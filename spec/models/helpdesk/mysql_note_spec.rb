@@ -8,7 +8,7 @@ describe Helpdesk::Note do
     $primary_cluster = "mysql"
     $secondary_cluster = "none"
     $backup_cluster = "none"
-    RSpec.configuration.account.make_current
+    @account.make_current
     @user = User.find_by_account_id(@account.id)
     @ticket =  Helpdesk::Ticket.new(
       :requester_id => @user.id,

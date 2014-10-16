@@ -24,7 +24,7 @@ describe Admin::EmailConfigsController do
     post :create, { :email_config => {:name => Faker::Name.name, 
                                       :reply_email => @email, 
                                       :group_id => "", 
-                                      :to_email => "#{@domain}com#{@name}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{@domain}com#{@name}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "1",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -46,7 +46,7 @@ describe Admin::EmailConfigsController do
                                                                   }
                                       }
                   }
-    new_email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(@email)
+    new_email_config = @account.all_email_configs.find_by_reply_email(@email)
     new_email_config.should be_an_instance_of(EmailConfig)
     new_email_config.imap_mailbox.should be_nil
     new_email_config.smtp_mailbox.should be_nil
@@ -99,7 +99,7 @@ describe Admin::EmailConfigsController do
     post :create, { :email_config => {:name => Faker::Name.name, 
                                       :reply_email => mailbox_username, 
                                       :group_id => "", 
-                                      :to_email => "#{Faker::Internet.domain_word}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "0",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -121,7 +121,7 @@ describe Admin::EmailConfigsController do
                                                                   }
                                       }
                   }
-    email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(mailbox_username)
+    email_config = @account.all_email_configs.find_by_reply_email(mailbox_username)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_an_instance_of(ImapMailbox)
     email_config.smtp_mailbox.should be_an_instance_of(SmtpMailbox)
@@ -136,7 +136,7 @@ describe Admin::EmailConfigsController do
     post :create, { :email_config => {:name => Faker::Name.name, 
                                       :reply_email => mailbox_username, 
                                       :group_id => "", 
-                                      :to_email => "#{Faker::Internet.domain_word}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "0",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -149,7 +149,7 @@ describe Admin::EmailConfigsController do
                                       :imap_mailbox_attributes => { :_destroy => "1" }
                                       }
                   }
-    email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(mailbox_username)
+    email_config = @account.all_email_configs.find_by_reply_email(mailbox_username)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_nil
     email_config.smtp_mailbox.should be_an_instance_of(SmtpMailbox)
@@ -162,13 +162,13 @@ describe Admin::EmailConfigsController do
   # Editing email configs with and without custom mailbox
 
   it "should edit an email config" do
-    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save
     put :update, {  :id => email_config.id,
                     :email_config => {:name => Faker::Name.name, 
                                       :reply_email => @email, 
                                       :group_id => "", 
-                                      :to_email => "#{@domain}com#{@name}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{@domain}com#{@name}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "1",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -190,7 +190,7 @@ describe Admin::EmailConfigsController do
                                                                   }
                                       }
                   }
-    new_email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(@email)
+    new_email_config = @account.all_email_configs.find_by_reply_email(@email)
     new_email_config.should be_an_instance_of(EmailConfig)
     delayed_job = Delayed::Job.last
     delayed_job.handler.should include("activation_instructions")
@@ -204,7 +204,7 @@ describe Admin::EmailConfigsController do
     email_config = @account.primary_email_config
     imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     imap_mailbox.save
-    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
     put :update, {  :id => email_config.id,
                     :email_config => {:name => Faker::Name.name, 
@@ -247,11 +247,11 @@ describe Admin::EmailConfigsController do
   end
 
   it "should edit an email config with custom IMAP and SMTP mailboxes" do
-    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save
-    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     imap_mailbox.save
-    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
     mailbox_username = Faker::Internet.email
     mailbox_password = Faker::Lorem.characters(10)
@@ -260,7 +260,7 @@ describe Admin::EmailConfigsController do
                     :email_config => {:name => Faker::Name.name, 
                                       :reply_email => mailbox_username, 
                                       :group_id => "", 
-                                      :to_email => "#{Faker::Internet.domain_word}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "0",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -284,7 +284,7 @@ describe Admin::EmailConfigsController do
                                                                   }
                                       }
                   }
-    email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(mailbox_username)
+    email_config = @account.all_email_configs.find_by_reply_email(mailbox_username)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_an_instance_of(ImapMailbox)
     email_config.smtp_mailbox.should be_an_instance_of(SmtpMailbox)
@@ -294,9 +294,9 @@ describe Admin::EmailConfigsController do
   end
 
   it "should edit an email config with custom SMTP mailbox" do
-    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save
-    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
     mailbox_username = Faker::Internet.email
     mailbox_password = Faker::Lorem.characters(10)
@@ -304,7 +304,7 @@ describe Admin::EmailConfigsController do
                     :email_config => {:name => Faker::Name.name, 
                                       :reply_email => mailbox_username, 
                                       :group_id => "", 
-                                      :to_email => "#{Faker::Internet.domain_word}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "0",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -318,7 +318,7 @@ describe Admin::EmailConfigsController do
                                       :imap_mailbox_attributes => { :_destroy => "1" }
                                       }
                   }
-    email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(mailbox_username)
+    email_config = @account.all_email_configs.find_by_reply_email(mailbox_username)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_nil
 
@@ -330,18 +330,18 @@ describe Admin::EmailConfigsController do
   end
 
   it "should remove the configured IMAP and SMTP mailboxes when switching back to default mail server" do
-    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:primary_email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save
-    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     imap_mailbox.save
-    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
 
     put :update, {  :id => email_config.id,
                     :email_config => {:name => Faker::Name.name, 
                                       :reply_email => email_config.reply_email, 
                                       :group_id => "", 
-                                      :to_email => "#{Faker::Internet.domain_word}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{Faker::Internet.domain_word}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "1",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -365,16 +365,16 @@ describe Admin::EmailConfigsController do
                                                                   }
                                       }
                   }
-    email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(email_config.reply_email)
+    email_config = @account.all_email_configs.find_by_reply_email(email_config.reply_email)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.imap_mailbox.should be_nil
     email_config.smtp_mailbox.should be_nil
   end
 
   it "should remove the configured SMTP mailbox when switching back to default mail server" do
-    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save
-    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
 
     put :update, {  :id => email_config.id,
@@ -395,7 +395,7 @@ describe Admin::EmailConfigsController do
                                       :imap_mailbox_attributes => { :_destroy => "1" }
                                       }
                   }
-    email_config = RSpec.configuration.account.all_email_configs.find_by_reply_email(email_config.reply_email)
+    email_config = @account.all_email_configs.find_by_reply_email(email_config.reply_email)
     email_config.should be_an_instance_of(EmailConfig)
     email_config.smtp_mailbox.should be_nil
   end
@@ -404,27 +404,27 @@ describe Admin::EmailConfigsController do
   # Deleting email configs with and without custom mailbox
 
   it "should delete a non-primary email config without custom mailbox" do
-    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save!
     delete :destroy, :id => email_config.id
-    RSpec.configuration.account.all_email_configs.find_by_reply_email(email_config.reply_email).should be_nil
+    @account.all_email_configs.find_by_reply_email(email_config.reply_email).should be_nil
   end
 
   it "should delete a non-primary email config with custom mailbox" do
-    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save!
-    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    imap_mailbox = FactoryGirl.build(:imap_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     imap_mailbox.save
-    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => RSpec.configuration.account.id)
+    smtp_mailbox = FactoryGirl.build(:smtp_mailbox, :email_config_id => email_config.id, :account_id => @account.id)
     smtp_mailbox.save
     delete :destroy, :id => email_config.id
-    RSpec.configuration.account.all_email_configs.find_by_reply_email(email_config.reply_email).should be_nil
+    @account.all_email_configs.find_by_reply_email(email_config.reply_email).should be_nil
     email_config.imap_mailbox.should be_nil
     email_config.smtp_mailbox.should be_nil
   end
 
   it "should get an existing email config" do
-    get :existing_email, :email_address => RSpec.configuration.account.all_email_configs.last.reply_email
+    get :existing_email, :email_address => @account.all_email_configs.last.reply_email
     JSON.parse(response.body)["success"].should eql false
   end
 
@@ -439,28 +439,28 @@ describe Admin::EmailConfigsController do
   end
 
   it "should edit an existing email config" do
-    get :edit, :id => RSpec.configuration.account.all_email_configs.last.id
+    get :edit, :id => @account.all_email_configs.last.id
     response.should render_template "admin/email_configs/edit"
   end
 
   it "should deliver test email" do
-    put :test_email, :id => RSpec.configuration.account.all_email_configs.last.id
+    put :test_email, :id => @account.all_email_configs.last.id
     JSON.parse(response.body)["email_sent"].should eql true
   end
 
   it "should make the given email_config as primary" do
-    a = RSpec.configuration.account.primary_email_config.id
+    a = @account.primary_email_config.id
     email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
-    email_config.account_id = RSpec.configuration.account.id
+    email_config.account_id = @account.id
     email_config.save!
-    put :make_primary, :id => RSpec.configuration.account.all_email_configs.reject{|x| x.id == a}.last.id
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.primary_email_config.id.should_not eql a
+    put :make_primary, :id => @account.all_email_configs.reject{|x| x.id == a}.last.id
+    @account.reload
+    @account.primary_email_config.id.should_not eql a
   end
 
   it "should deliver activation token" do
     email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
-    email_config.account_id = RSpec.configuration.account.id
+    email_config.account_id = @account.id
     email_config.save!
     get :deliver_verification, :id => email_config.id
     session[:flash][:notice].should =~ /Verification email has been sent to #{email_config.reply_email}/
@@ -471,7 +471,7 @@ describe Admin::EmailConfigsController do
 
   it "should register email" do
     email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
-    email_config.account_id = RSpec.configuration.account.id
+    email_config.account_id = @account.id
     email_config.set_activator_token
     email_config.save!
     get :register_email, :activation_code => email_config.activator_token
@@ -482,7 +482,7 @@ describe Admin::EmailConfigsController do
 
   it "should not register email" do
     email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email)
-    email_config.account_id = RSpec.configuration.account.id
+    email_config.account_id = @account.id
     email_config.set_activator_token
     email_config.save!
     get :register_email, :activation_code => Faker::Lorem.words(4).join("-")
@@ -492,7 +492,7 @@ describe Admin::EmailConfigsController do
   end
 
   it "should get already registered email" do
-    email_config = RSpec.configuration.account.email_configs.first
+    email_config = @account.email_configs.first
     if email_config.activator_token.nil?
       email_config.activator_token = Digest::MD5.hexdigest(Helpdesk::SECRET_1 + email_config.reply_email + Time.now.to_f.to_s).downcase
       email_config.save(:validate => false)
@@ -507,32 +507,32 @@ describe Admin::EmailConfigsController do
 
   it "should enable reply_to email feature" do
     post :reply_to_email_enable
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.features?(:reply_to_based_tickets).should eql true
+    @account.reload
+    @account.features?(:reply_to_based_tickets).should eql true
   end
 
   it "should disable reply_to email feature" do
     post :reply_to_email_disable
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.features?(:reply_to_based_tickets).should eql false
+    @account.reload
+    @account.features?(:reply_to_based_tickets).should eql false
   end
 
   it "should enable personalized email" do
     post :personalized_email_enable
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.features?(:personalized_email_replies).should eql true
+    @account.reload
+    @account.features?(:personalized_email_replies).should eql true
   end
 
   it "should disable personalized email" do
     post :personalized_email_disable
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.features?(:personalized_email_replies).should eql false
+    @account.reload
+    @account.features?(:personalized_email_replies).should eql false
   end
 
   it "should throw error on create" do
-    to = "#{@domain}com#{@name}@#{RSpec.configuration.account.full_domain}"
+    to = "#{@domain}com#{@name}@#{@account.full_domain}"
     post :create, { :email_config => {:name => Faker::Name.name, 
-                                      :reply_email => RSpec.configuration.account.primary_email_config.reply_email, 
+                                      :reply_email => @account.primary_email_config.reply_email, 
                                       :group_id => "", 
                                       :to_email => to,
                                       :smtp_mailbox_attributes => { :_destroy => "1",
@@ -556,19 +556,19 @@ describe Admin::EmailConfigsController do
                                                                   }
                                       }
                   }
-  new_email_config = RSpec.configuration.account.all_email_configs.find_by_to_email(to)
+  new_email_config = @account.all_email_configs.find_by_to_email(to)
   new_email_config.should eql nil
   response.body.should =~ /Reply email has already been taken/
   end
 
   it "should throw error on update" do
-    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => RSpec.configuration.account.id )
+    email_config = FactoryGirl.build(:email_config, :to_email => Faker::Internet.email, :reply_email => Faker::Internet.email, :account_id => @account.id )
     email_config.save
     put :update, {  :id => email_config.id,
                     :email_config => {:name => Faker::Name.name, 
-                                      :reply_email => RSpec.configuration.account.primary_email_config.reply_email, 
+                                      :reply_email => @account.primary_email_config.reply_email, 
                                       :group_id => "", 
-                                      :to_email => "#{@domain}com#{@name}@#{RSpec.configuration.account.full_domain}", 
+                                      :to_email => "#{@domain}com#{@name}@#{@account.full_domain}", 
                                       :smtp_mailbox_attributes => { :_destroy => "1",
                                                                     :server_name => "smtp.gmail.com",
                                                                     :port => "587",
@@ -594,7 +594,7 @@ describe Admin::EmailConfigsController do
   end
 
   it "should not delete primary email config" do
-    delete :destroy, :id => RSpec.configuration.account.primary_email_config.id
+    delete :destroy, :id => @account.primary_email_config.id
     session[:flash][:notice] =~ /Cannot delete a primary email./
   end
 

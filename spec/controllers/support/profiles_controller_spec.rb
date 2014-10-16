@@ -22,7 +22,7 @@ describe Support::ProfilesController do
                                             :phone => phone_no,
                                             :time_zone => "Arizona",
                                             :language => "fr" }
-    edited_customer = RSpec.configuration.account.user_emails.user_for_email(@user.email)
+    edited_customer = @account.user_emails.user_for_email(@user.email)
     edited_customer.phone.should be_eql(phone_no)
     edited_customer.time_zone.should be_eql("Arizona")
     edited_customer.language.should be_eql("fr")

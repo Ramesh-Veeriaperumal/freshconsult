@@ -11,7 +11,7 @@ RSpec.describe Helpdesk::ConversationsController do
   context "For Web requests" do
     before(:all) do
       @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Convo"}))
-      @group = RSpec.configuration.account.groups.first
+      @group = @account.groups.first
     end
 
     before(:each) do
@@ -42,7 +42,7 @@ RSpec.describe Helpdesk::ConversationsController do
                     }
       Resque.inline = false
       response.should render_template "helpdesk/notes/create"
-      replied_ticket = RSpec.configuration.account.tickets.find(@test_ticket.id)
+      replied_ticket = @account.tickets.find(@test_ticket.id)
       replied_ticket.responder_id.should be_eql(@agent.id)
       ticket_reply = replied_ticket.notes.last
       ticket_reply.full_text_html.should be_eql("<div>#{now}</div>")
@@ -69,7 +69,7 @@ RSpec.describe Helpdesk::ConversationsController do
                      :ticket_id => @test_ticket.display_id
                     }
       response.should render_template "helpdesk/notes/create"
-      RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
+      @account.tickets.find(@test_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
     end
 
     it "should add a private note to a ticket" do
@@ -86,7 +86,7 @@ RSpec.describe Helpdesk::ConversationsController do
                      :ticket_id => @test_ticket.display_id
                     }
       response.should render_template "helpdesk/notes/create"
-      private_note = RSpec.configuration.account.tickets.find(@test_ticket.id).notes.last
+      private_note = @account.tickets.find(@test_ticket.id).notes.last
       private_note.full_text_html.should be_eql("<div>#{now}</div>")
       private_note.private.should be_truthy
     end
@@ -105,7 +105,7 @@ RSpec.describe Helpdesk::ConversationsController do
                      :ticket_id => test_tkt.display_id
                     }
       response.should render_template "helpdesk/notes/create"
-      private_note = RSpec.configuration.account.tickets.find(test_tkt.id).notes.last
+      private_note = @account.tickets.find(test_tkt.id).notes.last
       private_note.full_text_html.should be_eql("<div>#{note_body}</div>")
       private_note.private.should be_truthy
       test_tkt.status.eql?(6)
@@ -128,7 +128,7 @@ RSpec.describe Helpdesk::ConversationsController do
                      :since_id => "-1",
                      :showing => "notes"
                    } 
-      RSpec.configuration.account.solution_articles.find_by_title(@test_ticket.subject).should be_an_instance_of(Solution::Article)
+      @account.solution_articles.find_by_title(@test_ticket.subject).should be_an_instance_of(Solution::Article)
     end
 
     it "should add a post to forum topic" do
@@ -186,7 +186,7 @@ RSpec.describe Helpdesk::ConversationsController do
     
   context "For API requests" do
     it "must add a note to the ticket via api" do
-      request.host = RSpec.configuration.account.full_domain
+      request.host = @account.full_domain
       http_login(@agent)
       clear_json
       test_ticket = create_ticket({:status => 2 })

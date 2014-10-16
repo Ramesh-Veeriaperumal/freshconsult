@@ -1,5 +1,6 @@
 class ImapMailbox < ActiveRecord::Base
 
+  # Please keep this one after the ar after_commit callbacks - rails 3
   include ObserverAfterCommitCallbacks
 
   belongs_to :email_config

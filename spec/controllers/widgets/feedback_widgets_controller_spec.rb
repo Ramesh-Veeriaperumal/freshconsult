@@ -33,7 +33,7 @@ describe Widgets::FeedbackWidgetsController do
                                        :source => "3",
                                        :status => "2",
                                        :priority => "1"}
-    RSpec.configuration.account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
     response.should render_template "widgets/feedback_widgets/thanks"
   end
 

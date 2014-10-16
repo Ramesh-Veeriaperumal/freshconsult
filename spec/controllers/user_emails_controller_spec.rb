@@ -5,7 +5,7 @@ describe UserEmailsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.account.features.multiple_user_emails.create
+    @account.features.multiple_user_emails.create
     @userUEC = add_user_with_multiple_emails(@account, 4)
   end
 
@@ -14,7 +14,7 @@ describe UserEmailsController do
   end
 
   after(:all) do
-    RSpec.configuration.account.features.multiple_user_emails.destroy
+    @account.features.multiple_user_emails.destroy
   end
 
   it "should make email primary" do

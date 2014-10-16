@@ -57,9 +57,9 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should show an account's logo" do
-    logo = RSpec.configuration.account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
+    logo = @account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
                                :description => "logo", 
-                               :account_id => RSpec.configuration.account.id)
+                               :account_id => @account.id)
     logo.save
     get :show, :id => logo.id
     response.should be_redirect
@@ -71,7 +71,7 @@ describe Helpdesk::AttachmentsController do
     post = quick_create_post
     attachment = post.attachments.create(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                         :description => Faker::Lorem.characters(10), 
-                                        :account_id => RSpec.configuration.account.id)
+                                        :account_id => @account.id)
     get :show, :id => attachment.id
     response.should be_redirect
     response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
@@ -83,7 +83,7 @@ describe Helpdesk::AttachmentsController do
     call = create_freshfone_call
     attachment = call.create_recording_audio(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                             :description => Faker::Lorem.characters(10), 
-                                            :account_id => RSpec.configuration.account.id)
+                                            :account_id => @account.id)
     user = add_new_user(@account)
     ticket = create_ticket(:requester_id => user.id)
     call.update_attributes(:customer_id => user.id, :notable_id => ticket.id, :notable_type => 'Helpdesk::Ticket')
@@ -95,10 +95,10 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should show a data export's attachment" do
-    data_export = FactoryGirl.build(:data_export, :account_id => RSpec.configuration.account.id, :user_id => RSpec.configuration.agent.id)
+    data_export = FactoryGirl.build(:data_export, :account_id => @account.id, :user_id => @agent.id)
     data_export.create_attachment(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                   :description => Faker::Lorem.characters(10), 
-                                  :account_id => RSpec.configuration.account.id)
+                                  :account_id => @account.id)
     data_export.save
     get :show, :id => data_export.attachment.id
     response.should be_redirect
@@ -161,20 +161,20 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should delete an account's logo" do
-    logo = RSpec.configuration.account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
+    logo = @account.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
                                :description => "logo", 
-                               :account_id => RSpec.configuration.account.id)
+                               :account_id => @account.id)
     logo.save
     delete :destroy, :id => logo.id
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.logo.should be_nil
+    @account.reload
+    @account.logo.should be_nil
   end
 
   it "should delete a forum post's attachment" do
     post = quick_create_post
     attachment = post.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                         :description => Faker::Lorem.characters(10), 
-                                        :account_id => RSpec.configuration.account.id)
+                                        :account_id => @account.id)
     attachment.save
     delete :destroy, :id => attachment.id
     post.reload
@@ -185,7 +185,7 @@ describe Helpdesk::AttachmentsController do
     user = add_new_user(@account)
     attachment = user.build_avatar(:content => fixture_file_upload('files/image.gif', 'image/gif'), 
                                    :description => Faker::Lorem.characters(10), 
-                                   :account_id => RSpec.configuration.account.id)
+                                   :account_id => @account.id)
     attachment.save
     delete :destroy, :id => attachment.id
     user.reload

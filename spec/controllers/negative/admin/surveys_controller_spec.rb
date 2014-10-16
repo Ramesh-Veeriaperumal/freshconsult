@@ -17,7 +17,7 @@ describe Admin::SurveysController do
                                                 :unhappy_text => nil, 
                                                 :send_while => send_while
                                               }
-    survey = RSpec.configuration.account.survey
+    survey = @account.survey
     survey.link_text.should_not be_nil
     survey.happy_text.should_not be_nil
     survey.neutral_text.should_not be_nil

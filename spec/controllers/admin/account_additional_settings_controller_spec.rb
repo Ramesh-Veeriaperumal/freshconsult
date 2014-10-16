@@ -19,8 +19,8 @@ describe Admin::AccountAdditionalSettingsController do
 		put :update, {
 			:account_additional_settings =>{ :bcc_email=> test_email }
 		}
-		RSpec.configuration.account.reload
-		RSpec.configuration.account.account_additional_settings.bcc_email.should eql(test_email)
+		@account.reload
+		@account.account_additional_settings.bcc_email.should eql(test_email)
 		session[:flash][:notice].should eql "Successfully updated Bcc email"
 		response.should redirect_to("/admin/email_configs")
 	end
@@ -30,8 +30,8 @@ describe Admin::AccountAdditionalSettingsController do
 		put :update, {
 			:account_additional_settings =>{ :bcc_email=> text }
 		}
-		RSpec.configuration.account.reload
-		RSpec.configuration.account.account_additional_settings.bcc_email.should_not eql(text)
+		@account.reload
+		@account.account_additional_settings.bcc_email.should_not eql(text)
 		session[:flash][:notice].should eql "Failed to update Bcc email"
 		response.should redirect_to("/admin/email_configs")
 	end

@@ -29,7 +29,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
         :or_filters => [],
         :actual_data => [{ :name => "source" , :operator => "is", :value => "1"}]
       }
-      quest_data = {:value => "2", :date => TIME_TYPE_BY_TOKEN[:any_time]}
+      quest_data = {:value => "2", :date => Gamification::Quests::Constants::TIME_TYPE_BY_TOKEN[:any_time]}
       @quest = create_ticket_quest(@account, quest_data, quest_filter_data)
       @agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
     end
@@ -118,7 +118,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
         :or_filters => [],
         :actual_data => [{ :name => "st_survey_rating" , :operator => "is", :value => "1"}]
       }
-      quest_data = {:value => "2", :date => TIME_TYPE_BY_TOKEN[:one_day]}
+      quest_data = {:value => "2", :date => Gamification::Quests::Constants::TIME_TYPE_BY_TOKEN[:one_day]}
       @quest = create_ticket_quest(@account, quest_data, quest_filter_data)
       @agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
     end

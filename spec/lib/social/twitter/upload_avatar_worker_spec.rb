@@ -8,7 +8,7 @@ describe Social::Workers::Twitter::UploadAvatar do
     @handle = create_test_twitter_handle(@account)
     user_name = Faker::Name.name
     twitter_user_id = user_name.split.first
-    @twitter_user = FactoryGirl.build(:user, :account => RSpec.configuration.account,
+    @twitter_user = FactoryGirl.build(:user, :account => @account,
                                       :name => user_name, 
                                       :twitter_id => twitter_user_id,
                                       :time_zone => "Chennai", 
@@ -24,7 +24,7 @@ describe Social::Workers::Twitter::UploadAvatar do
       handle_data = sample_twitter_user(sender1)
       Twitter::REST::Client.any_instance.stubs(:user).returns(handle_data)
       Twitter::User.any_instance.stubs(:profile_image_url).returns(@img_url)
-      Social::Workers::Twitter::UploadAvatar.perform({:account_id => RSpec.configuration.account.id, :twitter_handle_id => @handle.id})
+      Social::Workers::Twitter::UploadAvatar.perform({:account_id => @account.id, :twitter_handle_id => @handle.id})
       @handle.avatar.should_not be_nil
     end
   end
@@ -32,7 +32,7 @@ describe Social::Workers::Twitter::UploadAvatar do
   context "For twitter user" do
     it "must build an avatar" do
       args = {
-        :account_id       => RSpec.configuration.account.id,
+        :account_id       => @account.id,
         :twitter_user_id  => @twitter_user.id,
         :prof_img_url     => @img_url
       }

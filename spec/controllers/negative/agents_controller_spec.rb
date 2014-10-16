@@ -35,12 +35,12 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    RSpec.configuration.account.user_emails.user_for_email(test_email).should be_nil
+    @account.user_emails.user_for_email(test_email).should be_nil
   end
 
   it "should not allow the admin to create more agents than allowed by the plan" do
     login_admin
-    RSpec.configuration.account.subscription.update_attributes(:state => "active", :agent_limit => RSpec.configuration.account.full_time_agents.count)
+    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     test_email = Faker::Internet.email
     post :create, { :agent => { :occasional => "false",
@@ -60,7 +60,7 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    RSpec.configuration.account.user_emails.user_for_email(test_email).should be_nil
-    RSpec.configuration.account.subscription.update_attributes(:state => "trial")
+    @account.user_emails.user_for_email(test_email).should be_nil
+    @account.subscription.update_attributes(:state => "trial")
   end
 end

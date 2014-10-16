@@ -6,7 +6,7 @@ describe Mobihelp::DevicesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.account = create_test_account
+    @account = create_test_account
     @mobihelp_app = create_mobihelp_app
   end
 
@@ -55,8 +55,8 @@ describe Mobihelp::DevicesController do
     @device_attr["device_info"].merge!("device_uuid" => device_id)
     post  :register_user, @device_attr
 
-    RSpec.configuration.account.users.find_by_email(email_id).should be_an_instance_of(User)
-    RSpec.configuration.account.users.find_by_email(email_id).mobihelp_devices.should have(1).items
+    @account.users.find_by_email(email_id).should be_an_instance_of(User)
+    @account.users.find_by_email(email_id).mobihelp_devices.should have(1).items
   end
 
   it "should accept a user registration without email" do
@@ -67,8 +67,8 @@ describe Mobihelp::DevicesController do
 
     post  :register_user, @device_attr
 
-    RSpec.configuration.account.users.find_by_external_id(device_id).should be_an_instance_of(User)
-    RSpec.configuration.account.users.find_by_external_id(device_id).mobihelp_devices.should have(1).items
+    @account.users.find_by_external_id(device_id).should be_an_instance_of(User)
+    @account.users.find_by_external_id(device_id).mobihelp_devices.should have(1).items
   end
 
   it "should accept a user registration for existing user" do
@@ -79,8 +79,8 @@ describe Mobihelp::DevicesController do
     @device_attr["device_info"].merge!("device_uuid" => device_id)
 
     post  :register_user, @device_attr
-    RSpec.configuration.account.users.find_by_external_id(device_id).should be_an_instance_of(User)
-    RSpec.configuration.account.users.find_by_external_id(device_id).mobihelp_devices.find_by_device_uuid(device_id).should be_an_instance_of(Mobihelp::Device);
+    @account.users.find_by_external_id(device_id).should be_an_instance_of(User)
+    @account.users.find_by_external_id(device_id).mobihelp_devices.find_by_device_uuid(device_id).should be_an_instance_of(Mobihelp::Device);
   end
 
   it "should not accept a user registration of a deleted app" do

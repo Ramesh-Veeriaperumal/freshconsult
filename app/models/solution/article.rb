@@ -3,7 +3,6 @@ class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  include ObserverAfterCommitCallbacks
   self.table_name =  "solution_articles"
   serialize :seo_data, Hash
 
@@ -45,6 +44,9 @@ class Solution::Article < ActiveRecord::Base
   after_commit  :clear_mobihelp_solutions_cache, on: :create
   after_commit :clear_mobihelp_solutions_cache, on: :update
   before_destroy          :clear_mobihelp_solutions_cache
+
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240

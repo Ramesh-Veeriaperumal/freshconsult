@@ -136,16 +136,16 @@ Spork.prefork do
     config.before(:all) do
       create_test_account
       @account = Account.first
-      RSpec.configuration.account = @account
+      @account = @account
       @agent = get_admin
-      RSpec.configuration.agent = @agent
+      @agent = @agent
       RSpec.configuration.timings = []
       
       #begin_gc_defragment
     end
 
     config.before(:each, :type => :controller) do
-      @request.host = RSpec.configuration.account.full_domain
+      @request.host = @account.full_domain
       @request.env['HTTP_REFERER'] = '/sessions/new'
       @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36\
                                           (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"

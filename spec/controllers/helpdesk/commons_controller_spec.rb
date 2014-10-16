@@ -6,7 +6,7 @@ describe Helpdesk::CommonsController do
 
 	before(:all) do
 		@test_group = create_group(@account, {:name => "Testing group_agents"})
-		agents_group = FactoryGirl.build(:agent_group, :user_id => RSpec.configuration.agent.id, :group_id => @test_group.id)
+		agents_group = FactoryGirl.build(:agent_group, :user_id => @agent.id, :group_id => @test_group.id)
 		agents_group.save(validate: false)
 	end
 

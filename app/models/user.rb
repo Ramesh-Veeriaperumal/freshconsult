@@ -19,11 +19,12 @@ class User < ActiveRecord::Base
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
-  include ObserverAfterCommitCallbacks
 
   
   concerned_with :constants, :associations, :callbacks
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true

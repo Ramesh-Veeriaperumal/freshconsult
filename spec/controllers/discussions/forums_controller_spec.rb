@@ -10,7 +10,7 @@ describe Discussions::ForumsController do
 	end
 
 	before(:each) do
-		@request.host = RSpec.configuration.account.full_domain
+		@request.host = @account.full_domain
 		log_in(@user)
 	end
 

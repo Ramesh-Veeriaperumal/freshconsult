@@ -5,7 +5,7 @@ module NoteHelper
                                          :notable_id => params[:ticket_id],
                                          :created_at => params[:created_at],
                                          :user_id => params[:user_id],
-                                         :account_id => RSpec.configuration.account.id,
+                                         :account_id => @account.id,
                                          :notable_type => 'Helpdesk::Ticket')
     test_note.incoming = params[:incoming] if params[:incoming]
     test_note.private = params[:private] if params[:private]

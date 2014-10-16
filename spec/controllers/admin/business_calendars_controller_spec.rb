@@ -5,13 +5,13 @@ describe Admin::BusinessCalendarsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    business_hours = FactoryGirl.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>RSpec.configuration.account.id)
+    business_hours = FactoryGirl.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
     business_hours.save(validate: false)
     @test_business_hours=business_hours
   end
 
   before(:each) do
-    log_in(RSpec.configuration.agent)
+    log_in(@agent)
   end
 
   it "should go to the index page" do
@@ -43,7 +43,7 @@ describe Admin::BusinessCalendarsController do
       :Tuesday=>"2", :Wednesday=>"3", :Thursday=>"4", :Friday=>"5",
       :holiday=>{"date(1i)"=>"2014", "date(2i)"=>"5", "date(3i)"=>"27", "name"=>""}
 
-    RSpec.configuration.account.business_calendar.find_by_name(business_hours_name).should_not be_nil
+    @account.business_calendar.find_by_name(business_hours_name).should_not be_nil
 
   end
 
@@ -70,36 +70,36 @@ describe Admin::BusinessCalendarsController do
       :Tuesday=>"2", :Wednesday=>"3", :Thursday=>"4", :Friday=>"5",
       :holiday=>{"date(1i)"=>"2014", "date(2i)"=>"5", "date(3i)"=>"27", "name"=>""},:id=>@test_business_hours.id
 
-    RSpec.configuration.account.business_calendar.find_by_id(@test_business_hours.id).name.should_not be_eql(@test_business_hours.name)
+    @account.business_calendar.find_by_id(@test_business_hours.id).name.should_not be_eql(@test_business_hours.name)
   end
 
   it "should delete the business calendar" do
-    business_hours = FactoryGirl.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>RSpec.configuration.account.id)
+    business_hours = FactoryGirl.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
     business_hours.save(validate: false)
     delete :destroy, {:id=>business_hours.id}
-    RSpec.configuration.account.business_calendar.find_by_id(business_hours.id).should be_nil
+    @account.business_calendar.find_by_id(business_hours.id).should be_nil
   end
 
   #cases when feature is disabled
 
   it "should go to default business hour edit page " do
-    RSpec.configuration.account.features.multiple_business_hours.destroy
-    default_id=RSpec.configuration.account.business_calendar.default.first.id
+    @account.features.multiple_business_hours.destroy
+    default_id=@account.business_calendar.default.first.id
     get 'index'
     response.should redirect_to "/admin/business_calendars/#{default_id}/edit"
-    RSpec.configuration.account.features.multiple_business_hours.create
+    @account.features.multiple_business_hours.create
   end
 
   it "should go to default business hour edit page while creating new hour" do
-    RSpec.configuration.account.features.multiple_business_hours.destroy
-    default_id=RSpec.configuration.account.business_calendar.default.first.id
+    @account.features.multiple_business_hours.destroy
+    default_id=@account.business_calendar.default.first.id
     get 'new'
     response.should redirect_to "/admin/business_calendars/#{default_id}/edit"
-    RSpec.configuration.account.features.multiple_business_hours.create
+    @account.features.multiple_business_hours.create
   end
 
   it "should not destroy default business hour" do
-    delete :destroy, {:id=>RSpec.configuration.account.business_calendar.default.first.id}
+    delete :destroy, {:id=>@account.business_calendar.default.first.id}
     session["flash"][:notice].should eql "The Business Calendar could not be deleted"
     response.should redirect_to('/admin/business_calendars')
   end

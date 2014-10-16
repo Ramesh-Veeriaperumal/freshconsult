@@ -20,7 +20,7 @@ RSpec.describe "SpamWatcher" do
   after(:each) do
     @agent1.destroy
     @user1.destroy
-    Account.reset_current_account
+    # Account.reset_current_account
   end
 
   describe "tickets" do

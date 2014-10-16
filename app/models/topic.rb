@@ -1,7 +1,6 @@
 class Topic < ActiveRecord::Base
   include Search::ElasticSearchIndex
   include Mobile::Actions::Topic
-  include ObserverAfterCommitCallbacks
   acts_as_voteable
   validates_presence_of :forum, :user, :title
 
@@ -15,6 +14,10 @@ class Topic < ActiveRecord::Base
   before_create :set_unanswered_stamp, :if => :questions?
   before_create :set_unsolved_stamp, :if => :problems?
 
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
+
+  
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 

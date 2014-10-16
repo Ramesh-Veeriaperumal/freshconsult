@@ -4,9 +4,10 @@ class Agent < ActiveRecord::Base
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods
-  include ObserverAfterCommitCallbacks
 
   concerned_with :associations, :constants
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
 
   before_destroy :remove_escalation
 

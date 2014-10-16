@@ -12,7 +12,7 @@ describe ProfilesController do
   it "should update mobile and phone number" do
     new_phone  = Faker::PhoneNumber.phone_number
     new_mobile = Faker::PhoneNumber.phone_number
-    put :update, :id => RSpec.configuration.agent.id,
+    put :update, :id => @agent.id,
       :agent =>{ :signature_html=>"<p><br></p>\r\n",
         :user_id => "#{@agent.id}" },
         :user =>{ :name => "#{@agent.name}",
@@ -29,7 +29,7 @@ describe ProfilesController do
   end
 
   it "should change api_key" do
-    api_before_change = RSpec.configuration.agent.single_access_token
+    api_before_change = @agent.single_access_token
     post :reset_api_key, {}
     user = User.find_by_id(@agent.id)
     api_after_change = user.single_access_token
@@ -38,7 +38,7 @@ describe ProfilesController do
   end
 
   it "should change password" do
-    password_before_update = RSpec.configuration.agent.crypted_password
+    password_before_update = @agent.crypted_password
     post :change_password, {"user_id"=>"#{@agent.id}",
       "user"=>{"current_password"=>"test",
       "password"=>"test1",
@@ -51,9 +51,9 @@ describe ProfilesController do
   end
 
   it "should go to the edit page" do
-    RSpec.configuration.agent.reload
+    @agent.reload
     log_in(@agent)
-    get :edit, :id => RSpec.configuration.agent.id
+    get :edit, :id => @agent.id
     response.should render_template "profiles/edit"
   end
 

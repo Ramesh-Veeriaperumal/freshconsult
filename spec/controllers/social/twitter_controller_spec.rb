@@ -28,7 +28,7 @@ RSpec.describe Social::TwitterController do
   end
   
   before(:each) do
-    RSpec.configuration.account.make_current
+    @account.make_current
     unless GNIP_ENABLED
       Social::DynamoHelper.stubs(:insert).returns({})
       Social::DynamoHelper.stubs(:update).returns({})
@@ -59,7 +59,7 @@ RSpec.describe Social::TwitterController do
       end
       
       #Pushed tweet should not be a ticket
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should be_nil
       
       @stream_id = "#{@account.id}_#{@default_stream.id}"
@@ -68,7 +68,7 @@ RSpec.describe Social::TwitterController do
       post :create_fd_item, fd_item_params
       
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_truthy
       
@@ -84,7 +84,7 @@ RSpec.describe Social::TwitterController do
       fd_item_params = sample_params_fd_item("#{(Time.now.utc.to_f*100000).to_i}", @stream_id, SEARCH_TYPE[:custom])
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_truthy
       
@@ -100,7 +100,7 @@ RSpec.describe Social::TwitterController do
       
       #Check ticket
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
@@ -113,7 +113,7 @@ RSpec.describe Social::TwitterController do
       twitter_feed = Social::Twitter::Feed.new(twitter_feed)
       Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
       
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(reply_tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
       tweet.is_note?.should be_truthy
       
@@ -141,7 +141,7 @@ RSpec.describe Social::TwitterController do
       fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:custom], "#{tweet_id}")
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
@@ -154,7 +154,7 @@ RSpec.describe Social::TwitterController do
       reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
       post :reply, reply_params
       
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
     end
     
@@ -210,7 +210,7 @@ RSpec.describe Social::TwitterController do
       fd_item_params = sample_params_fd_item("#{tweet_id}", @stream_id, SEARCH_TYPE[:saved], "#{tweet_id}")
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
@@ -229,7 +229,7 @@ RSpec.describe Social::TwitterController do
       reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
       post :reply, reply_params
       
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       
       if GNIP_ENABLED
@@ -369,7 +369,7 @@ RSpec.describe Social::TwitterController do
       
       post :create_fd_item, fd_item_params
       tweet_id = fd_item_params[:item][:feed_id]
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
       tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
@@ -388,7 +388,7 @@ RSpec.describe Social::TwitterController do
       reply_params = sample_tweet_reply(@stream_id, tweet_id, SEARCH_TYPE[:saved])
       post :reply, reply_params
       
-      tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
      
       hash_key = "#{@account.id}_#{@default_stream.id}"
@@ -445,8 +445,8 @@ RSpec.describe Social::TwitterController do
     $redis_others.del("STREAM_RECENT_SEARCHES:#{@account.id}:#{@agent.id}")
     Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
 
-    RSpec.configuration.account.twitter_handles.update_all(:state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active]) # to avoid re-auth errors from cropping up
-    RSpec.configuration.account.make_current
+    @account.twitter_handles.update_all(:state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active]) # to avoid re-auth errors from cropping up
+    @account.make_current
     
     5.times do |n|
       search_hash  = {
@@ -455,7 +455,7 @@ RSpec.describe Social::TwitterController do
         "keywords"     => [],
         "query_string" => ""
       }
-      RSpec.configuration.agent.agent.add_social_search(search_hash)
+      @agent.agent.add_social_search(search_hash)
     end
 
     get :twitter_search, {

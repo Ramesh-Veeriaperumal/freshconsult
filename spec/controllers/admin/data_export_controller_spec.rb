@@ -6,10 +6,10 @@ RSpec.describe Admin::DataExportController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    Account.reset_current_account
+    # Account.reset_current_account
     User.current = nil
-    @account = RSpec.configuration.account 
-    @agent = RSpec.configuration.agent
+    @account = @account 
+    @agent = @agent
   end
 
   before(:each) do

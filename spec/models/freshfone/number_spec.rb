@@ -14,7 +14,7 @@ RSpec.describe Freshfone::Number do
 
   after(:each) do
     Freshfone::Number.delete_all
-    RSpec.configuration.account.freshfone_numbers = []
+    @account.freshfone_numbers = []
     @number = nil
   end
 

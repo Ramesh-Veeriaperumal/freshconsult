@@ -20,13 +20,13 @@ describe Admin::GettingStartedController do
 											:logo_attributes=>{:content=>
 												fixture_file_upload('files/image4kb.png', 'image/png')}, 
 											:preferences=>{:header_color=>"#252525", :tab_color=>"#006063", :bg_color=>"#efefef"},
-											:id=> RSpec.configuration.account.id 
+											:id=> @account.id 
 											}
 									}
 		}
 		assigns["error"].should be_nil
-		RSpec.configuration.account.main_portal.logo.should_not be_nil
-		RSpec.configuration.account.main_portal.logo.content_file_name.should eql "image4kb.png"
+		@account.main_portal.logo.should_not be_nil
+		@account.main_portal.logo.content_file_name.should eql "image4kb.png"
 	end
 
 	it "should not allow invalid colors while rebranding" do
@@ -35,18 +35,18 @@ describe Admin::GettingStartedController do
 											:logo_attributes=>{:content=>
 												fixture_file_upload('files/image33kb.jpg', 'image/jpg')}, 
 											:preferences=>{:header_color=>"#252asa525", :tab_color=>"#00sd6063", :bg_color=>"#efsdsefef"},
-											:id=> RSpec.configuration.account.id 
+											:id=> @account.id 
 											}
 									}
 		}
 		assigns["error"].should eql "Header color code is invalid."
-		RSpec.configuration.account.main_portal.logo.content_file_name.should_not eql "image33kb.jpg"
-		RSpec.configuration.account.main_portal.logo.content_file_name.should eql "image4kb.png"
+		@account.main_portal.logo.content_file_name.should_not eql "image33kb.jpg"
+		@account.main_portal.logo.content_file_name.should eql "image4kb.png"
 	end
 
 	it "should delete logo of the account" do
 		delete :delete_logo
-		RSpec.configuration.account.reload
-		RSpec.configuration.account.main_portal.logo.should be_nil
+		@account.reload
+		@account.main_portal.logo.should be_nil
 	end
 end

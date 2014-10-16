@@ -9,11 +9,11 @@ RSpec.describe SsoController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.agent = add_test_agent(@account)
+    @agent = add_test_agent(@account)
     @authorization = FactoryGirl.build(:authorization, :provider => "facebook",
-                    :uid => "12345678", :user_id => RSpec.configuration.agent.id, :account_id => RSpec.configuration.account.id )
+                    :uid => "12345678", :user_id => @agent.id, :account_id => @account.id )
     @authorization.save(validate: false)
-    key_options = { :account_id => RSpec.configuration.account.id, :user_id => RSpec.configuration.agent.id, :provider => @authorization[:provider]}
+    key_options = { :account_id => @account.id, :user_id => @agent.id, :provider => @authorization[:provider]}
     @key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
   end
 
@@ -42,7 +42,7 @@ RSpec.describe SsoController do
 
   it "should redirect to facebook auth url" do
     get :facebook
-    current_portal = RSpec.configuration.account.portals.first
+    current_portal = @account.portals.first
     response.should redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{@account.id}%26portal_id%3D#{current_portal.id}&state="
   end
 

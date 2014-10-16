@@ -5,7 +5,7 @@ describe Admin::SupervisorRulesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @test_supervisor_rule = create_supervisor_rule({:account_id => RSpec.configuration.account.id})
+    @test_supervisor_rule = create_supervisor_rule({:account_id => @account.id})
   end
 
   before(:each) do
@@ -34,7 +34,7 @@ describe Admin::SupervisorRulesController do
                      :action_data => [{:name=>"priority", :value=>"1"}].to_json}
 
 
-    RSpec.configuration.account.all_supervisor_rules.find_by_name(supervisor_name).should_not be_nil
+    @account.all_supervisor_rules.find_by_name(supervisor_name).should_not be_nil
   end
 
   it "should edit a supervisor rule" do
@@ -55,21 +55,21 @@ describe Admin::SupervisorRulesController do
                   :filter_data=>[{:name=>"subject", :operator=>"is", :value=>"temp"}].to_json,
                   :filter=>"end", :name=>"status", :operator=>"is", :value=>"6",
                   :action_data=>[{:name=>"status", :value=>"6"}].to_json, :id=>@test_supervisor_rule.id}
-    RSpec.configuration.account.all_supervisor_rules.find_by_id(@test_supervisor_rule.id).action_data.should_not be_eql(@test_supervisor_rule.action_data)
+    @account.all_supervisor_rules.find_by_id(@test_supervisor_rule.id).action_data.should_not be_eql(@test_supervisor_rule.action_data)
   end
 
   it "should delete a supervisor rule" do
-    delete_supervisor_id = create_supervisor_rule({:account_id => RSpec.configuration.account.id}).id
+    delete_supervisor_id = create_supervisor_rule({:account_id => @account.id}).id
     delete :destroy, {:id=>delete_supervisor_id}
-    RSpec.configuration.account.all_supervisor_rules.find_by_id(delete_supervisor_id).should be_nil
+    @account.all_supervisor_rules.find_by_id(delete_supervisor_id).should be_nil
   end
 
   it "should active and deactivate supervisor rule" do
-    supervisor_rule =create_supervisor_rule({:account_id => RSpec.configuration.account.id})
+    supervisor_rule =create_supervisor_rule({:account_id => @account.id})
     put :activate_deactivate,  {:va_rule=>{:active=>"false"},:id =>supervisor_rule.id}
-    RSpec.configuration.account.all_supervisor_rules.find_by_id(supervisor_rule.id).active.should be_eql(false)
+    @account.all_supervisor_rules.find_by_id(supervisor_rule.id).active.should be_eql(false)
     put :activate_deactivate,  {:va_rule=>{:active=>"true"},:id =>supervisor_rule.id}
-    RSpec.configuration.account.all_supervisor_rules.find_by_id(supervisor_rule.id).active.should be_eql(true)
+    @account.all_supervisor_rules.find_by_id(supervisor_rule.id).active.should be_eql(true)
   end
 
 end

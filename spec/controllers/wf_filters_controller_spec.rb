@@ -67,7 +67,7 @@ describe Wf::FilterController do
   private
   
     def scoper
-      RSpec.configuration.account.ticket_filters
+      @account.ticket_filters
     end
 
 end

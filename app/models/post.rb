@@ -1,5 +1,4 @@
 class Post < ActiveRecord::Base
-  include ObserverAfterCommitCallbacks
 
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
@@ -52,6 +51,9 @@ class Post < ActiveRecord::Base
   }
   attr_accessor :request_params, :portal
 
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
+  
   def to_xml(options = {})
     options[:except] ||= []
     options[:except] << :topic_title << :forum_name

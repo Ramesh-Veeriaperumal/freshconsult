@@ -14,7 +14,9 @@ class WhitelistedIp < ActiveRecord::Base
 
 	before_validation :valid_ips?, :if => :enabled
 	validate :valid_range?, :current_ip_present_in_range?, :if => :enabled
-
+	# Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
+  
 	def load_ip_info(current_ip)
 		@current_ip = IPAddress current_ip
 		@current_ip_version = @current_ip.ipv4? ? "ipv4?" : "ipv6?"

@@ -3,13 +3,13 @@ require 'spec_helper'
 # describe Social::FacebookSubscriptionController do
 #   #Delete these examples and add some real ones
 #   before(:all) do
-#     RSpec.configuration.account = create_test_account
+#     @account = create_test_account
 #     Social::FacebookPage.any_instance.stubs(:after_commit_on_create => true)
 #     Social::FacebookPage.any_instance.stubs(:after_commit_on_update => true)
 #     FBClient.any_instance.stubs(:subscribe_for_page).returns(true)
 #     # Social::FacebookPosts.any_instance.stubs(:fetch).returns({})
 #     fb_page = FactoryGirl.build(:facebook_pages)
-#     fb_page.account_id = RSpec.configuration.account.id
+#     fb_page.account_id = @account.id
 #     fb_page.save(validate: false)
 #   end
 

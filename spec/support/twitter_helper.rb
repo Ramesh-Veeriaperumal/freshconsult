@@ -295,7 +295,7 @@ module TwitterHelper
     send_tweet(feed, fd_counter)
     wait_for = 1
     tweet = nil
-    tweet = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+    tweet = @account.tweets.find_by_tweet_id(tweet_id)
     return tweet
   end
 

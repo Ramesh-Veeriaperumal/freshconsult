@@ -63,10 +63,10 @@ namespace :spam_watcher_redis do
         table_name = queue.split("sw_")[1]
         unless paid_account?(account)
           operation = "blocked"
-          block_spam_user(user) if RAILS_ENV == "test"
+          block_spam_user(user) if Rails.env.test?
         else
           operation = "deleted" 
-          delete_user(user) if RAILS_ENV == "test"
+          delete_user(user) if Rails.env.test?
         end
         # deleted_users = account.all_users.find([user.id])
         deleted_users = [user]
@@ -75,7 +75,7 @@ namespace :spam_watcher_redis do
         # Notify admin about the blocked user
       end
     rescue Exception => e
-      puts "#{e.backtrace}"
+      puts "#{e.message}::::::#{e.backtrace}"
       NewRelic::Agent.notice_error(e,{:description => "error occured in during processing spam_watcher_queue"})
     ensure
       Account.reset_current_account

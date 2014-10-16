@@ -10,29 +10,29 @@ module FreshfoneSpecHelper
       :twilio_subaccount_token => "58aacda85de70e5cf4f0ba4ea50d78ab", 
       :twilio_application_id => "AP932260611f4e4830af04e4e3fed66276", 
       :queue => "QU81f8b9ad56f44a62a3f6ef69adc4d7c7",
-                          :account_id => RSpec.configuration.account.id, 
+                          :account_id => @account.id, 
       :friendly_name => "RSpec Test" )
     freshfone_account.sneaky_save
-    RSpec.configuration.account.freshfone_account = freshfone_account
+    @account.freshfone_account = freshfone_account
     create_freshfone_credit
     create_freshfone_number
-    RSpec.configuration.account.features.freshfone.create
+    @account.features.freshfone.create
   end
 
   def create_freshfone_credit
-    @credit = RSpec.configuration.account.freshfone_credit
+    @credit = @account.freshfone_credit
     if @credit.present?
-      @credit.account = RSpec.configuration.account
+      @credit.account = @account
       @credit.update_attributes(:available_credit => 25)
     else
-      @credit = RSpec.configuration.account.create_freshfone_credit(:available_credit => 25)
+      @credit = @account.create_freshfone_credit(:available_credit => 25)
     end
-    @credit.account = RSpec.configuration.account
+    @credit.account = @account
   end
 
   def create_freshfone_number
-    if RSpec.configuration.account.freshfone_numbers.blank?
-      @number ||= RSpec.configuration.account.freshfone_numbers.create( :number => "+12407433321", 
+    if @account.freshfone_numbers.blank?
+      @number ||= @account.freshfone_numbers.create( :number => "+12407433321", 
         :display_number => "+12407433321", 
         :country => "US", 
         :region => "Texas", 
@@ -41,12 +41,12 @@ module FreshfoneSpecHelper
         :state => 1,
         :deleted => false )
     else
-      @number ||= RSpec.configuration.account.freshfone_numbers.first
+      @number ||= @account.freshfone_numbers.first
     end
   end
 
   def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
-    @freshfone_call = RSpec.configuration.account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
+    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
                                       :params => { :CallSid => call_sid })
   end
@@ -61,16 +61,16 @@ module FreshfoneSpecHelper
   def build_freshfone_caller
     number = "+12345678900"
     account = @freshfone_call.account
-    caller  = RSpec.configuration.account.freshfone_callers.find_or_initialize_by_number(number)
+    caller  = @account.freshfone_callers.find_or_initialize_by_number(number)
     caller.update_attributes({:number => number})
       @freshfone_call.update_attributes(:caller => caller)
   end
 
   def create_freshfone_user(presence = 0)
-    # @freshfone_user = RSpec.configuration.agent.build_freshfone_user({ :account => RSpec.configuration.account, :presence => presence })
+    # @freshfone_user = @agent.build_freshfone_user({ :account => @account, :presence => presence })
     @freshfone_user = Freshfone::User.find_by_user_id(@agent.id)
     if @freshfone_user.blank?
-      @freshfone_user = Freshfone::User.create({ :account => RSpec.configuration.account, :presence => presence, :user => RSpec.configuration.agent })
+      @freshfone_user = Freshfone::User.create({ :account => @account, :presence => presence, :user => @agent })
     end
   end
 
@@ -80,7 +80,7 @@ module FreshfoneSpecHelper
   end
 
   def create_call_family
-    @parent_call = RSpec.configuration.account.freshfone_calls.create( :freshfone_number_id => @number.id, 
+    @parent_call = @account.freshfone_calls.create( :freshfone_number_id => @number.id, 
       :call_status => 0, :call_type => 1,
       :params => { :CallSid => "CABCDEFGHIJK" } )
     @parent_call.build_child_call({ :agent => @agent, 
@@ -93,16 +93,16 @@ module FreshfoneSpecHelper
     @dummy_users = []; @dummy_freshfone_users = []
     n.times do 
       new_agent = FactoryGirl.build(  :agent, :signature => "Regards, #{Faker::Name.name}", 
-        :account_id => RSpec.configuration.account.id, :available => 1)
-      user = FactoryGirl.build(:user, :account => RSpec.configuration.account, :email => Faker::Internet.email, :user_role => 3, :helpdesk_agent => true )
+        :account_id => @account.id, :available => 1)
+      user = FactoryGirl.build(:user, :account => @account, :email => Faker::Internet.email, :user_role => 3, :helpdesk_agent => true )
       user.agent = new_agent
       user.roles = [@account.roles.second]
-      freshfone_user = user.build_freshfone_user({ :account => RSpec.configuration.account, :presence => 1 })
+      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => 1 })
       user.save!
       @dummy_freshfone_users << freshfone_user
       @dummy_users << user
     end
-    RSpec.configuration.account.users << @dummy_users
+    @account.users << @dummy_users
   end
 
   def create_customer
@@ -117,7 +117,7 @@ module FreshfoneSpecHelper
   end
 
   def build_signature_for(path, params, master)
-    auth_token = master ? FreshfoneConfig['twilio']['auth_token'] : RSpec.configuration.account.freshfone_account.token
+    auth_token = master ? FreshfoneConfig['twilio']['auth_token'] : @account.freshfone_account.token
     @url = "http://play.ngrok.com/#{path}"
     data = @url + params.sort.join
     digest = OpenSSL::Digest.new('sha1')
@@ -165,7 +165,7 @@ module FreshfoneSpecHelper
 
   def record_params
     { "RecordingUrl" => "http://api.twilio.com/2010-04-01/Accounts/AC626dc6e5b03904e6270f353f4a2f068f/Recordings/REa618f1f9d5cbf4117cb4121bc2aa5a0b",
-      "agent" => RSpec.configuration.agent.id,
+      "agent" => @agent.id,
       "number_id" => @number.id }
   end
 

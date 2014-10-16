@@ -10,8 +10,8 @@ RSpec.describe ContactsController do
   
   
   before(:each) do
-    request.host = RSpec.configuration.account.full_domain
-    http_login(RSpec.configuration.agent)
+    request.host = @account.full_domain
+    http_login(@agent)
   end
   
   it "should not create a contact without an email" do

@@ -43,7 +43,7 @@ describe Solution::CategoriesController do
   end
 
   it "should reorder categories" do
-    categories = RSpec.configuration.account.solution_categories
+    categories = @account.solution_categories
     count = categories.count
     position_arr = (1..count).to_a.shuffle
     reorder_hash = {}
@@ -57,7 +57,7 @@ describe Solution::CategoriesController do
   end  
 
   it "should not edit a default category" do 
-    default_category = RSpec.configuration.account.solution_categories.find_by_is_default(true)
+    default_category = @account.solution_categories.find_by_is_default(true)
     get :edit, :id => default_category.id 
     flash[:notice] =~ /category_edit_not_allowed/
   end
@@ -99,7 +99,7 @@ describe Solution::CategoriesController do
                                        :description => "#{Faker::Lorem.sentence(3)}"
                                       }
 
-    RSpec.configuration.account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)
+    @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)
     response.should redirect_to(solution_categories_url)
   end
 
@@ -111,13 +111,13 @@ describe Solution::CategoriesController do
       :solution_category => { :name => "#{name}",
                               :description => "#{Faker::Lorem.sentence(3)}"
                             }
-    RSpec.configuration.account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)    
+    @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)    
     response.should redirect_to(solution_categories_url)
   end
 
   it "should delete a solution category" do
     delete :destroy, :id => @test_category.id
-    RSpec.configuration.account.solution_categories.find_by_name(@test_category.name).should be_nil
+    @account.solution_categories.find_by_name(@test_category.name).should be_nil
     response.should redirect_to(solution_categories_url)
   end
 

@@ -16,8 +16,8 @@ describe Admin::EmailCommandsSettingsController do
   it "should edit the delimiter for email commands" do
     get 'index'
     put :update, :account_additional_settings => { :email_cmds_delimeter => "@freshsays" }
-    RSpec.configuration.account.account_additional_settings.reload
-    RSpec.configuration.account.account_additional_settings.email_cmds_delimeter.should be_eql("@freshsays")
+    @account.account_additional_settings.reload
+    @account.account_additional_settings.email_cmds_delimeter.should be_eql("@freshsays")
     flash[:notice].should be_eql(I18n.t(:'email_commands_update_success'))
   end
 

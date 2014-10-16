@@ -24,7 +24,7 @@ describe DiscussionsController do
 	# 			publish_post(post) 
 	# 		end
 	# 		reply_to_topic2 = publish_post(create_test_post(topic2))
-	# 		published_topics = RSpec.configuration.account.topics.as_activities.paginate(:page => params[:page])
+	# 		published_topics = @account.topics.as_activities.paginate(:page => params[:page])
 	# 		get :index
 	# 		response.should render_template("discussions/index")
 	# 		fetched_topics_from_controller = controller.instance_variable_get("@topics")
@@ -112,7 +112,7 @@ describe DiscussionsController do
 			get :categories
 			response.should render_template("discussions/categories")
 			fetched_categories_from_controller = controller.instance_variable_get("@forum_categories")
-			fetched_categories_from_controller.should == RSpec.configuration.account.forum_categories
+			fetched_categories_from_controller.should == @account.forum_categories
 		end
 
 		it "should display all categories, underlying forums, my posts, all posts and other views in the sidebar" do

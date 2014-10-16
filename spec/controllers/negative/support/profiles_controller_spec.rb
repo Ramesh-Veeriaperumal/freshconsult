@@ -23,8 +23,8 @@ describe Support::ProfilesController do
                                             :time_zone => "Arizona", 
                                             :language => "fr" }
 
-    RSpec.configuration.account.users.find_by_email(updated_email).should be_nil
-    user = RSpec.configuration.account.users.find_by_email(email)
+    @account.users.find_by_email(updated_email).should be_nil
+    user = @account.users.find_by_email(email)
     user.is_client_manager?.should be_falsey
     user.helpdesk_agent.should be_falsey
     user.user_role.should be_eql(3)

@@ -9,8 +9,8 @@ RSpec.describe ContactsController do
 	self.use_transactional_fixtures = false
 
 	before(:each) do
-		request.host = RSpec.configuration.account.full_domain
-		http_login(RSpec.configuration.agent)
+		request.host = @account.full_domain
+		http_login(@agent)
 		clear_json
 	end
 

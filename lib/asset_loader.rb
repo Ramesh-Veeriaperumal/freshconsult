@@ -40,7 +40,6 @@ class AssetLoader
 	
 	
 	def css_app_assets(scope)
-		puts asset_list(CSS[scope]).inspect
 		Hash[*((asset_list(CSS[scope]) || []).map do |asset|
 			[asset.gsub('.scss', '').to_s , Rails.application.assets.find_asset("#{scope}/#{asset}").digest_path]
 		end).flatten]

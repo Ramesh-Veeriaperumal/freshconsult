@@ -13,7 +13,7 @@ RSpec.describe Freshfone::UsageTriggersController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = RSpec.configuration.account.full_domain
+    @request.host = @account.full_domain
   end
 
   after(:each) do

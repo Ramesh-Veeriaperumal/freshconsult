@@ -10,7 +10,7 @@ module MobihelpHelper
     @mh_user = User.find_by_email(email_id) unless email_id.nil?
     return @mh_user unless @mh_user.nil?
 
-    @mh_user = FactoryGirl.build(:user, :account => account, :email => email_id,
+    @mh_user = FactoryGirl.build(:user, :account_id => account.id, :email => email_id,
                               :user_role => 3)
     @mh_user.save
     Rails.logger.debug("Created user #{@mh_user.inspect}");

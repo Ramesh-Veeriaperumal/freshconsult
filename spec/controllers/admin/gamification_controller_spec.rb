@@ -13,7 +13,7 @@ describe Admin::GamificationController do
 	end
 
 	it "should display arcade index page with gamification_enabled" do
-		RSpec.configuration.account.features.gamification_enable.create
+		@account.features.gamification_enable.create
 		get :index
 		response.body.should =~ /Arcade Settings/
 		response.body.should =~ /Award points/
@@ -42,20 +42,20 @@ describe Admin::GamificationController do
 		}
 		session[:flash][:notice].should eql "Gamification settings has been successfully updated."
 		for i in 1..6 do
-			RSpec.configuration.account.scoreboard_ratings.find(i).score.should eql scr[i-1]
-			RSpec.configuration.account.scoreboard_levels.find(i).points.should eql pts[i-1]
+			@account.scoreboard_ratings.find(i).score.should eql scr[i-1]
+			@account.scoreboard_levels.find(i).points.should eql pts[i-1]
 		end
 		response.should redirect_to("/admin/gamification")
 	end
 
 	it "should inactivate the Gamification" do
 		post :toggle
-		RSpec.configuration.account.features.reload
-		RSpec.configuration.account.features.find_by_type("GamificationEnableFeature").should be_nil
+		@account.features.reload
+		@account.features.find_by_type("GamificationEnableFeature").should be_nil
 	end
 
 	it "should display arcade page with gamification_disabled" do
-		RSpec.configuration.account.features.gamification_enable.destroy
+		@account.features.gamification_enable.destroy
 		get :index
 		response.body.should =~ /What is Freshdesk Arcade?/
 		response.body.should =~ /Enable freshdesk arcade/
@@ -65,7 +65,7 @@ describe Admin::GamificationController do
 
 	it "should activate the Gamification" do
 		post :toggle
-		RSpec.configuration.account.features.reload
-		RSpec.configuration.account.features.find_by_type("GamificationEnableFeature").should_not be_nil
+		@account.features.reload
+		@account.features.find_by_type("GamificationEnableFeature").should_not be_nil
 	end
 end

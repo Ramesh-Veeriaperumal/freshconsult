@@ -28,7 +28,7 @@ describe Helpdesk::TimeSheetsController do
     user = add_new_user(@account)
     time_sheet = FactoryGirl.build(:time_sheet, :user_id => user.id,
                                             :workable_id => ticket.id,
-                                            :account_id => RSpec.configuration.account.id,
+                                            :account_id => @account.id,
                                             :billable => 1,
                                             :timer_running => false)
     time_sheet.save

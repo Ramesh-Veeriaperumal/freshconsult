@@ -10,7 +10,7 @@ RSpec.describe Helpdesk::RemindersController do
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Reminders"}))
-    @group = RSpec.configuration.account.groups.first
+    @group = @account.groups.first
   end
 
   before(:each) do
@@ -49,9 +49,9 @@ RSpec.describe Helpdesk::RemindersController do
   end
 
   it "should strike off a to-do entry" do
-    reminder = FactoryGirl.build(:reminder, :user_id => RSpec.configuration.agent.id,
+    reminder = FactoryGirl.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
-                                        :account_id => RSpec.configuration.account.id)
+                                        :account_id => @account.id)
     reminder.save
     put :complete, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
     @test_ticket.reminders.first.deleted.should be_truthy
@@ -63,9 +63,9 @@ RSpec.describe Helpdesk::RemindersController do
   end
 
   it "should delete a reminder" do
-    reminder = FactoryGirl.build(:reminder, :user_id => RSpec.configuration.agent.id,
+    reminder = FactoryGirl.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
-                                        :account_id => RSpec.configuration.account.id)
+                                        :account_id => @account.id)
     reminder.save
     delete :destroy, :id => reminder.id
     @test_ticket.reminders.find_by_id(reminder.id).should be_nil

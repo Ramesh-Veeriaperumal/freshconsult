@@ -34,17 +34,17 @@ describe Helpdesk::TagsController do
   it "should rename the tag" do
     tag_name="Tag1 - #{Faker::Name.name}"
     put 'rename_tags' , :tag_id => @tag1.id,:tag_name => tag_name
-    RSpec.configuration.account.tags.find_by_id(@tag1.id).name.should be_eql(tag_name)
+    @account.tags.find_by_id(@tag1.id).name.should be_eql(tag_name)
   end
 
   it "should merge the tags" do
     put 'merge_tags', :tag_id => @tag1.id,:tag_name =>@tag2.name
-    RSpec.configuration.account.tags.find_by_id(@tag1.id).should be_nil
+    @account.tags.find_by_id(@tag1.id).should be_nil
   end
 
   it "should remove associated tags" do
     delete :remove_tag, :tag_id=>@tag3.id, :tag_type=> "Helpdesk::Ticket"
-    RSpec.configuration.account.tags.find_by_id(@tag3.id).tag_uses_count.should be_eql(0)
+    @account.tags.find_by_id(@tag3.id).tag_uses_count.should be_eql(0)
   end
 
   it "should complete tags search automatically" do

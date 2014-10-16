@@ -19,7 +19,7 @@ RSpec.describe Admin::Social::TwitterStreamsController do
       GnipRule::Client.any_instance.stubs(:list).returns([]) 
       GnipRule::Client.any_instance.stubs(:add).returns(add_response)
     end
-    @handle = create_test_twitter_handle(RSpec.configuration.account)
+    @handle = create_test_twitter_handle(@account)
     @default_stream = @handle.default_stream
     @custom_stream = create_test_custom_twitter_stream(@handle)
     @data = @default_stream.data

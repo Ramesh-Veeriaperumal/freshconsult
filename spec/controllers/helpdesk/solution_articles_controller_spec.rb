@@ -11,9 +11,9 @@ describe Solution::ArticlesController do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
       :category_id => @test_category.id } )
     @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-      :user_id => RSpec.configuration.agent.id, :status => "2", :art_type => "1" } )
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
     @test_article2 = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-      :user_id => RSpec.configuration.agent.id, :status => "2", :art_type => "1" } )
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
   end
 
   before(:each) do
@@ -69,7 +69,7 @@ describe Solution::ArticlesController do
     reorder_hash = {}
     for i in 0..3
       article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-      :user_id => RSpec.configuration.agent.id, :status => "2", :art_type => "1" } )
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
       reorder_hash[article.id] = position_arr[i] 
     end
     put :reorder, :category_id => @test_category.id, :folder_id => folder.id, :reorderlist => reorder_hash.to_json
@@ -91,7 +91,7 @@ describe Solution::ArticlesController do
       :description => "#{Faker::Lorem.sentence(3)}" ,:folder_id => @test_folder.id, :status => 2, :art_type => 1},
       :tags => {:name => "new"}
     }
-    RSpec.configuration.account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)            
+    @account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)            
   end
 
   it "should redirect to new page if article create fails" do 
@@ -118,7 +118,7 @@ describe Solution::ArticlesController do
                     :folder_id => @test_folder.id
                   }
     @test_article.reload                  
-    RSpec.configuration.account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)    
+    @account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)    
   end
 
   it "should add attahchment to article" do 
@@ -163,7 +163,7 @@ describe Solution::ArticlesController do
   it "should delete a solution article" do
     title = @test_article.title
     delete :destroy, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
-    RSpec.configuration.account.solution_articles.find_by_title(title).should be_nil
+    @account.solution_articles.find_by_title(title).should be_nil
     response.should redirect_to(solution_category_folder_url(@test_category.id,@test_folder.id ))
   end
 

@@ -41,8 +41,8 @@ describe Admin::Mobihelp::AppsController do
           }
         }
       }
-    RSpec.configuration.account.mobihelp_apps.find_by_name("FreshApp #{now}").should be_an_instance_of(Mobihelp::App)
-    RSpec.configuration.account.mobihelp_apps.find_by_name("FreshApp #{now}").platform.should be_eql(1)
+    @account.mobihelp_apps.find_by_name("FreshApp #{now}").should be_an_instance_of(Mobihelp::App)
+    @account.mobihelp_apps.find_by_name("FreshApp #{now}").platform.should be_eql(1)
   end
 
   it "should reject invalid mobihelp app and render new page " do
@@ -101,7 +101,7 @@ describe Admin::Mobihelp::AppsController do
         },
         "id" => mobihelp_app.id
     }
-    updated_mobihelp_app = RSpec.configuration.account.mobihelp_apps.find_by_id(mobihelp_app.id)
+    updated_mobihelp_app = @account.mobihelp_apps.find_by_id(mobihelp_app.id)
     updated_mobihelp_app.config[:app_review_launch_count].should be_eql("15")
     updated_mobihelp_app.platform.should be_eql(mobihelp_app.platform)
   end

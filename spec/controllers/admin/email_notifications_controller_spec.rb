@@ -5,11 +5,11 @@ describe Admin::EmailNotificationsController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		@email_notifications = RSpec.configuration.account.email_notifications
+		@email_notifications = @account.email_notifications
 		@test_notification = @email_notifications.find_by_notification_type("1")		
 		@test_reply_temp = @email_notifications.find_by_notification_type("15")
-		@user1 = add_test_agent(RSpec.configuration.account)
-		@user2 = add_test_agent(RSpec.configuration.account)
+		@user1 = add_test_agent(@account)
+		@user2 = add_test_agent(@account)
 	end
 
 	before(:each) do

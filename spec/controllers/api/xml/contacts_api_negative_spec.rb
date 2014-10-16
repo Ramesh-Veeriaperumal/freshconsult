@@ -10,8 +10,8 @@ RSpec.describe ContactsController do
 
 
   before(:each) do
-    request.host = RSpec.configuration.account.full_domain
-    http_login(RSpec.configuration.agent)
+    request.host = @account.full_domain
+    http_login(@agent)
   end
 
   it "should not create a contact without an email" do
@@ -24,9 +24,9 @@ RSpec.describe ContactsController do
   end
 
   it "should not update a contact with an existing/duplicate email" do
-		first_contact = add_new_user(RSpec.configuration.account,{})
+		first_contact = add_new_user(@account,{})
 		dup_email = first_contact.email
-		second_contact = add_new_user(RSpec.configuration.account,{})
+		second_contact = add_new_user(@account,{})
 		put :update, {:id => second_contact.id, :user=>{:email => dup_email },:format => 'xml'}, :content_type => 'application/xml'
 		# puts "#{response.body} :: #{response.status}"
     # val = error_message(response) && error_status?(response.status)
@@ -34,7 +34,7 @@ RSpec.describe ContactsController do
   end
 
   it "should not accept query params other than email/phone/mobile" do
-    contact = add_new_user(RSpec.configuration.account,{})
+    contact = add_new_user(@account,{})
     check_name  = contact.name
     get :index, {:query=>"name is #{check_name}", :state=>:all, :format => 'xml'}
     #puts "#{response.body} :: #{response.status}"

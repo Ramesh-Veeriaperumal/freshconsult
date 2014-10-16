@@ -8,17 +8,17 @@ RSpec.describe Admin::QuestsController do
 
   before(:all) do
     quest_data = {:value=>"4", :date=>"4"}
-    @new_quest = create_article_quest(RSpec.configuration.account, quest_data)
+    @new_quest = create_article_quest(@account, quest_data)
 
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry, 
-                                         :flexifield_def_id => RSpec.configuration.account.flexi_field_defs.find_by_module("Ticket").id,
-                                         :flexifield_alias => "tkt_level_#{RSpec.configuration.account.id}",
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                         :flexifield_alias => "tkt_level_#{@account.id}",
                                          :flexifield_name => "ff_int01",
                                          :flexifield_coltype => "number",
-                                         :account_id => RSpec.configuration.account.id)
+                                         :account_id => @account.id)
     flexifield_def_entry.save
-    custom_field = FactoryGirl.build( :ticket_field, :account_id => RSpec.configuration.account.id,
-                                                 :name => "tkt_level_#{RSpec.configuration.account.id}",
+    custom_field = FactoryGirl.build( :ticket_field, :account_id => @account.id,
+                                                 :name => "tkt_level_#{@account.id}",
                                                  :field_type => "custom_number",
                                                  :flexifield_def_entry_id => flexifield_def_entry.id)
     custom_field.save
@@ -49,7 +49,7 @@ RSpec.describe Admin::QuestsController do
                     :quest_data_date=>"2", :filter_data=>"", :quest_data=> quest_data
     }
     session[:flash][:notice].should eql "The quest has been created."  
-    quest = RSpec.configuration.account.quests.find_by_badge_id(45)
+    quest = @account.quests.find_by_badge_id(45)
     quest.should be_an_instance_of(Quest)
     response.should redirect_to "/admin/gamification#quests"
   end
@@ -63,8 +63,8 @@ RSpec.describe Admin::QuestsController do
                     :quest_data_date=>"3", :filter_data=>"", :quest_data=> quest_data
     }
     response.body.should =~ /New Quest/
-    RSpec.configuration.account.reload
-    after_count = RSpec.configuration.account.quests.count
+    @account.reload
+    after_count = @account.quests.count
     before_count.should eql after_count
     response.should be_success
   end

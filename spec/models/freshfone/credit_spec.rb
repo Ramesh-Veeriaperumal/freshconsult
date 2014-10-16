@@ -29,7 +29,7 @@ RSpec.describe Freshfone::Credit do
     
     @credit.reload
     @credit.available_credit.to_i.should be_eql(10)
-    freshfone_payments = RSpec.configuration.account.freshfone_payments.find(:first, 
+    freshfone_payments = @account.freshfone_payments.find(:first, 
       :conditions => {:status_message => "500. Your auto recharge is prevented"},
       :order => "created_at DESC")
     freshfone_payments.should_not be_blank

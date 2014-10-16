@@ -9,8 +9,8 @@ RSpec.describe ContactsController do
 	self.use_transactional_fixtures = false
 
 	before(:each) do
-		request.host = RSpec.configuration.account.full_domain
-		http_login(RSpec.configuration.agent)
+		request.host = @account.full_domain
+		http_login(@agent)
 	end
 
 	before(:all) do
@@ -62,7 +62,7 @@ RSpec.describe ContactsController do
 	end
 
 	it "should show an existing contact" do
-		contact = add_new_user(RSpec.configuration.account,{})
+		contact = add_new_user(@account,{})
 		get :show, {:id => contact.id, :format => 'xml'}
 		result = parse_xml(response)
 		expected = (response.status == 200) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
@@ -99,7 +99,7 @@ RSpec.describe ContactsController do
 	end
 
 	it "should delete an existing contact" do
-		contact = add_new_user(RSpec.configuration.account,{})
+		contact = add_new_user(@account,{})
 		delete :destroy, {:id => contact.id, :format => 'xml'}
 		response.status.should be_eql(200)		
 	end

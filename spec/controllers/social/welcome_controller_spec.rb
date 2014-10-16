@@ -7,13 +7,13 @@ describe Social::WelcomeController do
   
   before(:all) do
     Resque.inline = true
-    RSpec.configuration.account = create_test_account
+    @account = create_test_account
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([])
       Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)
     end
     Social::TwitterHandle.destroy_all
-    RSpec.configuration.account.account_additional_settings.update_attributes(:additional_settings => nil)
+    @account.account_additional_settings.update_attributes(:additional_settings => nil)
     Resque.inline = false
   end
 
@@ -40,8 +40,8 @@ describe Social::WelcomeController do
     post :enable_feature, {
       :twitter => "false"
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.account_additional_settings.additional_settings[:enable_social].should eql(false)
+    @account.reload
+    @account.account_additional_settings.additional_settings[:enable_social].should eql(false)
     response.should redirect_to admin_home_index_url
   end
 

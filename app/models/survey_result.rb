@@ -3,7 +3,6 @@ class SurveyResult < ActiveRecord::Base
   self.primary_key = :id
 
   include Va::Observer::Util
-  include ObserverAfterCommitCallbacks
 
   belongs_to_account
     
@@ -17,6 +16,9 @@ class SurveyResult < ActiveRecord::Base
   after_create :update_ticket_rating
   before_create :update_observer_events
   after_commit :filter_observer_events, on: :create, :if => :user_present?
+
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
   
   def add_feedback(feedback)
     note = surveyable.notes.build({

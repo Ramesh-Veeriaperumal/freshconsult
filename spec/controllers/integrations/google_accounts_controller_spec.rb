@@ -58,7 +58,7 @@ describe Integrations::GoogleAccountsController do
 
   before(:each) do
     login_admin
-    @request.host = RSpec.configuration.account.full_domain
+    @request.host = @account.full_domain
   end
 
   it "should update google accounts" do

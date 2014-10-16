@@ -5,6 +5,8 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Search::ElasticSearchIndex
 
   after_commit :clear_cache
+  # Please keep this one after the ar after_commit callbacks - rails 3
+  include ObserverAfterCommitCallbacks
 
   self.table_name =  "helpdesk_tags"
   

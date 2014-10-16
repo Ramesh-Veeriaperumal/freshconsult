@@ -67,7 +67,7 @@ describe Helpdesk::NotesController do
     ticket_note = create_note({:source => test_ticket.source,
                                :ticket_id => test_ticket.id,
                                :body => body,
-                               :user_id => RSpec.configuration.agent.id})
+                               :user_id => @agent.id})
     get :edit, :ticket_id => test_ticket.display_id, :id => ticket_note.id
     response.body.should =~ /#{body}/
     response.should render_template "helpdesk/notes/_edit_note"
@@ -79,7 +79,7 @@ describe Helpdesk::NotesController do
     ticket_note = create_note({:source => test_ticket.source,
                                :ticket_id => test_ticket.id,
                                :body => body,
-                               :user_id => RSpec.configuration.agent.id})
+                               :user_id => @agent.id})
 
     updated_note_body = "Edited Note - #{Faker::Lorem.paragraph}"
     post :update, :helpdesk_note => {:source => @test_ticket.source,
@@ -111,7 +111,7 @@ describe Helpdesk::NotesController do
     ticket_note = create_note({:source => test_ticket.source,
                                :ticket_id => test_ticket.id,
                                :body => body,
-                             :user_id => RSpec.configuration.agent.id})
+                             :user_id => @agent.id})
     test_ticket.notes.last.body.should be_eql(body)
     post :destroy, :id => ticket_note.id, :ticket_id => test_ticket.display_id
     test_ticket.notes.last.deleted.should be_eql(true)
@@ -159,7 +159,7 @@ describe Helpdesk::NotesController do
                    :since_id => "-1",
                    :showing => "activites"
                  } 
-    RSpec.configuration.account.solution_articles.find_by_title(test_ticket.subject).should be_an_instance_of(Solution::Article)
+    @account.solution_articles.find_by_title(test_ticket.subject).should be_an_instance_of(Solution::Article)
   end
 
   it "should add a post to forum topic" do

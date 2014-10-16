@@ -11,7 +11,7 @@ RSpec.describe Integrations::JiraIssueController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.agent = add_test_agent(@account)
+    @agent = add_test_agent(@account)
     @installed_application = create_installed_application(@account)
   end
 
@@ -68,7 +68,7 @@ RSpec.describe Integrations::JiraIssueController do
   # it "remove notification redis key" do
   #   post :create, create_params
   #   integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
-  #   redis_key = INTEGRATIONS_JIRA_NOTIFICATION % { :account_id => RSpec.configuration.account.id, 
+  #   redis_key = INTEGRATIONS_JIRA_NOTIFICATION % { :account_id => @account.id, 
   #               :local_integratable_id => integrated_resource.local_integratable_id, 
   #               :remote_integratable_id => integrated_resource.remote_integratable_id }
   #   set_integ_redis_key(redis_key, params)
@@ -79,7 +79,7 @@ RSpec.describe Integrations::JiraIssueController do
   it "remove notification redis key" do# failing in master
     post :create, create_params
     integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
-    redis_key = INTEGRATIONS_JIRA_NOTIFICATION % { :account_id => RSpec.configuration.account.id, 
+    redis_key = INTEGRATIONS_JIRA_NOTIFICATION % { :account_id => @account.id, 
                 :local_integratable_id => integrated_resource.local_integratable_id, 
                 :remote_integratable_id => integrated_resource.remote_integratable_id }
     set_integ_redis_key(redis_key, controller.params)

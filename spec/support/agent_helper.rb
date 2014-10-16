@@ -5,7 +5,7 @@ module AgentHelper
     new_agent = FactoryGirl.build(:agent, :signature => "Regards, #{options[:name]}", 
                                       :account_id => account.id, 
                                       :available => available)
-    new_user = FactoryGirl.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user, :account_id => account.id,
                                     :name => options[:name], 
                                     :email => options[:email],
                                     :time_zone => "Chennai", 

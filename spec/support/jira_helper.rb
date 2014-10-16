@@ -51,7 +51,7 @@ module JiraHelper
     { "webhookEvent" => "jira:issue_updated", "timestamp" => DateTime.now.strftime('%Q').to_i,
       "issue" => { "key" => integrated_resource.remote_integratable_id }, 
       "auth_key" => @installed_application.configs_auth_key,
-      "user" => {"emailAddress" => @installed_application.configs_username, "displayName" => RSpec.configuration.agent.name },
+      "user" => {"emailAddress" => @installed_application.configs_username, "displayName" => @agent.name },
       "changelog" => {"id" => "10300",
       "items" => [ 
       {"field" => "status", "fieldtype" => "jira", "from" => "1", "fromString" => "Open", 

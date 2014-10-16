@@ -17,7 +17,7 @@ describe Admin::Social::TwitterHandlesController do
     
     it "should redirect to new handle if it doesn't exists and create a default stream/dm stream and ticket rule for dm stream" do 
       Resque.inline = true
-      handle = FactoryGirl.build(:twitter_handle, :account_id => RSpec.configuration.account.id, :twitter_user_id => "#{get_social_id}")
+      handle = FactoryGirl.build(:twitter_handle, :account_id => @account.id, :twitter_user_id => "#{get_social_id}")
       Resque.inline = false
       TwitterWrapper.any_instance.stubs(:auth).returns(handle)
       
@@ -35,19 +35,19 @@ describe Admin::Social::TwitterHandlesController do
     
     it "should redirect to existing stream if stream already exists" do    
       Resque.inline = true
-      handle = FactoryGirl.build(:twitter_handle, :account_id => RSpec.configuration.account.id, :twitter_user_id => "#{get_social_id}")
+      handle = FactoryGirl.build(:twitter_handle, :account_id => @account.id, :twitter_user_id => "#{get_social_id}")
       Resque.inline = false
       TwitterWrapper.any_instance.stubs(:auth).returns(handle)
       
       #Create a new handle  
       get :authdone
       response.should redirect_to "/admin/social/twitter_streams/#{handle.default_stream.id}/edit"
-      count = RSpec.configuration.account.twitter_handles.count  
+      count = @account.twitter_handles.count  
       streams_before = handle.twitter_streams
           
       #Add same handle again
       get :authdone  
-      RSpec.configuration.account.twitter_handles.count.should be_eql(count)    
+      @account.twitter_handles.count.should be_eql(count)    
       response.should redirect_to "/admin/social/twitter_streams/#{handle.default_stream.id}/edit"
       streams_after = handle.twitter_streams
       
@@ -65,9 +65,9 @@ describe Admin::Social::TwitterHandlesController do
   describe "DELETE #destroy" do    
     it "should delete and redirect" do
       Resque.inline = true
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)  
+      twt_handler = create_test_twitter_handle(@account)  
       delete :destroy, :id => twt_handler.id
-      handle = RSpec.configuration.account.twitter_handles.find_by_id(twt_handler.id)
+      handle = @account.twitter_handles.find_by_id(twt_handler.id)
       handle.present?.should be_falsey
       response.should redirect_to '/admin/social/streams'
       Resque.inline = false   

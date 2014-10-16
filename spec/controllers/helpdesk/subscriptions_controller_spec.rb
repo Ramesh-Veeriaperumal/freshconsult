@@ -6,7 +6,7 @@ describe Helpdesk::SubscriptionsController do
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "subscription"}))
-    @group = RSpec.configuration.account.groups.first
+    @group = @account.groups.first
   end
 
   before(:each) do
@@ -15,9 +15,9 @@ describe Helpdesk::SubscriptionsController do
 
   it "should render the list of watchers of a ticket" do
     ticket = create_ticket
-    subscription = FactoryGirl.build(:subscription, :account_id => RSpec.configuration.account.id,
+    subscription = FactoryGirl.build(:subscription, :account_id => @account.id,
                                                 :ticket_id => ticket.id,
-                                                :user_id => RSpec.configuration.agent.id)
+                                                :user_id => @agent.id)
     subscription.save
     get :index, :ticket_id => ticket.display_id
     response.should render_template "helpdesk/subscriptions/_ticket_watchers"
@@ -38,9 +38,9 @@ describe Helpdesk::SubscriptionsController do
 
   it "should unwatch a ticket" do
     ticket = create_ticket
-    subscription = FactoryGirl.build(:subscription, :account_id => RSpec.configuration.account.id,
+    subscription = FactoryGirl.build(:subscription, :account_id => @account.id,
                                                 :ticket_id => ticket.id,
-                                                :user_id => RSpec.configuration.agent.id)
+                                                :user_id => @agent.id)
     subscription.save
     get :unsubscribe, :ticket_id => ticket.display_id
     ticket.reload
@@ -51,9 +51,9 @@ describe Helpdesk::SubscriptionsController do
     3.times do |i|
       instance_variable_set("@ticket_#{i+1}", create_ticket)
       instance_variable_set("@subscription_#{i+1}", FactoryGirl.build(:subscription, 
-                                                                :account_id => RSpec.configuration.account.id,
+                                                                :account_id => @account.id,
                                                                 :ticket_id => instance_variable_get("@ticket_#{i+1}").id,
-                                                                :user_id => RSpec.configuration.agent.id).save)
+                                                                :user_id => @agent.id).save)
     end
     delete :unwatch_multiple, :ticket_id => "multiple", :ids => [ @ticket_1.display_id, 
                                                                   @ticket_2.display_id,

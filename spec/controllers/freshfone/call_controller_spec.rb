@@ -12,14 +12,14 @@ RSpec.describe Freshfone::CallController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @request.host = RSpec.configuration.account.full_domain
+    @request.host = @account.full_domain
     create_test_freshfone_account
     create_freshfone_user
   end
 
   after(:each) do
-    RSpec.configuration.account.freshfone_users.find(@freshfone_user).destroy
-    RSpec.configuration.account.freshfone_calls.delete_all
+    @account.freshfone_users.find(@freshfone_user).destroy
+    @account.freshfone_calls.delete_all
   end
 
   it 'should retrieve caller data for the phone number' do
@@ -37,9 +37,9 @@ RSpec.describe Freshfone::CallController do
 
     post :in_call, in_call_params
     
-    freshfone_user = RSpec.configuration.account.freshfone_users.find_by_user_id(@agent)
+    freshfone_user = @account.freshfone_users.find_by_user_id(@agent)
     freshfone_user.should be_busy
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find_by_call_sid("CSATH")
+    freshfone_call = @account.freshfone_calls.find_by_call_sid("CSATH")
     freshfone_call.should be_inprogress
     xml.should be_eql({:Response=>nil})
   end
@@ -50,7 +50,7 @@ RSpec.describe Freshfone::CallController do
     create_freshfone_call("CDIRECT")
 
     post :direct_dial_success, direct_dial_params
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find_by_call_sid("CDIRECT")
+    freshfone_call = @account.freshfone_calls.find_by_call_sid("CDIRECT")
     freshfone_call.should be_inprogress
     freshfone_call.direct_dial_number.should be_eql("9994269753")
     xml.should be_eql({:Response=>nil})
@@ -61,10 +61,10 @@ RSpec.describe Freshfone::CallController do
     create_freshfone_call("CTRANSFER")
     @freshfone_user.update_attributes(:presence => 2)
 
-    post :call_transfer_success, call_transfer_params.merge({"call_back" => "false", "source_agent" => RSpec.configuration.agent.id})
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find_by_call_sid("CTRANSFER")
+    post :call_transfer_success, call_transfer_params.merge({"call_back" => "false", "source_agent" => @agent.id})
+    freshfone_call = @account.freshfone_calls.find_by_call_sid("CTRANSFER")
     freshfone_call.should be_inprogress
-    freshfone_user = RSpec.configuration.account.freshfone_users.find_by_user_id(@agent) 
+    freshfone_user = @account.freshfone_users.find_by_user_id(@agent) 
     freshfone_user.should be_online
   end
 
@@ -73,9 +73,9 @@ RSpec.describe Freshfone::CallController do
     create_freshfone_call("CTRANSFER")
     @freshfone_user.update_attributes(:presence => 2)
 
-    post :call_transfer_success, call_transfer_params.merge({"call_back" => "true", "agent" => RSpec.configuration.agent.id})
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find_by_call_sid("CTRANSFER")
-    freshfone_user = RSpec.configuration.account.freshfone_users.find_by_user_id(@agent) 
+    post :call_transfer_success, call_transfer_params.merge({"call_back" => "true", "agent" => @agent.id})
+    freshfone_call = @account.freshfone_calls.find_by_call_sid("CTRANSFER")
+    freshfone_user = @account.freshfone_users.find_by_user_id(@agent) 
     freshfone_user.should be_busy
   end
 
@@ -84,7 +84,7 @@ RSpec.describe Freshfone::CallController do
     status_call = create_call_for_status
     controller.stubs(:called_agent_id).returns(@agent.id)
     post :status, status_params
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find(status_call)
+    freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
     xml.should be_eql({:Response => nil})
   end
@@ -95,7 +95,7 @@ RSpec.describe Freshfone::CallController do
     status_call = create_call_for_status
     
     post :status, status_params
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find(status_call)
+    freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
     xml.should be_eql({:Response => nil})
   end
@@ -104,9 +104,9 @@ RSpec.describe Freshfone::CallController do
     set_twilio_signature('freshfone/call/status', status_params)
     status_call = create_call_for_status
     key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
-    controller.set_key(key, {:agent => RSpec.configuration.agent.id}.to_json)
+    controller.set_key(key, {:agent => @agent.id}.to_json)
     post :status, status_params
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find(status_call)
+    freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
   end
 
@@ -114,9 +114,9 @@ RSpec.describe Freshfone::CallController do
     set_twilio_signature('freshfone/call/status?force_termination=true', status_params)
     status_call = create_call_for_status
     key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
-    controller.set_key(key, {:agent => RSpec.configuration.agent.id}.to_json)
+    controller.set_key(key, {:agent => @agent.id}.to_json)
     post :status, status_params.merge(:force_termination => true)
-    freshfone_call = RSpec.configuration.account.freshfone_calls.find(status_call)
+    freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
   end
 
@@ -152,7 +152,7 @@ RSpec.describe Freshfone::CallController do
     status_call = create_call_for_status
     setup_call_for_transfer
 
-    post :status, status_params.merge({"call_back" => "false", "source_agent" => RSpec.configuration.agent.id})
+    post :status, status_params.merge({"call_back" => "false", "source_agent" => @agent.id})
     tear_down TRANSFER_KEY
     JSON.parse(assigns[:transferred_calls]).last.should be_eql(status_call.user_id.to_s)
   end
@@ -163,7 +163,7 @@ RSpec.describe Freshfone::CallController do
     status_call = create_call_for_status
     setup_call_for_transfer
     controller.stubs(:current_number).returns(@number)
-    post :status, status_params.merge({"call_back" => "false", "outgoing" => "false", "source_agent" => RSpec.configuration.agent.id, "DialCallStatus" => 'in-progress'})
+    post :status, status_params.merge({"call_back" => "false", "outgoing" => "false", "source_agent" => @agent.id, "DialCallStatus" => 'in-progress'})
     tear_down TRANSFER_KEY
     xml[:Response][:Dial][:Client].should be_eql(@agent.id.to_s)
   end

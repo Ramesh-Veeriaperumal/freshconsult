@@ -5,7 +5,7 @@ describe Social::TwitterHandlesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @agent_role = RSpec.configuration.account.roles.find_by_name("Agent")
+    @agent_role = @account.roles.find_by_name("Agent")
   end
 
   before(:each) do
@@ -46,7 +46,7 @@ describe Social::TwitterHandlesController do
 
     it "should redirect to existing handle if handle already exists" do
       # Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
       get :authdone
@@ -61,7 +61,7 @@ describe Social::TwitterHandlesController do
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
       get :authdone
-      twt_handler = RSpec.configuration.account.twitter_handles.find_by_screen_name(twt_handler.screen_name)
+      twt_handler = @account.twitter_handles.find_by_screen_name(twt_handler.screen_name)
       response.should redirect_to "/social/twitters/#{twt_handler.id}/edit"
     end
 
@@ -93,7 +93,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "if handles preset should render feed page" do
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
 
       get :feed
       response.should redirect_to "/social/streams"
@@ -104,7 +104,7 @@ describe Social::TwitterHandlesController do
   describe "GET #twitter_search" do
 
     it "should search for keyword and respond with json for Index page" do
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
       attrs =
          {
             'statuses' => [], 
@@ -118,7 +118,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "should search for keyword and respond with json for show more page" do
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
       attrs =
          {
             'statuses' => [], 
@@ -132,7 +132,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "should search for keyword and respond with json for show new page" do
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
       attrs =
          {
             'statuses' => [], 
@@ -146,7 +146,7 @@ describe Social::TwitterHandlesController do
     end
 
     it "should catch exception and respond with json" do
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
       Twitter::REST::Client.any_instance.stubs(:search).raises(Twitter::Error::TooManyRequests)
 
       get :twitter_search, {:q => 'test', :handle => 0, :since_id => 10}
@@ -159,10 +159,10 @@ describe Social::TwitterHandlesController do
 
     it "should delete and redirect" do
       Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
       delete :destroy, :id => twt_handler.id
 
-      handle = RSpec.configuration.account.twitter_handles.find_by_id(twt_handler.id)
+      handle = @account.twitter_handles.find_by_id(twt_handler.id)
       handle.present?.should be_falsey
       response.should redirect_to '/social/twitters'
     end
@@ -184,7 +184,7 @@ describe Social::TwitterHandlesController do
 
     it "should create tweet as ticket " do
       #Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
 
       Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(nil)
@@ -210,13 +210,13 @@ describe Social::TwitterHandlesController do
       }
 
       response.should render_template '_create_twicket'
-      RSpec.configuration.account.contacts.find_by_twitter_id(twitter_id).present?.should be_truthy
-      RSpec.configuration.account.tickets.find_by_subject(subject).present?.should be_truthy
+      @account.contacts.find_by_twitter_id(twitter_id).present?.should be_truthy
+      @account.tickets.find_by_subject(subject).present?.should be_truthy
     end
 
     it "should create first tweet as ticket and second tweet as note " do
       #Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
 
       #========================first tweet start====================================
       Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
@@ -244,7 +244,7 @@ describe Social::TwitterHandlesController do
     }
       #========================first tweet end====================================
 
-      ft = RSpec.configuration.account.tweets.find_by_tweet_id(tweet_id)
+      ft = @account.tweets.find_by_tweet_id(tweet_id)
       Twitter::REST::Client.any_instance.stubs(:status).returns(Twitter::Tweet)
       Twitter::Tweet.stubs(:in_reply_to_status_id).returns(ft.tweet_id)
 
@@ -271,7 +271,7 @@ describe Social::TwitterHandlesController do
       }
 
       response.should render_template '_create_twicket'
-      RSpec.configuration.account.contacts.find_by_twitter_id(twitter_id).present?.should be_truthy
+      @account.contacts.find_by_twitter_id(twitter_id).present?.should be_truthy
       ticket = Helpdesk::Ticket.find_by_id(ft.tweetable_id)
       ticket.notes.present?.should be_truthy
       ticket.notes.last.tweet.tweet_id.should be_eql(note_tweet_id)
@@ -283,7 +283,7 @@ describe Social::TwitterHandlesController do
 
     it "should be successful when updating form" do
       #Social::TwitterHandle.destroy_all
-      twt_handler = create_test_twitter_handle(RSpec.configuration.account)
+      twt_handler = create_test_twitter_handle(@account)
 
       put :update,  {
         :social_twitter_handle => {
@@ -295,7 +295,7 @@ describe Social::TwitterHandlesController do
         :id => twt_handler.id
       }
 
-      handle =  RSpec.configuration.account.twitter_handles.find_by_id(twt_handler.id)
+      handle =  @account.twitter_handles.find_by_id(twt_handler.id)
       handle.should be_an_instance_of(Social::TwitterHandle)
       handle.search_keys.first.should be_eql("@#{twt_handler.screen_name}")
       handle.capture_mention_as_ticket.should be_truthy

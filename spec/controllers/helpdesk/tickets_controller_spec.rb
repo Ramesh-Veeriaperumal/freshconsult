@@ -8,7 +8,7 @@ RSpec.describe Helpdesk::TicketsController do
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
-    @group = RSpec.configuration.account.groups.first
+    @group = @account.groups.first
   end
 
   before(:each) do
@@ -108,7 +108,7 @@ RSpec.describe Helpdesk::TicketsController do
                                        :responder_id => "",
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
                                       }
-    RSpec.configuration.account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
   it "should create a new ticket with RabbitMQ enabled" do
@@ -175,7 +175,7 @@ RSpec.describe Helpdesk::TicketsController do
                                          :responder_id => "",
                                          :ticket_body_attributes => {"description_html"=>"<p>Editing...</p>"}
                                         }
-      RSpec.configuration.account.tickets.find_by_subject("Edit Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+      @account.tickets.find_by_subject("Edit Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
     end
 
     it "should update a ticket's properties" do
@@ -189,7 +189,7 @@ RSpec.describe Helpdesk::TicketsController do
                                        :helpdesk => { :tags => ""},
                                        :id => @test_ticket.display_id
                                       }
-      updated_ticket = RSpec.configuration.account.tickets.find(@test_ticket.id)
+      updated_ticket = @account.tickets.find(@test_ticket.id)
       updated_ticket.ticket_type.should be_eql("Lead")
       updated_ticket.source.should be_eql(9)
     end
@@ -222,11 +222,11 @@ RSpec.describe Helpdesk::TicketsController do
                             :due_by_date_time => due_date,
                             :id => @test_ticket.display_id
                           }
-      RSpec.configuration.account.tickets.find(@test_ticket.id).due_by.to_date.should be_eql(due_date.to_date)
+      @account.tickets.find(@test_ticket.id).due_by.to_date.should be_eql(due_date.to_date)
     end
 
     it "should save draft for a ticket" do
-      draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => RSpec.configuration.account.id, :user_id => RSpec.configuration.agent.id,
+      draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => @account.id, :user_id => @agent.id,
         :ticket_id => @test_ticket.id}
       post :save_draft, { :draft_data => "<p>Testing save_draft</p>", :id => @test_ticket.display_id }
       get_tickets_redis_key(draft_key).should be_eql("<p>Testing save_draft</p>")
@@ -235,9 +235,9 @@ RSpec.describe Helpdesk::TicketsController do
     it "should execute a scenario" do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       scenario_ticket = create_ticket({ :status => 2 }, @group)
-      scenario = RSpec.configuration.account.scn_automations.find_by_name("Mark as Feature Request")
+      scenario = @account.scn_automations.find_by_name("Mark as Feature Request")
       put :execute_scenario, :scenario_id => scenario.id, :id => scenario_ticket.display_id
-      RSpec.configuration.account.tickets.find(scenario_ticket.id).ticket_type.should be_eql("Feature Request")
+      @account.tickets.find(scenario_ticket.id).ticket_type.should be_eql("Feature Request")
     end
 
     it "should close a ticket without notifying the customer on shift_close_ticket+Close" do
@@ -254,7 +254,7 @@ RSpec.describe Helpdesk::TicketsController do
                                        :redirect => "true",
                                        :id => shift_close_ticket.display_id
                                       }
-      RSpec.configuration.account.tickets.find(shift_close_ticket.id).status.should be_eql(5)
+      @account.tickets.find(shift_close_ticket.id).status.should be_eql(5)
       Delayed::Job.last.handler.should include("biz_rules_check")
       Delayed::Job.last.handler.should include("update_status")
     end
@@ -263,22 +263,22 @@ RSpec.describe Helpdesk::TicketsController do
   # Ticket Quick Assign Triplet
 
     it "should quick-assign an agent to a ticket" do
-      put :quick_assign, { :assign => "agent", :value => RSpec.configuration.agent.id, :id => @test_ticket.display_id,
+      put :quick_assign, { :assign => "agent", :value => @agent.id, :id => @test_ticket.display_id,
                            :disable_notification => false, :_method => "put" }
       response.body.should be_eql({:success => true}.to_json)
-      RSpec.configuration.account.tickets.find(@test_ticket.id).responder_id.should be_eql(@agent.id)
+      @account.tickets.find(@test_ticket.id).responder_id.should be_eql(@agent.id)
     end
 
     it "should quick-assign status of a ticket" do
       put :quick_assign, { :assign => "status", :value => 3, :id => @test_ticket.display_id }
       response.body.should be_eql({:success => true}.to_json)
-      RSpec.configuration.account.tickets.find(@test_ticket.id).status.should be_eql(3)
+      @account.tickets.find(@test_ticket.id).status.should be_eql(3)
     end
 
     it "should quick-assign priority of a ticket" do
       put :quick_assign, { :assign => "priority", :value => 3, :id => @test_ticket.display_id }
       response.body.should be_eql({:success => true}.to_json)
-      RSpec.configuration.account.tickets.find(@test_ticket.id).priority.should be_eql(3)
+      @account.tickets.find(@test_ticket.id).priority.should be_eql(3)
     end
 
   
@@ -290,7 +290,7 @@ RSpec.describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :pick_tickets, { :id => "multiple",
                            :ids => ["#{pick_ticket1.display_id}", "#{pick_ticket2.display_id}"]}
-      picked_tickets = RSpec.configuration.account.tickets.find_all_by_responder_id(@agent.id).map(&:id)
+      picked_tickets = @account.tickets.find_all_by_responder_id(@agent.id).map(&:id)
       picked_tickets.include?(pick_ticket1.id).should be_truthy
       picked_tickets.include?(pick_ticket2.id).should be_truthy
     end
@@ -309,7 +309,7 @@ RSpec.describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :assign, { :id => "multiple", :responder_id => new_agent.id,
                     :ids => ["#{assign_ticket1.display_id}", "#{assign_ticket2.display_id}"]}
-      assigned_tickets = RSpec.configuration.account.tickets.find_all_by_responder_id(new_agent.id).map(&:id)
+      assigned_tickets = @account.tickets.find_all_by_responder_id(new_agent.id).map(&:id)
       assigned_tickets.include?(assign_ticket1.id).should be_truthy
       assigned_tickets.include?(assign_ticket2.id).should be_truthy
     end
@@ -320,7 +320,7 @@ RSpec.describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :close_multiple, { :id => "multiple",
                              :ids => ["#{close_ticket1.display_id}", "#{close_ticket2.display_id}"]}
-      closed_tickets = RSpec.configuration.account.tickets.find_all_by_status(5).map(&:id)
+      closed_tickets = @account.tickets.find_all_by_status(5).map(&:id)
       closed_tickets.include?(close_ticket1.id).should be_truthy
       closed_tickets.include?(close_ticket2.id).should be_truthy
     end
@@ -331,7 +331,7 @@ RSpec.describe Helpdesk::TicketsController do
       @request.env['HTTP_REFERER'] = 'sessions/new'
       put :spam, { :id => "multiple",
                    :ids => ["#{spam_ticket1.display_id}", "#{spam_ticket2.display_id}"]}
-      spammed_tickets = RSpec.configuration.account.tickets.find_all_by_spam(1).map(&:id)
+      spammed_tickets = @account.tickets.find_all_by_spam(1).map(&:id)
       spammed_tickets.include?(spam_ticket1.id).should be_truthy
       spammed_tickets.include?(spam_ticket2.id).should be_truthy
     end
@@ -341,7 +341,7 @@ RSpec.describe Helpdesk::TicketsController do
       del_ticket2 = create_ticket({ :status => 2 }, @group)
       delete :destroy, { :id => "multiple",
                          :ids => ["#{del_ticket1.display_id}", "#{del_ticket2.display_id}"]}
-      deleted_tickets = RSpec.configuration.account.tickets.find_all_by_deleted(1).map(&:id)
+      deleted_tickets = @account.tickets.find_all_by_deleted(1).map(&:id)
       deleted_tickets.include?(del_ticket1.id).should be_truthy
       deleted_tickets.include?(del_ticket2.id).should be_truthy
     end
@@ -351,12 +351,12 @@ RSpec.describe Helpdesk::TicketsController do
 
     it "should mark a ticket as spam" do
       put :spam, :id => @test_ticket.display_id
-      RSpec.configuration.account.tickets.find(@test_ticket.id).spam.should be_truthy
+      @account.tickets.find(@test_ticket.id).spam.should be_truthy
     end
 
     it "should delete a ticket" do
       delete :destroy, :id => @test_ticket.display_id
-      RSpec.configuration.account.tickets.find(@test_ticket.id).deleted.should be_truthy
+      @account.tickets.find(@test_ticket.id).deleted.should be_truthy
     end
 
     it "should unspam a ticket from spam view" do

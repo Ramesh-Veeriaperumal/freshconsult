@@ -5,7 +5,7 @@ describe Admin::AutomationsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @test_scn=create_scn_automation_rule({ :account_id => RSpec.configuration.account.id })
+    @test_scn=create_scn_automation_rule({ :account_id => @account.id })
   end
 
   before(:each) do
@@ -30,7 +30,7 @@ describe Admin::AutomationsController do
                    :action_data => [{:name=> "ticket_type", :value=> "Question"}].to_json,
                    :name =>"ticket_type",
                    :value=>"Question"}
-    RSpec.configuration.account.all_scn_automations.find_by_name(scn_name).should_not be_nil
+    @account.all_scn_automations.find_by_name(scn_name).should_not be_nil
   end
 
   it "should edit selected scenario" do
@@ -50,13 +50,13 @@ describe Admin::AutomationsController do
   it "should update a scenario" do
     put :update, {:va_rule=>{"name"=>"move to Support", "description"=>Faker::Lorem.sentence(3)},
                   :action_data=>[{:name=>"priority", :value=>"3"},{:name=>"status", :value=>"3"}].to_json,  :name=>"status", :value=>"3",:id=>@test_scn.id}
-    RSpec.configuration.account.all_scn_automations.find_by_id(@test_scn.id).action_data.should_not be_eql(@test_scn.action_data)
+    @account.all_scn_automations.find_by_id(@test_scn.id).action_data.should_not be_eql(@test_scn.action_data)
   end
 
   it "should delete a scenario" do
-    delete_scn=create_scn_automation_rule({:account_id=>RSpec.configuration.account.id})
+    delete_scn=create_scn_automation_rule({:account_id=>@account.id})
     delete :destroy, {:id=>delete_scn.id}
-    RSpec.configuration.account.all_scn_automations.find_by_id(delete_scn.id).should be_nil
+    @account.all_scn_automations.find_by_id(delete_scn.id).should be_nil
   end
 
 end

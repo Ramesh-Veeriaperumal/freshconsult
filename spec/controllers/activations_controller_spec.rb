@@ -5,17 +5,17 @@ describe ActivationsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.account.features.multiple_user_emails.create
-    @user2 = add_user_with_multiple_emails(RSpec.configuration.account, 4)
+    @account.features.multiple_user_emails.create
+    @user2 = add_user_with_multiple_emails(@account, 4)
   end
 
   after(:all) do
-    RSpec.configuration.account.features.multiple_user_emails.destroy
+    @account.features.multiple_user_emails.destroy
   end
 
   it "should send invite to user" do
     login_admin
-    u = add_new_user(RSpec.configuration.account)
+    u = add_new_user(@account)
     put :send_invite, :id => u.id
     session["flash"][:notice].should eql "Activation email has been sent!"
     Delayed::Job.last.handler.should include("user_activation")
@@ -23,14 +23,14 @@ describe ActivationsController do
 
   it "should send invite to user js" do
     login_admin
-    u = add_new_user(RSpec.configuration.account)
+    u = add_new_user(@account)
     put :send_invite, :id => u.id, :format => 'js'
     response.body.should =~ /activation_sent/
     Delayed::Job.last.handler.should include("user_activation")
   end
 
   it "should accept to new activation" do
-    u = add_new_user(RSpec.configuration.account)
+    u = add_new_user(@account)
     u.active = false
     u.save
     get :new, :activation_code => u.perishable_token
@@ -44,7 +44,7 @@ describe ActivationsController do
   end
 
   it "should activate new email" do
-    u = add_user_with_multiple_emails(RSpec.configuration.account, 4)
+    u = add_user_with_multiple_emails(@account, 4)
     u.active = false
     u.save
     get :new_email, :activation_code => u.user_emails.first.perishable_token
@@ -69,7 +69,7 @@ describe ActivationsController do
   end
 
   it "should create and save passwords" do
-    u = add_user_with_multiple_emails(RSpec.configuration.account, 2)
+    u = add_user_with_multiple_emails(@account, 2)
     u.active = false
     u.save
     u.reload

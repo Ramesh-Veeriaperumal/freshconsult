@@ -15,11 +15,11 @@ describe Admin::PortalController do
   end
 
   it "should update" do
-    RSpec.configuration.account.sso_enabled = false
-    RSpec.configuration.account.save(:validate => false)
+    @account.sso_enabled = false
+    @account.save(:validate => false)
 
     put :update, { 
-      :id => RSpec.configuration.account.id,
+      :id => @account.id,
       :account => { 
         :features => {
           :anonymous_tickets => "0", 
@@ -37,13 +37,13 @@ describe Admin::PortalController do
     }
     available_feature = ["OpenSolutionsFeature","OpenForumsFeature","GoogleSigninFeature","SignupLinkFeature","CaptchaFeature"]
     available_feature.each do |feature|
-      RSpec.configuration.account.features.find_by_type("#{feature}").should_not be_nil
+      @account.features.find_by_type("#{feature}").should_not be_nil
     end
 
     restricted_feature = ["AnonymousTicketsFeature","AutoSuggestSolutionsFeature","FacebookSigninFeature","TwitterSigninFeature",
                           "HidePortalForumsFeature"]
     restricted_feature.each do |feature|
-      RSpec.configuration.account.features.find_by_type("#{feature}").should be_nil
+      @account.features.find_by_type("#{feature}").should be_nil
     end
   end
 end

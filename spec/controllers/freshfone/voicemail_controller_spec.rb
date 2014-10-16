@@ -7,7 +7,7 @@ describe Freshfone::VoicemailController do
   before(:each) do
     create_test_freshfone_account
     create_freshfone_call
-    @request.host = RSpec.configuration.account.full_domain
+    @request.host = @account.full_domain
   end
 
   it 'should update call on quitting voicemail' do

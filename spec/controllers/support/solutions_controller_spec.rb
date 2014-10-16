@@ -22,7 +22,7 @@ describe Support::SolutionsController do
   end
 
   before(:each) do
-    RSpec.configuration.account.features.open_solutions.create
+    @account.features.open_solutions.create
   end
 
   it "should show folder without logging in" do
@@ -32,7 +32,7 @@ describe Support::SolutionsController do
   end
 
   it "should not show folder without logging in while open solution feature is disabled" do
-    RSpec.configuration.account.features.open_solutions.destroy
+    @account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /folder3 visible to logged in customers/
     response.should redirect_to(login_url)    
@@ -45,7 +45,7 @@ describe Support::SolutionsController do
   end
 
   it "should not show solutions" do
-    RSpec.configuration.account.features.open_solutions.destroy
+    @account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /Solutions/ 
     response.should redirect_to(login_url)    

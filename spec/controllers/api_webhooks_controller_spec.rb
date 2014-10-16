@@ -82,4 +82,8 @@ RSpec.describe ApiWebhooksController do
 		response.status.should eql 200
 	end
 
+	after(:all) do
+		@account.observer_rules.destroy_all
+	end
+
 end

@@ -26,7 +26,7 @@ describe Integrations::GmailGadgetsController do
 
    before(:each) do
     login_admin
-    @request.host = RSpec.configuration.account.full_domain
+    @request.host = @account.full_domain
   end
 
   it "should get correct spec for development" do
@@ -51,7 +51,7 @@ describe Integrations::GmailGadgetsController do
     def @env.production? 
       true;
     end
-    RSpec.configuration.account.update_attributes(:ssl_enabled => false)
+    @account.update_attributes(:ssl_enabled => false)
     get :spec, :format => "xml"
     result = parse_xml(response)
     result.has_key?('Module').should eql(true)

@@ -10,7 +10,7 @@ RSpec.describe Freshfone::CallTransferController do
 
   before(:each) do
     create_test_freshfone_account
-    @request.host = RSpec.configuration.account.full_domain
+    @request.host = @account.full_domain
   end
 
   it 'should fail on invalid call transfer by sending a completed call sid' do
@@ -50,7 +50,7 @@ RSpec.describe Freshfone::CallTransferController do
       incoming_call_transfer_params)
     post :transfer_incoming_call, 
       incoming_call_transfer_params.merge({ :id => @dummy_users.first.id, 
-                                            :source_agent => RSpec.configuration.agent.id })
+                                            :source_agent => @agent.id })
     xml[:Response][:Dial][:Client].should be_eql(@dummy_users.first.id.to_s)
   end
 
@@ -61,7 +61,7 @@ RSpec.describe Freshfone::CallTransferController do
       outgoing_call_transfer_params)
     post :transfer_outgoing_call, 
       outgoing_call_transfer_params.merge({ :id => @dummy_users.first.id, 
-                                            :source_agent => RSpec.configuration.agent.id })
+                                            :source_agent => @agent.id })
     xml[:Response][:Dial][:Client].should be_eql(@dummy_users.first.id.to_s)
   end
 

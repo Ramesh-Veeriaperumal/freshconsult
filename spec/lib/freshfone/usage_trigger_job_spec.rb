@@ -11,8 +11,8 @@ RSpec.describe 'UsageTrigger' do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.account = create_test_account
-    RSpec.configuration.agent = get_admin
+    @account = create_test_account
+    @agent = get_admin
     create_test_freshfone_account
   end
 

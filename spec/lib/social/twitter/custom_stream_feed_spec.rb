@@ -39,7 +39,7 @@ RSpec.describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
 
-    tweet = RSpec.configuration.account.tweets.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should be_nil
   end
 
@@ -58,7 +58,7 @@ RSpec.describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
 
-    tweet = RSpec.configuration.account.tweets.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description
@@ -83,7 +83,7 @@ RSpec.describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
 
-    tweet = RSpec.configuration.account.tweets.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description
@@ -109,7 +109,7 @@ RSpec.describe Social::Twitter::Feed do
     sample_feed_array = [sample_feed]
     Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
 
-    tweet = RSpec.configuration.account.tweets.find_by_tweet_id(sample_feed.feed_id)
+    tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
     tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description

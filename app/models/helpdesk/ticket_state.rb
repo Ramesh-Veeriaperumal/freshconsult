@@ -19,8 +19,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   before_update :update_ticket_state_changes
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
-  after_commit ->(obj) { obj.send(:create_ticket_stats) }, on: :update, :if => :ent_reports_enabled?
-  after_commit ->(obj) { obj.send(:create_ticket_stats) }, on: :create, :if => :ent_reports_enabled?
+  after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
+  after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
   after_commit :update_search_index, on: :update
   
   def reset_tkt_states
@@ -125,6 +125,46 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     tickets.update_es_index if (@ticket_state_changes.keys & TICKET_STATE_SEARCH_FIELDS).any?
   end
 
+  # populating data in monthly stats table for created and update cases
+  def create_ticket_stats
+    begin
+      resolved_tkt, fcr_tkt, sla_tkt, created_hour, resolved_hour = 0, 0, 0, created_at.hour, "\\N"
+      resolved_tkt, fcr_tkt, sla_tkt, resolved_hour  = 1, 1, 1, created_hour unless tickets.active?
+      assign_tkt = first_assigned_at ? 1 : 0
+      sql = %(INSERT INTO #{stats_table} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{ticket_id},
+            '#{created_at.strftime('%Y-%m-%d 00:00:00')}','#{created_hour}',
+            #{resolved_hour},1,#{resolved_tkt},0,#{assign_tkt},0,#{fcr_tkt},#{sla_tkt}))
+      Sharding.run_on_master do 
+        connection.execute(sql)
+      end
+    rescue Exception => e
+      puts "Exception occurred while inserting data into stats table ::: #{e.message}" 
+      puts e.backtrace.join("\n\t")
+      NewRelic::Agent.notice_error(e)
+    end
+  end
+
+  def update_ticket_stats
+    return unless (@ticket_state_changes.keys & STATS_ATTRIBUTES).any?
+    begin
+      stats_table_name = stats_table
+      datetime = updated_at.strftime('%Y-%m-%d 00:00:00')
+      select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{ticket_id} and 
+        account_id = #{account_id} and created_at = '#{datetime}' )
+
+      Sharding.run_on_master do 
+        result = connection.execute(select_sql)
+        f_hash = result.fetch_hash
+        f_hash.symbolize_keys! unless f_hash.nil?
+        check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
+      end
+    rescue Exception => e
+      puts "Exception occurred while updating data into stats table"
+      puts e.backtrace.join("\n\t")
+      NewRelic::Agent.notice_error(e)
+    end
+  end
+
 private
   TICKET_LIST_VIEW_STATES = { :created_at => "created_at", :closed_at => "closed_at", 
     :resolved_at => "resolved_at", :agent_responded_at => "agent_responded_at", 
@@ -149,43 +189,6 @@ private
     @ticket_state_changes = self.changes.clone
   end
 
-  # populating data in monthly stats table for created and update cases
-  def create_ticket_stats
-    begin
-      resolved_tkt, fcr_tkt, sla_tkt, created_hour, resolved_hour = 0, 0, 0, created_at.hour, "\\N"
-      resolved_tkt, fcr_tkt, sla_tkt, resolved_hour  = 1, 1, 1, created_hour unless tickets.active?
-      assign_tkt = first_assigned_at ? 1 : 0
-      sql = %(INSERT INTO #{stats_table} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{ticket_id},
-            '#{created_at.strftime('%Y-%m-%d 00:00:00')}','#{created_hour}',
-            #{resolved_hour},1,#{resolved_tkt},0,#{assign_tkt},0,#{fcr_tkt},#{sla_tkt}))
-      Sharding.run_on_master do 
-        connection.execute(sql)
-      end
-    rescue Exception => e
-      puts "Exception occurred while inserting data into stats table ::: #{e.message}"
-      NewRelic::Agent.notice_error(e)
-    end
-  end
-
-  def update_ticket_stats
-    return unless (@ticket_state_changes.keys & STATS_ATTRIBUTES).any?
-    begin
-      stats_table_name = stats_table
-      datetime = updated_at.strftime('%Y-%m-%d 00:00:00')
-      select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{ticket_id} and 
-        account_id = #{account_id} and created_at = '#{datetime}' )
-
-      Sharding.run_on_master do 
-        result = connection.execute(select_sql)
-        f_hash = result.fetch_hash
-        f_hash.symbolize_keys! unless f_hash.nil?
-        check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
-      end
-    rescue Exception => e
-      puts "Exception occurred while updating data into stats table"
-      NewRelic::Agent.notice_error(e)
-    end
-  end
 
   def check_and_update_ticket_stats(stats_table_name, field_hash, datetime)
     resolved_tkt, reopens, assign_tkt, reassigns, fcr_tkt, sla_tkt, resolved_hour, 

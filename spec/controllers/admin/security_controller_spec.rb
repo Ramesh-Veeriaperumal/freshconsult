@@ -5,7 +5,7 @@ RSpec.describe Admin::SecurityController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.account.features.whitelisted_ips.create
+    @account.features.whitelisted_ips.create
   end
 
   before(:each) do
@@ -20,7 +20,7 @@ RSpec.describe Admin::SecurityController do
   end
 
   it "should not update" do
-    put :update, :id => RSpec.configuration.account.id, :account => {
+    put :update, :id => @account.id, :account => {
       :sso_enabled => "1",
       :sso_options => { :login_url => "", :logout_url => ""},
       :ssl_enabled => "0",
@@ -30,8 +30,8 @@ RSpec.describe Admin::SecurityController do
                                                       "end_ip"=>"127.0.0.1"}]},
       :account_configuration_attributes => [Faker::Internet.email]
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.sso_enabled.should_not eql(1)
+    @account.reload
+    @account.sso_enabled.should_not eql(1)
     response.body.should =~ /Please provide a valid login url/
   end
 
@@ -40,7 +40,7 @@ RSpec.describe Admin::SecurityController do
   end
 
   it "should create whitelisted ips" do
-    put :update, :id => RSpec.configuration.account.id, :account => {
+    put :update, :id => @account.id, :account => {
       :sso_enabled => "0",
       :sso_options => { :login_url => "", :logout_url => ""},
       :ssl_enabled => "0",
@@ -58,20 +58,20 @@ RSpec.describe Admin::SecurityController do
   it "should update trusted ips" do
     login_url = Faker::Internet.url
     logout_url = Faker::Internet.url
-    put :update, :id => RSpec.configuration.account.id, :account => {
+    put :update, :id => @account.id, :account => {
       :sso_enabled => "1",
       :sso_options => { :login_url => login_url, :logout_url => logout_url},
       :ssl_enabled => "1",
       :whitelisted_ip_attributes => { :enabled => "1", 
-                                      :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
+                                      :id => "#{@account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
                                       :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
       :account_configuration_attributes => [Faker::Internet.email]
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.sso_enabled.should eql(true)
-    RSpec.configuration.account.ssl_enabled.should eql(true)
-    RSpec.configuration.account.sso_options.should eql({ "login_url" => login_url, 
+    @account.reload
+    @account.sso_enabled.should eql(true)
+    @account.ssl_enabled.should eql(true)
+    @account.sso_options.should eql({ "login_url" => login_url, 
                                     "logout_url" => logout_url, 
                                     "sso_type"=>"simple" })
     @account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}])
@@ -81,20 +81,20 @@ RSpec.describe Admin::SecurityController do
   it "should disable trusted ips" do
     login_url = Faker::Internet.url
     logout_url = Faker::Internet.url
-    put :update, :id => RSpec.configuration.account.id, :account => {
+    put :update, :id => @account.id, :account => {
       :sso_enabled => "1",
       :sso_options => { :login_url => login_url, :logout_url => logout_url},
       :ssl_enabled => "1",
       :whitelisted_ip_attributes => { :enabled => "0", 
-                                      :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
+                                      :id => "#{@account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
                                       :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
       :account_configuration_attributes => [Faker::Internet.email]
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.sso_enabled.should eql(true)
-    RSpec.configuration.account.ssl_enabled.should eql(true)
-    RSpec.configuration.account.sso_options.should eql({ "login_url" => login_url, 
+    @account.reload
+    @account.sso_enabled.should eql(true)
+    @account.ssl_enabled.should eql(true)
+    @account.sso_options.should eql({ "login_url" => login_url, 
                                      "logout_url" => logout_url, 
                                      "sso_type"=>"simple" })
     @account.whitelisted_ip.ip_ranges.should eql([{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}])
@@ -103,35 +103,35 @@ RSpec.describe Admin::SecurityController do
 
   # Keep the below two test cases at the last
   it "should update ssl_type as default ssl" do
-    RSpec.configuration.account.main_portal.update_attributes(:ssl_enabled => true, :elb_dns_name => "abc.qwerty.com")
-    put :update, :id => RSpec.configuration.account.id, :ssl_type => "0",
+    @account.main_portal.update_attributes(:ssl_enabled => true, :elb_dns_name => "abc.qwerty.com")
+    put :update, :id => @account.id, :ssl_type => "0",
     :account => {
       :sso_enabled => "1",
       :sso_options => { :login_url => login_url, :logout_url => logout_url},
       :ssl_enabled => "1",
       :whitelisted_ip_attributes => { :enabled => "1", 
-                                      :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
+                                      :id => "#{@account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
                                       :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
       :account_configuration_attributes => [Faker::Internet.email]
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.main_portal.ssl_enabled.should eql(false)
+    @account.reload
+    @account.main_portal.ssl_enabled.should eql(false)
   end
 
   it "should update ssl_type as custom ssl" do
-    put :update, :id => RSpec.configuration.account.id, :ssl_type => "1",
+    put :update, :id => @account.id, :ssl_type => "1",
     :account => {
       :sso_enabled => "1",
       :sso_options => { :login_url => login_url, :logout_url => logout_url},
       :ssl_enabled => "1",
       :whitelisted_ip_attributes => { :enabled => "1", 
-                                      :id => "#{RSpec.configuration.account.whitelisted_ip.id}", 
+                                      :id => "#{@account.whitelisted_ip.id}", 
                                       :applies_only_to_agents => "1", 
                                       :ip_ranges => [{"start_ip"=>"127.0.0.1", "end_ip"=>"127.0.0.10"}]},
       :account_configuration_attributes => [Faker::Internet.email]
     }
-    RSpec.configuration.account.reload
-    RSpec.configuration.account.main_portal.ssl_enabled.should eql(true)
+    @account.reload
+    @account.main_portal.ssl_enabled.should eql(true)
   end
 end

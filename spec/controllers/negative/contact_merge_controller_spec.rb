@@ -13,7 +13,7 @@ describe ContactMergeController do
   end
 
   it "should not merge for agent" do
-    post :new, :id => RSpec.configuration.agent.id
+    post :new, :id => @agent.id
     response.body.should =~ /The change you wanted was rejected/
   end
 

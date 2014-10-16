@@ -9,16 +9,16 @@ describe SubscriptionsController do
 
   before(:all) do
     if @billing_account.blank?
-      Account.reset_current_account
+      # Account.reset_current_account
       User.current = nil
       
       Resque.inline = true
       @billing_account = create_test_billing_acccount 
       Resque.inline = false               
     
-      RSpec.configuration.account = Account.find(@billing_account.id)
-      @user = RSpec.configuration.account.account_managers.first
-      @account = RSpec.configuration.account
+      @account = Account.find(@billing_account.id)
+      @user = @account.account_managers.first
+      @account = @account
       2.times { add_test_agent(@account) }  
     end
   end
@@ -46,19 +46,19 @@ describe SubscriptionsController do
     post "plan", :plan_id => 3, :agent_limit => 10, :billing_cycle => 1, :currency => "USD"
     
     plan = SubscriptionPlan.find(3)
-    RSpec.configuration.account.subscription.reload
+    @account.subscription.reload
 
-    RSpec.configuration.account.subscription.subscription_plan.should eql plan
-    RSpec.configuration.account.subscription.renewal_period.should eql 1
-    RSpec.configuration.account.subscription.agent_limit.should eql 10
-    RSpec.configuration.account.subscription.free_agents.should eql plan.free_agents
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql 10
+    @account.subscription.free_agents.should eql plan.free_agents
   end
 
   it "should not update plan if agent_limit < full time agents" do      
     @request.env["HTTP_ACCEPT"] = "application/json"
     post "plan", :plan_id => 3, :agent_limit => 1, :billing_cycle => 1, :currency => "USD"
     
-    RSpec.configuration.account.subscription.agent_limit.should_not eql 2
+    @account.subscription.agent_limit.should_not eql 2
   end
 
   it "should switch currency to EUR" do    
@@ -67,12 +67,12 @@ describe SubscriptionsController do
 
     plan = SubscriptionPlan.find(3)
     currency = Subscription::Currency.find_by_name("EUR")
-    RSpec.configuration.account.subscription.reload
+    @account.subscription.reload
 
-    RSpec.configuration.account.subscription.subscription_plan.should eql plan
-    RSpec.configuration.account.subscription.renewal_period.should eql 1
-    RSpec.configuration.account.subscription.agent_limit.should eql 5
-    RSpec.configuration.account.subscription.currency.should eql currency
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql 5
+    @account.subscription.currency.should eql currency
   end
 
   it "should update free plan" do
@@ -81,33 +81,33 @@ describe SubscriptionsController do
 
     plan = SubscriptionPlan.find(1)
     currency = Subscription::Currency.find_by_name("USD")
-    RSpec.configuration.account.subscription.reload
+    @account.subscription.reload
 
-    RSpec.configuration.account.subscription.state.should eql "free"
-    RSpec.configuration.account.subscription.subscription_plan.should eql plan
-    RSpec.configuration.account.subscription.renewal_period.should eql 1
-    RSpec.configuration.account.subscription.agent_limit.should eql 3
-    RSpec.configuration.account.subscription.currency.should eql currency
+    @account.subscription.state.should eql "free"
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql 3
+    @account.subscription.currency.should eql currency
   end
 
   it "should not update invalid card and should not activate" do
     @request.env["HTTP_ACCEPT"] = "application/json"
     post "billing", card_info(:invalid, true)
 
-    RSpec.configuration.account.subscription.reload
-    RSpec.configuration.account.subscription.card_number.should_not be_present
-    RSpec.configuration.account.subscription.card_expiration.should_not be_present
-    RSpec.configuration.account.subscription.state.should_not eql "active"
+    @account.subscription.reload
+    @account.subscription.card_number.should_not be_present
+    @account.subscription.card_expiration.should_not be_present
+    @account.subscription.state.should_not eql "active"
   end
 
   it "should update valid card and activate subscription" do      
     @request.env["HTTP_ACCEPT"] = "application/json" 
     post "billing", card_info(:valid, false)
     
-    RSpec.configuration.account.subscription.reload
-    RSpec.configuration.account.subscription.card_number.should be_present
-    RSpec.configuration.account.subscription.card_expiration.should be_present
-    RSpec.configuration.account.subscription.state.should eql "active"
+    @account.subscription.reload
+    @account.subscription.card_number.should be_present
+    @account.subscription.card_expiration.should be_present
+    @account.subscription.state.should eql "active"
   end
 
   it "should get subscription amount when active" do

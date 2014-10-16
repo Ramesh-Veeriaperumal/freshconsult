@@ -26,12 +26,12 @@ describe Support::Mobihelp::TicketsController do
     end
     it "should create a new mobihelp ticket" do
       post :create, @ticket_attributes
-      RSpec.configuration.account.tickets.find_by_subject(@test_subject).should be_an_instance_of(Helpdesk::Ticket)
+      @account.tickets.find_by_subject(@test_subject).should be_an_instance_of(Helpdesk::Ticket)
     end
     it "should fail for unregistered device" do
       @ticket_attributes[:helpdesk_ticket].merge!(:external_id => "invalid device id")
       post :create, @ticket_attributes
-      RSpec.configuration.account.tickets.find_by_subject(@test_subject).should be_nil
+      @account.tickets.find_by_subject(@test_subject).should be_nil
     end
   end
 

@@ -35,7 +35,7 @@ describe CustomersController do
     id = company.id
     fake_a_customer
     put :update, (@params).merge!({ :id => id, :format => 'xml' })
-    { :customer => company_attributes(RSpec.configuration.account.companies.find(id), SKIPPED_KEYS) }.
+    { :customer => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
                                                                     should be_eql(@company_params)
   end
 

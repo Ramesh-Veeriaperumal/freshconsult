@@ -55,7 +55,7 @@ class VA::TestCase
   private
 
     def remove_custom_fields differences
-      return differences - RSpec.configuration.account.ticket_fields_with_nested_fields.custom_fields.map(&:name).map(&:to_sym) - RSpec.configuration.account.event_flexifields_with_ticket_fields_from_cache.map(&:flexifield_name).map(&:to_sym)
+      return differences - @account.ticket_fields_with_nested_fields.custom_fields.map(&:name).map(&:to_sym) - @account.event_flexifields_with_ticket_fields_from_cache.map(&:flexifield_name).map(&:to_sym)
     end
 
 end

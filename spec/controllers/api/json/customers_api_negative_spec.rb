@@ -8,8 +8,8 @@ RSpec.describe CustomersController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    request.host = RSpec.configuration.account.full_domain
-    http_login(RSpec.configuration.agent)
+    request.host = @account.full_domain
+    http_login(@agent)
   end
 
 

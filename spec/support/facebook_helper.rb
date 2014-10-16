@@ -250,7 +250,7 @@ module FacebookHelper
     post.is_ticket?.should eql(true)
     
     ticket = post.postable
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
     ticket.description.should eql facebook_feed[:message]
     ticket.subject.should eql truncate_subject(facebook_feed[:message], 100)
     ticket.requester_id.should eql user_id
@@ -331,7 +331,7 @@ module FacebookHelper
     
     Facebook::Core::Parser.new(realtime_feed).parse
     
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(comment[:from][:id]).id
+    user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
     post_comment = Social::FbPost.find_by_post_id(comment[:id])
     
     
@@ -339,7 +339,7 @@ module FacebookHelper
     post_comment.is_ticket?.should eql(true)
     
     ticket = post_comment.postable
-    user_id = RSpec.configuration.account.users.find_by_fb_profile_id(comment[:from][:id]).id
+    user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
     ticket.description.should eql comment[:message]
     ticket.subject.should eql truncate_subject(comment[:message], 100)
     ticket.requester_id.should eql user_id

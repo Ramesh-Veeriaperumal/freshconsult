@@ -58,7 +58,7 @@ RSpec.describe Support::Solutions::ArticlesController do
   end
 
   before(:each) do
-    RSpec.configuration.account.features.open_solutions.create
+    @account.features.open_solutions.create
   end
 
   it "should redirect to support home if index is hit" do
@@ -189,7 +189,7 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should redirect to login page if there is no open solutions feature " do
     name = Faker::Name.name
-    RSpec.configuration.account.features.open_solutions.destroy
+    @account.features.open_solutions.destroy
     article = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
     get 'show', id: article.id
@@ -204,7 +204,7 @@ RSpec.describe Support::Solutions::ArticlesController do
   end
  
   it "should not show draft article without logging in while open solutions feature is disabled" do
-    RSpec.configuration.account.features.open_solutions.destroy
+    @account.features.open_solutions.destroy
     get 'show', id: @test_article2
     response.body.should_not =~ /article2 with status as draft/
     response.should redirect_to(login_url)
@@ -222,7 +222,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       :helpdesk_ticket=> {:subject=>"#{@test_article1.title}", 
                           :email=> Faker::Internet.email, 
                           :ticket_body_attributes =>{:description=>""}}
-    RSpec.configuration.account.tickets.find_by_subject("#{@test_article1.title}").should  be_an_instance_of(Helpdesk::Ticket)
+    @account.tickets.find_by_subject("#{@test_article1.title}").should  be_an_instance_of(Helpdesk::Ticket)
     response.status.should eql(200)
   end
     

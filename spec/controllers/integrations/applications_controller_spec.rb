@@ -8,7 +8,7 @@ RSpec.describe Integrations::ApplicationsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    RSpec.configuration.agent = add_test_agent(@account)
+    @agent = add_test_agent(@account)
     @new_application = FactoryGirl.build(:application, 
                                     :name => "Test Application",
                                     :listing_order => 24,
@@ -26,7 +26,7 @@ RSpec.describe Integrations::ApplicationsController do
     @widget = FactoryGirl.build(:widget, :application_id => @new_application.id)
     @widget.save(validate: false)
     @new_installed_app = FactoryGirl.build(:installed_application, :application_id => @new_application.id,
-                                              :account_id => RSpec.configuration.account.id,
+                                              :account_id => @account.id,
                                               :configs => { :inputs => { "refresh_token" => "7977697105566556112", 
                                                             "oauth_token" => "61837911-03ab-485a-9903-fb6dbbbf7b46", 
                                                             "uid" => "roshiniphilip@gmail.com"}
@@ -108,7 +108,7 @@ RSpec.describe Integrations::ApplicationsController do
                                    :description => "New application subject #{now}",
                                    :listing_order => 1,
                                    :options => {:display_in_pages => ["helpdesk_tickets_show_page_side_bar"]},
-                                   :account_id => RSpec.configuration.account.id,
+                                   :account_id => @account.id,
                                    :application_type => "freshplug"
                                   }
     response.should redirect_to "/integrations/applications"
