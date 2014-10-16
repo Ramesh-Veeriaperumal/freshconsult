@@ -41,7 +41,7 @@ class GroupsController < Admin::AdminController
   end
 
   def create
-     @group = current_account.groups.new(params[nscname])     
+     @group = current_account.groups.new(params[nscname].except(:added_list, :removed_list))     
      agents_data = params[:group][:agent_list] 
      #for api to pass agent_id as an comma separated value/otherwise UI sends as array so each will take care.
      agents_data.split(',').each { |agent| @group.agent_groups.build(:user_id =>agent) } unless agents_data.blank?

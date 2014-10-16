@@ -329,7 +329,7 @@ class Topic < ActiveRecord::Base
   end
 
   def to_indexed_json
-    to_json(
+    as_json(
           :root => "topic",
           :tailored_json => true,
           :only => [ :title, :user_id, :forum_id, :account_id, :created_at, :updated_at ],
@@ -340,7 +340,7 @@ class Topic < ActiveRecord::Base
                                     :include => { :customer_forums => { :only => [:customer_id] } }
                                   }
                       }
-       )
+       ).to_json
   end
 
   # Added for portal customisation drop

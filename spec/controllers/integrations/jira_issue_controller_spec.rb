@@ -49,7 +49,7 @@ RSpec.describe Integrations::JiraIssueController do
     ir.should_not be_nil
   end
 
-  it "should delete all integrated resources of remote key (destroy)" do
+  it "should delete all integrated resources of remote key (destroy)" do# failing in master
     post :create, create_params
     integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
     post :destroy, { "remote_integratable_id" => integrated_resource.remote_integratable_id }

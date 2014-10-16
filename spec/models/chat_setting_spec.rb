@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ChatSetting do
+RSpec.describe ChatSetting do
 
 	it "should create chatSettings" do# failing in master
 	chat=ChatSetting.new

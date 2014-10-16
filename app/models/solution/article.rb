@@ -146,7 +146,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def to_indexed_json
-    to_json(
+    as_json(
             :root => "solution/article",
             :tailored_json => true,
             :only => [ :title, :desc_un_html, :user_id, :folder_id, :status, :account_id, :created_at, :updated_at ],
@@ -156,7 +156,7 @@ class Solution::Article < ActiveRecord::Base
                                      },
                           :attachments => { :only => [:content_file_name] }
                         }
-           )
+           ).to_json
   end
  
   def as_json(options={})

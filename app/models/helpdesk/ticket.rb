@@ -694,7 +694,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_indexed_json
-    to_json({
+    as_json({
             :root => "helpdesk/ticket",
             :tailored_json => true,
             :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
@@ -707,7 +707,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                                          :requester_responded_at, :status_updated_at ] }
                         }
             },
-            false)
+            false).to_json
   end
 
   def unsubscribed_agents

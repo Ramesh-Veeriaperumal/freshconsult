@@ -31,7 +31,7 @@ describe Solution::FoldersController do
     response.should render_template("solution/folders/show")
   end
 
-  it "should redirect user with no privilege to login" do#TODO-RAILS3 failing in master
+  it "should redirect user with no privilege to login" do
     session = UserSession.find
     session.destroy
     log_in(@user)

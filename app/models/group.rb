@@ -27,7 +27,7 @@ class Group < ActiveRecord::Base
     
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
                    :ticket_assign_type, :business_calendar_id,
-                   :added_list, :removed_list
+                   :added_list, :removed_list, :agent_groups_attributes
    
    accepts_nested_attributes_for :agent_groups
    scope :active_groups_in_account, lambda { |account_id|

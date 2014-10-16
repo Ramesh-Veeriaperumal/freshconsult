@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Admin::ChatSettingController do
+RSpec.describe Admin::ChatSettingController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 	
@@ -38,14 +38,14 @@ describe Admin::ChatSettingController do
 		response.should render_template("admin/chat_setting/index")
 	end
 
-	it "should send mail to request chat feature" do# ACTION NOT FOUND
+	it "should send mail to request chat feature" do# failing in master
 		post :request_freshchat_feature
 		temp = JSON.parse(response.body)
 		temp["status"].should eql "success"
 
 	end
 
-	it "should toggle the chat enable feature" do# ACTION NOT FOUND
+	it "should toggle the chat enable feature" do# failing in master
     request.env["HTTP_ACCEPT"] = "application/javascript"
 		firstState=@account.features? :chat_enable
 		post :toggle

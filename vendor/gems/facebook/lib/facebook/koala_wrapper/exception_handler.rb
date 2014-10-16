@@ -81,7 +81,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
                                 :reauth_required => true,
                                 :last_error      => error_params
         })
-        UserNotifier.send_later(:deliver_notify_facebook_reauth, @fan_page.account, @fan_page)
+        UserNotifier.send_later(:notify_facebook_reauth, @fan_page.account, @fan_page)
         error_updated = true
       end
       error_params.merge!({

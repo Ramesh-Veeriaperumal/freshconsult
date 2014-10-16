@@ -65,7 +65,7 @@ RSpec.describe Social::StreamsController do
       response.should render_template("social/streams/fetch_new")
     end
   
-    it "should fetch the top tweets from all the handles with latest first from dynamo when" do# failing in master
+    it "should fetch the top tweets from all the handles with latest first from dynamo when" do
       first_handle = create_test_twitter_handle(@account)
       first_default_stream = first_handle.default_stream
       first_data = first_default_stream.data

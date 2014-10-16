@@ -20,7 +20,7 @@ RSpec.describe Freshfone::CallFlow do
     create_freshfone_user
   end
 
-  it 'should render non availability message if all users in the group are offline' do# failing in master
+  it 'should render non availability message if all users in the group are offline' do
     group = create_group RSpec.configuration.account, {:name => "Freshfone Group"}
     call = create_freshfone_call
     @freshfone_user.update_attributes(:presence => 0)

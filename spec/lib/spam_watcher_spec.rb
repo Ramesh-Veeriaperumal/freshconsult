@@ -25,7 +25,7 @@ RSpec.describe "SpamWatcher" do
 
   describe "tickets" do
     context "agent belongs to paid account" do
-      it "delete the agent and send email" do# failing in master
+      it "delete the agent and send email" do
         Redis.any_instance.stubs(:blpop).returns(["spam_watcher_queue", "sw_helpdesk_tickets:#{@account.id}:#{@agent1.user_id}"])
         Subscription.any_instance.stubs(:state).returns("active")
         # Rake::Task["spam_watcher_redis:block_spam_user"].invoke
@@ -164,7 +164,7 @@ RSpec.describe "SpamWatcher" do
       end
     end
     context "agent belongs to unpaid account" do
-      it "block the agent if free account and send email" do# failing in master
+      it "block the agent if free account and send email" do
         Redis.any_instance.stubs(:blpop).returns(["spam_watcher_queue", "sw_helpdesk_notes:#{@account.id}:#{@agent1.user_id}"])
         # Rake::Task["spam_watcher_redis:block_spam_user"].invoke
         Subscription.any_instance.stubs(:state).returns("free")

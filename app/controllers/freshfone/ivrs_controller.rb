@@ -29,6 +29,7 @@ class Freshfone::IvrsController < ApplicationController
 
 	def index
 		@ivrs = scoper
+    render :text => ' '
 	end
 
 	def edit

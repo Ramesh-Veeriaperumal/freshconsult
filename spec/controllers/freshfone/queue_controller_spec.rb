@@ -54,14 +54,14 @@ RSpec.describe Freshfone::QueueController do
     xml[:Response][:Dial][:Client].should include(@agent.id.to_s)
   end
 
-  it 'should remove all default queue entries from redis on hangup' do#TODO-RAILS3 FAILING ON MASTER
+  it 'should remove all default queue entries from redis on hangup' do # failing in master
     set_twilio_signature('freshfone/queue/hangup', hangup_params)
     set_default_queue_redis_entry
     post :hangup, hangup_params
     controller.get_key(DEFAULT_QUEUE).should be_nil
   end
 
-  it 'should remove all agent priority queue entries from redis on hangup' do#TODO-RAILS3 FAILING ON MASTER
+  it 'should remove all agent priority queue entries from redis on hangup' do # failing in master
     set_twilio_signature("freshfone/queue/hangup?hunt_type=agent&hunt_id=#{@agent.id}",
                            hangup_params.merge({"CallSid" => "CAGENTQUEUE"}))
     set_agent_queue_redis_entry

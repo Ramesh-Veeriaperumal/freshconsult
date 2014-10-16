@@ -1,32 +1,31 @@
 require 'spec_helper'
 
-describe Admin::DayPassesController do
+RSpec.describe Admin::DayPassesController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
   before(:all) do
-  	# @account = Account.last
+  	 @account = Account.last
 
-  	# if @account.full_domain.include?("billing")
-  	# 	# Using the account if created in subscriptions/billing controller.
-	  # 	@account.make_current	  	
-	  # 	@user = @account.account_managers.first	  	
-	  # else	  	
-    #    Account.reset_current_account
-    #    User.current = nil
+  	 if @account.full_domain.include?("billing")
+  	 	# Using the account if created in subscriptions/billing controller.
+	   	@account.make_current	  	
+	   	@user = @account.account_managers.first	  	
+	  else	  	
+        Account.reset_current_account
+        User.current = nil
       
-    #    Resque.inline = true
-    #    @billing_account = create_test_billing_acccount
-    #    Resque.inline = false               
+        Resque.inline = true
+        @billing_account = create_test_billing_acccount
+        Resque.inline = false               
     
-    #    @account = Account.find(@billing_account.id)
-    #    @user = @account.account_managers.first
-	  # end
-    @account = RSpec.configuration.account
-    @user = @account.account_managers.first
-  end
+        @account = Account.find(@billing_account.id)
+        @user = @account.account_managers.first
+	  end
+	end
 
 	before(:each) do
+    @request.host = @billing_account.full_domain
 		log_in(@user)
 	end
 

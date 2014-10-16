@@ -121,11 +121,11 @@ class Company < ActiveRecord::Base
   # Elasticsearch related methods starts
 
   def to_indexed_json
-    to_json( 
+    as_json( 
               :root => "customer",
               :tailored_json => true,
               :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ] 
-           )
+           ).to_json
   end
 
   # May not need this after ES re-indexing

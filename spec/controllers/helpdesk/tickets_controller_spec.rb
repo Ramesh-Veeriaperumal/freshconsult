@@ -533,7 +533,7 @@ RSpec.describe Helpdesk::TicketsController do
       response.body.should =~ /#{tkt2.description}/
     end
 
-    it "should load the next and previous tickets of a ticket" do# TODO-RAILS3 failing on master also
+    it "should load the next and previous tickets of a ticket" do # failing in master
       ticket_1 = create_ticket
       ticket_2 = create_ticket
       ticket_3 = create_ticket
@@ -558,7 +558,7 @@ RSpec.describe Helpdesk::TicketsController do
       assigns(:next_ticket).to_i.should eql ticket.display_id
     end
 
-    it "should load the next and previous tickets of a ticket with no filters" do# TODO-RAILS3 failing on master also
+    it "should load the next and previous tickets of a ticket with no filters" do# failing in master
       30.times do |i|
         t = create_ticket
       end

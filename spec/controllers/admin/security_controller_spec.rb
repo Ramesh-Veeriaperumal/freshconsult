@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::SecurityController do
+RSpec.describe Admin::SecurityController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

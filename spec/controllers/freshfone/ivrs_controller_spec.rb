@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Freshfone::IvrsController do
+RSpec.describe Freshfone::IvrsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -16,12 +16,12 @@ describe Freshfone::IvrsController do
     response.should redirect_to("/admin/freshfone/numbers/#{@number.id}/edit")
   end
 
-  it 'should return all ivrs for the account' do#TODO-RAILS3
+  it 'should return all ivrs for the account' do
     get :index
     assigns[:ivrs].map(&:freshfone_number_id).should include @number.id
   end
 
-  it 'should return ivr object for edit and redirect to edit template' do#TODO-RAILS3 possible dead code
+  it 'should return ivr object for edit and redirect to edit template' do
     get :edit, {:id => @number.ivr.id}
     assigns[:ivr].freshfone_number_id.should be_eql(@number.id)
     response.should render_template("freshfone/ivrs/edit")
@@ -83,7 +83,7 @@ describe Freshfone::IvrsController do
   end
 
   it 'should not enable ivr on unsuccessful activate action' do
-    ivr = @number.ivr
+    ivr = @number.ivr.reload
     ivr.update_attributes(:active => false)
     Freshfone::Ivr.any_instance.stubs(:update_attributes).returns(false)
     post :activate, {:id => @number.ivr.id, :active => true}
@@ -98,7 +98,7 @@ describe Freshfone::IvrsController do
   end
 
   it 'should not disable ivr on unsuccessful deactivate action' do
-    ivr = @number.ivr
+    ivr = @number.ivr.reload
     ivr.update_attributes(:active => true)
     Freshfone::Ivr.any_instance.stubs(:update_attributes).returns(false)
     post :deactivate, {:id => @number.ivr.id, :active => false}

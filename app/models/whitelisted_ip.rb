@@ -3,6 +3,8 @@ class WhitelistedIp < ActiveRecord::Base
 	include ArExtensions
 	include Cache::Memcache::WhitelistedIp
 
+  include ObserverAfterCommitCallbacks
+  
 	belongs_to_account
 	serialize :ip_ranges, Array
 

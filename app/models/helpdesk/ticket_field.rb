@@ -12,7 +12,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   attr_accessible :name, :label, :label_in_portal, :description, :active, 
     :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, 
     :required_for_closure, :flexifield_def_entry_id, :field_options, :default, 
-    :level, :parent_id, :prefered_ff_col, :import_id, :choices
+    :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes, 
+    :ticket_statuses_attributes
   
   belongs_to :account
   belongs_to :flexifield_def_entry, :dependent => :destroy
@@ -39,7 +40,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   #Phase1:- end
 
   # xss_terminate
-  acts_as_list :top_of_list => 0
+  acts_as_list :top_of_list => 0, :scope => 'account_id = #{account_id}'
 
   after_commit :clear_cache
   
@@ -62,11 +63,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_type.include?("dropdown")
   end
    
-  # scope_condition for acts_as_list
-  def scope_condition
-    "account_id = #{account_id}"
-  end
-  
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   

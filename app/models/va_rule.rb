@@ -35,7 +35,7 @@ class VaRule < ActiveRecord::Base
     "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
     "va_rules.active" => true }, :order => "va_rules.position"
 
-  acts_as_list
+  acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
   JOINS_HASH = {
     :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on 
@@ -55,11 +55,6 @@ class VaRule < ActiveRecord::Base
           flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
           flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'"
   }
-  
-  # scope_condition for acts_as_list
-  def scope_condition
-    "account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}"
-  end
   
   def filter_data
     (observer_rule? || api_webhook_rule?) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)

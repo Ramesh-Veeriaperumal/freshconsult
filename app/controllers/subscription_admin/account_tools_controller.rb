@@ -25,7 +25,7 @@ class SubscriptionAdmin::AccountToolsController < ApplicationController
 
   def update_global_blacklist_ips
     @item = GlobalBlacklistedIp.first
-    @item.ip_list = params["ip_list"]
+    @item.ip_list = Array.wrap(params["ip_list"])
     if @item.save
       flash[:notice] = "Global Blacklist IP's updated"
       redirect_to :action => 'index'

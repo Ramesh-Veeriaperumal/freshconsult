@@ -67,7 +67,7 @@ RSpec.describe Helpdesk::ProcessEmail do
 			ticket.cc_email_hash[:cc_emails].should include(*a[1..-1])
   	end
 
-  	it "with multiple reply_to emails and repeating cc emails" do# failing in master
+  	it "with multiple reply_to emails and repeating cc emails" do
 			a = []
 			5.times do
 				a << Faker::Internet.email

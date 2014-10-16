@@ -7,13 +7,9 @@ class TicketFormField < ActiveRecord::Base
 	belongs_to :flexifield_def
 	belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
 
-	acts_as_list
+	acts_as_list :scope => 'form_id = #{form_id}'
   	attr_accessible :form_id, :ticket_field_id, :ff_col_name, :field_alias, 
     				:sub_section_field, :account_id
 
-	# scope_condition for acts_as_list
-  def scope_condition
-    "form_id = #{form_id}"
-  end
 
 end

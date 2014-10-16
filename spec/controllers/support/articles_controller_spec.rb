@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Support::Solutions::ArticlesController do
+RSpec.describe Support::Solutions::ArticlesController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -61,7 +61,7 @@ describe Support::Solutions::ArticlesController do
     RSpec.configuration.account.features.open_solutions.create
   end
 
-  it "should redirect to support home if index is hit" do# failing in master
+  it "should redirect to support home if index is hit" do
     log_in(@user)
     get :index, :category_id => @test_category.id, :folder_id => @test_folder1.id, :id => @test_article1.id
     response.should redirect_to("#{support_solutions_path}")
@@ -99,7 +99,7 @@ describe Support::Solutions::ArticlesController do
     response.code.should be_eql("200")
   end
 
-  it "should increment thumbs up" do# failing in master 
+  it "should increment thumbs up" do
     log_in(@user)
     put :thumbs_up, :id => @public_article2.id
     @public_article2.reload
@@ -110,7 +110,7 @@ describe Support::Solutions::ArticlesController do
     response.code.should be_eql("200")
   end
 
-  it "should increment thumbs down" do# failing in master
+  it "should increment thumbs down" do
     log_in(@user)
     put :thumbs_down, :id => @public_article2.id
     @public_article2.reload
@@ -197,7 +197,7 @@ describe Support::Solutions::ArticlesController do
     response.should redirect_to(login_url)
   end
 
-  it "should not show article and redirect to support solutions home if its folder is visible only to Agents" do# failing in master
+  it "should not show article and redirect to support solutions home if its folder is visible only to Agents" do
     log_in(@user) 
     get 'show', :id => @test_article3    
     response.should redirect_to(support_solutions_path)    
@@ -210,13 +210,13 @@ describe Support::Solutions::ArticlesController do
     response.should redirect_to(login_url)
   end
 
-  it "should handle unknown actions" do# failing in master 
+  it "should handle unknown actions" do
     log_in(@user)
     get :unknownaction, :id => @test_article1.id    
     response.should redirect_to("#{send(Helpdesk::ACCESS_DENIED_ROUTE)}")
   end
 
-  it "should create ticket while submitting feedback form" do # failing in master
+  it "should create ticket while submitting feedback form" do
     log_in(@user)
     post :create_ticket, :id => @test_article1.id,
       :helpdesk_ticket=> {:subject=>"#{@test_article1.title}", 
@@ -226,7 +226,7 @@ describe Support::Solutions::ArticlesController do
     response.status.should eql(200)
   end
     
-  it "should show a published article to user" do#profiles_controller_spec.rb
+  it "should show a published article to user" do
     log_in(@user)
     name = Faker::Name.name
     article = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
@@ -235,7 +235,7 @@ describe Support::Solutions::ArticlesController do
     response.body.should =~ /#{name}/    
   end
 
-  it "should not show a draft article to user" do# failing in master
+  it "should not show a draft article to user" do
     log_in(@user)
     get 'show', id: @test_article2
     response.body.should_not =~ /article2 with status as draft/    

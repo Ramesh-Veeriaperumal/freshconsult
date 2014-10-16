@@ -18,8 +18,8 @@ describe Social::TwitterHandlesController do
         get :index
 
         response.should redirect_to "/admin/social/streams"
-        # session["request_token"].present?.should be_true
-        # session["request_secret"].present?.should be_true
+        # session["request_token"].present?.should be true
+        # session["request_secret"].present?.should be true
       end
     end
 

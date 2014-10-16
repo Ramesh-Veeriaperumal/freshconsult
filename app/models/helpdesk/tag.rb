@@ -102,10 +102,10 @@ class Helpdesk::Tag < ActiveRecord::Base
   end
 
   def to_indexed_json
-    to_json({
+    as_json({
             :root => "helpdesk/tag",
             :tailored_json => true,
             :only => [ :name, :tag_uses_count, :account_id ]
-            })
+            }).to_json
   end
 end

@@ -257,7 +257,7 @@ class Helpdesk::Note < ActiveRecord::Base
             :include => { 
                           :attachments => { :only => [:content_file_name] }
                         }
-            })
+            }).to_json
   end
 
   protected

@@ -1513,7 +1513,7 @@ Helpkit::Application.routes.draw do
       match '/folders/:id/page/:page' => 'folders#show'
       resources :folders, :only => :show
       
-      resources :articles, :only => [:show, :destroy] do
+      resources :articles, :only => [:show, :destroy, :index] do
         member do
           put :thumbs_up
           put :thumbs_down

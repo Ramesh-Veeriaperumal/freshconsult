@@ -295,7 +295,7 @@ describe AgentsController do
     new_user = add_test_agent(RSpec.configuration.account)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :convert_to_contact, :id => new_user.agent.id
-    @account.users.find(new_user.id).helpdesk_agent.should be_false
+    @account.users.find(new_user.id).helpdesk_agent.should be false
     @account.agents.find_by_user_id(new_user.id).should be_nil
     Delayed::Job.last.handler.should include("#{@account.name}: #{new_user.name} was deleted")
   end

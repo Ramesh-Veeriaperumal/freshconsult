@@ -21,7 +21,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id", 
     :dependent => :destroy 
   
-  attr_accessible :name,:description, :is_default, :conditions, :escalations, :active, :datatype
+  attr_accessible :name,:description, :is_default, :conditions, :escalations, :active, :datatype, 
+    :sla_details_attributes
   
   accepts_nested_attributes_for :sla_details
 
@@ -73,12 +74,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
   ESCALATION_TYPES = [:resolution, :response]
 
-  acts_as_list
+  acts_as_list :scope => 'account_id = #{account_id}'
 
-  def scope_condition
-    "account_id = #{account_id}"
-  end
-  
   def matches?(evaluate_on)
     return false if va_conditions.empty?
     va_conditions.all? { |c| c.matches(evaluate_on) }

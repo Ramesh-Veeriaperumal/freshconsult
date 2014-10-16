@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AgentsController do
+RSpec.describe AgentsController do
   self.use_transactional_fixtures = false
 	
   let(:params) { {:format => "json"} }
@@ -9,7 +9,7 @@ describe AgentsController do
     api_login
   end
 
-  it "should return an agent object with all valid attributes" do# failing in master
+  it "should return an agent object with all valid attributes" do
     user = add_test_agent(@account)
     get :show, params.merge!(:id => user.agent.id)
     user_json = json_response['user'].map{|res| res[0]}

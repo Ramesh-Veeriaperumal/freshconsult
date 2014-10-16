@@ -41,10 +41,9 @@ class Middleware::TrustedIp
   end
 
   def valid_ip(current_ip, current_user_id)
-    return true
     unless applies_to_agent?(current_user_id)
       @current_account.whitelisted_ip_from_cache.ip_ranges.each do |ip|
-        return true if ip_is_in_range?(IPAddress(ip[:start_ip]),IPAddress(ip[:end_ip]),IPAddress(current_ip))
+        return true if ip_is_in_range?(IPAddress(ip['start_ip']),IPAddress(ip['end_ip']),IPAddress(current_ip))
       end
     else
       return true
