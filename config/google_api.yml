@@ -5,8 +5,8 @@ development:
     options:
       scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
     base_calendar_id: admin@freshpo.com
-    access_token: ya29.MQCaNDpScfft5BoAAABJfbxzipRw4pK2paPTOJt68f-J5dGt-shyYvfrUAY61A
-    refresh_token: 1/9e-BQSONlfSeQuqiKVAND7yr2W6hhGHLPoNLw7vQo9I
+    access_token: ya29.ngC8UZUDVSg1LD4hRiicPZV68ra3zOeo_ZbcjcEDQDpP_3nc5yv-rIcp
+    refresh_token: 1/3VjYf-OcbcbDYiW-lR4XXLqGxg-ZxuTJVat928bCTow
 production: 
   google_oauth2:
     consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
@@ -27,7 +27,7 @@ staging:
     options:
       scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
     base_calendar_id: admin@freshpo.com
-    access_token: ya29.MQCaNDpScfft5BoAAABJfbxzipRw4pK2paPTOJt68f-J5dGt-shyYvfrUAY61A
-    refresh_token: 1/9e-BQSONlfSeQuqiKVAND7yr2W6hhGHLPoNLw7vQo9I
+    access_token: ya29.ngC8UZUDVSg1LD4hRiicPZV68ra3zOeo_ZbcjcEDQDpP_3nc5yv-rIcp
+    refresh_token: 1/3VjYf-OcbcbDYiW-lR4XXLqGxg-ZxuTJVat928bCTow
 defaults: 
   google_oauth2: *id001
