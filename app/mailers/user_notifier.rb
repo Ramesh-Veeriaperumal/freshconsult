@@ -3,20 +3,17 @@ class UserNotifier < ActionMailer::Base
 
   def user_activation(user, params, reply_email_config)
     ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
-    @subject = params[:subject]
-    send_the_mail(user, params[:email_body], params[:reply_email])
+    send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
   end
 
   def email_activation(email_id, params, reply_email_config)
     ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
-    @subject = params[:subject]
-    send_the_mail(email_id, params[:email_body], params[:reply_email])
+    send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email])
   end
 
   def password_reset_instructions(user, params, reply_email_config)  
     ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox  
-    @subject = params[:subject]
-    send_the_mail(user, params[:email_body], params[:reply_email])
+    send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
   end
   
   def admin_activation(admin)
@@ -120,9 +117,10 @@ class UserNotifier < ActionMailer::Base
 
   private
 
-    def send_the_mail(user_or_email, email_body, reply_email =nil)
+    def send_the_mail(user_or_email, subject, email_body, reply_email =nil)
       mail(:to => user_or_email.email, 
         :from => reply_email || user_or_email.account.default_friendly_email,
+        :subject => subject,
         :sent_on => Time.zone.now,
         :reply_to => "#{reply_email || user_or_email.account.default_friendly_email}",
         :"Auto-Submitted" => "auto-generated", 

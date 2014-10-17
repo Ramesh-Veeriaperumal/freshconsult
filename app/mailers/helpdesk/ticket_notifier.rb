@@ -264,12 +264,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       "References"                    => generate_email_references(ticket)
     }
 
-    @note = note , @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol)
+    @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol)
     @body_html = generate_body_html(note.body_html, inline_attachments, note.account, attachments)
+    @note = note
     @ticket = ticket
     
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, note.body_html, note.account)
+    end
+
+    note.all_attachments.each do |a|
+      attachments[a.content_file_name] = {
+        :mime_type => a.content_content_type, 
+        :content => File.read(a.content.to_file.path, :mode => "rb")
+      }
     end
 
     mail(headers) do |part|
