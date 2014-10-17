@@ -261,7 +261,7 @@ protected
       tag.contacts
     elsif !params[:query].blank?
       query = params[:query]
-      current_account.contacts.with_conditions(convert_query_to_conditions(query))
+      current_account.all_contacts.with_conditions(convert_query_to_conditions(query))
     else
       current_account.all_contacts
     end
