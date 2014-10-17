@@ -1,7 +1,7 @@
 (function($) {
 
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
-var MAX_EMAILS = 20;
+var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
 save_draft = function(content) {
 	if ($.trim(content) != '') {
