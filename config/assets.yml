@@ -10,135 +10,65 @@ css_compressor:         sass
 allow_debugging:        on
 template_function:      _.template
 
+
 stylesheets:
-  pattern:
-    - public/stylesheets/pattern/pattern.css
 
-  common:
-    - public/stylesheets/common.css
-    - public/stylesheets/pages.css
+<% @stylesheets_items = {
+  :pattern => [ "pattern/pattern" ],
+  :common  => [ "common", "pages" ],
+  :plugins => [ "plugins" ],
+  :app  => [ "app/application", "module" ],
+  :non_pattern  => [ "app/app-common"],
+  :sprites  => [ "sprites"],
+  :ie_hacks  => [ "app/ie"],
+  :tour_my_app  => [ "plugins/tourmyapp_initial","plugins/tourmyapp"],
+  :codemirror  => [ "plugins/codemirror"],
+  :player360  => [ "freshfone/360player"],
+  :freshwidget  => [ "freshwidget"],
+  :tkt_details  => [ "page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites"],
+  :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
+  :gadget  => [ "common","pages","sprites","app/app-common","plugins","app/ie","page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites","page/gadget"],
+  :google_signup  => [ "common","page/google-signup"],
+  :reports  => [ "page/reports"],
+  :print  => [ "print/print"],
+  :report_print  => [ "print/report-print"],
+  :portal_print  => [ "print/support"],
+  :getting_started  => [ "page/getting_started"],
+  :subscription  => [ "subscription/subscription","plugins"],
+  :portal_utils  => [ "portal/portal_utils","freshfone/record_playback","freshfone/360player"],
+  :preview  => [ "portal/preview"],
+  :community  => [ "page/community/community"],
+  :widget  => [ "portal/widget"],
+  :responsive_widget  => [ "portal/responsive-widget"],
+  :facebook  => [ "portal/facebook"],
+  :social  => [ "social/social"],
+  :rating  => [ "portal/rating"],
+  :freshfone  => [ "freshfone/freshfone","freshfone/jquery.keypad","freshfone/call_history","ui.daterangepicker"],
+  :freshfone_ivr  => [ "freshfone/ivr/main"],
+  :freshfone_settings  => [ "freshfone/settings/main"],
+  :freshfone_admin  => [ "freshfone/admin"],
+  :freshfone_message_select  => [ "freshfone/message_select"],
+  :freshfone_recording_playback  => [ "freshfone/record_playback"],
+  :freshchat_admin  => [ "chat/admin"]
+} %>
 
-  plugins:
-    - public/stylesheets/plugins.css
+<%  @stylesheets_list = []
 
-  app:
-    - public/stylesheets/app/application.css
-    - public/stylesheets/module.css
+    def dir_check dir, prefix
+      (dir === "") ? "" : prefix
+    end
 
-  non_pattern:
-    - public/stylesheets/app/app-common.css
+    @stylesheets_items.each_pair do |key, pair|
+      ["", "rtl"].each do |dir|
+        @stylesheets_list << "  #{key}#{dir_check(dir, "_")}#{dir}:"
+        pair.each do |item|
+          @stylesheets_list << "    - public/stylesheets/#{dir}#{dir_check(dir, "/")}#{item}.css"
+        end
+      end
+    end
+%>
 
-  sprites:
-    - public/stylesheets/sprites.css
-
-  ie_hacks:
-    - public/stylesheets/app/ie.css
-
-  tour_my_app:
-    - public/stylesheets/plugins/tourmyapp_initial.css
-    - public/stylesheets/plugins/tourmyapp.css
-
-  codemirror:
-    - public/stylesheets/plugins/codemirror.css
-
-  360player:
-    - public/stylesheets/freshfone/360player.css
-
-  freshwidget:
-    - public/stylesheets/freshwidget.css
-
-  tkt_details:
-    - public/stylesheets/page/tkt_details/tkt_details.css
-    - public/stylesheets/page/tkt_details/tkt_details_sprites.css
-
-  tkt_details_print:
-    - public/stylesheets/page/tkt_details/tkt_details_print.css
-
-  gadget:
-    - public/stylesheets/common.css
-    - public/stylesheets/pages.css
-    - public/stylesheets/sprites.css
-    - public/stylesheets/app/app-common.css
-    - public/stylesheets/plugins.css
-    - public/stylesheets/app/ie.css
-    - public/stylesheets/page/tkt_details/tkt_details.css
-    - public/stylesheets/page/tkt_details/tkt_details_sprites.css
-    - public/stylesheets/page/gadget.css
-
-  google_signup:
-    - public/stylesheets/common.css
-    - public/stylesheets/page/google-signup.css
-
-  reports:
-    - public/stylesheets/page/reports.css
-
-  print:
-    - public/stylesheets/print/print.css
-
-  report_print:
-    - public/stylesheets/print/report-print.css
-
-  getting_started:
-    - public/stylesheets/page/getting_started.css
-
-  subscription:
-    - public/stylesheets/subscription/subscription.css
-    - public/stylesheets/plugins.css
-
-  portal_utils:
-    - public/stylesheets/portal/portal_utils.css
-    - public/stylesheets/freshfone/record_playback.css
-    - public/stylesheets/freshfone/360player.css
-
-  portal_print:
-    - public/stylesheets/print/support.css
-
-  preview:
-    - public/stylesheets/portal/preview.css
-
-  community:
-    - public/stylesheets/page/community/community.css
-
-  widget:
-    - public/stylesheets/portal/widget.css
-
-  responsive_widget:
-    - public/stylesheets/portal/responsive-widget.css
-
-  facebook:
-    - public/stylesheets/portal/facebook.css
-
-  social: 
-    - public/stylesheets/social/social.css
-
-  rating:
-    - public/stylesheets/portal/rating.css
-
-  freshfone:
-    - public/stylesheets/freshfone/freshfone.css
-    - public/stylesheets/freshfone/jquery.keypad.css
-    - public/stylesheets/freshfone/call_history.css
-    - public/stylesheets/ui.daterangepicker.css
-
-
-  freshfone_ivr:
-    - public/stylesheets/freshfone/ivr/main.css
-
-  freshfone_settings:
-    - public/stylesheets/freshfone/settings/main.css
-
-  freshfone_admin:
-    - public/stylesheets/freshfone/admin.css
-
-  freshfone_message_select:
-    - public/stylesheets/freshfone/message_select.css
-
-  freshfone_recording_playback:
-    - public/stylesheets/freshfone/record_playback.css
-
-  freshchat_admin:
-    - public/stylesheets/chat/admin.css
-
+<%= @stylesheets_list.join("\n") %>
 
 javascripts:
   defaults:
@@ -296,6 +226,9 @@ javascripts:
 
   html2canvas:
     - public/javascripts/html2canvas.js
+
+  placeholder:
+    - public/javascripts/placeholder-events.js
 
   fdwidget:
     - public/javascripts/prototype.js

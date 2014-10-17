@@ -120,7 +120,7 @@ describe Solution::FoldersController do
         },
       :category_id => @test_category.id
     @account.folders.find_by_name("#{name}").should be_an_instance_of(Solution::Folder)
-    response.should redirect_to(solution_category_path(@test_category.id))
+    response.should redirect_to(solution_category_folder_path(@test_category.id, @test_folder.id))
   end
 
   it "should not edit a default folder" do 

@@ -1,4 +1,4 @@
-module Admin::HomeHelper
+ module Admin::HomeHelper
   
   ######### Admin Items ########
 
@@ -9,7 +9,8 @@ module Admin::HomeHelper
         :privilege                     =>   privilege?(:manage_email_settings)
       },
       :freshchat                       =>   {
-        :url                           =>   "/admin/chat_setting",
+        :url                           =>   "/admin/chat_widgets",
+        :pjax                          =>   true,
         :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:chat)
       },
       :freshfone                       =>   {
@@ -318,7 +319,11 @@ module Admin::HomeHelper
           <div class="img-outer"><i class = "fsize-36 ficon-#{ item.to_s }" ></i></div>
           <div class="admin-icon-text">#{t(".#{item.to_s}")}</div>
 HTML
-          content_tag( :li, link_to(link_content.html_safe, admin_item[:url].html_safe))
+          if admin_item[:pjax]
+            content_tag( :li, pjax_link_to(link_content.html_safe, admin_item[:url].html_safe))
+          else
+            content_tag( :li, link_to(link_content.html_safe, admin_item[:url].html_safe))
+          end
       end
 
     link_item.to_s.html_safe

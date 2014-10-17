@@ -158,16 +158,14 @@ class BusinessCalendar < ActiveRecord::Base
     end
 
     def chatBusinessCalendarUpdate(type)
-      current_account = Account.current
-      if current_account.features?(:chat)
-        if current_account.chat_setting['business_calendar_id'] == self['id']
-          display_id = current_account.chat_setting['display_id']
-          @CalendarData = if (type.eql? "destroy") then nil else self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}) end
-
-          Resque.enqueue(Workers::FreshchatCalendarUpdate, {:type => type, :display_id => display_id, :calendarData => @CalendarData})
+      if account.features?(:chat)
+        widgets = account.chat_widgets.find(:all, :conditions => {:business_calendar_id => id})
+        widgets.each do |widget|
+          site_id = account.chat_setting.display_id
+          calendar_data = if (type.eql? "destroy") then nil else JSON.parse(self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar'] end
+          Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :widget_id => widget.widget_id, :siteId => site_id, :attributes => { :business_calendar => calendar_data}})
         end
       end
-
     end
 
 end

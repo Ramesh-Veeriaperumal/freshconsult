@@ -875,7 +875,8 @@ ol, ul, li{
 
     		.clear_emails {
     			@include float(right);
-    			width: 30px;
+    			width: 60px;
+    			@include text-align(right);
     			margin-top: 5px;
     			position: relative;
     			z-index: 2;
@@ -1008,11 +1009,8 @@ ol, ul, li{
     	&.attachment-options {
     		@include float(none);
     		width: auto;
-
     		padding: 0 10px;
     		margin-bottom: -15px;
-
-    		overflow: hidden;
 
     		label{
     			@include float(left);
@@ -1045,7 +1043,7 @@ ol, ul, li{
     			}
     		}
 
-    		.dropbox_div {
+    		.box_div, .dropbox_div {
 				@include float(left);
 				width: 300px;
 				label {
@@ -2220,7 +2218,7 @@ ol, ul, li{
 .modal-body .timesheet_form {
 
 	dd, dt {
-		float:left;
+		@include float(left);
 		width: 30%;
 		margin-bottom: 10px;
 	}
@@ -2232,7 +2230,7 @@ ol, ul, li{
 	dd {
 		display: inline-block;
 		width: 68%;
-		margin-left:2%;
+		@include margin-left(2%);
 	}
 
 	label {
@@ -2255,6 +2253,19 @@ ol, ul, li{
 
 #ticket_original_request div {
 	margin: 10px 0;
+}
+
+.attach-wrapper{
+	color: #333333;
+	.invalid_attachment {
+			text-decoration: line-through;
+		}
+	.attachment_contents {
+		width: auto;
+		.alert-text{
+			color:red;
+		}
+	}
 }
 
 .attachments-wrap{
@@ -2303,11 +2314,10 @@ ol, ul, li{
 		@include margin-right(10px);
 	}
 
-	ul{
+	.attachment_list{
 		margin-top: 10px;
 	}
-
-	li, div.item{
+	.attachment, div.item{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
 		@include border-radius(4px);
@@ -2338,7 +2348,15 @@ ol, ul, li{
 			}
 		}
 	}
-
+}
+.new-attach 
+{
+	.attachments-wrap .item{
+		padding:0;	
+	}
+	.dropdown-menu li{
+		width: 100%
+	}
 }
 
 
@@ -2821,16 +2839,32 @@ $collision_delay: 1s;
 }
 
 .article-list{
+	.table-striped tbody tr:nth-child(even) td {
+		background-color: white;
+	}
 	.actions-menu-wrapper{
 		position: relative;
 		background: inherit;
 	}
 	.actions-menu{
 		position: absolute;
-		right: -13px;
+		@include right(-13px);
 		background: inherit;
 		padding: 12px 20px;
 		margin-top: -14px;
+	}
+	.search-solution-content {
+		@include float(left);
+		line-height: 1.5;
+	}
+	.draft-label {
+			background-color: #ccc; 
+			color: white;
+			border-radius: 4px;
+			font-weight: bold;
+			padding: 2px 6px;
+			font-size:11px;
+			@include margin-right(5px);
 	}
 }
 

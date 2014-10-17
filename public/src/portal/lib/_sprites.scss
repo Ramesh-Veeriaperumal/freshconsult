@@ -92,7 +92,7 @@ $forum-neutral-color: #888888;
 		@include border-radius(2em);
 	}	
 	&:after{
-		@if $rtl == true{ margin: 3px 2px; }
+		@if $rtl { margin: 3px 2px; }
 		@else {	margin: 3px 4px;	}
 	}
 }

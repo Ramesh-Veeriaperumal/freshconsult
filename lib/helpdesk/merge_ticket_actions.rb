@@ -62,6 +62,9 @@ module Helpdesk::MergeTicketActions
 				source_description_note.attachments.build(:content => io, :description => "",
 																									:account_id => source_description_note.account_id)
 			end
+			source_ticket.cloud_files.each do |cloud_file|
+	  		source_description_note.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+		  end
 		end
 
 		def move_source_requesters_to_target # Possible dead code

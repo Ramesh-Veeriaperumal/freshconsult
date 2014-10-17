@@ -8,7 +8,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_many_attachments
 
-  has_many_dropboxes
+  has_many_cloud_files
     
   has_one :tweet,
     :as => :tweetable,

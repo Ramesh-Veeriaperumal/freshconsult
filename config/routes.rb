@@ -135,7 +135,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :chat_setting, :collection => { :toggle => :post }
+    admin.resources :chat_widgets
     admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
@@ -483,7 +483,8 @@
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end
 
-    helpdesk.resources :dropboxes
+    helpdesk.resources :cloud_files
+
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
 
@@ -562,6 +563,7 @@
 
   # Theme for the support portal
   map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
+  map.connect "/support/theme_rtl.:format", :controller => 'theme/support_rtl', :action => :index  
   map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
 
   # Support Portal routes
@@ -664,7 +666,7 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get}
+    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get, :deliver_activation_instructions => :get}
     mobile.resources :freshfone, :collection => {:numbers => :get}
   end
  
@@ -689,11 +691,16 @@
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 
-  map.connect '/all_agents', :controller => 'agents', :action => 'list'
-  map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-  map.connect '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
-  map.connect '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
-  map.connect '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+  map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
+  map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+
+  map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
+
+  map.connect '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
+
+  map.connect '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
+  map.connect '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
+
+  map.connect '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 end

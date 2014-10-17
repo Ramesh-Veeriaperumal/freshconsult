@@ -500,6 +500,11 @@ private
 
   def regenerate_reports_data
     set_reports_redis_key(account_id, created_at)
+    set_reports_redis_key(account_id, self.ticket_states.resolved_at) if is_resolved_or_closed? 
+  end
+
+  def is_resolved_or_closed?
+    [RESOLVED,CLOSED].include?(self.status) && self.ticket_states.resolved_at
   end
 
   def regenerate_data?

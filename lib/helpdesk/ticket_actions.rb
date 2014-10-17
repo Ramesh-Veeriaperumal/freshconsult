@@ -5,7 +5,8 @@ module Helpdesk::TicketActions
   include ParserUtil
   include ExportCsvUtil
   include Helpdesk::ToggleEmailNotification
-
+  include CloudFilesHelper
+  
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
 
@@ -61,13 +62,7 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def build_ticket_attachments
     handle_screenshot_attachments unless params[:screenshot].blank?
-      (params[:dropbox_url] || []).each do |urls|
-        decoded_url =  URI.unescape(urls)
-         @ticket.dropboxes.build(:url => decoded_url)
-      end
-    (params[:helpdesk_ticket][:attachments] || []).each do |a|
-      @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
-    end
+    attachment_builder(@ticket, params[:helpdesk_ticket][:attachments], params[:cloud_file_attachments] )
   end
   
   def split_the_ticket        
@@ -147,8 +142,8 @@ module Helpdesk::TicketActions
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
-    build_item
-    move_dropboxes
+    build_item 
+    move_cloud_files
     if @item.save_ticket
       move_attachments
       @note.destroy
@@ -163,9 +158,10 @@ module Helpdesk::TicketActions
     @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
   end
 
-  def move_dropboxes #added to support dropbox while spliting tickets
-    @note.dropboxes.each do |dropbox|
-      @item.dropboxes.build(:url => dropbox.url)
+  def move_cloud_files #added to support cloud_file while spliting tickets
+    @note.cloud_files.each do |cloud_file|
+      @item.cloud_files.build(:url => cloud_file.url,:filename => cloud_file.filename, 
+        :application_id => cloud_file.application_id)
     end
   end
   

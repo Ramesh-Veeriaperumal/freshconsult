@@ -55,7 +55,7 @@
 
           c_dom = jQuery("<div class=\"s_comment\" />")
                 .append(placeholder)
-                .append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
+                .append(FactoryUI.paragraph("", "comment", initFeed["comment"], "insert-placeholder-target"))
                 .append(FactoryUI.checkbox("<%= t('ticket.note_form.private_note') %>", "private", initFeed["private"]));
         break;
 
@@ -88,13 +88,13 @@
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
                   .append(jQuery('<div class="sub_placeholder"/>')
-                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]).data(
+                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"], 'insert-placeholder-target').data(
                   "ignorePlaceholders", 'triggered_event'))
                   .append(placeholder1))
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
-                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"],"paragraph-redactor").data(
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"],"paragraph-redactor insert-placeholder-target").data(
                   "ignorePlaceholders", 'triggered_event'))
           c_dom = jQuery("<div class='s_email row-fluid' />")
                 .append(to)
@@ -165,7 +165,7 @@
                         .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer', 'using_webhooks'));
 
           var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
-          var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required")
+          var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required insert-placeholder-target")
                                 .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
 
           setTimeout(function(ev){
@@ -198,11 +198,13 @@
                                                       "content_layout", initFeed['content_layout']);
 
           var simple_edit = jQuery('<div class="params_div"/>');
-          <% placeholders.each do |ph| %>
-            checkbox_value = (initFeed['params'] && initFeed['params']['<%= ph[3] %>']!=undefined) ? "true" : "false"
-            checkbox_div_class = (checkbox_value == "true") ? " row-fluid highlighted" : " row-fluid"
+          <% placeholders.each do |category, subcategories| %>
+            <% subcategories.each do |sc| %>
+              checkbox_value = (initFeed['params'] && initFeed['params']['<%= sc[3] %>']!=undefined) ? "true" : "false"
+              checkbox_div_class = (checkbox_value == "true") ? " row-fluid highlighted" : " row-fluid"
 
-            simple_edit.append(FactoryUI.checkbox("<span><%= ph[1] %></span><span class='muted'>&nbsp&nbsp<%= ph[0] %></span>", "params[<%= ph[3] %>]", checkbox_value, "checkbox_label ", "<%= ph[0] %>", "checkbox", checkbox_div_class));
+              simple_edit.append(FactoryUI.checkbox("<span><%= sc[1] %></span><span class='muted'>&nbsp&nbsp<%= sc[0] %></span>", "params[<%= sc[3] %>]", checkbox_value, "checkbox_label ", "<%= sc[0] %>", "checkbox", checkbox_div_class));
+            <% end %>
           <% end %>
           var simple = jQuery('<div class="edit1 span10"/>')
                         .append(simple_edit)
@@ -210,7 +212,7 @@
 
           var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var advanced_edit = jQuery("<div class='row-fluid'/>")
-                                .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
+                                .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params insert-placeholder-target').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
           var advanced = jQuery('<div class="edit2 span10"/>')
                           .append(placeholder2)
                           .append(advanced_edit)

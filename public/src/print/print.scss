@@ -1,6 +1,13 @@
 @import "blueprint";
 @import "../pattern/lib/rtl-mixins";
 
+@if $rtl {
+  html,body{
+    text-align: right;
+    direction:rtl !important;
+  }
+}
+
 // Generate the blueprint print styles:
 @include blueprint-print;
  

@@ -2,7 +2,7 @@
 
 <%= @body.html_safe %>
 
-<%=render :partial => 'dropbox_template',:locals => {:dropboxes => @dropboxes} %>
+<%=render :partial => 'cloud_files_template',:locals => {:cloud_files => @cloud_files} %>
 
 <%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket,
 	:survey_handle => @survey_handle, :surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false }%>

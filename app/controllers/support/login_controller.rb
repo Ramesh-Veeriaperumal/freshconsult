@@ -3,7 +3,7 @@ class Support::LoginController < SupportController
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
 	include SsoUtil
-
+	MAX_ATTEMPT = 5
 	SUB_DOMAIN = "freshdesk.com"
 	
 	skip_before_filter :check_account_state
@@ -22,7 +22,8 @@ class Support::LoginController < SupportController
 
 	def create   
 		@user_session = current_account.user_sessions.new(params[:user_session])
-		if @user_session.save
+    	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
+    	if @verify_captcha && @user_session.save 
 			#Temporary hack due to current_user not returning proper value
 			@current_user_session = @user_session
 			@current_user = @user_session.record
@@ -34,6 +35,7 @@ class Support::LoginController < SupportController
 			#Unable to put 'grant_day_pass' in after_filter due to double render
 		else
 			note_failed_login
+      		show_recaptcha?
 			handle_deleted_user_login
 			set_portal_page :user_login
 			render :action => :new
@@ -45,6 +47,21 @@ class Support::LoginController < SupportController
 			user_info = params[:user_session][:email] if params[:user_session]
 			logger.warn "Failed login for '#{user_info.to_s}' from #{request.remote_ip} at #{Time.now.utc}"
 	    end
+
+      def show_recaptcha?
+        unless @verify_captcha
+          @user_session.errors.add(:base, t("captcha_verify_message"))
+          @show_recaptcha = true
+          return
+        end
+        if params[:recaptcha_challenge_field] || has_reached_max_attempt?
+          @show_recaptcha = true
+        end
+      end
+
+      def has_reached_max_attempt?
+        @user_session.attempted_record && @user_session.attempted_record.failed_login_count >= MAX_ATTEMPT
+      end
 
 	    def handle_deleted_user_login
 	    	if params[:user_session] && !(params[:user_session][:email].blank? || params[:user_session][:password].blank?)

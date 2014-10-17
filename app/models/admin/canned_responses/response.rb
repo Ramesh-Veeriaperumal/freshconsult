@@ -35,6 +35,13 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
    validates_length_of :title, :in => 3..240
    validates_presence_of :folder_id
 
+   has_one :helpdesk_accessible,
+    :class_name => "Helpdesk::Access",
+    :as => 'accessible',
+    :dependent => :destroy
+
+   delegate :groups, :users, :to => :helpdesk_accessible
+
   named_scope :accessible_for, lambda { |agent_user| 
     {
       :joins => %(JOIN admin_user_accesses acc ON

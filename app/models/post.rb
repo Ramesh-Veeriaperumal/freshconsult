@@ -37,7 +37,8 @@ class Post < ActiveRecord::Base
   after_destroy :mark_as_unanswered, :if => :answer
 
   has_many_attachments
-
+  has_many_cloud_files
+  
   delegate :update_es_index, :to => :topic, :allow_nil => true
   delegate :questions?, :problems?, :to => :forum
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]

@@ -57,8 +57,9 @@
 	<div class="details" id='<%= "post_details_#{post.id}" %>'>
 		<%= auto_link(post.body_html.html_safe, :all, :target => "_blank") %>
 	</div>
-	<% unless post.attachments.empty? %>
-			<strong><%= pluralize(post.attachments.size, 'attachment')%></strong>
-      <%= attachment_container(post.attachments, true, "article", nil) %>
-	<% end %>	
+  <% unless post.attachments.empty? and post.cloud_files.empty? %>
+    <strong><%= pluralize(post.attachments.size + post.cloud_files.size, 'attachment')%></strong>
+    <%= attachment_container(post.attachments, true, "article", nil) %>
+    <%= attachment_container(post.cloud_files, true, "cloud_file", nil) %>
+  <% end %> 
 </div>

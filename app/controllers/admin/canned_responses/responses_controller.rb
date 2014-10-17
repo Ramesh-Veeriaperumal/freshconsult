@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Admin::CannedResponses::ResponsesController < Admin::AdminController
   include HelpdeskControllerMethods
+  include AccessibleControllerMethods
 
   before_filter :load_multiple_items, :only => [:delete_multiple, :update_folder]
   before_filter :load_all_folders, :only => [:new, :edit, :create]
@@ -35,6 +36,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
     build_attachments @ca_response, :admin_canned_responses_response
     respond_to do |format|
 		  if @ca_response.save        
+		  	create_helpdesk_accessible(@ca_response, "admin_canned_responses_response")
 		    format.html {redirect_to(admin_canned_responses_folder_path(@folder), 
 		      :notice => t('canned_folders.created')) }        
 		    format.xml  { render :xml => @ca_response, 
@@ -56,6 +58,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		params[nscname].merge!("folder_id"=>params[:new_folder_id])
 		respond_to do |format|     
 			if @ca_response.update_attributes(params[nscname])           
+				update_helpdesk_accessible(@ca_response, "admin_canned_responses_response")
 			  format.html {redirect_to(admin_canned_responses_folder_path(@ca_response.folder_id), 
 			    :notice => t('canned_folders.update')) } 
 			  format.xml  { render :xml => @ca_response, 

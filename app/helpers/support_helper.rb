@@ -597,10 +597,10 @@ HTML
 	      when "dropdown" then
           	select(object_name, field_name,
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
-          			{ :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
+          			{ :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
 	        select(object_name, field_name, field.html_unescaped_choices,
-	        		{ :include_blank => "...", :selected => is_num?(field_value) ? field_value.to_i : field_value }, {:class => element_class})
+	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
 	        	{:include_blank => "...", :selected => field_value},
@@ -798,12 +798,6 @@ HTML
 			</textarea></div>).html_safe
 	end
 
-	def attach_a_file_link attach_id
-		link_to_function("#{I18n.t('portal.attach_file')}".html_safe, "Helpdesk.Multifile.clickProxy(this)",
-                "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
-	end
-
-	# A fallback for portal... as attachment & screenshot is being used in both feedback widget & portal
 	def widget_option type
 		true
 	end
@@ -824,7 +818,7 @@ HTML
 			else
 				params[field.field_name]
 			end
-	    end
+    end
 	end
 
 	def is_num?(str)
@@ -855,11 +849,14 @@ HTML
 	def post_attachments post
 		output = []
 
-		if(post.attachments.size > 0)
+		if(post.attachments.size > 0 or post.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
 
 			post.attachments.each do |a|
 				output << attachment_item(a.to_liquid)
+			end
+			(post.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid)
 			end
 
 			output << %(</div>)
@@ -871,7 +868,7 @@ HTML
 	def ticket_attachemnts ticket
 		output = []
 
-		if(ticket.attachments.size > 0 or ticket.dropboxes != nil)
+		if(ticket.attachments.size > 0 or ticket.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
 
 			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
@@ -879,9 +876,8 @@ HTML
 			(ticket.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
-
-			(ticket.dropboxes || []).each do |c|
-				output << dropbox_item(c.to_liquid, can_delete)
+			(ticket.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid, can_delete)
 			end
 
 			output << %(</div>)
@@ -892,7 +888,7 @@ HTML
 	def comment_attachments comment
 		output = []
 
-		if(comment.attachments.size > 0 or comment.dropboxes != nil)
+		if(comment.attachments.size > 0 or comment.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
 
 			can_delete = (comment.user and comment.user.id == User.current.id)
@@ -901,8 +897,8 @@ HTML
 				output << attachment_item(a.to_liquid, can_delete)
 			end
 
-			(comment.dropboxes || []).each do |c|
-				output << dropbox_item(c.to_liquid, can_delete)
+			(comment.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid, can_delete)
 			end
 
 			output << %(</div>)
@@ -923,26 +919,26 @@ HTML
 		output << %(<div class="ellipsis">)
 		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
 		output << %(</div>)
-		output << %(<div>#{  attachment.size  } </div>)
+		output << %(<div>(#{  attachment.size  }) </div>)
 		output << %(</div>)
 		output << %(</div>)
 
 		output.join('').html_safe
 	end
 
-	def dropbox_item dropbox, can_delete = false
+	def cloud_file_item cloud_file, can_delete = false
 		output = []
 
 		output << %(<div class="cs-g-3 attachment">)
-		output << %(<a href="#{dropbox.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
+		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
-		output << %(<img src="/images/dropbox_big.png"></span>)
+		output << %(<img src="/images/#{cloud_file.provider}_big.png"></span>)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{dropbox.url}" class="filename" target="_blank">#{ dropbox.filename } </a>)
+		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank">#{ cloud_file.filename } </a>)
+		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
-		output << %(<div> ( dropbox link )</div>)
 		output << %(</div>)
 		output << %(</div>)
 

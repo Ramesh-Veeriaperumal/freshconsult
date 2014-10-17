@@ -17,12 +17,12 @@
 	display: block;
 	visibility: hidden;
 	position: static !important;
-	@include float(left !important);
+	float: left !important;
 }
 
 .ui-tooltip, .qtip{
 	position: absolute;
- @include left(-31000px);
+ 	left: -31000px;
 	top: -31000px;
 	display: none;
 
@@ -49,7 +49,7 @@
 .ui-tooltip-titlebar{
 	position: relative;
 	min-height: 14px;
-	@include padding(5px 35px 5px 10px);
+	padding: 5px 35px 5px 10px;
 	overflow: hidden;
 	
 	border-width: 1px 1px 0;
@@ -63,7 +63,7 @@
 /*! Default close button class */
 .ui-tooltip-titlebar .ui-state-default{
 	position: absolute;
- @include right(4px);
+ 	right: 4px;
 	top: 50%;
 	margin-top: -9px;
 
@@ -94,7 +94,7 @@
 	width: 18px;
 	height: 14px;
 
-	@include text-align(center);
+	text-align: center;
 	@include text-indent(0);
 	font: normal bold 10px/13px Tahoma,sans-serif;
 
@@ -129,11 +129,11 @@
 
 .ui-tooltip-ticket{
 	max-width: 650px !important;
-	@include margin-left(18px);
+	margin-left: 18px;
 
 	.working-agents {
 		position: relative;
-		@include margin(-30px 10px 0 0);
+		margin: -30px 10px 0 0;
 		border-top: solid 1px #dadada;
 		padding: 2px 0;
 		color: #666;
@@ -145,13 +145,13 @@
 
 		div {
 			width: 100%;
-			@include padding(5px 0 0 30px);
+			padding: 5px 0 0 30px;
 		}
 	}
 }
 
 .ui-tooltip-response{
-	@include margin-left(10px);
+	margin-left: 10px;
 }
 
 .ui-tooltip-response, .ui-tooltip-ticket {
@@ -166,7 +166,7 @@
 }
 
 .ui-tooltip-ticket .ui-tooltip-content{
-	@include margin-left(-14px); 
+	margin-left: -14px; 
 	width: 500px;
 }
 
@@ -183,7 +183,7 @@
 	}
 
 	.working-agents {
-		@include margin(-55px 10px 0 0);
+		margin: -55px 10px 0 0;
 	}
 }
 
@@ -576,7 +576,7 @@
 		position: absolute;
 		width:12px; 
 		height:21px;		
-	 	@include left(-11px);
+	 	left: -11px;
 		top: 20px;		
 	}
 	.ui-tooltip-content{

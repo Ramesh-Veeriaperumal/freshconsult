@@ -3,6 +3,9 @@
 
 if(!window.Helpdesk) Helpdesk = {};
 Helpdesk.Multifile = {	
+
+    FILE_LOCATION : /^.*[\\\/]/ ,
+
     load: function(){
         // jQuery("input[fileList]").each( function () {
         //     console.log("Attachment form " + this);
@@ -80,11 +83,11 @@ Helpdesk.Multifile = {
         }
         var target = jQuery("#"+jQuery(oldInput).attr('fileList'));
         target.append(jQuery.tmpl(this.template, {
-                name: jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
-                inputId: jQuery(oldInput).attr('id'),
-                size: filesize,
-                file_valid: validFile
-            }));
+            name: jQuery(oldInput).data('filename') || jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
+            inputId: jQuery(oldInput).attr('id'),
+            size: filesize,
+            file_valid: validFile
+        }));
         jQuery("#"+container + ' label i').text(target.children(':visible').length);
 
         return validFile;
@@ -112,7 +115,7 @@ Helpdesk.Multifile = {
     },
 
     findFileSize: function(oldInput){
-      if(jQuery(oldInput)[0].files){
+      if(jQuery(oldInput)[0].files && jQuery(oldInput).attr('type') === 'file'){
         return jQuery(oldInput)[0].files[0].size / (1024 * 1024);    
       }
       else{

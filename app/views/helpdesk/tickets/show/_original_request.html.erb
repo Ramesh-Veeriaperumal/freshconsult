@@ -93,17 +93,18 @@
 	</div>
 	<% end %>
 
-	<% unless @ticket.attachments.empty? and @ticket.dropboxes.empty? %>
+	<% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
 		<span class="seperator"></span>
 		<div class="attachments-wrap clearfix">
-			<h5><strong><%= pluralize(@ticket.attachments.size + @ticket.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
+			<h5><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
 			    <% @ticket.attachments.each do |attached| %> 
 			    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
 			    <% end %>
-			    <% @ticket.dropboxes.each do |dropbox| %> 
-					<%= attachment_list(dropbox, privilege?(:edit_ticket_properties), "dropbox",nil) %>
-				<% end %>
+
+			    <% @ticket.cloud_files.each do |cloud_file| %> 
+						<%= attachment_list(cloud_file, privilege?(:edit_ticket_properties), "cloud_file",nil) %>
+					<% end %>
 			</ul>
 		</div>
 	<% end %>

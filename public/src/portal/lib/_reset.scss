@@ -5,6 +5,14 @@
 // Display in IE6-9 and FF3
 // -------------------------
 
+// Right - To - Left Lang
+// -------------------------
+@if $rtl{
+  html,body,.redactor_editor{
+    direction:rtl;
+  }
+}
+
 article,
 aside,
 details,
