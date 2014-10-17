@@ -9,6 +9,7 @@ module Admin::EmailConfigsHelper
   end
 
   def selected_server_profile_name(server_name)
+    return "gmail" unless server_name
     selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && (server_name.casecmp("imap.#{server[4]}") == 0 || server_name.casecmp("smtp.#{server[4]}") == 0)}
     selected_profile.first.nil? ?  "other" : selected_profile.first[0].to_s
   end
