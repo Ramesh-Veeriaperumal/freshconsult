@@ -627,7 +627,8 @@ var StreamManager = Class.create({
         str = j(e.target).text();
 
         j('a.'+_class).html(str + " <i class='ficon-caret-down fsize-16' size='16'></i>").attr("data-original-title", str);
-        j(_class).find('img').attr("src", _img);
+        
+        j('.' + _class + ' img').attr("src", _img);
         j("input."+_class).val(handle_id);
     },
     closeOnBodyClick: function(e) {
