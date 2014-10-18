@@ -14,8 +14,8 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
     @subscription = subscription
     @agent_name = agent_name
     mail(headers) do |part|
-      part.html { render "notify_new_watcher.text.html" }
       part.text { render "notify_new_watcher.text.plain" }
+      part.html { render "notify_new_watcher.text.html" }
     end.deliver
   end
 

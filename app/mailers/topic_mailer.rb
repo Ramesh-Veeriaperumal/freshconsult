@@ -41,13 +41,14 @@ class TopicMailer < ActionMailer::Base
       :subject => "[Status Update] in #{topic.title}",
       :sent_on => Time.now
     }
-
+    
+    inline_attachments =[]
     @topic = topic
     @user = user
     @host = host 
     @current_stamp = current_stamp 
     @forum_type = forum_type
-    @body_html = generate_body_html( topic.posts.first.body_html, [], topic.account )
+    @body_html = generate_body_html( topic.posts.first.body_html, inline_attachments, topic.account, attachments )
 
     mail(headers) do |part|
       part.text { render "mailer/topic/stamp_change_notification_email.text.plain" }

@@ -8,9 +8,9 @@ module Social::Util
       Sharding.select_shard_of(account_id) do
         account = Account.find_by_id(account_id)
         account.make_current if account
+        account = Account.current
+        yield(account)
       end
-      account = Account.current
-      yield(account)
     rescue ActiveRecord::RecordNotFound => e
       Rails.logger.debug "Could not find account with id #{account_id}"
       custom_params = {
