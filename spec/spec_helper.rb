@@ -87,7 +87,7 @@ Spork.prefork do
     # lines, delete config/database.yml and disable :active_record
     # in your config/boot.rb
     config.render_views
-    config.use_transactional_fixtures = true
+    config.use_transactional_fixtures = false
     config.use_instantiated_fixtures  = false
     config.mock_with :mocha
     config.fixture_path = "#{Rails.root}/spec/fixtures/"

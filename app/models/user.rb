@@ -5,7 +5,6 @@ class User < ActiveRecord::Base
 
   belongs_to_account
 
-  include ArExtensions
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
