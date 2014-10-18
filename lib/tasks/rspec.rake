@@ -173,9 +173,8 @@ MobileAppTests = [
 ]
 
 ChatTests = [
-  "spec/controllers/chats_controller_spec.rb",
-  "spec/controllers/admin/chat_setting_controller_spec.rb",
-  "spec/models/chat_setting_spec.rb"
+  "spec/controllers/chats_controller_spec.rb"
+  #"spec/models/chat_setting_spec.rb"
 ]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
