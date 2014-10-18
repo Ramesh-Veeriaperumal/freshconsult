@@ -32,8 +32,15 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     :foreign_key => "group_id" , 
     :source => :group
   
-   validates_length_of :title, :in => 3..240
-   validates_presence_of :folder_id
+  validates_length_of :title, :in => 3..240
+  validates_presence_of :folder_id
+
+  has_one :helpdesk_accessible,
+  :class_name => "Helpdesk::Access",
+  :as => 'accessible',
+  :dependent => :destroy
+
+  delegate :groups, :users, :to => :helpdesk_accessible
 
   scope :accessible_for, lambda { |agent_user| 
     {

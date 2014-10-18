@@ -25,12 +25,12 @@
   jQuery(document).ready(function() {
     var data = {
       current_user_id : "<%= current_user.id %>",
-      faye_host : "<%= faye_host %>",
+      faye_host : "<%= agentcollision_host %>",
       client_opts : {
         retry: 10,
         timeout: 120
       },
-      faye_server : "<%= faye_server %>",
+      faye_server : "<%= agentcollision_server %>",
       faye_auth_params : <%= faye_auth_params %>,
       current_user : "<%= escape_javascript(current_user.name) %>", 
       agent_names : <%= raw current_account.agent_names_from_cache.to_json %>
@@ -38,6 +38,8 @@
     channels = {};
     <%  if (ticket.nil?) %> 
       <% if @is_auto_refresh_feature %>
+        data["faye_host"] = "<%= autorefresh_host %>"
+        data["faye_server"] = "<%= autorefresh_server %>"
         data['auto_refresh'] = { 
           ticketFilterDateoptions :{
             'today' : Date.parse("<%= Time.now.midnight %>"),
@@ -50,12 +52,6 @@
         };
         channels[ "<%= auto_refresh_channel %>"] = window.AutoRefreshIndex.callback 
       <% end %>
-      <% if current_account.features?(:collision) && current_account.agents_from_cache.count > 1 %>  
-        data['agent_collision_index'] = {
-          collision_channel : "<%= agent_collision_index_channel %>"
-        };
-        channels["<%= agent_collision_index_channel %>"] = AgentCollisionIndex.callback
-      <% end %>
     <% else %>
       data['agent_collision_show'] = {
         ticket_path : "<%= helpdesk_ticket_path(ticket.display_id) %>",
@@ -65,7 +61,6 @@
       }
       channels["<%= agent_collision_ticket_channel(ticket.display_id) %>"] = window.AgentCollisionShow.ticketChannelCallback;
       channels["<%= agent_collision_ticket_view_channel(ticket.display_id) %>"] = window.AgentCollisionShow.viewChannelCallback;
-      channels[ "<%= auto_refresh_channel %>"] = window.AutoRefreshShow.callback 
     <% end %>
     window.channels = channels;
     window.FreshdeskNode.data(data).addChannels(channels).init();

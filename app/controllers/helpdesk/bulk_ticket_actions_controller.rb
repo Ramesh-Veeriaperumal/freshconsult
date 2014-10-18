@@ -79,7 +79,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def params_for_queue
-      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'dropbox_url', 'shared_attachments', 'spam_key')
+      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'cloud_file_attachments', 'shared_attachments', 'spam_key')
     end
 
     def get_updated_ticket_count

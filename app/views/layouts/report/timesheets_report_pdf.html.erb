@@ -1,4 +1,5 @@
-<%= include_cloudfront_css :common %>
-<%= include_cloudfront_js :defaults %>
+<%#= TODO-RAILS3 RTL %>
+<%= stylesheet_link_tag :common %>
+<%= javascript_include_tag :defaults %>
 <%= render :partial => "layouts/report/pdf_files", :locals => {} %>
 <%= render :partial => "reports/timesheet_reports/time_sheet_list.html", :locals => {:time_sheets => @time_sheets} %> 

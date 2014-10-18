@@ -4,11 +4,6 @@ body{
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: normal;
 }
-@if $rtl == true {
-  html,body{
-    direction:rtl;
-  }
-}
 
 .f-left {
   @include float(left);

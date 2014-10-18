@@ -1,6 +1,7 @@
 class Helpdesk::Access < ActiveRecord::Base
   self.table_name =  "helpdesk_accesses"  
   
+  concerned_with :user_access_methods,:group_access_methods
   belongs_to_account
 
   belongs_to :accessible, :polymorphic => true  
@@ -19,6 +20,24 @@ class Helpdesk::Access < ActiveRecord::Base
   ]
   
   ACCESS_TYPES_KEYS_BY_TOKEN = Hash[*ACCESS_TYPES.map { |i| [i[0], i[2]] }.flatten] 
+  ACCESS_TYPES_KEYS_BY_TYPE = Hash[*ACCESS_TYPES.map { |i| [i[2], i[0]] }.flatten]
+  ACCESS_TYPES_KEYS = ACCESS_TYPES.map{|i| i[0].to_s.singularize}
+
+  ACCESS_TYPES_KEYS.product(ACCESS_TYPES_KEYS).each do |types|
+    define_method("update_#{types[0]}_access_type_to_#{types[1]}") do |new_ids|
+      if types[1] == types[0]
+        send("update_#{types[0]}_accesses",new_ids)
+      else
+        send("remove_#{types[0]}_accesses",nil)
+        send("create_#{types[1]}_accesses",new_ids)
+      end
+    end
+  end
+
+#This method is for handling self.alls in the above define_method.
+  def alls 
+    []
+  end
 
   
   class << self
@@ -103,36 +122,14 @@ class Helpdesk::Access < ActiveRecord::Base
      access_type == ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
   end
   
-  def create_group_accesses(group_ids)
-    groups = Account.current.groups.find(:all, :conditions => { :id => group_ids })
-    groups.each do |group|
-      self.groups << group
-    end
-  end
-  
-  def remove_group_accesses(group_ids)
-    groups = Account.current.groups.find(:all, :conditions => { :id => group_ids })
-    groups.each do |group|
-      self.groups.delete(group)
-    end
-  end
   
   # def user_access_type?
   #   access_type == ACCESS_TYPES_KEYS_BY_TOKEN[:users]
   # end
-  
-  # def create_user_accesses(user_ids)
-  #   users = Account.current.users.find(:all, :conditions => { :id => user_ids })
-  #   users.each do |user|
-  #     self.users << user
-  #   end
-  # end
-  
-  # def remove_user_accesses(user_ids)
-  #   users = Account.current.users.find(:all, :conditions => { :id => user_ids })
-  #   users.each do |user|
-  #     self.users.delete(user)
-  #   end
-  # end
+  def no_op(dummy)
+  end
 
+  alias_method :create_all_accesses, :no_op
+  alias_method :remove_all_accesses, :no_op
+  alias_method :update_all_accesses, :no_op
 end

@@ -1,0 +1,6 @@
+<%unless @cloud_files.blank? %>
+  <%= t('cloudfile_plaintext') %>:
+  <% @cloud_files.each do |cloud_file| %>
+    <%=URI.escape(cloud_file.url)%>
+  <%end%>
+<%end%>

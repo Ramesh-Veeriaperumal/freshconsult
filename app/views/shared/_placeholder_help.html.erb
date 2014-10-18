@@ -1,57 +1,26 @@
-<%= javascript_tag do %>		
-	var active_email_body = null;
-	function ignorePlaceholders(){	
-		var iphs = active_email_body.data("ignorePlaceholders") || "";
-		jQuery("#placeholder-list-1 dt").show();
-	 	iphs.split(",").each(function(item){
-	 		jQuery("#placeholder-btn-" + item).hide()
-	 	})
-	}
 
-	jQuery(document).ready(function(){
-		jQuery('body').on('focus',"input[name$=_subject_template], input[name=email_subject], textarea[name=email_body], textarea[name=url], textarea[name=params], textarea[name=comment], textarea[id=application_script]"
-		, function(){
-			active_email_body = jQuery(this);
-			ignorePlaceholders();
-		}); 
-
-		jQuery('.redactor_editor').live('click', function(){
-			active_email_body = jQuery(this).siblings('textarea');
-        }); 
-		
-		jQuery("#placeholder-list-1 a").click(function(ev){  
-			if(active_email_body){
-		        var placeHolderText = jQuery(this).data("placeholder"); 
-		        if(active_email_body.hasClass("paragraph-redactor")){
-		        	active_email_body.data('redactor').focusOnCursor();	
-					active_email_body.insertHtml(placeHolderText); 
-					jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });
-		        }else{
-		          insertTextAtCursor(active_email_body.get(0), placeHolderText);
-		        }
-
-		        var editor = active_email_body.data("CodeMirrorInstance");
-		        if (editor){
-			    	editor.replaceRange(placeHolderText, editor.getCursor());   
-			    }
-			}
-		});
-		
-		jQuery('#placeholder_close').click(function(){
-			jQuery('#place-dialog').hide();	
-		});
-		jQuery('#place-dialog').draggable();
-	});
-<% end %>
-<div class="placeholder-info" id="place-dialog" style="display:none;">		
-	<a href="javascript:void(0)" id="placeholder_close" class="close"></a>
+<%= javascript_include_tag :placeholder %>
+<div class="placeholder-info" id="place-dialog">		
+    <button type="button" class="close" id="placeholder_close"></button>
   	<h3 class="title"><%=t('automations.available_placeholders')%></h3>
 	<div class="intro"><%=t('automations.info4')%>.</div>
-	<div id="placeholder-list-1" class="placeholder-list">
-		<dl>
-			<% placeholders.each do |ph| %>	
-				<dt id="placeholder-btn-<%= ph[3] %>"><a class="uiButton small tooltip" href="javascript:void(0)" data-placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
+	<div id="placeholder-list-1" class="placeholder-list" rel='mouse-wheel' data-scroll-speed="10">	
+		<% placeholders.each do |category, subcategories| %>
+			<% if subcategories.length > 0 %>
+				<div class="placeholder-category">
+					<div class='placeholder-category-title'> <%= t('admin.placeholders.' +category.to_s) %> </div>
+					<div class='placeholder-category-list'>
+						<ul class='ph-list'>
+							<% subcategories.each do |sc| %>	
+								<li class='ph-item' id="placeholder-btn-<%= sc[3] %>"><button class="btn btn-flat tooltip" data-placeholder="<%= sc[0] %>" title="<%= sc[2] %>"><%= sc[1] %></button></li> 
+							<% end %>
+							<li class = 'ph-more-less'><button class="btn btn-flat tooltip ficon-ellipsis ph-more" title="Show More"></button></li>  
+							<li class = 'ph-more-less'><button class="btn btn-flat tooltip ficon-ellipsis ph-less" title="Show Less"></button></li> 
+
+						</ul>
+					</div>
+				</div>
 			<% end %>
-		</dl>	
+		<% end %>
 	</div> 
 </div>

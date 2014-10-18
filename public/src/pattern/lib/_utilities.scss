@@ -34,6 +34,9 @@ ul.disc{
 .invisible {
   visibility: hidden;
 }
+.overflow-visible, .form-horizontal .control-group.overflow-visible{
+  overflow: visible;
+}
 // --------------------------------------------------
 //                  Alignment options
 // --------------------------------------------------

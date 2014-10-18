@@ -1214,11 +1214,12 @@ input.search{
 	width:110px;
 }
 
+//No need RTL 
 .due-date-dialog{
 	position:absolute;
- @include left(-252px);
+ 	left: -252px;
 	top:25px;
-	@include margin-left(-20px);
+	margin-left: -20px;
 	margin-top:-6px;
 	z-index:99999;
 	width:250px;
@@ -1237,14 +1238,17 @@ input.search{
 	.due-date-calender{ 
 		@include vertical-gradient(#f5f5f5, #e9e9e9);
 	  	padding:4px 10px;
-	  	@include margin(4px 0 8px 0);	
+	  	margin: 4px 0 8px 0;	
 	  	@include border-radius(4px);
 	  	border:#e0e0e0 1px solid;
 	}
 	.right_pointer{	 	
 		position:absolute;
 		width:10px; height:18px;
-	 @include right(-10px);
+	 	@include right(-10px);
+	 	@if $rtl{
+	 		@include transform(scaleX(-1));
+	 	}
 		top:10px;
 	}
 	.ui-datepicker{

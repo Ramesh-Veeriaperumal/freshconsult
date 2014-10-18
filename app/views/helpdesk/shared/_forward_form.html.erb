@@ -124,14 +124,14 @@
                     <% end %>
                 </div>
               <% end %>
-              <% dropbox = conv_item.dropboxes %>
-              <% if(dropbox.length > 0) %>
+              <% cloud_files = conv_item.cloud_files %>
+              <% if(cloud_files.length > 0) %>
                 <div class="attachments">
-                  <% dropbox.each do |dbox| %>
+                  <% cloud_files.each do |cloud_file| %>
                     <div class="item">
-                      <span> <%= dbox.url %> 
+                      <span> <%= cloud_file.filename || URI.unescape(cloud_file.url.split('/')[-1]) %> 
                       - <a href="javascript:void(0)" onclick="jQuery(this).parent().parent().remove(); return false;">remove</a>
-                        <input type="hidden" name="[dropbox_url][]" value="<%=dbox.url%>" />
+                        <input type="hidden" name="[cloud_file_attachments][]" value="<%=cloud_file.serialize%>" />
                       </span>
                     </div>
                     <% end %>

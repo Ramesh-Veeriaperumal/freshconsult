@@ -34,7 +34,7 @@
     jQuery('#canned_show').live('click', function(ev){
         ev.preventDefault();
         jQuery('#bulk-response-group').removeClass('hide');
-        jQuery('#bulktickets').animate({marginLeft: '-=688px'}, 300);
+        jQuery('#bulktickets').addClass('bulk-tickets-animation');
         jQuery('#no-response').toggle('fast');
         jQuery('#bulkcontent').css('height','375px');
     });

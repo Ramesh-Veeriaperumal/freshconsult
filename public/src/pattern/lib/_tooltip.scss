@@ -1,73 +1,8 @@
 //
 // Tooltips
 // --------------------------------------------------
-/*
-// Base class
-.tooltip {
-  position: absolute;
-  z-index: $zindexTooltip;
-  display: block;
-  visibility: visible;
-  padding: 5px;
-  font-size: 11px;
-  @include opacity(0);
-  &.in     { @include opacity(80); }
-  &.top    { margin-top:  -3px; }
-  &.right  { margin-left:  3px; }
-  &.bottom { margin-top:   3px; }
-  &.left   { @include margin-left(-3px); }
-}
+// No need RTL, handled in js 
 
-// Wrapper for the tooltip content
-.tooltip-inner {
-  max-width: 200px;
-  padding: 3px 8px;
-  color: $tooltipColor;
-  @include text-align(center);
-  text-decoration: none;
-  background-color: $tooltipBackground;
-  @include border-radius(4px);
-}
-
-// Arrows
-.tooltip-arrow {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-}
-.tooltip {
-  &.top .tooltip-arrow {
-    bottom: 0;
-    @include left(50%);
-    margin-left: -$tooltipArrowWidth;
-    border-width: $tooltipArrowWidth $tooltipArrowWidth 0;
-    border-top-color: $tooltipArrowColor;
-  }
-  &.right .tooltip-arrow {
-    top: 50%;
-    @include left(0);
-    margin-top: -$tooltipArrowWidth;
-    border-width: $tooltipArrowWidth $tooltipArrowWidth $tooltipArrowWidth 0;
-    border-right-color: $tooltipArrowColor;
-  }
-  &.left .tooltip-arrow {
-    top: 50%;
-    @include right(0);
-    margin-top: -$tooltipArrowWidth;
-    border-width: $tooltipArrowWidth 0 $tooltipArrowWidth $tooltipArrowWidth;
-    border-left-color: $tooltipArrowColor;
-  }
-  &.bottom .tooltip-arrow {
-    top: 0;
-    @include left(50%);
-    margin-left: -$tooltipArrowWidth;
-    border-width: 0 $tooltipArrowWidth $tooltipArrowWidth;
-    border-bottom-color: $tooltipArrowColor;
-  }
-}
-*/
 .twipsy {
   display: block;
   position: absolute;
@@ -83,50 +18,50 @@
   &.above{
       .twipsy-arrow {
         bottom: 0;
-        @include left(50%);
-        @include margin-left(-5px);
-        @include border-left(5px solid transparent);
-        @include border-right(5px solid transparent);
+        left: 50%;
+        margin-left: -5px;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
         border-top: 5px solid #000000;
       }
   }
   &.below{
     .twipsy-arrow {
       top: 0;
-      @include left(50%);
-      @include margin-left(-5px);
-      @include border-left(5px solid transparent);
-      @include border-right(5px solid transparent);
+      left: 50%;
+      margin-left: -5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
       border-bottom: 5px solid #000000;
     }
   }
   &.left{
     .twipsy-arrow {
       top: 50%;
-      @include right(0);
+      right: 0;
       margin-top: -5px;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
-      @include border-left(5px solid #000000);
+      border-left: 5px solid #000000;
     }
   }
   &.right{
     .twipsy-arrow {
       top: 50%;
-      @include left(0);
+      left: 0;
       margin-top: -5px;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
-      @include border-right(5px solid #000000);
+      border-right: 5px solid #000000;
     }
   }
   &.belowLeft{
     .twipsy-arrow {
       top: 0;
-      @include left(90%);
-      @include margin-left(-5px);
-      @include border-left(5px solid transparent);
-      @include border-right(5px solid transparent);
+      left: 90%;
+      margin-left: -5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
       border-bottom: 5px solid #000000;
     }
   }
@@ -135,7 +70,7 @@
   padding: 3px 8px 4px;
   background-color: #000000;
   color: white;
-  @include text-align(center);
+  text-align: center;
   max-width: 400px;
   text-decoration: none;
   -webkit-border-radius: 4px;

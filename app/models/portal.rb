@@ -14,6 +14,7 @@ class Portal < ActiveRecord::Base
   after_commit :update_users_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
+  after_save :update_chat_widget
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -53,7 +54,7 @@ class Portal < ActiveRecord::Base
   belongs_to :product
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD64"
+  APP_CACHE_VERSION = "FD65"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -196,10 +197,20 @@ class Portal < ActiveRecord::Base
       to_ret
     end
 
-
-
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
       get_portal_redis_key(key) || "0"
+    end
+
+    def update_chat_widget
+      if account.features?(:chat)
+        if product && portal_url_changed?
+          site_id = account.chat_setting.display_id
+          chat_widget = product.chat_widget
+          if chat_widget && chat_widget.widget_id
+            Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :widget_id => chat_widget.widget_id, :siteId => site_id, :attributes => { :site_url => portal_url}})
+          end
+        end
+      end
     end
 end

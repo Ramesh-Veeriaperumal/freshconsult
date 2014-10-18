@@ -1,18 +1,137 @@
 <script src="/javascripts/helpdesk/expanding_textarea.js" type="text/javascript"></script>
 <script src="/javascripts/helpdesk/article_section.js" type="text/javascript"></script>
-<% attach_id = attach_id || "solution_article" %>
-<label><%=t('attach_files')%></label>
-<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="solution_article[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-<div class="info-data">
-  <%=t('attachment_help_info')%>
-</div>
-<div class="attachments" id="<%=attach_id%>-container" style="display:none">
-  <div id="<%=attach_id%>-attachments"></div>
-</div>
+<%
+  attach_id ||= "article"
+  original_attachments ||= {:regular => [], :cloud_files => []}
+  nsc_param = nsc_param || "solution_article"
+%>
+<div class="attachments-wrap">
+  <div id="<%=attach_id%>-container" class="attachments-container">
 
-<%# 
-  The following is a template used by multifile.js to create rows in
-  the attachments table.
- %>
-			
-<%= render :partial => "/shared/multifile_template" %>
+    <% unless dropbox_app_key.blank? %>
+      <div class="dropdown dropup">        
+        <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
+          <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+          <li class="portal-attach">
+            <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
+                <%= I18n.t('portal.attach_file').html_safe %>
+                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
+                  <input type="file" name="emptyfile" 
+                    id="<%=attach_id%>_file"
+                    data-attach-id="<%=attach_id%>"
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                    fileContainer="<%=attach_id%>-container" 
+                    fileList="<%=attach_id%>-attachments"
+                    sendFocusTo="<%=attach_id%>-body" />
+                </div>
+            </a>
+          </li>
+          <% unless dropbox_app_key.blank? %>
+            <li id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
+                <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[cloud_file_attachments][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+                <a href="#" class="dropbox_button" name="selected-file" id="db-chooser" 
+                  data-holder="<%=attach_id%>_url" onclick='initDropbox(this); event.preventDefault();'><%=I18n.t('dropbox_attach_from').html_safe%></a>         
+            </li>
+          <% end %>
+        </ul>      
+      </div>
+    <% else %>
+      <div class="hidden_upload">
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
+        <input type="file" id="<%=attach_id%>_file" name="emptyfile"
+                nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
+                fileContainer="<%=attach_id%>-container"
+                fileList="<%=attach_id%>-attachments"
+                sendFocusTo="<%=attach_id%>-body"/>
+      </div>
+    <% end %>
+    <div class="clear"> </div>
+    <label class="hide"><i class="a-count">0 </i> <%= t('attachments')%>: </label>
+    <div class="attachment_wrapper">
+      <ul class="attachment_list" id="<%=attach_id%>-attachments">
+        <% original_attachments[:regular].each do |attached| %>
+          <%= attachment_list(attached, true, "article", nil) %>
+        <% end %>
+        <% original_attachments[:cloud_files].each do |attached| %>
+          <%= attachment_list(attached, true, "cloud_file", nil) %>
+        <% end %>
+        </ul>
+    </div>
+  </div>
+  <div class="info-data">
+    <%=t('attachment_help_info')%>
+  </div>
+</div>
+<script id="file-list-template" type="text/x-jquery-tmpl">
+  <li class="attachment list_element {{if (!file_valid)}}invalid tooltip{{/if}}"{{if (!file_valid)}} title="<%= t('helpdesk.tickets.note.attachment_size.exceed_limit') %>"{{/if}}>
+    <div>
+      {{if (file_valid)}}
+      <a  class="delete mr10" href="#" 
+        onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;"
+        inputId="${inputId}" >
+      </a>
+      {{/if}}
+      {{if provider != ''}}
+        <div class="file-types-${provider}"></div>
+      {{else}}
+        <div class="attachment-type"></div>
+      {{/if}}
+      <div class="attach_content">
+        <div class="ellipsis">
+          <a href="javascript:void(0)">${name}</a>
+        </div>
+        <span class="file-size">
+          {{if provider == ''}}
+            {{if (size != '0.00 KB ') }} (${size}) {{/if}}
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </li>
+</script>
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+  // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
+  jQuery('#<%=attach_id%>-container a[data-toggle="dropdown"]').bind('click', function(){
+    jQuery(this).parents('div.attach-wrapper').find('a.attach-link-wrap').first().css({
+          'background-color': 'inherit',
+          'background-image': 'inherit',
+          'color': 'inherit',
+          'box-shadow': 'inherit'
+      });
+  });
+  jQuery('li.portal-attach a.attach-link-wrap')
+    .bind('mouseover', function(){
+      jQuery(this).removeAttr('style');
+    })
+    .bind('mousemove', function(event){
+      // Fix to move "Browse" button along with mouse pointer - fix for IE.
+      p=jQuery(this).find('div').first();
+      newLeft = Math.min(175, Math.max(event.clientX - p.offset().left + p.position().left - 5, 0));
+      window.title = newLeft;
+      p.css({left: newLeft, top: 0});
+    })
+</script>
+
+<% unless dropbox_app_key.blank? %>
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>
+  <script type="text/javascript">
+    function initDropbox(inp){
+      Dropbox.choose({success:function(files){
+          var inputElement = jQuery(inp).data('holder');
+
+          jQuery('#'+inputElement)
+            .val(JSON.stringify({link: files[0].link,name: files[0].name, provider: 'dropbox'}))
+            .data('filename', files[0].name)
+            .data('provider', 'Dropbox');
+
+          Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
+          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
+          jQuery(inp).data('holder',newInput.attr('id'));
+      }, extensions:""})
+    }
+  </script>
+<% end %>

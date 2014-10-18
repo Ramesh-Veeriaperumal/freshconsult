@@ -1,7 +1,7 @@
 class Helpdesk::BulkReplyTickets
   
   include Conversations::Twitter
-
+  include CloudFilesHelper
   attr_accessor :params, :tickets, :attachments
 
   def initialize(args)
@@ -101,7 +101,7 @@ class Helpdesk::BulkReplyTickets
 
     def build_attachments note
       build_new_attachments(note)
-      build_dropbox_attachments(note)
+      build_cloud_file_attachments(note)
       build_shared_attachments(note)
     end
 
@@ -117,10 +117,8 @@ class Helpdesk::BulkReplyTickets
       end
     end
 
-    def build_dropbox_attachments note
-      (params[:dropbox_url] || []).each do |urls|
-        note.dropboxes.build(:url => URI.unescape(urls))
-      end
+    def build_cloud_file_attachments note
+      attachment_builder(note, [], params[:cloud_file_attachments])
     end
 
     def email_reply ticket, note

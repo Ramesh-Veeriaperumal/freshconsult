@@ -1,18 +1,22 @@
 module Portal::Helpers::Article
+
 	def article_attachments article
-			output = []
+		output = []
 
-			if(article.attachments.size > 0)
-				output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
+		if(article.attachments.size > 0 or article.cloud_files.size > 0)
+			output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
 
-				article.attachments.each do |a|
-					output << attachment_item(a.to_liquid)
-				end
-
-				output << %(</div>)
+			article.attachments.each do |a|
+				output << attachment_item(a.to_liquid)
+			end
+			(article.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid)
 			end
 
-			output.join('').html_safe
+			output << %(</div>)
+		end
+
+		output.join('').html_safe
 	end
 
 	def article_list folder, limit = 5, reject_article = nil

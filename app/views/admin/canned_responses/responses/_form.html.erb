@@ -16,7 +16,9 @@ jQuery(document).ready(function(){
 	
 	jQuery('.l_placeholder').bind("click", function(ev){
 			active_email_body = jQuery("#ca-content");
-			jQuery('#place-dialog').slideDown();			
+			jQuery('#place-dialog').slideDown('fast', function(){
+        		jQuery(this).groupPlaceholders({'truncateItems': false});
+			});			
 	});
 });
 
@@ -41,7 +43,7 @@ function toggleGroup(access_id)
 <ul class="cnt">
 	<li>
 		<%= f.label(:title, t('.response_name')) %>
-		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
+		<%= f.text_field :title, :class => "text required insert-placeholder-target", "minlength" => "3" %>
 	</li>
 	<li>
 		<label for="ca-content">
@@ -106,7 +108,7 @@ function toggleGroup(access_id)
 </div>
 
 <% content_for :pagefixed do %>
-	<%= render :partial => "/shared/notification_placeholder" %>
+	<%= render :partial => "/shared/placeholder_help", :locals => {:placeholders => ticket_placeholders} %>
 <% end %>
 
 <script>

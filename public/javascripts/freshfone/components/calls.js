@@ -257,6 +257,15 @@ var FreshfoneCalls;
 		},
 		isOngoingCall : function () {
 		return	(this.tConn && this.tConn._status === "open")
+		},
+
+		onCallStopSound : function () {
+			if(typeof threeSixtyPlayer != "undefined"){
+				var self = threeSixtyPlayer;
+		        if(self.lastSound != null && self.lastSound.playState && !self.lastSound.paused ){
+                    self.lastSound.stop();
+                }      		
+			}
 		}
 	};
 }(jQuery));

@@ -41,24 +41,25 @@
 	</div>
 	<div class="control-group">
 		<label class="control-label"><%= t('attach_files') %></label>	
-		<% attach_id = attach_id || "post" %>
-		<div class="controls">
-			<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-			<div class="attachments" id="<%=attach_id%>-container" style="display:none">
-			  <div id="<%=attach_id%>-attachments"></div>
-			</div>
-		</div>	
-					
+		<% attach_id = attach_id || "post"
+		   nsc_param = nsc_param || "post" %>
+		 <div class="controls">
+			<%= render :partial=>'/support/shared/attachment_form', :locals=>{:attach_id=>attach_id, :nsc_param=>nsc_param} %>
+		 </div>
 		<%= render :partial => "/support/shared/multifile_template" %>
 	</div>
 	<% unless @topic.new_record? %>
 	<div class="control-group">
 		<div class="controls">
-			<div class="attachment-list-container">
+
+			<div class="attachment-list-container" >
+				<%= content_tag('h5', t('attachments')) %>
 				<% unless @topic.posts.first.attachments.empty? %>
-				    <%= content_tag('h5', t('attachments')) %>
-				    <%= attachment_container(@topic.posts.first.attachments, true, "article", nil) %>
-			    <% end %>
+					<%= attachment_container(@topic.posts.first.attachments, true, "article", nil) %>
+				<% end %>
+				<% unless @topic.posts.first.cloud_files.empty? %>
+					<%= attachment_container(@topic.posts.first.cloud_files, true, "cloud_file", nil) %>
+				<% end %>
 			</div>
 		</div>
 	</div>

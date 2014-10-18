@@ -1,4 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
+<%#= TODO-RAILS3 RTL %>
 <%= javascript_include_tag :observer_event %>
 <%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders+event_placeholders } %>
 <%= f.error_messages :object_name => 'rule' %>
@@ -96,6 +97,6 @@
 
 <% content_for :pagefixed do %>	
 	<%= render :partial => "/shared/placeholder_help", 
-				:locals => { :placeholders => ticket_placeholders+survey_placeholders+event_placeholders } %>
+				:locals => { :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <% end %>
 

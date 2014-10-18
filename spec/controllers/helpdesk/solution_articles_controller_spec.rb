@@ -167,4 +167,56 @@ describe Solution::ArticlesController do
     response.should redirect_to(solution_category_folder_url(@test_category.id,@test_folder.id ))
   end
 
+  describe "Modified at column" do
+    before(:each) do
+      now = (Time.now.to_f*1000).to_i
+      name = Faker::Name.name
+      post :create, { :solution_article => {:title => name,
+        :description => Faker::Lorem.sentence(3) ,:folder_id => @test_folder.id, :status => 2, :art_type => 1},
+        :tags => {:name => "new"}
+      }
+      @article = @account.solution_articles.find_by_title(name)
+    end
+
+    it "should be same as updated at while creating a new article" do
+      @article.updated_at.should eql @article.modified_at
+    end
+
+    it "should be modified when title changes" do
+      sleep(2)
+      put :update, { :id => @article.id, 
+                    :solution_article => { :title => "Title Changed" },
+                    :tags => {:name => ""},
+                    :category_id => @test_category.id, 
+                    :folder_id => @test_folder.id 
+                  }
+      @article.reload
+      @article.updated_at.should eql @article.modified_at
+    end
+
+    it "should be modified when description changes" do
+      sleep(2)
+      put :update, { :id => @article.id, 
+                    :solution_article => { :description => Faker::Lorem.sentence(2) },
+                    :tags => {:name => ""},
+                    :category_id => @test_category.id, 
+                    :folder_id => @test_folder.id 
+                  }
+      @article.reload
+      @article.updated_at.should eql @article.modified_at
+    end
+
+    it "should not change when other column values changes" do
+      sleep(2)
+      put :update, { :id => @article.id, 
+                    :solution_article => { :status => 1 },
+                    :tags => {:name => ""},
+                    :category_id => @test_category.id, 
+                    :folder_id => @test_folder.id
+                  }
+      @article.reload
+      @article.updated_at.should_not eql @article.modified_at
+    end
+  end
+
 end

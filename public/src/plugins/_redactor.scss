@@ -244,7 +244,7 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 .redactor_dropdown {
 	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
 	top: 28px;
- @include left(0);
+ 	left: 0; //No need RTL
 	z-index: 2004;
 	position: absolute;
 	width: 200px;
@@ -308,7 +308,7 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 	position: fixed;
 	margin: auto;
 	top: 0;
- @include left(0);
+ 	left: 0; //No need RTL
 	width: 100%;
 	height: 100%;
 	z-index: 50000;
@@ -325,7 +325,7 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 	padding: 0;
 	position: fixed;
 	top: 50%;
- @include left(50%);
+ 	left: 50%; //No need RTL
 	
 	box-shadow: 0px 5px 20px #999;
 	-webkit-box-shadow: 0 5px 20px #999; 
@@ -356,7 +356,7 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 }
 #redactor_modal_close {
 	position: absolute;
- @include right(0px);
+ 	@include right(0px);
 	top: 10px;
 	font-size: 24px;
 	width: 30px;

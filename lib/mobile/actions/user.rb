@@ -86,4 +86,8 @@ module Mobile::Actions::User
     privilege?(:view_solutions)
   end
 
+  def can_merge_or_split_tickets
+    privilege?(:merge_or_split_ticket)
+  end
+
 end

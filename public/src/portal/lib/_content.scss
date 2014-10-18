@@ -493,7 +493,7 @@ hr.content-divider{
 		border: 1px solid #CCC;
 		@include border-left(none);
 		border-radius: 0 5px 5px 0;
-		@if $rtl == true{ border-radius: 5px 0 0 5px ; }
+		@if $rtl { border-radius: 5px 0 0 5px ; }
 		padding: 3px 10px;
 		cursor: pointer;
 		z-index: 10;

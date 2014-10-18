@@ -154,7 +154,7 @@ module TicketConstants
     :customer_resolved  => :"helpdesk_ticket_states.resolved_at"
   }
   # CC emails count
-  MAX_EMAIL_COUNT = 20
+  MAX_EMAIL_COUNT = 50
 
   # Used in redis_display_id feature
   TICKET_START_DISPLAY_ID = -100000000

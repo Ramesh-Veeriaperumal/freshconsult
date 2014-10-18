@@ -7,6 +7,7 @@ class ArticleObserver < ActiveRecord::Observer
 	def before_save(article)
 		remove_script_tags(article)
 		set_un_html_content(article)
+		modified_date(article) if (article.description_changed? or article.title_changed?)
 		article.article_changes
 		article.seo_data ||= {}
 	end
@@ -41,6 +42,10 @@ private
 
 	def set_un_html_content(article)
 		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
+    end
+
+    def modified_date(article)
+      article.modified_at = Time.now.utc
     end
 
 end

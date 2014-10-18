@@ -36,8 +36,9 @@ module SubscriptionsHelper
 
   def recharge_options
     cost_options = []
+    credit_price = current_account.subscription.retrieve_addon_price(:freshfone)
     (Freshfone::Credit::RECHARGE_OPTIONS).each{ |credit|
-      cost_options << [number_to_currency(credit, :precision => 0), credit]
+      cost_options << [ format_amount((credit * credit_price), current_account.currency_name), credit ]
     }
     cost_options
   end
@@ -54,6 +55,11 @@ module SubscriptionsHelper
     recharge_quantity = freshfone_credit.recharge_quantity
     return recharge_quantity if Freshfone::Credit::RECHARGE_OPTIONS.include?(recharge_quantity)
     Freshfone::Credit::DEFAULT
+  end
+
+  def multicurrency_followup_amount
+    (@freshfone_credit && @freshfone_credit.last_purchased_credit.nonzero?) ? 
+      @freshfone_credit.last_purchased_credit : Freshfone::Credit::DEFAULT
   end
 
   def fetch_recharge_amount

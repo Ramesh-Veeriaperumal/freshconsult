@@ -3,6 +3,15 @@
 // Adapted from http://github.com/necolas/normalize.css
 // --------------------------------------------------
 
+// Right - To - Left Lang
+// -------------------------
+@if $rtl{
+  html,body,.redactor_editor{
+    direction:rtl;
+  }
+}
+
+
 // Display in IE6-9 and FF3
 // -------------------------
 

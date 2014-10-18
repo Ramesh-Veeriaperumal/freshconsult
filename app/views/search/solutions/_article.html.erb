@@ -2,6 +2,13 @@
 	<% article_url = support_solutions_article_url(article, :host => @ticket.solution_article_host(article)) %> 
 	<tr class="show-menu-on-hover">
 		<td>
+			<div class="search-solution-content">
+				<%= content_tag :span, t('solutions.status.draft'), :class => 'draft-label' unless article.published? %>
+				<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
+				<%= article.title %>
+				<%= link_to "", article_url, :target => "blank", 
+												:title => truncate( article.desc_un_html, 100), :class => "open_in_new" %> 
+			</div>
 			<div class='actions-menu-wrapper'>
 				<div class="actions-menu">
 					<%= t('ticket.insert') %>:
@@ -17,12 +24,6 @@
 					<% end %>
 				</div>
 			</div>
-
-			<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
-			
-			<%= article.title %>
-			<%= link_to "", article_url, :target => "blank", 
-											:title => truncate(article.desc_un_html, :length => 100), :class => "open_in_new" %> 
 		</td>
 	</tr>
 <% end %>

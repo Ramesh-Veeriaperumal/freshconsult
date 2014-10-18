@@ -36,7 +36,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.attachments
-        params[:dropboxes] = ticket.dropboxes
+        params[:cloud_files] = ticket.cloud_files
       end
       deliver_email_notification(params) if ticket.requester_has_email?
     end
@@ -92,7 +92,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments   = []
     @ticket              = params[:ticket] 
     @body                = params[:email_body_plain]
-    @dropboxes           = params[:dropboxes]
+    @cloud_files           = params[:cloud_files]
     @survey_handle       = SurveyHandle.create_handle_for_notification(
                             params[:ticket],params[:notification_type]
                           )
@@ -146,7 +146,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = note.full_text
     @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account, attachments)
     @note = note, 
-    @dropboxes = note.dropboxes, 
+    @cloud_files = note.cloud_files, 
     @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey]),
     @include_quoted_text = options[:quoted_text],
     @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user),
@@ -188,7 +188,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     @ticket = ticket
     @body = note.full_text
-    @dropboxes= note.dropboxes
+    @cloud_files= note.cloud_files
     @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account, attachments)
 
     if attachments.present? && attachments.inline.present?
@@ -226,7 +226,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     @ticket = ticket 
     @body = ticket.description
-    @dropboxes = ticket.dropboxes
+    @cloud_files = ticket.cloud_files
     @body_html = generate_body_html(ticket.description_html, inline_attachments, ticket.account, attachments)
 
     if attachments.present? && attachments.inline.present?

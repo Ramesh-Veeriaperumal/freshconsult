@@ -50,7 +50,7 @@ class Support::Mobihelp::TicketsController < SupportController
     end
   end
 
-  def add_note 
+  def add_note
     @note = @ticket.notes.build({
       "incoming" => true,
       "private" => false,
@@ -89,7 +89,7 @@ class Support::Mobihelp::TicketsController < SupportController
       params[:helpdesk_ticket][:requester_id] = current_user.id # set the user to the current logged in user
 
       @assoc_device = current_user.mobihelp_devices.find_by_device_uuid(params[:helpdesk_ticket][:external_id])
-      unless @assoc_device 
+      unless @assoc_device
         render :json => unregistered_device
       end
       if params[:helpdesk_ticket][:mobihelp_ticket_info_attributes]  && @assoc_device
@@ -129,6 +129,7 @@ class Support::Mobihelp::TicketsController < SupportController
     def mobihelp_user_login
       unless current_user # override validated user check for mobihelp tickets
         @current_user = User.find_by_single_access_token(params['k']); #ignore active / check
+        User.current = @current_user
       end
     end
 end

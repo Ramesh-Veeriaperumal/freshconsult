@@ -37,7 +37,7 @@
 					<div class='article-desc'>
 						<%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %>
 						<div class="muted">
-							<%= t('solution.user_details', :user => article.user.name, :time => formated_date(article.updated_at) ).html_safe %>
+							<%= t('solution.user_details', :user => article.user.name, :time => formated_date(article.modified_at) ).html_safe %>
 						</div>
 					</div>
 				</div>

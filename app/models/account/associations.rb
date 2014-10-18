@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
   
   has_many :attachments, :class_name => 'Helpdesk::Attachment'
 
-  has_many :dropboxes,  :class_name=> 'Helpdesk::Dropbox'
+  has_many :cloud_files,  :class_name=> 'Helpdesk::CloudFile'
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
@@ -227,6 +227,8 @@ class Account < ActiveRecord::Base
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   
   has_one :chat_setting
+  has_many :chat_widgets
+  has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
 
 end

@@ -287,7 +287,7 @@
   margin-top: 20px;
 }
 .freshfone_admin_content {
-  margin: 0 0 0 150px;
+  @include margin(0 0 0 150px);
   .info-data {
     font-size: 15px;
     li {

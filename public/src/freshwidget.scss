@@ -1,7 +1,11 @@
 @import "settings/settings";
-
 $button-radius: 6px;
-
+@if $rtl {
+	html,body,.redactor_editor{
+		text-align: right;
+		direction:rtl !important;
+	}
+}
 .widget-ovelay{
 	@include opacity(0.5);
 	background-color:white;
@@ -10,7 +14,8 @@ $button-radius: 6px;
 .freshwidget-container, .widget-ovelay {
 	position:fixed;
 	_position:absolute;
-	left:0px; top:0px;
+	@include left(0px); 
+	top:0px;
 	width:100%;
 	height:100%;
 	z-index:90002;
@@ -23,22 +28,22 @@ $button-radius: 6px;
 	z-index:999999; //need to override chat button
 }
 
-.fd-btn-left a{ left:-2px; }
-.fd-btn-left a:hover{ left:0px; }
+.fd-btn-left a{ @include left(-2px); }
+.fd-btn-left a:hover{ @include left(0px); }
 
 .fd-btn-right{ 
-	right:-2px;
+	@include right(-2px);
 	*right: 35px; /* IE 7 specific style */
 }
 .fd-btn-right:hover{ 
-	right:0px;
+	@include right(0px);
 	*right:33px; /* IE 7 specific style */
 }
 .ie8.fd-btn-right, .ie9.fd-btn-right{ 
-	right:35px; /* IE 8 & 9 specific style */
+	@include right(35px); /* IE 8 & 9 specific style */
 }
 .ie8.fd-btn-right:hover, .ie9.fd-btn-right:hover{ 
-	right:33px; /* IE 8 & 9 specific style */
+	@include right(33px); /* IE 8 & 9 specific style */
 }
 
 .fd-btn-top{ top:-2px; }
@@ -69,7 +74,7 @@ $button-radius: 6px;
 
 .freshwidget-customimage{ overflow:visible; }
 
-.fd-btn-right .freshwidget-customimage{ right:0px; }
+.fd-btn-right .freshwidget-customimage{ @include right(0px); }
 
 .freshwidget-button{
 	position:fixed;
@@ -130,15 +135,15 @@ $button-radius: 6px;
 .freshwidget-dialog{
 	position:absolute;
 	padding:8px 0; 
-	left:50%;
-	margin-left:-420px;
+	@include left(50%);
+	@include margin-left(-420px);
 	top:20px;
 	z-index:900010;
 	iframe{ width: 850px; height: 600px; }
 	.widget-close{
 		display: block;
 		position:absolute;
-		left:-8px;
+		@include left(-8px);
 		top:30px;
 		width: 28px;
 		height: 28px; 
@@ -164,7 +169,7 @@ $button-radius: 6px;
 			font-weight: bold;
 			margin:0;
 			padding:0;
-			left: 15px;
+			@include left(15px);
 			z-index:10;
 			cursor:pointer;
 			&:before{
@@ -172,8 +177,8 @@ $button-radius: 6px;
 			}
 		}
 		.freshwidget-dialog{
-			left: 0;
-			margin-left: 0;
+			@include left(0);
+			@include margin-left(0);
 			top: 0;
 			iframe{
 				position:fixed;

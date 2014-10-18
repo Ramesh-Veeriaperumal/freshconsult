@@ -38,6 +38,10 @@
 
       if("<%= @smtp_mailbox.present? && @smtp_mailbox.new_record? %>") jQuery("#reply_to_id").trigger("change");
 
+      <% if (@smtp_mailbox.present? && @smtp_mailbox.user_name) %>
+        jQuery("#email_config_smtp_mailbox_attributes_user_name").val("<%= @smtp_mailbox.user_name%>")
+      <% end %>
+
       jQuery("#email_config_smtp_mailbox_attributes_user_name")
         .bind("change keyup",
           function(ev){

@@ -118,6 +118,15 @@ describe ContactsController do
     get :index, {:state => "blocked", :letter => []}
     response.body.should =~ /#{blocked_contact.email}/
   end
+
+  it "should list all deleted contacts" do
+    deleted_contact = Factory.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
+                              :user_role => 3, :active => false, 
+                              :deleted => true)
+    deleted_contact.save(false)
+    get :index, {:state => "deleted", :letter => []}
+    response.body.should =~ /#{deleted_contact.email}/
+  end
   
   it "should list all contacts created xml" do
     get :index, :format => 'xml'
@@ -158,6 +167,16 @@ describe ContactsController do
                               :user_role => 3, :active => true)
     contact.save(:validate => false)
     get :index, :format => 'xml', :query => "email is #{contact.email}"
+    response.body.should =~ /#{contact.email}/
+    response.body.should_not =~ /#{@sample_contact.email}/
+  end
+
+  it "should list deleted contacts matching the query with filter condition as deleted state" do
+    contact = Factory.build(:user, :account => @acc, :phone => "23423422334234", :email => Faker::Internet.email,
+                              :user_role => 3, :active => false, 
+                              :deleted => true)
+    contact.save(false)
+    get :index,:state => "deleted", :letter => [],:format => 'xml', :query => "email is #{contact.email}"
     response.body.should =~ /#{contact.email}/
     response.body.should_not =~ /#{@sample_contact.email}/
   end

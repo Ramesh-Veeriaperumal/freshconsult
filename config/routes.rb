@@ -809,6 +809,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :cloud_files
+
+    resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
+                                                        :company_autocomplete => :get }
+
     resources :agent_analysis_reports, :controller => 'agents_analysis' do
       collection do
         post :generate
@@ -1424,7 +1429,11 @@ Helpkit::Application.routes.draw do
 
   
   match '/support/theme.:format' => 'theme/support#index'
+  match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
+
+
+
   namespace :support do
     match 'home' => 'home#index', :as => :home
     match 'preview' => 'preview#index', :as => :preview
@@ -1815,5 +1824,16 @@ Helpkit::Application.routes.draw do
   #     billing.resources :billing, :collection => { :trigger => :post }
   #   end
   # end
+  match '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
+  match '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+
+  match '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
+
+  match '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
+
+  match '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
+  match '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
+
+  match '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 end

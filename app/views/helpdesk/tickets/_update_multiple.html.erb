@@ -80,7 +80,7 @@
   jQuery('#no-response').die('click');
   jQuery('#no-response').live('click', function(){
     jQuery('#bulkcontent').css('height','auto');
-    jQuery('#bulktickets').animate({marginLeft: '+=688px'}, 300, function() {
+    jQuery('#bulktickets').removeClass('bulk-tickets-animation', function() {
       jQuery('#bulk-response-group').addClass('hide');
     });
     jQuery('#no-response').toggle('fast');

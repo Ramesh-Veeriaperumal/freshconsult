@@ -41,14 +41,9 @@
 
 					<%= attachment_container(@ticket.attachments,true,"ticket") %>
 				<% end %>
-
-				<% unless @ticket.dropboxes.empty? %>
-			        <ul class="attachment_list">
-			        <%@ticket.dropboxes.each do |dropbox| %> 
-			          <%= render :partial => '/helpdesk/shared/dropbox',:locals => {:dropbox => dropbox, :show_delete => true, :url => [@item] } %>
-			        <%end%> 
-			        </ul>
-      			<% end %>
+				<% unless @ticket.cloud_files.empty? %>
+					<%= attachment_container(@ticket.cloud_files,true,"cloud_file") %>
+      	<% end %>
 
 			</div> 
 	    </div>               

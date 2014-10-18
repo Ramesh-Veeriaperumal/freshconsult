@@ -127,6 +127,12 @@ module Mobile::Actions::Ticket
 
   def call_details
     call = self.freshfone_call
-    {:call_url => call.recording_url, :call_duration => call.call_duration} if call.present?
+    {:call_url => recording_audio_url, :call_duration => call.call_duration, :twilio_url => call.recording_url} if call.present?
+  end
+
+  def recording_audio_url
+    return if self.freshfone_call.recording_audio.nil?
+    AwsWrapper::S3Object.url_for(self.freshfone_call.recording_audio.content.path('original'), self.freshfone_call.recording_audio.content.bucket_name,
+                                :expires => 3600.seconds, :secure => true, :response_content_type => self.freshfone_call.recording_audio.content_content_type)
   end
 end
