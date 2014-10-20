@@ -160,7 +160,7 @@
 					<%= content_tag(:label, t('account.page_colors.title'), :class => "control-label" ) %>
 					<div class="controls">
 						<div class="row-fluid">
-						<% portal.fields_for :preferences do |p| %>
+						<%= portal.fields_for :preferences do |p| %>
 							<div class="span3">
 								<%= p.label :header_color, t('account.page_colors.header') %>
 								<div class="color">

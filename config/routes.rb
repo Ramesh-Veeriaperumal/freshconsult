@@ -59,7 +59,7 @@ Helpkit::Application.routes.draw do
   root :to => 'home#index'
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
-  match '/images/helpdesk/attachments/:id/:style.:format' => 'helpdesk/attachments#show', :via => :get
+  match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
   match '/javascripts/:action.:format' => 'javascripts#index'
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
@@ -746,6 +746,7 @@ Helpkit::Application.routes.draw do
         get :requesters
         get :agents
         get :companies
+        get :tags
       end
     end
 
@@ -1335,7 +1336,6 @@ Helpkit::Application.routes.draw do
         put :remove_stamp
         put :vote
         delete :destroy_vote
-        get :show
       end
       
       resources :posts, :except => :new do
@@ -1484,6 +1484,9 @@ Helpkit::Application.routes.draw do
       match '/forums/:id/:filter_topics_by' => 'forums#show', :as => :filter_topics
       match '/forums/:id/page/:page' => 'forums#show'
 
+      match '/topics/my_topics/page/:page' => 'topics#my_topics'
+      match '/topics/:id/page/:page' => 'topics#show'
+
       resources :topics, :except => :index do
         collection do
           get :my_topics
@@ -1501,9 +1504,6 @@ Helpkit::Application.routes.draw do
           put :toggle_solution
           get :reply
         end
-
-        match '/topics/my_topics/page/:page' => 'topics#my_topics'
-        match '/topics/:id/page/:page' => 'topics#show'
 
         resources :posts, :except => [:index, :new, :show] do
           member do

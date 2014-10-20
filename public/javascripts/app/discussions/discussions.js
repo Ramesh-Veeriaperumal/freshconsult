@@ -42,7 +42,16 @@ window.App = window.App || {};
 		},
 
 		bindHandlers: function () {
+			this.bindDeleteConfirm();
+		},
 
+		bindDeleteConfirm: function () {
+			if($('#del') !== undefined){
+				var submit_btn_id = $('#del').data('target') + '-submit';
+				$(submit_btn_id).live('click', function () {
+					$('#delete_object').trigger('click');
+				})
+			}
 		},
 
 		bindShortcuts: function () {

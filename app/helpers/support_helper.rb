@@ -5,6 +5,11 @@ module SupportHelper
   include Redis::PortalRedis
   include Portal::Helpers::Article
 
+  # TODO-RAILS3 the below helpers are added to use liquids truncate
+  # HACK Need to scope down liquid helpers and include only the required ones 
+  # and ignore all rails helpers in portal_view
+  include Liquid::StandardFilters
+
 	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
 					  "Lato" => "Lato:regular,italic,900,900italic",

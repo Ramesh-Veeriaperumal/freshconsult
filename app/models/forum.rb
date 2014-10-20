@@ -89,7 +89,7 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   
   attr_accessible :name, :description, :topics_count, :posts_count, :description_html, 
-    :forum_type, :import_id, :forum_visibility
+    :forum_type, :import_id, :forum_visibility, :customer_forums_attributes
   
   xss_sanitize :only=>[:description_html], :html_sanitize => [:description_html]
 

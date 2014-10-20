@@ -13,14 +13,14 @@ class Helpdesk::AttachmentsController < ApplicationController
     redir_url = AwsWrapper::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
                                           :expires => 300.seconds, :secure => true, :response_content_type => @attachment.content_content_type)
     respond_to do |format|
-      format.html do
-        redirect_to redir_url
-      end
       format.xml  do
         render :xml => @attachment.to_xml
       end
       format.nmobile do
         render :json => { "url" => redir_url}.to_json
+      end
+      format.all do
+        redirect_to redir_url
       end
     end
   end

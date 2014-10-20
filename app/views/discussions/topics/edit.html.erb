@@ -13,7 +13,7 @@
   <div class="button-container">
     <% if privilege?(:delete_topic, @topic) %>
       <div class="pull-left">
-        <%= link_to(t('delete'), discussions_topic_path(@topic), :method => 'delete', :class => "hide", :id => "delete_topic") %>
+        <%= link_to(t('delete'), discussions_topic_path(@topic), :method => 'delete', :class => "hide", :id => "delete_object") %>
       <button id="del"
           class="btn"
           data-target="#topic-delete-confirmation" 
@@ -42,10 +42,3 @@
   <% end %>
   </p>
 </div>
-
-<% javascript_tag do -%>
-  jQuery('#topic-delete-confirmation-submit').live('click',function(){
-    jQuery('#topic-delete-confirmation').hide();
-    jQuery('#delete_topic').trigger('click');
-});
-<% end %>
