@@ -27,7 +27,7 @@ class Solution::Folder < ActiveRecord::Base
   
   scope :alphabetical, :order => 'name ASC'
 
-  attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default
+  attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default, :customer_folders_attributes
   
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 

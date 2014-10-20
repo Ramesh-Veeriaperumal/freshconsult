@@ -11,7 +11,7 @@
   <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
 	<div class="button-container">
 		<div class="floatl">
-			<%= link_to(t('delete'), discussion_path(@forum_category), :method => 'delete', :class => "hide", :id => "delete_forum_category") %>
+			<%= link_to(t('delete'), discussion_path(@forum_category), :method => 'delete', :class => "hide", :id => "delete_object") %>
 			<button id="del"
 					class="btn"
 					data-target="#forum-category-delete-confirmation" 
@@ -39,11 +39,4 @@
 		<% end %>
 		</p>
 	</div>
-<% end %>
-
-<% javascript_tag do -%>
-	jQuery('#forum-category-delete-confirmation-submit').live('click',function(){
-		jQuery('#category-delete-confirmation').hide();
-		jQuery('#delete_forum_category').trigger('click');
-});
 <% end %>

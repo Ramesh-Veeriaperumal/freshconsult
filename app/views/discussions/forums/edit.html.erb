@@ -6,7 +6,7 @@
 <%= form_for @forum, :url => discussions_forum_path(@forum)   do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container align-left">
-		<%= link_to(t('delete'), discussions_forum_path(@forum), :method => 'delete', :class => "hide", :id => "delete_forum") %>
+		<%= link_to(t('delete'), discussions_forum_path(@forum), :method => 'delete', :class => "hide", :id => "delete_object") %>
 			<button id="del"
 					class="btn"
 					data-target="#forum-delete-confirmation" 
@@ -35,10 +35,3 @@
 		</p>
 	</div>
 <% end -%>
-
-<% javascript_tag do -%>
-	jQuery('#forum-delete-confirmation-submit').live('click',function(){
-		jQuery('#forum-delete-confirmation').hide();
-		jQuery('#delete_forum').trigger('click');
-});
-<% end %>
