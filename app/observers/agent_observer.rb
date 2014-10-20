@@ -10,7 +10,9 @@ class AgentObserver < ActiveRecord::Observer
     update_agents_level(agent)
   end
 
-  
+  def after_commit_on_create(agent)
+    update_crm(agent)
+  end
 
   def after_save(agent)
     update_agent_levelup(agent)
@@ -58,4 +60,9 @@ class AgentObserver < ActiveRecord::Observer
       $sqs_autorefresh.send_message(body) unless Rails.env.test?
     end
       
+    def update_crm(agent)
+      if agent.account.full_time_agents.count > 1
+        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
+      end
+    end
 end

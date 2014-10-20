@@ -36,10 +36,11 @@ class CRM::AddToCRM
   end
 
   class DeletedCustomer 
+    extend Resque::AroundPerform
     @queue = QUEUE
 
     def self.perform(account_id)
-      CRM::Salesforce.new.update_deleted_account_to_crm(account_id) if Rails.env.production?
+      CRM::Salesforce.new.update_deleted_account_to_crm(Account.current.id) if Rails.env.production?
     end
   end
 
@@ -55,6 +56,13 @@ class CRM::AddToCRM
     end
   end
 
+  class UpdateTrialAccounts
+    extend Resque::AroundPerform
+    @queue = QUEUE
+
+    def self.perform(args)
+      CRM::Salesforce.new.update_trial_accounts(Account.current.id) if Rails.env.production?
+    end
+  end
+
  end
-
-

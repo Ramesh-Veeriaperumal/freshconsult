@@ -50,7 +50,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
         subscription = payment.subscription
         if subscription.subscription_payments.first.created_at > 1.year.ago
           response = HTTParty.get('https://shareasale.com/q.cfm', :query => {
-              :amount => (payment.amount.to_f * payment.subscription.currency_exchange_rate.to_f),
+              :amount => (payment.amount.to_f),
               :tracking => payment.id,
               :transtype => "sale",
               :merchantID => SubscriptionAffiliate::AFFILIATES[:shareasale][:merchant_id],
