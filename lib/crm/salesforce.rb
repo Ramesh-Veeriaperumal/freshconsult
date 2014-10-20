@@ -5,7 +5,7 @@ class CRM::Salesforce < Resque::Job
   RECORD_TYPES        =   { :account => "Account", :contact => "Contact", :opportunity => "Opportunity",
                             :opportunity_contact_role => "OpportunityContactRole" }
 
-  PAYMENT_ATTRIBUTES  =   { :Name => :to_s, :Agents__c => :agents, :Plan__c => :plan_name, 
+  PAYMENT_ATTRIBUTES  =   { :Agents__c => :agents, :Plan__c => :plan_name, 
                             :Amount__c => :usd_equivalent, :Amount => :usd_equivalent, 
                             :Renewal_Period__c => :renewal_period }
 
@@ -14,7 +14,8 @@ class CRM::Salesforce < Resque::Job
   BUSINESS_TYPES      =   { :new =>  "New Business", :existing => "Existing Business - Renewal",
                             :misc => "Existing Business - Upgrade", :day_pass => "Day Pass" }
 
-  CUSTOMER_STATUS     =   { :free => "Free", :paid => "Customer", :deleted => "Deleted" }
+  CUSTOMER_STATUS     =   { :trial => "Trial", :suspended => "Trial Expired", :free => "Free", 
+                            :paid => "Customer", :deleted => "Deleted",  }
   
   PAYMENT_TYPE        =   "Credit Card"
 
@@ -29,10 +30,9 @@ class CRM::Salesforce < Resque::Job
     #returned_value = sandbox(0){
       crm_ids = search_crm_record(payment.account_id)
       update_paid_account(crm_ids, payment)   
-
+      
       return if business_type(payment).eql?(BUSINESS_TYPES[:existing])
       opportunity_id = add_opportunity(crm_ids, payment)
-      # add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
     #}
     #FreshdeskErrorsMailer.deliver_error_in_crm!(payment) if returned_value == 0
   end
@@ -70,6 +70,23 @@ class CRM::Salesforce < Resque::Job
     owner
   end
 
+  # Updates accounts/contacts in SFDC when trial extended or full time agents added.
+  def update_trial_accounts(account_id)
+    account = Account.current
+    crm_ids = search_crm_record(account_id)
+    next_renewal_date = account.subscription.next_renewal_at.to_s(:db)
+    agent_count = account.full_time_agents.count.to_s
+    
+    record_attributes = { :Customer_Status__c => CUSTOMER_STATUS[:trial], 
+      :Account_Renewal_Date__c => next_renewal_date,
+      :Agent_Count__c => agent_count }
+
+    [:account, :contact].each do |record|
+      record_attributes.merge!({:id => crm_ids[record]})
+      update_records_for_trial_accounts(RECORD_TYPES[record], record_attributes)
+    end
+  end
+
   private 
 
     def binding
@@ -92,7 +109,7 @@ class CRM::Salesforce < Resque::Job
       search_string = %(SELECT Id, AccountId FROM Contact WHERE Freshdesk_Account_Id__c = '#{account_id}')
       response = binding.query(:searchString => search_string).queryResponse
 
-      return create_new_crm_account(Account.find(account_id)) if response.result[:size].eql?("0")
+      return create_new_crm_account(Account.current) if response.result[:size].eql?("0")
 
       record = (response.result.records.is_a?(Array))? response.result.records[0] : response.result.records
       
@@ -117,8 +134,15 @@ class CRM::Salesforce < Resque::Job
 
     def add_opportunity(crm_ids, payment)
       opportunity_id = fetch_opportunity(crm_ids[:account])
-      data = ({:id => opportunity_id}).merge(opportunity_details(crm_ids, payment))
-      binding.update('sObject {"xsi:type" => "Opportunity"}' => data)
+      data = opportunity_details(crm_ids, payment)
+      if opportunity_id
+        data.merge!({:id => opportunity_id})
+        binding.update('sObject {"xsi:type" => "Opportunity"}' => data)
+      else
+        data.merge!(:Name => payment.account.name)
+        opportunity_id = add_record(RECORD_TYPES[:opportunity], data)
+        add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
+      end  
       opportunity_id
     end
 
@@ -134,7 +158,8 @@ class CRM::Salesforce < Resque::Job
       subscription = payment.account.subscription
       binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
         :Account_Renewal_Date__c => subscription.next_renewal_at,
-        :Customer_Status__c => CUSTOMER_STATUS[:paid], :Monthly_Revenue__c => subscription.cmrr.to_s })
+        :Customer_Status__c => CUSTOMER_STATUS[:paid], :Monthly_Revenue__c => subscription.cmrr.to_s,
+        :Agent_Count__c => subscription.agent_limit.to_s })
     end
 
     def update_account(crm_ids, domain, status)
@@ -153,7 +178,7 @@ class CRM::Salesforce < Resque::Job
       account_info = account_attributes(payment.account)
       payment_info = payment_attributes(payment).delete_if{|k, v| [:Name, :Amount].include? k }
       record = { :id => crm_account_id, :Name => payment.account.name, 
-                  :Customer_Status__c => CUSTOMER_STATUS[:paid] }
+                  :Customer_Status__c => CUSTOMER_STATUS[:paid], :Agent_Count__c => payment.agents.to_s }
 
       record.merge(payment_info.merge(account_info))
     end
@@ -184,7 +209,7 @@ class CRM::Salesforce < Resque::Job
     end
 
     def payment_attributes(payment)
-      return { :Name => payment.to_s } unless DayPassPurchase.find_by_payment_id(payment.id).blank?
+      # return { :Name => payment.to_s } unless DayPassPurchase.find_by_payment_id(payment.id).blank?
       payment_attr = PAYMENT_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = payment.send(v).to_s; h } 
     end
 
@@ -229,5 +254,10 @@ class CRM::Salesforce < Resque::Job
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+    end
+
+    def update_records_for_trial_accounts(record_type, record_attributes)      
+      sobject_type = %(sObject { 'xsi:type' => '#{record_type}' })
+      binding.update(sobject_type => record_attributes)
     end
 end
