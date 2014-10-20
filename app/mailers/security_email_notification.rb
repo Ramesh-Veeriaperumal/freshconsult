@@ -41,10 +41,10 @@ class SecurityEmailNotification < ActionMailer::Base
       part.html { render "#{body_message_file}.text.html.erb" }
       part.text { render "#{body_message_file}.text.plain.erb" }
     end.deliver
-
-    # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
-    # Keep this include at end
-    include MailerDeliverAlias
   end
 
+  # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
+  # Keep this include at end
+  include MailerDeliverAlias
+    
 end
