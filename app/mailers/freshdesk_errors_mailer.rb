@@ -45,6 +45,19 @@ class FreshdeskErrorsMailer < ActionMailer::Base
       part.html { render "spam_watcher" }
     end.deliver
   end 
+
+  def spam_blocked_alert(options={}) 
+    headers = {
+      :to           =>  Helpdesk::EMAIL[:spam_watcher],
+      :from         =>  Helpdesk::EMAIL[:default_requester_email],
+      :subject      =>  (options[:subject] || "Abnormal load by spam watcher"),
+      :sent_on      =>  Time.now
+    }
+    @additional_info = options[:additional_info]
+    mail(headers) do |part|
+      part.html { render "spam_blocked_alert.html" }
+    end.deliver
+  end
   
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end
