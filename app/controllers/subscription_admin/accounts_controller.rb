@@ -87,7 +87,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end 
 
   def select_account_shard
-    Sharding.select_shard_of(params[:id]) do 
+    Sharding.admin_select_shard_of(params[:id]) do 
       Sharding.run_on_slave do
         yield 
       end
