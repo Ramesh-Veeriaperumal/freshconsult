@@ -1,0 +1,37 @@
+<![CDATA[
+
+    <% if Rails.env.development? %>
+        <%= render :partial => "integrations/gmail_gadgets/gadget_development_css_js.html"%>
+    <% else %>
+        <%= include_cloudfront_css :gadget %>
+        <%= include_cloudfront_js :gadget %>
+    <%end%>
+
+    <style type="text/css">
+        html {
+            overflow-y: hidden;
+        }
+        body {
+            min-width: 300px;
+        }
+    </style>
+
+    <div id="maxmin" class="minimize hide" title="Minimize the Gadget">&nbsp;</div>
+    <div id="maxmin_tip" class="hide">Click here to maximize the gadget</div>
+    <div id="fullbody" class="hide">
+        <ul class="tabs" id="gcgTabs">
+        <li id="contact" class="active" onclick="showContact()"><a href="#">Contact</a></li>
+        <li id="recent_tickets"><a href="#" onclick="showRecentTickets()">Recent Tickets</a></li>
+        <li id="ticket"><a href="#" onclick="showTicket()">Ticket</a></li>
+        </ul>
+        <div id="content_div"></div>
+        <div id="output"></div>
+    </div>
+    <div id="auth" class="hide">
+        <div class="center">You have not yet linked this Gmail account with an agent in Freshdesk.</div><br/>
+        <a class="special uiButton" href="javascript:void(0);">Connect your Freshdesk</a>
+    </div>
+    <div id="error"></div>
+
+    <%= render :partial => "integrations/gmail_gadgets/gadget_content.js" %>
+]]>

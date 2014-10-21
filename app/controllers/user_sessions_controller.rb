@@ -14,6 +14,7 @@ include Redis::RedisKeys
 include Redis::TicketsRedis
 include SsoUtil
 include Mobile::Actions::Push_Notifier
+include GoogleLoginHelper
 
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => :destroy
@@ -21,9 +22,9 @@ include Mobile::Actions::Push_Notifier
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy]
-  skip_filter :select_shard, :only => [:openid_google,:opensocial_google]
-  skip_before_filter :set_current_account, :only => [:openid_google,:opensocial_google] 
-  skip_before_filter :set_locale, :only => [:openid_google,:opensocial_google] 
+  skip_filter :select_shard, :only => [:oauth_google_gadget,:opensocial_google]
+  skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
+  skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
   
   def new
     # Login normal supersets all login access (can be used by agents)
@@ -250,7 +251,7 @@ include Mobile::Actions::Push_Notifier
     end
   end
 
-  def openid_google
+  def oauth_google_gadget
     base_domain = AppConfig['base_domain'][Rails.env]
     domain_name = params[:domain] 
     signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?
@@ -262,16 +263,12 @@ include Mobile::Actions::Push_Notifier
     end
     Sharding.select_shard_of(account_id) do
       @current_account = Account.find(account_id)
-      cust_url = @current_account.full_domain    
-      http_s = @current_account.ssl_enabled ? "https" : "http"
-      ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
-      t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
-      return_url = http_s+"://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
-      re_alm = http_s+"://"+cust_url
-      logger.debug "domain name is : #{domain_name}, return_url is : #{return_url}, re_alm : #{re_alm}"
-      url = nil
-      url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
-      authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
+      @current_account.make_current
+      @current_portal = @current_account.main_portal
+      @current_portal.make_current
+      cust_url = @current_account.full_domain
+      gv_id = params[:t] || "" # passed token will be preserved for authentication.
+      redirect_to construct_google_auth_url(cust_url, 'google_gadget_oauth2') << "%26gv_id%3D" << "#{gv_id}" # "google_gadget_oauth2" is the base key value in the oauth_config.yml file.
     end
   end
   

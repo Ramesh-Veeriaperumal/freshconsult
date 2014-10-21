@@ -27,7 +27,7 @@ stylesheets:
   :freshwidget  => [ "freshwidget"],
   :tkt_details  => [ "page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites"],
   :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
-  :gadget  => [ "common","pages","sprites","app/app-common","plugins","app/ie","page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites","page/gadget"],
+  :gadget  => [ "common","pages","module","sprites","app/app-common","app/app-bootstrap","plugins","app/ie","page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites","page/gadget"],
   :google_signup  => [ "common","page/google-signup"],
   :reports  => [ "page/reports"],
   :print  => [ "print/print"],
@@ -207,6 +207,14 @@ javascripts:
     - public/javascripts/app/discussions/topic_list.js
     - public/javascripts/app/discussions/topic.js
     - public/javascripts/app/discussions/moderation.js
+
+  gadget:
+    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/redactor/redactor.js
+    - public/javascripts/redactor/freshdesk_redactor.js
+    - public/javascripts/prototype.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
 
   search:
     - public/javascripts/app/search.js

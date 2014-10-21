@@ -38,6 +38,7 @@ development:
     scope: read write sign
     api_key: vsg6tg9qsdhmp28q2yugtdng
  google_oauth2:
+  provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
@@ -45,6 +46,15 @@ development:
     prompt: none
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
     name: google_login
+ google_gadget_oauth2:
+  provider: google_oauth2
+  consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
+  consumer_secret: cK1hUwD5fyjV5tgS3mn_Ad2M
+  api_key: AIzaSyA5RBoFAIF6jK-BP7r-A-3BB3HxM_R6eSg
+  options:
+    prompt: none
+    scope: https://www.googleapis.com/auth/calendar profile email
+    name: google_gadget
  shopify:
   consumer_token: b78ef7808d2dba974b17fd21dc94201f
   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
@@ -61,6 +71,7 @@ defaults: &defaults
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
  google_oauth2:
+  provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
@@ -68,6 +79,15 @@ defaults: &defaults
     prompt: none
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
     name: google_login
+ google_gadget_oauth2:
+  provider: google_oauth2
+  consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
+  consumer_secret: cK1hUwD5fyjV5tgS3mn_Ad2M
+  api_key: AIzaSyA5RBoFAIF6jK-BP7r-A-3BB3HxM_R6eSg
+  options:
+    prompt: none
+    scope: https://www.googleapis.com/auth/calendar profile email
+    name: google_gadget
 
 test:
  <<: *defaults
@@ -90,6 +110,7 @@ staging:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
  google_oauth2:
+  provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
@@ -97,6 +118,15 @@ staging:
     prompt: none
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
     name: google_login
+ google_gadget_oauth2:
+  provider: google_oauth2
+  consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
+  consumer_secret: cK1hUwD5fyjV5tgS3mn_Ad2M
+  api_key: AIzaSyA5RBoFAIF6jK-BP7r-A-3BB3HxM_R6eSg
+  options:
+    prompt: none
+    scope: https://www.googleapis.com/auth/calendar profile email
+    name: google_gadget
  mailchimp:
   consumer_token: 187267923355
   consumer_secret: 0c8b6473fe421fa60dbd0f3befc4f219

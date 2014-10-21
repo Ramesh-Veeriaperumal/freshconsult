@@ -7,14 +7,18 @@ class GoogleLoginController < AccountsController
   before_filter :login_account, :only =>[:create_account_from_google]
 
   def marketplace_login
-    redirect_to construct_google_auth_url('')
+    redirect_to construct_google_auth_url('', 'google_oauth2')
+  end
+
+  def google_gadget_login #endpoint given for app install in google_gadget
+    redirect_to construct_google_auth_url('', 'google_gadget_oauth2')
   end
 
   def portal_login
-    redirect_to construct_google_auth_url(current_account.full_domain)
+    redirect_to construct_google_auth_url(current_account.full_domain, 'google_oauth2')
   end
 
-  def create_account_from_google
+  def create_account_from_google #return url endpoint for all google_apps
     params[:state].present? ? login_from_portal : login_from_marketplace
     if login_account.present?
       login_account.make_current
@@ -58,6 +62,14 @@ class GoogleLoginController < AccountsController
       end
     end
 
+    def google_viewer_id_from_state
+      if params[:state].present?
+        google_viewer_id = state_params['gv_id'] ? state_params['gv_id'][0].to_s : nil
+      else
+        nil
+      end
+    end
+
     def login_from_marketplace
       create_account_user and return if login_account.nil?
     end
@@ -84,7 +96,13 @@ class GoogleLoginController < AccountsController
 
     def activate_user_and_redirect
       request_domain = requested_portal_url
-      verify_domain_user
+      google_viewer_id = google_viewer_id_from_state
+      if google_viewer_id.present? # Request is from Gadget.
+        google_gadget_auth(google_viewer_id)
+        render :text => @notice and return unless @gadget_error.nil?
+      else # Request is not from Gadget.
+        verify_domain_user # verify_domain_user creates a user and makes him active if the user is not present.
+      end
       set_redis_and_redirect(request_domain, email, login_account, uid)
     end
 
