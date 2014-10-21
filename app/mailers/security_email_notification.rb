@@ -11,9 +11,9 @@ class SecurityEmailNotification < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
-    @model = model, 
-    @changes = changed_attributes, 
+    @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
+    @model = model
 
     mail(headers) do | part|
       part.html { render "agent_alert_mail.html" }
@@ -33,9 +33,9 @@ class SecurityEmailNotification < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
-    @model = model, 
-    @changes = changed_attributes, 
+    @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
+    @model = model
 
     mail(headers) do | part|
       part.html { render "#{body_message_file}.text.html.erb" }
