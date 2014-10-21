@@ -16,8 +16,8 @@ class SecurityEmailNotification < ActionMailer::Base
     @model = model
 
     mail(headers) do | part|
-      part.html { render "agent_alert_mail.html" }
-      part.text { render "agent_alert_mail.text" }
+      part.text { render "agent_alert_mail.text.plain.erb" }
+      part.html { render "agent_alert_mail.text.html.erb" }
     end.deliver
   end
 
@@ -38,8 +38,8 @@ class SecurityEmailNotification < ActionMailer::Base
     @model = model
 
     mail(headers) do | part|
-      part.html { render "#{body_message_file}.text.html.erb" }
       part.text { render "#{body_message_file}.text.plain.erb" }
+      part.html { render "#{body_message_file}.text.html.erb" }
     end.deliver
   end
 
