@@ -79,7 +79,7 @@
 		jQuery('#err_no_fields_selected').addClass('hide');
 		
 	 	getFilterData();
-		jQuery("#exportFilter input[name=data_hash]").val(JSON.stringify(query_hash));
+		jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
 		jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "sloading loading-small", 0);
 		setTimeout(function(){
 			active_dialog.dialog("close");
