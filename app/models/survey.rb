@@ -48,11 +48,10 @@ class Survey < ActiveRecord::Base
   end
  
   def self.satisfaction_survey_html(ticket)
-        
-        survey_handle = SurveyHandle.create_handle_for_place_holder(ticket)
-        
-        ActionController::Base.helpers.render(:partial => "app/views/helpdesk/ticket_notifier/satisfaction_survey.html.erb",
-                                        :locals => {:ticket => ticket, :survey_handle => survey_handle, :surveymonkey_survey => nil})
+    survey_handle = SurveyHandle.create_handle_for_place_holder(ticket)
+    SurveyHelper.render_content_for_placeholder({ :ticket => ticket, 
+                                     :survey_handle => survey_handle, 
+                                     :surveymonkey_survey => nil})
   end
 
   def self.survey_names(account)

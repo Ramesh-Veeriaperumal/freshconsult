@@ -44,10 +44,8 @@ module Integrations::SurveyMonkey
   end
 
   def self.survey_html ticket
-    ActionController::Base.helpers.render({
-      :partial => "app/views/helpdesk/ticket_notifier/satisfaction_survey.html.erb",
-      :locals => {:survey_handle => nil, :in_placeholder => true,
-        :surveymonkey_survey => survey_for_notification(Survey::PLACE_HOLDER, ticket)}})
+    SurveyHelper.render_content_for_placeholder({:survey_handle => nil, :in_placeholder => true,
+                       :surveymonkey_survey => survey_for_notification(Survey::PLACE_HOLDER, ticket)})
   end
 
   #checks for both account validity and whether SM integration is enabled
