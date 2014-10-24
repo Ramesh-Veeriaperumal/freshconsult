@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "94856ef593c3f80e307427c5f7320a9eb23056164469b458ab609ed28692ca60",
-    "current": "94856ef593c3f80e307427c5f7320a9eb23056164469b458ab609ed28692ca60"
+    "previous": "1ebbb1041a5fbfcc33471c6eac388192810665a47330f44bbb2ef7ec5bdaca79",
+    "current": "1ebbb1041a5fbfcc33471c6eac388192810665a47330f44bbb2ef7ec5bdaca79"
   },
   "fonts": [
-    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.ttf",
-    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.svg",
-    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.woff",
-    "public/generated/fonts/glyphs_94856ef593c3f80e307427c5f7320a9e.eot"
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.ttf",
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.svg",
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.woff",
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.eot"
   ],
   "glyphs": {
     "account": {
@@ -519,7 +519,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": false,
+    "debug": true,
     "font_name": "glyphs",
     "force": false,
     "input": {
