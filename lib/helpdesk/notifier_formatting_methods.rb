@@ -25,10 +25,10 @@ module Helpdesk::NotifierFormattingMethods
     subject.blank? ? default_reply_subject(ticket) : subject
   end
 
-  def generate_body_html(html, inline_attachments, account, attachments)
+  def generate_body_html(html)
     html_part = Nokogiri::HTML(html)
     if html_part.at_css('img.inline-image')
-      build_body_html_with_inline_attachments(html_part, inline_attachments, account, attachments)
+      html_part.at_css("body").inner_html.html_safe
     else
       html.html_safe
     end
@@ -42,25 +42,14 @@ module Helpdesk::NotifierFormattingMethods
     references = (ticket.header_info && ticket.header_info[:message_ids]) ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
   end
 
-  def build_body_html_with_inline_attachments(html_part, inline_attachments, account, attachments)
-    html_part.xpath('//img[@class="inline-image"]').each do |inline|
-      inline_attachment = account.attachments.find_by_id(inline['data-id'])
-      if inline_attachment
-        attachments.inline[inline_attachment.content_file_name] = {
-          :data => File.read(inline_attachment.content.to_file.path),
-          :mime_type => inline_attachment.content_content_type
-        }
-        inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
-      end
-    end
-    return html_part.at_css("body").inner_html.html_safe
-  end
-
   def handle_inline_attachments(inline_attachments, html, account)
     html_part = Nokogiri::HTML(html)
     html_part.xpath('//img[@class="inline-image"]').each do |inline|
       inline_attachment = account.attachments.find_by_id(inline['data-id'])
-      inline.set_attribute('src', inline_attachments.inline[inline_attachment.content_file_name].url) if inline_attachment
+      if inline_attachment
+        inline.set_attribute('src', inline_attachments.inline[inline_attachment.content_file_name].url)
+        inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
+      end
     end
   end
 end

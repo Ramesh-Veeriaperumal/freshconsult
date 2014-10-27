@@ -99,10 +99,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(
                             params[:notification_type], params[:ticket]
                           )
-    @body_html           = generate_body_html(params[:email_body_html], 
-                                              inline_attachments, 
-                                              params[:ticket].account,
-                                              attachments)
+    @body_html           = generate_body_html(params[:email_body_html])
     
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
@@ -144,7 +141,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
 
     @body = note.full_text
-    @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account, attachments)
+    @body_html = generate_body_html(note.full_text_html)
     @note = note, 
     @cloud_files = note.cloud_files, 
     @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey]),
@@ -189,7 +186,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket
     @body = note.full_text
     @cloud_files= note.cloud_files
-    @body_html = generate_body_html(note.full_text_html, inline_attachments, note.account, attachments)
+    @body_html = generate_body_html(note.full_text_html)
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, note.full_text_html, note.account)
@@ -227,7 +224,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket 
     @body = ticket.description
     @cloud_files = ticket.cloud_files
-    @body_html = generate_body_html(ticket.description_html, inline_attachments, ticket.account, attachments)
+    @body_html = generate_body_html(ticket.description_html)
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, ticket.description_html, ticket.account)
@@ -265,7 +262,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     }
 
     @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol)
-    @body_html = generate_body_html(note.body_html, inline_attachments, note.account, attachments)
+    @body_html = generate_body_html(note.body_html)
     @note = note
     @ticket = ticket
     
@@ -301,7 +298,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     }
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
-    @body_html = generate_body_html(content, inline_attachments, ticket.account, attachments)
+    @body_html = generate_body_html(content)
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)
@@ -328,7 +325,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     }
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
-    @body_html = generate_body_html(content, inline_attachments, ticket.account, attachments)
+    @body_html = generate_body_html(content)
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)

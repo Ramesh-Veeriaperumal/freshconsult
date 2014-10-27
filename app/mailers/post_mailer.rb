@@ -15,7 +15,7 @@ class PostMailer < ActionMailer::Base
     inline_attachments = []
     @post = post
     @user = user
-    @body_html = generate_body_html( post.body_html, inline_attachments, post.account, attachments)
+    @body_html = generate_body_html(post.body_html)
     @host = host
     
     if attachments.present? && attachments.inline.present?

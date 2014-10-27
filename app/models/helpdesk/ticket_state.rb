@@ -7,9 +7,9 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   include Redis::ReportsRedis
 
   # Attributes for populating data into monthly stats tables
-  STATS_ATTRIBUTES = [:resolved_at,:first_assigned_at,:assigned_at,:opened_at]
-  TICKET_STATE_SEARCH_FIELDS = [ :resolved_at, :closed_at, :agent_responded_at,
-                                 :requester_responded_at, :status_updated_at ]
+  STATS_ATTRIBUTES = ['resolved_at','first_assigned_at','assigned_at','opened_at']
+  TICKET_STATE_SEARCH_FIELDS = [ 'resolved_at', 'closed_at', 'agent_responded_at',
+                                 'requester_responded_at', 'status_updated_at' ]
 
   belongs_to_account
   self.table_name =  "helpdesk_ticket_states"

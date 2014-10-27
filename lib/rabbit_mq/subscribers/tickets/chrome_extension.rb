@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::Tickets::ChromeExtension
   
   include RabbitMq::Constants
-  MODEL_CHANGE_KEYS = [:responder_id,:group_id,:status]
+  MODEL_CHANGE_KEYS = ['responder_id','group_id','status']
 
   def mq_chrome_extension_ticket_properties(action)
     properties = get_properties(self)

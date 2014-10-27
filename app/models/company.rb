@@ -149,7 +149,7 @@ class Company < ActiveRecord::Base
   protected
 
     def search_fields_updated?
-      all_fields = [:name, :description, :note]
+      all_fields = ['name', 'description', 'note']
       (@model_changes.keys & all_fields).any?
     end
 
