@@ -12,7 +12,6 @@ begin
   servers = config.delete(:servers)
   options = { :namespace => config[:namespace], :compress => true}
   $dalli = Dalli::Client.new(servers, options)
-  ActionController::Base.cache_store = :dalli_store, servers, config
 rescue => e
   puts "Rails 3 migration yml is not configured properly"
 end
