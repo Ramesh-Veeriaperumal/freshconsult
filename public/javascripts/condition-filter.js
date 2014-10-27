@@ -381,8 +381,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				jQuery.each(jQuery('.paragraph-redactor'), function(i, item) { 
 					var $redactor = jQuery(item).data("redactor"); 
 					if($redactor != "undefined") { 
-						$redactor.removeTagOnLiquid();
 						$redactor.deleteCursor(); 
+						$redactor.removeTagOnLiquid();
 					} 
 				});
 

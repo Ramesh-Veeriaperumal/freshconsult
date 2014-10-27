@@ -25,8 +25,7 @@ var CHAT_ENV    = "<%= Rails.env -%>";
             'domain'     : '<%=current_account.full_domain%>',
             'product_id' : '<%=current_portal.product ? current_portal.product.id : ""%>',
             'chat_enabled': <%=current_account.chat_setting.active%>,
-            'visitorChat': <%=current_chatwidget.active%>,
-            'widget_id': '<%=current_chatwidget.widget_id%>'
+            'widget_id'  : '<%=current_chatwidget.widget_id%>'
     };
     
 

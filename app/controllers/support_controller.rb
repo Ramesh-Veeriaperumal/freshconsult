@@ -189,6 +189,10 @@ class SupportController < ApplicationController
       end
     end
 
+    def forums_enabled?
+      feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums)
+    end
+
     protected
 
     def render_tracker

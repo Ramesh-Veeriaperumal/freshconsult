@@ -57,6 +57,11 @@ module SubscriptionsHelper
     Freshfone::Credit::DEFAULT
   end
 
+  def multicurrency_followup_amount
+    (@freshfone_credit && @freshfone_credit.last_purchased_credit.nonzero?) ? 
+      @freshfone_credit.last_purchased_credit : Freshfone::Credit::DEFAULT
+  end
+
   def fetch_recharge_amount
     credit_price = current_account.subscription.retrieve_addon_price(:freshfone)
     recharge_price = current_account.freshfone_credit.recharge_quantity * credit_price

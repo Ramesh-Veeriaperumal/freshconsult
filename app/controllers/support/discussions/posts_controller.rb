@@ -1,10 +1,14 @@
 class Support::Discussions::PostsController < SupportController
+
+	include CloudFilesHelper
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
  	before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
+ 	before_filter :verify_user, :only => [:update, :edit]
+ 	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
 		params[:post].merge!(post_request_params)
@@ -51,12 +55,17 @@ class Support::Discussions::PostsController < SupportController
 		end
 	end
 
-	def create_attachments
-	   	return unless @post.respond_to?(:attachments)
-	    (params[:post][:attachments] || []).each do |a|
-	      	@post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+  def create_attachments
+  	if @post.respond_to?(:cloud_files)
+	    (params[:cloud_file_attachments] || []).each do |attachment_json|
+	      @post.cloud_files.create(build_cloud_files(attachment_json))
 	    end
-	end
+	  end
+   	return unless @post.respond_to?(:attachments)
+    (params[:post][:attachments] || []).each do |a|
+      	@post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+    end
+  end
 
 	def edit
 		render :partial => "/support/discussions/topics/edit_post"
@@ -133,5 +142,13 @@ private
 				:user_agent => request.env['HTTP_USER_AGENT']
 			}
 		}
+	end
+
+	def verify_user
+		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.user == current_user
+	end
+
+	def verify_topic_user
+		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless (current_user.agent? || @topic.user == current_user)
 	end
 end

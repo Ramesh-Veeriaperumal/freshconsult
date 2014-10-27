@@ -90,7 +90,7 @@ minimizable ||= false
 			</div>
 			<%= freshfone_audio_dom(note) %>
 			<div id="note_attachments_container_<%= note.id%>">
-				<% unless note.all_attachments.empty? and note.dropboxes.empty? %>				
+				<% unless note.all_attachments.empty? and note.cloud_files.empty? %>				
 						<%= render :partial => "/helpdesk/tickets/show/note_attachments", :locals => { :note => note }%>
 				<% end %>
 			</div>

@@ -6,6 +6,11 @@ class ImapMailbox < ActiveRecord::Base
 
   attr_protected :account_id
 
+  def selected_server_profile
+    selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && server_name.casecmp("imap.#{server[4]}") == 0}
+    selected_profile.first.nil? ?  "other" : selected_profile.first[0].to_s
+  end
+
   def imap_params(action)
     { :mailbox_attributes => { :id => id,
         :user_name => user_name,

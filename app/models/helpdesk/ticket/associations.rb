@@ -6,7 +6,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_attachments
 
-  has_many_dropboxes
+  has_many_cloud_files
 
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
                             :dependent => :destroy, :autosave => false

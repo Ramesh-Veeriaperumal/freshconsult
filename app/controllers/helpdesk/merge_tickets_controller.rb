@@ -5,6 +5,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 	before_filter :load_source_tickets, :only => [ :bulk_merge, :merge, :complete_merge ]
 
 	before_filter :load_target_ticket, :only => [ :merge, :complete_merge ]
+	before_filter :set_native_mobile, :only => [:complete_merge]
 
 	# MERGE_TICKET_STATES_PRIORITY = {
  #    "created_at" => 4,
@@ -24,11 +25,19 @@ class Helpdesk::MergeTicketsController < ApplicationController
 
 	def complete_merge
 		handle_merge
-		flash[:notice] = t("helpdesk.merge.bulk_merge.target_note_description3", 
+		respond_to do |format|
+			format.html do
+				flash[:notice] = t("helpdesk.merge.bulk_merge.target_note_description3",
 										:count => @source_tickets.length, 
 										:target_ticket_id => @target_ticket.display_id, 
 										:source_tickets => @source_tickets.map(&:display_id).to_sentence)
-    	redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
+				redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
+			end
+			format.nmobile { render :json => { :result => true, :count => @source_tickets.length,
+										:target_ticket_id => @target_ticket.display_id,
+										:source_tickets => @source_tickets.map(&:display_id).to_sentence }}
+		end
+    	
 	end
 
 	protected

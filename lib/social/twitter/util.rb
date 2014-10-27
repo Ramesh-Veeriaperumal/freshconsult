@@ -75,5 +75,17 @@ module Social::Twitter::Util
                   hash
               end
   end
+  
+  def load_reply_handles
+    @reply_handles = all_visible_streams.map{ |stream| stream.twitter_handle}.compact.uniq
+  end
+  
+  def load_visible_handles
+    @visible_handles = all_visible_streams.map{ |stream| stream.twitter_handle if stream.default_stream?}.compact
+  end
+  
+  def all_visible_streams
+    @all_visible_streams ||= current_user.visible_social_streams
+  end
 
 end

@@ -484,7 +484,8 @@
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end
 
-    helpdesk.resources :dropboxes
+    helpdesk.resources :cloud_files
+
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
 
@@ -666,7 +667,7 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get}
+    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get, :deliver_activation_instructions => :get}
     mobile.resources :freshfone, :collection => {:numbers => :get}
   end
  

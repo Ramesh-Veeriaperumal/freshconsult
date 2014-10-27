@@ -1,20 +1,21 @@
 <% form_remote_tag :url => { :controller => "social/twitter", :action => "post_tweet" },  :html => { :class => "uniForm", :id => "post_tweet" } do %>
       
+  <% handle = handles.first%>
   <div class="row twt-area">
     <div class="twt-msg">
       <%= text_area "tweet", :body, :class => 'reply-input required tweet', :id => "post_tweet_textarea", :placeholder => t('social.streams.compose'), :rows => 3 , :onfocus=> "this.value = this.value;" %>
     </div>
     <div class="twt-options clearfix">
-      <div class="twt-profile image-lazy-load">
+      <div class="twt-profile image-lazy-load twt-as-main">
         <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
       </div>
       <div class="twt-as">
         <div class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
-          <%= handles_select_tag(handle) %>  
+          <a class="dropdown-toggle twt-as-main" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
+          <%= handles_select_tag(handle, handles, 'twt-as-main') %>  
         </div>
       </div>
-      <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id" %>
+      <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id twt-as-main" %>
       <div class="pull-right">
         <span class="pull-left tweet-counter" id="tweet_counter">140</span>
         <button type="button" class="btn btn-default pull-left twt-submit post-twt-submit"> Post </button>

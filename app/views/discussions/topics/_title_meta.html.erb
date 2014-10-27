@@ -16,7 +16,8 @@
 		</h1>
 		<% if @topic.published? %>
 			<div class="tooltip ml20 view_on_portal pull-right" title='<%= t('topic.view_on_portal')%>'>
-				<%= link_to '<i class="agent-preview"></i>'.html_safe, support_discussions_topic_path(@topic.id), :target => "_blank" %>
+				<%= link_to '<i class="agent-preview"></i>'.html_safe, support_discussions_topic_path(@topic.id), 
+							:target => "_blank" unless feature?(:hide_portal_forums) %>
 			</div>
 			<div class="sub-action-list">
 				<ul>

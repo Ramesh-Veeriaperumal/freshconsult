@@ -157,16 +157,18 @@ en:
   mobihelp: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Working
+  attach: Attach
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attachment_failed_message: One or more attachments discarded since the 15MB limit was exceeded.
   attach_file_local: Attach a file from your computer
-  attach_file: Attach file
+  attach_file: Attach a file
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
   dropbox_plaintext: Dropbox Attachments
+  cloudfile_plaintext: Attachments on Cloud
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time
@@ -2519,8 +2521,10 @@ en:
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
-    day_pass_available: "%{count} Day pass available"
-    no_day_pass: No day pass available
+    day_passes_available: 
+      zero: "No day pass available"
+      one: "1 Day pass available"
+      other: "%{count} Day passes available"
     assign_role: Associate Roles
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
     assign: Assign
@@ -4301,6 +4305,7 @@ en:
         no_retweets: No retweets
         contact_details: Contact Details
         flash_card_html: What's New in Social?
+        flash_card_text: Understanding your Social tab
     welcome:
       title: Social Support
       turn_off: Turn OFF Social

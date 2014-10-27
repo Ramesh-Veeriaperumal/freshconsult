@@ -1,13 +1,13 @@
 <span class="seperator"></span>	
 <div class="attachments-wrap clearfix">
-	<h5><strong><%= pluralize(note.all_attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
+	<h5><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 	<ul class="attachment_list">
 	    <% note.all_attachments.each do |attached| %> 
 	    	<%= attachment_list(attached, privilege?(:edit_note, note), "ticket", note.id) %>
 	    <%end%>
 
-	    <% note.dropboxes.each do |dropbox| %> 
-			<%= attachment_list(dropbox, privilege?(:edit_note, note), "dropbox",nil) %>
+	    <% note.cloud_files.each do |cloud_file| %> 
+			<%= attachment_list(cloud_file, privilege?(:edit_note, note), "cloud_file",nil) %>
 		<%end%>
 	</ul>
 </div>

@@ -23,10 +23,10 @@ module HelpdeskAttachable
         include InstanceMethods
       end
 
-      def has_many_dropboxes
-        has_many :dropboxes,
+      def has_many_cloud_files
+        has_many :cloud_files,
           :as => :droppable,
-          :class_name => 'Helpdesk::Dropbox',
+          :class_name => 'Helpdesk::CloudFile',
           :dependent => :destroy 
       end
 

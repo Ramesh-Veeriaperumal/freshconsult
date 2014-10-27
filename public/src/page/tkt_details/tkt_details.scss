@@ -1009,11 +1009,8 @@ ol, ul, li{
     	&.attachment-options {
     		@include float(none);
     		width: auto;
-
     		padding: 0 10px;
     		margin-bottom: -15px;
-
-    		overflow: hidden;
 
     		label{
     			@include float(left);
@@ -1046,7 +1043,7 @@ ol, ul, li{
     			}
     		}
 
-    		.dropbox_div {
+    		.box_div, .dropbox_div {
 				@include float(left);
 				width: 300px;
 				label {
@@ -2258,6 +2255,19 @@ ol, ul, li{
 	margin: 10px 0;
 }
 
+.attach-wrapper{
+	color: #333333;
+	.invalid_attachment {
+			text-decoration: line-through;
+		}
+	.attachment_contents {
+		width: auto;
+		.alert-text{
+			color:red;
+		}
+	}
+}
+
 .attachments-wrap{
 	color: #333333;
 	
@@ -2304,11 +2314,10 @@ ol, ul, li{
 		@include margin-right(10px);
 	}
 
-	ul{
+	.attachment_list{
 		margin-top: 10px;
 	}
-
-	li, div.item{
+	.attachment, div.item{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
 		@include border-radius(4px);
@@ -2339,7 +2348,15 @@ ol, ul, li{
 			}
 		}
 	}
-
+}
+.new-attach 
+{
+	.attachments-wrap .item{
+		padding:0;	
+	}
+	.dropdown-menu li{
+		width: 100%
+	}
 }
 
 

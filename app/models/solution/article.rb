@@ -16,6 +16,7 @@ class Solution::Article < ActiveRecord::Base
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   
   has_many_attachments
+  has_many_cloud_files
   
   has_many :activities,
     :class_name => 'Helpdesk::Activity',

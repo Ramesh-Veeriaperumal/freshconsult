@@ -337,12 +337,20 @@ module Helpdesk::TicketsHelper
   end
 
 
-  def faye_host
-    "#{request.protocol}#{NodeConfig["faye_host"]}"
+  def agentcollision_host
+    "#{request.protocol}#{NodeConfig["agentcollision_host"]}"
   end
 
-  def faye_server
-    "#{request.protocol}#{NodeConfig["faye_server"]}"
+  def agentcollision_server
+    "#{request.protocol}#{NodeConfig["agentcollision_server"]}"
+  end
+
+  def autorefresh_host
+    "#{request.protocol}#{NodeConfig["autorefresh_host"]}"
+  end
+
+  def autorefresh_server
+    "#{request.protocol}#{NodeConfig["autorefresh_server"]}"
   end
 
   def freshfone_audio_dom(notable = nil)

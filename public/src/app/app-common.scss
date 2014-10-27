@@ -825,24 +825,6 @@ h4.border_title{
 	}
 }
 
-.attachments{
-	padding:8px;
-	margin-top:8px;
-	background:#f6f6f6;
-	border:1px solid #dfdfdf;
-	div.item{
-		padding:5px;
-		em{
-			font-size:11px;
-			color:#527EAA;
-		}
-		@include clearfix;
-	}
-	.invalid_attachment{
-		text-decoration: line-through;
-	}
-}
-
 div.survey_check{
 	padding:0 10px;
 	@include text-align(right);	
@@ -1424,6 +1406,14 @@ a.page_title{
 	}
 	#select-all{
 		@include margin-right(10px); 
+		margin-top: 7px;
+	}
+	#filters{
+		display: inline-block;
+		margin-top: 6px;
+	}
+	#select-all{
+		margin-right: 10px; 
 		margin-top: 7px;
 	}
 	#filters{
@@ -3193,6 +3183,7 @@ a.pill.help{
 	}
 }
 
+
 //------------------------------------------------------------------------------------------
 								//Deleted Agent and Contact Info 
 //------------------------------------------------------------------------------------------
@@ -3243,6 +3234,213 @@ a.pill.help{
 //------------------------------------------------------------------------------------
 //								Forum by prashanth end
 //------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------------
+//							Box Styles Begin
+//------------------------------------------------------------------------------------------
+
+.inline-block{
+	@include inline-block;
+}
+
+.ui-form div.attach-wrapper{
+	ul.dropdown-menu li { padding: 0px; width: 100%}
+	a.attach-link { background: none; }
+}
+
+.attach-link-wrap{
+	position:relative;
+	cursor:pointer;
+	.attach-link-file, input[type="file"]{
+		@include opacity(0);
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		height: 26px;
+		z-index:99999;
+		width:100%;
+		cursor:pointer;
+	}
+	.attach-link-file{ 
+		width: 20px;
+		left: 0px;
+	}
+}
+
+.box-loading-big{
+	div{height: 100%;}	
+}
+
+.empty-folder{
+	font-size: 30px;
+	color: #ddd;
+	position: relative;
+	top: 5px;
+	left: 10px;
+	span {font-size: 18px;}
+}
+
+body.box-chooser-body{
+	background: #f7f7f7;
+	div.popover{ z-index: 1041;}
+	div#sticky_header{
+		padding: 0px;
+		margin: 0px;
+		background-color: #2480c9;
+		@include border-radius(0px);
+	}
+	div.ui-dialog{
+		@include border-radius(6px);
+		.box-confirm-modal-content, .box-error-modal-content{padding: 6px;}
+	}
+	div.ui-widget-overlay{display: none;}
+	div.ui-dialog-titlebar{display: none;}
+	#box-confirm-modal, #box-error-modal{font-size: 110%;}
+	
+}
+div.box-header{
+	width: 100%;
+	height: 35px;
+	background-color: #2480c9;
+	z-index: 1041;
+	span.box-logo{
+		position: relative;
+		top: 5px;
+		left: 4px;
+		float: left;
+		cursor: pointer;
+		display: inline-block;
+		width: 38px;
+		height: 25px;
+		background-image: url("/images/box-chooser/box-logo.png")
+	}
+	span.box-logo:hover{
+		background-image: url("/images/box-chooser/box-homeicon.png")
+	}
+	div.box-navbar{float: left; height: inherit;}
+	div.box-item{
+		background: url("/images/box-chooser/box-folder-seperator.png");
+		background-repeat: no-repeat;
+		background-position: left;
+		padding-left: 20px;
+		float: left;
+		height: inherit;
+		max-width: 120px;
+		span{
+			top: 10px;
+			left: 2px;
+			position: relative;
+			color: #EEE;
+			display: inline-block;
+			text-align: center;
+			max-width: inherit;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow-x: hidden;
+			cursor: pointer;
+		}
+	}
+}	
+
+#box-navbar > div > span[data-item-id='na'] { cursor: default; }
+
+div.hover_card div.box-settings-popover{ text-align: right;}
+li.box-item{
+	width: 260px;
+	min-height:30px;
+	padding: 18px 5px 0px 42px;
+	margin: 10px 0px 0px 10px;
+	display: inline-block;
+	@include border-radius(6px);
+	cursor: pointer;	
+	a{
+		position: relative;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow-x: hidden;
+		width: inherit;
+		display: inline-block;
+		overflow:visible;
+		span.name-holder {float: left;}
+		.sloading{
+			float: right;
+			position: relative;
+			top: 6px;
+			left: 8px;
+		}
+	}
+	.arrow-right{
+		border-bottom: 7px solid transparent;
+		border-left: 7px solid #06c;
+		border-top: 7px solid transparent;
+		height: 0;
+		width: 0;
+		float: right;
+	}
+}
+
+li.box-item[data-item-type="file"] {
+	@include box-shadow(#f0f0f0 0px 0px 1px 1px);
+	background: #fafafa url("/images/box-chooser/box-fileicon.png") no-repeat 10px center;
+	&:hover{
+		a{color: #333333;}
+		background: white url("/images/box-chooser/box-fileicon-hover.png") no-repeat 10px center;
+		@include box-shadow(#cfcccc 0px 0px 1px 1px);	
+	}
+}
+li.box-item[data-item-type="folder"] {
+	@include box-shadow(#e6e6e6 0px 0px 1px 1px);
+	background-position: 10px center;
+	background: #f2f2f2 url("/images/box-chooser/box-foldericon.png") no-repeat 10px center;
+	&:hover {
+		background: white url("/images/box-chooser/box-foldericon-hover.png") no-repeat 11px center;
+		@include box-shadow(#cfcccc 0px 0px 1px 1px);
+		.arrow-right{border-left: 7px solid #a6a6a6;}
+	}
+}
+
+.box-settings{
+	float: right;
+	border-left: 1px solid #216191;
+	padding-left: 8px;
+	position: relative;
+	left: -2px;
+	img{
+		height: 20px;
+		width: 21px;
+		position: relative;
+		left: -8;
+		border-left: 1px solid #63a5d4;
+		padding-top: 6px;
+		padding-bottom: 9px;
+		padding-left: 7px;
+	}
+}
+.box-account-holder, .change-account-link{ 
+	color: #333;
+	text-decoration: underline;
+	float: right;
+	a{color: #333;}
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+#box-left-pane{
+	#box-left-list{
+		display: block;
+		width: inherit;
+    	li:last-child{margin: 10px 0px 10px 10px;}
+	}
+	li.box-item {
+		margin: 10px 0px 0px 10px;
+    	height: 30px;
+ 	}
+}
+
+body.popup-body{ min-width: 0px; }
+//------------------------------------------------------------------------------------------
+//							Box Styles End
+//------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------
 //								Contact form changes by prashanth

@@ -1,6 +1,9 @@
 if(!window.Helpdesk) Helpdesk = {};
 
 Helpdesk.Multifile = {	
+    
+    FILE_LOCATION : /^.*[\\\/]/ ,
+
     load: function(){
         // jQuery("input[fileList]").each( function () {
         //     console.log("Attachment form " + this);
@@ -50,7 +53,7 @@ Helpdesk.Multifile = {
 
     addFileToList: function(oldInput){
         var container = jQuery(oldInput).attr('fileContainer'),
-            filesize = '0.00 KB ',
+            filesize = 0,
             validFile = true,
             filereader = !!window.FileReader;
 
@@ -76,13 +79,13 @@ Helpdesk.Multifile = {
         }
         var target = jQuery("#"+jQuery(oldInput).attr('fileList'));
         target.append(jQuery.tmpl(this.template, {
-                name: jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
+                name: jQuery(oldInput).data('filename') || jQuery(oldInput).val().replace(this.FILE_LOCATION, ''),
                 inputId: jQuery(oldInput).attr('id'),
                 size: filesize,
-                file_valid: validFile
+                file_valid: validFile,
+                provider: (jQuery(oldInput).data('provider') || "").toLowerCase()
             }));
-        jQuery("#"+container + ' label i').text(target.children(':visible').length);
-
+        jQuery("#"+container + ' .a-count').text(target.children(':visible').length);
         return validFile;
     },
 
@@ -108,7 +111,7 @@ Helpdesk.Multifile = {
     },
 
     findFileSize: function(oldInput){
-        if(jQuery(oldInput)[0].files){
+        if(jQuery(oldInput)[0].files && jQuery(oldInput).attr('type') === 'file'){
             return jQuery(oldInput)[0].files[0].size / (1024 * 1024);    
         }
         else{
@@ -119,15 +122,15 @@ Helpdesk.Multifile = {
     remove: function(link){
 		try{
             var fileInput = jQuery('#'+jQuery(link).attr('inputId'));
-            if (!!window.FileReader)
+            if (window.FileReader)
             {
                 this.decrementTotalSize(fileInput);
             }
-            var target = jQuery("#"+jQuery(fileInput).attr('fileList')),
-                container = jQuery(fileInput).attr('fileContainer');
+            var target = jQuery("#"+jQuery(fileInput).attr('fileList'));
+            var container = jQuery(fileInput).attr('fileContainer');
 			jQuery('#'+jQuery(link).attr('inputId')).remove();
             jQuery(link).parents("div:first, .attachment.list_element").remove();
-            jQuery("#"+container + ' label i').text(target.children(':visible').length);
+            jQuery("#"+container + ' .a-count').text(target.children(':visible').length);
             return true;
 		}catch(e){
 			alert(e);
@@ -135,10 +138,10 @@ Helpdesk.Multifile = {
     },    
 
     updateCount: function(item) {
-        var target = jQuery("#"+jQuery(item).attr('fileList')),
-            container = jQuery(item).attr('fileContainer');
-        jQuery("#"+container + ' label i').text(target.children(':visible').length);
-    },
+        var target = jQuery("#"+jQuery(item).attr('fileList'));
+        var container = jQuery(item).attr('fileContainer');
+        jQuery("#"+container + ' .a-count').text(target.children(':visible').length);
+    },    
 
     resetAll: function(form) {
 
@@ -148,7 +151,7 @@ Helpdesk.Multifile = {
             jQuery("#"+inputs.first().attr('fileList')).children().not('[rel=original_attachment]').remove();
             jQuery("#"+inputs.first().attr('fileList')).children().show();
             inputs.prop('disabled', false);
-            jQuery("#"+inputs.first().attr('fileContainer')+ ' label i').text(jQuery("#"+inputs.first().attr('fileList')).children().length);
+            jQuery("#"+inputs.first().attr('fileContainer')+ ' .a-count').text(jQuery("#"+inputs.first().attr('fileList')).children().length);
             inputs.not(".original_input").remove();
         }
 

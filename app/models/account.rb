@@ -67,6 +67,10 @@ class Account < ActiveRecord::Base
     features?(:freshfone) and freshfone_account.present?
   end
 
+  def freshchat_enabled?
+    features?(:chat)
+  end
+
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
   end

@@ -1,7 +1,7 @@
 class Discussions::PostsController < ApplicationController
 
 	helper DiscussionsHelper
-
+	include CloudFilesHelper
 	before_filter :find_post, :except =>  [:monitored, :create]
 
 	before_filter :find_topic, :check_lock, :only => :create
@@ -104,9 +104,7 @@ class Discussions::PostsController < ApplicationController
 	end
 
 	def build_attachments
-		(params[:post][:attachments] || []).each do |a|
-			@post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
-		end
+		attachment_builder(@post, params[:post][:attachments], params[:cloud_file_attachments] )
 	end
 
 	def invalid_message

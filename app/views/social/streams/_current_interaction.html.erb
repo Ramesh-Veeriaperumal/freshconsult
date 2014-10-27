@@ -4,9 +4,11 @@
     <% stream = current_account.twitter_streams.find_by_id(stream_id) %>
     <% handle = stream.twitter_handle %>
 <% end %>
+
 <% if handle.nil? || first_feed.stream_id.blank? %>
-    <% handle = @all_handles.first %>
+    <% handle = @reply_handles.first %>
 <% end %>
+
 <% @interactions[:current].each_with_index do |feed, index| %>
   <% current_tweet_class = (feed.feed_id.to_i == @feed_id.to_i) ? "current_feed" : ""%>
   <div id="conv_div_<%= feed.feed_id%>" class="tweets-conv tweets-feed twt-rply clearfix <%=current_tweet_class%>" data-feed-id = "<%= feed.feed_id%>" >
@@ -49,7 +51,7 @@
         </div>
         <ul class="action-el pull-right">
           <!-- Dont show reply, retweet, convert to ticket for agent replies -->
-          <% if feed.agent_name.blank? && privilege?(:reply_ticket) %>
+          <% if feed.agent_name.blank? && privilege?(:reply_ticket) && !@reply_handles.blank?%>
             <li class="icon-lst">
               <!-- reply -->
               <a href="javascript:void(0);" class="reply-btn tooltip" data-original-title="Reply" twipsy-content-set="true" data-feed-id = "<%= feed.feed_id %>"><%= font_icon "reply", :size => 18 %>
@@ -83,112 +85,108 @@
                 <% end %>    
               </li>  
             <% end %>
-                   
-            
-            <li class="icon-lst">
-              <!-- convert to tkt -->
-              <% if feed.ticket_id %>
-                <a href="<%= helpdesk_tickets_url %>/<%=feed.ticket_id %>" target="_blank" class="ctt-btn tooltip tw-tkt-link" data-original-title="Go to ticket #<%=feed.ticket_id.split("#").first %> " twipsy-content-set="true" data-placement="left">
-                    <%= font_icon "ticket", :size => 18 %>
-                </a>
-              <% else %>
-                <a href="javascript:void(0);" class="ctt-btn tooltip convert_as_ticket current_interaction_ctt" data-original-title="Convert to Ticket" data-feed-id="<%= feed.feed_id%>" twipsy-content-set="true" target="_blank" data-placement="left">
-                  <%= font_icon "ticket", :size => 18 %>
-                </a>
-              <% end %>
-            </li>
-          <% elsif feed.ticket_id %>
-            <li class="icon-lst">
+          <% end %>
+          <li class="icon-lst">
+            <!-- convert to tkt -->
+            <% if feed.ticket_id %>
               <a href="<%= helpdesk_tickets_url %>/<%=feed.ticket_id %>" target="_blank" class="ctt-btn tooltip tw-tkt-link" data-original-title="Go to ticket #<%=feed.ticket_id.split("#").first %> " twipsy-content-set="true" data-placement="left">
+                  <%= font_icon "ticket", :size => 18 %>
+              </a>
+            <% else %>
+              <a href="javascript:void(0);" class="ctt-btn tooltip convert_as_ticket current_interaction_ctt" data-original-title="Convert to Ticket" data-feed-id="<%= feed.feed_id%>" twipsy-content-set="true" target="_blank" data-placement="left">
                 <%= font_icon "ticket", :size => 18 %>
               </a>
-            </li>
-          <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
     </div>
 
-    <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear">
-      <% form_remote_tag :url => { :controller => "social/twitter", :action => "reply" },  :html => { :class => "uniForm", :id => "reply_form_#{feed.feed_id}" } do %>
-          
-        <div class="row twt-area">
-          <div class="twt-msg">
-            <% reply_mentions = feed.user_mentions - @all_screen_names %>
-            <% reply_mentions << feed.user[:screen_name] unless reply_mentions.include?(feed.user[:screen_name]) %>
-            <% mentions = reply_mentions.map { |mention| "@#{mention}"}.join(" ") %>
 
-            <%= text_area "tweet", :body, :class => 'reply-input required tweet', :id => "reply_text_area_#{feed.feed_id}", :placeholder => " Reply to #{feed.user[:screen_name]}", :rows => 3 , :value => "#{mentions} ", :onfocus=> "this.value = this.value;" %>
-          </div>
-          
-          <div class="twt-options clearfix">
-            <div class="twt-profile image-lazy-load">
-              <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+    <% if @reply_handles.any? %>
+      <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear">
+        <% form_remote_tag :url => { :controller => "social/twitter", :action => "reply" },  :html => { :class => "uniForm", :id => "reply_form_#{feed.feed_id}" } do %>
+            
+          <div class="row twt-area">
+            <div class="twt-msg">
+              <% reply_mentions = feed.user_mentions - @all_screen_names %>
+              <% reply_mentions << feed.user[:screen_name] unless reply_mentions.include?(feed.user[:screen_name]) %>
+              <% mentions = reply_mentions.map { |mention| "@#{mention}"}.join(" ") %>
+
+              <%= text_area "tweet", :body, :class => 'reply-input required tweet', :id => "reply_text_area_#{feed.feed_id}", :placeholder => " Reply to #{feed.user[:screen_name]}", :rows => 3 , :value => "#{mentions} ", :onfocus=> "this.value = this.value;" %>
             </div>
             
-            <div class="twt-as">
-              <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
-                <%= handles_select_tag(handle) %>  
+            <div class="twt-options clearfix">
+              <div class="twt-profile image-lazy-load twt-as-pop">
+                <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+              </div>
+              
+              <div class="twt-as">
+                <div class="dropdown">
+                  <a class="dropdown-toggle twt-as-pop" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
+                  <%= handles_select_tag(handle, @reply_handles, 'twt-as-pop') %>  
+                </div>
+              </div>
+          
+              <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id twt-as-pop" %>
+              
+              <%= hidden_field "tweet", :in_reply_to , :value => feed.feed_id %>
+
+              <%= hidden_field_tag "stream_id", "#{feed.stream_id}" %>
+
+              <%= hidden_field_tag "screen_name", "#{feed.user[:screen_name]}" %>
+
+              <%= hidden_field_tag "search_type", "" %>
+
+              <div class="pull-right">
+                <span class="pull-left tweet-counter" id="SendTweetCounter_<%=feed.feed_id%>">140</span>
+                 <button type="button" class="btn btn-default pull-left twt-submit reply-submit" data-feed-id = "<%= feed.feed_id%>"> Reply </button>
               </div>
             </div>
-        
-            <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id" %>
-            
-            <%= hidden_field "tweet", :in_reply_to , :value => feed.feed_id %>
-
-            <%= hidden_field_tag "stream_id", "#{feed.stream_id}" %>
-
-            <%= hidden_field_tag "screen_name", "#{feed.user[:screen_name]}" %>
-
-            <%= hidden_field_tag "search_type", "" %>
-
-            <div class="pull-right">
-              <span class="pull-left tweet-counter" id="SendTweetCounter_<%=feed.feed_id%>">140</span>
-               <button type="button" class="btn btn-default pull-left twt-submit reply-submit" data-feed-id = "<%= feed.feed_id%>"> Reply </button>
-            </div>
           </div>
-        </div>
-      <% end %>
-    </div>
+        <% end %>
+      </div>
 
-    <div id="rt_box_<%= feed.feed_id%>" class="rtwt-box twt-box clear" style="display:none;">
-      <% form_remote_tag :url => { :controller => "social/twitter", :action => "retweet" },  :html => { :class => "uniForm", :id => "retweet_form_#{feed.feed_id}" } do %>
+      <div id="rt_box_<%= feed.feed_id%>" class="rtwt-box twt-box clear" style="display:none;">
+        <% form_remote_tag :url => { :controller => "social/twitter", :action => "retweet" },  :html => { :class => "uniForm", :id => "retweet_form_#{feed.feed_id}" } do %>
 
-         <div class="row twt-area">
-          <div class="twt-msg">
-            <% reply_mentions = feed.user_mentions - @all_screen_names %>
-            <% reply_mentions << feed.user[:screen_name] unless reply_mentions.include?(feed.user[:screen_name]) %>
-            <% mentions = reply_mentions.map { |mention| "@#{mention}"}.join(" ") %>
+           <div class="row twt-area">
+            <div class="twt-msg">
+              <% reply_mentions = feed.user_mentions - @all_screen_names %>
+              <% reply_mentions << feed.user[:screen_name] unless reply_mentions.include?(feed.user[:screen_name]) %>
+              <% mentions = reply_mentions.map { |mention| "@#{mention}"}.join(" ") %>
 
-            <%= text_area "tweet", :body, :class => 'reply-input span12 disabled required tweet', :id => "retweet_text_area_#{feed.feed_id}", :rows => 3, :value => "RT #{feed.body}" %>
-          </div>
-          
-          <div class="twt-options clearfix">
-            <div class="twt-profile image-lazy-load">
-              <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+              <%= text_area "tweet", :body, :class => 'reply-input span12 disabled required tweet', :id => "retweet_text_area_#{feed.feed_id}", :rows => 3, :value => "RT #{feed.body}" %>
             </div>
             
+            <div class="twt-options clearfix">
+              <div class="twt-profile image-lazy-load twt-as-pop">
+                <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+              </div>
+              
+      
             <div class="twt-as">
               <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
-                <%= handles_select_tag(handle) %>  
+                <a class="dropdown-toggle twt-as-pop" data-toggle="dropdown" href="#" data-original-title="@<%=handle.screen_name%>">@<%=handle.screen_name%> <i class='ficon-caret-down fsize-16' size='16'></i></a>
+                <%= handles_select_tag(handle, @reply_handles, 'twt-as-pop') %>  
               </div>
             </div>
-        
-            <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id" %>
-            
-            <%= hidden_field_tag "stream_id", "#{feed.stream_id}" %>
-            
-            <%= hidden_field "tweet", :feed_id , :value => feed.feed_id %>
+          
+              <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id twt-as-pop" %>
+              
+              <%= hidden_field_tag "stream_id", "#{feed.stream_id}" %>
+              
+              <%= hidden_field "tweet", :feed_id , :value => feed.feed_id %>
 
-            <div class="pull-right">
-               <button type="button" class="btn btn-default pull-left twt-submit rt-submit" data-feed-id = "<%= feed.feed_id%>"> Retweet </button>
+              <div class="pull-right">
+                 <button type="button" class="btn btn-default pull-left twt-submit rt-submit" data-feed-id = "<%= feed.feed_id%>"> Retweet </button>
+              </div>
             </div>
           </div>
-        </div>
 
-      <% end %>
-    </div>
+        <% end %>
+      </div>
+    <% end%>
 
   </div>
 <% end %>

@@ -3,7 +3,8 @@ require "open-uri"
 
 module HelpdeskControllerMethods
   include Helpdesk::NoteActions
-
+  include CloudFilesHelper
+  
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
@@ -223,17 +224,8 @@ protected
   end
 
   def build_attachments item, model_name
-    if item.respond_to?(:dropboxes) #handle dropbox
-      (params[:dropbox_url] || []).each do |urls|
-        decoded_url =  URI.unescape(urls)
-        item.dropboxes.build(:url => decoded_url)
-      end
-    end
+    attachment_builder(item, params[model_name][:attachments], params[:cloud_file_attachments] )
     build_shared_attachments item
-    return unless item.respond_to?(:attachments)
-    (params[model_name][:attachments] || []).each do |a|
-      item.attachments.build(:content => a[:resource], :description => a[:description], :account_id => item.account_id)
-    end
   end
 
   def build_shared_attachments item

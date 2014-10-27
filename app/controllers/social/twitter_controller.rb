@@ -10,6 +10,9 @@ class Social::TwitterController < Social::BaseController
   before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
   before_filter :get_favorite_params, :only => [:favorite, :unfavorite]
   before_filter :get_follow_params,   :only => [:follow, :unfollow]
+  before_filter :load_visible_handles, :only => [:user_info, :followers]
+  before_filter :load_reply_handles, :only => [:twitter_search, :show_old, :fetch_new, :reply]
+
 
   def twitter_search
     @recent_search = current_user.agent.recent_social_searches
@@ -63,7 +66,7 @@ class Social::TwitterController < Social::BaseController
       :name => params[:user][:name]
     )
     @klout_score = params[:user][:klout_score].to_i # Currently disabling klout score fetching from api
-    @user[:show_followers] = true unless set_screen_names == [screen_name]
+    @user[:show_followers] = true unless visible_screen_names == [screen_name]
     unless set_screen_names.include?(screen_name)
       @user[:db] = current_account.users.find_by_twitter_id(screen_name,
                                                           :select => "name, customer_id, email, phone, mobile, time_zone")
@@ -163,8 +166,8 @@ class Social::TwitterController < Social::BaseController
     twt_handle  = current_account.random_twitter_handle
     follower_ids, @social_error_msg = Social::Twitter::User.get_followers(twt_handle, screen_name)
     if @social_error_msg.blank? and !follower_ids.nil?
-      all_handles  = current_account.twitter_handles.find(:all, :conditions => ["screen_name != ?", screen_name])
-      @follow_hash = Hash[*all_handles.collect { |handle| [ handle.screen_name, following?(follower_ids, handle.twitter_user_id) ] }.flatten]
+      visible_handles  = @visible_handles.select {|handle| handle.screen_name != screen_name }
+      @follow_hash = Hash[*visible_handles.collect { |handle| [ handle.screen_name, following?(follower_ids, handle.twitter_user_id) ] }.flatten]
     else
       flash.now[:notice] = @social_error_msg
     end
@@ -363,6 +366,10 @@ class Social::TwitterController < Social::BaseController
   def set_screen_names
     @all_handles      = current_account.twitter_handles_from_cache
     @all_screen_names = @all_handles.map {|handle| handle.screen_name }
+  end
+  
+  def visible_screen_names
+    @visible_handles.map{|handle| handle.screen_name}
   end
   
   def db_user?(item)
