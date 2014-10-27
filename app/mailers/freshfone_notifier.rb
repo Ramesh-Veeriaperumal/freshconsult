@@ -14,7 +14,7 @@ class FreshfoneNotifier < ActionMailer::Base
     @trial_days = trial_days
     @account = account
     mail(headers) do |part|
-      part.html { render "account_expiring.html" }
+      part.html { render "account_expiring", :formats => [:html] }
     end.deliver
   end
 
@@ -31,7 +31,7 @@ class FreshfoneNotifier < ActionMailer::Base
     @account = account
     @number  = number
     mail(headers) do |part|
-      part.html { render "number_renewal_failure.html" }
+      part.html { render "number_renewal_failure", :formats => [:html] }
     end.deliver
   end
 
@@ -48,7 +48,7 @@ class FreshfoneNotifier < ActionMailer::Base
     @body = { :account => account }
     @account = account
     mail(headers) do |part|
-      part.html { render "suspended_account.html" }
+      part.html { render "suspended_account", :formats => [:html]}
     end.deliver
   end
 
@@ -64,7 +64,7 @@ class FreshfoneNotifier < ActionMailer::Base
     }
     @freshfone_number = number
     mail(headers) do |part|
-      part.html { render "address_certification.html" }
+      part.html { render "address_certification", :formats => [:html] }
     end.deliver
   end
 
@@ -82,7 +82,7 @@ class FreshfoneNotifier < ActionMailer::Base
     @balance         = balance
 
     mail(headers) do |part|
-      part.html { render "recharge_success.html"}
+      part.html { render "recharge_success", :formats => [:html]}
     end.deliver
   end
 
@@ -99,7 +99,7 @@ class FreshfoneNotifier < ActionMailer::Base
     @account = account
     @balance = balance
     mail(headers) do |part|
-      part.html { render "low_balance.html" }
+      part.html { render "low_balance", :formats => [:html] }
     end.deliver
   end
 
@@ -190,7 +190,7 @@ class FreshfoneNotifier < ActionMailer::Base
     @user = user
     @message = params[:message]
     mail(headers) do |part|
-      part.html { render "freshfone_request_template.html" }
+      part.html { render "freshfone_request_template", :formats => [:html] }
     end.deliver
   end
 

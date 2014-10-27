@@ -12,7 +12,8 @@
 	</div>
 	<div class="answer-desc">
 		<div class="p-desc">
-			<%= truncate(@answer.body, :length => 400) %>
+                  <% # TODO-RAILS3:: calling liquid truncate rather Actionview Helper %>
+			<%= truncate(@answer.body, 400) %>
 		</div>
 	</div>
 </div>

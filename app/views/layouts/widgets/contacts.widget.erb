@@ -13,7 +13,7 @@
 <%#= TODO-RAILS3 RTL %>
 		<%= stylesheet_link_tag :common  %> 	    
 		<%= stylesheet_link_tag :app  %> 	    
-		<%= render :partial => "shared/theme.css"  %>
+		<%= render :partial => "shared/theme", :formats => [:css]  %>
 	  <%= yield :head %>
 	</head>
   <body style="min-width:auto;">

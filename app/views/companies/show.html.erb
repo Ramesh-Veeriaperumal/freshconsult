@@ -104,7 +104,7 @@
 		<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
 		<table class="tickets" id="tickets_view" width="100%">	
 			<tbody id="view_tickets">
-				<%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @company_tickets, :inline => true, 
+				<%= render :partial => "/helpdesk/shared/expanded/ticket", :formats => [:html], :collection => @company_tickets, :inline => true, 
 				    :locals => { :user_page => false } %>
 			</tbody>
 		</table>

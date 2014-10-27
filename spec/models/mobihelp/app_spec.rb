@@ -14,7 +14,7 @@ describe Mobihelp::App do
   end
 
   it "should allow to add an app with the same name of deleted app" do
-    dup_mobihelp_app = @mobihelp_app.clone
+    dup_mobihelp_app = @mobihelp_app.dup
     @mobihelp_app.deleted = true
     @mobihelp_app.save
     status = dup_mobihelp_app.save

@@ -6,10 +6,7 @@ end
 
 RSpec.describe Helpdesk::Email::Process do
 	before(:all) do
-		add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
-		clear_email_config
-		@comp = create_company
-		restore_default_feature("reply_to_based_tickets")
+		before_all_call
 	end
 
 	before(:each) do
@@ -41,6 +38,11 @@ RSpec.describe Helpdesk::Email::Process do
 	#Also check S3.yml and change the test credentials to that in staging.
 
 	describe "Create ticket" do
+    
+    after(:all) do
+      restore_default_feature("reply_to_based_tickets")
+    end
+    
 		it "Reply-To Based requester" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			reply_to = email["Reply-To"]
@@ -151,10 +153,10 @@ RSpec.describe Helpdesk::Email::Process do
 
 		it "by agent with kbase in cc", :focus => true do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :include_cc => @account.kbase_email, :reply => @account.agents.first.user.email})
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			@account.solution_articles.size.should eql @article_size+1
+      Helpdesk::Email::Process.new(email).perform
+      ticket = @account.tickets.last
+      ticket_incremented?(@ticket_size)
+      @account.solution_articles.size.should eql @article_size+1
 		end
 
 		it "with attachments" do
@@ -226,27 +228,27 @@ RSpec.describe Helpdesk::Email::Process do
 		it "from snapengage for chat" do
 			email_id = "sample1234@snapengage.com"
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.source.should eql 7
+      Helpdesk::Email::Process.new(email).perform
+      ticket = @account.tickets.last
+      ticket_incremented?(@ticket_size)
+      ticket.source.should eql 7
 		end
 
 		it "from blocked user" do
 			user1 = add_new_user(@account, {:blocked => true, :email => "sampleone@shdjsjdsd.ccc"})
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			@account.tickets.size.should eql @ticket_size
+      email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
+      Helpdesk::Email::Process.new(email).perform
+      ticket = @account.tickets.last
+      @account.tickets.size.should eql @ticket_size
 		end
 
 		it "from deleted user" do
-			user1 = add_new_user(@account, {:deleted => true, :email => "sampleone@shdjsjdsd.ccc"})
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.spam.should eql true
+			user1 = add_new_user(@account, {:deleted => true, :email => "sampleone@shdjsjdsd1.ccc"})
+      email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
+      Helpdesk::Email::Process.new(email).perform
+      ticket = @account.tickets.last
+      ticket_incremented?(@ticket_size)
+      ticket.spam.should eql true
 		end
 
 		it "with email commands" do
@@ -299,13 +301,22 @@ RSpec.describe Helpdesk::Email::Process do
 
 		it "from email_config to kbase" do
 			email = new_mailgun_email({:email_config => @account.kbase_email, :reply => @account.primary_email_config.reply_email, :include_cc => @account.kbase_email})
-			Helpdesk::Email::Process.new(email).perform
-			solutions_incremented?(@article_size)
+      Helpdesk::Email::Process.new(email).perform
+      solutions_incremented?(@article_size)
 		end
 
 	end
 
 	describe "Create article" do
+    
+    before(:all) do
+      before_all_call
+    end
+  
+    after(:all) do
+      restore_default_feature("reply_to_based_tickets")
+    end
+    
 		it "once by email" do
 			email = new_mailgun_email({:email_config => @account.kbase_email, :reply => @account.agents.first.user.email})
 			email[:from] = @account.agents.first.user.email
@@ -331,6 +342,11 @@ RSpec.describe Helpdesk::Email::Process do
 	end
 
 	describe "Create Note" do
+    
+    before(:all) do
+      before_all_call
+    end
+    
 		it "by ticket id" do
 			email_id = Faker::Internet.email
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
@@ -595,5 +611,12 @@ RSpec.describe Helpdesk::Email::Process do
 			latest_ticket.cc_email_hash[:reply_cc].should include cc_email
 		end
 	end
+  
+  def before_all_call
+    add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
+		clear_email_config
+		@comp = create_company
+		restore_default_feature("reply_to_based_tickets")
+  end
 
 end

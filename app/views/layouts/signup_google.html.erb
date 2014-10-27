@@ -22,7 +22,7 @@
 		<%= stylesheet_link_tag :ie_hacks %>
 		<%= stylesheet_link_tag :google_signup %>
 		<%= stylesheet_link_tag :pattern, :media => "screen, print, projection"  %>
-		<%= render :partial => "shared/theme.css"  %>
+		<%= render :partial => "shared/theme", :formats => [:css]  %>
 
 		<script type="text/javascript">
 			PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';

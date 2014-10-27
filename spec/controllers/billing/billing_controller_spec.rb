@@ -7,7 +7,7 @@ describe Billing::BillingController do
 
   before(:all) do
     if @billing_account.blank?
-      # Account.reset_current_account
+      Account.reset_current_account
       User.current = nil
       
       Resque.inline = true

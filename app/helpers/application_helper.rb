@@ -736,11 +736,11 @@ module ApplicationHelper
 
   def add_cc_field_tag element , field
     if current_user && current_user.agent?
-      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all", :formats => [:html]))
     elsif current_user && current_user.customer? && field.all_cc_in_portal?
-      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all", :formats => [:html]))
     else
-      element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.company)
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email", :formats => [:html])) if (current_user && field.company_cc_in_portal? && current_user.company)
     end
     return element
   end

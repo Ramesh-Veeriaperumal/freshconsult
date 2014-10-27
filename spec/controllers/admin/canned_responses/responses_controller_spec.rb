@@ -24,6 +24,12 @@ describe Admin::CannedResponses::ResponsesController do
 		@request.env['HTTP_REFERER'] = '/admin/canned_responses/folders'
 		stub_s3_writes
 		log_in(@agent)
+		stub_s3_writes
+	end
+
+	after(:all) do
+		@test_response_2.destroy
+		@test_cr_folder_1.destroy
 	end
 
 	it "should create a new Canned Responses" do
@@ -353,9 +359,12 @@ describe Admin::CannedResponses::ResponsesController do
 	end
 
 	it "should delete multiple Canned Responses" do
-		delete :delete_multiple, :ids => ["#{@test_response_1.id}"], :folder_id => @folder_id
-		canned_response = @account.canned_responses.find_by_id(@test_response_1.id)
-		canned_response.should be_nil
+		new_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
+		ids = ["#{@test_response_1.id}","#{new_response.id}"]
+		delete :delete_multiple, :ids => ids, :folder_id => @folder_id
+		ids.each do |id|
+			@account.canned_responses.find_by_id(id).should be_nil
+		end
 	end
 
 	it "should delete shared attachment" do

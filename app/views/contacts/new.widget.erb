@@ -4,7 +4,7 @@
 <% else %>
   <h3 class="title"><%=t('contacts.new')%></h3>
   <%= form_for @user,:url => "/contacts/create.widget", :html => { :multipart => true, :onsubmit=>"var new_user_form = jQuery('#new_user');var serialized_data = new_user_form.serializeArray();var form_data={}; for(var i=0;i<serialized_data.length;i++) {form_data[serialized_data[i].name] = serialized_data[i].value} var url = '/contacts.widget';makeRequest(url, handleResponse, {}, form_data);return false;" }  do |f| -%>
-    <%= render :partial => "create_form.html", :locals => { :f => f } %>
+    <%= render :partial => "create_form", :formats => [:html], :locals => { :f => f } %>
 	<div class="button-container">
 	      <%= f.submit t('contacts.save_changes'), :class => "uiButton" %> 
 	</div>

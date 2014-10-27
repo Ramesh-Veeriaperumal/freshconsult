@@ -16,11 +16,12 @@ if Rails.env.test?
       created_at Time.now
     end
 
-    factory :note, :class => Helpdesk::Note do
+    factory :helpdesk_note, :class => Helpdesk::Note do
       body Faker::Lorem.paragraph(3)
       notable_id 1
       notable_type 'Helpdesk::Ticket'
       private false
+      incoming true
     end
 
     # TODO-RAILS3
@@ -71,7 +72,7 @@ if Rails.env.test?
      factory :picklist_value, :class => Helpdesk::PicklistValue do
      end
 
-    factory :helpdesk_note, :class => Helpdesk::Note do
+    factory :note, :class => Helpdesk::Note do
       deleted 0
       incoming 0
       private 1

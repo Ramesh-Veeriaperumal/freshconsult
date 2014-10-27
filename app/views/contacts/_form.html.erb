@@ -83,7 +83,7 @@
 		<li class="control-group">
 			<label class="control-label"><%=t("user.profile_picture")%></label>
 			<div class="controls">
-				<%= render :partial => "/shared/profileavatar.html", :locals => { :user => @user, :type => type } %> 
+				<%= render :partial => "/shared/profileavatar", :formats => [:html], :locals => { :user => @user, :type => type } %> 
 			</div>
 		</li>
 

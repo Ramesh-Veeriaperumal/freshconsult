@@ -23,7 +23,13 @@ class Group < ActiveRecord::Base
    
    has_and_belongs_to_many :accesses, 
     :class_name => 'Helpdesk::Access',
-    :join_table => 'group_accesses'
+    :join_table => 'group_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO group_accesses (account_id, group_id, access_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
     
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
                    :ticket_assign_type, :business_calendar_id,

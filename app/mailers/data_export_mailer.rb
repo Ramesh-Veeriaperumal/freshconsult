@@ -14,7 +14,7 @@ class DataExportMailer < ActionMailer::Base
     }
     @url = options[:url]
     mail(headers) do | part|
-      part.html { render "data_backup.html" }
+      part.html { render "data_backup", :formats => [:html] }
     end.deliver
   end 
 
@@ -32,7 +32,7 @@ class DataExportMailer < ActionMailer::Base
     @user = options[:user]
     @url  = options[:url]
     mail(headers) do |part|
-      part.html { render "ticket_export.html" }
+      part.html { render "ticket_export", :formats => [:html] }
     end.deliver
   end
 
@@ -49,7 +49,7 @@ class DataExportMailer < ActionMailer::Base
     }
     @user = options[:user]
     mail(headers) do |part|
-      part.html { render "no_tickets.html" }
+      part.html { render "no_tickets", :formats => [:html] }
     end.deliver
   end
  

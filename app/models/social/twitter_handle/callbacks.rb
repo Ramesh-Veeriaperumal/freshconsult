@@ -54,7 +54,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   end
 
   def previous_changes
-    @custom_previous_changes || {}
+    @custom_previous_changes || HashWithIndifferentAccess.new
   end
 
   private

@@ -109,7 +109,13 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :accesses,  
     :class_name => 'Helpdesk::Access',
-    :join_table => 'user_accesses'
+    :join_table => 'user_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_accesses (account_id, user_id, access_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
 
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device', :dependent => :destroy
 end

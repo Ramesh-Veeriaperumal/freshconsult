@@ -55,7 +55,7 @@ class FreshdeskErrorsMailer < ActionMailer::Base
     }
     @additional_info = options[:additional_info]
     mail(headers) do |part|
-      part.html { render "spam_blocked_alert.html" }
+      part.html { render "spam_blocked_alert", :formats => [:html] }
     end.deliver
   end
   

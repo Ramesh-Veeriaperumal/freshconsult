@@ -120,10 +120,10 @@ describe ContactsController do
   end
 
   it "should list all deleted contacts" do
-    deleted_contact = Factory.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
+    deleted_contact = FactoryGirl.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => false, 
                               :deleted => true)
-    deleted_contact.save(false)
+    deleted_contact.save(:validate => false)
     get :index, {:state => "deleted", :letter => []}
     response.body.should =~ /#{deleted_contact.email}/
   end
@@ -172,10 +172,10 @@ describe ContactsController do
   end
 
   it "should list deleted contacts matching the query with filter condition as deleted state" do
-    contact = Factory.build(:user, :account => @acc, :phone => "23423422334234", :email => Faker::Internet.email,
+    contact = FactoryGirl.build(:user, :account => @acc, :phone => "23423422334234", :email => Faker::Internet.email,
                               :user_role => 3, :active => false, 
                               :deleted => true)
-    contact.save(false)
+    contact.save(:validate => false)
     get :index,:state => "deleted", :letter => [],:format => 'xml', :query => "email is #{contact.email}"
     response.body.should =~ /#{contact.email}/
     response.body.should_not =~ /#{@sample_contact.email}/

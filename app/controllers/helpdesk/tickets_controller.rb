@@ -297,7 +297,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def update
-    old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     build_attachments @item, :helpdesk_ticket   
     if @item.update_ticket_attributes(params[nscname])
@@ -336,11 +335,10 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def update_ticket_properties
-    old_item = @item.clone
     if @item.update_ticket_attributes(params[nscname])
       update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       if(params[:redirect] && params[:redirect].to_bool)
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] )
       end
       verify_permission
       respond_to do |format|
@@ -824,7 +822,6 @@ class Helpdesk::TicketsController < ApplicationController
     
     def assign_ticket user
       @items.each do |item|
-        old_item = item.clone
         item.responder = user
         #item.train(:ham) #Temporarily commented out by Shan
         item.save

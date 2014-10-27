@@ -7,7 +7,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email("kiran@freshdesk.com", "Error in Subscription module for #{options[:custom_message]}")
     @message = options[:error_msg], @full_domain = options[:full_domain]
     mail(@headers) do |part|
-      part.html { render "sub_error.html" }
+      part.html { render "sub_error", :formats => [:html] }
     end.deliver
   end
   
@@ -15,7 +15,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(account.admin_email, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
     @account = account, @host = account.host
     mail(@headers) do |part|
-      part.html { render "welcome.html" }
+      part.html { render "welcome", :formats => [:html] }
     end.deliver
   end
   
@@ -25,7 +25,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @user = user, @subscription = subscription, @trial_days = trial_days
 
     mail(@headers) do |part|
-      part.html { render "trial_expiring.html" }
+      part.html { render "trial_expiring", :formats => [:html] }
     end.deliver
   end
   
@@ -35,7 +35,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @subscription = subscription_payment.subscription
     @amount = subscription_payment.amount, @subscription_payment = subscription_payment 
     mail(@headers) do |part|
-      part.html { render "charge_receipt.html"}
+      part.html { render "charge_receipt", :formats => [:html]}
     end.deliver
   end
   
@@ -45,7 +45,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @units = quantity, @subscription_payment = subscription_payment, 
     @subscription = subscription_payment.subscription
     mail(@headers) do |part|
-      part.html { render "day_pass_receipt.html"}
+      part.html { render "day_pass_receipt", :formats => [:html]}
     end.deliver
   end
   
@@ -55,7 +55,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @subscription = subscription_payment.subscription, 
     @subscription_payment = subscription_payment, @description = description
     mail(@headers) do |part|
-      part.html { render "misc_receipt.html"}
+      part.html { render "misc_receipt", :formats => [:html]}
     end.deliver
   end
   
@@ -64,7 +64,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @bcc = AppConfig['from_email']
     @subscription = subscription
     mail(@headers) do |part|
-      part.html { render "charge_failure.html"}
+      part.html { render "charge_failure", :formats => [:html]}
     end.deliver   
   end
   
@@ -72,7 +72,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
     @account = account, @reason = feedback
     mail(@headers) do |part|
-      part.html { render "account_deleted.html"}
+      part.html { render "account_deleted", :formats => [:html]}
     end.deliver
   end
 
@@ -87,7 +87,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @deleted_users = deleted_users
     @spam_watcher_redis = spam_watcher_redis
     mail(@headers) do |part|
-      part.html { render "admin_spam_watcher.html"}
+      part.html { render "admin_spam_watcher", :formats => [:html]}
     end.deliver
   end
 
@@ -100,7 +100,7 @@ class SubscriptionNotifier < ActionMailer::Base
     }
     @account = account
     mail(@headers) do |part|
-      part.html { render "admin_spam_watcher_blocked.html"}
+      part.html { render "admin_spam_watcher_blocked", :formats => [:html] }
     end.deliver
   end
 
@@ -108,7 +108,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(AppConfig['from_email'], "#{subscription.account.full_domain} downgraded")
     @subscription = subscription, @old_subscription = old_subscription
     mail(@headers) do |part|
-      part.html { render "subscription_downgraded.html"}
+      part.html { render "subscription_downgraded", :formats => [:html]}
     end.deliver
   end
 

@@ -1,9 +1,7 @@
 require 'spec_helper'
 
-RSpec.configure do |c|
-  c.include Redis::RedisKeys
-  c.include Redis::IntegrationsRedis
-end
+include Redis::RedisKeys
+include Redis::IntegrationsRedis
 
 RSpec.describe Integrations::JiraIssueController do
 

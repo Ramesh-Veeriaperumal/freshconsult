@@ -1,6 +1,7 @@
 class Helpdesk::TicketState <  ActiveRecord::Base
 
   self.primary_key = :id
+  self.table_name =  "helpdesk_ticket_states"
 
   include Reports::TicketStats
   include Redis::RedisKeys
@@ -12,7 +13,6 @@ class Helpdesk::TicketState <  ActiveRecord::Base
                                  'requester_responded_at', 'status_updated_at' ]
 
   belongs_to_account
-  self.table_name =  "helpdesk_ticket_states"
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
   
   attr_protected :ticket_id

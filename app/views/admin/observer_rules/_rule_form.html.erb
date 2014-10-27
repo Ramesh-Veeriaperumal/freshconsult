@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%><%- end %>
 <%#= TODO-RAILS3 RTL %>
 <%= javascript_include_tag :observer_event %>
-<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders+event_placeholders } %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <%= f.error_messages :object_name => 'rule' %>
 <input type="hidden" name="id"   value="" />
 <input type="hidden" name="type" value="virtual_agents" />

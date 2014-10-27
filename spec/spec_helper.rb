@@ -136,9 +136,7 @@ Spork.prefork do
     config.before(:all) do
       create_test_account
       @account = Account.first
-      @account = @account
       @agent = get_admin
-      @agent = @agent
       RSpec.configuration.timings = []
       
       #begin_gc_defragment

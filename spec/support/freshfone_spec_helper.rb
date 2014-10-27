@@ -17,6 +17,7 @@ module FreshfoneSpecHelper
     create_freshfone_credit
     create_freshfone_number
     @account.features.freshfone.create
+    @account.reload
   end
 
   def create_freshfone_credit

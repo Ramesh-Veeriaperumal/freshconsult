@@ -1,8 +1,5 @@
 require 'spec_helper'
-
-RSpec.configure do |c|
-  c.include Gamification::Quests::Constants
-end
+include Gamification::Quests::Constants
 
 RSpec.describe Gamification::Quests::ProcessTicketQuests do
   self.use_transactional_fixtures = false
@@ -13,7 +10,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
   OVERALL_RESOLUTION_POINTS = FAST_RESOLUTION_POINTS + FIRST_CALL_RESOLUTION_POINTS
   
   before(:all) do
-    @account  = create_test_account
+    before_all_call
   end
   
   # Assuming all the tickets are resolved fast and in first call
@@ -21,15 +18,13 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
   
   context "Ticket quests with filter condition - source as email and time span - any time" do 
     before(:all) do
-      @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
-    
       Resque.inline = false
       quest_filter_data = {
         :and_filters => [{ :name => "source" , :operator => "is", :value => "1"}], # Source "1" is "email"
         :or_filters => [],
         :actual_data => [{ :name => "source" , :operator => "is", :value => "1"}]
       }
-      quest_data = {:value => "2", :date => Gamification::Quests::Constants::TIME_TYPE_BY_TOKEN[:any_time]}
+      quest_data = {:value => "2", :date => TIME_TYPE_BY_TOKEN[:any_time]}
       @quest = create_ticket_quest(@account, quest_data, quest_filter_data)
       @agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
     end
@@ -110,15 +105,15 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
   
   context "Ticket quests with filter conditions - customer satisfaction rating is happy and time span - 1 day" do
     before(:all) do
-      @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
-    
+      before_all_call
+      
       Resque.inline = false
       quest_filter_data = {
         :and_filters => [{ :name => "st_survey_rating" , :operator => "is", :value => "1"}], # Survey rating "1" is "happy"
         :or_filters => [],
         :actual_data => [{ :name => "st_survey_rating" , :operator => "is", :value => "1"}]
       }
-      quest_data = {:value => "2", :date => Gamification::Quests::Constants::TIME_TYPE_BY_TOKEN[:one_day]}
+      quest_data = {:value => "2", :date => TIME_TYPE_BY_TOKEN[:one_day]}
       @quest = create_ticket_quest(@account, quest_data, quest_filter_data)
       @agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
     end
@@ -192,5 +187,10 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       all_tickets.each { |tkt| tkt.destroy }
       # @agent.user.destroy
     end
+  end
+  
+  def before_all_call
+    @account  = create_test_account
+    @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
   end
 end

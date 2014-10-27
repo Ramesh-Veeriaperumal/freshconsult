@@ -9,16 +9,15 @@ describe SubscriptionsController do
 
   before(:all) do
     if @billing_account.blank?
-      # Account.reset_current_account
+      Account.reset_current_account
       User.current = nil
-      
       Resque.inline = true
+      
       @billing_account = create_test_billing_acccount 
       Resque.inline = false               
     
       @account = Account.find(@billing_account.id)
       @user = @account.account_managers.first
-      @account = @account
       2.times { add_test_agent(@account) }  
     end
   end

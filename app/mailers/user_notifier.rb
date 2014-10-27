@@ -100,7 +100,7 @@ class UserNotifier < ActionMailer::Base
     }
     @helpdesk_urls = helpdesk_urls
     mail(headers) do |part|
-      part.html { render "helpdesk_url_reminder.html" }
+      part.html { render "helpdesk_url_reminder", :formats => [:html] }
     end.deliver   
   end
 

@@ -7,10 +7,22 @@ class Helpdesk::Access < ActiveRecord::Base
   belongs_to :accessible, :polymorphic => true  
             
   has_and_belongs_to_many :users,
-    :join_table => 'user_accesses'
+    :join_table => 'user_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_accesses (account_id, access_id, user_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
   
   has_and_belongs_to_many :groups,
-    :join_table => 'group_accesses'
+    :join_table => 'group_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO group_accesses (account_id, access_id, group_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
 
 
   ACCESS_TYPES = [

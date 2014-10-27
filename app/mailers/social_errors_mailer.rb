@@ -14,7 +14,7 @@ class SocialErrorsMailer < ActionMailer::Base
     }
     @params = options
     mail(headers) do |part|
-      part.html { render "threshold_reached.html" }
+      part.html { render "threshold_reached", :formats => [:html] }
     end.deliver
   end
 
@@ -28,7 +28,7 @@ class SocialErrorsMailer < ActionMailer::Base
     @error = options
     @params = params
     mail(headers) do |part|
-      part.html { render "facebook_exception.html" }
+      part.html { render "facebook_exception", :formats => [:html] }
     end.deliver
   end
 

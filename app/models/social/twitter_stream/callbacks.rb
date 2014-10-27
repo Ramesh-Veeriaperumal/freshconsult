@@ -28,7 +28,7 @@ class Social::TwitterStream < Social::Stream
   end
 
   def previous_changes
-    @custom_previous_changes || {}
+    @custom_previous_changes || HashWithIndifferentAccess.new
   end
   
   def gnip_subscription?

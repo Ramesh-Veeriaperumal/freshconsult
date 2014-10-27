@@ -38,7 +38,6 @@ RSpec.describe FreshfoneController do
     @account.features.freshfone.destroy
     post :voice, { :format => "html" }
     response.should render_template "errors/non_covered_feature"
-    @account.reload
   end
 
   it 'should redirect to login when non-twilio-aware methods are called by not logged in users' do

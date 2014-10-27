@@ -13,7 +13,7 @@ class Admin::DataImportMailer < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     mail(headers) do |part|
-      part.html { render "import_email.html" }
+      part.html { render "import_email", :formats => [:html] }
     end.deliver
   end 
   
@@ -29,7 +29,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     }
     @user = options[:user][:name]
     mail(headers) do |part|
-      part.html { render "import_error_email.html" }
+      part.html { render "import_error_email", :formats => [:html] }
     end.deliver
   end 
 
@@ -45,7 +45,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     }
     @user = options[:user][:name]
     mail(headers) do |part|
-      part.html { render "import_format_error_email.html" }
+      part.html { render "import_format_error_email", :formats => [:html] }
     end.deliver
   end
 
@@ -61,7 +61,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     }
     @user = options[:user][:name]
     mail(headers) do |part|
-      part.html { render "import_summary.html" }
+      part.html { render "import_summary", :formats => [:html] }
     end.deliver
   end 
   
@@ -77,7 +77,7 @@ class Admin::DataImportMailer < ActionMailer::Base
     }
     @last_stats = options[:status]
     mail(headers) do |part|
-      part.html { render "google_contacts_import_email.html" }
+      part.html { render "google_contacts_import_email", :formats => [:html] }
     end.deliver
   end
 
@@ -92,7 +92,7 @@ class Admin::DataImportMailer < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     mail(headers) do |part|
-      part.html { render "google_contacts_import_error_email.html" }
+      part.html { render "google_contacts_import_error_email", :formats => [:html] }
     end.deliver
   end
 

@@ -76,7 +76,7 @@ RSpec.describe Freshfone::IvrsController do
   end
 
   it 'should enable ivr on successful activate action' do
-    ivr = @number.ivr
+    ivr = @number.ivr.reload
     ivr.update_attributes(:active => false)
     post :activate, {:id => @number.ivr.id, :active => true}
     @account.ivrs.find(ivr.id).should be_active
