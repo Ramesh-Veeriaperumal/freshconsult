@@ -12,7 +12,7 @@ class Company < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id
   attr_accessor :highlight_name
-  xss_sanitize  :only => [:name]
+  xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   
   belongs_to_account
   
