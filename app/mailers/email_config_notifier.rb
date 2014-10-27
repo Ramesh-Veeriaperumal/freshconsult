@@ -16,7 +16,7 @@ class EmailConfigNotifier < ActionMailer::Base
                         :host => email_config.account.host)
     @email_config   = email_config
     mail(headers) do |part|
-      part.html { render "activation_instructions" }
+      part.html { render "activation_instructions.html" }
     end.deliver
   end
   
