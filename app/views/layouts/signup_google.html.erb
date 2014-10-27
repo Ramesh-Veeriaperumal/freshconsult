@@ -17,12 +17,11 @@
 			<link rel="canonical" href="<%= page_canonical %>" />
 		<% end %>
 		<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :common %>
-		<%= stylesheet_link_tag :ie_hacks %>
-		<%= stylesheet_link_tag :google_signup %>
-		<%= stylesheet_link_tag :pattern, :media => "screen, print, projection"  %>
-		<%= render :partial => "shared/theme", :formats => [:css]  %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/common' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/ie_hacks' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/google_signup' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/pattern', :media => "screen, print, projection"  %>
+		<%= render :partial => "shared/theme.css"  %>
 
 		<script type="text/javascript">
 			PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
@@ -32,11 +31,10 @@
 			};
 			cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 		</script>
-		<%= javascript_include_tag :defaults  %>
-		<%= javascript_include_tag :frameworks %>
-		<%= javascript_include_tag :workspace %>
-		<%= javascript_include_tag :pattern  %>
-		<%#= javascript_include_tag :visitor %>
+		<%= javascript_include_tag :'cdn/defaults'  %>
+		<%= javascript_include_tag :'cdn/frameworks' %>
+		<%= javascript_include_tag :'cdn/workspace' %>
+		<%= javascript_include_tag :'cdn/pattern'  %>
 		<%= yield :head %>
 	</head>
 	<body class="single ui-signup">

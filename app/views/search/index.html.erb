@@ -29,7 +29,7 @@
 		</div>
 	</div>
 <% end %>
-<%= javascript_include_tag :search %>
+<%= javascript_include_tag :'cdn/search' %>
 <script type="text/javascript">
 	window.SEARCH_RESULTS_PAGE = {
 		data : <%= @result_json.html_safe %>,

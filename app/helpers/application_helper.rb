@@ -61,10 +61,6 @@ module ApplicationHelper
     "/support/#{stylesheet_name}?v=#{query_string}"
   end
 
-  def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
-    javascript_include_tag locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
-  end
-
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
         portal.logo.nil? ? "/assets/logo.png?721013" :

@@ -9,9 +9,9 @@
 		<meta name="viewport" content="width=device-width">  
 		<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />		
 		<!-- <link href="/theme.css" media="screen" rel="stylesheet" type="text/css"> -->
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :preview %>
-		<%= javascript_include_tag :preview %>
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/preview' %>
+		<%= javascript_include_tag :'cdn/preview' %>
 	</head>
 	<body>
 		<%= yield %>

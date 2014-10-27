@@ -1225,6 +1225,7 @@ Helpkit::Application.routes.draw do
     match '' => 'dashboard#index', :as => :dashboard
     match '/freshchat/visitor/:filter' => 'visitor#index', :as => :visitor
     match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive
+    match '/sales_manager' => 'dashboard#sales_manager'
     
     resources :articles do
       collection do

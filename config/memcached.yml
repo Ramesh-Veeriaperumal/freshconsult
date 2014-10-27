@@ -23,6 +23,8 @@ slave:
   <<: *defaults
 test:
   <<: *defaults
+staging:
+  <<: *defaults
 
 
 

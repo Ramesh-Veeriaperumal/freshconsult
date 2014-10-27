@@ -232,4 +232,5 @@ end
   gem 'asset_sync',           '1.1.0'
   # Building custom font icons inside the application
   gem "fontcustom",           "1.3.3"
+  gem 'turbo-sprockets-rails3'
 # end

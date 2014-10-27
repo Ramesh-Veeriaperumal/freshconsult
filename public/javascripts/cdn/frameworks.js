@@ -20,7 +20,7 @@
 //= require frameworks/plugins/jquery.gritter.js
 //= require jquery.keypad.js
 //= require frameworks/plugins/select2.js
-//= require_tree ./moment
+//= require_tree ./../moment
 //= require frameworks/plugins/jquery.blockUI.js
 //= require frameworks/underscore-min.js
 //= require frameworks/lab.min.js

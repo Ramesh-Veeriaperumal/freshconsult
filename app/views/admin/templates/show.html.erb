@@ -1,4 +1,3 @@
-<%#= javascript_include_tag :portaltemplate %>
 <% content_for :sidebar do %><% end %> 
 <h3 class="lead">
   <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>

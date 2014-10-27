@@ -28,14 +28,14 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :portal_utils %>
-		<%= stylesheet_link_tag :facebook %>
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/facebook' %>
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= javascript_include_tag :portal_head %>
+		<%= javascript_include_tag :'cdn/portal_head' %>
 
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 
@@ -108,8 +108,8 @@
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= javascript_include_tag :portal_bottom %>
-		<%= javascript_include_tag :redactor %>
+		<%= javascript_include_tag :'cdn/portal_bottom' %>
+		<%= javascript_include_tag :'cdn/redactor' %>
 
 		<%= cookie_law %>
 	</body>

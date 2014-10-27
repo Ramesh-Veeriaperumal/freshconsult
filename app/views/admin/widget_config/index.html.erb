@@ -1,4 +1,4 @@
-<%= javascript_include_tag :widget_config %>
+<%= javascript_include_tag :'cdn/widget_config' %>
 <% if current_account.main_portal.preferences.present?
 	$tab_color = current_account.main_portal.preferences[:tab_color]
    end %>

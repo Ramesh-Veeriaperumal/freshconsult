@@ -1,6 +1,6 @@
-<%#= TODO-RAILS3 RTL %>
-<%= javascript_include_tag :social_admin %>
-<%= stylesheet_link_tag :social %>
+ 
+<%= javascript_include_tag :'cdn/social_admin' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/social' %>
 <% content_for :sidebar do -%><%-end %>
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>

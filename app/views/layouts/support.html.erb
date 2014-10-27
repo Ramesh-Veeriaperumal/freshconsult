@@ -13,9 +13,9 @@
 
 		<!-- Base stylesheet -->
 
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :portal_utils %>
-		<%= stylesheet_link_tag :portal_print,  :media => "print" %>
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/portal_print',  :media => "print" %>
 
 		
 		<!-- Theme stylesheet -->
@@ -25,10 +25,10 @@
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= javascript_include_tag :portal_head %>
+		<%= javascript_include_tag :'cdn/portal_head' %>
 		
 		<!-- Including syntexhighlighter for portal -->
-		<%= javascript_include_tag :syntaxhighlighter %>
+		<%= javascript_include_tag :'cdn/syntaxhighlighter' %>
 
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 
@@ -44,10 +44,10 @@
 			<%= render :partial => "layouts/shared/chat/chat" %>
 		<% end %>
 				
-	    <%= javascript_include_tag :portal_bottom %>
-		<%= javascript_include_tag :redactor %>
-		<%= javascript_include_tag :freshfone_portal %>	
-		<%= include_cloudfront_js_langs %>
+	    <%= javascript_include_tag :'cdn/portal_bottom' %>
+		<%= javascript_include_tag :'cdn/redactor' %>
+		<%= javascript_include_tag :'cdn/freshfone_portal' %>	
+		<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 		<!-- Including default portal based script at the bottom -->
 		<%= render :partial => "layouts/shared/scripts" %> 
 

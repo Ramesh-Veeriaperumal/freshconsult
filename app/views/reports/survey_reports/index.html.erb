@@ -1,5 +1,5 @@
-<%#= TODO-RAILS3 RTL %>
-<%= stylesheet_link_tag :reports  %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/reports'  %>
 
 <%
 	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)

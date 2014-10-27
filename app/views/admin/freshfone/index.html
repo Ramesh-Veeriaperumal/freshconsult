@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%-end %>
-<%#= TODO-RAILS3 RTL %>
-<%= stylesheet_link_tag :freshfone_admin %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_admin' %>
 <% @page_title = t('freshfone.admin.welcome_page.title')%>
 <div class="list-page-body ">
 <h3 class="lead"> <%= t('freshfone.admin.feature_request_content.title') %> </h3>
@@ -43,4 +43,4 @@
   freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success_message')%>" ;
   freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
 <%- end %>
-<%= javascript_include_tag :freshfone_welcome_page %>
+<%= javascript_include_tag :'cdn/freshfone_welcome_page' %>

@@ -2,8 +2,8 @@
 <% disable_options = params[:disable]%>
 
 <% if(responsive != "no") %>
-  <%#= # TODO-RAILS3 RTL %>
-	<%= stylesheet_link_tag :responsive_widget %>
+   
+	<%= stylesheet_link_tag_with_rtl :'cdn/responsive_widget' %>
 <% end %>
 
 <div class="modal-header">

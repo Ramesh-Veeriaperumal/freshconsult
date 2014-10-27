@@ -10,9 +10,9 @@ require "rack/ssl"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
+  # Bundler.require(*Rails.groups(:assets => %w(development test)))
   # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
+  Bundler.require(:default, :assets, Rails.env)
 end
 
 module Helpkit
@@ -170,11 +170,8 @@ module Helpkit
 
     config.assets.paths += (Dir["#{Rails.root}/public/*"] - ["#{Rails.root}/public/assets"]).sort_by { |dir| -dir.size }
 
-    config.assets.paths << Rails.root.join("public", "generated", "fonts")
-    config.assets.paths << Rails.root.join("public", "generated", "images")
-    # config.assets.digest = true
-    # Precompile *all* assets, except those that start with underscore
-    config.assets.precompile << /(^[^_\/]|\/[^_])[^\/]*$/
+    config.assets.digest = true
+    config.assets.precompile = ["cdn/*"]
 
     # prevent Rails from initializing the Rails environment
     # and looking at database.yml when running rake assets:precompile

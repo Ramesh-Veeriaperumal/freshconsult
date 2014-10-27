@@ -71,6 +71,8 @@ Helpkit::Application.configure do
     Sass::Plugin.options[:never_update] = true
   end
 
+  config.action_controller.asset_host = "//d31jxxr9fvyo78.cloudfront.net"
+
 end
 
 

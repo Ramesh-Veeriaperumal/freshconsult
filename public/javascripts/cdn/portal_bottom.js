@@ -8,7 +8,7 @@
 //= require portal/bootstrap.js
 //= require portal/bootstrap.dialog.js
 //= require frameworks/plugins/select2.js
-//= require_tree ./moment
+//= require_tree ./../moment
 //= require security.js
 //= require portal/portal.js
 //= require portal/portal_custom_validators.js

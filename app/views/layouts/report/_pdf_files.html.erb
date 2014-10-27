@@ -1,8 +1,8 @@
 <% unless ["ko", "zh-CN", "ja-JP"].index(current_user.language) %>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <% end %>
-<%#= TODO-RAILS3 RTL %>
-<%= stylesheet_link_tag :reports  %>
-<%= stylesheet_link_tag :pattern  %>
-<%= javascript_include_tag :frameworks  %>
-<%= javascript_include_tag :reports  %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/reports'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/pattern'  %>
+<%= javascript_include_tag :'cdn/frameworks'  %>
+<%= javascript_include_tag :'cdn/reports'  %>

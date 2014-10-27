@@ -7,14 +7,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :widget %>
-		<%= stylesheet_link_tag :ie_hacks %>		
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/widget' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/ie_hacks' %>		
 
-		<%= javascript_include_tag :fdwidget %>
-		<%= javascript_include_tag :pattern %>
-		<%= javascript_include_tag :redactor %>
-		<!--[if IE]><%= javascript_include_tag :excanvas %><![endif]-->
+		<%= javascript_include_tag :'cdn/fdwidget' %>
+		<%= javascript_include_tag :'cdn/pattern' %>
+		<%= javascript_include_tag :'cdn/redactor' %>
+		<!--[if IE]><%= javascript_include_tag :'cdn/excanvas' %><![endif]-->
 
 	  	<%= yield :head %>
 		<script type="text/javascript">

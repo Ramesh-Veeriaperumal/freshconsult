@@ -141,7 +141,7 @@
                                   :column => "Churn"} %>
       <% } %>
 
-      <%= javascript_include_tag :subscription%>
+      <%= javascript_include_tag :'cdn/subscription' %>
       
       <%= javascript_tag do %>
         jQuery("#slide-down").live('click', function(ev){

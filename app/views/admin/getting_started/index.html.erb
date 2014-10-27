@@ -17,10 +17,10 @@
 	<!-- Mobile viewport optimized-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<%#= TODO-RAILS3 RTL %>
-    <%= stylesheet_link_tag :"page/getting_started" %>
-   	<%= javascript_include_tag :defaults %>
-    <%= javascript_include_tag :gettingstarted %>
+ 
+    <%= stylesheet_link_tag_with_rtl :'cdn/gettingstarted' %>
+   	<%= javascript_include_tag :'cdn/defaults' %>
+    <%= javascript_include_tag :'cdn/gettingstarted' %>
 	 
     <link rel="shortcut icon" href="/images/favicon.ico">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">

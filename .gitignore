@@ -48,4 +48,7 @@ spec/fixtures/files/temp/*
 # RVM
 .ruby-gemset
 .ruby-version
-public/assets
+public/assets/*.png
+public/assets/cdn*
+public/assets/*.yml
+public/generated

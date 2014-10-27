@@ -11,8 +11,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 		<link rel="shortcut icon" href="/images/favicon.ico" />
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :subscription %>		
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/subscription' %>		
 	</head>
 	<body>     
 		<div class="navbar navbar-fixed-top">
@@ -57,7 +57,7 @@
 			<%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
 			<%= yield %>
 		</div>
-		<%= javascript_include_tag :subscription%>    
+		<%= javascript_include_tag :'cdn/subscription' %>    
 		<%= javascript_tag do %>
 			jQuery.noConflict();
 

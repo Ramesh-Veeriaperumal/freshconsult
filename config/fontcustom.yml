@@ -28,7 +28,7 @@ input:
 # --------------------------------------------------------------------------- #
 
 output:
-  fonts: public/generated/fonts                              # required
+  fonts: public/assets                             # required
   css: public/src/fonts
   # preview: public/styleguide
   # freshdesk_preview.html: public/styleguide

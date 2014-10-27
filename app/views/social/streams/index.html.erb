@@ -1,5 +1,5 @@
-<%#= TODO-RAILS3 RTL %>
-<%= stylesheet_link_tag :"social/social" %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/social' %>
 <div class="row-fluid">
   <div class="span2">
     <% if @streams.length > 0 %>
@@ -143,7 +143,7 @@
   </div>
 </div>
 
-<%= javascript_include_tag  :social_tab %>
+<%= javascript_include_tag  :'cdn/social_tab' %>
 <script type="text/javascript">
   Fjax.afterNextPage = function () {
     streamMgr.destroy();

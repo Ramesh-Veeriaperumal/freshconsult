@@ -6,6 +6,7 @@ helpdesk:
     - activerecord_log
     - admin_roles
     - akismet_config
+    - asset_sync
     - aws_s3
     - aws_social
     - belongs_to_account

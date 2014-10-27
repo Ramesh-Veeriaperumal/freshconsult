@@ -13,7 +13,7 @@ images_dir 	= "public/images"
 
 # http_images_path = "/images"
 # http_generated_images_path = "/images/sprites"
-generated_images_dir = "public/generated/images"
+generated_images_dir = "public/assets"
 disable_warnings	 = true
 
 # You can select your preferred output style here (can be overridden via the command line):

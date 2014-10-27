@@ -10,10 +10,9 @@
 	  
 	  <title><%= "#{h(current_account.name)} Widget" %></title>
 
-<%#= TODO-RAILS3 RTL %>
-		<%= stylesheet_link_tag :common  %> 	    
-		<%= stylesheet_link_tag :app  %> 	    
-		<%= render :partial => "shared/theme", :formats => [:css]  %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/common'  %> 	    
+		<%= stylesheet_link_tag_with_rtl :'cdn/app'  %> 	    
+		<%= render :partial => "shared/theme.css"  %>
 	  <%= yield :head %>
 	</head>
   <body style="min-width:auto;">
