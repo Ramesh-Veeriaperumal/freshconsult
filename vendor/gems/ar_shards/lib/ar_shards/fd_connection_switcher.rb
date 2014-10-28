@@ -7,7 +7,7 @@ ActiveRecord::Base.class_eval do
     switch_connection(:shard => shard) if supports_sharding?
       yield
     ensure
-      #switch_connection(old_options)
+      switch_connection(old_options)
   end
   
   def on_all_shards(&block)
@@ -21,7 +21,7 @@ ActiveRecord::Base.class_eval do
         [yield]
       end
     ensure
-      #switch_connection(old_options)
+      switch_connection(old_options)
   end
   end
 end

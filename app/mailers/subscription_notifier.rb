@@ -104,6 +104,19 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def admin_spam_watcher_blocked(account)
+    @headers = {
+      :from        =>  AppConfig['from_email'],
+      :to          =>  account.admin_email,
+      :subject     =>  "Freshdesk :: Spam watcher",
+      :sent_on     =>  Time.now
+    }
+    @account = account
+    mail(@headers) do |part|
+      part.html { render "admin_spam_watcher_blocked.html"}
+    end.deliver
+  end
+
   def subscription_downgraded(subscription, old_subscription)
     setup_email(AppConfig['from_email'], "#{subscription.account.full_domain} downgraded")
     @subscription = subscription, @old_subscription = old_subscription

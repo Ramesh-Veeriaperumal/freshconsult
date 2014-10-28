@@ -41,7 +41,8 @@ class TopicMailer < ActionMailer::Base
       :subject => "[Status Update] in #{topic.title}",
       :sent_on => Time.now
     }
-
+    
+    inline_attachments =[]
     @topic = topic
     @user = user
     @host = host 
