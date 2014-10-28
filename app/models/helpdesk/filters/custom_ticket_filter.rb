@@ -264,29 +264,32 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def results
-    @results ||= begin
-      handle_empty_filter! 
-      all_conditions = sql_conditions
-      all_joins = get_joins(sql_conditions)
+    db_type = order.to_sym.eql?(:requester_responded_at) ? :run_on_slave : :run_on_master
+    Sharding.send(db_type) do
+      @results ||= begin
+        handle_empty_filter! 
+        all_conditions = sql_conditions
+        all_joins = get_joins(sql_conditions)
 
-      all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
+        all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
 
-      if @without_pagination
-        return model_class.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
-                                      :limit => per_page, :offset => (page - 1) * per_page,
-                                      :conditions => all_conditions, :joins => all_joins)
+        if @without_pagination
+          return model_class.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
+                                        :limit => per_page, :offset => (page - 1) * per_page,
+                                        :conditions => all_conditions, :joins => all_joins)
+        end
+        
+        select = @html_format ? ticket_select : "helpdesk_tickets.*"
+        select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
+
+        recs = model_class.paginate(:select => select,
+                                    :include => [:ticket_states, :ticket_status, :responder,:requester],
+                                    :order => order_clause, :page => page, 
+                                    :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
+                                    :total_entries => count_without_query)
+        recs.wf_filter = self
+        recs
       end
-      
-      select = @html_format ? ticket_select : "helpdesk_tickets.*"
-      select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
-
-      recs = model_class.paginate(:select => select,
-                                  :include => [:ticket_states, :ticket_status, :responder,:requester],
-                                  :order => order_clause, :page => page, 
-                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
-                                  :total_entries => count_without_query)
-      recs.wf_filter = self
-      recs
     end
   end
 
@@ -304,6 +307,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
+    all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
     all_joins
   end
 
@@ -354,7 +358,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       order_parts = order_columns.split('.')
       
       if order.eql? "requester_responded_at"
-        "helpdesk_tickets.id #{order_type}"
+        "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
       else
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
