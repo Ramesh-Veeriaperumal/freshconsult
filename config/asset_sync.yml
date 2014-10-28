@@ -1,7 +1,5 @@
 defaults: &defaults
   fog_provider: 'AWS'
-  aws_access_key_id: "<%= ENV['AWS_ACCESS_KEY_ID'] %>"
-  aws_secret_access_key: "<%= ENV['AWS_SECRET_ACCESS_KEY'] %>"
   # To use AWS reduced redundancy storage.
   # aws_reduced_redundancy: true
   fog_directory: "rails3-app-static-assets"
@@ -21,6 +19,8 @@ defaults: &defaults
   #  eg: Static files in public often reference non-fingerprinted application.css
   #  note: You will still need to expire them from the CDN's edge cache locations
   # always_upload: ['freshdeskwidget.js']
+  # Using IAM roles instead of keys
+  aws_iam_roles: true
 
 development:
   <<: *defaults
@@ -33,7 +33,3 @@ test:
 staging:
   <<: *defaults
   fog_directory: "rails3-app-static-assets"
-
-production:
-  <<: *defaults
-  fog_directory: "app-static-assets"
