@@ -84,17 +84,17 @@ describe ContactsController do
     @account.subscription.update_attributes(:agent_limit => nil)
   end
 
-  it "should fail user creation MUE feature enabled" do
-    user = add_new_user(@account)
-    @user_count = @user_count + 1
+  # it "should fail user creation MUE feature enabled" do
+  #   user = add_new_user(@account)
+  #   @user_count = @user_count + 1
 
-    @account.features.multiple_user_emails.create
-    test_email = user.email
-    post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
-    @account.users.all.size.should eql @user_count
-    response.body.should =~ /Email has already been taken/
-    @account.features.multiple_user_emails.destroy
-  end
+  #   @account.features.multiple_user_emails.create
+  #   test_email = user.email
+  #   post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
+  #   @account.users.all.size.should eql @user_count
+  #   response.body.should =~ /Email has already been taken/
+  #   @account.features.multiple_user_emails.destroy
+  # end
 
   it "should unblock an user" do
     contact = Factory.build(:user, :account => @acc, :phone => "4564564656456", 

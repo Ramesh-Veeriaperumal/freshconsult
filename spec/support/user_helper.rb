@@ -54,16 +54,16 @@ module UsersHelper
     new_user
   end
 
-  def add_user_with_multiple_emails(account, number)
-    new_user = add_new_user(@account)
-    new_user.save(false)
-    number.times do |i|
-      email = Faker::Internet.email
-      new_user.user_emails.build({:email => email})
-    end
-    new_user.save(false)
-    new_user
-  end
+  # def add_user_with_multiple_emails(account, number)
+  #   new_user = add_new_user(@account)
+  #   new_user.save(false)
+  #   number.times do |i|
+  #     email = Faker::Internet.email
+  #     new_user.user_emails.build({:email => email})
+  #   end
+  #   new_user.save(false)
+  #   new_user
+  # end
 
   def fake_a_contact
     @params = { :user=> { 

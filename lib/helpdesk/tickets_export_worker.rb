@@ -10,8 +10,8 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
                           { :flexifield => { 
                                               :flexifield_def => :flexifield_def_entries 
                                             }},
-                          { :requester => :user_emails },
-                          { :responder => :user_emails },
+                          # { :requester => :user_emails },
+                          # { :responder => :user_emails },
                           { :schema_less_ticket => :product }, 
                           :tags,
                           :ticket_old_body,
