@@ -8,6 +8,8 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   set_table_name "helpdesk_tags"
   
+  xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
+
   belongs_to_account
 
   has_many :tag_uses,

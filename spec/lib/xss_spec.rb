@@ -85,6 +85,20 @@ describe "XssTermination" do
         XssTermination.first.field2.should eql "&lt;hello&gt;hii&lt;script&gt;alert(&quot;hi&quot;)&lt;/hello&gt;hello"
       end
     end
+
+    context "plain sanitization when a new record is created" do
+      it "{:only => [:field1],:plain_sanitizer => [:field1,:field2]} plain sanitize field2" do
+        perform = {:only => [:field1],:plain_sanitizer => [:field1,:field2]}
+        XssTermination.xss_sanitize(perform)
+        xss_terminate = XssTermination.new(:field1 => "<hello>hii</hello>hello<div></div>",:field2 => "<hello>hii<script>alert(\"hi\")</hello>hello")
+        xss_terminate.save!
+        XssTermination.first.field1.should eql "hiihello"
+        XssTermination.first.field2.should eql "<hello>hii<script>alert(\"hi\")</hello>hello"
+        XssTermination.first.update_attributes(:field1 =>"this is only to test")
+        XssTermination.first.field1.should eql "this is only to test"
+        XssTermination.first.field2.should eql "<hello>hii<script>alert(\"hi\")</hello>hello"
+      end
+    end
   end
 
 end
