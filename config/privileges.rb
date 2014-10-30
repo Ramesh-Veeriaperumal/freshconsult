@@ -3,7 +3,7 @@ Authority::Authorization::PrivilegeList.build do
   # *************** TICKETS **********************
 
   manage_tickets do
-    resource :"helpdesk/dashboard"
+    resource :"helpdesk/dashboard", :only => [:index, :activity_list,:latest_activities,:latest_summary,:sales_manager]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
     resource :"helpdesk/note", :only => [:index, :agents_autocomplete]
@@ -336,6 +336,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
+    resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
   manage_account do

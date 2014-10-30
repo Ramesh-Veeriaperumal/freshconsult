@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
     t.integer  "scoreboard_level_id", :limit => 8
     t.integer  "account_id",          :limit => 8
     t.boolean  "available",                        :default => true
+    t.datetime "active_since"
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
