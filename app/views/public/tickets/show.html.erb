@@ -27,17 +27,17 @@
 		 		<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
 					<h4><%= @ticket.attachments.size %> <%= t('attachments')%></h4>
-					<%= attachment_container(@ticket.attachments, true, "ticket", nil) %>
+					<%= attachment_container(@ticket.attachments, false, "ticket", nil) %>
 				<% end %> 
 				<% unless @ticket.cloud_files.empty? %>
-						<%= attachment_container(@ticket.cloud_files, true, "cloud_file", nil) %>
+						<%= attachment_container(@ticket.cloud_files, false, "cloud_file", nil) %>
       			<% end %>
 			</div>
 		</div>               
 	</div>               
 	<% unless @ticket.deleted %>
 		<div class="request-wrapper">	
-			<a href="javascript:void(0)" class="uiButton" id="add_note_btn" 
+			<a href="javascript:void(0)" class="btn btn-primary" id="add_note_btn" 
 				onclick="jQuery('#ReplyToTicketPublic').show();
 				jQuery(this).hide();invokeRedactor('portal_ticket_note_public');">Add note</a>				
 		</div>  
