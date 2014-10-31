@@ -57,7 +57,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     if (agent_responded_at && requester_responded_at)
       requester_responded_at > agent_responded_at
     else
-      requester_responded_at.present?
+      agent_responded_at.blank?
     end
   end
 
