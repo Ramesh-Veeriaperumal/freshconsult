@@ -1008,3 +1008,14 @@ function preventDefault(event) {
   else
     event.returnValue = false;
 }
+
+function getKeyFromValue(object,value){
+  var key;
+  for(var i in object){
+      if (object.hasOwnProperty(i) && object[i] === value) {
+          key = i;
+          break;
+      }
+  }
+  return key;
+}

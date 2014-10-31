@@ -382,7 +382,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					var $redactor = jQuery(item).data("redactor"); 
 					if($redactor != "undefined") { 
 						$redactor.deleteCursor(); 
-						$redactor.removeTagOnLiquid();
+						$redactor.changesInTextarea();
 					} 
 				});
 

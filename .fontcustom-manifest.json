@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "2b31980ecc8177d04967ecacf5f11ef07cc1299b157b0ba2ed3b695b5378531e",
-    "current": "2b31980ecc8177d04967ecacf5f11ef07cc1299b157b0ba2ed3b695b5378531e"
+    "previous": "c841ccc108523bbac31440fc8040e815ecac0d27bde5b140368ad8b9641b1158",
+    "current": "c841ccc108523bbac31440fc8040e815ecac0d27bde5b140368ad8b9641b1158"
   },
   "fonts": [
-    "public/fonts/glyphs_2b31980ecc8177d04967ecacf5f11ef0.ttf",
-    "public/fonts/glyphs_2b31980ecc8177d04967ecacf5f11ef0.svg",
-    "public/fonts/glyphs_2b31980ecc8177d04967ecacf5f11ef0.woff",
-    "public/fonts/glyphs_2b31980ecc8177d04967ecacf5f11ef0.eot"
+    "public/fonts/glyphs_c841ccc108523bbac31440fc8040e815.ttf",
+    "public/fonts/glyphs_c841ccc108523bbac31440fc8040e815.svg",
+    "public/fonts/glyphs_c841ccc108523bbac31440fc8040e815.woff",
+    "public/fonts/glyphs_c841ccc108523bbac31440fc8040e815.eot"
   ],
   "glyphs": {
     "account": {
@@ -430,6 +430,14 @@
       "codepoint": 61788,
       "source": "public/glyphs/vectors/role.svg"
     },
+    "save": {
+      "codepoint": 61823,
+      "source": "public/glyphs/vectors/save.svg"
+    },
+    "save-as": {
+      "codepoint": 61824,
+      "source": "public/glyphs/vectors/save-as.svg"
+    },
     "scenario": {
       "codepoint": 61789,
       "source": "public/glyphs/vectors/scenario.svg"
@@ -534,6 +542,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

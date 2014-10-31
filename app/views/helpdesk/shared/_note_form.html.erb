@@ -11,7 +11,7 @@
         <label class="caption"><%= t("message").html_safe%>:</label>
         <div class="fields">
           <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => "" %>
+            <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => "", :"data-wrap-font-family" => true %>
           <% end %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
           <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>

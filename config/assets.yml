@@ -176,6 +176,7 @@ javascripts:
     - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
     - public/javascripts/app/product_notifications.js
+    - public/javascripts/app/admin_font_settings.js
 
   freshchat:
     - public/javascripts/freshchat/freshchat.js

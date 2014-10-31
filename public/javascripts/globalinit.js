@@ -1,6 +1,11 @@
 /*
  * @author venom
  */
+window.Helpdesk = window.Helpdesk || {};
+(function ($) {
+  Helpdesk.settings = {}   
+}(window.jQuery));
+
 var $J = jQuery.noConflict();
 is_touch_device = function() {
   return !!('ontouchstart' in window) // works on most browsers
