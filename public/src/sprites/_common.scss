@@ -4,10 +4,19 @@
 $common-icon-layout:horizontal;
 @include all-common-icon-sprites(true);
 
-@import "application-logo/*.png";
+/*@import "cdn-ignored/sprites/admin-icon/*.png";
+$admin-icon-layout:horizontal;
+@include all-admin-icon-sprites;*/
+
+@import "cdn-ignored/sprites/application-logo/*.png";
 $application-logo-layout:vertical;
 $application-logo-sprite-dimensions:true;
 @include all-application-logo-sprites;
+
+@import "cdn-ignored/sprites/integrations/*.png";
+$integrations-layout:vertical;
+$integrations-sprite-dimensions:true;
+@include all-integrations-sprites;
 
 /* Report tab icons */
 @import "cdn-ignored/sprites/reports-icon/*.png";
@@ -23,10 +32,6 @@ $ticket-view-layout:smart;
 @import "cdn-ignored/sprites/header-icons/*.png";
 @include all-header-icons-sprites;
 
-/* Admin product source icons */
-@import "cdn-ignored/sprites/product/*.png";
-@include all-product-sprites;
-
 /* Social product source icons */
 @import "cdn-ignored/sprites/social/*.png";
 @include all-social-sprites(true);
@@ -41,4 +46,3 @@ $ticket-view-layout:smart;
 
 /* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
 * These sprites are moved there so that they can be imported only if the feature is enabled */
-

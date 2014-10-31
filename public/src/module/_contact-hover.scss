@@ -26,22 +26,15 @@
 			@include padding(2px 10px 2px 0);
 		}
   }
-  .product-email-logo, .product-call, .product-phone{
+  .product-email-logo, .product-call, .product-phone, .product-twitter{
 	 	display: inline-block;
-		width: 16px;
-		height: 10px;
-		position: relative;
-		top: 1px;
+    font-size: 16px;
+    color: #6c6c6c;
 	}
 	.product-twitter{
-		display: inline-block;
-		width: 13px;
-		height: 13px;
-		margin-top: -5px;
-		position: relative;
-		top: 2px;
+	   font-size: 13px;
 	}
-	.product-call,.product-phone{
+	.product-phone{
 		height: 13px;
 		margin-top: -2px;
 		top: 2px;

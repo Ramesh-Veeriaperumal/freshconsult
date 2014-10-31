@@ -58,12 +58,6 @@
 	@include box-shadow(0 0 10px rgba(107, 107, 107, 0.4));
 }
 
-.list-toolbar{
-	background:url('/images/ticket_list_head_bg.png');
-	@include padding(5px 8px 8px 10px);
-	border-bottom:1px solid #dfdfdf;
-}
-
 #list-table [disabled]{
 	@include opacity(0.4);
 	cursor: default;

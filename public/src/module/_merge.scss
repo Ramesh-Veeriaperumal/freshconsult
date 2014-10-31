@@ -637,13 +637,16 @@
 		@include margin-left(5px);
 	}
 }
-.common-icon-outdated, .common-icon-updated{
+.common-icon-outdated{
 	display:inline-block;
 	@include margin-left(0);
 	@include margin-right(3px);
-	margin-top: -4px;
+	margin-top: -8px;
 	vertical-align: middle;
+	font-size: 21px;
+	color: #9d0e10;
 }
+
 .list-page.email-notification-edit{
 	.email-notification-footer{
 		margin-top: 15px;
