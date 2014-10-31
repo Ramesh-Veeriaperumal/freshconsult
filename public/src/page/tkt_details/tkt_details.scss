@@ -1187,15 +1187,12 @@ ol, ul, li{
 
 	a.conv-action-icon {
 		height:32px;
+		width: 50px;
+		@include hide-text();
 		@include float(right);
 		display: block;
 		@include border-right(solid 1px #ebebeb);
-		color: #535353;
-		font-size: 23px;
 
-		width: 35px;
-		padding-left: 15px;
-		padding-top: 10px;
 		&:first-child {
 			@include border-right(none);
 			@include border-radius(0 4px 0 0);
@@ -1203,12 +1200,6 @@ ol, ul, li{
 
 		&:hover {
 			background-color: #FFF;
-		}
-		&.conv-actions-edit {
-			font-size: 22px;
-		}
-		&.conv-actions-split {
-			font-size: 21px;
 		}
 	}
 

@@ -1,6 +1,10 @@
 @import "compass";
 @import "lib/rtl-mixins";
-@import '../module/_survey-smiley.scss';
+
+@import "cdn-ignored/sprites/smiley/*.png";
+$smiley-layout:horizontal;
+$smiley-sprite-dimensions:true;
+@include all-smiley-sprites;
 
 .smiley-happy, .smiley-neutral, .smiley-unhappy{
   @include inline-block;

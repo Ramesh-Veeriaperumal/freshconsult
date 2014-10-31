@@ -5,10 +5,7 @@
   <% if feature?(:multiple_emails) %>
     <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn btn-primary"%>
   <% else %>
-    <%= link_to "#", :class => "pull-right btn tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') do %>
-      <span class='ficon-lock locked'></span>
-      <%= t('email_configs.new_support_email') %>
-    <% end %>
+    <%= link_to t('email_configs.new_support_email'), "#", :class => "pull-right btn locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
     <% options =  ( current_user.privilege?(:manage_account) ) ? {:tag => :a, :href => subscription_url } : {:tag => :p} %>
     <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href], :class => "upgrade-message" ) %>
   <% end %>

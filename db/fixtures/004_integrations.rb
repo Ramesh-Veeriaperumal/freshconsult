@@ -305,7 +305,7 @@ if Integrations::Application.count == 0
     s.name = "logmein_widget"
     s.description = "logmein.widgets.logmein_widget.description"
     s.script = %{
-      <div class="clearfix"><h3 class="title pull-left">{{logmein.title | encode_html}} </h3><div class="class="integrations-logmein_logo pull-right"></div></div>
+      <div class="logmein-logo"><h3 class="title">{{logmein.title}} </h3></div>
       <div id="logmein_widget">
         <div class="content"></div>
         <div class="error hide"></div>

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "43ff47a653b2e2b102b107a6358a6dc0e86061ad858ba52307542114c407328e",
-    "current": "43ff47a653b2e2b102b107a6358a6dc0e86061ad858ba52307542114c407328e"
+    "previous": "1ebbb1041a5fbfcc33471c6eac388192810665a47330f44bbb2ef7ec5bdaca79",
+    "current": "1ebbb1041a5fbfcc33471c6eac388192810665a47330f44bbb2ef7ec5bdaca79"
   },
   "fonts": [
-    "public/assets/glyphs_43ff47a653b2e2b102b107a6358a6dc0.ttf",
-    "public/assets/glyphs_43ff47a653b2e2b102b107a6358a6dc0.svg",
-    "public/assets/glyphs_43ff47a653b2e2b102b107a6358a6dc0.woff",
-    "public/assets/glyphs_43ff47a653b2e2b102b107a6358a6dc0.eot"
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.ttf",
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.svg",
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.woff",
+    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.eot"
   ],
   "glyphs": {
     "account": {
@@ -158,10 +158,6 @@
       "codepoint": 61772,
       "source": "public/glyphs/vectors/day_pass.svg"
     },
-    "dislike": {
-      "codepoint": 61823,
-      "source": "public/glyphs/vectors/dislike.svg"
-    },
     "dispatcher": {
       "codepoint": 61773,
       "source": "public/glyphs/vectors/dispatcher.svg"
@@ -265,10 +261,6 @@
     "folder-open-o": {
       "codepoint": 61717,
       "source": "public/glyphs/vectors/folder-open-o.svg"
-    },
-    "forward": {
-      "codepoint": 61824,
-      "source": "public/glyphs/vectors/forward.svg"
     },
     "freshchat": {
       "codepoint": 61796,
@@ -458,10 +450,6 @@
       "codepoint": 61791,
       "source": "public/glyphs/vectors/sla.svg"
     },
-    "split": {
-      "codepoint": 61825,
-      "source": "public/glyphs/vectors/split.svg"
-    },
     "star": {
       "codepoint": 61732,
       "source": "public/glyphs/vectors/star.svg"
@@ -510,10 +498,6 @@
       "codepoint": 61812,
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
-    "twitter-o": {
-      "codepoint": 61826,
-      "source": "public/glyphs/vectors/twitter-o.svg"
-    },
     "unlock": {
       "codepoint": 61737,
       "source": "public/glyphs/vectors/unlock.svg"
@@ -535,7 +519,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": false,
+    "debug": true,
     "font_name": "glyphs",
     "force": false,
     "input": {
@@ -545,12 +529,11 @@
     "no_hash": false,
     "output": {
       "css": "public/src/fonts",
-      "fonts": "public/assets",
-      "preview": "public/assets"
+      "fonts": "public/generated/fonts",
+      "preview": "public/generated/fonts"
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"
@@ -558,6 +541,6 @@
   },
   "templates": [
     "public/src/fonts/_glyphs.scss",
-    "public/assets/index.html"
+    "public/generated/fonts/index.html"
   ]
 }

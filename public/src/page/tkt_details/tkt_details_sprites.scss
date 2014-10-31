@@ -3,11 +3,13 @@
 // Icon sprite creation
 // --------------------------------------------------
 @import "cdn-ignored/sprites/requester-info/*.png";
+@import "cdn-ignored/sprites/conv-actions/*.png";
 @import "cdn-ignored/sprites/ticket-details/*.png";
 @import "cdn-ignored/sprites/collision/*.png";
 
 /* %% more styles set for this class in some other file */
 .tkt-tabs-wrap{ @include all-requester-info-sprites; }
+.commentbox{ @include all-conv-actions-sprites; }
 
 /* %% tkt_details */
 .ticket-actions{

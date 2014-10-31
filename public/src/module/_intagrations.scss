@@ -212,10 +212,33 @@
 			min-height:30px;
 		}
 	
-		// background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
-		// background-position: 223px 7px;
-		// background-repeat: no-repeat;
+		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+		background-repeat: no-repeat;
 	}
+
+	/* div. added for higher specificity */
+	div.salesforce_widget_bg {
+		background-image: url(/images/integrations/salesforce_icon.png);
+ 	}
+
+ 	div.batchbook_widget_bg {
+		background-image: url(/images/integrations/batchbook_icon.png);
+  	}
+
+ 	div.highrise_widget_bg {
+		background-image: url(/images/integrations/highrise_icon.png);
+  	}
+
+ 	div.zohocrm_widget_bg {
+		background-image: url(/images/integrations/zohocrm_icon.png);
+		background-position: 210px -6px;
+  	}
+
+ 	div.nimble_widget_bg {
+		background-image: url(/images/integrations/nimble_icon.png);
+  	}
+	
 
  	.error {
 		&.name, &.salesforce-name {
@@ -378,12 +401,8 @@
 		-moz-text-overflow: ellipsis;
 		-webkit-text-overflow: ellipsis;
 		margin: 5px 95px;
+		background: url(/images/integrations/campaign-link.png) left -2px no-repeat;
 		@include padding-left(20px);
-		.url-icon {
-			font-size: 14px;
-			padding-right: 3px;
-			color: #999;
-		}
 	}
 	
 }
@@ -395,7 +414,7 @@
 	@include text-align(right);
 
 	.toggle_preview {
-		background-color: #FFF;
+		background: #FFF;
 		border: solid 1px #c9c9c9;
 		@include box-shadow(#c2c2c2 0 0 2px);
 		@include border-radius(5px);
@@ -405,8 +424,7 @@
 		margin-bottom:5px;
 
 		&.active {
-			background-color: #fff5cb;
-			@include background-image(repeating-linear-gradient(135deg, transparent, transparent 15px, #FFEEA9 15px, #FFEEA9 30px));
+			background: url(/images/integrations/custom_app_preview_title_bar.gif);
 		}
 
 		&:after {
@@ -430,28 +448,19 @@
 	@include margin(0 10px 10px 0);
 	.titlebar {
 		font-weight:bold;
-		background-color: #fff5cb;
-		@include background-image(repeating-linear-gradient(135deg, transparent, transparent 15px, #FFEEA9 15px, #FFEEA9 30px));
+		background: url(/images/integrations/custom_app_preview_title_bar.gif);
 		@include padding(10px 5px 10px 15px);
 		border-bottom: solid 1px #c9c9c9;
 		font-size:13px;
 		.preview_link {
 			@include float(right);
-			width:70px;
-			color: #8e6a00;
-			@include padding(10px 5px 10px 5px);
+			width:60px;
+			background: url(/images/integrations/refresh_preview.png) right no-repeat;
+			@include padding(10px 30px 10px 5px);
 			@include text-align(right);
 			color:#AAA;
 			margin-top:-10px;
 			font-weight:normal;
-			line-height: 29px;
-			.refresh-icon {
-				color: #8e6a00;
-				font-size: 24px;
-				display: inline-block;
-				margin-top: 3px;
-				line-height: 21px;
-			}
 		}
 	}
 
@@ -499,6 +508,9 @@
 	
 }
 
+.logmein-logo {
+		background: url(/images/integrations/logmein_logo.png) right 8px no-repeat;
+}
 #logmein_widget .error{
 	color: red;
 }
@@ -559,12 +571,12 @@
 			background-position: center;
 		}
 	}
-	.integrations-campaign-image {
-		@include padding-right(10px);
+	.campaign-image {
+		background: url(/images/integrations/campaign-image.png) 10px no-repeat;
 	}
 
 	.campaign-activity{
-		@include padding-left(10px);
+		@include padding-left(35px);
 		font-weight: bold;
 		border-bottom: 1px solid #DDD;
 		background-color: #EEE;
@@ -581,4 +593,39 @@
 			cursor: pointer
 		}
 	}
+}
+.constantcontact-modal-logo {
+		background: url(/images/application-logo/constantcontact.png) right 1px no-repeat;
+		background-size: 80px 30px;
+		height: 30px;
+}
+.campaignmonitor-modal-logo {
+		background: url(/images/application-logo/campaignmonitor.png) right 1px no-repeat;
+		height: 30px;
+}
+.icontact-modal-logo {
+		background: url(/images/application-logo/icontact.png) right 1px no-repeat;
+		background-size: 65px 24px;
+		height: 30px;
+}
+.mailchimp-modal-logo {
+		background: url(/images/application-logo/mailchimp.png) right 1px no-repeat;
+		background-size: 80px 25px;
+		height: 30px;
+}
+.constantcontact-logo {
+		background: url(/images/integrations/constantcontact-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.campaignmonitor-logo {
+		background: url(/images/integrations/campaignmonitor-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.icontact-logo {
+		background: url(/images/integrations/icontact-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.mailchimp-logo {
+		background: url(/images/integrations/mailchimp-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
 }

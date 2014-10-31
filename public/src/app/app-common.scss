@@ -401,6 +401,7 @@ h4.title{
 					display: inline-block;
 					vertical-align: middle;
 					.twitter-logo{
+						background: url(/images/twitter.png) no-repeat; 
 						width:22px;	
 						display: inline-block;
 						height: 15px;
@@ -638,6 +639,9 @@ ul.inactive{
 	}
 	a:hover{
 		@include opacity(1);
+	}
+	.selected_tick{
+		background:url('/images/photo_check.png') no-repeat;					
 	}
 }
 
@@ -1321,8 +1325,10 @@ a.page_title{
 			visibility:visible;
 		}
 		background-color:#e6f3f9;
-		box-shadow: inset 0px 3px 3px 0px rgba(190,190,190,0.5);
+		background-image:url(/images/overlay-top-shadow.png);
+		background-position:top left;
 		border-bottom:1px solid #dfdfdf;
+		background-repeat:repeat-x;
 	} 
 	
 	.application {
@@ -1904,18 +1910,12 @@ p.info-text{
 			border-bottom: 1px solid #EFEFEF;
 			&:hover{
 				background-color: #E6F3F9;
-				box-shadow: inset 0px 3px 3px 0px rgba(190,190,190,0.5);
+				background-image: url(/images/overlay-top-shadow.png);
+				background-position: top left;
 				border-bottom: 1px solid #DFDFDF;
-			}
-			a {
-				background-color: transparent;
+				background-repeat: repeat-x;
 			}
 		}
-	}
-	.email_marketing_apps .drop-right {
-		width: 100px;
-		display: inline-block;
-		@include padding-right(6px);
 	}
 }
 
@@ -2069,10 +2069,13 @@ a.submit_link:hover{
 		margin-top: 6px;
 		padding: 5px;
 	}
-	.locked {
-		@include padding-right(5px);
-		color: #999;
-	}
+}
+
+.locked{
+	background: #EEE url(/images/lock.png) no-repeat 5px 8px !important;
+	@include padding(6px 6px 6px 22px !important);
+	background-size: 10px 12px !important;
+	cursor: default;
 }
 
 .unsupported-message{
@@ -3871,19 +3874,3 @@ $adm-bdr:#F0F0F0;
 
 // Admin Social styles end
 // =======================
-
-/* Signup Social icons */
-
-.social {
-	font-size: 16px;
-	margin-right: 5px;
-	&.twitter {
-		color: #23c0ff;
-	}
-	&.facebook {
-		color: #2b4788;
-	}
-	&.google {
-		color: #3750d1;
-	}
-}

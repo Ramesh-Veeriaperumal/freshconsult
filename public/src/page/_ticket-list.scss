@@ -57,41 +57,6 @@
 	width: 36px;
 	height: 16px;
 	opacity: 0.3;
-	font-size: 18px;
-	position: relative;
-}
-
-.ticket-view-delete:before,
-.ticket-view-cancel:before,
-.ticket-view-edit:before,
-.ticket-view-save:before,
-.ticket-view-saveas:before {
-	position: absolute;
-	position: absolute;
-	top: -2px;
-	color: #333;
-	padding-left: 11px;
-}
-		
-.ticket-view-saveas {
-	&:after {
-		position: relative;
-		left: 21px;
-		top: 2px;
-		color: #333;
-	}
-}
-
-.ticket-view-cancel {
-	&:after {
-		content: "\00d7";
-		position: relative;
-		top: -3px;
-		left: 11px;
-		font-size: 22px;
-		font-weight: bold;
-		color: #333;
-	}
 }
 
 .leftFilter {

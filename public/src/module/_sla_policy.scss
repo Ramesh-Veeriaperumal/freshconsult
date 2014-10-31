@@ -324,20 +324,12 @@
 				@include float(right);
 				@include hide-text();
 				@include padding(2px 3px 2px 7px !important);
+				background: image-url("select2/select2.png") right top no-repeat !important;
 				width: 12px;
 				height: 8px;
-				@include left(-2px);
+			 @include left(-2px);
 				&:hover {
-					color: #363636;
-				}
-				&::after {
-					color: #999;
-					content: "\00d7";
-					position: absolute;
-					top: 1px;
-					@include right(1px);
-					font-size: 17px;
-					font-weight: bold;
+					background-position: right -11px;
 				}
 			}
 			&:hover {

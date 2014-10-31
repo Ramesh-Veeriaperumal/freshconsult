@@ -328,14 +328,18 @@
   font-size: 22px;
 }
 
-.icons-like, .icons-dislike{
+.icons-like{
 	display: inline-block;
-	@include margin-right(5px);
+	height: 16px;
+	width: 20px;
 }
 
 .icons-dislike{
+	display: inline-block;
+	height: 16px;
+	width: 20px;
 	position: relative;
-	top: 2px;
+	top: 8px;
 }
 
 .artical-list{
@@ -512,6 +516,17 @@
 
 .solution_title{
 	position:relative;
+	.topic_icon{
+		position:absolute;
+	 	@include left(20px);
+		top:10px;
+		@include text-align(center);
+		.locked{
+			position:absolute;
+			top:13px;
+		 	@include left(10px);
+		}
+	}
 }
 
 

@@ -19,40 +19,6 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 .forum-type-ideas{               @extend .#{$font-class}bulb; }
 .forum-type-howto{               @extend .#{$font-class}help; }
 .agent-preview{                  @extend .#{$font-class}open-in-new-window; }
-.icons-like{ 					 @extend .#{$font-class}like; }
-.icons-dislike{ 			 	 @extend .#{$font-class}dislike; }
-
-// Hover card font icons
-.contact_hover .product-twitter { 			@extend .#{$font-class}twitter-o;}
-.contact_hover .product-email-logo { 		@extend .#{$font-class}mail;}
-.contact_hover .product-call { 				@extend .#{$font-class}phone;}
-
-// Email notification font icons
-.common-icon-outdated {				@extend .#{$font-class}notice;}
-
-// Ticket Show font icons
-.commentbox .conv-actions-delete {			@extend .#{$font-class}trash;}
-.commentbox .conv-actions-edit {			@extend .#{$font-class}edit;}
-.commentbox .conv-actions-forward {			@extend .#{$font-class}forward;}
-.commentbox .conv-actions-split {			@extend .#{$font-class}split;}
-
-// Ticket View font icons
-.ticket-view-saveas{						
-	@extend .#{$font-class}checkmark;
-	&:before {
-		font-weight: bold;
-	}
-}
-.ticket-view-save{							
-	@extend .#{$font-class}checkmark;
-	&:before {
-		font-weight: bold;
-	}
-}
-.ticket-view-saveas:after{					@extend .#{$font-class}ellipsis:before;}
-.ticket-view-edit {							@extend .#{$font-class}edit;}
-.ticket-view-delete {						@extend .#{$font-class}trash;}
-
 .list-query-panel .dropdown-menu li.active a:before{ 	
 	@extend .#{$font-class}checkmark; 
 }

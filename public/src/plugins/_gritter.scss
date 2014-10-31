@@ -56,18 +56,10 @@
 				width:16px;
 				height:20px;
 				position: absolute;
-				@include right(8px);
+			 @include right(8px);
 				top: 5px;
+				background:url('/images/square-close.png') no-repeat center 3px;
 				cursor:pointer;
-				&:after {
-					content: "\00d7";
-					position: absolute;
-					top: 2px;
-					left: 1px;
-					font-size: 20px;
-					font-weight: bold;
-					color: #999;
-				}
 			}
 			.gritter-title {
 				font-size:14px;
@@ -115,8 +107,8 @@
 		.gritter-bottom,
 		.gritter-top,
 		.gritter-close {
-			background-image: url(/images/gritter-light.png);
-			color: #222;
+	    background-image: url(/images/gritter-light.png);
+	    color: #222;
 		}
 		.gritter-title {
 	    text-shadow: none;
@@ -147,6 +139,9 @@
 		background-color: #fdfde5;		
 		border-color: #7d7d7d;
 		.gritter-item { color: #333333; }
+		.gritter-item .gritter-close {
+			background:image-url("btn_close_icon.png") no-repeat center 3px;
+		}
 		
 	}
 }
