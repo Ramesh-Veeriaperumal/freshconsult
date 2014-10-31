@@ -73,7 +73,7 @@ namespace :spam_watcher_redis do
         Sharding.select_shard_of(account_id) do
           account = Account.find(account_id)  
           account.make_current
-          return if paid_account?(account)
+          return if(paid_account?(account) || ((Time.now - 5.days).to_i - account.created_at.to_i) > 0)
           spam_blocked_alert(account)
           sub = account.subscription
           sub.state = "suspended"
