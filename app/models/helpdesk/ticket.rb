@@ -777,6 +777,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def send_agent_assigned_notification?
       doer_id = Thread.current[:observer_doer_id]
-      @model_changes.symbolize_keys[:responder_id] && responder && responder_id != doer_id && responder != User.current
+      @model_changes[:responder_id] && responder && responder_id != doer_id && responder != User.current
     end
 end

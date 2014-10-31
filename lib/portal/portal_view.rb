@@ -18,9 +18,8 @@ class PortalView
     @view = view
   end
   
-  def render(template, local_assigns = nil, buffer=nil, &block)    
-    return template.source if @view.controller.headers["Content-Type"] == 'text/plain'
-
+  def render(template, local_assigns = nil, buffer=nil, &block)  
+    return template if @view.instance_variable_get('@show_raw_liquid')
     @view.controller.headers["Content-Type"] ||= 'text/html; charset=utf-8'    
 
     # The template key that should be used when retriving dynamic page or template information

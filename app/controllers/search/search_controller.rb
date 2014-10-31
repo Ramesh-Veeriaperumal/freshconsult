@@ -165,16 +165,13 @@ class Search::SearchController < ApplicationController
 			format.json do
 				render :json => @result_json
 			end
-			format.nmobile do
-				json="[" 
-				sep=""
-				@result_set.each { |item|
-				  json << sep+"#{item.to_mob_json_search}"
-				  sep = ","
-				}
-				json << "]"
-				render :json => json
-			end
+      format.nmobile do
+        array = []
+        @result_set.each do |item|
+          array << item.to_mob_json_search
+        end
+        render :json => array
+      end
 			unless ["forums", "solutions"].include?(controller_name)
 				format.xml do
 					render_404

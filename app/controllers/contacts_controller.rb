@@ -41,14 +41,11 @@ class ContactsController < ApplicationController
         @contacts = @contacts.newest(20) #throws error
       end
       format.nmobile do
-        response="[";sep=""
-        @contacts.each { |user|
-          response << sep+"#{user.to_mob_json_search}"
-          sep = ","
-        }
-        response << "]"
-        render :json => response
-        
+        array = []
+        @contacts.each do |user|
+          array << user.to_mob_json_search
+        end
+        render :json => array
       end
     end    
   end

@@ -62,9 +62,8 @@ class Admin::PagesController < Admin::AdminController
     def get_raw_page
       if @portal_page[:content].nil?
         @from_cache = false
-        @portal_page[:content] = render_to_string(
-                                  :file => @portal_page.default_page, 
-                                  :content_type => 'text/plain') 
+        @show_raw_liquid = true
+        @portal_page[:content] = render_to_string(:file => @portal_page.default_page)
       else
         @from_cache = true
       end

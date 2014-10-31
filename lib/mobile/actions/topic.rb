@@ -6,7 +6,7 @@ module Mobile::Actions::Topic
 	}
 	
 	def to_mob_json_search
-		to_json JSON_OPTIONS
+		as_json JSON_OPTIONS
 	end
 	
 end

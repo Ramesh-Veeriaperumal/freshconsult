@@ -9,15 +9,15 @@ class Search::SolutionsController < Search::SearchController
 			format.js do
 				render :layout => false
 			end
-			format.json do 
-				json = "["; sep=""
-			    @result_set.each do |article| 
-			      json << sep + article.to_mob_json[11..-2]; sep=","
-			    end
-			    render :json => json + "]"
-			end
-		end				
-	end
+      format.json do
+        array = []
+        @result_set.each do |article| 
+          array <<  article['article']
+        end
+        render :json => array
+      end
+    end
+  end
 
 	def search_solutions
 		article_suggest params[:q]

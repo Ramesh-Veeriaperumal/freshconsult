@@ -42,8 +42,6 @@ gem "omniauth-oauth"
 gem "tzinfo", "~> 0.3.29"
 gem 'rails_autolink', '1.1.6'
 
-gem "test-unit", '1.2.3'
-
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
 # TODO-RAILS3 need check are we still using this
