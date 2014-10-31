@@ -2719,7 +2719,9 @@ Redactor.prototype = {
 
 		selectedhtml.html(this.formatting(selectedhtml.html())); // Format the html
 
-		replacehtml = selectedhtml.text().replace(/\n+/g,'\n'); // Obtain innertext of the selected content
+		replacehtml = selectedhtml.text().replace(/\n+/g,'\n')
+									.replace(/</g,'&lt;')
+									.replace(/>/g,'&gt;'); // Obtain innertext of the selected content
 
 		return replacehtml;
 	},
@@ -3478,7 +3480,8 @@ Redactor.prototype = {
 		{
 			if ($(parent).get(0).tagName !== 'A')
 			{
-				$(el).replaceWith('<a href="' + link + '">' + this.outerHTML(el) + '</a>');
+				var anchor = $('<a >').attr('href',link ).html( this.outerHTML(el)).get(0).outerHTML;
+				$(el).replaceWith(anchor);
 			}
 			else
 			{
