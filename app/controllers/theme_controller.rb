@@ -46,7 +46,7 @@ class ThemeController < ApplicationController
 	protected
 
 		def cache_key_url
-			"#{scoper_cache_key}#{request.request_uri}"
+			"#{scoper_cache_key}#{request.fullpath}"
 		end
 
 		def theme_load_path

@@ -54,25 +54,25 @@ module SslRequirement
         if ssl_required? && (cnamed_portal_with_ssl? || host_is_full_domain?) #like billing from ssl enabled portal/full_domain
           return true #Allow
         elsif ssl_required? && cnamed_portal_without_ssl? #like billing from ssl disabled portal
-          redirect_to "https://" + current_account.full_domain + request.request_uri #redirect to full_domain with https
+          redirect_to "https://" + current_account.full_domain + request.fullpath #redirect to full_domain with https
           flash.keep
           return false        
         elsif cnamed_portal_without_ssl? # like explicit https access of portal url with ssl disabled
-          redirect_to "http://" + request.host + request.request_uri #redirect to same url without https
+          redirect_to "http://" + request.host + request.fullpath #redirect to same url without https
           flash.keep
           return false
         end
       elsif !request.ssl?
         if ssl_required? && (cnamed_portal_without_ssl? || host_is_full_domain?) # like billing from full_domain or "portal_url with SSL disabled" accessed from http
-          redirect_to "https://" + current_account.full_domain + request.request_uri #redirect to full_domain https
+          redirect_to "https://" + current_account.full_domain + request.fullpath #redirect to full_domain https
           flash.keep
           return false        
         elsif (ssl_required? && cnamed_portal_with_ssl?) #like billing acceessed from portal_url with ssl enabled
-          redirect_to "https://" + request.host + request.request_uri #redirect to same url with https
+          redirect_to "https://" + request.host + request.fullpath #redirect to same url with https
           flash.keep
           return false
         elsif (main_portal_with_ssl? || cnamed_portal_with_ssl?) #full_domain or portal_url access with SSL enabled accessed with http
-          redirect_to "https://" + request.host + request.request_uri #redirect to  same url with https
+          redirect_to "https://" + request.host + request.fullpath #redirect to  same url with https
           flash.keep
           return false
         end
