@@ -27,11 +27,7 @@ module SpamWatcherCallbacks
         def spam_watcher_counter
           begin
             Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
-              if "#{user_column}".blank?
-                user_id = ""
-              else
-                user_id = self.send("#{user_column}") 
-              end
+              user_id = self.send("#{user_column}")
               account_id = self.account_id
               key = "#{key}"
               max_count = "#{threshold}".to_i
