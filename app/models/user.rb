@@ -81,6 +81,12 @@ class User < ActiveRecord::Base
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
 
+  def time_zone
+    tz = self.read_attribute(:time_zone)
+    tz = "Kyiv" if tz.eql?("Kyev")
+    tz
+  end
+  
   class << self # Class Methods
     #Search display
     def search_display(user)
