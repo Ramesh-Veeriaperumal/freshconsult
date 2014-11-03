@@ -28,4 +28,8 @@ class Workers::Freshchat
 		response = HTTParty.post(@url+"/widgets/destroy",:body => args)
 	end
 
+	def self.update_site(args)
+		response = HTTParty.post(@url+"/sites/update",:body => args)
+	end
+
 end

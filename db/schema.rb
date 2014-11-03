@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141010062714) do
+ActiveRecord::Schema.define(:version => 20141019110919) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
     t.datetime "updated_at"
   end
 
+  add_index "admin_user_accesses", ["account_id", "accessible_id", "accessible_type"], :name => "index_admin_acc_id_type"
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
@@ -906,6 +907,8 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
     t.integer "account_id",        :limit => 8
   end
 
+  add_index "google_contacts", ["account_id", "user_id"], :name => "index_google_contacts_on_accid_and_uid"
+
   create_table "google_domains", :primary_key => "account_id", :force => true do |t|
     t.string "domain", :null => false
   end
@@ -1250,6 +1253,7 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
   end
 
   add_index "helpdesk_shared_attachments", ["account_id", "shared_attachable_id", "shared_attachable_type"], :name => "index_helpdesk_shared_attachments_on_attachable_id", :length => {"account_id"=>nil, "shared_attachable_id"=>nil, "shared_attachable_type"=>15}
+  add_index "helpdesk_shared_attachments", ["account_id", "shared_attachable_id"], :name => "index_helpdesk_attachement_shared_id_share_id"
 
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -1435,6 +1439,7 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
     t.string   "workable_type",              :default => "Helpdesk::Ticket"
   end
 
+  add_index "helpdesk_time_sheets", ["account_id", "workable_id", "workable_type"], :name => "index_helpdesk_sheets_on_workable_acc"
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
   add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
@@ -2102,6 +2107,9 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
     t.datetime "updated_at"
   end
 
+  add_index "support_scores", ["account_id", "group_id", "created_at"], :name => "index_support_scores_on_accid_and_gid_and_created_at"
+  add_index "support_scores", ["account_id", "scorable_id", "scorable_type"], :name => "index_support_scores_on_accid_scorable_id_scorable_type"
+  add_index "support_scores", ["account_id", "user_id", "created_at"], :name => "index_support_scores_on_accid_and_uid_and_created_at"
   add_index "support_scores", ["id"], :name => "support_scores_id"
 
   create_table "survey_handles", :id => false, :force => true do |t|
@@ -2541,6 +2549,7 @@ ActiveRecord::Schema.define(:version => 20141010062714) do
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
+  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"

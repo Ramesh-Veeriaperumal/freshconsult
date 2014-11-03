@@ -117,6 +117,7 @@ module MemcacheKeys
 
     def memcache_delete(key, account=Account.current, user=User.current)
       newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) } 
+      newrelic_begin_rescue { $dalli.delete(memcache_view_key(key, account, user)) } 
     end
 
     def get_from_cache(key, raw=false)
@@ -129,6 +130,7 @@ module MemcacheKeys
 
     def delete_from_cache(key)
       newrelic_begin_rescue { $memcache.delete(key) }
+      newrelic_begin_rescue { $dalli.delete(key) } 
     end
 
     def fetch(key, expiry=0,&block)

@@ -10,7 +10,7 @@ class Support::Discussions::TopicsController < SupportController
   before_filter { |c| c.requires_feature :forums }
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission, :only => [:edit, :update]
+  before_filter :check_user_permission, :only => [:edit, :update, :destroy]
 
   before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not

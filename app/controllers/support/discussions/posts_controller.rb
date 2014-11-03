@@ -7,7 +7,7 @@ class Support::Discussions::PostsController < SupportController
   before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
- 	before_filter :verify_user, :only => [:update, :edit]
+ 	before_filter :verify_user, :only => [:update, :edit, :destroy]
  	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
