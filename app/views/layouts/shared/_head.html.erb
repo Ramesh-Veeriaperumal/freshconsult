@@ -66,7 +66,7 @@
 	<% if chat_activated? %>
 		<%= javascript_include_tag :'cdn/freshchat' %>
 	<% end %>
-
+	
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
 	<script type="text/javascript">
@@ -74,7 +74,7 @@
 		$LAB.setGlobalDefaults({
 			BasePath: cloudfront_host_url + '/assets/'
 		});
-		Fjax.Assets.setup(<%= AssetLoader.js_assets.to_json.html_safe %>, <%= AssetLoader.css_assets.to_json.html_safe %>, "", cloudfront_host_url);
+		Fjax.Assets.setup(<%= asset_manifest(:js).to_json.html_safe %>, {app:[], plugins:[]}, "", cloudfront_host_url);
 		Fjax.Manager.start();
 	</script>
 

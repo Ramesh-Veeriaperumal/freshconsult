@@ -1,17 +1,17 @@
 class AssetLoader
 	
 	JS = {
-		:app => 'public/javascripts/app',
-		:plugins => 'public/javascripts/plugins'
+		:app => 'public/javascripts/cdn/app',
+		:plugins => 'public/javascripts/cdn/plugins'
 	}
 	
 	CSS = {
-		:app => 'public/src/app',
-		:plugins => 'public/src/plugins'
+		:app => 'public/src/cdn/app',
+		:plugins => 'public/src/cdn/plugins'
 	}
 	
 	class << self
-		
+	
 	def js_assets
 		{
 			:app => js_app_assets(:app),
@@ -34,14 +34,14 @@ class AssetLoader
 	
 	def js_app_assets(scope)
 		Hash[*((asset_list(JS[scope]) || []).map do |asset|
-			[asset.gsub('.js', '').to_s , Rails.application.assets.find_asset("#{scope}/#{asset}").digest_path]
+			[asset.gsub('.js', '').to_s , Rails.application.assets.find_asset("cdn/#{scope}/#{asset}").digest_path]
 		end).flatten]
 	end
 	
 	
 	def css_app_assets(scope)
 		Hash[*((asset_list(CSS[scope]) || []).map do |asset|
-			[asset.gsub('.scss', '').to_s , Rails.application.assets.find_asset("#{scope}/#{asset}").digest_path]
+			[asset.gsub('.scss', '').to_s , Rails.application.assets.find_asset("cdn/#{scope}/#{asset}").digest_path]
 		end).flatten]
 	end
 	

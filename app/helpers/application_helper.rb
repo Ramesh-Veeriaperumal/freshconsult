@@ -15,6 +15,7 @@ module ApplicationHelper
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
+  ASSET_MANIFEST = {}
 
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
@@ -1060,6 +1061,20 @@ module ApplicationHelper
 
   def requester_company
     ['{{ticket.requester.company_name}}', 'Requester company name',   "",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
+  end
+  
+  def load_manifest
+    ASSET_MANIFEST.replace({ 
+      :js => AssetLoader.js_assets, 
+      # :css => AssetLoader.css_assets
+      :css => {}
+    })
+  end
+  
+  def asset_manifest(type = :js)
+    return {} unless [:js, :css].include?(type)
+    load_manifest if ASSET_MANIFEST.blank? and !Rails.env.development?
+    Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type ]
   end
 
   # ITIL Related Methods ends here
