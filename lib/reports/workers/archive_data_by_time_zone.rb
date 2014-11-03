@@ -17,7 +17,18 @@ module Reports
 						Account.active_accounts.find_in_batches(:batch_size => 500 , 
 																						:conditions => {:time_zone => time_zones}) do |accounts|
 							accounts.each do |account|
-								id, Time.zone = account.id, account.time_zone
+								id = account.id
+                begin
+                  Time.zone = account.time_zone
+                rescue ArgumentError => e
+                  # we have problem with Kyev. In rails 2.3.18 Kyev , but in Rails 3.2.18 its corrected to Kyiv
+                  # https://rails.lighthouseapp.com/projects/8994/tickets/2613-fix-spelling-of-kyiv-timezone
+                  if e.message.include?("Invalid Timezone: Kyev")
+                    Time.zone = "Kyiv" 
+                  else
+                    raise e
+                  end
+                end
 								export_hash = REPORT_STATS_EXPORT_HASH % {:account_id => id}
 								last_export_date, end_date = get_reports_hash_value(export_hash, "date"), args[:yesterday_date].to_date
 
