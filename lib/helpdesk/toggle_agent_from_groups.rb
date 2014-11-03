@@ -11,8 +11,9 @@ module Helpdesk
               user_id = args[:user_id]
               agent = account.agents.find_by_user_id(user_id)
               groups = account.groups.round_robin_groups
-              groups.each do |group|
-                group.add_or_remove_agent(user_id,agent.available?)
+              agent.agent_groups.each do |agent_group|
+                group = agent_group.group
+                group.add_or_remove_agent(user_id,agent.available?) if group.round_robin_enabled?
               end
               
           rescue Exception => e

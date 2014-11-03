@@ -336,7 +336,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
-    resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
   manage_account do
@@ -349,6 +348,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
+    resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
   client_manager do
