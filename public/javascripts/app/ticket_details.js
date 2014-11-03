@@ -1200,6 +1200,11 @@ var scrollToError = function(){
 		}
 	});
 
+	$('body').on('click', '.reminder_check', function () {
+		console.log('asda');
+		$(this).parent().addClass('disabled');
+	});
+
 	//Binding the Reply/Forward/Add Note buttons
 	$('body').on('click.ticket_details', '[rel=note-button]', function(ev) {
 		if (!$(this).parent().parent().hasClass('dropdown-menu')) {

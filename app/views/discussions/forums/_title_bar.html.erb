@@ -8,7 +8,9 @@
 				:remote => true, :method => :post,
 				:class => "forum_follow_icon tooltip #{@monitor ? '' : 'active'}",
 				:id => "toggle_monitorship_status",
-				:"data-loading" => '',
+				:"data-hide-before" => 'this',
+				:"data-loading" => 'monitorship_link',
+				:"data-loading-classes" => 'sloading loading-tiny',
 				:title => t((@monitor ? 'monitorships.follow_title' : 'monitorships.unfollow_title')),
 				:"data-keybinding" => "#{shortcut("community_actions.monitor_forum")}" %>
 		</li>
@@ -25,13 +27,3 @@
 	</ul>
 	<h2 class="list-title ellipsis"><%= h(@forum.name) %></h2>
 </div>
-
-<%-# TODO-RAILS3 - Move to js files -%>
-<%= javascript_tag do %>
-(function($) {
-  $("#toggle_monitorship_status").bind("ajax:before", function(et, e){
-    $(this).hide();
-    $('#monitorship_link').addClass('sloading loading-tiny');
-  });
-})(jQuery)
-<% end %>

@@ -36,11 +36,13 @@
 			   <%= link_to(t('contacts.restore').html_safe, {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? and contact.parent.nil? %>
       <% end %>
       <% if privilege?(:view_contacts) %>
-			  <%= link_to(t('contacts.send_activation').html_safe, '', "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
-					"data-loading-text" => t('admin.getting_started.index.next_please_wait').html_safe, 
-					"data-url" => send_invite_activation_path(contact),
-					"data-remote" => 'true',
-					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
+			  <%= link_to(t('contacts.send_activation').html_safe, send_invite_activation_path(contact), 
+			  	:class => "btn send-activation btn-mini",
+			  	:"data-method" => 'PUT',
+					:"data-loading-text" => t('admin.getting_started.index.next_please_wait').html_safe, 
+					:remote => true,
+					:"data-type" => "json",
+					:"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
       <% end %>
       <% if privilege?(:manage_contacts) %>
 			   <%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? and !contact.spam? and !contact.blocked? %>

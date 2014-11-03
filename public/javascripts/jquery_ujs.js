@@ -129,7 +129,9 @@
           type: method || 'GET', data: data, dataType: dataType,
           // stopping the "ajax:beforeSend" event will cancel the ajax request
           beforeSend: function(xhr, settings) {
-            rails.setLoading(element, data, status, xhr);
+            rails.toggleLoading(element, true);
+            rails.setVisibility(element, 'Before');
+            rails.setButtonLoading(element);
             if (settings.dataType === undefined) {
               xhr.setRequestHeader('accept', '*/*;q=0.5, ' + settings.accepts.script);
             }
@@ -175,10 +177,13 @@
       if (typeof data_update !== typeof undefined && data_update !== false) {
         $('#'+data_update).html(data);
       }
+      rails.toggleLoading(element, false);
+      rails.setVisibility(element, 'After');
+      rails.resetButtonLoading(element);
     },
 
-    //Custom function to handle loading on remote link_to success
-    setLoading: function(element, data, status, xhr) {
+    //Custom function to handle loading on remote link_to beforesend and success
+    toggleLoading: function(element, type) {
       var loading = element.data('loading');
       if (typeof loading === "undefined") {
         return;
@@ -186,8 +191,74 @@
 
       var loading_classes = element.data('loading-classes') || 'sloading loading-block',
           loading_element = loading ? $('#' + loading) : element;
-    
-      loading_element.addClass(loading_classes);
+      
+      loading_element.toggleClass(loading_classes, type);
+    },
+
+    //Custom function to handle showing or hiding dom elements
+    setVisibility: function(element, time) {
+      rails['show' + time](element);
+      rails['hide' + time](element);
+    },
+
+    //Custom function to handle hiding dom elements on remote link_to success
+    hideAfter: function(element) {
+      var hide_dom = element.data('hide-after');
+      if (typeof hide_dom === "undefined") {
+        return;
+      } 
+
+      rails.toggle(element, false, hide_dom);
+    },
+
+    //Custom function to handle showing dom elements on remote link_to success
+    showAfter: function(element) {
+      var show_dom = element.data('show-after');
+      if (typeof show_dom === "undefined") {
+        return;
+      }
+
+      rails.toggle(element, true, show_dom);
+    },
+
+    //Custom function to handle hiding dom elements on remote link_to beforesend
+    hideBefore: function(element) {
+      var hide_dom = element.data('hide-before');
+      if (typeof hide_dom === "undefined") {
+        return;
+      } 
+
+      rails.toggle(element, false, hide_dom);
+    },
+
+    //Custom function to handle showing dom elements on remote link_to beforesend
+    showBefore: function(element) {
+      var show_dom = element.data('show-before');
+      if (typeof show_dom === "undefined") {
+        return;
+      }
+
+      rails.toggle(element, true, show_dom);
+    },
+
+    //Custom function to show or hide dom elements
+    toggle: function(element, type, dom_selectors){
+      if (dom_selectors === 'this'){
+        element.toggle(type);
+      } else {
+        $(dom_selectors).toggle(type);
+      }
+    },
+
+    //Custom function to set button loading on beforesend
+    setButtonLoading: function (element) {
+      if(element.hasClass('btn')) element.button("loading");
+    },
+
+    //Custom function to reset button loading on success
+    resetButtonLoading: function (element) {
+      if(element.hasClass('btn')) element.button("reset");
+      if(element.data('completeText')) element.button("complete");
     },
 
     // Handles "data-method" on links such as:

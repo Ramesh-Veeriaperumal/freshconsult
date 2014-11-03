@@ -3,13 +3,16 @@
 <%=
 		link_to_if @topic.published?, "",
 		toggle_monitorship_path("topic", @topic, (@monitorship.zero? ? "follow" : "unfollow")),
-		:method => :post,
+			:method => :post,
 	    :class => "tooltip forum_follow_icon #{@monitorship.zero? ? '': ' active'}",
-		:"data-placement" => 'below',
-		:id => "toggle_monitorship_status",
-		:title => t((@monitoring ? 'monitorships.unfollow_title' : 'monitorships.follow_title')),
-		:"data-keybinding" => "#{shortcut("community_actions.monitor_topic")}",
-		:remote => true
+			:"data-placement" => 'below',
+			:id => "toggle_monitorship_status",
+			:title => t((@monitoring ? 'monitorships.unfollow_title' : 'monitorships.follow_title')),
+			:"data-keybinding" => "#{shortcut("community_actions.monitor_topic")}",
+			:"data-hide-before" => 'this',
+			:"data-loading" => 'monitorship_link',
+			:"data-loading-classes" => 'sloading loading-tiny',
+			:remote => true
 %>
 </div>
 
@@ -52,14 +55,4 @@
 
 	  </ul>
 	</div>
-<% end %>
-
-<%-# TODO-RAILS3 - Move to js files (Added ids above, to make it bind to multiple elements) -%>
-<%= javascript_tag do %>
-(function($) {
-  jQuery("#toggle_monitorship_status').bind("ajax:before", function(et, e){
-	jQuery(this).hide();
-	jQuery('#monitorship_link').addClass('sloading loading-small');
-  });
-})(jQuery)
 <% end %>

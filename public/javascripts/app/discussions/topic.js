@@ -84,7 +84,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindPostEditLink: function () {
-      var $this = this;
+			var $this = this;
 			$('body').on('click.topic_show', "[rel=post-edit]", function (ev) {
 				ev.preventDefault();
 				var conv = $this.findPostElement(this);
@@ -94,7 +94,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindPostEditCancelLink: function () {
-      var $this = this;
+			var $this = this;
 			$('body').on('click.topic_show', "[rel=post-edit-cancel]", function (ev) {
 				ev.preventDefault();
 				var conv = $this.findPostElement(this);
@@ -106,7 +106,7 @@ window.App.Discussions = window.App.Discussions || {};
 		bindPostUpdateForm: function () {
 			var $this = this;
 			$('body').on('submit.topic_show', '[rel=post-update]', function (ev) {
-				if($(this).valid()){
+				if ($(this).valid()) {
 					$this.blockElement($this.findPostElement(this));
 				}
 			});

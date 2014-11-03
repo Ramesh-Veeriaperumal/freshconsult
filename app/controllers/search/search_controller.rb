@@ -160,7 +160,7 @@ class Search::SearchController < ApplicationController
 				end
 			end
 			format.js do 
-				render :partial => 'search/search_sort.rjs'
+				render :partial => 'search/search_sort'
 			end
 			format.json do
 				render :json => @result_json

@@ -1,5 +1,5 @@
 <div class="addReminder">
-  <%= form_tag form_controller, :remote => true do |f| %>
+  <%= form_for :helpdesk_reminder, :url => helpdesk_ticket_reminders_path(ticket), :remote => true do |f| %>
     <input type="hidden" name="source" value="ticket_view" />
     <%= f.text_area :body, :class => "text", :autocomplete => "off", :placeholder => t('add_to_do'), :maxlength => 120 %>
   <% end %>

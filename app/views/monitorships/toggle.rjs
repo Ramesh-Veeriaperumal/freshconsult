@@ -2,13 +2,14 @@ page << "jQuery('#toggle_monitorship_status').removeTip();"
 page << "jQuery('#monitorship_link').removeClass('sloading loading-small')"
 
 
-page.replace :toggle_monitorship_status, link_to "", toggle_monitorship_path(params[:object], params[:id], (@monitorship.active? ? "unfollow" : "follow")),
+page.replace :toggle_monitorship_status, link_to("", toggle_monitorship_path(params[:object], params[:id], (@monitorship.active? ? "unfollow" : "follow")),
 											:method => :post,
-											#TODO - RAILS3 JS
-											:before => "jQuery('#toggle_monitorship_status').hide();jQuery('#monitorship_link').addClass('sloading loading-small');",
 											:class => "forum_follow_icon tooltip #{@monitorship.active? ? 'active' : ''}", 
 											:"data-placement" => 'below',
 											:id => "toggle_monitorship_status",
 											:title => t((@monitorship.active? ? 'monitorships.unfollow_title' : 'monitorships.follow_title')),
 											:"data-keybinding" => "#{shortcut("community_actions.monitor_#{params[:object]}")}",
-											:remote => true
+											:"data-hide-before" => 'this',
+											:"data-loading" => 'monitorship_link',
+											:"data-loading-classes" => 'sloading loading-tiny',
+											:remote => true)
