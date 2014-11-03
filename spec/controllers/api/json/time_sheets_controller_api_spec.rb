@@ -47,11 +47,11 @@ describe Helpdesk::TimeSheetsController do
 
   # Delete time entry api(json) is failing in production. throwing 500 error. Need to be
   # fixed. The test case below is correct (checked with xml api). Uncomment after fixing it.
-  # it "should delete an existing time entry" do
-  #   time_sheet = create_test_time_entry({}, @test_ticket)
-  #   delete :destroy, {:id => time_sheet.id, :format => 'json'}
-  #   response.status.should be_eql('200 OK')   
-  # end
+  it "should delete an existing time entry" do
+    time_sheet = create_test_time_entry({}, @test_ticket)
+    delete :destroy, {:id => time_sheet.id, :format => 'json'}
+    response.status.should be_eql('200 OK')   
+  end
   
   it "should show an all time entries for the ticket" do
     time_sheet = create_test_time_entry({}, @test_ticket)

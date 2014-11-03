@@ -219,7 +219,11 @@ private
           render :json => {:success => true, :item => result}.to_json
       }
       format.json do
-        render :json => result.to_json and return 
+        if(result.frozen?)
+          render :json => {:success => true}
+        else
+          render :json => result.to_json and return 
+        end
       end
     end
   end
