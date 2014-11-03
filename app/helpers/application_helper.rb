@@ -1074,7 +1074,12 @@ module ApplicationHelper
   def asset_manifest(type = :js)
     return {} unless [:js, :css].include?(type)
     load_manifest if ASSET_MANIFEST.blank? and !Rails.env.development?
-    Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type ]
+    Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type]
+  end
+  
+  def asset_host_url
+    return "" if Rails.env.development?
+    "#{request.protocol}#{ActionController::Base.asset_host[2..-1]}"
   end
 
   # ITIL Related Methods ends here

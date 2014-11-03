@@ -46,7 +46,7 @@
 			imageLoading : '<%= image_path("fillers/image_upload_placeholder.gif") %>'
 		};
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
-		cloudfront_host_url = "<%= ActionController::Base.asset_host %>";
+		cloudfront_host_url = "<%= asset_host_url %>";
 	</script>
 		
 	<%= javascript_include_tag :'cdn/defaults'  %>

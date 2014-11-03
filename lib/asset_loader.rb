@@ -13,6 +13,7 @@ class AssetLoader
 	class << self
 	
 	def js_assets
+		Rails.logger.debug "Generating JS Manifest for AssetLoader"
 		{
 			:app => js_app_assets(:app),
 			:plugins => js_app_assets(:plugins)
@@ -20,6 +21,7 @@ class AssetLoader
 	end
 	
 	def css_assets
+		Rails.logger.debug "Generating CSS Manifest for AssetLoader"
 		{
 			:app => css_app_assets(:app),
 			:plugins => css_app_assets(:plugins)
