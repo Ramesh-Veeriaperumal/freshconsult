@@ -1078,7 +1078,7 @@ module ApplicationHelper
   end
   
   def asset_host_url
-    return "" if Rails.env.development?
+    return "" if Rails.env.development? || Rails.env.test?
     "#{request.protocol}#{ActionController::Base.asset_host[2..-1]}"
   end
 
