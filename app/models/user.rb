@@ -658,9 +658,11 @@ class User < ActiveRecord::Base
     end
 
     def clear_redis_for_agent
-      self.agent_groups.each do |ag|
-        group = ag.group
-        group.remove_agent_from_round_robin(self.id) if group.round_robin_enabled?
+      if helpdesk_agent_changed? and !agent?
+        self.agent_groups.each do |ag|
+          group = ag.group
+          group.remove_agent_from_round_robin(self.id) if group.round_robin_enabled?
+        end
       end
     end
 

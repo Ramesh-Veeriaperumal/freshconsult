@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
   
   before_update :backup_user_changes
-  before_update :clear_redis_for_agent, :if => [:helpdesk_agent, :deleted_changed?]
+  before_update :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :company_info_updated?
 
   def set_time_zone
