@@ -1106,6 +1106,7 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
+        post :create # For Mobile apps backward compatibility.
       end
 
       resources :surveys do
