@@ -187,3 +187,15 @@ ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:p
 # Captcha API Keys
 ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'
 ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
+
+
+
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+       RABBIT_MQ_ENABLED = !Rails.env.development?
+       RabbitMq::Init.start if RABBIT_MQ_ENABLED
+    end
+  end
+end
+
