@@ -887,10 +887,11 @@ Helpkit::Application.routes.draw do
 
   resources :reports
 
-  resources :timesheet_reports do
+  resources :timesheet_reports , :controller => 'reports/timesheet_reports' do
     collection do
       post :report_filter
       post :export_csv
+      post :generate_pdf
     end
   end
 
