@@ -193,7 +193,7 @@ Helpkit::Application.routes.draw do
     resources :time_sheets
   end
 
-  match '/agents/filter/:state/*letter' => 'agents#index'
+  match '/agents/filter/:state(/*letter)' => 'agents#index'
   match '/logout' => 'user_sessions#destroy', :as => :logout
   match '/openid/google' => 'user_sessions#openid_google', :as => :gauth
   match '/opensocial/google' => 'user_sessions#opensocial_google', :as => :gauth
@@ -308,7 +308,7 @@ Helpkit::Application.routes.draw do
 
   resources :freshfone do
     collection do
-      get :voice
+      post :voice
       post :build_ticket
       get :dashboard_stats
       get :get_available_agents
@@ -887,10 +887,11 @@ Helpkit::Application.routes.draw do
 
   resources :reports
 
-  resources :timesheet_reports do
+  resources :timesheet_reports , :controller => 'reports/timesheet_reports' do
     collection do
       post :report_filter
       post :export_csv
+      post :generate_pdf
     end
   end
 
@@ -1010,7 +1011,8 @@ Helpkit::Application.routes.draw do
       put :rebrand
       get :dashboard
       get :thanks
-      put :cancel
+      get :cancel
+      post :cancel
       get :canceled
       post :signup_google
       delete :delete_logo
@@ -1106,6 +1108,7 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
+        post :create # For Mobile apps backward compatibility.
       end
 
       resources :surveys do

@@ -901,7 +901,7 @@ module ApplicationHelper
 
     def additional_settings?
       settings = current_account.account_additional_settings.additional_settings
-      settings.nil? || settings[:enable_social]
+      settings.blank? || settings[:enable_social]
     end
 
     def handles_associated?
@@ -1078,7 +1078,7 @@ module ApplicationHelper
   end
   
   def asset_host_url
-    return "" if Rails.env.development?
+    return "" if Rails.env.development? || Rails.env.test?
     "#{request.protocol}#{ActionController::Base.asset_host[2..-1]}"
   end
 

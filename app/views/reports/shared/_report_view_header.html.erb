@@ -30,9 +30,11 @@
         <div class="filter-container">
           <ul class="inline" id="filter_container">
             <li>Filtered by:</li>
-            <%@filter_data.each do |obj|%>
-              <li><%=obj["name"]%> : <strong><%=h(obj["value"])%></strong></li>
-            <%end%>
+            <% if @filter_data %>
+              <%@filter_data.each do |obj|%>
+                <li><%=obj["name"]%> : <strong><%=h(obj["value"])%></strong></li>
+              <%end%>
+            <% end %>
             <li>Time Period: <strong><%=@report_date%></strong></li>
           </ul>
         </div>
