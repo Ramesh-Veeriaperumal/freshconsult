@@ -37,7 +37,7 @@ class Search::TicketsController < Search::SearchController
 		def search_query f
 			if @search_by_field
 				if SearchUtil.es_exact_match?(@search_key) and (params[:search_field] != "requester")
-					f.query { |q| q.text params[:search_field].to_sym, SearchUtil.es_filter_exact(@search_key), :type => :phrase }				
+					f.query { |q| q.match params[:search_field].to_sym, SearchUtil.es_filter_exact(@search_key), :type => :phrase }				
 				else
 					case params[:search_field]
 					when "display_id"

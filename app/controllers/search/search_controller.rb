@@ -58,7 +58,7 @@ class Search::SearchController < ApplicationController
 
 		def search_query f
 			if SearchUtil.es_exact_match?(@search_key)
-				f.query { |q| q.text :_all, SearchUtil.es_filter_exact(@search_key), :type => :phrase }
+				f.query { |q| q.match :_all, SearchUtil.es_filter_exact(@search_key), :type => :phrase }
 			else
 				f.query { |q| q.string SearchUtil.es_filter_key(@search_key), :analyzer => "include_stop" }
 			end
