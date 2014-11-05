@@ -1,0 +1,16 @@
+<div class="list-page agent-status">
+<a href="/helpdesk">< <%= t('helpdesk.dashboard.round_robin.back_to_dashboard') %> </a>
+	<div class="list-page-header">
+		<h3 class="lead"><%= t('helpdesk.dashboard.round_robin.available_agents') %></h3>
+		<div class="row-fluid lead-desc">
+			<p class="span8"><%= t('helpdesk.dashboard.round_robin.info1') %></p>
+			<div id="agents-filter" class="agents-filter span4">
+				<%= render :partial => "agents_filter", :locals => {:group => @group}  %>
+			</div>		
+		</div>
+	</div>
+	<div id="agents-list" class="agents-list agents-list-round-robin" data-text-since="<%= t('helpdesk.dashboard.round_robin.since_now') %>">
+		<%= render :partial => "agents_list", :locals => {:available_agents => @available_agents, :non_available_agents => @unavailable_agents} %>
+	</div>
+</div>
+<%= render :partial => 'sidebar' %>
