@@ -3,7 +3,9 @@ if(jQuery('#got_pages').length){
   jQuery('#new_page_dialog').trigger('click');
 }
 <% end %>
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do %>
+&nbsp;
+<% end %>
 <% unless @fb_pages.empty? %>
   <div class="list-page facebook-list">
     <div class="list-page-header row-fluid"> 
