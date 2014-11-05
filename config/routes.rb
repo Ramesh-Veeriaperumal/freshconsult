@@ -868,12 +868,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :report_filters, :controller => 'report_filters' do
-      collection do
+    resources :report_filters do
+      member do
         post :create
-        post :destroy
       end
     end
+
     
     namespace :freshfone do
       resources :summary_reports, :controller => 'summary_reports' do
@@ -886,6 +886,8 @@ Helpkit::Application.routes.draw do
   end
 
   resources :reports
+  match 'reports/report_filters/destroy/:id(.:format)' => "reports/report_filters#destroy", :method => :post
+
 
   resources :timesheet_reports , :controller => 'reports/timesheet_reports' do
     collection do
