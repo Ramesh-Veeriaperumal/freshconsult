@@ -39,11 +39,11 @@
 
 	<script type="text/javascript">
 	  /* TODO-RAILS3 need to cross check this area */
-		PROFILE_BLANK_THUMB_PATH = '<%= image_path("misc/profile_blank_thumb.gif") %>';
-		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("misc/profile_blank_medium.gif") %>';
-		SPACER_IMAGE_PATH = '<%= image_path("misc/spacer.gif") %>';
+		PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.gif';
+		PROFILE_BLANK_MEDIUM_PATH = '<%= asset_host_url %>/misc/profile_blank_medium.gif';
+		SPACER_IMAGE_PATH = '<%= asset_host_url %>/misc/spacer.gif';
 		FILLER_IMAGES = {
-			imageLoading : '<%= image_path("animated/image_upload_placeholder.gif") %>'
+			imageLoading : '<%= asset_host_url %>/animated/image_upload_placeholder.gif'
 		};
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 		cloudfront_host_url = "<%= asset_host_url %>";
