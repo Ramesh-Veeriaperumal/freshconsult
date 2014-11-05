@@ -23,11 +23,15 @@ module SpamWatcherCallbacks
       user_column, key, threshold  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
       class_eval %Q(
-        before_create :spam_watcher_counter
+        after_commit_on_create :spam_watcher_counter
         def spam_watcher_counter
           begin
             Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
-              user_id = self.send("#{user_column}")
+              if "#{user_column}".blank?
+                user_id = ""
+              else
+                user_id = self.send("#{user_column}") 
+              end
               account_id = self.account_id
               key = "#{key}"
               max_count = "#{threshold}".to_i

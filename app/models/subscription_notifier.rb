@@ -76,6 +76,15 @@ class SubscriptionNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
+  def admin_spam_watcher_blocked(account)
+    from  AppConfig['from_email']
+    recipients account.admin_email
+    subject "Freshdesk :: Spam watcher"
+    sent_on Time.now
+    body(:account => account)
+    content_type  "text/html"
+  end
+
   def subscription_downgraded(subscription, old_subscription)
     setup_email(AppConfig['from_email'], "#{subscription.account.full_domain} downgraded")
     @body = { :subscription => subscription, :old_subscription => old_subscription }

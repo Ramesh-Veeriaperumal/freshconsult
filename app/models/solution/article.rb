@@ -17,6 +17,7 @@ class Solution::Article < ActiveRecord::Base
   
   has_many_attachments
   has_many_cloud_files
+  spam_watcher_callbacks 
   
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
