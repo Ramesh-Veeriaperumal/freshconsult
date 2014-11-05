@@ -3532,6 +3532,7 @@ body.popup-body{ min-width: 0px; }
 
 input[type="file"].zip-file {
     line-height: 10px;
+    @include padding-left(0px);
 }
 
 // Admin Social styles
