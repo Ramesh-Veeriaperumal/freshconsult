@@ -4149,7 +4149,7 @@ en:
       updated_at: Last Modified
       priority: Priority
       status: Status
-      customer_response: Customer Response
+      requester_responded_at: Customer Response
       asc: Ascending
       desc: Descending
   click_to_change_sort_order: Click to change sort order
