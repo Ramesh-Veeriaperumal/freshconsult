@@ -103,8 +103,8 @@
     </div>
 
     <% if @reply_handles.any? %>
-      <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear">
-        <% form_remote_tag :url => { :controller => "social/twitter", :action => "reply" },  :html => { :class => "uniForm", :id => "reply_form_#{feed.feed_id}" } do %>
+      <div id="reply_box_<%= feed.feed_id %>" class="twt-box clear">        
+        <%= form_tag url_for(:controller => "social/twitter", :action => "reply"), :class => "uniForm", :id => "reply_form_#{feed.feed_id}", :remote => true do %>
             
           <div class="row twt-area">
             <div class="twt-msg">
