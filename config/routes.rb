@@ -146,7 +146,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/contacts/filter/:state/*letter' => 'contacts#index'
+  match '/contacts/filter/:state(/*letter)' => 'contacts#index'
   resources :groups
 
   resources :user_emails do
@@ -1235,6 +1235,12 @@ Helpkit::Application.routes.draw do
     match '/freshchat/visitor/:filter' => 'visitor#index', :as => :visitor
     match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive
     match '/sales_manager' => 'dashboard#sales_manager'
+
+    # For mobile apps backward compatibility.
+    match '/tickets/execute_scenario/:id' => 'tickets#execute_scenario'
+    match '/subscriptions' => 'subscriptions#index'
+    match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
+    # Mobile apps routes end.
     
     resources :articles do
       collection do
