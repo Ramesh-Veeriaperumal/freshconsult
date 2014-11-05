@@ -1029,6 +1029,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :plans
       get :billing
+      post :billing
       post :plan
       post :calculate_amount
       put :convert_subscription_to_free
