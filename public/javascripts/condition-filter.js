@@ -316,7 +316,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				current_filter = serialHash.get(name);
 
 				if( current_filter && current_filter.length != 0 )
-					save_data = (type != 'json') ? current_filter.toObject() : JSON.stringify(current_filter);
+					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
 
 				hidden_.val(save_data);
 
