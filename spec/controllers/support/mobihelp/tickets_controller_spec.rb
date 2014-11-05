@@ -65,7 +65,7 @@ describe Support::Mobihelp::TicketsController do
         :id => @test_ticket.display_id
       }
 
-    post :add_note, note
+    post :notes, note
   end
 
   it "should add note with attachment" do
@@ -81,7 +81,7 @@ describe Support::Mobihelp::TicketsController do
         :id => @test_ticket.display_id
       }
 
-    post :add_note, note
+    post :notes, note
   end
 
   it "should close a mobihelp ticket" do

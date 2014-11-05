@@ -1448,13 +1448,6 @@ Helpkit::Application.routes.draw do
     resource :signup, :only => [:new, :create]
     match '/signup' => 'signups#new'
 
-    namespace :mobihelp do
-      resource :tickets do
-        post :add_note
-        post :close
-      end
-    end
-
     resource :profile, :only => [:edit, :update] do
       member do
         delete :delete_avatar
@@ -1558,8 +1551,12 @@ Helpkit::Application.routes.draw do
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
     
     namespace :mobihelp do
-      resources :tickets
-      match '/tickets/:id/notes.:format' => 'tickets#add_note'
+      resources :tickets do
+        member do
+          post :notes
+          post :close
+        end
+      end
     end
   end
 
