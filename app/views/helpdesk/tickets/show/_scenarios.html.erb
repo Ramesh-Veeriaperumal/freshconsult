@@ -28,7 +28,6 @@
         	jQuery('.dialog-well').focus();
     	})
     	jQuery('.execute_scenario_form').on('ajax:send', function(xhr, status, success) {
-		  	console.log('test');
 		  	jQuery('#execute_scenario .dialog-well').hide();
 			jQuery('#execute_scenario .modal-body .sloading').remove();
 			jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');

@@ -114,7 +114,7 @@ module HelpdeskControllerMethods
     respond_to do |result|
       result.html{
         flash[:notice] = render_to_string(
-          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items).html_safe
         redirect_to after_restore_url 
       }
       result.mobile { render :json => { :success => true }}
@@ -123,7 +123,7 @@ module HelpdeskControllerMethods
       result.json {  render :json => @items.to_json(options) }
       result.js {
         flash[:notice] = render_to_string(
-          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items).html_safe
       }
     end
   end
@@ -207,7 +207,7 @@ protected
   end
   
   def process_destroy_message
-    flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice')
+    flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice').html_safe
     # Hook for controllers to add their own message and redirect
   end
 
