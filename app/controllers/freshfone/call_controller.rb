@@ -25,7 +25,7 @@ class Freshfone::CallController < FreshfoneBaseController
           :call_meta => call_meta
         }
       }
-      format.js {
+      format.json {
 				render :json => {
      		  :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
                           :locals => { :user => @user }),
