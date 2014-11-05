@@ -9,8 +9,18 @@
 a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
   color:#333;
 }
-
-// Font icons used in forum pages
+// -----------------------------------------------------------------------------------------------
+//									 Fix!!! - Remove content controls
+// 												Ticket Details
+// -----------------------------------------------------------------------------------------------
+.content .controls, .ticket_details .sticky_right, .community {
+	.monitor{              @extend .#{$font-class}star-o;}
+	.monitor_active{       @extend .#{$font-class}star;}
+	.monitor_active:after{ @extend .#{$font-class}star-o:before; }
+}
+// -----------------------------------------------------------------------------------------------
+// 									Font icons used in forum pages
+// -----------------------------------------------------------------------------------------------
 .forum_follow_icon{              @extend .#{$font-class}star-o; }
 .forum_follow_icon.active{       @extend .#{$font-class}star; }
 .forum_follow_icon.active:after{ @extend .#{$font-class}star-o:before; }
@@ -19,11 +29,46 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 .forum-type-ideas{               @extend .#{$font-class}bulb; }
 .forum-type-howto{               @extend .#{$font-class}help; }
 .agent-preview{                  @extend .#{$font-class}open-in-new-window; }
+.icons-like{ 					 @extend .#{$font-class}like; }
+.icons-dislike{ 			 	 @extend .#{$font-class}dislike; }
+
+// Hover card font icons
+.contact_hover .product-twitter { 			@extend .#{$font-class}twitter-o;}
+.contact_hover .product-email-logo { 		@extend .#{$font-class}mail;}
+.contact_hover .product-call { 				@extend .#{$font-class}phone;}
+
+// Email notification font icons
+.common-icon-outdated {				@extend .#{$font-class}notice;}
+
+// Ticket Show font icons
+.commentbox .conv-actions-delete {			@extend .#{$font-class}trash;}
+.commentbox .conv-actions-edit {			@extend .#{$font-class}edit;}
+.commentbox .conv-actions-forward {			@extend .#{$font-class}forward;}
+.commentbox .conv-actions-split {			@extend .#{$font-class}split;}
+
+// Ticket View font icons
+.ticket-view-saveas{						
+	@extend .#{$font-class}checkmark;
+	&:before {
+		font-weight: bold;
+	}
+}
+.ticket-view-save{							
+	@extend .#{$font-class}checkmark;
+	&:before {
+		font-weight: bold;
+	}
+}
+.ticket-view-saveas:after{					@extend .#{$font-class}ellipsis:before;}
+.ticket-view-edit {							@extend .#{$font-class}edit;}
+.ticket-view-delete {						@extend .#{$font-class}trash;}
+
 .list-query-panel .dropdown-menu li.active a:before{ 	
 	@extend .#{$font-class}checkmark; 
 }
-
-// Font icons in ticket pages
+// -----------------------------------------------------------------------------------------------
+// 									Font icons in ticket pages
+// -----------------------------------------------------------------------------------------------
 .hover-card-agent , .list_agents_replying{
 	.active{
 		.#{$font-class}message{
@@ -40,8 +85,9 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 		color: #007F80;
 	}
 }
-
-// Font icons used in Freshsocial
+// -----------------------------------------------------------------------------------------------
+// 									Font icons used in Freshsocial
+// -----------------------------------------------------------------------------------------------
 .tw-accs{
 	li{
 		a{
@@ -49,7 +95,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 				width: 24px;
 				height: 24px;
 				@include float(left);
-				background: #333;
+				background: $default_txt_color;
 				color: #fff;
 				text-align: center;
 				@include border-radius(4px);
@@ -74,7 +120,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 				.#{$font-class-name}cross{
 					display: inline-block;
 					margin-top: 2px;
-					color: #333;
+					color: $default_txt_color;
 					@include margin-right(5px);
 				}
 			}
@@ -163,7 +209,9 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
-/* ======================= header notification ================== */
+// -----------------------------------------------------------------------------------------------
+// 											header notification 
+// -----------------------------------------------------------------------------------------------
 .header-notification-wrapper{
 	.notification_present .#{$font-class-name}help{
 		color: white;
@@ -185,7 +233,9 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
-/* === Admin Chat Settings === */
+// -----------------------------------------------------------------------------------------------
+// 											Admin Chat Settings 		
+// -----------------------------------------------------------------------------------------------
 .prechat_form{
 	.inline-field{
 		.#{$font-class-name}rearrange{
@@ -205,3 +255,113 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+// -----------------------------------------------------------------------------------------------
+//												Add and Delete Icon
+// -----------------------------------------------------------------------------------------------
+
+.rounded-add-icon{
+	background: green;
+	@extend .#{$font-class}plus;
+}
+.rounded-minus-icon{
+	background: #990000;
+	@extend .#{$font-class}minus;
+}
+.rounded-add-icon, .rounded-minus-icon{
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 100%;
+	@include padding(0 4px 0 4px);
+	color: #fff;
+	font-size: 14px;
+	@include box-shadow(inset 1px -1px 0px rgba(0,0,0,0.2));
+	&.disabled{
+		background: #999;
+	}
+}
+span.fb_add
+.pick-response, .recently_used a:hover #resp-icon,
+#results li, .merge_results li, .match_results li:hover #resp-icon,
+.contactdiv:hover #resp-icon,
+#resp-icon, .canned-response-menu span.bullet{
+	@extend .rounded-add-icon;
+}
+#contact-area #resp-icon
+.sla_policy_form .delete, 
+.sla_policy_form .delete_conditions,
+.rem_mail, #cancel_email, .remove_image,
+.ivr-menu .delete-symbol { 
+	@extend .rounded-minus-icon;  
+}
+.icon-detail .symbols-add{
+	@extend .#{$font-class}plus;
+	font-size:14px;
+	color: #009853;
+}
+#resp-icon, .canned-response-menu span.bullet{ color:#aaa; }
+.rem_mail, #cancel_email, .remove_image { 
+	@include padding(0 0 2px 20px); @include margin-left(5px); cursor: pointer; 
+}
+
+.icon-close{
+	cursor: pointer;
+	&:before{
+		content: '\00d7';
+		padding: 2px;
+		color: #000;
+		font-weight: bold;
+		position: relative;
+		top: -1px;
+	}
+}
+// -----------------------------------------------------------------------------------------------
+// 												Freshfone & customer details page
+// -----------------------------------------------------------------------------------------------
+
+.phone-icons,.user_phone{@extend .#{$font-class}ff-phone; font-size:14px;}
+.mobile-icons { @extend .#{$font-class}mobile; }
+.phone-icons, .mobile-icons { &:before{@include padding-right(10px); color:$default_txt_color;}}
+
+// -----------------------------------------------------------------------------------------------
+// 										Ticket Details Page
+// -----------------------------------------------------------------------------------------------
+.conversation_thread{
+	.comment-lock{ @extend .#{$font-class}security; color:#999; font-size:16px; }
+	.attachment-options .dropbox_div label{ 
+		@extend .#{$font-class}dropbox;
+		&:before{
+			font-size: 15px;
+			@include padding-right(7px);
+		}
+	} 
+} 
+.ticket-actions{
+	.forward{ @extend .#{$font-class}arrow-right-2; }
+	.reply-inner{ @extend .#{$font-class}reply; }
+	.forward-inner{ @extend .#{$font-class}arrow-right-2; }
+	.note-inner{ @extend .#{$font-class}file-edit; }
+	.forward, .reply-inner, .forward-inner, .note-inner{
+		&:before{
+			font-size: 16px;
+			vertical-align: middle;
+			position: relative;
+			top: -1px;
+		}
+	}
+}
+.private-icon{ @extend .#{$font-class}security;}
+.delete_black{ @extend .#{$font-class}trash; }
+.private-icon,.delete_black{
+	font-size: 16px;color:#000; 
+	&:hover{color:#000;}
+}
+.reminders, .todo{ .delete{ @extend .#{$font-class}trash; color:#990000; } }
+
+.toolbar_pagination .prev_page span{ @extend .#{$font-class}caret-left; font-size:20px;}
+.toolbar_pagination .next_page span{ @extend .#{$font-class}caret-right; font-size:20px;}
+// -----------------------------------------------------------------------------------------------
+
+#duration .error{ @extend .#{$font-class}warning; color:#fdb415; }
+.symbols-issue{ @extend .#{$font-class}warning; color:#d33d27; }
+.symbols-tag-edit{@extend .#{$font-class}pencil; }
+.symbols-tag-remove{@extend .#{$font-class}minus; }

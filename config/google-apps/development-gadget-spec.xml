@@ -435,7 +435,7 @@
 		}
 
 		function imgerror(source){
-			source.src = http_s+"://"+url_root+"/images/fillers/profile_blank_thumb.gif";
+			source.src = http_s+"://"+url_root+"/images/misc/profile_blank_thumb.gif";
 			source.onerror = "";
 			return true;
 		}

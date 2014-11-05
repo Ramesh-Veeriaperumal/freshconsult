@@ -201,7 +201,7 @@ module SupportHelper
 	def profile_image user, more_classes = "", width = "50px", height = "50px"
 		output = []
 		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}">
-							<img src="/images/fillers/profile_blank_thumb.gif" onerror="imgerror(this)" )
+							<img src="/images/misc/profile_blank_thumb.gif" onerror="imgerror(this)" )
 		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
 		output << %(			width="#{width}" height="#{height}" />
 						</div> )
@@ -256,7 +256,7 @@ module SupportHelper
 
 	def portal_fav_ico
 		fav_icon = MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal],30.days.to_i) do
-     			current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' :
+     			current_portal.fav_icon.nil? ? '/images/misc/favicon.ico?123457' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
                         :expires => 30.days.to_i,
@@ -769,9 +769,9 @@ HTML
 		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences,
-			:image_placeholders => { :spacer => image_path("spacer.gif"),
-			 												:profile_thumb => image_path("fillers/profile_blank_thumb.gif"),
-															 :profile_medium => image_path("fillers/profile_blank_medium.gif") }
+			:image_placeholders => { :spacer => image_path("misc/spacer.gif"),
+			 												:profile_thumb => image_path("misc/profile_blank_thumb.gif"),
+															 :profile_medium => image_path("misc/profile_blank_medium.gif") }
 		}.to_json
 	end
 

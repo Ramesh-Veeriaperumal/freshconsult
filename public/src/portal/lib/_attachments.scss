@@ -151,9 +151,9 @@
 }
 
 .no-image-logo{
-	@include no-image-class("logo.png");
+	@include no-image-class("cdn-ignored/inline-images/logo.png");
 }
 
 .no-image-favicon{
-	@include no-image-class("favicon-preview.png");
+	@include no-image-class("cdn-ignored/inline-images/favicon-preview.png");
 }

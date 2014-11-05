@@ -401,7 +401,7 @@ hr.content-divider{
 .db-chooser{
 	label{ @include margin-right(50%); }
 	.dropbox_button{
-		background: image-url("/images/portal/dropbox-attach.png") no-repeat left -11px #f3f2f2;
+		background-color: #f3f2f2;
 	    height: 26px;
 	    @include padding-left(90px);
 	    border:1px solid #d6d6d6;

@@ -136,7 +136,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var inner = jQuery("<div class='controls' />");
 				var outer = jQuery("<fieldset />")
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
-								.append("<img class=\"delete\" src=\"/images/delete.png\" />")
+								.append("<i class=\"rounded-minus-icon\"></i>")
 								.append("<span class='sort_handle'></span>")
 								.append(inner)
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"end\" />");
