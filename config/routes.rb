@@ -1460,17 +1460,14 @@ Helpkit::Application.routes.draw do
       end
     end
     
-    resource :search, :only => :show do
+    resource :search, :controller => "search", :only => :show do
       member do
         get :solutions
         get :topics
         get :tickets
         get :suggest_topic
       end
-    end
-      
-    resource :search do
-      match '/topics/suggest' => 'search#suggest_topic'
+      match '/topics/suggest', :action => 'suggest_topic'
     end
 
     resources :discussions, :only => [:index, :show] do
