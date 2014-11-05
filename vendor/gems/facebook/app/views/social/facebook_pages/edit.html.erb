@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do %>&nbsp;<% end %>
 <h2 class="lead">Facebook settings</h2>
 <%= form_for :facebook_page, :url => social_facebook_path(@item), :html => { :method => :put, :id => "fb_form" } do |f| %>
 	<%= render :partial => 'form', :locals => { :facebook_page => @item } %>
