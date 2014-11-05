@@ -43,9 +43,10 @@ class Solution::Article < ActiveRecord::Base
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
     :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data
   
-  after_commit  :clear_mobihelp_solutions_cache, on: :create
-  after_commit :clear_mobihelp_solutions_cache, on: :update
-  before_destroy          :clear_mobihelp_solutions_cache
+  before_destroy :clear_mobihelp_solutions_cache
+
+  after_commit ->(obj) { obj.send(:clear_mobihelp_solutions_cache) }, on: :create
+  after_commit ->(obj) { obj.send(:clear_mobihelp_solutions_cache) }, on: :update
 
   # Please keep this one after the ar after_commit callbacks - rails 3
   include ObserverAfterCommitCallbacks

@@ -20,8 +20,9 @@ class User < ActiveRecord::Base
   before_save :set_primary_email, :if => :no_primary_email
   before_save :remove_duplicate_emails
 
-  after_commit :clear_agent_list_cache, :if => :agent?
-  after_commit :clear_agent_list_cache, on: :update, :if => :helpdesk_agent_updated?
+  after_commit ->(obj) { obj.clear_agent_list_cache }, :if => :agent?
+  after_commit ->(obj) { obj.clear_agent_list_cache }, on: :update, :if => :helpdesk_agent_updated?
+
   after_commit :clear_agent_name_cache
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
