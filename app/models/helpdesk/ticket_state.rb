@@ -56,6 +56,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
 
+  def consecutive_customer_response?
+    if (agent_responded_at && requester_responded_at)
+      requester_responded_at > agent_responded_at
+    else
+      agent_responded_at.blank?
+    end
+  end
+
   def first_call_resolution?
       (inbound_count == 1)
   end
