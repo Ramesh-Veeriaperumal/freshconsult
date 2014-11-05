@@ -308,7 +308,7 @@ Helpkit::Application.routes.draw do
 
   resources :freshfone do
     collection do
-      get :voice
+      post :voice
       post :build_ticket
       get :dashboard_stats
       get :get_available_agents
