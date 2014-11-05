@@ -313,7 +313,7 @@ Helpkit::Application.routes.draw do
       get :dashboard_stats
       get :get_available_agents
       get :credit_balance
-      get :ivr_flow
+      post :ivr_flow
       get :preview_ivr
       post :voice_fallback
       post :create_note
