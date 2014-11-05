@@ -16,7 +16,7 @@ Ext.define("Freshdesk.view.Home", {
         listeners: {
             show:function(){
                 var portalData = FD.current_portal;
-                portalData.logo_url =  portalData.logo_url || 'resources/images/admin-logo.png';
+                portalData.logo_url =  portalData.logo_url || 'resources/images/misc/admin-logo.png';
                 Ext.getCmp('branding').setData(portalData);
                 var userData = FD.current_user;
                 userData.avatar_url = userData.medium_avatar || 'resources/images/profile_blank_thumb.gif';
@@ -44,7 +44,7 @@ Ext.define("Freshdesk.view.Home", {
                                 '<div class="title">{name}</div>',
                             '</div>'].join(''),
                         data:{
-                            logo_url: 'resources/images/admin-logo.png',
+                            logo_url: 'resources/images/misc/admin-logo.png',
                             name:'Freshdesk'
                         },
                         height:'120px'

@@ -365,7 +365,7 @@ class Topic < ActiveRecord::Base
   end
 
   def topic_desc
-    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
+    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), :length => 300)
   end
 
 end

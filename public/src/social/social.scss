@@ -386,8 +386,9 @@ $bdr-color:#e1e1e1;
     margin-top: -20px;
     padding-top: 20px;
     padding-bottom: 10px;
-    background: #fff url('../../images/social/ribbon-bg.png');
-    background-size: 50px;
+    background-image: inline-image("cdn-ignored/inline-images/ribbon-bg.png");
+    background-color: #fff;
+    background-repeat: repeat;
   }
   #current_interaction{
     border-bottom: 1px solid #ddd;
@@ -804,8 +805,8 @@ $bdr-color:#e1e1e1;
       width: 32px;
       img{
         display: block;
-      background: url(/images/fillers/profile_blank_thumb.gif);
-      background-size: 100%;
+        background-image: inline-image("cdn-ignored/inline-images/profile_blank_thumb.png");
+        background-size: 100%;
         width: 100%;
         @include border-bottom-left-radius(2px);
       }

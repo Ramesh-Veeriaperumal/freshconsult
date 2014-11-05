@@ -29,22 +29,11 @@
 	 
 	
 	  <div class="solution_title">
-		    <div style="display:none;">
-		    	<span class="status_text"><%@article.status_name%></span> 
-				
-		  	</div>	
-			<span class="topic_icon" style="display:none;">
-				<% if( !@article.folder.visible?(current_user))%> 
-					<img src="/images/private_lock.gif" class="locked" width="20px" height="19px" />
-				<% end %>
-				<div class="icon_text"><%= @article.type_name %></div>
-			</span>	
-	  		 
 			<div class="tag_list"> 
 			<% @article.tags.map.each do |t| %> 
 				<div class="item">			
           <% if privilege?(:publish_solution) %>					
-					  <%= link_to(image_tag('btn_close_icon.png'), solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+					  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
           <% end %>
 					<%= h(t.name) %>
 				</div>

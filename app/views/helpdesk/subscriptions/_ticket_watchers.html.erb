@@ -14,7 +14,7 @@
 
 <div id="addwatcher">
   <div class="select_agents">
-    <span class="add-icon-green"></span>
+    <span class="rounded-add-icon"></span>
     <% agent_list = unsubscribed_agent_list %>
     <%= select_tag :ids, 
           options_for_select(agent_list.map {|k, v| [v, k.to_s]}), { 
@@ -43,7 +43,7 @@
           </div>
           <% if subscription.user.id == current_user.id %>
             <div class="unwatch" title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
-              <%= image_tag "/images/delete.png", :alt => t('delete') %>
+              <i class="rounded-minus-icon"></i>
             </div>
             <div class="watcher_list">
               <b><%= t('helpdesk.tickets.add_watcher.me') %></b>&nbsp;
@@ -68,7 +68,7 @@
   <li>
     <div class="user_image clearfix">
       <div class="preview_pic" size_type="thumb">
-        <img alt="<%= t('user.profile_picture') %>" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif">
+        <img alt="<%= t('user.profile_picture') %>" onerror="imgerror(this)" src="/images/misc/profile_blank_thumb.gif">
       </div>
     </div>
     <div class="watcher_list">
@@ -77,7 +77,7 @@
     </div>
   </li>
   <div class="unwatch" title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
-    <%= image_tag "/images/delete.png", :alt => t('delete') %>
+    <i class="rounded-minus-icon"></i>
   </div>
 </div>
 

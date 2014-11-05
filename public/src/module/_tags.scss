@@ -90,10 +90,37 @@
     @include left(10px);
     top:8px;
     i{
-      width: 26px;
+      width: 25px;
       height: 25px;
       display: inline-block;
       margin-top: -15px;
+      @include box-shadow(0 0 10px rgba(0,0,0,0.1) inset);
+      border-radius: 100%;
+      background: #f2f2f2;
+      border: 1px solid #ddd;
+      position: relative;
+      vertical-align: middle;
+      color:#333;
+      &:before{
+        position: absolute;
+        top: 6px;
+        z-index: 10;
+      }
+    }
+    .symbols-tag-edit:before{left: 7px;}
+    .symbols-tag-remove{
+      color: #fff;
+      &:before{left: 9px;}
+      &:after{
+        content: "";
+        width: 15px;
+        height: 15px;
+        background-color: #333;
+        border-radius: 100%;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+      }
     }
   }
   .edittag{

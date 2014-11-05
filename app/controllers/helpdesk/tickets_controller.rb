@@ -338,7 +338,7 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_ticket_attributes(params[nscname])
       update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       if(params[:redirect] && params[:redirect].to_bool)
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] )
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
       verify_permission
       respond_to do |format|

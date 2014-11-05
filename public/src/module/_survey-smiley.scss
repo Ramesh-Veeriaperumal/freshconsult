@@ -1,0 +1,69 @@
+
+@import "cdn-ignored/sprites/smiley/*.png";
+$smiley-layout:horizontal;
+$smiley-sprite-dimensions:true;
+@include all-smiley-sprites;
+
+/* start of classes used in satisfaction.scss */
+.happy-smily, .neutral-smily, .unhappy-smily{
+	@include float(left);
+	@include padding-left(10px);
+	position: relative;
+	width: 42px;
+	height: 42px;
+	@include margin-left(-8px);
+	margin-top: 10px;
+}
+
+.happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
+	top: 9px;
+ 	@include left(-65px);
+	width:20px;
+	height:21px;
+	display: block;
+	@include float(right);
+	position: relative;
+}
+/* end of classes used in satisfaction.scss */
+
+/* start of classes used in survey-report.scss */
+.smallsmiley, .mediumsmiley, .bigsmiley { 
+	box-sizing: border-box; 
+	background-repeat: no-repeat; 
+}
+ 
+.smallsmiley { 
+	width: 20px; 
+	height: 20px; 
+	margin-top: 5px; }
+ 
+.mediumsmiley { 
+	width: 42px; 
+	height: 42px; 
+}
+/* end of classes used in survey-report.scss */
+
+.happy-smily, .happymediumsmiley {
+	@extend .smiley-happy-smily-tab;
+}
+
+.neutral-smily, .neutralmediumsmiley{
+	@extend .smiley-neutral-smily-tab;
+}
+
+.unhappy-smily, .unhappymediumsmiley{
+	@extend .smiley-unhappy-smily-tab;
+}
+
+.happy-smily-small, .happysmallsmiley{
+	@extend .smiley-happy-smily-small;
+}
+
+.unhappy-smily-small, .unhappysmallsmiley{
+	@extend .smiley-unhappy-smily-small;
+}
+
+.neutral-smily-small, .neutralsmallsmiley{
+	@extend .smiley-neutral-smily-small;
+}
+
