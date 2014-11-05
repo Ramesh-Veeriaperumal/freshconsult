@@ -148,6 +148,8 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 gem "bunny", "1.2.1"
 
+gem 'scrypt', '1.2.1'
+
 group :production,:test,:staging do
   gem "tire", :git => "git://github.com/PratheepV/retire.git"
 end

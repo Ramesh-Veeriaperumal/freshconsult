@@ -299,7 +299,7 @@ module ApplicationHelper
   def subscription_tabs
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
-      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_affiliates_path, :affiliates, "Affiliates" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]
@@ -956,10 +956,6 @@ module ApplicationHelper
   def will_paginate(collection_or_options = nil, options = {})
     if collection_or_options.is_a? Hash
       options, collection_or_options = collection_or_options, nil
-    end
-    unless options[:renderer]
-      # TODO-RAILS3 need to change this
-      # options = options.merge :renderer => DefaultPaginationRenderer
     end
     super *[collection_or_options, options].compact
   end

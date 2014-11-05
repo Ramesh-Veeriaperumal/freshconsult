@@ -56,6 +56,122 @@ Helpkit::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
+
+
+  constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
+    
+    root :to => 'subscription_admin/subscriptions#index'
+
+    match '/plans' => 'subscription_admin/subscription_plans#index', :as => :plans
+    match '/affiliates' => 'subscription_admin/subscription_affiliates#index', :as => :affiliates
+    match '/customers' => 'subscription_admin/subscriptions#customers', :as => :customers
+    match '/resque' => 'subscription_admin/resque/home#index', :as => :home
+    match '/resque/failed/:queue_name/show' => 'subscription_admin/resque/failed#show', :as => :failed_show
+    match '/resque/failed/destroy_all' => 'subscription_admin/resque/failed#destroy_all', :as => :failed_destroy_all
+    match '/resque/failed/requeue_all' => 'subscription_admin/resque/failed#requeue_all', :as => :failed_requeue_all
+    match '/resque/failed/:id' => 'subscription_admin/resque/failed#destroy', :as => :failed_destroy
+    match '/resque/failed/:id/requeue' => 'subscription_admin/resque/failed#requeue', :as => :failed_requeue
+
+    namespace :resque do
+      resources :failed, :controller => '/subscription_admin/resque/failed' do
+      end
+    end
+    
+    namespace :subscription_admin, :as => 'admin' do
+      resources :subscriptions do
+        collection do
+          get :deleted_customers
+          get :customers_csv
+        end
+      end
+      
+      resources :accounts do
+        member do
+          post :add_day_passes
+        end
+        collection do
+          get :agents
+          get :tickets
+          get :renewal_csv
+        end
+      end
+      
+      resources :subscription_affiliates do
+        collection do
+          post :new
+          post :add_affiliate_transaction
+        end
+        member do
+          post :add_subscription
+        end
+      end
+      
+      resources :subscription_payments, :as => 'payments'
+      resources :subscription_announcements, :as => 'announcements'
+      resources :conversion_metrics, :as => 'metrics'
+      
+      resources :account_tools, :as => 'tools' do
+        collection do
+          post :regenerate_reports_data
+          put :update_global_blacklist_ips
+        end
+      end
+        
+      resources :manage_users, :as => 'manage_users' do
+        collection do
+          post :add_whitelisted_user_id
+          post :remove_whitelisted_user_id
+        end
+      end
+        
+      match '/freshfone_admin' => 'freshfone_subscriptions#index', :as => :freshfone
+        
+      match '/freshfone_admin/stats' => 'freshfone_stats#index', :as => :freshfone_stats
+        
+      resources :spam_watch, :only => :index
+      match ':shard_name/spam_watch/:user_id/:type' => 'spam_watch#spam_details'
+      
+      match ':shard_name/spam_user/:user_id' => 'spam_watch#spam_user', :as => :spam_user
+      
+      match ':shard_name/block_user/:user_id' => 'spam_watch#block_user'
+      match ':shard_name/hard_block/:user_id' => 'spam_watch#hard_block', :as => :hard_block_user
+      match ':shard_name/internal_whitelist/:user_id' => 'spam_watch#internal_whitelist', :as => :internal_whitelist
+      
+      
+      resources :subscription_events, :as => 'events' do
+        collection do
+          get :export_to_csv
+        end
+      end
+      
+      resources :custom_ssl, :as => 'customssl' do
+        collection do
+          post :enable_custom_ssl
+        end
+      end
+      
+      resources :currencies, :as => 'currency'
+
+      resources :admin_sessions, :only => [:create, :destroy]
+      
+      match 'admin_sessions/logout' => 'admin_sessions#destroy', :as => :subscription_logout
+      
+      match 'admin_sessions/login' => 'admin_sessions#new', :as => :subscription_login
+      
+      resources :subscription_users, :as => 'subscription_users' do
+        member do
+          post :update
+          get :edit
+          get :show
+        end
+        
+        collection do
+          put :reset_password
+        end
+      end
+    end
+  end
+
   root :to => 'home#index'
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
@@ -1631,123 +1747,7 @@ Helpkit::Application.routes.draw do
       post :create_ticket
       post :add_note
     end
-  end
-
-  constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
-    
-    root :to => 'subscription_admin/subscriptions#index'
-    
-    namespace :subscription_admin, :as => 'admin' do
-      resources :subscriptions do
-        collection do
-          get :customer
-          get :deleted_customers
-          get :customers_csv
-        end
-      end
-      
-      resources :accounts do
-        member do
-          post :add_day_passes
-        end
-        collection do
-          get :agents
-          get :tickets
-          get :renewal_csv
-        end
-      end
-      
-      resources :subscription_plans, :as => 'plans'
-      
-      resources :subscription_affiliates, :as => 'affiliates' do
-        collection do
-          post :add_affiliate_transaction
-        end
-        member do
-          post :add_subscription
-        end
-      end
-      
-      resources :subscription_payments, :as => 'payments'
-      resources :subscription_announcements, :as => 'announcements'
-      resources :conversion_metrics, :as => 'metrics'
-      
-      resources :account_tools, :as => 'tools' do
-        collection do
-          post :regenerate_reports_data
-          put :update_global_blacklist_ips
-        end
-      end
-        
-      resources :manage_users, :as => 'manage_users' do
-        collection do
-          post :add_whitelisted_user_id
-          post :remove_whitelisted_user_id
-        end
-      end
-        
-      namespace :resque do
-        match '/' => 'home#index', :as => :home
-        match '/failed/:queue_name/show' => 'failed#show', :as => :failed_show
-          
-        resources :failed do
-          member do
-            delete :destroy
-            put :requeue
-          end
-          collection do
-            delete :destroy_all
-            put :requeue_all
-          end
-        end
-      end
-        
-      match '/freshfone_admin' => 'freshfone_subscriptions#index', :as => :freshfone
-        
-      match '/freshfone_admin/stats' => 'freshfone_stats#index', :as => :freshfone_stats
-        
-      resources :spam_watch, :only => :index
-      match ':shard_name/spam_watch/:user_id/:type' => 'spam_watch#spam_details'
-      
-      match ':shard_name/spam_user/:user_id' => 'spam_watch#spam_user', :as => :spam_user
-      
-      match ':shard_name/block_user/:user_id' => 'spam_watch#block_user'
-      match ':shard_name/hard_block/:user_id' => 'spam_watch#hard_block', :as => :hard_block_user
-      match ':shard_name/internal_whitelist/:user_id' => 'spam_watch#internal_whitelist', :as => :internal_whitelist
-      
-      
-      resources :subscription_events, :as => 'events' do
-        collection do
-          get :export_to_csv
-        end
-      end
-      
-      resources :custom_ssl, :as => 'customssl' do
-        collection do
-          post :enable_custom_ssl
-        end
-      end
-      
-      resources :currencies, :as => 'currency'
-      
-      match 'admin_sessions/logout' => 'admin_sessions#destroy', :as => :subscription_logout
-      
-      match 'admin_sessions/login' => 'admin_sessions#new', :as => :subscription_login
-      
-      resources :subscription_users, :as => 'subscription_users' do
-        member do
-          post :update
-          get :edit
-          get :show
-        end
-        
-        collection do
-          get :reset_password
-        end
-      end
-    end
-  end
-  
+  end  
   
 #  constraints(lambda {|req| req.subdomain == AppConfig['partner_subdomain'] }) do
     namespace :partner_admin, :as => 'partner' do
