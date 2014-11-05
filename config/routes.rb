@@ -1201,6 +1201,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match 'canned_responses/show/:id' => 'canned_responses#show'
+    match 'canned_responses/index/:id' => 'canned_responses#index'
+
     resources :reminders do
       member do
         put :complete
@@ -1266,14 +1269,10 @@ Helpkit::Application.routes.draw do
         post :company
       end
     end
-
-    resources :commons do# TODO-RAILS3 new route
-      collection do
-        post :group_agents
-      end
-    end
+    match 'commons/group_agents/:id' => "commons#group_agents", :method => :post
   end
 
+  #match '/helpdesk/canned_responses/index/:id' => 'helpdesk/canned_responses#index'
   match '/helpdesk/tickets/quick_assign/:id' => "Helpdesk::tickets#quick_assign", :as => :quick_assign_helpdesk_tickets,
         :method => :put
 
