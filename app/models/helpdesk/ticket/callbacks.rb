@@ -139,7 +139,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def assign_tickets_to_agents
     #Ticket already has an agent assigned to it or doesn't have a group
     return if group.nil? || self.responder_id
-    schedule_round_robin_for_agents if group.round_robin_eligible?
+    schedule_round_robin_for_agents if group.round_robin_enabled?
   end 
 
   def schedule_round_robin_for_agents

@@ -23,4 +23,6 @@
 //= require report/date.js
 //= require freshfone/global.js
 //= require app/metrics.js
+//= require app/dashboard.js
 //= require app/product_notifications.js
+
