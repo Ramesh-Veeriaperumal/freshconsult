@@ -1150,6 +1150,8 @@ Helpkit::Application.routes.draw do
   match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
+  match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
+
 
   namespace :helpdesk do
     resources :tags do
@@ -1343,7 +1345,6 @@ Helpkit::Application.routes.draw do
     match '/sales_manager' => 'dashboard#sales_manager'
 
     # For mobile apps backward compatibility.
-    match '/tickets/execute_scenario/:id' => 'tickets#execute_scenario'
     match '/subscriptions' => 'subscriptions#index'
     match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
     # Mobile apps routes end.

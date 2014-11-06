@@ -81,8 +81,8 @@ class Freshfone::Call < ActiveRecord::Base
 		CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
 	]
 
-	scope :filter_by_call_sid, lambda { |call_sid|
-		{ :conditions => ["call_sid = ? or dial_call_sid = ?", call_sid, call_sid], :limit => 1 }
+  scope :filter_by_call_sid, lambda { |call_sid|
+		{ :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
 	}
 
 	scope :filter_by_dial_call_sid, lambda { |dial_call_sid|
@@ -94,7 +94,12 @@ class Freshfone::Call < ActiveRecord::Base
 	scope :include_customer, { :include => [ :customer ] }
 	scope :include_agent, { :include => [ :agent ] }
 	scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-	scope :active_call, :conditions =>  { :call_status => CALL_STATUS_HASH[:default] }, :limit => 1
+	scope :active_call, lambda {
+		{ :conditions => [ 'call_status = ? AND updated_at >= ?', 
+				CALL_STATUS_HASH[:default], 1.minute.ago.to_s(:db)
+			], :limit => 1, :order => "created_at DESC"
+		}
+	}
 	scope :agent_progress_calls, lambda { |user_id|
 		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or call_status = ?)",
 					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db), CALL_STATUS_HASH[:'in-progress']
