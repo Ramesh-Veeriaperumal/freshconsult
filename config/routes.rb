@@ -1276,7 +1276,7 @@ Helpkit::Application.routes.draw do
   match '/helpdesk/tickets/quick_assign/:id' => "Helpdesk::tickets#quick_assign", :as => :quick_assign_helpdesk_tickets,
         :method => :put
 
-  resources :api_webhooks
+  resources :api_webhooks, :path => 'webhooks/subscription'
 
   namespace :solution do
     resources :categories do
