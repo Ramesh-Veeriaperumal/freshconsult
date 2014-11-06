@@ -1491,24 +1491,19 @@ p.info-text{
 	}
 }
 .admin_help_image{
-   margin:30px 15px;
-   @include clearfix;
-   .ff-admin-img{
-		float: left;
-		border: 1px solid;
-		padding: 24px;
-		border-radius: 100%;
-		color: #fff;
-		background-color: #14a893;
+	@include margin(30px 0 30px 30px);
+	@include clearfix;
+	.help_image{
+	  @include float(left);
 	}
-   .content{
-      @include margin(0 0 0 230px);
-      p.info-data{
-         font-size:15px;
-         line-height:26px;
-         @include padding-right(8%);
-      }
-   }
+	p.info-data{
+	   font-size:15px;
+	   line-height:26px;
+	   @include padding-right(8%);
+	}
+	.image-centered{
+		text-align: center;
+	}
 }
 
 .admin_icon_image{ 
