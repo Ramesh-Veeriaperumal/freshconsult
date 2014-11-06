@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <%= javascript_include_tag :'cdn/observer_event' %>
 <%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <%= f.error_messages :object_name => 'rule' %>

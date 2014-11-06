@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <h3 class="title"><%=t('company.edit')%> <span class="info_data">"<%=h(@company.name)%>"</span></h3>
 <%= form_for(@company) do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>

@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <h3 class="lead"><%=t('contacts.edit')%> <span class="info_data">"<%= h(@user.display_name) %>"</span> </h3>
 <%= form_for @user, :url => { :controller => "contacts", :action => "update" },:html => { :multipart => true, :rel => 'validate' }  do |f| %>
 	  <%= render :partial => "form", :locals => { :f => f, :type => "edit" } %>

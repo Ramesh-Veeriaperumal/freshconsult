@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
 <%= content_tag :h3, t(".new_folder"), :class => "lead itil-hide" %>
 <%= form_for (@folder), :url => solution_category_folders_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
