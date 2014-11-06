@@ -14,6 +14,7 @@ require 'gapps_openid'
 require "#{Rails.root}/lib/facebook_routing.rb"
 require "rate_limiting"
 require "rack/ssl"
+require "statsd"
 
 Rails::Initializer.run do |config|
 
