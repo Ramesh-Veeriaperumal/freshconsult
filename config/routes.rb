@@ -388,7 +388,9 @@ Helpkit::Application.routes.draw do
     resources :blacklist_number do
       collection do
         post :create
-        post :destroy
+      end
+      member do
+        delete :destroy
       end
     end
 
