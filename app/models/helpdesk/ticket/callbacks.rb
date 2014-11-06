@@ -336,10 +336,10 @@ private
   end
 
   def update_ticket_related_changes
-    @model_changes = self.changes.clone
-    @model_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
+    @model_changes = self.changes.to_hash
+    @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.changes) unless flexifield.nil?
-    @model_changes
+    @model_changes.symbolize_keys!
   end
 
   def load_ticket_status
