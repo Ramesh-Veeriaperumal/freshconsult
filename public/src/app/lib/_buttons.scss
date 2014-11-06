@@ -368,7 +368,7 @@ div.action_buttons:hover{
       @extend .button;
       background:#ffffff; 
       border-color:#dfdfdf;
-      @include single-box-shadow(none);
+      @include box-shadow(none);
 
       &:hover {
         background:#ffffff;
@@ -381,7 +381,7 @@ div.action_buttons:hover{
       border-color:#888;
    }
    .disabled.prev_page, .disabled.next_page, .disabled.prev_page:hover, .disabled.next_page:hover{ 
-      @include single-box-shadow(none);
+      @include box-shadow(none);
       background: #EFEFEF;      
       cursor: default;
       border-color: #DFDFDF;
