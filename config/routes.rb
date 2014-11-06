@@ -587,6 +587,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :widget_config, :only => :index
+    resources :chat_widgets
     resources :chat_setting do
       collection do
         post :toggle
@@ -1348,8 +1349,6 @@ Helpkit::Application.routes.draw do
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
     match '' => 'dashboard#index', :as => :dashboard
-    match '/freshchat/visitor/:filter' => 'visitor#index', :as => :visitor
-    match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive
     match '/sales_manager' => 'dashboard#sales_manager'
 
     # For mobile apps backward compatibility.
@@ -1357,7 +1356,12 @@ Helpkit::Application.routes.draw do
     match '/subscriptions' => 'subscriptions#index'
     match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
     # Mobile apps routes end.
-    
+
+    #freshchat routes with helpdesk namespace - start
+    match '/freshchat/visitor/:filter' => 'visitor#index', :as => :visitor
+    match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive    
+    #freshchat routes with helpdesk namespace - end
+
     resources :articles do
       collection do
         get :autocomplete
