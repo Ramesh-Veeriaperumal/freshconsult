@@ -281,7 +281,7 @@ i.#{$font-class-name}twitter{
 }
 span.fb_add
 .pick-response, .recently_used a:hover #resp-icon,
-#results li, .merge_results li, .match_results li:hover #resp-icon,
+#results li, .match_results li:hover #resp-icon,
 .contactdiv:hover #resp-icon,
 #resp-icon, .canned-response-menu span.bullet{
 	@extend .rounded-add-icon;
@@ -290,7 +290,8 @@ span.fb_add
 .sla_policy_form .delete, 
 .sla_policy_form .delete_conditions,
 .rem_mail, #cancel_email, .remove_image,
-.ivr-menu .delete-symbol { 
+.ivr-menu .delete-symbol,
+.merge-cont #resp-icon { 
 	@extend .rounded-minus-icon;  
 }
 .icon-detail .symbols-add{
@@ -298,7 +299,7 @@ span.fb_add
 	font-size:14px;
 	color: #009853;
 }
-#resp-icon, .canned-response-menu span.bullet{ color:#aaa; }
+.canned-response-menu span.bullet{ color:#aaa; }
 .rem_mail, #cancel_email, .remove_image { 
 	@include padding(0 0 2px 20px); @include margin-left(5px); cursor: pointer; 
 }
@@ -312,6 +313,12 @@ span.fb_add
 		font-weight: bold;
 		position: relative;
 		top: -1px;
+	}
+}
+#resp-icon.clicked{
+	background-color: #fff;
+	&:before{
+		visibility:hidden;
 	}
 }
 // -----------------------------------------------------------------------------------------------
