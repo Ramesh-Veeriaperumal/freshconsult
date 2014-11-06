@@ -588,7 +588,12 @@ Helpkit::Application.routes.draw do
     end
 
     resources :widget_config, :only => :index
-    resources :chat_widgets
+    resources :chat_widgets do
+      member do
+        post :update
+      end
+    end
+
     resources :chat_setting do
       collection do
         post :toggle
