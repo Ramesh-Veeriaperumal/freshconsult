@@ -73,7 +73,7 @@
 	  </div>
 
 	<%= content_tag :div, "", :id => "#{edit_id}", :class => "hide", :rel => "remote", 
-							"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(notable_object, note) %>
+							"data-remote-url" => edit_helpdesk_ticket_note_path(notable_object.display_id, note.id) %>
     <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
 					"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
 												:id => notable_object.display_id, 
