@@ -1086,7 +1086,7 @@ Helpkit::Application.routes.draw do
         get :user_info
         get :retweets
         post :reply
-        get :retweet
+        post :retweet
         post :post_tweet
         post :favorite
         post :unfavorite
