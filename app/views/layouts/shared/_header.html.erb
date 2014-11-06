@@ -23,7 +23,7 @@
 							<a href="#" id="freshfone-presence-toggle" class="tooltip"
 								data-placement="below"  
 							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
-							 	<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-ffone-<%= current_user.freshfone_user_online? ? "on" : "off" %>">
+							 	<img alt="" height="35px" src="/images/misc/spacer.gif" class="header-icons-agent-ffone-<%= current_user.freshfone_user_online? ? "on" : "off" %>">
 			  			</a>
 			  		<% end %>
 			  		<% if feature?(:round_robin) && current_user.in_round_robin? %>
@@ -37,7 +37,7 @@
 			  		%>
 				  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
 				  		title="<%= availabilty_tooltip %>" data-html="true">
-				  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
+				  			<img alt="" height="35px" src="/images/misc/spacer.gif" class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
 				  		</a>
 				  	<% end %>
 					<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">

@@ -823,7 +823,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	Title: '<div class="email_marketing">'+
 						'<div class="contact_title">'+
-							'<div class="<%=app%>-modal-logo"> <h3 class="fname"><%=contact.name%></h3></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
+							'<div class="clearfix"> <h3 class="fname pull-left"><%=contact.name%></h3><div class="application-logo-<%=app%> pull-right"></div></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
 						'</div>'+
 					'</div>',
 
@@ -860,14 +860,14 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 										'if(app == "icontact"){'+
 											'keys = _.keys(campaigns).reverse();'+
 									    'for(i=0; i<keys.length; i++){ %>'+
-								    		'<div id="show-activity-<%=app%>" class="activity-toggle <%=keys[i]%>"> <div class="campaign-activity campaign-image"><%=campaigns[keys[i]].title%></div></div>'+
+								    		'<div id="show-activity-<%=app%>" class="activity-toggle <%=keys[i]%>"> <div class="campaign-activity"><div class="pull-left integrations-campaign-image"></div><%=campaigns[keys[i]].title%></div></div>'+
 												'<div id="user-campaign-<%=keys[i]%>" class="hide loading-fb">'+
 													'<div class="activities">'+
 													'<div class="campaign-details hide"></div>'+
 												'</div>'+
 											'</div>'+
 									    '<%}}else{'+
-										 'for(key in campaigns){%><div id="show-activity-<%=app%>" class="activity-toggle <%=key%>"> <div class="campaign-activity campaign-image"><%=campaigns[key].title%></div></div>'+
+										 'for(key in campaigns){%><div id="show-activity-<%=app%>" class="activity-toggle <%=key%>"> <div class="campaign-activity"><div class="pull-left integrations-campaign-image"></div><%=campaigns[key].title%></div></div>'+
 												'<div id="user-campaign-<%=key%>" class="hide loading-fb">'+
 													'<div class="activities">'+
 													'<div class="campaign-details hide"></div>'+
@@ -876,7 +876,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 							'</div>'+
 						'</div>',
 
-	CampaignActivity: '<div class="activity"><div class="action_type"> <span class="action"> <%=action%> </span></div><span class="action-time"><%=action_time%></span><span class="action-url"><a href="<%=action_url%>" target="_blank"><%=action_url%></a></span> </div>',
+	CampaignActivity: '<div class="activity"><div class="action_type"> <span class="action"> <%=action%> </span></div><span class="action-time"><%=action_time%></span><span class="action-url"><a href="<%=action_url%>" target="_blank"><span class="ficon-link url-icon"></span><%=action_url%></a></span> </div>',
 
 	MailingLists: '<div class="mailing-lists">'+
 										'<div class="lists-load hide">'+

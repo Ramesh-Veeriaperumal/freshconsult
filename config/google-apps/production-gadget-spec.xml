@@ -440,7 +440,7 @@
 		}
 
 		function imgerror(source){
-			source.src = "https://asset.freshdesk.com/images/fillers/profile_blank_thumb.gif";
+			source.src = "https://asset.freshdesk.com/images/misc/profile_blank_thumb.gif";
 			source.onerror = "";
 			return true;
 		}

@@ -15,7 +15,7 @@
  <% if current_account.features?(:cascade_dispatchr) %>
   <div class="row-fluid list-page-subheader">
     <span class="vertical-alignment">
-      <img alt="" src="/images/down-arrow-automation.png">
+      <i class="ficon-arrow-down-2 fsize-18"></i>
     </span>
     <span class="vertical-alignment"><%= t('dispatch.cascade_text') %> &nbsp;</span>
       <%= form_for :cascade_dispatcher, @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>

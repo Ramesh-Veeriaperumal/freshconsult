@@ -33,25 +33,25 @@ minimizable ||= false
 			<% else %>
 			<div class="actions">
 				<% if privilege?(:edit_conversation) %>
-					<%= link_to(t('delete'), :url => helpdesk_ticket_note_path(notable_object, note), 
+					<%= link_to('', helpdesk_ticket_note_path(notable_object, note), 
 								:remote => true,
 								:method => :delete, :confirm => t("helpdesk.tickets.note.delete_note"), 
-								:html => {:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')}) if note.user && note.user.agent?    %>   
+								:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')) if note.user && note.user.agent?    %>   
         <% end %>
         <% if privilege?(:merge_or_split_ticket) %>
-					<%= link_to(t('ticket.split_ticket'), 
+					<%= link_to('', 
 								{ :action => :split_the_ticket, :controller => 'helpdesk/tickets', :id => notable_object.display_id, :note_id => note.id }, 
 								:method => :post, :confirm => t("helpdesk.tickets.note.split_ticket_confirm"),
 								:class => "tooltip conv-action-icon conv-actions-split tooltip",
 								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.incoming and notable_object and !notable_object.fb_post %>
         <% end %>
         <% if privilege?(:forward_ticket) %>
-					<%= link_to_function(t("fwd_to"), 
+					<%= link_to_function('', 
 								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
 								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private %>
         <% end %>
         <% if privilege?(:edit_note, note) %>
-					<%= link_to_function(t("edit"), 
+					<%= link_to_function('', 
 								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
 								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent?) %>
         <% end %>

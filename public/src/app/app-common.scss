@@ -174,13 +174,6 @@ ul.activityfeed li{
 		height:50px;
 		@include border-radius(6px); 
 	}
-	.tweet_pic, .fb_pic{
-	   position:absolute;
-	   width:18px;
-	   height:18px;
-	   bottom:3px;
-	   @include right(0);
-	}	
 }
 
 div.profile_pic img{
@@ -400,15 +393,6 @@ h4.title{
 					margin-top: 30px;
 					display: inline-block;
 					vertical-align: middle;
-					.twitter-logo{
-						background: url(/images/twitter.png) no-repeat; 
-						width:22px;	
-						display: inline-block;
-						height: 15px;
-						vertical-align: middle;
-						@include padding-right(3px);
-						opacity: 0.3;
-					}
 					a{
 						vertical-align: middle;
 						display: inline-block;
@@ -627,9 +611,6 @@ ul.active{
 	a{			
 		color:#336699;		
 	}
-	.selected_tick{
-		background:url('/images/delete.png') no-repeat;
-	}
 }
 
 ul.inactive{
@@ -639,9 +620,6 @@ ul.inactive{
 	}
 	a:hover{
 		@include opacity(1);
-	}
-	.selected_tick{
-		background:url('/images/photo_check.png') no-repeat;					
 	}
 }
 
@@ -1006,10 +984,6 @@ a.page_title{
 	@include border-radius(4px);
 	font-weight: lighter;
 }
-
-.add_new{
-	background:url("/images/add_small.png") 3px 1px no-repeat;
-}
 .lock{
 	background-image:url("/images/private_lock.gif"); 
 	background-position:3px 0;
@@ -1325,10 +1299,8 @@ a.page_title{
 			visibility:visible;
 		}
 		background-color:#e6f3f9;
-		background-image:url(/images/overlay-top-shadow.png);
-		background-position:top left;
+		box-shadow: inset 0px 3px 3px 0px rgba(190,190,190,0.5);
 		border-bottom:1px solid #dfdfdf;
-		background-repeat:repeat-x;
 	} 
 	
 	.application {
@@ -1427,26 +1399,6 @@ a.page_title{
 	border-top: none;
 }
 
-.idea-likes{
-	padding:4px 8px;
-	margin:0;
-	font-size:12px; 
-	font-weight:bold;
-	color:#666666;
-	border-color:#dadada;
-	@include padding-left(24px);
-	@include border-radius(6px);
-	position:relative;
-	background-color:#f4f4f4;
-	.like-image{
-	 @include left(3px);
-		top: 1px;
-		position:absolute;		
-		width:18px;
-		height:18px;
-	} 
-}
-
 .ui-form .info-highlight{
 	@include margin(0 -10px 6px -10px);
 	@include padding(0 10px 8px 10px);
@@ -1520,13 +1472,6 @@ p.info-text{
 		position:relative;
 		display:inline-block;
 		width:100%;
-		span.forum-bullet{			
-			position:absolute;
-		 @include left(0);
-			top:1px;
-			width:16px;
-			height:16px;
-		}
 		a{
 			@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 			text-decoration:none;
@@ -1545,13 +1490,17 @@ p.info-text{
 		@include margin-left(-22px);
 	}
 }
-
 .admin_help_image{
    margin:30px 15px;
    @include clearfix;
-   .help_image{
-      @include float(left);
-   }
+   .ff-admin-img{
+		float: left;
+		border: 1px solid;
+		padding: 24px;
+		border-radius: 100%;
+		color: #fff;
+		background-color: #14a893;
+	}
    .content{
       @include margin(0 0 0 230px);
       p.info-data{
@@ -1910,12 +1859,18 @@ p.info-text{
 			border-bottom: 1px solid #EFEFEF;
 			&:hover{
 				background-color: #E6F3F9;
-				background-image: url(/images/overlay-top-shadow.png);
-				background-position: top left;
+				box-shadow: inset 0px 3px 3px 0px rgba(190,190,190,0.5);
 				border-bottom: 1px solid #DFDFDF;
-				background-repeat: repeat-x;
+			}
+			a {
+				background-color: transparent;
 			}
 		}
+	}
+	.email_marketing_apps .drop-right {
+		width: 100px;
+		display: inline-block;
+		@include padding-right(6px);
 	}
 }
 
@@ -2069,13 +2024,10 @@ a.submit_link:hover{
 		margin-top: 6px;
 		padding: 5px;
 	}
-}
-
-.locked{
-	background: #EEE url(/images/lock.png) no-repeat 5px 8px !important;
-	@include padding(6px 6px 6px 22px !important);
-	background-size: 10px 12px !important;
-	cursor: default;
+	.locked {
+		@include padding-right(5px);
+		color: #999;
+	}
 }
 
 .unsupported-message{
@@ -2820,7 +2772,6 @@ a.pill.help{
 	height:22px;
 	top:3px;
  	@include left(0);
-	background:url("/images/animated/timer.gif") no-repeat center;
 	@include opacity(0.5);
 }
 .time{
@@ -3875,3 +3826,19 @@ $adm-bdr:#F0F0F0;
 
 // Admin Social styles end
 // =======================
+
+/* Signup Social icons */
+
+.social {
+	font-size: 16px;
+	margin-right: 5px;
+	&.twitter {
+		color: #23c0ff;
+	}
+	&.facebook {
+		color: #2b4788;
+	}
+	&.google {
+		color: #3750d1;
+	}
+}

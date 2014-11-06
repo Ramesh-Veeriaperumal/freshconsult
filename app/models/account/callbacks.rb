@@ -11,8 +11,11 @@ class Account < ActiveRecord::Base
   after_destroy :remove_shard_mapping
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
-  after_commit :clear_cache, :clear_api_limit_cache, :update_redis_display_id, on: :update
-  after_commit :clear_cache, :delete_reports_archived_data, on: :destroy
+  after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
+  after_commit :delete_reports_archived_data, on: :destroy
+
+  after_commit ->(obj) { obj.clear_cache }, on: :update
+  after_commit ->(obj) { obj.clear_cache }, on: :destroy
 
 
   def check_default_values

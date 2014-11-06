@@ -64,7 +64,7 @@ module ApplicationHelper
 
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
-        portal.logo.nil? ? "/assets/logo.png?721013" :
+        portal.logo.nil? ? "/assets/misc/logo.png?721014" :
         AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
@@ -72,7 +72,7 @@ module ApplicationHelper
 
   def fav_icon_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","fav_ico",portal]) do
-      portal.fav_icon.nil? ? '/assets/favicon.ico?123456' :
+      portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123457' :
             AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
@@ -482,7 +482,7 @@ module ApplicationHelper
     end 
     avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
     avatar_content
   end
@@ -493,7 +493,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end
-    content_tag( :div, (image_tag "/assets/fillers/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_url(user, profile_size = :thumb)
@@ -509,13 +509,13 @@ module ApplicationHelper
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
     else
-      "/assets/fillers/profile_blank_#{profile_size}.gif"
+      "/assets/misc/profile_blank_#{profile_size}.gif"
     end
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
     handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
-      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/fillers/profile_blank_#{profile_size}.gif"
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.gif"
     end
     handle_avatar
   end

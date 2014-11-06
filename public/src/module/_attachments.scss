@@ -141,9 +141,27 @@
 }
 
 .no-image-logo{
-	@include no-image-class("logo.png");
+	@include no-image-class("cdn-ignored/inline-images/logo.png");
 }
 
 .no-image-favicon{
-	@include no-image-class("favicon-preview.png");
+	@include no-image-class("cdn-ignored/inline-images/favicon-preview.png");
+}
+
+// ------------------------------------------------------------------ //
+// -------------------- DropBox Style  ------------------------------ //
+// ------------------------------------------------------------------ //
+.attach-list-wrap{
+	position: relative;
+	.ficon-dropbox{
+		color: #1272de;
+		position: absolute;
+		@include left(5px);
+		top: 3px;
+	}
+	.ficon-file-edit{
+		position: absolute;
+		@include left(3px);
+		top: 4px;
+	}
 }
