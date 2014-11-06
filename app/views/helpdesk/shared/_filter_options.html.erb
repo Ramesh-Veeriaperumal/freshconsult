@@ -176,7 +176,7 @@
     jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>));
 
     getFilterData();
-    <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash);'.html_safe unless special_case_views.include?(@current_view) %>
+    <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());'.html_safe unless special_case_views.include?(@current_view) %>
 
     jQuery(".filter_item").bind("change", function(){
       jQuery("#active_filter").addClass('unsaved');
