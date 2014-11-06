@@ -26,7 +26,7 @@ Array.prototype.deleteElement = function (element) {
 
 	formatResultWithDisable = function (object, container, query, node) {
 		if (object.element[0].disabled) {
-			node.removeClass('select2-result-selectable').addClass('select2-result-unselectable');
+			$(object.element[0]).removeClass('select2-result-selectable').addClass('select2-result-unselectable');
 		}
 		return '<span class="select2-match"></span>' + object.text;
 	};
