@@ -933,8 +933,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :cloud_files
-
     resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                 :company_autocomplete => :get }
 
@@ -1334,6 +1332,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/filter/requester/:requester_id' => 'tickets#index', :as => :requester_filter
     match '/tickets/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter
     match '/tickets/filter/company/:company_id' => 'tickets#index', :as => :company_filter
+    match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
     match '/dashboard.:format' => 'dashboard#index', :as => :formatted_dashboard
@@ -1390,6 +1389,8 @@ Helpkit::Application.routes.draw do
       end
     end
     match 'commons/group_agents/:id' => "commons#group_agents", :method => :post
+
+    resources :cloud_files
   end
 
   #match '/helpdesk/canned_responses/index/:id' => 'helpdesk/canned_responses#index'
