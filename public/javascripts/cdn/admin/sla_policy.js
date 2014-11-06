@@ -48,11 +48,11 @@
 		}
 		agFormatResult = function(result) {
 			var email = result.email;
-			if($(email).trim != "")
+						
+			if(email.trim() != "")
 				email = "  (" + email + ")";	
 			
-			return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
-							email + "</span>"; 
+			return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + email + "</span>"; 
 		}
 		
 		agFormatSelection = function(result) {
