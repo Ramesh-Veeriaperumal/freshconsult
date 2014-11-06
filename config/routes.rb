@@ -1489,7 +1489,7 @@ Helpkit::Application.routes.draw do
     match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter
   end
 
-  post 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships',
+  match 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships',
     :action => 'toggle', :as => :toggle_monitorship
 
   get 'discussions' => 'discussions#index', as: :discussions
