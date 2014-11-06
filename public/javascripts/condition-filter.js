@@ -372,7 +372,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				if(parentDom=='#actionDOM'){
 					removeIfConditionMatches(jQuery("input[name=need_authentication]:checked").val(), undefined, jQuery(".credentials"));
-					removeIfConditionMatches(jQuery("input[name='content_layout']:checked=true").val(), 1, jQuery(".edit2"), jQuery(".edit1"));
+					removeIfConditionMatches(jQuery("input[name='content_layout']:checked").val(), 1, jQuery(".edit2"), jQuery(".edit1"));
 					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 1, jQuery('.request_content'));
 					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 5, jQuery('.request_content'));
 					removeIfConditionMatches(jQuery(".api_webhook").attr("style"), "display: none;", jQuery('.api_webhook'), jQuery('.user_pass_webhook'));
