@@ -130,8 +130,8 @@ class Solution::CategoriesController < ApplicationController
       @selected_tab = :solutions
     end
     
-    def folder_scope #possible dead code
-      :folders
+    def folder_scope
+      { :folders => { :except => [:account_id,:import_id] }}
     end
 
     def portal_scoper
