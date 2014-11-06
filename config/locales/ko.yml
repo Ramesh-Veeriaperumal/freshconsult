@@ -5016,7 +5016,7 @@ ko:
         remove_tab: "페이지 탭 제거"
         tab_not_removed: "탭을 제거할 수 없습니다."
         tab_removed: "제거된 페이지 탭"
-        page_added: "이 페이지는 이미 {{source}}에 추가되었습니다. 페이지를 제거하고 다시 시도하십시오."
+        page_added: "이 페이지는 이미 %{source}에 추가되었습니다. 페이지를 제거하고 다시 시도하십시오."
         add_tab: "페이지 탭 추가"
         tab_name: "탭 이름 "
         tab_url: "탭 이미지 URL: "

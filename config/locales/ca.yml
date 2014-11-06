@@ -2031,7 +2031,7 @@ ca:
     remove_tab: "Treu la pestanya de la pàgina"
     tab_not_removed: "No es pot treure la pestanya"
     tab_removed: "S'ha tret la pestanya"
-    page_added: "Aquesta pàgina ja està afegida a {{source}}. Si us plau, elimina-la i torna-ho a provar"
+    page_added: "Aquesta pàgina ja està afegida a %{source}. Si us plau, elimina-la i torna-ho a provar"
     add_tab: "Afegir fitxa de pàgina"
     tab_name: "Nom de pestanya "
     tab_url: "URL d'imatge de la pestanya: "

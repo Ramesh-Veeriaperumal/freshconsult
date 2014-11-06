@@ -2570,7 +2570,7 @@ da:
   facebook_tab:
     tab_not_removed: "Kunne ikke fjerne fanen"
     tab_removed: "Side fanen er fjernet"
-    page_added: "Denne side er allerede tilføj til {{source}}. Venligst fjern den og så prøv at tilføje"
+    page_added: "Denne side er allerede tilføj til %{source}. Venligst fjern den og så prøv at tilføje"
     add_tab: "Tilføj side fane"
     tab_name: "Fane navn "
     page_tab_head: "Facebook side fane"

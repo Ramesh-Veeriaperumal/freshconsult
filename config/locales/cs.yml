@@ -2047,7 +2047,7 @@ cs:
     remove_tab: "Odstranit záložku stránky"
     tab_not_removed: "Záložku nelze odstranit"
     tab_removed: "Záložka byla odstraněna"
-    page_added: "Tato stránka již byla přidána do {{source}}. Prosím, odstraňte ji a zkuste to znova"
+    page_added: "Tato stránka již byla přidána do %{source}. Prosím, odstraňte ji a zkuste to znova"
     add_tab: "Přidat záložku stránky"
     tab_name: "Jméno záložky "
     tab_url: "URL obrázku záložky: "

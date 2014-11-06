@@ -5689,7 +5689,7 @@ nl:
         remove_tab: "Paginatab verwijderen"
         tab_not_removed: "De tab kan niet worden verwijderd."
         tab_removed: "De paginatab is verwijderd."
-        page_added: "Deze pagina is al aan {{source}} toegevoegd. Verwijder de pagina en probeer de pagina vervolgens opnieuw toe te voegen."
+        page_added: "Deze pagina is al aan %{source} toegevoegd. Verwijder de pagina en probeer de pagina vervolgens opnieuw toe te voegen."
         add_tab: "Paginatab toevoegen"
         tab_name: "Tabnaam "
         tab_url: "Tabafbeeldings-URL: "

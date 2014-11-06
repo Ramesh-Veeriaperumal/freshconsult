@@ -5686,7 +5686,7 @@ de:
         remove_tab: "Seitenregisterkarte entfernen"
         tab_not_removed: "Registerkarte konnte nicht entfernt werden"
         tab_removed: "Seitenregisterkarte entfernt"
-        page_added: "Diese Seite wurde {{source}} bereits hinzugefügt. Bitte entfernen Sie sie, und versuchen Sie es erneut."
+        page_added: "Diese Seite wurde %{source} bereits hinzugefügt. Bitte entfernen Sie sie, und versuchen Sie es erneut."
         add_tab: "Seitenregisterkarte hinzufügen"
         tab_name: "Name der Registerkarte "
         tab_url: "Bild-URL der Registerkarte: "

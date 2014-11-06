@@ -2027,7 +2027,7 @@ es:
     remove_tab: "Borrar pestaña"
     tab_not_removed: "No se puede borrar la pestaña"
     tab_removed: "Pestaña borrada"
-    page_added: "Esta página ya ha sido agregada a {{source}}. Por favor remuévala e intente agregar"
+    page_added: "Esta página ya ha sido agregada a %{source}. Por favor remuévala e intente agregar"
     add_tab: "Añadir pestaña"
     tab_name: "Nombre pestaña "
     tab_url: "URL de la imagen "

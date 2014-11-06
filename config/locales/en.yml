@@ -5992,7 +5992,7 @@ en:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
     tab_removed: "Page tab removed"
-    page_added: "This page has already been added to {{source}}. Please remove it and then try to add"
+    page_added: "This page has already been added to %{source}. Please remove it and then try to add"
     add_tab: "Add page tab"
     tab_name: "Tab name "
     tab_url: "Tab image url : "

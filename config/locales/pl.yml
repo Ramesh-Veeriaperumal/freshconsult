@@ -5042,7 +5042,7 @@ pl:
     remove_tab: Usuń kartę strony
     tab_not_removed: Nie można usunąć karty
     tab_removed: Karta strony usunięta
-    page_added: Ta strona została już dodana do {{source}}. Usuń ją, a następnie spróbuj dodać
+    page_added: Ta strona została już dodana do %{source}. Usuń ją, a następnie spróbuj dodać
     add_tab: Dodaj kartę strony
     tab_name: Nazwa karty 
     tab_url: "URL obrazu karty:" 

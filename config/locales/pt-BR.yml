@@ -5686,7 +5686,7 @@ pt-BR:
         remove_tab: "Remover a guia Página"
         tab_not_removed: "Não foi possível remover a guia"
         tab_removed: "Guia Página removida"
-        page_added: "Esta página já foi adicionada em {{source}}. Remova-a e tente adicioná-la novamente."
+        page_added: "Esta página já foi adicionada em %{source}. Remova-a e tente adicioná-la novamente."
         add_tab: "Adicionar guia Página"
         tab_name: "Nome da guia "
         tab_url: "URL da imagem da guia: "

@@ -3280,7 +3280,7 @@ vi:
     remove_tab: "Gỡ bỏ trang"
     tab_not_removed: "Không thể gỡ trang"
     tab_removed: "Trang đã được gỡ bỏ"
-    page_added: "Trang này đã được thêm để {{source}}. Xin vui lòng gỡ ra và thử thêm lại"
+    page_added: "Trang này đã được thêm để %{source}. Xin vui lòng gỡ ra và thử thêm lại"
     add_tab: "Thêm trang"
     tab_name: "Tên trang"
     tab_url: "URL hình ảnh trang"
