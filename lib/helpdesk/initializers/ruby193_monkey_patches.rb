@@ -382,4 +382,16 @@ end
 #   end
 # end
 
+module ActionView
+  module Helpers
+    module FormHelper
+      def check_box(object_name, method, options = {}, checked_value = "1", unchecked_value = "0")
+        InstanceTag.new(object_name, method, self, 
+                        options.delete(:object)).to_check_box_tag(options, checked_value.to_s, unchecked_value.to_s)
+      end
+    end
+  end
+end
+
+
 
