@@ -21,7 +21,7 @@
 <% end %>
 
 <li class = "text default_tags field">
-    <% fields_for :helpdesk  do |ticket| %>
+    <%= fields_for :helpdesk  do |ticket| %>
       <%= ticket.label(:tags, t('ticket_fields.fields.tags')) %>
       <%= ticket.text_field :tags , :value => @item.tags.collect{|tag| tag.name}.join(','), :class => "select2 input-xxlarge"%>
     <%end%>
