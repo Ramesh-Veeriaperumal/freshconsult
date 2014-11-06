@@ -5041,7 +5041,7 @@ it:
     remove_tab: Rimuovi scheda pagina
     tab_not_removed: Impossibile rimuovere la scheda
     tab_removed: Scheda pagina rimossa
-    page_added: La pagina è stata già aggiunta a {{source}}. Rimuovila e quindi prova ad aggiungere
+    page_added: La pagina è stata già aggiunta a %{source}. Rimuovila e quindi prova ad aggiungere
     add_tab: Aggiungi scheda pagina
     tab_name: Nome scheda 
     tab_url: "URL immagine scheda:" 

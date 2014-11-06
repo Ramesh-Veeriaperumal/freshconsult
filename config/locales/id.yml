@@ -2177,7 +2177,7 @@ id:
     remove_tab: "Hapus halaman Tab"
     tab_not_removed: "Tidak dapat menghapus tab"
     tab_removed: "Tab halaman dihapus"
-    page_added: "Halaman ini telah ditambahkan ke {{source}}. Harap hapus dan kemudian coba untuk menambahkan"
+    page_added: "Halaman ini telah ditambahkan ke %{source}. Harap hapus dan kemudian coba untuk menambahkan"
     add_tab: "Tambahkan halaman tab"
     tab_name: "Tab nama"
     tab_url: "Tab tampilan url:"

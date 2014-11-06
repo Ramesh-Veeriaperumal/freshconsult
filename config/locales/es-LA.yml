@@ -5686,7 +5686,7 @@ es-LA:
         remove_tab: "Pestaña Eliminar página"
         tab_not_removed: "No se pudo eliminar la pestaña."
         tab_removed: "Se eliminó la pestaña de página."
-        page_added: "Esta página ya se ha agregado a {{source}}. Elimínala y luego intenta agregarla."
+        page_added: "Esta página ya se ha agregado a %{source}. Elimínala y luego intenta agregarla."
         add_tab: "Agregar pestaña de página"
         tab_name: "Nombre de pestaña "
         tab_url: "URL de imagen de pestaña: "

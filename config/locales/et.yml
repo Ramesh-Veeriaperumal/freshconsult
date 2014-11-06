@@ -2324,7 +2324,7 @@ et:
     remove_tab: "Eemalda lehe vahekaart"
     tab_not_removed: "Vahekaarti ei saanud eemaldada"
     tab_removed: "Lehe vahekaart on eemaldatud"
-    page_added: "See leht on allikale {{source}} juba lisatud. Palun eemalda see kõigepealt ja proovi siis uuesti lisada."
+    page_added: "See leht on allikale %{source} juba lisatud. Palun eemalda see kõigepealt ja proovi siis uuesti lisada."
     add_tab: "Lisa lehe vahekaart"
     tab_name: "Vahekaardi nimi "
     tab_url: "Vahekaardi kujutise URL: "

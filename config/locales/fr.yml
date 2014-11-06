@@ -5686,7 +5686,7 @@ fr:
         remove_tab: "Supprimer l'onglet"
         tab_not_removed: "Impossible de supprimer l'onglet"
         tab_removed: "Onglet supprimé"
-        page_added: "Cette page a déjà été ajoutée à {{source}}. Supprimez-la et essayez d'ajouter"
+        page_added: "Cette page a déjà été ajoutée à %{source}. Supprimez-la et essayez d'ajouter"
         add_tab: "Ajouter un onglet"
         tab_name: "Nom de l'onglet "
         tab_url: "URL de l'onglet : "

@@ -5040,7 +5040,7 @@ sv-SE:
     remove_tab: Ta bort sidflik
     tab_not_removed: Det gick inte att ta bort fliken
     tab_removed: Sidfliken borttagen
-    page_added: Den här sidan har redan lagts till i {{source}}. Ta bort den och försök lägga till den
+    page_added: Den här sidan har redan lagts till i %{source}. Ta bort den och försök lägga till den
     add_tab: Lägg till sidflik
     tab_name: Fliknamn 
     tab_url: "URL för flikbild: "

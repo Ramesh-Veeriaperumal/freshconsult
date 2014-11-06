@@ -5014,7 +5014,7 @@ zh-CN:
         remove_tab: "移除页签"
         tab_not_removed: "无法移除页签"
         tab_removed: "页签已移除"
-        page_added: "此页面已添加到{{source}}。请移除后重新添加。"
+        page_added: "此页面已添加到%{source}。请移除后重新添加。"
         add_tab: "添加页签"
         tab_name: "页签名 "
         tab_url: "页签图像URL： "

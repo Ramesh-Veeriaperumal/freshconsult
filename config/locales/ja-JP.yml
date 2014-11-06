@@ -2027,7 +2027,7 @@ ja-JP:
     remove_tab: ページタブを除去
     tab_not_removed: タブを除去できませんでした
     tab_removed: ページタブが除去されました
-    page_added: "このページは既に{{source}}に追加されています。除去して追加してみてください"
+    page_added: "このページは既に%{source}に追加されています。除去して追加してみてください"
     add_tab: ページタブを追加
     tab_name: タブ名　
     tab_url: タブ画像URL：　

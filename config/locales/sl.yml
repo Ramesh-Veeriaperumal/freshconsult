@@ -3061,7 +3061,7 @@ sl:
     remove_tab: "Odstrani Zavihek strani"
     tab_not_removed: "Odstranitev ni mogoča"
     tab_removed: "Zavihek strani odstranjen"
-    page_added: "Ta stran je že dodana {{source}}.Prosimo odstranite jo in poiskusite dodati"
+    page_added: "Ta stran je že dodana %{source}.Prosimo odstranite jo in poiskusite dodati"
     add_tab: "Dodaj Zavihek"
     tab_name: "Ime zavihka "
     tab_url: "Url slike zavihka "
