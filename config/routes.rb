@@ -1090,7 +1090,7 @@ Helpkit::Application.routes.draw do
         post :post_tweet
         post :favorite
         post :unfavorite
-        post :followers
+        get :followers
         post :follow
         post :unfollow
       end
