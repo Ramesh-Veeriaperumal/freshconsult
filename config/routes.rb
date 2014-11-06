@@ -1771,13 +1771,13 @@ Helpkit::Application.routes.draw do
 #  end
     
   constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
-    namespace :billing do
-      resources :billing do
+    # namespace :billing do
+      resources :billing, :controller => 'billing/billing' do
         collection do
           post :trigger
         end
       end
-    end
+    # end
   end
 
   
