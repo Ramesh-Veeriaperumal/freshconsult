@@ -10,7 +10,7 @@
             <%= check_box_tag("", 1, r.deleted , :onchange => %{ jQuery(this.form).trigger("submit"); }) %>
         </label>
     <%  end %>
-     <%= link_to t('delete'), helpdesk_reminder_path(r), :method => 'delete', :class => 'delete_black', 
+     <%= link_to '', helpdesk_reminder_path(r), :method => 'delete', :class => 'delete_black', 
                  :remote => true %>
     <%= content_tag("label", text, :class=>"reminder #{ r.deleted ? "checked" : "unchecked" }") %>
 </li>
