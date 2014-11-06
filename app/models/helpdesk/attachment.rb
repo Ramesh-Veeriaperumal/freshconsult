@@ -107,7 +107,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
     options[:except] = exclude
     options[:methods] = [:attachment_url_for_api]
     json_hash = super(options)
-    json_hash[:attachment_url] = json_hash['attachment'].delete(:attachment_url_for_api)
+    #json_hash[:attachment_url] = json_hash['attachment'].delete(:attachment_url_for_api)
+    attachment_hash = json_hash['attachment']
+    attachment_hash[:attachment_url] = attachment_hash.delete(:attachment_url_for_api)
+    json_hash['attachment'] = attachment_hash
   end
 
   def to_xml(options = {})
