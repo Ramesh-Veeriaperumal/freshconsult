@@ -20,7 +20,7 @@ module SpamWatcherCallbacks
     end
 
     def generate_spam_watcher_methods
-      user_column, key, threshold  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
+      user_column, key  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
       class_eval %Q(
         after_commit_on_create :spam_watcher_counter
@@ -36,6 +36,8 @@ module SpamWatcherCallbacks
               key = "#{key}"
               max_count = "#{threshold}".to_i
               final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
+              # this case is added for the sake of skipping imports
+              return true if (((key == "sw_helpdesk_tickets") or (key == "sw_helpdesk_notes")) && ((Time.now.to_i - self.created_at.to_i) > 1.day))
               return true if $spam_watcher.get(account_id.to_s + "-" + user_id.to_s)
               count = $spam_watcher.rpush(final_key, Time.now.to_i)
               sec_expire = "#{sec_expire}".to_i 
