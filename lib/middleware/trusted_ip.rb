@@ -20,7 +20,7 @@ class Middleware::TrustedIp
         if trusted_ips_enabled?
           unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'])
             @status, @headers, @response = [302, {"Location" => "/unauthorized.html"}, 
-                                        'Your IPAddress is blocked by the administrator']
+                                        ['Your IPAddress is blocked by the administrator']]
             return [@status, @headers, @response]
           end
         end
@@ -29,7 +29,7 @@ class Middleware::TrustedIp
     [@status, @headers, @response]
     rescue DomainNotReady => ex
       @status, @headers, @response = [302, {"Location" => "/DomainNotReady.html"},
-                                          'Your data is getting moved to a new datacenter.' ]
+                                          ['Your data is getting moved to a new datacenter.'] ]
       return [@status, @headers, @response]
     ensure
       Thread.current[:account] = nil
