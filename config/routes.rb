@@ -1029,8 +1029,10 @@ Helpkit::Application.routes.draw do
   match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
 
   namespace :social do
-    resources :twitters do
+    
+    resources :twitters, :controller => "twitter_handles" do
       collection do
+        get :index
         get :show
         get :feed
         post :create_twicket
@@ -1049,13 +1051,7 @@ Helpkit::Application.routes.draw do
     end
 
 
-    resources :gnip, :controller => "gnip_twitter_controller" do
-      collection do
-        post :reconnect
-      end
-    end
-
-    resources :gnip_twitter do
+    resources :gnip, :controller => "gnip_twitter" do
       collection do
         post :reconnect
       end
@@ -1093,18 +1089,6 @@ Helpkit::Application.routes.draw do
         get :followers
         post :follow
         post :unfollow
-      end
-    end
-
-    resources :twitter_handles do
-      collection do
-        post :user_following
-        get :index
-        get :feed
-        get :twitter_search
-        get :tweet_exists
-        get :create_twicket
-        post :tweet
       end
     end
   end

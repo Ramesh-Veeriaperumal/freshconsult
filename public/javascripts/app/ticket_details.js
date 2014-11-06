@@ -635,7 +635,7 @@ var scrollToError = function(){
 			return ;
 
 		$.ajax({   
-			type: 'POST',
+			type: 'GET',
 			url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
 			contentType: 'application/text',
 			success: function(data){ 
