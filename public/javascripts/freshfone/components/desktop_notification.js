@@ -21,7 +21,7 @@ var FreshfoneDesktopNotification;
       bodyText = this.getUserInfo();
       notificationProperties = {
         body: bodyText,
-        icon: "/images/ff-notification-icon-2x.png",
+        icon: "/images/misc/ff-notification-icon-2x.png",
         tag: 'freshfone_'+this.callConnection.callSid()
       };
       this.notification = new Notification(title,notificationProperties);

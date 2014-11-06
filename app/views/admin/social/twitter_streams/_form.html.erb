@@ -146,7 +146,7 @@
           var _container = jQuery('#previewFeeds .modal-body'),
               _results   = [];
           for( i = 0; i < data.length; i++ ){
-            _results.push(JST['social_tweet'](data[i]));            
+            _results.push(JST['app/social/templates/social_tweet'](data[i]));
           }
           jQuery('#previewFeeds .modal-body').removeClass('sloading loading-block');
           _container.append('<div id="streamTemplate" class="tw-streams">' + _results.join("") + '</div>');

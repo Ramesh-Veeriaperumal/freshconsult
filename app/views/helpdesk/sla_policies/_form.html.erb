@@ -139,8 +139,8 @@
 									options_for_select(escalation_time_options), 
 									{:class => "hide"}) %>
 				 	<%= f.fields_for :escalations do |e| %>
-				 		<% e.fields_for "response" do |response|%>	
-				 			<% response.fields_for "1"  do |i| %>
+				 		<%= e.fields_for "response" do |response|%>	
+				 			<%= response.fields_for "1"  do |i| %>
 								<tr data-level = "1" data-type = "response" rel = "reconstruct" 
 										class='<%= (@esc_agents || {})['response_1'] ? "" : "hide" %> escalations response' 
 										id="response_level_1">
@@ -175,8 +175,8 @@
 								{:class => "hide"}) %>
 
 			 			<% (Helpdesk::SlaPolicy::ESCALATION_LEVELS_OPTIONS).each do |index| %>
-					 		<% e.fields_for "resolution" do |resolution|%>	
-					 			<% resolution.fields_for "#{index}"  do |i| %>
+					 		<%= e.fields_for "resolution" do |resolution|%>	
+					 			<%= resolution.fields_for "#{index}"  do |i| %>
 
 									<tr data-level = <%= "#{index}" %> data-type = "resolution" rel = "reconstruct" 
 											id = "<%= "resolution_level_#{index}" %>" 

@@ -40,9 +40,8 @@ class Company < ActiveRecord::Base
       :limit => 1000  }
   }
 
-  after_commit :map_contacts_to_company, :clear_cache, on: :create
-  after_commit :clear_cache, on: :destroy
-  after_commit :clear_cache, on: :update
+  after_commit :map_contacts_to_company, on: :create
+  after_commit :clear_cache
   after_update :map_contacts_on_update, :if => :domains_changed?
   
   before_create :check_sla_policy

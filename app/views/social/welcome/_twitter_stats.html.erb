@@ -5,13 +5,13 @@
   <%else%>
     <% if @perct <= 30 %>
       <p><b><%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%></b></p>
-      <p><%= t('social.welcome.lt30_html', :link_meta => "href='/admin/social/streams'")%></p>
+      <p><%= t('social.welcome.lt30_html', :link_meta => "href=/admin/social/streams")%></p>
     <% elsif  @perct > 30 and @perct <= 70 %>
       <p><b><%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%></b></p>
-      <p><%= t('social.welcome.30to70_html', :link_meta => "href='/admin/social/streams'")%></p>
+      <p><%= t('social.welcome.30to70_html', :link_meta => "href=/admin/social/streams")%></p>
     <% else %>
       <p><b><%= t('social.welcome.response_rate_html', :perct => "#{@perct}%")%></b></p>
-      <p><%= t('social.welcome.gt70_html', :link_meta => "href='/admin/social/streams'")%></p>
+      <p><%= t('social.welcome.gt70_html', :link_meta => "href=/admin/social/streams")%></p>
     <% end %>
   <%end%>
 </div>

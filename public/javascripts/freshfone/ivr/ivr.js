@@ -83,7 +83,7 @@ var Ivr;
 			var self = this;
 			$(menu_json).each(function () {
 				var menu = new IvrMenu(self, this).build();
-				$(JSON.parse(this.options)).each(function () {
+				$((this.options)).each(function () {
 					this.menuId = menu.menuId;
 					new IvrOption(self, menu, this).build();
 				});

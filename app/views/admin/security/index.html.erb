@@ -173,8 +173,9 @@
           <div class="span2"></div>
           <div class="span10">
             <a href="#" id="ip-range-btn">
-                 <span class=""><img alt="Add New" class="add pull-left" src="/images/add.png" /> </span>
-                 <span class="span8 app-omega">&nbsp&nbsp<%= t('.add_new') %></span>
+              <span class="span8 app-omega"> 
+                <i class="rounded-add-icon pull-left"></i> &nbsp&nbsp<%= t('.add_new') %>
+              </span>
             </a>
           </div>
         </div>
@@ -212,7 +213,7 @@
 	<script id="security-ip-range-template" type="text/x-jquery-tmpl">
 		<div class="row-fluid">
 			<a href="#" class="delete-row">
- 				<img src="/images/delete.png" alt="<%= t('delete') %>"/>
+        <i class="rounded-minus-icon"></i>
 			</a>
 			<input type="text" name="account[whitelisted_ip_attributes][ip_ranges][][start_ip]" value="${start_ip}" placeholder= "<%= t('.start_ip') %>" class="span4 required"/>
 				&nbsp&nbsp-&nbsp&nbsp

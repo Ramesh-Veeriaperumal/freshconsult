@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <%= content_tag(:h3, t("ticket.edit"), :class => "lead") %>
 <%= form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
   <ul class="ui-form">  
@@ -30,6 +30,6 @@
     <% if privilege?(:delete_ticket) %>
       <%= link_to t('delete'), @item, :method => :delete, :class => "btn" %>
     <% end %>
-    <%= f.submit t('update'), :class => "btn btn-primary" %>    
+    <%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit" %>    
   </div>
 <% end %>  

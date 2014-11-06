@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
 <%= content_tag(:h3, t('contacts.import_csv'), :class => "lead") %>
 
 	<%= form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>

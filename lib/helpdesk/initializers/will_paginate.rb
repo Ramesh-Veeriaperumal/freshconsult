@@ -1,4 +1,4 @@
-WillPaginate::ViewHelpers.class_variable_set(:@@pagination_options,{
+WillPaginate::ViewHelpers.pagination_options = {
       :class          => 'pagination',
       :previous_label => '&laquo; Previous',
       :next_label     => 'Next &raquo;',
@@ -7,7 +7,7 @@ WillPaginate::ViewHelpers.class_variable_set(:@@pagination_options,{
       :separator      => ' ', # single space is friendly to spiders and non-graphic browsers
       :param_name     => :page,
       :params         => nil,
-      :renderer       => 'WillPaginate::LinkRenderer',
+      :renderer       => 'BootstrapPaginationRenderer',
       :page_links     => true,
       :container      => true
-    })
+    }

@@ -1,9 +1,9 @@
 /*
 Version: 3.5.1 Timestamp: Tue Jul 22 18:58:56 EDT 2014
 */
-$select-sprite-bg-url: "select2/select2.png";
-$select-sprite-bg2x2-url: "select2/select2x2.png";
-$select-sprite-spinner-url: "select2/spinner.gif";
+$select-sprite-bg-url: "plugins/select2/select2.png";
+$select-sprite-bg2x2-url: "plugins/select2/select2x2.png";
+$select-sprite-spinner-url: "plugins/select2/spinner.gif";
 
 .select2-container {
     margin: 0;
@@ -109,9 +109,17 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
     text-decoration: none;
 
     border: 0;
-    background: image-url($select-sprite-bg-url) right top no-repeat;
     cursor: pointer;
     outline: 0;
+    &::after {
+        color: #999;
+        content: "\00d7";
+        position: absolute;
+        top: -11px;
+        @include right(1px);
+        font-size: 20px;
+        font-weight: bold;
+    }
 }
 
 .select2-container.select2-allowclear .select2-choice abbr {
@@ -119,8 +127,9 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
 }
 
 .select2-container .select2-choice abbr:hover {
-    background-position: right -11px;
-    cursor: pointer;
+    &::after {
+        color: #363636;
+    }
 }
 
 .select2-drop-mask {
@@ -222,11 +231,20 @@ html[dir="rtl"] .select2-container .select2-choice .select2-arrow {
     display: block;
     width: 100%;
     height: 100%;
-    background: image-url($select-sprite-bg-url) no-repeat 0 1px;
+    &::after {
+        content: "";
+        border: 5px solid transparent;
+        border-top-color: #999;
+        position: absolute;
+        top: 10px;
+        left: 0px;
+    }
 }
 
 html[dir="rtl"] .select2-container .select2-choice .select2-arrow b {
-    background-position: 2px 1px;
+    &::after {
+        left: 4px;
+    }
 }
 
 .select2-search {
@@ -336,11 +354,11 @@ html[dir="rtl"] .select2-dropdown-open .select2-choice .select2-arrow {
 }
 
 .select2-dropdown-open .select2-choice .select2-arrow b {
-    background-position: -18px 1px;
-}
-
-html[dir="rtl"] .select2-dropdown-open .select2-choice .select2-arrow b {
-    background-position: -16px 1px;
+    &::after {
+        border-top-color: transparent;
+        top: 5px;
+        border-bottom-color: #999;
+    }
 }
 
 .select2-hidden-accessible {
@@ -614,11 +632,19 @@ html[dir="rtl"] .select2-container-multi .select2-choices .select2-search-choice
 
     font-size: 1px;
     outline: none;
-    background: image-url($select-sprite-bg-url) right top no-repeat;
+    &::after {
+        color: #999;
+        content: "\00d7";
+        position: absolute;
+        top: -4px;
+        @include right(1px);
+        font-size: 16px;
+        font-weight: bold;
+    }
 }
 html[dir="rtl"] .select2-search-choice-close {
     right: auto;
-    left: 3px;
+    left: 25px;
 }
 
 .select2-container-multi .select2-search-choice-close {
@@ -627,14 +653,14 @@ html[dir="rtl"] .select2-search-choice-close {
 
 html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
     left: auto;
-    right: 2px;
+    right: 25px;
 }
 
-.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
-  background-position: right -11px;
-}
+.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover,
 .select2-container-multi .select2-choices .select2-search-choice-focus .select2-search-choice-close {
-    background-position: right -11px;
+    &::after {
+        color: #363636;
+    }
 }
 
 /* disabled styles */
@@ -692,7 +718,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 
 /* Retina-ize icons */
 
-@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx)  {
+/*@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx)  {
     .select2-search input,
     .select2-search-choice-close,
     .select2-container .select2-choice abbr,
@@ -705,4 +731,4 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
     .select2-search input {
         background-position: 100% -21px !important;
     }
-}
+}*/

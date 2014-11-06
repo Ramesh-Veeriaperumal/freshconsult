@@ -30,6 +30,7 @@ group :development, :test do
   gem 'better_errors', '~> 1.1.0'
   gem "debugger", "~> 1.6.8"
   gem 'pry'
+  gem 'binding_of_caller'
 end
 
 gem "mail"
@@ -147,6 +148,8 @@ gem "premailer", "~> 1.8.0"
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 gem "bunny", "1.2.1"
+
+gem 'scrypt', '1.2.1'
 
 group :production,:test,:staging do
   gem "tire", :git => "git://github.com/PratheepV/retire.git"

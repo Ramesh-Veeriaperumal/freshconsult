@@ -852,10 +852,6 @@ p{
   height: 28px;
   top: 4px;
 }
-
-#email_config_submit.loading{
-  background:#ccdede image-url("animated/gs-loader.gif") no-repeat center 3px;
-}
 #email_config_submit.saved{
   background: #137200 inline-image("cdn-ignored/inline-images/gs/email-success.png") no-repeat center 7px;
   @include box-shadow(0 1px 0 rgba(255, 255, 255, 0.3), 0 -1px 0 rgba(0, 0, 0, 0.3));   

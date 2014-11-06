@@ -21,11 +21,11 @@
 									dataType: "json",
 									success: function(data){
 										var result_list = jQuery("#page_search_results"),
-											templateName = ["app/search/templates/", resultType].join(""),
-											resultHtml = '';
+										resultHtml = '';
 										if(data.results.length){
 								 			data.results.each(function(result){
-												var resultType = result.result_type
+												var resultType = result.result_type,
+												templateName = ["app/search/templates/", resultType].join("");
 												if(result) { resultHtml += (JST[templateName](result)); }
 											})
 										} else {

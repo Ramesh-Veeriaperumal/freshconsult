@@ -215,7 +215,7 @@ class Helpdesk::TicketsController < ApplicationController
         if verify_permission
           @ticket_notes = @ticket.conversation
           @ticket_notes = @ticket_notes.take(3) if @ticket_notes.size > 3
-          @ticket_notes.reverse!
+          @ticket_notes = @ticket_notes.reverse
           @ticket_notes_total = @ticket.conversation_count
           render :layout => "widgets/contacts"
         else
@@ -258,7 +258,7 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-          @ticket_notes.reverse!
+          @ticket_notes = @ticket_notes.reverse
           @ticket_notes_total = @ticket.conversation_count
 
       }
@@ -338,7 +338,7 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_ticket_attributes(params[nscname])
       update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       if(params[:redirect] && params[:redirect].to_bool)
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] )
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
       verify_permission
       respond_to do |format|
@@ -457,7 +457,7 @@ class Helpdesk::TicketsController < ApplicationController
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
-                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name }).html_safe
           redirect_to :back
         }
         format.xml { render :xml => @item }
@@ -467,7 +467,7 @@ class Helpdesk::TicketsController < ApplicationController
         format.json { render :json => @item }  
         format.js { 
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
-                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name }).html_safe
         }
       end
     end
@@ -492,7 +492,7 @@ class Helpdesk::TicketsController < ApplicationController
       :inline => t("helpdesk.flash.flagged_spam", 
                       :tickets => get_updated_ticket_count,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
-                  ))
+                  )).html_safe
                     
     link = render_to_string( :inline => "<%= link_to t('user_block'), block_user_path(:ids => req_list), :method => :put, :remote => true  %>" ,
       :locals => { :req_list => req_list.uniq } )
@@ -519,7 +519,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     flash[:notice] = render_to_string(
       :inline => t("helpdesk.flash.flagged_unspam", 
-                      :tickets => get_updated_ticket_count ))
+                      :tickets => get_updated_ticket_count )).html_safe
 
     respond_to do |format|
       format.html { redirect_to (@items.size == 1) ? helpdesk_ticket_path(@items.first) : :back }

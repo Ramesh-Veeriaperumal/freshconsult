@@ -395,6 +395,8 @@ GEM
     better_errors (1.1.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
     braintree (2.10.0)
       builder
     buftok (0.2.0)
@@ -434,6 +436,7 @@ GEM
     curb (0.8.4)
     dalli (2.7.0)
     database_cleaner (1.2.0)
+    debug_inspector (0.0.2)
     debugger (1.6.8)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -461,6 +464,9 @@ GEM
     faraday (0.8.7)
       multipart-post (~> 1.1)
     ffi (1.9.0)
+    ffi-compiler (0.1.3)
+      ffi (>= 1.0.0)
+      rake
     fog (1.19.0)
       builder
       excon (~> 0.31.0)
@@ -730,6 +736,9 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
+    scrypt (1.2.1)
+      ffi-compiler (>= 0.0.2)
+      rake
     signet (0.4.5)
       addressable (>= 2.2.3)
       faraday (~> 0.8.1)
@@ -836,6 +845,7 @@ DEPENDENCIES
   autotest-rails (= 4.1.0)
   aws-sdk (~> 1.11.3)
   better_errors (~> 1.1.0)
+  binding_of_caller
   braintree (= 2.10.0)
   bunny (= 1.2.1)
   business_time!
@@ -947,6 +957,7 @@ DEPENDENCIES
   sanitize (= 2.0.3)
   sass-rails (= 3.2.6)
   sax-machine (~> 0.1.0)
+  scrypt (= 1.2.1)
   seed-fu!
   sentient_user!
   sharding!

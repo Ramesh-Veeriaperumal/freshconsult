@@ -120,7 +120,7 @@ var RLANG = {
 
 var DEFAULT_LANG = jQuery.extend({}, RLANG);
 
-var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/fillers/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
+var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/animated/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
 
 (function($){
 	

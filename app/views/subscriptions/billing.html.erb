@@ -1,14 +1,14 @@
-<% content_for :helpcard do -%>
-	<% if @subscription.trial? or @subscription.trial_expired? %>
-		<div class="sidepanel"> 
+<%= content_for :helpcard do %>
+	<div class="sidepanel"> 
+		<% if @subscription.trial? or @subscription.trial_expired? %>
 			<h3 class="title"><%= t("accounts.billing.billing").html_safe %></h3>
 			<p><%= t("accounts.billing.begin_subscription_info").html_safe %></p>
-		</div>
-	<% end %>
+		<% end %>
+	</div>
 <%- end %>
 
 <h3 class= "title"><%= @page_title = t('plans_billing').html_safe %></h3>
-<%= form_for :creditcard, @creditcard, :url => { :action => 'billing' }, :html => {
+<%= form_for :creditcard, :url => { :action => 'billing' }, :html => {
 		:id => "credit-card-form"} do |f| %>
 	<ul class="ui-form">
 		<li class="inline-field">  
@@ -24,7 +24,7 @@
 				</div>
 			<% end %>
 			<%= content_tag(:h3, t("credit_card_info").html_safe, :class => "title") %>
-		   	<%= render :partial => 'shared/credit_card_form' %>
+		   	<%= render :partial => '/shared/credit_card_form' %>
 				<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
 				<span class="seperator"></span>
 				<div class="button-container">

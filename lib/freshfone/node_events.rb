@@ -85,7 +85,7 @@ module Freshfone::NodeEvents
       { :members => @user.account.freshfone_users.raw_online_agents.count,
         :user => { :id => @user.id,
                    :name => @user.name, 
-                   :avatar => user_avatar(@user)}}
+                   :avatar => user_avatar(@user).to_str}}
     end
 
     def offline_message

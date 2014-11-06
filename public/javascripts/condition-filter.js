@@ -136,7 +136,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var inner = jQuery("<div class='controls' />");
 				var outer = jQuery("<fieldset />")
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
-								.append("<img class=\"delete\" src=\"/images/delete.png\" />")
+								.append("<i class=\"rounded-minus-icon delete\"></i>")
 								.append("<span class='sort_handle'></span>")
 								.append(inner)
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"end\" />");
@@ -316,7 +316,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				current_filter = serialHash.get(name);
 
 				if( current_filter && current_filter.length != 0 )
-					save_data = (type != 'json') ? current_filter.toObject() : JSON.stringify(current_filter);
+					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
 
 				hidden_.val(save_data);
 

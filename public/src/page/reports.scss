@@ -3,8 +3,6 @@
 $report-number-color:#333;
 $report-number-positive-color:#006063;
 $report-number-negative-color:#990000;
-
-
 $tickets_summary_bg : #F6F6F6;
 $tickets_summary_bottom_border : #eeeeee;
 $title_color: #666;
@@ -206,7 +204,7 @@ $single_stackbar_chart_height: 120px;
 	  width:250px;
 	  @include text-align(center);
 	  margin:10px 0 0;
-	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
+	  background: url("/images/misc/no-pie-doughnut.png") no-repeat center;
 	  font-size:16px;
 	  font-weight:bold;
 	  padding:110px 0;
@@ -234,7 +232,7 @@ $single_stackbar_chart_height: 120px;
 	  width:250px;
 	  @include text-align(center);
 	  margin:10px 0 0;
-	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
+	  background: url("/images/misc/no-pie-doughnut.png") no-repeat center;
 	  font-size:16px;
 	  font-weight:bold;
 	  padding:110px 0;
@@ -420,6 +418,7 @@ $single_stackbar_chart_height: 120px;
 		padding:10px 20px;
 		.report-header-icon{
 			@include margin-right(20px);
+			margin-top: -13px;
 		}
 		div.preview_pic{
 			@include margin-right(0);
