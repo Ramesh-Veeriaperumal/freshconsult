@@ -57,7 +57,7 @@
           <li class="fc-mxc-cancel" title="Cancel"><i>+</i></li>
         </ul>
   </div>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
       (function($){
           $(document).one('ready pjax:success' ,function(){
             var url = ASSET_URL.js;
