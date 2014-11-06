@@ -233,6 +233,7 @@ Helpkit::Application.routes.draw do
       get :verify_email
       put :make_agent
       get :unblock
+      post :restore
     end
 
     member do
