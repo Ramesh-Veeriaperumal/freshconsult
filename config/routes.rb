@@ -505,8 +505,10 @@ Helpkit::Application.routes.draw do
 
     resources :integrated_resources do
       collection do
-        post :create
         delete :delete
+      end
+      member do
+        post :create
       end
     end
 
@@ -539,6 +541,10 @@ Helpkit::Application.routes.draw do
         post :update
         post :destroy
       end
+      member do
+        post :create
+      end
+
     end
 
     resources :pivotal_tracker do
@@ -565,7 +571,8 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
-    match 'oauth_install/:provider' => 'applications#oauth_install', :as => :custom_install
+    match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :custom_install
+    match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
     match 'install/:app' => 'oauth#authenticate', :as => :oauth
   end
 
@@ -1374,7 +1381,7 @@ Helpkit::Application.routes.draw do
         resources :attachments, :only => [:show, :destroy]
       end
     end
-    resources :dropboxes
+    resources :cloud_files
 
     resources :sla_policies, :except => :show do
       collection do
@@ -1393,7 +1400,7 @@ Helpkit::Application.routes.draw do
     end
     match 'commons/group_agents/:id' => "commons#group_agents", :method => :post
 
-    resources :cloud_files
+    
   end
 
   #match '/helpdesk/canned_responses/index/:id' => 'helpdesk/canned_responses#index'
