@@ -4,7 +4,7 @@
     <% if email_config.primary_role? %>
       <%= content_tag :span, "", :title => t('email_configs.primary_supp_email_tool_tip'), :class => "tooltip primary #{font_class(:star)}" %>
     <% else %>
-      <%= link_to "", "/admin/email_configs/make_primary/#{email_config.id}", :confirm => t('email_configs.mark_as_primary_msg'), :title => t('email_configs.secondary_supp_email_tool_tip'), :class => "tooltip secondary #{font_class(:star)}" %> 
+      <%= link_to "", "/admin/email_configs/#{email_config.id}/make_primary", :method => :put, :confirm => t('email_configs.mark_as_primary_msg'), :title => t('email_configs.secondary_supp_email_tool_tip'), :class => "tooltip secondary #{font_class(:star)}" %> 
     <% end %>
   </td>
 
