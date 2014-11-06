@@ -1709,7 +1709,12 @@ Helpkit::Application.routes.draw do
         put :register_mobile_notification
       end
     end
-    resources :settings,  :only =>:index
+    resources :settings,  :only => [:index] do
+      collection do
+        get :mobile_pre_loader
+        get :deliver_activation_instructions
+      end
+    end
   end
 
   namespace :mobihelp do
