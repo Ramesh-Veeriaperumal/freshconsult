@@ -226,7 +226,8 @@ module ChatHelper
             :required => t('freshchat.required'),
             :no_matching_agents => t('freshchat.no_matching_agents'),
             :chat_enabled_label => t('freshchat.chat_enabled_label'),
-            :chat_disabled_label => t('freshchat.chat_disabled_label')
+            :chat_disabled_label => t('freshchat.chat_disabled_label'),
+            :transfer_limt_exceeded_msg => t('freshchat.transfer_limt_exceeded_msg')
         }
         return text.to_json.html_safe
   end

@@ -5976,6 +5976,7 @@ en:
     portal_option_info: "Show chat widget for"
     maximum_chat_title: "Maximum Number Of Visitor Chats"
     maximum_change_label: "Change"
+    transfer_limt_exceeded_msg: "Agent has reached maximum capacity. Please choose another agent to transfer the chat."
     loading_new_archives: "Loading new archives..."
     non_availability_msg_header: "Non-availability Message"
     non_availability_msg_help: "To hyperlink a text enclose the Phrase within '# #'"
