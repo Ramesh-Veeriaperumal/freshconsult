@@ -927,8 +927,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :cloud_files
-
     resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                 :company_autocomplete => :get }
 
@@ -1384,6 +1382,8 @@ Helpkit::Application.routes.draw do
       end
     end
     match 'commons/group_agents/:id' => "commons#group_agents", :method => :post
+
+    resources :cloud_files
   end
 
   #match '/helpdesk/canned_responses/index/:id' => 'helpdesk/canned_responses#index'
