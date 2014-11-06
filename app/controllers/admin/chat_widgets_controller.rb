@@ -28,7 +28,7 @@ class Admin::ChatWidgetsController < Admin::AdminController
         proactive_chat = params[:proactive_chat]
         proactive_time = params[:proactive_time]
         businessCal_id = params[:chat_setting][:business_calendar_id] 
-        @CalendarData = (businessCal_id.eql? '0') ? nil : JSON.parse(BusinessCalendar.find(businessCal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
+        @CalendarData = businessCal_id.blank? ? nil : JSON.parse(BusinessCalendar.find(businessCal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
         Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :siteId => params[:siteId],
                                             :widget_id => @widget.widget_id,
                                             :attributes => { :business_calendar => @CalendarData, 
