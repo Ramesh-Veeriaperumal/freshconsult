@@ -16,17 +16,17 @@
 			</li>
 		  <li class="recharge-now">
 		  	<% if current_account.subscription.active? and current_account.has_credit_card? %>
-		  		<% if @freshfone_credit.present? %>
-			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> <%= t('freshfone.subscription.purchase') %> </a></div>
-			  		<div class="show-freshfone-credits" style="display:none;" >
-			  			<%= render :partial => "purchase_freshfone_credits" %>
-			  		</div>
-				  	<div class="choose-plan-title"><a class="auto-recharge" href="#"> <%= t('freshfone.subscription.setup_auto_recharge') %> </a></div>
-				  	<div class="show-freshfone-auto-recharge" style="display:none;" >
-			  			<%= render :partial => "freshfone_auto_recharge" %>
-			  		</div>
+		  		<% if @freshfone_credit.new_record? %>
+            <%= render :partial => "purchase_freshfone_credits" %>
 			  	<% else %>
-			  		<%= render :partial => "purchase_freshfone_credits" %>
+			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> <%= t('freshfone.subscription.purchase') %> </a></div>
+            <div class="show-freshfone-credits" style="display:none;" >
+              <%= render :partial => "purchase_freshfone_credits" %>
+            </div>
+            <div class="choose-plan-title"><a class="auto-recharge" href="#"> <%= t('freshfone.subscription.setup_auto_recharge') %> </a></div>
+            <div class="show-freshfone-auto-recharge" style="display:none;" >
+              <%= render :partial => "freshfone_auto_recharge" %>
+            </div>
 			  	<% end %>
 				<% else %>
 			  	<p class="alert alert-error">

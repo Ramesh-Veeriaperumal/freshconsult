@@ -131,7 +131,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_freshfone_credits
-      @freshfone_credit = current_account.freshfone_credit
+      @freshfone_credit = current_account.freshfone_credit || Freshfone::Credit.new
     end
 
     def build_free_subscription

@@ -1,4 +1,4 @@
-<% if @freshfone_credit.present? %> 
+<% unless @freshfone_credit.new_record? %> 
 	<div class="row-fluid auto_recharge_quantity">
 		<div class="recharge-now-text">
 			<%= t('freshfone.subscription.auto_recharge_text') %>
