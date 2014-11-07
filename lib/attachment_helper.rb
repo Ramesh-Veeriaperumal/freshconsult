@@ -1,5 +1,6 @@
  module AttachmentHelper
 
+
   def attachment_container(attachment, show_delete, page, note_id=nil)
     unless attachment.empty?
       output = ""
@@ -46,7 +47,7 @@
         output << %(<span class="file-size cloud-file"></span>)
       else
         size = number_to_human_size attached.content_file_size
-        output << content_tag( :div,link_to(truncate(h(attached.content_file_name), { :length => 23 }), attached, :popup => true),:class => "ellipsis")
+        output << content_tag( :div,link_to(h(attached.content_file_name.truncate(23)), attached, :popup => true), :class => "ellipsis")
         output << %(<span class="file-size">( #{size} )</span>)
       end
 
