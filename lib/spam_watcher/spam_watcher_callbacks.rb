@@ -20,29 +20,32 @@ module SpamWatcherCallbacks
     end
 
     def generate_spam_watcher_methods
-      user_column, key, threshold  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
+      user_column, key  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
       class_eval %Q(
-        before_create :spam_watcher_counter
+        after_commit_on_create :spam_watcher_counter
         def spam_watcher_counter
           begin
             Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
-              user_id = self.send("#{user_column}")
+              if "#{user_column}".blank?
+                user_id = ""
+              else
+                user_id = self.send("#{user_column}") 
+              end
               account_id = self.account_id
               key = "#{key}"
               max_count = "#{threshold}".to_i
               final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
+              # this case is added for the sake of skipping imports
+              return true if (((key == "sw_helpdesk_tickets") or (key == "sw_helpdesk_notes")) && ((Time.now.to_i - self.created_at.to_i) > 1.day))
               return true if $spam_watcher.get(account_id.to_s + "-" + user_id.to_s)
               count = $spam_watcher.rpush(final_key, Time.now.to_i)
               sec_expire = "#{sec_expire}".to_i 
               $spam_watcher.expire(final_key, sec_expire+1.minute)
-              if count > max_count
-                $spam_watcher.lpop(final_key)
-              end
-              if count == max_count
-                head = $spam_watcher.lindex(final_key,0).to_i
+              if count >= max_count
+                head = $spam_watcher.lpop(final_key).to_i
                 time_diff = Time.now.to_i - head
-                if time_diff < sec_expire
+                if time_diff <= sec_expire
                   # ban_expiry = sec_expire - time_diff
                   $spam_watcher.rpush(SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
                 end
