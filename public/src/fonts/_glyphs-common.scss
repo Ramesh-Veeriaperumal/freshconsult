@@ -297,12 +297,13 @@ span.fb_add
 .icon-detail .symbols-add{
 	@extend .#{$font-class}plus;
 	font-size:14px;
-  color: #fff;
-  background: #009853;
-  width: inherit;
-  height: inherit;
-  text-align: center;
-  border-radius: 100%;
+	color: #fff;
+	background: #009853;
+	width: auto;
+	height: auto;
+	@include padding(1px 4px);
+	text-align: center;
+	border-radius: 100%;
 }
 .canned-response-menu span.bullet{ color:#aaa; }
 .rem_mail, #cancel_email, .remove_image { 
