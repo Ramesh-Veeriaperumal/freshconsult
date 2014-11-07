@@ -226,7 +226,7 @@ class Group < ActiveRecord::Base
 
   def create_round_robin_list
     user_ids = self.agent_groups.available_agents.map(&:user_id)
-    set_others_redis_lpush(new_round_robin_key, user_ids)
+    set_others_redis_lpush(new_round_robin_key, user_ids) if user_ids.any?
   end
 
   def update_round_robin_list
