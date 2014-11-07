@@ -42,13 +42,10 @@ module SpamWatcherCallbacks
               count = $spam_watcher.rpush(final_key, Time.now.to_i)
               sec_expire = "#{sec_expire}".to_i 
               $spam_watcher.expire(final_key, sec_expire+1.minute)
-              if count > max_count
-                $spam_watcher.lpop(final_key)
-              end
-              if count == max_count
-                head = $spam_watcher.lindex(final_key,0).to_i
+              if count >= max_count
+                head = $spam_watcher.lpop(final_key).to_i
                 time_diff = Time.now.to_i - head
-                if time_diff < sec_expire
+                if time_diff <= sec_expire
                   # ban_expiry = sec_expire - time_diff
                   $spam_watcher.rpush(SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
                 end
