@@ -126,7 +126,7 @@ class Reports::SurveyReportsController < ApplicationController
 
     def group_list
       
-      @survey_reports = current_account.survey_results.group(conditional_params).paginate(:page => params[:page], :per_page => LIST_LIMIT)
+      @survey_reports = current_account.survey_results.group_scope(conditional_params).paginate(:page => params[:page], :per_page => LIST_LIMIT)
       
       @reports_list = current_account.survey_results.generate_reports_list(@survey_reports,Survey::GROUP,sort_by)
 
