@@ -79,7 +79,6 @@ $select-sprite-spinner-url: "plugins/select2/spinner.gif";
 }
 
 .select2-container .select2-choice span {
-    @include margin-right(26px);
     display: block;
     overflow: hidden;
     white-space: nowrap;
