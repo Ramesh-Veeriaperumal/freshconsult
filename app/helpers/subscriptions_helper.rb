@@ -44,14 +44,14 @@ module SubscriptionsHelper
   end
 
   def default_freshfone_credit(freshfone_credit)
-    return Freshfone::Credit::DEFAULT if freshfone_credit.blank?
+    return Freshfone::Credit::DEFAULT if freshfone_credit.new_record?
     current_credit = freshfone_credit.credit
-    return current_credit if Freshfone::Credit::RECHARGE_OPTIONS.include?(current_credit)
+    return current_credit.to_i if Freshfone::Credit::RECHARGE_OPTIONS.include?(current_credit)
     Freshfone::Credit::DEFAULT
   end
 
   def default_freshfone_auto_recharge(freshfone_credit)
-    return Freshfone::Credit::DEFAULT if freshfone_credit.blank?
+    return Freshfone::Credit::DEFAULT if freshfone_credit.new_record?
     recharge_quantity = freshfone_credit.recharge_quantity
     return recharge_quantity if Freshfone::Credit::RECHARGE_OPTIONS.include?(recharge_quantity)
     Freshfone::Credit::DEFAULT
