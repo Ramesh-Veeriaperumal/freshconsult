@@ -118,7 +118,7 @@ class SubscriptionsController < ApplicationController
 
     def cache_objects
       @cached_subscription = Subscription.find(current_account.subscription.id)
-      @cached_addons = @cached_subscription.addons.clone
+      @cached_addons = @cached_subscription.addons.dup
     end
 
     #building objects
