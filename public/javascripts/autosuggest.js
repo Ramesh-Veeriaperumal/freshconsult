@@ -674,6 +674,7 @@ _b.Ajax.prototype.makeRequest = function (url, meth, onComp, onErr)
 		this.req = new XMLHttpRequest();
 		this.req.onreadystatechange = function () { pointer.processReqChange() };
 		this.req.open("GET", url, true); //
+		this.req.setRequestHeader("Accept", "application/json");
 		this.req.send(null);
 	// branch for IE/Windows ActiveX version
 	}
