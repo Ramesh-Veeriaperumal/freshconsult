@@ -101,7 +101,7 @@ class ApplicationController < ActionController::Base
      # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
      #                                                              :referer => request.referer,
      #                                                              :request_params => params})
-    render :file => "#{Rails.root}/public/404.html", :status => :not_found
+    render :file => "#{Rails.root}/public/404.html", :status => :not_found, :layout => false
   end
   
   def record_not_found(exception)

@@ -212,8 +212,8 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should handle unknown actions" do
     log_in(@user)
-    get :unknownaction, :id => @test_article1.id    
-    response.should redirect_to("#{send(Helpdesk::ACCESS_DENIED_ROUTE)}")
+    expect{get :unknownaction, :id => @test_article1.id}.to raise_error(ActionController::RoutingError)  
+    # response.should redirect_to("#{send(Helpdesk::ACCESS_DENIED_ROUTE)}")
   end
 
   it "should create ticket while submitting feedback form" do

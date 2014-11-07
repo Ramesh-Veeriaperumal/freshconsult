@@ -43,7 +43,7 @@
 
       if(page == "cloud_file")
         filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
-        output << link_to( h(truncate(filename, :length => 15)), attached.url , :popup => true, :title => h(filename))
+        output << link_to( h(filename.truncate(15)), attached.url , :popup => true, :title => h(filename))
         output << %(<span class="file-size cloud-file"></span>)
       else
         size = number_to_human_size attached.content_file_size
