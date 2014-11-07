@@ -537,7 +537,7 @@ sl:
         message_thread_time: "Čas sporočila"
         message_thread_time_info: "Maksimalen čas, ko se sporočila istega uporabnika smatra kot povezana."
         direct_messages: "Uvozi <strong> \"Direktna sporočila\" </strong> kot zahtevek"
-        direct_messages_info: "Freshdesk bo vse direktna sporočila na Facebook strani spremenil v zahtevek. Če ste to možnost vključili boste morali <a href='{{reauth_url}}'> ponovno avtorizirati Facebook </a>"
+        direct_messages_info: "Freshdesk bo vse direktna sporočila na Facebook strani spremenil v zahtevek. Če ste to možnost vključili boste morali <a href='%{reauth_url}'> ponovno avtorizirati Facebook </a>"
     twitter_handles:
       index:
         go_to_ticket: "Pojdi na zahtevek"
@@ -2097,7 +2097,7 @@ sl:
     updated: "Spremembe mape pripravljenih odgovorov uspešno shranjena"
     deleted: "Mapa uspešno izbrisana"
     no_folders: "Ni pripravljenih odgovorov"
-    folder_update: "Izbrani odgovori so premaknjeni v mapo: {{folder_name}}"
+    folder_update: "Izbrani odgovori so premaknjeni v mapo: %{folder_name}"
     update: "Spremembe pripravljenega odgovora uspešno shranjene."
     created: "Pripravljen odgovor uspešno kreiran."
     delete_multiple: "Izbran pripravljen odgovor uspešno izbrisan!!"
@@ -3949,8 +3949,8 @@ sl:
     helpcard:
       tour1: "Pomoč pri nastavitvi e-pošte podpore"
       tour2: "Pomoč pri nastavitvi več epoštnih predalov"
-      info5: "Privzeta epošta vaše podpore je <a target=\"_blank\" href=\"{{solution_url}}\"> support@demo.freshdesk.com</a>. Vsako sporočilo poslano na ta naslov bo avtomatično spremenilo v zahtevek, ki ga agenti ustrezno obravnavajo."
-      info19: "Freshdesk račun lahko nastavite tako, da uporabite epoštni naslov podpore z vašo domeno. npr, support@mycompany.com tako da preusmerite epoštna sporočila na <a target=\"_blank\" href=\"{{solution_url}}\">demo.freshdesk.com</a>. Za izdelavo novega epoštnega naslova podpore kliknite ne \"Uredi\" v globalnih nastavitvah epošte."
+      info5: "Privzeta epošta vaše podpore je <a target=\"_blank\" href=\"%{solution_url}\"> support@demo.freshdesk.com</a>. Vsako sporočilo poslano na ta naslov bo avtomatično spremenilo v zahtevek, ki ga agenti ustrezno obravnavajo."
+      info19: "Freshdesk račun lahko nastavite tako, da uporabite epoštni naslov podpore z vašo domeno. npr, support@mycompany.com tako da preusmerite epoštna sporočila na <a target=\"_blank\" href=\"%{solution_url}\">demo.freshdesk.com</a>. Za izdelavo novega epoštnega naslova podpore kliknite ne \"Uredi\" v globalnih nastavitvah epošte."
       info20: "Uporaba več epošnih predalov"
       info21: "V vašo podporo lahko dodate neomejeno število epoštnih naslovov - vhodnih in izhodnih (npr. info@yourcompany.com, prodaja@yourcompany.com, itd.). Nastavite lahko tudi, da Freshdesk avtomatično dodeli epošna sporočila vsakega predala specifični skupini."
     primary_supp_email: "Primarna e-pošta podpore"
@@ -3964,7 +3964,7 @@ sl:
     info18: "Avtomatično bcc vključen v odgovorih zahtevkov"
     email_added_succ_msg: "E-pošta je bila dodana"
     assign_to_product_msg: "Poveži to e-pošto podpore z produktom"
-    assign_to_product_info: "Če želite povezati e-pošto z novim produktom najprej <a href='{{products_path}}'> dodaj produkt </a>"
+    assign_to_product_info: "Če želite povezati e-pošto z novim produktom najprej <a href='%{products_path}'> dodaj produkt </a>"
     new_support_email: "Nova e-pošte podpore"
     global_support_emails: "E-poštni naslovi globalne podpore"
     support_email: "e-pošta podpore"

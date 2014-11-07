@@ -3956,7 +3956,7 @@ tr:
     updated: "Canned Response Folder has been updated successfully !!"
     deleted: "Canned Response Folder has been deleted successfully."
     no_folders: "No Canned Responses"
-    folder_update: "Selected responses have been moved to the folder: {{folder_name}}"
+    folder_update: "Selected responses have been moved to the folder: %{folder_name}"
     update: "Canned Response was successfully updated."
     created: "Canned Response was successfully created."
     delete_multiple: "The selected canned responses were deleted!!"
@@ -5041,7 +5041,7 @@ tr:
         message_thread_time: "Message Thread Time"
         message_thread_time_info: "Maximum time to consider messages from same user as threaded"
         direct_messages: "Import <strong>\"Direct messages\"</strong> as ticket"
-        direct_messages_info: "Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>"
+        direct_messages_info: "Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='%{reauth_url}'>Reauthorize with Facebook</a>"
     twitter_handles:
       index:
         go_to_ticket: "Go to Ticket"
@@ -5649,8 +5649,8 @@ tr:
     helpcard:
       tour1: "Help me setup my support email"
       tour2: "Help me configure multiple mailboxes"
-      info5: "Your default support email address is <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Any email sent here gets automatically converted into a ticket that you can get working on."
-      info19: "You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Your default support email address is <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Any email sent here gets automatically converted into a ticket that you can get working on."
+      info19: "You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "To create a new support email box, click “Edit” under global email settings."
       info20: "Using Multiple Mailboxes"
       info21: "You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to automatically assign emails from each mailbox to a specific group."
