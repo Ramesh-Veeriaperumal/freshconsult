@@ -44,7 +44,7 @@
 	<%= render :partial => "/reports/survey_reports/details_sidebar" %>
 <%end%>
 
-<%if @reports_list.blank? and @remarks.total_pages==0 %>
+<%if @reports_list.blank? and @remarks.total_entries==0 %>
 	 <h1 style="font-size:18px;text-align:center;margin-top:50px;"> <%=t('reports.survey_reports.list.no_feedback')%> </h1>
 <%end%>
 

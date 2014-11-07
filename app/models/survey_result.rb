@@ -120,7 +120,7 @@ class SurveyResult < ActiveRecord::Base
                                                      :order => :name
                                                    }}
   
-  scope :group , lambda { |conditional_params| { :joins => :group,
+  scope :group_scope , lambda { |conditional_params| { :joins => :group,
                                                      :select => "group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total",
                                                      :group => "survey_results.group_id,survey_results.rating",
                                                      :conditions => conditional_params,                                                     
