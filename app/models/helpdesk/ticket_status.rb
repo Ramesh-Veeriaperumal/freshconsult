@@ -12,7 +12,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   validates_presence_of :name, :message => I18n.t('status_name_validate_presence_msg')
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
   
-  attr_accessible :name, :customer_display_name, :stop_sla_timer, :deleted, :is_default, :ticket_field_id
+  attr_accessible :name, :customer_display_name, :stop_sla_timer, :deleted, :is_default, :ticket_field_id, :position
   belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key => "status", :primary_key => "status_id",

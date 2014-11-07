@@ -1532,7 +1532,7 @@ nb-NO:
     updated: "Ferdigsvar mappen har blitt oppdatert"
     deleted: "Ferdigsvar mappen har blitt slettet"
     no_folders: "Ingen ferdigsvar"
-    folder_update: "Valgte svar har blitt flyttet til mappe: {{folder_name}}"
+    folder_update: "Valgte svar har blitt flyttet til mappe: %{folder_name}"
     update: "Ferdigsvaret ble oppdatert."
     created: "Ferdigsvar ble opprettet."
     delete_multiple: "Det valgte ferdigsvaret ble slettet"
@@ -2895,7 +2895,7 @@ nb-NO:
     helpcard:
       tour1: "Hjelp meg med å konfigurere min support e-post"
       tour2: "Hjelp meg med å sette opp ulike e-postbokser"
-      info5: "Din standard support e-postadresse er <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. E-poster sendt hit blir automatisk gjort om til saker."
+      info5: "Din standard support e-postadresse er <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. E-poster sendt hit blir automatisk gjort om til saker."
       info20: "bruk av forskjellige e-postbokser"
     primary_supp_email: "Hoved support e-post"
     info16: "Saker vil bli tildelt"

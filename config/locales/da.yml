@@ -565,7 +565,7 @@ da:
         message_thread_time: "Meddelelsestråd Tid"
         message_thread_time_info: "Maksimal tid til at overveje beskeder fra samme bruger som en del af tråd"
         direct_messages: "Importer <strong>\"Direkte beskeder\"</strong> som billet"
-        direct_messages_info: "Freshdesk vil konvertere alle direkte beskeder på denne Facebook-side til billetter. Hvis du aktiverer dette for første gang, er du måske nødt til at <a href='{{reauth_url}}'>Reauthorize med Facebook</a>"
+        direct_messages_info: "Freshdesk vil konvertere alle direkte beskeder på denne Facebook-side til billetter. Hvis du aktiverer dette for første gang, er du måske nødt til at <a href='%{reauth_url}'>Reauthorize med Facebook</a>"
     twitter_handles:
       index:
         go_to_ticket: "Gå til billet"
@@ -3364,7 +3364,7 @@ da:
     inactive_info1: "Alle dine support e-mails er stadig ubekræftede, du skal mindst bekræfte én support e-mail"
     info14: "Enhver e-mail sendt til denne adresse vil blive konverteret til en billet"
     info4: "<strong>BEMÆRK:</strong> Hvis du har flere e-mailadresser til at understøtte flere produkter, <a href='{{products_path}}'>kan du tilføje dem her</a>."
-    spf_info: "Mens de fleste af dine e-mails vil blive leveret, skal du, for at være på den sikre side, oprette en <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF post</a> i din DNS zone fil, hvis du bruger e-mail i dit eget domæne. Dette hjælper med at sikre ordenlig levering af e-mailen."
+    spf_info: "Mens de fleste af dine e-mails vil blive leveret, skal du, for at være på den sikre side, oprette en <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF post</a> i din DNS zone fil, hvis du bruger e-mail i dit eget domæne. Dette hjælper med at sikre ordenlig levering af e-mailen."
     reply_email: "Din Support-e-mail"
     unverified_info1: "En e-mail med et bekræftelseslink er blevet sendt til denne e-mail. Først efter verifikation vil denne support e-mail blive aktiv."
     inactive_info2: "Indtil da, vil standard e-mail \"%{default_email}\" blive brugt som svar e-mail."
@@ -3380,7 +3380,7 @@ da:
     info18: "Automatisk bcc adresse inkluderet i billetsvar"
     email_added_succ_msg: "Denne e-mail er blevet tilføjet"
     assign_to_product_msg: "Link denne support e-mail til et produkt"
-    assign_to_product_info: "Hvis du vil linke e-mailen til et nyt produkt, skal du først <a href='{{products_path}}'> tilføje produktet </a>"
+    assign_to_product_info: "Hvis du vil linke e-mailen til et nyt produkt, skal du først <a href='%{products_path}'> tilføje produktet </a>"
     new_support_email: "Ny Support e-mail"
     global_support_emails: "Globale Support E-mails"
     support_email: "Support E-mail"

@@ -3956,7 +3956,7 @@ ja-JP:
     updated: 定型応答文フォルダが正常に更新されました！！
     deleted: 定型応答文フォルダが正常に削除されました。
     no_folders: 定型応答文はありません
-    folder_update: "選択された応答がフォルダに移動されました：{{folder_name}}"
+    folder_update: "選択された応答がフォルダに移動されました：%{folder_name}"
     update: 定型応答文が正常に更新されました。
     created: 定型応答文が正常に作成されました。
     delete_multiple: 選択された定型応答文が削除されました！！
@@ -5041,7 +5041,7 @@ ja-JP:
         message_thread_time: メッセージスレッド時間
         message_thread_time_info: 同じユーザーによるメッセージをスレッド済みと検討できる時間の上限
         direct_messages: <strong>"ダイレクトメッセージ"</strong>をチケットとしてインポートする
-        direct_messages_info: "このFacebookページに掲載されているダイレクトメッセージを全てFreshdeskのチケットに変換します。この機能を初めて起動する場合、 <a href='{{reauth_url}}'>Facebookで再認証</a>する必要があるかもしれません"
+        direct_messages_info: "このFacebookページに掲載されているダイレクトメッセージを全てFreshdeskのチケットに変換します。この機能を初めて起動する場合、 <a href='%{reauth_url}'>Facebookで再認証</a>する必要があるかもしれません"
     twitter_handles:
       index:
         go_to_ticket: チケットへ移動
@@ -5649,8 +5649,8 @@ ja-JP:
     helpcard:
       tour1: サポートメールを設定するためのヘルプが必要です
       tour2: 複数メールボックスをコンフィギュアするためのヘルプが必要です
-      info5: "あなたのデフォルトサポートメールアドレスは<a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}です</a>。ここに送信されるメールはどれもあなたが取り組み始めることができるチケットに自動的に変換されます。"
-      info19: "Freshdeskアカウントをコンフィギュアして、このアドレスからのメールを<a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}に転送することにより、support@mycompany.comなど独自のドメインでサポートメールアドレスを使用することができます</a>。"
+      info5: "あなたのデフォルトサポートメールアドレスは<a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}です</a>。ここに送信されるメールはどれもあなたが取り組み始めることができるチケットに自動的に変換されます。"
+      info19: "Freshdeskアカウントをコンフィギュアして、このアドレスからのメールを<a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}に転送することにより、support@mycompany.comなど独自のドメインでサポートメールアドレスを使用することができます</a>。"
       edit_info: 新規サポートメールボックスを作成するには、グローバルメール設定で「編集」をクリックします。
       info20: 複数メールボックスの使用
       info21: ヘルプデスクの送信用および受信用メールボックス（info@yourcompany.com、sales@yourcompany.comなど）は無制限に追加可能です。各メールボックスのメールを自動的に特定のグループに割り当てるようにFreshdeskを設定することもできます。
@@ -5666,7 +5666,7 @@ ja-JP:
     info18: 自動bccアドレスはチケット返信に含まれます
     email_added_succ_msg: このメールは追加されました
     assign_to_product_msg: プロダクトのリンクをサポートメールに載せる
-    assign_to_product_info: "新しいプロダクトへのリンクをメールに掲載したい場合は、まず<a href='{{products_path}}'>プロダクトを追加してください </a>"
+    assign_to_product_info: "新しいプロダクトへのリンクをメールに掲載したい場合は、まず<a href='%{products_path}'>プロダクトを追加してください </a>"
     new_support_email: 新しいサポートメール
     global_support_emails: グローバルサポートメール
     support_email: サポートメール

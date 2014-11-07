@@ -16,7 +16,8 @@ gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 3.0"
 gem "country_select", git: "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
 gem "activemerchant", git: "git://github.com/Shopify/active_merchant", :tag => 'v1.43.1'
-gem "acts_as_list", "~> 0.4.0"
+# Please do not update acts_as_list unless this issue is resolved https://github.com/swanandp/acts_as_list/issues/137
+gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
 gem "class_inheritable_attributes", git: "git://github.com/burke/class_inheritable_attributes"

@@ -2676,7 +2676,7 @@ pl:
     inactive_info1: Wszystkie twoje adresy e-mail pomocy technicznej pozostają niezweryfikowane. Musisz zweryfikować przynajmniej jeden adres e-mail pomocy.
     info14: Każda wiadomość e-mail wysłana na ten adres zostanie przekształcona w zgłoszenie
     info4: "<strong>UWAGA:</strong> Jeśli masz oddzielny adres e-mail do obsługi każdego produktu, <a href='{{products_path}}'>możesz dodać go tutaj</a>."
-    spf_info: Odpowiedzi e-mail z systemu Freshdesk będą automatycznie zawierać odpowiednie ID adresu pomocy technicznej w polu nadawcy. Utworzenie <a target="_blank" title="Dowiedz się więcej na temat tworzenia rekordów SPF" href="{{solution_url}}"></a> w pliku strefy DNS zapewni poprawne dostarczanie wiadomości e-mail.
+    spf_info: Odpowiedzi e-mail z systemu Freshdesk będą automatycznie zawierać odpowiednie ID adresu pomocy technicznej w polu nadawcy. Utworzenie <a target="_blank" title="Dowiedz się więcej na temat tworzenia rekordów SPF" href="%{solution_url}"></a> w pliku strefy DNS zapewni poprawne dostarczanie wiadomości e-mail.
     reply_email: Twój adres e-mail pomocy technicznej
     unverified_info1:  Aktywuj ten adres e-mail, klikając łącze zawarte we wiadomości weryfikacyjnej w swojej skrzynce.
     inactive_info2: Do tego czasu domyślny adres e-mail „%{default_email}” będzie używany jako zwrotny adres e-mail.
@@ -2684,8 +2684,8 @@ pl:
     helpcard:
       tour1: Pomóż mi skonfigurować pocztę e-mail pomocy technicznej
       tour2: Pomóż mi skonfigurować wiele skrzynek pocztowych
-      info5: Domyślny adres e-mail twojej pomocy technicznej to <a class='break-all' target="_blank" href="https://{{solution_url}}"> {{solution_url}}</a>. Każda wiadomość wysłana pod ten adres zostanie automatycznie przekształcona w zgłoszenie, nad którym możesz rozpocząć pracę.
-      info19: Możesz skonfigurować swoje konto Freshdesk do użytku z adresem e-mail pomocy technicznej w swojej własnej domenie, np. support@mycompany.com, poprzez przesyłanie wiadomości e-mail z tego adresu na <a class='break-all' target="_blank" href="https://{{solution_url}}"> {{solution_url}}</a>.
+      info5: Domyślny adres e-mail twojej pomocy technicznej to <a class='break-all' target="_blank" href="https://%{solution_url}"> %{solution_url}</a>. Każda wiadomość wysłana pod ten adres zostanie automatycznie przekształcona w zgłoszenie, nad którym możesz rozpocząć pracę.
+      info19: Możesz skonfigurować swoje konto Freshdesk do użytku z adresem e-mail pomocy technicznej w swojej własnej domenie, np. support@mycompany.com, poprzez przesyłanie wiadomości e-mail z tego adresu na <a class='break-all' target="_blank" href="https://%{solution_url}"> %{solution_url}</a>.
       edit_info: Aby utworzyć nową skrzynkę pocztową, kliknij przycisk Edytuj w ustawieniach globalnych poczty e-mail.
       info20: Korzystanie z wielu skrzynek pocztowych
       info21: W swoim centrum pomocy możesz dodać nieograniczoną liczbę skrzynek pocztowych przychodzących i wychodzących (na przykład info@mycompany.com, sales@mycompany.com itp.). Możesz nawet skonfigurować automatyczne przypisywanie wiadomości z konkretnej skrzynki pocztowej do określonej grupy.
@@ -2703,7 +2703,7 @@ pl:
     info18: Automatyczny adres UDW dodawany do odpowiedzi związanych ze zgłoszeniem
     email_added_succ_msg: Adres e-mail został dodany
     assign_to_product_msg: Powiąż ten adres e-mail z produktem
-    assign_to_product_info: Jeśli chcesz powiązać ten adres e-mail z nowym produktem, najpierw <a href='{{products_path}}'> dodaj produkt</a>.
+    assign_to_product_info: Jeśli chcesz powiązać ten adres e-mail z nowym produktem, najpierw <a href='%{products_path}'> dodaj produkt</a>.
     new_support_email: Nowy adres e-mail pomocy technicznej
     global_support_emails: Globalne adresy e-mail pomocy technicznej
     support_email: Adres e-mail pomocy technicznej
@@ -3675,7 +3675,7 @@ pl:
         message_thread_time: Czas wątku wiadomości
         message_thread_time_info: Maksymalny czas, w którym można zapoznać się z wiadomościami od tego samego użytkownika, wynosi
         direct_messages: Przekonwertuj <strong>„Bezpośrednie wiadomości”</strong> na zgłoszenia
-        direct_messages_info: Freshdesk przekonwertuje wszystkie bezpośrednie wiadomości na tej stronie serwisu Facebook na zgłoszenia. Jeśli uruchamiasz tę funkcję pierwszy raz, może zaistnieć konieczność wykonania opcji <a href='{{reauth_url}}'>Ponownie upoważnij serwis Facebook</a>
+        direct_messages_info: Freshdesk przekonwertuje wszystkie bezpośrednie wiadomości na tej stronie serwisu Facebook na zgłoszenia. Jeśli uruchamiasz tę funkcję pierwszy raz, może zaistnieć konieczność wykonania opcji <a href='%{reauth_url}'>Ponownie upoważnij serwis Facebook</a>
     twitter_handles:
       index:
         go_to_ticket: Idź do zgłoszenia
@@ -4418,7 +4418,7 @@ pl:
     updated: Folder szablonów odpowiedzi został zaktualizowany!
     deleted: Folder szablonów odpowiedzi został usunięty.
     no_folders: Brak szablonów odpowiedzi
-    folder_update: "Wybrane odpowiedzi zostały przeniesione do folderu: {{folder_name}}"
+    folder_update: "Wybrane odpowiedzi zostały przeniesione do folderu: %{folder_name}"
     update: Szablon odpowiedzi został zaktualizowany.
     created: Szablon odpowiedzi został utworzony.
     delete_multiple: Wybrane szablony odpowiedzi zostały usunięte!

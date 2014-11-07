@@ -2675,7 +2675,7 @@ it:
     inactive_info1: Tutte le e-mail di assistenza non sono ancora state verificate, devi verificare almeno un'e-mail di assistenza
     info14: Ogni e-mail inviata a questo indirizzo sarà convertita in un ticket
     info4: <strong>NOTA:</strong> se disponi di più indirizzi e-mail per il supporto di molteplici prodotti, <a href='{{products_path}}'>puoi aggiungerli qui</a>.
-    spf_info: Le e-mail di risposta di Freshdesk utilizzeranno in automatico i tuoi rispettivi ID delle e-mail di supporto come indirizzo e-mail mittente. La creazione di un <a target="_blank" title="Ulteriori informazioni sulla creazione dei record SPF" href="{{solution_url}}">record SPF</a> nel file della tua area DNS assicurerà una corretta consegna delle e-mail.
+    spf_info: Le e-mail di risposta di Freshdesk utilizzeranno in automatico i tuoi rispettivi ID delle e-mail di supporto come indirizzo e-mail mittente. La creazione di un <a target="_blank" title="Ulteriori informazioni sulla creazione dei record SPF" href="%{solution_url}">record SPF</a> nel file della tua area DNS assicurerà una corretta consegna delle e-mail.
     reply_email: La tua e-mail di supporto
     unverified_info1:  Attiva questa e-mail facendo clic sul collegamento di verifica nella tua posta in arrivo.
     inactive_info2: Fino ad allora, l'e-mail predefinita "%{default_email}" sarà utilizzata come destinatario della risposta.
@@ -2683,8 +2683,8 @@ it:
     helpcard:
       tour1: Supporto nella configurazione dell'e-mail di supporto
       tour2: Supporto nella configurazione di cassette postali multiple
-      info5: Il tuo indirizzo e-mail di supporto predefinito è <a class='break-all' target="_blank" href="https://{{solution_url}}"> {{solution_url}}</a>. Qualsiasi e-mail inviata a questo indirizzo viene automaticamente convertita in un ticket sul quale puoi lavorare.
-      info19: Puoi configurare il tuo account Freshdesk in modo da utilizzare un indirizzo e-mail di supporto nel tuo dominio, ad esempio supporto@miazienda.com,  inoltrando le email da questo indirizzo a <a class='break-all' target="_blank" href="https://{{solution_url}}"> {{solution_url}}</a>.
+      info5: Il tuo indirizzo e-mail di supporto predefinito è <a class='break-all' target="_blank" href="https://%{solution_url}"> %{solution_url}</a>. Qualsiasi e-mail inviata a questo indirizzo viene automaticamente convertita in un ticket sul quale puoi lavorare.
+      info19: Puoi configurare il tuo account Freshdesk in modo da utilizzare un indirizzo e-mail di supporto nel tuo dominio, ad esempio supporto@miazienda.com,  inoltrando le email da questo indirizzo a <a class='break-all' target="_blank" href="https://%{solution_url}"> %{solution_url}</a>.
       edit_info: Per creare una nuova casella postale di supporto, da impostazioni globali e-mail fai clic su "Modifica".
       info20: Utilizzo di cassette postali multiple
       info21: È possibile aggiungere un numero illimitato di cassette postali in entrata e in uscita (ad esempio info@nomeazienda.it o commerciale@nomeazienda.it) nell'helpdesk. È persino possibile impostare Freshdesk in modo che assegni automaticamente le e-mail di ciascuna cassetta postale a un gruppo specifico.
@@ -2702,7 +2702,7 @@ it:
     info18: Indirizzo Ccn automatico inserito nelle risposte dei ticket
     email_added_succ_msg: L'e-mail è stata aggiunta
     assign_to_product_msg: Collega questo indirizzo e-mail di supporto a un prodotto
-    assign_to_product_info: Per collegare l'indirizzo e-mail a un nuovo prodotto, prima devi <a href='{{products_path}}'> aggiungere il prodotto </a>
+    assign_to_product_info: Per collegare l'indirizzo e-mail a un nuovo prodotto, prima devi <a href='%{products_path}'> aggiungere il prodotto </a>
     new_support_email: Nuova e-mail di supporto
     global_support_emails: E-mail di supporto globale
     support_email: E-mail di supporto
@@ -3674,7 +3674,7 @@ it:
         message_thread_time: Durata dei thread del messaggio
         message_thread_time_info: Tempo massimo per considerare in thread i messaggi dello stesso utente
         direct_messages: Importa <strong>"Messaggi diretti"</strong> come ticket
-        direct_messages_info: Freshdesk convertirà tutti i messaggi diretti su questa pagina Facebook in ticket. Se stai abilitando questa funzione per la prima volta, potresti dover <a href='{{reauth_url}}'>Ripetere autorizzazione Facebook</a>
+        direct_messages_info: Freshdesk convertirà tutti i messaggi diretti su questa pagina Facebook in ticket. Se stai abilitando questa funzione per la prima volta, potresti dover <a href='%{reauth_url}'>Ripetere autorizzazione Facebook</a>
     twitter_handles:
       index:
         go_to_ticket: Vai al ticket
@@ -4417,7 +4417,7 @@ it:
     updated: La cartella risposta predefinita è stata aggiornata.
     deleted: La cartella risposta predefinita è stata eliminata.
     no_folders: Nessuna risposta predefinita
-    folder_update: "Le risposte selezionate sono state spostate nella cartella: {{folder_name}}"
+    folder_update: "Le risposte selezionate sono state spostate nella cartella: %{folder_name}"
     update: La risposta predefinita è stata aggiornata.
     created: La risposta predefinita è stata creata.
     delete_multiple: Le risposte predefinite selezionate sono state eliminate.

@@ -3146,8 +3146,8 @@ es-LA:
         helpcard: 
             tour1: "Ayúdame a configurar mi correo electrónico de soporte"
             tour2: "Ayúdame a configurar varios buzones"
-            info5: "Tu dirección de correo electrónico de soporte predeterminada es <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Todos los correos electrónicos enviados aquí se convierten automáticamente en un ticket en el que puedes comenzar a trabajar."
-            info19: "Puedes configurar tu cuenta de Freshdesk para usar un correo electrónico de soporte en tu propio dominio, como soporte@miempresa.com mediante el reenvío de mensajes de correo electrónico desde esta dirección a <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+            info5: "Tu dirección de correo electrónico de soporte predeterminada es <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Todos los correos electrónicos enviados aquí se convierten automáticamente en un ticket en el que puedes comenzar a trabajar."
+            info19: "Puedes configurar tu cuenta de Freshdesk para usar un correo electrónico de soporte en tu propio dominio, como soporte@miempresa.com mediante el reenvío de mensajes de correo electrónico desde esta dirección a <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
             edit_info: "Para crear un nuevo buzón de correo electrónico de soporte, haz clic en “Editar” en la configuración global de correo electrónico."
             info20: "Uso de varios buzones"
             info21: "Puedes agregar una cantidad ilimitada de buzones de correo entrante y saliente (como info@tuempresa.com, ventas@tuempresa.com, etc.) en tu helpdesk. Incluso puedes configurar Freshdesk para que asigne automáticamente mensajes de correo electrónico de cada buzón a un grupo específico."
@@ -3163,7 +3163,7 @@ es-LA:
         info18: "Dirección CCO incluida automáticamente en las respuestas de los tickets"
         email_added_succ_msg: "Se agregó el correo electrónico."
         assign_to_product_msg: "Vincular este correo electrónico con un producto"
-        assign_to_product_info: "Si quieres vincular un correo electrónico con un nuevo producto, primero <a href='{{products_path}}'>agrega el producto</a>."
+        assign_to_product_info: "Si quieres vincular un correo electrónico con un nuevo producto, primero <a href='%{products_path}'>agrega el producto</a>."
         new_support_email: "Nuevo correo electrónico de soporte"
         global_support_emails: "Correos electrónicos globales de soporte"
         support_email: "Correo electrónico de soporte"
@@ -4196,7 +4196,7 @@ es-LA:
                 message_thread_time: "Hora de la cadena de mensajes"
                 message_thread_time_info: "Tiempo máximo para considerar mensajes del mismo usuario como cadena"
                 direct_messages: "Importar <strong>&quot;Mensajes directos&quot;</strong> como tickets"
-                direct_messages_info: "Freshdesk convertirá todos los mensajes directos de esta página de Facebook como tickets. Si estás habilitando esto por primera vez, es posible que debas<a href='{{reauth_url}}'>volver a autorizar con Facebook.</a>"
+                direct_messages_info: "Freshdesk convertirá todos los mensajes directos de esta página de Facebook como tickets. Si estás habilitando esto por primera vez, es posible que debas<a href='%{reauth_url}'>volver a autorizar con Facebook.</a>"
         twitter_handles: 
             index: 
                 go_to_ticket: "Ir al ticket"
@@ -4983,7 +4983,7 @@ es-LA:
         updated: "La carpeta de respuestas predeterminadas se actualizó correctamente."
         deleted: "La carpeta de respuestas predeterminadas se eliminó correctamente."
         no_folders: "Sin respuestas predeterminadas"
-        folder_update: "Las respuestas seleccionadas se movieron a la carpeta {{folder_name}}."
+        folder_update: "Las respuestas seleccionadas se movieron a la carpeta %{folder_name}."
         update: "La respuesta predeterminada se actualizó correctamente."
         created: "La respuesta predeterminada se creó correctamente."
         delete_multiple: "Se eliminaron las respuestas predeterminadas seleccionadas."

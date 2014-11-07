@@ -3957,7 +3957,7 @@ ca:
     updated: "La carpeta de respostes guardades ha estat actualitzada correctament !!"
     deleted: "La carpeta de respostes guardades s'ha esborrat correctament."
     no_folders: "No hi ha respostes guardades"
-    folder_update: "Les respostes seleccionades s'han mogut a la carpeta: {{folder_name}}"
+    folder_update: "Les respostes seleccionades s'han mogut a la carpeta: %{folder_name}"
     update: "La resposta guardada s'ha gravat correctament."
     created: "La resposta guardada s'ha creat correctament."
     delete_multiple: "Les respostes preconfigurades seleccionades van ser esborrades!"
@@ -5042,7 +5042,7 @@ ca:
         message_thread_time: "Temps de missatge relacionat"
         message_thread_time_info: "Temps màxim per considerar els missatges del mateix usuari com a relacionats"
         direct_messages: "Importa <strong>\"Missatges directes\"</strong> com a tiquet"
-        direct_messages_info: "Freshdesk convertirà en tiquets tots els missatges directes en aquest Facebook. Si ho estàs activant per primera vegada potser hauràs de <a href='{{reauth_url}}'>Reautoritzar-ho amb Facebook</a>"
+        direct_messages_info: "Freshdesk convertirà en tiquets tots els missatges directes en aquest Facebook. Si ho estàs activant per primera vegada potser hauràs de <a href='%{reauth_url}'>Reautoritzar-ho amb Facebook</a>"
     twitter_handles:
       index:
         go_to_ticket: "Anar al tiquet"
@@ -5644,7 +5644,7 @@ ca:
     info4: "<strong>NOTA:</strong> Si tens més d'una adreça per donar suport a més d'un producte, <a href='{{products_path}}'>els pots afegir aquí</a>."
     spf_info: |
         Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an
-        <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">
+        <a target="_blank" title="Learn more about creating SPF records" href="%{solution_url}">
         SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: "El teu correu de suport"
     unverified_info1: "Si us plau, activa aquest correu electrònic fent clic a l'enllaç de verificació a la teva safata d'entrada."
@@ -5653,8 +5653,8 @@ ca:
     helpcard:
       tour1: "Ajuda'm a configurar el meu correu de suport"
       tour2: "Ajuda'm a configurar múltiples bústies de correu"
-      info5: "La teva adreça de suport per defecte és <a target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Tot correu enviat allà serà convertit en un tiquet automàticament per a que puguis començar a treballar en ell."
-      info19: "Pots configurar el teu compte de Freshdesk per fer servir un correu de suport del teu propi domini, com suport@lamevacompanyia.cat enviant correus des d'aquesta adreça a <a target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Per crear una nova bústia de suport, clica a “Edita” a sota de la configuració global del correu."
+      info5: "La teva adreça de suport per defecte és <a target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Tot correu enviat allà serà convertit en un tiquet automàticament per a que puguis començar a treballar en ell."
+      info19: "Pots configurar el teu compte de Freshdesk per fer servir un correu de suport del teu propi domini, com suport@lamevacompanyia.cat enviant correus des d'aquesta adreça a <a target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Per crear una nova bústia de suport, clica a “Edita” a sota de la configuració global del correu."
       edit_info: "Per crear una nova bústia de correu electrònic de suport, fes clic a \"Edita\" a la configuració de correu electrònic a nivell global."
       info20: "Ús de diferents bústies"
       info21: "Pots afegir un nombre il·limitat de bústies de correu entrant i sortint (com info@latevacompanyia.com, vendes@latevacompanyia, etc.) en el teu servei de suport. Pots fins i tot configurar Freshdesk per assignar automàticament els correus electrònics de cada bústia a un grup específic."
@@ -5670,7 +5670,7 @@ ca:
     info18: "CCO automàtica inclosa en les respostes dels tiquets"
     email_added_succ_msg: "S'ha afegit aquest correu"
     assign_to_product_msg: "Enllaça aquest correu de suport amb un producte"
-    assign_to_product_info: "Si vols vincular el correu electrònic a un producte nou primer <a href='{{products_path}}'> afegeix el producte </a>"
+    assign_to_product_info: "Si vols vincular el correu electrònic a un producte nou primer <a href='%{products_path}'> afegeix el producte </a>"
     new_support_email: "Nou correu de suport"
     global_support_emails: "Correus de suport globals"
     support_email: "Correu de suport"

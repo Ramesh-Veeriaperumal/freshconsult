@@ -33,9 +33,9 @@ class Solution::Category < ActiveRecord::Base
   after_create :assign_portal
   after_destroy :clear_mobihelp_solutions_cache
 
+  attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
+  
   acts_as_list :scope => :account
-
-  attr_accessible :name, :description, :import_id, :is_default, :portal_ids
 
   scope :customer_categories, {:conditions => {:is_default=>false}}
 

@@ -475,7 +475,7 @@ hu:
         associate_account: "Associate a Facebook page with <b> %{account_name} </b> and respond to customer comments and wall posts directly from Freshdesk. You can also add your solutions and community forums within your Facebook page."
         add_facebook: "Facebook oldal hozzáadása"
       form:
-        direct_messages_info: "Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>"
+        direct_messages_info: "Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='%{reauth_url}'>Reauthorize with Facebook</a>"
     twitter_handles:
       index:
         search: Keresés
@@ -1662,7 +1662,7 @@ hu:
     updated: "Tárolt válasz mappa sikeresen frissítve!"
     deleted: "Tárolt válasz mappa sikeresen törölve."
     no_folders: "Nem található tárolt válasz"
-    folder_update: "A kiválasztott válasz áthelyezve a következő mappába: {{folder_name}}"
+    folder_update: "A kiválasztott válasz áthelyezve a következő mappába: %{folder_name}"
     update: "Tárolt válasz sikeresen frissítve."
     created: "Tárolt válasz sikeresen létrehozva."
     delete_multiple: "A kiválaszott tárolt válasz törölve!"
@@ -3139,8 +3139,8 @@ hu:
     spf_info: "Freshdeskben a válasz emailek a releváns ügyfélszolgálati email címről fognak kimenni. Nagyon hasznos, ha egy <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF rekordot</a> állít be a DNS zónájába, hogy emailjei maradéktalanul megérkezzenek."
     helpcard:
       tour1: "Email cím beállításához segítség"
-      info5: "Az Ön alapértelmezett ügyfélszolgálati email címe: <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Minden emailt, amit erre a címre küldenek, átkonvertáljuk kérelemmé."
-      info19: "Beállíthatja úgy Freshdesk fiókját, hogy saját email címét használja, pl. support@mycompany.com. Nem kell mást tennie, mint továbbítania erről az email címről a leveleket ide: <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Új email fiók létrehozásához kattintson a szerkesztés gombra az általános email beállításoknál."
+      info5: "Az Ön alapértelmezett ügyfélszolgálati email címe: <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Minden emailt, amit erre a címre küldenek, átkonvertáljuk kérelemmé."
+      info19: "Beállíthatja úgy Freshdesk fiókját, hogy saját email címét használja, pl. support@mycompany.com. Nem kell mást tennie, mint továbbítania erről az email címről a leveleket ide: <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Új email fiók létrehozásához kattintson a szerkesztés gombra az általános email beállításoknál."
       info20: "Több email fiók használata"
       info21: "Annyi bejövő és kimenő email címet használhat, amennyit csak akar (pl. info@yourcompany.com, sales@yourcompany.com) Azt is beállíthatja, hogy a rendszer automatikusan egy bizonyos csoportba küldje a bejövő emaileket."
     info16: "Kérelmek hozzárendelve lesznek"
