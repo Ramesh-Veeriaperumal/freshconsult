@@ -769,7 +769,7 @@ HTML
 		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences,
-			:image_placeholders => { :spacer => image_path("misc/spacer.gif"),
+			:image_placeholders => { :spacer => spacer_image_url,
 			 												:profile_thumb => image_path("misc/profile_blank_thumb.gif"),
 															 :profile_medium => image_path("misc/profile_blank_medium.gif") }
 		}.to_json
@@ -979,6 +979,10 @@ HTML
 		else
 			""
 		end
+	end
+
+	def spacer_image_url
+		"#{asset_host_url}/assets/misc/spacer.gif"
 	end
 
 	private

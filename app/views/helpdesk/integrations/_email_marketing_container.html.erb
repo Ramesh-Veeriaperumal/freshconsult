@@ -30,7 +30,7 @@
 				</div>
 		<% else %>
 			<% iapp = Integrations::Constants::APP_NAMES[installed_apps[0]] %>
-			<%= link_to_function( image_tag("/images/spacer.gif", :title => iapp + " Activity", :height => 30, :width => 80, :class => "application-logo-#{iapp.downcase}"), "displayAsModal('#{iapp}')" ) %>
+			<%= link_to_function( image_tag(spacer_image_url, :title => iapp + " Activity", :height => 30, :width => 80, :class => "application-logo-#{iapp.downcase}"), "displayAsModal('#{iapp}')" ) %>
 		<% end %>
 		</span>
 	<% end

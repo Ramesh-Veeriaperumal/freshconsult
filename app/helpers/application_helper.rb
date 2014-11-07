@@ -34,6 +34,10 @@ module ApplicationHelper
     }.to_s.html_safe
   end
 
+  def spacer_image_url
+    "#{asset_host_url}/assets/misc/spacer.gif"
+  end
+
   def trial_expiry_title(trial_days)
     if trial_days == 0
       t('trial_one_more_day').html_safe
