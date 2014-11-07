@@ -2698,8 +2698,6 @@ de:
     import: "Importieren"
     contains: "Enthält"
     import_solution_article_info: "Hinweis: Die Forenkommentare werden nicht gespeichert"
-    no_anonymous_tickets: "Um ein Ticket zu senden, <a href={{signup}}><b>registrieren Sie sich</b></a> als neuer Benutzer oder <a href={{login}}><b>melden Sie sich an</b></a>."
-    no_signup: "Um ein Ticket zu senden, <a href={{login}}><b>melden Sie sich bitte an</b></a>."
     register: "Registrieren"
     by: "von"
     portal: 
@@ -4992,8 +4990,8 @@ de:
         no_response_admin: "Keine Antwort in diesem Order. <a href={{link}} id='new_resp'>Neu erstellen</a>"
         select_folder: "Ordner auswählen"
     merge_contacts: 
-        header: "Wichtig:<br />Sie sind dabei {{number}} Kontakte mit {{name}} zusammenzuführen."
-        info: "Beachten Sie bitte, dass durch die Zusammenführung die gesamten Tickets, E-Mails, Notizen und Kontaktinformationen der ausgewählten Kontakte  zu {{name}} verschoben werden. Außerdem werden die zusammengeführten Kontakte als gelöscht markiert. Sie können dann nicht wiederhergestellt werden. <br /><br />Fahren Sie mit der Zusammenführung der Kontakte mit {{name}} fort."
+        header: "Wichtig:<br />Sie sind dabei %{number} Kontakte mit %{name} zusammenzuführen."
+        info: "Beachten Sie bitte, dass durch die Zusammenführung die gesamten Tickets, E-Mails, Notizen und Kontaktinformationen der ausgewählten Kontakte  zu %{name} verschoben werden. Außerdem werden die zusammengeführten Kontakte als gelöscht markiert. Sie können dann nicht wiederhergestellt werden. <br /><br />Fahren Sie mit der Zusammenführung der Kontakte mit %{name} fort."
         invalid: "Die angegebene E-Mail-Adresse ist ungültig"
         loading: "Zusammenführung wird vorbereitet <img src='/images/loading.gif'>"
         email_activated: "E-Mail-ID ist bereits aktiviert"
@@ -5005,7 +5003,7 @@ de:
         removed: "E-Mail-ID entfernt"
         confirm_and_merge: "Bestätigen und zusammenführen"
         activation_sent: "Aktivierungs-E-Mail gesendet. Verifizieren Sie bitte innerhalb einer Woche."
-        client_manager: "Sie haben den Client-Manager „{{name}}“ zur Zusammenführung ausgewählt."
+        client_manager: "Sie haben den Client-Manager „%{name}“ zur Zusammenführung ausgewählt."
         cannot_restore: "Zusammengeführte Benutzer können nicht wiederhergestellt werden"
         primary: "Standard"
         not_verified: "Nicht verifiziert"

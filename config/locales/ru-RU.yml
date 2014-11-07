@@ -2246,8 +2246,6 @@ ru-RU:
   import: Импорт
   contains: Содержит
   import_solution_article_info: Примечание. Комментарии форума не сохраняются
-  no_anonymous_tickets: Чтобы отправить заявку, <a href={{signup}}><b>зарегистрируйтесь</b></a> как новый пользователь или <a href={{login}}><b>войдите</b></a> в систему.
-  no_signup: Чтобы отправить заявку, <a href={{login}}><b>войдите</b></a> в систему.
   register: Зарегистрироваться
   by: по
   portal:

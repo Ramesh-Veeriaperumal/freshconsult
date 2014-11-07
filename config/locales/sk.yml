@@ -1748,8 +1748,6 @@ sk:
   import: Import
   contains: Obsah
   import_solution_article_info: "Poznámka: Neukládáme komentáre k fóram"
-  no_anonymous_tickets: "Pre odoslanie tiketu sa <a href={{signup}}><b>zaregistrujte</b></a> ako nový užívateľ alebo sa <a href={{login}}><b>prihláste</b></a>."
-  no_signup: "Pro odoslanie tiketu sa, prosím, <a href={{login}}><b>prihláste</b></a>."
   register: Registrovať
   by: podľa
   portal: 

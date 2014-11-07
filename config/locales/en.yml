@@ -2773,8 +2773,6 @@ en:
   import: Import
   contains: Contains
   import_solution_article_info: "Note: We will not save the forum comments"
-  no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
-  no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   register: Register
   by: by
   portal:
@@ -5216,8 +5214,8 @@ en:
     no_response_admin: "No responses in this folder <a href=%{link} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
   merge_contacts:
-    header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."
-    info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
+    header: "Important:<br />You are about to merge %{number} contacts with %{name}."
+    info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into %{name}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into %{name}"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
     email_activated: "email id already activated"
@@ -5229,7 +5227,7 @@ en:
     removed: "E-Mail id removed"
     confirm_and_merge: "Confirm and Merge"
     activation_sent: "Activation mail sent. Please verify within a week"
-    client_manager: "You have selected a Client Manager {{name}} to merge."
+    client_manager: "You have selected a Client Manager %{name} to merge."
     cannot_restore: "Merged user cannot be restored"
     primary: "Default"
     not_verified: "Not Verified"

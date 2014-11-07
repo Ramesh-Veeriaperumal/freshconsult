@@ -2698,8 +2698,6 @@ nl:
     import: "Importeren"
     contains: "Bevat"
     import_solution_article_info: "Opmerking: de forumopmerkingen worden niet opgeslagen."
-    no_anonymous_tickets: "Als u een ticket wilt versturen, moet u zich <a href={{signup}}><b>registreren</b></a> als een nieuwe gebruiker of <a href={{login}}><b>aanmelden</b></a>."
-    no_signup: "Als u een ticket wilt versturen, moet u <a href={{login}}><b>zich aanmelden</b></a>."
     register: "Registreren"
     by: "door"
     portal: 
@@ -4992,8 +4990,8 @@ nl:
         no_response_admin: "Deze map bevat geen antwoorden.<a href={{link}} id='new_resp'>Nieuwe maken</a>"
         select_folder: "Map selecteren"
     merge_contacts: 
-        header: "Belangrijk:<br />U staat op het punt {{number}} contactpersonen samen te voegen met {{name}}."
-        info: "Als u de contactpersonen samenvoegt, worden alle e-mails, tickets, opmerkingen en contactgegevens van de geselecteerde contactpersonen naar {{name}} verplaatst. Daarnaast worden de samengevoegde contactpersonen gemarkeerd als verwijderd en kunnen ze niet worden hersteld. <br /><br />Ga door om de contactpersonen samen te voegen in {{name}}"
+        header: "Belangrijk:<br />U staat op het punt %{number} contactpersonen samen te voegen met %{name}."
+        info: "Als u de contactpersonen samenvoegt, worden alle e-mails, tickets, opmerkingen en contactgegevens van de geselecteerde contactpersonen naar %{name} verplaatst. Daarnaast worden de samengevoegde contactpersonen gemarkeerd als verwijderd en kunnen ze niet worden hersteld. <br /><br />Ga door om de contactpersonen samen te voegen in %{name}"
         invalid: "Het opgegeven e-mailadres is ongeldig."
         loading: "Samenvoegen wordt voorbereid <img src='/images/loading.gif'>"
         email_activated: "Het e-mail-id is al geactiveerd."
@@ -5005,7 +5003,7 @@ nl:
         removed: "Het e-mail-id is verwijderd."
         confirm_and_merge: "Bevestigen en samenvoegen"
         activation_sent: "Er is een activerings-e-mail verstuurd. Controleer binnen een week of u dit bericht hebt ontvangen."
-        client_manager: "U hebt een klantmanager ({{name}}) geselecteerd om samen te voegen."
+        client_manager: "U hebt een klantmanager (%{name}) geselecteerd om samen te voegen."
         cannot_restore: "De samengevoegde gebruiker kan niet worden hersteld."
         primary: "Standaard"
         not_verified: "Niet geverifieerd"

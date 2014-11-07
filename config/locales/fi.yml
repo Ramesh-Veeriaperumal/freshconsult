@@ -3003,8 +3003,6 @@ fi:
   import: Tuo
   contains: Sisältää
   import_solution_article_info: "Huom! Artikkelissa olevia kommentteja ei tallenneta."
-  no_anonymous_tickets: "Lähettääksesi tiketin, <a href={{signup}}><b>Rekisteröidy</b></a> uudeksi käyttäjäksi tai <a href={{login}}><b>Kirjaudu</b></a>"
-  no_signup: "Lähettääksesi tiketin, ole hyvä ja <a href={{login}}><b>Kirjaudu</b></a>."
   register: Rekisteröi
   by: "-"
   portal:

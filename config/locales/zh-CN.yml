@@ -2235,8 +2235,6 @@ zh-CN:
     import: "导入"
     contains: "包含"
     import_solution_article_info: "注意：我们不保存论坛的评论"
-    no_anonymous_tickets: "提交工单前，<a href={{signup}}><b>请首先注册账号</b></a>或<a href={{login}}><b>登录</b></a>。"
-    no_signup: "提交工单前，请先<a href={{login}}><b>登录</b></a>。"
     register: "注册"
     by: "由"
     portal: 

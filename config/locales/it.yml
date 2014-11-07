@@ -2246,8 +2246,6 @@ it:
   import: Importa
   contains: Contiene
   import_solution_article_info: "Nota: i commenti del forum non saranno salvati"
-  no_anonymous_tickets: Per inviare un ticket, <a href={{signup}}><b>registrati</b></a> come nuovo utente oppure <a href={{login}}><b>esegui l'accesso</b></a>.
-  no_signup: Per inviare un ticket, <a href={{login}}><b>esegui l'accesso</b></a>.
   register: Registrati
   by: entro
   portal:

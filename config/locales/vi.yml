@@ -3978,8 +3978,6 @@ vi:
   import: Import
   contains: chứa
   import_solution_article_info: "Lưu ý: Hệ thống sẽ không lưu các bình luận trong forum"
-  no_anonymous_tickets: "để gửi 1 ticket<a href={{signup}}><b> đăng ký</b></a> như người dùng mới <a href={{login}}><b> đăng nhập</b></a>"
-  no_signup: "để gửi 1 ticket<a href={{login}}><b> đăng nhập</b></a>"
   register: "đăng ký"
   by: bởi
   portal:

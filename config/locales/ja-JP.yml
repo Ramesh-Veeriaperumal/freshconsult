@@ -4020,8 +4020,6 @@ ja-JP:
   import: インポート
   contains: 含む
   import_solution_article_info: 注意：フォーラムコメントは保存されません
-  no_anonymous_tickets: "チケットを送信するには、新規ユーザーとして<a href={{signup}}><b>登録</b></a>するか、<a href={{login}}><b>ログイン</b></a>してください。"
-  no_signup: "チケットを送信するには<a href={{login}}><b>ログイン</b></a>してください。"
   register: 登録
   by: By
   portal:
@@ -4146,8 +4144,8 @@ ja-JP:
       reopen_reply: 返信
       related_articles: 関連したアーティクル
   merge_contacts:
-    header: "重要：<br />あなたは{{number}}個の連絡先を{{name}}と結合しようとしています。"
-    info: "結合すると、選択された連絡先のメール、チケット、メモ、連絡先情報がそっくりそのまま{{name}}へ移動されることをご了承ください。また、結合された連絡先は削除済みとマークされ復元することはできません。<br /><br />続行し、連絡先を{{name}}に結合"
+    header: "重要：<br />あなたは%{number}個の連絡先を%{name}と結合しようとしています。"
+    info: "結合すると、選択された連絡先のメール、チケット、メモ、連絡先情報がそっくりそのまま%{name}へ移動されることをご了承ください。また、結合された連絡先は削除済みとマークされ復元することはできません。<br /><br />続行し、連絡先を%{name}に結合"
     invalid: 入力されたメールアドレスは無効です
     loading: "結合を準備しています<img src='/images/loading.gif'>"
     email_activated: メールIDは既にアクティベートされています
@@ -4159,7 +4157,7 @@ ja-JP:
     removed: メールアドレスIDが除去されました
     confirm_and_merge: 確認して結合
     activation_sent: アクティベーション用のメールが送信されました。1週間以内に認証してください
-    client_manager: "結合にクライアントマネージャー{{name}}が選択されました。"
+    client_manager: "結合にクライアントマネージャー%{name}が選択されました。"
     cannot_restore: 結合されたユーザーは回復できません
     primary: デフォルト
     not_verified: 未認証

@@ -4057,8 +4057,6 @@ cs:
   import: Import
   contains: Obsahuje
   import_solution_article_info: "Poznámka: Neukládáme komentáře k fórům"
-  no_anonymous_tickets: "Pro odeslání požadavku se <a href={{signup}}><b>zregistrujte</b></a> jako nový uživatel nebo se <a href={{login}}><b>přihlašte</b></a>."
-  no_signup: "Pro odeslání požadavku se, prosím, <a href={{login}}><b>přihlašte</b></a>."
   register: Registrovat
   by: podle
   portal:
@@ -4195,8 +4193,8 @@ cs:
       reopen_reply: Odpovědět
       related_articles: "Podobné články..."
   merge_contacts:
-    header: "Důležité: <br />snažíte se sloučit {{number}} pracovníků s {{name}}."
-    info: "Uvědomte si, prosím, že spojením se přesunou všechny maily, požadavky, poznámky a kontaktní informace zvoleného pracovníka do {{name}}. Navíc - spojení pracovníci budou označeni jako smazaní a nebude možné je obnovit! <br /> <br />Pokračovat ve spojení pracovníků do {{name}}"
+    header: "Důležité: <br />snažíte se sloučit %{number} pracovníků s %{name}."
+    info: "Uvědomte si, prosím, že spojením se přesunou všechny maily, požadavky, poznámky a kontaktní informace zvoleného pracovníka do %{name}. Navíc - spojení pracovníci budou označeni jako smazaní a nebude možné je obnovit! <br /> <br />Pokračovat ve spojení pracovníků do %{name}"
     invalid: "Vložená e-mailová adresa není platná"
     loading: "Příprava na sloučení <img src='/images/loading.gif'>"
     email_activated: "e-mail je již aktivován"
@@ -4208,7 +4206,7 @@ cs:
     removed: "ID e-mailu bylo odstraněno"
     confirm_and_merge: "Potvrdit a sloučit"
     activation_sent: "Aktivační e-mail byl odeslán. Prosíme, potvrďte jej nejpozději do týdne."
-    client_manager: "Vybrali jste pro sloučení Client Manager {{name}}."
+    client_manager: "Vybrali jste pro sloučení Client Manager %{name}."
     cannot_restore: "Sloučeného uživatele není možné obnovit"
     primary: Defaultní
     not_verified: Neověřeno

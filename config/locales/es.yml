@@ -4016,8 +4016,6 @@ es:
   import: Importar
   contains: Contiene
   import_solution_article_info: "Nota: No grabaremos los comentarios del foro"
-  no_anonymous_tickets: "Para enviar un ticket, <a href={{signup}}><b>Registrate</b></a> como nuevo usuario o <a href={{login}}><b>Inicia sesión</b></a>."
-  no_signup: "Para enviar un ticket <a href={{login}}><b>Iniciar sesión</b></a>."
   register: Registrar
   by: por
   portal:
@@ -4142,8 +4140,8 @@ es:
       reopen_reply: "Reabrir y responder"
       related_articles: "Artículos relacionados..."
   merge_contacts:
-    header: "Importante: <br />Vas a fusionar {{number}} contactos con {{name}}."
-    info: "Por favor ten en cuenta que funsionando moverás todos los emails, tickets, notas e información de contactos desde el contacto seleccionado a {{name}}. Además, los contactos fusionados serán marcados como eliminados y no podrán ser restaurados. <br /><br />Proceder a fusionar los contactos en {{name}}"
+    header: "Importante: <br />Vas a fusionar %{number} contactos con %{name}."
+    info: "Por favor ten en cuenta que funsionando moverás todos los emails, tickets, notas e información de contactos desde el contacto seleccionado a %{name}. Además, los contactos fusionados serán marcados como eliminados y no podrán ser restaurados. <br /><br />Proceder a fusionar los contactos en %{name}"
     invalid: "La dirección de correo provista no es válida"
     loading: "Preparand para Fusionar <img src='/images/loading.gif'>"
     email_activated: "id de email se encuentra activado"
@@ -4155,7 +4153,7 @@ es:
     removed: "Se ha elminado el id de email"
     confirm_and_merge: "Confirmar y Fusionar"
     activation_sent: "Se ha enviado la activación de correo. Por favor verifica antes de una semana"
-    client_manager: "Has seleccionado el Gestor de Clientes {{name}} para fusionar."
+    client_manager: "Has seleccionado el Gestor de Clientes %{name} para fusionar."
     cannot_restore: "El usuario fusionado no puede ser restaurado"
     primary: Defecto
     not_verified: "No Verficado"

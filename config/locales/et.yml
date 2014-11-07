@@ -3952,7 +3952,6 @@ et:
   import_solution_article_info: "Märkus: me ei salvesta foorumi kommentaare."
   ticket_close_success: "Sinu pilet on edukalt suletud."
   ticket_close_failure: "Pileti sulgemine ebaõnnestus."
-  no_anonymous_tickets: "Pileti esitamiseks <a href={{signup}}><b>registreeru</b></a> uue kasutajana või <a href={{login}}><b>logi sisse</b></a>."
   gamification:
     levels:
       beginner: Algaja
@@ -3981,7 +3980,6 @@ et:
       speed_trophie_info_group: "Grupp, mis sai sel kuul kiirete lahenduste eest maksimumpunktid"
       love_trophie_label_group: "Klientide lemmikud"
       love_trophie_info_group: "Grupp, mis sai sel kuul klientide rahulolu osas maksimumpunktid"
-  no_signup: "Pileti esitamiseks <a href={{login}}><b>logi palun sisse</b></a>."
   canned_folders:
     insert_placeholder: "Sisesta kohatäide"
     important: "Tähtis: "
@@ -4177,8 +4175,8 @@ et:
     js_forum_txt: "$$questmode$$ $$questvalue$$ foorumipostitust ajavahemikus $$questtime$$ ja vastavalt nendele tingimustele."
     js_quest_txt: "Väljakutse eduka saavutamise korral saad sa märgi nimega $$badgename$$ ja $$questpoints$$ boonuspunkti."
   merge_contacts:
-    header: "Tähtis:<br />sa oled mestimas {{number}} kontakti nimega {{name}}."
-    info: "Pane tähele, et mestimisel lähevad kõik e-kirjad, piletid, märkused ja kontaktandmed valitud kontaktide alt nime {{name}} alla. Lisaks märgitakse mestitud kontaktid kustutatuks ja neid ei saa taastada. <br /><br />Jätka kontaktide mestimist nime {{name}} alla."
+    header: "Tähtis:<br />sa oled mestimas %{number} kontakti nimega %{name}."
+    info: "Pane tähele, et mestimisel lähevad kõik e-kirjad, piletid, märkused ja kontaktandmed valitud kontaktide alt nime %{name} alla. Lisaks märgitakse mestitud kontaktid kustutatuks ja neid ei saa taastada. <br /><br />Jätka kontaktide mestimist nime %{name} alla."
     invalid: "Esitatud e-posti aadress on kehtetu"
     loading: "Mestimiseks valmistumine <img src='/images/loading.gif'>"
     email_activated: "e-posti ID on juba aktiveeritud"
@@ -4190,7 +4188,7 @@ et:
     removed: "E-posti ID on eemaldatud"
     confirm_and_merge: "Kinnita ja mesti"
     activation_sent: "Aktiveerimiskiri on saadetud. Palun kinnita ühe nädala jooksul."
-    client_manager: "Sa oled mestimiseks valinud kliendihalduri {{name}}."
+    client_manager: "Sa oled mestimiseks valinud kliendihalduri %{name}."
     cannot_restore: "Mestitud kasutajat ei saa taastada"
     primary: Vaikimisi
     not_verified: Verifitseerimata

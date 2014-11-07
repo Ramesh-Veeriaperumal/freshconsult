@@ -2698,8 +2698,6 @@ pt-BR:
     import: "Importar"
     contains: "Contém"
     import_solution_article_info: "Obs.: Não salvaremos os comentários do fórum."
-    no_anonymous_tickets: "Para enviar um ticket, <a href={{signup}}><b>cadastre-se</b></a> como um novo usuário ou <a href={{login}}><b>faça login</b></a>."
-    no_signup: "Para enviar um ticket, <a href={{login}}><b>faça login</b></a>."
     register: "Registrar"
     by: "por"
     portal: 
@@ -4992,8 +4990,8 @@ pt-BR:
         no_response_admin: "Nenhuma respostas nesta pasta <a href={{link}} id='new_resp'>Criar nova</a>"
         select_folder: "Selecionar pasta"
     merge_contacts: 
-        header: "Importante:<br />Você está prestes a mesclar {{number}} contatos com {{name}}."
-        info: "Observe que essa mesclagem moverá o todo o conjunto de e-mails, tickets, anotações e informações de contato dos contatos selecionados para {{name}}. Além disso, os contatos mesclados serão marcados como excluídos e não poderão ser restaurados. <br /><br />Continuar com a mesclagem dos contatos com {{name}}"
+        header: "Importante:<br />Você está prestes a mesclar %{number} contatos com %{name}."
+        info: "Observe que essa mesclagem moverá o todo o conjunto de e-mails, tickets, anotações e informações de contato dos contatos selecionados para %{name}. Além disso, os contatos mesclados serão marcados como excluídos e não poderão ser restaurados. <br /><br />Continuar com a mesclagem dos contatos com %{name}"
         invalid: "O endereço de e-mail fornecido é inválido"
         loading: "Preparando mesclagem <img src='/images/loading.gif'>"
         email_activated: "ID de e-mail já ativado"
@@ -5005,7 +5003,7 @@ pt-BR:
         removed: "ID de e-mail removido"
         confirm_and_merge: "Confirmar e mesclar"
         activation_sent: "E-mail de ativação enviado. Verifique no prazo de uma semana"
-        client_manager: "Você selecionou um Gerente de cliente {{name}} para mesclar."
+        client_manager: "Você selecionou um Gerente de cliente %{name} para mesclar."
         cannot_restore: "O usuário mesclado não pode ser restaurado"
         primary: "Padrão"
         not_verified: "Não verificado"

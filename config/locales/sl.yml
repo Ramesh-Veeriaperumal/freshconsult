@@ -3611,8 +3611,6 @@ sl:
   import: Uvozi
   contains: Vsebuje
   import_solution_article_info: "Obvestilo: Kometarji na forumu ne bodo shranjeni"
-  no_anonymous_tickets: "Za vnos zahtevka, se <a href={{signup}}><b> Registrirajte </b></a> kot nov uporabnik ali <a href={{login}}> <b>Prijavite </b></a>."
-  no_signup: "Za oddajo zahtevka. prosimo <a href={{login}}> <b> Prijavite se </b></a>."
   register: Registracija
   by: od
   portal:

@@ -2246,8 +2246,6 @@ pl:
   import: Importuj
   contains: Zawiera
   import_solution_article_info: "Uwaga: Nie zapiszemy komentarzy na forum."
-  no_anonymous_tickets: Aby przesłać zgłoszenie, <a href={{signup}}><b>Zarejestruj się</b></a> jako nowy użytkownik lub <a href={{login}}><b>Zaloguj</b></a>.
-  no_signup: Aby przesłać zgłoszenie, <a href={{login}}><b>Zaloguj się</b></a>.
   register: Zarejestruj
   by: przez
   portal:

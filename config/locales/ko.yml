@@ -2237,8 +2237,6 @@ ko:
     import: "가져오기"
     contains: "다음을 포함:"
     import_solution_article_info: "참고: 포럼 코멘트는 저장하지 않습니다."
-    no_anonymous_tickets: "티켓을 제출하려면 새 사용자로 <a href={{signup}}><b>가입하거나</b></a>   <a href={{login}}><b>로그인하십시오</b></a>."
-    no_signup: "티켓을 제출하려면 <a href={{login}}><b>로그인</b></a>하십시오."
     register: "등록"
     by: "담당자:"
     portal: 

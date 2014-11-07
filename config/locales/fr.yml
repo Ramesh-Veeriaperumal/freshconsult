@@ -2698,8 +2698,6 @@ fr:
     import: "Importer"
     contains: "Contient"
     import_solution_article_info: "Remarque : nous n'enregistrons pas les commentaires du forum."
-    no_anonymous_tickets: "Pour envoyer un ticket, <a href={{signup}}><b>inscrivez-vous</b></a>en tant que nouvel utilisateur ou <a href={{login}}><b>connectez-vous</b></a>."
-    no_signup: "Pour envoyer un ticket, veuillez vous <a href={{login}}><b>connecter</b></a>."
     register: "S'inscrire"
     by: "par"
     portal: 
@@ -4992,8 +4990,8 @@ fr:
         no_response_admin: "Aucune réponse dans le dossier <a href={{link}} id='new_resp'>Créer nouveau</a>"
         select_folder: "Choisir le dossier"
     merge_contacts: 
-        header: "Important :<br />Vous êtes sur le point de fusionner {{number}} contacts avec {{name}}."
-        info: "Remarque : la fusion supprimera tous les e-mails, tickets, notes et coordonnées des contacts sélectionnés dans {{name}}.  Les contacts fusionnés seront marqués comme supprimés et ne pourront pas être restaurés. <br /><br />Continuez pour fusionner les contacts dans {{name}}."
+        header: "Important :<br />Vous êtes sur le point de fusionner %{number} contacts avec %{name}."
+        info: "Remarque : la fusion supprimera tous les e-mails, tickets, notes et coordonnées des contacts sélectionnés dans %{name}.  Les contacts fusionnés seront marqués comme supprimés et ne pourront pas être restaurés. <br /><br />Continuez pour fusionner les contacts dans %{name}."
         invalid: "L'adresse e-mail fournie n'est pas valide"
         loading: "Préparation de la fusion <img src='/images/loading.gif'>"
         email_activated: "Identifiant d'e-mail déjà activé"
@@ -5005,7 +5003,7 @@ fr:
         removed: "Identifiant d'e-mail supprimé"
         confirm_and_merge: "Confirmer et fusionner"
         activation_sent: "E-mail d'activation envoyé. Veuillez vérifier sous une semaine."
-        client_manager: "Vous avez sélectionner un gestionnaire client {{name}} à fusionner."
+        client_manager: "Vous avez sélectionner un gestionnaire client %{name} à fusionner."
         cannot_restore: "Impossible de restaurer l'utilisateur fusionné"
         primary: "Par défaut"
         not_verified: "Non vérifiés"

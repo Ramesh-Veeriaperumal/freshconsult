@@ -2246,8 +2246,6 @@ sv-SE:
   import: Importera
   contains: Innehåller
   import_solution_article_info: Obs! Vi sparar inte forumkommentarerna
-  no_anonymous_tickets: För att skicka in ett ärende måste du antingen <a href={{signup}}><b>registrera dig</b></a> som en ny användare eller <a href={{login}}><b>logga in</b></a>.
-  no_signup: Du måste <a href={{login}}><b>logga in</b></a> för att skicka in ett nytt ärende.
   register: Registrera dig
   by: av
   portal:

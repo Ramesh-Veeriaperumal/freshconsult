@@ -4021,8 +4021,6 @@ ca:
   import: Importar
   contains: Conté
   import_solution_article_info: "Nota: no desarem els comentaris dels fòrums"
-  no_anonymous_tickets: "Per enviar una entrada, <a href={{signup}}><b>Registra't</b></a> Com un nou usuari o <a href={{login}}><b>Login</b></a>.\n"
-  no_signup: "Per enviar un tiquet, si us plau <a href={{login}}><b>inicia sessió</b></a>."
   register: Registrar
   by: per
   portal:
@@ -4147,8 +4145,8 @@ ca:
       reopen_reply: Respondre
       related_articles: "Articles relacionats..."
   merge_contacts:
-    header: "Important:<br />Estàs a punt de fusionar {{number}} contactes amb {{name}}."
-    info: "Tingues en compte que amb la fusió es mourà tot el conjunt de missatges de correu electrònic, tiquets, notes i informació del contacte seleccionat a {{name}}. A més, els contactes fusionats es marquen com esborrats i no poden ser restaurats . <br /><br />Procedeix a unir els contactes a {{name}}"
+    header: "Important:<br />Estàs a punt de fusionar %{number} contactes amb %{name}."
+    info: "Tingues en compte que amb la fusió es mourà tot el conjunt de missatges de correu electrònic, tiquets, notes i informació del contacte seleccionat a %{name}. A més, els contactes fusionats es marquen com esborrats i no poden ser restaurats . <br /><br />Procedeix a unir els contactes a %{name}"
     invalid: "El correu electrònic proporcionat no és vàlid"
     loading: "Combinar preparació <img src='/images/loading.gif'>"
     email_activated: "L'adreça de correu electrònic ja està activada"
@@ -4160,7 +4158,7 @@ ca:
     removed: "Identificador de correu electrònic eliminat"
     confirm_and_merge: "Confirmar i combinar"
     activation_sent: "Correu electrònic d'activació enviat. Si us plau, comprova-ho la propera setmana"
-    client_manager: "Has seleccionat un responsable de client {{name}} per a la fusió."
+    client_manager: "Has seleccionat un responsable de client %{name} per a la fusió."
     cannot_restore: "L'usuari fusionat no pot ser restaurat"
     primary: Defecte
     not_verified: "No verificat"

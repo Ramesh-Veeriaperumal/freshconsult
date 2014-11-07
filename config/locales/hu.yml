@@ -2812,8 +2812,6 @@ hu:
   incident: Eset
   import: Importálás
   import_solution_article_info: "Megjegyzés: fórum hozzászólások nincsenek elmentve"
-  no_anonymous_tickets: "Kérelem létrehozásához, kérjük <a href={{signup}}><b>Regisztráljon</b></a>új ügyfélként vagy <a href={{login}}><b>Lépjen be</b></a>"
-  no_signup: "Kérelem létrehozásához kérjük <a href={{login}}><b>Lépjen be</b></a>."
   portal:
     cookie:
       cookie_policy: "Cookie használat"

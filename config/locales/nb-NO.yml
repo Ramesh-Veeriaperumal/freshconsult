@@ -2591,8 +2591,6 @@ nb-NO:
   import: Importer
   contains: Inneholder
   import_solution_article_info: "Merk: Vi vil ikke lagre forum-kommentarene"
-  no_anonymous_tickets: "For å registrere en sak må du <a href={{signup}}><b>registrere deg</b></a> som ny bruker eller <a href={{login}}><b>logge inn</b></a>."
-  no_signup: "For å registrere en sak, <a href={{login}}><b>Logg inn</b></a>."
   register: Registrere
   by: av
   portal:
