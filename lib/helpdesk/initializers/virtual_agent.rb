@@ -16,10 +16,11 @@ module VAConfig
   INSTALLED_APP_BUSINESS_RULE = 12
   API_WEBHOOK_RULE = 13
 
+  # TODO-RAIL3:: Get these I18N based constants out of Initializers
   CREATED_DURING_VALUES = [
-    [ :business_hours, I18n.t('ticket.created_during.business_hours'), "business_hours"],
-    [ :non_business_hours, I18n.t('ticket.created_during.non_business_hours'), "non_business_hours"],
-    [ :holidays, I18n.t('ticket.created_during.holidays'), "holidays"]
+    [ :business_hours, "Business Hours", "business_hours"],
+    [ :non_business_hours, "Non-Business Hours", "non_business_hours"],
+    [ :holidays, "Holidays", "holidays"]
   ]
 
   CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
