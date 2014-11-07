@@ -44,12 +44,6 @@ GIT
     class_inheritable_attributes (0.0.2)
 
 GIT
-  remote: git://github.com/d3chapma/map-fields
-  revision: 188990d4dd069c2cc55d84391e90790394595964
-  specs:
-    map_fields (1.0.5)
-
-GIT
   remote: git://github.com/freshdesk/Marketo.git
   revision: 5f53130eb61d751b90e6a7f8b1452b308f15a39a
   specs:
@@ -74,6 +68,13 @@ GIT
   revision: dc9cca3cc2114f6e935447a1a45e69c16338c935
   specs:
     lhm (1.2.0)
+
+GIT
+  remote: git://github.com/freshdesk/map-fields
+  revision: ea166ab63976b3b3ce1a7f5ae0c440f5db87cee1
+  branch: csv_import
+  specs:
+    map_fields (1.0.5)
 
 GIT
   remote: git://github.com/freshdesk/rate-limiting.git
