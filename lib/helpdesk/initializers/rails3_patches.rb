@@ -67,3 +67,16 @@ module ActionView
     end
   end
 end
+
+# In Rails 3. submit button we are not getting id.This method is for QA Automation
+module ActionView
+  module Helpers
+    class FormBuilder
+      def submit(value=nil, options={})
+        value, options = nil, value if value.is_a?(Hash)
+        value ||= submit_default_value
+        @template.submit_tag(value, options.reverse_merge(:id => "#{object_name}_submit"))
+      end
+    end
+  end
+end
