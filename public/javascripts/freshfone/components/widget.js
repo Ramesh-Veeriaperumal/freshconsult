@@ -174,12 +174,18 @@ var FreshfoneWidget;
 		},
 		bindDeskNotifierButton: function () {
 				if(this.isSupportWebNotification && Notification.permission == 'default' && (!freshfonecalls.isOutgoing())) {
-					this.desktopNotifierWidget.show();
+					this.desktopNotifierWidget
+						.show()
+						.on("click", function () {
+							Notification.requestPermission( function () {
+								freshfonewidget.desktopNotifierWidget.hide();
+							});
+						});
+
 				} else {
 					this.desktopNotifierWidget.hide();
 				}
 		}
-
 	};
 	
 	$(window).on("load", function () {
