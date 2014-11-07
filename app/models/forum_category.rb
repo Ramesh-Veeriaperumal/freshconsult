@@ -26,7 +26,7 @@ class ForumCategory < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  attr_accessible :name,:description , :import_id
+  attr_accessible :name,:description , :import_id, :position
   belongs_to :account
 
   acts_as_list :scope => :account

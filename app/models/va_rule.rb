@@ -22,7 +22,7 @@ class VaRule < ActiveRecord::Base
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event
 
-  attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type
+  attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
   belongs_to :account
   
