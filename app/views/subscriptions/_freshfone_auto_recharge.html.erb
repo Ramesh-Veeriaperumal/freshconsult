@@ -21,7 +21,7 @@
 				</div>
 			</div>
 		<% end %>
-		<%= form_for :freshfone_credits, @freshfone_credit,
+		<%= form_for @freshfone_credit,
 						:url => {:action => "enable_auto_recharge", :controller => "admin/freshfone/credits"}, 
 						:html => {:class => "auto_recharge_form", :method => :put} do |f| %>
 

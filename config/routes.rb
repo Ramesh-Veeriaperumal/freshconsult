@@ -820,6 +820,7 @@ Helpkit::Application.routes.draw do
           put :disable_auto_recharge
           put :enable_auto_recharge
           post :purchase
+          put  :purchase
         end
       end
     end
