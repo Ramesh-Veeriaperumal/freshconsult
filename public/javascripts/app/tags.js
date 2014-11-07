@@ -109,17 +109,17 @@ $(document).ready(function(){
 
 
     $('.tag-list').on('click.tag_index', '#tag-delete', function(e) {
+
+        //TODO:DIALOG remove dialog and convert to Bootstrap dialog
         $( "#tag-delete-confirm" ).dialog({
             resizable: false,
-            height:150,
+            height: 150,
             modal: true,
             buttons: {
-
 
                 Cancel: {
                     text:"Cancel",
                     class:"btn",
-                    style:"margin: 5px;",
                     click:function() {
                         $( this ).dialog( "close" );
                     }
@@ -128,7 +128,6 @@ $(document).ready(function(){
                 "Delete Tags": {
                     text:"Delete Tags",
                     class:"btn btn-primary",
-                    style:"margin: 5px",
                     click:function() {
                         var form = $("#tags-expanded");
                         form.submit();
@@ -228,7 +227,7 @@ $(document).ready(function(){
     $('.tag-list').on('click.tag_index', '.removetag', function(ev) {
 
         var tag_association = $(this) ;
-
+        //TODO:DIALOG remove dialog and convert to Bootstrap dialog
         $( "#tag-remove-confirm" ).dialog({
             resizable: false,
             height:150,
@@ -298,6 +297,7 @@ $(document).ready(function(){
 
                 if(status["status"] === "existing_tag" )
                 {
+                    //TODO:DIALOG remove dialog and convert to Bootstrap dialog
                     $( "#tag-dialog-confirm" ).dialog({
                         resizable: false,
                         height:150,
