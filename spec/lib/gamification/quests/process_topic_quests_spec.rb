@@ -138,7 +138,7 @@ RSpec.describe Gamification::Quests::ProcessTopicQuests do
 				@user.achieved_quests.find_by_quest_id(quest.id).should_not be_nil
 
 				sb_level = @account.scoreboard_levels.level_for_score(total_points).first
-				@user.agent.scoreboard_level_id.should eql(sb_level.id)
+				@user.agent.scoreboard_level_id.should eql(sb_level.id) if sb_level
 				quest_points += quest.points
 			}
 			bonus_pts = total_points - exiting_pts
