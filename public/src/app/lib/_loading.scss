@@ -6,7 +6,11 @@
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
 .loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif') no-repeat; } 
-.response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
+.response-loading #resp-icon{ 
+	background: image-url('/images/animated/canned-response.gif') no-repeat !important; 
+	@include padding-left(5px); 
+	font-size: 0;
+}
 #ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
 #tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
 .loading-fb, .request_details .request-cnt-first .loading-edit, .due-date-dialog .calender-buttons .loading-item{ 
