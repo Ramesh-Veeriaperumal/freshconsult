@@ -25,11 +25,11 @@ class EmailController < ApplicationController
 
   private
 
-    def log_file
-      @log_file_path = "#{Rails.root}/log/incoming_email.log"      
-    end
+    # def log_file
+    #   @log_file_path = "#{Rails.root}/log/incoming_email.log"      
+    # end
 
-    def logging_format
-      @log_file_format = %(from_email : #{params[:from]}, to_emails : #{params[:to]}, envelope : #{params[:envelope]})
-    end
+    # def logging_format
+    #   @log_file_format = %(from_email : #{params[:from]}, to_emails : #{params[:to]}, envelope : #{params[:envelope]})
+    # end
 end
