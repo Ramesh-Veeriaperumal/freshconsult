@@ -55,14 +55,11 @@ module ActionView
     end
 
     class InstanceTag
-      def to_select_tag(choices, options, html_options)# fix for multiselect returning [] if nothing is selected
+      def select_content_tag(option_tags, options, html_options)
         html_options = html_options.stringify_keys
         add_default_name_and_id(html_options)
-        value = value(object)
-        selected_value = options.has_key?(:selected) ? options[:selected] : value
-        disabled_value = options.has_key?(:disabled) ? options[:disabled] : nil
-        content_tag("select", add_options(options_for_select(choices, :selected => selected_value, 
-          :disabled => disabled_value), options, selected_value), html_options)
+        select = content_tag("select", add_options(option_tags, options, value(object)), html_options)
+        select
       end
     end
   end
