@@ -245,7 +245,7 @@ class AccountsController < ApplicationController
   
   def delete_logo
     current_account.main_portal.logo.destroy
-    current_account.main_portal.touch
+    current_account.main_portal.save
     respond_to do |format|
       format.html { redirect_to :back }
       format.js { render :text => "success" }
@@ -254,7 +254,7 @@ class AccountsController < ApplicationController
   
   def delete_favicon
     current_account.main_portal.fav_icon.destroy
-    current_account.main_portal.touch
+    current_account.main_portal.save
     
     respond_to do |format|
       format.html { redirect_to :back }

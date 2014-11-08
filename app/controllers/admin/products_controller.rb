@@ -84,7 +84,7 @@ class Admin::ProductsController < Admin::AdminController
     def delete_icon(icon_type)
       portal = current_account.portals.find(params[:id])
       portal.send(icon_type).destroy
-      portal.touch
+      portal.save
       redirect_to :back
       # render :text => "success"
     end
