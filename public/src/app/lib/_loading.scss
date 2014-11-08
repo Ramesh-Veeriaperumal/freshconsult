@@ -5,16 +5,16 @@
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif') no-repeat; } 
+.loading-amount, .ui-after-submit{ background-image:image-url('/assets/animated/ajax-loader.gif') no-repeat; } 
 .response-loading #resp-icon{ 
-	background: image-url('/images/animated/canned-response.gif') no-repeat !important; 
+	background: image-url('/assets/animated/canned-response.gif') no-repeat !important; 
 	@include padding-left(5px); 
 	font-size: 0;
 }
-#ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
-#tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
+#ticket_list_count.fetching{ background: image-url("/assets/animated/ticket-count.gif"); }
+#tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/assets/animated/loading.gif'); }
 .loading-fb, .request_details .request-cnt-first .loading-edit, .due-date-dialog .calender-buttons .loading-item{ 
-	background-image:image-url('/images/animated/load-fb-style.gif'); background-repeat:no-repeat;
+	background-image:image-url('/assets/animated/load-fb-style.gif'); background-repeat:no-repeat;
 }
 
 /*.ajax-loader, .loading, .loading-right, .loading-center, .loading-box, .loading-fb, .paddingloading{*/
