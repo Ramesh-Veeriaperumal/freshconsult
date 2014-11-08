@@ -143,7 +143,10 @@
 
 					<!--Agents-->
 					<div class="slide">
-						<%= form_for @agent, :url => create_multiple_items_agents_path(), :remote => true, :html => { :method => :put,:id =>"agent_invite" } do |f| %>
+						<%= form_for @agent, :url => create_multiple_items_agents_path(), 
+									:remote => true, 
+									:html => { :method => :put, :id => "agent_invite", "data-type" => "script" } do |f| %>
+									
 						<div class="slide-left-panel small-slide-left-panel">
 								<h4><%=t(".agents_subtitle")%></h4>
 								<div class="textbox-note"><%=t(".agent_title_info")%></div>
