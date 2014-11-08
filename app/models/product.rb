@@ -9,6 +9,7 @@ class Product < ActiveRecord::Base
   after_create :create_chat_widget
 
   after_commit :clear_cache
+  after_update :widget_update
 
   belongs_to :account
   has_one    :portal               , :dependent => :destroy
@@ -63,6 +64,23 @@ class Product < ActiveRecord::Base
       primary_email_config.update_attribute(:primary_role, false)
     end
 
+
+   def widget_update
+
+    if account.features?(:chat) && name_changed?
+       chat_widget.update_attributes(:name => name)
+        #####
+        # Updating name in widgets table of Freshchat DB.
+        #####
+        Rails.logger.debug " Sending the Product Data to FreshChat through Resque"
+        Resque.enqueue(Workers::Freshchat, { :worker_method => "update_widget", 
+                                             :siteId => account.chat_setting.display_id,
+                                             :widget_id => chat_widget.widget_id,
+                                             :attributes => { :name => name}
+                                            })
+      end
+   end
+
     def create_chat_widget
       if account.features?(:chat)
         chat_setting = account.chat_setting
@@ -73,11 +91,13 @@ class Product < ActiveRecord::Base
         chat_widget.active = false
         chat_widget.show_on_portal = false
         chat_widget.portal_login_required = false
+        chat_widget.name = name
         chat_widget.save
         Resque.enqueue( Workers::Freshchat, {
           :id     => account_id,
           :url    => account.full_domain, 
           :status => 0,
+          :name => name,
           :external_id => id,
           :protocol => account.url_protocol+':',
           :siteId => chat_setting.display_id, 
