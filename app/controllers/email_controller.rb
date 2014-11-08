@@ -11,7 +11,7 @@ class EmailController < ApplicationController
   skip_before_filter :check_account_state, :except => [:show,:index]
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
-  skip_before_filter :logging_details, :only => :new
+  skip_before_filter :logging_details
   
   def new
     render :layout => false
