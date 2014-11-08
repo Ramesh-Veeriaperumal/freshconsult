@@ -341,6 +341,12 @@ class Subscription < ActiveRecord::Base
     self.update_billing_address(card)
   end
 
+  def clear_billing_info
+    self.card_number = nil
+    self.card_expiration = nil
+    self.billing_id = nil
+  end
+
   protected
   
     def non_social_plans
@@ -414,12 +420,6 @@ class Subscription < ActiveRecord::Base
 
     def address(card)
       ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = card.send(v); h }
-    end
-    
-    def clear_billing_info
-      self.card_number = nil
-      self.card_expiration = nil
-      self.billing_id = nil
     end
     
     def config_from_file(file)
