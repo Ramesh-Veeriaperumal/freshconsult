@@ -71,7 +71,12 @@ Helpkit::Application.configure do
     Sass::Plugin.options[:never_update] = true
   end
 
-  config.action_controller.asset_host = "//d31jxxr9fvyo78.cloudfront.net"
+  # Need to set records for assets1..10.freshdesk.com
+  config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
+    asset_host_url = "http://assets%d.freshdesk.com" % (rand(9)+1)
+    asset_host_url = "https://d31jxxr9fvyo78.cloudfront.net" if request && request.ssl?
+    asset_host_url
+  }
 
 end
 
@@ -83,12 +88,3 @@ if defined?(PhusionPassenger)
     end
   end
 end
-
-# Enable serving of images, stylesheets, and javascripts from an asset server
-# config.action_controller.asset_host                  = "http://assets.example.com"
-ActionController::Base.asset_host =  Proc.new { |source, request|
-  params = request.parameters
-  if params['format'] == 'widget'
-    "https://asset.freshdesk.com"
-  end
-}
