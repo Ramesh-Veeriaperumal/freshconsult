@@ -342,16 +342,17 @@
       'float': 'right'
     }).appendTo($f);
     
-    $(img).attr({
-      'src': $o.imageFolder + 'meta100.png',
-      'title': $i.slogan,
-      'alt': $i.slogan
-    }).css({
-      'border': 0,
-      'border-left': '1px solid #aaa',
-      'right': 0,
-      'position': 'absolute'
-    }).appendTo($l);
+    // Removing meta100 from colorpicker
+    // $(img).attr({
+    //   'src': $o.imageFolder + 'meta100.png',
+    //   'title': $i.slogan,
+    //   'alt': $i.slogan
+    // }).css({
+    //   'border': 0,
+    //   'border-left': '1px solid #aaa',
+    //   'right': 0,
+    //   'position': 'absolute'
+    // }).appendTo($l);
 
     $('.mNoLeftBorder').css({
       'border-left':0
