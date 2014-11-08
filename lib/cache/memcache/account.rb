@@ -33,7 +33,7 @@ module Cache::Memcache::Account
 
   def ticket_types_from_cache
     key = ticket_types_memcache_key
-    MemcacheKeys.fetch(key) { ticket_type_values }
+    MemcacheKeys.fetch(key) { ticket_type_values.all }
   end
 
   def agents_from_cache
