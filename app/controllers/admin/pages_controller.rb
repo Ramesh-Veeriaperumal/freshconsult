@@ -26,6 +26,7 @@ class Admin::PagesController < Admin::AdminController
       format.html { 
         set_preview_and_redirect(get_redirect_portal_url) if params[:preview_button]
       }
+      format.js
     end
   end
 

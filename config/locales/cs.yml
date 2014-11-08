@@ -3993,7 +3993,7 @@ cs:
     updated: "Složka pro připravené odpovědi byla úspěšně upravena !!"
     deleted: "Složka pro připravené odpovědi byla úspěšně smazána."
     no_folders: "Žádné připravené odpovědi"
-    folder_update: "Vybrané odpovědi byly přesunuty do složky: {{folder_name}}"
+    folder_update: "Vybrané odpovědi byly přesunuty do složky: %{folder_name}"
     update: "Připravená odpověď byla úspěšně upravena."
     created: "Připravená odpověď byla úspěšně vytvořena."
     delete_multiple: "Zvolená připravená odpověď nemohla být smazána!!"
@@ -4057,8 +4057,6 @@ cs:
   import: Import
   contains: Obsahuje
   import_solution_article_info: "Poznámka: Neukládáme komentáře k fórům"
-  no_anonymous_tickets: "Pro odeslání požadavku se <a href={{signup}}><b>zregistrujte</b></a> jako nový uživatel nebo se <a href={{login}}><b>přihlašte</b></a>."
-  no_signup: "Pro odeslání požadavku se, prosím, <a href={{login}}><b>přihlašte</b></a>."
   register: Registrovat
   by: podle
   portal:
@@ -4195,8 +4193,8 @@ cs:
       reopen_reply: Odpovědět
       related_articles: "Podobné články..."
   merge_contacts:
-    header: "Důležité: <br />snažíte se sloučit {{number}} pracovníků s {{name}}."
-    info: "Uvědomte si, prosím, že spojením se přesunou všechny maily, požadavky, poznámky a kontaktní informace zvoleného pracovníka do {{name}}. Navíc - spojení pracovníci budou označeni jako smazaní a nebude možné je obnovit! <br /> <br />Pokračovat ve spojení pracovníků do {{name}}"
+    header: "Důležité: <br />snažíte se sloučit %{number} pracovníků s %{name}."
+    info: "Uvědomte si, prosím, že spojením se přesunou všechny maily, požadavky, poznámky a kontaktní informace zvoleného pracovníka do %{name}. Navíc - spojení pracovníci budou označeni jako smazaní a nebude možné je obnovit! <br /> <br />Pokračovat ve spojení pracovníků do %{name}"
     invalid: "Vložená e-mailová adresa není platná"
     loading: "Příprava na sloučení <img src='/images/loading.gif'>"
     email_activated: "e-mail je již aktivován"
@@ -4208,7 +4206,7 @@ cs:
     removed: "ID e-mailu bylo odstraněno"
     confirm_and_merge: "Potvrdit a sloučit"
     activation_sent: "Aktivační e-mail byl odeslán. Prosíme, potvrďte jej nejpozději do týdne."
-    client_manager: "Vybrali jste pro sloučení Client Manager {{name}}."
+    client_manager: "Vybrali jste pro sloučení Client Manager %{name}."
     cannot_restore: "Sloučeného uživatele není možné obnovit"
     primary: Defaultní
     not_verified: Neověřeno
@@ -5090,7 +5088,7 @@ cs:
         message_thread_time: "Doba vlákna zpráv"
         message_thread_time_info: "Maximální doba, po kterou se budou považovat zprávy od jednoho uživatele za vlákno  "
         direct_messages: "Importovat <strong>&quot;přímé zprávy&quot;</strong> jako lístek"
-        direct_messages_info: "FreshDesk převede všechny přímé zprávy na této stránce Facebooku na požadavky. Pokud tuto funkci zapínáte poprvé, může být nutné <a href='{{reauth_url}}'>znova se přihlásit na Facebook</a>"
+        direct_messages_info: "FreshDesk převede všechny přímé zprávy na této stránce Facebooku na požadavky. Pokud tuto funkci zapínáte poprvé, může být nutné <a href='%{reauth_url}'>znova se přihlásit na Facebook</a>"
     twitter_handles:
       index:
         go_to_ticket: "Jít na požadavek"
@@ -5690,7 +5688,7 @@ cs:
     inactive_info1: "Všechny vaše e-maily pro podporu jsou ještě nepotvrzené; musíte potvrdit alespoň jeden e-mail pro podporu"
     info14: "Každý e-mail odeslaný na tuto adresu bude převeden na požadavek"
     info4: "<strong>POZNÁMKA:</strong> Máte-li více e-mailových adres pro podporu různých produktů, <a href='{{products_path}}'>můžete je přidat sem</a>."
-    spf_info: "Odpovědní e-maily z FreshDesku budou automaticky používat vaši e-mailovou adresu podpory jako adresu odesílatele. Pro zajištění řádného doručení e-mailů bude třeba vytvořit <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPC záznam</a> v DNS vaší zóny."
+    spf_info: "Odpovědní e-maily z FreshDesku budou automaticky používat vaši e-mailovou adresu podpory jako adresu odesílatele. Pro zajištění řádného doručení e-mailů bude třeba vytvořit <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPC záznam</a> v DNS vaší zóny."
     reply_email: "Váš e-mail podpory"
     unverified_info1: "Prosím aktivujte tento e-mail kliknutím na verifikační odkaz ve zprávě, kterou najdete v příchozí poště."
     inactive_info2: "Od teď bude standardní e-mail \"%{default_email}\" použit jako odpovědní e-mail."
@@ -5698,8 +5696,8 @@ cs:
     helpcard:
       tour1: "Pomozte mi nastavit můj e-mail podpory"
       tour2: "Pomozte mi nakonfigurovat vícenásobné e-mailové schránky"
-      info5: "Vaše implicitní e-mailová adresa je <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Jakýkoli e-mail odeslaný na tuto adresu bude automaticky převeden na požadavek se kterým můžete dále pracovat."
-      info19: "Váš účet na FreshDesku můžete nakonfigurovat tak, aby používal e-mail podpory z vaší vlastní domény, např. support@mycompany.com pomocí přesposlání e-mailu z této adresy na <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Pro vytvoření nového e-mailové schránky podpory klikněte ne tlačítko \"Upravit\" pod globálním nastavením e-mailu."
+      info5: "Vaše implicitní e-mailová adresa je <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Jakýkoli e-mail odeslaný na tuto adresu bude automaticky převeden na požadavek se kterým můžete dále pracovat."
+      info19: "Váš účet na FreshDesku můžete nakonfigurovat tak, aby používal e-mail podpory z vaší vlastní domény, např. support@mycompany.com pomocí přesposlání e-mailu z této adresy na <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Pro vytvoření nového e-mailové schránky podpory klikněte ne tlačítko \"Upravit\" pod globálním nastavením e-mailu."
       edit_info: "Pro založení nové e-mailové schránky podpory klikněte na \"Upravit\" v sekci  Nastavení emailů"
       info20: "Použití vícenásobných e-mailových schránek"
       info21: "Na helpdesk je možné přidávat neomezené množství příchozích i odchozích e-mailových schránek (např. info@yourcompany.com, sales@yourcompany.com, atd.). Každá tato schránky může být automaticky přiřazena k nějaké skupině podpory."
@@ -5715,7 +5713,7 @@ cs:
     info18: "Automatická adresa Skryté kopie vkládaná do odpovědí na požadavky"
     email_added_succ_msg: "E-mail byl přidán"
     assign_to_product_msg: "Propojit tento e-mail podpory s produktem"
-    assign_to_product_info: "Chcete-li propojit e-mail s novým produktem <a href='{{products_path}}'>, přidejte nejprve produkt </a>"
+    assign_to_product_info: "Chcete-li propojit e-mail s novým produktem <a href='%{products_path}'>, přidejte nejprve produkt </a>"
     new_support_email: "Nový e-mail podpory"
     global_support_emails: "E-maily globální podpory"
     support_email: "E-mail podpory"

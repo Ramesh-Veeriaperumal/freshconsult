@@ -10,11 +10,11 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   has_many :sub_picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue', :include => :sub_picklist_values,
     :dependent => :destroy
   
+  attr_accessible :value, :choices, :position
+  
   acts_as_list :scope => 'pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
    \'#{pickable_type}\''
   before_create :set_account_id
-
-  attr_accessible :value, :choices
 
   def choices=(c_attr)
     sub_picklist_values.clear

@@ -433,13 +433,13 @@ Helpkit::Application.routes.draw do
       get :get_available_agents
       get :credit_balance
       post :ivr_flow
-      get :preview_ivr
       post :voice_fallback
       post :create_note
       post :create_ticket
     end
   end
 
+  match '/freshfone/preview_ivr/:id' => 'freshfone#preview_ivr', :via => :post
 
   resources :users do
     collection do

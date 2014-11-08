@@ -8909,7 +8909,9 @@ var uiDialogClasses =
 		minWidth: true
 	},
 	// support for jQuery 1.3.2 - handle common attrFn methods for dialog
-	attrFn = $.attrFn || {
+	// Directly calling attrFn direcly in jquery ui 1.8.2 as its blank in jquery 1.8.3
+	// attrFn = $.attrFn || {
+	attrFn = {
 		val: true,
 		css: true,
 		html: true,

@@ -207,7 +207,7 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages].delete_if{ |lang| lang.empty? } if dynamic_content_available?
+    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if dynamic_content_available?
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]

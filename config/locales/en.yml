@@ -2773,8 +2773,6 @@ en:
   import: Import
   contains: Contains
   import_solution_article_info: "Note: We will not save the forum comments"
-  no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
-  no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   register: Register
   by: by
   portal:
@@ -3224,7 +3222,7 @@ en:
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
     info14: Any email sent to this address will be converted as a ticket
     info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
-    spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
+    spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="%{solution_url}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: Your support email
     unverified_info1:  Please activate this email by clicking on the verification link in your inbox.
     inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
@@ -3233,14 +3231,14 @@ en:
       tour1: Help me setup my support email
       tour2: Help me configure multiple mailboxes
       info5: Your default support email address is
-                      <a class='break-all' target="_blank" href="https://{{solution_url}}">
-                      {{solution_url}}</a>.
+                      <a class='break-all' target="_blank" href="https://%{solution_url}">
+                      %{solution_url}</a>.
                       Any email sent here gets automatically converted into a ticket that you can
                       get working on.
       info19: You can configure your Freshdesk account to use a support email in your own domain,
                       like support@mycompany.com by forwarding emails from this address to
-                      <a class='break-all' target="_blank" href="https://{{solution_url}}">
-                        {{solution_url}}</a>.
+                      <a class='break-all' target="_blank" href="https://%{solution_url}">
+                        %{solution_url}</a>.
       edit_info: To create a new support email box, click “Edit” under global email settings.
       info20: Using Multiple Mailboxes
       info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com,
@@ -3258,7 +3256,7 @@ en:
     info18: Automatic bcc address included in ticket replies
     email_added_succ_msg: The email has been added
     assign_to_product_msg: Link this support email with a product
-    assign_to_product_info: If you want to link the email to a new product first <a href='{{products_path}}'> add product </a>
+    assign_to_product_info: If you want to link the email to a new product first <a href='%{products_path}'> add product </a>
     new_support_email: New Support Email
     global_support_emails: Global Support Emails
     support_email: Support Email
@@ -4346,7 +4344,7 @@ en:
         message_thread_time: Message Thread Time
         message_thread_time_info: Maximum time to consider messages from same user as threaded
         direct_messages: Import <strong>"Direct messages"</strong> as ticket
-        direct_messages_info: Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>
+        direct_messages_info: Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='%{reauth_url}'>Reauthorize with Facebook</a>
     twitter_handles:
       index:
         go_to_ticket: Go to Ticket
@@ -5207,7 +5205,7 @@ en:
     updated: "Canned Response Folder has been updated successfully !!"
     deleted: "Canned Response Folder has been deleted successfully."
     no_folders: "No Canned Responses"
-    folder_update: "Selected responses have been moved to the folder: {{folder_name}}"
+    folder_update: "Selected responses have been moved to the folder: %{folder_name}"
     update: "Canned Response was successfully updated."
     created: "Canned Response was successfully created."
     delete_multiple: "The selected canned responses were deleted!!"
@@ -5216,8 +5214,8 @@ en:
     no_response_admin: "No responses in this folder <a href=%{link} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
   merge_contacts:
-    header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."
-    info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
+    header: "Important:<br />You are about to merge %{number} contacts with %{name}."
+    info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into %{name}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into %{name}"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
     email_activated: "email id already activated"
@@ -5229,7 +5227,7 @@ en:
     removed: "E-Mail id removed"
     confirm_and_merge: "Confirm and Merge"
     activation_sent: "Activation mail sent. Please verify within a week"
-    client_manager: "You have selected a Client Manager {{name}} to merge."
+    client_manager: "You have selected a Client Manager %{name} to merge."
     cannot_restore: "Merged user cannot be restored"
     primary: "Default"
     not_verified: "Not Verified"

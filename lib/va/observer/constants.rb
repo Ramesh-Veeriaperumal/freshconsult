@@ -8,9 +8,11 @@ module Va::Observer::Constants
 											'SurveyResult' => :customer_id,
 											'Helpdesk::TimeSheet' => :user_id }
 
-	TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by,
-										:time_sheet_action, :deleted, :spam, :reply_sent, :note_type,
-										:customer_feedback ]
+  #For Rails3 migration. TODO - Fix this
+	# model_changes is a HashWithIndifferentAccess, hence .keys returns strings and the rest are retained as symbols
+	#  to reduce regressions
+	TICKET_EVENTS = [ 'status', 'priority', 'ticket_type', 'group_id', 'responder_id', 'due_by', 'deleted', 'spam',
+										:time_sheet_action, :reply_sent, :note_type, :customer_feedback]
 
 	TICKET_UPDATED = { :ticket_action => :update }
 	TICKET_DELETED = { :ticket_action => :delete }
@@ -25,3 +27,4 @@ module Va::Observer::Constants
 												}		
 
 end
+

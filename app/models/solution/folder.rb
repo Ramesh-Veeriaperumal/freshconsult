@@ -11,8 +11,6 @@ class Solution::Folder < ActiveRecord::Base
   belongs_to :category, :class_name => 'Solution::Category'
   self.table_name =  "solution_folders"
   
-  acts_as_list :scope => :category
-  
   before_create :populate_account
   after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
@@ -28,6 +26,8 @@ class Solution::Folder < ActiveRecord::Base
   scope :alphabetical, :order => 'name ASC'
 
   attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default, :customer_folders_attributes
+  
+  acts_as_list :scope => :category
   
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 

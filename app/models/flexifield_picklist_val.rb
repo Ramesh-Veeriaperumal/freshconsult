@@ -1,6 +1,6 @@
 class FlexifieldPicklistVal < ActiveRecord::Base
   
-  attr_accessible :flexifield_def_entry_id, :value
+  attr_accessible :flexifield_def_entry_id, :value, :position
   
   belongs_to :flexifield_def_entry
   

@@ -43,3 +43,40 @@ module Foo
 end
  
 ActiveRecord::Base.send(:include, Foo::CommittedWithExceptions)
+
+# for rails 3 rendering a hidden input tag with nil value to update the attr, if no input is given
+module ActionView
+  module Helpers
+    module FormHelper
+      def check_box(object_name, method, options = {}, checked_value = "1", unchecked_value = "0")
+        InstanceTag.new(object_name, method, self, 
+                        options.delete(:object)).to_check_box_tag(options, checked_value.to_s, unchecked_value.to_s)
+      end
+    end
+
+    class InstanceTag
+      def to_select_tag(choices, options, html_options)# fix for multiselect returning [] if nothing is selected
+        html_options = html_options.stringify_keys
+        add_default_name_and_id(html_options)
+        value = value(object)
+        selected_value = options.has_key?(:selected) ? options[:selected] : value
+        disabled_value = options.has_key?(:disabled) ? options[:disabled] : nil
+        content_tag("select", add_options(options_for_select(choices, :selected => selected_value, 
+          :disabled => disabled_value), options, selected_value), html_options)
+      end
+    end
+  end
+end
+
+# In Rails 3. submit button we are not getting id.This method is for QA Automation
+module ActionView
+  module Helpers
+    class FormBuilder
+      def submit(value=nil, options={})
+        value, options = nil, value if value.is_a?(Hash)
+        value ||= submit_default_value
+        @template.submit_tag(value, options.reverse_merge(:id => "#{object_name}_submit"))
+      end
+    end
+  end
+end

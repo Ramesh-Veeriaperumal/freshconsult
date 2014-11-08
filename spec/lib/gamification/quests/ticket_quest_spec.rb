@@ -1,16 +1,17 @@
 require 'spec_helper'
 include Gamification::Quests::Constants
+include Gamification::Scoreboard::Constants
 
 RSpec.describe Gamification::Quests::ProcessTicketQuests do
   self.use_transactional_fixtures = false
   
-  FAST_RESOLUTION_POINTS = 10
-  FIRST_CALL_RESOLUTION_POINTS = 5
-  HAPPY_CUSTOMER_POINTS = 10
-  OVERALL_RESOLUTION_POINTS = FAST_RESOLUTION_POINTS + FIRST_CALL_RESOLUTION_POINTS
-  
   before(:all) do
-    before_all_call
+    @account  = create_test_account
+    @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
+    FAST_RESOLUTION_POINTS = @account.scoreboard_ratings.find_by_resolution_speed(FAST_RESOLUTION).score
+    FIRST_CALL_RESOLUTION_POINTS = @account.scoreboard_ratings.find_by_resolution_speed(FIRST_CALL_RESOLUTION).score
+    HAPPY_CUSTOMER_POINTS = @account.scoreboard_ratings.find_by_resolution_speed(HAPPY_CUSTOMER).score
+    OVERALL_RESOLUTION_POINTS = FAST_RESOLUTION_POINTS + FIRST_CALL_RESOLUTION_POINTS
   end
   
   # Assuming all the tickets are resolved fast and in first call
@@ -40,8 +41,8 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       ticket.update_attributes(:status => 4)
       ticket.reload
       @agent.reload
-      excpected_agent_points = OVERALL_RESOLUTION_POINTS
-      @agent.points.should eql(excpected_agent_points)
+      expected_agent_points = OVERALL_RESOLUTION_POINTS
+      @agent.points.should eql(expected_agent_points)
       @agent.achieved_quests.should be_empty
     end
     
@@ -52,8 +53,8 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       ticket.update_attributes(:status => 4)  # Status changed to resolved
       ticket.reload
       @agent.reload
-      excpected_agent_points = 2 * OVERALL_RESOLUTION_POINTS # 2 tickets have been resolved till the point
-      @agent.points.should eql(excpected_agent_points)
+      expected_agent_points = 2 * OVERALL_RESOLUTION_POINTS # 2 tickets have been resolved till the point
+      @agent.points.should eql(expected_agent_points)
       @agent.achieved_quests.should be_empty
     end
     
@@ -74,10 +75,10 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       @agent.achieved_quests.first.quest_id.should eql(@quest.id)
       
       # Check if agent points and level are correct
-      excpected_agent_points = (3 * (OVERALL_RESOLUTION_POINTS)) + @quest.points # 3 tickets have been resolved till the point
-      @agent.points.should eql(excpected_agent_points)
+      expected_agent_points = (3 * (OVERALL_RESOLUTION_POINTS)) + @quest.points # 3 tickets have been resolved till the point
+      @agent.points.should eql(expected_agent_points)
       level = @account.scoreboard_levels.level_for_score(@agent.points).first
-      @agent.scoreboard_level_id.should eql(level.id)
+      @agent.scoreboard_level_id.should eql(level.id) if level
     end
     
     it "must revoke the achieved quests if any of the resolved tickets is reopened again and the quest conditions and data are not satisfied" do
@@ -89,24 +90,15 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       ticket.update_attributes(:status => 2) # Status changed from resolved to open again
       ticket.reload
       @agent.reload
-      excpected_agent_points = current_agent_points - @quest.points - OVERALL_RESOLUTION_POINTS
+      expected_agent_points = current_agent_points - @quest.points - OVERALL_RESOLUTION_POINTS
       @agent.achieved_quests.should be_empty
       @quest.support_scores.count.should eql(2)
-      @agent.points.should eql(excpected_agent_points)
-    end
-    
-    after(:all) do
-      Resque.inline = false
-      all_tickets = @account.tickets.find_all_by_responder_id(@agent.user_id)
-      all_tickets.each { |tkt| tkt.destroy }
-      # @agent.user.destroy
+      @agent.points.should eql(expected_agent_points)
     end
   end
   
   context "Ticket quests with filter conditions - customer satisfaction rating is happy and time span - 1 day" do
     before(:all) do
-      before_all_call
-      
       Resque.inline = false
       quest_filter_data = {
         :and_filters => [{ :name => "st_survey_rating" , :operator => "is", :value => "1"}], # Survey rating "1" is "happy"
@@ -124,7 +116,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
     
     it "must not achieve the quest when the quest_data value is not satisfied but filter condition is satisfied" do
       Resque.inline = false
-      ticket = create_ticket({:status => 2, :responder_id => @agent.user_id, :source => 1})
+      ticket = create_ticket({:status => 2, :responder_id => @agent.user_id, :source => 2})
       Resque.inline = true
       note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}, :user_id => @agent.user_id})
       note.save_note
@@ -134,14 +126,14 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       ticket.update_attributes(:status => 4) # Status changed to resolved
       ticket.reload
       @agent.reload
-      excpected_agent_points = OVERALL_RESOLUTION_POINTS + HAPPY_CUSTOMER_POINTS
-      @agent.points.should eql(excpected_agent_points)
+      expected_agent_points = OVERALL_RESOLUTION_POINTS + HAPPY_CUSTOMER_POINTS
+      @agent.points.should eql(expected_agent_points)
       @agent.achieved_quests.should be_empty
     end
     
     it "must achieve the quest when the quest_data value and quest filter conditions are satisfied" do
       Resque.inline = false
-      ticket = create_ticket({:status => 2, :source => 1, :responder_id => @agent.user_id})
+      ticket = create_ticket({:status => 2, :source => 2, :responder_id => @agent.user_id})
       Resque.inline = true
       note = ticket.notes.build({ :note_body_attributes => {:body => Faker::Lorem.sentence} , :user_id => @agent.user_id})
       note.save_note
@@ -161,10 +153,10 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       @agent.achieved_quests.first.quest_id.should eql(@quest.id)
       
       # Check if agent points and level are correct
-      excpected_agent_points = (2 * (OVERALL_RESOLUTION_POINTS + HAPPY_CUSTOMER_POINTS)) + @quest.points # 2 tickets have been resolved till the point
-      @agent.points.should eql(excpected_agent_points)
+      expected_agent_points = (2 * (OVERALL_RESOLUTION_POINTS + HAPPY_CUSTOMER_POINTS)) + @quest.points # 2 tickets have been resolved till the point
+      @agent.points.should eql(expected_agent_points)
       level = @account.scoreboard_levels.level_for_score(@agent.points).first
-      @agent.scoreboard_level_id.should eql(level.id)
+      @agent.scoreboard_level_id.should eql(level.id) if level
     end
   
     it "must revoke the achieved quests if any of the resolved tickets is reopened again and quest data is not satisfied" do
@@ -176,21 +168,9 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       ticket.update_attributes(:status => 2) # Status changed from resolved to open again
       ticket.reload
       @agent.reload
-      excpected_agent_points = current_agent_points - OVERALL_RESOLUTION_POINTS - @quest.points
+      expected_agent_points = current_agent_points - OVERALL_RESOLUTION_POINTS - @quest.points
       @agent.achieved_quests.should be_empty
-      @agent.points.should eql(excpected_agent_points)
+      @agent.points.should eql(expected_agent_points)
     end
-    
-    after(:all) do
-      Resque.inline = false
-      all_tickets = @account.tickets.find_all_by_responder_id(@agent.user_id)
-      all_tickets.each { |tkt| tkt.destroy }
-      # @agent.user.destroy
-    end
-  end
-  
-  def before_all_call
-    @account  = create_test_account
-    @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
   end
 end

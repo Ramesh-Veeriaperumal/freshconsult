@@ -543,7 +543,7 @@ fi:
         message_thread_time: "Viestiketjun aika"
         message_thread_time_info: "Suurin aika, jonka puitteissa viestejä samalta käyttäjältä pidetään ketjuina  "
         direct_messages: "Tuo <strong>\"suorat viestit\"</strong> tikettinä"
-        direct_messages_info: "Freshdesk muuntaa kaikki tämän Facebook-sivun suorat viestit tiketeiksi. Jos otat tämän toiminnon käyttöön ensimmäistä kertaa, sinun on ehkä <a href='{{reauth_url}}'>annettava tarvittavat oikeudet Facebookissa uudelleen</a>."
+        direct_messages_info: "Freshdesk muuntaa kaikki tämän Facebook-sivun suorat viestit tiketeiksi. Jos otat tämän toiminnon käyttöön ensimmäistä kertaa, sinun on ehkä <a href='%{reauth_url}'>annettava tarvittavat oikeudet Facebookissa uudelleen</a>."
     twitter_handles:
       index:
         go_to_ticket: "Siirry tikettiin"
@@ -1858,7 +1858,7 @@ fi:
     updated: "Tallennettujen vastauksien kansio on päivitetty onnistuneesti !!"
     deleted: "Tallennettujen vastauksien kansio on poistettu onnistuneesti !!"
     no_folders: "Ei tallennettuja vastauksia"
-    folder_update: "Valitut vastaukset on siirretty kansioon: {{folder_name}}"
+    folder_update: "Valitut vastaukset on siirretty kansioon: %{folder_name}"
     update: "Tallennettu vastaus päivitettiin onnistuneesti."
     created: "Tallennettu vastaus luotiin onnistuneesti."
     delete_multiple: "Valitut tallennetut vastaukset poistettiin!!"
@@ -3003,8 +3003,6 @@ fi:
   import: Tuo
   contains: Sisältää
   import_solution_article_info: "Huom! Artikkelissa olevia kommentteja ei tallenneta."
-  no_anonymous_tickets: "Lähettääksesi tiketin, <a href={{signup}}><b>Rekisteröidy</b></a> uudeksi käyttäjäksi tai <a href={{login}}><b>Kirjaudu</b></a>"
-  no_signup: "Lähettääksesi tiketin, ole hyvä ja <a href={{login}}><b>Kirjaudu</b></a>."
   register: Rekisteröi
   by: "-"
   portal:
@@ -3309,7 +3307,7 @@ fi:
     info3: "Freshdesk noutaa sähköpostiviestit ja muuntaa ne tiketeiksi"
     inactive_info1: "Kaikki sähköpostiosoitteesi ovat vielä vahvistamatta. Ainakin yksi osoite on vahvistettava."
     info14: "Kaikki tähän osoitteeseen lähetetyt sähköpostiviestit muunnetaan tiketeiksi"
-    info4: "<strong>Huom!</strong> Jos eri tuotteita varten on oma sähköpostiosoite, voit <a href='{{products_path}}'>lisätä ne täällä</a>."
+    info4: "<strong>Huom!</strong> Jos eri tuotteita varten on oma sähköpostiosoite, voit <a href='%{products_path}'>lisätä ne täällä</a>."
     spf_info: "Suurin osa sähköposteistasi toimitetaan kyllä perille, mutta turvataksesi toimituksen sinun tulee luoda <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\"> SPF-tietue </a> sinun DNS-vyöhykkeen tiedostoon (sähköposti omalla domainilla). Tämä auttaa varmistamaan sähköpostien kunnollisen toimituksen."
     reply_email: "Asiakaspalvelun sähköposti"
     unverified_info1: "Vahvistuslinkki on lähetetty tähän sähköpostiosoitteeseen. Sähköpostiosoite tulee käyttöön vasta, kun vahvistusviestiä on klikattu."
@@ -3318,8 +3316,8 @@ fi:
     helpcard:
       tour1: "Auta minua asettamaan tukisähköpostini"
       tour2: "Auta minua konfiguroimaan useita sähköpostilaatikkoja"
-      info5: "Oletustukisähköpostiosoitteesi on <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Kaikki tähän lähetettävät sähköpostit muutetaan automaattisesti tiketeiksi, joiden parissa voit alkaa tekemään töitä."
-      info19: "Voit konfiguroida Freshdesk-tilisi käyttämään tukisähköpostiasi omalla verkkotunnuksellasi, kuten support@mycompany.com, lähettämällä sähköpostiviestit eteenpäin tästä sähköpostiosoitteesta tähän<a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Luodaksesi uuden tukisähköpostilaatikon, klikkaa \"Muokkaa\" painiketta, joka sijaitsee yleisten sähköpostiasetuksien alla."
+      info5: "Oletustukisähköpostiosoitteesi on <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Kaikki tähän lähetettävät sähköpostit muutetaan automaattisesti tiketeiksi, joiden parissa voit alkaa tekemään töitä."
+      info19: "Voit konfiguroida Freshdesk-tilisi käyttämään tukisähköpostiasi omalla verkkotunnuksellasi, kuten support@mycompany.com, lähettämällä sähköpostiviestit eteenpäin tästä sähköpostiosoitteesta tähän<a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Luodaksesi uuden tukisähköpostilaatikon, klikkaa \"Muokkaa\" painiketta, joka sijaitsee yleisten sähköpostiasetuksien alla."
       info20: "Käytetään useita sähköpostilaatikkoja"
       info21: "Voit lisätä käyttötuessasi rajattoman määrän sähköpostilaatikkoja tuleville ja lähteville viesteille (esim. info@yourcompany.com, sales@yourcompany.com, jne.). Voit jopa asettaa Freshdeskin automaattisesti osoittamaan sähköpostit jokaisesta sähköpostilaatikosta tietylle ryhmälle."
     primary_supp_email: "Ensisijainen asiakaspalvelusähköposti"
@@ -3333,7 +3331,7 @@ fi:
     info18: "Automaattinen piilokopio-osoite, joka sisältää tiketin vastauksiin"
     email_added_succ_msg: "Sähköposti on lisätty"
     assign_to_product_msg: "Liitä tämä tukisähköposti tuotteeseen"
-    assign_to_product_info: "Jos haluat liittää uuteen tuotteeseen sähköpostilinkin, ensiksi <a href='{{products_path}}'> lisää tuote </a>"
+    assign_to_product_info: "Jos haluat liittää uuteen tuotteeseen sähköpostilinkin, ensiksi <a href='%{products_path}'> lisää tuote </a>"
     new_support_email: "Uusi tukisähköposti"
     global_support_emails: "Yleinen tukisähköposti"
     support_email: Tukisähköposti

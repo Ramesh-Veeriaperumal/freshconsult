@@ -1,4 +1,5 @@
 //= require jquery-1.7.1.min.js
+//= require jquery_ujs.js
 //= require utils.js
 //= require fast_autocompleter.js
 //= require frameworks/plugins/jquery.livequery.js
