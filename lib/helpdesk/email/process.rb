@@ -3,6 +3,7 @@ class Helpdesk::Email::Process
   include EmailCommands
   include Helpdesk::Email::ParseEmailData
   include Helpdesk::Email::HandleArticle
+  include ActionView::Helpers
   include WhiteListHelper
 
   #All email meta data and parsing of email values are done on parse_email_data.rb. Please refer while viewing this file.
