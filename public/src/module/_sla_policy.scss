@@ -69,7 +69,7 @@
 		z-index:2;
 		content:"";
 		top: -6px;
-	 @include left(25px);
+	 	@include left(25px);
 	}
 
 	.open > .dropdown-menu:after {
@@ -78,7 +78,7 @@
 		z-index:3;
 		content:"";
 		top: -5px;
-	 @include left(26px);
+		@include left(26px);
 	}
 
 	.ui-form li.seperator {
@@ -201,8 +201,6 @@
 						}@else{
 							padding-right: 4px;						
 						}
-						width: 16px;
-						height: 16px;
 						position: absolute;
 					}
 				}
