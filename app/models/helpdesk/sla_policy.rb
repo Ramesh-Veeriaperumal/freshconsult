@@ -1,6 +1,7 @@
 class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   self.table_name =  "sla_policies"
+  self.primary_key = :id
 
   serialize :escalations, Hash
   serialize :conditions, Hash

@@ -1,4 +1,5 @@
 class TicketTopic < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to :topic, 
     :foreign_key => 'topic_id'
   

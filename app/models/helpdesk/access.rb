@@ -1,5 +1,6 @@
 class Helpdesk::Access < ActiveRecord::Base
   self.table_name =  "helpdesk_accesses"  
+  self.primary_key = :id
   
   concerned_with :user_access_methods,:group_access_methods
   belongs_to_account

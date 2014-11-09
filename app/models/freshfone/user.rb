@@ -1,4 +1,5 @@
 class Freshfone::User < ActiveRecord::Base
+  self.primary_key = :id
 	self.table_name =  "freshfone_users"
 	belongs_to_account
 

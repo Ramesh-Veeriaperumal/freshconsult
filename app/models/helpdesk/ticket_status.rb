@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Helpdesk::TicketStatus < ActiveRecord::Base
   
+  self.primary_key = :id
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketStatus
   

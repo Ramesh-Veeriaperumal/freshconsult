@@ -3,6 +3,8 @@
 
 class BusinessCalendar < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   include MemcacheKeys
   serialize :business_time_data
   serialize :holiday_data

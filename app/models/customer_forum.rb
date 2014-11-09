@@ -1,5 +1,6 @@
 class CustomerForum < ActiveRecord::Base
 	self.table_name =  "customer_forums"
+  self.primary_key = :id
 
 
 	before_validation :set_account_id

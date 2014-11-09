@@ -1,4 +1,5 @@
 class Helpdesk::NestedTicketField < ActiveRecord::Base
+  self.primary_key = :id
 
   # add for multiform phase 1 migration
   include Helpdesk::Ticketfields::TicketFormFields

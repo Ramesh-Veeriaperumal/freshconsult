@@ -1,5 +1,5 @@
 class Admin::CannedResponses::Folder < ActiveRecord::Base
-
+  self.primary_key = :id
   self.table_name =  "ca_folders"
 
   belongs_to :account

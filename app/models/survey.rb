@@ -1,5 +1,6 @@
 class Survey < ActiveRecord::Base
   
+  self.primary_key = :id
   include Reports::ActivityReport
   
   ANY_EMAIL_RESPONSE = 1

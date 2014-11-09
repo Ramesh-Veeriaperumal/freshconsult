@@ -2,6 +2,7 @@ class TicketFormField < ActiveRecord::Base
 	
   # include Cache::Memcache::Helpdesk::TicketFormField
 
+  self.primary_key = :id
 	belongs_to_account
 
 	belongs_to :flexifield_def

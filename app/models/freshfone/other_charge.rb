@@ -1,4 +1,5 @@
 class Freshfone::OtherCharge < ActiveRecord::Base
+  self.primary_key = :id
 	self.table_name =  :freshfone_other_charges
 	belongs_to_account
 

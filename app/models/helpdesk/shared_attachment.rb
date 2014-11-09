@@ -1,6 +1,7 @@
 class Helpdesk::SharedAttachment < ActiveRecord::Base
 
   self.table_name =  "helpdesk_shared_attachments"
+  self.primary_key = :id
   belongs_to :attachment, :class_name => 'Helpdesk::Attachment'
   belongs_to :shared_attachable, :polymorphic => true
 

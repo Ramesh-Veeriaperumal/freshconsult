@@ -3,6 +3,7 @@
 # Check out google_contacts_importer for proper import, export or merge functionalities.
 
 class Integrations::GoogleAccount < ActiveRecord::Base
+  self.primary_key = :id
   include Integrations::GoogleContactsUtil
   include Integrations::OauthHelper
 

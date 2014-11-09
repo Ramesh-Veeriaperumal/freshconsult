@@ -1,5 +1,7 @@
 class EmailNotificationAgent < ActiveRecord::Base
   
+  self.primary_key = :id
+  
   belongs_to :email_notification
   belongs_to :user
   belongs_to :account

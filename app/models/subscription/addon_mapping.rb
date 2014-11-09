@@ -1,4 +1,5 @@
 class Subscription::AddonMapping < ActiveRecord::Base	
+  self.primary_key = :id
 	not_sharded
 
 	belongs_to :subscription, :class_name => "Subscription"

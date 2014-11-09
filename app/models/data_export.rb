@@ -1,4 +1,5 @@
 class DataExport < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to_account
   belongs_to :user
 

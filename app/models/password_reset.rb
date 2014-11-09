@@ -1,4 +1,5 @@
 class PasswordReset < ActiveRecord::Base
+  self.primary_key = :id
   include TokenGenerator
   
   belongs_to :user

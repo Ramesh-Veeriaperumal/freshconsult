@@ -1,5 +1,7 @@
 class Authorization < ActiveRecord::Base
   
+  self.primary_key = :id
+  
   belongs_to :user
   validates_presence_of :user_id, :uid, :provider, :account_id
   validates_uniqueness_of :uid, :scope => [:provider , :account_id]

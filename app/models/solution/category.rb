@@ -5,6 +5,7 @@
 
 class Solution::Category < ActiveRecord::Base
 
+  self.primary_key = :id
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   

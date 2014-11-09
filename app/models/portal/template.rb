@@ -1,6 +1,7 @@
 class Portal::Template < ActiveRecord::Base    
 
 	self.table_name =  "portal_templates"
+  self.primary_key = :id
 
   include Redis::RedisKeys
   include Redis::PortalRedis

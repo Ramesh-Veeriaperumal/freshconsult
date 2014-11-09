@@ -1,5 +1,6 @@
 class Post < ActiveRecord::Base
 
+  self.primary_key = :id
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
 

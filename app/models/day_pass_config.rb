@@ -1,4 +1,5 @@
 class DayPassConfig < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to :account
   
   RECHARGE_THRESHOLD = 2

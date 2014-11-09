@@ -1,5 +1,6 @@
 class Portal::Page < ActiveRecord::Base
 	self.table_name =  "portal_pages"
+  self.primary_key = :id
 	
 	include MemcacheKeys
 

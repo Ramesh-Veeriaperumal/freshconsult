@@ -1,5 +1,6 @@
 class Freshfone::Account < ActiveRecord::Base
 	self.table_name =  :freshfone_accounts
+  self.primary_key = :id
 	
 	belongs_to_account
 	has_many :freshfone_usage_triggers, :class_name => "Freshfone::UsageTrigger", 

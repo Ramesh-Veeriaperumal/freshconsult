@@ -1,4 +1,5 @@
 class Role < ActiveRecord::Base
+  self.primary_key = :id
   
   include Authority::FreshdeskRails::ModelHelpers
   before_destroy :destroy_user_privileges

@@ -1,6 +1,7 @@
 class Solution::CustomerFolder < ActiveRecord::Base
 
 	self.table_name =  "solution_customer_folders"
+  self.primary_key = :id
 
 	before_validation :set_account_id
 

@@ -1,5 +1,6 @@
 class Helpdesk::TicketIssue < ActiveRecord::Base
   self.table_name =  "helpdesk_ticket_issues"
+  self.primary_key = :id
 
   belongs_to :issue, 
     :class_name => 'Helpdesk::Issue',

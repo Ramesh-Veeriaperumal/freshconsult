@@ -1,5 +1,6 @@
 class FlexifieldDef < ActiveRecord::Base
 
+  self.primary_key = :id
   has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry', :order => 'flexifield_order', :dependent => :destroy
   accepts_nested_attributes_for :flexifield_def_entries,
     :reject_if => proc { |attrs| attrs['flexifield_alias'].blank? }

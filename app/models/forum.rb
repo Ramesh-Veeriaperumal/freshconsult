@@ -1,4 +1,5 @@
 class Forum < ActiveRecord::Base
+  self.primary_key = :id
   acts_as_list :scope => :forum_category
 
   has_many :activities,

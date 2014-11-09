@@ -1,4 +1,5 @@
 class SubscriptionAffiliate < ActiveRecord::Base
+  self.primary_key = :id
   not_sharded
   
   has_many :subscriptions

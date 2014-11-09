@@ -2,6 +2,7 @@ require_dependency "mobile/actions/portal"
 require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
 
+  self.primary_key = :id
   serialize :preferences, Hash
 
   attr_protected  :account_id

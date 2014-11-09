@@ -1,5 +1,6 @@
 class Helpdesk::SlaDetail < ActiveRecord::Base
   self.table_name =  "sla_details" 
+  self.primary_key = :id
   
   belongs_to_account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"

@@ -1,4 +1,5 @@
 class ChatSetting < ActiveRecord::Base
+  self.primary_key = :id
 	CHAT_CONSTANTS =  [
 	  [ :HIDE,             0], 
       [ :SHOW,              1],

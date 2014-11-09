@@ -1,5 +1,6 @@
 class Helpdesk::TagUse < ActiveRecord::Base
   self.table_name =  "helpdesk_tag_uses"
+  self.primary_key = :id
 
   belongs_to_account
   belongs_to :tags, 

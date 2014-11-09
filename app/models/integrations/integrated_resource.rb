@@ -1,4 +1,5 @@
 class Integrations::IntegratedResource < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to :installed_application, :class_name => 'Integrations::InstalledApplication'
   belongs_to :local_integratable, :polymorphic => true
   belongs_to_account

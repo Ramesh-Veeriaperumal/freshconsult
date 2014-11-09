@@ -1,5 +1,6 @@
 class Subscription < ActiveRecord::Base
   
+  self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
   
   AGENTS_FOR_FREE_PLAN = 3

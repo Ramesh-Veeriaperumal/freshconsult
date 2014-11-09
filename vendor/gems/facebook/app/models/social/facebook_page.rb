@@ -2,6 +2,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   include Cache::Memcache::Facebook
   self.table_name =  "social_facebook_pages"
+  self.primary_key = :id
   
   concerned_with :associations, :constants, :validations, :callbacks
 

@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Helpdesk::Tag < ActiveRecord::Base
   
+  self.primary_key = :id
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
 

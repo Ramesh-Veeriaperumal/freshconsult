@@ -1,5 +1,6 @@
 require 'business_calendar_ext/association'
 class Freshfone::Number < ActiveRecord::Base
+  self.primary_key = :id
 	include Mobile::Actions::Freshfone
 	self.table_name =  :freshfone_numbers
 	include BusinessCalendarExt::Association

@@ -1,5 +1,7 @@
 class Agent < ActiveRecord::Base
   
+  self.primary_key = :id
+  
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods

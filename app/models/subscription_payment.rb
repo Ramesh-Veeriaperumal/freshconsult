@@ -1,5 +1,6 @@
 class SubscriptionPayment < ActiveRecord::Base
   
+  self.primary_key = :id
   serialize :meta_info
   
   include HTTParty

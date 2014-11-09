@@ -1,4 +1,5 @@
 class Group < ActiveRecord::Base
+  self.primary_key = :id
   
   belongs_to_account
   include Cache::Memcache::Group

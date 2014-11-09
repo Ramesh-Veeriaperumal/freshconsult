@@ -1,4 +1,5 @@
 class SubscriptionPlan < ActiveRecord::Base
+  self.primary_key = :id
   not_sharded
   
   include ActionView::Helpers::NumberHelper
