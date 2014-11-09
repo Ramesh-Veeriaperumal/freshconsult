@@ -196,7 +196,7 @@
 	<br/>
 <div class="row-fluid tab-content">
 	<div class="tab-pane fade active in" id="default"> 
-		<%= form_for @email_notification, :remote => true, :url => { :action => "update" }, :html => { :method => :put, :id => "description_default_form", :class => "notif_form", :rel =>"validate"} do |f| %>
+		<%= form_for @email_notification, :url => { :action => "update" }, :html => { :method => :put, :id => "description_default_form", :class => "notif_form", :rel =>"validate"} do |f| %>
 			<div class="row-fluid" id="last_saved_reset">
 				<div class="span7">
 					<div class="notification-message" title="<%=@email_notification.updated_at%>" >
