@@ -19,7 +19,7 @@ module SpamConstants
     },
     "posts" => {
       "key_space" => "sw_posts",
-      "threshold" => 50,
+      "threshold" => 100,
       "sec_expire" => 21600
     }
 
