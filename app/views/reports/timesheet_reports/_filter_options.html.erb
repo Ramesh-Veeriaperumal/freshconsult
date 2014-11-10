@@ -39,9 +39,8 @@
 							  :class => "select2 filter_item", 
 										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_group') } %>
 
-			
 			<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
-			<%= hidden_field_tag "group_by", grp_data %>
+			<%= hidden_field_tag "group_by", grp_data.compact[0] %>
 			
 			<label class="control-label"><%=t('helpdesk.time_sheets.product')%></label>
 			<%= select_tag :products_id, options_for_select(current_account.products.collect{|c| [c.name, c.id]}, @products_id.map(&:to_i) ), 

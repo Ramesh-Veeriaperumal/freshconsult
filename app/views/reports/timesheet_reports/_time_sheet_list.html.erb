@@ -39,7 +39,7 @@
       <div>
         <h3 class="header-lead"><span><%=t('adv_reports.summary')%> </span></h3>
 	 			<div class="row-fluid report-summary-wrapper">
-					<%=render :partial =>"time_sheets_metric" %>
+					<%=render :partial =>"time_sheets_metric.html.erb" %>
 				</div>
 			</div>
 			<% if generate_pdf_action? %>
@@ -77,7 +77,7 @@
 							</tr>
 							
 					 	<% if @time_sheets.size > 0 %>
-				     		<%= render :partial => "time_sheet", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>	
+				     		<%= render :partial => "time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>	
 							<tr>
 				       			<th colspan="<%=colspan%>" class="align-right">&nbsp;<%=t('helpdesk.time_sheets.report.total')%></th>
 				       			<th class="hours"><div id="totaltime"></div></th>
