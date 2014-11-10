@@ -2289,12 +2289,12 @@ ol, ul, li{
 		width: auto;
 		height: 14px;
 		display: inline-block;
+		vertical-align: middle;
 	}
 
 	.attachment-close{		
 		display: inline-block;
-		width: 9px;
-		height: 9px;
+		vertical-align: middle;
 		@include margin-right(10px);
 		&:before{
 			content: "\00d7";
@@ -2307,7 +2307,7 @@ ol, ul, li{
 	.attachment_list{
 		margin-top: 10px;
 	}
-	.attachment, div.item{
+	div.item{
 		background: rgba(255,255,255,0.4);
 		border: 1px #e8e8e8 solid;
 		@include border-radius(4px);
