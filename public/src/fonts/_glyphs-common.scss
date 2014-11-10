@@ -369,7 +369,7 @@ span.fb_add
 	font-size: 16px;color:#000; 
 	&:hover{color:#000;}
 }
-.reminders, .todo{ .delete{ @extend .#{$font-class}trash; color:#990000; } }
+.reminders, .todo{ .delete{ @extend .#{$font-class}trash-o; color:#990000; font-size: 18px; } }
 
 .toolbar_pagination .prev_page span{ @extend .#{$font-class}caret-left; font-size:20px;}
 .toolbar_pagination .next_page span{ @extend .#{$font-class}caret-right; font-size:20px;}
