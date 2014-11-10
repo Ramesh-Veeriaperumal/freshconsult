@@ -232,7 +232,7 @@ Helpkit::Application.routes.draw do
       post :export_csv
       get :verify_email
       put :make_agent
-      get :unblock
+      post :unblock
       post :restore
     end
 
