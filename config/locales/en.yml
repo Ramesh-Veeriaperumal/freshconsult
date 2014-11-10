@@ -487,7 +487,10 @@ en:
       ticket_list: "Your tickets"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
-  admin:
+  admin:    
+    help_image_alt:
+      helpdesk_arcarde: "Helpdesk Arcade"
+      import_csv_file_pattern: "Import CSV file pattern"
     social:
       helpcard:
         title1: "Adding social accounts"
