@@ -13,7 +13,7 @@
 			<div class="brand">
 		    	<%= link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
 			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
-		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/images/logo.png?722013" : @survey_handle.portal.logo.content.url(:logo)) %>
+		        <%= image_tag (@survey_handle.portal.logo.nil? ? logo_url : @survey_handle.portal.logo.content.url(:logo)) %>
 
 		        <% end %>
 		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>
