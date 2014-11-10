@@ -46,7 +46,7 @@ jQuery(document).ready(function(){
     jQuery('#filter_name').val('<%= t('tickets_filter.copy_of') %> ' + jQuery("#active_filter").text())
   }
   jQuery('#filter_name').focus();
-  jQuery('#freshFilter').data('url',"<%= (local_assigns.count == 4) ? 'update_filter' : 'save_filter' %>");
+  jQuery('#freshFilter').data('url',"<%= (local_assigns.count == 3) ? 'update_filter' : 'save_filter' %>");
   jQuery("#freshFilter").validate({
     submitHandler: function(form){
       jQuery.ajax({
