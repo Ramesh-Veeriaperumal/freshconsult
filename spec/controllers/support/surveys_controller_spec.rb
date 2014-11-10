@@ -63,8 +63,8 @@ describe Support::SurveysController do
     note.body.should be_eql(remark)
   end
 
-  it "should record a survey from the ticket's portal view" do# failing in master
-    ticket = create_ticket({ :status => 2 }, @group)
+  it "should record a survey from the ticket's portal view" do
+    ticket = create_ticket({ :status => 2, :requester_id => @user.id }, @group)
     feedback = Faker::Lorem.sentence
     put :create_for_portal, :rating => rand(1..4), 
                             :feedback => feedback, 
