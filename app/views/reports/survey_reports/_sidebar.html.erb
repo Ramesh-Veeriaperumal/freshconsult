@@ -7,8 +7,12 @@
 <div class="sidepanel">
  	<%= form_for survey_list_path, :remote => true, 
  				:url => survey_list_url, :before => "if(!validate_request()){return false;}",
- 				:method => :post, :html => {:id => 'report_filters'}, :update => "report_list", 
- 				:loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');"  do %>
+ 				:method => :post, :html => {
+ 					:id => 'report_filters', 
+ 					"data-update" => "report_list",
+ 					"data-loading-class" => "sloading loading-small loading-block",
+ 					"data-loading" => "report_list loading-small loading-block"
+ 				}  do %>
  		<ul>
     	   <li class="control-group">
 				<label class="control-label"><%=t('.filter_by')%></label>
@@ -39,17 +43,8 @@
 	<p>	<%= t('.helptext').html_safe %> </p>
 </div>
 
-<%= javascript_tag do %> 	
+<%= javascript_tag do %>
 
-	function validate_request(){
-		var category =  jQuery("#category").val();
-		var date_range =  jQuery("#date_range").serialize();
-		if(category == "company"){
-			location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
-			return false;	
-		}
-		return true;
-	}
 
 	jQuery(document).ready(function() {
 	    jQuery("#report_filters").change(function(){
@@ -64,6 +59,18 @@
 		        			}
 				});
 	    });
+
+			    
+		jQuery('#report_filters').on('ajax:beforeSend', function() {
+			var category =  jQuery("#category").val();
+			var date_range =  jQuery("#date_range").serialize();
+			if(category == "company"){
+				location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
+				return false;	
+			}
+			return true;
+		});
+
 
 		jQuery("#date_range").daterangepicker({
 		earliestDate: Date.parse('1/1/2009'),
