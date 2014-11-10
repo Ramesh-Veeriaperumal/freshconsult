@@ -23,6 +23,7 @@ gem "dynamic_form"
 gem "class_inheritable_attributes", git: "git://github.com/burke/class_inheritable_attributes"
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
+gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', git: 'git://github.com/partyearth/sneaky-save.git'
 
@@ -149,8 +150,6 @@ gem "premailer", "~> 1.8.0"
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 gem "bunny", "1.2.1"
-
-gem 'scrypt', '1.2.1'
 
 group :production,:test,:staging do
   gem "tire", :git => "git://github.com/PratheepV/retire.git"

@@ -7,6 +7,7 @@ require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)
 require "rate_limiting"
 require "rack/ssl"
+require "statsd"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -73,6 +74,12 @@ module Helpkit
     config.action_controller.include_all_helpers = false
 
     # Configuring middlewares -- Game begins from here ;)
+    statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
+    # statsd intialization
+    statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
+    # middleware for statsd
+    config.middleware.use "Statsd::Rack::Middleware", statsd
+
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
