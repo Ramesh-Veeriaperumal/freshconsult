@@ -982,7 +982,7 @@ HTML
 	end
 
 	def spacer_image_url
-		"#{ActionController::Base.asset_host}/assets/misc/spacer.gif"
+		"#{asset_host_url}/assets/misc/spacer.gif"
 	end
 
 	private

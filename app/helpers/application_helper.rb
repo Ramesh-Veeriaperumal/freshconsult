@@ -35,7 +35,7 @@ module ApplicationHelper
   end
 
   def spacer_image_url
-    "#{ActionController::Base.asset_host}/assets/misc/spacer.gif"
+    "#{asset_host_url}/assets/misc/spacer.gif"
   end
 
   def trial_expiry_title(trial_days)
@@ -1078,8 +1078,10 @@ module ApplicationHelper
   end
   
   def asset_host_url
-    ActionController::Base.asset_host
+    return "" if Rails.env.development? || Rails.env.test?
+    ActionController::Base.asset_host.yield
   end
+
   # ITIL Related Methods ends here
 
 end
