@@ -35,6 +35,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 // Hover card font icons
 .contact_hover .product-twitter { 			@extend .#{$font-class}twitter-o;}
 .contact_hover .product-email-logo { 		@extend .#{$font-class}mail;}
+.product-page .product-email-logo { 		@extend .#{$font-class}mail;}
 .contact_hover .product-call { 				@extend .#{$font-class}phone;}
 
 // Email notification font icons
