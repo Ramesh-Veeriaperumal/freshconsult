@@ -6,7 +6,8 @@
 
 	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
 
-  <%form_tag("/integrations/applications/oauth_install/salesforce?install=true", :method=> "post")  do %>
+  <%= form_tag("/integrations/applications/oauth_install/salesforce?install=true", :method=> "post")  do %>
+
    <% default_fields = ["Name"]%>
     <ul class="ui-form">
     <li class="inline-field">
@@ -19,6 +20,7 @@
       <div class="salesforce-wrapper">
         <div class="contact-fields"> 
           <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
+
       		<div id='sfcontacts'>
       			<span>
       				<div id="contactslist">
