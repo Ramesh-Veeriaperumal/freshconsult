@@ -122,7 +122,6 @@ module Helpkit
     # /auth/providername for example /auth/twitter /auth/facebook
 
     # TODO-RAILS3 need to cross check
-    config.middleware.use  OmniAuth::Strategies::OpenID, :store => OpenID::Store::Filesystem.new('./omnitmp') , :name => "google",  :identifier => "https://www.google.com/accounts/o8/id"
     # you won't be able to access the openid urls like /auth/google
     # you will be able to access them through
     # /auth/open_id?openid_url=https://www.google.com/accounts/o8/id
@@ -161,8 +160,6 @@ module Helpkit
         end
         [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
       end
-
-      provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
     end
 
 
