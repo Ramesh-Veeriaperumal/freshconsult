@@ -40,7 +40,7 @@ RSpec.describe Freshfone::CallInitiator do
     params = { :agent => @agent.id, :number_id => @number.id }
     call_initiator = Freshfone::CallInitiator.new(params, @account, @number, nil)
     twiml = twimlify call_initiator.initiate_recording
-    twiml[:Response][:Record][:action].should eql "#{account_protocol}#{@account.full_domain}/freshfone/device/record?agent=#{@agent.id}&number_id=#{@number.id}"
+    twiml[:Response][:Record][:action].should  include("#{@account.full_domain}/freshfone/device/record?agent=#{@agent.id}&number_id=#{@number.id}")
   end
 
   it 'should render twiml that adds a caller to queue' do

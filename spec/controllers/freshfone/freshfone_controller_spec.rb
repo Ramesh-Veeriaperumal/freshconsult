@@ -37,7 +37,7 @@ RSpec.describe FreshfoneController do
     set_twilio_signature('freshfone/voice', incoming_params)
     @account.features.freshfone.destroy
     post :voice, { :format => "html" }
-    response.should render_template "errors/non_covered_feature"
+    response.body.should include('freshfone enabled validation failed')
   end
 
   it 'should redirect to login when non-twilio-aware methods are called by not logged in users' do

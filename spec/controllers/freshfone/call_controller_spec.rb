@@ -26,7 +26,7 @@ RSpec.describe Freshfone::CallController do
     log_in(@agent)
     setup_caller_data
 
-    get :caller_data, { :PhoneNumber => @caller_number, :format => "js" }
+    get :caller_data, { :PhoneNumber => @caller_number, :format => "json" }
     call_meta = json[:call_meta]
     call_meta.keys.should be_eql([:number, :group])
   end
