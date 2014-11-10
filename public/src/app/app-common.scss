@@ -2541,7 +2541,8 @@ a.mobile_switchBtn {
 #configure_page_tab{ min-height: 50px; }
 
 .fb_tab_pic{
-	background: url("/images/helpimages/fb-tab.png") no-repeat;
+	background-image: image-url("/assets/helpimages/fb-tab.png");
+	background-repeat: no-repeat;
 	height: 192px;
 	@include margin-left(20px);
 }
