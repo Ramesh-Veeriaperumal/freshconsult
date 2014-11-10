@@ -40,7 +40,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   #Phase1:- end
 
   # xss_terminate
-  acts_as_list :top_of_list => 0, :scope => 'account_id = #{account_id}'
+  acts_as_list :scope => 'account_id = #{account_id}'
 
   after_commit :clear_cache
   
