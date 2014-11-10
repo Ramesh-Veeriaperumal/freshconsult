@@ -51,5 +51,5 @@ Integrations::GoogleContactsImporter
 Integrations::GoogleContactsUtil
 Integrations::GoogleAccount
 
-ActiveRecord::Base.default_shard = ActiveRecord::Base.shard_names.first
+#ActiveRecord::Base.default_shard = ActiveRecord::Base.shard_names.first
 
