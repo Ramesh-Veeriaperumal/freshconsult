@@ -7,9 +7,9 @@
 .page-list .list-group .loadingbox,
 .loading-amount, .ui-after-submit{ background-image:image-url('/assets/animated/ajax-loader.gif') no-repeat; } 
 .response-loading #resp-icon{ 
-	background: image-url('/assets/animated/canned-response.gif') no-repeat !important; 
-	@include padding-left(5px); 
-	font-size: 0;
+	background: inline-image('animated/canned-response.gif') no-repeat !important; 
+	@include text-indent(-99999px);
+	width: 8px;
 }
 #ticket_list_count.fetching{ background: image-url("/assets/animated/ticket-count.gif"); }
 #tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/assets/animated/loading.gif'); }
