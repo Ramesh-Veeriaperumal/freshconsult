@@ -81,7 +81,7 @@ module Reports::ChartGenerator
       tmp_dates_without_data.push([this_date.to_i*1000,0]) unless dates_with_data.include?(this_date.to_i*1000)      
       this_date = this_date.since 1.day
     end
-    data_hash.store(:data,series_data)
+    data_hash.store(:data,series_data.sort)
     data_hash.store(:type,options[:type])
     data_hash.store(:color,options[:color])
     data_hash
