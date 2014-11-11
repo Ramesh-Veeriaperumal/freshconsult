@@ -144,7 +144,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 					             jQuery('#helpdesk_ticket_responder_id')
 					                     .html("<option value=''>...</option>");
 					             jQuery.ajax({
-					               type:        'POST',
+					               type:        'GET',
 					               url: 		     '/helpdesk/commons/group_agents/'+this.value,
 					               contentType: 'application/text',
 					               success:     function(data){

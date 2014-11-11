@@ -23,7 +23,7 @@
 
 		      	_agent_ui.html("<option value=''>...</option>")
 
-			    $.post( '/helpdesk/commons/group_agents/'+$(this).val(),
+			    $.get( '/helpdesk/commons/group_agents/'+$(this).val(),
 	        		function(data){
 						_agent_ui.html(data);
 					});

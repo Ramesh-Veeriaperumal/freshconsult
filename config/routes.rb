@@ -1399,7 +1399,8 @@ Helpkit::Application.routes.draw do
         post :company
       end
     end
-    match 'commons/group_agents/:id' => "commons#group_agents", :method => :post
+    
+    match 'commons/group_agents/(:id)' => "commons#group_agents"
 
     
   end

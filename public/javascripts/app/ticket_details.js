@@ -241,7 +241,7 @@ $('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
 		.addClass('loading-right');
 
 	var group_id = $('#helpdesk_ticket_group_id').val();
-	$.ajax({type: 'POST',
+	$.ajax({type: 'GET',
 		url: '/helpdesk/commons/group_agents/' + group_id,
 		contentType: 'application/text',
 		success: function(data){
@@ -519,7 +519,7 @@ var scrollToError = function(){
 		$('#TicketProperties .default_agent')
 			.addClass('sloading loading-small loading-right');
 
-		$.ajax({type: 'POST',
+		$.ajax({type: 'GET',
 			url: '/helpdesk/commons/group_agents/'+this.value,
 			contentType: 'application/text',
 			success: function(data){
