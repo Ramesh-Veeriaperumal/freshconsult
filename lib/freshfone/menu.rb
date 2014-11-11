@@ -51,7 +51,8 @@ class Freshfone::Menu < Tree::TreeNode
 	end
 	
 	def to_yaml_properties
-		instance_variables.reject{|v| [:@menu_options, :@ivr].include? v }
+		#sort by natural order the instance variables for ivr menu missing issue.
+		instance_variables.sort.reject{|v| [:@menu_options, :@ivr].include? v }
 	end
 		
 	def as_json(options=nil)

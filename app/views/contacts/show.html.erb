@@ -2,7 +2,8 @@
 <%= include_javascripts :pattern %>
 
 <% content_for :sidebar do -%>
-  <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
+	<span></span>
+  <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => { :user => @user }%>
 <%- end %>
 
 <%= javascript_tag do %>
