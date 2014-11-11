@@ -288,7 +288,7 @@ class Account < ActiveRecord::Base
   end
   
   def default_form
-    flexi_field_defs.default_form.first
+    ticket_field_def
   end
   
   def is_saml_sso?

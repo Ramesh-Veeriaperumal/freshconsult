@@ -101,12 +101,12 @@ end
 def ticket_post_process ticket_prop , ticket
   custom_hash ={}              
   ticket_prop.custom_fields.each do |custom_field|
-    ff_def_entry = FlexifieldDefEntry.first(:conditions =>{:flexifield_def_id => @current_account.flexi_field_defs.first.id ,:import_id => custom_field.field_id.to_i()})
+    ff_def_entry = FlexifieldDefEntry.first(:conditions =>{:flexifield_def_id => @current_account.ticket_field_def.id ,:import_id => custom_field.field_id.to_i()})
     custom_hash.store(ff_def_entry.flexifield_alias ,custom_field.value) unless ff_def_entry.blank? 
   end
   
   unless custom_hash.blank?      
-    ticket.ff_def = @current_account.flexi_field_defs.first.id       
+    ticket.ff_def = @current_account.ticket_field_def.id       
     ticket.assign_ff_values custom_hash    
     ticket.flexifield.save 
   end

@@ -2,7 +2,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to_account
 
-  has_flexiblefields
+  has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
 
   has_many_attachments
 

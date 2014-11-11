@@ -20,7 +20,7 @@ module Import::Zen::FlexiField
 
 
   def save_record field_xml
-    ff_def = @current_account.flexi_field_defs.first
+    ff_def = @current_account.ticket_field_def
     @invalid_fields = []
     custom_props =  FieldProp.parse(field_xml)
     flexifield = ff_def.flexifield_def_entries.find_by_import_id(custom_props.import_id)
