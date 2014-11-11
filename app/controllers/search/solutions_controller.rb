@@ -12,7 +12,7 @@ class Search::SolutionsController < Search::SearchController
       format.json do
         array = []
         @result_set.each do |article| 
-          array <<  article['article']
+          array <<  article.to_mob_json['article']
         end
         render :json => array
       end
