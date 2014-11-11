@@ -51,8 +51,10 @@ class Freshfone::Menu < Tree::TreeNode
 	end
 	
 	def to_yaml_properties
-		#sort by natural order the instance variables for ivr menu missing issue.
-		instance_variables.sort.reject{|v| [:@menu_options, :@ivr].include? v }
+		#options should be serialized before children and children hash to prevent 
+		#yaml dump from creating the child menu refrence first. 
+		#Only this allows the root menu to have an id of id001.
+		instance_variables.reject{|v| [:@menu_options, :@options, :@ivr].include? v }.prepend(:@options)
 	end
 		
 	def as_json(options=nil)
