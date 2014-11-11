@@ -17,8 +17,8 @@ module RoutingFilter
     def around_generate(*args, &block)
       source = @support_portal_filter_type
       yield.tap do |result|
-        if source and !exclude_path?(result)
-          result.sub!(%r(^(http.?://[^/]*)?(.*))){ "#{$1}/#{source}#{$2}" }
+        if source and !exclude_path?(result.first)
+          result.first.sub!(%r(^(http.?://[^/]*)?(.*))){ "#{$1}/#{source}#{$2}" }
         end 
       end
     end

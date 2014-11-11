@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <h3 class="lead"><%= t('.twitter_settings_for_msg') %> <%= (@item.product ? @item.product.name : current_account.portal_name) %></h3>
 <%= form_for :twitter_handle, :url => social_twitter_path(@item), :html => { :method => :put } do |f| %>
 	<%= render :partial => 'form', :locals => { :twitter_handle => @item } %>

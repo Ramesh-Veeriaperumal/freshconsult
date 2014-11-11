@@ -7,7 +7,6 @@ class Solution::Article < ActiveRecord::Base
   serialize :seo_data, Hash
 
   acts_as_voteable
-  acts_as_list :scope => :folder
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
@@ -41,11 +40,14 @@ class Solution::Article < ActiveRecord::Base
   attr_accessor :highlight_title, :highlight_desc_un_html
 
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
-    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data
+    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position
   
-  after_commit  :clear_mobihelp_solutions_cache, on: :create
-  after_commit :clear_mobihelp_solutions_cache, on: :update
-  before_destroy          :clear_mobihelp_solutions_cache
+  acts_as_list :scope => :folder
+  
+  before_destroy :clear_mobihelp_solutions_cache
+
+  after_commit ->(obj) { obj.send(:clear_mobihelp_solutions_cache) }, on: :create
+  after_commit ->(obj) { obj.send(:clear_mobihelp_solutions_cache) }, on: :update
 
   # Please keep this one after the ar after_commit callbacks - rails 3
   include ObserverAfterCommitCallbacks

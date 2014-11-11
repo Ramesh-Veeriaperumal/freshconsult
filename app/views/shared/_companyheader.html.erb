@@ -22,34 +22,16 @@
 		jQuery("#customers-select-all")
 			.prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
 	});
-
-	jQuery('.send-activation').one("click", function(ev) {
-    	ev.preventDefault();
-    	jQuery(this).button("loading")
-    	var _o_data = jQuery(this).data(),
-    	    _href = jQuery(this).data("url"),
-			_self = jQuery(this),
-			_post_data = { 
-				"_method" : jQuery(this).data("method")
-			}
-		jQuery.ajax({
-			type: 'POST',
-			url: _href,
-			data: _post_data,
-			dataType: "json",
-			success: function(data){		
-				if(data.access_denied){ 
-					_self.button("reset").html("Access denied")
-				}
-
-				if(data.activation_sent)
-					_self.button("complete")
-					setTimeout(function(){
-						_self.addClass("disabled")
-					}, 10);
-			}
-		})
-	});
+	jQuery('.send-activation').on('ajax:success', function (ev, data) {
+		var _self = jQuery(this);
+		console.log(data.activation_sent);
+		if(data.access_denied){ 
+			_self.html("Access denied");
+		}
+		setTimeout(function(){
+			_self.addClass("disabled");
+		}, 10);
+	})
 <% end %>
 <div class="list-page-header"	>
 	<div class="row-fluid">

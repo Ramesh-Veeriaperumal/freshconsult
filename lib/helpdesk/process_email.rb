@@ -273,10 +273,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
         ticket.save_ticket!
       rescue AWS::S3::Errors::InvalidURI => e
-        FreshdeskErrorsMailer.error_email(ticket,params,e)
+        # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         raise e
       rescue ActiveRecord::RecordInvalid => e
-        FreshdeskErrorsMailer.error_email(ticket,params,e)
+        # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
       set_others_redis_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
     end

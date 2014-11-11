@@ -27,16 +27,16 @@ RSpec.describe Freshfone::CallHistoryController do
   end
 
   it 'should return no results in search for calls made yesterday' do# failing in master
-    get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
-                          "page"=>"1", "number_id"=>@number.id, "wf_c0"=>"created_at", 
-                          "wf_o0"=>"is_greater_than", "wf_v0_0"=>"yesterday" }
+    get :custom_search, { "page"=>"1",
+                          :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.yesterday.inspect + '"}]',
+                          "number_id"=>@number.id }
     assigns[:calls].should be_empty
   end
 
   it 'should return valid results in search for calls made today' do
-    get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
-                          "page"=>"1", "number_id"=>@number.id, "wf_c0"=>"created_at", 
-                          "wf_o0"=>"is_greater_than", "wf_v0_0"=>"today" }
+    get :custom_search, { "page"=>"1",
+                          :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.today.inspect + '"}]',
+                          "number_id"=>@number.id }
     assigns[:calls].should_not be_empty
   end
 

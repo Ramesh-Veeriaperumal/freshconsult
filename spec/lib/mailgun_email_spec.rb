@@ -61,6 +61,21 @@ RSpec.describe Helpdesk::Email::Process do
 			@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
   	end
 
+  	it "plain text email with formatted email addresses" do
+  		email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+  		email.delete("body-html")
+  		email["body-plain"] = %(replyyyyyy On Sat, Nov 8, 2014 at 6:02 PM, phase1 <support@phase1.freshitil.com> wrote: > Hi Anu87008,
+  		 > > replyyyy > > Ticket: http://phase1.freshitil.com/helpdesk/tickets/103 > > 103 > > Open > > 
+  		 Anu87008 > > phase1 > > > On Sat, 8 Nov at 6:02 PM , suba r <rsuba758@gmail.com> wrote: > just replying > > 
+  		 On Sat, Nov 8, 2014 at 6:01 PM, phase1 <support@phase1.freshitil.com> wrote: >> >> Hi Anu87008, >> >> >> again replying >> >> 
+  		 Ticket: http://phase1.freshitil.com/helpdesk/tickets/103 >> >> 103 >> >> Open >> >> Anu87008 >> >> phase1 >> >> >> 
+  		 Ticket: http://phase1.freshitil.com/helpdesk/tickets/103 >>> >>> 103 >>> >>> Open >>> >>> Anu87008 >>> >>> phase1 >>> >>> >>> 
+  		 On Sat, 8 Nov at 5:20 PM , Anu87008 <anu87008@gmail.com> wrote: >>> reply from customer >> >> > > 103)
+  		Helpdesk::Email::Process.new(email).perform
+		ticket = @account.tickets.last
+		ticket_incremented?(@ticket_size)
+  	end
+
   	it "with blank reply_to" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
 			email["Reply-To"] = ""

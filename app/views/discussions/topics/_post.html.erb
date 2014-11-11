@@ -34,7 +34,7 @@ unpublished =  !original && !post.published
 					<% if privilege?(:edit_topic, post) %>
 						<%= link_to "",
 							"/discussions/topics/#{@topic.id}/posts/#{post.id}",
-							:method => :delete, :confirm => t(".delete_confirm"),
+							:method => :delete, :confirm => t('discussions.topics.post.delete_confirm'),
 							:remote => true,
 							:title => t('delete'),
 							:class => font_class("trash-o", 21, "tooltip delete_action")

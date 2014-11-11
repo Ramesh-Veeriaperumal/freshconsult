@@ -15,6 +15,7 @@ module ApplicationHelper
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
+  ASSET_MANIFEST = {}
 
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
@@ -31,6 +32,10 @@ module ApplicationHelper
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{
           language }" dir="#{current_direction?}" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
     }.to_s.html_safe
+  end
+
+  def spacer_image_url
+    "#{asset_host_url}/assets/misc/spacer.gif"
   end
 
   def trial_expiry_title(trial_days)
@@ -63,7 +68,7 @@ module ApplicationHelper
 
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
-        portal.logo.nil? ? "/assets/logo.png?721013" :
+        portal.logo.nil? ? "/assets/misc/logo.png?721014" :
         AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
@@ -71,7 +76,7 @@ module ApplicationHelper
 
   def fav_icon_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","fav_ico",portal]) do
-      portal.fav_icon.nil? ? '/assets/favicon.ico?123456' :
+      portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123457' :
             AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
@@ -298,7 +303,7 @@ module ApplicationHelper
   def subscription_tabs
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
-      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_affiliates_path, :affiliates, "Affiliates" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]
@@ -481,7 +486,7 @@ module ApplicationHelper
     end 
     avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
     avatar_content
   end
@@ -492,7 +497,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end
-    content_tag( :div, (image_tag "/assets/fillers/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_url(user, profile_size = :thumb)
@@ -508,13 +513,13 @@ module ApplicationHelper
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
     else
-      "/assets/fillers/profile_blank_#{profile_size}.gif"
+      "/assets/misc/profile_blank_#{profile_size}.gif"
     end
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
     handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
-      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/fillers/profile_blank_#{profile_size}.gif"
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.gif"
     end
     handle_avatar
   end
@@ -900,7 +905,7 @@ module ApplicationHelper
 
     def additional_settings?
       settings = current_account.account_additional_settings.additional_settings
-      settings.nil? || settings[:enable_social]
+      settings.blank? || settings[:enable_social]
     end
 
     def handles_associated?
@@ -955,10 +960,6 @@ module ApplicationHelper
   def will_paginate(collection_or_options = nil, options = {})
     if collection_or_options.is_a? Hash
       options, collection_or_options = collection_or_options, nil
-    end
-    unless options[:renderer]
-      # TODO-RAILS3 need to change this
-      # options = options.merge :renderer => DefaultPaginationRenderer
     end
     super *[collection_or_options, options].compact
   end
@@ -1060,6 +1061,25 @@ module ApplicationHelper
 
   def requester_company
     ['{{ticket.requester.company_name}}', 'Requester company name',   "",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
+  end
+  
+  def load_manifest
+    ASSET_MANIFEST.replace({ 
+      :js => AssetLoader.js_assets, 
+      # :css => AssetLoader.css_assets
+      :css => {}
+    })
+  end
+  
+  def asset_manifest(type = :js)
+    return {} unless [:js, :css].include?(type)
+    load_manifest if ASSET_MANIFEST.blank? and !Rails.env.development?
+    Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type]
+  end
+  
+  def asset_host_url
+    return "" if Rails.env.development? || Rails.env.test?
+    ActionController::Base.asset_host.yield
   end
 
   # ITIL Related Methods ends here

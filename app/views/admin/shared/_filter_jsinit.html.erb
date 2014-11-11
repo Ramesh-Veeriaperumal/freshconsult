@@ -1,5 +1,5 @@
 <% content_for :pagefixed do %>
-  <link href="/stylesheets/autosuggest_inquisitor.css" media="screen" rel="stylesheet" type="text/css">
+  <%= stylesheet_link_tag_with_rtl :'cdn/autosuggest_inquisitor' %>
   <%= javascript_include_tag :'cdn/conditional' %>
   <%= javascript_tag do %>
     // Condition Parsing 

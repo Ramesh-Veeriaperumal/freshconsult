@@ -75,6 +75,8 @@ RSpec.describe Social::TwitterHandle do
 
   it "should delete the default gnip rule and the default streams if account is suspended" do
     GnipRule::Client.any_instance.stubs(:list).returns([GnipRule::Rule.new(@rule[:value],@rule[:tag])])
+    AwsWrapper::DynamoDb.any_instance.stubs(:query).returns({:member => []})
+       
     Resque.inline = true
     @handle.account.subscription.update_attributes(:state => "trial") 
     @handle.reload

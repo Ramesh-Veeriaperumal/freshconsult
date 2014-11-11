@@ -1,7 +1,7 @@
 <% content_for :layoutType do -%>reports_page<%- end %>
-<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
- 
+
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
 <div class="row-fluid">
@@ -50,5 +50,4 @@ jQuery(document).ready(function(){
 });
 
 </script>
-<script type="text/javascript" src="/javascripts/report/date.js"></script>
-<script type="text/javascript" src="/javascripts/report/daterangepicker.jQuery.js"></script>
+<%= javascript_include_tag :'cdn/report_date'  %>

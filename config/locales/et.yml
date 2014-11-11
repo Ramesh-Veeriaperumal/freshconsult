@@ -2324,7 +2324,7 @@ et:
     remove_tab: "Eemalda lehe vahekaart"
     tab_not_removed: "Vahekaarti ei saanud eemaldada"
     tab_removed: "Lehe vahekaart on eemaldatud"
-    page_added: "See leht on allikale {{source}} juba lisatud. Palun eemalda see kõigepealt ja proovi siis uuesti lisada."
+    page_added: "See leht on allikale %{source} juba lisatud. Palun eemalda see kõigepealt ja proovi siis uuesti lisada."
     add_tab: "Lisa lehe vahekaart"
     tab_name: "Vahekaardi nimi "
     tab_url: "Vahekaardi kujutise URL: "
@@ -3952,7 +3952,6 @@ et:
   import_solution_article_info: "Märkus: me ei salvesta foorumi kommentaare."
   ticket_close_success: "Sinu pilet on edukalt suletud."
   ticket_close_failure: "Pileti sulgemine ebaõnnestus."
-  no_anonymous_tickets: "Pileti esitamiseks <a href={{signup}}><b>registreeru</b></a> uue kasutajana või <a href={{login}}><b>logi sisse</b></a>."
   gamification:
     levels:
       beginner: Algaja
@@ -3981,7 +3980,6 @@ et:
       speed_trophie_info_group: "Grupp, mis sai sel kuul kiirete lahenduste eest maksimumpunktid"
       love_trophie_label_group: "Klientide lemmikud"
       love_trophie_info_group: "Grupp, mis sai sel kuul klientide rahulolu osas maksimumpunktid"
-  no_signup: "Pileti esitamiseks <a href={{login}}><b>logi palun sisse</b></a>."
   canned_folders:
     insert_placeholder: "Sisesta kohatäide"
     important: "Tähtis: "
@@ -4016,7 +4014,7 @@ et:
     updated: "Valmisvastuste kaust on edukalt uuendatud"
     deleted: "Valmisvastuste kaust on edukalt kustutatud"
     no_folders: "Valmisvastuseid ei ole"
-    folder_update: "Valitud vastused on viidud kausta: {{folder_name}}"
+    folder_update: "Valitud vastused on viidud kausta: %{folder_name}"
     update: "Valmisvastus on edukalt uuendatud."
     created: "Valmisvastus on edukalt loodud."
     delete_multiple: "Valitud valmisvastused kustutati!"
@@ -4177,8 +4175,8 @@ et:
     js_forum_txt: "$$questmode$$ $$questvalue$$ foorumipostitust ajavahemikus $$questtime$$ ja vastavalt nendele tingimustele."
     js_quest_txt: "Väljakutse eduka saavutamise korral saad sa märgi nimega $$badgename$$ ja $$questpoints$$ boonuspunkti."
   merge_contacts:
-    header: "Tähtis:<br />sa oled mestimas {{number}} kontakti nimega {{name}}."
-    info: "Pane tähele, et mestimisel lähevad kõik e-kirjad, piletid, märkused ja kontaktandmed valitud kontaktide alt nime {{name}} alla. Lisaks märgitakse mestitud kontaktid kustutatuks ja neid ei saa taastada. <br /><br />Jätka kontaktide mestimist nime {{name}} alla."
+    header: "Tähtis:<br />sa oled mestimas %{number} kontakti nimega %{name}."
+    info: "Pane tähele, et mestimisel lähevad kõik e-kirjad, piletid, märkused ja kontaktandmed valitud kontaktide alt nime %{name} alla. Lisaks märgitakse mestitud kontaktid kustutatuks ja neid ei saa taastada. <br /><br />Jätka kontaktide mestimist nime %{name} alla."
     invalid: "Esitatud e-posti aadress on kehtetu"
     loading: "Mestimiseks valmistumine <img src='/images/loading.gif'>"
     email_activated: "e-posti ID on juba aktiveeritud"
@@ -4190,7 +4188,7 @@ et:
     removed: "E-posti ID on eemaldatud"
     confirm_and_merge: "Kinnita ja mesti"
     activation_sent: "Aktiveerimiskiri on saadetud. Palun kinnita ühe nädala jooksul."
-    client_manager: "Sa oled mestimiseks valinud kliendihalduri {{name}}."
+    client_manager: "Sa oled mestimiseks valinud kliendihalduri %{name}."
     cannot_restore: "Mestitud kasutajat ei saa taastada"
     primary: Vaikimisi
     not_verified: Verifitseerimata
@@ -5071,7 +5069,7 @@ et:
         message_thread_time: "Sõnumilõnga aeg"
         message_thread_time_info: "Pikim aeg, mille jooksul samalt kasutajalt tulnud sõnumeid käsitletakse ühe lõngana."
         direct_messages: "Impordi <strong>otsesõnumid</strong> piletina"
-        direct_messages_info: "Freshdesk konverdib kõik otsesõnumid sellel Facebooki lehel piletiteks. Kui sa lubad selle funktsiooni esmakordselt, võib osutuda vajalikuks <a href='{{reauth_url}}'>Facebookis uuesti autoriseerimine</a>."
+        direct_messages_info: "Freshdesk konverdib kõik otsesõnumid sellel Facebooki lehel piletiteks. Kui sa lubad selle funktsiooni esmakordselt, võib osutuda vajalikuks <a href='%{reauth_url}'>Facebookis uuesti autoriseerimine</a>."
     twitter_handles:
       index:
         go_to_ticket: "Mine piletile"
@@ -5661,7 +5659,7 @@ et:
     inactive_info1: "Kõik sinu klienditoe e-posti aadressid on veel verifitseerimata. Sa pead verifitseerima vähemalt ühe aadressi."
     info14: "Kõik sellele aadressile saadetavad e-kirjad konverditakse piletiks."
     info4: "<strong>MÄRKUS:</strong> kui sul on mitut toodet hõlmava klienditoe pakkumiseks mitu e-posti aadressi, <a href='{{products_path}}'>saad need lisada siin</a>."
-    spf_info: "Freshdeskist saadetavates vastuskirjades kasutatakse saatja aadressina automaatselt sinu vastava klienditoe e-posti aadressi ID-d. Kui sa lood oma DNS-tsooni failis <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF-kirje</a>, tagad e-kirjade tõrgeteta kohalejõudmise."
+    spf_info: "Freshdeskist saadetavates vastuskirjades kasutatakse saatja aadressina automaatselt sinu vastava klienditoe e-posti aadressi ID-d. Kui sa lood oma DNS-tsooni failis <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF-kirje</a>, tagad e-kirjade tõrgeteta kohalejõudmise."
     reply_email: "Sinu klienditoe e-posti aadress"
     unverified_info1: "Palun aktiveeri see e-posti aadress. Selleks pead sulle saadetud kirjas verifitseerimislingil klõpsama."
     inactive_info2: "Seni kasutatakse vastuseaadressina vaikimisi aadressi %{default_email}."
@@ -5669,8 +5667,8 @@ et:
     helpcard:
       tour1: "Aita mul mu tugiaadress seadistada"
       tour2: "Aita mul mitu postkasti seadistada"
-      info5: "Sinu vaikimisi valitud tugiaadress on <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Kõik sellele aadressile saadetud e-kirjad konverditakse automaatselt piletiks, millega sa siis tööle saad asuda."
-      info19: "Sa saad seadistada oma Freshdeski konto kasutama tugiaadressi sinu oma domeenis, nagu nt support@minuettevõte.com, suunates e-kirjad sellelt aadressilt siia: <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Sinu vaikimisi valitud tugiaadress on <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Kõik sellele aadressile saadetud e-kirjad konverditakse automaatselt piletiks, millega sa siis tööle saad asuda."
+      info19: "Sa saad seadistada oma Freshdeski konto kasutama tugiaadressi sinu oma domeenis, nagu nt support@minuettevõte.com, suunates e-kirjad sellelt aadressilt siia: <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Uue tugipostkasti loomiseks klõpsa e-posti üldsätete all valikul \"Redigeeri\"."
       info20: "Mitme postkasti kasutamine"
       info21: "Sa saad oma kasutajatoele lisada piiramatu arvu sissetulevate ja väljaminevate kirjade postkaste (nagu nt info@sinuettevõte.com, müük@sinuettevõte.com jne). Sa saad isegi Freshdeskis seadistada e-kirjade automaatse suunamise igast postkastist kindlale grupile."
@@ -5686,7 +5684,7 @@ et:
     info18: "Pileti vastustele lisatakse automaatne salakoopia (Bcc) aadress"
     email_added_succ_msg: "E-posti aadress on lisatud"
     assign_to_product_msg: "Seo see tugikiri kindla tootega"
-    assign_to_product_info: "Kui soovid e-kirja uue tootega siduda, pead kõigepealt <a href='{{products_path}}'> toote lisama </a>"
+    assign_to_product_info: "Kui soovid e-kirja uue tootega siduda, pead kõigepealt <a href='%{products_path}'> toote lisama </a>"
     new_support_email: "Uus klienditoe e-posti aadress"
     global_support_emails: "Üldised klienditoe e-posti aadressid"
     support_email: "Klienditoe e-posti aadress"

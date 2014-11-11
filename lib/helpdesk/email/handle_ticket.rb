@@ -9,6 +9,7 @@ class Helpdesk::Email::HandleTicket
   include Helpdesk::Email::ParseEmailData
   include Helpdesk::Email::NoteMethods
   include Helpdesk::Email::TicketMethods
+  include ActionView::Helpers
 
   attr_accessor :note, :email, :user, :account, :ticket
 

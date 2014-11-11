@@ -635,7 +635,7 @@ var scrollToError = function(){
 			return ;
 
 		$.ajax({   
-			type: 'POST',
+			type: 'GET',
 			url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
 			contentType: 'application/text',
 			success: function(data){ 
@@ -1198,6 +1198,11 @@ var scrollToError = function(){
 			ev.preventDefault();
 			if(trim($(this).val()) != '') $(this).parents('form').submit();
 		}
+	});
+
+	$('body').on('click', '.reminder_check', function () {
+		console.log('asda');
+		$(this).parent().addClass('disabled');
 	});
 
 	//Binding the Reply/Forward/Add Note buttons

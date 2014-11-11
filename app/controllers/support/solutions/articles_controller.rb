@@ -52,8 +52,7 @@ class Support::Solutions::ArticlesController < SupportController
     respond_to do |format|
       format.xml{ head :ok }
       format.json { head :ok }
-      format.any{
-        # Rendering the feedback form for the user... to get his comments
+      format.html {
         render :partial => "feedback_form", :locals => { :ticket => @ticket, :article => @article }
       }
       

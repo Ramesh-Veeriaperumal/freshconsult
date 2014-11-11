@@ -16,12 +16,14 @@ gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 3.0"
 gem "country_select", git: "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
 gem "activemerchant", git: "git://github.com/Shopify/active_merchant", :tag => 'v1.43.1'
-gem "acts_as_list", "~> 0.4.0"
+# Please do not update acts_as_list unless this issue is resolved https://github.com/swanandp/acts_as_list/issues/137
+gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
 gem "class_inheritable_attributes", git: "git://github.com/burke/class_inheritable_attributes"
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
+gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', git: 'git://github.com/partyearth/sneaky-save.git'
 
@@ -30,6 +32,7 @@ group :development, :test do
   gem 'better_errors', '~> 1.1.0'
   gem "debugger", "~> 1.6.8"
   gem 'pry'
+  gem 'binding_of_caller'
 end
 
 gem "mail"
@@ -48,7 +51,7 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
-gem "omniauth-salesforce"
+gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "omniauth-surveymonkey", "1.0.0"
@@ -69,7 +72,7 @@ gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem "ruby-saml", "0.8.1"
 
 gem "arel", "~> 3.0.2"
-gem "map_fields", :git => "git://github.com/d3chapma/map-fields", :require => "map_fields"
+gem 'map_fields', :git => "git://github.com/freshdesk/map-fields", :branch => "csv_import", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"

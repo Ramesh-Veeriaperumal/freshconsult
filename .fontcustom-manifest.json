@@ -1,17 +1,17 @@
 {
   "checksum": {
-    "previous": "1ebbb1041a5fbfcc33471c6eac388192810665a47330f44bbb2ef7ec5bdaca79",
-    "current": "1ebbb1041a5fbfcc33471c6eac388192810665a47330f44bbb2ef7ec5bdaca79"
+    "previous": "5a595cfb0e6ff22fdf1706755b70abeead348d37f424f31a5bcaebb01760ea10",
+    "current": "5a595cfb0e6ff22fdf1706755b70abeead348d37f424f31a5bcaebb01760ea10"
   },
   "fonts": [
-    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.ttf",
-    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.svg",
-    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.woff",
-    "public/generated/fonts/glyphs_1ebbb1041a5fbfcc33471c6eac388192.eot"
+    "public/assets/glyphs_5a595cfb0e6ff22fdf1706755b70abee.ttf",
+    "public/assets/glyphs_5a595cfb0e6ff22fdf1706755b70abee.svg",
+    "public/assets/glyphs_5a595cfb0e6ff22fdf1706755b70abee.woff",
+    "public/assets/glyphs_5a595cfb0e6ff22fdf1706755b70abee.eot"
   ],
   "glyphs": {
     "account": {
-      "codepoint": 61814,
+      "codepoint": 61831,
       "source": "public/glyphs/vectors/account.svg"
     },
     "agent": {
@@ -90,6 +90,10 @@
       "codepoint": 61769,
       "source": "public/glyphs/vectors/business-hours.svg"
     },
+    "calling": {
+      "codepoint": 61827,
+      "source": "public/glyphs/vectors/calling.svg"
+    },
     "canned-response": {
       "codepoint": 61770,
       "source": "public/glyphs/vectors/canned-response.svg"
@@ -158,6 +162,10 @@
       "codepoint": 61772,
       "source": "public/glyphs/vectors/day_pass.svg"
     },
+    "dislike": {
+      "codepoint": 61823,
+      "source": "public/glyphs/vectors/dislike.svg"
+    },
     "dispatcher": {
       "codepoint": 61773,
       "source": "public/glyphs/vectors/dispatcher.svg"
@@ -165,6 +173,10 @@
     "dots": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/dots.svg"
+    },
+    "dropbox": {
+      "codepoint": 61828,
+      "source": "public/glyphs/vectors/dropbox.svg"
     },
     "earth": {
       "codepoint": 61711,
@@ -262,6 +274,10 @@
       "codepoint": 61717,
       "source": "public/glyphs/vectors/folder-open-o.svg"
     },
+    "forward": {
+      "codepoint": 61824,
+      "source": "public/glyphs/vectors/forward.svg"
+    },
     "freshchat": {
       "codepoint": 61796,
       "source": "public/glyphs/vectors/freshchat.svg"
@@ -354,6 +370,10 @@
       "codepoint": 61784,
       "source": "public/glyphs/vectors/mobihelp.svg"
     },
+    "mobile": {
+      "codepoint": 61829,
+      "source": "public/glyphs/vectors/mobile.svg"
+    },
     "multi-product": {
       "codepoint": 61785,
       "source": "public/glyphs/vectors/multi-product.svg"
@@ -377,6 +397,10 @@
     "paperplane": {
       "codepoint": 61727,
       "source": "public/glyphs/vectors/paperplane.svg"
+    },
+    "pencil": {
+      "codepoint": 61830,
+      "source": "public/glyphs/vectors/pencil.svg"
     },
     "phone": {
       "codepoint": 61764,
@@ -450,6 +474,10 @@
       "codepoint": 61791,
       "source": "public/glyphs/vectors/sla.svg"
     },
+    "split": {
+      "codepoint": 61825,
+      "source": "public/glyphs/vectors/split.svg"
+    },
     "star": {
       "codepoint": 61732,
       "source": "public/glyphs/vectors/star.svg"
@@ -498,6 +526,10 @@
       "codepoint": 61812,
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
+    "twitter-o": {
+      "codepoint": 61826,
+      "source": "public/glyphs/vectors/twitter-o.svg"
+    },
     "unlock": {
       "codepoint": 61737,
       "source": "public/glyphs/vectors/unlock.svg"
@@ -519,7 +551,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": true,
+    "debug": false,
     "font_name": "glyphs",
     "force": false,
     "input": {
@@ -529,11 +561,12 @@
     "no_hash": false,
     "output": {
       "css": "public/src/fonts",
-      "fonts": "public/generated/fonts",
-      "preview": "public/generated/fonts"
+      "fonts": "public/assets",
+      "preview": "public/assets"
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"
@@ -541,6 +574,6 @@
   },
   "templates": [
     "public/src/fonts/_glyphs.scss",
-    "public/generated/fonts/index.html"
+    "public/assets/index.html"
   ]
 }

@@ -9,6 +9,7 @@ class AdminUser < ActiveRecord::Base
     c.session_class = AdminSession
     c.validate :password_validation
     c.validates_format_of_email_field_options :with => FD_EMAIL_REGEX
+    c.crypto_provider = Authlogic::CryptoProviders::Sha512
   end
 
   validates_uniqueness_of :name, :message => "is already in use"

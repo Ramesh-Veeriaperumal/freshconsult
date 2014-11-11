@@ -1,8 +1,11 @@
 module AgentsHelper
-  TOOLBAR_LINK_OPTIONS = {  "data-remote" => true, 
-                            "data-method" => :get,
-                            "data-response-type" => "script",
-                            "data-loading-box" => "#agents-list" }
+  TOOLBAR_LINK_OPTIONS = {  :remote => true, 
+                            :"data-method" => 'get',
+                            :"data-type" => 'script',
+                            :"data-hide-before" => '.list-page-body',
+                            :"data-loading" => 'agents-list',
+                            :"data-loading-classes" => 'sloading loading-small'
+                          }
 
   
   def check_agents_limit

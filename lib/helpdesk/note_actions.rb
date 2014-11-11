@@ -21,7 +21,7 @@ module Helpdesk::NoteActions
 
   def conversation_popover_details(note)
     return "" if (note.schema_less_note.nil? or note.to_emails.blank?)
-    content_tag :div, (content_tag :dl, conv_details(note)), :class => "email-details"
+    content_tag :div, (content_tag :dl, conv_details(note).html_safe), :class => "email-details"
   end
 
   def conv_details note

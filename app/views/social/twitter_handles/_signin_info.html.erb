@@ -1,15 +1,15 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
 <h3 class="title"><%=t('.title')%></h3>
 <ul class="ui-form">
   <li class="inline-field">
-	  <div class="admin_help_image">
-      <%= get_img("twitter-admin-page.png", :help) %>
-      <div class="content">
+	  <div class="row-fluid admin_help_image">
+      <div class="span4"><%= get_img("twitter-admin-page.png", :help) %></div>
+      <div class="span8">
         <h2 class="title"><%=t('.engage_customers')%></h2>
         <p class="info-data">
         	<%=t('.associate_account', :product_name => (product ? product.name : current_account.portal_name)).html_safe%>
 		    </p>
-        <a href="<%= @auth_redirect_url %>" class="uiButton special large"><%=t('.add_twitter')%></a>
+        <a href="<%= @auth_redirect_url %>" class="btn btn-primary btn-large"><%=t('.add_twitter')%></a>
       </div>
     </div>
   </li>

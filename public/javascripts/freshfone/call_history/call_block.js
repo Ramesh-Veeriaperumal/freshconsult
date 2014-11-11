@@ -39,8 +39,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           .removeClass('blacklisted')
           .addClass('blacklisting sloading loading-tiny');
         $.ajax({
-          url: '/freshfone/blacklist_number/destroy/' + number,
-          method: 'POST',
+          url: '/freshfone/blacklist_number/' + number,
+          type: 'DELETE',
           async: true,
           success: function (data) {self.unblockSuccess(data, number)},
           error: function (data) {self.unblockError(data, number)}

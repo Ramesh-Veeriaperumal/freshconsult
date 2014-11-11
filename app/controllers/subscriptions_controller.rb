@@ -118,7 +118,7 @@ class SubscriptionsController < ApplicationController
 
     def cache_objects
       @cached_subscription = Subscription.find(current_account.subscription.id)
-      @cached_addons = @cached_subscription.addons.clone
+      @cached_addons = @cached_subscription.addons.dup
     end
 
     #building objects
@@ -131,7 +131,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_freshfone_credits
-      @freshfone_credit = current_account.freshfone_credit
+      @freshfone_credit = current_account.freshfone_credit || Freshfone::Credit.new
     end
 
     def build_free_subscription

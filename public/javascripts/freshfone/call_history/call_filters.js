@@ -311,7 +311,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
     },
     select2FormatResult: function (result) {
       var userDetails = result.email || result.mobile || result.phone;
-          if(userDetails && $(userDetails).trim != "") {
+          if(userDetails && (userDetails).trim() != "") {
             userDetails = "(" + userDetails + ")" ;
           }
           return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 

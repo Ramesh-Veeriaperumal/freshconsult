@@ -39,7 +39,7 @@
 	        		var item_id = item.getAttribute("item_id");
 	          		position_hash.set(item_id, index+1);
 	      		});
-	      		this['reorderlist'].value = JSON.stringify(position_hash);
+	      		this['reorderlist'].value = position_hash.toJSON();
 	    	});
 			jQuery("#"+reorder_id).click(function(ev){
 				ev.preventDefault();

@@ -47,9 +47,9 @@ I18n.fallbacks.map('et' => 'en')
 
 # TODO-RAILS3 Need cross check why these files are added here
 # For importing google contacts lazily from delayed jobs and also using rails recipes.
-# Integrations::GoogleContactsImporter
-# Integrations::GoogleContactsUtil
-# Integrations::GoogleAccount
+Integrations::GoogleContactsImporter
+Integrations::GoogleContactsUtil
+Integrations::GoogleAccount
 
 #ActiveRecord::Base.default_shard = ActiveRecord::Base.shard_names.first
 

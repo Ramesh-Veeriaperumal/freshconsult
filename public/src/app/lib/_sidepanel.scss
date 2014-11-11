@@ -198,7 +198,6 @@
 				@include float(right);
 				width:16px; height:16px; 
 				overflow:hidden;
-				@include text-indent(-99999px);				
 				visibility:hidden;
 				position:relative;
 			 	@include left(-3px);

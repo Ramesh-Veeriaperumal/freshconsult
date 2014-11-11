@@ -30,38 +30,47 @@ entry_delete_path << "/posts/#{post.id}" if post_type=='reply'
 		</div>
 	</div>
 	<div class="post-action-bar">
-			<div class="action-icon">
+			<div class="action-icon" id="approve_<%= post.id %>">
 				<%= link_to '', approve_discussions_moderation_path(post),
 					:method => :put,
 					:class => font_class("checkmark-round", 28, "tooltip post-approve"),
-					:id => 'approve-post',
+					:id => "approve-post_#{ post.id }",
 					:title => t('.approve_tooltip'),
 					:"data-track" => 'Action on Unpublished post',
 					:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json,
+					:"data-hide-before" => 'this',
+					:"data-loading" => "approve_#{ post.id }",
+					:"data-loading-classes" => 'sloading loading-small',
 					:remote => true
 			    %>
 			</div>
 		<% unless post.spam? %>
-			<div class="action-icon">
+			<div class="action-icon" id="delete_<%= post.id %>">
 				<%= link_to '', entry_delete_path,
 					:method => :delete,
 					:class => font_class("trash", 28, "tooltip post-delete delete_action"),
-					:id => 'delete-post',
+					:id => "delete-post_#{ post.id }",
 					:title => t('delete'),
 					:"data-track" => 'Action on Unpublished post',
 					:"data-event-data" => {:action => 'Delete', :spam => false }.to_json,
+					:"data-hide-before" => 'this',
+					:"data-loading" => "delete_#{ post.id }",
+					:"data-loading-classes" => 'sloading loading-small',
 					:remote => true
 				%>
 			</div>
-			<div class="action-icon">
+			<div class="action-icon" id="ban_<%= post.id %>">
 				<%= link_to_if privilege?(:delete_contact), "", ban_discussions_moderation_path(post),
 					:method => :put,
 					:class => font_class("notice", 28, "tooltip post-ban-user"),
-					:id => 'delete-contact',
+					:id => "delete-contact_#{ post.id }",
 					:title => t('.ban_tooltip'),
 					:"data-placement" => "left",
 					:"data-track" => 'Action on Unpublished post',
 					:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json,
+					:"data-hide-before" => 'this',
+					:"data-loading" => "ban_#{ post.id }",
+					:"data-loading-classes" => 'sloading loading-small',
 					:remote => true
 				%>
 			</div>
@@ -69,12 +78,3 @@ entry_delete_path << "/posts/#{post.id}" if post_type=='reply'
 	</div>
 </div>
 
-<%-# TODO-RAILS3 - Move to js files (Added ids above, to make it bind to multiple elements) -%>
-<%= javascript_tag do %>
-(function($) {
-  jQuery("#delete-contact, #delete-post, #approve-post').bind("ajax:before", function(et, e){
-	$(this).hide(); 
-	$(this).parent().addClass('sloading loading-small')
-  });
-})(jQuery)
-<% end %>

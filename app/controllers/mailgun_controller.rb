@@ -9,6 +9,7 @@ class MailgunController < ApplicationController
   skip_before_filter :check_account_state, :except => [:show,:index]
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
+  skip_before_filter :logging_details
 
   def create
     Helpdesk::Email::Process.new(params).perform
@@ -17,13 +18,13 @@ class MailgunController < ApplicationController
 
   private
 
-    def log_file
-      @log_file_path = "#{Rails.root}/log/incoming_email.log"      
-    end
+    # def log_file
+    #   @log_file_path = "#{Rails.root}/log/incoming_email.log"      
+    # end
 
-    def logging_format
-      @log_file_format = %(from_email : #{params[:from]}, to_emails : #{params["To"]}, envelope : #{params[:recipient]})
-    end
+    # def logging_format
+    #   @log_file_format = %(from_email : #{params[:from]}, to_emails : #{params["To"]}, envelope : #{params[:recipient]})
+    # end
 
     def mailgun_verifed
       return params["signature"] == OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new('sha256'),

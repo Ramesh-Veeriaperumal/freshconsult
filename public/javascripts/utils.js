@@ -219,6 +219,7 @@ function insertTextAtCursor(el, text) {
         endIndex = el.selectionEnd;
         el.value = val.slice(0, endIndex) + text + val.slice(endIndex);
         el.selectionStart = el.selectionEnd = endIndex + text.length;
+        el.focus();
     } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
         el.focus();
         range = document.selection.createRange();

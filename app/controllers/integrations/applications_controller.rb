@@ -38,7 +38,7 @@ class Integrations::ApplicationsController < Admin::AdminController
             @salesforce_config['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
             @salesforce_config['lead_fields'] = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
             @salesforce_config['account_fields'] = fetch_sf_account_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            render :partial => "integrations/applications/salesforce_fields",:layouts=> ( request.headers['X-PJAX'] ? 'maincontent' : 'application' ) and return
+            render :template => "integrations/applications/salesforce_fields", :layout => ( request.headers['X-PJAX'] ? 'maincontent' : 'application' ) and return
           else
             config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
             config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?

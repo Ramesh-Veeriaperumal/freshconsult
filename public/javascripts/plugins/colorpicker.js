@@ -75,7 +75,7 @@
     currentColor: false,
     changeColor: false,
     color: false,
-    imageFolder: '/images/colorpicker/',
+    imageFolder: '/images/plugins/colorpicker/',
     swatches: [
       "#ffffff",
       "#ffff00",
@@ -302,7 +302,7 @@
     $f.attr({
       'id': 'mColorPickerFooter'
     }).css({
-      'background-image': 'url(' + $o.imageFolder + 'grid.gif)',
+      'background-color': '#FFF',
       'position': 'relative',
       'height': '26px'
     }).appendTo($w);
@@ -311,10 +311,11 @@
       'id': 'mColorPickerInput',
       'type': 'text'
     }).css({
-      'border': 'solid 1px gray',
       'font-size': '10pt',
-      'margin': '3px',
-      'width': '80px'
+      'margin-left': '5px',
+      'width': '185px',
+      'box-shadow': 'none',
+      'border': '0'
     }).appendTo($f);
 
     if ($i.allowTransparency) $(span).attr({
@@ -341,16 +342,17 @@
       'float': 'right'
     }).appendTo($f);
     
-    $(img).attr({
-      'src': $o.imageFolder + 'meta100.png',
-      'title': $i.slogan,
-      'alt': $i.slogan
-    }).css({
-      'border': 0,
-      'border-left': '1px solid #aaa',
-      'right': 0,
-      'position': 'absolute'
-    }).appendTo($l);
+    // Removing meta100 from colorpicker
+    // $(img).attr({
+    //   'src': $o.imageFolder + 'meta100.png',
+    //   'title': $i.slogan,
+    //   'alt': $i.slogan
+    // }).css({
+    //   'border': 0,
+    //   'border-left': '1px solid #aaa',
+    //   'right': 0,
+    //   'position': 'absolute'
+    // }).appendTo($l);
 
     $('.mNoLeftBorder').css({
       'border-left':0
@@ -404,7 +406,7 @@
     var $t = $(this),
         css = {
           'border-right-color': color,
-          'background-image': (color == 'transparent')? "url('" + $o.imageFolder + "grid.gif')": ''
+          'background-color': '#FFF'
           // 'color': $.fn.mColorPicker.textColor(color)
         };
   

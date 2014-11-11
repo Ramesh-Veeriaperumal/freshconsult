@@ -54,6 +54,7 @@ class Admin::TemplatesController < Admin::AdminController
           set_preview_and_redirect(preview_url) 
         end
       }
+      format.js
     end
   end  
 

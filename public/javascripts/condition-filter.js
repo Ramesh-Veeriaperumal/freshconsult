@@ -136,7 +136,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var inner = jQuery("<div class='controls' />");
 				var outer = jQuery("<fieldset />")
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
-								.append("<img class=\"delete\" src=\"/images/delete.png\" />")
+								.append("<i class=\"rounded-minus-icon delete\"></i>")
 								.append("<span class='sort_handle'></span>")
 								.append(inner)
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"end\" />");
@@ -316,7 +316,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				current_filter = serialHash.get(name);
 
 				if( current_filter && current_filter.length != 0 )
-					save_data = (type != 'json') ? current_filter.toObject() : JSON.stringify(current_filter);
+					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
 
 				hidden_.val(save_data);
 
@@ -372,7 +372,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				if(parentDom=='#actionDOM'){
 					removeIfConditionMatches(jQuery("input[name=need_authentication]:checked").val(), undefined, jQuery(".credentials"));
-					removeIfConditionMatches(jQuery("input[name='content_layout']:checked=true").val(), 1, jQuery(".edit2"), jQuery(".edit1"));
+					removeIfConditionMatches(jQuery("input[name='content_layout']:checked").val(), 1, jQuery(".edit2"), jQuery(".edit1"));
 					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 1, jQuery('.request_content'));
 					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 5, jQuery('.request_content'));
 					removeIfConditionMatches(jQuery(".api_webhook").attr("style"), "display: none;", jQuery('.api_webhook'), jQuery('.user_pass_webhook'));

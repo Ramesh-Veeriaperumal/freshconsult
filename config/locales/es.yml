@@ -2027,7 +2027,7 @@ es:
     remove_tab: "Borrar pestaña"
     tab_not_removed: "No se puede borrar la pestaña"
     tab_removed: "Pestaña borrada"
-    page_added: "Esta página ya ha sido agregada a {{source}}. Por favor remuévala e intente agregar"
+    page_added: "Esta página ya ha sido agregada a %{source}. Por favor remuévala e intente agregar"
     add_tab: "Añadir pestaña"
     tab_name: "Nombre pestaña "
     tab_url: "URL de la imagen "
@@ -3952,7 +3952,7 @@ es:
     updated: "La carpeta de respuestas tipo fue actualizada con exito"
     deleted: "La carpeta de respuestas tipo ha sido eliminada con exito"
     no_folders: "Sin respuestas tipo"
-    folder_update: "Selecciona las respuestas para moverlas a la carpeta {{folder_name}}"
+    folder_update: "Selecciona las respuestas para moverlas a la carpeta %{folder_name}"
     update: "Las respuestas tipo fueron actualizadas"
     created: "La respuesta tipo fue creada con exito"
     delete_multiple: "La respuesta tipo seleccionada fue eliminada"
@@ -4016,8 +4016,6 @@ es:
   import: Importar
   contains: Contiene
   import_solution_article_info: "Nota: No grabaremos los comentarios del foro"
-  no_anonymous_tickets: "Para enviar un ticket, <a href={{signup}}><b>Registrate</b></a> como nuevo usuario o <a href={{login}}><b>Inicia sesión</b></a>."
-  no_signup: "Para enviar un ticket <a href={{login}}><b>Iniciar sesión</b></a>."
   register: Registrar
   by: por
   portal:
@@ -4142,8 +4140,8 @@ es:
       reopen_reply: "Reabrir y responder"
       related_articles: "Artículos relacionados..."
   merge_contacts:
-    header: "Importante: <br />Vas a fusionar {{number}} contactos con {{name}}."
-    info: "Por favor ten en cuenta que funsionando moverás todos los emails, tickets, notas e información de contactos desde el contacto seleccionado a {{name}}. Además, los contactos fusionados serán marcados como eliminados y no podrán ser restaurados. <br /><br />Proceder a fusionar los contactos en {{name}}"
+    header: "Importante: <br />Vas a fusionar %{number} contactos con %{name}."
+    info: "Por favor ten en cuenta que funsionando moverás todos los emails, tickets, notas e información de contactos desde el contacto seleccionado a %{name}. Además, los contactos fusionados serán marcados como eliminados y no podrán ser restaurados. <br /><br />Proceder a fusionar los contactos en %{name}"
     invalid: "La dirección de correo provista no es válida"
     loading: "Preparand para Fusionar <img src='/images/loading.gif'>"
     email_activated: "id de email se encuentra activado"
@@ -4155,7 +4153,7 @@ es:
     removed: "Se ha elminado el id de email"
     confirm_and_merge: "Confirmar y Fusionar"
     activation_sent: "Se ha enviado la activación de correo. Por favor verifica antes de una semana"
-    client_manager: "Has seleccionado el Gestor de Clientes {{name}} para fusionar."
+    client_manager: "Has seleccionado el Gestor de Clientes %{name} para fusionar."
     cannot_restore: "El usuario fusionado no puede ser restaurado"
     primary: Defecto
     not_verified: "No Verficado"
@@ -5037,7 +5035,7 @@ es:
         message_thread_time: "Hora de la cadena de mensajes"
         message_thread_time_info: "El tiempo máximo para considerar los mensajes del mismo usuario como en la cadena  "
         direct_messages: "Importar <strong>&quot;Mensajes directos&quot;</strong> como tickets"
-        direct_messages_info: "Freshdesk convertirá todos los mensajes directos en esta página de Facebook como tickets. Si está habilitando esto por primera vez, es posible que necesite <a href='{{reauth_url}}'>Volver a autorizar con Facebook</a>"
+        direct_messages_info: "Freshdesk convertirá todos los mensajes directos en esta página de Facebook como tickets. Si está habilitando esto por primera vez, es posible que necesite <a href='%{reauth_url}'>Volver a autorizar con Facebook</a>"
     twitter_handles:
       index:
         go_to_ticket: "Ir al ticket"
@@ -5637,7 +5635,7 @@ es:
     inactive_info1: "Todos sus correos de soporte están sin verificar, debe verificar por lo menos un correo de soporte."
     info14: "Un correo electrónico enviado a esta dirección se convertirá como un ticket"
     info4: "<strong>NOTA:</strong> si tiene múltiples direcciones de correo electrónico para prestar asistencia a múltiples productos, <a href='{{products_path}}'>puede añadirlos aquí</a>."
-    spf_info: "Aunque la mayoria de tus emails serán entregados, para estar mas seguros debes crear un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">registro SPF</a>en tu zona de DNS si estas usando emails con tu propio dominio. Esto te ayudará a asegurar una entrega apropiada de emails."
+    spf_info: "Aunque la mayoria de tus emails serán entregados, para estar mas seguros debes crear un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">registro SPF</a>en tu zona de DNS si estas usando emails con tu propio dominio. Esto te ayudará a asegurar una entrega apropiada de emails."
     reply_email: "Su correo de soporte"
     unverified_info1: "Por favor, active su cuenta de correo, pulsando sobre el link enviado a su buzón."
     inactive_info2: "Hasta tanto, se usará el correo por defecto \"%{default_email}\" como dirección de respuesta."
@@ -5645,8 +5643,8 @@ es:
     helpcard:
       tour1: "Ayuda para configurar mi email de soporte"
       tour2: "Ayuda para configurar multiples casillas de email"
-      info5: "Tu dirección de correo para ayuda por defecto es <a target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Cada email enviado a esta dirección se convierte de forma automática en un ticket en el que puedes empezar a trabajar."
-      info19: "Puedes configurar tu cuenta Freshdesk para utilizar una dirección de correo con tu propio dominio, como ayuda@micompañía.com reenviando los correos desde esta dirección a <a target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Para crear una nueva cuenta de ayuda, pulsa en \"Editar\" en la configuración global de email."
+      info5: "Tu dirección de correo para ayuda por defecto es <a target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Cada email enviado a esta dirección se convierte de forma automática en un ticket en el que puedes empezar a trabajar."
+      info19: "Puedes configurar tu cuenta Freshdesk para utilizar una dirección de correo con tu propio dominio, como ayuda@micompañía.com reenviando los correos desde esta dirección a <a target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Para crear una nueva cuenta de ayuda, pulsa en \"Editar\" en la configuración global de email."
       edit_info: "Para crear un nuevo buzón de soporte, pulsa \"Editar\" bajo la configuración global de correo."
       info20: "Usando multiples casillas de email"
       info21: "Puede añadir un número ilimitado buzones de correo entrantes y salientes (como info@yourcompany.com, ventas@yourcompany.com, etc) en su servicio de asistencia. Incluso puedes configurar Freshdesk para asignar automáticamente mensajes de correo electrónico de todos los buzones a un grupo específico"
@@ -5662,7 +5660,7 @@ es:
     info18: "Dirección BCC incluida automáticamente en las respuestas de los tickets "
     email_added_succ_msg: "El mail ha sido añadido"
     assign_to_product_msg: "Enlaza este email de soporte con un producto"
-    assign_to_product_info: "Si quieres enlazar el email a un nuevo producto primero <a href='{{products_path}}'>añade el producto</a>"
+    assign_to_product_info: "Si quieres enlazar el email a un nuevo producto primero <a href='%{products_path}'>añade el producto</a>"
     new_support_email: "Nuevo email de soporte"
     global_support_emails: "Emails de soporte global"
     support_email: "Email de soporte"

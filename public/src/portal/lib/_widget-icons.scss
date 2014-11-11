@@ -1,5 +1,5 @@
 $wicon-layout:horizontal;
-@import "cdn-ignored/sprites/wicon/*.png";
+@import "cdn-ignored/sprites/portal/wicon/*.png";
 $wicon-sprite-dimensions:true;
 @include all-wicon-sprites;
 
@@ -17,7 +17,7 @@ $wicon-sprite-dimensions:true;
 	.default_name_field:before{ @extend .wicon-user; }
 }
 
-.hc-search-input:before{ @extend .wicon-search; }
+#feedback-suggest .hc-search-input:before{ @extend .wicon-search; }
 .default_requester .controls, .default_subject .controls, .default_name_field, .hc-search-input{
 	&:before{
 		content: " ";

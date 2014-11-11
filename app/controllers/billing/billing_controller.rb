@@ -157,11 +157,12 @@ class Billing::BillingController < ApplicationController
     #Events
     def subscription_changed(content)
       plan = subscription_plan(@billing_data.subscription.plan_id)      
-      @old_subscription = @account.subscription.clone
-      @existing_addons = @account.addons.clone
+      @old_subscription = @account.subscription.dup
+      @existing_addons = @account.addons.dup
       
       @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
       update_addons(@account.subscription, @billing_data.subscription)
+
       update_features if update_features?
     end
 

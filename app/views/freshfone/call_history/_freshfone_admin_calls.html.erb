@@ -10,12 +10,6 @@
 				data-title="<%= t('freshfone.call_history.block_number_title') %>"
 				data-width="340"></button>
 			<div id="blacklist-confirmation" class="hide">
-				<%= form_tag :remote => true,
-										:url => url_for(:controller => 'freshfone/blacklist_number',
-											:action => 'create'),
-										:method => 'post' do  %>
-					<%= hidden_field(:blacklist_number, :number) %>
-                                <% end %>
 				<%= form_for(:blacklist_number, :url => url_for(:controller => 'freshfone/blacklist_number', 
 							 :action => 'create'), :method => 'post', :remote => true) do |f| %>
 					<%= f.hidden_field :number %>
@@ -36,7 +30,7 @@
 						<div class="list-page-freshfone-numbers span12">
 							<!--  start -->
 							<div class="span7">
-	              <img src="/images/reports/report-icon.png" alt="" class="vertical-alignment call-history-header-icon">
+	              	<i class="vertical-alignment report-header-icon reports-icon-report"></i>
 		            <div class="vertical-alignment">
 		              <h1 class="freshfone-lead lead" ><%=t('freshfone.call_history.title')%></h1>
 		              <span class="filter_freshfone_number"></span>

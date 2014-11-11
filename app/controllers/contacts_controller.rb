@@ -66,7 +66,7 @@ class ContactsController < ApplicationController
   
   def create   
     if initialize_and_signup!
-      flash[:notice] = render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('flash.contacts.create.success') } )
+      flash[:notice] = render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('flash.contacts.create.success') } ).html_safe
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
@@ -160,7 +160,7 @@ class ContactsController < ApplicationController
   def update
     if @user.update_attributes(params[:user])
       respond_to do |format|
-        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('merge_contacts.contact_updated') } )
+        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('merge_contacts.contact_updated') } ).html_safe
         format.html { redirect_to redirection_url }
         format.xml  { head 200}
         format.json { head 200}

@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %> 
+<% content_for :sidebar do -%>&nbsp;<%- end %> 
 
 <%= content_tag( :h3,  t('import_zendesk_title'), :class => "title" ) %>
 <%= form_for :dump, :url => { :controller=>"admin/xmlreader", :action=>"zendesk_import"}, :html => { :multipart => true } do |f| -%>

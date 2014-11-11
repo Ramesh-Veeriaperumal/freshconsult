@@ -15,9 +15,10 @@
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
-            <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
+            <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-list-wrap attach-link-wrap">
+                <i class="ficon-file-edit fsize-16"></i>
                 <%= I18n.t('portal.attach_file').html_safe %>
-                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
+                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">
                   <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
                     data-attach-id="<%=attach_id%>"
@@ -31,8 +32,10 @@
           <% unless dropbox_app_key.blank? %>
             <li id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
                 <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[cloud_file_attachments][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-                <a href="#" class="dropbox_button" name="selected-file" id="db-chooser" 
-                  data-holder="<%=attach_id%>_url" onclick='initDropbox(this); event.preventDefault();'><%=I18n.t('dropbox_attach_from').html_safe%></a>         
+                <a href="#" class="dropbox_button attach-list-wrap" name="selected-file" id="db-chooser" data-holder="<%=attach_id%>_url" onclick='initDropbox(this); event.preventDefault();'>
+                  <i class="ficon-dropbox fsize-16"></i>
+                  <%=I18n.t('dropbox_attach_from').html_safe%>
+                </a>         
             </li>
           <% end %>
         </ul>      

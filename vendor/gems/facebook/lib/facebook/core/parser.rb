@@ -9,13 +9,13 @@ class Facebook::Core::Parser
   end
 
   def parse
-    sandbox do
-      Account.reset_current_account
-      if @feed.entry_changes
-        mapping = Social::FacebookPageMapping.find_by_facebook_page_id(@feed.page_id)
-        account_id = mapping.account_id if mapping
+    Account.reset_current_account
+    if @feed.entry_changes
+      mapping = Social::FacebookPageMapping.find_by_facebook_page_id(@feed.page_id)
+      account_id = mapping.account_id if mapping
 
-        Sharding.select_shard_of(account_id) do
+      Sharding.select_shard_of(account_id) do
+        sandbox do
           account = Account.find_by_id(account_id)
           return unless account && account.active?
           account.make_current
@@ -36,10 +36,9 @@ class Facebook::Core::Parser
                 end
               end
             end
-
           end
-        end if account_id
-      end
+        end
+      end if account_id
     end
   end
 

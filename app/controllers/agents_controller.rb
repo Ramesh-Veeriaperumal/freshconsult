@@ -42,8 +42,10 @@ class AgentsController < ApplicationController
       @agents = scoper.filter(params[:state],params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
-      format.html # index.html.erb
-      format.js
+      format.html #index.html.erb
+      format.js do
+        render 'index', :formats => [:rjs] 
+      end
       format.xml  { render :xml => @agents.to_xml }
       format.json  { render :json => @agents.to_json }
     end

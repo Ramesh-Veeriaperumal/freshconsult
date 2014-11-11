@@ -1,7 +1,7 @@
  <div class="sidepanel">
  	<!-- #TODO-RAILS3 to be tested -->
   <%= form_tag '/activity_reports/helpdesk/generate', :"data-update" => "report-container", 
-	                   :"data-loading" => "#report-container", :"data-loading-classes" => "sloading loading-block loading-small", :remote => true do %>
+	                   :"data-loading" => "report-container", :"data-loading-classes" => "sloading loading-block loading-small", :remote => true do %>
 	  <%= render :partial => "/reports/shared/options_form" %> 
 	<%= submit_tag t('reports.generate_button'), :class => "btn" %>
 	<% end %>

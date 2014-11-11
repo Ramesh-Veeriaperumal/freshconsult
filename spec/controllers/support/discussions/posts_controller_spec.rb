@@ -75,29 +75,29 @@ describe Support::Discussions::PostsController do
 		response.should redirect_to "/support/discussions"
 	end
 
-	it "should render edit on get 'edit'" do
+	it "should render edit on get 'edit' if author or agent" do
 		topic = publish_topic(create_test_topic(@forum))
-		post = create_test_post(topic)
+		post = create_test_post(topic, @user)
 		post_body = Faker::Lorem.paragraph
 
 		get :edit, :id => post.id,
-      :post => {
-      :body_html =>"<p>#{post_body}</p>"
-    },
-      :topic_id => topic.id
+					:post => {
+							:body_html =>"<p>#{post_body}</p>"
+							},
+					:topic_id => topic.id
 		response.should render_template "support/discussions/topics/_edit_post"
 	end
 
-	it "should update a post on put 'update'" do
+	it "should update a post on put 'update' if author or agent" do
 		topic = publish_topic(create_test_topic(@forum))
-		post = create_test_post(topic)
+		post = create_test_post(topic, @user)
 		post_body = Faker::Lorem.paragraph
 
 		put :update, :id => post.id,
-      :post => {
-      :body_html =>"<p>#{post_body}</p>"
-    },
-      :topic_id => topic.id
+					:post => {
+							:body_html =>"<p>#{post_body}</p>"
+							},
+					:topic_id => topic.id
 
 		post.reload
 		post.body_html.should eql "<p>#{post_body}</p>"
@@ -108,7 +108,7 @@ describe Support::Discussions::PostsController do
 
 	it "should not update a post on put 'update' when post is invalid" do
 		topic = publish_topic(create_test_topic(@forum))
-		post = create_test_post(topic)
+		post = create_test_post(topic, @user)
 		put :update, :id => post.id,
       :post => {
       :body_html =>""
@@ -132,9 +132,9 @@ describe Support::Discussions::PostsController do
 		response.should redirect_to "/support/discussions/topics/#{topic.id}?page=1"
 	end
 
-	it "should mark a post as answer on 'toggle_answer'" do
-		topic = create_test_topic(@forum)
-		post = create_test_post(topic)
+	it "should mark a post as answer on 'toggle_answer' if author or agent" do
+		topic = create_test_topic(@forum, @user)
+		post = create_test_post(topic, @user)
 
 		put :toggle_answer, :id => post.id, :topic_id => topic.id
 
@@ -146,9 +146,9 @@ describe Support::Discussions::PostsController do
 		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
-	it "should unmark a post as answer on 'toggle_answer'" do
-		topic = create_test_topic(@forum)
-		post = mark_as_answer(create_test_post(topic))
+	it "should unmark a post as answer on 'toggle_answer' if author or agent" do
+		topic = create_test_topic(@forum, @user)
+		post = mark_as_answer(create_test_post(topic, @user))
 
 
 		put :toggle_answer, :id => post.id, :topic_id => topic.id
@@ -168,6 +168,51 @@ describe Support::Discussions::PostsController do
 
     response.should render_template "support/discussions/posts/best_answer"
 	end
+
+	describe "should redirect to login page when a non-author or non-agent tries to make changes to a post" do
+
+		before(:all) do
+			@first_user = add_new_user(@account)
+			@second_user = add_new_user(@account)
+			@new_topic = publish_topic(create_test_topic(@forum))
+			@new_post = create_test_post(@new_topic, @first_user)
+			log_in(@second_user)
+		end
+
+		after(:all) do
+			log_in(@user)
+		end
+
+		it "should redirect to login page post on edit on get 'edit' if not author or agent" do
+			post_body = Faker::Lorem.paragraph
+
+			get :edit, :id => @new_post.id,
+						:post => {
+								:body_html =>"<p>#{post_body}</p>"
+								},
+						:topic_id => @new_topic.id
+			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+		end
+
+		it "should redirect to login page on put 'update' if not author or agent" do
+			post_body = Faker::Lorem.paragraph
+
+			put :update, :id => @new_post.id,
+	      :post => {
+	      :body_html =>"<p>#{post_body}</p>"
+	    },
+	      :topic_id => @new_topic.id
+
+			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+		end
+
+		it "should redirect to login page on marking a post as answer on 'toggle_answer' by a non-agent or author" do
+			put :toggle_answer, :id => @new_post.id, :topic_id => @new_topic.id
+
+			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+		end
+	end
+
 
 	describe "should check for spam" do
 

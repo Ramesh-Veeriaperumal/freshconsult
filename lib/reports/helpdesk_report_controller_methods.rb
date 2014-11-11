@@ -30,7 +30,7 @@ module Reports::HelpdeskReportControllerMethods
   end
 
   def add_filter_conditions(params)
-    params = params.symbolize_keys!
+    #params = params.symbolize_keys!
     unless params[:data_hash].blank? 
       action_hash = params[:data_hash]
       action_hash = ActiveSupport::JSON.decode action_hash unless action_hash.kind_of?(Array)

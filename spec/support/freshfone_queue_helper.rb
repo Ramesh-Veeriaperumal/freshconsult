@@ -46,6 +46,14 @@ module FreshfoneQueueHelper
 
   end
 
+  def default_queue
+    DEFAULT_QUEUE
+  end
+
+  def agent_queue
+    AGENT_QUEUE
+  end
+
   DEFAULT_QUEUE = "FRESHFONE:CALLS:QUEUE:1"
   AGENT_QUEUE = "FRESHFONE:AGENT_QUEUE:1"
 end

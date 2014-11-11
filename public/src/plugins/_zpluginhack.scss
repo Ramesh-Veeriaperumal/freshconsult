@@ -6,6 +6,7 @@
 .select2-container .select2-choice .select2-arrow{
 	background:#fff;
 	border:0;
+	@inlcude margin-right(0);
 }
 .select2-dropdown-open a.select2-choice, .select2-container .select2-choice { 
 	background: #fff; 

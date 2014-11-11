@@ -39,14 +39,14 @@
 
 	<script type="text/javascript">
 	  /* TODO-RAILS3 need to cross check this area */
-		PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
-		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
-		SPACER_IMAGE_PATH = '<%= image_path("spacer.gif") %>';
+		PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.gif';
+		PROFILE_BLANK_MEDIUM_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_medium.gif';
+		SPACER_IMAGE_PATH = '<%= spacer_image_url %>';
 		FILLER_IMAGES = {
-			imageLoading : '<%= image_path("fillers/image_upload_placeholder.gif") %>'
+			imageLoading : '<%= asset_host_url %>/assets/animated/image_upload_placeholder.gif'
 		};
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
-		cloudfront_host_url = "<%= ActionController::Base.asset_host %>";
+		cloudfront_host_url = "<%= asset_host_url %>";
 	</script>
 		
 	<%= javascript_include_tag :'cdn/defaults'  %>
@@ -66,7 +66,7 @@
 	<% if chat_activated? %>
 		<%= javascript_include_tag :'cdn/freshchat' %>
 	<% end %>
-
+	
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
 	<script type="text/javascript">
@@ -74,7 +74,7 @@
 		$LAB.setGlobalDefaults({
 			BasePath: cloudfront_host_url + '/assets/'
 		});
-		Fjax.Assets.setup(<%= AssetLoader.js_assets.to_json.html_safe %>, <%= AssetLoader.css_assets.to_json.html_safe %>, "", cloudfront_host_url);
+		Fjax.Assets.setup(<%= asset_manifest(:js).to_json.html_safe %>, {app:[], plugins:[]}, "", cloudfront_host_url);
 		Fjax.Manager.start();
 	</script>
 

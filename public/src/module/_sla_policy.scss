@@ -69,7 +69,7 @@
 		z-index:2;
 		content:"";
 		top: -6px;
-	 @include left(25px);
+	 	@include left(25px);
 	}
 
 	.open > .dropdown-menu:after {
@@ -78,7 +78,7 @@
 		z-index:3;
 		content:"";
 		top: -5px;
-	 @include left(26px);
+		@include left(26px);
 	}
 
 	.ui-form li.seperator {
@@ -201,8 +201,6 @@
 						}@else{
 							padding-right: 4px;						
 						}
-						width: 16px;
-						height: 16px;
 						position: absolute;
 					}
 				}
@@ -259,8 +257,6 @@
 			.delete_conditions {
 				@include opacity(0.7);
 				margin-top:7px;
-				width: 16px;
-				height: 16px;
 				position: absolute;
 			}
 			.condition_autocompleter {
@@ -324,12 +320,20 @@
 				@include float(right);
 				@include hide-text();
 				@include padding(2px 3px 2px 7px !important);
-				background: image-url("select2/select2.png") right top no-repeat !important;
 				width: 12px;
 				height: 8px;
-			 @include left(-2px);
+				@include left(-2px);
 				&:hover {
-					background-position: right -11px;
+					color: #363636;
+				}
+				&::after {
+					color: #999;
+					content: "\00d7";
+					position: absolute;
+					top: 1px;
+					@include right(1px);
+					font-size: 17px;
+					font-weight: bold;
 				}
 			}
 			&:hover {

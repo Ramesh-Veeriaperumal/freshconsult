@@ -201,7 +201,7 @@ module SupportHelper
 	def profile_image user, more_classes = "", width = "50px", height = "50px"
 		output = []
 		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}">
-							<img src="/images/fillers/profile_blank_thumb.gif" onerror="imgerror(this)" )
+							<img src="/images/misc/profile_blank_thumb.gif" onerror="imgerror(this)" )
 		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
 		output << %(			width="#{width}" height="#{height}" />
 						</div> )
@@ -210,20 +210,20 @@ module SupportHelper
 
 	#freshfone audio dom
 	# TODO-RAILS3 duplicate of tickets_helper
- # def freshfone_audio_dom(notable)
- #      notable = notable
- #      call = notable.freshfone_call
- #      dom = []
- #      if call.present? && call.recording_url
- #        dom << %(<br> <span> <b> #{I18n.t('freshfone.ticket.recording') }</b> </span>)
- #        if call.recording_audio
- #        	dom << %(<div class='freshfoneAudio'> <div class='ui360'> <a href=/helpdesk/attachments/#{call.recording_audio.id} type='audio/mp3' class='call_duration' data-time=#{call.call_duration} ></a>)
- #        else
- #          dom << %(<br> <div class='freshfoneAudio_text'>#{I18n.t('freshfone.recording_on_process')}</div>)
- #        end
- #      end
-	# 	dom.join("").html_safe
- #  end
+ def freshfone_audio_dom(notable)
+      notable = notable
+      call = notable.freshfone_call
+      dom = []
+      if call.present? && call.recording_url
+        dom << %(<br> <span> <b> #{I18n.t('freshfone.ticket.recording') }</b> </span>)
+        if call.recording_audio
+        	dom << %(<div class='freshfoneAudio'> <div class='ui360'> <a href=/helpdesk/attachments/#{call.recording_audio.id} type='audio/mp3' class='call_duration' data-time=#{call.call_duration} ></a>)
+        else
+          dom << %(<br> <div class='freshfoneAudio_text'>#{I18n.t('freshfone.recording_on_process')}</div>)
+        end
+      end
+		dom.join("").html_safe
+  end
 
 	# No content information for forums
 	def filler_for_forums portal
@@ -256,7 +256,7 @@ module SupportHelper
 
 	def portal_fav_ico
 		fav_icon = MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal],30.days.to_i) do
-     			current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' :
+     			current_portal.fav_icon.nil? ? '/images/misc/favicon.ico?123457' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
                         :expires => 30.days.to_i,
@@ -769,9 +769,9 @@ HTML
 		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences,
-			:image_placeholders => { :spacer => image_path("spacer.gif"),
-			 												:profile_thumb => image_path("fillers/profile_blank_thumb.gif"),
-															 :profile_medium => image_path("fillers/profile_blank_medium.gif") }
+			:image_placeholders => { :spacer => spacer_image_url,
+			 												:profile_thumb => image_path("misc/profile_blank_thumb.gif"),
+															 :profile_medium => image_path("misc/profile_blank_medium.gif") }
 		}.to_json
 	end
 
@@ -979,6 +979,10 @@ HTML
 		else
 			""
 		end
+	end
+
+	def spacer_image_url
+		"#{asset_host_url}/assets/misc/spacer.gif"
 	end
 
 	private

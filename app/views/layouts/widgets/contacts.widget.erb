@@ -12,7 +12,7 @@
 
 		<%= stylesheet_link_tag_with_rtl :'cdn/common'  %> 	    
 		<%= stylesheet_link_tag_with_rtl :'cdn/app'  %> 	    
-		<%= render :partial => "shared/theme.css"  %>
+		<%= render :partial => "shared/theme", :formats => [:css]  %>
 	  <%= yield :head %>
 	</head>
   <body style="min-width:auto;">

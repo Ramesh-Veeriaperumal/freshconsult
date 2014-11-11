@@ -366,7 +366,7 @@
 
          $("<fieldset />")
             .append("<span class='sort_handle' />")
-            .append('<img class="deleteChoice" src="/images/delete.png" />')
+            .append('<i class="rounded-minus-icon"></i>')
             .append(dropSpan)            
             .appendTo(dom);  
       }
@@ -436,7 +436,7 @@
          return choices;
       }
 
-      jQuery("#DropFieldChoices .deleteChoice")
+      jQuery("#DropFieldChoices .rounded-minus-icon")
          .live('click', function(){
                           if(jQuery(this).parent().siblings().size() !== 0) {
                             $($(this).siblings()[1]).children().attr("data-deleted",true);
@@ -445,7 +445,7 @@
                           }
                         });
 
-      jQuery("#statuschoices .deleteChoice")
+      jQuery("#statuschoices .rounded-minus-icon")
          .live('click', function(){
                           if(jQuery(this).hasClass('disabled')) return;
                             jQuery(this)

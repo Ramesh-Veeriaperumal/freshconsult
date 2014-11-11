@@ -1,8 +1,5 @@
 module Helpdesk::Email::ParseEmailData
 	include ParserUtil
-	include ActionView::Helpers::TagHelper
-	include ActionView::Helpers::TextHelper
-	include ActionView::Helpers::UrlHelper
 
 	attr_accessor :reply_to_email, :recipients
 

@@ -7,6 +7,7 @@ require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)
 require "rate_limiting"
 require "rack/ssl"
+require "statsd"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -38,7 +39,7 @@ module Helpkit
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
     config.time_zone = 'Chennai'
-    config.exceptions_app = ->(env) { ExceptionsController.action(:show).call(env) }
+    # config.exceptions_app = ->(env) { ExceptionsController.action(:show).call(env) }
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
@@ -73,6 +74,12 @@ module Helpkit
     config.action_controller.include_all_helpers = false
 
     # Configuring middlewares -- Game begins from here ;)
+    statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
+    # statsd intialization
+    statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
+    # middleware for statsd
+    config.middleware.use "Statsd::Rack::Middleware", statsd
+
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
@@ -122,7 +129,6 @@ module Helpkit
     # /auth/providername for example /auth/twitter /auth/facebook
 
     # TODO-RAILS3 need to cross check
-    config.middleware.use  OmniAuth::Strategies::OpenID, :store => OpenID::Store::Filesystem.new('./omnitmp') , :name => "google",  :identifier => "https://www.google.com/accounts/o8/id"
     # you won't be able to access the openid urls like /auth/google
     # you will be able to access them through
     # /auth/open_id?openid_url=https://www.google.com/accounts/o8/id
@@ -161,8 +167,6 @@ module Helpkit
         end
         [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
       end
-
-      provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
     end
 
 
@@ -187,3 +191,15 @@ ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:p
 # Captcha API Keys
 ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'
 ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
+
+
+
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+       RABBIT_MQ_ENABLED = !Rails.env.development?
+       RabbitMq::Init.start if RABBIT_MQ_ENABLED
+    end
+  end
+end
+

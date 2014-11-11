@@ -135,7 +135,9 @@ RSpec.describe Helpdesk::TicketsController do
   it "should create a ticket with attachments" do
      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
      post :create, ticket_params(file).merge!(:format => 'json')
-     response.should be_success
+     result =  parse_json(response)
+     expected = (response.status == 200) && compare(result['helpdesk_ticket'].keys, APIHelper::TICKET_ATTRIBS,{}).empty? && compare(result['helpdesk_ticket']['attachments'][0].keys, APIHelper::ATTACHMENT_ATTRIBS,{}).empty?
+     expected.should be(true)
   end
 
   

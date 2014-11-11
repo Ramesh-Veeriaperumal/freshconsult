@@ -65,7 +65,7 @@ class Portal < ActiveRecord::Base
   end
 
   def fav_icon_url
-    fav_icon.nil? ? '/images/favicon.ico' : fav_icon.content.url
+    fav_icon.nil? ? '/images/misc/favicon.ico' : fav_icon.content.url
   end
 
   def forum_categories

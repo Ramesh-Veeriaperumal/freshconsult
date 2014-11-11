@@ -103,7 +103,7 @@
 		<% unless current_user %>
 		<div id="auth_fb_btn"></div>
 		<% end %>
-		<%= @page_yield %>
+		<%= @page_yield.html_safe %>
 				
 		<%= render :partial => "layouts/shared/scripts" %> 
 

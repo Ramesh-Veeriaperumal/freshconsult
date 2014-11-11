@@ -5,8 +5,8 @@ class Support::Mobihelp::TicketsController < SupportController
   before_filter :mobihelp_user_login
   before_filter :require_user_login
   before_filter :build_tickets, :only => [:index]
-  before_filter :load_ticket, :only => [:show,:add_note,:close]
-  before_filter :check_ticket_permissions, :only => [:show,:add_note,:close]
+  before_filter :load_ticket, :only => [:show,:notes,:close]
+  before_filter :check_ticket_permissions, :only => [:show,:notes,:close]
   before_filter :pre_process_mobihelp_params, :only => [:create]
 
   def create
@@ -50,7 +50,7 @@ class Support::Mobihelp::TicketsController < SupportController
     end
   end
 
-  def add_note
+  def notes
     @note = @ticket.notes.build({
       "incoming" => true,
       "private" => false,

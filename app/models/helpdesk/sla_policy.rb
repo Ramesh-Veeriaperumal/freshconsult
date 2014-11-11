@@ -22,7 +22,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     :dependent => :destroy 
   
   attr_accessible :name,:description, :is_default, :conditions, :escalations, :active, :datatype, 
-    :sla_details_attributes
+    :sla_details_attributes, :position
   
   accepts_nested_attributes_for :sla_details
 

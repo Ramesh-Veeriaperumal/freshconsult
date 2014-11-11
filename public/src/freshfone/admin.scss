@@ -287,12 +287,21 @@
   margin-top: 20px;
 }
 .freshfone_admin_content {
-  @include margin(0 0 0 150px);
   .info-data {
     font-size: 15px;
     li {
+      @include padding(0);
       line-height: 1.8;
     }
+    &:after{
+      content:" ";
+      display: table;
+      clear:both;
+    }
+  }
+  .content_footer{
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
 }
 .fresfhone_flash_message {

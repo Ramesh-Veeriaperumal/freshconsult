@@ -3,7 +3,7 @@
     <div class="sidepanel">
 	  	<% if privilege?(:manage_contacts) %>
     		<h3 class="lead"><%=t('contacts.quick_contact')%></h3>	
-    		<%= form_tag :url  => contacts_path, :method => :post do %>
+    		<%= form_tag contacts_path, :method => :post, :rel => "validate" do %>
     			<%= error_messages_for :user %> 	
     			<div class="quick-contact">
     				<div class="control-group">
@@ -81,7 +81,7 @@
         </div>
 </div>​
 <div id="user-deletion-confirmation" class="hide">
-	<p class="margin-bottom lead-desc"><%= t('contacts.delete_confirmation')%></p>
+	<p class="margin-bottom"><%= t('contacts.delete_confirmation')%></p>
 </div>
 
 
