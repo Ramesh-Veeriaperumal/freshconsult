@@ -72,6 +72,11 @@
 		overflow:visible;
 	}
 }
+.select2-container.custom-select{
+	.select2-search-choice-close{
+		display: block;
+	}
+}
 // Redactor Hack
 //-----------------
 .form-widget .redactor_editor{ //Mozilla fix for hidden feedback widget
