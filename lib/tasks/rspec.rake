@@ -38,7 +38,8 @@ TwitterTests = [
   "spec/lib/social/twitter/*_spec.rb", 
   "spec/models/social/twitter_*_spec.rb", 
   "spec/controllers/social/*_spec.rb",
-  "spec/controllers/admin/social/*_spec.rb"
+  "spec/controllers/admin/social/*_spec.rb",
+  "spec/controllers/mobile/freshsocial/*_spec.rb"
 ]
 
 ModelTests = [
@@ -169,7 +170,8 @@ FunctionalTests = [
 
 MobileAppTests = [
   "spec/controllers/mobile/*_spec.rb",
-  "spec/controllers/mobile/freshfone/*_spec.rb"
+  "spec/controllers/mobile/freshfone/*_spec.rb",
+  "spec/controllers/mobile/freshsocial/*_spec.rb"
 ]
 
 ChatTests = [

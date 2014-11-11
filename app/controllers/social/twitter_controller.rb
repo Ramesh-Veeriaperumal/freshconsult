@@ -5,11 +5,13 @@ class Social::TwitterController < Social::BaseController
   include Conversations::Twitter
   include Social::Twitter::TicketActions
   include Social::Twitter::Constants
+  include Mobile::Actions::Social
 
   before_filter :fetch_live_feeds, :only => [:twitter_search, :show_old, :fetch_new]
   before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
   before_filter :get_favorite_params, :only => [:favorite, :unfavorite]
   before_filter :get_follow_params,   :only => [:follow, :unfollow]
+  before_filter :set_native_mobile, :only => [:twitter_search, :show_old, :fetch_new, :reply, :retweet, :post_tweet, :create_fd_item, :favorite, :unfavorite]
   before_filter :load_visible_handles, :only => [:user_info, :followers]
   before_filter :load_reply_handles, :only => [:twitter_search, :show_old, :fetch_new, :reply]
 
@@ -17,24 +19,28 @@ class Social::TwitterController < Social::BaseController
   def twitter_search
     @recent_search = current_user.agent.recent_social_searches
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile { render_twitter_mobile_response  }
     end
   end
 
   def show_old
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile { render_twitter_mobile_response }
     end
   end
 
   def fetch_new
     @refresh = true
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile { render_twitter_mobile_response }
     end
   end
 
   def create_fd_item
+    mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:ticket_save]
     if has_permissions?(params[:search_type], params[:item][:stream_id])
       current_feed = create_fd_item_params
       @current_feed_id = current_feed[:feed_id]
@@ -46,12 +52,22 @@ class Social::TwitterController < Social::BaseController
                           :user_in_db => db_user?(item)  }
                     arr
                 end
-      flash.now[:notice] = t('twitter.tkt_err_save') if fd_items.empty?
+      if fd_items.empty?
+        flash.now[:notice] = t('twitter.tkt_err_save')
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:tkt_err_save]
+      end
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_create_fd_item')
+      mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_create_fd_item]
     end
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile {
+        render :json => { :message => mobile_response,
+                          :items => @items_info,
+                          :result => !fd_items.empty?
+                        }
+      }
     end
   end
   
@@ -97,17 +113,22 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], params[:stream_id])
       tweet        = current_account.tweets.find_by_tweet_id(@in_reply_to)
       unless tweet.blank?
-        reply_for_ticket_tweets(tweet)
+        mobile_response = reply_for_ticket_tweets(tweet)
       else
-        reply_for_non_ticket_tweets
+        mobile_response = reply_for_non_ticket_tweets
       end
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_reply')
+      mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_reply]
     end
     @thumb_avatar_urls = twitter_avatar_urls("thumb")
     @medium_avatar_urls = twitter_avatar_urls("medium")
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile {
+        render :json => { :message => mobile_response,
+                          :result =>  mobile_response.eql?(MOBILE_TWITTER_RESPONSE_CODES[:reply_success]) }
+      }
     end
   end
 
@@ -118,46 +139,71 @@ class Social::TwitterController < Social::BaseController
       retweet_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:retweet])
       unless retweet_status.blank?
         flash.now[:notice] = t('social.streams.twitter.retweet_success')
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:retweet_success]
       else
         flash.now[:notice] = @social_error_msg || t('social.streams.twitter.already_retweeted')
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:already_retweeted]
       end
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_retweet')
+      mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_retweet]
     end
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile {
+        render :json => { :message => mobile_response,
+                          :result =>  !retweet_status.blank? }
+      }
     end
   end
   
   def favorite
+    mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:favorite_success]
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       favourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:favorite])
       update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
-      flash.now[:notice] = @social_error_msg if @social_error_msg && favourite_status.blank?
+      if favourite_status.blank?
+        flash.now[:notice] = @social_error_msg if @social_error_msg
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:favorite_error]
+      end
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_favorite')
+      mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_favorite]
     end
 
     respond_to do |format|
       format.js
+      format.nmobile {
+        render :json => { :message => mobile_response,
+                          :feed_id => @feed_id,
+                          :result =>  !favourite_status.blank? }
+      }
     end
   end
   
   def unfavorite
+    mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:unfavorite_success]
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       unfavourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
       update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
       if unfavourite_status.blank? 
         flash.now[:notice] = @social_error_msg unless not_valid_error?(@social_error_msg)
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:unfavorite_error]
       end
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_unfavorite')
+      mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_unfavorite]
     end
 
     respond_to do |format|
       format.js
+      format.nmobile {
+        render :json => { :message => mobile_response,
+                          :feed_id => @feed_id,
+                          :result =>  !unfavourite_status.blank? }
+      }
     end
   end
   
@@ -220,14 +266,21 @@ class Social::TwitterController < Social::BaseController
       @tweet_obj, @social_error_msg = Social::Twitter::Feed.twitter_action(handle, params[:tweet][:body], TWITTER_ACTIONS[:post_tweet])
       unless @tweet_obj.blank?
         flash.now[:notice] = t('social.streams.twitter.tweeted')
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:tweeted]
       else
         flash.now[:notice] = @social_error_msg
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:social_error_msg]
       end
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_post')
+      mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_post]
     end
     respond_to do |format|
-      format.js
+      format.js { }
+      format.nmobile {
+        render :json => { :message => mobile_response,
+                          :result =>  !@tweet_obj.blank? }
+      }
     end
   end
 
@@ -307,11 +360,14 @@ class Social::TwitterController < Social::BaseController
       twt_success, reply_twt = send_tweet_as_mention(ticket, note)
       if twt_success
         @interactions[:current] << recent_agent_reply(reply_twt, note) if reply_twt
+        MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
       else
         flash.now[:notice] = t('twitter.not_authorized')
+        MOBILE_TWITTER_RESPONSE_CODES[:not_authorized]
       end
     else
       flash.now[:notice] = t(:'flash.tickets.reply.failure')
+      MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
     end
   end
 
@@ -335,8 +391,10 @@ class Social::TwitterController < Social::BaseController
         reply_params = agent_reply_params(twt, in_reply_to, nil)
         update_custom_streams_reply(reply_params, params[:stream_id], nil)
       end
+      MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
     else
       flash.now[:notice] = @sandbox_error_msg
+      MOBILE_TWITTER_RESPONSE_CODES[:sandbox_error_msg]
     end
   end
 
