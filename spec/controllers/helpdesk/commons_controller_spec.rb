@@ -15,14 +15,14 @@ describe Helpdesk::CommonsController do
 	end
 
 	it "should list all agents added in that groups" do
-		post :group_agents, :id => @test_group.id
+		get :group_agents, :id => @test_group.id
 		response.body.should =~ /#{@agent.id}/
 		response.body.should =~ /#{@agent.name}/
 		response.should be_success
 	end
 
 	it "should list all agents added in that groups(format - mobile)" do
-		post :group_agents, :id => @test_group.id, :format => 'mobile'
+		get :group_agents, :id => @test_group.id, :format => 'mobile'
 		response.body.should =~ /#{@agent.id}/
 		response.body.should =~ /#{@agent.name}/
 		response.body.should =~ /#{@agent.email}/
