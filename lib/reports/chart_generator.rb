@@ -107,6 +107,7 @@ module Reports::ChartGenerator
         },
       :plotOptions => {
         :pie => {
+          :animation =>false,
           :size => '75%',
           :borderWidth => 0,
           :shadow => false,
@@ -133,7 +134,7 @@ module Reports::ChartGenerator
           :left => 2,
         },
         :borderWidth => 0,
-        :y => 15,
+        :y => -20,
         :verticalAlign => 'bottom',
         :floating => false,
         
@@ -198,6 +199,7 @@ return nil if data_arr.empty?
             },
              :plotOptions=> {
                 :bar=> {
+                    :animation =>false,
                     :dataLabels=> {
                         :enabled=> true,
                          :style=> {
@@ -260,6 +262,7 @@ end
       },
       :plotOptions => {
         :series => {
+          :animation =>false,
           :stacking => 'normal'
         },
         :bar => {
@@ -283,7 +286,7 @@ end
           :top => 95,
         },
         :borderWidth => 0,
-        :y => -25,
+        :y => -10,
         :reversed => true,
         :verticalAlign => 'top',
         :floating => false,
@@ -310,6 +313,7 @@ end
       :colors => define_gauge_colors(column_name),
       :plotOptions => {
         :pie => {
+          :animation =>false,
           :size => '100%',
           :borderWidth => 1,
           :borderColor => '#FEFEFE',
@@ -393,6 +397,7 @@ end
       },
       :plotOptions => {
          :column => {
+           :animation =>false,
            :borderWidth => 0,
            :shadow => false,
            :dataLabels => {
