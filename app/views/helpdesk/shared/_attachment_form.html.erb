@@ -15,16 +15,12 @@
       <div class="db-chooser" id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
         <label><%= t('dropbox_attach_label') %></label>
           <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[cloud_file_attachments][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-          <div class="attach-list-wrap dropbox-attachment" onclick='initDropbox(this)'>
-            <div class='dropbox-wrap'>
-              <i class="ficon-dropbox fsize-16"></i>
-              <span class='dropbox-text'> <%= t('integrations.dropbox.label') %> </span>
-            </div>
-            <input type="button" class="dropbox_button" name="selected-file" id="db-chooser" data-holder="<%=attach_id%>_url" value="<%=t('dropbox_choose_file')%>">
+          <div class="attach-list-wrap tkt-dropbox-atmt">
+            <i class="ficon-dropbox fsize-16"></i>
+            <input type="button" class="dropbox_button" name="selected-file" id="db-chooser" data-holder="<%=attach_id%>_url" onclick='initDropbox(this);' value="<%=t('dropbox_choose_file_from')%>">
           </div>
           <script type="text/javascript">
-              function initDropbox(wrap){
-                inp = jQuery(wrap).children('.dropbox_button');
+              function initDropbox(inp){
                 Dropbox.choose({success:function(files){
                     var inputElement = jQuery(inp).data('holder');
 

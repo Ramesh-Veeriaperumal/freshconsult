@@ -154,35 +154,10 @@
 // ------------------------------------------------------------------ //
 .attach-list-wrap{
 	position: relative;
-	&.dropbox-attachment {
-		background-color: #fafafa;
-		@include border-radius(6px);
-		border: 1px solid #d6d6d6;
+	&.tkt-dropbox-atmt {
 		.ficon-dropbox {
-			@include padding-left(6px);
-			position: static;
-		}
-	}
-	.dropbox-wrap {
-		display: inline-block;
-	}
-	.dropbox-text {
-		font-weight: bold;
-		cursor: pointer;
-		&::before, &::after {
-			content: '';
-			position: absolute;
-			border: 13px solid transparent;
-		}
-		&::before {
-			border-left: 13px solid #d6d6d6;
-			@include right(62px);
-			top: 0px;
-		}
-		&::after {
-			border-left: 13px solid #fafafa;
-			@include right(63px);
-			top: 0px;
+			left: 8px;
+			top: 5px;
 		}
 	}
 	.ficon-dropbox{

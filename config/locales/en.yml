@@ -167,6 +167,7 @@ en:
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
+  dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox Attachments
   cloudfile_plaintext: Attachments on Cloud
   show_quoted_text: Show Quoted text
