@@ -257,7 +257,7 @@ class AgentsController < ApplicationController
         @existing_user = current_account.user_emails.user_for_email(@user.user_emails.first.email)
       end
     else
-      if("Email has already been taken".eql?(@user.errors["base"]))        
+      if((@user.errors["base"]).include? "Email has already been taken")        
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => params[:user][:email]}})
       end
     end
