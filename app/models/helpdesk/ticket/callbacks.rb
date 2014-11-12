@@ -208,17 +208,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
-    set_sla_time(ticket_status_changed)
+    BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def set_sla_time(ticket_status_changed)
     if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
-      set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
       set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)      
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      set_user_time_zone if User.current
       Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     end
   end

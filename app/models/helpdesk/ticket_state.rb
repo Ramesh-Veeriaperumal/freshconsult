@@ -97,23 +97,27 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   def set_first_response_time(time)
     self.first_response_time ||= time
-    if self.first_resp_time_by_bhrs
-      self.first_resp_time_by_bhrs
-    else
-      default_group = tickets.group if tickets
-      business_calendar_config = Group.default_business_calendar(default_group)
-      self.first_resp_time_by_bhrs = Time.zone.parse(created_at.to_s).
-                        business_time_until(Time.zone.parse(first_response_time.to_s),business_calendar_config)
-    end
+    BusinessCalendar.execute(self.tickets) { 
+      if self.first_resp_time_by_bhrs
+        self.first_resp_time_by_bhrs
+      else
+        default_group = tickets.group if tickets
+        business_calendar_config = Group.default_business_calendar(default_group)
+        self.first_resp_time_by_bhrs = Time.zone.parse(created_at.to_s).
+                          business_time_until(Time.zone.parse(first_response_time.to_s),business_calendar_config)
+      end
+    }
   end
 
   def set_resolution_time_by_bhrs
     return unless resolved_at
     time = created_at || Time.zone.now
-    default_group = tickets.group if tickets
-    business_calendar_config = Group.default_business_calendar(default_group)
-    self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
-                        business_time_until(Time.zone.parse(resolved_at.to_s),business_calendar_config)
+    BusinessCalendar.execute(self.tickets) {
+      default_group = tickets.group if tickets
+      business_calendar_config = Group.default_business_calendar(default_group)
+      self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
+                          business_time_until(Time.zone.parse(resolved_at.to_s),business_calendar_config)
+    }
   end
 
   def set_avg_response_time
