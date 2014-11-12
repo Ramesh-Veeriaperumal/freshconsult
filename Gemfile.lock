@@ -71,7 +71,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/map-fields
-  revision: ea166ab63976b3b3ce1a7f5ae0c440f5db87cee1
+  revision: ef85a05939093f7e69b857f2259411df459c886f
   branch: csv_import
   specs:
     map_fields (1.0.5)
