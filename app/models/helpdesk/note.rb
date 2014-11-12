@@ -195,7 +195,7 @@ class Helpdesk::Note < ActiveRecord::Base
     if human_note_for_ticket?
       ticket_state = notable.ticket_states   
       if user.customer?  
-        ticket_state.requester_responded_at = created_at unless replied_by_third_party?
+        ticket_state.requester_responded_at = created_at unless(replied_by_third_party? or consecutive_customer_response?)
         ticket_state.inbound_count = notable.notes.visible.customer_responses.count+1
       elsif !private
         update_note_level_resp_time(ticket_state)
@@ -307,6 +307,10 @@ class Helpdesk::Note < ActiveRecord::Base
     # Use this method only after checking human_note_for_ticket? and user.customer?
     def replied_by_third_party? 
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
+    end
+
+    def consecutive_customer_response?
+      notable.ticket_states.consecutive_customer_response?
     end
 
     def notable_cc_email_updated?(old_cc, new_cc)

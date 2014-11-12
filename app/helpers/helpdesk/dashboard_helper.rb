@@ -1,4 +1,8 @@
 module Helpdesk::DashboardHelper
+	 TOOLBAR_LINK_OPTIONS = {   "data-remote" => true, 
+	                            "data-method" => :get,
+	                            "data-response-type" => "script",
+	                            "data-loading-box" => "#agents-list" }
 	def find_activity_url(activity)
 		activity_data = activity.activity_data
 	 	(activity_data.empty? || activity_data[:path].nil? ) ? activity.notable : activity_data[:path]
@@ -12,7 +16,7 @@ module Helpdesk::DashboardHelper
 	               "data-remote-url" => '/helpdesk/sales_manager' )
 		end
 		sidebar_content.concat(content_tag(:div,
-			content_tag(:h3,t(".todo_title").html_safe, :class => "title").concat(render('/helpdesk/reminders/reminders',
+			content_tag(:h3,t("helpdesk.dashboard.index.todo_title").html_safe, :class => "title").concat(render('/helpdesk/reminders/reminders',
 			:reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true )),
 			:class => "reminders sidepanel", :id => "reminders"))
 
@@ -32,5 +36,12 @@ module Helpdesk::DashboardHelper
 				"http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp&utm_medium=inapp&utm_campaign=complimentarydemo",
 				:onclick => "window.open(this.href);return false;", :target => "_blank" ) )
 			))
+	end
+
+	def group_list_filter
+	    filter_list = current_account.groups.round_robin_groups.map{ |grp| 
+	      [grp.name,"?group_id=#{grp.id}",false]
+	    }
+	     dropdown_menu filter_list, TOOLBAR_LINK_OPTIONS
 	end
 end

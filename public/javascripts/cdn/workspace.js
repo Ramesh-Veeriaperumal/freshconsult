@@ -24,3 +24,4 @@
 //= require freshfone/global.js
 //= require app/metrics.js
 //= require app/product_notifications.js
+//= require app/dashboard.js

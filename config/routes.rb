@@ -603,14 +603,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :chat_setting do
-      collection do
-        post :toggle
-        post :request_freshchat_feature
-        post :update
-      end
-    end
-
     resources :automations do
       collection do
         put :reorder
@@ -1353,6 +1345,7 @@ Helpkit::Application.routes.draw do
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
     match '' => 'dashboard#index', :as => :dashboard
     match '/sales_manager' => 'dashboard#sales_manager'
+    match '/agent_status' => 'dashboard#agent_status'
 
     # For mobile apps backward compatibility.
     match '/subscriptions' => 'subscriptions#index'

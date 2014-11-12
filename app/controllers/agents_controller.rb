@@ -89,11 +89,16 @@ class AgentsController < ApplicationController
 
   def toggle_availability
     @agent = current_account.agents.find_by_user_id(params[:id])
-    @agent.available = params[:value]
+    @agent.toggle(:available)
+    @agent.active_since = Time.now.utc
     @agent.save
     Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
-    render :nothing => true
+    respond_to do |format|
+      format.html { render :nothing => true}
+      format.json  { render :json => {} }
+    end    
   end
+    
 
   def toggle_shortcuts
     @agent = scoper.find(params[:id])

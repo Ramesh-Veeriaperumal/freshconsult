@@ -25,6 +25,3 @@ test:
   <<: *defaults
 staging:
   <<: *defaults
-
-
-

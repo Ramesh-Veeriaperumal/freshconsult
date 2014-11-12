@@ -36,9 +36,29 @@ module Redis::OthersRedis
 		newrelic_begin_rescue { $redis_others.exists(key) }
 	end
 
-    def publish_to_channel channel, message
-      newrelic_begin_rescue do
-          return $redis_others.publish(channel, message)
-      end
-    end	
+  def publish_to_channel channel, message
+    newrelic_begin_rescue do
+        return $redis_others.publish(channel, message)
+    end
+  end
+
+  	def get_others_redis_list(key, start = 0, stop = -1)
+		newrelic_begin_rescue { $redis_others.lrange(key,start,stop) }
+	end
+
+	def get_others_redis_llen(key)
+		newrelic_begin_rescue { $redis_others.llen(key) }
+	end
+
+	def set_others_redis_lpush(key, value)
+		newrelic_begin_rescue { $redis_others.lpush(key,value) }
+	end
+
+	def get_others_redis_rpoplpush(source, destination)
+		newrelic_begin_rescue { $redis_others.rpoplpush(source, destination) }
+	end
+
+	def get_others_redis_lrem(key, value, all=0)
+		newrelic_begin_rescue { $redis_others.lrem(key,all,value) }
+	end
 end
