@@ -1,4 +1,3 @@
-
 account = Account.current
 
 FlexifieldDef.seed(:account_id, :module) do |s|
