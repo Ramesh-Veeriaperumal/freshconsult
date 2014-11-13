@@ -1,8 +1,9 @@
-<script src="/javascripts/highcharts-2.1.9.js" type="text/javascript"></script>
-<%= javascript_include_tag :'cdn/report_date'  %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports', :media => "screen, print, projection"  %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports_print', :media => "print, projection" %>
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
+
+<%= javascript_include_tag :'cdn/report_charts'  %>
+<%= javascript_include_tag :'cdn/report_date'  %>
 
 <% content_for :sidebar do %>
 	<%= render :partial => "/reports/customer_reports/sidebar" %>

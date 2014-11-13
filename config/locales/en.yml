@@ -167,6 +167,7 @@ en:
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
+  dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox Attachments
   cloudfile_plaintext: Attachments on Cloud
   show_quoted_text: Show Quoted text
@@ -3899,6 +3900,17 @@ en:
       history:
         recent_item: Recent Items
     dashboard:
+      round_robin:
+        all_agents : All agents
+        showing:  Showing
+        available_agents: Available agents
+        info1: Showing agents in groups which has automatic ticket assignment enabled
+        back_to_dashboard: Back to Dashboard
+        na: N/A
+        since_now: Since 1 second
+        header: Automatic ticket assignment
+        view_agent_status: View agent status
+        no_agents_available: No agents available in the group
       index:
         todo_title: To-Do
       summary:
@@ -4150,7 +4162,7 @@ en:
       updated_at: Last Modified
       priority: Priority
       status: Status
-      customer_response: Customer Response
+      requester_responded_at: Customer Response
       asc: Ascending
       desc: Descending
   click_to_change_sort_order: Click to change sort order

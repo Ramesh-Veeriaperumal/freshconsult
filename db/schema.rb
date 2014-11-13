@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141019110919) do
+ActiveRecord::Schema.define(:version => 20141013054728) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -170,6 +170,7 @@ ActiveRecord::Schema.define(:version => 20141019110919) do
     t.integer  "scoreboard_level_id", :limit => 8
     t.integer  "account_id",          :limit => 8
     t.boolean  "available",                        :default => true
+    t.datetime "active_since"
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"

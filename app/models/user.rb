@@ -664,11 +664,11 @@ class User < ActiveRecord::Base
     end
 
     def clear_redis_for_agent
-      return unless deleted_changed? || agent?
-      self.agent_groups.each do |ag|
-        next unless ag.group.round_robin_eligible?
-        remove_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
-               {:account_id => account_id, :group_id => ag.group_id})
+      if helpdesk_agent_changed? and !agent?
+        self.agent_groups.each do |ag|
+          group = ag.group
+          group.remove_agent_from_round_robin(self.id) if group.round_robin_enabled?
+        end
       end
     end
 

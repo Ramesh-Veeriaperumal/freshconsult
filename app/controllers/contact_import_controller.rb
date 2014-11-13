@@ -30,7 +30,7 @@ class ContactImportController < ApplicationController
     if fields_mapped?
         contact_params = {:account_id => current_account.id,
                         :email => current_user.email,
-                        :contacts =>{:mapped_fields => @rows,
+                        :contacts =>{:mapped_fields => mapped_fields,
                                   :fields => params[:fields] ,
                                   :ignore_first_row => params[:ignore_first_row]}}
          Resque.enqueue(Workers::Import::ContactsImport ,contact_params)
@@ -41,11 +41,11 @@ class ContactImportController < ApplicationController
       render
     end
   rescue CSVBridge::MalformedCSVError => e
-    redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.wrong_format')}
+    redirect_to csv_contact_import_index_path, :flash => {:error => t(:'flash.contacts_import.wrong_format')}
   rescue MapFields::InconsistentStateError
-    redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.failure')}
+    redirect_to csv_contact_import_index_path, :flash => {:error => t(:'flash.contacts_import.failure')}
   rescue MapFields::MissingFileContentsError
-    redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.no_file')}
+    redirect_to csv_contact_import_index_path, :flash => {:error => t(:'flash.contacts_import.no_file')}
   end
 
   def google

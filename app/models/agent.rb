@@ -11,6 +11,8 @@ class Agent < ActiveRecord::Base
   before_destroy :remove_escalation
 
   accepts_nested_attributes_for :user
+  before_update :create_model_changes
+  after_commit :enqueue_round_robin_process, on: :update
   
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
@@ -107,6 +109,18 @@ class Agent < ActiveRecord::Base
   def as_json(options = {})
     options.merge!(API_OPTIONS)
     super options
+  end
+
+  def create_model_changes
+    @model_changes = self.changes.clone.to_hash
+    @model_changes.symbolize_keys!
+  end
+
+  def enqueue_round_robin_process
+    return unless @model_changes.key?(:available)
+    Resque.enqueue(Helpdesk::ToggleAgentFromGroups, 
+          { :account_id => account.id,
+            :user_id => self.user_id })
   end
 
 end

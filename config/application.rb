@@ -90,6 +90,7 @@ module Helpkit
       r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 20,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
+      r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
       r.set_cache(store) if store.present?
     end
@@ -180,6 +181,15 @@ module Helpkit
     # prevent Rails from initializing the Rails environment
     # and looking at database.yml when running rake assets:precompile
     config.assets.initialize_on_precompile = false
+
+    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
+    # loading statsd configuration
+    statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
+    # statsd intialization
+    statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
+    # middleware for statsd
+    config.middleware.use "Statsd::Rack::Middleware", statsd
+
 
   end
 end

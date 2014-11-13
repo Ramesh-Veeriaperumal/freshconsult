@@ -2314,9 +2314,9 @@ div.db-chooser{
 	.dropbox_button{
 		background-color: #f3f2f2;
 	    height: 26px;
-	    @include padding-left(16px);
-	    border: none;
-	    @include border-radius(0 4px 4px 0);
+	    @include padding-left(25px);
+	    border: 1px solid #d6d6d6;
+	    @include border-radius(4px);
 		cursor:pointer;
 		@include text-shadow(1px 1px 0px #fff);
 		@include padding-right(5px);

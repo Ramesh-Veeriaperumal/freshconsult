@@ -1,0 +1,2 @@
+page.replace_html "agents-list", :partial => "agents_list"
+page.replace_html "agents-filter", :partial => "agents_filter"

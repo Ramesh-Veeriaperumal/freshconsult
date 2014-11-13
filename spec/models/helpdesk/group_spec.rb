@@ -1,4 +1,6 @@
 require 'spec_helper'
+include Redis::RedisKeys
+include Redis::OthersRedis
 
 describe Group do
 	before(:all) do 
@@ -38,7 +40,7 @@ describe Group do
  	it "should say whether its eligible for round robin or not"  do
 	    @group5 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:default],
 	    								:name =>  "dummy group5"})
-	    @group5.round_robin_eligible?.should == false
+	    @group5.round_robin_enabled?.should == false
 
 	    @group6 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
 	    								:name =>  "dummy group6"})
@@ -46,6 +48,84 @@ describe Group do
 
 	end
 
-	
+	it "should create a list if group is created with round robon" do
+		@group6 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
+	    								:name =>  "dummy group6"})
+		
+		@ag3 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
+                                            :active => 1,
+                                            :group_id => @group.id})
+ 		#creating an unavailable agent
+ 		@ag4 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
+                                            :active => 1,
+                                            :group_id => @group.id, :available => 0})
+ 		if @group6.account.features?(:round_robin_revamp)
+ 			value = get_others_redis_list(@group6.round_robin_key)
+			value.should_not be_nil
+		end
+	end
+
+	it "should not create a list if group is created without round robin" do
+		@group7 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:default],
+	    								:name =>  "dummy group6"})
+		if @group7.account.features?(:round_robin_revamp)
+			value = get_others_redis_list(@group7.round_robin_key)
+			value.should be_nil
+		end
+	end
+
+	it "should create a list if group is updated with round_robin" do
+		@group8 = create_group(@account,{:name =>  "dummy group6"})
+		@group8.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:round_robin]
+		@group.save
+		@ag1 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
+                                            :active => 1,:group_id => @group8.id})
+
+		if @group8.account.features?(:round_robin_revamp)
+			value = get_others_redis_list(@group8.round_robin_key)
+			value.should_not be_nil
+		end
+	end
+
+	it "should not have a list if group is updated without round_robin" do
+		@group9 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
+	    								:name =>  "dummy group6"})
+		@group9.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
+		@group.save
+		if @group9.account.features?(:round_robin_revamp)
+			value = get_others_redis_list(@group9.round_robin_key)
+			value.should be_nil
+		end
+	end
+
+	it "should delete the round robin list after group deletion" do
+		@account.features.round_robin_revamp.create
+		@group9 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
+	    								:name =>  "dummy group6"})
+
+		key = @group9.round_robin_key
+		value = get_others_redis_list(key)
+		value.should_not be_nil
+
+		@group.destroy
+		value = get_others_redis_list(key)
+		value.should be_empty
+	end
+
+	it "should delete the round robin list after group is updated with round_robin turned off" do
+		@account.features.round_robin_revamp.create
+		@group9 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
+	    								:name =>  "dummy group6"})
+
+		key = @group9.round_robin_key
+		value = get_others_redis_list(key)
+		value.should_not be_nil
+
+		@group9.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
+		@group.save
+		
+		value = get_others_redis_list(key)
+		value.should be_empty
+	end
 
  end

@@ -48,11 +48,5 @@ Helpkit::Application.configure do
 end
 
 
-
-if defined?(PhusionPassenger)
-  PhusionPassenger.on_event(:starting_worker_process) do |forked|
-    if forked
-       RabbitMq::Init.start
-    end
-  end
-end
+# Disable delivery errors, bad email addresses will be ignored
+# config.action_mailer.raise_delivery_errors = false

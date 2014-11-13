@@ -89,11 +89,16 @@ class AgentsController < ApplicationController
 
   def toggle_availability
     @agent = current_account.agents.find_by_user_id(params[:id])
-    @agent.available = params[:value]
+    @agent.toggle(:available)
+    @agent.active_since = Time.now.utc
     @agent.save
     Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
-    render :nothing => true
+    respond_to do |format|
+      format.html { render :nothing => true}
+      format.json  { render :json => {} }
+    end    
   end
+    
 
   def toggle_shortcuts
     @agent = scoper.find(params[:id])
@@ -257,7 +262,7 @@ class AgentsController < ApplicationController
         @existing_user = current_account.user_emails.user_for_email(@user.user_emails.first.email)
       end
     else
-      if("Email has already been taken".eql?(@user.errors["base"]))        
+      if((@user.errors["base"]).include? "Email has already been taken")        
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => params[:user][:email]}})
       end
     end

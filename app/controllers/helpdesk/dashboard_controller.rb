@@ -3,6 +3,8 @@ class Helpdesk::DashboardController < ApplicationController
   helper  Helpdesk::TicketsHelper #by Shan temp
   include Reports::GamificationReport
   include Cache::Memcache::Account
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   skip_before_filter :check_account_state
   before_filter :check_account_state, :only => [:index]
@@ -11,6 +13,7 @@ class Helpdesk::DashboardController < ApplicationController
   
   before_filter :load_items, :only => [:activity_list]
   before_filter :set_selected_tab
+  before_filter :round_robin_filter, :only => [:agent_status]
 
   def index
     if request.xhr? and !request.headers['X-PJAX']
@@ -44,10 +47,29 @@ class Helpdesk::DashboardController < ApplicationController
     render :partial => "sales_manager"
   end
 
+  def agent_status
+    all_agents = {}
+
+    if @current_group_filter
+      available_agents_list = @group.round_robin_queue.reverse
+
+      unavailable_agents_list = @group.agents.all(:select => "users.id").map(&:id).map(&:to_s) - available_agents_list
+      agent_ids = available_agents_list + unavailable_agents_list
+      all_agents = current_account.agents.find_all_by_user_id(agent_ids, :include => [{:user => :avatar}], :order => "field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
+    end
+
+    @available_agents   = all_agents[true] || []
+    @unavailable_agents = all_agents[false] || []
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.js
+    end
+  end
+
   protected
     def recent_activities(activity_id)
       if activity_id
-
         Helpdesk::Activity.freshest(current_account).activity_before(activity_id).permissible(current_user) unless activity_id == "0"
       else
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
@@ -62,4 +84,36 @@ class Helpdesk::DashboardController < ApplicationController
     def set_selected_tab
       @selected_tab = :dashboard
     end
+
+    def round_robin_filter
+      if params[:group_id].present?
+        @group = current_account.groups.find_by_id(params[:group_id])
+        if @group
+          set_others_redis_key(round_robin_filter_key,params[:group_id], 86400 * 7)
+          @current_group_filter = params[:group_id]
+        end
+      else
+        @current_group_filter = get_others_redis_key(round_robin_filter_key)
+
+        if @current_group_filter
+          @group = current_account.groups.round_robin_groups.find_by_id(@current_group_filter) 
+          unless @group
+            @current_group_filter = nil 
+            remove_others_redis_key(round_robin_filter_key)
+          end
+        end
+      end
+      unless @group
+        @group = current_account.groups.round_robin_groups.first
+        if @group
+          @current_group_filter = @group.id 
+          set_others_redis_key(round_robin_filter_key,@group.id, 86400 * 7)
+        end
+      end
+    end
+
+    def round_robin_filter_key
+      ADMIN_ROUND_ROBIN_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
+    end
+
 end

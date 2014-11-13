@@ -123,7 +123,7 @@ describe Support::Discussions::PostsController do
 
 	it "should delete a post on delete 'destroy'" do
 		topic = publish_topic(create_test_topic(@forum))
-		post = create_test_post(topic)
+		post = create_test_post(topic, @user)
 		delete :destroy, :id => post.id,
       :topic_id => topic.id
 

@@ -43,12 +43,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
   }
 
-
   scope :for_companies, lambda{ |company_ids|
     {
       :select     => "DISTINCT `helpdesk_time_sheets`.*" ,
-      :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
-                "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+      :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
       :conditions => {:users => {:customer_id => company_ids}}
     } unless company_ids.blank?
   }
@@ -56,8 +54,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   scope :for_contacts, lambda{|contact_email|
       {
         :select => "DISTINCT `helpdesk_time_sheets`.*" ,
-        :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
-                "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
         :conditions =>{:users => {:email => contact_email}},
       } unless contact_email.blank?
   }
@@ -65,8 +62,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   scope :for_products, lambda { |products|
     { 
       :select => "DISTINCT helpdesk_time_sheets.*",
-      :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
-                "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
+      :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
       :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
      } unless products.blank?
   } 
