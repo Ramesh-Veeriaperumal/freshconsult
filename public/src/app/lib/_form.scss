@@ -771,7 +771,7 @@ li.nested_field{
 	display:inline-block;
 	padding: 0 10px;
 	position: relative;
-	top: 3px
+	top: 3px;
 	@if $rtl {
 		direction:ltr; //For text to display correct order
 	}
