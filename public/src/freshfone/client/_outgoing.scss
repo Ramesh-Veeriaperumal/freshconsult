@@ -75,6 +75,10 @@
 		.select2-choice div {
 		 @include left(0);
 		}
+		.select2-choice .select2-arrow {
+			background: transparent;
+			margin-top: 2px;
+		}
 	}
 	.keypad-key, .keypad-special {
 		@include border-radius(0);
