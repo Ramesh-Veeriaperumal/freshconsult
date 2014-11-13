@@ -772,6 +772,9 @@ li.nested_field{
 	padding: 0 10px;
 	position: relative;
 	top: 3px
+	@if $rtl {
+		direction:ltr; //For text to display correct order
+	}
 	
 }
 #duration .error{ padding:0 10px; }

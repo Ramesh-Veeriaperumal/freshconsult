@@ -225,9 +225,7 @@ $single_stackbar_chart_height: 120px;
 }
 .single-line-bar .graph-container{
 	height: 350px;
-	//border: 1px solid #bfbfbf;
-	overflow-x:hidden;
-	overflow-y:auto;
+	overflow:hidden;
 	.noinfo{ 
 	  width:250px;
 	  @include text-align(center);
@@ -893,10 +891,11 @@ $animation_timing: .1s;
 }
 /*Please dont remove this... hardcoded bcz on chart toggle the hidden chart is overlaping */
 .hide-chart{
-		position: absolute;
-		z-index: 1;
-		visibility: hidden;
-		width:48.93%;
+	position: absolute;
+	z-index: 1;
+	@include opacity(0);
+	visibility: hidden;
+	width:48.93%;
 }
 
 .highcharts-container text{

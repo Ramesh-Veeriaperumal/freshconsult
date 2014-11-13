@@ -215,9 +215,7 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
 html[dir="rtl"] .select2-container .select2-choice .select2-arrow {
     left: 0;
     right: auto;
-
     border-left: none;
-    border-right: 1px solid #aaa;
     border-radius: 4px 0 0 4px;
 }
 
