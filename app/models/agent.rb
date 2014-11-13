@@ -112,7 +112,7 @@ class Agent < ActiveRecord::Base
   end
 
   def create_model_changes
-    @model_changes = self.changes.clone
+    @model_changes = self.changes.clone.to_hash
     @model_changes.symbolize_keys!
   end
 
