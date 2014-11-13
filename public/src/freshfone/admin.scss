@@ -323,3 +323,15 @@
 .error_flash {
  color: #a90329;
 }
+
+.admin_help_image {
+  .ff-admin-img {
+    background: #10a78b;
+    color: #Fff;
+    border-radius: 50%;
+    width: 120px;
+    height: 100px;
+    display: inline-block;
+    @include padding(20px 0 0);
+  }
+}
