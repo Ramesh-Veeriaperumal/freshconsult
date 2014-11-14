@@ -13,6 +13,12 @@
 	@include inline-block;
 	width: 20px; height: 16px;
 }
+.quoted_button{
+  margin:0 0;
+  display:inline-block;
+  width:31px;
+  height:14px;
+}
 
 .sort_handle{
 	position:relative;
@@ -31,6 +37,7 @@
 .sort_handle{  		@include symbols-sprite(sort_handle); }
 /* %% app-bootstrap */
 .searchicon{ 				 	@include symbols-sprite(search); }
+.quoted_button{ 		@include symbols-sprite(quote_button); /* %% inside */ }
 .clock{ 						@include symbols-sprite(clock-inactive); }
 .time_running .clock{ 			@include symbols-sprite(clock); }
 .timeentry .billable{ 			@include symbols-sprite(billable); }
