@@ -29,4 +29,10 @@ $.validator.addMethod("validate_image", function(value,element){
 
 $.validator.addClassRules("validate_image", { validate_image: true });
 
+$.validator.addMethod("password_confirmation", function(value, element){
+  return ($(element).val() == $("#password").val());
+}, "Should be same as Password")
+
+$.validator.addClassRules("password_confirmation", { password_confirmation : true });
+
 })(jQuery);

@@ -99,15 +99,6 @@
 		// Changing the default loading button text
 		$.fn.button.defaults = { loadingText: 'Please wait...'  }
 
-		// Adding Dependant rule for password
-		if($("#password_confirmation").get(0)){
-			$("#password_confirmation").rules("add", {  
-		        equalTo: "#password",
-		        messages: {
-				   equalTo: "Should be same as Password"
-				}
-	        });
-		}
 
 		// To show forgot password if its available in the page
 		if(/forgot_password/.test(window.location.hash))
