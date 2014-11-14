@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Account
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Redis::DisplayIdRedis
   include ErrorHandle
   include AccountConstants
 

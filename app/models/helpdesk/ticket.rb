@@ -16,6 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::TicketsRedis
   include Redis::ReportsRedis
   include Redis::OthersRedis
+  include Redis::DisplayIdRedis
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
   include ActionView::Helpers::TranslationHelper
