@@ -183,13 +183,6 @@ module Helpkit
     config.assets.initialize_on_precompile = false
 
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
-    # loading statsd configuration
-    statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
-    # statsd intialization
-    statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
-    # middleware for statsd
-    config.middleware.use "Statsd::Rack::Middleware", statsd
-
 
   end
 end
