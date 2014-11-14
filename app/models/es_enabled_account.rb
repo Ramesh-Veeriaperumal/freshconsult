@@ -1,4 +1,5 @@
 class EsEnabledAccount < ActiveRecord::Base
+  self.primary_key = :id
 
   include MemcacheKeys
 

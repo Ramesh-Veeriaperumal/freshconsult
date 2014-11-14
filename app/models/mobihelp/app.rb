@@ -1,4 +1,5 @@
 class Mobihelp::App < ActiveRecord::Base
+  self.primary_key = :id
   include ApplicationHelper
   include Cache::Memcache::Mobihelp::App
   include Cache::Memcache::Mobihelp::Solution

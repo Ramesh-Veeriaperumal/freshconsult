@@ -1,5 +1,6 @@
 class PortalSolutionCategory < ActiveRecord::Base
 
+  self.primary_key = :id
 	belongs_to_account
 	belongs_to :portal
 	belongs_to :solution_category, :class_name => 'Solution::Category'

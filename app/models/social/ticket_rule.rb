@@ -1,6 +1,7 @@
 class Social::TicketRule < ActiveRecord::Base
 
   self.table_name =  "social_ticket_rules"
+  self.primary_key = :id
 
   belongs_to_account
 

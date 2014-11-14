@@ -1,5 +1,6 @@
 # encoding: utf-8
 class Integrations::Application < ActiveRecord::Base 
+  self.primary_key = :id
   include Integrations::Constants
 
   serialize :options, Hash

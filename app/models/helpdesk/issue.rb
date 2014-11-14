@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Helpdesk::Issue < ActiveRecord::Base
   self.table_name =  "helpdesk_issues"
+  self.primary_key = :id
 
   belongs_to :user,
     :class_name => 'User'

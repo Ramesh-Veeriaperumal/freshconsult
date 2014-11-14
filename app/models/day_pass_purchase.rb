@@ -1,4 +1,5 @@
 class DayPassPurchase < ActiveRecord::Base
+  self.primary_key = :id
   STATUS = { :success => 1, :failure => 2 } #Original plan was to introduce a few more descriptive states...
   STATUS_BY_VALUE = STATUS.invert
   

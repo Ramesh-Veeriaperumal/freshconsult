@@ -1,4 +1,5 @@
 class EmailNotification < ActiveRecord::Base
+  self.primary_key = :id
   has_many :dynamic_notification_templates
   belongs_to :account
   attr_protected  :account_id

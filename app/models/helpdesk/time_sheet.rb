@@ -1,5 +1,5 @@
 class Helpdesk::TimeSheet < ActiveRecord::Base
-
+  self.primary_key = :id
   include Va::Observer::Util
   include ApplicationHelper
   include Mobile::Actions::TimeSheet

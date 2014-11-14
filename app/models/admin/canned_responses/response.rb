@@ -1,6 +1,7 @@
 class Admin::CannedResponses::Response < ActiveRecord::Base
   
   self.table_name =  "admin_canned_responses"    
+  self.primary_key = :id
   
   belongs_to_account
  

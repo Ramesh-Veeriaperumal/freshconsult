@@ -1,5 +1,6 @@
 class Helpdesk::Mysql::DynamicTable < ActiveRecord::Base
-	def self.create(table_name, options={})
+  self.abstract_class = true
+  def self.create(table_name, options={})
     self.table_name = table_name
     id = options.delete(:id)
     conditions = options.delete(:conditions)

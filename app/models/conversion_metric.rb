@@ -1,5 +1,6 @@
 # encoding: utf-8
 class ConversionMetric < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to :account
   has_one :subscription, :through => :account
   serialize :session_json, Hash

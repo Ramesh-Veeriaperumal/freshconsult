@@ -15,7 +15,9 @@ module Features
     
     # include ::MemcacheKeys
 
-    abstract_class = true
+    self.abstract_class = true
+
+    self.primary_key = :id
   
     LIST = []
   

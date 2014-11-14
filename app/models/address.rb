@@ -1,4 +1,6 @@
 class Address < ActiveRecord::Base
+
+  self.primary_key = :id
   
   belongs_to :addressable, :polymorphic => true
   

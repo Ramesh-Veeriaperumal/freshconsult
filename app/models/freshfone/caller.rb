@@ -1,5 +1,6 @@
 class Freshfone::Caller < ActiveRecord::Base
   self.table_name =  :freshfone_callers
+  self.primary_key = :id
   include Search::ElasticSearchIndex
 	
   belongs_to_account

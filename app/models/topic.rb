@@ -1,4 +1,5 @@
 class Topic < ActiveRecord::Base
+  self.primary_key = :id
   include Search::ElasticSearchIndex
   include Mobile::Actions::Topic
   acts_as_voteable

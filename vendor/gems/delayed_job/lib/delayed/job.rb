@@ -10,6 +10,7 @@ module Delayed
   class Job < ActiveRecord::Base
     
     self.table_name =  :delayed_jobs
+    self.primary_key = :id
     not_sharded
 
     before_save { self.run_at ||= self.class.db_time_now }

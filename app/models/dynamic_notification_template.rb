@@ -1,4 +1,5 @@
 class DynamicNotificationTemplate < ActiveRecord::Base
+  self.primary_key = :id
 	belongs_to :email_notification
 	after_create :update_outdated_in_email_notifications
 	after_update :update_outdated_in_email_notifications

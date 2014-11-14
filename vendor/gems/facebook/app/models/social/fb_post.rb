@@ -1,6 +1,7 @@
 class Social::FbPost < ActiveRecord::Base
   
   self.table_name =  "social_fb_posts"
+  self.primary_key = :id
   
   belongs_to :postable, :polymorphic => true
   belongs_to_account

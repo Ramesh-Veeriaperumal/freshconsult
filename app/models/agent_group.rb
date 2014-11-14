@@ -1,4 +1,5 @@
 class AgentGroup < ActiveRecord::Base
+  self.primary_key = :id
  
   include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
 

@@ -1,6 +1,7 @@
 class Social::TwitterHandle < ActiveRecord::Base
 
   self.table_name =  "social_twitter_handles"
+  self.primary_key = :id
 
   concerned_with :associations, :constants, :validations, :callbacks
 

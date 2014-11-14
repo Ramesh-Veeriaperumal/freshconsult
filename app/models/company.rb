@@ -2,6 +2,7 @@
 class Company < ActiveRecord::Base
   
   self.table_name = :customers
+  self.primary_key = :id
   
   include Cache::Memcache::Company
   include Search::ElasticSearchIndex

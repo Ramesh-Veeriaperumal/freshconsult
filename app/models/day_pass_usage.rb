@@ -1,4 +1,5 @@
 class DayPassUsage < ActiveRecord::Base
+  self.primary_key = :id
   serialize :usage_info, Hash
   
   belongs_to :account

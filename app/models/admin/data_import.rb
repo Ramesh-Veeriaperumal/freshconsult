@@ -1,4 +1,5 @@
 class Admin::DataImport < ActiveRecord::Base
+  self.primary_key = :id
 
 	include Import::Zen::Redis
 

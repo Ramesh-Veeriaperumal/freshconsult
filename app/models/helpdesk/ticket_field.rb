@@ -1,5 +1,6 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   
+  self.primary_key = :id
   serialize :field_options
   attr_writer :choices
 

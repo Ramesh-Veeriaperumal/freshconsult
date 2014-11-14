@@ -1,4 +1,5 @@
 class WhitelistedIp < ActiveRecord::Base
+  self.primary_key = :id
 
 	include Cache::Memcache::WhitelistedIp
 

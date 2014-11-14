@@ -1,4 +1,5 @@
 class FlexifieldDefEntry < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to :flexifield_def , :class_name =>'FlexifieldDef'
   
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order

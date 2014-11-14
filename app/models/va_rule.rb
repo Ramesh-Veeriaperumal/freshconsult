@@ -1,5 +1,6 @@
 class VaRule < ActiveRecord::Base
 
+  self.primary_key = :id
   include Cache::Memcache::VARule
 
   TICKET_CREATED_EVENT = { :ticket_action => :created }

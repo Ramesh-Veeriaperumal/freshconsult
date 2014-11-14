@@ -1,5 +1,6 @@
 class WhitelistUser < ActiveRecord::Base
 
+  self.primary_key = :id
 	not_sharded
 
 	include Cache::Memcache::WhitelistUser

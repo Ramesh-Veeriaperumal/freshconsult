@@ -1,4 +1,5 @@
 class Forum < ActiveRecord::Base
+  self.primary_key = :id
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'

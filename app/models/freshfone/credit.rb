@@ -1,4 +1,5 @@
 class Freshfone::Credit < ActiveRecord::Base
+  self.primary_key = :id
 	include ActionView::Helpers::NumberHelper
 	
 	belongs_to_account

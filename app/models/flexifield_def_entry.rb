@@ -1,5 +1,6 @@
 # encoding: utf-8
 class FlexifieldDefEntry < ActiveRecord::Base
+  self.primary_key = :id
 
   include Cache::Memcache::FlexifieldDefEntry
 

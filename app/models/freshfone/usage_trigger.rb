@@ -1,4 +1,5 @@
 class Freshfone::UsageTrigger < ActiveRecord::Base
+  self.primary_key = :id
   self.table_name =  :freshfone_usage_triggers
   
   attr_protected :account_id

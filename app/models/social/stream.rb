@@ -1,6 +1,7 @@
 class Social::Stream < ActiveRecord::Base
 
   self.table_name =  "social_streams"
+  self.primary_key = :id
   belongs_to_account
 
   serialize :data, Hash

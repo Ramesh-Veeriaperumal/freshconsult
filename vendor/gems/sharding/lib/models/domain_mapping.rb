@@ -1,6 +1,7 @@
 
 class DomainMapping < ActiveRecord::Base
 
+  self.primary_key = :id
 	not_sharded
     
     validates_uniqueness_of :domain

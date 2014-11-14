@@ -1,4 +1,5 @@
 class FlexifieldPicklistVal < ActiveRecord::Base
+  self.primary_key = :id
   
   attr_accessible :flexifield_def_entry_id, :value, :position
   

@@ -1,4 +1,5 @@
 class DeletedCustomers < ActiveRecord::Base
+  self.primary_key = :id
 	serialize   :account_info
 	validates_uniqueness_of :account_id
 

@@ -1,4 +1,5 @@
 class Quest < ActiveRecord::Base
+  self.primary_key = :id
   include Gamification::Quests::Constants
   include Gamification::Scoreboard::Constants
   include Gamification::Quests::Badges

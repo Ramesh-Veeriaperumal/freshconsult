@@ -1,4 +1,5 @@
 class SubscriptionEvent < ActiveRecord::Base
+  self.primary_key = :id
   
   belongs_to :account
   has_one :subscription, :through => :account                     

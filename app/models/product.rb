@@ -1,5 +1,6 @@
 class Product < ActiveRecord::Base
   
+  self.primary_key = :id
   include Cache::Memcache::Product
 
   before_destroy :remove_primary_email_config_role

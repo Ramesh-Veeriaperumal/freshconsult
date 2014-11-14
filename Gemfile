@@ -99,7 +99,7 @@ gem "sax-machine", "~> 0.1.0"
 gem "insensitive_hash", "0.2.3"
 
 gem "redis","3.0.7"
-gem "resque","1.22.0"
+gem "resque","~> 1.24.0"
 gem "resque-status", "0.4.1"
 gem 'resque-scheduler', :require => 'resque_scheduler'
 
@@ -123,7 +123,7 @@ gem 'global_phone'
 # gem "global_phone_dbgen", "~> 1.0.0"
 gem "useragent", "~> 0.4.16"
 
-gem 'active_record_shards', '~> 3.1.0', :require => 'active_record_shards'
+gem 'active_record_shards', '~> 3.2.0', :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
 gem "static_model", "~> 1.0.4"
 

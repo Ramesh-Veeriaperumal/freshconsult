@@ -1,4 +1,5 @@
 class Freshfone::Ivr < ActiveRecord::Base
+  self.primary_key = :id
 	self.table_name =  "freshfone_ivrs"
 	require_dependency 'freshfone/menu'
 	require_dependency 'freshfone/option'

@@ -1,4 +1,5 @@
 class AffiliateDiscount < ActiveRecord::Base
+  self.primary_key = :id
 	not_sharded
 
 	has_many :affiliate_discount_mappings

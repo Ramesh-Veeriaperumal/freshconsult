@@ -1,6 +1,7 @@
 class Social::Tweet < ActiveRecord::Base
 
   self.table_name =  "social_tweets"
+  self.primary_key = :id
 
   belongs_to :tweetable, :polymorphic => true
   belongs_to_account

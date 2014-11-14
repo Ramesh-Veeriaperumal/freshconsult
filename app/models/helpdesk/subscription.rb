@@ -1,5 +1,6 @@
 class Helpdesk::Subscription < ActiveRecord::Base
   self.table_name =  "helpdesk_subscriptions"
+  self.primary_key = :id
 
   belongs_to_account
   belongs_to :ticket,
