@@ -694,6 +694,8 @@
 
   map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  map.connect '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
+
 
   map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
 
