@@ -3,12 +3,14 @@
 		<li>
 			<strong><%= t('admin.webhook.jira_hook_title') %></strong>:
 			<%= t('admin.webhook.jira_hook_description') %>
-			<%= image_tag "helpimages/jira.png", :alt => t('admin.webhook.jira_hook_alt'), :width => "700" %>
+			<%= image_tag "#{asset_host_url}/assets/helpimages/jira.png", 
+							:alt => t('admin.webhook.jira_hook_alt'), :width => "700" %>
 		</li>
 		<li>
 			<strong><%= t('admin.webhook.hipchat_hook_title') %></strong>:
 			<%= t('admin.webhook.hipchat_hook_description') %>
-			<%= image_tag "helpimages/hipchat.png", :alt => t('admin.webhook.hipchat_hook_alt'), :width => "700" %>
+			<%= image_tag "#{asset_host_url}/assets/helpimages/hipchat.png", 
+							:alt => t('admin.webhook.hipchat_hook_alt'), :width => "700" %>
 		</li>
 	</ul>
 </div>

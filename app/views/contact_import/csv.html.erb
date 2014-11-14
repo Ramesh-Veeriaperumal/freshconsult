@@ -24,7 +24,8 @@
 		<div class="control-group">
 			<%= content_tag(:h5, t('import_example_title'), :class => "lead") %>
 			<div class="muted">
-				<%= image_tag "helpimages/import_csv.png", :alt => t('admin.help_image_alt.import_csv_file_pattern') %>
+				<%= image_tag "#{asset_host_url}/assets/helpimages/import_csv.png", 
+								:alt => t('admin.help_image_alt.import_csv_file_pattern') %>
 			</div>
 	  	</div>
 	</div> 
