@@ -93,10 +93,10 @@ RSpec.describe GroupsController do
 		@test_group.ticket_assign_type.should eql 1
 		agent_list = [ @agent.id, @user_1.id ]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
+		(agent_list.sort == agents_in_group.sort).should be true
 		if @test_group.account.features?(:round_robin_revamp)
 			value = get_others_redis_list(@test_group.round_robin_key)
-			value.include?(@user_1.id).should be_true
+			value.include?(@user_1.id).should be true
 		end
 	end
 
@@ -139,7 +139,7 @@ RSpec.describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		if @test_group.account.features?(:round_robin_revamp)
 			value = get_others_redis_list(@test_group.round_robin_key)
-			value.include?(@user_1.id).should be_true
+			value.include?(@user_1.id).should be true
 		end
 	end
 

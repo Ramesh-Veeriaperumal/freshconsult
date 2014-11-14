@@ -77,7 +77,34 @@ describe AgentsController do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
   end
 
-  it "should not create a new agent without a Agent role or existing email ID" do
+  it "should not create a new agent without a Agent role" do
+    @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
+    @request.env['HTTP_REFERER'] = 'sessions/new'
+    test_name = Faker::Name.name
+    post :create, { :agent => { :occasional => "false",
+                                :scoreboard_level_id => "1",
+                                :signature_html=> "Cheers!",
+                                :user_id => "",
+                                :ticket_permission => "1"
+                                },
+                    :user => { :helpdesk_agent => true,
+                                :name => test_name,
+                                :user_emails_attributes => {"0" => {:email => Faker::Internet.email}},
+                                :time_zone => "Chennai",
+                                :job_title =>"Support Agent",
+                                :phone => Faker::PhoneNumber.phone_number,
+                                :language => "en",
+                                :role_ids => [""],
+                                :privileges => "",
+                                :roleValidate => ""
+                              }
+                  }
+    response.body.should =~ /A user must be associated with atleast one role/
+    created_user = @account.users.find_by_name(test_name)
+    created_user.should_not be_an_instance_of(User)
+  end
+  
+  it "should not create a new agent with existing email ID" do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     user = add_new_user(@account)
@@ -95,13 +122,12 @@ describe AgentsController do
                                 :job_title =>"Support Agent",
                                 :phone => Faker::PhoneNumber.phone_number,
                                 :language => "en",
-                                :role_ids => [""],
+                                :role_ids => ["1"],
                                 :privileges => "",
                                 :roleValidate => ""
                               }
                   }
     response.body.should =~ /Email has already been taken/
-    response.body.should =~ /A user must be associated with atleast one role/
     created_user = @account.users.find_by_name(test_name)
     created_user.should_not be_an_instance_of(User)
   end
@@ -418,7 +444,7 @@ describe AgentsController do
   it "should enable toggle_availability for an agent" do
     user = add_test_agent(@account)
     user.agent.available = false
-    user.save
+    user.agent.save
     post :toggle_availability, :id => user.id, :value => "true"
     user.reload
     user.agent.available.should be_truthy

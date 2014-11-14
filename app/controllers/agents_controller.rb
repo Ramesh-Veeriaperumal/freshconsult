@@ -150,7 +150,7 @@ class AgentsController < ApplicationController
           @user.create_agent
           @new_users << @user
         else
-          check_email_exist
+          check_email_exist(agent_email)
           @existing_users << @existing_user
         end
         
@@ -256,14 +256,14 @@ class AgentsController < ApplicationController
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
   
-  def check_email_exist
+  def check_email_exist(email = params[:user][:email])
     if current_account.features?(:multiple_user_emails)
       if("has already been taken".eql?(@user.user_emails.first.errors["email"]))        
         @existing_user = current_account.user_emails.user_for_email(@user.user_emails.first.email)
       end
     else
-      if((@user.errors["base"]).include? "Email has already been taken")        
-        @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => params[:user][:email]}})
+      if(( @user.errors.messages[:base]).include? "Email has already been taken")        
+        @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => email}})
       end
     end
   end

@@ -286,7 +286,7 @@ protected
         end
       end
     else
-      if((@user.errors["base"]).include? "Email has already been taken")
+      if((@user.errors.messages[:base]).include? "Email has already been taken")
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
       end
     end
