@@ -14,8 +14,8 @@ module SpamConstants
     },
     "solution_articles" => {
       "key_space" => "sw_solution_articles",
-      "threshold" => 10,
-      "sec_expire" => 21600
+      "threshold" => 30,
+      "sec_expire" => 7200
     },
     "posts" => {
       "key_space" => "sw_posts",
