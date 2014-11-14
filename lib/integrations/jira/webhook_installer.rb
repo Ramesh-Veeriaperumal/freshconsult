@@ -3,9 +3,12 @@ module Integrations::Jira::WebhookInstaller
   
   def self.included(klass)
     klass.send :attr_accessor, :disable_observer
-    klass.send :after_commit, :register_webhook, on: :create, :if => :jira_app?
-    klass.send :after_commit, :register_webhook, on: :update, :if => :jira_app?, :unless => :disable_observer
+    klass.send :after_commit, :register_webhook_on_create, on: :create , :if => :jira_app?
+    klass.send :after_commit, :register_webhook_on_update, on: :update, :if => :jira_app?, :unless => :disable_observer
     klass.send :after_destroy,:unregister_webhook, :if => :jira_app?
+
+    alias :register_webhook_on_create :register_webhook
+    alias :register_webhook_on_update :register_webhook
   end
 
   def register_webhook

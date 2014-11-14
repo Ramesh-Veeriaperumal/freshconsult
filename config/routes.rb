@@ -531,18 +531,20 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '/jira_issue/unlink' => 'jira_issue#unlink'
+    match 'jira_issue/destroy' => 'jira_issue#destroy'
+    match 'jira_issue/update' => 'jira_issue#update'
+
     resources :jira_issue do
       collection do
         get :get_issue_types
-        put :unlink
         post :notify
         get :register
-        post :fetch_jira_projects_issues
-        post :update
-        post :destroy
+        post :fetch_jira_projects_issues #todo : check this route action
       end
       member do
         post :create
+
       end
 
     end
