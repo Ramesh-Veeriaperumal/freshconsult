@@ -359,17 +359,17 @@ describe ContactsController do
   #   response.body.should =~ /success/
   # end
 
-  it "should verify email" do
-    @account.features.multiple_user_emails.create
-    Delayed::Job.delete_all
-    u = add_user_with_multiple_emails(@account, 3)
-    u.active = true
-    u.save(false)
-    get :verify_email, :email_id => u.user_emails.last.id, :format => 'js'
-    Delayed::Job.last.handler.should include("deliver_email_activation")
-    response.body.should =~ /Activation mail sent/
-    @account.features.multiple_user_emails.destroy
-  end
+  # it "should verify email" do
+  #   @account.features.multiple_user_emails.create
+  #   Delayed::Job.delete_all
+  #   u = add_user_with_multiple_emails(@account, 3)
+  #   u.active = true
+  #   u.save(false)
+  #   get :verify_email, :email_id => u.user_emails.last.id, :format => 'js'
+  #   Delayed::Job.last.handler.should include("deliver_email_activation")
+  #   response.body.should =~ /Activation mail sent/
+  #   @account.features.multiple_user_emails.destroy
+  # end
 
   it "should make a customer an occasional agent" do
     occasional_customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
@@ -409,23 +409,23 @@ describe ContactsController do
     @account.all_users.find(customer.id).deleted.should be_true
   end
 
-  it "should create with multiple user emails" do
-    @account.features.multiple_user_emails.create
-    test_email = Faker::Internet.email
-    post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
-    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
-    @account.users.all.size.should eql @user_count+1
-    @account.features.multiple_user_emails.destroy
-  end
+  # it "should create with multiple user emails" do
+  #   @account.features.multiple_user_emails.create
+  #   test_email = Faker::Internet.email
+  #   post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
+  #   @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+  #   @account.users.all.size.should eql @user_count+1
+  #   @account.features.multiple_user_emails.destroy
+  # end
 
-  it "should create for wrong params with MUE feature" do
-    @account.features.multiple_user_emails.create
-    test_email = Faker::Internet.email
-    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
-    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
-    @account.users.all.size.should eql @user_count+1
-    @account.features.multiple_user_emails.destroy
-  end
+  # it "should create for wrong params with MUE feature" do
+  #   @account.features.multiple_user_emails.create
+  #   test_email = Faker::Internet.email
+  #   post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
+  #   @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+  #   @account.users.all.size.should eql @user_count+1
+  #   @account.features.multiple_user_emails.destroy
+  # end
 
   #### Company revamp specs - User Tags Revamp Specs
 

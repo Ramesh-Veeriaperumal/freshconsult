@@ -15,7 +15,7 @@ class Search::SearchController < ApplicationController
 												:ticket_states, :ticket_old_body, :ticket_status, :responder, :group]},
 				Topic => { :include => [ {:forum => :forum_category}, :user] },
 				Solution::Article => { :include => [ :user, :folder ] },
-				User => { :include => [:avatar, :customer, :primary_email]}, Customer => {}
+				User => { :include => [:avatar, :customer]}, Customer => {}
 			}
 
 	def index

@@ -54,6 +54,7 @@ describe Freshfone::QueueController do
 
   it 'should remove all default queue entries from redis on hangup' do
     set_twilio_signature('freshfone/queue/hangup', hangup_params)
+    create_freshfone_call('CDEFAULTQUEUE')
     set_default_queue_redis_entry
     post :hangup, hangup_params
     controller.get_key(DEFAULT_QUEUE).should be_nil
@@ -62,6 +63,7 @@ describe Freshfone::QueueController do
   it 'should remove all agent priority queue entries from redis on hangup' do
     set_twilio_signature("freshfone/queue/hangup?hunt_type=agent&hunt_id=#{@agent.id}",
                            hangup_params.merge({"CallSid" => "CAGENTQUEUE"}))
+    create_freshfone_call('CAGENTQUEUE')
     set_agent_queue_redis_entry
     post :hangup, 
       hangup_params.merge({:hunt_type => "agent", :hunt_id => @agent.id, "CallSid" => "CAGENTQUEUE"})

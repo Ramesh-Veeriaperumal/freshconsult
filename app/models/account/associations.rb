@@ -42,6 +42,7 @@ class Account < ActiveRecord::Base
  
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
+  has_one  :ticket_field_def,  :class_name => 'FlexifieldDef', :conditions => 'name = "Ticket_#{self.id}"'
   has_many :flexifield_def_entries
   
   has_many :data_exports

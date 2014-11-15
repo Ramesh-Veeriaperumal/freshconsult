@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   end
   
   validate :has_role?, :unless => :customer?
-  validate :user_email_count, :if => :email_required?, :on => :update
+  # validate :user_email_count, :if => :email_required?, :on => :update
   validate :email_validity, :if => :chk_email_validation?
   validate :only_primary_email, :on => [:create], :unless => [:customer?, :no_multiple_user_emails]
 
@@ -169,7 +169,7 @@ class User < ActiveRecord::Base
   end
 
   def email
-    self.actual_email || self[:email]
+    self[:email]
   end
 
   def parent_id
@@ -253,7 +253,7 @@ class User < ActiveRecord::Base
     self.tag_names = params[:user][:tag_names]
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
-    self.deleted = true if (user_emails.present? && user_emails.first.email =~ /MAILER-DAEMON@(.+)/i)
+    self.deleted = true if (self.email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
     portal.make_current if portal
@@ -333,7 +333,7 @@ class User < ActiveRecord::Base
     self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
-    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+    # self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
@@ -557,7 +557,7 @@ class User < ActiveRecord::Base
       self.deleted = false
       self.helpdesk_agent = true
       self.role_ids = [account.roles.find_by_name("Agent").id] 
-      UserEmail.destroy self.user_emails.reject(&:primary_role?)
+      # UserEmail.destroy self.user_emails.reject(&:primary_role?)
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       save

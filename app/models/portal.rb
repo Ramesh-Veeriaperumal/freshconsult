@@ -105,11 +105,11 @@ class Portal < ActiveRecord::Base
 
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
-    filter_fields account.ticket_fields.send(additional_scope)
+    filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
   end
 
   def customer_editable_ticket_fields
-    filter_fields account.ticket_fields.customer_editable
+    filter_fields account.ticket_fields.customer_editable, ticket_field_conditions
   end
 
   def layout
@@ -187,11 +187,13 @@ class Portal < ActiveRecord::Base
       self.portal_url = portal_url.downcase if portal_url
     end
 
-    def filter_fields(f_list)
+    def ticket_field_conditions
+      { 'product' => (main_portal && !account.products.empty?) }
+    end
+    def filter_fields(f_list, conditions)
       to_ret = []
-      checks = { 'product' => (main_portal && !account.products.empty?) }
 
-      f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
+      f_list.each { |field| to_ret.push(field) if conditions.fetch(field.name, true) }
       to_ret
     end
 

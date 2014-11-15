@@ -212,11 +212,14 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def update_note_level_resp_time(ticket_state)
+    resp_time_bhrs = nil
     if ticket_state.first_response_time.nil?
       resp_time = created_at - notable.created_at
-      business_calendar_config = Group.default_business_calendar(notable.group)
-      resp_time_bhrs = Time.zone.parse(notable.created_at.to_s).
-                          business_time_until(Time.zone.parse(created_at.to_s),business_calendar_config)
+      BusinessCalendar.execute(self.notable) {
+        business_calendar_config = Group.default_business_calendar(notable.group)
+        resp_time_bhrs = Time.zone.parse(notable.created_at.to_s).
+                            business_time_until(Time.zone.parse(created_at.to_s), business_calendar_config)
+      }
     else
       customer_resp = notable.notes.visible.customer_responses.
         created_between(ticket_state.agent_responded_at,created_at).first(
@@ -224,9 +227,11 @@ class Helpdesk::Note < ActiveRecord::Base
         :order => "helpdesk_notes.created_at ASC")
       unless customer_resp.blank?
         resp_time = created_at - customer_resp.created_at
-        business_calendar_config = Group.default_business_calendar(notable.group)
-        resp_time_bhrs = Time.zone.parse(customer_resp.created_at.to_s).
-                            business_time_until(Time.zone.parse(created_at.to_s),business_calendar_config)
+        BusinessCalendar.execute(self.notable) {
+          business_calendar_config = Group.default_business_calendar(notable.group)
+          resp_time_bhrs = Time.zone.parse(customer_resp.created_at.to_s).
+                            business_time_until(Time.zone.parse(created_at.to_s), business_calendar_config)
+        }
       end
     end
     schema_less_note.update_attributes(:response_time_in_seconds => resp_time,

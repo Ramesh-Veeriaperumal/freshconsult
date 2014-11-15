@@ -6,8 +6,8 @@ class FlexifieldDefEntry < ActiveRecord::Base
   belongs_to_account
   belongs_to :flexifield_def
 
-  has_many :flexifield_picklist_vals, :dependent => :destroy
-  has_one :ticket_field, :class_name => 'Helpdesk::TicketField', :dependent => :destroy
+  has_many :flexifield_picklist_vals#, :dependent => :destroy # commenting to reduce a query while contact_field deletion
+  has_one :ticket_field, :class_name => 'Helpdesk::TicketField'#, :dependent => :destroy # Confirm with Shan
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
   named_scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
@@ -74,7 +74,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   end
 
   def self.dropdown_custom_fields(account=Account.current)
-    account.flexi_field_defs.first.flexifield_def_entries.
+    account.ticket_field_def.flexifield_def_entries.
               drop_down_fields.all(:select => :flexifield_name).map(&:flexifield_name)
   end
 

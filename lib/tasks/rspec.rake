@@ -38,7 +38,8 @@ TwitterTests = [
   "spec/lib/social/twitter/*_spec.rb", 
   "spec/models/social/twitter_*_spec.rb", 
   "spec/controllers/social/*_spec.rb",
-  "spec/controllers/admin/social/*_spec.rb"
+  "spec/controllers/admin/social/*_spec.rb",
+  "spec/controllers/mobile/freshsocial/*_spec.rb"
 ]
 
 ModelTests = [
@@ -116,9 +117,9 @@ HelpdeskTests = [
   "spec/controllers/agents_controller_spec.rb",
   "spec/controllers/groups_controller_spec.rb",
   "spec/controllers/contacts_controller_spec.rb",
-  "spec/controllers/contact_merge_controller_spec.rb",
+  # "spec/controllers/contact_merge_controller_spec.rb",
   "spec/controllers/users_controller_spec.rb",
-  "spec/controllers/user_emails_controller_spec.rb",
+  # "spec/controllers/user_emails_controller_spec.rb",
   "spec/controllers/activations_controller_spec.rb",
   "spec/controllers/customers_controller_spec.rb",
   "spec/controllers/companies_controller_spec.rb",
@@ -169,13 +170,13 @@ FunctionalTests = [
 
 MobileAppTests = [
   "spec/controllers/mobile/*_spec.rb",
-  "spec/controllers/mobile/freshfone/*_spec.rb"
+  "spec/controllers/mobile/freshfone/*_spec.rb",
+  "spec/controllers/mobile/freshsocial/*_spec.rb"
 ]
 
 ChatTests = [
-  "spec/controllers/chats_controller_spec.rb",
-  "spec/controllers/admin/chat_setting_controller_spec.rb",
-  "spec/models/chat_setting_spec.rb"
+  "spec/controllers/chats_controller_spec.rb"
+  #"spec/models/chat_setting_spec.rb"
 ]
   
 UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,

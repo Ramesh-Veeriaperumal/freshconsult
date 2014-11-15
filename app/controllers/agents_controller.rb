@@ -69,7 +69,7 @@ class AgentsController < ApplicationController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
-    @agent.user.user_emails.build({:primary_role => true}) if @agent.user.user_emails.blank?
+    # @agent.user.user_emails.build({:primary_role => true}) if @agent.user.user_emails.blank?
     @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
      respond_to do |format|
       format.html # new.html.erb
