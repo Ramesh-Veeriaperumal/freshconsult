@@ -1842,6 +1842,7 @@ Helpkit::Application.routes.draw do
   # end
   match '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   match '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  match '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
 
   match '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
 

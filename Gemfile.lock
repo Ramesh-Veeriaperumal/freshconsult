@@ -488,6 +488,9 @@ GEM
       thor (~> 0.14)
     forgery (0.5.0)
     formatador (0.2.5)
+    fuubar (2.0.0)
+      rspec (~> 3.0)
+      ruby-progressbar (~> 1.4)
     global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
@@ -716,6 +719,7 @@ GEM
     ruby-ole (1.2.11.3)
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
+    ruby-progressbar (1.5.1)
     ruby-saml (0.8.1)
       nokogiri (>= 1.5.0)
       uuid (~> 2.3)
@@ -878,6 +882,7 @@ DEPENDENCIES
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
   freshdesk_authority!
+  fuubar
   global_phone
   gnip!
   gnip-rule (= 0.4.1)

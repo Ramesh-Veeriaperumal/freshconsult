@@ -1,8 +1,8 @@
 class ChatsController < ApplicationController
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle]
-  before_filter  :load_ticket, :only => [:add_note]
-  before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
+  before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
+  before_filter  :load_ticket, :only => [:add_note, :chat_note]
   
   def create_ticket
 
@@ -21,6 +21,7 @@ class ChatsController < ApplicationController
   end  
 
   def add_note 
+    params[:userId] = current_user.id
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
   end
@@ -119,6 +120,16 @@ class ChatsController < ApplicationController
     end
   end
 
+  #######
+  # This function is used to add note to ticket
+  # Post request url :/freshchat/chat_note  , body : {ticket_id : #{ticket_id} , msg : #{msg} , userId :#{userId}}
+  #######
+
+  def chat_note
+    status = create_note
+    render :json => { :ticket_id=> @note.notable.display_id , :status => status }
+  end
+
   private
   
   def load_ticket
@@ -128,7 +139,7 @@ class ChatsController < ApplicationController
   def create_note 
     @note = @ticket.notes.build(
                 :private => false,
-                :user_id => current_user.id,
+                :user_id => params[:userId],
                 :account_id => current_account.id,
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
                 :note_body_attributes => { :body_html => params[:note] }

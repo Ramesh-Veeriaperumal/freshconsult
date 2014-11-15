@@ -13,8 +13,9 @@ module Has #:nodoc:
       def has_flexiblefields options = {}
         unless includes_flexiblefields?
           
-          has_one :flexifield, :as => :flexifield_set, :dependent => :destroy
-          
+          options[:dependent] = :destroy
+          has_one :flexifield, options
+
           # has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry'
          
           delegate :assign_ff_values, :retrieve_ff_values, :get_ff_value, :ff_def=, :ff_def, :to_ff_alias, :ff_aliases, :to_ff_field, :ff_fields, :to => :flexifield

@@ -5,7 +5,7 @@ class Search::HomeController < Search::SearchController
 	SUGGEST_LOAD_OPTIONS  = {
 		Helpdesk::Note => { :include => [ :notable ] },
 		Helpdesk::Ticket => { :include => [{:flexifield => :flexifield_def}, :ticket_states] },
-		Topic => { :include => [:forum] }, Solution::Article => {}, User => { :include => [:primary_email]}, Customer => {}
+		Topic => { :include => [:forum] }, Solution::Article => {}, User => {}, Customer => {}
 	}
 
 	def suggest

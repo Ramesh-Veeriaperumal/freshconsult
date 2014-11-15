@@ -127,7 +127,7 @@ RSpec.describe Freshfone::CallController do
     setup_batch
     post :status, status_params.merge({:batch_call => true, :outgoing => "false", "DialCallStatus" => 'busy'}) 
     tear_down BATCH_KEY
-    xml[:Response][:Dial][:Client].should include_all(@dummy_users.map{|u| u.id.to_s})
+    xml[:Response][:Dial][:Client].should be_eql(@dummy_users.map{|u| u.id.to_s}.reverse)
   end
 
   it 'should clear any batch key for non batched calls' do

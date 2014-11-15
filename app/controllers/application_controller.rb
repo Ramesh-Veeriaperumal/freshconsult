@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :set_default_locale, :set_locale
+  include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
   before_filter :check_account_state, :except => [:show,:index]
@@ -27,7 +28,6 @@ class ApplicationController < ActionController::Base
   include AuthenticationSystem
   include HelpdeskSystem  
   include ControllerLogger
-  include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
   

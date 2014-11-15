@@ -2,8 +2,8 @@ class User < ActiveRecord::Base
 
   before_create :set_time_zone , :set_company_name
   #user_email callbacks
-  before_validation :assign_user_email, :if => :email_required?
-  after_validation :set_primary_email, :on => :create
+  # before_validation :assign_user_email, :if => :email_required?
+  # after_validation :set_primary_email, :on => :create
   #end
   before_create :set_language, :unless => :created_from_email
   before_save :set_customer_privilege, :if => :customer?
@@ -17,8 +17,8 @@ class User < ActiveRecord::Base
   after_update :update_verified, :if => [:active_changed?, :email_available?, :user_emails_migrated?, :no_multiple_user_emails] #for user email delta
   before_update :make_inactive, :if => [:email_changed?, :no_multiple_user_emails]
   after_commit :send_activation_email, on: :update, :if => [:email_updated?, :no_multiple_user_emails]
-  before_save :set_primary_email, :if => :no_primary_email
-  before_save :remove_duplicate_emails
+  # before_save :set_primary_email, :if => :no_primary_email
+  # before_save :remove_duplicate_emails
 
   after_commit ->(obj) { obj.clear_agent_list_cache }, :if => :agent?
   after_commit ->(obj) { obj.clear_agent_list_cache }, on: :update, :if => :helpdesk_agent_updated?

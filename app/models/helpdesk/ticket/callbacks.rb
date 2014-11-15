@@ -203,17 +203,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
-    set_sla_time(ticket_status_changed)
+    BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def set_sla_time(ticket_status_changed)
     if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
-      set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
       set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)      
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      set_user_time_zone if User.current
       Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
     end
   end
@@ -280,7 +278,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     lock_key = DISPLAY_ID_LOCK % { :account_id => account_id }
 
     TicketConstants::TICKET_DISPLAY_ID_MAX_LOOP.times do
-      computed_display_id = increment_tickets_redis_key(key).to_i
+      computed_display_id = increment_display_id_redis_key(key).to_i
       #computed_display_id will be 0 if the redis command fails,
       #in which case we will keep retrying till we timeout
 
@@ -290,15 +288,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
         return
       #first time, when the key is a huge -ve value
       elsif computed_display_id < 0
-        if set_others_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
+        if set_display_id_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
                                                        :nx => true })
           computed_display_id = account.get_max_display_id
-          set_tickets_redis_key(key, computed_display_id, nil)
+          set_display_id_redis_key(key, computed_display_id)
           self.display_id = computed_display_id
           return
         end
       end
     end
+    account.features.redis_display_id.destroy
+
+    notification_topic = SNS["dev_ops_notification_topic"]
+    options = { :account_id => account_id, :environment => Rails.env }
+    DevNotification.publish(notification_topic, "Redis Display ID - Retry limit exceeded", options.to_json)
+    
     Rails.logger.debug "Redis Display ID - Retry limit exceeded in #{account_id}"
     NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
@@ -517,7 +521,7 @@ private
 
   def assign_flexifield
     build_flexifield
-    self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
+    self.ff_def = FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
     assign_ff_values custom_field
     @custom_field = nil
   end
