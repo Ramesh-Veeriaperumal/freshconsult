@@ -20,7 +20,7 @@ end
   
   account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
   Sharding.select_shard_of(account_id) do
-    ::NewRelic::Agent.record_metric('Custom/Resque/around_perform_with_shard/find_by_id') do
+    ::NewRelic::Agent.trace_execution_scoped('Custom/Resque/around_perform_with_shard/find_by_id') do
       account = Account.find_by_id(account_id)
       account.make_current if account
       TimeZone.set_time_zone
