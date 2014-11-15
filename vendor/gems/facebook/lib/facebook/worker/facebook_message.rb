@@ -19,11 +19,12 @@ class Facebook::Worker::FacebookMessage
 
   def self.run
     account = Account.current
+    facebook_relatime = account.features?(:facebook_realtime)
     facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1 and reauth_required = 0"])
     return if facebook_pages.empty?
     facebook_pages.each do |fan_page|
         #This will get removed
-        fetch_fb_posts(fan_page) unless fan_page.realtime_subscription
+        fetch_fb_posts(fan_page,facebook_relatime) unless fan_page.realtime_subscription
         if fan_page.import_dms and fan_page.last_error.nil?
             fetch_fb_messages fan_page
         end
@@ -38,10 +39,10 @@ class Facebook::Worker::FacebookMessage
     end
   end
 
-  def self.fetch_fb_posts fan_page
+  def self.fetch_fb_posts fan_page, facebook_relatime
     sandbox(true) do
       @fan_page = fan_page
-      @fan_page.update_attributes(:realtime_subscription => "true") if @fan_page.account.features?(:facebook_realtime)
+      @fan_page.update_attributes(:realtime_subscription => "true") if facebook_relatime
       fb_posts = Social::FacebookPosts.new(@fan_page)
       fb_posts.fetch
     end
