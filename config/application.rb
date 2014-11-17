@@ -206,3 +206,4 @@ if defined?(PhusionPassenger)
   end
 end
 
+GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
