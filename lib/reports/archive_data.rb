@@ -13,7 +13,17 @@ module Reports
 				start_date, end_date = options[:start_date].to_date, options[:end_date].to_date
 				Sharding.run_on_slave do
 					account = Account.current
-					Time.zone = account.time_zone
+          begin
+            Time.zone = account.time_zone
+          rescue ArgumentError => e
+            # we have problem with Kyev. In rails 2.3.18 Kyev , but in Rails 3.2.18 its corrected to Kyiv
+            # https://rails.lighthouseapp.com/projects/8994/tickets/2613-fix-spelling-of-kyiv-timezone
+            if e.message.include?("Invalid Timezone: Kyev")
+              Time.zone = "Kyiv" 
+            else
+              raise e
+            end
+          end
 					start_date.upto(end_date) do |day|
 						@stats_date, @stats_end_time = day.strftime("%Y-%m-%d 00:00:00"), Time.zone.parse(day.strftime("%Y-%m-%d 23:59:59"))
 						@stats_date_time = Time.zone.parse(stats_date)

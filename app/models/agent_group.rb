@@ -17,7 +17,7 @@ class AgentGroup < ActiveRecord::Base
         :joins => %(INNER JOIN agents on 
           agents.user_id = agent_groups.user_id and
           agents.account_id = agent_groups.account_id),
-		:select => "agents.user_id",
+        :select => "agents.user_id",
         :conditions => ["agents.available = ?",true]
 
 end

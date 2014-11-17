@@ -68,6 +68,12 @@ class Account < ActiveRecord::Base
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
   end
+
+  def time_zone
+    tz = self.read_attribute(:time_zone)
+    tz = "Kyiv" if tz.eql?("Kyev")
+    tz
+  end
   
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?

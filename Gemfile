@@ -71,7 +71,6 @@ gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
 gem "ruby-saml", "0.8.1"
 
-gem "arel", "~> 3.0.2"
 gem 'map_fields', :git => "git://github.com/freshdesk/map-fields", :branch => "csv_import", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"

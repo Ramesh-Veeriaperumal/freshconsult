@@ -15,10 +15,9 @@ module Features
     
     # include ::MemcacheKeys
 
-#    abstract_class = true
+    abstract_class = true
 
     self.primary_key = :id
-
     self.table_name = :features
   
     LIST = []

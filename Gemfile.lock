@@ -845,7 +845,6 @@ DEPENDENCIES
   akismetor!
   ancestry (= 1.3)
   ar_shards!
-  arel (~> 3.0.2)
   asset_sync (= 1.1.0)
   authlogic (~> 3.4.2)
   autotest-fsevent (= 0.1.1)

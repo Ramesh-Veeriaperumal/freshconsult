@@ -1359,6 +1359,9 @@ Helpkit::Application.routes.draw do
     match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive
     #freshchat routes with helpdesk namespace - end
 
+    match '/sales_manager' => 'dashboard#sales_manager'
+    match '/agent-status' => 'dashboard#agent_status'
+    
     resources :articles do
       collection do
         get :autocomplete

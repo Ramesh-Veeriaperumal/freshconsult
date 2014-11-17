@@ -2,6 +2,8 @@ require 'spec_helper'
 include Redis::RedisKeys
 include Redis::OthersRedis
 
+include Redis::RedisKeys
+include Redis::OthersRedis
 RSpec.describe GroupsController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false

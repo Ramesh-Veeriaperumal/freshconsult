@@ -7,9 +7,8 @@ module BelongsToAccount
   module ClassMethods
     def belongs_to_account
       belongs_to :account, :class_name => '::Account'
-      # TODO-RAILS3 Its too bad need to check some other way......temp
       default_scope do
-        where(:account_id => ::Account.current.id) if (column_names.include?("account_id") && ::Account.current)
+        where(:account_id => ::Account.current.id) if ::Account.current
       end
 
     end

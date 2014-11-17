@@ -77,7 +77,7 @@ class Workers::Supervisor
             rule.trigger_actions ticket
             ticket.save_ticket!
           rescue Exception => e
-            Rails.logger.info "::::::::::::::::::::error::::::::::"
+            Rails.logger.info "::::::::::::::::::::error:::::::::::::#{rule.inspect}"
             Rails.logger.debug e
             Rails.logger.debug ticket.inspect
             NewRelic::Agent.notice_error(e)

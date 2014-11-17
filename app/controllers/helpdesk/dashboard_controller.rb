@@ -63,7 +63,9 @@ class Helpdesk::DashboardController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.js
+      format.js do
+        render :agent_status, :formats => [:rjs]
+      end
     end
   end
 
