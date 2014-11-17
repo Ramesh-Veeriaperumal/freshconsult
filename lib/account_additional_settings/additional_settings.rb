@@ -3,7 +3,7 @@ module AccountAdditionalSettings::AdditionalSettings
   include AccountConstants
   
   def email_template_settings
-    self.additional_settings.is_a?(Hash) and self.additional_settings[:email_template] ? 
+    (self.additional_settings.is_a?(Hash) and self.additional_settings[:email_template]) ? 
         self.additional_settings[:email_template] : DEFAULTS_FONT_SETTINGS[:email_template]
   end
 
