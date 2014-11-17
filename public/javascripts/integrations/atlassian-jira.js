@@ -132,7 +132,9 @@ JiraWidget.prototype = {
 			ev.preventDefault();
 			jiraWidget.deleteJiraIssue();
 		});
-
+		this.json_stringify = JSON.stringify;
+		this.array_tojson = Array.prototype.toJSON;
+		delete Array.prototype.toJSON;
 	},
 
 	getProjectBy: function(key, value){
@@ -241,14 +243,9 @@ JiraWidget.prototype = {
 	},
 	selectOnlyRequiredFields:function(resJson){
 		jiraWidget.customFieldData = {};
-		jiraWidget.numericFieldList =[];
 		jQuery.each(resJson.projects[0].issuetypes[0].fields,function(field_key,field_value){
 			if(field_value["required"]&& (field_key != "issuetype" && field_key != "project")){
 				jiraWidget.customFieldData[field_key] = field_value; 
-				if(field_value["schema"]["type"] == "number")
-				{
-					jiraWidget.numericFieldList.push(field_value["schema"]["customId"]);
-				}
 			}
 		});
 		jiraWidget.processJiraFields();
@@ -287,15 +284,10 @@ JiraWidget.prototype = {
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
-    if(jiraWidget.numericFieldList.length > 0)
-    {
-			for(var i =0 ;i< jiraWidget.numericFieldList.length;i++)
-			{
-				var custom_field = "customfield_" + jiraWidget.numericFieldList[i];
-				created_issue["fields"][custom_field] = parseFloat(created_issue["fields"][custom_field]);
-			}
-		}
-	  issue = JSON.stringify(created_issue);
+   
+		this.jsonFix();
+		issue = JSON.stringify(created_issue);
+	  this.resetJsonFix();
 		init_reqs = [{
 			source_url: "/integrations/jira_issue/create",
 			content_type: "application/json",
@@ -312,6 +304,19 @@ JiraWidget.prototype = {
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs
 		jiraWidget.freshdeskWidget.call_init_requests();
 	},
+	jsonFix: function () {
+			var self = this;
+			JSON.stringify = function (value) {
+				var array_tojson = Array.prototype.toJSON;
+				value = self.json_stringify(value);
+				return value;
+			};
+		},
+	resetJsonFix: function () {
+			JSON.stringify = this.json_stringify;
+			Array.prototype.toJSON = this.array_tojson;
+	},
+	
 	jiraCreateSummaryAndDescription: function(){
 		var jira_initialtext = jQuery("#jira-note").text();
 		jQuery("#jira-note").html(jira_initialtext);
@@ -449,9 +454,8 @@ JiraWidget.prototype = {
 		jiraWidget.freshdeskWidget.display();
 		jiraWidget.freshdeskWidget.call_init_requests();
 		jQuery('#jira-issue-summary').val(jiraBundle.ticketSubject);
-
-
-	},
+	  delete Array.prototype.toJSON;
+		},
 
 	displayLinkWidget: function() {
 		jiraWidget.freshdeskWidget.options.application_html = this.displayLinkContent;
@@ -775,10 +779,10 @@ JiraWidget.prototype = {
 			jiraWidget.ProcessJiraFieldArrayStringAllowedValues(fieldKey,fieldData);
 		}
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
-		jiraWidget.fieldContainer += '<input type="number" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';		
+		jiraWidget.fieldContainer += '<input type="number" class ="numeric" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';		
 	},
 	processJiraFieldArray:function(fieldKey,fieldData){
-	  if(fieldData["schema"]["items"] == "string"){
+		if(fieldData["schema"]["items"] == "string"){
 			if(fieldData["allowedValues"])
 				jiraWidget.ProcessJiraFieldArrayStringAllowedValues(fieldKey,fieldData);
 			else
