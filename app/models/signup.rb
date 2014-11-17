@@ -14,7 +14,8 @@ class Signup < ActivePresenter::Base
 
   def time_zone=(utc_offset)
     utc_offset = utc_offset.blank? ? "Eastern Time (US & Canada)" : utc_offset.to_f
-    @time_zone = (ActiveSupport::TimeZone[utc_offset]).name 
+    t_z = ActiveSupport::TimeZone[utc_offset]
+    @time_zone = t_z ? t_z.name : "Eastern Time (US & Canada)"
   end
     
   def metrics=(metrics_obj)

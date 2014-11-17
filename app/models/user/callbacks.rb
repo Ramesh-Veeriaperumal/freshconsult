@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
   end
 
   def email_obtained
-    self[:email] || self.actual_email
+    self[:email]
   end
 
   def update_user_related_changes
