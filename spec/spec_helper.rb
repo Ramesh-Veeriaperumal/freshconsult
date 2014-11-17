@@ -185,6 +185,7 @@ Spork.prefork do
       RIAK_ENABLED = false
       DatabaseCleaner.clean_with(:truncation,
                                  {:pre_count => true, :reset_ids => false})
+      $redis_others.flushall
       logfile_name = 'log/rspec_file_times.log'
       logfile = "#{File.dirname(__FILE__)}/../#{logfile_name}"
       File.delete(logfile) if File.exist?(logfile)
