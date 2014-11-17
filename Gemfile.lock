@@ -38,12 +38,6 @@ GIT
       nokogiri (~> 1.4)
 
 GIT
-  remote: git://github.com/burke/class_inheritable_attributes
-  revision: 2f492f1053a0c668c294067667e6b7952d06f2c8
-  specs:
-    class_inheritable_attributes (0.0.2)
-
-GIT
   remote: git://github.com/freshdesk/Marketo.git
   revision: 5f53130eb61d751b90e6a7f8b1452b308f15a39a
   specs:
@@ -858,7 +852,6 @@ DEPENDENCIES
   business_time!
   carmen!
   chargebee (~> 1.2.9)
-  class_inheritable_attributes!
   clockwork (= 0.4.1)
   compass-blueprint (= 1.0.0)
   compass-rails (= 2.0.0)

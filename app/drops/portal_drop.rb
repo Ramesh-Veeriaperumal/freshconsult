@@ -2,7 +2,7 @@ class PortalDrop < BaseDrop
   
   include Rails.application.routes.url_helpers
   
-  liquid_attributes << :name << :language
+  self.liquid_attributes += [:name, :language]
 
   def initialize(source)
     super source

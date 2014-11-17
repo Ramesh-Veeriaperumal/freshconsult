@@ -3,7 +3,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	include Rails.application.routes.url_helpers
 	include TicketConstants
 
-	liquid_attributes << :requester << :group << :ticket_type << :deleted	
+	self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted	]
 
 	def initialize(source)
 		super source

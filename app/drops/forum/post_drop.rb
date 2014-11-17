@@ -2,7 +2,7 @@ class Forum::PostDrop < BaseDrop
   
   include Rails.application.routes.url_helpers
   
-  liquid_attributes << :body << :body_html
+  self.liquid_attributes += [:body, :body_html]
   
   def initialize(source)
     super source

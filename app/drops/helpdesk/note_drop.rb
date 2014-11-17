@@ -2,7 +2,7 @@ class Helpdesk::NoteDrop < BaseDrop
 
 	include Rails.application.routes.url_helpers
 
-	liquid_attributes << :private
+	self.liquid_attributes += [:private]
 
 	def initialize(source)
 		super source

@@ -1,4 +1,6 @@
 module RestrictControllerAction
+  extend ActiveSupport::Concern
+  
 	include Redis::OthersRedis
 	include Redis::RedisKeys
 
@@ -6,21 +8,23 @@ module RestrictControllerAction
 	PERFORM_LIMIT = 5
 	PERFORM_EXPIRY = 3600 #1 hour
 
-	def self.included(controller)
-		controller.extend(ClassMethods)
-		controller.before_filter(:restrict)
+	included do
+    class_attribute :restrict_actions
+    
+		before_filter :restrict
 	end
 
 	module ClassMethods
 		def restrict_perform(*actions)
-			write_inheritable_array(:restrict_actions, actions)
+      self.restrict_actions ||= []
+      self.restrict_actions += actions
 		end
 	end
 
 
 	protected
 		def restrict_perform?
-			(self.class.read_inheritable_attribute(:restrict_actions) || []).include?(action_name.to_sym)
+			(self.class.restrict_actions || []).include?(action_name.to_sym)
 		end
 
 	  def key

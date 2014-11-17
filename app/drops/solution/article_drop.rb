@@ -2,7 +2,7 @@ class Solution::ArticleDrop < BaseDrop
   
   include Rails.application.routes.url_helpers
   
-  liquid_attributes << :title << :status << :thumbs_up << :thumbs_down
+  self.liquid_attributes += [ :title , :status , :thumbs_up , :thumbs_down ]
   
   def initialize(source)
     super source
