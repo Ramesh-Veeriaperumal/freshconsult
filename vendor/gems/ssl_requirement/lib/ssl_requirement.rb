@@ -19,30 +19,36 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module SslRequirement
-  def self.included(controller)
-    controller.extend(ClassMethods)
-    controller.before_filter(:ensure_proper_protocol)
+  extend ActiveSupport::Concern
+  
+  included do
+    class_attribute :ssl_required_actions
+    class_attribute :ssl_allowed_actions
+    
+    before_filter :ensure_proper_protocol
   end
-
+  
   module ClassMethods
     # Specifies that the named actions requires an SSL connection to be performed (which is enforced by ensure_proper_protocol).
     def ssl_required(*actions)
-      write_inheritable_array(:ssl_required_actions, actions)
+      self.ssl_required_actions ||= []
+      self.ssl_required_actions += actions
     end
 
     def ssl_allowed(*actions)
-      write_inheritable_array(:ssl_allowed_actions, actions)
+      self.ssl_allowed_actions ||= []
+      self.ssl_allowed_actions += actions
     end
   end
   
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
-      (self.class.read_inheritable_attribute(:ssl_required_actions) || []).include?(action_name.to_sym)
+      (self.class.ssl_required_actions || []).include?(action_name.to_sym)
     end
-    
+  
     def ssl_allowed?
-      (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
+      (self.class.ssl_allowed_actions || []).include?(action_name.to_sym)
     end
     
   private
