@@ -277,7 +277,7 @@ class Account < ActiveRecord::Base
   end
 
   def user_emails_migrated?
-    $redis_others.sismember('user_email_migrated', self.id)
+    $redis_others.sismember(USER_EMAIL_MIGRATED, self.id)
   end
 
   def google_account?

@@ -10,7 +10,6 @@ ticksymbol = "<span class='icon ticksymbol'></span>";
 priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
 TicketListEvents = function() {
-MergeTicketsInitializer();
 
 Fjax.beforeNextPage = function() {
 	jQuery('#ticket_pagination').html('<span class="disabled prev_page"><span></span></span><span class="disabled next_page"><span></span></span>');

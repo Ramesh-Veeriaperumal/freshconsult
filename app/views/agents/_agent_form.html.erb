@@ -70,16 +70,6 @@
                     :value => @agent.user.name, :placeholder => t('user.name'))  %>
 					  </div>
 				  </li>	
-          <% if current_account.features?(:multiple_user_emails) %>
-    				<li class="control-group">
-    					<%= label(:user, :email, t('user.email'), :class => "control-label" ) %>
-    					<div class="controls">
-              <% usr.fields_for :user_emails do |ue| %>
-                <%= ue.text_field :email, :id => "email_primary", :class=>"text required input-xlarge email", :placeholder => t('user.email') if ue.object.primary_role? %>
-              <% end %>
-    					</div>
-    				</li>	
-          <% else %>
             <li class="control-group">
               <%= label(:user, :email, t('user.email'), :class => "control-label" ) %>
               <div class="controls">
@@ -87,7 +77,6 @@
                       :value => @agent.user.email, :placeholder => t('user.email')) %>
               </div>
             </li>
-          <% end %> 
   				<li class="control-group">
   					<%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
   					<div class="controls">
