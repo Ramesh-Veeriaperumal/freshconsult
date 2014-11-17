@@ -97,7 +97,7 @@ module ApplicationHelper
     hours = hours - (days * 24)
 
     if (interval.to_i <= 0)
-      "-"
+      I18n.t('since_a_second')
     elsif days > 0
       I18n.t('no_of_days', :days => "#{days}" , :hours => "#{hours % 24}" )
     elsif hours > 0
