@@ -7,13 +7,13 @@ class User < ActiveRecord::Base
   has_many :votes, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
 
-  has_many :user_emails , :class_name =>'UserEmail', :validate => true, :dependent => :destroy, :order => "primary_role desc"
-  has_many :verified_emails, :class_name =>'UserEmail', :dependent => :destroy, :conditions => { :verified => true }
-  has_one :primary_email, :class_name => 'UserEmail', :conditions => { :primary_role => true }, :autosave => true
+  # has_many :user_emails , :class_name =>'UserEmail', :validate => true, :dependent => :destroy, :order => "primary_role desc"
+  # has_many :verified_emails, :class_name =>'UserEmail', :dependent => :destroy, :conditions => { :verified => true }
+  # has_one :primary_email, :class_name => 'UserEmail', :conditions => { :primary_role => true }
 
-  accepts_nested_attributes_for :user_emails, :reject_if => proc {|att| att['email'].blank? }, :allow_destroy => true
+  # accepts_nested_attributes_for :user_emails, :reject_if => proc {|att| att['email'].blank? }, :allow_destroy => true
 
-  delegate :email, :to => :primary_email, :allow_nil => true, :prefix => :actual
+  # delegate :email, :to => :primary_email, :allow_nil => true, :prefix => :actual
   
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
    

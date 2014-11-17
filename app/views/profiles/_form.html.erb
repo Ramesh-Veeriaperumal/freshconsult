@@ -63,10 +63,36 @@ jQuery('.email').live('keyup', function(){
 			<%= label(:user, :job_title, t("user.title")) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
 		</li>	
-		<li class="medium">
-			<%= label(:user, :email, t("user.email")) %>			
-			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
+		<%if !feature?(:multiple_user_emails) %>
+			<li class="medium">
+	 			<%= label(:user, :email, t("user.email")) %>			
+	 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
+ 			</li>
+		<% else %>
+		<div id="emails_con" class="email_con">
+		<li class="closebottom medium">
+			<%= label(:user, :email, "Email", :id => "email-label") %>
+			<% usr.fields_for :user_emails do |ue| %>
+			<span>
+			<% if !ue.object.blank? %>
+			<%= ue.object.primary_role? ? content_tag(:span, "", :id => 'rem_mail', :class=>'email_primary profile') : 
+					content_tag(:span, "", :class => "remove_image profile", :id => "rem_mail", "data-email" => ue.object.id) %>
+			<%= ue.label :email, ue.object.email, :class => "display_label" %>
+			<% if ue.object.verified %>
+				<%= radio_button_tag :primary, ue.object.id, ue.object.primary_role %>
+				<%= ue.object.primary_role? ? content_tag(:p, "<b>#{t('merge_contacts.default_email')}</b>") : content_tag(:p, "#{t('merge_contacts.default_email')}")%><br/>
+			<% else %>
+				<%= content_tag(:p, "#{t('merge_contacts.unverified')} - #{link_to_remote t('merge_contacts.verify'), 
+				:url => send_verification_profile_user_email_path(params[:id], :email_id => ue.object.id.to_s),
+				:method => :put, :complete => "jQuery('#verify_email').text('Verification sent');", :html => {:id => "verify_email"}}") %>
+			<% end %>
+			<% end %>
+		</span>
+		<% end %>
 		</li>
+		</div>
+		<a id="add_new_mail" class="profile" href="#"><span id="add_email"></span><%= t('merge_contacts.add_another') %></a>
+		<% end %>
 		<li class="small">
 			<%= label(:user, :phone, t("user.phone_no")) %>	
 			<div>

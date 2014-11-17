@@ -1,6 +1,40 @@
+<%= include_cloudfront_js 'merge' %>
 <% javascript_tag do -%>
-  window.App.Contacts.Contacts_merge.searchUrl = "<%= search_contact_contact_merge_path(@source_user.id) %>?id=<%= @source_user.id %>&";
-  window.App.Contacts.Contacts_merge.bindAutocompleter();
+
+  MergeInitializer();
+  ContactsMergeInitializer();
+
+  this.ContactsSearch = new Template(
+      '<li><div class="contactdiv" data-id="#{id}">'+
+      '<span id="resp-icon"></span>'+
+      '<div id="user-contact" data-uid="#{id}" class="merge_element">'+
+      '<div id="avatar_image"><div id="pic" class="preview_pic" size_type="thumb">'+
+      '<img alt="" onerror="imgerror(this)" src="#{avatar}"></div></div>'+
+      '<div id="user_info_item"><a class="item_info"><b>#{name}</b></a>'+
+      '<div class="info_contact_data">'+
+      '<span>#{email}</span>'+
+      '<span>#{company}</span>'+
+      '</div></div></div></div></li>'
+  );
+
+  function lookup(searchString, callback) { 
+    jQuery('#match_results').addClass('sloading loading-small');
+    var list = jQuery('#match_results').find('ul');
+    if(list.length)
+      list.empty();
+    new Ajax.Request('<%= search_contact_contact_merge_path(@source_user.id) %>?v='+searchString+'&id=<%= @source_user.id %>', 
+                        { parameters: {name: searchString, rand: (new Date()).getTime()},
+                          method: 'get',
+                          onSuccess: function(response) {       
+                            callback(response.responseJSON.results);
+                            jQuery('#match_results').removeClass('sloading loading-small');
+                          } 
+                        }
+                    );
+  }
+var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
 <%- end %>
 <div id="mergebox_confirm"></div>
 <div id="mergebox" class="row-fluid">
@@ -28,6 +62,9 @@
   <div class="search-content span6">
     <span>
     <input type="text" id="select-user" name="select-user" class="search_merge" placeholder="Search contacts to merge"/><span class="searchicon"></span></span>
+    <% javascript_tag do %>
+      new Autocompleter.PanedSearch("select-user", cachedLookup, this.ContactsSearch, "match_results", $A(<%= @contact_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true, afterPaneShow: ContactsMergeAfterShow, separatorRegEx:/;|,/});
+    <% end %>
       <div id="match_results"></div>
   </div>
   <% form_tag do -%>

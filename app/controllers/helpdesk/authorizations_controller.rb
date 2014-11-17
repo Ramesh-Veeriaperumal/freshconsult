@@ -19,7 +19,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
   end
 
   def deliver_autocomplete auto_scoper
-    if current_account.features_included?(:multiple_user_emails)
+    if current_account.features?(:multiple_user_emails)
       items = auto_scoper.find(
       :all, 
       :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],

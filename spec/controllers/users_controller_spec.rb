@@ -18,7 +18,7 @@ describe UsersController do
                                     :blocked => 0,
                                     :customer_id => nil,
                                     :language => "en")
-	    @new_user.save
+	    @new_user.save(false)
 	end
 
 	before(:each) do

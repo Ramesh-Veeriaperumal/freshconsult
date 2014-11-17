@@ -7,6 +7,7 @@ class ProfilesController < ApplicationController
    include ModelControllerMethods  
 
   def edit       
+    # @user_emails = current_user.user_emails.all
     respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @profile }

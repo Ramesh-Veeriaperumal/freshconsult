@@ -6,10 +6,7 @@ describe UserEmailsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @key_state = mue_key_state(@account)
-    enable_mue_key(@account)
     @account.features.multiple_user_emails.create
-    @account.features.contact_merge_ui.create
     @userUEC = add_user_with_multiple_emails(@account, 4)
   end
 
@@ -18,9 +15,7 @@ describe UserEmailsController do
   end
 
   after(:all) do
-    @account.features.contact_merge_ui.destroy
     @account.features.multiple_user_emails.destroy
-    disable_mue_key(@account) unless @key_state
   end
 
   it "should make email primary" do
@@ -37,9 +32,8 @@ describe UserEmailsController do
   # end
 
   it "should send user verification" do
-    usernew = add_user_with_multiple_emails(@account, 2)
     Delayed::Job.delete_all
-    put :send_verification, :email_id => usernew.user_emails.last.id
+    put :send_verification, :email_id => @userUEC.user_emails.second.id
     response.body.should =~ /Activation mail sent./
     Delayed::Job.last.handler.should include("deliver_email_activation")
   end

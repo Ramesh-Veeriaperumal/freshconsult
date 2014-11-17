@@ -12,7 +12,7 @@ module Freshfone::Search
 	def self.search_user_using_es(search_string, fields)
 		Search::EsIndexDefinition.es_cluster(Account.current.id)
 		index_name = Search::EsIndexDefinition.searchable_aliases([User], Account.current.id)
-		Tire.search(index_name, { :load => { User => { :include => [:avatar] } } }) do |search|
+		Tire.search(index_name, { :load => { User => { :include => [:avatar, :primary_email] } } }) do |search|
 			search.query do |query|
 				query.filtered do |f|
 					f.query { |q| q.string(search_string, :fields => fields) }

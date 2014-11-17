@@ -6,8 +6,6 @@ describe AccountsController do
   self.use_transactional_fixtures = false
 
   before(:each) do
-    @account.reload
-    @account.make_current
     login_admin
   end
 

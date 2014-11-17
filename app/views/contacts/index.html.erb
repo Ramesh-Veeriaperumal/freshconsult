@@ -13,7 +13,7 @@
     				</div>
     				<div class="control-group">
     					<div class="controls">
-    						<% if current_account.features_included?(:contact_merge_ui) %>
+    						<% if current_account.features?(:multiple_user_emails) %>
     						<input class="require_from_group user_info email input-large" id="email_primary" name="user[user_emails_attributes][0][email]" type="email" placeholder="<%=t('user.email')%>"/>
     						<% else %>
     						<input class="require_from_group user_info email input-large" id="email_primary" name="user[email]" type="email" placeholder="<%=t('user.email')%>"/>

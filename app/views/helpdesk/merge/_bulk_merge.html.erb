@@ -63,11 +63,11 @@
   </div>   
 </div>
 <script type="text/javascript">
-  var primary_ticket = window.App.Tickets.Merge_tickets.findOldestTicket();
+  var primary_ticket = findOldestTicket();
   primary_ticket.parent().prepend(primary_ticket);
   primary_ticket.addClass('cont-primary');
   primary_ticket.find('.primary-marker').attr('title','Primary ticket');
-  window.App.Tickets.Merge_tickets.enableContinue();
-  window.App.Tickets.Merge_tickets.bindAutocompleter();
-  window.App.Tickets.Merge_tickets.checkRequester();
+  enable_continue();
+  bind_autocompleter();
+  check_requester();
 </script>

@@ -38,7 +38,7 @@
 			</div>
 			<br />
 			<% if @profile.email.present? %>
-				<% if current_account.features_included?(:contact_merge_ui) %>
+				<% if current_account.features?(:multiple_user_emails) %>
 					<h4><%= t("user.emails") %></h4>
 					<div><%= @profile.emails.join(", ") %></div>
 				<% else %>

@@ -441,7 +441,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def from_email
-    (account.features_included?(:multiple_user_emails) and self.sender_email.present?) ? self.sender_email : requester.email
+    requester.email
   end
 
   def ticlet_cc

@@ -50,6 +50,7 @@ class PasswordResetsController < SupportController
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..
+    @user.primary_email.update_attributes({:verified => true}) if current_account.features?(:multiple_user_emails) && !@user.primary_email.verified?
     if @user.save
       flash[:notice] = t(:'flash.password_resets.update.success')
       redirect_to root_url

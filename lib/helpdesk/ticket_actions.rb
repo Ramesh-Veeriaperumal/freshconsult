@@ -192,6 +192,7 @@ module Helpdesk::TicketActions
   
   def add_requester
     @user = current_account.users.new
+    # @user.user_emails.build
     render :partial => "contacts/add_requester_form"
   end
 

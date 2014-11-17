@@ -27,10 +27,11 @@ describe Admin::EmailNotificationsController do
 
 	it "should edit an agent email_notification" do
 		get :edit, :id => @test_notification.id, :type => "agent_template"
-    	response.body.should =~ /Agent Notification/
-    	put :update, :id => @test_notification.id, :agent => "1", :email_notification => { :agent_subject_template => @sample_subject,
-                               																:agent_template => @sample_message
-                             															 }
+    response.body.should =~ /Agent Notification/
+    put :update, :id => @test_notification.id, :agent => "1",
+      :email_notification => { :agent_subject_template => @sample_subject,
+                               :agent_template => @sample_message
+                             }
 		@test_notification.reload
 		@test_notification.agent_subject_template.should eql @sample_subject
 		@test_notification.agent_template.should eql @sample_message
@@ -38,8 +39,8 @@ describe Admin::EmailNotificationsController do
 
 	it "should edit an requester email_notification" do
 		get :edit, :id => @test_notification.id, :type => "requester_template"
-    	response.body.should =~ /Requester Notification/
-    	put :update, :id => @test_notification.id, :requester => "1",
+    response.body.should =~ /Requester Notification/
+    put :update, :id => @test_notification.id, :requester => "1",
       :email_notification => { :requester_subject_template => @sample_subject,
                                :requester_template => @sample_message
                              }
@@ -75,8 +76,10 @@ describe Admin::EmailNotificationsController do
 
 	it "should edit reply_template"	do
 		get :edit, :id => @test_reply_temp.id, :type => "reply_template"
-    	response.body.should =~ /Reply Templates/
-    	put :update, :id => @test_reply_temp.id, :requester => "1", :email_notification => { :requester_template => @sample_message }
+    response.body.should =~ /Reply Templates/
+    put :update, :id => @test_reply_temp.id, :requester => "1",
+      :email_notification => { :requester_template => @sample_message,
+                             }
 		@test_reply_temp.reload
 		@test_reply_temp.requester_template.should eql @sample_message
 	end

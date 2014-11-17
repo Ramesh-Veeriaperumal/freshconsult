@@ -6,37 +6,14 @@ window.App = window.App || {};
 	"use strict";
 	
 	App.Contacts = {
-		current_module: '',
-
-		onFirstVisit: function (data) {
-			this.onVisit(data);
+		onFirstVisit: function () {
+			console.log('This is the first time	into the Contacts Page');
 		},
-
-		onVisit: function (data) {
-			this.setSubModule();
-			if (this.current_module !== '') {
-				this[this.current_module].onVisit();
-			}
+		onVisit: function () {
+			console.log('Hi Again from the Contacts JS');
 		},
-
-		setSubModule: function() {
-			switch (App.namespace) {
-
-			case 'contacts/new' || 'contacts/edit':
-				this.current_module = 'Contact_form';
-				break;
-
-			case 'contacts/show':
-				this.current_module = 'Contacts_merge';
-				break;
-			}
-		},
-
-		onLeave: function (data) {
-			if (this.current_module !== '') {
-				this[this.current_module].onLeave();
-				this.current_module = '';
-			}
+		onLeave: function () {
+			console.log('Leaving the Contacts Namespace');
 		}
 	};
 }(window.jQuery));

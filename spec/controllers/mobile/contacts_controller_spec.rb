@@ -49,7 +49,9 @@ describe ContactsController do
 
   it "should delete multiple contacts" do
     contact = add_new_user(@account)
+    contact.save!
     contact_one = add_new_user(@account)
+    contact_one.save!
     delete :destroy, params.merge!(:id => "multiple", :ids => [contact.id,contact_one.id])
     @account.all_contacts.find(contact.id).deleted.should be_true
     @account.all_contacts.find(contact_one.id).deleted.should be_true
@@ -71,6 +73,7 @@ describe ContactsController do
   
   it "should not create a contact with exisiting email address" do
     contact = add_new_user(@account)
+    contact.save!
     post :create, params.merge!(:user => {
                       :name => Faker::Name.name,
                       :email => contact.email,
@@ -82,6 +85,6 @@ describe ContactsController do
                    
     json_response.should include("error")
     json_response["error"].should be_true
-    json_response["message"][0][1].should include("has already been taken")
+    json_response["message"][0][1].should be_eql("Email has already been taken")
   end
 end

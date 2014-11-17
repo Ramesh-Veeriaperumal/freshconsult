@@ -32,10 +32,10 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 
 
 			<% if privilege?(:manage_users) %>
-				<%= link_to t('ticket.merge_btn'), { :controller => 'contact_merge', :action => "new" , :id => @user.id }, :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "685", :rel => "freshdialog", "data-target" => "#mergebox1", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features_included?(:contact_merge_ui) %>
+				<%= link_to t('ticket.merge_btn'), { :controller => 'contact_merge', :action => "new" , :id => @user.id }, :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "685", :rel => "freshdialog", "data-target" => "#mergebox1", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features?(:multiple_user_emails) %>
 				<% if @user.has_email? and !@user.blocked?%>
 					<ul class="dropdown-menu pull-right" role="menu">
-						<% if current_account.features_included?(:contact_merge_ui) %>
+						<% if current_account.features?(:multiple_user_emails) %>
 							<li><%= link_to( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put, :confirm => t('contacts.convert_note'))%></li>
 							<li><%= link_to( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put, :confirm => t('contacts.convert_note')) %></li>  
 						<% else %>  
@@ -59,7 +59,7 @@ jQuery('#primary_maker, #verify_email').live('click', function(){
 		<div id="email_mark" class="hide"></div>
 		<%= render :partial => "helpdesk/integrations/email_marketing_container" , :locals => {:contact => @user} %>
 		<div class="user-info row-fluid">
-		<% if current_account.features_included?(:contact_merge_ui) %>
+		<% if current_account.features?(:multiple_user_emails) %>
 			<div class="row-fluid">
 				<span class="span3">
 					<%= t('user.email') unless @user.user_emails.blank? %>

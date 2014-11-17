@@ -14,10 +14,10 @@ describe ContactsController do
   before(:all) do
     @sample_contact = Factory.build(:user, :account => @acc, :phone => "23423423434", :email => Faker::Internet.email,
                               :user_role => 3)
-    @sample_contact.save
+    @sample_contact.save(false)
     @active_contact = Factory.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
-    @active_contact.save
+    @active_contact.save(false)
     @new_company = Factory.build(:company)
     @new_company.save
   end
@@ -33,9 +33,6 @@ describe ContactsController do
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
-    u = @account.user_emails.user_for_email(test_email)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(u.name)
   end
 
   it "should create a new contact with new company" do # with old company parameters(customer deprecation)
@@ -44,10 +41,7 @@ describe ContactsController do
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :customer => company_name }
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
-    u = @account.user_emails.user_for_email(test_email)
     @account.companies.find_by_name(company_name).should be_an_instance_of(Customer)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(u.name)
   end
 
    it "should create a new contact with new company" do # with new company parameters(customer deprecation)
@@ -65,9 +59,6 @@ describe ContactsController do
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }, :format =>'nmobile'
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
-    u = @account.user_emails.user_for_email(test_email)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(u.name)
   end
 
   it "should create a new contact - json format" do
@@ -75,9 +66,6 @@ describe ContactsController do
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :tags => "phonecontact" }, :format => 'json'
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
-    u = @account.user_emails.user_for_email(test_email)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(u.name)
   end
   
   it "should create a new contact with email - js format" do
@@ -86,9 +74,6 @@ describe ContactsController do
    
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
-    u = @account.user_emails.user_for_email(test_email)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(u.name)
   end
   
   it "should create a new contact with phone number - js format" do
@@ -120,7 +105,7 @@ describe ContactsController do
   it "should list all non-verified contacts" do
     unverified_contact = Factory.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => false)
-    unverified_contact.save
+    unverified_contact.save(false)
     get :index, {:state => "unverified", :letter => []}
     response.body.should =~ /#{unverified_contact.email}/
   end
@@ -130,7 +115,7 @@ describe ContactsController do
                               :user_role => 3, :active => false, 
                               :blocked => true, :blocked_at =>  Time.now + 2.days, 
                               :deleted => true, :deleted_at => Time.now + 3.days)
-    blocked_contact.save
+    blocked_contact.save(false)
     get :index, {:state => "blocked", :letter => []}
     response.body.should =~ /#{blocked_contact.email}/
   end
@@ -139,7 +124,7 @@ describe ContactsController do
     deleted_contact = Factory.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => false, 
                               :deleted => true)
-    deleted_contact.save
+    deleted_contact.save(false)
     get :index, {:state => "deleted", :letter => []}
     response.body.should =~ /#{deleted_contact.email}/
   end
@@ -162,7 +147,7 @@ describe ContactsController do
   it "should list contact with tag" do
     contact = Factory.build(:user, :account => @acc, :phone => "2342342456454234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
-    contact.save
+    contact.save(false)
     contact.tags.create({:name => "amazing"})
     tag = contact.tags.first
     get :index, :tag => tag.id
@@ -181,8 +166,7 @@ describe ContactsController do
   it "should list all contacts matching the query" do
     contact = Factory.build(:user, :account => @acc, :phone => "23423422334234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
-    contact.save
-    contact.reload
+    contact.save(false)
     get :index, :format => 'xml', :query => "email is #{contact.email}"
     response.body.should =~ /#{contact.email}/
     response.body.should_not =~ /#{@sample_contact.email}/
@@ -192,7 +176,7 @@ describe ContactsController do
     contact = Factory.build(:user, :account => @acc, :phone => "23423422334234", :email => Faker::Internet.email,
                               :user_role => 3, :active => false, 
                               :deleted => true)
-    contact.save
+    contact.save(false)
     get :index,:state => "deleted", :letter => [],:format => 'xml', :query => "email is #{contact.email}"
     response.body.should =~ /#{contact.email}/
     response.body.should_not =~ /#{@sample_contact.email}/
@@ -201,7 +185,7 @@ describe ContactsController do
   it "should give all details of a contact with id" do
     contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    contact.save
+    contact.save(false)
     contact.reload
     get :show, :id => contact.id
     response.body.should =~ /#{contact.email}/
@@ -210,7 +194,7 @@ describe ContactsController do
   it "should give all details of a contact with id in json" do
     contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    contact.save
+    contact.save(false)
     contact.reload
     get :show, :id => contact.id, :format => 'json'
     response.body.should =~ /#{contact.email}/
@@ -219,7 +203,7 @@ describe ContactsController do
   it "should give all details of a contact with email" do
     contact = Factory.build(:user, :account => @acc, :phone => "456564564564899", :email => Faker::Internet.email,
                               :user_role => 3)
-    contact.save
+    contact.save(false)
     contact.reload
     get :show, :email => contact.email
     response.body.should =~ /#{contact.phone}/
@@ -238,7 +222,7 @@ describe ContactsController do
   it "should unblock an user" do
     contact = Factory.build(:user, :account => @acc, :phone => "4564564656456", :blocked => true, :email => Faker::Internet.email,
                               :user_role => 3, :deleted => true, :deleted_at => Time.now)
-    contact.save
+    contact.save(false)
     ticket = create_ticket({ :requester_id => contact.id })
     Resque.inline = true
     get :unblock, :id => contact.id
@@ -291,38 +275,32 @@ describe ContactsController do
                                       }
     new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
-    new_contact.company_id.should be_eql(new_company.id)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(new_contact.name)
+    new_contact.company_id.should be_eql(@new_company.id)
   end
 
   it "should edit an existing contact" do
     contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
-                              :user_role => 3, :active => 1, :password => "test")
-    contact.save
+                              :user_role => 3)
+    contact.save(false)
     get :edit, :id => contact.id
     response.body.should =~ /Edit Contact/
     test_email = Faker::Internet.email
-    puts test_email
-    puts "\n\n\n"
     test_phone_no = Faker::PhoneNumber.phone_number
     put :update, :id => contact.id, :user => { :email => test_email, 
                                                 :job_title => "Developer",
                                                 :phone => test_phone_no,
                                                 :time_zone => contact.time_zone, 
                                                 :language => contact.language }
-    @account.reload
+
     edited_contact = @account.user_emails.user_for_email(test_email)
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(edited_contact.name)
   end
 
   it "should update an existing contact" do # with new company parameters(customer deprecation)
     contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    contact.save
+    contact.save(false)
     test_email = Faker::Internet.email
     test_phone_no = Faker::PhoneNumber.phone_number
     put :update, :id => contact.id, :user => { :email => test_email, 
@@ -339,8 +317,8 @@ describe ContactsController do
 
   it "should edit an existing contact and create new company" do # with old company parameters(customer deprecation)
     contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
-                              :user_role => 3, :active => 1, :password => "test")
-    contact.save
+                              :user_role => 3)
+    contact.save(false)
     get :edit, :id => contact.id
     response.body.should =~ /Edit Contact/
     test_email = Faker::Internet.email
@@ -355,8 +333,6 @@ describe ContactsController do
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
     @account.companies.find_by_name("testcompany").should be_an_instance_of(Customer)
-    Delayed::Job.last.handler.should include("deliver_user_activation")
-    Delayed::Job.last.handler.should include(edited_contact.name)
   end
 
   it "should make a customer a full-time agent" do
@@ -383,10 +359,22 @@ describe ContactsController do
   #   response.body.should =~ /success/
   # end
 
+  # it "should verify email" do
+  #   @account.features.multiple_user_emails.create
+  #   Delayed::Job.delete_all
+  #   u = add_user_with_multiple_emails(@account, 3)
+  #   u.active = true
+  #   u.save(false)
+  #   get :verify_email, :email_id => u.user_emails.last.id, :format => 'js'
+  #   Delayed::Job.last.handler.should include("deliver_email_activation")
+  #   response.body.should =~ /Activation mail sent/
+  #   @account.features.multiple_user_emails.destroy
+  # end
+
   it "should make a customer an occasional agent" do
     occasional_customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    occasional_customer.save
+    occasional_customer.save(false)
     occasional_customer.reload
     put :make_occasional_agent, :id => occasional_customer.id
     occasional_agent = @account.agents.find_by_user_id(occasional_customer.id)
@@ -397,7 +385,7 @@ describe ContactsController do
   it "should restore a deleted contact" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3, :deleted => true)
-    customer.save
+    customer.save(false)
     put :restore, :id => customer.id
     customer.reload
     customer.deleted?.should eql false
@@ -406,7 +394,7 @@ describe ContactsController do
   it "should restore a deleted contact - Js format" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3, :deleted => true)
-    customer.save
+    customer.save(false)
     put :restore, :id => customer.id, :format => 'js'
     customer.reload
     customer.deleted?.should eql false
@@ -415,11 +403,29 @@ describe ContactsController do
   it "should delete an existing contact" do
     customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-    customer.save
+    customer.save(false)
     customer.reload
     delete :destroy, :id => customer.id
     @account.all_users.find(customer.id).deleted.should be_true
   end
+
+  # it "should create with multiple user emails" do
+  #   @account.features.multiple_user_emails.create
+  #   test_email = Faker::Internet.email
+  #   post :create, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
+  #   @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+  #   @account.users.all.size.should eql @user_count+1
+  #   @account.features.multiple_user_emails.destroy
+  # end
+
+  # it "should create for wrong params with MUE feature" do
+  #   @account.features.multiple_user_emails.create
+  #   test_email = Faker::Internet.email
+  #   post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
+  #   @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+  #   @account.users.all.size.should eql @user_count+1
+  #   @account.features.multiple_user_emails.destroy
+  # end
 
   #### Company revamp specs - User Tags Revamp Specs
 

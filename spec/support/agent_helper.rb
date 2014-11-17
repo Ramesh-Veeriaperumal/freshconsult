@@ -2,7 +2,6 @@ module AgentHelper
 
   def add_agent_to_account(account, options={})
     available = options[:available] || 1
-    options[:email] = options[:email] || Faker::Internet.email
     new_agent = Factory.build(:agent, :signature => "Regards, #{options[:name]}", 
                                       :account_id => account.id, 
                                       :available => available)
@@ -18,8 +17,7 @@ module AgentHelper
                                     :language => "en") 
     new_user.agent = new_agent
     new_user.roles = [account.roles.second]
-    new_user.save
-    new_user.reload
+    new_user.save(false)
     
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , 

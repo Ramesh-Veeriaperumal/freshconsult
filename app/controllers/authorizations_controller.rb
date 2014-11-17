@@ -239,7 +239,13 @@ class AuthorizationsController < ApplicationController
   def create_from_hash(hash, account)
     user = account.users.new  
     user.name = hash['info']['name']
-    user.email = hash['info']['email'] if hash['info']['email']
+    if hash['info']['email']
+      if account.features?(:multiple_user_emails)
+        user.user_emails.build({:email => hash['info']['email'], :verified => true})
+      else
+        user.email = hash['info']['email']
+      end
+    end
     unless hash['info']['nickname'].blank?
       user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
       user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == 'facebook'

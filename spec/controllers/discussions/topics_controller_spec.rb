@@ -103,17 +103,16 @@ describe Discussions::TopicsController do
 	it "should deny access on get 'show' when user doesnt have privilege to view forum" do
 		topic = create_test_topic(@forum)
 		create_test_post(topic)
-		agent = add_agent(@account, { :name => Faker::Name.name, 
+		log_in(add_agent(@account, { :name => Faker::Name.name, 
 			                        :email => Faker::Internet.email, 
 			                        :active => 1, 
 			                        :role => 1, 
 			                        :agent => 1,
-			                        :role_ids => [@account.roles.find_by_name("Agent").id.to_s],
-			                        :ticket_permission => 1})
-		agent.privileges = 525315
-		agent.save!
-		log_in(agent)
+			                        :ticket_permission => 1,
+			                        :privileges => 525315 }))
+
 		get :show, :id => topic.id
+
 		response.session["flash"][:notice].should eql I18n.t(:'flash.general.access_denied')
 	end
 

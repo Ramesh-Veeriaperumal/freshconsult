@@ -32,9 +32,7 @@ window.Fjax = window.Fjax || {};
 	Fjax.Config = {
 		paths: {
 			"/discussions": 'discussions',
-			"/freshfone/call_history": 'freshfonecallhistory',
-			"/contacts": 'contacts',
-			"/helpdesk/tickets": 'tickets'
+			"/freshfone/call_history": 'freshfonecallhistory'
 		},
 		LOADING_WAIT: 5
 	};

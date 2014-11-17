@@ -51,6 +51,8 @@
 
 
 	<%= include_cloudfront_js :pattern  %>
+	<%= include_cloudfront_js :merge  %>
+
 	<%= include_cloudfront_js :custom_widget %>
 
 	<% if current_account.features?(:freshfone) ||

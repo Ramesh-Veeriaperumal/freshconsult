@@ -177,7 +177,6 @@ javascripts:
     - public/javascripts/app/metrics.js
     - public/javascripts/app/dashboard.js
     - public/javascripts/app/product_notifications.js
-    - public/javascripts/app/merge.js
 
   freshchat:
     - public/javascripts/freshchat/freshchat.js
@@ -439,14 +438,13 @@ javascripts:
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
 
-  tickets:
-    - public/javascripts/app/tickets.js
+  merge:
+    - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
-
-  contacts:
-    - public/javascripts/app/contacts.js
-    - public/javascripts/app/contact_form.js
     - public/javascripts/app/contacts_merge.js
+
+  contact_form:
+    - public/javascripts/app/contact_form.js
 
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js

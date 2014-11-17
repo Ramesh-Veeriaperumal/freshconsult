@@ -11,8 +11,7 @@ module HtmlSanitizer
         :except => (options[:except] || []),
         :only => (options[:only]||[]),
         :html_sanitize => (options[:html_sanitize] || []),
-        :full_sanitizer => (options[:full_sanitizer] || []),
-        :plain_sanitizer => (options[:plain_sanitizer] || [])
+        :full_sanitizer => (options[:full_sanitizer] || [])
       }
       Sharding.run_on_slave do
         sanitize_field_data if self.table_exists?
@@ -52,8 +51,6 @@ module HtmlSanitizer
         generate_setters_full_sanitizer(column)
       elsif xss_terminate_options[:html_sanitize].include?(column)
         generate_setters_html_sanitizer(column)
-      elsif xss_terminate_options[:plain_sanitizer].include?(column)
-        generate_setters_plain_sanitizer(column)
       else
         generate_setters_plain(column)
       end
@@ -70,13 +67,6 @@ module HtmlSanitizer
       class_eval %Q(
         def #{attr_name.to_s}=(value)
           write_attribute("#{attr_name.to_sym}",CGI.escapeHTML(value))
-        end
-      )
-    end
-    def generate_setters_plain_sanitizer(attr_name)
-      class_eval %Q(
-        def #{attr_name.to_s}=(value)
-          write_attribute("#{attr_name.to_sym}",Nokogiri::HTML(value).text)
         end
       )
     end

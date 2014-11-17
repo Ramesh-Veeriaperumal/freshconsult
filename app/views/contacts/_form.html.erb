@@ -1,9 +1,11 @@
-<script type="text/javascript">
-jQuery('body').on('assetLoaded.fjax', function() {
-	window.App.Contacts.Contact_form.confirm_text = "<%= t('merge_contacts.email_remove') %>";
-	window.App.Contacts.Contact_form.tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
-});
-</script>
+<%= include_cloudfront_js 'contact_form' %>  
+
+<% content_for :onload_script do %>  
+  var confirm_text = "<%= t('merge_contacts.email_remove') %>",
+  	  tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
+  ContactFormInitializer(confirm_text, tags_options)
+<% end %>
+
 
  	 <% if @existing_user %>
 	  	<div id="errorExplanation" class="errorExplanation">
@@ -29,7 +31,7 @@ jQuery('body').on('assetLoaded.fjax', function() {
 				<%= text_field(:user, :job_title, :class => "text input-xlarge" ) %>
 			</div>
 		</li>
-		<% if current_account.features_included?(:contact_merge_ui) %>
+		<% if current_account.features?(:multiple_user_emails) %>
 		<div id="emails_con" class="email_con">
 			<li class="control-group closebottom">
 				<%= label_tag :email, "Email", :id => "email-label", :class => "control-label" %>
@@ -41,12 +43,10 @@ jQuery('body').on('assetLoaded.fjax', function() {
 							content_tag(:span, "", :class => "remove_image rem_mail", "data-email" => ue.object.id)%>
 						<% else %>
 							<%= ue.text_field :email, :id => "email_sec", :class => "email cont text input-xlarge default_email" %>
-							<% unless f.object.new_record? %>
-								<% unless @user.email_required? %>
-								<span class='email_primary remove_image rem_mail'></span>
-								<% end %>
-							<p class="primary_text"><b><%= t('merge_contacts.primary') %></b></p>
+							<% unless @user.email_required? %>
+							<span class='email_primary remove_image rem_mail'></span>
 							<% end %>
+							<p class="primary_text"><b><%= t('merge_contacts.primary') %></b></p>
 						<% end %>
                         <%= ue.hidden_field :_destroy, :value => false %>
 					</div> <!-- The hidden id field gets added after this -->

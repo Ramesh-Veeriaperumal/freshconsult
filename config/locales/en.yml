@@ -2366,7 +2366,6 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
-        user_emails: Please enter at least one contact detail
       full_messages:
         format: "%{attribute} %{message}"
       template:

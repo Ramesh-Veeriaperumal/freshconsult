@@ -11,7 +11,7 @@
     </li>
     <li>
       <%= add_requester.label t('user.email') %>
-      <% if current_account.features_included?(:contact_merge_ui) %>
+      <% if current_account.features?(:multiple_user_emails) %>
       <% add_requester.fields_for :user_emails do |ue| %>
         <%= ue.text_field :email, :class => "require_from_group user_info email" %>
       <% end %>

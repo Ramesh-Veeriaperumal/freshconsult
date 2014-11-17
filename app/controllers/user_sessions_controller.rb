@@ -428,7 +428,12 @@ include GoogleLoginHelper
       @contact.name = options[:name] unless options[:name].blank?
       @contact.phone = options[:phone] unless options[:phone].blank?
       @contact.customer_id = current_account.customers.find_or_create_by_name(options[:company]).id unless options[:company].blank?
-      @contact.email = email
+
+      if account.features?(:multiple_user_emails)
+        @contact.user_emails.build({:email => email, :primary_role => true})
+      else
+        @contact.email = email
+      end
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language
       return @contact

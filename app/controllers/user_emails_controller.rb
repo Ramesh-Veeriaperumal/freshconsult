@@ -4,7 +4,7 @@ class UserEmailsController < ApplicationController
 
   def make_primary
     @user = current_account.users.find(params[:id])
-    if @user.reset_primary_email(params[:email_id])
+    if @user.change_primary_email(params[:email_id])
       flash[:notice] = t('merge_contacts.primary_changed')
     else
       flash[:error] = t('merge_contacts.failed_change')
