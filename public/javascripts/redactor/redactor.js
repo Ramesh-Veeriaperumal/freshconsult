@@ -951,9 +951,9 @@ Redactor.prototype = {
 	removeTagOnLiquid: function(){
 		var content = this.$editor.html();
 
-		var r_content = content.replace(/\{.*?\{|\}.*?\}/g, this.replaceLiquidHtml)
-	       .replace(/\{.*?%|%.*?\}/g, this.replaceLiquidHtml)
-	       .replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) 
+		var r_content = content.replace(/\{[^{]*}/g,this.replaceLiquidHtml)
+	 			.replace(/\{[^}]*}/g, this.replaceLiquidHtml)
+	 			.replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) ;
 
 		return r_content;
 	},
