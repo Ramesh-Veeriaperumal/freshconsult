@@ -1524,6 +1524,9 @@ en:
     portal:
       discussions:
         topics:
+          moderation_none: 
+            topic: "Thank you for starting a new topic. Your topic will appear in the forum, after checking for spam."
+            post: "Thank you for posting. Your reply will appear in the topic, after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
       tickets:
