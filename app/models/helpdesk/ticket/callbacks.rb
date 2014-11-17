@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
-  before_update :clear_sender_email, :if => [:requester_id_changed?, :sender_email]
+  before_update :update_sender_email
 
   before_save :update_dueby, :unless => :manual_sla?
 
@@ -75,8 +75,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
   end
 
-  def clear_sender_email
-    self.sender_email = nil
+  def update_sender_email
+    assign_sender_email
     schema_less_ticket.save
   end
 
@@ -382,7 +382,7 @@ private
       language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email]) #Assign languages only for non-email tickets
       requester = account.users.new
       requester.signup!({:user => {
-        :user_emails_attributes => { "0" => {:email => self.email, :primary_role => true} }, 
+        :email => self.email, #user_email changed
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
@@ -414,6 +414,11 @@ private
   def assign_schema_less_attributes
     build_schema_less_ticket unless schema_less_ticket
     schema_less_ticket.account_id ||= account_id
+    assign_sender_email
+  end
+
+  def assign_sender_email
+    self.sender_email = self.email if self.email
   end
 
   def assign_email_config_and_product

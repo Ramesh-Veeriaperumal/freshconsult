@@ -141,7 +141,7 @@ module Helpdesk::Email::ParseEmailData
 
 	def user_params from_email
 		{
-			:user_emails_attributes => { "0" => {:email => from_email[:email], :primary_role => true}},
+			:email => from_email[:email], #user_email_changed
 			:name => from_email[:name],
 			:helpdesk_agent => false,
 			:language => set_language,

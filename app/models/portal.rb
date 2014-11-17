@@ -5,7 +5,7 @@ class Portal < ActiveRecord::Base
 
   attr_protected  :account_id
 
-  xss_sanitize  :only => [:name]
+  xss_sanitize  :only => [:name,:language], :plain_sanitizer => [:name,:language]
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true

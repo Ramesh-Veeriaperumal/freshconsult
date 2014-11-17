@@ -5,7 +5,7 @@ window.App = window.App || {};
 (function ($) {
 	"use strict";
 	
-	App.Contacts = {
+	App.Tickets = {
 		current_module: '',
 
 		onFirstVisit: function (data) {
@@ -14,6 +14,8 @@ window.App = window.App || {};
 
 		onVisit: function (data) {
 			this.setSubModule();
+			console.log(App.namespace);
+			console.log(this.current_module);
 			if (this.current_module !== '') {
 				this[this.current_module].onVisit();
 			}
@@ -22,12 +24,8 @@ window.App = window.App || {};
 		setSubModule: function() {
 			switch (App.namespace) {
 
-			case 'contacts/new' || 'contacts/edit':
-				this.current_module = 'Contact_form';
-				break;
-
-			case 'contacts/show':
-				this.current_module = 'Contacts_merge';
+			case 'helpdesk/tickets/index' || 'helpdesk/tickets/show':
+				this.current_module = 'Merge_tickets';
 				break;
 			}
 		},
