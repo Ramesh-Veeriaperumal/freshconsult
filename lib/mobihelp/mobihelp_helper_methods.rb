@@ -38,13 +38,7 @@ module Mobihelp::MobihelpHelperMethods
 
     def save_user(user_params, device_uuid)
       user = User.new(user_params)
-      if user.email.blank? # add uuid id to ignore email requirement.
-        user.external_id = device_uuid 
-      else
-        if current_account.features?(:multiple_user_emails)
-          user.user_emails.build({:email => user.email, :primary_role => true, :verified => user.active})
-        end
-      end
+      user.external_id = device_uuid if user.email.blank? # add uuid id to ignore email requirement.
       user.save
       user
     end

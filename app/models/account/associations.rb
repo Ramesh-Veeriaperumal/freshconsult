@@ -10,7 +10,6 @@ class Account < ActiveRecord::Base
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState'
   has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket'
   has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote'
-  has_many :user_emails, :class_name =>'UserEmail'
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
   has_many :email_configs, :conditions => { :active => true }

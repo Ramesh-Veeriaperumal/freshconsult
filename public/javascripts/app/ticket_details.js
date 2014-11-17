@@ -1190,7 +1190,6 @@ var scrollToError = function(){
 
     });
 
-	MergeTicketsInitializer();
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
@@ -1352,7 +1351,6 @@ TICKET_DETAILS_CLEANUP = function() {
 		jQuery(document).off(custom_events[i]);
 	}
 
-    MergeTicketsDestructor();
 
 };
 

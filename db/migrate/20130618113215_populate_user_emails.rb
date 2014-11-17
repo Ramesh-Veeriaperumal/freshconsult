@@ -1,4 +1,5 @@
 class PopulateUserEmails < ActiveRecord::Migration
+  include Redis::RedisKeys
   shard :all
   def self.up
     Account.find_in_batches do |accounts|
@@ -10,12 +11,12 @@ class PopulateUserEmails < ActiveRecord::Migration
                                                         :verified => x.active}
                                                   })
         end
-        $redis_others.sadd('user_email_migrated', account.id)
+        $redis_others.sadd(USER_EMAIL_MIGRATED, account.id)
       end
     end
   end
 
   def self.down
-    $redis_others.del('user_email_migrated')
+    $redis_others.del(USER_EMAIL_MIGRATED)
   end
 end

@@ -4,20 +4,22 @@ module Helpdesk::Email::TicketMethods
   include ParserUtil
 
   def get_original_user
-    e_email = orig_email_from_text
-    get_user(e_email , email[:email_config], email[:text]) unless e_email.nil?
+    get_user(orig_email_from_text , email[:email_config], email[:text]) unless orig_email_from_text.blank?
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
-    content = email[:text] || email[:description_html]
-    if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                          content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
-                          content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-      name = $1
-      email = $2
-      if email =~ EMAIL_REGEX
-        { :name => name, :email => $1 }
+    @orig_user ||= begin
+      content = email[:text] || email[:description_html]
+      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
+                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
+                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
+        name = $1
+        email = $2
+        if email =~ EMAIL_REGEX
+          return { :name => name, :email => $1 }
+        end
       end
+      {}
     end
   end
 
@@ -41,7 +43,20 @@ module Helpdesk::Email::TicketMethods
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
-    ticket.sender_email = email[:from][:email]
+
+    if current_agent?
+      ticket.sender_email = get_original_email || email[:from][:email]
+      alter_forwarding_based_user       
+    end
+  end
+
+  def alter_forwarding_based_user
+    self.user = (get_original_user || user)
+    ticket.requester = user
+  end
+
+  def get_original_email
+    (orig_email_from_text.present?)  ? orig_email_from_text[:email] : nil
   end
 
   def hash_cc_emails

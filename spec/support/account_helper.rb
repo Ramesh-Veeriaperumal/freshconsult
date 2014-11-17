@@ -1,4 +1,5 @@
 module AccountHelper
+  include Redis::RedisKeys
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
     @acc = Account.first
@@ -78,6 +79,18 @@ module AccountHelper
     subscription = @acc.subscription
     subscription.set_billing_params("USD")
     subscription.save
+  end
+
+  def mue_key_state(account)
+    $redis_others.sismember(USER_EMAIL_MIGRATED, account.id.to_s)
+  end
+  
+  def enable_mue_key(account)
+    $redis_others.sadd(USER_EMAIL_MIGRATED, account.id.to_s) unless $redis_others.sismember(USER_EMAIL_MIGRATED, account.id.to_s)
+  end
+
+  def disable_mue_key(account)
+    $redis_others.srem(USER_EMAIL_MIGRATED, account.id.to_s) if $redis_others.sismember(USER_EMAIL_MIGRATED, account.id.to_s)
   end
 
   def restore_default_feature feature

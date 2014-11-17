@@ -2474,10 +2474,10 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
   end
 
   add_index "user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "user_emails", ["account_id", "perishable_token"], :name => "index_account_id_perishable_token"
+  add_index "user_emails", ["account_id", "user_id", "primary_role"], :name => "index_account_id_user_id_primary_role"
   add_index "user_emails", ["email"], :name => "user_emails_email"
   add_index "user_emails", ["id"], :name => "user_emails_id"
-  add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
-  add_index "user_emails", ["user_id", "primary_role"], :name => "index_user_emails_on_user_id_and_primary_role"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8
