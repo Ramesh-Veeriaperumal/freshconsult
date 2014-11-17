@@ -997,7 +997,15 @@ module ApplicationHelper
 		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.map{|n| [n.number, n.id]}
 	end
 
-	def call_direction_class(call)
+  def current_account_freshfone_names
+      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : n.name] }
+  end
+  
+ def current_account_freshfone_details
+    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{n.name} #{n.number}", n.id] }
+ end
+ 
+ def call_direction_class(call)
 		if call.blocked?
 			"blocked_call_icon"
 		elsif call.incoming?
