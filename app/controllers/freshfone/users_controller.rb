@@ -100,7 +100,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def reset_client_presence
-			return false if @freshfone_user.available_on_phone?
+			return false if @freshfone_user.blank? || @freshfone_user.available_on_phone?
 			@freshfone_user.set_presence(params[:status])
 		end
 

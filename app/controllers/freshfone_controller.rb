@@ -29,9 +29,7 @@ class FreshfoneController < FreshfoneBaseController
 		# end
 		@available_agents = freshfone_user_scoper.online_agents.count		
 		@active_calls = get_count_from_integ_redis_set(NEW_CALL % {:account_id => current_account.id})
-		respond_to do |format|
-			format.js 
-		end
+		render :json => {:available_agents => @available_agents, :active_calls => @active_calls}
 	end
 
 	def credit_balance
