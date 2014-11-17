@@ -1524,6 +1524,9 @@ en:
     portal:
       discussions:
         topics:
+          moderation_none: 
+            topic: "Thank you for starting a new topic. Your topic will appear in the forum, after checking for spam."
+            post: "Thank you for posting. Your reply will appear in the topic, after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
       tickets:
@@ -2363,6 +2366,7 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
+        user_emails: Please enter at least one contact detail
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5125,8 +5129,8 @@ en:
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
   for: "for"
-  since_time: "Since %{time_words}"
-  since_last_time: "since last %{time_words}"
+  since_time: "since %{time_words}"
+  since_a_second: "1 second"
   no_of_days: "%{days} days %{hours} hours"
   no_of_hours: "%{hours} hours %{minutes} minutes"
   no_of_minutes: "%{minutes} minutes %{seconds} seconds"

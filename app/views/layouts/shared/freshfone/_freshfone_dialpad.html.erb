@@ -1,11 +1,11 @@
 <% if current_account_freshfone_numbers.length == 1 %>
  <% number = current_account_freshfone_numbers.first %>
-	<span data-number_id='<%= number[1] %>' class="outgoing_number"
+    <span data-number_id='<%= number[1] %>' class="outgoing_number hide"
 				id="outgoing_number_selector"><%= number[0] %></span>
 <% else %>
 	<%= select_tag "outgoing_number_selector", 
-								options_for_select(current_account_freshfone_numbers),  
-								 :class => "select2 span2 outgoing_numbers_list",
+								options_for_select(current_account_freshfone_details),  
+								 :class => "span2 outgoing_numbers_list",
 								 :id => "outgoing_number_selector",
 								 :"data-dropdown-css-class" => "outgoing_numbers_list_dropdown",
 								 :"data-minimum-results-for-search" => 5,

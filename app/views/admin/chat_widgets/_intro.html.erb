@@ -32,10 +32,10 @@
 					          var data = {	
 														"id" 								: <%= current_account.id %>, 
 					            			"siteId"						: window.SITE_ID,
-														"domain"						: '<%= current_account.domain %>', 
+														"domain"						: '<%= current_account.full_domain %>', 
 														"url"								: window.location.hostname , 
 														"protocol" 					: window.location.protocol, 
-														"widget_site_url"		: '<%= current_account.domain %>'
+														"widget_site_url"		: '<%= current_account.host %>'
 										};
 										$.ajax({
 											type: "POST",

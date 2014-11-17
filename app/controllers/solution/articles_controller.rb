@@ -151,6 +151,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def set_solution_tags      
+      return unless params[:tags] && (params[:tags].is_a?(Hash) && params[:tags][:name].present?)      
       @article.tags.clear    
       tags = params[:tags][:name]
       ar_tags = tags.split(',').map(&:strip).uniq    
