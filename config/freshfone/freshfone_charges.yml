@@ -2344,6 +2344,7 @@ VOICEMAIL:
   :standard: 0.0125
   :usca_tollfree: 0.037
   :uk_tollfree: 0.075
+MISSED_OR_BUSY: 0.0025
 YE: 
   :max_digits: 5
   :country: Yemen

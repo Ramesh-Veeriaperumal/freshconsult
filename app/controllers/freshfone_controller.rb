@@ -51,8 +51,14 @@ class FreshfoneController < FreshfoneBaseController
 		def indian_number_incoming_fix
 			#Temp fix suggested by Twilio to truncate +1 country code in incoming calls from India
 			from = params[:From]
-			params[:From] = from.gsub(/^\+1/, "+") if 
-						params[:FromCountry] == "US" and from.starts_with?("+1") and from.length > 12
+			reset_caller_params if params[:FromCountry] == "US" and from.starts_with?("+1") and from.length > 12
+		end
+
+		def reset_caller_params
+	 		params[:From] = from.gsub(/^\+1/, "+")
+			params[:FromCountry] = "IN"
+			params[:FromState] = ""
+			params[:ToCity] = ""
 		end
 
 		def validate_twilio_request

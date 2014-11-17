@@ -13,6 +13,7 @@ class Freshfone::CallCostCalculator
 	
 	def perform
 		begin
+			set_current_call
 			calculate_cost
 		rescue => exp
 			puts "Freshfone ERROR: TOTAL Call Cost :#{total_charge}:  #{exp} : \n #{exp.backtrace}"
@@ -25,29 +26,27 @@ class Freshfone::CallCostCalculator
 	end
 	
 	def calculate_cost
+		return missed_call_cost if missed_or_busy?
 		self.first_leg_call = get_twilio_call
-		calculate_second_leg_cost
+		get_first_leg_cost
+		dial_call_cost unless one_leg_calls?
 
-		puts "CALL COST :: #{total_charge}"
 		raise "Call Cost is Negative!!!" if total_charge < 0
 	end
 	
 	private
+
+		def one_leg_calls?
+			!transferred? && (dial_call_sid.blank? || no_call_duration?)
+		end
+
 		def get_first_leg_cost
 			puts "Call cost for the first leg of #{args[:call_sid]} : #{first_leg_call.price}"
-			if current_call.present?
-				pulse_rate = Freshfone::PulseRate.new(current_call, false)
-				self.total_charge = pulse_rate.one_legged_call_cost	
-			else
-				self.total_charge = first_leg_call.price.to_f.abs
-			end	
+			self.total_charge = current_call.present? ? pulse_rate.one_legged_call_cost	: first_leg_call.price.to_f.abs
 		end
 	
-		def calculate_second_leg_cost
-			set_current_call
-			return get_first_leg_cost if !transferred? && (dial_call_sid.blank? || current_call.blank? || no_call_duration?)
-
-			dial_call_cost
+		def missed_call_cost
+			self.total_charge = pulse_rate.missed_call_cost
 		end
 
 		def transferred?
@@ -61,10 +60,8 @@ class Freshfone::CallCostCalculator
 		
 		#have separate dial call cost for transfer-to-voicemail scenario
 		def dial_call_cost
-			# calculate the charge for duration.(cost from freshfone_charges.yml)
-			pulse_rate = Freshfone::PulseRate.new(current_call, args[:call_forwarded])
-			dial_call_charge = pulse_rate.pulse_charge
-			self.total_charge = dial_call_charge.to_f * no_of_pulse(first_leg_call_duration)
+			pulse_cost = pulse_rate.pulse_charge
+			self.total_charge = pulse_cost.to_f * no_of_pulse(first_leg_call_duration)
 		end
 		
 		def update_call_cost
@@ -127,12 +124,17 @@ class Freshfone::CallCostCalculator
 										current_account.find_by_call_sid(call_sid)
 		end
 
+
+		def pulse_rate
+			@pulse_rate ||= Freshfone::PulseRate.new(current_call,  args[:call_forwarded]) if current_call.present?
+		end
+
 		def current_call_duration
 			current_call.call_duration unless current_call.blank?
 		end
 		
 		def no_call_duration?
-			(current_call_duration.blank? or current_call_duration == 0 )
+			(current_call.blank? || current_call_duration.blank? or current_call_duration == 0 )
 		end
 		
 		def first_leg_call_duration
@@ -143,4 +145,11 @@ class Freshfone::CallCostCalculator
 		def can_update_call_record?(args)
 			args[:billing_type].blank? and current_call.present?
 		end
+
+		def missed_or_busy?
+			return false if current_call.blank? #Recording or IVR Preview Cost
+			[ Freshfone::Call::CALL_STATUS_HASH[:busy],
+				 Freshfone::Call::CALL_STATUS_HASH[:'no-answer']].include?(current_call.call_status)
+		end
+
 end
