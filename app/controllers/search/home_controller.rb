@@ -9,7 +9,7 @@ class Search::HomeController < Search::SearchController
 	}
 
 	def suggest
-		search(search_classes, { :load => SUGGEST_LOAD_OPTIONS, :size => 40, :preference => :_primary_first, :page => 1 })
+		search(search_classes, { :load => SUGGEST_LOAD_OPTIONS, :size => 30, :preference => :_primary_first, :page => 1 })
 		respond_to do |format|
 			format.json do
 				@result_json.merge!({
