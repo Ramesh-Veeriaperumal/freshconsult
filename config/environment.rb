@@ -131,6 +131,4 @@ end
 ActiveRecord::ConnectionAdapters::Mysql2Adapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY" 
 
 
-GC.enable_stats if defined?(GC) && GC.respond_to?(:enable_stats)
-
-GC.copy_on_write_friendly = true if defined?(GC) && GC.respond_to?(:copy_on_write_friendly=)
+GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
