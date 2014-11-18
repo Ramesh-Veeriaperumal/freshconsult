@@ -1493,6 +1493,21 @@ ActiveRecord::Schema.define(:version => 20141031092937) do
     t.integer  "account_id",               :limit => 8
   end
 
+  create_table "mailbox_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+ 
+  add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
+
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8, :null => false
     t.string   "name",                    :null => false
