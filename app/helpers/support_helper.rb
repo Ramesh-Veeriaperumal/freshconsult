@@ -613,8 +613,9 @@ HTML
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
+	      		element_class = " #{required ? 'required_redactor' : '' } #{ dom_type }"
 	      		_output << %( #{ ff.text_area(field_name,
-	      			{ :class => "element_class" + " span12" + " required_redactor", :value => field_value, :rows => 6 }.merge(html_opts)) } )
+	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
 	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
