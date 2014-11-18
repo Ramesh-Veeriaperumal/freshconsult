@@ -291,7 +291,7 @@ module SupportHelper
 	end
 
 	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(forum, follow_label, unfollow_label) if forum.type_name == 'announcement'
+		follow_button(forum, follow_label, unfollow_label)
 	end
 
 	def follow_button current_obj, follow_label, unfollow_label
