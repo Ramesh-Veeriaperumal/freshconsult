@@ -190,6 +190,15 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.string  "application_type",              :default => "freshplug", :null => false
   end
 
+  create_table "article_tickets", :id => false, :force => true do |t|
+    t.integer "article_id", :limit => 8
+    t.integer "ticket_id",  :limit => 8
+    t.integer "account_id", :limit => 8
+  end
+
+  add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
+  add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
+
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
     t.string   "uid"

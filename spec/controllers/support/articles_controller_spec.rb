@@ -218,16 +218,46 @@ describe Support::Solutions::ArticlesController do
     response.should redirect_to("#{send(Helpdesk::ACCESS_DENIED_ROUTE)}")
   end
 
-  it "should create ticket while submitting feedback form" do 
+  it "should create ticket, add watcher and update article_tickets while submitting feedback form for logged in users" do 
     log_in(@user)
+    description = Faker::Lorem.paragraph
+
+    random_message = rand(4) + 1
     post :create_ticket, :id => @test_article1.id,
-      :helpdesk_ticket=> {:subject=>"#{@test_article1.title}", 
-                          :email=> Faker::Internet.email, 
-                          :ticket_body_attributes =>{:description=>""}}
-    @acc.tickets.find_by_subject("#{@test_article1.title}").should  be_an_instance_of(Helpdesk::Ticket)
+      :helpdesk_ticket_description => "#{description}",
+      :message => [random_message]
     response.code.should be_eql("200")
+    
+    ticket = @acc.tickets.find_by_subject("Article Feedback - #{@test_article1.title}")
+    ticket.description.include? description
+    ticket.description.include? I18n.t("solution.feedback_message_#{random_message}")
+    ArticleTicket.find(:all, :conditions => { :article_id => @test_article1.id }).map(&:ticket_id).should include ticket.id
+    ArticleTicket.find_by_ticket_id(ticket).article_id.should eql @test_article1.id
+    ticket.subscriptions.find_by_user_id(@test_article1.user_id).should_not be_nil
   end
     
+  it "should create ticket and update article_tickets while submitting feedback form for non logged in users" do
+    agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
+    test_article = create_article( {:title => "article #{Faker::Name.sentence}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{agent.id}"} )
+    description = Faker::Lorem.paragraph
+    
+    agent.user.make_customer
+
+		random_message = rand(4) + 1
+    post :create_ticket, :id => test_article.id,
+      :helpdesk_ticket => { :email => "example@example.com" },
+      :helpdesk_ticket_description => description,
+      :message => [1]
+   
+    ticket = @acc.tickets.find_by_subject("Article Feedback - #{test_article.title}")
+    ticket.description.include? description
+    ticket.description.include? I18n.t("solution.feedback_message_#{random_message}")
+    ArticleTicket.find(:all, :conditions => { :article_id => test_article.id }).map(&:ticket_id).should include ticket.id
+    ArticleTicket.find_by_ticket_id(ticket).article_id.should eql test_article.id
+    ticket.subscriptions.find_by_user_id(test_article.user_id).should be_nil
+  end
+
   it "should show a published article to user" do
     log_in(@user)
     name = Faker::Name.name
