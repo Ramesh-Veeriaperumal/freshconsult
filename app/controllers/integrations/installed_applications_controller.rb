@@ -1,5 +1,7 @@
 class Integrations::InstalledApplicationsController < Admin::AdminController
 
+  class VersionDetectionError < Exception; end
+
   include Integrations::AppsUtil
 
   before_filter :strip_slash, :only => [:install, :update]
@@ -93,14 +95,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   private
-  def convert_to_configs_hash(params) #possible dead code
-    if params[:configs].blank?
-      {:inputs => {}}
-    else
-      params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
-      {:inputs => params[:configs].to_hash || {}}
-    end
-  end
 
   def load_object
     if params[:action] == "install"

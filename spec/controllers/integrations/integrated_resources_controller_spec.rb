@@ -48,11 +48,19 @@ describe Integrations::IntegratedResourcesController do
   end
 
   it "should fail create for a new IntegratedResource" do
+    Integrations::IntegratedResource.any_instance.stubs(:save!).raises(StandardError)     
     post :create, {
         :integrated_resource => {
         :error => "test_error"
         }
     }
+    response.status.should eql 200
+  end
+
+  it "should fail for delete integrated resource" do
+    Integrations::IntegratedResource.any_instance.stubs(:delete).raises(Timeout::Error)      
+    id = Integrations::IntegratedResource.find_by_remote_integratable_id("1106038/stories/73687832").id
+    delete :delete, { :integrated_resource => { :id => id, :remote_integratable_id => "1106038/stories/73687832", :account => @account}}
     response.status.should eql 200
   end
 
@@ -63,7 +71,8 @@ describe Integrations::IntegratedResourcesController do
     response.status.should eql 200
   end
   
-  it "should fail for delete integrated resource" do 
+  it "should fail for delete integrated resource" do
+    Integrations::IntegratedResource.any_instance.stubs(:deleteResource).raises(Timeout::Error)      
     delete :delete, { :integrated_resource => {:integrated_resource => {
         :error => "test_error"
         }}}

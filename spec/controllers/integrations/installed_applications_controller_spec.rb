@@ -93,9 +93,9 @@ describe Integrations::InstalledApplicationsController do
     response.body.should =~ /Harvest settings/
   end
 
-  it "should uninstall an application" do
-
+  it "should fail to uninstall an application" do
     highrise_application_id = @installaling_applications.find_by_name("highrise").id
+    Integrations::InstalledApplication.any_instance.stubs(:destroy).raises(StandardError)     
 
     put :install, {
       :configs => {"domain"=>"freshdesk14", "ghostvalue"=>".highrisehq.com", "api_key"=>"9c0401360bf94a7d0fe9c798a1063ea9"},
@@ -104,6 +104,20 @@ describe Integrations::InstalledApplicationsController do
     }
 
     @account.installed_applications.find_by_application_id(highrise_application_id).should_not be_nil
+    highrise_application = @account.installed_applications.find_by_application_id(highrise_application_id)
+
+    get :uninstall, {
+      :id => highrise_application.id
+    }
+
+    @account.installed_applications.find_by_application_id(highrise_application_id).should_not be_nil
+
+  end
+
+  it "should uninstall an application" do
+
+    highrise_application_id = @installaling_applications.find_by_name("highrise").id
+
     highrise_application = @account.installed_applications.find_by_application_id(highrise_application_id)
 
     get :uninstall, {
@@ -163,6 +177,46 @@ describe Integrations::InstalledApplicationsController do
 
     @account.installed_applications.find_by_application_id(application_id).should_not be_nil
     response.should redirect_to "/integrations/applications"
+  end
+
+  it "should fail to install shopify" do
+    Integrations::InstalledApplication.any_instance.stubs(:save!).raises(StandardError)     
+    put :install, {"application_id"=>"", "configs"=>{"shop_name"=>"itsgaurav", "ghostvalue"=>".myshopify.com"}, 
+    "commit"=>"Enable", "action"=>"install", "controller"=>"integrations/installed_applications", "id"=>"24"}
+    insta_app = @account.installed_applications.find_by_application_id(24)
+    insta_app.should be_nil
+  end
+
+  it "should fail to install shopify" do
+    Integrations::InstalledApplication.any_instance.stubs(:save!).returns(false)     
+    put :install, {"application_id"=>"", "configs"=>{"shop_name"=>"itsgaurav", "ghostvalue"=>".myshopify.com"}, 
+    "commit"=>"Enable", "action"=>"install", "controller"=>"integrations/installed_applications", "id"=>"24"}
+    insta_app = @account.installed_applications.find_by_application_id(24)
+    insta_app.should be_nil
+  end
+
+  it "should install shopify" do
+    put :install, {"application_id"=>"", "configs"=>{"shop_name"=>"itsgaurav", "ghostvalue"=>".myshopify.com"}, 
+    "commit"=>"Enable", "action"=>"install", "controller"=>"integrations/installed_applications", "id"=>"24"}
+    response.location.should eql "http://#{@account.full_domain}/auth/shopify?shop=itsgaurav.myshopify.com&origin=id%3D1"
+  end
+
+  it "should fail to update shopify" do
+    Integrations::InstalledApplication.any_instance.stubs(:save!).raises(StandardError)     
+    inst_id = Integrations::InstalledApplication.find_by_application_id(24).id
+    put :update, {"application_id"=>"", "configs"=>{"shop_name"=>"itsgaurav", "ghostvalue"=>".myshopify.com"}, 
+    "commit"=>"Update", "action"=>"update", "controller"=>"integrations/installed_applications", "id"=>inst_id}
+    insta_app = @account.installed_applications.find_by_application_id(24)
+    insta_app.should_not be_nil
+  end
+
+
+
+  it "should update shopify" do
+    inst_id = Integrations::InstalledApplication.find_by_application_id(24).id
+    put :update, {"application_id"=>"", "configs"=>{"shop_name"=>"itsgaurav", "ghostvalue"=>".myshopify.com"}, 
+    "commit"=>"Update", "action"=>"update", "controller"=>"integrations/installed_applications", "id"=>inst_id}
+    response.location.should eql "http://#{@account.full_domain}/auth/shopify?shop=itsgaurav.myshopify.com&origin=id%3D1"
   end
 
 end
