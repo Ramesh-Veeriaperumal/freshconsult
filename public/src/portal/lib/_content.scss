@@ -23,6 +23,11 @@
 	}
 }
 
+.max-search-content{
+	max-height: 62px;
+	overflow: hidden;
+}
+
 .article-list, .topic-list, .ticket-list{	
 	ul{ 
 		margin-bottom: 0; 
