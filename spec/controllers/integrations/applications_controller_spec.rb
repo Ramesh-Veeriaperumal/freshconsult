@@ -67,9 +67,10 @@ RSpec.describe Integrations::ApplicationsController do
   it "should install salesforce application using oauth token from redis when install params is nil" do
     provider = "salesforce"
     set_redis_key(provider, salesforce_params(provider))
-    Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_contact_fields).returns({"Id"=>"Contact ID"})
-    Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_lead_fields).returns({"Id"=>"Lead ID"})
-    Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_account_fields).returns({"Id"=>"Account ID"})
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(:text => {:fields => [{:name =>"name","label"=>"label"}]})
+    # Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_contact_fields).returns({"Id"=>"Contact ID"})
+    # Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_lead_fields).returns({"Id"=>"Lead ID"})
+    # Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_account_fields).returns({"Id"=>"Account ID"})
     post 'oauth_install', :id => provider
     get_redis_key(provider).should_not be_nil
     Integrations::InstalledApplication.with_name(provider).should_not be_nil
@@ -141,5 +142,15 @@ RSpec.describe Integrations::ApplicationsController do
   it "renders custom widget preview partial" do
     get 'custom_widget_preview'
     response.should render_template("integrations/widgets/_custom_widget_preview")
+  end
+
+  it "should install salesforce application using oauth" do
+    provider = "salesforce"
+    set_redis_key(provider, salesforce_params(provider))
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(:text => '{"fields":[{"name":"name","label":"label"}]}')
+    post 'oauth_install', :id => provider
+    get_redis_key(provider).should_not be_nil
+    Integrations::InstalledApplication.with_name(provider).should_not be_nil
+    response.should render_template "integrations/applications/_salesforce_fields.html.erb"
   end
 end
