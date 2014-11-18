@@ -5918,7 +5918,7 @@ en:
     url_error_msg: "No such url exists"
     accept: "Accept"
     ignore: "Ignore"
-    transfer_msg: "made a chat transfer request"
+    transfer_msg: "Transferred via "
     unauthorized_attempt_msg: "Unauthorized Attempt - logout"
     update_success_msg: "Chat settings saved."
     update_error_msg: "Error while updating chat settings."
