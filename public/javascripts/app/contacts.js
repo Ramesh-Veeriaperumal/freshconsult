@@ -22,7 +22,8 @@ window.App = window.App || {};
 		setSubModule: function() {
 			switch (App.namespace) {
 
-			case 'contacts/new' || 'contacts/edit':
+			case 'contacts/new':
+			case 'contacts/edit':
 				this.current_module = 'Contact_form';
 				break;
 

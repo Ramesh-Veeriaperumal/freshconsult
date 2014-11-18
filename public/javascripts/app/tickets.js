@@ -24,7 +24,8 @@ window.App = window.App || {};
 		setSubModule: function() {
 			switch (App.namespace) {
 
-			case 'helpdesk/tickets/index' || 'helpdesk/tickets/show':
+			case 'helpdesk/tickets/index':
+			case 'helpdesk/tickets/show':
 				this.current_module = 'Merge_tickets';
 				break;
 			}
