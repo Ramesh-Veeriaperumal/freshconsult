@@ -2133,6 +2133,7 @@ en:
     info8: Add another action
   category:
     new: New Category
+    new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
   message: Message
@@ -2142,14 +2143,17 @@ en:
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
   solution_category:
-    name: Category name
-    new: New solution category
+    name: Name
+    new: New Solution Category
     edit: Edit solution category
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
     delete: "Important: Deleting a category will delete all the folders and articles in it."
     size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
+    product_portal_visibility: Visible in
+    select_solution_category: Select a product portal...
+    solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
     delete: "Important: Deleting a category will delete all the forums and topics in it."
     size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
