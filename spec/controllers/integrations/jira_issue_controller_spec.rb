@@ -10,7 +10,9 @@ RSpec.describe Integrations::JiraIssueController do
 
   before(:all) do
     @agent = add_test_agent(@account)
+    @account.installed_applications.with_name('jira').destroy_all
     @installed_application = create_installed_application(@account)
+    @custom_fields_id_value_map = get_custom_fields
   end
 
   before(:each) do
