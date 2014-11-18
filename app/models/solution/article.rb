@@ -95,11 +95,11 @@ class Solution::Article < ActiveRecord::Base
   end
 
   
-  def related(current_portal)
+  def related(current_portal, size = 10)
     return [] if title.blank? || (title = self.title.gsub(/[\^\$]/, '')).blank?
     begin
       Search::EsIndexDefinition.es_cluster(account_id)
-      options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
+      options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
       item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
         search.query do |query|
           query.filtered do |f|

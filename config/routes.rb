@@ -594,6 +594,7 @@
       :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
     support.resource :search do |search|
       search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
+      search.connect "/articles/:article_id/related_articles", :controller => :search, :action => :related_articles
     end
 
     # Forums for the portal, the items will be name spaced by discussions

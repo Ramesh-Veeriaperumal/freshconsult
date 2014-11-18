@@ -42,6 +42,13 @@ class Support::SearchController < SupportController
     render :layout => false
   end
 
+  def related_articles
+    article = current_account.solution_articles.find(params[:article_id])
+    @related_articles = article.related(current_portal, params[:limit])
+    @container = params[:container]
+    render :layout => false
+  end
+
   # def widget_solutions
   #   @widget_solutions = true
   #   solutions

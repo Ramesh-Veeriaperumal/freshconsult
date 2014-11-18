@@ -45,6 +45,19 @@ module Portal::Helpers::Article
 		output.join("")
 	end
 
+	def related_articles article, limit=10, container='related_articles'
+		output = []
+		output << %(<div id="#{container}">)
+		output << %(<div class="cs-g-c">)
+		output << %(<section class="article-list">)
+		output << %(<h3 class="list-lead">#{I18n.t('portal.article.related_articles')}</h3>)
+		output << %(<ul rel="remote" 
+			data-remote-url="/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}" 
+			id="related-article-list"></ul>)
+		output << %(</section></div></div>)
+		output.join("")	
+	end
+
 	def more_articles_in_folder folder
 		%( <h3 class="list-lead">
 			#{I18n.t('portal.article.more_articles', :article_name => folder['name'])}
