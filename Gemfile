@@ -7,7 +7,6 @@ gem "rack", "~> 1.4.5"
 gem "rails","3.2.18"
 
 gem "json", "~> 1.8"
-gem "json-compare", "0.1.8"
 
 gem "mysql2", "~> 0.3.0"
 
@@ -208,6 +207,7 @@ group :test do
   gem "simplecov-csv"
   gem "database_cleaner"
   gem "fuubar"
+  gem "json-compare", "0.1.8"
 end
 
 # group :development, :assets do

@@ -1,9 +1,5 @@
 require 'spec_helper'
 
-RSpec.configure do |c|
-  c.include APIAuthHelper
-end
-
 RSpec.describe Helpdesk::TicketsController do
 
   self.use_transactional_fixtures = false

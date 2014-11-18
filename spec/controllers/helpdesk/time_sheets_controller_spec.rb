@@ -183,7 +183,6 @@ RSpec.describe Helpdesk::TimeSheetsController do
   end
 
   it "should sysnc harvest" do
-   debugger
     @new_installed_app = FactoryGirl.build(:installed_application, :application_id => 3,
                                               :account_id => @account.id,
                                               :configs => { :inputs => { "title" => "Harvest", 
@@ -219,7 +218,6 @@ RSpec.describe Helpdesk::TimeSheetsController do
     integrated_resources.save!
     integrated_resources.local_integratable_type = "Helpdesk::TimeSheet"
     integrated_resources.save!
-    debugger
     put :toggle_timer, :id => time_sheet.id
     put :toggle_timer, :id => time_sheet.id
     test_ticket3.time_sheets.first.timer_running.should be_truthy
