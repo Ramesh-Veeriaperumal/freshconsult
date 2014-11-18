@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   concerned_with :associations, :constants, :validations, :callbacks
   include CustomerDeprecationMethods
   
-  xss_sanitize  :only => [:name,:helpdesk_name]
+  xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,

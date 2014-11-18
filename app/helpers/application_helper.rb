@@ -574,7 +574,7 @@ module ApplicationHelper
    if !item[:preferences].blank?
      color = item[:preferences].fetch(type, '')
    end
-   color
+   sanitize(color)
  end
 
  # def get_time_in_hours seconds

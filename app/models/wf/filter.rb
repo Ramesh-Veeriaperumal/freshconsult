@@ -31,6 +31,7 @@ class Wf::Filter < ActiveRecord::Base
   
   belongs_to :user
   belongs_to_account
+  xss_sanitize :only => [:name], :plain_sanitizer => [:name]
   
   attr_accessor :visibility 
   
