@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
 
   create_table "chat_widgets", :force => true do |t|
+    t.string   "name"
     t.integer  "account_id",            :limit => 8
     t.integer  "product_id",            :limit => 8
     t.string   "widget_id"
