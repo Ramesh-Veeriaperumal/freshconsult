@@ -62,6 +62,10 @@
 		<%= include_cloudfront_js :freshchat %>
 	<% end %>
 
+	<% if current_account.features?(:client_debugging)%>
+		<%= include_cloudfront_js :client_logger %>
+	<% end %>
+
 	<%= include_cloudfront_js_langs %>
 
 	<script type="text/javascript">

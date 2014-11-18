@@ -14,6 +14,7 @@
 		});
 
 		Twilio.Device.error(function (error) {
+			ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
 			freshfonetimer.resetCallTimer();
 			freshfoneNotification.resetJsonFix();
 			freshfoneNotification.popAllNotification();
@@ -54,11 +55,19 @@
 
 		/* Log a message when a call disconnects. */
 		Twilio.Device.disconnect(function (conn) {
-			$("#log").text("Call ended");
+			var callSid, detail;
+			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
+			callSid = freshfonecalls.tConn.parameters.CallSid;
+			detail = callSid ? callSid : 'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
+			ffLogger.logIssue("Freshfone Call :: " + detail);
 			freshfoneNotification.resetJsonFix();
 			if (recordingMode()) {
 				return freshfonecalls.fetchRecordedUrl();
 			}
+			if (freshfonetimer.timerElement.data('runningTime') < 5) {
+				ffLogger.logIssue('Freshfone Short Call :: ' + detail, '', 'error');
+			}
+
 			freshfonetimer.stopCallTimer();
 			freshfonecalls.enableCallButton();
 			if (previewMode()) {
@@ -91,12 +100,15 @@
 			$("#log").text("Ready");
 			// freshfonecalls.enableCallButton();
 			freshfoneNotification.closeConnections(conn);
+			var callSid = conn.parameters.CallSid ||  'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
+			ffLogger.log({'action': "Rejected/canceled the Call Notification", 'params': conn.parameters});
+			ffLogger.logIssue("Freshfone Call :: " + callSid);
 		});
 
 		Twilio.Device.incoming(function (conn) {
 			$("#log").text("Incoming connection from " + conn.parameters.From);
 			// freshfonecalls.disableCallButton();
-			
+			ffLogger.log({'action': "Incoming Call Notification", 'params': conn.parameters});
 			freshfoneNotification.anyAvailableConnections(conn);
 			var freshfoneConnection = new FreshfoneConnection(conn);
 			freshfoneConnection.incomingAlert();
