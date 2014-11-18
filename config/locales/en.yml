@@ -3492,6 +3492,7 @@ en:
       send_and_set_as: "Send and set as <strong>%{status}</strong>"
       send: Send
       send_satisfaction_survey: Include satisfaction survey
+      dm_confirm_message: You are not following this user on twitter. Your response will be sent as a public tweet. Do you want to continue?
     facebook_form:
       send_and_resolve: Send and Resolve
       send: Send
