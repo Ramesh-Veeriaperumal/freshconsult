@@ -32,6 +32,9 @@ class Solution::Article < ActiveRecord::Base
     :through => :tag_uses
 
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+
+  has_many :article_ticket, :dependent => :destroy
+  has_many :tickets, :through => :article_ticket
   
   include Mobile::Actions::Article
   include Solution::Constants

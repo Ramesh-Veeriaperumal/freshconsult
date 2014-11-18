@@ -35,4 +35,18 @@ $.validator.addMethod("password_confirmation", function(value, element){
 
 $.validator.addClassRules("password_confirmation", { password_confirmation : true });
 
+$.validator.addMethod("select_atleast_one", function(value,element,options){
+  return $('[data-select-one]:checked').length > 0 || $('textarea[data-select-one]').val().length > 0;
+ }, "Select atleast one option.");
+
+$.validator.addClassRules("select_atleast_one", { select_atleast_one: ['.select_atleast_one'] });
+
+$('body').on("change", "[data-select-one]", function(){
+	var _form = this.form,
+      _validator = jQuery(_form).data("validator"),
+      _textarea = jQuery(this).parent().find(".select_atleast_one");
+
+	_validator.element(_textarea);
+});
+
 })(jQuery);

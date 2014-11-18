@@ -318,6 +318,14 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	}
 }
 
+.sol-feedback-message{
+	padding-left: 20px;
+}
+
+.align-feedback{
+	padding-top: 7px;
+}
+
 /* Pointer that shows up near the user pic in Ticket and Topic details page */
 .user-pointer-bottom, .user-pointer-right{
    	&:before, &:after{
