@@ -234,7 +234,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def is_twitter?
-    (tweet) and (!account.twitter_handles.blank?) 
+    (tweet) and (tweet.twitter_handle) 
   end
   alias :is_twitter :is_twitter?
 
