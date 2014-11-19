@@ -6,12 +6,7 @@ window.App = window.App || {};
   "use strict";
 
   App.Merge = {
-    current_module: '',
-
-    onFirstVisit: function (data) {
-      this.onVisit(data);
-    },
-    onVisit: function (data) {
+    initialize: function (data) {
       this.bindHandlers();
     },
 
@@ -32,12 +27,12 @@ window.App = window.App || {};
       // Commented condition was breaking ticket merge
       // console.log(entity);
       if(!jQuery(entity).hasClass('contactdiv')){
-        mark_primary(findOldestTicket());
+        this.makePrimary(App.Tickets.Merge_tickets.findOldestTicket());
       }
       entity.children('#resp-icon').addClass('clicked');
     },
 
-    makePrimary: function () {
+    makePrimary: function (entity) {
       jQuery('.merge-cont').removeClass('cont-primary');
       entity.addClass('cont-primary');
     },
@@ -60,10 +55,6 @@ window.App = window.App || {};
         jQuery('#merge_freshdialog').modal('hide');
         jQuery('#merge_freshdialog-content').html('<span class="loading-block sloading loading-small">');
       });
-    },
-    
-    onLeave: function (data) {
-
     }
     
   };

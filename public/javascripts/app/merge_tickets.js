@@ -22,6 +22,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
+      App.Merge.initialize();
       this.bindHandlers();
     },
     onLeave: function () {
@@ -37,6 +38,8 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       this.primaryMarkerClick();
       this.bulkMergeClick();
       this.searchTypeChange();
+      this.ticketDivClick();
+      this.clickRespIcon();
     },
 
     typedClick: function () {
@@ -78,20 +81,14 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       }
     },
 
-    enableContinue: function () {
-      if( (jQuery('.merge-cont').hasClass('cont-primary')) && (jQuery('.merge-cont').length > 1) )
-        jQuery("#bulk_merge").attr("disabled", false );
-      else
-        jQuery("#bulk_merge").attr("disabled", true );
-    },
-
     primaryMarkerClick: function () {
+      var $this = this;
       jQuery('body').on('click.merge_tickets', '.primary-marker', function(){
-        mark_primary(jQuery(this).parents('.merge-cont'));
+        App.Merge.makePrimary(jQuery(this).parents('.merge-cont'));
         jQuery('.twipsy').hide();
         jQuery('.primary-marker').attr('data-original-title','Mark as primary')
         jQuery(this).attr('data-original-title','Primary ticket').trigger('mouseover')
-        this.enableContinue();
+        $this.enableContinue();
       });
     },
 
@@ -138,21 +135,22 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
     },
 
     ticketDivClick: function () {
+      var $this = this;
       jQuery('body').on('click.merge_tickets', '.ticketdiv', function(){
         if(!jQuery(this).find('#resp-icon').hasClass("clicked"))
         {
           jQuery(this).parent().addClass("clicked");
           var element = jQuery(".cont-primary").clone();
-          append_to_merge_list(element, jQuery(this));
+          App.Merge.appendToMergeList(element, jQuery(this));
           element.find('.primary-marker').attr('title','Mark as primary').addClass('tooltip');
-          replace_element = element.find('.item_info');
+          var replace_element = element.find('.item_info');
           var title =  replace_element.attr('title');
           var ticket_id = element.find("#merge-ticket").data("id")
           var replace_html = "<a class='item_info' target='_blank' title='"+title+"' href='/helpdesk/tickets/"+ticket_id+"'>"
                                                                                             +replace_element.html()+"</a>"
           replace_element.replaceWith(replace_html);
-          this.enableContinue();
-          this.changeTicketCount();
+          $this.enableContinue();
+          $this.changeTicketCount();
         }
       });
     },
@@ -212,6 +210,13 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
           }
         });
       });
+    },
+
+    enableContinue: function () {
+      if( (jQuery('.merge-cont').hasClass('cont-primary')) && (jQuery('.merge-cont').length > 1) )
+        jQuery("#bulk_merge").attr("disabled", false );
+      else
+        jQuery("#bulk_merge").attr("disabled", true );
     },
 
     changeTicketCount: function () {

@@ -23,6 +23,7 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
+      App.Merge.initialize();
       this.bindHandlers();
     },
 

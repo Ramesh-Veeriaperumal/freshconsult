@@ -14,8 +14,6 @@ window.App = window.App || {};
 
 		onVisit: function (data) {
 			this.setSubModule();
-			console.log(App.namespace);
-			console.log(this.current_module);
 			if (this.current_module !== '') {
 				this[this.current_module].onVisit();
 			}
