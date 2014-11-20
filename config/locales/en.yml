@@ -3678,8 +3678,8 @@ en:
     save: Save
     time_zone: Time Zone
     date_format: Date Format
-    non_us: DATE-MONTH-YEAR
-    us: MONTH-DATE-YEAR
+    non_us: DAY-MONTH-YEAR
+    us: MONTH-DAY-YEAR
     helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
@@ -5372,7 +5372,7 @@ en:
   search_results: Search results
   plans_and_pricing: "Plans & Pricing"
   number_of_attachments: " attachments"
-  activation_link: Successfully registered activation link has been sent to %{email}
+  activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   adv_reports:
