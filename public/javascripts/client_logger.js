@@ -11,7 +11,7 @@ var ClientLogger
       Bugsnag.user = {
         name: CURRENT_USER.username,
         email: CURRENT_USER.email,
-        id: "account_"+CURRENT_USER.aid
+        id: "account_"+CURRENT_USER.account_id
       };
       Bugsnag.notifyReleaseStages = ["development", "staging", "production"];
       Bugsnag.releaseStage = APP_ENV;
@@ -27,7 +27,7 @@ var ClientLogger
       }
     },
     notifyException: function (exception) {
-      clientLogger.notifyException(exception);
+      Bugsnag.notifyException(exception);
     }
   }
 }(jQuery));

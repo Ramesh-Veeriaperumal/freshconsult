@@ -44,11 +44,7 @@ var FreshfoneLogger
       }
 
       basic_info = { 
-        'Twilio Device' : {
-          'status': Twilio.Device.status(),
-          'incoming sound': Twilio.Device.sounds.incoming(),
-          'Latest Device Token': getCookie("freshfone")
-        },
+        'Twilio Device' : this.getTwilioDeviceDetails(),
         'freshfone User' : {
           'previousStatus' : userStatusReverse[freshfoneuser.previous_status],
           'status': userStatusReverse[freshfoneuser.status], 
@@ -79,6 +75,17 @@ var FreshfoneLogger
         self.lastestNetConnectedAt = new Date();
       });
 
+    },
+    getTwilioDeviceDetails: function () {
+      var twilioDetails ={};
+      try {
+       twilioDetails = {
+          'status': Twilio.Device.status(),
+          'incoming sound': Twilio.Device.sounds.incoming(),
+          'Latest Device Token': getCookie("freshfone")
+        };
+      } catch(e) { clientLogger.notifyException(e);}
+      return twilioDetails;
     }
   };
 }(jQuery));
