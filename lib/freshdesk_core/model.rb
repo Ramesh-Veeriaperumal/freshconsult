@@ -12,6 +12,8 @@ module FreshdeskCore::Model
                         "business_calendars",           
                         "ca_folders", 
                         "conversion_metrics",           
+                        "contact_forms",
+                        "contact_fields",
                         "data_exports", 
                         "day_pass_configs",              
                         "day_pass_usages", 
