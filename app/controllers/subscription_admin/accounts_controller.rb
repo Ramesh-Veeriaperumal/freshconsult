@@ -42,7 +42,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
 
   def ublock_account
     shard_mapping = ShardMapping.find(params[:account_id])
-    shard_mapping.status = 200
+    shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
     shard_mapping.save
     Sharding.admin_select_shard_of(params[:account_id]) do 
       @account = Account.find(params[:account_id])
@@ -58,7 +58,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
 
   def block_account
     shard_mapping = ShardMapping.find(params[:account_id])
-    shard_mapping.status = 400
+    shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
     shard_mapping.save
     Sharding.admin_select_shard_of(params[:account_id]) do 
       @account = Account.find(params[:account_id])
