@@ -1,5 +1,6 @@
 class Support::Discussions::TopicsController < SupportController
 
+  include Community::Moderation
   include SupportDiscussionsControllerMethods
   include CloudFilesHelper
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
@@ -104,7 +105,7 @@ class Support::Discussions::TopicsController < SupportController
     if topic_saved && post_saved
       respond_to do |format|
         format.html {
-          flash[:notice] = t('.flash.portal.discussions.topics.spam_check')
+          flash[:notice] = flash_msg_on_topic_create
           redirect_to support_discussions_path
         }
         format.xml  { render :xml => @topic }

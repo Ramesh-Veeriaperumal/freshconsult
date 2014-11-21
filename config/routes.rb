@@ -10,6 +10,7 @@
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/google_login/callback', :controller => 'google_login', :action => 'create_account_from_google'
+  map.callback '/auth/google_gadget/callback', :controller => 'google_login', :action => 'create_account_from_google'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
@@ -60,7 +61,7 @@
   #map.resources :support_plans
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
-  map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
+  map.gauth '/oauth/googlegadget', :controller => 'user_sessions', :action => 'oauth_google_gadget'
   map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'
@@ -593,6 +594,7 @@
       :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
     support.resource :search do |search|
       search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
+      search.connect "/articles/:article_id/related_articles", :controller => :search, :action => :related_articles
     end
 
     # Forums for the portal, the items will be name spaced by discussions
@@ -679,6 +681,7 @@
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   map.root :controller => "home"

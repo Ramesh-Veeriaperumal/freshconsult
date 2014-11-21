@@ -3513,12 +3513,6 @@ zh-CN:
                 remove: "移除此工单"
                 target_merge_description: "工单 {{ticket.id}} {{ticket.subject}} 与此请求合并"
                 target_merge_description1: "合并来自工单<a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
-                target_note_description1: 
-                    other: "工单ID为"
-                target_note_description2: 
-                    other: "合并入此工单。"
-                target_note_description3: 
-                    other: "工单%{source_tickets}已合并入工单%{target_ticket_id}。即将添加会话。"
     import_ticket_group: "工单"
     or: "或"
     tickets_filter: 

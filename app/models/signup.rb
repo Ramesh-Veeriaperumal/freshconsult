@@ -1,12 +1,13 @@
 class Signup < ActivePresenter::Base
   include Helpdesk::Roles
+  include Redis::RedisKeys
 
   presents :account, :user
   
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone
 
-  after_save :make_user_current, :populate_seed_data
+  after_save :make_user_current, :add_user_email_migrated, :populate_seed_data
 
   def locale=(language)
     @locale = (language.blank? ? I18n.default_locale : language).to_s
@@ -59,9 +60,9 @@ class Signup < ActivePresenter::Base
       user.helpdesk_agent = true
       user.build_agent()
       user.agent.account = account
+      user.build_primary_email({:email => user.email, :primary_role => true, :verified => user.active}) #user_email key sets after creation of account
+      user.primary_email.account = account
       user.language = account.language
-      # user.user_emails.build({:email => user.email, :primary_role => true, :verified => user.active})
-      # user.user_emails.first.account = account
     end
     
     def build_subscription
@@ -104,10 +105,10 @@ class Signup < ActivePresenter::Base
       User.current = user
     end
 
-    # def add_user_email_migrated
-    #   $redis_others.sadd('user_email_migrated', account.id)
-    #   true
-    # end
+    def add_user_email_migrated
+      $redis_others.sadd(USER_EMAIL_MIGRATED, account.id)
+      true
+    end
 
     def populate_seed_data
       PopulateAccountSeed.populate_for(account)

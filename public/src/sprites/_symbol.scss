@@ -125,7 +125,7 @@
 	&:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
 }
 
-.contactdiv:hover{
+.ticketdiv:hover,.contactdiv:hover{
 	#resp-icon{
 		@include symbols-sprite(bullet-folder1_hover);
 	}
@@ -134,7 +134,7 @@
 	}
 }
 
-.contactdiv{
+.ticketdiv,.contactdiv{
 	#resp-icon.clicked{
 		@include symbols-sprite(resp-icon-clicked);
 	}

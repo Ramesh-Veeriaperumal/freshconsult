@@ -9,14 +9,15 @@ module Delayed
       Rails.logger
     end
 
-    def initialize(options={})
+    def initialize(model = ::Delayed::Job, options={})
       @quiet = options[:quiet]
-      Delayed::Job.min_priority = options[:min_priority] if options.has_key?(:min_priority)
-      Delayed::Job.max_priority = options[:max_priority] if options.has_key?(:max_priority)
+      @model = model
+      model.min_priority = options[:min_priority] if options.has_key?(:min_priority)
+      model.max_priority = options[:max_priority] if options.has_key?(:max_priority)
     end
 
     def start
-      say "*** Starting job worker #{Delayed::Job.worker_name}"
+      say "*** Starting job worker #{@model.worker_name}"
 
       trap('TERM') { say 'Exiting...'; $exit = true }
       trap('INT')  { say 'Exiting...'; $exit = true }
@@ -25,7 +26,7 @@ module Delayed
         result = nil
 
         realtime = Benchmark.realtime do
-          result = Delayed::Job.work_off
+          result = @model.work_off
         end
 
         count = result.sum
@@ -42,7 +43,7 @@ module Delayed
       end
 
     ensure
-      Delayed::Job.clear_locks!
+      @model.clear_locks!
     end
 
     def say(text)

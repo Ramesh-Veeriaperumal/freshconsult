@@ -190,6 +190,15 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.string  "application_type",              :default => "freshplug", :null => false
   end
 
+  create_table "article_tickets", :force => true do |t|
+    t.integer "article_id", :limit => 8
+    t.integer "ticket_id",  :limit => 8
+    t.integer "account_id", :limit => 8
+  end
+
+  add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
+  add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
+
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
     t.string   "uid"
@@ -235,6 +244,7 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
 
   create_table "chat_widgets", :force => true do |t|
+    t.string   "name"
     t.integer  "account_id",            :limit => 8
     t.integer  "product_id",            :limit => 8
     t.string   "widget_id"
@@ -249,6 +259,41 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
+
+  create_table "contact_fields", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "contact_form_id",    :limit => 8
+    t.string   "name"
+    t.string   "column_name"
+    t.string   "label"
+    t.string   "label_in_portal"
+    t.integer  "field_type"
+    t.integer  "position"
+    t.boolean  "deleted",                         :default => false
+    t.boolean  "required_for_agent",              :default => false
+    t.boolean  "visible_in_portal",               :default => false
+    t.boolean  "editable_in_portal",              :default => false
+    t.boolean  "editable_in_signup",              :default => false
+    t.boolean  "required_in_portal",              :default => false
+    t.text     "field_options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_fields", ["account_id", "contact_form_id", "field_type"], :name => "idx_contact_field_account_id_and_contact_form_id_and_field_type"
+  add_index "contact_fields", ["account_id", "contact_form_id", "name"], :name => "index_contact_fields_on_account_id_and_contact_form_id_and_name", :length => {"account_id"=>nil, "contact_form_id"=>nil, "name"=>20}
+  add_index "contact_fields", ["account_id", "contact_form_id", "position"], :name => "idx_contact_field_account_id_and_contact_form_id_and_position"
+
+  create_table "contact_forms", :force => true do |t|
+    t.integer  "account_id",   :limit => 8
+    t.integer  "parent_id",    :limit => 8
+    t.boolean  "active",                    :default => false
+    t.text     "form_options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_forms", ["account_id", "active", "parent_id"], :name => "index_contact_forms_on_account_id_and_active_and_parent_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -1493,6 +1538,21 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.integer  "account_id",               :limit => 8
   end
 
+  create_table "mailbox_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+ 
+  add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
+
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8, :null => false
     t.string   "name",                    :null => false
@@ -2474,10 +2534,10 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
   end
 
   add_index "user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "user_emails", ["account_id", "perishable_token"], :name => "index_account_id_perishable_token"
+  add_index "user_emails", ["account_id", "user_id", "primary_role"], :name => "index_account_id_user_id_primary_role"
   add_index "user_emails", ["email"], :name => "user_emails_email"
   add_index "user_emails", ["id"], :name => "user_emails_id"
-  add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
-  add_index "user_emails", ["user_id", "primary_role"], :name => "index_user_emails_on_user_id_and_primary_role"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8

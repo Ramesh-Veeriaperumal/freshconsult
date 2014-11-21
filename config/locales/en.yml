@@ -97,6 +97,7 @@ en:
     select_contacts: "Select contacts from %{contact_name}"
   captcha_verify_message: "Captcha verification failed, try again!"
   your_email: "Your email"
+  your_feedback: "Your feedback"
   please_wait: Please wait...
   filter_options:
     status: "Status"
@@ -598,13 +599,13 @@ en:
           debug_log_count: Debug Log Count
           debug_log_count_info: Debug logs includes the log information from logcat for your application
           solutions: Solution Category
-          solutions_info: The solution category you select will be shown in the App Support 
+          solutions_info: The Solution Category you select will be shown in the App Support 
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           not_included: is not included in the list
           should_be_unique: should be unique
           select_a_platform: Select a platform
-          select_a_solution_category: Select a solution category
+          select_a_solution_category: Select a Solution Category
           enable_push_notification: Enable Push Notification
           gcm_api_key: GCM API Key
           app_key: App Key
@@ -1131,7 +1132,7 @@ en:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
-        select_solution_category: Select a solution category...
+        select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
@@ -1524,6 +1525,9 @@ en:
     portal:
       discussions:
         topics:
+          moderation_none: 
+            topic: "Thank you for starting a new topic. Your topic will appear in the forum, after checking for spam."
+            post: "Thank you for posting. Your reply will appear in the topic, after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
       tickets:
@@ -2130,6 +2134,7 @@ en:
     info8: Add another action
   category:
     new: New Category
+    new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
   message: Message
@@ -2139,14 +2144,17 @@ en:
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
   solution_category:
-    name: Category name
-    new: New solution category
-    edit: Edit solution category
+    name: Name
+    new: New Solution Category
+    edit: Edit Solution Category
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
     delete: "Important: Deleting a category will delete all the folders and articles in it."
     size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
+    product_portal_visibility: Visible in
+    select_solution_category: Select a product portal...
+    solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
     delete: "Important: Deleting a category will delete all the forums and topics in it."
     size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
@@ -2363,6 +2371,7 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
+        user_emails: Please enter at least one contact detail
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -2967,6 +2976,10 @@ en:
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
     user_details: "By <span class='article-user'>%{user}</span>, %{time}"
+    feedback_message_1: "Need more information"
+    feedback_message_2: "Difficult to understand"
+    feedback_message_3: "Inaccurate/irrelevant content"
+    feedback_message_4: "Missing/broken link"
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
@@ -3479,6 +3492,7 @@ en:
       send_and_set_as: "Send and set as <strong>%{status}</strong>"
       send: Send
       send_satisfaction_survey: Include satisfaction survey
+      dm_confirm_message: The user is not following your twitter account. Your response will be sent as a public tweet. Do you want to continue?
     facebook_form:
       send_and_resolve: Send and Resolve
       send: Send
@@ -3664,8 +3678,8 @@ en:
     save: Save
     time_zone: Time Zone
     date_format: Date Format
-    non_us: DATE-MONTH-YEAR
-    us: MONTH-DATE-YEAR
+    non_us: DAY-MONTH-YEAR
+    us: MONTH-DAY-YEAR
     helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
@@ -5125,8 +5139,8 @@ en:
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
   for: "for"
-  since_time: "Since %{time_words}"
-  since_last_time: "since last %{time_words}"
+  since_time: "since %{time_words}"
+  since_a_second: "1 second"
   no_of_days: "%{days} days %{hours} hours"
   no_of_hours: "%{hours} hours %{minutes} minutes"
   no_of_minutes: "%{minutes} minutes %{seconds} seconds"
@@ -5358,7 +5372,7 @@ en:
   search_results: Search results
   plans_and_pricing: "Plans & Pricing"
   number_of_attachments: " attachments"
-  activation_link: Successfully registered activation link has been sent to %{email}
+  activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   adv_reports:
@@ -5904,7 +5918,7 @@ en:
     url_error_msg: "No such url exists"
     accept: "Accept"
     ignore: "Ignore"
-    transfer_msg: "made a chat transfer request"
+    transfer_msg: "Transferred via "
     unauthorized_attempt_msg: "Unauthorized Attempt - logout"
     update_success_msg: "Chat settings saved."
     update_error_msg: "Error while updating chat settings."

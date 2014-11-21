@@ -25,8 +25,9 @@ class Va::Handlers::ObjectId < Va::RuleHandler
       construct_query (proper_value ? '!=' : 'is not')
     end
 
+    #Checking 'proper_value' to avoid "column != null" condition as its invalid
     def filter_query_negation
-      [ " #{condition.db_column} != ? OR #{condition.db_column} IS NULL ", proper_value ]
+      [ " #{condition.db_column} #{proper_value ? '!=' : 'is not'} ? OR #{condition.db_column} IS NULL ", proper_value ]
     end
     
     def construct_query(q_operator)

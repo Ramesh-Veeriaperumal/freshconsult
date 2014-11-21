@@ -25,7 +25,7 @@ class Helpdesk::AutocompleteController < ApplicationController
   	def results
       @results ||= begin 
         return [] if params[:q].blank? 
-        if @current_action == "requester"
+        if current_action == "requester" and current_account.features_included?(:multiple_user_emails)
           scoper.matching_users_from(params[:q])
         else
           scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )

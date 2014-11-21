@@ -64,7 +64,7 @@ class Admin::SecurityController <  Admin::AdminController
 
   def load_whitelisted_ips
 		if current_account.features_included?(:whitelisted_ips)
-			@whitelisted_ips = current_account.whitelisted_ip_from_cache || current_account.build_whitelisted_ip
+			@whitelisted_ips = current_account.whitelisted_ip || current_account.build_whitelisted_ip
 		end
   end
 end
