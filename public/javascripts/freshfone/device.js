@@ -32,6 +32,7 @@
 
 		Twilio.Device.connect(function (conn) {
 			freshfonecalls.tConn = conn;
+			ffLogger.log({'action': "Call accept", 'params': conn.parameters});
 			if(!freshfonecalls.isOutgoing()) { freshfoneNotification.initializeCall(conn); }
 			freshfonecalls.errorcode = null;
 			freshfonecalls.lastAction = null;
