@@ -3,7 +3,7 @@ class CreateArticleTickets < ActiveRecord::Migration
 	shard :all
 
 	def self.up
-		create_table :article_tickets, :id => false do |t|
+		create_table :article_tickets do |t|
 			t.integer 	:article_id, :limit => 8
 			t.integer 	:ticket_id, :limit => 8
 			t.integer 	:account_id, :limit => 8

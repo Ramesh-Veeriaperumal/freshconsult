@@ -190,7 +190,7 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.string  "application_type",              :default => "freshplug", :null => false
   end
 
-  create_table "article_tickets", :id => false, :force => true do |t|
+  create_table "article_tickets", :force => true do |t|
     t.integer "article_id", :limit => 8
     t.integer "ticket_id",  :limit => 8
     t.integer "account_id", :limit => 8
