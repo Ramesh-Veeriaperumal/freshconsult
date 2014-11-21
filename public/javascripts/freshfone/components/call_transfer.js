@@ -12,10 +12,7 @@ var FreshfoneCallTransfer
       id = parseInt(id, 10);
       if (!this.freshfone_call.tConn || isNaN(id)) { return false; }
       this.$transferAgent.show();
-        ffLogger.log({
-            'action': "Call Transfere initiate", 
-            'params': this.freshfone_call.tConn.parameters
-          });
+
       $.ajax({
         type: 'POST',
         dataType: "json",
@@ -23,14 +20,7 @@ var FreshfoneCallTransfer
         data: { "call_sid": this.freshfone_call.getCallSid(),
                 "id": id,
                 "outgoing": this.freshfone_call.isOutgoing() },
-        error: function () {
-          self.freshfone_call.transfered = false;
-          freshfonewidget.toggleWidgetInactive(false);
-          ffLogger.logIssue("Call Transfer Failure",{
-            'call_sid': this.freshfone_call.getCallSid(), 
-            "outgoing": this.freshfone_call.isOutgoing() 
-          });
-        },
+        error: function () { self.freshfone_call.transfered = false; freshfonewidget.toggleWidgetInactive(false);},
         success: function () {
            $(".transfer_call").trigger("click");
           freshfonewidget.toggleWidgetInactive(true);

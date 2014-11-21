@@ -24,8 +24,8 @@ var freshfonetimer,
 		freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser);
 		freshfoneendcall.loadDependencies(freshfonecalls, freshfoneuser, freshfonewidget);
 		freshfoneNotification.loadDependencies(freshfonecalls, freshfoneUserInfo);
-		window.ffLogger = new FreshfoneLogger();
 	});
+	
 	// End ongoing call
 	$(document).on('click', '.end_call', function (e) {
 		e.preventDefault();

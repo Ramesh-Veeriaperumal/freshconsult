@@ -1,5 +1,4 @@
-var FreshfoneCalls,
-callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIVECALL", 4: "AVAILABLE" };
+var FreshfoneCalls;
 (function ($) {
     "use strict";
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },

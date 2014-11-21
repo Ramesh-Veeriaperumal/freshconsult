@@ -94,15 +94,6 @@ reseller_portal:
     staging: "partners.freshpo.com/freshdesk_webhooks"
     production: "partners.freshdesk.com/freshdesk_webhooks"
 
-client_debugging:
-  bugsnag:
-    development:
-      api_key: "5a70e4c1267210fa050ac6e17eb9dc5f"
-    staging:
-      api_key: "5a70e4c1267210fa050ac6e17eb9dc5f"
-    production:
-      api_key: "9bb6cf89697da0b3a4299c66dd0a130b"
-
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
 

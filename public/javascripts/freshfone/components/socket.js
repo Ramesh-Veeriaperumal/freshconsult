@@ -16,8 +16,6 @@ var FreshfoneSocket;
 		this.$freshfoneAvailableAgentsListContainer = this.$freshfoneAvailableAgentsList.find('.transfer_call_container');
 		this.onlineAgents = 0;
 		this.onloadUserarray = [];
-		this.connectionCreatedAt = "";
-		this.connectionClosedAt = "";
 		this.connection = null;
 
 //  Intercept emit && listeners to print args
@@ -63,13 +61,11 @@ var FreshfoneSocket;
       // this.freshfone_socket_channel.socket.disconnect();
       this.freshfone_socket_channel.io.disconnect();
       // this.freshfone_socket_channel = false;
-      this.connectionClosedAt = new Date();
     },
     connect: function () {
       this.freshfone_socket_channel = io.connect(this.freshfone_nodejs_url(), 
                                         {'sync disconnect on unload': false,
                                         'max reconnection attempts': MAX_RECONNECT_ATTEMPTS});
-      this.connectionCreatedAt = new Date();
     },
     freshfone_nodejs_url: function(){
       var query = freshfone.current_user+'&|&'+freshfone.current_account+'&|&'+$.cookie('helpdesk_node_session');
@@ -87,40 +83,21 @@ var FreshfoneSocket;
 				if (data.user) { self.addToAvailableAgents(data.user); }
 			});
 
-				this.freshfone_socket_channel.on('rooms_count', function(data){ 
-					ffLogger.tabs_count = data.number_of_rooms;
-				});
+      this.freshfone_socket_channel.on('agent_unavailable', function (data) {
+        data = JSON.parse(data) || {};
 
-				this.freshfone_socket_channel.on('agent_available', function (data) {
-					data = JSON.parse(data) || {};
-					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.ONLINE); return;}
+        if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
+        if(data.user.id == freshfone.current_user) {
+          self.toggleUserStatus(userStatus.OFFLINE);
+        }
+      });
+                
+      this.freshfone_socket_channel.on('agent_busy', function (data) {
+        data = JSON.parse(data) || {};
 
-					if (data.user) { 
-						self.addToAvailableAgents(data.user);
-						ffLogger.logIssue("Freshfone Agent online :: ac_" + freshfone.current_account  + " :: user_" + CURRENT_USER.id , {
-							user_id: data.user.id,
-							user_name: data.user.name
-						});
-					}
-				});
-
-				this.freshfone_socket_channel.on('agent_unavailable', function (data) {
-					data = JSON.parse(data) || {};
-		
-					if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
-					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.OFFLINE); }
-					ffLogger.logIssue("Freshfone Agent Offline :: ac_" + freshfone.current_account  + " :: user_" + CURRENT_USER.id, {
-						user_id: data.user.id,
-						user_name: data.user.name
-					});
-				});
-				
-				this.freshfone_socket_channel.on('agent_busy', function (data) {
-					data = JSON.parse(data) || {};
-		
-					if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
-					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.BUSY); }
-				});
+        if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
+        if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.BUSY); }
+      });
 
 			this.freshfone_socket_channel.on('credit_change', function (data) {
 				(data === 'enable') ? freshfonewidget.enableFreshfoneWidget() : 
