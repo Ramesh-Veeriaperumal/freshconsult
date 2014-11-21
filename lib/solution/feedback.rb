@@ -28,7 +28,7 @@ module Solution::Feedback
 	  end
 
 		def formatted_content
-			h(params[:helpdesk_ticket_description]).gsub("\n", "<br />\n")
+			"<br>" + h(params[:helpdesk_ticket_description]).gsub("\n", "<br />\n")
 		end
 
 		def link_to_article
