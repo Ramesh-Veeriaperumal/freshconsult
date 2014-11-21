@@ -61,6 +61,11 @@ class CRM::AddToCRM
     @queue = QUEUE
 
     def self.perform(args)
+      # Do not enqueue jobs for paying and free customers. Temporary fix to discard those jobs 
+      # in the queue
+      account = Account.current
+      return if account.subscription.active? or account.subscription.free?
+
       CRM::Salesforce.new.update_trial_accounts(Account.current.id) if Rails.env.production?
     end
   end
