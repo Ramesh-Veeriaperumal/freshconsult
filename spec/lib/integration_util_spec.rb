@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Integrations::Util do
-	setup :activate_authlogic
-  self.use_transactional_fixtures = false
   include Integrations::Util
  before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))

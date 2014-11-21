@@ -1,8 +1,6 @@
 class ImapMailbox < ActiveRecord::Base
 
   self.primary_key = :id
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
 
   belongs_to :email_config
 

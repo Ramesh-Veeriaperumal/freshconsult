@@ -5,8 +5,6 @@ class Agent < ActiveRecord::Base
   include Social::Ext::AgentMethods
 
   concerned_with :associations, :constants
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
 
   before_destroy :remove_escalation
 

@@ -49,8 +49,6 @@ class Solution::Article < ActiveRecord::Base
   after_commit ->(obj) { obj.send(:clear_mobihelp_solutions_cache) }, on: :create
   after_commit ->(obj) { obj.send(:clear_mobihelp_solutions_cache) }, on: :update
 
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240

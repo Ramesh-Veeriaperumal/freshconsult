@@ -15,8 +15,6 @@ class Topic < ActiveRecord::Base
   before_create :set_unanswered_stamp, :if => :questions?
   before_create :set_unsolved_stamp, :if => :problems?
 
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
 
   
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy

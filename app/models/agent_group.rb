@@ -11,8 +11,6 @@ class AgentGroup < ActiveRecord::Base
 
   after_commit ->(obj) { obj.clear_cache_agent_group }, on: :destroy
   after_commit ->(obj) { obj.clear_cache_agent_group }, on: :create
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   scope :available_agents,
         :joins => %(INNER JOIN agents on 
           agents.user_id = agent_groups.user_id and

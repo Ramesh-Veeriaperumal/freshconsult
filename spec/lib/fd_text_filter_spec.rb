@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Integrations::FDTextFilter do
-	setup :activate_authlogic
-  self.use_transactional_fixtures = false
   include Integrations::FDTextFilter
 
 

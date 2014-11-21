@@ -17,8 +17,6 @@ class Account < ActiveRecord::Base
   
   concerned_with :associations, :constants, :validations, :callbacks
   include CustomerDeprecationMethods
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   
   xss_sanitize  :only => [:name,:helpdesk_name]
   

@@ -15,8 +15,6 @@ class SubscriptionPayment < ActiveRecord::Base
   belongs_to :subscription
   belongs_to :account
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   
   def self.stats
     {

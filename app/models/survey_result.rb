@@ -17,8 +17,6 @@ class SurveyResult < ActiveRecord::Base
   before_create :update_observer_events
   after_commit :filter_observer_events, on: :create, :if => :user_present?
 
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   
   def add_feedback(feedback)
     note = surveyable.notes.build({

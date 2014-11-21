@@ -31,8 +31,6 @@ class Freshfone::Account < ActiveRecord::Base
 											 :expires_on => (expires_on.beginning_of_day .. expires_on.end_of_day) }
 		}
 	}
-	# Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
 
 	def freshfone_subaccount
 		unless account.freshfone_account.blank?

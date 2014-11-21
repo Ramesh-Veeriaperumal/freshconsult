@@ -48,8 +48,6 @@ class Company < ActiveRecord::Base
   before_create :check_sla_policy
   before_update :check_sla_policy, :backup_company_changes
   
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   

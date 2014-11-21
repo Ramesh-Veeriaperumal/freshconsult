@@ -53,8 +53,6 @@ class Post < ActiveRecord::Base
   }
   attr_accessor :request_params, :portal
 
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   
   def to_xml(options = {})
     options[:except] ||= []

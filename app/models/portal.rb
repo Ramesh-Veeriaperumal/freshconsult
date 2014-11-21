@@ -21,8 +21,6 @@ class Portal < ActiveRecord::Base
   include Cache::Memcache::Portal
   include Redis::RedisKeys
   include Redis::PortalRedis
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
 
   has_one :logo,
     :as => :attachable,

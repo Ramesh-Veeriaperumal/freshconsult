@@ -36,8 +36,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   serialize :cc_email
 
   concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes
-  # Please keep this one after the ar after_commit callbacks - rails 3
-  include ObserverAfterCommitCallbacks
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
