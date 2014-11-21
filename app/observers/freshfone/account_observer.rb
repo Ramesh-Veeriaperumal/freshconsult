@@ -14,8 +14,11 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 		freshfone_account.close
 	end
 
-	def after_commit_on_create(freshfone_account)
-		set_usage_trigger(freshfone_account)
+	def after_commit(freshfone_account)
+    if freshfone_account.send(:transaction_include_action?, :create)
+      set_usage_trigger(freshfone_account)
+    end
+    true
 	end
 
 	private

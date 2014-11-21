@@ -6,18 +6,27 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 
 	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status", "thumbs_up"]
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
-
-	def after_commit_on_create(model)
+  
+  def after_commit(model)
+    if model.send(:transaction_include_action?, :create)
+      commit_on_create(model)
+    elsif model.send(:transaction_include_action?, :update)
+      commit_on_update(model) 
+    end
+    true
+  end
+  
+  private
+  
+	def commit_on_create(model)
 		return unless gamification_feature?(model.account)
 		process_quests(model)
 	end
 
-	def after_commit_on_update(model)
+	def commit_on_update(model)
 		return unless (!([:Post,:SurveyResult].include? model.class.name.to_sym) and gamification_feature?(model.account))
 		process_quests(model)
 	end
-
-	private
 
 	def process_quests(model)
 		model_name = (:"Helpdesk::Ticket".eql? model.class.name.to_sym)  ? "ticket" : (

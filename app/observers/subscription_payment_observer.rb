@@ -11,8 +11,11 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     #add_to_crm(payment)
   end
 
-  def after_commit_on_create(payment)
-    add_to_crm(payment)
+  def after_commit(payment)
+    if payment.send(:transaction_include_action?, :create) 
+      add_to_crm(payment)
+    end
+    true
   end
 
   private

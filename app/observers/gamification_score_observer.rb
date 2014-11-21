@@ -3,19 +3,28 @@ class GamificationScoreObserver < ActiveRecord::Observer
 	observe Helpdesk::Ticket, SurveyResult
 
 	include Gamification::GamificationUtil
-
-	def after_commit_on_create(model)
+  
+  def after_commit(model)
+    if model.send(:transaction_include_action?, :create)
+      commit_on_create(model)
+    elsif model.send(:transaction_include_action?, :update)
+      commit_on_update(model)
+    end
+    true
+  end
+  
+  private
+  
+	def commit_on_create(model)
 		return unless gamification_feature?(model.account)
 		model_name = (:"Helpdesk::Ticket".eql? model.class.name.to_sym) ? "ticket" : model.class.name.downcase
 		send("process_#{model_name}_score",model)
 	end
 
-	def after_commit_on_update(model)
+	def commit_on_update(model)
 		return unless (!(:SurveyResult.eql? model.class.name.to_sym) and gamification_feature?(model.account))
 		process_ticket_score_on_update(model)
 	end
-
-	private
 
 	def process_ticket_score(ticket)
 		add_support_score(ticket) unless ticket.active?

@@ -9,17 +9,18 @@ class AgentObserver < ActiveRecord::Observer
   def before_update(agent)
     update_agents_level(agent)
   end
-
-  def after_commit_on_create(agent)
-    update_crm(agent)
+  
+  def after_commit(agent)
+    if agent.send(:transaction_include_action?, :create)
+      update_crm(agent) 
+    elsif agent.send(:transaction_include_action?, :update)
+      clear_auto_refresh_cache(agent) if agent.account.features?(:auto_refresh) 
+    end
+    true
   end
 
   def after_save(agent)
     update_agent_levelup(agent)
-  end
-
-  def after_commit_on_update(agent)
-    clear_auto_refresh_cache(agent) if agent.account.features?(:auto_refresh)
   end
 
   protected

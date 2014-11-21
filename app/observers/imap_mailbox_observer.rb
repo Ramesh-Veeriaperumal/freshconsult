@@ -12,21 +12,32 @@ class ImapMailboxObserver < ActiveRecord::Observer
     set_imap_timeout mailbox
     encrypt_password mailbox
   end
+  
+  def after_commit(mailbox)
+    if mailbox.send(:transaction_include_action?, :create)
+      commit_on_create mailbox
+    elsif mailbox.send(:transaction_include_action?, :update) 
+      commit_on_update mailbox
+    elsif mailbox.send(:transaction_include_action?, :destroy)
+      commit_on_destroy mailbox
+    end
+    true
+  end
+  
+  private
 
-  def after_commit_on_create mailbox
+  def commit_on_create mailbox
     $sqs_mailbox.send_message(mailbox.imap_params("create")) unless Rails.env.test?
   end
 
-  def after_commit_on_update mailbox
+  def commit_on_update mailbox
     $sqs_mailbox.send_message(mailbox.imap_params("update")) unless Rails.env.test?
   end
 
-  def after_commit_on_destroy mailbox
+  def commit_on_destroy mailbox
     params = { :mailbox_id => mailbox.id, :account_id => mailbox.account_id, :action => "delete" }
     $sqs_mailbox.send_message(params.to_json) unless Rails.env.test?
   end
-
-  private
 
     def set_imap_timeout mailbox
       mailbox.timeout = 60 * MailboxConstants::TIMEOUT_OPTIONS[mailbox.selected_server_profile.to_sym]

@@ -23,16 +23,25 @@ class PortalObserver < ActiveRecord::Observer
       remove_domain_mapping(portal)
       notify_custom_ssl_removal(portal)
   	end
+    
+    def after_commit(portal)
+      if portal.send(:transaction_include_action?, :update)
+        commit_on_update(portal)
+      elsif portal.send(:transaction_include_action?, :destroy)
+        commit_on_destroy(portal)
+      end
+      true
+    end
+    
+    private
 
-    def after_commit_on_update(portal)
+    def commit_on_update(portal)
       clear_portal_cache
     end
 
-    def after_commit_on_destroy(portal)
+    def commit_on_destroy(portal)
       clear_portal_cache
     end
-
-  private
 
     def create_template(portal)
       portal.build_template()
