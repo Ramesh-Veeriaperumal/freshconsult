@@ -89,18 +89,27 @@ Autocompleter.Cache = Class.create({
 
     if (result == null) {
       if (partialTerm.length > 1) {
-        return this._lookupInCache(fullTerm, partialTerm.substr(0, partialTerm.length - 1), callback);
+        if(result == undefined || result.length){
+          return false
+        } else {
+          return this._lookupInCache(fullTerm, partialTerm.substr(0, partialTerm.length - 1), callback);
+        }
+        
       } else {
         return false;
-      };
+      }
     } else {
       if (fullTerm != partialTerm) {
         result = this._localSearch(result, fullTerm);
-        this._storeInCache(fullTerm, null, result);
-      };
+        if(result.length < this.options.choices){
+          return false;
+        } else {
+          this._storeInCache(fullTerm, null, result);
+        }
+      }
       callback(result.slice(0, this.options.choices));
       return true;
-    };
+    }
   },
   
   _localSearch: function(data, term) {
