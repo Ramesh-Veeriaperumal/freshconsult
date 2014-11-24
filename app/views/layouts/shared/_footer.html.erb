@@ -21,6 +21,15 @@
 	</script>
 	<%= render :partial => 'layouts/shared/freshfone' %>
 <% end %>
+<% if current_account.features?(:client_debugging) %>
+    <script
+      src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
+      data-apikey= <%=AppConfig["client_debugging"]["bugsnag"][Rails.env]["api_key"]%> 
+      data-autonotify="false"
+      >
+    </script>
+    <%= include_cloudfront_js :client_logger %>
+<% end %>
 <%if @debuging %>
 	<script type="text/javascript" src="/javascripts/labs/boomerang.js"></script>
 	<script type="text/javascript" src="/javascripts/labs/benchmark_init.js"></script>
@@ -41,6 +50,7 @@
     	}
     	window.widget_updated = false;
     	FreshWidget.show();	
-    });  
+    });
+  var APP_ENV = "<%= Rails.env %>";
 </script>
 <% end %>

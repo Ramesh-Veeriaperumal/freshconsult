@@ -284,6 +284,7 @@ javascripts:
     - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/components/call_transfer.js
+    - public/javascripts/freshfone/freshfone_logger.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js
@@ -460,6 +461,9 @@ javascripts:
 
   admin:
     - public/javascripts/admin/ui_search.js
+
+  client_logger:
+    - public/javascripts/client_logger.js
 
 <% 
   # Adding specific javascript assets to the package list
