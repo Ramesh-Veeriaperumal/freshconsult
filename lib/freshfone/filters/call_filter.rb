@@ -7,7 +7,6 @@ class Freshfone::Filters::CallFilter < Wf::Filter
         :order => order_clause,
         :page => page, :per_page => per_page,
         :conditions => sql_conditions,
-        :joins => get_join(sql_conditions),
         :include => [:ticket, :note, :recording_audio, :caller, :agent => [:avatar], :customer => [:avatar]] )
       recs.wf_filter = self
       recs
@@ -91,7 +90,6 @@ class Freshfone::Filters::CallFilter < Wf::Filter
           defs[:"#{join_class.to_s.underscore}.#{col.name.to_sym}"] = default_condition_definition_for(col.name, col.sql_type)
         end
       end
-      defs["freshfone_calls_meta.group_id".to_sym] = ({:operator => :is, :is => :numeric, :options =>[], :name => "freshfone_calls_meta.group_id", :container => :numeric })
       defs
     end
   end
@@ -128,16 +126,9 @@ class Freshfone::Filters::CallFilter < Wf::Filter
     add_condition(filter["condition"],filter["operator"],value)
   end
 
-  def get_join(conditions)
-   join = conditions[0].include?('group_id') ? call_meta_joins : []
-  end
-
   def default_filter
     date_range = "#{(Time.now.utc.ago 7.days).strftime("%d %B %Y")} - #{(Date.today).strftime("%d %B %Y")}"
     return [{ "condition" => "created_at", "operator" => "is_in_the_range", "value" => date_range } ]    
   end
 
-  def call_meta_joins
-     ["INNER JOIN freshfone_calls_meta ON freshfone_calls.id = freshfone_calls_meta.call_id AND freshfone_calls.`account_id` = freshfone_calls_meta.account_id"]
-  end
 end

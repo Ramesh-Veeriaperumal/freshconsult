@@ -4937,6 +4937,8 @@ en:
         options:
           incoming: "Incoming"
           outgoing: "Outgoing"
+          all_groups: "All Groups"
+          unassigned: Unassigned
         range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
