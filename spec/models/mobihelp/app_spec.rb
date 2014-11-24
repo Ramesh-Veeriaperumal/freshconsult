@@ -48,26 +48,4 @@ describe Mobihelp::App do
     test_app.should_not be_valid
   end
 
-  it "should have a valid bread crumbs count" do
-    bread_crumbs_count = @mobihelp_app.config[:bread_crumbs]
-    invalid_count = (Mobihelp::App::CONFIGURATIONS[:bread_crumbs][0].to_i - 1).to_s
-    @mobihelp_app.config[:bread_crumbs] = invalid_count
-    status = @mobihelp_app.save
-
-    @account.mobihelp_apps.find_by_id(@mobihelp_app).config[:bread_crumbs].should be_eql(bread_crumbs_count)
-    status.should_not be_true
-  end
-
-  it "should have a valid debug log count" do
-    debug_log_count = @mobihelp_app.config[:debug_log_count]
-    invalid_count = (Mobihelp::App::CONFIGURATIONS[:debug_log_count][0].to_i - 1).to_s
-    @mobihelp_app.config[:bread_crumbs] = Mobihelp::App::CONFIGURATIONS[:bread_crumbs][0]
-    @mobihelp_app.config[:debug_log_count] = invalid_count
-    status = @mobihelp_app.save
-    @account.mobihelp_apps.find_by_id(@mobihelp_app).config[:debug_log_count].should be_eql(debug_log_count)
-    status.should_not be_true
-
-    @mobihelp_app.config[:debug_log_count] = Mobihelp::App::CONFIGURATIONS[:debug_log_count][0]
-  end
-
 end

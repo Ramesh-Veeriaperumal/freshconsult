@@ -1086,15 +1086,10 @@ ja-JP:
           description: アプリケーションの説明
           platform: プラットフォーム
           configurations: SDKコンフィギュレーション
-          bread_crumbs: ブレッドクラム
-          bread_crumbs_info: ブレッドクラムはユーザーのステップをたどるのに役立ちます
-          debug_log_count: デバッグログ数
-          debug_log_count_info: デバッグログにはアプリケーションのログキャットからのログ情報が含まれます
           solutions: ソリューションカテゴリ
           solutions_info: あなたが選択したソリューションカテゴリは「アプリサポート」で表示されます
           app_store_id: アプリストアID
           app_store_id_info: "App Store ID will be used to redirect users to App Store for Reviews"
-          not_included: はこのリストには含まれていません
           should_be_unique: "should be unique"
           select_a_platform: プラットフォームを選択
           select_a_solution_category: ソリューションカテゴリを選択
@@ -1103,10 +1098,6 @@ ja-JP:
           app_key: アプリキー
           app_secret: アプリシークレット
           integration_details: 統合の詳細
-          app_review: アプリレビューのプロンプト
-          app_review_info: これは起動数がコンフィギュアされた後、自動的にレビュープロンプトを起動させます
-          app_review_launch_count: "起動数%{count}回の後"
-          app_review_launch_never: しない
         index:
           title: MobiHelpアプリ
           new_app: 新規アプリ

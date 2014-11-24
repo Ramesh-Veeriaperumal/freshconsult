@@ -594,15 +594,10 @@ en:
           description: Application Description
           platform: Platform
           configurations: SDK Configurations
-          bread_crumbs: Breadcrumbs
-          bread_crumbs_info: Breadcrumbs will help you retrace the user’s steps
-          debug_log_count: Debug Log Count
-          debug_log_count_info: Debug logs includes the log information from logcat for your application
           solutions: Solution Category
           solutions_info: The Solution Category you select will be shown in the App Support 
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
-          not_included: is not included in the list
           should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a Solution Category
@@ -611,10 +606,6 @@ en:
           app_key: App Key
           app_secret: App Secret
           integration_details: Integration Details
-          app_review: Prompt for App Review
-          app_review_info: This will automatically launch the review prompt after the No. of launches configured
-          app_review_launch_count: After %{count} Launches
-          app_review_launch_never: Never
         index:
           title: Mobihelp Apps
           new_app: New App
