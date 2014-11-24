@@ -21,6 +21,13 @@
 	</script>
 	<%= render :partial => 'layouts/shared/freshfone' %>
 <% end %>
+<% if current_user && current_user.agent? %>
+	<% cti_app = current_account.installed_applications.select {|app| app.application.application_type=="CTI Integration"} %>
+	<% unless cti_app.first.nil? %>
+	<% @cti_app_name = cti_app.first.application.name %>
+	<%= render :partial => 'layouts/shared/integrations/cti/' + @cti_app_name %>
+	<% end %>
+<% end %>
 <%if @debuging %>
 	<script type="text/javascript" src="/javascripts/labs/boomerang.js"></script>
 	<script type="text/javascript" src="/javascripts/labs/benchmark_init.js"></script>

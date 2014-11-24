@@ -1508,6 +1508,7 @@ en:
       install:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
+        cti_error: "Multiple integrations of type CTI can not be enabled."
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -4490,6 +4491,12 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    czentrix:
+      label: "C-Zentrix"
+      desc: "Lets you to integrate the C-Zentrix client into the Freshdesk."
+      helptext: "This is C-Zentrix helptext"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
@@ -5520,6 +5527,16 @@ en:
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date
+  cti:
+    create:
+      success:
+        with_link: "The %{human_name} has been created  %{link}"
+    note:
+      human_name: "note"
+      view: "View"
+    ticket:
+      human_name: "ticket"
+      view: "View"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"

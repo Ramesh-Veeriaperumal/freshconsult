@@ -44,7 +44,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce" 
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
-    
+    resource :"integrations/cti/customer_detail"
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
     resource :"freshfone/ivr"
