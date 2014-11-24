@@ -16,7 +16,7 @@
 </div>
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 <% if current_user && current_user.agent? && current_account.freshfone_active? %>
-  <% twilio_client_version = current_account.features?(:updated_twilio_client) ? 1.2 : 1.1%>
+  <% twilio_client_version = current_account.freshfone_account.twilio_client_version%>
 	<script type="text/javascript" src= <%= "https://static.twilio.com/libs/twiliojs/#{twilio_client_version}/twilio.min.js"%> >
 	</script>
 	<%= render :partial => 'layouts/shared/freshfone' %>
