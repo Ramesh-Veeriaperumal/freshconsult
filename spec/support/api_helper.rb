@@ -50,6 +50,8 @@ module APIHelper
 
   FORUM_ATTRIBS = ["description", "description_html", "forum_category_id", "forum_type", "forum_visibility", "id", "name", "position", "posts_count", "topics_count"]
 
+  MONITOR_ATTRIBS = ["active" ,"id","monitorable_id","monitorable_type","portal_id","user_id"]
+
   TOPIC_ATTRIBS = ["account_id", "created_at", "delta", "forum_id", "hits", "id", "import_id", "last_post_id", "locked", "posts_count", "published", "replied_at", "replied_by", "stamp_type", "sticky", "title", "updated_at", "user_id", "user_votes"]
 
   POST_ATTRIBS = ["answer", "body", "body_html", "created_at", "forum_id", "id", "published", "spam", "topic_id", "trash", "updated_at", "user_id"]
