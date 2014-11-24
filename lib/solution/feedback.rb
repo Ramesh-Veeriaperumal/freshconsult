@@ -32,7 +32,9 @@ module Solution::Feedback
 		end
 
 		def link_to_article
-			"<a href='#{solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article)}'> #{h(@article.title)}</a>"
+			"<a href='#{solution_category_folder_article_url(@article.folder.category_id, @article.folder_id, @article, 
+				:host => @article.account.host, 
+				:protocol => @article.account.url_protocol)}'> #{h(@article.title)}</a>"
 		end
 
 		def add_watcher
