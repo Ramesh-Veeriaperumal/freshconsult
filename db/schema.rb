@@ -1870,9 +1870,13 @@ ActiveRecord::Schema.define(:version => 20141118111038) do
     t.datetime "updated_at"
     t.string   "msg_type",                      :default => "post"
     t.string   "thread_id"
+    t.text     "post_attributes"
+    t.string   "ancestry"
   end
 
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
+  add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id" => nil, "ancestry" => 30}
+  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id" => nil, "post_id" => 30}
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"

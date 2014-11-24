@@ -1,7 +1,7 @@
 module Social::Dynamo::Feed
 
   include Social::Constants
-  include Gnip::Constants
+  include ::Gnip::Constants
 
   TABLE = "feeds"
   SCHEMA = TABLES[TABLE][:schema]
