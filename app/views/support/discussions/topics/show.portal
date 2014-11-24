@@ -16,6 +16,7 @@
 		<b class="page-stamp page-stamp-{{ forum.type_name }}">
 			<i class="icon-page-{{ forum.type_name }}"></i>
 		</b>
+		{{ topic | topic_icon }}
 		<h2 class="post-title heading">
 			{{ topic.title | h}}
 		</h2>
@@ -52,31 +53,7 @@
 
 				{% assign best_answer = topic.best_answer %}
 				{% if best_answer != nil %}
-					<hr />
-					<div class="best-answer-info">
-						<section class="user-comment {% if best_answer.user.is_agent %} comment-by-agent {% endif %}" id="post-{{best_answer.id}}">
-							<div class="best-answer-tick pull-left">
-								<i class="icon-best-answer"></i>
-							</div>
-							<div class="answer-comment">
-								<div class="best-badge">{% translate portal.topic.best_answer %}</div>
-								<div class="user-info">
-									{{ best_answer.user | profile_image: 'user-thumb-image', '25px', '25px' }}
-									<div class="user-details">
-										<strong>{{ best_answer.user.name | h}}</strong>
-										{% translate portal.said %} {{ best_answer.created_on | time_ago }}
-									</div>
-								</div>
-								<div class="answer-desc" id="post-{{best_answer.id}}-description">
-									<div class="p-desc">
-										{{ best_answer.body_html }}
-									</div>
-
-									{{ best_answer | post_attachments }}
-								</div>
-							<div>
-						</section>
-					</div>
+					{{ best_answer | topic_best_answer }}
 				{% endif %}
 
 				{% snippet topic_vote %}
@@ -125,13 +102,9 @@
 	{% endpaginate %}
 	</div>
 
-	<hr class="content-divider" />
-
 	{% if topic.locked? %}
-		<section class="lead-small">
-			{% translate portal.topic.comments_closed %} 
-		</section>
 	{% elsif portal.user %}
+		<hr class="content-divider" />
 		<section id="reply-to-post" class="user-comment">
 			<div class="user-info">
 				{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
@@ -152,30 +125,35 @@
 		{{ portal | post_topic_in_portal }}
 	{% endif %}
 </section>
+{% if forum.topics_display_count > 1 or topic.locked? or topic.has_merged_topics? %}
+	<section class="sidebar content rounded-6 min-height-on-desktop">	
+		<div class="cs-g-c">
+			<section class="topic-list" id="merged-topics-list">
+				
+				{% if topic.locked? %}
+				
+					<div class="list-lead lock-merge-topic-text">
+						{% translate portal.topic.comments_closed %}
+						{% if topic.merged? %}
+							{% translate portal.topic.merge_continue %}
+							{{ topic | link_to_merged_topic }}
+						{% endif %}
+					</div>
 
-<section class="sidebar content rounded-6 min-height-on-desktop">	
-	{% if forum.topics_count > 1 %}
-	<div class="cs-g-c">
-		<section class="topic-list">
-			<div class="list-lead">
-			 	{% translate portal.topic.more_topic %} <span class="folder-name">{{ forum.name | h}}</span>
-			</div>
-			<ul>
-				{% assign topic_count = 10 %}
-				{% for o_topic in forum.topics limit:topic_count %}
-					{% if topic.id != o_topic.id %}
-					<li class="cs-g-3">
-						<div class="ellipsis">
-							<a href="{{o_topic.url}}" title="{{o_topic.title | h}}">{{o_topic.title | h}}</a>
-						</div>
-					</li>
+					{% if topic.has_merged_topics? or forum.topics_display_count > 1 %}
+						<hr class="content-divider">
 					{% endif %}
-				{% endfor %}
-			</ul>
-			{% if forum.topics_count > topic_count %}
-				{{ forum | link_to_see_all_topics }}
-			{% endif %}
-		</section>
-	</div>
-	{% endif %}
-</section>
+
+				{% endif %}
+
+				{{ topic | merged_topics }}
+
+				{% if forum.topics_display_count > 1 and topic.has_merged_topics? %}
+						<hr class="content-divider">
+				{% endif %}
+
+				{{ topic | more_topics_list }}
+			</section>
+		</div>
+	</section>
+{% endif %}

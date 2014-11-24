@@ -206,6 +206,7 @@
   end
   map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
   map.connect '/search/all', :controller => 'search/home', :action => 'index'
+  map.connect '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
   map.connect '/search/topics.:format', :controller => 'search/forums', :action => 'index'
   map.connect '/mobile/tickets/get_suggested_solutions/:ticket.:format', :controller => 'search/solutions', :action => 'related_solutions'
 
@@ -534,6 +535,7 @@
       :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
 
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
+    discussion.resources :merge_topic, :collection => { :select => :post, :review => :put, :confirm => :post, :merge => :put }
   end
 
   map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'create', :conditions => { :method => :post }

@@ -27,6 +27,10 @@ class Monitorship < ActiveRecord::Base
     [sender,host]
   end
 
+  def get_portal
+    @get_portal ||= portal_id? ? portal : account.main_portal
+  end
+
   protected
 
   def user_has_email
@@ -40,5 +44,4 @@ class Monitorship < ActiveRecord::Base
       self.account_id = user.account_id
     end
   
-	
 end

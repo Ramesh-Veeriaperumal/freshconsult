@@ -208,6 +208,7 @@ javascripts:
     - public/javascripts/app/discussions/topic_list.js
     - public/javascripts/app/discussions/topic.js
     - public/javascripts/app/discussions/moderation.js
+    - public/javascripts/app/discussions/merge.js
 
   gadget:
     - public/javascripts/frameworks/jquery.js

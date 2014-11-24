@@ -89,80 +89,110 @@ module DiscussionsHelper
 		current_account.features?(:moderate_all_posts) || current_account.features?(:moderate_posts_with_links)
 	end
 
-  def list_discussions_panel(default_btn = :topic)
-    _op = ""
-    _op << %(<ul class="list-actions-right">
-  	           <li class="list-default-btns">)
+	def list_discussions_panel(default_btn = :topic)
+	  _op = ""
+	  _op << %(<ul class="list-actions-right">
+		           <li class="list-default-btns">)
 
-  	_op << %(<a href="#" class="btn" id="categories_reorder_btn">
-               #{font_icon "reorder", :size => 13}
-               #{t('topic.reorder')}
-  				   </a>) if privilege?(:manage_forums)
+		_op << %(<a href="#" class="btn" id="categories_reorder_btn">
+	             #{font_icon "reorder", :size => 13}
+	             #{t('topic.reorder')}
+					   </a>) if privilege?(:manage_forums)
 
-  	_op << new_discussions_button(default_btn)
-    _op << %(</li>
-             <li class="list-reorder-btns">
-               <a href="#" class="btn btn-primary" id="categories_submit_btn">Done</a>
-               <a href="#" class="btn btn-link" id="categories_cancel_btn">cancel</a>
-             </li>
-            </ul>)
-    _op.html_safe
-  end
+		_op << new_discussions_button(default_btn)
+	  _op << %(</li>
+	           <li class="list-reorder-btns">
+	             <a href="#" class="btn btn-primary" id="categories_submit_btn">Done</a>
+	             <a href="#" class="btn btn-link" id="categories_cancel_btn">cancel</a>
+	           </li>
+	          </ul>)
+	  _op.html_safe
+	end
 
-  def new_discussions_button(default_btn = :topic)
-    category = [t('topic.add_category'), new_discussion_path]
-    forum    = [t('topic.add_forum'),    new_discussions_forum_path(btn_default_params(:forum))]
-    topic    = [t("topic.add_topic"),    new_discussions_topic_path(btn_default_params(:topic))]
-    opts     = {:"data-pjax" => "#body-container"}
+	def new_discussions_button(default_btn = :topic)
+	  category = [t('topic.add_category'), new_discussion_path]
+	  forum    = [t('topic.add_forum'),    new_discussions_forum_path(btn_default_params(:forum))]
+	  topic    = [t("topic.add_topic"),    new_discussions_topic_path(btn_default_params(:topic))]
+	  opts     = {:"data-pjax" => "#body-container"}
 
-    if privilege?(:manage_forums)
-      topic = nil unless privilege?(:create_topic)
-      case default_btn
-        when :category
-          btn_dropdown_menu(category, [forum, topic], opts)
-        when :forum
-          btn_dropdown_menu(forum, [category, topic], opts)
-        else
-          if privilege?(:create_topic)
-          	btn_dropdown_menu(topic, [category, forum], opts)
-          else
-          	btn_dropdown_menu(forum, [category], opts)
-          end
-      end
-    elsif privilege?(:create_topic)
-      pjax_link_to(topic[0], topic[1], :class => 'btn')
-  	else
-  		""
-    end
-  end
+	  if privilege?(:manage_forums)
+	    topic = nil unless privilege?(:create_topic)
+	    case default_btn
+	      when :category
+	        btn_dropdown_menu(category, [forum, topic], opts)
+	      when :forum
+	        btn_dropdown_menu(forum, [category, topic], opts)
+	      else
+	        if privilege?(:create_topic)
+	        	btn_dropdown_menu(topic, [category, forum], opts)
+	        else
+	        	btn_dropdown_menu(forum, [category], opts)
+	        end
+	    end
+	  elsif privilege?(:create_topic)
+	    pjax_link_to(topic[0], topic[1], :class => 'btn')
+		else
+			""
+	  end
+	end
 
-  def btn_default_params(type)
-    case type
-      when :forum
-        { :forum_category_id => @forum_category.id } if @forum_category.present?
-      when :topic
-        { :forum_id => @forum.id } if @forum.present?
-      else
-    end
-  end
+	def btn_default_params(type)
+	  case type
+	    when :forum
+	      { :forum_category_id => @forum_category.id } if @forum_category.present?
+	    when :topic
+	      { :forum_id => @forum.id } if @forum.present?
+	    else
+	  end
+	end
 
   # Topic page
-  def topic_sort
-    %(<div class="dropdown" id="topic-sort-menu">
-        <a href="#" class="dropdown-toggle" id="sorted_by" data-toggle="dropdown">
-          #{ t('topic.sorted_by') } :
-          <strong> #{ t("topic.#{params[:order].to_s}") }</strong>
-          <span class="caret"></span>
-        </a>
-        #{ topic_sort_dropdown }
-      </div>).html_safe
-  end
+	def topic_sort
+	  %(<div class="dropdown" id="topic-sort-menu">
+	      <a href="#" class="dropdown-toggle" id="sorted_by" data-toggle="dropdown">
+	        #{ t('topic.sorted_by') } :
+	        <strong> #{ t("topic.#{params[:order].to_s}") }</strong>
+	        <span class="caret"></span>
+	      </a>
+	      #{ topic_sort_dropdown }
+	    </div>).html_safe
+	end
 
-  def topic_sort_dropdown
-    sort_items = ["recent", "popular"].map {|s|
-                    [t("topic.#{s}"), "#", params[:order].eql?(s), { :"data-value" => s, :id => "#{s}-sort", :rel => "topic-sort-item" }] }
+	def topic_sort_dropdown
+	  sort_items = ["recent", "popular"].map {|s|
+	                  [t("topic.#{s}"), "#", params[:order].eql?(s), { :"data-value" => s, :id => "#{s}-sort", :rel => "topic-sort-item" }] }
 
-    dropdown_menu(sort_items)
+	  dropdown_menu(sort_items)
+	end
+
+	def merged_list topic
+		list = "<ul>"
+		topic.merged_topics.each do |merged|
+			list << "<li>" + pjax_link_to(merged.title, discussions_topic_path(merged)) + "</li>"
+		end
+		list << "</ul>"
+		list.html_safe
+	end
+
+  def display_topic_icons(topic)
+    output = ""
+    
+  	output << content_tag(:span, font_icon('lock-2').html_safe, {
+  			:class => 'tooltip ml4',
+  			:title => t('discussions.topics.locked')
+		}).html_safe if topic.locked?
+  	
+  	output << content_tag(:span, font_icon('merge').html_safe, {
+  			:class => 'tooltip ml4',
+  			:title => t('discussions.topics.merged')
+		}).html_safe if topic.merged_topic_id?
+  	
+  	output << content_tag(:span, font_icon('pushpin').html_safe, {
+  			:class => 'tooltip ml4',
+  			:title => t('discussions.topics.sticky')
+		}).html_safe if topic.sticky?
+
+    output.html_safe
   end
 
 end

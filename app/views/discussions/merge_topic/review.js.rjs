@@ -1,0 +1,5 @@
+page.hide :mergebox
+page.replace_html :mergeboxconfirm, :partial => "confirm_merge_topic"
+page.show :mergeboxconfirm
+page << "jQuery('#merge_topic').button('reset')"
+page << "jQuery('.src').remove()"

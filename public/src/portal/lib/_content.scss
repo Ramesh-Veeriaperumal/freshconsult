@@ -318,6 +318,11 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	}
 }
 
+/* Merged topics list in topic details page */
+.merged-topics-list a{
+	color: #049cdb;
+}
+
 .sol-feedback-message{
 	padding-left: 20px;
 }
@@ -402,6 +407,11 @@ hr.content-divider{
 
 /* Topic label styles in forum list view */
 .topic-list .topic-labels .label{ @extend .label-small; }
+
+.lock-merge-topic-text{
+	font-size: 14px;
+	font-weight: normal;
+}
 
 .avatar-span{ margin-bottom: 15px; }
 .attach-wrapper, .attachments-list-form{ margin-top: 5px; }
@@ -593,6 +603,26 @@ hr.content-divider{
 		font-size: 11px;
 		padding-bottom: 5px;
 	}
+}
+
+.icon-sticky-small {
+	vertical-align: middle;
+	padding-right: 18px;
+}
+
+#sticky-topic-icon{
+	float: left;
+	padding-top: 5px;
+	padding-right: 2px;
+}
+
+#sticky-small-topic-icon{
+	float: left;
+}
+
+.lock-merge-topic-text{
+	a{ color: #049CDB; }
+	a:hover{ color: #036690; }
 }
 
 //----------------------------------------------------------------------------------------------------------

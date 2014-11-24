@@ -2502,10 +2502,27 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
     t.integer  "import_id",    :limit => 8
     t.integer  "user_votes",                :default => 0
     t.boolean  "published",                 :default => false
+    t.integer  "merged_topic_id", :limit => 8
+    t.integer  "int_tc01"
+    t.integer  "int_tc02"
+    t.integer  "int_tc03"
+    t.integer  "int_tc04"
+    t.integer  "int_tc05"
+    t.integer  "long_tc01",       :limit => 8
+    t.integer  "long_tc02",       :limit => 8
+    t.datetime "datetime_tc01"
+    t.datetime "datetime_tc02"
+    t.boolean  "boolean_tc01",                 :default => false
+    t.boolean  "boolean_tc02",                 :default => false
+    t.string   "string_tc01"
+    t.string   "string_tc02"
+    t.text     "text_tc01"
+    t.text     "text_tc02"
   end
 
   add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
+  add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"

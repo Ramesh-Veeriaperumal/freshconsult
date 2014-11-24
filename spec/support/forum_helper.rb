@@ -99,6 +99,18 @@ module ForumHelper
 		monitorship.save(true)
 	end
 
+	def vote_topic(topic, user = @user)
+		vote = Factory.build(
+									:vote,
+									:voteable_type => 'Topic',
+									:voteable_id => topic.id,
+									:vote => 1,
+									:user_id => user.id,
+									:account_id => @account.id
+			)
+		vote.save(true)
+	end
+
 	def lock_topic(topic)
 		topic.locked = true
 		topic.save

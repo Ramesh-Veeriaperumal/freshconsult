@@ -39,6 +39,11 @@
 				}
 			}
 
+			ul {
+				list-style-type: disc;
+				padding-left: 16px;
+			}
+
 			&.user-list {
 				.preview_pic{
 					float: none;

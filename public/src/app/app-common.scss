@@ -2168,6 +2168,19 @@ a.submit_link:hover{
 		}
 	}
 }
+
+.merge-topics{
+	margin-top: 10px;
+	width:49%;
+	padding: 2px;
+	border: 1px;
+	@include float(left);
+	.selector{
+		@include margin-right(5px);
+		@include float(left);
+	}
+}
+
 // ------------------------------------------------------------------------------------------------------------
 //							 Export link in the Ticket list of Self Service Portal 
 // ------------------------------------------------------------------------------------------------------------
