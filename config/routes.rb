@@ -681,6 +681,7 @@
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/openid/google', :controller => 'google_login', :action => 'marketplace_login'
   map.route '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 
