@@ -602,7 +602,7 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
-      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put, }
+      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put}
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
