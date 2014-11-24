@@ -230,7 +230,8 @@
 											<% if multiple_business_hours? %>
 											<span id="chat_business_options" class="chat_business_options">
 												<%= select_tag :business_calendar_id,
-												options_from_collection_for_select(current_account.business_calendar,:id, :name,current_chat_widget.business_calendar_id),
+												options_from_collection_for_select(current_account.business_calendar,:id, :name,
+													@widget.business_calendar_id),
 												:class => 'select2 business_calendar_select2'%>
 											</span>
 											<% end %>

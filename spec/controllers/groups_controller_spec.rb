@@ -1,5 +1,6 @@
 require 'spec_helper'
-
+include Redis::RedisKeys
+include Redis::OthersRedis
 describe GroupsController do
 	integrate_views
 	setup :activate_authlogic
@@ -82,6 +83,30 @@ describe GroupsController do
 				:description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
 				:added_list => "#{@agent.id} , #{@user_1.id}",
 				:removed_list => "",
+				:ticket_assign_type=> 1,
+				:assign_time => "2500", :escalate_to => @agent.id
+			}
+		}
+		@test_group.reload
+		@test_group.name.should eql("Updated: Spec Testing Grp #{@now}")
+		@test_group.escalate_to.should eql(@agent.id)
+		@test_group.ticket_assign_type.should eql 1
+		agent_list = [ @agent.id, @user_1.id ]
+		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
+		(agent_list.sort == agents_in_group.sort).should be_true
+		if @test_group.account.features?(:round_robin_revamp)
+			value = get_others_redis_list(@test_group.round_robin_key)
+			value.include?(@user_1.id).should be_true
+		end
+	end
+
+	it "should add agents to the group with non-round robin but not create the list" do
+		put :update, {
+			:id => @test_group.id,
+			:group => {:name => "Updated: Spec Testing Grp #{@now}",
+				:description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
+				:added_list => "#{@agent.id} , #{@user_1.id}",
+				:removed_list => "",
 				:ticket_assign_type=> 0,
 				:assign_time => "2500", :escalate_to => @agent.id
 			}
@@ -93,6 +118,29 @@ describe GroupsController do
 		agent_list = [ @agent.id, @user_1.id ]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
 		(agent_list.sort == agents_in_group.sort).should be_true
+		value = get_others_redis_list(@test_group.round_robin_key)
+		value.should be_empty
+	end
+
+	it "should add agents to the group with round robin and create the list" do
+		put :update, {
+			:id => @test_group.id,
+			:group => {:name => "Updated: Spec Testing Grp #{@now}",
+				:description => Faker::Lorem.paragraph, :business_calendar => @calendar.id,
+				:added_list => "#{@agent.id} , #{@user_1.id}",
+				:removed_list => "",
+				:ticket_assign_type=> 1,
+				:assign_time => "2500", :escalate_to => @agent.id
+			}
+		}
+		@test_group.reload
+		@test_group.name.should eql("Updated: Spec Testing Grp #{@now}")
+		@test_group.escalate_to.should eql(@agent.id)
+		@test_group.ticket_assign_type.should eql 0
+		if @test_group.account.features?(:round_robin_revamp)
+			value = get_others_redis_list(@test_group.round_robin_key)
+			value.include?(@user_1.id).should be_true
+		end
 	end
 
 	it "should remove agents from the group" do
@@ -112,6 +160,8 @@ describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
 		agents_in_group.include?(@agent.id).should be_false
+		value = get_others_redis_list(@test_group.round_robin_key)
+		value.should be_empty
 	end
 
 	it "should not update the Group without a name" do

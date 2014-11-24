@@ -1,6 +1,6 @@
 class Search::AutocompleteController < ApplicationController
 
-  USER_ASSOCIATIONS = { User => { :include => [:primary_email, { :account => :features }] }}
+  USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }] }}
 
   def agents
     begin
@@ -136,7 +136,7 @@ class Search::AutocompleteController < ApplicationController
     end
 
     def agent_sql
-      if current_account.features?(:multiple_user_emails)
+      if current_account.features_included?(:multiple_user_emails)
         items = current_account.users.technicians.find(
         :all, 
         :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],

@@ -27,17 +27,19 @@
 									if(window.location && window.location.protocol=="http:" && fc_helper.ieVersionCompatability){
 									    comm_url = "http://"+CS_URL+":80";
 									}
+
 			          	$('body').on('click',"#chat_initial_enable",function(){
 			          		jQuery(this).button('loading');
 					          var data = {	
-											"id" 					: <%= current_account.id %>, 
-		            		            	"siteId"				: window.SITE_ID,
-											"domain"				: '<%= current_account.domain %>', 
-											"url"					: window.location.hostname , 
-											"protocol" 				: window.location.protocol, 
+											"id" 					      : <%= current_account.id %>, 
+		            		  				"siteId"				    : window.SITE_ID,
+											"domain"				    : '<%= current_account.domain %>', 
+											"url"					      : window.location.hostname , 
+											"protocol" 				  : window.location.protocol, 
 											"widget_site_url"		: '<%= current_account.domain %>',
-											"name"                  : '<%= current_account.main_portal.name %>' 
+											"name"              : '<%= current_account.main_portal.name %>' 
 										};
+										
 										$.ajax({
 											type: "POST",
 											url: comm_url + "/sites/create",

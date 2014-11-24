@@ -17,6 +17,7 @@ class Solution::Article < ActiveRecord::Base
   
   has_many_attachments
   has_many_cloud_files
+  spam_watcher_callbacks 
   
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -31,6 +32,9 @@ class Solution::Article < ActiveRecord::Base
     :through => :tag_uses
 
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+
+  has_many :article_ticket, :dependent => :destroy
+  has_many :tickets, :through => :article_ticket
   
   include Mobile::Actions::Article
   include Solution::Constants
@@ -94,11 +98,11 @@ class Solution::Article < ActiveRecord::Base
   end
 
   
-  def related(current_portal)
+  def related(current_portal, size = 10)
     return [] if title.blank? || (title = self.title.gsub(/[\^\$]/, '')).blank?
     begin
       Search::EsIndexDefinition.es_cluster(account_id)
-      options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
+      options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
       item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
         search.query do |query|
           query.filtered do |f|

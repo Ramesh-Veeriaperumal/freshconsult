@@ -7,7 +7,8 @@ module Helpdesk::TicketActions
   include Helpdesk::ToggleEmailNotification
   include CloudFilesHelper
   
-  def create_the_ticket(need_captcha = nil)
+  def create_the_ticket(need_captcha = nil, skip_notifications = nil)
+
     cc_emails = fetch_valid_emails(params[:cc_emails])
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
@@ -22,6 +23,7 @@ module Helpdesk::TicketActions
     return false if need_captcha && !(current_user || is_native_mobile? ||verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
+    @ticket.skip_notification = skip_notifications
     return false unless @ticket.save_ticket
 
     if params[:meta]
@@ -192,7 +194,6 @@ module Helpdesk::TicketActions
   
   def add_requester
     @user = current_account.users.new
-    @user.user_emails.build
     render :partial => "contacts/add_requester_form"
   end
 
@@ -201,15 +202,18 @@ module Helpdesk::TicketActions
     if(total_entries.blank? || total_entries.to_i == 0)
       load_cached_ticket_filters
       load_ticket_filter
-      @ticket_filter.deserialize_from_params(params)
-      joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-      joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-      if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-        options[:distinct] = true 
-        options[:select] = :id
+      db_type = (params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) ? :run_on_slave : :run_on_master
+      Sharding.send(db_type) do
+        @ticket_filter.deserialize_from_params(params)
+        joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+        joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+        options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+        if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+          options[:distinct] = true 
+          options[:select] = :id
+        end
+        total_entries = current_account.tickets.permissible(current_user).count(options)
       end
-      total_entries = current_account.tickets.permissible(current_user).count(options)
     end
     @ticket_count = total_entries.to_i
   end

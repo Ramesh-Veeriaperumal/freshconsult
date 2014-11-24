@@ -157,6 +157,7 @@ production:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
  google_oauth2:
+  provider: google_oauth2
   consumer_token: 367378856688.apps.googleusercontent.com
   consumer_secret: M0tVzcR4cSL-pRxDUqSV2FH1
   api_key: AIzaSyDZWCWNdZUiq_mYe70i80tKHpzRBz4ZADM
@@ -164,6 +165,15 @@ production:
     prompt: none
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
     name: google_login
+ google_gadget_oauth2:
+  provider: google_oauth2
+  consumer_token: 287551691553-uticbd9oktcqodm81m9hcb2oeolinkev.apps.googleusercontent.com
+  consumer_secret: QWzwA3yw6tmfN6-J5apF7etN
+  api_key: AIzaSyBD9Qlxj8unyVFdMHQk2ZqMTqAvpT2yXO0
+  options:
+    prompt: none
+    scope: https://www.googleapis.com/auth/calendar profile email
+    name: google_gadget
  mailchimp:
   consumer_token: 560756408749
   consumer_secret: d30b60816fe878cf6ea67489b7c47dad

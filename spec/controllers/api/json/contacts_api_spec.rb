@@ -100,35 +100,35 @@ describe ContactsController do
 		# Hence not using Faker for phonenumber generation.
 		# This needs to be addressed. change filter expresssion in api_helper_methods
 		contact = Factory.build(:user, :account => @account,
-										:name => Faker::Name.name, 
-										:email => Faker::Internet.email,
-										:phone => 42345678,
-										:time_zone => "Chennai", 
-										:delta => 1, 
-										:language => "en")
-		contact.save(false)
-		check_phone  = contact.phone
-		get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'json'}
-		result = parse_json(response)
-		expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
-		expected.should be(true)
+                                    :name => Faker::Name.name, 
+                                    :email => Faker::Internet.email,
+                                    :phone => 42345678,
+                                    :time_zone => "Chennai", 
+                                    :delta => 1, 
+                                    :language => "en")
+    	contact.save
+	 	check_phone  = contact.phone
+	 	get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'json'}
+	 	result = parse_json(response)
+	 	expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+	 	expected.should be(true)
 	end
 
 	it "should fetch contacts filtered by mobile" do
 		# This needs to be addressed. change filter expresssion in api_helper_methods
 		contact = Factory.build(:user, :account => @account,
-										:name => Faker::Name.name, 
-										:email => Faker::Internet.email,
-										:mobile => 9876543210,
-										:time_zone => "Chennai", 
-										:delta => 1, 
-										:language => "en")
-		contact.save(false)
-		check_mobile  = contact.mobile
-		get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'json'}
-		result = parse_json(response)
-		expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
-		expected.should be(true)
+                                    :name => Faker::Name.name, 
+                                    :email => Faker::Internet.email,
+                                    :mobile => 9876543210,
+                                    :time_zone => "Chennai", 
+                                    :delta => 1, 
+                                    :language => "en")
+		contact.save
+	 	check_mobile  = contact.mobile
+	 	get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'json'}
+	 	result = parse_json(response)
+	 	expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+	 	expected.should be(true)
 	end
 
   it "should fetch contacts filtered by company id" do
@@ -142,7 +142,7 @@ describe ContactsController do
                                     :delta => 1, 
                                     :language => "en",
                                     :customer_id => new_company.id)
-    contact.save(false)
+    contact.save
     check_id  = new_company.id
     get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'json'}
     result = parse_json(response)

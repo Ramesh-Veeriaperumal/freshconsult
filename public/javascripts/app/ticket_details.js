@@ -466,6 +466,18 @@ var scrollToError = function(){
 
 // End of Due-by time JS
 
+
+//Show alert on sending a reply to DM as a tweet
+	$('body').on('click.ticket_details', '#tweet-reply-btn', function(e) {
+		tweet_type = $(this).data('tweet-type');
+    if(tweet_type == 'dm' && jQuery("#tweet_type_selector").is(':hidden')){
+      confirm_message = $(this).data('confirm-message');
+      if(!confirm(confirm_message)){
+      	e.stopImmediatePropagation();
+      }
+    }
+	});
+
 	if (jQuery('.requester-info-sprite').length < 2) {
 		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
 	}
@@ -1190,7 +1202,6 @@ var scrollToError = function(){
 
     });
 
-	MergeTicketsInitializer();
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
@@ -1352,7 +1363,6 @@ TICKET_DETAILS_CLEANUP = function() {
 		jQuery(document).off(custom_events[i]);
 	}
 
-    MergeTicketsDestructor();
 
 };
 

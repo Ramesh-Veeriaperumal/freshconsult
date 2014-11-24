@@ -7,6 +7,10 @@ class Group < ActiveRecord::Base
   include BusinessCalendar::Association
 
   after_commit :clear_cache
+  after_commit_on_create  :create_round_robin_list, :if => :round_robin_enabled?
+  after_commit_on_update  :update_round_robin_list
+  after_commit_on_destroy :delete_round_robin_list
+  before_save :create_model_changes
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
@@ -39,6 +43,8 @@ class Group < ActiveRecord::Base
     }
    liquid_methods :name
 
+   named_scope :round_robin_groups, :conditions => { :ticket_assign_type => true}
+
   API_OPTIONS = {
     :except  => [:account_id,:email_on_assign,:import_id],
     :include => { 
@@ -60,9 +66,7 @@ class Group < ActiveRecord::Base
     [ :twelve,  I18n.t("group.assigntime.twelve"),    43200 ], 
     [ :day,     I18n.t("group.assigntime.day"),       86400 ],
     [ :twoday,  I18n.t("group.assigntime.twoday"),    172800 ], 
-    [ :threeday,I18n.t("group.assigntime.threeday"),  259200 ], 
-   
-   
+    [ :threeday,I18n.t("group.assigntime.threeday"),  259200 ],
   ]
 
   TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1}
@@ -123,25 +127,52 @@ class Group < ActiveRecord::Base
   end
 
   def next_available_agent
+    return nil unless round_robin_enabled?
+
+    return next_agent unless self.account.features_included?(:round_robin_revamp)    
+
+    current_agent_id = get_others_redis_rpoplpush(new_round_robin_key, new_round_robin_key)
+    return account.agents.find_by_user_id(current_agent_id)
+
+    #COMMENTING THE BELOW CODE to avoid complex logix . If required, we ll put back again.
+    # repetition_list = Set.new
+    # available_agent = nil
+    # break_condition = false
+
+    # until break_condition do
+    #   current_agent_id  = get_others_redis_rpoplpush(new_round_robin_key, new_round_robin_key)
+
+    #   break if current_agent_id.blank? #Empty list
+
+    #   agent = account.agents.find_by_user_id(current_agent_id)
+    #   available_agent = agent if agent and agent.available?
+    #   break_condition = true if (repetition_list.include?(current_agent_id) or available_agent)
+
+    #   repetition_list << current_agent_id #unless repetition_list.include?(current_agent_id)
+    # end
+    
+  end
+
+  #old code; will be deprecated
+  def next_agent
     #this method returns the next available agent
     #for the group, provided the group has
     #round robin scheduled.
-    return nil if !round_robin_eligible?
+    return nil if !round_robin_enabled?
 
     #Take from DB if its not available in redis.
-    last_assigned_agent = get_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
-                                 {:account_id => self.account_id, :group_id => self.id})
+    last_assigned_agent = get_others_redis_key(old_round_robin_key)
     
 
     if last_assigned_agent.nil?
-      agent_ids = self.agents.map { |ag| ag.id  }
+      agent_ids = self.agents.all(:select => "users.id").map(&:id)
     else
       agent_ids = last_assigned_agent.split(",")
     end
 
     count = 1
     agent_ids.each do |agent_id|
-      agent = Agent.find_by_user_id(agent_id)
+      agent = account.agents.find_by_user_id(agent_id)
       next if agent.nil?
       if agent.available?
           #rotating the array. Put the latest assigned agent at last.
@@ -156,12 +187,73 @@ class Group < ActiveRecord::Base
   end
 
   def store_in_redis(agent_arr)
-    set_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
-            {:account_id => self.account_id, :group_id => self.id}, agent_arr.join(","), false)
+    set_others_redis_key(old_round_robin_key, agent_arr.join(","), false)
   end
 
-  def round_robin_eligible?
-    self.account.features?(:round_robin) && (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin])
+  def round_robin_enabled?
+    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and self.account.features_included?(:round_robin)
+  end
+
+  def round_robin_queue
+    get_others_redis_list(new_round_robin_key)
+  end
+
+  def remove_agent_from_round_robin(user_id)
+    delete_agent_from_round_robin(user_id) 
+    delete_old_round_robin_key
+  end
+
+  def delete_old_round_robin_key #will be deprecated
+    remove_others_redis_key(old_round_robin_key)
+  end
+
+  #used only in spec for now. We will start using this instead of new_round_robin_key once we remove the feature
+  def round_robin_key
+    account.features_included?(:round_robin_revamp) ? new_round_robin_key : old_round_robin_key
+  end
+
+  def add_or_remove_agent(user_id, add=true)
+    newrelic_begin_rescue {
+      $redis_others.multi do 
+        $redis_others.lrem(new_round_robin_key,0,user_id)
+        $redis_others.lpush(new_round_robin_key,user_id) if add
+      end
+    }
+  end
+
+  private
+
+  def create_round_robin_list
+    user_ids = self.agent_groups.available_agents.map(&:user_id)
+    set_others_redis_lpush(new_round_robin_key, user_ids) if user_ids.any?
+  end
+
+  def update_round_robin_list
+    return unless @model_changes.key?(:ticket_assign_type)
+    round_robin_enabled? ? create_round_robin_list : delete_round_robin_list
+  end
+
+  def delete_round_robin_list
+    remove_others_redis_key([old_round_robin_key, new_round_robin_key])
+  end 
+
+  def delete_agent_from_round_robin(user_id) #new key
+      get_others_redis_lrem(new_round_robin_key, user_id)
+  end
+
+  def create_model_changes
+    @model_changes = self.changes.clone
+    @model_changes.symbolize_keys!
+  end 
+
+  def old_round_robin_key
+    GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
+                            :group_id => self.id}
+  end
+
+  def new_round_robin_key
+    GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
+                               :group_id => self.id}
   end
   
 end

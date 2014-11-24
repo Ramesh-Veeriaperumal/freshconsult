@@ -5,11 +5,11 @@ class Search::HomeController < Search::SearchController
 	SUGGEST_LOAD_OPTIONS  = {
 		Helpdesk::Note => { :include => [ :notable ] },
 		Helpdesk::Ticket => { :include => [{:flexifield => :flexifield_def}, :ticket_states] },
-		Topic => { :include => [:forum] }, Solution::Article => {}, User => { :include => [:primary_email]}, Customer => {}
+		Topic => { :include => [:forum] }, Solution::Article => {}, User => {}, Customer => {}
 	}
 
 	def suggest
-		search(search_classes, { :load => SUGGEST_LOAD_OPTIONS, :size => 40, :preference => :_primary_first, :page => 1 })
+		search(search_classes, { :load => SUGGEST_LOAD_OPTIONS, :size => 30, :preference => :_primary_first, :page => 1 })
 		respond_to do |format|
 			format.json do
 				@result_json.merge!({

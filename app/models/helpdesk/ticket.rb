@@ -16,6 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::TicketsRedis
   include Redis::ReportsRedis
   include Redis::OthersRedis
+  include Redis::DisplayIdRedis
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
   include ActionView::Helpers::TranslationHelper
@@ -233,7 +234,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def is_twitter?
-    (tweet) and (!account.twitter_handles.blank?) 
+    (tweet) and (tweet.twitter_handle) 
   end
   alias :is_twitter :is_twitter?
 
@@ -440,7 +441,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def from_email
-    requester.email
+    (account.features_included?(:multiple_user_emails) and self.sender_email.present?) ? self.sender_email : requester.email
   end
 
   def ticlet_cc

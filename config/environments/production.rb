@@ -44,6 +44,13 @@ config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |
   store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
   r.set_cache(store) if store.present?
 end
+config.middleware.insert_before "ActionController::Session::CookieStore","Rack::SSL"
+# loading statsd configuration
+statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
+# statsd intialization
+statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
+# middleware for statsd
+config.middleware.use "Statsd::Rack::Middleware", statsd
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false

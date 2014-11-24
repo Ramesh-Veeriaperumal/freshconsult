@@ -102,7 +102,7 @@ class Product < ActiveRecord::Base
           :protocol => account.url_protocol+':',
           :siteId => chat_setting.display_id, 
           :worker_method => "create_widget"
-        })
+        }) unless chat_setting.display_id.blank? 
       end
     end
 end

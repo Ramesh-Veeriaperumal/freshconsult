@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Account
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Redis::DisplayIdRedis
   include ErrorHandle
   include AccountConstants
 
@@ -276,7 +277,7 @@ class Account < ActiveRecord::Base
   end
 
   def user_emails_migrated?
-    $redis_others.sismember('user_email_migrated', self.id)
+    $redis_others.sismember(USER_EMAIL_MIGRATED, self.id)
   end
 
   def google_account?
@@ -288,7 +289,7 @@ class Account < ActiveRecord::Base
   end
   
   def default_form
-    flexi_field_defs.default_form.first
+    ticket_field_def
   end
   
   def is_saml_sso?

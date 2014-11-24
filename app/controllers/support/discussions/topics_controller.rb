@@ -1,5 +1,6 @@
 class Support::Discussions::TopicsController < SupportController
 
+  include Community::Moderation
   include SupportDiscussionsControllerMethods
   include CloudFilesHelper
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
@@ -10,7 +11,7 @@ class Support::Discussions::TopicsController < SupportController
   before_filter { |c| c.requires_feature :forums }
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission, :only => [:edit, :update]
+  before_filter :check_user_permission, :only => [:edit, :update, :destroy]
 
   before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
@@ -104,7 +105,7 @@ class Support::Discussions::TopicsController < SupportController
     if topic_saved && post_saved
       respond_to do |format|
         format.html {
-          flash[:notice] = t('.flash.portal.discussions.topics.spam_check')
+          flash[:notice] = flash_msg_on_topic_create
           redirect_to support_discussions_path
         }
         format.xml  { render :xml => @topic }

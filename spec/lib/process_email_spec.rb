@@ -356,7 +356,7 @@ describe Helpdesk::ProcessEmail do
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.last
 			user1.blocked = true
-			user1.save(false)
+			user1.save
 			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
 			Helpdesk::ProcessEmail.new(another).perform
 			ticket_incremented?(@ticket_size)
@@ -522,6 +522,29 @@ describe Helpdesk::ProcessEmail do
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+2
 			ticket.notes.size.should eql 2
+		end
+
+		it "by secondary email" do
+			@key_state = mue_key_state(@account)
+    		enable_mue_key(@account)
+    		@account.features.multiple_user_emails.create
+    		@account.features.contact_merge_ui.create
+    		@account.reload
+    		@account.features.reload
+    		@user1 = add_user_with_multiple_emails(@account, 2)
+			email_id = @user1.email
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @user1.user_emails.last.email})
+			Helpdesk::ProcessEmail.new(email).perform
+			ticket = @account.tickets.last
+			another[:html] = another[:html]+" #{span_gen(ticket.display_id)} "+another[:html]
+			Helpdesk::ProcessEmail.new(another).perform
+			ticket_incremented?(@ticket_size)
+			@account.notes.size.should eql @note_size+1
+			ticket.notes.size.should eql 1
+			@account.features.contact_merge_ui.destroy
+			@account.features.multiple_user_emails.destroy
+			disable_mue_key(@account) unless @key_state
 		end
 
 		it "with cc removed from reply" do

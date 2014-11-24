@@ -3,7 +3,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   include AdminControllerMethods
   
   around_filter :select_account_shard, :only => [:show]
-  before_filter :check_super_admin_role, :only => [:add_day_passes, :add_feature, :change_url]
+  before_filter :check_super_admin_role, :only => [:add_day_passes, :add_feature, :change_url, :block_account]
 
 
   def show
@@ -11,7 +11,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end
   
   def add_day_passes
-   Sharding.select_shard_of(params[:id]) do 
+   Sharding.admin_select_shard_of(params[:id]) do 
     @account = Account.find(params[:id])
     if request.post? and !params[:passes_count].blank?
       day_pass_config = @account.day_pass_config
@@ -24,7 +24,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end
 
   def add_feature
-    Sharding.select_shard_of(params[:account_id]) do 
+    Sharding.admin_select_shard_of(params[:account_id]) do 
       @account = Account.find(params[:account_id])
       if !@account.features?(params[:feature_name])
         feature = @account.features.send(params[:feature_name])
@@ -40,6 +40,43 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     redirect_to :back
   end
 
+  def ublock_account
+    shard_mapping = ShardMapping.find(params[:account_id])
+    shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
+    shard_mapping.save
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      @account = Account.find(params[:account_id])
+      @account.make_current
+      sub = @account.subscription
+      sub.state="trial"
+      sub.save
+      Account.reset_current_account
+    end
+    $spam_watcher.set("#{params[:account_id]}-","true")
+    redirect_to :back
+  end
+
+  def block_account
+    shard_mapping = ShardMapping.find(params[:account_id])
+    shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
+    shard_mapping.save
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      @account = Account.find(params[:account_id])
+      @account.make_current
+      sub = @account.subscription
+      sub.state="suspended"
+      sub.save
+      Account.reset_current_account
+    end
+    $spam_watcher.del("#{params[:account_id]}-")
+    redirect_to :back   
+  end
+
+  def whitelist
+    $spam_watcher.set("#{params[:account_id]}-","true")
+    redirect_to :back
+  end
+
   def change_url
     old_url = params[:old_url]
     new_url = params[:new_url]
@@ -48,7 +85,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       flash[:error] = "New account url is not available"
       redirect_to :back and return
     end
-    Sharding.select_shard_of(old_url) do
+    Sharding.admin_select_shard_of(old_url) do
       current_account = Account.find_by_full_domain(params[:old_url])
       email_configs = current_account.all_email_configs
       email_configs.each do |email_config|
@@ -87,7 +124,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end 
 
   def select_account_shard
-    Sharding.select_shard_of(params[:id]) do 
+    Sharding.admin_select_shard_of(params[:id]) do 
       Sharding.run_on_slave do
         yield 
       end

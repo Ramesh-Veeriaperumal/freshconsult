@@ -3,7 +3,7 @@ module Freshfone::Call::EndCallActions
 
   def handle_end_call
     call_forwarded? ? handle_forwarded_calls : normal_end_call
-    set_last_call_at if call_answered? 
+    set_last_call_at if call_answered? && !direct_dialled_call?
     empty_twiml
   end
 
@@ -17,7 +17,7 @@ module Freshfone::Call::EndCallActions
     unpublish_live_call(params)
     current_call.update_call(params)
   ensure
-    update_user_presence if params[:direct_dial_number].blank?
+    update_user_presence unless direct_dialled_call?
   end
 
   def clear_client_calls

@@ -1,0 +1,12 @@
+defaults: &defaults
+  host: localhost
+  port: 8125
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults

@@ -1,0 +1,14 @@
+<% if @related_articles.present? %>
+	<% @related_articles.each do |related_article| %>
+	<li>
+		<div class="ellipsis">
+			<%= link_to related_article.title, related_article %>
+		</div>
+	</li>
+	<% end %>
+<% else %>
+<script type="text/javascript">
+	jQuery("#<%= @container %>").remove();
+	layoutResize(".main", ".sidebar");
+</script>
+<% end %>

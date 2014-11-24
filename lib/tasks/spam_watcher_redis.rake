@@ -48,14 +48,47 @@ namespace :spam_watcher_redis do
     )
   end
 
+  def spam_blocked_alert(account)
+    SubscriptionNotifier.deliver_admin_spam_watcher_blocked(account)
+    FreshdeskErrorsMailer.deliver_spam_blocked_alert(
+      {
+        :subject          => "Blocked Account with id #{account.id} Due to heavy creation of solution articles",
+        :additional_info  => {
+          :account_id  => account.id,
+          :full_domain  => account.full_domain,
+          :signature => "Spam Watcher"
+        }
+      }
+    )
+  end
+
   def core_spam_watcher
     begin
       puts "waiting for job..."
       list, element = $spam_watcher.blpop(SpamConstants::SPAM_WATCHER_BAN_KEY)
       queue, account_id, user_id = element.split(":")
       puts "#{list}, #{element}"
+      unless user_id
+        return if $spam_watcher.exists("spam_solutions_#{account_id}")
+        Account.reset_current_account
+        Sharding.select_shard_of(account_id) do
+          account = Account.find(account_id)  
+          account.make_current
+          return if(paid_account?(account) || ((Time.now - 2.days).to_i - account.created_at.to_i) > 0)
+          spam_blocked_alert(account)
+          sub = account.subscription
+          sub.state = "suspended"
+          sub.save
+        end
+        $spam_watcher.setex("spam_solutions_#{account_id}",6.hours,"true")
+        shard_map = ShardMapping.find(account_id)
+        shard_map.status = ShardMapping::STATUS_CODE[:not_found]
+        shard_map.save
+        return 
+      end
       return if WhitelistUser.find_by_account_id_and_user_id(account_id, user_id)
       # check if user is an agent or not
+      return if $spam_watcher.exists("spam_tickets_#{account_id}_#{user_id}")
       Sharding.select_shard_of(account_id) do
         user = User.find_by_id(user_id)
         account = user.account
@@ -72,6 +105,7 @@ namespace :spam_watcher_redis do
         deleted_users = [user]
         # SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users,operation=="blocked")
         spam_alert(account,user,table_name,operation)
+        $spam_watcher.setex("spam_tickets_#{account_id}_#{user_id}",1.hour,"true")
         # Notify admin about the blocked user
       end
     rescue Exception => e

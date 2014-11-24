@@ -291,7 +291,7 @@ module SupportHelper
 	end
 
 	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(forum, follow_label, unfollow_label) if forum.type_name == 'announcement'
+		follow_button(forum, follow_label, unfollow_label)
 	end
 
 	def follow_button current_obj, follow_label, unfollow_label
@@ -520,7 +520,7 @@ HTML
 	def status_alert ticket
 		_text = []
 		_text << %( <b> #{ ticket['status'] } </b> )
-		_text << I18n.t('since_last_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
+		_text << I18n.t('since_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
 		_text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form'
 			data-show-dom='#reply-to-ticket'>#{ t('portal.tickets.reopen_reply') }</a> ) if ticket['closed?']
 		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
@@ -613,8 +613,9 @@ HTML
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
+	      		element_class = " #{required ? 'required_redactor' : '' } #{ dom_type }"
 	      		_output << %( #{ ff.text_area(field_name,
-	      			{ :class => "element_class" + " span12" + " required_redactor", :value => field_value, :rows => 6 }.merge(html_opts)) } )
+	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
 	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")

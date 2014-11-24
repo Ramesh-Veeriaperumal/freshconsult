@@ -26,7 +26,7 @@ module Import::CustomField
 
   def import_flexifields (base_dir, account = current_account)
     doc = REXML::Document.new(File.new(File.join(base_dir, "ticket_fields.xml")))
-    ff_def = account.flexi_field_defs.first
+    ff_def = account.ticket_field_def
     @invalid_fields = []
     
     REXML::XPath.each(doc,'//record') do |record|
@@ -92,7 +92,7 @@ module Import::CustomField
 
   def ff_meta_data(field_details, account=current_account)
     type = field_details.delete(:type)
-    ff_def = account.flexi_field_defs.first
+    ff_def = account.ticket_field_def
     ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => {
       :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
 

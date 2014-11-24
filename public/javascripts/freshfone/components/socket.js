@@ -160,10 +160,17 @@ var FreshfoneSocket;
 			return (this.totalAgents + offset < 0) ? 0 : (this.totalAgents + offset) || 0 ;
 		},
 		getAvailableAgents: function () {
-			$.ajax({
-				dataType: "script",
-				url: '/freshfone/dashboard_stats'
-			});
+      var self = this;
+      $.ajax({
+        dataType: "json",
+        url: '/freshfone/dashboard_stats',
+        success: function(data) {
+          self.available_agents=data.available_agents;
+          self.activeCalls = data.active_calls;
+          self.populateAvailableAgentsCount();
+          self.tryUpdateDashboard();
+        }
+      });
 		},
 
 		populateAvailableAgentsCount: function () {

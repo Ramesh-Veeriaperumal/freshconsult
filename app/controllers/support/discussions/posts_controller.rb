@@ -1,13 +1,14 @@
 class Support::Discussions::PostsController < SupportController
 
 	include CloudFilesHelper
+	include Community::Moderation
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
  	before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
- 	before_filter :verify_user, :only => [:update, :edit]
+ 	before_filter :verify_user, :only => [:update, :edit, :destroy]
  	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
@@ -36,7 +37,7 @@ class Support::Discussions::PostsController < SupportController
 		create_attachments
 		respond_to do |format|
 		  format.html do
-		  	flash[:notice] = t('.flash.portal.discussions.topics.success')
+				flash[:notice] = flash_msg_on_post_create
 		    redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
 		  end
 		  format.xml {

@@ -8,6 +8,12 @@ class Sharding
     ActiveRecord::Base.on_shard(shard_name.to_sym,&block)
   end
 
+  def admin_select_shard_of(shard_key, &block)
+    shard = is_numeric?(shard_key) ? ShardMapping.lookup_with_account_id(shard_key) : ShardMapping.lookup_with_domain(shard_key)
+    shard_name = shard.shard_name 
+    ActiveRecord::Base.on_shard(shard_name.to_sym,&block)
+  end
+
   def run_on_slave(&block)
     ActiveRecord::Base.on_slave(&block)
   end

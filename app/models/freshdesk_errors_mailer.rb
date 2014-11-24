@@ -29,5 +29,14 @@ class FreshdeskErrorsMailer < ActionMailer::Base
     body(:additional_info => options[:additional_info])
     content_type  "text/html"
   end 
+
+  def spam_blocked_alert(options={}) 
+    recipients    Helpdesk::EMAIL[:spam_watcher]
+    from          Helpdesk::EMAIL[:default_requester_email]
+    subject       (options[:subject] || "Abnormal load by spam watcher")
+    sent_on       Time.now
+    body(:additional_info => options[:additional_info])
+    content_type  "text/html"
+  end 
   
 end

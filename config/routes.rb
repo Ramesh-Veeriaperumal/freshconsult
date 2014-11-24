@@ -472,6 +472,7 @@
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
     helpdesk.sales_manager 'sales_manager', :controller => 'dashboard', :action => 'sales_manager'
+    helpdesk.agent_status 'agent-status', :controller => 'dashboard', :action => 'agent_status'
     helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
     helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
@@ -593,6 +594,7 @@
       :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
     support.resource :search do |search|
       search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
+      search.connect "/articles/:article_id/related_articles", :controller => :search, :action => :related_articles
     end
 
     # Forums for the portal, the items will be name spaced by discussions
@@ -695,6 +697,8 @@
 
   map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  map.connect '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
+
 
   map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
 

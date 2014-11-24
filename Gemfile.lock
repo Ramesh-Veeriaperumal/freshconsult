@@ -120,13 +120,6 @@ GIT
     country_select (1.1.2)
 
 GIT
-  remote: git://github.com/thedarkone/rails-dev-boost.git
-  revision: 56527076b8379e460f7fd641ffd36eea288e80fc
-  branch: rails-2-3
-  specs:
-    rails-dev-boost (0.1.1)
-
-GIT
   remote: git://github.com/sumakumardey/rack-ssl
   revision: b7a3e736f52b29b5c0512d4a7b6206cf332c2e7e
   branch: ssl
@@ -134,17 +127,24 @@ GIT
     rack-ssl (1.4.1)
       rack
 
+GIT
+  remote: git://github.com/sumakumardey/statsd-ruby
+  revision: 50d77a17d822cdc73b5b229c3329ced7e9c6aa53
+  branch: custom_stats
+  specs:
+    statsd-ruby (1.0.0)
+
+GIT
+  remote: git://github.com/thedarkone/rails-dev-boost.git
+  revision: 56527076b8379e460f7fd641ffd36eea288e80fc
+  branch: rails-2-3
+  specs:
+    rails-dev-boost (0.1.1)
+
 PATH
   remote: vendor/gems/freshdesk_authority-0.1
   specs:
     freshdesk_authority (0.1)
-
-GIT
-  remote: git://github.com/sumakumardey/mysql2.git
-  revision: b8118e1a066d6759075e3850f7cfa234f64473b6
-  branch: mysql_logs
-  specs:
-    mysql2 (0.2.18)
 
 GEM
   remote: https://rubygems.org/
@@ -336,6 +336,7 @@ GEM
     multi_json (1.3.6)
     multi_xml (0.5.1)
     multipart-post (1.2.0)
+    mysql2 (0.2.18)
     namae (0.8.4)
     newrelic_rpm (3.8.0.218)
     nokogiri (1.5.2)
@@ -612,7 +613,7 @@ DEPENDENCIES
   marketo!
   mocha (~> 0.12.8)
   mongrel (>= 1.2.0.pre2)
-  mysql2!
+  mysql2 (= 0.2.18)
   namae (= 0.8.4)
   newrelic_rpm (= 3.8.0.218)
   nori (= 1.1.4)
@@ -633,6 +634,7 @@ DEPENDENCIES
   pg
   premailer (~> 1.8.0)
   rack (~> 1.1.6)
+  rack-ssl!
   rack-test (~> 0.6.2)
   rack-throttle (~> 0.3.0)
   rails (= 2.3.18)
@@ -667,6 +669,7 @@ DEPENDENCIES
   spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
   static_model (~> 1.0.4)
+  statsd-ruby!
   susy (= 1.0.9)
   test-unit (= 1.2.3)
   therubyracer

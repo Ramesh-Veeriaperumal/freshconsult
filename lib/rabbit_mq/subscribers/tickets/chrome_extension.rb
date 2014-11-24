@@ -26,7 +26,7 @@ module RabbitMq::Subscribers::Tickets::ChromeExtension
 
   def create_notification_users(properties)
     properties["actions"].push(ACTION[:new])
-    user_ids = responder_id.nil? ? [] : [responder.id]
+    user_ids = responder_id.nil? ? [] : [responder_id]
 
     if group_id
       begin

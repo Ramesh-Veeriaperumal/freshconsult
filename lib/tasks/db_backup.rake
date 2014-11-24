@@ -5,7 +5,8 @@ namespace :database do
     include Helpdesk::S3::Util
      mysql_database = "helpkit"
      mysql_user = "s3backup"
-     mysql_host = "fdprodshard1slave.c6mwxinbic44.us-east-1.rds.amazonaws.com"
+     database_config = Rails.configuration.database_configuration[Rails.env]
+     mysql_host = database_config["shards"]["shard_1"]["slave"]["host"]
      mysql_password = "DbFnSt02#"
       sname=Time.now.to_s.split(" ")[0]
       dump_file="#{Rails.root}/log/global_tables_#{sname}.sql"

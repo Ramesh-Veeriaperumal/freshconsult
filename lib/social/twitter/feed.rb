@@ -42,7 +42,6 @@ class Social::Twitter::Feed
     handle  = select_reply_handle(stream)
     account = handle.account
     @sender = self.user[:screen_name]
-    user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
     feed_obj = {
       :body       => self.body,
       :id         => self.feed_id,
@@ -52,9 +51,13 @@ class Social::Twitter::Feed
     tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless tweet.blank?
       ticket = tweet.get_ticket
+      user = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
       notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
     else
-      notable = add_as_ticket(feed_obj, handle, :mention, action_data) if action_data[:convert]
+      if action_data[:convert]
+        user = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+        notable = add_as_ticket(feed_obj, handle, :mention, action_data) 
+      end
     end
     notable
   end

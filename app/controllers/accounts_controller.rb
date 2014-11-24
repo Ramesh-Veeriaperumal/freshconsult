@@ -3,6 +3,7 @@ class AccountsController < ApplicationController
   include ModelControllerMethods
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Redis::DisplayIdRedis
   
   layout :choose_layout 
   
@@ -42,7 +43,7 @@ class AccountsController < ApplicationController
     @ticket_display_id = current_account.get_max_display_id
     if current_account.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
-      redis_display_id = get_tickets_redis_key(key).to_i
+      redis_display_id = get_display_id_redis_key(key).to_i
       @ticket_display_id = redis_display_id if redis_display_id > @ticket_display_id
     end
   end
