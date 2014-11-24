@@ -206,9 +206,11 @@ class ContactsController < ApplicationController
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
+        format.json {render :json => @item.as_json,:status => 200}
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
+        format.json { render :json => @item.errors,:status => 500 }
       end   
     end
   end
