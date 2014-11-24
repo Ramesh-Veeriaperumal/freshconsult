@@ -41,9 +41,11 @@ RSpec.describe FreshfoneController do
   end
 
   it 'should redirect to login when non-twilio-aware methods are called by not logged in users' do
-    get :dashboard_stats
-    response.should be_redirect
-    response.should redirect_to('/support/login')
+    get :dashboard_stats, { :format => "json" }
+    expected = {
+      :require_login => true
+    }.to_json
+    response.body.should be_eql(expected)
   end
   #End spec for freshfone base controller. 
   #Change this to contexts
@@ -64,11 +66,16 @@ RSpec.describe FreshfoneController do
     xml.should have_key(:Response)
   end
 
-  it 'should render valid js on dashboard_stats' do
-    request.env["HTTP_ACCEPT"] = "application/javascript"
+  it 'should render valid json on dashboard_stats' do
     log_in(@agent)
-    get :dashboard_stats
-    response.should render_template("freshfone/dashboard_stats")
+    key = NEW_CALL % {:account_id => @account.id}
+    add_to_set(key, "1234")
+    get :dashboard_stats, { :format => "json" }
+    expected = {
+      :available_agents => @account.freshfone_users.online_agents.count,
+      :active_calls => get_count_from_integ_redis_set(key)
+    }.to_json
+    response.body.should be_eql(expected)
   end
 
   it 'should render valid json on credit_balance' do

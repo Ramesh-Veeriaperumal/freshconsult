@@ -33,6 +33,9 @@ class Freshfone::PulseRate
 		return FRESHFONE_CHARGES['VOICEMAIL'][forwarded_call_type].to_f		
 	end
 
+	def missed_call_cost
+		FRESHFONE_CHARGES['MISSED_OR_BUSY'].to_f
+	end
 
 	private
 

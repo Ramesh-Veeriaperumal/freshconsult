@@ -71,4 +71,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   accepts_nested_attributes_for :tweet, :fb_post , :mobihelp_ticket_info
 
+  has_one :article_ticket, :dependent => :destroy
+  has_one :article, :through => :article_ticket
+
 end

@@ -5,7 +5,6 @@ class ContactsController < ApplicationController
    include ExportCsvUtil
 
    before_filter :redirect_to_mobile_url
-   before_filter :set_email_params, :only => [:create, :update]
    before_filter :clean_params, :only => [:update]
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
@@ -178,7 +177,7 @@ class ContactsController < ApplicationController
   def verify_email
     @user_mail = current_account.user_emails.find(params[:email_id])
     @user_mail.deliver_contact_activation_email
-    @user_mail.user.change_primary_email(params[:email_id]) if !@user_mail.user.active?
+    @user_mail.user.reset_primary_email(params[:email_id]) if !@user_mail.user.active?
     flash[:notice] = t('merge_contacts.activation_sent')
     respond_to do |format|
       format.js
@@ -239,9 +238,9 @@ protected
     @user = current_account.users.new
     @user.helpdesk_agent = false
     @user.avatar = Helpdesk::Attachment.new
+    @user.user_emails.build({:primary_role => true}) if current_account.features_included?(:contact_merge_ui)
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language
-    # @user.user_emails.build
   end
 
   def cname
@@ -271,7 +270,7 @@ protected
   end
 
   def set_user_email
-    @user.user_emails.build if current_account.features?(:multiple_user_emails) and @user.user_emails.blank?
+    @user.user_emails.build if current_account.features_included?(:contact_merge_ui) and @user.user_emails.blank?
   end
    
   def set_selected_tab
@@ -279,12 +278,13 @@ protected
   end
   
   def check_email_exist
-    if current_account.features?(:multiple_user_emails)
+    if current_account.features_included?(:contact_merge_ui)
       @user.user_emails.each do |ue|
         if("has already been taken".eql?(ue.errors["email"]))
           @existing_user = current_account.user_emails.user_for_email(ue.email)
         end
       end
+      @user.user_emails.build({:primary_role => true}) if @user.user_emails.blank?
     else
       if((@user.errors.messages[:base]).include? "Email has already been taken")
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
@@ -307,12 +307,6 @@ protected
     if params[:user]
       params[:user].delete(:helpdesk_agent)
       params[:user].delete(:role_ids)
-    end
-  end
-
-  def set_email_params
-    if current_account.features?(:multiple_user_emails)
-      params[:user][:user_emails_attributes] = {"0" => {:email => params[:user][:email]}} if params[:user][:email] and !params[:user][:user_emails_attributes]
     end
   end
 

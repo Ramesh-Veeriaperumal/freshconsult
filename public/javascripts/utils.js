@@ -875,6 +875,10 @@ jQuery.fn.serializeObject = function(){
               epoch_sec = merge.getTime() + (1100*60000);
               merge = (new Date(epoch_sec)).toISOStringCustom().trim();
             }
+            else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("numeric"))
+            {
+              merge = parseFloat(merge);
+            }
             while((k = keys.pop()) !== undefined){
 
                 // adjust reverse_key
@@ -898,7 +902,6 @@ jQuery.fn.serializeObject = function(){
 
             json = jQuery.extend(true, json, merge);
         });
-
         return json;
     };
 

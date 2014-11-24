@@ -1,4 +1,4 @@
-<%= form_for @email_config, :url => admin_email_config_path, :html => { :method => :put } do |f| %>
+<%= form_for @email_config, :url => admin_email_config_path, :html => { :method => :put, :rel=> "validate" } do |f| %>
 <%= f.error_messages %>
 <h3 class="lead"><%=t('email_configs.title').html_safe%></h3>
 <ul class="unstyled form-horizontal row-fluid">
@@ -10,7 +10,7 @@
 			</div>
 	</li>
 	<li class="control-group">	
-			<label class="control-label" ><%=(t('email_configs.reply_email') + " *").html_safe%></label>
+			<label class="control-label" ><%= t('email_configs.reply_email').html_safe%><span class="required_star">*</span></label>
 			<div class="controls">
 				<%= f.text_field :reply_email, :class => "required email muted text input-xxlarge", :id => "reply_to_id" %>
 				<div class="muted"><%= t('email_configs.info7').html_safe %> </div>

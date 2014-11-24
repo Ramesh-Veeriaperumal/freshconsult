@@ -16,6 +16,9 @@
 		"use strict"
 		
 		// Attaching dom ready events
+		$(document).ready(function(){
+			$('[rel=remote]').trigger('afterShow');
+		})
 
 		// Preventing default click & event handlers for disabled or active links
 		$(".pagination, .dropdown-menu") 
@@ -206,6 +209,16 @@
 		    });
 		});
 
+		$('body').on('afterShow', '[rel=remote]', function(ev) {
+			var _self = $(this);
+			if(!_self.data('loaded')) {
+				_self.append("<div class='loading loading-box'></div>");
+				_self.load(_self.data('remoteUrl'), function(){
+					_self.data('loaded', true);
+					_self.trigger('remoteLoaded');
+				});
+			}
+		});
 	})
 
 }(window.jQuery);

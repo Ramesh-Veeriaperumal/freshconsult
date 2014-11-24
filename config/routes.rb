@@ -312,7 +312,7 @@ Helpkit::Application.routes.draw do
 
   match '/agents/filter/:state(/*letter)' => 'agents#index'
   match '/logout' => 'user_sessions#destroy', :as => :logout
-  match '/openid/google' => 'user_sessions#openid_google', :as => :gauth
+  match '/oauth/googlegadget' => 'user_sessions#oauth_google_gadget', :as => :gauth
   match '/opensocial/google' => 'user_sessions#opensocial_google', :as => :gauth
   match '/authdone/google' => 'user_sessions#google_auth_completed', :as => :gauth_done
   match '/login' => 'user_sessions#new', :as => :login
@@ -1592,6 +1592,7 @@ Helpkit::Application.routes.draw do
         get :suggest_topic
       end
       match '/topics/suggest', :action => 'suggest_topic'
+      match '/articles/:article_id/related_articles', :action => 'related_articles'
     end
 
     resources :discussions, :only => [:index, :show] do
@@ -1747,6 +1748,7 @@ Helpkit::Application.routes.draw do
   resources :rabbit_mq, :only => [:index]
   match '/marketplace/login' => 'google_login#marketplace_login', :as => :route
   match '/google/login' => 'google_login#portal_login', :as => :route
+  match '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login', :as => :route
   match '/' => 'home#index'
   # match '/:controller(/:action(/:id))'
   match '/all_agents' => 'agents#list'
@@ -1778,6 +1780,9 @@ Helpkit::Application.routes.draw do
     end
   end
   #  end
+  match '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  match '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
+  match '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
     # namespace :billing do

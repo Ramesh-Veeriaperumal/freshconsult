@@ -145,14 +145,13 @@ class Account < ActiveRecord::Base
     end
 
     def update_freshchat_url
-      if full_domain_changed?
+      if full_domain_changed? && !chat_setting.display_id.blank?
         Resque.enqueue(Workers::Freshchat, {
-            :worker_method => "update_site", 
-            :siteId        => chat_setting.display_id, 
-            :attributes    => { 
-                              :site_url => full_domain
-                            }
-            })
+          :account_id    => id,
+          :worker_method => "update_site", 
+          :siteId        => chat_setting.display_id, 
+          :attributes    => { :site_url => full_domain }
+        })
       end
     end
 

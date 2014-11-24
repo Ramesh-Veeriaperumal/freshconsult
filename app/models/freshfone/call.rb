@@ -100,9 +100,12 @@ class Freshfone::Call < ActiveRecord::Base
 			], :limit => 1, :order => "created_at DESC"
 		}
 	}
+  
 	scope :agent_progress_calls, lambda { |user_id|
-		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or call_status = ?)",
-					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db), CALL_STATUS_HASH[:'in-progress']
+		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or 
+			(call_status = ? and created_at > ? and created_at < ?))",
+					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db),
+					CALL_STATUS_HASH[:'in-progress'], 15.minutes.ago.to_s(:db), Time.zone.now.to_s(:db)
 				]
 		}
 	}

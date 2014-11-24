@@ -134,7 +134,19 @@
 	min-height: 50px;
 }
 
-.contactdiv{
+#cont-chosen{
+	height: 65px;
+	&:hover{
+		cursor: pointer;
+	}
+	#resp-text{
+		vertical-align: middle;
+		width: 190px;
+		@include float(right);
+	}
+}
+
+.ticketdiv, .contactdiv{
 	.item_info{
 		color: #333;
 		&:hover{
@@ -524,7 +536,7 @@
 			}
 		}
 	}
-	.contactdiv{
+	.ticketdiv{
 		#merge-ticket{
 			margin-top: 2px;
 			span.item_info{

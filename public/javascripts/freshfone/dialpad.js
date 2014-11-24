@@ -92,6 +92,37 @@
 		$('.outgoing_numbers_list').on("change",function(){
 			var callerIdNumber = $('.outgoing_numbers_list').select2("val");
 			localStorage.setItem("callerIdNumber", callerIdNumber);
-			
-		});
+            $('#outgoing_number_selector').find('.li_opt_selected').removeClass("li_opt_selected");
+			$('#outgoing_number_selector option:selected').addClass("li_opt_selected");
+
+        });
+
+
+        $(document).ready(function(){
+            var $outgoing_numbers_list = $('.outgoing_numbers_list');
+            
+            $outgoing_numbers_list.select2({
+            	dropdownCssClass: "outgoing_numbers_list_dropdown",
+            	minimumResultsForSearch: 5,
+            	attachtoContainerClass: ".popupbox-content",
+
+	            formatResult: function(result, container,query){
+                    var name = freshfone.namesHash[result.id],
+	            	    number = freshfone.numbersHash[result.id];
+	                if(name == ""|| name.trim == "" ){
+	            	    return  "<span>" +number + "</span>" ;
+                    }else{
+	            		return "<span><b>" + name + "</b></span><br/><span>" + number + " </span>" ;    
+	            	}
+	            },
+	            
+	            formatSelection: function(data, container) {
+	            	var result = data.text;
+	            	var lastindex = result.lastIndexOf(" ");
+	            	result = (lastindex > -1) ?  result.substring(0, lastindex) : data.text;
+                    return result;
+                }
+            });
+            
+       });
 }(jQuery));

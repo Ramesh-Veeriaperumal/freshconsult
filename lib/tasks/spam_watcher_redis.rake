@@ -82,7 +82,7 @@ namespace :spam_watcher_redis do
         end
         $spam_watcher.setex("spam_solutions_#{account_id}",6.hours,"true")
         shard_map = ShardMapping.find(account_id)
-        shard_map.status = 404
+        shard_map.status = ShardMapping::STATUS_CODE[:not_found]
         shard_map.save
         return 
       end

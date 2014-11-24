@@ -637,7 +637,7 @@ RSpec.describe Helpdesk::TicketsController do
       company = create_company
       user = FactoryGirl.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
                                     :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
-      user.save(:validate => false)
+      user.save
       ticket = create_ticket({ :status => 2, :requester_id => user.id}, @group)
       ticket_1 = create_ticket({ :status => 2}, @group)
       get :index, :company_id => company.id

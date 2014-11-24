@@ -47,9 +47,6 @@
 <% content_for :pagefixed do %>
   <%= javascript_tag do %>
       TicketListEvents();
-      Fjax.afterNextPage = function() {
-        MergeTicketsDestructor();
-      }
   <% end %>
 <% end %>
 <script type="text/javascript">

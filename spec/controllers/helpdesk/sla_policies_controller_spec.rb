@@ -56,10 +56,10 @@ describe Helpdesk::SlaPoliciesController do
     response.body.should =~ /New SLA Policy/
   end
 
-  it "should edit a Sla Policy" do
-    get :edit, :id => @sla_policy_1.id
-    response.body.should =~ /"#{ERB::Util.html_escape(@sla_policy_1.name)}"/
-  end
+    it "should edit a Sla Policy" do
+        get :edit, :id => @sla_policy_1.id
+        response.body.should =~ /#{@sla_policy_1.name}/
+    end
 
   it "should update a Sla Policy" do
     ids = sla_detail_ids(@sla_policy_1)

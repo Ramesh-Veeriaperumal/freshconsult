@@ -2,7 +2,6 @@ require 'spec_helper'
 
 RSpec.describe Admin::DayPassesController do
 	setup :activate_authlogic
-	self.use_transactional_fixtures = false
 
   before(:all) do
   	 @account = Account.last

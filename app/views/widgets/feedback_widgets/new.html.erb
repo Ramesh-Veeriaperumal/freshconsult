@@ -285,13 +285,13 @@
 				jQuery("input[name='helpdesk_ticket[name]']").attr("readonly","readonly");
 			}
 			else if(jQuery("#helpdesk_ticket_"+key)){
-				jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly");
+				jQuery("#helpdesk_ticket_"+key).attr("readonly","readonly").select2("disable");
 			}
 		}
 		for(var i = 0; i < disabled_custom_options.length; i++){
 			var key = disabled_custom_options[i];
 			if(jQuery("#helpdesk_ticket_custom_field_"+key)){
-						jQuery("#helpdesk_ticket_custom_field_"+key).attr("readonly","readonly");
+						jQuery("#helpdesk_ticket_custom_field_"+key).attr("readonly","readonly").select2("disable");
 			}
 		}
 

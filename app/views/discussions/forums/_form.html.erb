@@ -4,7 +4,7 @@
 <%= form.error_messages %>
 <div class="form-horizontal">
 	<div class="control-group">
-		<label class="control-label"><%=t('title')%></label>
+		<label class="control-label"><%=t('name')%><span class='required_star'>*</span></label>
 		<div class="controls">
 			<%= form.text_field :name, :class => "primary input-xxlarge" %>
 		</div>

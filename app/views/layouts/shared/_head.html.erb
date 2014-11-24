@@ -57,6 +57,8 @@
 	<%= javascript_include_tag :'cdn/pattern'  %>
 	<%= javascript_include_tag :'cdn/merge'  %>
 	<%= javascript_include_tag :'cdn/custom_widget' %>
+    <%= javascript_include_tag :'cdn/shortcut' if shortcuts_enabled? %>
+
 
 	<% if current_account.features?(:freshfone) ||
 		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>

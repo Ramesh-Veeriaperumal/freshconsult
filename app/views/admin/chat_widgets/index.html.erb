@@ -21,7 +21,7 @@
         <% @widgets.each do |widget| %>
           <tr id="<%= dom_id(widget)%>">
             <td rel="<%=widget.id%>">
-              <%= check_box_tag :toggle_widget, 0, widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => "on", "data-unchecked-label" => "off" %>
+              <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => "on", "data-unchecked-label" => "off" %>
             </td>
             <td>
               <%= pjax_link_to(h(widget.product ? widget.product.name : widget.account.name), edit_admin_chat_widget_path(widget), :class => "item_info") %>

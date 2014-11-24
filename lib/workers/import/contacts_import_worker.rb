@@ -17,7 +17,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
 		mapped_fields.each do |row|
           @params_hash ={ :user => {:name => (row[fields["0"]] ),
                                     :job_title => (row[fields["1"]] ) ,
-                                    :email =>  (row[fields["2"]] ) ,
+                                    :email => ( row[fields["2"]] ), #user_email changed
                                     :phone => (row[fields["3"]] ) ,
                                     :mobile => (row[fields["4"]] ) , 
                                     :twitter_id => (row[fields["5"]] ) ,
@@ -51,4 +51,5 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
       enable_user_activation(current_account)
       UserNotifier.send_later(:notify_contacts_import, current_user) 
 	end
+
 end

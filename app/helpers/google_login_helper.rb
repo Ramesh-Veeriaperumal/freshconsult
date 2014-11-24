@@ -1,4 +1,5 @@
 module GoogleLoginHelper
+  include Redis::RedisKeys
 
   def uid
     auth_hash['uid']
@@ -26,9 +27,10 @@ module GoogleLoginHelper
     end
   end
 
-  def construct_google_auth_url(portal_url)
+  def construct_google_auth_url(portal_url, provider_key_name)
     oauth_keys = Integrations::OauthHelper::get_oauth_keys
-    auth_url = "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" << consumer_token(oauth_keys) << callback_url << scopes << options_name
+    app_name = google_app_name(provider_key_name, oauth_keys)
+    auth_url = "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" << consumer_token(provider_key_name, oauth_keys) << callback_url(app_name) << scopes(provider_key_name, oauth_keys) << options_name(app_name)
     if portal_url.present?
       auth_url = auth_url << '&state=full_domain%3D' << current_account.full_domain << '%26portal_url%3D'
       if current_portal.portal_url.present?
@@ -38,22 +40,6 @@ module GoogleLoginHelper
       end
     end
     auth_url
-  end
-
-  def consumer_token(oauth_keys)
-    consumer_token = oauth_keys['google_oauth2']['consumer_token']
-  end
-
-  def callback_url
-    callback_url = "&redirect_uri=#{AppConfig['integrations_url'][Rails.env]}/auth/google_login/callback"
-  end
-
-  def scopes
-    scopes = "&scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/calendar"
-  end
-
-  def options_name
-    options_name = "&name=google_login"
   end
 
   def find_account_by_google_domain(google_domain_name)
@@ -90,8 +76,72 @@ module GoogleLoginHelper
     create_auth(domain_user, uid, login_account.id)
   end
 
-  def make_user_active user
-    user.update_attributes(:active => 1)
+  def google_gadget_auth google_viewer_id_hash
+    domain_user = login_account.all_users.find_by_email(email)
+    verify_gadget_user(domain_user)
+    verify_gadget_viewer_id(google_viewer_id_hash, domain_user) unless @gadget_error.present?
+    # If the user is also an agent and no OAuth entry in authrizations table then create one.
+    create_auth(domain_user, uid, login_account.id) unless @gadget_error.present?
   end
 
+  private
+    def consumer_token(provider_key_name, oauth_keys)
+      consumer_token = oauth_keys["#{provider_key_name}"]['consumer_token']
+    end
+
+    def callback_url(app_name)
+      callback_url = "&redirect_uri=#{AppConfig['integrations_url'][Rails.env]}/auth/#{app_name}/callback"
+    end
+
+    def scopes(provider_key_name, oauth_keys)
+      scopes = "&scope=" << oauth_keys["#{provider_key_name}"]['options']['scope'].tr(" ","+")
+    end
+
+    def options_name(app_name)
+      options_name = "&name=#{app_name}"
+    end
+
+    def make_user_active user
+      user.update_attributes(:active => 1)
+
+    end
+
+    def google_app_name provider_key_name, oauth_keys
+      app_name = oauth_keys["#{provider_key_name}"]['options']['name']
+    end
+
+    def verify_gadget_user user
+      if user.blank?
+        @gadget_error = true
+        @notice = t(:'flash.gmail_gadgets.user_missing')
+      end
+    end
+
+    def verify_gadget_viewer_id google_viewer_id_hash, user
+      google_viewer_id = google_viewer_id_from_hash(google_viewer_id_hash)
+      if google_viewer_id.present?
+        set_agent_google_viewer_id(google_viewer_id, user)
+      else
+        @gadget_error = true
+        @notice = t(:'flash.gmail_gadgets.kvp_missing')
+      end
+    end
+
+    def set_agent_google_viewer_id google_viewer_id, user
+      agent = user.agent
+      if agent.present?
+        agent.google_viewer_id = google_viewer_id
+        agent.save!
+      else
+        @gadget_error = true
+        @notice = t(:'flash.gmail_gadgets.agent_missing')
+      end
+    end
+
+    def google_viewer_id_from_hash hash
+      key_options = {:account_id => login_account.id, :token => hash}
+      kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options))
+      kv_store.group = :integration
+      google_viewer_id = kv_store.get_key
+    end
 end

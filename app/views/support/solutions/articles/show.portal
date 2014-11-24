@@ -32,15 +32,6 @@
 		{{article | article_voting }}
 		
 </section>
-{% if article.related_articles.size > 0 %}
-<section class="sidebar content rounded-6">	
-	<div class="cs-g-c">
-		<section class="article-list">
-			<h3 class="list-lead">
-				{% translate portal.article.related_articles %}
-			</h3>
-			{{ article | related_articles_list: 10 }}
-		</section>
-	</div>
+<section class="sidebar content rounded-6">
+	{{ article | related_articles: 10, 'related_articles' }}
 </section>
-{% endif %}

@@ -9,6 +9,7 @@ PAGERDUTY_QUEUES = [
     "observer_worker","update_ticket_states_queue"
 ]
 DELAYED_JOBS_MSG = "Delayed jobs needs your attention!"
+CUSTOM_MAILBOX_JOBS_MSG = "Custom Mailbox's delayed jobs needs your attention!"
 
 
 
@@ -39,6 +40,14 @@ namespace :delayedjobs_watcher do
             :subject => "#{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs" 
         }) if failed_jobs_count >= FAILED_DELAYED_JOBS_THRESHOLD
 
+
+        failed_custom_mailbox_jobs = Mailbox::Job.count(
+            :conditions => ["last_error is not null and attempts > 1"]
+        )
+        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
+            :subject => "#{CUSTOM_MAILBOX_JOBS_MSG} #{failed_custom_mailbox_jobs} failed jobs" 
+        }) if failed_custom_mailbox_jobs >= FAILED_DELAYED_JOBS_THRESHOLD
+
         #For every 5 hours we will init the alert
         if FAILED_DJ_PAGERDUTY_THRESHOLD <= failed_jobs_count and 
             $redis_others.get("FAILED_JOBS_ALERTED").blank?
@@ -59,6 +68,11 @@ namespace :delayedjobs_watcher do
         FreshdeskErrorsMailer.error_email(nil, nil, nil,{  
             :subject => "#{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue" 
         }) if total_jobs_count >= TOTAL_DELAYED_JOBS_THRESHOULD
+
+        total_mailbox_jobs_count = Mailbox::Job.count
+        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,{  
+            :subject => "#{FAILED_JOBS_ALERTED} #{total_mailbox_jobs_count} jobs are in queue" 
+        }) if total_mailbox_jobs_count >= TOTAL_DELAYED_JOBS_THRESHOULD
         
         #For every 5 hours we will init the alert
         if TOTAL_DJ_PAGERDUTY_THRESHOULD <= total_jobs_count and

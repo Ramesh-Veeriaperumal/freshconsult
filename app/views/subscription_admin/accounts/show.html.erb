@@ -76,7 +76,8 @@
       </tr>
        <tr>
         <th>Chat</th>
-        <td>Chat - <%= @account.features?(:chat) %>  Enabled - <%= @account.chat_setting.active? %></td>
+        <td>Chat - <%= @account.features?(:chat) %>  Enabled - <%= @account.chat_setting.display_id? && 
+                                                                    @account.chat_setting.active %></td>
       </tr>
       <tr>
         <th>Multi product</th>

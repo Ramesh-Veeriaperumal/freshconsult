@@ -6,6 +6,7 @@ chat_setting = ChatSetting.seed(:account_id) do |c|
 end
 
 ChatWidget.seed(:account_id) do |c|
+	c.name = account.name
   c.account_id = account.id
   c.show_on_portal = false
 	c.portal_login_required = false

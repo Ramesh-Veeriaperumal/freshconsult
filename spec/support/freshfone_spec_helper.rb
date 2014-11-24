@@ -93,13 +93,11 @@ module FreshfoneSpecHelper
   def create_dummy_freshfone_users(n=3)
     @dummy_users = []; @dummy_freshfone_users = []
     n.times do 
-      new_agent = FactoryGirl.build(  :agent, :signature => "Regards, #{Faker::Name.name}", 
-        :account_id => @account.id, :available => 1)
-      user = FactoryGirl.build(:user, :account => @account, :email => Faker::Internet.email, :user_role => 3, :helpdesk_agent => true )
-      user.agent = new_agent
-      user.roles = [@account.roles.second]
+      new_agent = add_agent_to_account(@account, {:available => 1, :name => Faker::Name.name, :email => Faker::Internet.email, :role => 3, :active => 1})
+      user = new_agent.user
       freshfone_user = user.build_freshfone_user({ :account => @account, :presence => 1 })
       user.save!
+      user.reload
       @dummy_freshfone_users << freshfone_user
       @dummy_users << user
     end

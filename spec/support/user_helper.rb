@@ -1,8 +1,9 @@
 module UsersHelper
   def add_test_agent(account=nil, options={})
+    account = account || @account
+
     role_id = options[:role].nil? ? account.roles.find_by_name("Account Administrator").id : options[:role]
 
-    account = account || @account
     add_agent(account, {:name => Faker::Name.name,
                         :email => Faker::Internet.email,
                         :active => 1,
@@ -30,12 +31,12 @@ module UsersHelper
                                     :role_ids => options[:role_ids])
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
-    new_user.save(validate: false)
+    v = new_user.save!
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
       ag_grp.save!
     end
-    new_user
+    new_user.reload
   end
 
   def add_new_user(account, options={})
@@ -49,20 +50,21 @@ module UsersHelper
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,
                                     :language => "en")
-    new_user.save(validate: false)
-    new_user
+    new_user.save
+    new_user.reload
   end
 
-  # def add_user_with_multiple_emails(account, number)
-  #   new_user = add_new_user(@account)
-  #   new_user.save(false)
-  #   number.times do |i|
-  #     email = Faker::Internet.email
-  #     new_user.user_emails.build({:email => email})
-  #   end
-  #   new_user.save(false)
-  #   new_user
-  # end
+  def add_user_with_multiple_emails(account, number)
+    new_user = add_new_user(@account)
+    new_user.save
+    new_user.reload
+    number.times do |i|
+      email = Faker::Internet.email
+      new_user.user_emails.build({:email => email})
+    end
+    new_user.save
+    new_user.reload
+  end
 
   def fake_a_contact
     @params = { :user=> { 

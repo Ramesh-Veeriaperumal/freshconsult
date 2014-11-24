@@ -23,12 +23,12 @@ RSpec.describe Admin::DataExportController do
 
     FileUtils.stubs(:remove_dir)
 
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_forums_data)
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_solutions_data)
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_users_data)
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_companies_data)
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_tickets_data)
-    Helpdesk::ExportDataWorker.any_instance.stubs(:export_groups_data)
+    # Helpdesk::ExportDataWorker.any_instance.stubs(:export_forums_data)
+    # Helpdesk::ExportDataWorker.any_instance.stubs(:export_solutions_data)
+    # Helpdesk::ExportDataWorker.any_instance.stubs(:export_users_data)
+    # Helpdesk::ExportDataWorker.any_instance.stubs(:export_companies_data)
+    # Helpdesk::ExportDataWorker.any_instance.stubs(:export_tickets_data)
+    # Helpdesk::ExportDataWorker.any_instance.stubs(:export_groups_data)
     
     Resque.inline = true
   end
@@ -59,7 +59,6 @@ RSpec.describe Admin::DataExportController do
   it 'should export forums data' do
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_forums_data)
     get :export
-
     out_dir   = "#{Rails.root}/tmp/#{@account.id}" 
     exported_file = "#{out_dir}/Forums.xml"
     Pathname.new(exported_file).exist?.should eql(true)
@@ -99,7 +98,7 @@ RSpec.describe Admin::DataExportController do
     
     companies_xml = File.read(exported_file)
     companies = Hash.from_trusted_xml companies_xml
-    companies["companies"].should_not be_blank
+    companies["companies"].should be_present
     companies["companies"].first["name"].should eql(company_name)
   end
 

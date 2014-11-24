@@ -15,7 +15,7 @@
 		<li class="control-group">
 			<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
 			<div class="controls">
-		 		<%= f.select :category_id, current_account.solution_categories.collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
+		 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
 		 	</div>
 		</li>
 		<li class="companies_select control-group">

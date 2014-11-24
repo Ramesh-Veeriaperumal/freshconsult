@@ -233,9 +233,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)            
+      e_email = {}
       if (user.agent? && !user.deleted?)
-        e_email = orig_email_from_text
-        user = get_user(account, e_email , email_config) unless e_email.nil?
+        e_email = orig_email_from_text || {}
+        user = get_user(account, e_email , email_config) unless e_email.blank?
       end
      
       ticket = Helpdesk::Ticket.new(
@@ -251,7 +252,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
-      ticket.sender_email = from_email[:email]
+      ticket.sender_email = e_email[:email] || from_email[:email]
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
       check_for_auto_responders(ticket)
@@ -397,9 +398,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:user_emails_attributes => { "0" => {:email => from_email[:email], :primary_role => true}}, :name => from_email[:name], 
+        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
           :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-        args = [user, text_for_detection]  
+        args = [user, text_for_detection]  #user_email changed
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
       end
       user.make_current

@@ -95,6 +95,10 @@ class Freshfone::CallController < FreshfoneBaseController
 			@call_options["answered_on_mobile"] || params[:direct_dial_number]
 		end
 
+		def direct_dialled_call?
+			params[:direct_dial_number].present?
+		end
+
 		def preview?
 			(params[:preview] && params[:preview] == 'true') || false
 		end

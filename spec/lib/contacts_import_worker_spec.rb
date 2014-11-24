@@ -5,9 +5,10 @@ require 'spec_helper'
 
 RSpec.describe Workers::Import::ContactsImportWorker do 
 
-	before(:all) do
-		@sample_contact = FactoryGirl.build(:user, :account => @account, :phone => "23423423434", :email => "samara-1@example.net", :user_role => 3)
-		@sample_contact.save(:validate => false)
+
+	before(:all) do		
+		@sample_contact = FactoryGirl.build(:user, :account => @acc, :phone => "23423423434", :email => "samara@example.net", :user_role => 3)
+		@sample_contact.save
 		@contact_import_params = YAML.load(File.read("spec/fixtures/contacts_import/contact_import.yml"))
 		Resque.inline = true
 		Workers::Import::ContactsImportWorker.new(@contact_import_params).perform

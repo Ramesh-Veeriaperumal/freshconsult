@@ -52,9 +52,11 @@ describe Solution::ArticlesController do
                                             :email => Faker::Internet.email,
                                             :active => 1,
                                             :role => 1,
-                                            :agent => 1,                                            
-                                            :privileges => 1
+                                            :agent => 1,
+                                            :role_ids => [@account.roles.find_by_name("Agent").id.to_s]                                         
                                             })
+    restricted_agent.privileges = 1
+    restricted_agent.save
     log_in(restricted_agent)
     get :show, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
     response.status.should eql 302
