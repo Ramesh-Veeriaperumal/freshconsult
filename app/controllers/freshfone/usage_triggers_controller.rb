@@ -9,9 +9,10 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
   def notify
     begin
       update_trigger
+      @ops_notifier = Freshfone::OpsNotifier.new(current_account, 
+        trigger.trigger_type)
       send trigger.trigger_type if respond_to?(trigger.trigger_type, true)
-      Freshfone::OpsNotifier.new(current_account, 
-        trigger.trigger_type, { :message => alert_message }).alert
+      @ops_notifier.alert_mail
     rescue Exception => e
       NewRelic::Agent.notice_error(e, params)
       #puts "Error - #{e} \n #{e.backtrace.join("\n\t")}"
@@ -27,12 +28,17 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
         # freshfone_account.suspend
         @alert_message = "SUSPEND FRESHFONE ACCOUNT. #{alert_message}"
       end
+      @ops_notifier.message = @alert_message
+    end
+
+    def daily_credit_threshold
+      @ops_notifier.alert_call
     end
 
     def overdraft?
       current_account.freshfone_credit.zero_balance? || 
-        Freshfone::Payment.find(:first, :conditions => ["created_at > ? ", 
-          trigger.created_at]).blank?
+        Freshfone::Payment.find(:first, :conditions => ["created_at > ? AND status = ?", 
+          trigger.created_at, true]).blank?
     end
 
     def alert_message
