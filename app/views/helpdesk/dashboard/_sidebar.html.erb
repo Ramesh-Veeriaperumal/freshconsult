@@ -1,7 +1,8 @@
 <% content_for :sidebar do %>
   <%= sidebar_content %>
 
-  <% if params[:action] != 'agent_status' && current_account.features?(:round_robin) and current_account.features?(:round_robin_revamp) and current_user.privilege?(:manage_account) and current_account.groups.round_robin_groups.any? %>
+  <% if params[:action] != 'agent_status' and current_account.features?(:round_robin) and 
+    current_user.privilege?(:admin_tasks) and current_account.groups.round_robin_groups.any? %>
   <div class="sidepanel pt10">
     <h3 class="title"><%= t('helpdesk.dashboard.round_robin.header') %></h3>
     <a href="/helpdesk/agent-status"><%= t('helpdesk.dashboard.round_robin.view_agent_status') %> </a>
