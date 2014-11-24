@@ -177,10 +177,6 @@ class User < ActiveRecord::Base
     self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
   end
 
-  def email
-    self[:email] #primary email maintained in both user and user_email so now taking from user
-  end
-
   def parent_id
     string_uc04.to_i
   end

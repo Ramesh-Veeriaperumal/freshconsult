@@ -12,7 +12,7 @@ class Monitorship < ActiveRecord::Base
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   ALLOWED_TYPES = [:forum, :topic]
-  ACTIONS = [:follow, :unfollow]
+  ACTIONS = [:follow, :unfollow, :is_following]
 
   before_create :set_account_id
 

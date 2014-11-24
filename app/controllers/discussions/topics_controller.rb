@@ -78,8 +78,8 @@ class Discussions::TopicsController < ApplicationController
 		if topic_saved && post_saved
 			respond_to do |format|
 				format.html { redirect_to discussions_topic_path(@topic) }
-				format.xml  { head 200 }
-				format.json { head 200 }
+				format.xml  {head :ok}
+				format.json  {head :ok}
 			end
 		else
 			respond_to do |format|
@@ -97,8 +97,8 @@ class Discussions::TopicsController < ApplicationController
 				redirect_to  @after_destroy_path 
 			end
 			format.js
-			format.xml  { head 200 }
-			format.json  { head 200 }
+		    format.xml  {head :ok}
+			format.json  {head :ok}
 		end
 	end
 

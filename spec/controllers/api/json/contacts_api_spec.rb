@@ -150,6 +150,10 @@ describe ContactsController do
     expected.should be(true)
   end
 
-  
+  it "should make user as agent" do
+    contact = add_new_user(@account,{})
+    put :make_agent, {:id => contact.id,:format => 'json'}
+    response.status.should eql("200 OK")
+  end
 
 end

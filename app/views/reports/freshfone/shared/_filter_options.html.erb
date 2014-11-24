@@ -23,12 +23,8 @@
               "data-placeholder".to_sym() => t('reports.freshfone.select_number')
             } %>
       <label class="control-label"><%=t('reports.freshfone.group')%></label>  
-      <%= select_tag :group_id, 
-              options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
-                         @group_id.map(&:to_i)), 
-              { :multiple => true,
-                :class => "select2 filter_item", 
-                     "data-placeholder".to_sym() => t('reports.freshfone.select_group') } %>
+
+      <input type="hidden" id='group_id' name='group_id' class = "select2 filter_item"/>
 
       <label class="control-label"><%=t('reports.freshfone.call_type')%></label>
       <%= select_tag :call_type, options_for_select(call_types,@call_type.to_i), 
