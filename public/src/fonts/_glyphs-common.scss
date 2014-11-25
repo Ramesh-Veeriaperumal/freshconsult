@@ -205,3 +205,9 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+// Chat conversation in ticket page
+.conversation_wrap{
+  &:after{
+    @extend .#{$font-class-name}comments:before;
+  }
+}
