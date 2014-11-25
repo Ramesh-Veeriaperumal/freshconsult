@@ -2,7 +2,6 @@ class Facebook::Core::Comment
   
   include Facebook::Core::Util
   include Facebook::KoalaWrapper::ExceptionHandler
-  include Social::Dynamo::Facebook
   include Facebook::Constants
   include Facebook::Util
   
