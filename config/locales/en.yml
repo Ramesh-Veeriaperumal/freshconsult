@@ -4493,8 +4493,8 @@ en:
       contacts: "Contact details of "
     czentrix:
       label: "C-Zentrix"
-      desc: "Lets you to integrate the C-Zentrix client into the Freshdesk."
-      helptext: "This is C-Zentrix helptext"
+      desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
       host_name: "Host ip:Port"
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
