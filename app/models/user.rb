@@ -163,7 +163,7 @@ class User < ActiveRecord::Base
   end
 
   def chk_email_validation?
-    (is_not_deleted?) and (user_emails.blank? || !email.blank?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
                           (mobile.blank? || !email.blank?)
   end
