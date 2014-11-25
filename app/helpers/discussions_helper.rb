@@ -174,25 +174,34 @@ module DiscussionsHelper
 		list.html_safe
 	end
 
-  def display_topic_icons(topic)
+  def display_widget_topic_icons(topic)
     output = ""
-    
-  	output << content_tag(:span, font_icon('lock-2').html_safe, {
+  	output << %(<div class='list-space'>#{font_icon('lock-2', :class => 'widget-icon-list').html_safe}
+  						#{t('portal.topic.locked')}</div>) if topic.locked?
+  	output << %(<div class='list-space'>#{font_icon('merge', :class => 'widget-icon-list').html_safe}
+  						#{t('portal.topic.merge')}<br>
+  						#{pjax_link_to(truncate(topic.merged_into.title, { :length => 27 }), discussions_topic_path(topic.merged_into), :class => 'indent-topic-merge-link', :title => topic.merged_into.title)}</div>) if topic.merged_topic_id?
+  	output << %(<div>#{font_icon('pushpin', :class => 'widget-icon-list').html_safe}
+  						#{t('portal.topic.sticky')}</div>) if topic.sticky?
+    output.html_safe
+  end
+
+  def display_topic_icons(topic)
+		output = ""
+  	output << content_tag(:span, font_icon('lock-2', :class => 'widget-icon-list').html_safe, {
   			:class => 'tooltip ml4',
   			:title => t('discussions.topics.locked')
 		}).html_safe if topic.locked?
   	
-  	output << content_tag(:span, font_icon('merge').html_safe, {
+  	output << content_tag(:span, font_icon('merge', :class => 'widget-icon-list').html_safe, {
   			:class => 'tooltip ml4',
   			:title => t('discussions.topics.merged')
 		}).html_safe if topic.merged_topic_id?
   	
-  	output << content_tag(:span, font_icon('pushpin').html_safe, {
+  	output << content_tag(:span, font_icon('pushpin', :class => 'widget-icon-list').html_safe, {
   			:class => 'tooltip ml4',
   			:title => t('discussions.topics.sticky')
 		}).html_safe if topic.sticky?
-
     output.html_safe
-  end
-
+   end
 end

@@ -7,7 +7,6 @@
 						<%= t(@first_post.spam? ? 'discussions.topics.spam' : 'discussions.topics.waiting_for_approval') %>
 				</span>
 			<% end %>
-			<%= display_topic_icons(@topic) %>
 			<%= @topic.title %>
 		</h1>
 		<% if @topic.published? %>

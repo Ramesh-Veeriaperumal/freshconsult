@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "62bb438409b0fa673fb9a60a199e2078870fff06eff506a459e1cf5fe3c1536a",
-    "current": "62bb438409b0fa673fb9a60a199e2078870fff06eff506a459e1cf5fe3c1536a"
+    "previous": "6609bcad8c5e7f7988f80773f414c60ccc07f967601c962308eb01a7dc39d203",
+    "current": "6609bcad8c5e7f7988f80773f414c60ccc07f967601c962308eb01a7dc39d203"
   },
   "fonts": [
-    "public/fonts/glyphs_62bb438409b0fa673fb9a60a199e2078.ttf",
-    "public/fonts/glyphs_62bb438409b0fa673fb9a60a199e2078.svg",
-    "public/fonts/glyphs_62bb438409b0fa673fb9a60a199e2078.woff",
-    "public/fonts/glyphs_62bb438409b0fa673fb9a60a199e2078.eot"
+    "public/fonts/glyphs_6609bcad8c5e7f7988f80773f414c60c.ttf",
+    "public/fonts/glyphs_6609bcad8c5e7f7988f80773f414c60c.svg",
+    "public/fonts/glyphs_6609bcad8c5e7f7988f80773f414c60c.woff",
+    "public/fonts/glyphs_6609bcad8c5e7f7988f80773f414c60c.eot"
   ],
   "glyphs": {
     "account": {
@@ -331,7 +331,7 @@
       "source": "public/glyphs/vectors/lock.svg"
     },
     "lock-2": {
-      "codepoint": 61815,
+      "codepoint": 61826,
       "source": "public/glyphs/vectors/lock-2.svg"
     },
     "lock-open": {

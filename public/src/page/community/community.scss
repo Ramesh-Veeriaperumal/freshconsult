@@ -237,3 +237,22 @@ body.community {
 .categories-list-page .reorder-content{
 		@include margin-left(15px);
 }
+
+.widget-icon-list{
+	color: #999;
+	cursor: default;
+	display: inline-block;
+	width: 16px;
+}
+
+.cursor-default{
+	cursor: default;
+}
+
+.list-space{
+	padding-bottom: 8px;
+}
+
+.indent-topic-merge-link{
+	padding-left: 19px;
+}

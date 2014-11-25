@@ -2866,7 +2866,9 @@ en:
       best_answer: Best Answer
       matching_results: "Matching Topics Found"
       in_forum: "In: %{forum_name}"
-      merge: "Merged into "
+      merge: "Merged into topic:"
+      locked: "Topic is locked"
+      sticky: "Topic is marked as sticky"
       merge_continue: "However, you can continue the conversation here: "
       merge_note:
         one: "Topic merged into this topic:"

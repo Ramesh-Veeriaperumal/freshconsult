@@ -254,7 +254,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .c-row{
 	@include pie-clearfix;
-	padding-top:10px;
+	padding:10px;
 	border-top:1px solid $row-border-color;
   	.help-text{ font-size: 0.96em; }
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
@@ -613,7 +613,7 @@ hr.content-divider{
 #sticky-topic-icon{
 	float: left;
 	padding-top: 5px;
-	padding-right: 2px;
+	padding-right: 5px;
 }
 
 #sticky-small-topic-icon{

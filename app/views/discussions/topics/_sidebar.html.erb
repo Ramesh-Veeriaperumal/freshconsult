@@ -1,6 +1,6 @@
 <div class="rightcontent">
 
-	<%= render :partial => "discussions/topics/widgets/merged_topic_note" if @topic.merged_topic_id.present?  %>
+	<%= render :partial => "discussions/topics/widgets/note" if @topic.merged_topic_id? || @topic.locked? || @topic.sticky? %>
 
 	<%= render :partial => "discussions/topics/widgets/merged_topics_list" if @topic.merged_topics.present?  %>
 
