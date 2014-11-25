@@ -34,7 +34,7 @@ module Facebook
             @app_id = FacebookConfig::APP_ID
             @page_token = page.page_token
           end
-          @graph = Koala::Facebook::GraphAndRestAPI.new(@page_token) if @page_token
+          @graph = Koala::Facebook::API.new(@page_token) if @page_token
         end
       end
 

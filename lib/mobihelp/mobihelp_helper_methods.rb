@@ -25,7 +25,7 @@ module Mobihelp::MobihelpHelperMethods
         app_secret = authKey.split(":")[1] 
         if app_key.blank? or app_secret.blank?
           render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS])
-          return;
+          return
         end
         @mobihelp_app = fetch_app_from_cache(current_account, app_key)
       end
@@ -70,10 +70,10 @@ module Mobihelp::MobihelpHelperMethods
     def generate_mobile_config
       app_config = @mobihelp_app.config
       config = {
-        :breadcrumb_count => app_config[:bread_crumbs],
-        :debug_log_count => app_config[:debug_log_count],
+        :breadcrumb_count => Mobihelp::App::DEFAULT_BREADCRUMBS_COUNT,
+        :debug_log_count => Mobihelp::App::DEFAULT_LOGS_COUNT,
         :solution_category => app_config[:solutions],
-        :app_review_launch_count => app_config[:app_review_launch_count],
+        :app_review_launch_count => Mobihelp::App::DEFAULT_APP_REVIEW_LAUNCH_COUNT,
         :acc_status => current_account.subscription.paid_account?
       }
       config[:app_store_id] = app_config[:app_store_id] if @mobihelp_app.platform == Mobihelp::App::PLATFORM_ID_BY_KEY[:ios]

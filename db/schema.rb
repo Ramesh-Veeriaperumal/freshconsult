@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141113114722) do
+ActiveRecord::Schema.define(:version => 20141118111038) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -735,6 +735,7 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.datetime "expires_on"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
@@ -785,14 +786,15 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "direct_dial_number"
+    t.integer  "group_id"
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
-  add_index "freshfone_calls", ["account_id", "customer_number"], :name => "index_freshfone_calls_on_account_id_and_customer_number", :length => {"account_id"=>nil, "customer_number"=>16}
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "freshfone_calls", ["account_id", "notable_type", "notable_id"], :name => "index_ff_calls_on_account_id_notable_type_id"
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
@@ -1868,9 +1870,13 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.datetime "updated_at"
     t.string   "msg_type",                      :default => "post"
     t.string   "thread_id"
+    t.text     "post_attributes"
+    t.string   "ancestry"
   end
 
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
+  add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id" => nil, "ancestry" => 30}
+  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id" => nil, "post_id" => 30}
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"
@@ -2501,10 +2507,27 @@ ActiveRecord::Schema.define(:version => 20141113114722) do
     t.integer  "import_id",    :limit => 8
     t.integer  "user_votes",                :default => 0
     t.boolean  "published",                 :default => false
+    t.integer  "merged_topic_id", :limit => 8
+    t.integer  "int_tc01"
+    t.integer  "int_tc02"
+    t.integer  "int_tc03"
+    t.integer  "int_tc04"
+    t.integer  "int_tc05"
+    t.integer  "long_tc01",       :limit => 8
+    t.integer  "long_tc02",       :limit => 8
+    t.datetime "datetime_tc01"
+    t.datetime "datetime_tc02"
+    t.boolean  "boolean_tc01",                 :default => false
+    t.boolean  "boolean_tc02",                 :default => false
+    t.string   "string_tc01"
+    t.string   "string_tc02"
+    t.text     "text_tc01"
+    t.text     "text_tc02"
   end
 
   add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
+  add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"

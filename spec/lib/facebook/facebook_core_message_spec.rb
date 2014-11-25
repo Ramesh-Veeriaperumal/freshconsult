@@ -15,7 +15,7 @@ describe Facebook::Core::Message do
     msg_id = thread_id + 2
     
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(sample_dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
     fb_message = Facebook::Core::Message.new(@fb_page)
     fb_message.fetch_messages
@@ -32,7 +32,7 @@ describe Facebook::Core::Message do
     msg_id = thread_id + 2
     
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(sample_dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
     fb_message = Facebook::Core::Message.new(@fb_page)
     fb_message.fetch_messages
@@ -44,7 +44,7 @@ describe Facebook::Core::Message do
     actor_id = thread_id + 10
     msg_id = thread_id + 20
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(sample_dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
     fb_message = Facebook::Core::Message.new(@fb_page)
     fb_message.fetch_messages

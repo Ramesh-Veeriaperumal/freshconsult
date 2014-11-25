@@ -208,6 +208,7 @@ javascripts:
     - public/javascripts/app/discussions/topic_list.js
     - public/javascripts/app/discussions/topic.js
     - public/javascripts/app/discussions/moderation.js
+    - public/javascripts/app/discussions/merge.js
 
   gadget:
     - public/javascripts/frameworks/jquery.js
@@ -284,6 +285,7 @@ javascripts:
     - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/components/call_transfer.js
+    - public/javascripts/freshfone/freshfone_logger.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js
@@ -309,6 +311,8 @@ javascripts:
   freshfone_welcome_page:
     - public/javascripts/freshfone/freshfone_admin_welcome_page.js
 
+  freshfonereports:
+    - public/javascripts/app/freshfonereports.js
   soundmanager:
     - public/javascripts/sound/soundmanager2-jsmin.js
 
@@ -458,6 +462,9 @@ javascripts:
 
   admin:
     - public/javascripts/admin/ui_search.js
+
+  client_logger:
+    - public/javascripts/client_logger.js
 
 <% 
   # Adding specific javascript assets to the package list

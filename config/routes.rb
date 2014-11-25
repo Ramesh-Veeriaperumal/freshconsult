@@ -206,6 +206,7 @@
   end
   map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
   map.connect '/search/all', :controller => 'search/home', :action => 'index'
+  map.connect '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
   map.connect '/search/topics.:format', :controller => 'search/forums', :action => 'index'
   map.connect '/mobile/tickets/get_suggested_solutions/:ticket.:format', :controller => 'search/solutions', :action => 'related_solutions'
 
@@ -534,6 +535,7 @@
       :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
 
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
+    discussion.resources :merge_topic, :collection => { :select => :post, :review => :put, :confirm => :post, :merge => :put }
   end
 
   map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'create', :conditions => { :method => :post }
@@ -560,7 +562,9 @@
     end
   end
 
-  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle', :method => :post
+
+  map.view_monitorship 'discussions/:object/:id/subscriptions/is_following.:format', :controller => 'monitorships', :action => 'is_following', :conditions => {:method => :get}
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle', :conditions => {:method => :post}
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal
@@ -600,7 +604,7 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
-      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put }
+      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put}
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
@@ -681,6 +685,7 @@
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/openid/google', :controller => 'google_login', :action => 'marketplace_login'
   map.route '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 

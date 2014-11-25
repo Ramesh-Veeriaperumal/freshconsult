@@ -400,9 +400,9 @@
 // 														ticket merge css 
 // ------------------------------------------------------------------------------------------------------------
 
-.ticket-merge{
+.ticket-merge, .topic-merge{
 	overflow: hidden;
-	.merge-ticket-info{
+	.merge-ticket-info, .merge-topic-info{
 		font-size:11px;
 	}
 	.ok{
@@ -442,7 +442,7 @@
 		width: 89%;
 		@include padding-right(20px);
 	}
-	#merge-ticket{
+	#merge-ticket, .merge-topic{
 		margin-top: 5px;
 		@include margin-left(10px);
 		a.item_info{
@@ -533,8 +533,9 @@
 			}
 		}
 	}
-	.ticketdiv{
-		#merge-ticket{
+
+	.ticketdiv, .contactdiv{
+		#merge-ticket, .merge-topic{
 			margin-top: 2px;
 			span.item_info{
 				max-width:98%;
@@ -543,7 +544,6 @@
 				display: block;
 			}
 		}
-
 	}
 	li.clicked{
 		cursor: default;
@@ -626,6 +626,45 @@
 			@include right(13px);
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------------------
+// 														topic merge css (to override ticket merge css) 
+// ------------------------------------------------------------------------------------------------------------
+.topic-merge{
+	.merge-cont{
+		width: 350px;
+	}
+	.merge-topic{
+		a.item_info{
+			max-width: 98%;
+		}
+	}
+	.note-height-adjust{
+		.source-note{
+			margin-top: 16px;
+			.arrow-left{
+				top: 90px;
+			}
+		}
+	}
+	.search_merge{
+		width: 335px;
+		padding-right: 26px;
+	}
+	#mergebox{
+		.search-content{
+			width: 370px;
+			margin-top: -3px;
+			.searchicon{
+				top: 99px;
+				right: 32px;
+			}
+		}
+	}
+}
+.target-topic-merge-note{
+	height: 60px;
 }
 
 // ------------------------------------------------------------------------------------------------------------

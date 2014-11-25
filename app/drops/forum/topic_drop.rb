@@ -3,7 +3,7 @@ class Forum::TopicDrop < BaseDrop
   
   include ActionController::UrlWriter
   
-  liquid_attributes << :title << :posts_count
+  liquid_attributes << :title << :posts_count << :merged_topic_id
 
   def context=(current_context)    
     current_context['paginate_url'] = support_discussions_topic_path(source) unless source.new_record?
@@ -76,6 +76,34 @@ class Forum::TopicDrop < BaseDrop
     source.forum
   end
 
+  def merged?
+  	source.merged_topic_id.present?
+  end
+
+  def parent
+    portal_account.topics.find(source.merged_topic_id)
+  end
+
+  def merged_topics
+    @merged_topics ||= source.merged_topics
+  end
+
+  def has_merged_topics?
+    merged_topics.present?
+  end
+
+  def merged_into
+    @merged_into ||= source.merged_into
+  end
+
+  def merged_topic_url
+    support_discussions_topic_path(source.merged_topic_id)
+  end
+
+  def topic_url
+    support_discussions_topic_path(source.id)
+  end
+
   def voted_by_current_user
     source.voted_by_user? portal_user
   end
@@ -122,7 +150,6 @@ class Forum::TopicDrop < BaseDrop
   end
   
   def answered?
-    Rails.logger.debug "Checking for answered?"
     source.answered?
   end
 

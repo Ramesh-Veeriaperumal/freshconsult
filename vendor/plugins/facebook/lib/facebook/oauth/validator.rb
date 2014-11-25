@@ -3,7 +3,7 @@ module Facebook
     class Validator
 
       def self.has_permissions? token
-        fb_user = Koala::Facebook::GraphAndRestAPI.new(token)
+        fb_user = Koala::Facebook::API.new(token)
         permissions = fb_user.get_connections('me','permissions').first
         (Facebook::Oauth::Constants::PAGE_TAB_PERMISSION - permissions.keys).empty?
       end

@@ -22,6 +22,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
 
+  before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
@@ -622,8 +623,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def new
     @item.build_ticket_body
-    unless params[:topic_id].nil?
-      @topic = Topic.find(params[:topic_id])
+    
+    unless @topic.nil?
       @item.subject     = @topic.title
       @item.description_html = @topic.posts.first.body_html
       @item.requester   = @topic.user
@@ -883,7 +884,17 @@ class Helpdesk::TicketsController < ApplicationController
 
   
   private
-  
+
+    def find_topic
+    	@topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
+    end
+
+    def redirect_merged_topics
+      return if params[:topic_id].nil? || @topic.blank? || !@topic.merged_topic_id?
+      flash[:notice] = t("portal.tickets.merged_topic_note")
+      redirect_to discussions_topic_path(params[:topic_id])
+    end
+
     def supported_view
       [:all, :open, :overdue, :due_today, :on_hold, :new, :new_and_my_open, :my_groups_open]
     end

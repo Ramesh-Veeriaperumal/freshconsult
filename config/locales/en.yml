@@ -594,15 +594,10 @@ en:
           description: Application Description
           platform: Platform
           configurations: SDK Configurations
-          bread_crumbs: Breadcrumbs
-          bread_crumbs_info: Breadcrumbs will help you retrace the user’s steps
-          debug_log_count: Debug Log Count
-          debug_log_count_info: Debug logs includes the log information from logcat for your application
           solutions: Solution Category
           solutions_info: The Solution Category you select will be shown in the App Support 
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
-          not_included: is not included in the list
           should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a Solution Category
@@ -611,10 +606,6 @@ en:
           app_key: App Key
           app_secret: App Secret
           integration_details: Integration Details
-          app_review: Prompt for App Review
-          app_review_info: This will automatically launch the review prompt after the No. of launches configured
-          app_review_launch_count: After %{count} Launches
-          app_review_launch_never: Never
         index:
           title: Mobihelp Apps
           new_app: New App
@@ -1881,6 +1872,9 @@ en:
       topic_stamp_9:
         short: "{{user_path}} has marked the forum topic as 'Unsolved'"
         long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Unsolved'"
+      topic_merge:
+        short: "{{user_path}} has merged a topic"
+        long: "{{user_path}} has merged the topic {{notable_path}} into {{target_topic_path}}"        
     tickets:
       assigned_to_nobody:
         short: Assigned to 'None' by {{user_path}}
@@ -2872,6 +2866,11 @@ en:
       best_answer: Best Answer
       matching_results: "Matching Topics Found"
       in_forum: "In: %{forum_name}"
+      merge: "Merged into "
+      merge_continue: "However, you can continue the conversation here: "
+      merge_note:
+        one: "Topic merged into this topic:"
+        other: "Topics merged into this topic:"
     topic_vote:
       you:
         one: "You"
@@ -2901,6 +2900,7 @@ en:
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
     tickets:
+      merged_topic_note: "Merged topic cannot be converted into a ticket."
       export: "Export tickets"
       submit_export: "Export"
       export_ticket_data: "Export tickets"
@@ -3198,7 +3198,6 @@ en:
     agent_notification: Agent Notification
     agent_notifications: Agent Notifications
     subject: Subject
-    do_not_delete_ticket_id_from_subject: To capture customer replies as ticket conversations, the ticket ID placeholder should not be removed from the subject line
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1
@@ -4127,7 +4126,7 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
+        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
@@ -4937,6 +4936,8 @@ en:
         options:
           incoming: "Incoming"
           outgoing: "Outgoing"
+          all_groups: "All Groups"
+          unassigned: Unassigned
         range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
@@ -6179,9 +6180,15 @@ en:
       spam: Spam
       waiting_for_approval: Unpublished
       locked: Locked
+      locked_label: Topic is locked for comments
+      merged_label: Topic is merged into another topic
+      sticky_label: Topic is marked as sticky
+      merged: Merged
+      sticky: Sticky
       reply: Reply
       add_note: Add note
       mark_as_spam: Mark as Spam
+      merge_topic: Merge Topic
       close_topic: Lock Topic
       reopen_topic: Reopen Topic
       edit_topic: Edit Topic
@@ -6264,6 +6271,26 @@ en:
         reply:
           title: Reply
           posted: "replied to"
+    topic_merge:
+      merge_title: "Merge Topics"
+      continue: "Continue"
+      cancel: "Cancel"
+      please_wait: "Please Wait..."
+      mark_primary: "Mark as primary"
+      remove: "Remove this topic"
+      detailed_note: "Reason for Merge"
+      confirm_and_merge: "Confirm and Merge"
+      add_note: Reason for Merge
+      note_saved : Note saved
+      add: Add
+      warning: "Topics once merged cannot be unmerged"
+      merge_notification: "This topic is already locked or merged. Please refresh the page."
+      merge_error_for_locked: "This topic is locked for editing as it has been merged into <a href='%{topic_link}'>%{title}</a>."
+      target_note_description:
+        one: "%{source_topics} has been merged into %{target_topic_title}. "
+        other: "%{source_topics} have been merged into the topic %{target_topic_title}."
+      merge_topic_list_status_created_at: "in %{forum}<br />by %{username}, <span class='emphasize'>%{time_ago} ago</span>"
+      title_placeholder: "Search topics to merge"
   link_with_marketplace: Link with Google Marketplace
   google_signup:
     associate_google:

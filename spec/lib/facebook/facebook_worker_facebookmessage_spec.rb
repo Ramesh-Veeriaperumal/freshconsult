@@ -14,17 +14,17 @@ describe Facebook::Worker::FacebookMessage do
     
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed, [])
+    Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_feed, [])
     sample_feed = sample_facebook_feed(feed_id)
     sample_feed["type"] = "video"
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id),  sample_feed)  
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id),  sample_feed)  
     
     thread_id = Time.now.utc.to_i
     actor_id = thread_id + 1
     msg_id = thread_id + 2
     
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(sample_dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
     Facebook::Worker::FacebookMessage.perform({:account_id => @account.id})
     

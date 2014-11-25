@@ -1,5 +1,6 @@
 var FreshfoneUser,
 	userStatus = { OFFLINE : 0, ONLINE : 1, BUSY : 2};
+	userStatusReverse = { 0 : 'OFFLINE', 1: 'ONLINE', 2: 'BUSY'};
 
 (function ($) {
     "use strict";
@@ -171,6 +172,7 @@ var FreshfoneUser,
 				error: function (data) {
 					self.status = self.previous_status;
 					if ($loading_element) { $loading_element.removeClass('header-spinner'); }
+					ffLogger.logIssue("Unable get Capability Token for "+ CURRENT_USER.id, { "data" : data });
 				}
 			});
 		},
@@ -195,8 +197,13 @@ var FreshfoneUser,
 			var CapabilityToken = token || getCookie('freshfone');
 			try {
 				Twilio.Device.setup(CapabilityToken);
+				ffLogger.logIssue("Freshfone Device Config", {
+					"Capabilitytoken" : CapabilityToken, "Time Stamp": Date().toString()
+				});
 			} catch (e) {
-				//console.log(e);
+				ffLogger.logIssue("Freshfone Device Config Failure", {
+					"Capabilitytoken" : CapabilityToken, "Time Stamp": Date().toString()
+				});
 			}
 		},
 
@@ -240,8 +247,13 @@ var FreshfoneUser,
 						self.status = self.previous_status;
 					} else {
 						self.freshfonecalls.setCallSid(data.call_sid); 
-					} },
-				error: function (data) { self.status = self.previous_status; }
+					} 
+					ffLogger.log({'action': "Getting CallSid from in_Call ajax", 'params': data});
+				},
+				error: function (data) { 
+					self.status = self.previous_status; 
+					ffLogger.logIssue("Call Publish Failure", { "data" : data });
+				}
 			});
 		}
 	};

@@ -1084,15 +1084,10 @@ cs:
           description: "Popis aplikace"
           platform: Platforma
           configurations: "Konfigurace SDK"
-          bread_crumbs: "\"Drobečková navigace\""
-          bread_crumbs_info: "\"Drobečková navigace\" vám pomůže vysledovat jak uživatel postupoval"
-          debug_log_count: "Počet ladicích logů"
-          debug_log_count_info: "Ladicí logy obsahují informace z \"logcat\" vaší apliakce"
           solutions: "Kategorie řešení"
           solutions_info: "Zvolená kategorie řešení bude zobrazena v App Support"
           app_store_id: "ID App Store"
           app_store_id_info: "ID do AppStore bude použito pro přesměrování uživatelů do AppStore pro posouzení"
-          not_included: "není součástí tohoto seznamu"
           should_be_unique: "mělo by být jedinečné"
           select_a_platform: "Zvolte platformu"
           select_a_solution_category: "Zvolte kategorii řešení"
@@ -1101,10 +1096,6 @@ cs:
           app_key: "Klíč aplikace"
           app_secret: "Tajemství aplikace"
           integration_details: "Detaily integrace"
-          app_review: "Vyvolání posouzení aplikace"
-          app_review_info: "Toto automaticky vyvolá posouzení aplikací po konfigurovaném Počtu vyvolání"
-          app_review_launch_count: "Po %{count} vyvolání(ch)"
-          app_review_launch_never: Nikdy
         index:
           title: "Aplikace MobiHelp"
           new_app: "Nová aplikace"
