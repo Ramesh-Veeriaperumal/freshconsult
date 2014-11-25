@@ -1,10 +1,11 @@
 class Social::FacebookPage < ActiveRecord::Base
+  include MixpanelWrapper
 
   before_create :create_mapping
   before_destroy :unregister_stream_subscription
   after_destroy :remove_mapping
 
-  after_commit_on_create :subscribe_realtime
+  after_commit_on_create :subscribe_realtime, :send_mixpanel_event
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
 
@@ -61,6 +62,10 @@ class Social::FacebookPage < ActiveRecord::Base
                        :page_id => self.page_id
       })
     end
+  end
+
+  def send_mixpanel_event
+    send_to_mixpanel(self.class.name)
   end
 
 end
