@@ -15,7 +15,7 @@
 			<img src="<%= profile_image_user_url(@user.id, :host => @host)%>" width="30" height="30" />
 		</div> 
 		<div class="user_identity">
-			<b class="user_name"><%= @user.name %></b><br><%= @topic.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
+			<b class="user_name"><%= @user.name %></b><br><%= @topic.user_readable_created_at %>
 		</div>
 		<br>
 		<div class="actual_content">

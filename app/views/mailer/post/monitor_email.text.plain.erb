@@ -2,7 +2,7 @@ New Reply on topic "<%= @post.topic.title %>"
 
 <%= "_" * 100 %>
  
-<%= @user.name %> said on <%= @post.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
+<%= @user.name %> said on <%= @post.user_readable_created_at %>
 
 <%= @post.body %>
 
