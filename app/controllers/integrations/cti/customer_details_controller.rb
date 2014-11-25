@@ -25,7 +25,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
             json << sep + tic.to_json({}, false)[19..-2]; sep=","
             }
       href = "/contacts/" + (usr.id).to_s
-      usr_hash = { :name => usr.name, :email => usr.email, :mobile => usr.mobile, :description => usr.description,
+      usr_hash = { :name => usr.name, :email => usr.email, :mobile => mobile_number, :description => usr.description,
       :job_title => usr.job_title, :company_name => usr.company_name, :tickets => json,:avatar => avatar,:href => href}
       
     end
