@@ -6,9 +6,9 @@ class Social::FacebookPage < ActiveRecord::Base
   before_create :create_mapping
   before_destroy :unregister_stream_subscription
   after_destroy :remove_mapping
-  after_commit_on_destroy :delete_default_streams
+  # after_commit_on_destroy :delete_default_streams
 
-  after_commit_on_create :subscribe_realtime, :build_default_streams, :send_mixpanel_event
+  after_commit_on_create :subscribe_realtime, :send_mixpanel_event
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
 

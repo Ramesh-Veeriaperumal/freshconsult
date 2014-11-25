@@ -1,6 +1,6 @@
 class Social::FacebookStream < Social::Stream
   
-  after_commit_on_create :populate_ticket_rule
+  # after_commit_on_create :populate_ticket_rule
     
   private   
   def populate_ticket_rule
