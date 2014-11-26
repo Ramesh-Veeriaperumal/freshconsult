@@ -23,7 +23,10 @@ en:
     abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
     month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
     abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
-    order: [ :year, :month, :day ]
+    order: 
+      - :year
+      - :month
+      - :day
   datetime:
     distance_in_words:
       about_x_hours:
@@ -2155,13 +2158,13 @@ en:
     info2: No folders in this category
     save_and_create: Save and Create Another
     delete: "Important: Deleting a category will delete all the folders and articles in it."
-    size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
+    size: "%{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted."
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
     delete: "Important: Deleting a category will delete all the forums and topics in it."
-    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
+    size: "%{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted."
   billed_monthly: Billed monthly
   users:
     activations:

@@ -4817,7 +4817,6 @@ es-LA:
         helpcard: 
             heading: " Configuración de comandos de correo electrónico"
             tour: "Ayúdame a comprender los comandos de correo electrónico"
-            info1: "Al responder a los correos electrónicos de notificación desde tu buzón, puedes incluir \"Comandos de correo electrónico\" para indicarle a Freshdesk que lleve a cabo determinadas acciones en un ticket. Freshdesk borrará el texto Comando de correo electrónico y el solicitante no lo verá, mientras que el resto del texto se convertirá en parte de la conversación."
             info2: "Los comandos de correo electrónico deben tener la sintáxis correcta y deben colocarse dentro del texto delimitador preconfigurado. Por ejemplo, el comando - \"@simonsays agent : John Roberts Status:Resolved@simonsays\" asignará el ticket al agente John Roberts y marcará el ticket como resuelto."
             info3: "El resto del contenido del correo electrónico se agregará a Freshdesk como una conversación y también se enviará al solicitante por correo electrónico."
             ticket_type_example: "Pregunta"

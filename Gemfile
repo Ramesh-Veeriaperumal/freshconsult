@@ -13,8 +13,8 @@ gem "mysql2", "~> 0.3.0"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 3.0"
-gem "country_select", git: "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
-gem "activemerchant", git: "git://github.com/Shopify/active_merchant", :tag => 'v1.43.1'
+gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
+gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag => 'v1.43.1'
 # Please do not update acts_as_list unless this issue is resolved https://github.com/swanandp/acts_as_list/issues/137
 gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
@@ -23,12 +23,16 @@ gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototyp
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
-gem 'sneaky-save', git: 'git://github.com/partyearth/sneaky-save.git'
+gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
+
+#for ruby ~> 2.1.0 upgrade
+gem 'iconv', '~> 1.0.2', :platform => [:mri_20, :mri_21]
 
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
-  gem "debugger", "~> 1.6.8"
+  # Commenting out for ruby ~> 2.1.0 upgrade
+  # gem "debugger", "~> 1.6.8"
   gem 'pry'
   gem 'binding_of_caller'
 end
@@ -194,7 +198,7 @@ group :test do
   gem "rspec", '~> 3.0.0'
   gem "rspec-rails", '~> 3.0.0'
   gem "spork", "~> 0.9.0"
-  gem "mocha", "~> 0.13.0", require: false
+  gem "mocha", "~> 0.13.0", :require => false
   gem 'rspec-collection_matchers', '1.0.0'
   gem 'rack-test', '~> 0.6.2'
   gem "rr", "~> 1.1.0"

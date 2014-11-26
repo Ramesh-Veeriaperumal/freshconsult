@@ -44,3 +44,11 @@ Resque.before_first_fork do
     end
   end
 end
+
+Resque.before_fork do
+  if defined?(GC)
+    t0 = Time.now
+    GC.start
+    puts "Out-Of-Bound GC finished in #{Time.now - t0} sec"
+  end
+end
