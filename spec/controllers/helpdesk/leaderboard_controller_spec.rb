@@ -136,8 +136,8 @@ RSpec.describe Helpdesk::LeaderboardController do
 		response.body.should =~ /Leaderboard/
 		response.body.should =~ /Sharpshooter/
 		response.body.should =~ /Customer Wow Champion/
-		response.body.should =~ /#{@agent_1.name}/
-		response.body.should =~ /#{@agent_2.name}/
+		response.body.should =~ /#{ERB::Util.html_escape @agent_1.name}/
+		response.body.should =~ /#{ERB::Util.html_escape @agent_2.name}/
 
 		#check if agent_1 is a Most Valuable Player
 		assigns[:mvp_scorecard].first.user_id.should eql @agent_1.id

@@ -19,6 +19,7 @@ describe ContactsController do
     @active_contact.save
     @new_company = FactoryGirl.build(:company)
     @new_company.save
+    Delayed::Job.delete_all
   end
 
   after(:each) do

@@ -63,7 +63,7 @@ describe ContactMergeController do
     Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
     # tweet.tweetable.destroy
@@ -101,7 +101,7 @@ describe ContactMergeController do
     Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
     # tweet.tweetable.destroy
@@ -127,12 +127,12 @@ describe ContactMergeController do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true)
     Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(facebook_feed)
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))  
+    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id))
     fb_posts = Social::FacebookPosts.new(@fb_page)
     fb_posts.fetch
     post1 = @account.facebook_posts.find_by_post_id(feed_id)
     post1.should_not be_nil
-    post1.is_ticket?.should be_true
+    post1.is_ticket?.should be true
     ticket = post1.postable
     user = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id]) #this is the facebook user
     ticket.description.should eql facebook_feed.first[:message]
@@ -158,7 +158,7 @@ describe ContactMergeController do
     fb_posts.fetch
     post1 = @account.facebook_posts.find_by_post_id(feed_id)
     post1.should_not be_nil
-    post1.is_ticket?.should be_true
+    post1.is_ticket?.should be true
     ticket = post1.postable
     user = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id])
     ticket.description.should eql facebook_feed.first[:message]
@@ -244,7 +244,7 @@ describe ContactMergeController do
     fb_posts.fetch
     post1 = @account.facebook_posts.find_by_post_id(feed_id)
     post1.should_not be_nil
-    post1.is_ticket?.should be_true
+    post1.is_ticket?.should be true
     ticket = post1.postable
     user4 = @account.users.find_by_fb_profile_id(facebook_feed.first[:actor_id])
     ticket.description.should eql facebook_feed.first[:message]
@@ -269,7 +269,7 @@ describe ContactMergeController do
     Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
     # tweet.tweetable.destroy

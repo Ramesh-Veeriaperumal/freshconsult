@@ -38,7 +38,7 @@ describe Solution::CategoriesController do
 
   it "should render a new category form" do 
     get :new 
-    response.body.should =~ /New solution category/
+    response.body.should =~ /New solution category/i
     response.should render_template("solution/categories/new")
   end
 
@@ -64,7 +64,7 @@ describe Solution::CategoriesController do
 
   it "should render new page if category create fails" do 
     post :create, :solution_category => {:description => "#{Faker::Lorem.sentence(3)}"}
-    response.body.should =~ /New solution category/
+    response.body.should =~ /New solution category/i
     response.should render_template("solution/categories/new")
   end
 
@@ -91,7 +91,7 @@ describe Solution::CategoriesController do
       :solution_category => { :name => nil,
                             :description => "#{Faker::Lorem.sentence(3)}"
                           }
-    response.body.should =~ /Edit solution category/ 
+    response.body.should =~ /Edit solution category/i
     response.should render_template("solution/categories/edit")                         
   end
 
@@ -107,7 +107,7 @@ describe Solution::CategoriesController do
 
   it "should edit a solution category" do
     get :edit, :id => @test_category.id
-    response.body.should =~ /Edit solution category/
+    response.body.should =~ /Edit solution category/i
     name = Faker::Name.name
     put :update, :id => @test_category.id, 
       :solution_category => { :name => "#{name}",

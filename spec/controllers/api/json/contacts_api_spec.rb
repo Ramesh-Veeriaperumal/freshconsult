@@ -109,7 +109,7 @@ RSpec.describe ContactsController do
 	 	check_phone  = contact.phone
 	 	get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'json'}
 	 	result = parse_json(response)
-	 	expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+	 	expected = (response.status == 200 ) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 	 	expected.should be(true)
 	end
 
@@ -126,7 +126,7 @@ RSpec.describe ContactsController do
 	 	check_mobile  = contact.mobile
 	 	get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'json'}
 	 	result = parse_json(response)
-	 	expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+	 	expected = (response.status == 200) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 	 	expected.should be(true)
 	end
 

@@ -17,10 +17,10 @@ describe ContactsController do
     enable_mue_key(@account)
     @account.features.multiple_user_emails.create
     @account.features.contact_merge_ui.create
-    @sample_contact = Factory.build(:user, :account => @acc, :phone => "23423423434", :email => Faker::Internet.email,
+    @sample_contact = FactoryGirl.build(:user, :account => @acc, :phone => "23423423434", :email => Faker::Internet.email,
                               :user_role => 3)
     @sample_contact.save
-    @active_contact = Factory.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
+    @active_contact = FactoryGirl.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
     @active_contact.save
   end

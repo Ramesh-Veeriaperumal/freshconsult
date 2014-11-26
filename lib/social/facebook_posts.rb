@@ -75,7 +75,7 @@ class Social::FacebookPosts
     Rails.logger.debug "get_html_content"
     post = @rest.get_object(post_id)
     post.symbolize_keys!
-    html_content =  CGI.escapeHTML(post[:message]).to_s
+    html_content =  CGI.escapeHTML(post[:message].to_s).to_s
     if "video".eql?(post[:type])
 
       desc = post[:description] || ""

@@ -127,7 +127,7 @@ describe AgentsController do
                                 :roleValidate => ""
                               }
                   }
-    response.body.should =~ /A user must be associated with atleast one role/
+    response.body.should =~ /Email has already been taken/
     created_user = @account.users.find_by_name(test_name)
     created_user.should_not be_an_instance_of(User)
   end

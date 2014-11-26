@@ -118,7 +118,7 @@ RSpec.describe GroupsController do
 		@test_group.escalate_to.should eql(@agent.id)
 		@test_group.ticket_assign_type.should eql 0
 		agent_list = [ @agent.id, @user_1.id ]
-		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
+		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }.uniq
 		(agent_list.sort == agents_in_group.sort).should be true
 		value = get_others_redis_list(@test_group.round_robin_key)
 		value.should be_empty

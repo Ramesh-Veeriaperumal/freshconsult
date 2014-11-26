@@ -96,6 +96,7 @@ module AccountHelper
   end
 
   def restore_default_feature feature
+    @account.reload
     @account.features.send(feature).create unless @account.features_included?(feature.to_sym)
   end
 

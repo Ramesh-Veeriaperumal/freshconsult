@@ -17,7 +17,7 @@ describe Helpdesk::CommonsController do
 	it "should list all agents added in that groups" do
 		get :group_agents, :id => @test_group.id
 		response.body.should =~ /#{@agent.id}/
-		response.body.should =~ /#{@agent.name}/
+		response.body.should =~ /#{ERB::Util.html_escape(@agent.name)}/
 		response.should be_success
 	end
 

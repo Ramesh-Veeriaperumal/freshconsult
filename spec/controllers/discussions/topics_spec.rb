@@ -13,7 +13,7 @@ RSpec.describe TopicsController do
 	end
 
 	after(:all) do
-		@category.destroy
+		@category.destroy if @category
 	end
 
 	describe "Setting Default stamps for the Topics" do
