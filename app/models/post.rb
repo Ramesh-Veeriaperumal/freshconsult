@@ -145,8 +145,4 @@ class Post < ActiveRecord::Base
     support_discussions_topic_url(topic, :host => account.host)
   end
 
-  def user_readable_created_at
-    created_at.in_time_zone.strftime("%a, %b %e, %Y at %l:%M %p")
-  end
-
 end

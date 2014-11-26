@@ -2,12 +2,10 @@ class PostMailer < ActionMailer::Base
 
   include Helpdesk::NotifierFormattingMethods
 	include Mailbox::MailerHelperMethods
-  include TimeZoneHelper
 
-  def monitor_email(recipient, post, user, portal, sender, host)
+  def monitor_email(emailcoll, post, user, portal, sender, host)
     configure_mailbox(user, portal)
-    set_time_zone(recipient)
-    recipients    recipient.email
+    recipients    emailcoll
     from          sender
     subject       "[New Reply] in #{post.topic.title}"
     sent_on       Time.now

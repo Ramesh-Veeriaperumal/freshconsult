@@ -4,7 +4,7 @@ New Topic in "<%= @topic.forum.name %>"
  
 <%= @topic.title %>
 By: <%= @user.name %> 
-	on <%= @topic.user_readable_created_at %>
+	on <%= @topic.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
 
 <%= @topic.posts.first.body %>
 

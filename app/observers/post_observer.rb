@@ -32,7 +32,7 @@ class PostObserver < ActiveRecord::Observer
   def send_monitorship_emails(post)
     post.topic.monitorships.active_monitors.all(:include => :portal).each do |monitorship|
     	next if monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
-    	PostMailer.deliver_monitor_email!(monitorship.user, post, post.user, monitorship.portal, *monitorship.sender_and_host)
+    	PostMailer.deliver_monitor_email!(monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
     end
   end
 

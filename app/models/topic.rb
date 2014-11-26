@@ -374,8 +374,4 @@ class Topic < ActiveRecord::Base
     truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
   end
 
-  def user_readable_created_at
-    created_at.in_time_zone.strftime("%a, %b %e, %Y at %l:%M %p")
-  end
-
 end

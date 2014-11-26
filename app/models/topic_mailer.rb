@@ -2,12 +2,10 @@ class TopicMailer < ActionMailer::Base
 
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
-  include TimeZoneHelper
 	
-  def monitor_email(recipient, topic, user, portal, sender, host)
+  def monitor_email(emailcoll, topic, user, portal, sender, host)
     configure_mailbox(user, portal)
-    set_time_zone(recipient)
-    recipients    recipient.email
+    recipients    emailcoll
     from          sender
     subject       "[New Topic] in #{topic.forum.name}"
     sent_on       Time.now
