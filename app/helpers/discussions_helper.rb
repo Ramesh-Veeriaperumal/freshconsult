@@ -166,7 +166,7 @@ module DiscussionsHelper
 	end
 
 	def merged_list topic
-		list = "<ul>"
+		list = "<ul id='merge-topics-list'>"
 		topic.merged_topics.each do |merged|
 			list << "<li>" + pjax_link_to(merged.title, discussions_topic_path(merged)) + "</li>"
 		end

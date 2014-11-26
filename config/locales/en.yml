@@ -4128,7 +4128,7 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>."
+        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
@@ -6286,7 +6286,7 @@ en:
       add_note: Reason for Merge
       note_saved : Note saved
       add: Add
-      warning: "Topics once merged cannot be unmerged"
+      warning: "Topics once merged cannot be unmerged (Followers and votes from the merged topic(s) will be added to the primary topic)."
       merge_notification: "This topic is already locked or merged. Please refresh the page."
       merge_error_for_locked: "This topic is locked for editing as it has been merged into <a href='%{topic_link}'>%{title}</a>."
       target_note_description:

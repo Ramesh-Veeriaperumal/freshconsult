@@ -85,7 +85,7 @@
         <div id="target-note-content" class="hide">
           <textarea id="source-note-body" class="target-source-text" name="source[note]">
             <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id, 
-            :full_domain => @target_ticket.portal.host), :class => merge_links %>
+            :full_domain => @target_ticket.portal.host)%>
           </textarea>
           <div class="private-note">
             <input id="source_private" checked="checked" name="source[is_private]" value="true" type="checkbox"> 

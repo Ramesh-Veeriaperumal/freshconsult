@@ -265,43 +265,6 @@ module SupportHelper
 		output << %(</ul>)
 	end
 
-	# Default topic filter that shows up in the topic list
-	def default_topic_filters forum
-		output = []
-		output << %(<ul class="nav nav-pills nav-filter">)
-			forum.allowed_filters.each do |f|
-				output << %(<li class="#{forum.current_topic_filter == f[:name] ? "active" : ""}">)
-				output << link_to(t("forums_order.#{f[:name]}"), f[:url])
-				output << %(</li>)
-			end
-		output << %(</ul>)
-	end
-
-	# Follow/unfollow button
-	# To modify label the liquid can be modified as so
-	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
-	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(topic, follow_label, unfollow_label)
-	end
-
-	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(forum, follow_label, unfollow_label)
-	end
-
-	def follow_button current_obj, follow_label, unfollow_label
-		if User.current
-			_monitoring = current_obj['followed_by_current_user?']
-
-			link_to _monitoring ? unfollow_label : follow_label, current_obj['toggle_follow_url'],
-				"data-remote" => true, "data-method" => :put,
-				:id => "topic-monitor-button",
-				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
-				"data-toggle" => "button",
-				"data-button-active-label" => unfollow_label,
-				"data-button-inactive-label" => follow_label
-		end
-	end
-
 	def link_to_folder_with_count folder, *args
 		link_opts = link_args_to_options(args)
 		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>".html_safe
@@ -634,25 +597,6 @@ module SupportHelper
     end
     _output.join("").html_safe
   end
-
-	def post_attachments post
-		output = []
-
-		if(post.attachments.size > 0 or post.cloud_files.size > 0)
-			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
-
-			post.attachments.each do |a|
-				output << attachment_item(a.to_liquid)
-			end
-			(post.cloud_files || []).each do |c|
-				output << cloud_file_item(c.to_liquid)
-			end
-
-			output << %(</div>)
-		end
-
-		output.join('').html_safe
-	end
 
 	def ticket_attachemnts ticket
 		output = []

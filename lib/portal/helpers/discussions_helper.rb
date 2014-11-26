@@ -16,11 +16,11 @@ module Portal::Helpers::DiscussionsHelper
 	# To modify label the liquid can be modified as so
 	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
 	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(topic, follow_label, unfollow_label)
+		follow_button(topic, follow_label, unfollow_label) unless topic.merged?
 	end
 
 	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(forum, follow_label, unfollow_label) if forum.type_name == 'announcement'
+		follow_button(forum, follow_label, unfollow_label)
 	end
 
 	def follow_button current_obj, follow_label, unfollow_label
@@ -197,11 +197,14 @@ module Portal::Helpers::DiscussionsHelper
 	def post_attachments post
 		output = []
 
-		if(post.attachments.size > 0)
+		if(post.attachments.size > 0 or post.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
 
 			post.attachments.each do |a|
 				output << attachment_item(a.to_liquid)
+			end
+			(post.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid)
 			end
 
 			output << %(</div>)

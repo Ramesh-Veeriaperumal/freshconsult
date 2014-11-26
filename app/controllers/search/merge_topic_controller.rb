@@ -9,12 +9,8 @@ class Search::MergeTopicController < Search::ForumsController
 			@search_by_field = true
 		end
 
-		def search_query f
-			f.query { |q| q.string SearchUtil.es_filter_key(@search_key), :fields => [ 'title', 'posts.body' ], :analyzer => "include_stop" }
-		end       
-
 		def generate_result_json
-			@result_json[:results].reject! { |t| t[:locked] === true }
+			@result_json[:results].reject! { |t| t[:locked] == true }
 			@result_json = @result_json.to_json
 		end
 
