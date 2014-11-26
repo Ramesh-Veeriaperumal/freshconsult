@@ -76,7 +76,8 @@
       </tr>
        <tr>
         <th>Chat</th>
-        <td>Chat - <%= @account.features?(:chat) %>  Enabled - <%= @account.chat_setting.active? %></td>
+        <td>Chat - <%= @account.features?(:chat) %>  Enabled - <%= @account.chat_setting.display_id? && 
+                                                                    @account.chat_setting.active %></td>
       </tr>
       <tr>
         <th>Multi product</th>
@@ -168,6 +169,28 @@
         <input type="hidden" name="old_url" id="old_url" value="<%=@account.full_domain%>"/>
         <input type="submit" value="Change" class="btn" />
       <% end %>
+      <%if @account.subscription.state == "trial"%>
+        <h3>Block account</h3>
+        <% form_tag({:action => 'block_account'}, :id => 'block_account', :class => "well form-inline") do %>
+          <input type="hidden" name="account_id" value="<%=@account.id%>"/>
+          <input type="submit" value="Block account" class="btn" />
+        <% end %>
+      <%end%>
     <% end %>
+    <%if @account.subscription.state == "suspended"%>
+        <h3>Unblock account</h3>
+        <% form_tag({:action => 'ublock_account'}, :id => 'unblock_account', :class => "well form-inline") do %>
+          <input type="hidden" name="account_id" value="<%=@account.id%>"/>
+          <input type="submit" value="Unblock Account" class="btn" />
+        <% end %>
+      <%end%>
+    <%if @account.subscription.state == "trial"%>
+      <h3>Whitelist</h3>
+        <% form_tag({:action => 'whitelist'}, :id => 'whitelist', :class => "well form-inline") do %>
+          <input type="hidden" name="account_id" value="<%=@account.id%>"/>
+          <input type="submit" value="Whitelist" class="btn" />
+        <% end %>
+    <%end%>
+      
 
 </div>

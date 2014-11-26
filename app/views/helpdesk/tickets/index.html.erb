@@ -28,7 +28,6 @@
 <% content_for :pagefixed do %>
    <%= render :partial => "freshdesk_node", :locals => 
   {:ticket => nil}  if current_account.features?(:collision)  || @is_auto_refresh_feature %>
-  <%= render :partial => "collision_index" if feature?(:agent_collision) && current_account.agents_from_cache.count > 1 %>
 <% end %>  
 
 <% content_for :layoutType do -%>ticket_list<%- end %>
@@ -48,9 +47,6 @@
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
       TicketListEvents();
-      Fjax.afterNextPage = function() {
-        MergeTicketsDestructor();
-      }
   <% end %>
 <% end %>
 <script type="text/javascript">

@@ -10,6 +10,7 @@
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/google_login/callback', :controller => 'google_login', :action => 'create_account_from_google'
+  map.callback '/auth/google_gadget/callback', :controller => 'google_login', :action => 'create_account_from_google'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
@@ -60,7 +61,7 @@
   #map.resources :support_plans
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
-  map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
+  map.gauth '/oauth/googlegadget', :controller => 'user_sessions', :action => 'oauth_google_gadget'
   map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'
@@ -135,7 +136,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :chat_setting, :collection => { :toggle => :post }
+    admin.resources :chat_widgets
     admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
@@ -471,6 +472,7 @@
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
     helpdesk.sales_manager 'sales_manager', :controller => 'dashboard', :action => 'sales_manager'
+    helpdesk.agent_status 'agent-status', :controller => 'dashboard', :action => 'agent_status'
     helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
     helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
@@ -483,7 +485,8 @@
       fb_helpdesk.resources :attachments, :only => [:show, :destroy]
     end
 
-    helpdesk.resources :dropboxes
+    helpdesk.resources :cloud_files
+
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                         :company_autocomplete => :get }
 
@@ -591,6 +594,7 @@
       :member => { :solutions => :get, :topics => :get, :tickets => :get, :suggest_topic => :get }
     support.resource :search do |search|
       search.connect "/topics/suggest", :controller => :search, :action => :suggest_topic
+      search.connect "/articles/:article_id/related_articles", :controller => :search, :action => :related_articles
     end
 
     # Forums for the portal, the items will be name spaced by discussions
@@ -665,7 +669,7 @@
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :ticket_properties => :get , :load_reply_emails => :get}
     mobile.resources :automations, :only =>:index
 	mobile.resources :notifications, :collection => {:register_mobile_notification => :put}, :only => {}
-    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get}
+    mobile.resources :settings,  :only =>:index, :collection => {:mobile_pre_loader => :get, :deliver_activation_instructions => :get}
     mobile.resources :freshfone, :collection => {:numbers => :get}
   end
  
@@ -677,6 +681,8 @@
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/openid/google', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   map.root :controller => "home"
@@ -690,11 +696,18 @@
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 
-  map.connect '/all_agents', :controller => 'agents', :action => 'list'
-  map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-  map.connect '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
-  map.connect '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
-  map.connect '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+  map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
+  map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+  map.connect '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
+
+
+  map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
+
+  map.connect '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
+
+  map.connect '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
+  map.connect '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
+
+  map.connect '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 end

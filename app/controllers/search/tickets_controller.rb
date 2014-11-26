@@ -2,7 +2,10 @@ class Search::TicketsController < Search::SearchController
 
 	include Search::ESDisplayIdWildcardSearch
 
+	before_filter :set_native_mobile, :only => [:index]
+
 	TICKET_SEARCH_FIELDS = ["display_id", "subject", "requester"]
+
 
 	def index
 		if @search_by_field
@@ -10,7 +13,7 @@ class Search::TicketsController < Search::SearchController
 					:load => { Helpdesk::Ticket => { :include => [:requester, :ticket_states, {:flexifield => :flexifield_def}] }},
 					:preference => :_primary_first, :page => 1}) if TICKET_SEARCH_FIELDS.include?(params[:search_field])
 			respond_to do |format|
-				format.json { render :json => @result_json }
+				format.any(:json, :nmobile) { render :json => @result_json }
 			end
 		else
 			super

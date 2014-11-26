@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 
   has_many :user_emails , :class_name =>'UserEmail', :validate => true, :dependent => :destroy, :order => "primary_role desc"
   has_many :verified_emails, :class_name =>'UserEmail', :dependent => :destroy, :conditions => { :verified => true }
-  has_one :primary_email, :class_name => 'UserEmail', :conditions => { :primary_role => true }
+  has_one :primary_email, :class_name => 'UserEmail', :conditions => { :primary_role => true }, :autosave => true
 
   accepts_nested_attributes_for :user_emails, :reject_if => proc {|att| att['email'].blank? }, :allow_destroy => true
 

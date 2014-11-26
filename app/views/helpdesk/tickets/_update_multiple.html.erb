@@ -67,6 +67,7 @@
    	});
 
   jQuery("#reply-multiple-cnt-reply-multiple-body").val("");
+  jQuery("#reply-multiple-cnt-reply-multiple-body").attr('disabled', true);
 
   jQuery('#no-response').hide();
   function submitBulkUpdate(){
@@ -118,7 +119,9 @@
       {
         jQuery("#bulkreplyform").show();
         jQuery("#bulkreplyform textarea").addClass('required_redactor');
-        jQuery("#reply-multiple-cnt-reply-multiple-body").getEditor().focus();
+        jQuery("#reply-multiple-cnt-reply-multiple-body")
+            .attr('disabled', false)
+            .getEditor().focus();
       }
     }
     else
@@ -129,6 +132,7 @@
       {
         jQuery("#bulkreplyform").hide();
         jQuery("#bulkreplyform textarea").val("");
+        jQuery("#reply-multiple-cnt-reply-multiple-body").attr('disabled', true);
         jQuery("#bulkreplyform textarea").removeClass('required_redactor');
       }
       jQuery(this).parent().find("select").find('option:first').prop('selected', 'selected');

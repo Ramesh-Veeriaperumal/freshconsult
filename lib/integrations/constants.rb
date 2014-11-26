@@ -19,6 +19,7 @@ module Integrations::Constants
     :zohocrm => "zohocrm",
     :google_calendar => "google_calendar",
     :surveymonkey => "surveymonkey",
+    :dropbox => 'dropbox',
     :shopify => "shopify",
     :seoshop => "seoshop"
   }

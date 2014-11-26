@@ -1,10 +1,16 @@
 account = Account.current
 
-ChatSetting.seed(:account_id) do |c|
+chat_setting = ChatSetting.seed(:account_id) do |c|
   c.account_id = account.id
+  c.active = true
+end
 
+ChatWidget.seed(:account_id) do |c|
+	c.name = account.name
+  c.account_id = account.id
+  c.show_on_portal = false
+	c.portal_login_required = false
   c.active = false
-  c.show_on_portal = 0
-  c.portal_login_required = 0
-
+  c.chat_setting_id = chat_setting.id
+  c.main_widget = true
 end

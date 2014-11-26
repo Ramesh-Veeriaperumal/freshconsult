@@ -42,6 +42,13 @@ class Support::SearchController < SupportController
     render :layout => false
   end
 
+  def related_articles
+    article = current_account.solution_articles.find(params[:article_id])
+    @related_articles = article.related(current_portal, params[:limit])
+    @container = params[:container]
+    render :layout => false
+  end
+
   # def widget_solutions
   #   @widget_solutions = true
   #   solutions
@@ -50,7 +57,7 @@ class Support::SearchController < SupportController
   private
 
     def forums_allowed_in_portal?
-      render :nothing => true and return unless (feature?(:forums) && allowed_in_portal?(:open_forums))
+      render :nothing => true and return unless forums_enabled?
     end
   
     def solutions_allowed_in_portal? #Kinda duplicate
@@ -68,10 +75,9 @@ class Support::SearchController < SupportController
       to_ret = Array.new
 
       to_ret << Solution::Article if(allowed_in_portal?(:open_solutions))
-      to_ret << Topic if(feature?(:forums) && allowed_in_portal?(:open_forums))
+      to_ret << Topic if forums_enabled?
       to_ret << Helpdesk::Ticket if(current_user)
       to_ret << Helpdesk::Note if(current_user)
-
       to_ret
     end
    

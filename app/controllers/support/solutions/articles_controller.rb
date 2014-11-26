@@ -1,6 +1,7 @@
 class Support::Solutions::ArticlesController < SupportController 
   
   include Helpdesk::TicketActions
+  include Solution::Feedback
 
   before_filter :load_and_check_permission, :except => :index
 
@@ -16,6 +17,9 @@ class Support::Solutions::ArticlesController < SupportController
   before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
 
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
+
+  before_filter :generate_ticket_params, :only => :create_ticket
+  after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket
 
   def handle_unknown
      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -68,7 +72,7 @@ class Support::Solutions::ArticlesController < SupportController
   
   def create_ticket
     # Message to the user based on success of ticket submission
-    render :text => (create_the_ticket) ? 
+    render :text => (create_the_ticket(nil, true)) ? 
      I18n.t('solution.articles.article_not_useful') : I18n.t(:'solution.articles.error_message', :error_msg => @ticket.errors )
   end
 
@@ -127,3 +131,4 @@ class Support::Solutions::ArticlesController < SupportController
       @vote = @article.votes.find_or_initialize_by_user_id(current_user.id) if current_user
     end
 end
+

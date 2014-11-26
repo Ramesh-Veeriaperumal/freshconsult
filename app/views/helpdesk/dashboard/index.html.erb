@@ -1,32 +1,10 @@
 <% @page_title = "Dashboard" %>
-<% content_for :sidebar do %>
-  <%= sidebar_content %>
 
-  <% if gamification_feature?(current_account) %>
-
-  	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "mini-leaderboard",
-  						 "data-remote-url" => mini_list_helpdesk_leaderboard_path() %>
-
-    <%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "quests-section-container",
-               "data-remote-url" => active_helpdesk_quests_path() %>
-  <% end %> 
-
-  <%#= render :partial => '/helpdesk/shared/history' %>
-<% end %>
 <div class="index-page-content">
   <%= render :partial => "summary" %>
 
   <%= content_tag :div, "", :rel => "remote", :id => "Activity",
                  "data-remote-url" => '/helpdesk/dashboard/activity_list' %>
 </div>
-<% content_for :onload_script do %>
-setTimeout(function() {
-  jQuery('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container').trigger('afterShow');
-},50);
 
-jQuery('#sales-manager-container').on('remoteLoaded', function(e){
-  if(jQuery('#sales-manager-container').children().hasClass('details-container')){
-    jQuery(this).slideDown();
-  }
-})
-<% end %>
+<%= render :partial => 'sidebar' %>

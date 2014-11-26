@@ -39,6 +39,10 @@ class Solution::ArticleDrop < BaseDrop
   def attachments
     source.attachments
   end
+
+  def cloud_files
+    source.cloud_files
+  end
   
   def type
     source.art_type

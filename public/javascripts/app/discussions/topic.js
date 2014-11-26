@@ -11,10 +11,15 @@ window.App.Discussions = window.App.Discussions || {};
 		onVisit: function () {
 			this.lookForHash();
 			this.bindHandlers();
+			this.cleanInlineCSS();
 		},
 
 		onLeave: function () {
 			this.unbindHandlers();
+		},
+
+		cleanInlineCSS: function () {
+			$('.post-content *').css('position', '');
 		},
 
 		lookForHash: function () {

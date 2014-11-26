@@ -1,6 +1,6 @@
 <div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
 	<%= @body.html_safe %>
-	<%=render :partial => 'dropbox_template', :locals => { :dropboxes => @dropboxes} %>
+	<%=render :partial => 'cloud_files_template', :locals => { :cloud_files => @cloud_files} %>
 	<br/>
 	<%= render :partial => '/shared/free_plan_message' %>
 

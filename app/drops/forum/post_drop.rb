@@ -32,6 +32,10 @@ class Forum::PostDrop < BaseDrop
     source.attachments
   end
 
+  def cloud_files
+    source.cloud_files
+  end
+
   def url
     support_discussions_topic_path(source.topic, :anchor => "post-#{source.id}")
   end

@@ -57,6 +57,53 @@ class BusinessCalendar < ActiveRecord::Base
     :weekdays => [1, 2, 3, 4, 5],
     :fullweek => false
   }  
+
+  # setting correct timezone and business_calendar based on the context of the ticket getting updated
+  def self.execute(groupable)
+    begin
+      set_time_zone(groupable)
+      # do businesstime related stuff
+      yield
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+    ensure
+      Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = nil
+      User.current ? set_user_time_zone : set_account_time_zone
+    end 
+  end
+
+  def self.set_time_zone(groupable)
+    begin
+      group = groupable.respond_to?("group")? groupable.group : nil      
+      account = groupable ? groupable.account : Account.current
+
+      Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = group
+      
+      return set_account_time_zone(account) unless account.features_included?(:multiple_business_hours)
+
+      if group.nil? || group.business_calendar.nil?
+        set_account_time_zone(account)
+      else
+        set_group_time_zone(group)
+      end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+    end
+  end
+
+  def self.set_account_time_zone(account=Account.current)
+    Time.zone = account.time_zone    
+  end
+
+  def self.set_group_time_zone(group)
+    Time.zone = group.business_calendar.time_zone
+  end
+ 
+  def self.set_user_time_zone
+    Time.zone = User.current.time_zone  
+  end
+  # setting correct timezone and business_calendar based on the context of the ticket ends here
+
   def beginning_of_workday day
     business_hour_data[:working_hours][day][:beginning_of_workday]
   end
@@ -158,16 +205,13 @@ class BusinessCalendar < ActiveRecord::Base
     end
 
     def chatBusinessCalendarUpdate(type)
-      current_account = Account.current
-      if current_account.features?(:chat)
-        if current_account.chat_setting['business_calendar_id'] == self['id']
-          display_id = current_account.chat_setting['display_id']
-          @CalendarData = if (type.eql? "destroy") then nil else self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}) end
-
-          Resque.enqueue(Workers::FreshchatCalendarUpdate, {:type => type, :display_id => display_id, :calendarData => @CalendarData})
+      if account.features?(:chat)
+        widgets = account.chat_widgets.find(:all, :conditions => {:business_calendar_id => id})
+        widgets.each do |widget|
+          site_id = account.chat_setting.display_id
+          calendar_data = if (type.eql? "destroy") then nil else JSON.parse(self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar'] end
+          Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :widget_id => widget.widget_id, :siteId => site_id, :attributes => { :business_calendar => calendar_data}})
         end
       end
-
     end
-
 end

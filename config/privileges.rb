@@ -3,7 +3,7 @@ Authority::Authorization::PrivilegeList.build do
   # *************** TICKETS **********************
 
   manage_tickets do
-    resource :"helpdesk/dashboard"
+    resource :"helpdesk/dashboard", :only => [:index, :activity_list,:latest_activities,:latest_summary,:sales_manager]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
     resource :"helpdesk/note", :only => [:index, :agents_autocomplete]
@@ -64,7 +64,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -330,6 +330,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/page"
     resource :"support/preview"
     resource :"admin/chat_setting"
+    resource :"admin/chat_widget"
     resource :"api_webhook", :only => [:create, :destroy]
     resource :"admin/social/stream"
     resource :"admin/social/twitter_stream"
@@ -347,6 +348,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
+    resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
   client_manager do

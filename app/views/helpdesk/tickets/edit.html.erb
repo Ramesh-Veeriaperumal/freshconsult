@@ -7,7 +7,7 @@
       <%= render( :partial => "/helpdesk/shared/attachment_form" ) %>
     </li>
 
-  <% unless @item.attachments.empty? and @item.dropboxes.empty? %>
+  <% unless @item.attachments.empty? and @item.cloud_files.empty? %>
     <li>
       <div class="attachments-wrap clearfix">
         <%= content_tag('h4', t("attachments"), :class => "title")%>
@@ -15,8 +15,8 @@
             <% @item.attachments.each do |attached| %> 
               <%= attachment_list(attached, true, "ticket",nil) %>
             <% end %>
-            <% @item.dropboxes.each do |dropbox| %> 
-            <%= attachment_list(dropbox, true, "dropbox",nil) %>
+            <% @item.cloud_files.each do |cloud_file| %> 
+            <%= attachment_list(cloud_file, true, "cloud_file",nil) %>
           <% end %>
         </ul>
       </div>

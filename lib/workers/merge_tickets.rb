@@ -51,10 +51,12 @@ class Workers::MergeTickets
       target_ticket.ticket_states.send("#{state}=",current_state_collection.compact.send(operator))
     end
     target_ticket.ticket_states.set_avg_response_time
-    if target_ticket.ticket_states.first_response_time_changed? 
-      business_calendar_config = Group.default_business_calendar(target_ticket.group)
-      target_ticket.ticket_states.first_resp_time_by_bhrs = Time.zone.parse(target_ticket.created_at.to_s).
-                        business_time_until(Time.zone.parse(target_ticket.ticket_states.first_response_time.to_s),business_calendar_config)
+    if target_ticket.ticket_states.first_response_time_changed?
+      BusinessCalendar.execute(target_ticket) {
+        business_calendar_config = Group.default_business_calendar(target_ticket.group)
+        target_ticket.ticket_states.first_resp_time_by_bhrs = Time.zone.parse(target_ticket.created_at.to_s).
+          business_time_until(Time.zone.parse(target_ticket.ticket_states.first_response_time.to_s),business_calendar_config)
+      }
     end
     target_ticket.ticket_states.save
   end

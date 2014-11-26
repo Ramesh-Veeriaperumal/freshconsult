@@ -342,16 +342,13 @@ describe Helpdesk::Email::Process do
 		end
 
 		it "by blocked user" do
-			user1 = Factory.build(:user, :account => @account,
-                    :name => "samplethree", :email => "samplethree@shdjsjdsd.ccc",
-                    :time_zone => "Chennai", :active => 0, :delta => 1, :language => "en")
-			user1.save(false)
+			user1 = add_new_user(@account, {:active => 0, :delta => 1, :language => "en"})
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
 			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => user1.email})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = @account.tickets.last
 			user1.blocked = true
-			user1.save(false)
+			user1.save
 			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
 			Helpdesk::Email::Process.new(another).perform
 			ticket_incremented?(@ticket_size)

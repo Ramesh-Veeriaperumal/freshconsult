@@ -142,9 +142,7 @@
 					<% unless first_post.attachments.empty? %>
   					<span class="seperator"></span>
 					  <strong><%= first_post.attachments.size %> <%= t('attachments') %></strong> 
-					  
 					  <%= attachment_container(first_post.attachments, privilege?(:edit_topic, @topic), "article", nil) %>
-
  					<% end %>
 					<% if @topic.published? and  !@topic.forum.announcement? %>
 						<div class="status" id="voting_container">

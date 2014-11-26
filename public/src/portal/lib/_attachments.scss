@@ -72,6 +72,9 @@
 			.file-size{
 				display: block;
 			}
+			.cloud-file{
+				padding:10px;
+			}
 		}
 		.delete{
 			@include margin-right(10px);
@@ -113,10 +116,18 @@
 				width:32px;
 				height:32px;
 			}
+			.file-types-dropbox{
+				margin: 0;
+				@include padding(3px 0px 3px 25px);
+				width: auto;
+				height: 25px;
+				display: inline-block;
+				vertical-align: middle;
+				background: inline-image('cdn-ignored/inline-images/dropbox.png') no-repeat #ffffff;
+			}
 		}
 	}
 }
-
 
 // ------------------------------------------------------------------ //
 // -------------------- NO IMAGE CLASS ------------------------------ //

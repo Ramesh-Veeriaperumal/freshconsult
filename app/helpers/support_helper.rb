@@ -291,7 +291,7 @@ module SupportHelper
 	end
 
 	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(forum, follow_label, unfollow_label) if forum.type_name == 'announcement'
+		follow_button(forum, follow_label, unfollow_label)
 	end
 
 	def follow_button current_obj, follow_label, unfollow_label
@@ -520,7 +520,7 @@ HTML
 	def status_alert ticket
 		_text = []
 		_text << %( <b> #{ ticket['status'] } </b> )
-		_text << I18n.t('since_last_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
+		_text << I18n.t('since_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
 		_text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form'
 			data-show-dom='#reply-to-ticket'>#{ t('portal.tickets.reopen_reply') }</a> ) if ticket['closed?']
 		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
@@ -613,8 +613,9 @@ HTML
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
+	      		element_class = " #{required ? 'required_redactor' : '' } #{ dom_type }"
 	      		_output << %( #{ ff.text_area(field_name,
-	      			{ :class => "element_class" + " span12" + " required_redactor", :value => field_value, :rows => 6 }.merge(html_opts)) } )
+	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
 	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
@@ -798,12 +799,6 @@ HTML
 			</textarea></div>).html_safe
 	end
 
-	def attach_a_file_link attach_id
-		link_to_function("#{I18n.t('portal.attach_file')}".html_safe, "Helpdesk.Multifile.clickProxy(this)",
-                "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
-	end
-
-	# A fallback for portal... as attachment & screenshot is being used in both feedback widget & portal
 	def widget_option type
 		true
 	end
@@ -824,7 +819,7 @@ HTML
 			else
 				params[field.field_name]
 			end
-	    end
+    end
 	end
 
 	def is_num?(str)
@@ -855,11 +850,14 @@ HTML
 	def post_attachments post
 		output = []
 
-		if(post.attachments.size > 0)
+		if(post.attachments.size > 0 or post.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
 
 			post.attachments.each do |a|
 				output << attachment_item(a.to_liquid)
+			end
+			(post.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid)
 			end
 
 			output << %(</div>)
@@ -871,7 +869,7 @@ HTML
 	def ticket_attachemnts ticket
 		output = []
 
-		if(ticket.attachments.size > 0 or ticket.dropboxes != nil)
+		if(ticket.attachments.size > 0 or ticket.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
 
 			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
@@ -879,9 +877,8 @@ HTML
 			(ticket.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
-
-			(ticket.dropboxes || []).each do |c|
-				output << dropbox_item(c.to_liquid, can_delete)
+			(ticket.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid, can_delete)
 			end
 
 			output << %(</div>)
@@ -892,7 +889,7 @@ HTML
 	def comment_attachments comment
 		output = []
 
-		if(comment.attachments.size > 0 or comment.dropboxes != nil)
+		if(comment.attachments.size > 0 or comment.cloud_files.size > 0)
 			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
 
 			can_delete = (comment.user and comment.user.id == User.current.id)
@@ -901,8 +898,8 @@ HTML
 				output << attachment_item(a.to_liquid, can_delete)
 			end
 
-			(comment.dropboxes || []).each do |c|
-				output << dropbox_item(c.to_liquid, can_delete)
+			(comment.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid, can_delete)
 			end
 
 			output << %(</div>)
@@ -923,26 +920,26 @@ HTML
 		output << %(<div class="ellipsis">)
 		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
 		output << %(</div>)
-		output << %(<div>#{  attachment.size  } </div>)
+		output << %(<div>(#{  attachment.size  }) </div>)
 		output << %(</div>)
 		output << %(</div>)
 
 		output.join('').html_safe
 	end
 
-	def dropbox_item dropbox, can_delete = false
+	def cloud_file_item cloud_file, can_delete = false
 		output = []
 
 		output << %(<div class="cs-g-3 attachment">)
-		output << %(<a href="#{dropbox.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
+		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
-		output << %(<img src="/images/dropbox_big.png"></span>)
+		output << %(<img src="/images/#{cloud_file.provider}_big.png"></span>)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{dropbox.url}" class="filename" target="_blank">#{ dropbox.filename } </a>)
+		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank">#{ cloud_file.filename } </a>)
+		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
-		output << %(<div> ( dropbox link )</div>)
 		output << %(</div>)
 		output << %(</div>)
 

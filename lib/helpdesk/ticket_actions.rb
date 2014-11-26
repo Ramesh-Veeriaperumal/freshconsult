@@ -5,8 +5,10 @@ module Helpdesk::TicketActions
   include ParserUtil
   include ExportCsvUtil
   include Helpdesk::ToggleEmailNotification
+  include CloudFilesHelper
+  
+  def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
-  def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
@@ -21,6 +23,7 @@ module Helpdesk::TicketActions
     return false if need_captcha && !(current_user || is_native_mobile? ||verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
+    @ticket.skip_notification = skip_notifications
     return false unless @ticket.save_ticket
 
     if params[:meta]
@@ -61,13 +64,7 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def build_ticket_attachments
     handle_screenshot_attachments unless params[:screenshot].blank?
-      (params[:dropbox_url] || []).each do |urls|
-        decoded_url =  URI.unescape(urls)
-         @ticket.dropboxes.build(:url => decoded_url)
-      end
-    (params[:helpdesk_ticket][:attachments] || []).each do |a|
-      @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
-    end
+    attachment_builder(@ticket, params[:helpdesk_ticket][:attachments], params[:cloud_file_attachments] )
   end
   
   def split_the_ticket        
@@ -147,8 +144,8 @@ module Helpdesk::TicketActions
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
-    build_item
-    move_dropboxes
+    build_item 
+    move_cloud_files
     if @item.save_ticket
       move_attachments
       @note.destroy
@@ -163,9 +160,10 @@ module Helpdesk::TicketActions
     @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
   end
 
-  def move_dropboxes #added to support dropbox while spliting tickets
-    @note.dropboxes.each do |dropbox|
-      @item.dropboxes.build(:url => dropbox.url)
+  def move_cloud_files #added to support cloud_file while spliting tickets
+    @note.cloud_files.each do |cloud_file|
+      @item.cloud_files.build(:url => cloud_file.url,:filename => cloud_file.filename, 
+        :application_id => cloud_file.application_id)
     end
   end
   
@@ -196,7 +194,6 @@ module Helpdesk::TicketActions
   
   def add_requester
     @user = current_account.users.new
-    @user.user_emails.build
     render :partial => "contacts/add_requester_form"
   end
 
@@ -205,15 +202,18 @@ module Helpdesk::TicketActions
     if(total_entries.blank? || total_entries.to_i == 0)
       load_cached_ticket_filters
       load_ticket_filter
-      @ticket_filter.deserialize_from_params(params)
-      joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-      joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-      if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-        options[:distinct] = true 
-        options[:select] = :id
+      db_type = (params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) ? :run_on_slave : :run_on_master
+      Sharding.send(db_type) do
+        @ticket_filter.deserialize_from_params(params)
+        joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+        joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+        options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+        if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+          options[:distinct] = true 
+          options[:select] = :id
+        end
+        total_entries = current_account.tickets.permissible(current_user).count(options)
       end
-      total_entries = current_account.tickets.permissible(current_user).count(options)
     end
     @ticket_count = total_entries.to_i
   end

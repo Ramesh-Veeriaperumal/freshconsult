@@ -41,7 +41,6 @@ class Helpdesk::Email::HandleTicket
   #-------------------------------------TICKET PART----------------------------------------------
 
 	def create_ticket
-    self.user = (get_original_user || user) if current_agent?
     create_ticket_object
     check_valid_ticket
     handle_ticket_email_commands if current_agent?

@@ -1,206 +1,51 @@
-<% account = current_account %>
-<%if (current_user) 
-comm_url = ChatConfig['communication_url'][Rails.env]
-asset = ChatConfig['asset_url'][Rails.env].to_json.html_safe
-chat_debug = ChatConfig['chat_debug'][Rails.env]
-%>
+<!-- Chat related contents starts -->
 <script>
-var CS_URL = "<%=comm_url%>";
-CS_URL = CS_URL.replace('https://',"").replace('http://',"").replace(':443',"").replace(':80',""); 
-var WEB_ROOT = "//<%=account.full_domain%>";
-var CHAT_DEBUG = "<%=chat_debug%>";
-var CHAT_ENV = "<%= Rails.env -%>";
-var ASSET_URL = JSON.parse('<%=asset%>');
+var ASSET_URL   = <%= ChatConfig['asset_url'][Rails.env].to_json.html_safe %>;
+var CS_URL      = "<%=ChatConfig['communication_url'][Rails.env]%>";
+var CHAT_ENV    = "<%= Rails.env -%>";
+</script>
 
-var CURRENT_USER = {
-    'id': '<%=current_user.id%>',
-    'username': '<%=current_user.name%>',
-    'isAdmin': <%=current_user.privilege?(:admin_tasks)%>,
-    'email' : '<%=current_user.email%>',
-    'aid' : '<%=account.id%>',
-    'domain': '<%=account.full_domain%>'
-};
+<%if current_user && chat_activated? && !(is_assumed_user?) %>
+<script>
+    <% current_chatwidget = current_chat_widget %>
+    var WEB_ROOT        = "//<%=current_account.full_domain%>";
+    var CHAT_DEBUG      = "<%=ChatConfig['chat_debug'][Rails.env]%>";
+    var SITE_ID         = '<%=current_account.chat_setting.display_id%>';
+    var CHAT_CONSTANTS  = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
+    var CHAT_I18n       = <%= i18n_text %>;
 
-var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
-var CHAT_I18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
-            title:'<%= t("freshchat.title") %>',
-            says:'<%= t("freshchat.says") %>',
-            tag_msg:'<%= t("freshchat.tag_msg") %>',
-            transfer_to_agent:'<%= t("freshchat.transfer_to_agent") %>',
-            block:'<%= t("freshchat.block") %>',
-            unblock: '<%= t("freshchat.unblock") %>',
-            visitor: '<%= t("freshchat.visitor") %>',
-            transfer_agent:'<%= t("freshchat.transfer_agent") %>',
-            agent_transfer_msg: '<%= t("freshchat.agent_transfer_msg") %>',
-            transfer: '<%= t("freshchat.transfer") %>',
-            search_agent: '<%= t("freshchat.search_agent") %>',
-            block_visitor:'<%= t("freshchat.block_visitor") %>',
-            visitor_details:'<%= t("freshchat.visitor_details") %>',
-            visitor_block_msg:'<%= t("freshchat.visitor_block_msg") %>',
-            save:'<%= t("freshchat.save") %>',
-            cancel:'<%= t("freshchat.cancel") %>',
-            enter_tags:'<%= t("freshchat.enter_tags") %>',
-            chat_with: '<%= t("freshchat.chat_with") %>',
-            ticket_success_msg: '<%= t("freshchat.ticket_success_msg").html_safe %>',
-            ticket_error_msg: '<%= t("freshchat.ticket_error_msg") %>',
-            in_conversation:'<%= t("freshchat.in_conversation") %>',
-            available_agents:'<%= t("freshchat.available_agents") %>',
-            returning_visitors:'<%= t("freshchat.returning_visitors") %>',
-            website_visitors_msg:'<%= t("freshchat.website_visitors_msg") %>',
-            message_archives:'<%= t("freshchat.message_archives") %>',
-            connection_error_msg:'<%= t("freshchat.connection_error_msg") %>',
-            connection_success_msg:'<%= t("freshchat.connection_success_msg") %>',
-            website_visitors:'<%= t("freshchat.website_visitors") %>',
-            filter_by: '<%= t("freshchat.filter_by") %>',
-            keyword: '<%= t("freshchat.keyword") %>',
-            visitor_location: '<%= t("freshchat.visitor_location") %>',
-            between: '<%= t("freshchat.between") %>',
-            tags: '<%= t("freshchat.tags") %>',
-            agent: '<%= t("freshchat.agent") %>',
-            back: '<%= t("freshchat.back") %>',
-            select_location: '<%= t("freshchat.select_location") %>',
-            visitors_online: '<%= t("freshchat.visitors_online") %>',
-            and: '<%= t("freshchat.and") %>',
-            on_: '<%= t("freshchat.on_") %>',
-            visitor_disconnect_msg: '<%= t("freshchat.visitor_disconnect_msg") %>',
-            last_message: '<%= t("freshchat.last_message") %>',
-            typing_message: '<%= t("freshchat.typing_message") %>',
-            is_typing_header: '<%= t("freshchat.is_typing_header") %>',
-            chat_recent_empty_tip: '<%= t("freshchat.chat_recent_empty_tip") %>',
-            add_agent_to_chat: '<%= t("freshchat.add_agent_to_chat") %>',
-            accept: '<%= t("freshchat.accept") %>',
-            ignore: '<%= t("freshchat.ignore") %>',
-            transfer_msg: '<%= t("freshchat.transfer_msg") %>',
-            unauthorized_attempt_msg: '<%= t("freshchat.unauthorized_attempt_msg") %>',
-            update_success_msg: '<%= t("freshchat.update_success_msg") %>',
-            update_error_msg: '<%= t("freshchat.update_error_msg") %>',
-            recent_messages: '<%= t("freshchat.recent_messages") %>',
-            agents: '<%= t("freshchat.agents") %>',
-            convert_to_ticket: '<%= t("freshchat.convert_to_ticket") %>',
-            create_ticket_tip: '<%= t("freshchat.create_ticket_tip") %>',
-            error: '<%= t("freshchat.error") %>',
-            existing_tkt_option_tip: '<%= t("freshchat.existing_tkt_option_tip").html_safe %>',
-            select_ticket: '<%= t("freshchat.select_ticket") %>',
-            do_not_convert_tkt: '<%= t("freshchat.do_not_convert_tkt") %>',
-            do_not_convert_tkt_info: "<%= t('freshchat.do_not_convert_tkt_info') %>",
-            go_back: '<%= t("freshchat.go_back") %>',
-            id: '<%= t("freshchat.id") %>',
-            subject: '<%= t("freshchat.subject") %>',
-            requested_by: '<%= t("freshchat.requested_by") %>',
-            find_by_id: '<%= t("freshchat.find_by_id") %>',
-            find_by_subject: '<%= t("freshchat.find_by_subject") %>',
-            find_by_requester: '<%= t("freshchat.find_by_requester") %>',
-            info_msg: '<%= t("freshchat.info_msg") %>',
-            join_chat: '<%= t("freshchat.join_chat") %>',
-            chatting_with: '<%= t("freshchat.chatting_with") %>',
-            returning_visitor: '<%= t("freshchat.returning_visitor") %>',
-            new_visitor: '<%= t("freshchat.new_visitor") %>',
-            unknown: '<%= t("freshchat.unknown") %>',
-            no_visitors: '<%= t("freshchat.no_visitors") %>',
-            no_conversation: '<%= t("freshchat.no_conversation") %>',
-            no_return_visitors: '<%= t("freshchat.no_return_visitors") %>',
-            tag_placeholder: '<%= t("freshchat.tag_placeholder") %>',
-            no_visitors_msg: '<%= t("freshchat.no_visitors_msg") %>',
-            options: '<%= t("freshchat.options") %>',
-            edit_visitor_details: '<%= t("freshchat.edit_visitor_details") %>',
-            new_ticket_tip: '<%= t("freshchat.new_ticket_tip").html_safe %>',
-            install_tip: "<%= t('freshchat.install_tip').html_safe %>",
-            nochat: "<%= t('freshchat.nochat') %>",
-            chat_with_archive: "<%= t('freshchat.chat_with_archive').html_safe %>",
-            chat_loadmore: "<%= t('freshchat.chat_loadmore') %>",
-            chat_viewmore: "<%= t('freshchat.chat_viewmore') %>",
-            ticket_subject: "<%= t('freshchat.ticket_subject').html_safe %>",
-            ticket_description: "<%= t('freshchat.ticket_description').html_safe %>",
-            ticket_title: "<%= t('freshchat.ticket_title') %>",
-            requester_name: "<%= t('freshchat.requester_name') %>",
-            requester_email: "<%= t('freshchat.requester_email') %>",
-            note_success: "<%= t('freshchat.note_success').html_safe %>",
-            note_error: "<%= t('freshchat.note_error') %>",
-            view_details: "<%= t('freshchat.view_details') %>",
-            saving: "<%= t('freshchat.saving') %>",
-            begin_chat: "<%= t('freshchat.begin_chat') %>",
-            min_title: "<%= t('freshchat.minimized_title') %>",
-            max_title: "<%= t('freshchat.maximized_title') %>",
-            wel_msg: "<%= t('freshchat.welcome_message') %>",
-            thank_msg: "<%= t('freshchat.thank_message') %>",
-            wait_msg: "<%= t('freshchat.wait_message') %>",
-            typ_msg: "<%= t('freshchat.typing_message') %>",
-            pre_msg: "<%= t('freshchat.prechat_message') %>",
-            settings_save: "<%= t('freshchat.chatsettings_save')%>",
-            transfer_accepted_msg: "<%= t('freshchat.transfer_accepted_msg') %>",
-            transfer_request_timeout_msg: "<%= t('freshchat.transfer_request_timeout_msg') %>",
-            integrate_freshchat_title: "<%= t('freshchat.integrate_freshchat_title') %>",
-            integrate_freshchat_info: "<%= t('freshchat.integrate_freshchat_info') %>",
-            click_to_go_online: "<%= t('freshchat.click_to_go_online').html_safe %>",
-            click_to_go_offline: "<%= t('freshchat.click_to_go_offline').html_safe %>",
-            fetching: "<%= t('freshchat.fetching') %>",
-            loading: "<%= t('freshchat.loading') %>",
-            last_7_days: "<%= t('freshchat.last_7_days') %>",
-            last_30_days: "<%= t('freshchat.last_30_days') %>",
-            last_90_days: "<%= t('freshchat.last_90_days') %>",
-            date_range: "<%= t('freshchat.date_range') %>",
-            agent_joined_msg: "<%= t('freshchat.agent_joined_msg') %>",
-            agent_left_msg: "<%= t('freshchat.agent_left_msg') %>",
-            connecting_msg: "<%= t('freshchat.connecting_msg') %>",
-            non_availability_message: "<%= t('freshchat.non_availability_message') %>",
-            me: "<%= t('freshchat.me') %>",
-            on: "<%= t('freshchat.texton') %>",
-            off: "<%= t('freshchat.textoff') %>",
-            copy_to_clipboard: "<%= t('freshchat.copy_to_clipboard') %>",
-            copied: "<%= t('freshchat.copied') %>",
-            loading_new_archives: "<%= t('freshchat.loading_new_archives') %>",
-            incoming_chat: "<%= t('freshchat.incoming_chat') %>",
-            text_place: "<%= t('freshchat.text_placeholder') %>",
-            dropdown_info: "<%= t('freshchat.dropdown_info') %>",
-            dropdown_choices: "<%= t('freshchat.dropdown_choices') %>",
-            done: "<%= t('freshchat.done') %>",
-            edit: "<%= t('freshchat.edit') %>",
-            show: "<%= t('freshchat.show') %>",
-            required: "<%= t('freshchat.required') %>",
-            no_matching_agents: "<%= t('freshchat.no_matching_agents') %>"
-        };
+    var CURRENT_USER    = {
+            'id'        : '<%=current_user.id%>',
+            'username'  : '<%=current_user.name%>',
+            'isAdmin'   : <%=current_user.privilege?(:admin_tasks)%>,
+            'email'     : '<%=current_user.email%>'
+    };
+    var CURRENT_ACCOUNT = {
+            'id'         : '<%=current_account.id%>',
+            'name'       : '<%=current_account.name%>',
+            'domain'     : '<%=current_account.full_domain%>',
+            'product_id' : '<%=current_portal.product ? current_portal.product.id : ""%>',
+            'chat_enabled': <%=current_account.chat_setting.active%>,
+            'widget_id'  : '<%=current_chatwidget.widget_id%>'
+    };
+    
 
-(function($){
-    $(document).ready(function(){
+    jQuery(document).ready(function(){
         var url = ASSET_URL.js;
         var css_url = ASSET_URL.css;
         if(window.location && window.location.protocol=='https:'){
             url = css_url = ASSET_URL.cloudfront;
         }
-
         var fc_CSS = document.createElement('link');
         fc_CSS.setAttribute('rel','stylesheet');
         fc_CSS.setAttribute('type','text/css');
         fc_CSS.setAttribute('href', css_url+'/css/chat.css');
         document.getElementsByTagName('head')[0].appendChild(fc_CSS);
-
-        var path = window.location.pathname.split('/');
-        if(path[path.length-1] == "chat_setting"){
-            $.getScript(url+ "/js/chat_settings.js", function(){
-                if(window.behaviour){
-                    behaviour.initialize({setting:<%=freshchat_setting%>, asset:ASSET_URL});
-                }
-            });
-        }
+        <%if current_account.chat_setting.active %>
+            jQuery.getScript(url+"/js/chat.js");
+        <%end%>
     });
-})(jQuery);
 </script>
-<%if (current_user && chat_active? && !(is_assumed_user?))%>
 <div id="freshchat_layout" class="fc-layout"></div>
-<script language="javascript">
-(function($){
-    $(document).ready(function(){
-        var url = ASSET_URL.js;
-        var css_url = ASSET_URL.css;
-        if(window.location && window.location.protocol=='https:'){
-            url = css_url = ASSET_URL.cloudfront;
-        }
-
-        $.getScript(url+"/js/chat.js");
-    });
-})(jQuery);
-var SITE_ID = '<%=account.chat_setting.display_id%>';
-</script>
+<%end%>
 <!-- Chat related contents ends -->
-<%end%>
-<%end%>

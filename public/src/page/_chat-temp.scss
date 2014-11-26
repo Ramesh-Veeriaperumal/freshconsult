@@ -1,0 +1,100 @@
+
+// ----------------------------------------------------------------------------
+// 									Temp Hack for CHAT
+// ----------------------------------------------------------------------------
+@if $rtl{
+	.fc-layout, #chat-container,#fc-header{
+		direction: ltr;
+		text-align: left;
+	}	
+	#chat_setting .default-msgs .inline-field .fields{
+		margin-left: 0 !important;
+		margin-right: 240px !important;
+	}
+	.chat-settings .nav-tabs li:first-child{
+		margin-right: 20px !important;
+		margin-left: 0 !important;
+	}
+	.prechat_form.form_divider > .fields{
+		border-right: 1px solid #ccc !important;
+		border-left:0 !important;
+	}
+	.chat-settings .nav-tabs li:last-child {
+		float: left !important;
+		margin-left: 18px !important;
+	}
+	.prechat_form .prechat_input, .prechat_form .prechat_wrap{
+		float:right !important;
+	}
+	.prechat_form .prechat_dropdown{
+		float: right !important;
+		margin-right: 24px !important;
+		margin-left: 0 !important;
+	}
+	.prechat_form .prechat_dropdown .dropdown_choices{
+		margin: 0 18px 0 0 !important;
+	}
+	.form_divider{
+		border-left: 1px #ccc solid;
+		border-right: 0 !important;
+		margin-left: 15px !important;
+	}
+	.chat-window-left.ui-form .inline-field div.fields{
+		margin-right: 180px !important;
+		margin-left: 0 !important;
+	}
+	.marginleftnone{
+		margin-left: 0 !important;	
+	}
+	.show_on_portal_checkbox{
+		margin-right:30px;
+	}
+	.prechat_form_checkbox, .proactive_chat_checkbox{
+		margin-right:75px;
+	}
+	.chat_portal_enable_form input[type=radio], .chat_business_options_wrap input[type=radio]{
+		margin-left: 7px;
+	}
+	.proactive_chat .btn-group{
+		margin-right: 49px;
+		display: inline-block;
+		margin-left: 5px !important;
+	}
+	.chat-window-left.ui-form .dropdown-menu{
+		top: 35px !important;
+	}
+	.chat-window-left.ui-form .dropdown-menu:after, .chat-window-left.ui-form .dropdown-menu:before{
+		right: 10%;
+		left:0;
+	}
+	.chat-window-left.ui-form .dropdown-menu:before{
+		margin-right:-1;
+		margin-left:0 !important;
+	}
+	.search_results_list .rsltname, .search_results_list .rsltagent, .search_results_list .rsltdate, #search_filter, .search_results_list, #search_results_expand, .rsltname_expanded i,.rsltname_expanded p,
+	.search_results_list .rsltmsg .rsltavatar, .search_results_list .rsltname{
+		float:right !important;
+	}
+	.rsltname_expanded p{
+		padding-right: 17px;
+	}
+	.search_results_list .rsltname{
+		padding-right:10px;
+	}
+	.fc_convertTicket, .fc_ticketLink,.fc_convert_aside,.chat_info .refresh_wrap .ficon{
+		float:left !important;
+	}
+	.fc_convertTicket, .fc_ticketLink{
+		border-right: 1px #ccc solid !important;
+		padding-right:10px !important;
+		border-left:0 !important;
+		padding-left:0 !important;
+	}
+	.borderleftnull{
+		border-right:1px transparent solid !important;
+	}
+
+}
+// ----------------------------------------------------------------------------
+// 							  Temp Hack for CHAT end
+// ----------------------------------------------------------------------------

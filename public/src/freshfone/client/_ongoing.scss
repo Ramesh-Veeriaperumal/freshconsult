@@ -3,6 +3,7 @@
 	margin: 6px 0;
 	@include border-radius(6px);
 	background-color: $ongoing-background;
+	direction: ltr;
 	[class*="#{$font-class}"]{
 		color: #333;
 	}
@@ -78,6 +79,7 @@
 
 
 .popupbox-content {
+	direction: ltr;
 	.header {
 		background-color: $popup-content-header;
 		height: 40px;
@@ -189,6 +191,7 @@
 }
 // ticket search	
 .end_call_ticket_search {
+	direction: ltr;
 	border: 1px solid $ec-ticket-search-border;
 	height: 290px;
 	padding-top: 10px;
@@ -249,7 +252,7 @@
 }
 // Call notes and end call notes
 .end_call_notes_container {
-
+	direction: ltr;
 	.final_call_notes {
 		width: 99%;
 		height: 140px;
@@ -272,6 +275,7 @@
 	}
 }
 .ffone-end-call {
+	direction: ltr;
 	.form-horizontal {
 		border: 1px solid $ec-newticket-form-border;
 		padding: 10px;
@@ -306,6 +310,7 @@
 	}
 }
 .end_call_form_btns {
+	direction: ltr;
 	.btn { 
 		margin-bottom: 4px;
 		@include box-sizing(border-box);

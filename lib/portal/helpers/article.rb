@@ -1,18 +1,22 @@
 module Portal::Helpers::Article
+
 	def article_attachments article
-			output = []
+		output = []
 
-			if(article.attachments.size > 0)
-				output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
+		if(article.attachments.size > 0 or article.cloud_files.size > 0)
+			output << %(<div class="cs-g-c attachments" id="article-#{ article.id }-attachments">)
 
-				article.attachments.each do |a|
-					output << attachment_item(a.to_liquid)
-				end
-
-				output << %(</div>)
+			article.attachments.each do |a|
+				output << attachment_item(a.to_liquid)
+			end
+			(article.cloud_files || []).each do |c|
+				output << cloud_file_item(c.to_liquid)
 			end
 
-			output.join('').html_safe
+			output << %(</div>)
+		end
+
+		output.join('').html_safe
 	end
 
 	def article_list folder, limit = 5, reject_article = nil
@@ -39,6 +43,19 @@ module Portal::Helpers::Article
 		output = []
 		output << %(<ul>#{ article.related_articles.take(limit).map { |a| article_list_item(a.to_liquid) } }</ul>)
 		output.join("")
+	end
+
+	def related_articles article, limit=10, container='related_articles'
+		output = []
+		output << %(<div id="#{container}">)
+		output << %(<div class="cs-g-c">)
+		output << %(<section class="article-list">)
+		output << %(<h3 class="list-lead">#{I18n.t('portal.article.related_articles')}</h3>)
+		output << %(<ul rel="remote" 
+			data-remote-url="/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}" 
+			id="related-article-list"></ul>)
+		output << %(</section></div></div>)
+		output.join("")	
 	end
 
 	def more_articles_in_folder folder

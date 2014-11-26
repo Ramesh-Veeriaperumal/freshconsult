@@ -165,7 +165,7 @@ class Helpdesk::TicketsController < ApplicationController
             tickets <<  JSON.parse(tic.to_mob_json_index[19..-2]).as_json(false)
            end
 
-          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions]}, true).to_json[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
+          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions, :can_merge_or_split_tickets]}, true).to_json[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
           response << "}"
           render :json => response
         end
@@ -873,7 +873,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files])
     reply_to_all_emails
   end
 

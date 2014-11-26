@@ -28,7 +28,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   protected
 
     def queue_replies
-      reply_content =  params[:helpdesk_note][:note_body_attributes][:body_html]
       if privilege?(:reply_ticket) and reply_content.present?
         return unless check_attachments
         begin
@@ -43,6 +42,11 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         end
         Resque.enqueue(Workers::BulkReplyTickets, params_for_queue)
       end
+    end
+
+    def reply_content
+      params[:helpdesk_note][:note_body_attributes] ? 
+        params[:helpdesk_note][:note_body_attributes][:body_html] : nil
     end
 
     def check_attachments
@@ -80,7 +84,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def params_for_queue
-      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'dropbox_url', 'shared_attachments', 'spam_key')
+      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'cloud_file_attachments', 'shared_attachments', 'spam_key')
     end
 
     def get_updated_ticket_count

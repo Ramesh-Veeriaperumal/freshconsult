@@ -1,5 +1,6 @@
 class Discussions::TopicsController < ApplicationController
 
+	include CloudFilesHelper
 	helper DiscussionsHelper
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
@@ -225,12 +226,8 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def build_attachments
-			return unless @post.respond_to?(:attachments)
-			unless params[:post].nil?
-				(params[:post][:attachments] || []).each do |a|
-					@post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
-				end
-			end
+			post_attachments = params[:post].nil? ? [] : params[:post][:attachments]
+			attachment_builder(@post, post_attachments, params[:cloud_file_attachments])
 		end
 
 		def after_destroy_path

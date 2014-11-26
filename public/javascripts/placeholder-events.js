@@ -130,6 +130,8 @@ jQuery(document).ready(function(){
 		jQuery('#place-dialog').hide();	
 	});
 
-	jQuery('#place-dialog').draggable();
+	jQuery('#place-dialog').draggable({
+		cancel : '.placeholder-list'
+	});
 
 });

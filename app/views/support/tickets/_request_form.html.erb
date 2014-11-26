@@ -43,7 +43,7 @@
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
-          jQuery.ajax({ url: "/support/search/solutions?max_matches=4&term="+string, 
+          jQuery.ajax({ url: "/support/search/solutions?max_matches=5&term="+string, 
             dataType: 'json',
             success: function(data){
                 var search_items = jQuery("<ul class='unstyled'>")
@@ -51,10 +51,14 @@
                   jQuery( "<li>" )
                     //.append('<span class="label label-small label-light ">'+ item.group +'</span>')
                     .append("<a href='"+item.url+"'>" + item.title + "</a> ")                    
-                    .append('<p>'+ item.desc +'</p>')
+                    .append('<p class="max-search-content">'+ item.desc +'</p>')
                     //.addClass(item.type.toLowerCase()+'-item')
                     .appendTo( search_items )
                 })
+                if(data.length > 4){
+                  jQuery("<li>")
+                    .append("<a href='/support/search/solutions?max_matches=5&term="+string+"'>" + "<%= I18n.t('widgets.feedback_widgets.new.show_all_results') %>" + "</a> ").appendTo( search_items )
+                }
                 if(data.length > 0){
                   jQuery("#new-ticket-search")
                     .html(search_items)
@@ -92,8 +96,8 @@
       {
         var cc_emails = _form.find('input[name="cc_emails"]')
         var cc_emails_val = cc_emails.val()
-        if (cc_emails_val && cc_emails_val.split(",").length >= 20) {
-          alert('You can add upto 20 CC emails');
+        if (cc_emails_val && cc_emails_val.split(",").length >= 50) {
+          alert('You can add upto 50 CC emails');
           return false;
         }
         _form.find("button, a.btn").attr('disabled',true);

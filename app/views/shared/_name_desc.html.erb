@@ -1,8 +1,11 @@
 <p style="float:right; margin-top:0"></p>
 <div class="form-horizontal">
 	<div class="control-group" id="forum_name">
-		<label class="control-label"><%= t('title') %></label><div class="controls"><%= form.text_field :name, :class => "primary" %>
-		</div>
+		<label class="control-label">
+			<%= t('name') %>
+			<span class='required_star'>*</span>
+		</label>
+		<div class="controls"><%= form.text_field :name, :class => "primary" %></div>
 	</div>
 	<div class="control-group" id="forum_descripion">
 		<label class="control-label"><%= t('description') %></label><div class="controls">

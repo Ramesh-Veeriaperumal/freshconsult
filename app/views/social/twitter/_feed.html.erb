@@ -65,7 +65,8 @@
           <ul class="sharer">
             <% convert_ticket_class = feed.ticket_id.blank? ? "" : "hide" %>
             <% show_ticket_class = !feed.ticket_id.blank? ? "" : "hide" %>
-            <% if privilege?(:reply_ticket) %>
+            
+            <% if privilege?(:reply_ticket) && @reply_handles.any? %>
               <li>
                 <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id%>" data-clicked="no" class="more-links sharer_reply_button tooltip" data-original-title="Reply" twipsy-content-set="true" >
                   <%= font_icon "reply", :size => 18 %>
@@ -96,15 +97,15 @@
                   </span>
                 </li>
               <% end %>
-
-              <li> 
-                <span class="sharer_twt_not_ticket <%= convert_ticket_class %>">
-                  <a href="javascript:void(0);" class="ctt-btn tooltip convert_as_ticket more-links unified_view_ctt" data-original-title="<%=t('social.streams.tooltip.convert_to_tkt')%>" data-feed-id="<%= feed.feed_id%>" twipsy-content-set="true" target="_blank" data-placement="left">
-                    <%= font_icon "ticket", :size => 18%>
-                  </a>
-                </span>
-              </li>
             <% end %>
+            
+            <li> 
+              <span class="sharer_twt_not_ticket <%= convert_ticket_class %>">
+                <a href="javascript:void(0);" class="ctt-btn tooltip convert_as_ticket more-links unified_view_ctt" data-original-title="<%=t('social.streams.tooltip.convert_to_tkt')%>" data-feed-id="<%= feed.feed_id%>" twipsy-content-set="true" target="_blank" data-placement="left">
+                  <%= font_icon "ticket", :size => 18%>
+                </a>
+              </span>
+            </li>
             <li>
               <span class="sharer_twt_ticket <%= show_ticket_class %> ">
                   <% ticket_url = "#{helpdesk_tickets_url}/#{feed.ticket_id}" %>

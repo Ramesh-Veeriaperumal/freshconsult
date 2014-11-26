@@ -7,6 +7,7 @@ class Account < ActiveRecord::Base
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
+  after_update :update_freshchat_url, :if => :freshchat_enabled?
   after_destroy :remove_shard_mapping
 
   after_commit_on_create :add_to_billing, :enable_elastic_search
@@ -24,10 +25,10 @@ class Account < ActiveRecord::Base
   def update_redis_display_id
     if features?(:redis_display_id) && @all_changes.key?(:ticket_display_id) 
       key = TICKET_DISPLAY_ID % { :account_id => self.id }
-      display_id_increment = @all_changes[:ticket_display_id][1] - get_tickets_redis_key(key).to_i - 1
+      display_id_increment = @all_changes[:ticket_display_id][1] - get_display_id_redis_key(key).to_i - 1
       if display_id_increment > 0
-        success = increment_tickets_redis_key(key, display_id_increment)
-        set_tickets_redis_key(key, TicketConstants::TICKET_START_DISPLAY_ID, nil) unless success
+        success = increment_display_id_redis_key(key, display_id_increment)
+        set_display_id_redis_key(key, TicketConstants::TICKET_START_DISPLAY_ID) unless success
       end
     end
   end
@@ -136,6 +137,17 @@ class Account < ActiveRecord::Base
     def update_freshfone_voice_url
       if full_domain_changed? or ssl_enabled_changed?
         freshfone_account.update_voice_url
+      end
+    end
+
+    def update_freshchat_url
+      if full_domain_changed? && !chat_setting.display_id.blank?
+        Resque.enqueue(Workers::Freshchat, {
+          :account_id    => id,
+          :worker_method => "update_site", 
+          :siteId        => chat_setting.display_id, 
+          :attributes    => { :site_url => full_domain }
+        })
       end
     end
 

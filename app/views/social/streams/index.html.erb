@@ -82,13 +82,14 @@
 
     <div class="tw-explorer">
       <div class="info-highlight fs-notify">
-          <a href="https://support.freshdesk.com/support/solutions/articles/195543" target="_blank"><b><%= t('social.streams.twitter.flash_card_html')%></b></a>
+          <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
       </div>
-      <% if privilege?(:reply_ticket) %>
+      
+      <% if privilege?(:reply_ticket) and @visible_handles.any? %>
         <div class="ph-grey">
           <h4 class="title pane-title pst-twt"><%= t('social.streams.post_tweet') %></h4>
           <div class="twt-box clear">
-            <%= render :partial => 'social/twitter/post_tweet', :locals => {:handle => @all_handles.first } %>
+            <%= render :partial => 'social/twitter/post_tweet', :locals => {:handles => @visible_handles } %>
           </div>
         </div>
       <% end %>

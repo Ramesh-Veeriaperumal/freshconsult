@@ -28,7 +28,7 @@
                   <% count_class = "hide" if @user[:twitter].followers_count == 0 %>
                   <span class="btn btn-twt-followers <%=count_class%>"> <%= pluralize(@user[:twitter].followers_count, 'Follower')%></span>
                 <% end %>
-                <% if @user[:show_followers] and privilege?(:reply_ticket)%>
+                <% if @user[:show_followers] and @visible_handles.any? and privilege?(:reply_ticket) %>
                   <div class="btn btn-twt-follow twt-follow">
                     <span>Follow As...</span>
                     <ul class="followers" id="followers"> </ul>

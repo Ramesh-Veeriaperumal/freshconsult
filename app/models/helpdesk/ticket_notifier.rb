@@ -35,7 +35,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.attachments
-        params[:dropboxes] = ticket.dropboxes
+        params[:cloud_files] = ticket.cloud_files
       end
       deliver_email_notification(params) if ticket.requester_has_email?
     end
@@ -89,13 +89,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     part :content_type => "multipart/alternative" do |alt|
        alt.part "text/plain" do |plain|
-         plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body_plain], :dropboxes=>params[:dropboxes],
+         plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body_plain], :cloud_files=>params[:cloud_files],
                      :survey_handle => survey_handle,
                      :surveymonkey_survey => surveymonkey_survey )
        end
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
-                    :body => generate_body_html(params[:email_body_html], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
+                    :body => generate_body_html(params[:email_body_html], inline_attachments, params[:ticket].account), :cloud_files=>params[:cloud_files],
                     :survey_handle => survey_handle,
                     :surveymonkey_survey =>  surveymonkey_survey)
       end
@@ -133,7 +133,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
         plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, 
-                    :dropboxes=>note.dropboxes, :survey_handle => survey_handle,
+                    :cloud_files=>note.cloud_files, :survey_handle => survey_handle,
                     :include_quoted_text => options[:quoted_text],
                     :surveymonkey_survey =>  surveymonkey_survey
                     )
@@ -141,7 +141,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/html" do |html|
         html.body   render_message("reply.text.html.erb", :ticket => ticket, 
                     :body => generate_body_html(note.full_text_html, inline_attachments, note.account), :note => note, 
-                    :dropboxes=>note.dropboxes, :survey_handle => survey_handle,
+                    :cloud_files=>note.cloud_files, :survey_handle => survey_handle,
                     :include_quoted_text => options[:quoted_text],
                     :surveymonkey_survey =>  surveymonkey_survey
                     )
@@ -174,12 +174,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body   render_message("forward.text.plain.erb",:ticket => ticket, :body => note.full_text, :dropboxes=>note.dropboxes)
+        plain.body   render_message("forward.text.plain.erb",:ticket => ticket, :body => note.full_text, :cloud_files=>note.cloud_files)
       end
       alt.part "text/html" do |html|
         html.body   render_message("forward.text.html.erb",:ticket => ticket, 
                                     :body => generate_body_html(note.full_text_html, inline_attachments, note.account), 
-                                    :dropboxes=>note.dropboxes)
+                                    :cloud_files=>note.cloud_files)
       end
     end
 
@@ -207,12 +207,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body  render_message("send_cc_email.text.plain.erb", :ticket => ticket, :body => ticket.description,:dropboxes=>ticket.dropboxes)
+        plain.body  render_message("send_cc_email.text.plain.erb", :ticket => ticket, :body => ticket.description,:cloud_files=>ticket.cloud_files)
       end
       alt.part "text/html" do |html|
         html.body   render_message("send_cc_email.text.html.erb",:ticket => ticket, 
                                     :body => generate_body_html(ticket.description_html, inline_attachments, ticket.account), 
-                                    :dropboxes=>ticket.dropboxes)
+                                    :cloud_files=>ticket.cloud_files)
       end
     end
 

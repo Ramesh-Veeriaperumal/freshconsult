@@ -2,6 +2,7 @@
 class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
+  include CloudFilesHelper
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -116,10 +117,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def build_attachments
-      return unless @article.respond_to?(:attachments)
-      (params[nscname][:attachments] || []).each do |a|
-        @article.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
-      end
+      attachment_builder(@article, params[nscname][:attachments], params[:cloud_file_attachments] )
     end
     
     def reorder_scoper
@@ -153,6 +151,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def set_solution_tags      
+      return unless params[:tags] && (params[:tags].is_a?(Hash) && params[:tags][:name].present?)      
       @article.tags.clear    
       tags = params[:tags][:name]
       ar_tags = tags.split(',').map(&:strip).uniq    

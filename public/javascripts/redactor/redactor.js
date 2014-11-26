@@ -265,8 +265,8 @@ var Redactor = function(element, options)
 		fontsize_levels_reverse: {'10px':1, '13px':2, '16px':3, '18px':4, '24px':5, '32px':6},
 		fontsize_naming: ['Tiny', 'Small', 'Medium', 'Large', 'Huge'],
 		// private
-		allEmptyHtml: '<p><br /></p>',
-		mozillaEmptyHtml: '<p>&nbsp;</p>',
+		allEmptyHtml: "<p><br /></p>\r\n",
+		mozillaEmptyHtml: "<p>&nbsp;</p>\r\n",
 		buffer: false,
 		visual: true,
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
@@ -4443,7 +4443,6 @@ $.fn.insertExternal = function(html)
 			//check HTML view in redactor
 			if(this.$editor.$el.is(":hidden")){ 
 				var removeCursor = this.$editor.$el.data('removeCursor');
-				this.$editor.removeTagOnLiquid();
 				if(removeCursor == undefined || removeCursor){
 					this.$editor.deleteCursor();	
 				} else {
@@ -4452,6 +4451,7 @@ $.fn.insertExternal = function(html)
 						this.$editor.$el.data('redactor').addNoneStyleForCursor();
 					}
 				}
+				this.$editor.removeTagOnLiquid();
 			}
 		}
 	}

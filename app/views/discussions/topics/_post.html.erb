@@ -93,8 +93,17 @@ unpublished =  !original && !post.published
 			<div class="post-edit hide" rel="remote"
 					data-remote-url="<%= edit_discussions_topic_post_path(:topic_id => @topic.id, :id => post.id) %>"></div>
 		<% end %>
-		<%= attachment_container(post.attachments, privilege?(:edit_topic, post), "article", nil) %>
-
+			<div class="attachment_wrapper mb20">
+				<ul class="attachment_list">
+				    <% post.attachments.each do |attached| %> 
+				    	<%= attachment_list(attached, privilege?(:edit_topic, post), "article",nil) %>
+				    <% end %>
+	 
+				    <% post.cloud_files.each do |cloud_file| %> 
+						<%= attachment_list(cloud_file, privilege?(:edit_topic, post), "cloud_file",nil) %>
+						<% end %>
+				</ul>
+			</div>
 		<% if original && @topic.answered? && @topic.answer %>
 			<%= render :partial => 'discussions/shared/answer',
 						:locals => {

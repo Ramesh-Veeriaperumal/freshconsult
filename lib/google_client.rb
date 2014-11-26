@@ -21,14 +21,14 @@ module GoogleClient
 
 	def self.holidays_from_google(calendar_id)
       holidays_data = []
-
-      client = establish_connection
-      calendar = client.discovered_api('calendar', 'v3')
-
-      result = client.execute(:api_method => calendar.events.list, 
-        :parameters => {'calendarId' => calendar_id})
-
       begin
+        client = establish_connection
+        calendar = client.discovered_api('calendar', 'v3')
+
+        result = client.execute(:api_method => calendar.events.list, 
+          :parameters => {'calendarId' => calendar_id})
+
+        
         response = result.data.to_hash["items"]
         if response.nil?
           Rails.logger.info "Error in fetching google calendar: #{result.data.to_hash.inspect}"
@@ -47,12 +47,13 @@ module GoogleClient
 
     def self.calendars
     	calendars_list = []
-    	client = establish_connection
-      calendar = client.discovered_api('calendar', 'v3')
-      result = client.execute(:api_method => calendar.calendar_list.list, 
-        						:parameters => {'calendarId' => @@base_calendar_id})
-
       begin
+      	client = establish_connection
+        calendar = client.discovered_api('calendar', 'v3')
+        result = client.execute(:api_method => calendar.calendar_list.list, 
+          						:parameters => {'calendarId' => @@base_calendar_id})
+
+      
         response = result.data.to_hash["items"]
         if response.nil?
           Rails.logger.info "Error in fetching google calendar: #{result.data.to_hash.inspect}"

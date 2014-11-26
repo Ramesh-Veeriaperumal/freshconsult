@@ -19,9 +19,11 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   elsif key_hash["options"]["name"].blank?
     provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
   else
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], { scope: key_hash["options"]["scope"], name: key_hash["options"]["name"] }
-    key_hash["options"].delete "name"
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
+    provider key_hash["provider"], key_hash["consumer_token"], key_hash["consumer_secret"], { scope: key_hash["options"]["scope"], name: key_hash["options"]["name"] }
+    if key_hash["options"]["name"] == "google_login" # Since google_calendar uses the same tokens as that of google_login and uses the provider as "google_oauth2"
+      key_hash["options"].delete "name"
+      provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
+    end
   end
   }
 

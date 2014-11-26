@@ -29,8 +29,8 @@
 					<h4><%= @ticket.attachments.size %> <%= t('attachments')%></h4>
 					<%= attachment_container(@ticket.attachments, true, "ticket", nil) %>
 				<% end %> 
-				<% unless @ticket.dropboxes.empty? %>
-			        <%= attachment_container(@ticket.dropboxes, true, "dropbox" ,nil) %>
+				<% unless @ticket.cloud_files.empty? %>
+						<%= attachment_container(@ticket.cloud_files, true, "cloud_file", nil) %>
       			<% end %>
 			</div>
 		</div>               

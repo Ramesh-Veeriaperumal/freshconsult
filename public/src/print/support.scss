@@ -82,11 +82,11 @@ a[href^="http://"], a[href^="https://"] {
 }
 
 /* for solutions and forums */
-.article-vote, #vote-feedback-container, .helpdesk_view,
-#topic-toolbar, #reply-to-post, .start-topic, .lead,
-.alert-assume-agent, #reply-to-ticket, #add-people, .sidebar
-{
-	display: none;
+.article-vote, #vote-feedback-container, .helpdesk_view, #topic-toolbar, #reply-to-post, 
+.start-topic, .lead, .alert-assume-agent, #reply-to-ticket, #add-people, .sidebar, 
+iframe#freshwidget-embedded-form, #feedback-widget-container, #freshwidget-button, 
+.agent_view,.freshwidget-theme, #fc_chat_layout {
+	display: none !important;
 }
 
 .user-info, .user-pic-thumb, .user-details {

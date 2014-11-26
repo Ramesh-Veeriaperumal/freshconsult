@@ -27,7 +27,7 @@ describe Freshfone::User do
   it 'should return true for valid phone number check' do
     create_online_freshfone_user
     number = GlobalPhone.parse(Faker::Base.numerify('(###)###-####')).international_string
-    @freshfone_user.user.update_attributes(:phone => number)
+    @freshfone_user.user.update_attributes!({:phone => number})
     @freshfone_user.reload
     @freshfone_user.send(:vaild_phone_number?, @number).should be_true
   end

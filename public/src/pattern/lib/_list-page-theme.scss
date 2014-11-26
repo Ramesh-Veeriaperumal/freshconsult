@@ -256,7 +256,7 @@
         }
     }
 }
-.va_rule-index,.sla-index{
+.va_rule-index,.sla-index,.chat-widget-index{
     table{
         table-layout: fixed;
         tr td{
@@ -288,7 +288,26 @@
         color: white;
         font-weight: 500;
         .caret{
-            margin: 7px -7px 0px 7px;
+            @include margin(7px -7px 0px 7px);
         }
     }
+}
+
+// -------------------------------------------------------------------------------------------
+//                                     Round robin dashboard page
+// -------------------------------------------------------------------------------------------
+.agent-status{
+    .list-page-header{margin: 20px 0 -30px}
+    table{
+        table-layout: fixed;
+        tr td:first-child{ width:275px;}
+    }
+    table.available-agents{
+        border-bottom:1px solid rgba(0,0,0,0.3)
+    }
+    .active_since{@include margin-left(10px);}
+}
+.agents-list-round-robin {
+    clear: both;
+    text-align: center;
 }

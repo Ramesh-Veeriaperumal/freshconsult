@@ -619,14 +619,17 @@ var StreamManager = Class.create({
     /*Right Pane Actions */
     tweetAs: function(e) {
         var str = "",
-            handle_id, _img;
+            handle_id, _img, _class;
         j(e.target).addClass('selected');
         _img = j(e.target).attr("data-img-url");
         handle_id = j(e.target).attr("data-handle-id");
+        _class = j(e.target).attr("data-class");
         str = j(e.target).text();
-        j(".twt-profile img").attr("src", _img);
-        j(".dropdown-toggle").html(str + " <i class='ficon-caret-down fsize-16' size='16'></i>").attr("data-original-title", str);
-        j(".twitter_handle_id").val(handle_id);
+
+        j('a.'+_class).html(str + " <i class='ficon-caret-down fsize-16' size='16'></i>").attr("data-original-title", str);
+        
+        j('.' + _class + ' img').attr("src", _img);
+        j("input."+_class).val(handle_id);
     },
     closeOnBodyClick: function(e) {
         this.eObjToTrackClick = e.target; //remove after TWIPSY removed

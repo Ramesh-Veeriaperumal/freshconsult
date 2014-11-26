@@ -2,11 +2,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to_account
 
-  has_flexiblefields
+  has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
 
   has_many_attachments
 
-  has_many_dropboxes
+  has_many_cloud_files
 
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
                             :dependent => :destroy, :autosave => false
@@ -70,5 +70,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :mobihelp_ticket_info, :class_name => 'Mobihelp::TicketInfo' , :dependent => :destroy
   
   accepts_nested_attributes_for :tweet, :fb_post , :mobihelp_ticket_info
+
+  has_one :article_ticket, :dependent => :destroy
+  has_one :article, :through => :article_ticket
 
 end

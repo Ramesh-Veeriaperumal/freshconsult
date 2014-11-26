@@ -13,6 +13,7 @@ class Portal < ActiveRecord::Base
   after_commit_on_update :update_users_language, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
+  after_save :update_chat_widget
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -50,7 +51,7 @@ class Portal < ActiveRecord::Base
   belongs_to :product
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD64"
+  APP_CACHE_VERSION = "FD67"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -104,11 +105,11 @@ class Portal < ActiveRecord::Base
 
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
-    filter_fields account.ticket_fields.send(additional_scope)
+    filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
   end
 
   def customer_editable_ticket_fields
-    filter_fields account.ticket_fields.customer_editable
+    filter_fields account.ticket_fields.customer_editable, ticket_field_conditions
   end
 
   def layout
@@ -186,18 +187,30 @@ class Portal < ActiveRecord::Base
       self.portal_url = portal_url.downcase if portal_url
     end
 
-    def filter_fields(f_list)
+    def ticket_field_conditions
+      { 'product' => (main_portal && !account.products.empty?) }
+    end
+    def filter_fields(f_list, conditions)
       to_ret = []
-      checks = { 'product' => (main_portal && !account.products.empty?) }
 
-      f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
+      f_list.each { |field| to_ret.push(field) if conditions.fetch(field.name, true) }
       to_ret
     end
-
-
 
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
       get_portal_redis_key(key) || "0"
+    end
+
+    def update_chat_widget
+      if account.features?(:chat)
+        if product && portal_url_changed?
+          site_id = account.chat_setting.display_id
+          chat_widget = product.chat_widget
+          if chat_widget && chat_widget.widget_id
+            Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :widget_id => chat_widget.widget_id, :siteId => site_id, :attributes => { :site_url => portal_url}})
+          end
+        end
+      end
     end
 end

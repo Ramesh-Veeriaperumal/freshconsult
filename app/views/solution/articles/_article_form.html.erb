@@ -11,15 +11,13 @@
 			<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required"  %>
 		</div>
 	</div>
-	<div class="control-group">
+	<div class="control-group overflow-visible">
 		<div class="controls">
-			<%= render :partial => "/solution/shared/attachment_form" %>
-			<div class="attachment-list-container">
-				<% unless @article.attachments.empty?  %>
-					<%= content_tag('h4', t("attachments"), :class => "title")%>
-					<%= attachment_container(@article.attachments,true,"article") %>
-				<% end %>
-			</div>
+			<%= render	:partial => "/solution/shared/attachment_form",
+ 				:locals => { :attach_id => 'article', :nsc_param => 'solution_article',
+ 					:original_attachments => { :cloud_files => @article.cloud_files, 
+ 																		 :regular => @article.attachments }
+ 				} %>
 		</div>
 	</div>
 	<% if is_application_installed?("screenr") %>

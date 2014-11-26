@@ -11,7 +11,18 @@ module SpamConstants
       "key_space" => "sw_helpdesk_notes",
       "threshold" => 50,
       "sec_expire" => 1800
+    },
+    "solution_articles" => {
+      "key_space" => "sw_solution_articles",
+      "threshold" => 30,
+      "sec_expire" => 7200
+    },
+    "posts" => {
+      "key_space" => "sw_posts",
+      "threshold" => 100,
+      "sec_expire" => 21600
     }
+
   }
 
   # push all the ban keys to spam watcher queue for processing later

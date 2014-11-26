@@ -9,8 +9,7 @@
 		<%= submit_tag "Purchase Credits", :class => "btn" %>
 		<% unless default_currency? %>
 			<div id = "fone-credit-followup">$
-      <%= @freshfone_credit ? @freshfone_credit.last_purchased_credit
-                            : Freshfone::Credit::DEFAULT %> 
+      <%= multicurrency_followup_amount %> 
       <%= t('freshfone.subscription.followup_text') %></div>
 		<% end %>
 	</div>

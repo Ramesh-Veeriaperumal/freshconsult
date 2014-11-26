@@ -125,7 +125,7 @@
   <li class="inline-field field attachment-options continous" id="attachment-options-reply">
       <% unless local_assigns[:no_attachments] %>
       <% attached= conv_item.class.name=="Helpdesk::Note" ? conv_item.all_attachments : conv_item.attachments %>
-      <% attachments = {:regular => attached, :dropbox => conv_item.dropboxes } %>
+      <% attachments = {:regular => attached, :cloud_files => conv_item.cloud_files } %>
       <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :original_attachments => attachments} %>
       <% end %>    
   </li>

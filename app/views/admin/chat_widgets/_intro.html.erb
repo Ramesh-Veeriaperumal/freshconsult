@@ -1,0 +1,61 @@
+<div id="chat_intro" class="chat-intro">
+	<div class="freshchat-content">
+		<h2><%=t('freshchat.intro_title')%></h2><br>
+		<p><%=t('freshchat.intro')%></p>
+			<button class ="btn btn-primary" id = "chat_initial_enable"> <%=t('freshchat.enable_chat')%></button>
+			<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/181689-getting-started-with" >
+				<%= t('freshchat.learn_freshchat') %>
+			</a>
+		</p>
+	</div>
+</div>
+
+ <% javascript_tag do %>
+      (function($){
+          $(document).one('ready pjax:success' ,function(){
+          	var comm_url = "https://"+CS_URL+":443";  
+            var url = ASSET_URL.js;
+            if(window.location && window.location.protocol=='https:'){
+              url = ASSET_URL.cloudfront;
+            }
+            if(!window.chatSetting){
+              $.getScript(url+ "/js/chat_settings.js", function(){
+                if(window.chatSetting){
+                  if(typeof CHAT_ENV != 'undefined' && CHAT_ENV == 'development'){
+									    comm_url = "http://"+CS_URL+":4000";
+									}
+									if(window.location && window.location.protocol=="http:" && fc_helper.ieVersionCompatability){
+									    comm_url = "http://"+CS_URL+":80";
+									}
+
+			          	$('body').on('click',"#chat_initial_enable",function(){
+			          		jQuery(this).button('loading');
+					          var data = {	
+											"id" 					      : <%= current_account.id %>, 
+		            		  "siteId"				    : window.SITE_ID,
+											"domain"				    : '<%= current_account.domain %>', 
+											"url"					      : window.location.hostname , 
+											"protocol" 				  : window.location.protocol, 
+											"widget_site_url"		: '<%= current_account.domain %>',
+											"name"              : '<%= current_account.main_portal.name %>' 
+										};
+										
+										$.ajax({
+											type: "POST",
+											url: comm_url + "/sites/create",
+											data: data,
+											dataType: "json",
+											success: function(resp){
+												if(resp.status == "success"){
+													window.location = "/admin/chat_widgets";
+												}
+											}
+					          });
+					        });
+                }
+              });
+            }  
+		      });
+      })(jQuery);
+    <%end%>
+		

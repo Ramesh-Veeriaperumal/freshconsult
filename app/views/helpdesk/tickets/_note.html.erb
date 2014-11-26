@@ -60,15 +60,17 @@
 				<%= notes.html_safe %>
 			</div>
 		</div>
-	    <% unless note.all_attachments.empty? %>
-			<span class="seperator"></span>
-			<h4 class="lowercase"><%= pluralize(note.all_attachments.size, t('attachment'), t('attachments'))%></h4>
-			<%= attachment_container(note.all_attachments,true,"ticket",nil) %>
-		<% end %>
-		<% unless note.dropboxes.empty? %>
-			<%= attachment_container(note.dropboxes, true, "dropbox", nil) %>
-		<% end %>
-	</div>
+      <% if note.all_attachments.present? || note.cloud_files.present? %>
+          <span class="seperator"></span>
+          <h4 class="lowercase"><%= pluralize(note.all_attachments.size, t('attachment'), t('attachments'))%></h4>
+          <% unless note.all_attachments.empty? %>
+            <%= attachment_container(note.all_attachments,true,"ticket",nil) %>
+          <% end %>
+          <% unless note.cloud_files.empty? %>
+            <%= attachment_container(note.cloud_files, true, "cloud_file", nil) %>
+          <% end %>
+        <% end %>
+	  </div>
 
 	<%= content_tag :div, "", :id => "#{edit_id}", :class => "hide", :rel => "remote", 
 							"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(notable_object, note) %>

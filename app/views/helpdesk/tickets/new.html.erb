@@ -58,8 +58,8 @@
     var _form = jQuery(this);
     if(_form.valid())
     {
-      if (_form.find('input[name="cc_emails[]"]').length >= 20) {
-        alert('You can add upto 20 CC emails');
+      if (_form.find('input[name="cc_emails[]"]').length >= 50) {
+        alert('You can add upto 50 CC emails');
         return false;
       }
       _form.find("button, a.btn").attr('disabled',true);

@@ -59,7 +59,7 @@ describe Helpdesk::SlaPoliciesController do
 
     it "should edit a Sla Policy" do
         get :edit, :id => @sla_policy_1.id
-        response.body.should =~ /"#{@sla_policy_1.name}"/
+        response.body.should =~ /#{@sla_policy_1.name}/
     end
 
     it "should update a Sla Policy" do

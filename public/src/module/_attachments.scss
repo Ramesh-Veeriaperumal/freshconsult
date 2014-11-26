@@ -22,14 +22,14 @@
 			margin: 0;
 			padding: 3px 0px;
 			width: 25px;
-			height: 13px;
+			height: 14px;
 			display: inline-block;
 			position: relative;
 			&:before{
 				position: absolute;
 				content: "";
 				width: 30px;
-				height: 30px;
+				height: 29px;
 				background: inline-image('cdn-ignored/inline-images/page.png') no-repeat #ffffff;
 				background-size: 20px 25px;
 			}
@@ -74,6 +74,7 @@
 			vertical-align: middle;
 			@include margin-left(10px);
 			width: 110px;
+			height: 30px;
 			.file-size{
 				display: block;
 			}
@@ -103,7 +104,21 @@
 		}
 	}
 }
-
+// ------------------------------------------------------------------ //
+// 												For Ticket List page											  //
+// ------------------------------------------------------------------ //
+.ui-form .attachments-wrap{
+	.dropdown-menu 
+	{
+		a{
+			padding:3px 3px 3px 15px;
+		}
+		li{
+			padding: 0;
+			width: 100%;
+		}
+	}
+}
 // ------------------------------------------------------------------ //
 // -------------------- NO IMAGE CLASS ------------------------------ //
 // ------------------------------------------------------------------ //

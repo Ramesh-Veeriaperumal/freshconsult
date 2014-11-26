@@ -141,7 +141,7 @@
 	}
 }
 
-.contactdiv{
+.ticketdiv, .contactdiv{
 	.item_info{
 		color: #333;
 		&:hover{
@@ -526,14 +526,14 @@
 				display: block;
 				width: 68%;
 				@include float(right);
-			@include margin-right(8px);
+				@include margin-right(8px);
 			}
 			.display_id, .subject{
 				display: none;
 			}
 		}
 	}
-	.contactdiv{
+	.ticketdiv{
 		#merge-ticket{
 			margin-top: 2px;
 			span.item_info{

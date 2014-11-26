@@ -90,7 +90,8 @@
 			background-repeat: no-repeat;
 			cursor:pointer;
 			display: block;
-			@include text-indent(-9999px);
+			text-indent: -9999px;
+			direction: ltr;
 			padding: 0;
 		}
 	}
@@ -160,6 +161,9 @@
 		@include padding(6px 0 6px 30px);
 		background-repeat: no-repeat;
 		font-weight: 500;
+		@if $rtl{
+			background-position-x: 30px;
+		}
 	}
 	.transfer_call {
 		td:first-child {
@@ -350,7 +354,7 @@
 
 .freshfone_filter_sorting {
 	width: 25%;
-	border-left: 1px solid #ccc;
+	@include border-left(1px solid #ccc);
 	text-align: left;
 	min-height: 20px;
 	.filter_title {

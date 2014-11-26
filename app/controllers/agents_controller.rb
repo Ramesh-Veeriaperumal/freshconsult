@@ -69,7 +69,6 @@ class AgentsController < ApplicationController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
-    @agent.user.user_emails.build({:primary_role => true}) if @agent.user.user_emails.blank?
     @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
      respond_to do |format|
       format.html # new.html.erb
@@ -87,11 +86,16 @@ class AgentsController < ApplicationController
 
   def toggle_availability
     @agent = current_account.agents.find_by_user_id(params[:id])
-    @agent.available = params[:value]
+    @agent.toggle(:available)
+    @agent.active_since = Time.now.utc
     @agent.save
     Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
-    render :nothing => true
+    respond_to do |format|
+      format.html { render :nothing => true}
+      format.json  { render :json => {} }
+    end    
   end
+    
 
   def toggle_shortcuts
     @agent = scoper.find(params[:id])
@@ -250,14 +254,8 @@ class AgentsController < ApplicationController
   end
   
   def check_email_exist
-    if current_account.features?(:multiple_user_emails)
-      if("has already been taken".eql?(@user.user_emails.first.errors["email"]))        
-        @existing_user = current_account.user_emails.user_for_email(@user.user_emails.first.email)
-      end
-    else
-      if("Email has already been taken".eql?(@user.errors["base"]))        
-        @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => params[:user][:email]}})
-      end
+    if("Email has already been taken".eql?(@user.errors["base"]))        
+      @existing_user = current_account.user_emails.user_for_email(params[:user][:email])
     end
   end
   

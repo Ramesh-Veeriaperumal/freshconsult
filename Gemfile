@@ -8,7 +8,7 @@ gem "rails","2.3.18"
 gem "json", "~> 1.8"
 gem "json-compare", "0.1.8"
 
-gem "mysql2", :git => 'git://github.com/sumakumardey/mysql2.git',:branch => 'mysql_logs'
+gem "mysql2", "0.2.18"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
@@ -17,6 +17,7 @@ gem "country_select", :git => "git://github.com/stefanpenner/country_select", :t
 gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag => 'v1.7.0'
 gem "acts_as_list", "0.1.4"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
+gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 group :development do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git', :branch => "rails-2-3"
@@ -40,7 +41,7 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
-gem "omniauth-salesforce"
+gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "omniauth-surveymonkey", "1.0.0"

@@ -52,7 +52,7 @@ class Freshfone::CallInitiator
 	def initiate_outgoing
 		set_calls_beyond_threshold
 		twiml_response do |r|
-			r.Dial :callerId => number, :record => record?,
+			r.Dial :callerId => number, :record => record?, :timeout => 60,
 						 :action => outgoing_url, :timeLimit => time_limit do |d|
 				d.Number params[:PhoneNumber], :url => update_user_presence_url
 			end

@@ -58,8 +58,8 @@ class Helpdesk::NoteDrop < BaseDrop
 		@source.freshfone_call
 	end
 
-	def dropboxes
-		@source.dropboxes if @source.dropboxes.present?
+	def cloud_files
+		@source.cloud_files 
 	end
 
 end

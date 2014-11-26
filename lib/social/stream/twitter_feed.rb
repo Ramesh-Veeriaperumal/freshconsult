@@ -37,13 +37,13 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     handle  = select_reply_handle(stream)
     account = handle.account
     @sender = self.user[:screen_name]
-    user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
     feed_obj, options = fd_item_params(options)
 
     #HACK for a period of 1 week when we transition from old UI to new UI
     tweet = account.tweets.find_by_tweet_id(self.feed_id)
     if tweet
       notable = tweet.get_ticket
+      user  = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
       update_fd_link(self.stream_id, self.feed_id, notable, user)
       return notable
     end
@@ -51,9 +51,13 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     reply_tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless reply_tweet.blank?
       ticket  = reply_tweet.get_ticket
+      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
       notable = add_as_note(feed_obj, handle, :mention, ticket, user, options)
     else
-      notable = add_as_ticket(feed_obj, handle, :mention, options) if options[:convert]
+      if options[:convert]
+        user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+        notable = add_as_ticket(feed_obj, handle, :mention, options) 
+      end
     end
     update_fd_link(self.stream_id, self.feed_id, notable, user) if notable
     notable

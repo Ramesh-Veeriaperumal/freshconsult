@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   
+  include CloudFilesHelper
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
   before_filter :find_forum_topic, :only => [:create, :best_answer]
@@ -85,11 +86,8 @@ class PostsController < ApplicationController
     end
   end
   
-   def build_attachments
-   return unless @post.respond_to?(:attachments)
-    (params[:post][:attachments] || []).each do |a|
-      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
-    end
+  def build_attachments
+    attachment_builder(@post, params[:post][:attachments], params[:cloud_file_attachments] )
   end
   
   def edit

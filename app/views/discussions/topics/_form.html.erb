@@ -23,7 +23,10 @@
 						:tabindex => 20, :height => "200px", 'editor-type' => :forum) %>
 
 			<%= render :partial=> "discussions/shared/attachment_form", :locals => {
-										:attachments => @topic.new_record? ? [] : @topic.posts.first.attachments,
+										:attachments => {
+											:regular => @topic.new_record? ? [] : @topic.posts.first.attachments,
+											:cloud_files => @topic.new_record? ? [] : @topic.posts.first.cloud_files
+											},
 										:show_delete => true
 									} %>
 		</div>

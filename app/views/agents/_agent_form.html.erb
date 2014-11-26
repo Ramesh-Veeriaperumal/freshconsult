@@ -51,7 +51,7 @@
 					  <div class="radio inline">
 						  <%= radio_button 'agent', 'occasional', 'true', :checked => agents_exceeded?(@agent) %> 
 						  <strong><%= t('agent.occasional') %></strong><br />
-						  <%= passes_available? ? t('agent.day_pass_available', :count => available_passes ) : t('agent.no_day_pass') %>
+						  <%= I18n.t('agent.day_passes_available', :count => available_passes) %>
               &nbsp;
 					  </div>
 				  </div>
@@ -70,16 +70,6 @@
                     :value => @agent.user.name, :placeholder => t('user.name'))  %>
 					  </div>
 				  </li>	
-          <% if current_account.features?(:multiple_user_emails) %>
-    				<li class="control-group">
-    					<%= label(:user, :email, t('user.email'), :class => "control-label" ) %>
-    					<div class="controls">
-              <% usr.fields_for :user_emails do |ue| %>
-                <%= ue.text_field :email, :id => "email_primary", :class=>"text required input-xlarge email", :placeholder => t('user.email') if ue.object.primary_role? %>
-              <% end %>
-    					</div>
-    				</li>	
-          <% else %>
             <li class="control-group">
               <%= label(:user, :email, t('user.email'), :class => "control-label" ) %>
               <div class="controls">
@@ -87,7 +77,6 @@
                       :value => @agent.user.email, :placeholder => t('user.email')) %>
               </div>
             </li>
-          <% end %> 
   				<li class="control-group">
   					<%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
   					<div class="controls">
@@ -189,7 +178,7 @@
   						</ul>
               <div>
                 <a href="#agent-role-container" rel="freshdialog" data-width="400px" class="btn" id="add-role"
-                   title="<%= t('agent.roles') %>" data-submit-label="<%= t('agent.assign') %>"
+                   title="<%= t('agent.roles') %>" data-submit-label="<%= t('agent.assign') %>" data-close-label="<%= t('cancel') %>"
                    data-close-on-submit="true">
                   <b> <%= t('agent.assign_role')%> </b>
                 </a>
@@ -251,7 +240,7 @@
       $("#agent_role ul").children().remove();
       for(var key in roles){
         if(!roles[key]){
-          $("#agent_role ul").append("<li id='role_dom_" + key + "'><label class='check_box checkbox'><input id= 'role_check_" + key + "' rel='" + key + "' multiple='multiple' name='roles[]' type='checkbox' value='" +  key + "'><b>" + role_details[key][0] + "</b><p class='muted ellipsis'>" + role_details[key][1] + "</p></label></li>");
+          $("#agent_role ul").append("<li id='role_dom_" + key + "' title='"+role_details[key][1]+"' class='tooltip'><label class='check_box checkbox'><input id= 'role_check_" + key + "' rel='" + key + "' multiple='multiple' name='roles[]' type='checkbox' value='" +  key + "'><b>" + role_details[key][0] + "</b><p class='muted ellipsis'>" + role_details[key][1] + "</p></label></li>");
         }
       }
     });
@@ -287,7 +276,7 @@
 
 <!-- Agent role modal -->
 <div id="agent-role-container" class="hide">
-		<p class="margin-bottom lead-desc"><%=t('agent.roles_description')%></p>
+		<p class="margin-bottom"><%=t('agent.roles_description')%></p>
 
     <div id="agent_role" class="agent-role-modal">
       <ul class="unstyled"></ul>

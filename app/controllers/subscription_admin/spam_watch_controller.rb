@@ -63,7 +63,7 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
       all_notes.each_with_index do |note,index|
         @spam_notes[index] = {
           "created_at" => note.created_at,
-          "new_body_html" => note.note_body.body_html
+          "new_body_html" => Helpdesk::NoteOldBody.find_by_account_id_and_note_id(@user.account_id,note.id).body_html
         }
       end
     end
@@ -79,7 +79,7 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
         @spam_tickets[index] = {
           "subject" => ticket.subject,
           "created_at" => ticket.created_at,
-          "new_description_html" => ticket.ticket_body.description_html
+          "new_description_html" => Helpdesk::TicketOldBody.find_by_account_id_and_ticket_id(@user.account_id,ticket.id).description_html
         }
       end
     end

@@ -1,6 +1,6 @@
 class Account < ActiveRecord::Base
 
-  RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk
+  RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc team people india us talk
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out
                           logs projects itil marketing partner store channel reseller resellers online
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
@@ -82,7 +82,8 @@ class Account < ActiveRecord::Base
     :agent_collision => false, :multiple_user_emails => false, :facebook_realtime => false, :social_revamp => true,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => true, :chat_enable => false,
-    :report_field_regenerate => false}
+    :report_field_regenerate => false, :updated_twilio_client => false, :sort_by_customer_response => false, 
+    :round_robin_revamp =>  false, :contact_merge_ui => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 

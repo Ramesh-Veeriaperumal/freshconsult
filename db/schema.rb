@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140917120832) do
+ActiveRecord::Schema.define(:version => 20141113114722) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.datetime "updated_at"
   end
 
+  add_index "admin_user_accesses", ["account_id", "accessible_id", "accessible_type"], :name => "index_admin_acc_id_type"
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
@@ -169,6 +170,7 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.integer  "scoreboard_level_id", :limit => 8
     t.integer  "account_id",          :limit => 8
     t.boolean  "available",                        :default => true
+    t.datetime "active_since"
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
@@ -187,6 +189,15 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
   end
+
+  create_table "article_tickets", :force => true do |t|
+    t.integer "article_id", :limit => 8
+    t.integer "ticket_id",  :limit => 8
+    t.integer "account_id", :limit => 8
+  end
+
+  add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
+  add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
@@ -224,33 +235,65 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
 
   create_table "chat_settings", :force => true do |t|
     t.integer  "account_id",      :limit => 8
-    t.text     "display_id"
-    t.text     "preferences"
-    t.string   "minimized_title"
-    t.string   "maximized_title"
-    t.string   "welcome_message"
-    t.string   "thank_message"
-    t.string   "wait_message"
-    t.string   "typing_message"
-    t.integer  "prechat_form"
-    t.string   "prechat_message"
-    t.integer  "prechat_phone"
-    t.integer  "prechat_mail"
-    t.integer  "proactive_chat"
-    t.integer  "proactive_time"
+    t.string   "display_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_on_portal",                     :default => true
-    t.boolean  "portal_login_required",              :default => false
-    t.integer  "business_calendar_id", :limit => 8
-    t.text     "non_availability_message"
-    t.string   "prechat_form_name"
-    t.string   "prechat_form_mail"
-    t.string   "prechat_form_phoneno"
     t.boolean  "active",                                :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
+
+  create_table "chat_widgets", :force => true do |t|
+    t.string   "name"
+    t.integer  "account_id",            :limit => 8
+    t.integer  "product_id",            :limit => 8
+    t.string   "widget_id"
+    t.boolean  "show_on_portal"
+    t.boolean  "portal_login_required"
+    t.integer  "business_calendar_id",  :limit => 8
+    t.integer  "chat_setting_id",       :limit => 8
+    t.boolean  "active",                             :default => false
+    t.boolean  "main_widget"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
+
+  create_table "contact_fields", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "contact_form_id",    :limit => 8
+    t.string   "name"
+    t.string   "column_name"
+    t.string   "label"
+    t.string   "label_in_portal"
+    t.integer  "field_type"
+    t.integer  "position"
+    t.boolean  "deleted",                         :default => false
+    t.boolean  "required_for_agent",              :default => false
+    t.boolean  "visible_in_portal",               :default => false
+    t.boolean  "editable_in_portal",              :default => false
+    t.boolean  "editable_in_signup",              :default => false
+    t.boolean  "required_in_portal",              :default => false
+    t.text     "field_options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_fields", ["account_id", "contact_form_id", "field_type"], :name => "idx_contact_field_account_id_and_contact_form_id_and_field_type"
+  add_index "contact_fields", ["account_id", "contact_form_id", "name"], :name => "index_contact_fields_on_account_id_and_contact_form_id_and_name", :length => {"account_id"=>nil, "contact_form_id"=>nil, "name"=>20}
+  add_index "contact_fields", ["account_id", "contact_form_id", "position"], :name => "idx_contact_field_account_id_and_contact_form_id_and_position"
+
+  create_table "contact_forms", :force => true do |t|
+    t.integer  "account_id",   :limit => 8
+    t.integer  "parent_id",    :limit => 8
+    t.boolean  "active",                    :default => false
+    t.text     "form_options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_forms", ["account_id", "active", "parent_id"], :name => "index_contact_forms_on_account_id_and_active_and_parent_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -909,6 +952,8 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.integer "account_id",        :limit => 8
   end
 
+  add_index "google_contacts", ["account_id", "user_id"], :name => "index_google_contacts_on_accid_and_uid"
+
   create_table "google_domains", :primary_key => "account_id", :force => true do |t|
     t.string "domain", :null => false
   end
@@ -1004,6 +1049,8 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.datetime "updated_at"
     t.integer  "droppable_id",   :limit => 8
     t.string   "droppable_type"
+    t.integer  "application_id", :limit => 8
+    t.string   "filename"
   end
 
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
@@ -1251,6 +1298,7 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
   end
 
   add_index "helpdesk_shared_attachments", ["account_id", "shared_attachable_id", "shared_attachable_type"], :name => "index_helpdesk_shared_attachments_on_attachable_id", :length => {"account_id"=>nil, "shared_attachable_id"=>nil, "shared_attachable_type"=>15}
+  add_index "helpdesk_shared_attachments", ["account_id", "shared_attachable_id"], :name => "index_helpdesk_attachement_shared_id_share_id"
 
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -1436,6 +1484,7 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.string   "workable_type",              :default => "Helpdesk::Ticket"
   end
 
+  add_index "helpdesk_time_sheets", ["account_id", "workable_id", "workable_type"], :name => "index_helpdesk_sheets_on_workable_acc"
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
   add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
@@ -1488,6 +1537,21 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
+
+  create_table "mailbox_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+ 
+  add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
 
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8, :null => false
@@ -2103,6 +2167,9 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
     t.datetime "updated_at"
   end
 
+  add_index "support_scores", ["account_id", "group_id", "created_at"], :name => "index_support_scores_on_accid_and_gid_and_created_at"
+  add_index "support_scores", ["account_id", "scorable_id", "scorable_type"], :name => "index_support_scores_on_accid_scorable_id_scorable_type"
+  add_index "support_scores", ["account_id", "user_id", "created_at"], :name => "index_support_scores_on_accid_and_uid_and_created_at"
   add_index "support_scores", ["id"], :name => "support_scores_id"
 
   create_table "survey_handles", :id => false, :force => true do |t|
@@ -2467,10 +2534,10 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
   end
 
   add_index "user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "user_emails", ["account_id", "perishable_token"], :name => "index_account_id_perishable_token"
+  add_index "user_emails", ["account_id", "user_id", "primary_role"], :name => "index_account_id_user_id_primary_role"
   add_index "user_emails", ["email"], :name => "user_emails_email"
   add_index "user_emails", ["id"], :name => "user_emails_id"
-  add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
-  add_index "user_emails", ["user_id", "primary_role"], :name => "index_user_emails_on_user_id_and_primary_role"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8
@@ -2542,6 +2609,7 @@ ActiveRecord::Schema.define(:version => 20140917120832) do
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
+  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"

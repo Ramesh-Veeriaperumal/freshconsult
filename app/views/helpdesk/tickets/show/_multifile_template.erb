@@ -7,7 +7,7 @@
   {{/if}}
   <div class="attachment-type file-types-def">
     <span class="{{if (!file_valid) }} invalid_attachment {{/if}}">
-      <a href="javascript:void(0)">${name} {{if (size != '0.00 KB ' ) }}( ${size} ){{/if}}</a>
+      <a href="javascript:void(0)">${name} {{if (size != '0' && size != '0.00 KB ') }}( ${size} ){{/if}}</a>
       {{if (!file_valid)}}
         <%= content_tag(:b, t('helpdesk.tickets.note.attachment_size.not_added'), 
                             :class => "alert-text tooltip", 

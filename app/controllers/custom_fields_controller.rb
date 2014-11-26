@@ -33,7 +33,7 @@ class CustomFieldsController < Admin::AdminController
     @invalid_fields.each do |tf|
         tf.errors.each do |attr,msg|
           if(!err_str.include? "#{tf.label} : #{msg}")
-            err_str << " #{tf.label} : #{msg} <br />"
+            err_str << " #{tf.label} : #{msg} "
           end  
         end  
     end
@@ -85,7 +85,7 @@ class CustomFieldsController < Admin::AdminController
     error_str = ""
     field_data_count_by_type.keys.each do |key|
       if field_data_count_by_type[key] > MAX_ALLOWED_COUNT[key]
-        error_str << I18n.t("flash.custom_fields.failure.#{key}")+'<br />'
+        error_str << I18n.t("flash.custom_fields.failure.#{key}")
       end
     end
     unless error_str.blank?

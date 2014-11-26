@@ -1,7 +1,7 @@
 <script id="file-list-template" type="text/x-jquery-tmpl">			
   <div class="item">
   	<span class="{{if (!file_valid) }} alert-invalid{ {{/if}}">
-  		${name} {{if (size != '0.00 KB ' ) }} ( ${size} ){{/if}}
+  		${name} {{if (size != '0' && size != '0.00 KB ') }} (${size}) {{/if}}
   	</span>
   	<span> 
   		{{if (file_valid) }}

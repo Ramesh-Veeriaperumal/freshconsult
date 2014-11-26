@@ -44,7 +44,7 @@ class Subscription < ActiveRecord::Base
   before_update :cache_old_model
   # after_update :update_features 
 
-  after_update :add_to_crm, :if => :free_customer?
+  after_update :add_to_crm
   after_update :update_reseller_subscription
   after_commit_on_update :update_social_subscription, :add_free_freshfone_credit
 
@@ -439,7 +439,11 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_crm
-      Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+      if next_renewal_at_changed? and (trial? or suspended?)
+        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
+      elsif free_customer?
+        Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+      end
     end
 
     def update_reseller_subscription 

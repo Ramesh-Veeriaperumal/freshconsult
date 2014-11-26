@@ -1,4 +1,5 @@
 .outgoing {
+	direction: ltr;
 	margin: 0;
 	li {
 		padding: 7px 0;
@@ -19,9 +20,11 @@
 
 .popupbox-content.freshfone_content_container{
 	line-height: normal;
+	direction:ltr;
 }
 
 .popupbox-content {
+	direction: ltr;
 	.recent_calls_container{
 		p {
 			margin-bottom: 0;
@@ -36,11 +39,40 @@
 		border:none;
 	}
 	.outgoing_numbers_list_dropdown {
-		background: $numbers-list-background;
-		color: $numbers-list-text;
+        background: white;
+		color:#333;
 		border: none;
-		@include box-shadow(none);
-	}
+        box-shadow: 0 10px 40px -12px #333;
+        border-radius: 4px 4px 4px 4px;
+		.select2-result-label{
+		        overflow: hidden;
+		        white-space: nowrap;
+		        text-overflow: ellipsis;  
+		}
+		.select2-results{
+             background:#fff;
+            li{
+		        border-bottom: 1px solid #ddd;
+		        padding: 5px;
+		        color:#333;
+
+		    }
+		    li:last-child{
+		      border-bottom: none;
+
+		    }
+
+		    li.li_opt_selected, li.li_opt_selected:hover{
+		        background:#888 !important;
+		        color:#fff !important;
+		    }
+            .select2-highlighted{
+		    	width:100%;
+		        background:#eee !important;
+		        color:#333 !important;
+            }
+        }
+    }
 	.invalid_phone_text, .info_message, .already_in_call_text {
 		position: absolute;
 		top: 65px;
@@ -50,12 +82,18 @@
 		width: 100%;
 	}
 	.outgoing_number, .outgoing_numbers_list {
+	    width:220px;
 		position: absolute;
 		top: 0;
-	 @include left(45px);
+	 @include left(0px); 
+	     
+	}
+	.span2{
+	   margin-left: 5px !important;
 	}
 	.outgoing_number {
-	 @include left(85px);
+	 width: 240px;
+	 @include left(0px);
 		color: $numbers-list-text;
 	}
 	.outgoing_numbers_list {
@@ -68,6 +106,7 @@
 			span {
 				@include margin-left(15px);
 			}
+
 		}
 		.select2-choice div {
 		 @include left(0);

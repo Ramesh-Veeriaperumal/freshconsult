@@ -329,6 +329,7 @@ a.menu:after, .dropdown-toggle:after {
   color: #ffffff;
   background: #ccc;
   background: rgba(0, 0, 0, 0.3);
+  &.attach-link { background: none; }
 }
 .open .menu-dropdown,
 .dropdown.open .menu-dropdown,
@@ -692,7 +693,6 @@ $popover-radius: 3px;
       @include border-left($popover-arrow-size solid transparent);
       @include border-right($popover-arrow-size solid transparent);
       border-bottom: $popover-arrow-size solid $popover-stroke;
-      border-bottom: $popover-arrow-size solid rgba($popover-stroke, 0.8);
     }
   }
   &.belowLeft{
@@ -703,7 +703,6 @@ $popover-radius: 3px;
       @include border-left($popover-arrow-size solid transparent);
       @include border-right($popover-arrow-size solid transparent);
       border-bottom: $popover-arrow-size solid $popover-stroke;
-      border-bottom: $popover-arrow-size solid rgba($popover-stroke, 0.8);
     }
   }
   &.left{
