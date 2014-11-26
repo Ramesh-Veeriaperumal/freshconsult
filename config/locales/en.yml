@@ -5879,7 +5879,7 @@ en:
     chatbox_bgcolor: "Window Color"
     in_conversation: "In-conversation"
     available_agents: "Available Agents"
-    visitors_online: "Visitors Online"
+    visitors_online: "New Visitors"
     returning_visitors: "Returning Visitors"
     website_visitors_msg: "Visitors"
     message_archives: "Message archives"
@@ -6018,6 +6018,7 @@ en:
     no_matching_agents: "No matching agents"
     chat_disabled_label: "Chat is disabled for helpdesk"
     chat_enabled_label: "Chat is enabled for helpdesk"
+    concurrent_pick_attempt_msg: "This chat has been already accepted by"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
