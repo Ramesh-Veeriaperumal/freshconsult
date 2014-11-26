@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141118111038) do
+ActiveRecord::Schema.define(:version => 20141125102343) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -259,6 +259,37 @@ ActiveRecord::Schema.define(:version => 20141118111038) do
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
+
+  create_table "company_fields", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "company_form_id",    :limit => 8
+    t.string   "name"
+    t.string   "column_name"
+    t.string   "label"
+    t.string   "label_in_portal"
+    t.integer  "field_type"
+    t.integer  "position"
+    t.boolean  "deleted",                         :default => false
+    t.boolean  "required_for_agent",              :default => false
+    t.text     "field_options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_fields", ["account_id", "company_form_id", "field_type"], :name => "idx_company_field_account_id_and_company_form_id_and_field_type"
+  add_index "company_fields", ["account_id", "company_form_id", "name"], :name => "index_company_fields_on_account_id_and_company_form_id_and_name", :length => {"account_id"=>nil, "company_form_id"=>nil, "name"=>20}
+  add_index "company_fields", ["account_id", "company_form_id", "position"], :name => "idx_company_field_account_id_and_company_form_id_and_position"
+
+  create_table "company_forms", :force => true do |t|
+    t.integer  "account_id",   :limit => 8
+    t.integer  "parent_id",    :limit => 8
+    t.boolean  "active",                    :default => false
+    t.text     "form_options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_forms", ["account_id", "active", "parent_id"], :name => "index_company_forms_on_account_id_and_active_and_parent_id"
 
   create_table "contact_fields", :force => true do |t|
     t.integer  "account_id",         :limit => 8

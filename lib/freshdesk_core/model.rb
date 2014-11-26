@@ -11,6 +11,8 @@ module FreshdeskCore::Model
                         "authorizations", 
                         "business_calendars",           
                         "ca_folders", 
+                        "company_forms",
+                        "company_fields",
                         "conversion_metrics",           
                         "contact_forms",
                         "contact_fields",

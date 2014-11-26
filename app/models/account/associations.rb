@@ -142,6 +142,9 @@ class Account < ActiveRecord::Base
               :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
    
   has_one  :contact_form
+
+  has_one  :company_form
+
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
 
