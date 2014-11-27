@@ -597,7 +597,8 @@ en:
           solutions: Solution Category
           solutions_info: The Solution Category you select will be shown in the App Support 
           app_store_id: App Store ID
-          app_store_id_info: Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer Integration guide.
+          app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
+          app_store_id_v12_info: Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer Integration guide.
           should_be_unique: should be unique
           select_a_platform: Select a platform
           select_a_solution_category: Select a Solution Category
