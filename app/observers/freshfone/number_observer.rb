@@ -81,7 +81,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		
 		def address_certification_request(freshfone_number, account)
 			return unless freshfone_number.address_required
-			FreshfoneNotifier.send_later(:address_certification, account, freshfone_number)
+			FreshfoneNotifier.send_later(:deliver_address_certification, account, freshfone_number)
 		end
 		
 		def new_freshfone_account?(account)

@@ -244,7 +244,7 @@ include GoogleLoginHelper
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
       @current_user.deliver_admin_activation
-      #SubscriptionNotifier.send_later(:welcome, current_account)
+      #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
       redirect_to_getting_started
     else

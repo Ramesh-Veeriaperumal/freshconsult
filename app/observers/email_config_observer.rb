@@ -41,7 +41,7 @@ class EmailConfigObserver < ActiveRecord::Observer
 
   def deliver_email_activation(email_config)
     if ( !email_config.active?) && (email_config.changed.include?("reply_email") || email_config.changed.include?("activator_token") )
-      EmailConfigNotifier.send_later(:activation_instructions, email_config)
+      EmailConfigNotifier.send_later(:deliver_activation_instructions, email_config)
     end
   end
 end

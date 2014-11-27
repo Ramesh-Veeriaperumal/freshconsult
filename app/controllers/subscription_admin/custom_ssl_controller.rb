@@ -19,7 +19,7 @@ class SubscriptionAdmin::CustomSslController < ApplicationController
 			portal = account.portals.find_by_portal_url(params[:portal_url])
 			portal.update_attributes( :elb_dns_name => params[:elb_name], :ssl_enabled => 1 )
 			remove_others_redis_key(ssl_key)
-			UserNotifier.send_later(:custom_ssl_activation, account, 
+			UserNotifier.send_later(:deliver_custom_ssl_activation, account,
 																params[:portal_url], 
 																params[:elb_name])
 		end

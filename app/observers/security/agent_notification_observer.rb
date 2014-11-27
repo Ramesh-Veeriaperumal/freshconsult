@@ -18,7 +18,7 @@ class Security::AgentNotificationObserver < ActiveRecord::Observer
           return if skip_notification?(user.previous_changes)
           changed_attributes_names = changed_attributes.map{ |i| USER_ATTRIBUTES[i] }
           subject = "Your #{changed_attributes_names.to_sentence} in #{user.account.name} has been updated"
-          SecurityEmailNotification.send_later(:agent_alert_mail, user, subject, changed_attributes_names)
+          SecurityEmailNotification.send_later(:deliver_agent_alert_mail, user, subject, changed_attributes_names)
         end
       end
     end

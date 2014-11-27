@@ -8,10 +8,10 @@ module Conversations::Email
   def send_email #possible dead code
     add_cc_email     
     if @item.fwd_email?
-      Helpdesk::TicketNotifier.send_later(:forward, @parent, @item)
+      Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
       flash[:notice] = t(:'fwd_success_msg')
     else        
-      Helpdesk::TicketNotifier.send_later(:reply, @parent, @item, {:include_cc => params[:include_cc] , 
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] ,
               :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
       flash[:notice] =  (@publish_solution == false) ?
         t(:'flash.tickets.reply.without_kbase') : t(:'flash.tickets.reply.success')

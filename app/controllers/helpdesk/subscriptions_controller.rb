@@ -22,7 +22,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
       subscription = @ticket.subscriptions.build(:user_id => params[:user_id])
       if subscription.save
         if current_user.id != subscription.user_id
-          Helpdesk::WatcherNotifier.send_later(:notify_new_watcher, 
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher,
                                                @ticket, 
                                                subscription, 
                                                "#{current_user.name}")

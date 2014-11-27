@@ -270,9 +270,9 @@ class Helpdesk::Note < ActiveRecord::Base
     def send_reply_email  
       add_cc_email     
       if fwd_email?
-        Helpdesk::TicketNotifier.send_later(:forward, notable, self)
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
-        Helpdesk::TicketNotifier.send_later(:reply, notable, self, {:include_cc => self.cc_emails.present? , 
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? ,
                 :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
                 :quoted_text => self.quoted_text,
                 :include_surveymonkey_link => (self.include_surveymonkey_link.present? && self.include_surveymonkey_link.to_i==1)})

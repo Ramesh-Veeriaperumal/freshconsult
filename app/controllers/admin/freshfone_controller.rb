@@ -15,7 +15,7 @@ class Admin::FreshfoneController < Admin::AdminController
 			:cc => current_account.admin_email,
 			:message => "Request to Enable freshfone "
 		}
-		FreshfoneNotifier.send_later(:freshfone_request_template, current_account, current_user, email_params)
+		FreshfoneNotifier.send_later(:deliver_freshfone_request_template, current_account, current_user, email_params)
 		render :json => { :status => :success }
 	end
 

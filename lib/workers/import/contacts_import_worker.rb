@@ -49,7 +49,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
         end
       current_account.contact_import && current_account.contact_import.destroy
       enable_user_activation(current_account)
-      UserNotifier.send_later(:notify_contacts_import, current_user) 
+      UserNotifier.send_later(:deliver_notify_contacts_import, current_user)
 	end
 
 end
