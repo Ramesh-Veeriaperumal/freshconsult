@@ -564,7 +564,7 @@
 
 
   map.view_monitorship 'discussions/:object/:id/subscriptions/is_following.:format', :controller => 'monitorships', :action => 'is_following', :conditions => {:method => :get}
-  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle', :conditions => {:method => :post}
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle'
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal
