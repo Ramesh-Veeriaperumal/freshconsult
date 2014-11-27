@@ -97,6 +97,8 @@ module Mobile::Actions::Ticket
     to_json(options,false)
   end
 
+  
+
   def formatted_created_at(format = "%B %e %Y @ %I:%M %p")
     format = format.gsub(/.\b[%Yy]/, "") if (created_at.year == Time.now.year)
     created_at.strftime(format)

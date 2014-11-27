@@ -3,8 +3,11 @@ module Mobile::Actions::Social
 
   private
   def render_mobile_response
+    @all_screen_names = @all_handles.map {|handle| handle.screen_name }
     meta_data_hash = { :streams => @streams, :custom_streams => @custom_streams,
-                       :thumb_avatar_urls => @thumb_avatar_urls, :meta_data => @meta_data } if params["send_meta_data"]
+                       :thumb_avatar_urls => @thumb_avatar_urls, :meta_data => @meta_data,
+                       :visible_handles => @visible_handles, :reply_handles => @reply_handles,
+                       :all_screen_names => @all_screen_names } if params["send_meta_data"]
     render :json => { :sorted_feeds => @sorted_feeds ,
                       :first_feed_ids => @first_feed_ids,
                       :last_feed_ids => @last_feed_ids,
