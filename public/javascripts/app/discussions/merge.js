@@ -11,11 +11,11 @@ window.App.Discussions = window.App.Discussions || {};
 		TEMPLATE: new Template(
 		    '<li><div class="contactdiv" data-id="#{id}">'+
 		    '<span id="resp-icon" class="resp-icon"></span>'+
-		    '<div class="merge_element merge-topic" data-id="#{id}" data-created="#{created_at}">'+
+		    '<div class="merge_element merge-topic ellipsis" data-id="#{id}" data-created="#{created_at}">'+
 		    '<span class="item_info" title="#{searchKey}">#{searchKey}</span>'+
 		    '<div class="info-data hideForList">'+
 		    '<span class="merge-topic-info">'+
-		    'in <span class="muted">#{forum_name}</span><br />by <span class="muted">#{user_name}</span>, <span class="emphasize">#{info}</span>'+
+		    'in <span class="muted">#{forum_name} (#{category_name})</span><br />by <span class="muted">#{user_name}</span>, <span class="emphasize">#{info}</span>'+
 		    '</span></div></div></div></li>'
 		  ),
 		start: function () {
@@ -207,10 +207,11 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		lookup: function(searchString, callback) {
+			var visibility = $('#select-title').data('visibility');
 			$('#title_results').addClass("sloading");
 			$.ajax({
 					url: '/search/merge_topic',
-					data: { term: searchString },
+					data: { term: searchString, forum_visibility: visibility },
 					dataType: 'json',
 					type: 'POST',
 					success: function(response) {

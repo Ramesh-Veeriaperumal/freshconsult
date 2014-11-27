@@ -6286,13 +6286,14 @@ en:
       add_note: Reason for Merge
       note_saved : Note saved
       add: Add
-      warning: "Topics once merged cannot be unmerged (Followers and votes from the merged topic(s) will be added to the primary topic)."
+      visibility_info: "Showing topics visible to <b>%{visibility}</b> "
+      warning: "Topics once merged cannot be unmerged. Followers and votes from the merged topics will be added to the primary topic."
       merge_notification: "This topic is already locked or merged. Please refresh the page."
       merge_error_for_locked: "This topic is locked for editing as it has been merged into <a href='%{topic_link}'>%{title}</a>."
       target_note_description:
         one: "%{source_topics} has been merged into %{target_topic_title}. "
         other: "%{source_topics} have been merged into the topic %{target_topic_title}."
-      merge_topic_list_status_created_at: "in %{forum}<br />by %{username}, <span class='emphasize'>%{time_ago} ago</span>"
+      merge_topic_list_status_created_at: "in %{forum} (%{category})<br />by %{username}, <span class='emphasize'>%{time_ago} ago</span>"
       title_placeholder: "Search topics to merge"
   link_with_marketplace: Link with Google Marketplace
   google_signup:

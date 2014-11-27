@@ -5,10 +5,11 @@ module TopicMergeHelper
 		output << "<div data-id='#{topic.id}' class='merge-topic' data-created='#{topic.created_at.to_i}'>"
 		output << title_link(topic)
 		output << hidden_field_tag(tag, topic.to_param) if tag
-		output << '<div class="info-data"><span class="merge-topic-info">'
+		output << '<div class="info-data ellipsis"><span class="merge-topic-info">'
 		output << t("discussions.topic_merge.merge_topic_list_status_created_at", 
 									:username => "<span class='muted requester_name'>#{h(topic.user.name)}</span>",
 									:forum => topic.forum.name,
+									:category => topic.forum.forum_category.name,
 									:time_ago => time_ago_in_words(topic.created_at))
 		output << '</span></div></div>'
 		output.join("").html_safe

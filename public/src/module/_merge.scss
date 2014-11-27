@@ -650,7 +650,7 @@
 	}
 	.search_merge{
 		width: 335px;
-		padding-right: 26px;
+		@include padding-right(26px);
 	}
 	#mergebox{
 		.search-content{
@@ -658,7 +658,7 @@
 			margin-top: -3px;
 			.searchicon{
 				top: 99px;
-				right: 32px;
+				@include right(32px);
 			}
 		}
 	}
@@ -666,6 +666,19 @@
 .target-topic-merge-note{
 	height: 60px;
 }
+.visible-merge-note{
+	font-size: 13px;
+	margin-top: -4px;
+	background-color: #FFFDEC;
+	@include padding(9px 0px 8px 9px);
+	position: relative;
+	z-index: 1;
+	top: 4px;
+	width: 96.1%;
+	border: 1px solid #b7b7b7;
+	@include border-radius(3px 3px 0 0);
+}
+
 
 // ------------------------------------------------------------------------------------------------------------
 // 														Email notification css 

@@ -34,13 +34,14 @@
 <%= link_to t('discussions.topics.close_topic'), toggle_lock_discussions_topic_path(@topic), :method => :put,
 					:class => 'btn hide_on_collapse' if privilege?(:edit_topic, @topic) %>
 
-
-<a href="#merge_topicdialog" 
-	class="btn hide_on_collapse" id="mergetopic" 
-	data-target="#merge_topicdialog" 
-	data-title="<%= t('discussions.topic_merge.merge_title') %>" 
-	rel="freshdialog" 
-	data-width="800" data-template-footer=""><%= t('discussions.topics.merge_topic') %></a>
+<% unless @topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] %>
+	<a href="#merge_topicdialog" 
+		class="btn hide_on_collapse" id="mergetopic" 
+		data-target="#merge_topicdialog" 
+		data-title="<%= t('discussions.topic_merge.merge_title') %>" 
+		rel="freshdialog" 
+		data-width="800" data-template-footer=""><%= t('discussions.topics.merge_topic') %></a>
+<% end %>
 
 <% if privilege?(:edit_topic, @topic) ||  privilege?(:delete_topic) %>
 	<div class="btn-group">

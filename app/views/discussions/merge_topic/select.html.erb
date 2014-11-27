@@ -27,10 +27,19 @@
           <input type="text" id='select-title' name='select-title' 
                   class="search_merge" 
                   placeholder='<%=t("discussions.topic_merge.title_placeholder")%>' 
-                  data-filter='title'/>
+                  data-filter='title'
+                  data-visibility='<%= @source_topics.first.forum.forum_visibility %>'/>
           <span class="searchicon"></span>
+      </div>
+      
+      <div class="visible-merge-note">
+          <%= t("discussions.topic_merge.visibility_info", 
+              :visibility => Forum::VISIBILITY_NAMES_BY_KEY[@source_topics.first.forum.forum_visibility]).html_safe %>
         </div>
-      <div id="title_results" class="merge_results hide"></div>
+      
+      <div id="title_results" class="merge_results hide">
+        
+      </div>
       <input type="hidden" value='<%= @redirect_back %>' id="merge-redirect"/>
     </div>
 
