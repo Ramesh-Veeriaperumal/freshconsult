@@ -60,7 +60,7 @@
 			<div class='contact-info-fields-content'>
 				<%= user_avatar(@user, :medium, "profile_pic avatar-pic") %>
 				<div class='user-info'>
-					<h1 class='lead ellipsis'><%= h(@user.display_name) %></h1>
+					<h1 class='lead break-word'><%= h(@user.display_name) %></h1>
 					<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
 				</div>
 				<ul class='show-fields'>

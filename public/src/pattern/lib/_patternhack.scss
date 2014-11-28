@@ -207,6 +207,10 @@ html.touch .dialog-well .actions {
   font-weight: 200;
 }
 
+.break-word {
+  word-wrap: break-word;
+}
+
 ul.unstyled,
 ol.unstyled {
   @include margin-left(0);

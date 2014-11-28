@@ -1,10 +1,10 @@
 <% unless user.job_title.blank? %>
-	<div class="ellipsis user-job-title" title="<%= h user.job_title %>">
+	<div class="break-word user-job-title" title="<%= h user.job_title %>">
    		<%= h user.job_title %>
    	</div>
 <% end %>
 <% unless user.company.blank? %>
-	<div class="ellipsis user-company-name" title="<%= h user.company.name %>">
+	<div class="break-word user-company-name" title="<%= h user.company.name %>">
 		<%= link_to(h(user.company.name), user.company)  %>
 	</div>
 <% end %>
