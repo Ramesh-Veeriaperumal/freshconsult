@@ -83,7 +83,7 @@ label.overlabel{
 	background:$sidebar-bg;
 	@include pie-clearfix;
 	position:relative;
-	z-index:10; 
+	z-index:1; 
 	margin:0;	
 	@include padding-right($sidebar-width);   
 	.leftcontent{
