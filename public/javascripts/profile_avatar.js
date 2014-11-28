@@ -30,7 +30,7 @@
 
   AvatarReader.prototype = {
     onFileChange : function(e) {
-      var fileField = (this.options.fields.avatarFile)[0];
+      var fileField = e.currentTarget;
       if(fileField.files && fileField.files[0] && this.checkSupportedImageFormats(fileField.files[0].type)) {
         this.readLocalFile(fileField.files[0]);
         this.toggleRemoveOption('show');
@@ -100,7 +100,7 @@
       }
       this.options.formContainer = $(this.options.avatarContainer).parents(this.options.formContainer);
       $(document).on('change.avatar-reader', (this.options.fields.avatarFile).selector, function(e) {
-        self.onFileChange();
+        self.onFileChange(e);
       });
       $(document).on('click.avatar-reader', (this.options.fields.avatarRemove).selector, function(e) {
         e.preventDefault();
