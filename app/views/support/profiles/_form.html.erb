@@ -1,9 +1,4 @@
-<% javascript_tag do %>
-	var customMessages = {
-		confirmDelete: "<%= t('user.remove_profile_image_confirm') %>",
-		confirmNavigate: "<%= t('admin.products.portal.save_and_continue') %>"
-	}
-<% end %>
+
 <% form_for @profile, :url => support_profile_path, 
 	:html => { :class => "form-portal form-unsaved-changes-trigger", :multipart => true, :rel => "validate"} do |f| %>
 	<%= f.error_messages %>
@@ -78,3 +73,16 @@
 		</div>
 	<% end %>	
 <%end%>
+
+<% javascript_tag do %>
+	var customMessages = {
+		confirmDelete: "<%= t('user.remove_profile_image_confirm') %>",
+		confirmNavigate: "<%= t('admin.products.portal.save_and_continue') %>"
+	}
+	jQuery(window).on("load", function(){
+	    var avatarRdr = new AvatarReader({
+	                          confirmDeleteMessage : customMessages.confirmDelete
+	                        });
+	    avatarRdr.init();
+  	});
+<% end %>

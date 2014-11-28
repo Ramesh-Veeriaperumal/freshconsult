@@ -1,7 +1,8 @@
 // PROFILE AVATARS 
 (function($){
   "use strict";
-  var AvatarReader = function(options) {
+  
+  window.AvatarReader = function(options) {
     var defaults = {
       confirmDeleteMessage : 'Are you sure you want to delete this picture?',
       // Path of the default avatar pic
@@ -111,11 +112,4 @@
       $(document).off('change.avatar-reader');
     }
   };
-
-  $(document).ready(function(){
-    var avatarRdr = new AvatarReader({
-                          confirmDeleteMessage : customMessages.confirmDelete
-                        });
-    avatarRdr.init();
-  });
 })(window.jQuery);
