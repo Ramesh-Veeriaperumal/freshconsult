@@ -44,7 +44,7 @@ module APIHelper
 
   TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id"]
   
-  CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id"]
+  CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id", "custom_field"]
 
   FORUM_CATEGORY_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]
 

@@ -28,7 +28,7 @@ window.App = window.App || {};
 				break;
 
 			case 'contacts/show':
-				this.current_module = 'Contacts_merge';
+				this.current_module = 'Contact_show';
 				break;
 			}
 		},

@@ -121,6 +121,7 @@ Spork.prefork do
     config.include CustomMatcher
     config.include PerfHelper
     config.include DynamicTemplateHelper
+    config.include ContactFieldsHelper
 
     
     config.before(:all) do

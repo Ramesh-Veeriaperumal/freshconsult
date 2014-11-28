@@ -12,7 +12,7 @@ class CreateContactForms < ActiveRecord::Migration
     end
     
     add_index :contact_forms, [:account_id, :active, :parent_id],
-          :name => "index_contact_forms_on_account_id_and_active_and_parent_id"
+      :name => "index_contact_forms_on_account_id_and_active_and_parent_id"
   end
 
   def self.down

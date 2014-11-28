@@ -684,6 +684,9 @@ label.required:after{
       &:first-child {
         *padding-left: 160px;
       }
+      .disabled-field {
+        padding-top: 4px;
+      }
     }
     // Remove bottom margin on block level help text since that's accounted for on .control-group
     .help-block {

@@ -16,6 +16,8 @@ module FreshdeskCore::Model
                         "conversion_metrics",           
                         "contact_forms",
                         "contact_fields",
+                        "contact_fields_choices",
+                        "contact_fields_data",
                         "data_exports", 
                         "day_pass_configs",              
                         "day_pass_usages", 

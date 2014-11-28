@@ -140,6 +140,12 @@ GIT
   branch: rails-2-3
   specs:
     rails-dev-boost (0.1.1)
+PATH
+  remote: vendor/gems/custom_fields-0.1
+  specs:
+    custom_fields (0.1)
+      acts_as_list (= 0.1.4)
+      rails (= 2.3.18)
 
 PATH
   remote: vendor/gems/freshdesk_authority-0.1
@@ -580,6 +586,7 @@ DEPENDENCIES
   compass-rails (= 1.0.3)
   country_select!
   curb (~> 0.8.4)
+  custom_fields!
   dalli
   database_cleaner
   deadlock_retry!

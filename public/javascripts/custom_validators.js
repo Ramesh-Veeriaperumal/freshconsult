@@ -305,5 +305,20 @@ $.validator.addMethod("zendesk_size_validity", function(value,element){
 },jQuery.validator.format(''));
 
 $.validator.addClassRules("zendesk_size_validity", { zendesk_size_validity: true });
+$.validator.addMethod("regex_validity", function(value, element) {
+        var patternString = $(element).data('regex-pattern');
+        var match = patternString.match(new RegExp('^/(.*?)/([gimy]*)$'));
+        var regExp;
+        if(match) {
+          regExp = new RegExp(match[1], match[2]);
+        }
+        return this.optional(element) || regExp.test(value);
+    }, "Invalid value");
+$.validator.addClassRules("regex_validity", { regex_validity: true });
+
+$.validator.addMethod('validate_regexp', function(value, element) {
+  var regExp = new RegExp('^/(.*?)/([gimy]*)$');
+  return this.optional(element) || regExp.test(value);
+}, "Invalid Regular Expression");
 
 })(jQuery);

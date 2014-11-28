@@ -1,3 +1,4 @@
+
 window.App = window.App || {};
 window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
 
@@ -16,7 +17,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindAutocomplete: function () {
-      $("#contact_customer").autocomplete({
+      $("#user_company_name").autocomplete({
         source: function (request, response) {
             $.ajax({
                 url: "/search/autocomplete/companies",
@@ -65,28 +66,29 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.toggleAddNewEmail();
       this.bindErrorFieldChanges();
       this.bindWrongEmailClick();
+      this.enableClientManager();
     },
 
     bindContactSubmitClick: function () {
       $('body').on('click.contact_form', '#contact_submit', function(ev){
-        if($.trim($('#contact_customer').val()) == '')
+        if($.trim($('#user_company_name').val()) == '')
         {
-          $('#contact_role').removeAttr('checked');
+          $('#user_client_manager').removeAttr('checked');
         }
       });
     },
 
     bindCustomerKeyup: function () {
-      $("body").on('keyup.contact_form', '#contact_customer', function(ev) {
+      $("body").on('keyup.contact_form', '#user_company_name', function(ev) {
         var company = this.value.trim();
         if (company != "")
         {
-            $('#contact_role').removeAttr("disabled");
+            $('#user_client_manager').removeAttr("disabled");
         }
         else
         {
-          $('#contact_role').removeAttr('checked');
-          $('#contact_role').prop("disabled", true);
+          $('#user_client_manager').removeAttr('checked');
+          $('#user_client_manager').prop("disabled", true);
         }
       });
     },
@@ -187,6 +189,10 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           show_growl_flash("Please fill any one of the columns", 'error');
         }
       });
+    },
+
+    enableClientManager: function () {
+      $('#user_company_name').trigger('keyup');
     },
 
     onLeave: function (data) {

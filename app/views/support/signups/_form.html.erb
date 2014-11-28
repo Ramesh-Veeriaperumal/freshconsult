@@ -1,31 +1,23 @@
 <% if current_account.features?(:signup_link) && (preview? || !current_user) %>
-	<% @user ||= current_account.users.new %>
-	<% form_for @user, :url => support_signup_path, :html => { :class => "form-portal", :rel => "validate" } do |f| -%>
-		<%= f.error_messages %>
-		<fieldset>
-			<div class="control-group"> 
-				<label class="control-label" for="user_name"><%=t('user.full_name')%></label> 
-				<div class="controls">
-					<input class="text span8" id="user_name" name="user[name]" size="30" type="text" value="<%= @user.name %>" /> 
-				</div>
-			</div>
-			<div class="control-group"> 
-				<label class="control-label required" for="email_primary"><%=t('user.email')%></label> 
-				<div class="controls">
-					<input class="text required email span8" id="email_primary" name="user[email]" size="30" 
-						type="text" value="<%= @user.email %>" />
-				</div>
-			</div>
-			<div class="control-group"> 
-	        	<%#= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
-	        	<div class="controls recaptcha-control">
-	        		<%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
-	        	</div>
-	      	</div>
-		</fieldset>
-		<div class="form-actions">	
-			<%= submit_tag t('register'), { :class => "btn btn-primary" } -%> 
-			<%= link_to(t('cancel'), '/home', :class => "btn" ) -%>
-		</div>
-	<% end -%>
+  <% form_for @user, :url => support_signup_path, :html => { :class => "form-portal", :rel => "validate" } do |f|
+    -%>
+    <%= f.error_messages %>
+    <fieldset>
+      <ul class="profile-edit-form form-horizontal unstyled">
+        <% customer_signup_fields.each do |field| %>
+        <%= render_as_list f, field %>
+        <% end %>
+      </ul>
+      <div class="control-group">
+        <%#= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
+        <div class="controls recaptcha-control">
+          <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+        </div>
+      </div>
+    </fieldset>
+    <div class="form-actions">
+      <%= submit_tag t('register'), { :class => "btn btn-primary" } -%>
+      <%= link_to(t('cancel'), '/home', :class => "btn" ) -%>
+    </div>
+  <% end -%>
 <% end %>

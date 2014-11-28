@@ -151,15 +151,15 @@ class User < ActiveRecord::Base
 
     protected :find_by_email_or_name, :find_by_an_unique_id
   end
-  
+
   def client_manager=(checked)
     if customer?
-      self.privileges = (checked == "true") ? Role.privileges_mask([:client_manager]) : "0"
+      self.privileges = (checked == "true" && company ) ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
   def client_manager
-    customer? ? privilege?(:client_manager) : false
+    has_company? ? privilege?(:client_manager) : false
   end
 
   def chk_email_validation?
@@ -254,7 +254,8 @@ class User < ActiveRecord::Base
     self.email = params[:user][:email]
     self.language = params[:user][:language]
     self.address = params[:user][:address]
-    self.tag_names = params[:user][:tag_names]
+    self.tag_names = params[:user][:tag_names] # update tags in the user object
+    self.custom_field = params[:user][:custom_field]
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present? and has_contact_merge?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
@@ -300,11 +301,6 @@ class User < ActiveRecord::Base
     return false unless save_without_session_maintenance
     deliver_activation_instructions!(portal,false) if (!deleted and self.email.present?)
     true
-  end
-
-  def avatar_attributes=(av_attributes)
-    return build_avatar(av_attributes) if avatar.nil?
-    avatar.update_attributes(av_attributes)
   end
  
   def active?
@@ -473,13 +469,21 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-  def to_xml(options=API_OPTIONS)
-    process_api_options options
-    super(options)
+  def to_xml(options=XML_API_OPTIONS)
+    process_api_options XML_API_OPTIONS, options
+    super options do |builder|
+      unless helpdesk_agent
+        builder.custom_field do
+          custom_field.each do |name, value|
+            builder.tag!(name,value) unless value.nil?
+          end
+        end
+      end
+    end
   end
 
   def as_json(options=API_OPTIONS, do_not_process_options = false)
-    process_api_options options unless do_not_process_options
+    process_api_options API_OPTIONS, options unless do_not_process_options
     super(options)
   end
 
@@ -495,7 +499,7 @@ class User < ActiveRecord::Base
   end
 
   def has_company?
-    customer? and customer
+    customer? and company
   end
 
   def company_name= name
@@ -580,6 +584,21 @@ class User < ActiveRecord::Base
     self.tags
   end
 
+  def custom_form
+    helpdesk_agent? ? nil : account.contact_form # memcache this 
+  end
+
+  def custom_field_aliases
+    helpdesk_agent? ? [] : 
+      (@custom_field_aliases ||= account.contact_form.custom_contact_fields.map(&:name))
+  end
+  
+  #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F
+  def respond_to? attribute, include_private_methods = false # avoiding pointless flexifield loading
+    return false if [:to_ary, :after_initialize_without_slave].include? attribute
+    super(attribute, include_private_methods)
+  end
+
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
     begin
@@ -613,6 +632,7 @@ class User < ActiveRecord::Base
                     :twitter_id, :fb_profile_id, :customer_id, :deleted, :helpdesk_agent]
       (@all_changes.keys & all_fields).any?
     end
+
 
   private
     def name_part(part)
@@ -681,9 +701,9 @@ class User < ActiveRecord::Base
       end
     end
 
-    def process_api_options options
-      API_OPTIONS.each do |key, value| 
-        options[key] = options.key?(key) ? options[key] & API_OPTIONS[key] : API_OPTIONS[key]
+    def process_api_options default_options, current_options
+      default_options.each do |key, value| 
+        current_options[key] = current_options.key?(key) ? current_options[key] & default_options[key] : default_options[key]
       end
     end
 

@@ -205,6 +205,12 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+
+/* ==== Custom Contact Field Icons === */
+
+.#{$font-class-name}phone_number 	{ @extend .#{$font-class-name}freshfone; }
+.#{$font-class-name}url 			{ @extend .#{$font-class-name}link; }
+
 // Chat conversation in ticket page
 .conversation_wrap{
   &:after{

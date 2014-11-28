@@ -275,7 +275,7 @@ ActiveRecord::Schema.define(:version => 20141125102343) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
+  
   add_index "company_fields", ["account_id", "company_form_id", "field_type"], :name => "idx_company_field_account_id_and_company_form_id_and_field_type"
   add_index "company_fields", ["account_id", "company_form_id", "name"], :name => "index_company_fields_on_account_id_and_company_form_id_and_name", :length => {"account_id"=>nil, "company_form_id"=>nil, "name"=>20}
   add_index "company_fields", ["account_id", "company_form_id", "position"], :name => "idx_company_field_account_id_and_company_form_id_and_position"
@@ -290,6 +290,197 @@ ActiveRecord::Schema.define(:version => 20141125102343) do
   end
 
   add_index "company_forms", ["account_id", "active", "parent_id"], :name => "index_company_forms_on_account_id_and_active_and_parent_id"
+
+  create_table "contact_field_choices", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "contact_field_id", :limit => 8
+    t.string   "value"
+    t.integer  "position"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_field_choices", ["account_id", "contact_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_contact_field_id_and_position"
+
+  create_table "contact_field_data", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,                                                   :null => false
+    t.integer  "account_id",       :limit => 8,                                :default => 0,     :null => false
+    t.integer  "contact_form_id",  :limit => 8
+    t.integer  "user_id",          :limit => 8
+    t.integer  "health"
+    t.string   "priority"
+    t.string   "user_external_id"
+    t.string   "cf_str01"
+    t.string   "cf_str02"
+    t.string   "cf_str03"
+    t.string   "cf_str04"
+    t.string   "cf_str05"
+    t.string   "cf_str06"
+    t.string   "cf_str07"
+    t.string   "cf_str08"
+    t.string   "cf_str09"
+    t.string   "cf_str10"
+    t.string   "cf_str11"
+    t.string   "cf_str12"
+    t.string   "cf_str13"
+    t.string   "cf_str14"
+    t.string   "cf_str15"
+    t.string   "cf_str16"
+    t.string   "cf_str17"
+    t.string   "cf_str18"
+    t.string   "cf_str19"
+    t.string   "cf_str20"
+    t.string   "cf_str21"
+    t.string   "cf_str22"
+    t.string   "cf_str23"
+    t.string   "cf_str24"
+    t.string   "cf_str25"
+    t.string   "cf_str26"
+    t.string   "cf_str27"
+    t.string   "cf_str28"
+    t.string   "cf_str29"
+    t.string   "cf_str30"
+    t.string   "cf_str31"
+    t.string   "cf_str32"
+    t.string   "cf_str33"
+    t.string   "cf_str34"
+    t.string   "cf_str35"
+    t.string   "cf_str36"
+    t.string   "cf_str37"
+    t.string   "cf_str38"
+    t.string   "cf_str39"
+    t.string   "cf_str40"
+    t.string   "cf_str41"
+    t.string   "cf_str42"
+    t.string   "cf_str43"
+    t.string   "cf_str44"
+    t.string   "cf_str45"
+    t.string   "cf_str46"
+    t.string   "cf_str47"
+    t.string   "cf_str48"
+    t.string   "cf_str49"
+    t.string   "cf_str50"
+    t.string   "cf_str51"
+    t.string   "cf_str52"
+    t.string   "cf_str53"
+    t.string   "cf_str54"
+    t.string   "cf_str55"
+    t.string   "cf_str56"
+    t.string   "cf_str57"
+    t.string   "cf_str58"
+    t.string   "cf_str59"
+    t.string   "cf_str60"
+    t.string   "cf_str61"
+    t.string   "cf_str62"
+    t.string   "cf_str63"
+    t.string   "cf_str64"
+    t.string   "cf_str65"
+    t.string   "cf_str66"
+    t.string   "cf_str67"
+    t.string   "cf_str68"
+    t.string   "cf_str69"
+    t.string   "cf_str70"
+    t.string   "cf_str71"
+    t.string   "cf_str72"
+    t.string   "cf_str73"
+    t.string   "cf_str74"
+    t.string   "cf_str75"
+    t.string   "cf_str76"
+    t.text     "cf_text01"
+    t.text     "cf_text02"
+    t.text     "cf_text03"
+    t.text     "cf_text04"
+    t.text     "cf_text05"
+    t.text     "cf_text06"
+    t.text     "cf_text07"
+    t.text     "cf_text08"
+    t.text     "cf_text09"
+    t.text     "cf_text10"
+    t.integer  "cf_int01",         :limit => 8
+    t.integer  "cf_int02",         :limit => 8
+    t.integer  "cf_int03",         :limit => 8
+    t.integer  "cf_int04",         :limit => 8
+    t.integer  "cf_int05",         :limit => 8
+    t.integer  "cf_int06",         :limit => 8
+    t.integer  "cf_int07",         :limit => 8
+    t.integer  "cf_int08",         :limit => 8
+    t.integer  "cf_int09",         :limit => 8
+    t.integer  "cf_int10",         :limit => 8
+    t.integer  "cf_int11",         :limit => 8
+    t.integer  "cf_int12",         :limit => 8
+    t.integer  "cf_int13",         :limit => 8
+    t.integer  "cf_int14",         :limit => 8
+    t.integer  "cf_int15",         :limit => 8
+    t.integer  "cf_int16",         :limit => 8
+    t.integer  "cf_int17",         :limit => 8
+    t.integer  "cf_int18",         :limit => 8
+    t.integer  "cf_int19",         :limit => 8
+    t.integer  "cf_int20",         :limit => 8
+    t.datetime "cf_date01"
+    t.datetime "cf_date02"
+    t.datetime "cf_date03"
+    t.datetime "cf_date04"
+    t.datetime "cf_date05"
+    t.datetime "cf_date06"
+    t.datetime "cf_date07"
+    t.datetime "cf_date08"
+    t.datetime "cf_date09"
+    t.datetime "cf_date10"
+    t.boolean  "cf_boolean01"
+    t.boolean  "cf_boolean02"
+    t.boolean  "cf_boolean03"
+    t.boolean  "cf_boolean04"
+    t.boolean  "cf_boolean05"
+    t.boolean  "cf_boolean06"
+    t.boolean  "cf_boolean07"
+    t.boolean  "cf_boolean08"
+    t.boolean  "cf_boolean09"
+    t.boolean  "cf_boolean10"
+    t.decimal  "cf_decimal01",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal02",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal03",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal04",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal05",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal06",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal07",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal08",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal09",                  :precision => 15, :scale => 4
+    t.decimal  "cf_decimal10",                  :precision => 15, :scale => 4
+    t.integer  "long_uc01",        :limit => 8
+    t.integer  "long_uc02",        :limit => 8
+    t.integer  "long_uc03",        :limit => 8
+    t.integer  "long_uc04",        :limit => 8
+    t.integer  "long_uc05",        :limit => 8
+    t.integer  "int_uc01"
+    t.integer  "int_uc02"
+    t.integer  "int_uc03"
+    t.integer  "int_uc04"
+    t.integer  "int_uc05"
+    t.string   "string_uc07"
+    t.string   "string_uc08"
+    t.string   "string_uc09"
+    t.string   "string_uc10"
+    t.string   "string_uc11"
+    t.string   "string_uc12"
+    t.datetime "datetime_uc01"
+    t.datetime "datetime_uc02"
+    t.boolean  "boolean_uc01",                                                 :default => false
+    t.boolean  "boolean_uc02",                                                 :default => false
+    t.boolean  "boolean_uc03",                                                 :default => false
+    t.boolean  "boolean_uc04",                                                 :default => false
+    t.boolean  "boolean_uc05",                                                 :default => false
+    t.text     "text_uc02"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_field_data", ["account_id", "contact_form_id"], :name => "index_contact_field_data_on_account_id_and_contact_form_id"
+  add_index "contact_field_data", ["account_id", "int_uc01"], :name => "index_contact_field_data_on_account_id_and_int_uc01"
+  add_index "contact_field_data", ["account_id", "long_uc01"], :name => "index_contact_field_data_on_account_id_and_long_uc01"
+  add_index "contact_field_data", ["account_id", "priority"], :name => "index_contact_field_data_on_account_id_and_priority", :length => {"account_id"=>nil, "priority"=>20}
+  add_index "contact_field_data", ["account_id", "user_external_id"], :name => "index_contact_field_data_on_account_id_and_user_external_id", :length => {"account_id"=>nil, "user_external_id"=>30}
+  add_index "contact_field_data", ["account_id", "user_id"], :name => "index_contact_field_data_on_account_id_and_user_id"
+  add_index "contact_field_data", ["id"], :name => "index_contact_field_data_id"
 
   create_table "contact_fields", :force => true do |t|
     t.integer  "account_id",         :limit => 8
