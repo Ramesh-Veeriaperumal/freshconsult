@@ -6135,6 +6135,7 @@ en:
     maximum_chat_title: "Maximum Number Of Visitor Chats"
     maximum_change_label: "Edit"
     maximum_chat_desc: "Set the limit for the number of chats an agent can handle simultaneously. When an agent reaches this limit, they will not receive any new chat notifications."
+    maximum_chat_error: "You have reached the maximum chat limit."
     transfer_limt_exceeded_msg: " has reached his capacity. Please transfer the chat to another agent."
     loading_new_archives: "Loading new archives..."
     non_availability_msg_header: "Non-availability Message"
