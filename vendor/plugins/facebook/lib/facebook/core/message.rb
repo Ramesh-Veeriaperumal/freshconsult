@@ -24,7 +24,7 @@ class Facebook::Core::Message
     return_value = sandbox(true) {
       @fan_page = @fan_page
       thread_id =  ticket.fb_post.thread_id
-      message = @rest.put_connection(thread_id , 'messages',:message => note.body)
+      message = @rest.put_object(thread_id , 'messages',:message => note.body)
       message.symbolize_keys!
 
       #Create fb_post for this note
