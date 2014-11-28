@@ -18,7 +18,7 @@ class Topic < ActiveRecord::Base
   before_create :set_unanswered_stamp, :if => :questions?
   before_create :set_unsolved_stamp, :if => :problems?
 
-  has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id'
+  has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
