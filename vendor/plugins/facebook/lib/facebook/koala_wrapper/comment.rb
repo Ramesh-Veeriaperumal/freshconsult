@@ -8,7 +8,7 @@ class Facebook::KoalaWrapper::Comment
 
   alias_attribute :feed_id, :comment_id
   
-  FIELDS = "#{COMMENT_FIELDS}, comment.fields(#{COMMENT_FIELDS})"
+  FIELDS = "#{COMMENT_FIELDS}, comments.fields(#{COMMENT_FIELDS})"
 
 
   def initialize(fan_page)
