@@ -24,6 +24,8 @@ window.App = window.App || {};
 
 			case 'contacts/new':
 			case 'contacts/edit':
+			case 'contacts/create_contact':
+			case 'contacts/update_contact':
 				this.current_module = 'Contact_form';
 				break;
 
