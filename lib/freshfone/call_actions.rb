@@ -53,8 +53,9 @@ class Freshfone::CallActions
 	end
 
 	def save_call_meta(group)
-		current_call.group_id = group
-		current_call.save
+		current_call.create_meta(
+			:account => current_account, 
+			:group_id => group)
 	end
 
 

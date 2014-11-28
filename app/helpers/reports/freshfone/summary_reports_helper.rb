@@ -21,16 +21,7 @@ include FreshfoneHelper
   end
 
   def agent_groups_hash
-    @group_hash ||= current_account.groups.reduce({ Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i => t('reports.freshfone.options.unassigned')}){ |obj,c| 
-      obj.merge!({c.id => c.name}) 
-    }
-  end
-
-  def filter_group_options
-    groups_list_options = []
-    groups_list_options =  agent_groups_hash.map { |k,v| 
-      { :id => k, :value => v}
-    }.to_json
+    @group_hash ||= current_account.groups.reduce({}){ |obj,c| obj.merge!({c.id => c.name}) }
   end
 
   # Count Methods (results from query: def report_query)
@@ -51,10 +42,6 @@ include FreshfoneHelper
 
   def unanswered_transfers(calls)
     calls.sum(&:unanswered_transfers)
-  end
-
-  def all_unanswered(calls)
-    unanswered_calls_count(calls) + unanswered_transfers(calls)
   end
 
   #outbound_failed_call will be 0 for incoming, unanswered will be 0 for outgoing

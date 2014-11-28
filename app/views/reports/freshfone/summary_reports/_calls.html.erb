@@ -14,7 +14,7 @@
           content =[:agent_name].include?(header) ? "" : send(header,[call_list])
           if([:calls_count].include?(header) && num_of_unanswered.to_i != 0)
             %>
-            <td><%=h(content)%><span class='muted'><%= (call_type == Freshfone::Call::CALL_TYPE_HASH[:incoming]) ? " (#{num_of_unanswered.to_i} " + t("reports.freshfone.unanswered_count") + ")" : nil %></span></td>
+            <td><%=h(content)%><span class='muted'><%=" (#{num_of_unanswered.to_i} " + t("reports.freshfone.unanswered_count") + ")" %></span></td>
             <%
             next
           end

@@ -3,20 +3,19 @@ module Reports::FreshfoneReport
 
   include Reports::ActivityReport
 
-  UNASSIGNED_GROUP = "-1"
-
   def build_criteria
     @report_date = params[:date_range]
     @start_date = start_date
     @end_date = end_date
-    @call_type = params[:call_type] || Freshfone::Call::CALL_TYPE_HASH[:incoming]
-    @group_id = params[:group_id]
+    @call_type = params[:call_type] || 0
+    @group_id = params[:group_id] || []
     @freshfone_number = params[:freshfone_number] || current_account.freshfone_numbers.first.id
   end
 
   def filter(start_date, end_date)
     scoper(start_date,end_date).find(:all,
       :select =>"#{report_query}",
+      :joins => join_calls_meta,
       :conditions => select_conditions, 
       :group => "freshfone_calls.user_id",
       :order => "count desc")
@@ -46,23 +45,17 @@ module Reports::FreshfoneReport
     end
 
     def select_conditions
-      group_condition
-      conditions = ["freshfone_calls.call_type = ? and freshfone_calls.freshfone_number_id = ? #{group_condition}", 
-       @call_type, @freshfone_number]
-      conditions.push(@group_id) unless all_or_unassigned?
+      conditions = {}
+      conditions[:freshfone_calls_meta] = { :group_id => @group_id } unless @group_id.empty?
+      conditions[:call_type] = @call_type unless(@call_type.blank? || @call_type.to_i == 0)
+      conditions[:freshfone_number_id] = @freshfone_number unless @freshfone_number.blank?
       conditions
     end
 
-    def group_condition
-      query = "and freshfone_calls.group_id = ? " unless @group_id.blank?
-      query = "and freshfone_calls.group_id IS NULL"  if @group_id == UNASSIGNED_GROUP
-      query
+    def join_calls_meta
+      @group_id.empty? ? nil : "inner join freshfone_calls_meta on freshfone_calls.id = freshfone_calls_meta.call_id and freshfone_calls.account_id = freshfone_calls_meta.account_id"
     end
 
-    def all_or_unassigned?
-      @group_id.blank? || @group_id == UNASSIGNED_GROUP
-    end
-    
     def report_query
       %( #{select_columns}, count(freshfone_calls.id) as count,
           sum(if(freshfone_calls.ancestry is NULL, 1,0)) as total_count,
