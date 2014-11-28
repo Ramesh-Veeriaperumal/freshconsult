@@ -16,6 +16,11 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         redirect_to :controller=> 'applications', :action => 'index'
         return
       end
+      if current_account.freshfone_active?
+        flash[:notice] = t(:'flash.application.install.freshfone_enabled')
+        redirect_to :controller=> 'applications', :action => 'index'
+        return
+      end
     end
     begin
       successful = @installed_application.save!

@@ -1509,6 +1509,7 @@ en:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
         cti_error: "Multiple integrations of type CTI can not be enabled."
+        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -4475,6 +4476,7 @@ en:
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
+    cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
     no_freshplugs: You do not have any FreshPlugs.
     add_new_freshplug: Add new FreshPlug
