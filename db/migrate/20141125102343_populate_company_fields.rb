@@ -26,7 +26,6 @@ class PopulateCompanyFields < ActiveRecord::Migration
         :name               => f[:name],
         :column_name        => 'default',
         :label              => f[:label],
-        :label_in_portal    => f[:label],
         :deleted            => 0,
         :field_type         => CompanyField::DEFAULT_FIELD_PROPS[:"default_#{f[:name]}"][:type],
         :position           => i+1,

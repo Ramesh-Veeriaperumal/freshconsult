@@ -1,15 +1,14 @@
 class CreateCompanyFields < ActiveRecord::Migration
 
-	shard :all
+  shard :all
 
   def self.up
     create_table :company_fields do |t|
       t.column  :account_id,                'bigint unsigned'
       t.column  :company_form_id,           'bigint unsigned'
-      t.string 	:name
+      t.string  :name
       t.string  :column_name
-      t.string 	:label
-      t.string 	:label_in_portal
+      t.string  :label
       t.integer :field_type
       t.integer :position
       t.boolean :deleted,                   :default => false
