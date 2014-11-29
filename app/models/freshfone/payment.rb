@@ -8,7 +8,7 @@ class Freshfone::Payment < ActiveRecord::Base
 
   private
     def set_usage_trigger
-      return if account.freshfone_credit.zero_balance?
+      return if account.freshfone_credit.zero_balance? || !status
 
       trigger_options = { :trigger_type => :credit_overdraft,
                           :account_id => account.id,

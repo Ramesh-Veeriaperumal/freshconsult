@@ -51,7 +51,7 @@ class Portal < ActiveRecord::Base
   belongs_to :product
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD67"
+  APP_CACHE_VERSION = "FD68"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -190,6 +190,7 @@ class Portal < ActiveRecord::Base
     def ticket_field_conditions
       { 'product' => (main_portal && !account.products.empty?) }
     end
+    
     def filter_fields(f_list, conditions)
       to_ret = []
 

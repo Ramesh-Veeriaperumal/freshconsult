@@ -7,10 +7,10 @@
 	<div class="comm-item-main span8 clear-left-margin <%= 'no-checkbox' unless privilege?(:delete_topic) %>">
 		<%= user_avatar(topic.user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
 		<div class="comm-item-title">
-			<%= pjax_link_to(h(topic.title), discussions_topic_path(topic), :class => "latest_reply", :"data-tip-url" => latest_reply_discussions_topic_path(topic.id))%>
-			<% if topic.sticky? %>
-				<span class="label"><%= t('topic.sticky') %></span>
-			<% end %>
+			<%= display_topic_icons(topic) %>
+			<%= pjax_link_to(h(topic.title), discussions_topic_path(topic), 
+													:class => "latest_reply", 
+													:"data-tip-url" => latest_reply_discussions_topic_path(topic.id))%>
 		</div>
 		<div class="comm-item-details muted">
 			<%= t('topic.details',
@@ -29,7 +29,7 @@
 		</div>
 	</div>
 	<div class="span3 pull-right mt6 pr15">
-		<% if !@forum.announcement? && topic.stamp.present?  %>
+		<% if !@forum.announcement? && topic.stamp.present? && !topic.merged_topic_id? %>
 			<div class="span6 stamp-badge pull-right align-right">
 					<span class="stamp stamp_type_<%=topic.stamp_type%> align-right">
 						<%= topic.stamp %>

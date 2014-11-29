@@ -35,7 +35,7 @@
       elm_bottom = false;
     }
     _fn = function(elm, padding_bottom, parent_top, parent_height, top, height, el_float) {
-      var bottomed, detach, fixed, last_pos, offset, parent, recalc, recalc_and_tick, spacer, tick;
+      var bottomed, detach, fixed, last_pos, offset, parent, recalc, recalc_and_tick, spacer, tick, doRefresh;
       if (elm.data("sticky_kit")) {
         return;
       }
@@ -49,6 +49,7 @@
       }
       fixed = false;
       bottomed = false;
+      doRefresh = false;
       spacer = $("<div />");
       spacer.css('position', elm.css('position'));
       recalc = function() {
@@ -150,6 +151,18 @@
             will_bottom = scroll + height + offset > parent_height + parent_top;
           }
           if (!bottomed && will_bottom && !elm_bottom) {
+            
+            // Just before sticking the element to the bottom of the parent, do a force recalculation [recalc()] of values
+            // to check the changes in height of the parent and make necessary changes [tick()].
+            if(!doRefresh) {
+              doRefresh = true;
+              recalc();
+              return tick();
+            }
+            else {
+              doRefresh = false;
+            }
+
             bottomed = true;
             if (parent.css("position") === "static") {
               parent.css({

@@ -1,58 +1,74 @@
 class Facebook::Core::Post
 
-  def initialize(fan_page)
-    @account = fan_page.account
-    @fan_page = fan_page
-    @koala_post = Facebook::KoalaWrapper::Post.new(fan_page)
+  include Facebook::Constants
+  include Facebook::Util
+  include Facebook::Core::Util
+
+  attr_accessor :fan_page, :account, :koala_post, :source, :type
+
+  def initialize(fan_page, koala_post)
+    @account    = fan_page.account
+    @fan_page   = fan_page
+    @koala_post = koala_post
+    @source     = SOURCE[:facebook]
+    @type       = POST_TYPE[:post]
   end
 
   def add(feed)
+    @feed = feed
     if feed.post_id
       post_id = feed.post_id
       #hack because facebook doesn't differenciate between status and post
+      #Posts give the post id as pageid_postid at most times. Hack is still valid when the result is otherwise
       post_id = feed.page_id + "_" + post_id unless post_id.include?("_")
-      return if @account.facebook_posts.find_by_post_id(post_id)
-      @koala_post.fetch(post_id)
-      add_as_ticket if @koala_post.create_ticket
+      return if @account.facebook_posts.find_by_post_id(feed.post_id)
+      process(nil, realtime_subscription)
     end
   end
 
-  def add_as_ticket(koala_post=nil, real_time_update=true)
-    @koala_post  = koala_post if koala_post
-    group_id = @fan_page.product.primary_email_config.group_id unless @fan_page.product.blank?
-    if !@koala_post.description.blank? || (@koala_post.feed_type == "photo" || @koala_post.feed_type == "video")
-      @ticket = @account.tickets.build(
-        :subject => @koala_post.subject,
-        :requester => @koala_post.requester,
-        :product_id => @fan_page.product_id,
-        :group_id => group_id,
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-        :created_at => @koala_post.created_at,
-        :fb_post_attributes => {
-          :post_id => @koala_post.post_id,
-          :facebook_page_id => @fan_page.id,
-          :account_id => @account.id
-        },
-        :ticket_body_attributes => {
-          :description => @koala_post.description,
-          :description_html => @koala_post.description_html
-        }
-      )
-
-      if @ticket.save_ticket
-        if real_time_update && !@koala_post.created_at.blank?
-          @fan_page.update_attribute(:fetch_since, @koala_post.created_at.to_i)
-        end
-
-        #Along with the post, create notes for all the available comments
-        if @koala_post.comments
-          @koala_post.comments.each do |comment|
-            Facebook::Core::Comment.new(@fan_page).add_as_note(@ticket,comment)
-          end
-        end
-      else
-        Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
-      end
+  def process(koala_post = nil, real_time_update = true, convert = false)
+    @koala_post = koala_post if koala_post.present?
+    return if feed_converted?(@koala_post.feed_id)
+    
+    convert_post, convert_args = convert_args(@koala_post, convert)
+    if convert_post
+      ticket = add_as_ticket(@fan_page, @koala_post, real_time_update, convert_args) 
+      process_comments
     end
   end
+
+  def feed_id
+    @koala_post.post_id
+  end
+
+  def in_reply_to
+    nil
+  end
+
+  def feed_hash
+    @koala_post.post
+  end
+  
+
+  private
+  
+  def process_comments
+    #Along with the post, create notes for all the available comments
+    @koala_post.comments.each do |c|
+      comment = koala_comment(c)
+      Facebook::Core::Comment.new(@fan_page, comment).process(nil, realtime_subscription)
+    end
+  end
+
+  def koala_comment(comment)
+    koala_comment = Facebook::KoalaWrapper::Comment.new(@fan_page)
+    koala_comment.comment = comment
+    koala_comment.parse
+    koala_comment    
+  end
+
+  def realtime_subscription
+    fan_page.realtime_subscription
+  end 
+    
 end

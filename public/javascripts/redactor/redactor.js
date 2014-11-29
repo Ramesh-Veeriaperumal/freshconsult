@@ -270,6 +270,7 @@ var Redactor = function(element, options)
 		buffer: false,
 		visual: true,
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
+		allowTagsInCodeSnippet: false,
 
 		// modal windows container
 		modal_file: String() + 
@@ -945,9 +946,9 @@ Redactor.prototype = {
 	removeTagOnLiquid: function(){
 		var content = this.$editor.html();
 
-		var r_content = content.replace(/\{.*?\{|\}.*?\}/g, this.replaceLiquidHtml)
-	       .replace(/\{.*?%|%.*?\}/g, this.replaceLiquidHtml)
-	       .replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) 
+		var r_content = content.replace(/\{[^{]*}/g,this.replaceLiquidHtml)
+	 			.replace(/\{[^}]*}/g, this.replaceLiquidHtml)
+	 			.replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) ;
 
 		this.$el.val(r_content);
 	},
@@ -4451,7 +4452,9 @@ $.fn.insertExternal = function(html)
 						this.$editor.$el.data('redactor').addNoneStyleForCursor();
 					}
 				}
-				this.$editor.removeTagOnLiquid();
+				if(!this.$editor.opts.allowTagsInCodeSnippet){
+					this.$editor.removeTagOnLiquid();
+				}
 			}
 		}
 	}

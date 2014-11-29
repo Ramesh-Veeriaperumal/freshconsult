@@ -16,7 +16,6 @@ class AgentGroupObserver < ActiveRecord::Observer
             { :account_id => agent_group.account_id,
               :user_id => agent_group.user_id,
               :group_id => agent_group.group_id }) #maintain state for new key
-      group.delete_old_round_robin_key #deprecated will be deleted soon
     end
   end
 

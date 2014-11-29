@@ -40,15 +40,17 @@ module APIHelper
 
   TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id", "attachments", "custom_field"]
   
-  NOTE_ATTRIBS = ["body", "body_html", "created_at", "deleted", "id", "incoming", "private", "source", "updated_at", "user_id", "attachments"]
+  NOTE_ATTRIBS = ["body", "body_html", "created_at", "deleted", "id", "incoming", "private", "source", "updated_at", "user_id", "attachments", "support_email"]
 
   TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id"]
   
-  CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id"]
+  CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id", "custom_field"]
 
   FORUM_CATEGORY_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]
 
   FORUM_ATTRIBS = ["description", "description_html", "forum_category_id", "forum_type", "forum_visibility", "id", "name", "position", "posts_count", "topics_count"]
+
+  MONITOR_ATTRIBS = ["active" ,"id","monitorable_id","monitorable_type","portal_id","user_id"]
 
   TOPIC_ATTRIBS = ["account_id", "created_at", "delta", "forum_id", "hits", "id", "import_id", "last_post_id", "locked", "posts_count", "published", "replied_at", "replied_by", "stamp_type", "sticky", "title", "updated_at", "user_id", "user_votes"]
 

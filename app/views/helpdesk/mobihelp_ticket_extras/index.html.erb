@@ -24,11 +24,10 @@
           <%= render :partial => 'helpdesk/tickets/show/app_device_info.html.erb', :locals => {:extra_info => @extra_info, :info => debug_data_json["breadcrumbs"] , :source => 'breadcrumbs'} if debug_data%>
   			</div>
         <div class="tab-pane" id="debugLog">
-          <pre>
-            <div id="debugLogContent">
-              <%=debug_data_json["debug_logs"] if debug_data%>
-            </div>
-          </pre>
+          <div id="debugLogContent">
+            <pre><%=debug_data_json["debug_logs"].strip if debug_data%>
+            </pre>
+          </div>
   			</div>
   		</div>
   	</div>

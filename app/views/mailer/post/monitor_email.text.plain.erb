@@ -2,7 +2,7 @@ New Reply on topic "<%= @post.topic.title %>"
 
 <%= "_" * 100 %>
  
-<%= @user.name %> said on <%= @post.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
+By: <%= @user.name %>
 
 <%= @post.body %>
 
@@ -11,8 +11,10 @@ New Reply on topic "<%= @post.topic.title %>"
 View Topic
 <%= discussions_topic_url(@post.topic.id, :host => @host) %>
 
-Reply
-<%= reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post') %>
+<% unless @post.topic.merged_topic_id? %>
+	Reply
+	<%= reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post') %>
+<% end %>
 
 Turn off reply notifications for this topic
 <%= toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @host) %>

@@ -247,3 +247,205 @@
 .quick-contact{
 	height: 150px;
 }
+
+/* NEW STYLES */
+
+$iconColorList: "ticket" $bg_color_ticket, 
+				"forum" $bg_color_forum;
+
+.page-header-sticky {
+	.contact-name {
+		visibility: hidden;
+		color: #999;
+		display: inline-block;
+		width: 240px;
+		line-height: 17px;
+	}
+}
+
+.contact-sidebar {
+	@include padding(0 20px);
+	background-color: #fcfcfc;
+	@include border-left(1px solid #eee);
+	display: table-cell;
+	vertical-align: top;
+	width: 278px;
+	.contact-sidebar-content {
+		width: 278px;
+	}
+	.sidepanel {
+		border-bottom: none;
+		@include padding(2px 0 10px 0);
+		margin-top: 10px;
+		border-top: 2px solid #AAA;
+		.app-title {
+			font-size: 18px;
+			font-weight: 300;
+			@include padding(2px 0 15px 0);
+		}
+		a.view-detail {
+			display: block;
+			text-align: center;
+		}
+	} 
+}
+
+.contact-show-wrapper {
+	@include margin (0 -20px 0 -20px);
+}
+
+.contact-show {
+	position: relative;
+	@include pie-clearfix;
+	margin-bottom: -40px;
+	display: table;
+	width: 100%;
+	.contact-info-fields {
+		background-color: #f1f1f1;
+    	background-image: url('../../images/social/ribbon-bg.png');
+    	background-size: 20%;
+    	display: table-cell;
+		width: 260px;
+		vertical-align: top;
+	}
+	.profile_pic {
+		text-align: center;
+		margin-top: 20px;
+	}
+	.user-info {
+		text-align: center;
+		border-top: none;
+		@include padding(10px 15px);
+		width: 230px;
+		.lead {
+			margin-bottom: 4px;
+		}
+		.user-job-title, .user-company-name {
+			@include padding(0)
+		}
+		.user-job-title {
+			color: #999;
+			margin-bottom: 3px;
+		}
+	}
+	.contact-edit-fields {
+		@include margin-left(240px);
+		display: table-cell;
+		vertical-align: top;
+		padding-bottom: 30px;
+		.lead {
+			@include margin(4px 0);
+		}
+		.form-save, .ajax-error {
+			margin-top: 5px;
+		}
+		.no-conv-msg {
+			text-align: center;
+			color: #999;
+			font-weight: 300;
+			font-size: 16px;
+		}
+		.info-highlight {
+			@include border-width(0 0 1px 0);
+		}
+		.contact-edit-padding {
+			@include padding(15px 25px 0 25px);
+		}
+	}
+	.sp_paragraph {
+		max-height: 95px;
+		min-height: 30px;
+		font-size: 13px;
+		@include transition(all 0.4s);
+		@include box-shadow(none);
+		@include box-sizing(border-box);
+		width: 100%;
+		&.editarea {
+			min-height: 95px;
+			@include box-shadow(0 4px 5px -4px #cccccc inset);
+		}
+	}
+	.tags-wrapper {
+		width: 100%;
+		.select2-container {
+			width: 100%;
+		}
+	}
+	.tag_list {
+		.btn.btn-flat {
+			@include padding(2px 10px);
+			margin-top: 5px;
+			@include margin-right(5px);
+			&.add-new-tag {
+				@include padding(2px 10px 2px 0);
+				background: #fff;
+				font-weight: 500;
+				font-size: 12px;
+				color: #06c;
+				border: 1px solid #333;
+				.ficon-plus {
+					@include padding(3px 9px);
+					color: #fff;
+					@include margin-right(5px);
+					background: #333;
+					@include border-radius(3px 0 0 3px);
+				}
+			}
+		}
+	}
+}
+
+.show-fields {
+	@include padding(15px 20px 20px);
+	border-top: 1px solid $common-border-color;
+	width: 230px;
+	.show-field {
+		margin-bottom: 20px;
+	}
+	.field-label {
+		font-weight: 500;
+		margin-bottom: 3px;
+		display: block;
+	}
+	.field-value {
+		display: block;
+	}
+}
+
+.timeline {
+	padding-left: 11px;
+	@include margin(30px 0 20px 3px);
+	font-size: 13px;
+	p {
+		margin-bottom: 0px;
+	}
+	.timeline-item {
+		@include border-left(3px solid #ddd);
+		position: relative;
+		padding-bottom: 35px;
+		@include padding-left(20px);
+		&:last-child {
+			@include border-left(3px solid transparent);
+		}
+	}
+	.timeline-icon {
+		font-size: 18px;
+		position: absolute;
+		@include left(-16px);
+		@include box-shadow(inset 0 0 0px 1px rgba(0,0,0,0.2));
+		width: 30px;
+		height: 30px;
+		color: #FFF;
+		@include border-radius(50%);
+		
+		@each $item in $iconColorList {
+			&.#{nth($item,1)} {
+				background-color: #{nth($item,2)};
+			}
+		}
+		span[class^='ficon-timeline-'] {
+			@include padding(6px 0 0 7px);
+			display: block;
+		}
+	}
+}   

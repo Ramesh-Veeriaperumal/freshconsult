@@ -102,12 +102,6 @@ class AgentsController < ApplicationController
     @agent.update_attribute(:shortcuts_enabled, !@agent.shortcuts_enabled?)
     render :json => { :shortcuts_enabled => @agent.shortcuts_enabled? }
   end  
-  
-  def delete_avatar
-    @user = current_account.all_users.find(params[:id])
-    @user.avatar.destroy
-    render :text => "success"
-  end
 
   def create    
     @user  = current_account.users.new #by Shan need to check later        

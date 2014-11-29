@@ -226,7 +226,7 @@ class CRM::Salesforce < Resque::Job
     def business_type(payment)
       # return BUSINESS_TYPES[:day_pass] if DayPassPurchase.find_by_payment_id(payment.id)
 
-      # return BUSINESS_TYPES[:misc] if payment.misc?
+      return BUSINESS_TYPES[:existing] if payment.misc?
       
       payments = payment.account.subscription_payments.collect{ |p| p unless p.misc }.compact
       (payments.length > 1) ? BUSINESS_TYPES[:existing] : BUSINESS_TYPES[:new] 

@@ -110,7 +110,7 @@ describe TicketFieldsController do
 
   it "should edit a custom field" do
     flexifield_def_entry = Factory.build(:flexifield_def_entry, 
-                                         :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                          :flexifield_alias => "solution_#{@account.id}",
                                          :flexifield_name => "ff_text03",
                                          :account_id => @account.id)
@@ -229,7 +229,7 @@ describe TicketFieldsController do
     # ffs_05 and ffs_06 are created here
     (0..1).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = Factory.build(:flexifield_def_entry, 
-                                                            :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                                            :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                             :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
                                                             :flexifield_name => "ffs_0#{nested_field_id+5}",
                                                             :flexifield_order => 5,
@@ -321,7 +321,7 @@ describe TicketFieldsController do
 
   it "should delete a custom field" do
     flexifield_def_entry = Factory.build(:flexifield_def_entry, 
-                                         :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                          :flexifield_alias => "incident_#{@account.id}",
                                          :flexifield_name => "ff_text04",
                                          :account_id => @account.id)
@@ -359,7 +359,7 @@ describe TicketFieldsController do
     # ffs_07, ffs_08 and ffs_09 are created here
     (0..2).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = Factory.build(:flexifield_def_entry, 
-                                                            :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                                            :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                             :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
                                                             :flexifield_name => "ffs_0#{nested_field_id+7}",
                                                             :flexifield_order => 6,

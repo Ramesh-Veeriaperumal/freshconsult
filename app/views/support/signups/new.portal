@@ -2,3 +2,6 @@
 	<h3 class="heading">Signup for your {{ portal.name }} account</h3>
 	{% snippet signup_form %}
 </section>
+<section class="sidebar hide">
+	<br/>
+</section>

@@ -2,7 +2,8 @@
 	<%= font_icon "reply" %>
 	<%= t('discussions.topics.reply') %>
 </a>
-<% if privilege?(:edit_topic, @topic) %>
+<% if privilege?(:edit_topic, @topic) && !@topic.merged_topic_id.present? %>
 	<%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic), :class => 'btn' %>
 	<%= link_to t('discussions.topics.reopen_topic'), toggle_lock_discussions_topic_path(@topic), :method => :put, :class => 'btn' %>
 <% end %>
+

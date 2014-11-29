@@ -50,7 +50,7 @@
 	height:17px;
 	background:#fff;
 	position:relative;
- @include left(0);
+ 	@include left(0);
 	display: block;
 	background:url(/images/cdn-ignored/sprites/symbols/redactor-loading.png) no-repeat left;
 	cursor:none;

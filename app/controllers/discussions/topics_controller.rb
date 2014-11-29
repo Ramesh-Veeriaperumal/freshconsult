@@ -62,6 +62,15 @@ class Discussions::TopicsController < ApplicationController
 		end
 	end
 
+	def edit
+		if @topic.merged_topic_id?
+			flash[:notice] = I18n.t('discussions.topic_merge.merge_error_for_locked', 
+												:title => h(@topic.merged_into.title), 
+												:topic_link => discussions_topic_path(@topic.merged_topic_id)).html_safe 
+			redirect_to discussions_topic_path(@topic)
+		end
+	end
+
 	def update
 		topic_saved, post_saved = false, false
 		Topic.transaction do
@@ -78,8 +87,8 @@ class Discussions::TopicsController < ApplicationController
 		if topic_saved && post_saved
 			respond_to do |format|
 				format.html { redirect_to discussions_topic_path(@topic) }
-				format.xml  { head 200 }
-				format.json { head 200 }
+				format.xml  {head :ok}
+				format.json  {head :ok}
 			end
 		else
 			respond_to do |format|
@@ -97,8 +106,8 @@ class Discussions::TopicsController < ApplicationController
 				redirect_to  @after_destroy_path 
 			end
 			format.js
-			format.xml  { head 200 }
-			format.json  { head 200 }
+		    format.xml  {head :ok}
+			format.json  {head :ok}
 		end
 	end
 
@@ -200,11 +209,11 @@ class Discussions::TopicsController < ApplicationController
 	def reply
 		if current_user.agent?
 			path = discussions_topic_path(params[:id])
-  	else
-  		path = support_discussions_topic_path(params[:id])
-  	end
-  	path << "/page/last#reply-to-post"
-  	redirect_to path
+		else
+			path = support_discussions_topic_path(params[:id])
+		end
+		path << "/page/last#reply-to-post"
+		redirect_to path
 	end
 
 	private

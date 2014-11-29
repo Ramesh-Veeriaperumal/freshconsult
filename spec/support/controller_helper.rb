@@ -21,6 +21,7 @@ module ControllerHelper
   end
 
   def clear_email_config
+    @account.smtp_mailboxes.destroy_all
     unless @account.primary_email_config.to_email == "support@#{@account.full_domain}"
       @account.email_configs.destroy_all
       ec = @account.email_configs.build({:to_email => "support@#{@account.full_domain}", 

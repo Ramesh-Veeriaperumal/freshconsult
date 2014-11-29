@@ -9,6 +9,27 @@
 	@include box-shadow(0 2px 4px rgba(63, 63, 63, 0.1));
 }
 
+.page-header-sticky {
+	border-bottom: 1px solid #efefef;
+	background-color: #FFF;
+	margin-top: -$common-padding;
+	@include margin-left(-$common-padding);
+	@include margin-right(-$common-padding);
+	@include padding(10px $common-padding 15px $common-padding);
+	&.is_stuck {
+		@include box-shadow(0 4px 10px -6px rgba(0, 0, 0, 0.1));
+		border-bottom-color: #eee;
+		@include padding-right(19px);
+	}
+	.lead {
+		margin-bottom: 0px;
+	}
+	.sticky-header-wrapper {
+		padding-top: $common-padding;
+		@include pie-clearfix;
+	}
+}
+
 #scroll-to-top {
 	height: 37px;
 	width: 37px;

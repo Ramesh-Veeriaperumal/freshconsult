@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
   after_commit_on_update :update_search_index, :if => :company_info_updated?
+  after_commit_on_update :discard_contact_field_data, :if => :made_helpdesk_agent?
 
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
 
@@ -50,6 +51,10 @@ class User < ActiveRecord::Base
 
   def set_language
     self.language = account.language if language.nil? 
+  end
+
+  def discard_contact_field_data
+    self.flexifield.destroy
   end
 
   protected
@@ -83,6 +88,10 @@ class User < ActiveRecord::Base
 
   def delete_freshfone_user
     freshfone_user.destroy if freshfone_user
+  end
+
+  def made_helpdesk_agent?
+    @model_changes[:helpdesk_agent] == [false, true]
   end
 
 
