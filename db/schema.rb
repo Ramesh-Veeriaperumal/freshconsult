@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141125102343) do
+ActiveRecord::Schema.define(:version => 20141127052851) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -266,7 +266,6 @@ ActiveRecord::Schema.define(:version => 20141125102343) do
     t.string   "name"
     t.string   "column_name"
     t.string   "label"
-    t.string   "label_in_portal"
     t.integer  "field_type"
     t.integer  "position"
     t.boolean  "deleted",                         :default => false
