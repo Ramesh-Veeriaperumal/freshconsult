@@ -590,7 +590,7 @@ class User < ActiveRecord::Base
 
   def custom_field_aliases
     helpdesk_agent? ? [] : 
-      (@custom_field_aliases ||= account.contact_form.custom_contact_fields.map(&:name))
+      (@custom_field_aliases ||= [])
   end
   
   #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F
