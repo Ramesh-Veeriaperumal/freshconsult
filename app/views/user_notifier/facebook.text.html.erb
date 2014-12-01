@@ -1,12 +1,14 @@
-Hi <%=@admin_name%>,<br/><br/>
+<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
+    Hi <%=@admin_name%>,<br/><br/>
 
-The access token for your <b> <%=@fb_page.page_name%> </b> page has expired. This could be because
-<ol>
-<li>One of the admin's changed their facebook password.</li>
-<li>One of the admin's has revoked some app permissions.</li>
-<li>It has been 60 days since the last time you authorized the app.</li>
-</ol>
-Please click on this <a href="<%=@facebook_url%>">link</a> to reauthorize your facebook page and continue receiving facebook posts as tickets.<br/><br/>
+	The access token for your <b> <%=@fb_page.page_name%> </b> page has expired. This could be because
+	<ol>
+	<li>One of the admin's changed their facebook password.</li>
+	<li>One of the admin's has revoked some app permissions.</li>
+	<li>It has been 60 days since the last time you authorized the app.</li>
+    </ol>
+	Please click on this <a href="<%=@facebook_url%>">link</a> to reauthorize your facebook page and continue receiving facebook posts as tickets.<br/><br/>
 
-Regards,<br/>
-Freshdesk Support.
+	Regards,<br/>
+	Freshdesk Support.
+</div>

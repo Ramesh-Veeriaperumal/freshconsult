@@ -1,7 +1,5 @@
 class  Helpdesk::WatcherNotifier < ActionMailer::Base
 
-  layout "email_font"
-
   def notify_new_watcher(ticket, subscription, agent_name)
     subject       new_watcher_subject(ticket, agent_name)
     recipients    subscription.user.email
@@ -16,8 +14,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
       end
 
       alt.part "text/html" do |html|
-        html.body   render_message("notify_new_watcher.text.html.erb", :ticket => ticket, :subscription => subscription, 
-                        :account => ticket.account, :agent_name => agent_name)
+        html.body   render_message("notify_new_watcher.text.html.erb", :ticket => ticket, :subscription => subscription, :agent_name => agent_name)
       end
     end
   end
@@ -36,8 +33,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
       end
 
       alt.part "text/html" do |html|
-        html.body   render_message("notify_on_reply.text.html.erb", :ticket => ticket, :subscription => subscription, 
-                                        :account => ticket.account, :note => note)
+        html.body   render_message("notify_on_reply.text.html.erb", :ticket => ticket, :subscription => subscription, :note => note)
       end
     end
   end
@@ -57,7 +53,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
 
       alt.part "text/html" do |html|
         html.body   render_message("notify_on_status_change.text.html.erb", :ticket => ticket, :subscription => subscription, 
-                                    :account => ticket.account, :status => status, :agent_name => agent_name)
+                                    :status => status, :agent_name => agent_name)
       end
     end
   end

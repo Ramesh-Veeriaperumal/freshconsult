@@ -179,7 +179,7 @@
     admin.resources :quests, :member => { :toggle => :put }
     admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
     admin.resources :email_commands_setting, :member => { :update => :put }
-    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}, :collection => {:update_font => :put}
+    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }
     admin.namespace :freshfone do |freshfone|
       freshfone.resources :numbers, :collection => { :purchase => :post }

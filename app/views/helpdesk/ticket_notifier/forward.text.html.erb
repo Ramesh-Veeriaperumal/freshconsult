@@ -1,6 +1,8 @@
-<%= @body.html_safe %>
-<%=render :partial => 'cloud_files_template', :locals => { :cloud_files => @cloud_files} %>
-<br/>
-<%= render :partial => '/shared/free_plan_message' %>
+<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
+	<%= @body.html_safe %>
+	<%=render :partial => 'cloud_files_template', :locals => { :cloud_files => @cloud_files} %>
+	<br/>
+	<%= render :partial => '/shared/free_plan_message' %>
 
-<%= hidden_ticket_identifier(@ticket) %>
+	<%= hidden_ticket_identifier(@ticket) %>
+</div>
