@@ -51,24 +51,14 @@ class ApplicationController < ActionController::Base
  
   def check_account_state
     unless current_account.active? 
-      respond_to do |format|
-        account_suspended_hash = {:account_suspended => true}
-
-        format.xml { render :xml => account_suspended_hash.to_xml }
-        format.json { render :json => account_suspended_hash.to_json }
-        format.nmobile { render :json => account_suspended_hash.to_json }
-        format.js { render :json => account_suspended_hash.to_json }
-        format.html { 
-          if privilege?(:manage_account)
-            flash[:notice] = t('suspended_plan_info')
-            return redirect_to(subscription_url)
-          else
-            flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
-          end
-        }
+      if privilege?(:manage_account)
+        flash[:notice] = t('suspended_plan_info')
+        return redirect_to(subscription_url)
+      else
+        flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
-    end
+     end
   end
   
   def set_time_zone
