@@ -1,5 +1,6 @@
 helpdesk:
   initializers:
+    - mri2.1_patches
     - rails3_patches
     - action_mailer_callbacks
     - action_mailer_no_tmail

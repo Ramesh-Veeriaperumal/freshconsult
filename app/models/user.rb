@@ -621,13 +621,12 @@ class User < ActiveRecord::Base
     end 
   end
 
-  protected
   
-    def search_fields_updated?
-      all_fields = ["name", "email", "description", "job_title", "phone", "mobile",
-                    "twitter_id", "fb_profile_id", "customer_id", "deleted", "helpdesk_agent"]
-      (@all_changes.keys & all_fields).any?
-    end
+  def search_fields_updated?
+    all_fields = ["name", "email", "description", "job_title", "phone", "mobile",
+                  "twitter_id", "fb_profile_id", "customer_id", "deleted", "helpdesk_agent"]
+    (@all_changes.keys & all_fields).any?
+  end
 
   private
     def name_part(part)

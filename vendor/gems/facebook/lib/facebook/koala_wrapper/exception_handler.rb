@@ -50,6 +50,8 @@ module Facebook::KoalaWrapper::ExceptionHandler
         
       rescue => exception
         #construct_error_and_raise(exception)
+        Rails.logger.error exception.inspect
+        Rails.logger.error exception.message
         NewRelic::Agent.notice_error(exception, {:page_id => @fan_page.id, :account_id => @fan_page.account_id})
       end
       

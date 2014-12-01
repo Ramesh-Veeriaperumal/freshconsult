@@ -759,15 +759,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.fb_profile_id
   end
 
-  protected
 
-    def search_fields_updated?
-      attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",
-                         "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
-      include_fields = es_flexifield_columns
-      all_fields = attribute_fields | include_fields
-      (@model_changes.keys & all_fields).any?
-    end
+  def search_fields_updated?
+    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",
+                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
+    include_fields = es_flexifield_columns
+    all_fields = attribute_fields | include_fields
+    (@model_changes.keys & all_fields).any?
+  end
 
   private
     def sphinx_data_changed?

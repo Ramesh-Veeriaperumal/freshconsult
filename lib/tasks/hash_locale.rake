@@ -1,7 +1,7 @@
 #### To get the new strings without change rake i18n:rumble[No] equivqlent to unrumble
 namespace :i18n do
   desc 'Add some random strings around values in en.yml'
-  task :rumble,:replace, :needs => :environment do |t,args|
+  task [:rumble,:replace, :needs] => :environment do |t,args|
     replace = args[:replace] || 'Yes'
     f_name = "#{Rails.root}/config/locales/en.yml"
     en_content = File.open(f_name, 'r') { |f| f.read }

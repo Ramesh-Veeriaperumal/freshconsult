@@ -144,12 +144,10 @@ class Company < ActiveRecord::Base
     @company_drop ||= CompanyDrop.new self
   end
 
-  protected
-
-    def search_fields_updated?
-      all_fields = ['name', 'description', 'note']
-      (@model_changes.keys & all_fields).any?
-    end
+  def search_fields_updated?
+    all_fields = ['name', 'description', 'note']
+    (@model_changes.keys & all_fields).any?
+  end
 
   private
     def map_contacts_on_update

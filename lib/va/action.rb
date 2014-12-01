@@ -88,137 +88,135 @@ class Va::Action
     Thread.current[:scenario_action_log] = nil
   end
   ##Execution activities temporary storage hack ends here
-  
-  protected
-  
-    def group_id(act_on)
-      g_id = value.to_i
-      begin
-        group = act_on.account.groups.find(g_id)
-      rescue ActiveRecord::RecordNotFound
-      end
-
-      if group || value.empty?
-        act_on.group = group
-        add_activity("Set group as <b>#{group.name}</b>") unless group.nil?
-      else
-        add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
-      end
+    
+  def group_id(act_on)
+    g_id = value.to_i
+    begin
+      group = act_on.account.groups.find(g_id)
+    rescue ActiveRecord::RecordNotFound
     end
 
-    def responder_id(act_on)
-      r_id = value.to_i
-      begin
-        responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
-      rescue ActiveRecord::RecordNotFound
-      end
+    if group || value.empty?
+      act_on.group = group
+      add_activity("Set group as <b>#{group.name}</b>") unless group.nil?
+    else
+      add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
+    end
+  end
 
-      if responder || value.empty?
-        act_on.responder = responder
-        add_activity("Set agent as <b>#{responder.name}</b>") unless responder.nil?
-      else
-        add_activity("<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>")
-      end
+  def responder_id(act_on)
+    r_id = value.to_i
+    begin
+      responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
+    rescue ActiveRecord::RecordNotFound
     end
 
-    def add_comment(act_on)
-      note = act_on.notes.build()
-      note.build_note_body
-      note.note_body.body_html = substitute_placeholders(act_on, :comment)
-      note.account_id = act_on.account_id
-      note.user = User.current
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
-      note.incoming = false
-      note.private = "true".eql?(act_hash[:private])
-      note.save_note!
-      
-      add_activity(note.private ? "Added a <b>private note</b>" : "Added a <b>note</b>")
+    if responder || value.empty?
+      act_on.responder = responder
+      add_activity("Set agent as <b>#{responder.name}</b>") unless responder.nil?
+    else
+      add_activity("<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>")
     end
-  
-    def add_tag(act_on)
-      value.split(',').each do |tag_name|
-        tag_name.strip!
-        tag = Helpdesk::Tag.find_by_name_and_account_id(tag_name, act_on.account_id) || Helpdesk::Tag.new(
-            :name => tag_name, :account_id => act_on.account_id)
-        act_on.tags << tag unless act_on.tags.include?(tag)
-      end
-      
-      add_activity("Assigned the tag(s) [<b>#{value.split(',').join(', ')}</b>]")
-    end
+  end
 
-    def add_a_cc(act_on)
-      unless value.blank?
-        ticket_cc_emails = act_on.cc_email[:cc_emails].collect { |email| (parse_email_text email.downcase)[:email] }
-        cc_email_value = value.downcase.strip
-        return if ticket_cc_emails.include?(cc_email_value)
-        act_on.cc_email[:cc_emails] << cc_email_value
-        Helpdesk::TicketNotifier.send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
-      end
-    end
+  def add_comment(act_on)
+    note = act_on.notes.build()
+    note.build_note_body
+    note.note_body.body_html = substitute_placeholders(act_on, :comment)
+    note.account_id = act_on.account_id
+    note.user = User.current
+    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
+    note.incoming = false
+    note.private = "true".eql?(act_hash[:private])
+    note.save_note!
+    
+    add_activity(note.private ? "Added a <b>private note</b>" : "Added a <b>note</b>")
+  end
 
-    def add_watcher(act_on)
-      watchers = Array.new
-      watcher_value = value.kind_of?(Array) ? value : value.to_a
-      watcher_value.each do |agent_id|
-        watcher = act_on.subscriptions.find_by_user_id(agent_id)
-        unless watcher.present?
-          subscription = act_on.subscriptions.create( {:user_id => agent_id} )
-          watchers.push subscription.user.name if subscription
-          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
-                                               act_on, 
-                                               subscription, 
-                                               "automations rule")
-        end
-      end
-      add_activity("#{I18n.t('automations.activity.added_watcher(s)')} - <b>#{watchers.to_sentence}</b>") if watchers.present?
-    end
-
-    def send_email_to_requester(act_on)
-      if act_on.requester_has_email?
-        act_on.account.make_current
-        Helpdesk::TicketNotifier.email_to_requester(act_on, 
-          substitute_placeholders_for_requester(act_on, :email_body),
-                        substitute_placeholders_for_requester(act_on, :email_subject)) 
-        add_activity("Sent an email to the requester") 
-      end
+  def add_tag(act_on)
+    value.split(',').each do |tag_name|
+      tag_name.strip!
+      tag = Helpdesk::Tag.find_by_name_and_account_id(tag_name, act_on.account_id) || Helpdesk::Tag.new(
+          :name => tag_name, :account_id => act_on.account_id)
+      act_on.tags << tag unless act_on.tags.include?(tag)
     end
     
-    def send_email_to_group(act_on)
-      group = get_group(act_on)
-      if group && !group.agent_emails.empty?
-        send_internal_email(act_on, group.agent_emails)
-        add_activity("Sent an email to the group <b>#{group.name}</b>")
+    add_activity("Assigned the tag(s) [<b>#{value.split(',').join(', ')}</b>]")
+  end
+
+  def add_a_cc(act_on)
+    unless value.blank?
+      ticket_cc_emails = act_on.cc_email[:cc_emails].collect { |email| (parse_email_text email.downcase)[:email] }
+      cc_email_value = value.downcase.strip
+      return if ticket_cc_emails.include?(cc_email_value)
+      act_on.cc_email[:cc_emails] << cc_email_value
+      Helpdesk::TicketNotifier.send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
+    end
+  end
+
+  def add_watcher(act_on)
+    watchers = Array.new
+    watcher_value = value.kind_of?(Array) ? value : value.to_a
+    watcher_value.each do |agent_id|
+      watcher = act_on.subscriptions.find_by_user_id(agent_id)
+      unless watcher.present?
+        subscription = act_on.subscriptions.create( {:user_id => agent_id} )
+        watchers.push subscription.user.name if subscription
+        Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
+                                             act_on, 
+                                             subscription, 
+                                             "automations rule")
       end
     end
+    add_activity("#{I18n.t('automations.activity.added_watcher(s)')} - <b>#{watchers.to_sentence}</b>") if watchers.present?
+  end
 
-    def send_email_to_agent(act_on)
-      agent = get_agent(act_on)
-      if agent
-        send_internal_email(act_on, agent.email)
-        add_activity("Sent an email to the agent <b>#{agent}</b>")
-      end
+  def send_email_to_requester(act_on)
+    if act_on.requester_has_email?
+      act_on.account.make_current
+      Helpdesk::TicketNotifier.email_to_requester(act_on, 
+        substitute_placeholders_for_requester(act_on, :email_body),
+                      substitute_placeholders_for_requester(act_on, :email_subject)) 
+      add_activity("Sent an email to the requester") 
     end
-    
-    def delete_ticket(act_on)
-      act_on.deleted = true
-      add_activity("Deleted the ticket <b>#{act_on} </b>")
+  end
+  
+  def send_email_to_group(act_on)
+    group = get_group(act_on)
+    if group && !group.agent_emails.empty?
+      send_internal_email(act_on, group.agent_emails)
+      add_activity("Sent an email to the group <b>#{group.name}</b>")
     end
-    
-    def mark_as_spam(act_on)
-      act_on.spam = true 
-      add_activity("Marked the ticket <b>#{act_on} </b> as spam")
-    end
+  end
 
-    def skip_notification(act_on)
-      act_on.skip_notification = true
+  def send_email_to_agent(act_on)
+    agent = get_agent(act_on)
+    if agent
+      send_internal_email(act_on, agent.email)
+      add_activity("Sent an email to the agent <b>#{agent}</b>")
     end
+  end
+  
+  def delete_ticket(act_on)
+    act_on.deleted = true
+    add_activity("Deleted the ticket <b>#{act_on} </b>")
+  end
+  
+  def mark_as_spam(act_on)
+    act_on.spam = true 
+    add_activity("Marked the ticket <b>#{act_on} </b> as spam")
+  end
 
-    def set_nested_fields(act_on)
-      assign_custom_field act_on, @act_hash[:category_name], @act_hash[:value]
-      @act_hash[:nested_rules].each do |field|
-        assign_custom_field act_on, field[:name], field[:value]
-      end
+  def skip_notification(act_on)
+    act_on.skip_notification = true
+  end
+
+  def set_nested_fields(act_on)
+    assign_custom_field act_on, @act_hash[:category_name], @act_hash[:value]
+    @act_hash[:nested_rules].each do |field|
+      assign_custom_field act_on, field[:name], field[:value]
     end
+  end
 
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.

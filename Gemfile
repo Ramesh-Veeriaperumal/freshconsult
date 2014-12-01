@@ -2,7 +2,7 @@
 Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
-gem "rake", "0.8.7"
+gem "rake", "~> 10.4.0"
 gem "rack", "~> 1.4.5"
 gem "rails","3.2.18"
 
