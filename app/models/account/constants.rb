@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
     :agent_collision => false, :multiple_user_emails => false, :facebook_realtime => false, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
-    :hide_portal_forums => false, :reports_regenerate_data => true, :chat_enable => false,
+    :hide_portal_forums => false, :reports_regenerate_data => true, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, 
     :round_robin_revamp =>  false, :contact_merge_ui => false, :client_debugging => false}
 

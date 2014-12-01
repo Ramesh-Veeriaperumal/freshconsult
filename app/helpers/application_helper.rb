@@ -579,7 +579,7 @@ module ApplicationHelper
    if !item[:preferences].blank?
      color = item[:preferences].fetch(type, '')
    end
-   color
+   sanitize(color)
  end
 
  # def get_time_in_hours seconds
@@ -733,7 +733,7 @@ module ApplicationHelper
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
     end
     content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
@@ -1038,6 +1038,11 @@ module ApplicationHelper
   def shortcuts_enabled?
     logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
   end
+
+  def email_template_settings
+    current_account.account_additional_settings.email_template_settings.to_json
+  end
+
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|

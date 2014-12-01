@@ -134,7 +134,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
       Rails.logger.info "File Path: #{file_path}"
       Rails.logger.info "Detected Size: #{dimensions.width.to_s} x #{dimensions.height.to_s}"
       # errors.add('Dimensions are higher than Expected.') unless ((dimensions.width * dimensions.height) <= MAX_DIMENSIONS)
-      (dimensions.width * dimensions.height) <= MAX_DIMENSIONS
+      pixel_size = dimensions.width * dimensions.height
+      pixel_size <= MAX_DIMENSIONS && (content_content_type == 'image/gif' ? ((content_file_size / pixel_size) < 1000) : true )
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
       false

@@ -1,4 +1,3 @@
-<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
 <%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>, <br /> <br /> 
 <% if @agent_name == Va::Constants::AUTOMATIONS_MAIL_NAME %>
     <%= I18n.t('helpdesk.tickets.add_watcher.mail.added_as_watcher_by_automation') %>
@@ -34,4 +33,3 @@
                                             :host => @ticket.account.host,:protocol => @ticket.url_protocol)%>'>
     <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>
 </a> <br /> <br />
-</div>

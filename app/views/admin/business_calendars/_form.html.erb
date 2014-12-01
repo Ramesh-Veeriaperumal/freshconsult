@@ -109,7 +109,7 @@
 			<div class="row-fluid">
 				<div class="holidaylist-head span12">
 					<span class="span2 date-selection">
-						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true } ) %>
+						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true, :use_month_names => Date::ABBR_MONTHNAMES.compact } ) %>
 					</span>
 					<span class="span5">
 						<label class="overlabel" for="holiday_name"><%=t('business_hours.holiday_name')%></label>

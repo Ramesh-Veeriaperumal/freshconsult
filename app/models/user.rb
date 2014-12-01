@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
-  xss_sanitize  :only => [:name,:email]
+  xss_sanitize  :only => [:name,:email,:language, :phone, :mobile, :job_title], :plain_sanitizer => [:name,:email,:language, :phone, :mobile, :job_title]
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
   named_scope :technicians, :conditions => { :helpdesk_agent => true }
   named_scope :visible, :conditions => { :deleted => false }
@@ -590,7 +590,7 @@ class User < ActiveRecord::Base
 
   def custom_field_aliases
     helpdesk_agent? ? [] : 
-      (@custom_field_aliases ||= account.contact_form.custom_contact_fields.map(&:name))
+      (@custom_field_aliases ||= [])
   end
   
   #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F

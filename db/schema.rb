@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.boolean  "main_widget"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"

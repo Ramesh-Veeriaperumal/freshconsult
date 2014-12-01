@@ -133,3 +133,16 @@ var delay = (function(){
       timer = setTimeout(callback, ms);
   };
 })();
+
+function closeableFlash(flash){
+ flash = jQuery(flash);
+ jQuery("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
+    flash.fadeOut(600);
+    return false;
+ });
+ setTimeout(function() {
+    if(flash.css("display") != 'none')
+       flash.hide('blind', {}, 500);
+  }, 20000);
+}
+

@@ -1,5 +1,7 @@
 class UserNotifier < ActionMailer::Base
   
+  layout "email_font"
+
   def user_activation(user, params, reply_email_config)
     self.class.set_mailbox reply_email_config.smtp_mailbox
 
@@ -34,7 +36,7 @@ class UserNotifier < ActionMailer::Base
       end
 
       alt.part "text/html" do |html|
-        html.body   render_message("user_notification_mail.text.html.erb", :body => email_body)
+        html.body   render_message("user_notification_mail.text.html.erb", :body => email_body, :account => user_or_email.account)
       end
     end
     
@@ -55,7 +57,7 @@ class UserNotifier < ActionMailer::Base
 
       alt.part "text/html" do |html|
         html.body   render_message("admin_activation.text.html.erb", :admin => admin, 
-          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol ))
+          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol , :account => admin.account ))
       end
     end
   end
@@ -78,7 +80,7 @@ class UserNotifier < ActionMailer::Base
 
       alt.part "text/html" do |html|
         html.body   render_message("custom_ssl_activation.text.html.erb", :admin_name => "#{account.admin_first_name} #{account.admin_last_name}", 
-                                    :portal_url => portal_url, :elb_name => elb_name)
+                                    :portal_url => portal_url, :elb_name => elb_name, :account => account)
       end
     end
 
@@ -99,7 +101,7 @@ class UserNotifier < ActionMailer::Base
       end
 
       alt.part "text/html" do |html|
-        html.body   render_message("notify_contacts_import.text.html.erb", :user => user)
+        html.body   render_message("notify_contacts_import.text.html.erb", :user => user, :account => user.account)
       end
     end
 
@@ -121,7 +123,7 @@ class UserNotifier < ActionMailer::Base
       alt.part "text/html" do |html|
         html.body   render_message("facebook.text.html.erb",
                                     :facebook_url => social_facebook_index_url(:host => account.host), 
-                                    :fb_page => facebook_page,
+                                    :fb_page => facebook_page, :account => account,
                                     :admin_name=> account.admin_first_name)
       end
     end

@@ -294,6 +294,48 @@
 }
 
 // -------------------------------------------------------------------------------------------
+//                                     Email Notification 
+// -------------------------------------------------------------------------------------------
+
+.font-setting-wrapper{
+    margin-top: -55px;
+    min-height: 30px;
+    margin-bottom: 20px;
+    .edit-font-family{
+        position: relative;
+    }
+    .family-selected-text{
+        width: 120px;
+        display: inline-block;
+        border: 1px solid #DDD;
+        padding: 5px 1px 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .font-content{
+        display: inline-block;
+    }
+    .font-edit{
+        width: 205px;
+        position: relative;
+    }
+    .redactor_dropdown.active {
+        display: block;
+    }
+    .redactor_dropdown{
+        display: none;
+        top:21px;
+        width: 130px;
+        padding:0; 
+    }
+    .sloading{
+        position: absolute;
+        top: 15px;
+        right: 20px;
+    }
+}
+
+// -------------------------------------------------------------------------------------------
 //                                     Round robin dashboard page
 // -------------------------------------------------------------------------------------------
 .agent-status{
