@@ -1,0 +1,61 @@
+<div class="topic-merge">
+<% if @source_topics.first.locked? or @source_topics.first.merged_topic_id? %>
+  <span>
+    <%= t('discussions.topic_merge.merge_notification') %>
+  </span>
+<% else %>
+  <span><%= t('discussions.topic_merge.warning') %></span>
+  <div id="mergeboxconfirm" class="mergeboxconfirm"></div>
+  <div id="mergebox" class="row-fluid mergebox">
+    <div id="merge-content" class="span6">
+      <div class="content-show merge_entity">
+        <% @source_topics.each do |topic| %>
+          <div class="merge-cont">
+            <div class="primary-marker tooltip" title='<%= t("discussions.topic_merge.mark_primary")%>'>
+              <span id="marker"></span>
+            </div>
+              <div id="contact-area">
+                <span id="resp-icon" class="resp-icon" title="<%= t('discussions.topic_merge.remove') %>"></span>
+                <%= display_template(topic) %>
+              </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="search-content">
+      <div class="searchtopic title">
+          <input type="text" id='select-title' name='select-title' 
+                  class="search_merge" 
+                  placeholder='<%=t("discussions.topic_merge.title_placeholder")%>' 
+                  data-filter='title'
+                  data-visibility='<%= @source_topics.first.forum.forum_visibility %>'/>
+          <span class="searchicon"></span>
+      </div>
+      
+      <div class="visible-merge-note">
+          <%= t("discussions.topic_merge.visibility_info", 
+              :visibility => Forum::VISIBILITY_NAMES_BY_KEY[@source_topics.first.forum.forum_visibility]).html_safe %>
+        </div>
+      
+      <div id="title_results" class="merge_results hide">
+        
+      </div>
+      <input type="hidden" value='<%= @redirect_back %>' id="merge-redirect"/>
+    </div>
+
+      <% form_remote_tag( :url => review_discussions_merge_topic_path,
+                          :html => { :id => "merge_topics_form", :method => :put }) do %>  
+      <div class="divide"></div>
+      <input type="hidden" name="target_topic_id" id="target_topic" />
+        <div class="button-container">
+          <a class="btn" data-dismiss="modal" id="cancel_new_merge"><%= t('discussions.topic_merge.cancel') %></a>
+          <%= submit_tag t('discussions.topic_merge.continue'),:class => "btn btn-primary",:id => "merge_topic", :disabled => "disabled", "data-loading-text" => t('discussions.topic_merge.please_wait') %>
+        </div>
+      <% end %>
+  </div>
+
+  <script type="text/javascript">
+    App.Discussions.Merge.start();
+  </script>
+<% end %>
+</div>

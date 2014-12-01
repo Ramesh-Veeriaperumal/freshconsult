@@ -206,12 +206,14 @@ i.#{$font-class-name}twitter{
 	}
 }
 
-/* ====== Admin Font Settings ======== */
-.font-setting-wrapper{
-	.#{$font-class-name}save,.#{$font-class-name}cross{
-		color:#999;
-	}
-	.#{$font-class-name}save:hover,.#{$font-class-name}cross:hover{
-		color:#000;
-	}
+/* ==== Custom Contact Field Icons === */
+
+.#{$font-class-name}phone_number 	{ @extend .#{$font-class-name}freshfone; }
+.#{$font-class-name}url 			{ @extend .#{$font-class-name}link; }
+
+// Chat conversation in ticket page
+.conversation_wrap{
+  &:after{
+    @extend .#{$font-class-name}comments:before;
+  }
 }

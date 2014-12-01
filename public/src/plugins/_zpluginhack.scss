@@ -185,3 +185,27 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	background:#707070;
 	color:#fff;
 }
+
+.contact-form {
+	.ui-datepicker-trigger {
+		@include left(-4px);
+		top: 0px;
+		font-size: 20px;
+		position: absolute;
+		text-indent: 0;
+		width: 25px;
+		height: 25px;
+		background: none;
+		border: 0;
+	}
+}
+
+ .profile-edit-form {
+ 	.ui-datepicker-trigger {
+ 		@include left(-1px);
+ 		top: 3px;
+ 		background: none;
+ 		border: 0;
+ 		position: absolute;
+ 	}
+ }

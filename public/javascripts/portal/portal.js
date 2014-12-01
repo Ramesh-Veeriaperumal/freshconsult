@@ -168,11 +168,11 @@
 		        },
 				highlight: function(element, errorClass) {
 					// Applying bootstraps error class on the container of the error element
-					$(element).parents('div.control-group').addClass(errorClass+"-group")
+					$(element).parents('.control-group').addClass(errorClass+"-group")
 				},
 				unhighlight: function(element, errorClass) {
 					// Removed bootstraps error class from the container of the error element
-					$(element).parents('div.control-group').removeClass(errorClass+"-group")
+					$(element).parents('.control-group').removeClass(errorClass+"-group")
 				},
 				onkeyup: false,
          		focusCleanup: true,
@@ -207,6 +207,37 @@
 		    $(this).load(function() {
 		      this.style.opacity = 1;
 		    });
+		});
+		
+		// If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
+		// $(window).on('beforeunload', function(ev){
+		// 	var form = $('.form-unsaved-changes-trigger');
+		// 	if(form.data('formChanged')) {
+		// 		ev.preventDefault();
+		// 		return customMessages.confirmNavigate;
+		// 	}
+		// });
+		
+		// $('.form-unsaved-changes-trigger').on('change', function() {
+		// 	$(this).data('formChanged', true);
+		// }).on('submit', function() {
+		// 	ev.stopPropagation();
+		// 	$(this).data('formChanged', false);
+		// });
+
+    	// Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
+		$("input.datepicker_popover").livequery(function() {
+			var dateFormat = 'yy-mm-dd';
+			if($(this).data('date-format')) {
+				dateFormat = $(this).data('date-format');
+			}
+			$(this).datepicker({
+				dateFormat: dateFormat
+			});
+			 if($(this).data('showImage')) {
+		        $(this).datepicker('option', 'showOn', "both" );
+		        $(this).datepicker('option', 'buttonText', "<span class='icon-calendar'></span>" );
+		      }
 		});
 
 		$('body').on('afterShow', '[rel=remote]', function(ev) {

@@ -18,17 +18,23 @@ module AccountConstants
       :short_day_with_week => "%a, %-d %b, %Y",
       :short_day_with_time => "%a, %-d %b, %Y at %l:%M %p",
     }
+  }
+
+  DATA_DATEFORMATS = { 
+    :non_us => {
+      :moment_date_with_week  => 'ddd, D MMM, YYYY',
+      :datepicker       => 'd M, yy',
+      :datepicker_escaped   => 'd M yy',
+      :datepicker_full_date => 'D, d M, yy'
+    },
+      :us => {
+      :moment_date_with_week  => 'ddd, MMM D, YYYY',
+      :datepicker       => 'M d, yy',
+      :datepicker_escaped   => 'M d yy',
+      :datepicker_full_date => 'D, M d, yy'
+    }
   } 
   
   DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten]  
-
-  # Default email settings for additional settings
-  DEFAULTS_FONT_SETTINGS = { 
-    :email_template => { 
-      "font-size"   => '13px',
-      "font-family" => 'Helvetica Neue, Helvetica, Arial, sans-serif',
-      "line-height" => '1'
-    }
-  } 
 
 end

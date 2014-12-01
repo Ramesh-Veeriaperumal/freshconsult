@@ -226,6 +226,7 @@ a.addchoice:hover{
 		background-color:transparent;
 		background-position:31px 7px; 
 		font-size:12px;
+		margin-left:-15px;
 		@include padding(8px 10px 6px 63px);			
 	} 
 }	
@@ -1001,7 +1002,7 @@ input.time{
 		@include margin-left(3px);
 	}
 	li:hover, li.hover, li.active{
-		background:#ffffff;
+		background: #F7F7DC;
 		border-color:#dfdfdf;
 		.ui-field-panel{
 			display:block;
@@ -1177,7 +1178,7 @@ input.search{
 	top:60px;
 	@include margin-left(-310px);
 	z-index:999999;
-	background:#f7f7f7;
+	background:#ffffff;
 	border:1px solid #999999;
 	@include box-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
     @include border-radius(4px);
@@ -1195,6 +1196,8 @@ input.search{
 	width:100%;
 	height:100%;
 	background:none;
+	top: 0;
+	@include left(0);
 }
 
 .code-view{
@@ -2069,6 +2072,9 @@ input[type="text"].points{
 
 input[type="text"].number{
 	width:70px;
+	&.phone_number {
+		width: 98%;
+	}
 }
 
 #takescreen-btn{
@@ -2419,6 +2425,76 @@ label.label-choice{ cursor: pointer; }
 	label{ font-weight: bold; }
 	.reason-followup{ display: block; }
 }	
+
+.new-ui-form{
+	background-color: #FFF;
+	border: none;
+	.title{
+		padding-left:1.85%;
+	}
+}
+
+.ui-form.contact-form{
+	label{
+		display:inline;	
+	}
+	.dropdown-min-width{
+		min-width: 100px;
+	}
+	li.dropdown, li.dropdown_blank{
+		width:96%;
+	}
+	li.checkbox{
+		margin-bottom: 16px;
+		padding-left:0;
+		input{
+			margin-top:0;
+		}
+	}
+	li{padding:0;}
+	label.error{margin:0;}
+}
+
+// .custom-field-form{
+// 	li{
+// 		label{cursor:  move;}
+// 		cursor:  move;
+// 		input[type=text], textarea{ width:98%; }
+// 		padding: 5px 1.85% 5px 1.85%; 
+// 		border:  none;
+// 		border: 1px solid transparent;
+// 	}
+// 	li label, div span{
+// 		padding: 0; font-weight: 500;
+// 	}
+// 	li:hover, li:active, li.active{
+// 		background-color: #fefdee;/*yellow*/
+// 		border: 1px dotted;
+// 		@include border-radius(0 5px 5px 0);
+// 		// border-left: 1px solid #eee;
+// 		// @include box-shadow(0 0 1px 2px #B1A0A0 inset);
+// 	} 
+// 	.ui-sortable-placeholder{
+// 		background: #fff !important;
+// 		border: 2px solid #909090;
+// 		@include box-shadow(0 0 60px 15px #EEE inset);
+// 		@include border-radius(5px);
+// 	}
+// }
+
+.field_picker{
+	padding: 20px;
+	border:1px solid #ddd;
+	@include border-radius(5px);
+	@include box-shadow(#888 0 0 10px);
+	div{width:10%;}
+	display: none;
+	width: 20%;
+	position: fixed;
+	right: 90px;
+	background-color: #ffffff;
+}
+
 /* end */
 
 .ui-form .conditionset div.redactor_editor{ // overriding line no 472

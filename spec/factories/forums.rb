@@ -25,4 +25,8 @@ if Rails.env.test?
 
   Factory.define :monitorship, :class => Monitorship do |m|
   end
+
+  Factory.define :vote, :class => Vote do |v|
+  end
+
 end

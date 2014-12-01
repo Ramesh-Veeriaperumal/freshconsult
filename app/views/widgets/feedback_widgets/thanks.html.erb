@@ -14,7 +14,7 @@
 			<center><%= (params[:submit_message] || t("ticket.thanks").html_safe) %></center>
 		</h3>
 		<br /><br />
-		<center><%= link_to t('go_back'), new_widgets_feedback_widget_path(:widgetType => params[:widgetType]) %></center>
+		<center><%= link_to t('go_back'), new_widgets_feedback_widget_path(ActiveSupport::JSON.decode params[:retainParams]) %></center>
 		<input type="hidden" name="widgetType" id="widgetTypeThanks" value= "<%= params[:widgetType]%>" />
 	</div>
 	<div class="modal-footer">

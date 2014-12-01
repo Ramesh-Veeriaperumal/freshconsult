@@ -1,0 +1,12 @@
+<div class="field-picker">
+  <div class='field-info-wrapper'>
+    <%= content_tag(:h3, t("custom_fields.insert_field"), :class => "title") %> 
+    <ul id="custom-fields" class="custom-fields"> 
+      <% field_class::CUSTOM_FIELD_PROPS.each do |field, details| %>
+        <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" data-field-type="<%="#{field}"%>" data-fresh="true" title="<%=t("custom_fields.#{details[:dom_type]}") %>"> 
+            <%= content_tag(:span, '', :class => font_class(details[:dom_type],nil,'dom-icon')) %> 
+        </li>
+      <% end %>
+    </ul> 
+  </div>
+</div>

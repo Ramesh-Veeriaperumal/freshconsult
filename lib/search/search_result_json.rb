@@ -102,8 +102,11 @@ module Search::SearchResultJson
 			:category_name => h(topic.forum.forum_category.name),
 			:user_name => h(topic.user.name),
 			:user_path => user_path(topic.user),
+			:locked => topic.locked,
+			:created_at => topic.created_at,
 			:info => %{#{time_ago_in_words(topic.created_at)} #{t('search.ago')}},
-			:description => truncate(topic.topic_desc, :length => 250)
+			:description => truncate(topic.topic_desc, :length => 250),
+			:searchKey => topic.title
 		}
 	end
 

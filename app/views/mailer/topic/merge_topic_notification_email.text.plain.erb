@@ -1,0 +1,14 @@
+Hey <%= @user.name %>
+
+Your topic <%= discussions_topic_url(@source_topic.id, :host => @host) %> has been merged into <%= discussions_topic_url(@target_topic.id, :host => @host) %> and you have been added as a follower.
+
+Sincerely
+<%= @portal.name %>
+
+<%= "_" * 100 %>
+
+Reply
+<%= reply_discussions_topic_url(@target_topic.id, :host => @host, :anchor => 'reply-to-post') %>
+
+Turn off notifications for the new topic
+<%= toggle_monitorship_url("topic", @target_topic.id, "unfollow", :host => @host) %>

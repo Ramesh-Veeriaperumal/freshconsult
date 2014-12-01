@@ -15,7 +15,7 @@ module Social
     private
       def fetch_fb_comments fan_page
         sandbox(true) do
-            fb_posts = Social::FacebookPosts.new(fan_page)
+            fb_posts = Facebook::Fql::Posts.new(fan_page)
             fb_posts.get_comment_updates((Time.zone.now.ago 2.hours).to_i)
         end
       end

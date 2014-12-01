@@ -268,9 +268,14 @@ window.xhrPool = [];
         });
     });
 
+    // Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
     $("input.datepicker_popover").livequery(function() {
+      var dateFormat = 'yy-mm-dd';
+      if($(this).data('date-format')) {
+        dateFormat = $(this).data('date-format');
+      }
       $(this).datepicker({
-        dateFormat: 'yy-mm-dd',
+        dateFormat: dateFormat,
         beforeShow: function(){
           insideCalendar=true;
           closeCalendar=false;
@@ -279,6 +284,10 @@ window.xhrPool = [];
           closeCalendar=true;
         }
       });
+      if($(this).data('showImage')) {
+        $(this).datepicker('option', 'showOn', "both" );
+        $(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
+      }
     });
 
     $('input.datetimepicker_popover').livequery(function() {
@@ -689,6 +698,22 @@ window.xhrPool = [];
 			$(window).on("scroll.select2", function(ev) {
 			    $(".select2-container.select2-dropdown-open").not($(this)).select2('positionDropdown');
 			});
+
+      // If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
+      // $(window).on('beforeunload', function(ev){
+      //   var form = $('.form-unsaved-changes-trigger');
+      //   if(form.data('formChanged')) {
+      //     ev.preventDefault();
+      //     return customMessages.confirmNavigate;
+      //   }
+      // });
+
+      // $('.form-unsaved-changes-trigger').on('change', function() {
+      //   $(this).data('formChanged', true);
+      // }).on('submit', function(ev) {
+      //   ev.stopPropagation();
+      //   $(this).data('formChanged', false);
+      // });
    });
 })(jQuery);
 

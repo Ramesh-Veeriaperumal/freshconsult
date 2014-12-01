@@ -1,0 +1,47 @@
+<% form_tag confirm_discussions_merge_topic_path do |f| %>
+  <div class="contact-special">
+    <br>
+    <div id="primary-contact">
+      <%= display_template(@target_topic, 'target_topic_id') %>
+    </div>
+    <div id="merge-ready">
+    <% @source_topics.each do |source| %>
+      <div id="one-contact">
+        <span class="line <%= 'last-line' if source == @source_topics.last %>"></span>
+        <div id="contact-area">
+          <%= display_template(source, 'source_topics[]') %>
+        </div>
+      </div>
+     <% end %>
+   </div>
+  </div>
+	<div class="merge-info-text">
+		<div class="target-topic-merge-note"></div> 
+		<div class="source-target-note source-note">
+			<div class="content-note content">
+				<span class="arrow-left merge-left"></span>
+				<span class="default-note-text"></span>
+        <div class="note-button-container-test">
+          <a id="edit-source" class="edit-source">
+            <%= t("discussions.topic_merge.add") %>
+            <%= t("discussions.topic_merge.detailed_note").html_safe %>
+          </a>
+        </div>
+        <div id="target-note-content" class="target-note-content hide">
+          <textarea id="source-note-body" class="target-source-text" name="source_note"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="divide"></div>
+  <div class="button-container">
+    <%= button_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "btn", :id  => "back-user-merge") %>
+    <a class="btn" id="cancel-user-merge"><%= t('discussions.topic_merge.cancel') %></a>
+  	<%= submit_tag t("discussions.topic_merge.confirm_and_merge"), :class => "btn btn-primary", :id => "merge_completion",
+    "data-loading-text" => t('please_wait')  %>
+  </div>
+<% end %>
+
+<% javascript_tag do %>  
+  	App.Discussions.Merge.activateRedactor('<%= escape_javascript(t("discussions.topic_merge.add_note")).html_safe %>');
+<% end %>

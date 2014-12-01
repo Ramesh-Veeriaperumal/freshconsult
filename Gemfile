@@ -149,6 +149,8 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 gem "bunny", "1.2.1"
 
+gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
+
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git", :branch => "multi_match"
 end

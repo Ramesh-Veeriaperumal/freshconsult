@@ -9,6 +9,16 @@ describe AgentsController do
     @account.make_current
     @role_id = ["#{@account.roles.first.id}"]
     @agent_role = @account.roles.find_by_name("Agent")
+
+    agent = Factory.build(:agent, :occasional => "false", :scoreboard_level_id => "1", :signature_html=> "Spec Cheers!", 
+                                  :user_id => "",:ticket_permission => "1")
+    @user = Factory.build(:user, :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')},
+                                  :helpdesk_agent => true,:name => "Spec test user", :email => Faker::Internet.email, 
+                                  :time_zone => "Chennai", :job_title =>"Spec Agent", :phone => Faker::PhoneNumber.phone_number, 
+                                  :language => "en", :delta => 1,:role_ids => ["#{@agent_role.id}"],
+                                  :privileges => @agent_role.privileges,:active => 1)
+    @user.agent = agent
+    @user.save(false)
   end
 
   before(:each) do
@@ -32,7 +42,8 @@ describe AgentsController do
                                 :user_id => "",
                                 :ticket_permission => "1"
                                 },
-                    :user => { :helpdesk_agent => true,
+                    :user => { :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')},
+                                :helpdesk_agent => true,
                                 :name => Faker::Name.name,
                                 :email => test_email,
                                 :time_zone => "Chennai",
@@ -47,6 +58,8 @@ describe AgentsController do
     created_user = @account.user_emails.user_for_email(test_email)
     created_user.should be_an_instance_of(User)
     created_user.agent.should be_an_instance_of(Agent)
+    created_user.avatar.should_not be_nil
+    created_user.avatar.content_file_name.should eql "image4kb.png"
     Delayed::Job.last.handler.should include("#{@account.name}: A new agent was added in your helpdesk")
   end
 
@@ -128,24 +141,48 @@ describe AgentsController do
   end
 
   it "should edit an existing agent" do
-    user = add_test_agent(@account)
-    agent = user.agent
+    @user.reload
+    agent = @user.agent
     get :edit, :id => agent.id
     response.body.should =~ /Edit Agent/
     test_email = Faker::Internet.email
-    put :update, :id => agent.id, :agent => { :occasional => agent.occasional,
+    put :update, :id => agent.id, :agent =>{ :occasional => agent.occasional,
                                               :scoreboard_level_id => agent.scoreboard_level_id,
                                               :ticket_permission => 2
                                             },
-                                   :user => { :helpdesk_agent => true,
+                                   :user => { :avatar_attributes=>{:content=> Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg'), 
+                                                                    :id=> @user.avatar.id, :_destroy=>"0"},
+                                              :helpdesk_agent => true,
                                               :name => Faker::Name.name,
-                                              :time_zone => user.time_zone,
-                                              :language => user.language
+                                              :time_zone => @user.time_zone,
+                                              :language => @user.language
                                             }
-    edited_user = @account.user_emails.user_for_email(user.email)
+    edited_user = @account.user_emails.user_for_email(@user.email)
     edited_user.should be_an_instance_of(User)
     edited_user.agent.ticket_permission.should be_eql(2)
+    edited_user.avatar.should_not be_nil
+    edited_user.avatar.content_file_name.should_not eql "image4kb.png"
+    edited_user.avatar.content_file_name.should eql "image33kb.jpg"
   end
+
+    it "should delete agent avatar" do
+      @user.reload
+      agent = @user.agent
+      get :edit, :id => agent.id
+      response.body.should =~ /Edit Agent/
+      put :update, :id => agent.id, :agent =>{:occasional => agent.occasional,
+                                              :scoreboard_level_id => agent.scoreboard_level_id,
+                                              :ticket_permission => 2
+                                            },
+                                   :user => { :avatar_attributes => {:id => @user.avatar.id, :_destroy =>"1"},
+                                              :helpdesk_agent => true,
+                                              :name => @user.name,
+                                              :time_zone => @user.time_zone,
+                                              :language => @user.language
+                                            }
+      @user.reload
+      @user.avatar.should be_nil
+    end
 
   it "should check_agent_limit for update" do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
@@ -189,7 +226,7 @@ describe AgentsController do
                                               :language => user.language
                                             }
     user.reload
-    agent.reload
+    agent = user.agent.reload
     agent.should be_an_instance_of(Agent)
     agent.scoreboard_level_id.should_not be_eql(1)
     agent.ticket_permission.should_not be_eql(3)
@@ -351,34 +388,6 @@ describe AgentsController do
     response.session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
-  it "should delete avatar of a agent" do
-    new_agent = Factory.build(:agent, :occasional => "false", 
-                                      :scoreboard_level_id => "1", 
-                                      :signature_html=> "Spec Cheers!", 
-                                      :user_id => "",
-                                      :ticket_permission => "1")
-    new_user = Factory.build(:user, :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 
-                                        'image/png')},
-                                    :helpdesk_agent => true,
-                                    :name => "Spec test user",
-                                    :email => Faker::Internet.email,
-                                    :time_zone => "Chennai",
-                                    :job_title =>"Spec Agent",
-                                    :phone => Faker::PhoneNumber.phone_number, 
-                                    :language => "en", 
-                                    :delta => 1,
-                                    :role_ids => ["#{@agent_role.id}"],
-                                    :privileges => @agent_role.privileges,
-                                    :active => 1)
-    new_user.agent = new_agent
-    new_user.save
-    new_user.reload
-    put :delete_avatar, :id => new_user.id
-    new_user.reload
-    new_user.avatar.should eql nil
-    response.body.should =~ /success/
-  end
-
   it "should reset password" do
     new_user = add_test_agent(@account)
     @request.env['HTTP_REFERER'] = 'sessions/new'
@@ -444,8 +453,7 @@ describe AgentsController do
   end
 
   it "should not invite multiple agents with existing email ID" do
-    user = add_test_agent(@account)
-    put :create_multiple_items, :agents_invite_email => [user.email]
+    put :create_multiple_items, :agents_invite_email => [@user.email]
     response.body.should =~ /Successfully sent/
   end
 

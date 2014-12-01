@@ -150,7 +150,7 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def fetch_fb_wall_posts fb_page 
-    fb_posts = Social::FacebookPosts.new(fb_page)
+    fb_posts = Facebook::Fql::Posts.new(fb_page)
     fb_posts.fetch    
   end
 

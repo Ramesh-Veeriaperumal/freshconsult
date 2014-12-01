@@ -34,11 +34,8 @@ class Mobihelp::App < ActiveRecord::Base
 
     def default_values
       default_config = {
-        :bread_crumbs => DEFAULT_BREADCRUMBS_COUNT,
-        :debug_log_count => DEFAULT_LOGS_COUNT,
         :solutions => "",
         :push_notification => 'false',
-        :app_review_launch_count => DEFAULT_APP_REVIEW_LAUNCH_COUNT
       }
       default_config[:app_store_id] = "" if platform == PLATFORM_ID_BY_KEY[:ios]
       default_config

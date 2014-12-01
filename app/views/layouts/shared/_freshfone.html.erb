@@ -40,5 +40,14 @@
 	freshfone.numbersHash = JSON.parse('<%= Hash[*current_account_freshfone_numbers.collect(&:reverse).flatten].to_json.html_safe %>');
 	freshfone.namesHash =  JSON.parse('<%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>');
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_path %>';
+	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
+	if (typeof(CURRENT_USER) == 'undefined'){
+    var CURRENT_USER = {
+            'id'        : '<%=current_user.id%>',
+            'username'  : '<%=current_user.name%>',
+            'email'     : '<%=current_user.email%>',
+            'account_id': '<%= current_account.id%>'
+    };
+  }
 <% end %>
 <%= include_cloudfront_js :freshfone_client %>

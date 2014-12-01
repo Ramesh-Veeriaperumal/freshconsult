@@ -39,6 +39,16 @@ describe ContactsController do
     val.should be_true
   end
 
+  it "should not make agent as agent again" do
+    contact = add_new_user(@account,{})   
+    put :make_agent, {:id => contact.id,:format => 'xml'}    
+    put :make_agent, {:id => contact.id,:format => 'xml'}
+    record_not_found_status?(response.status).should be_true
+  end
+ 
+  def record_not_found_status?(status)
+     status =~ /404 Not Found/
+  end
 
   def error_status?(status)
       status =~ /422 Unprocessable Entity/ 

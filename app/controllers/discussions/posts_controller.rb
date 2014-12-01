@@ -22,8 +22,8 @@ class Discussions::PostsController < ApplicationController
 			respond_to do |format|
 				format.html { redirect_to :back }
 				format.js
-				format.xml { head 200 }
-				format.json { head 200 }
+				format.xml  {head :ok}
+				format.json  {head :ok}
 			end
 	end
 
@@ -46,8 +46,8 @@ class Discussions::PostsController < ApplicationController
 		@post.destroy
 		respond_to do |format|
 			format.js
-			format.xml { head 200 }
-			format.json { head 200 }
+			format.xml  {head :ok}
+			format.json  {head :ok}
 		end
 	end
 

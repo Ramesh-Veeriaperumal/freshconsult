@@ -126,6 +126,7 @@ HelpdeskTests = [
   "spec/controllers/companies_controller_spec.rb",
   "spec/controllers/profiles_controller_spec.rb",
   "spec/controllers/ticket_fields_controller_spec.rb",
+  "spec/controllers/admin/contact_fields_controller_spec.rb",
   "spec/controllers/password_resets_controller_spec.rb",
   "spec/controllers/helpdesk/*_spec.rb",
   "spec/controllers/admin/**/*_spec.rb",

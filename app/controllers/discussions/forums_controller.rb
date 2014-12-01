@@ -86,8 +86,8 @@ class Discussions::ForumsController < ApplicationController
 		@forum.destroy
 		respond_to do |format|
 			format.html { redirect_to(discussions_path, :notice => I18n.t('forum.forum_deleted')) }
-			format.xml  { head 200 }
-			format.json { head 200 }
+			format.xml  {head :ok}
+			format.json  {head :ok}
 		end
 	end
 

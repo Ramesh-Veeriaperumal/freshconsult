@@ -73,9 +73,9 @@ class FreshfoneNotifier < ActionMailer::Base
  
   def billing_failure(account, args, current_call, exception)
     subject       "Freshfone Credit Calculation Error for #{account.id} :: call sid :#{args[:call_sid]}"
-    recipients    FreshfoneConfig['billing_error_email']
+    recipients    FreshfoneConfig['ops_alert']['mail']['to']
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
-    from          AppConfig['billing_email']
+    from          FreshfoneConfig['ops_alert']['mail']['from']
     body          :account => account, :args => args, :call => current_call, :exception => exception
     sent_on       Time.now
     content_type  "text/html"
