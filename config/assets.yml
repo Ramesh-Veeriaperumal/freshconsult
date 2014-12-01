@@ -160,7 +160,7 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
-    - public/javascripts/util-dates.js
+    - public/javascripts/dates.js
     - public/javascripts/globalinit.js
     - public/javascripts/app/app.js
     - public/javascripts/security.js
@@ -175,9 +175,7 @@ javascripts:
     - public/javascripts/report/date.js
     - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
-    - public/javascripts/app/dashboard.js
     - public/javascripts/app/product_notifications.js
-    - public/javascripts/app/admin_font_settings.js
     - public/javascripts/app/merge.js
 
   freshchat:
@@ -209,7 +207,6 @@ javascripts:
     - public/javascripts/app/discussions/topic_list.js
     - public/javascripts/app/discussions/topic.js
     - public/javascripts/app/discussions/moderation.js
-    - public/javascripts/app/discussions/merge.js
 
   gadget:
     - public/javascripts/frameworks/jquery.js
@@ -286,7 +283,6 @@ javascripts:
     - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/components/call_transfer.js
-    - public/javascripts/freshfone/freshfone_logger.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js
@@ -323,7 +319,6 @@ javascripts:
 
   portal_head:
     - public/javascripts/prototype.js
-    - public/javascripts/effects.js
     - public/javascripts/portal/jquery-1.8.3.js
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/portal-utils.js
@@ -350,11 +345,10 @@ javascripts:
     - public/javascripts/moment/*
     - public/javascripts/security.js
     - public/javascripts/portal/portal.js
-    - public/javascripts/portal/profile_avatar.js
     - public/javascripts/portal/portal_custom_validators.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
-    - public/javascripts/util-dates.js
+    - public/javascripts/dates.js
     - public/javascripts/frameworks/plugins/jquery.unveil.js
 
   freshfone_portal:
@@ -389,10 +383,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/tf_customizer.js
-
-  contact_fields:
-    - public/javascripts/app/admin/contact_fields/cf_customizer.js
-    - public/javascripts/app/admin/contact_fields/formfield_props.jst
 
   survey:
     - public/javascripts/frameworks/jquery.js
@@ -448,15 +438,13 @@ javascripts:
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
 
-  tickets:
-    - public/javascripts/app/tickets.js
+  merge:
+    - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js
-
-  contacts:
-    - public/javascripts/app/contacts.js
-    - public/javascripts/app/contact_form.js
     - public/javascripts/app/contacts_merge.js
-    - public/javascripts/app/contact_view.js
+
+  contact_form:
+    - public/javascripts/app/contact_form.js
 
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js
@@ -468,12 +456,6 @@ javascripts:
 
   admin:
     - public/javascripts/admin/ui_search.js
-
-  profile_avatar:
-    - public/javascripts/profile_avatar.js
-
-  client_logger:
-    - public/javascripts/client_logger.js
 
 <% 
   # Adding specific javascript assets to the package list

@@ -26,16 +26,6 @@ describe Admin::AccountAdditionalSettingsController do
 		response.redirected_to.should eql "/admin/email_configs"
 	end
 
-	it "should update the font settings in account_additional_settings" do
-		put :update_font, {
-			"font-family" => 'times new roman, serif'
-		}
-		@account.reload
-		@email_template = @account.account_additional_settings.email_template_settings
-		@email_template["font-family"].should be_eql('times new roman, serif')
-		response.should render_template("admin/email_notifications/_fontsettings.rjs")
-	end
-
 	it "should not update the account_additional_settings without emailId" do
 		text = Faker::Name.name
 		put :update, {
