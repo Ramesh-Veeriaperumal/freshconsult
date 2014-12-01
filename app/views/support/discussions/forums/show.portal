@@ -25,7 +25,8 @@
 				<div class="c-row c-user-thumb {% if topic.sticky? %} c-topic-sticky {% endif %}">
 					{{ topic.user | profile_image }}
 					{{ topic | topic_labels }}
-					<div class="ellipsis">						
+					<div class="ellipsis">
+						{{ topic | topic_small_icon }}						
 						<a class="c-link" title="{{topic.title | h}}" href="{{topic.url}}">{{topic.title | h}}</a>
 					</div>				
 					<div class="help-text"> 

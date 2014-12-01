@@ -1,119 +1,88 @@
+
 <% form_for @profile, :url => support_profile_path, 
-	:html => { :class => "form-portal", :multipart => true, :rel => "validate"} do |f| %>
+	:html => { :class => "form-portal form-unsaved-changes-trigger", :multipart => true, :rel => "validate"} do |f| %>
 	<%= f.error_messages %>
 	<% fields_for "users", @profile do |usr| %>
-    <div class="row-fluid">
-    	<fieldset class="span4 avatar-span">
-    		<div id="avatar-pic">
-				<% if(@profile.avatar) %>
-					<div class="user-pic-original">					  
-						<%= image_tag @profile.avatar.expiring_url(:medium, 300) %>						
-					</div>
-					<div class="dropdown">
-		              	<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
-		              		<%= t('user.change_photo') %> <b class="caret"></b>
-		              	</a>
-						<ul class="dropdown-menu">
-							<li>
-								<a href="#" data-toggle-dom="#avatar-pic, #avatar-edit">
-									<%= t('user.choose_another_photo') %>
-								</a>
-							</li>
-							<li>
-								<a href="<%= delete_avatar_support_profile_path %>"
-									data-method="delete"
-									data-confirm="<%= t('user.remove_profile_image_confirm') %>">
-									<%= t('user.remove_photo') %>
-								</a>
-							</li>
-						</ul>
-		            </div>
-				<% end %>
-			</div>	
-			<div id="avatar-edit" class="<%= (@profile.avatar) ? 'hide' : '' %>">
-				<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
-					<div class="info-data"><%=t('user.info1')%></div>
-					<%= avatar_form.file_field :content, :size => "12", :class => "validate_image", :accept => 'image/*'  %>				
-				<% end %>
-			</div>
-			<br />
-			<% if @profile.email.present? %>
-				<% if current_account.features_included?(:contact_merge_ui) %>
-					<h4><%= t("user.emails") %></h4>
-					<div><%= @profile.emails.join(", ") %></div>
-				<% else %>
-					<h4><%= t("user.email") %></h4>
-					<div><%= @profile.email %></div>
-				<% end %>
-			<% end %>
-			<br />
-			<% if @profile.company.present? %>
-				<h4><%= t("user.company") %></h4>
-				<div><%= @profile.company %></div>
-			<% end %>
-		</fieldset>
- 		<fieldset class="span8 omega">
-			<div class="control-group">
-				<%= f.label(:name, t("user.full_name"), :class => "control-label required" ) %>
-				<div class="controls">
-					<%= f.text_field(:name, :class => "required")  %>
+	    <div class="row-fluid">
+	    	<fieldset class="span3 avatar-span">
+				<div class='avatar-pic'>
+					<%= image_tag @profile.avatar ? @profile.avatar.expiring_url(:medium) : '', 
+									:alt => @profile.name, 
+									:onerror => "imgerror(this)" %>
 				</div>
-			</div>
 
-			<div class="control-group">
-				<%= f.label(:job_title, t("user.title"), :class => "control-label" ) %>
-				<div class="controls">
-					<%= f.text_field(:job_title) %>
-				</div>
-			</div>
+				<% isAvatar = @profile.avatar && @profile.avatar.id %>
+				
+				<a class='btn default-pic <%= isAvatar ? "hide" : "" %>' href='javascript:;'>
+					<%= t('user.change_photo') %>  
+					<b class="caret invisible"></b>
+					<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+						<%= avatar_form.file_field :content, 
+													:size => 10 , 
+													:class => 'upload_size_validity avatar-file', 
+													:accept => "image/jpeg, image/png" %>
+					<% end %>
+				</a>
+				<div class="dropdown <%= isAvatar ? "" : "hide" %>">
+		          	<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+		          		<%= t('user.change_photo') %> <b class="caret"></b>
+		          	</a>
+					<ul class="dropdown-menu avatar-options">
+						<li>
+							<a href="javascript:;" class='option uplink'>
+								<span class='opt'>
+									<span><%= t('user.choose_another_photo') %></span>
 
-			<% unless @profile.email.present? %>
-				<div class="control-group">
-					<%= f.label(:email, t("user.email"), :class => "control-label" ) %>			
-					<div class="controls">
-						<%= f.text_field(:email) %>					
-					</div>
-				</div>
-			<% end %>
-      
-			<div class="control-group">
-				<%= f.label(:phone, t("user.phone_no"), :class => "control-label" ) %>	
-				<div class="controls multiple-inputs">
-					<%= f.text_field(:phone, :placeholder => t("user.work")) %>
-					<%= f.text_field(:mobile, :placeholder => t("user.mobile")) %>
-				</div>
-			</div>			
-			
-			<div class="control-group">
-				<%= f.label(:twitter_id, t("user.twitter_id"), :class => "control-label" ) %>
-				<div class="controls">
-					<%= f.text_field(:twitter_id) %>
-				</div>
-			</div>
-			
-			<% if feature?(:multi_timezone) %>
-			<div class="control-group">
-				<%= f.label(:time_zone, t("account.time_zone"), :class => "control-label" ) %>			
-				<div class="controls">
-					<%= f.time_zone_select(:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
-				</div>
-			</div>
-			<% end %>
+									<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+										<%= avatar_form.file_field :content, 
+																	:size => 10 , 
+																	:class => 'upload_size_validity avatar-file', 
+																	:accept => "image/jpeg, image/png" %>
+									<% end %>
 
-			<% if feature?(:multi_language) %>
-			<div class="control-group">
-				<%= f.label(:language, t('account.language'), :class => "control-label" ) %>
-				<div class="controls">
-					<%= f.select(:language, I18n.available_locales_with_name, { :selected => @profile.language.to_sym() })%>
+									<% isAvatar = @profile.avatar && @profile.avatar.id %>
+									<%= hidden_field_tag (isAvatar ? 'user[avatar_attributes][id]' : nil), 
+															(isAvatar ? @profile.avatar.id : "-1"),  
+															{:class => 'avatar-id'} %>
+									<%= hidden_field_tag (isAvatar ? 'user[avatar_attributes][_destroy]' : nil), 
+															(isAvatar ? "0" : "-1"), 
+															{ :class => 'avatar-destroy'} %>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href='#' class= 'option remove-avatar' >
+							    <span class='opt'><%= t('user.remove_photo') %> </span>
+							</a>
+						</li>
+					</ul>
 				</div>
-			</div>
-			<% end %>
-
-		</fieldset>
-	</div>
+	  			<div class="info-data"><%=t('user.info1')%></div>
+			</fieldset>
+			<fieldset class="span9 omega">
+				<ul class="profile-edit-form form-horizontal unstyled">
+					<% customer_visible_fields.each do |field| %>
+					<%= render_as_list f, field %>
+					<% end %>
+				</ul>
+				<div class="form-actions">
+					<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
+					<%= link_to t('cancel'), :back, :class => "btn" %>
+				</div>
+			</fieldset>
+		</div>
 	<% end %>	
-	<div class="form-actions">
-   		<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
-		<%= link_to t('cancel'), support_home_path, :class => "btn" %>
-	</div>
 <%end%>
+
+<% javascript_tag do %>
+	var customMessages = {
+		confirmDelete: "<%= t('user.remove_profile_image_confirm') %>",
+		confirmNavigate: "<%= t('admin.products.portal.save_and_continue') %>"
+	}
+	jQuery(window).on("load", function(){
+	    var avatarRdr = new AvatarReader({
+	                          confirmDeleteMessage : customMessages.confirmDelete
+	                        });
+	    avatarRdr.init();
+  	});
+<% end %>

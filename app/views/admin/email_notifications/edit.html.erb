@@ -227,10 +227,7 @@
 				end	%>	 
 				<%= f.text_field subject_field, {:id => "subject_default", :class => "email-notification-subject insert-placeholder-target required" } %>
 				<br/>
-				<% if notification_type != EmailNotification::USER_ACTIVATION and notification_type != EmailNotification::PASSWORD_RESET and notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
-					<span class="input-information"> <%=t('email_notifications.do_not_delete_ticket_id_from_subject')%> </span>
-					<br/>
-				<%end%>
+				
 				<% if notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE %>
 					<span class="input-information"> <%=t('email_notifications.default_reply_template_info')%> </span>
 					<br/>
@@ -240,10 +237,8 @@
 				<% if notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
 					<label><b><%= t('message') %></b><span class="required_star">*</span></label> 
 				<%end%>	
-				<% email_template = JSON.parse(email_template_settings) %>
 				<%= f.rich_editor description_field,
-				{'editor-type' => :email_notification, :id => 'description_default', :class =>"desc_info #{notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? 'required_redactor' : ''} ", :height => "300px",'data-remove-cursor' => notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? true : false,  :wrapFontSettings => {"font-family" => email_template["font-family"] , "font-size" => email_template["font-size"], "line-height" => email_template["line-height"]} 
-			}  %>
+				{'editor-type' => :email_notification, :id => 'description_default', :class =>"desc_info #{notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? 'required_redactor' : ''} ", :height => "300px",'data-remove-cursor' => notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? true : false }  %>
 			</div>
 			<% if notification_type == EmailNotification::NEW_TICKET and @type == 'agent_template' %>
 				<div class="email-notification-footer row-fluid">
@@ -346,10 +341,6 @@
 							<%= c.text_field :subject, {:id => "subject_#{lang}", :class => "email-notification-subject insert-placeholder-target required" } %>
 							<br/>
 					<%end	%>
-					<% if notification_type != EmailNotification::USER_ACTIVATION and notification_type != EmailNotification::PASSWORD_RESET  and notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
-						<span class="input-information"> <%=t('email_notifications.do_not_delete_ticket_id_from_subject')%> </span>
-						<span/>
-					<%end%>
 					<% if notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE %>
 						<span class="input-information"> <%=t('email_notifications.default_reply_template_info')%> </span>
 						<br/>

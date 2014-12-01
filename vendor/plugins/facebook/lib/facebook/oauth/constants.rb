@@ -2,18 +2,16 @@ module Facebook
   module Oauth
     module Constants
       PERMISSION = [
+        "public_profile",
         "manage_pages",
-        "offline_access",
         "email",
         "read_stream",
         "publish_stream",
-        "manage_notifications",
-        "read_mailbox",
-        "read_page_mailboxes",
-        "read_insights"
+        "read_page_mailboxes"
       ]
 
       PAGE_TAB_PERMISSION = [
+        "public_profile",
         "user_likes",
         "email"
       ]

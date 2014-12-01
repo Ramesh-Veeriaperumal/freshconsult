@@ -35,10 +35,7 @@ describe Admin::Mobihelp::AppsController do
         "name"=>"FreshApp #{now}", 
         "platform"=>"1", 
         "config"=> {
-          "bread_crumbs"=>"10", 
-          "debug_log_count"=>"50", 
-          "solutions"=>"2", 
-          "app_review_launch_count"=>"5"
+          "solutions"=>"2"
           }
         }
       }
@@ -48,8 +45,7 @@ describe Admin::Mobihelp::AppsController do
 
   it "should reject invalid mobihelp app and render new page " do
     get :new, :platform => 1
-    post :create, :mobihelp_app => {:name => "", :platform => 1, :config => {"bread_crumbs"=>"10", "debug_log_count"=>"50", 
-          "solutions"=>"2", "app_review_launch_count"=>"5"}}
+    post :create, :mobihelp_app => {:name => "", :platform => 1, :config => {"solutions"=>"2"}}
     response.should render_template('new')
   end
 
@@ -61,10 +57,7 @@ describe Admin::Mobihelp::AppsController do
         "name"=> "", 
         "platform"=> mobihelp_app.platform, 
         "config"=>{
-          "bread_crumbs"=> mobihelp_app.config[:bread_crumbs], 
-          "debug_log_count"=> mobihelp_app.config[:debug_log_count], 
-          "solutions"=> mobihelp_app.config[:solutions], 
-          "app_review_launch_count"=> mobihelp_app.config[:app_review_launch_count]
+          "solutions"=> mobihelp_app.config[:solutions]
           }
         },
         "id" => mobihelp_app.id
@@ -89,25 +82,23 @@ describe Admin::Mobihelp::AppsController do
 
   it "should update the existing mobihelp app" do
     mobihelp_app = create_mobihelp_app
+    now = (Time.now.to_f*1000).to_i
     post :update, {
       "mobihelp_app"=>{
-        "name"=> mobihelp_app.name, 
+        "name"=> "#{mobihelp_app.name} #{now}", 
         "platform"=> mobihelp_app.platform, 
         "config"=>{
-          "bread_crumbs"=> mobihelp_app.config[:bread_crumbs], 
-          "debug_log_count"=> mobihelp_app.config[:debug_log_count], 
-          "solutions"=> mobihelp_app.config[:solutions], 
-          "app_review_launch_count"=> "15"
+          "solutions"=> mobihelp_app.config[:solutions]
           }
         },
         "id" => mobihelp_app.id
     }
     updated_mobihelp_app = @account.mobihelp_apps.find_by_id(mobihelp_app.id)
-    updated_mobihelp_app.config[:app_review_launch_count].should be_eql("15")
+    updated_mobihelp_app.name.should be_eql("#{mobihelp_app.name} #{now}")
     updated_mobihelp_app.platform.should be_eql(mobihelp_app.platform)
   end
 
-  it "should delete a mobihelp_app" do
+  it "should set deleted flag when a mobihelp_app is deleted" do
     mobihelp_app = create_mobihelp_app
     delete :destroy, :id => mobihelp_app.id
     Mobihelp::App.find_by_id(mobihelp_app.id).deleted.should be_true

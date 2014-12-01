@@ -15,7 +15,6 @@
 		</div>
 		<div class="user_identity">
 			<b class="user_name"><%= @user.name %></b><br />
-			<%= @post.created_at.strftime("%a, %b %e, %Y at %l:%M %p") %>
 		</div>
 		<br />
 		<div class="actual_content">
@@ -24,7 +23,7 @@
 		<br>
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
+		<%= link_to("Reply", reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply") unless @post.topic.merged_topic_id? %>
 		<div class="footer-text">
 			<%= link_to "Turn Off", toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @host) %>
 			Reply notifications for this topic

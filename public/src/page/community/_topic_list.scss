@@ -33,6 +33,7 @@
 &.topic-show .type-icon{@include margin-left(0)}
 
 .forum-icon{
+	cursor: default;
 	width: 45px;
 	height: 50px;
 	@include float(left);

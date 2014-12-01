@@ -1,0 +1,95 @@
+<% content_for :head do %>
+  <style> html {  height:auto; overflow-y:visible; } </style>
+<% end %>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+<div class='page-header-sticky custom-field-header' rel='sticky'>
+  <div class='sticky-header-wrapper'>
+    <h3 class='lead pull-left'> 
+      <%= t('.title') %> 
+    </h3>
+    <div class="pull-right">
+      <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
+      <%= submit_tag t(".save"), :class => "btn btn-primary save-custom-form", "data-commit" => t('.saving') %>
+    </div>
+  </div>
+  <%= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => ContactField } %>
+</div>
+<br/>
+<% form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+
+  <div class="custom-form-outer">
+    <input type="hidden" name="jsonData" id="field_values" value="" />
+    <div class="row-fluid">
+      <div class='profile-pic-placeholder avatar-pic span3'>
+        <%= image_tag "fillers/profile_blank_medium.gif", :class => 'hide'%>
+      </div>
+      <div class='span9'>
+        <ul id="custom-field-form" class="form-horizontal custom-field-form"></ul>
+        <ul id="cloned-custom-field-form" class="form-horizontal custom-field-form cloned-custom-fields"></ul>
+      </div>
+    </div>
+  </div>
+  
+<%end%>
+
+<% content_for :dialogs do %>
+	<div id="CustomFieldsPropsDialog">
+
+  </div>
+<% end %>
+
+<% content_for :pagefixed do %>
+  <% javascript_tag do %>
+    // Localizing ticket fields js elements
+    customFields = <%= @fields_json.html_safe %>;
+    tf_lang = {
+      untitled:           '<%= t("ticket_fields.untitled") %>',
+      firstChoice:       '<%= t("ticket_fields.first_choice") %>',
+      secondChoice:      '<%= t("ticket_fields.second_choice") %>', 
+      noChoiceMessage:  '<%= t("ticket_fields.no_choice_message") %>',
+      confirmDelete:     '<%= t("ticket_fields.confirm_delete") %>',
+      formTitle:     '<%= t("admin.contact_fields.formfield_props.form_title") %>',
+      deleteField:     '<%= t("admin.contact_fields.formfield_props.delete_field") %>',
+      regExp:     '<%= t("admin.contact_fields.formfield_props.regexp") %>',
+      regExpExample:     '<%= t("admin.contact_fields.formfield_props.regexp_example_html") %>',
+      dropdownChoice:     '<%= t("admin.contact_fields.formfield_props.dropdown_choices") %>',
+      addNewChoice:     '<%= t("admin.contact_fields.formfield_props.add_new_choice") %>',
+      label:     '<%= t("admin.contact_fields.formfield_props.label") %>',
+      labelAgent:     '<%= t("admin.contact_fields.formfield_props.field_label_agents") %>',
+      labelCustomer:     '<%= t("admin.contact_fields.formfield_props.field_label_customer") %>',
+      behavior:     '<%= t("admin.contact_fields.formfield_props.behavior") %>',
+      forAgent:     '<%= t("admin.contact_fields.formfield_props.for_agents") %>',
+      agentMandatory:     '<%= t("admin.contact_fields.formfield_props.agent_mandatory_submission") %>',
+      forCustomer:     '<%= t("admin.contact_fields.formfield_props.for_customer") %>',
+      customerVisible:     '<%= t("admin.contact_fields.formfield_props.customer_visible") %>',
+      customerEditable:     '<%= t("admin.contact_fields.formfield_props.customer_edit") %>',
+      customerMandatory:     '<%= t("admin.contact_fields.formfield_props.customer_mandatory") %>',
+      customerEditSignup:     '<%= t("admin.contact_fields.formfield_props.customer_edit_signup") %>',
+      validateRegex:     '<%= t("admin.contact_fields.formfield_props.validate_regexp") %>',
+      default:          '<%= t("admin.contact_fields.formfield_props.default") %>',
+      number:     '<%= t("custom_fields.number") %>',
+      text:     '<%= t("custom_fields.text") %>',
+      paragraph:      '<%= t("custom_fields.paragraph") %>',
+      checkbox:     '<%= t("custom_fields.checkbox") %>',
+      dropdown:     '<%= t("custom_fields.dropdown") %>',
+      dropdown_blank:     '<%= t("custom_fields.dropdown_blank") %>',
+      phone_number:     '<%= t("custom_fields.phone_number") %>',
+      url:      '<%= t("custom_fields.url") %>',
+      date:     '<%= t("custom_fields.date") %>',
+      email:      '<%= t("custom_fields.email") %>',
+      learnMore:     '<%= t("group.learn_more") %>',
+      cancel:     '<%= t("cancel") %>',
+      done:     '<%= t("done") %>'
+    };
+
+    window['translate'] = {}; 
+    translate.get = function(name){
+      return tf_lang[name] || "";
+    };
+  <% end %>
+  <%= include_cloudfront_js :contact_fields %>
+<% end %> 
+
+<% content_for :layoutType do -%>antipattern<%- end %>

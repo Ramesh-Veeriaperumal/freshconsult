@@ -1,0 +1,369 @@
+.insert-field {
+	font-size: 14px;
+	font-weight: 500;
+	.add-symbol {
+		font-size: 16px;
+		@include margin(0 3px 0 -6px);
+		font-weight: 900;
+	}
+}
+
+.custom-field-form {
+	@include pie-clearfix;
+	.custom-form-label {
+		@include padding(0px);
+		cursor: move;
+	}
+	&.form-horizontal {
+		.control-group {
+			margin-bottom: 0px; 
+		}
+	}
+	.select2-container {
+		min-width: 125px;
+		.select2-choice {
+			height: 24px;
+		}
+	}
+	&:hover {
+		.custom-field {
+			@include opacity(0.6);
+			&:hover, &.hover {
+				@extend .li-hover-active;
+			}
+		}
+	}
+	.options-wrapper {
+		position: absolute;
+		@include opacity(0);
+		@include left(-75px);
+		top: -1px;
+		@include padding(0 0 0 6px);
+		.opt-inner-wrap {
+			@include pie-clearfix;
+		}
+	}
+	.private-symbol {
+		font-size: 13px;
+		@include margin(0 7px 0 2px);
+		display: none;
+		@include left(-8px);
+		position: absolute;
+	}
+	.ui-sortable-placeholder {
+		z-index: 1;
+		background-color: #ddd !important;
+		border: 1px solid #999;	
+		width: 100%;
+		min-height: 35px;
+		@include pie-clearfix;
+		@include float(left);
+		@include box-shadow(inset 0px 3px 10px -4px rgba(0,0,0,0.8));
+		@include border-radius(4px);
+	}
+	.ui-sortable-helper {
+		@include box-shadow(-20px 30px 50px -10px rgba(0,0,0,0.3));
+	}
+}
+
+.custom-field {
+	@include padding(5px 10px 6px);
+	cursor: move;
+	border: 1px solid transparent;
+	@include float(left);
+	width: 98%;
+	position: relative;
+	@include transition(opacity 0.2s ease-in-out, background 0.2s ease-in-out);
+	margin-bottom: 12px;
+	@include pie-clearfix;
+	&.checkbox {
+		overflow: visible;
+		padding-top: 10px;
+		padding-bottom: 9px;
+		input[type=checkbox] {
+			@include margin (2px 6px 0 0);
+			@include float(none);
+		}
+	}
+	&.dropdown, &.custom-dropdown, &.dropdown_blank {
+		position: relative;
+		.overlay-field {
+			z-index: 2;
+		}
+		.select2-container {
+			z-index: 1;
+		}
+	}
+	.options {
+		font-size: 21px;
+		@include padding(8px);
+		@include float(left);
+		cursor: pointer;
+		&.edit-field {
+			@include float(right);
+			@include padding-left(10px);
+			@include padding-right(10px);
+		}
+		&.delete-field {
+			border-right: 1px solid #eee;
+			@include border-radius(5px 0 0 5px);
+		}
+		&[class*='-strike-thru'] {
+			color: #ccc;
+			cursor: default;
+		}
+		&:hover:not([class*='-strike-thru']), &.hover:not([class*='-strike-thru']) {
+			background-color: #ebebc3;
+			color: #000;
+		}
+	}
+	&.active {
+		@extend .li-hover-active;
+	}
+	&.date {
+		.#{$font-class-name}date {
+			position: absolute;
+			@include left(4px);
+			top: 4px;
+			font-size: 16px;
+		}
+	}
+}
+
+.custom-fields-props-dialog {
+	width:100%;
+	.field-label {
+		color: #999;
+		font-weight: 200;
+	}
+	&.modal.email {
+		width: 450px;
+		@include margin-left(-280px);
+	}
+	.delete-choice {
+		font-size: 16px;
+		background-color: #a7232f;
+		@include margin(2px 10px 0 5px);
+		cursor: pointer;
+		color: #FFF;
+		border-radius: 50%;
+		@include padding(2px 5px);
+	}
+	.add-choice {
+		@include margin-left(16px);
+		font-size: 12px;
+		color: #333;
+		font-weight: bold;
+		.#{$font-class-name}plus {
+			background-color: #76ad20;
+			font-size: 16px;
+			@include margin-right(7px);
+			color: #FFF;
+			border-radius: 50%;
+			@include padding(1px 5px);
+		}
+	}
+	span.default-tag {
+		cursor: default;
+		@include margin(10px 0 0 0);
+		text-shadow: none;
+	}
+	.sections-wrapper {
+		max-height: 375px;
+		overflow-y: scroll;	
+	}
+	.section {
+		margin-bottom: 10px;
+		.delete-choice {
+			@include float(left);
+
+		}
+	}
+	.chkbox-img {
+		@include margin-left(-18px);
+		color: #999;
+		display: inline-block;
+	}
+	.dom-icon {
+		background-color: #8e8e8e;
+		color: #FFF;
+		@include padding(4px 7px);
+		font-size: 14px;
+		border-radius: 5px;
+		text-shadow: none;
+		position: relative;
+		top: -2px;
+	}
+}
+
+.cloned-custom-fields {
+	.custom-field {
+		visibility: hidden;
+		position: absolute;
+		&.in-movement {
+			visibility: visible;
+			@include opacity(0.6);
+		}
+	}
+}
+
+.page-header-sticky {
+	&.custom-field-header {
+		padding-bottom: 0px;
+		.sticky-header-wrapper {
+			padding-bottom: 15px;
+		}
+		&.is_stuck {
+			.field-picker {
+				@include margin-right(-19px);
+			}
+		}
+	}
+}
+
+.field-picker {
+	background-color: #f5f5f5;
+	@include margin(0 -20px);
+	border-top: 1px solid #ccc;
+	.field {
+		@include padding(10px 20px);
+		cursor: move;
+		@include float(left);
+		border-right: 1px solid #eee;
+		&:hover {
+			background-color: #FFF;
+		}
+	}
+	.field-name {
+		@include margin-left(5px);
+		font-size: 14px;
+	}
+	.custom-fields {
+		@include float(left);
+	}
+	.dom-icon {
+		color: #555;
+		font-size: 16px;
+	}
+	.field-info-wrapper {
+		@include pie-clearfix;
+		.title {
+			@include padding(6px 20px);
+			color: #aaa;
+			font-size: 14px;
+			@include float(left);
+		}
+	}
+}
+
+
+.li-hover-active {
+	background-color: #F7F7DC;
+	border: 1px dotted;
+	@include opacity(1);
+	@include border-radius(0 5px 5px 0);
+	&.paragraph {
+		@include border-radius(0 5px 5px 5px);
+	}
+	.options-wrapper{
+		@include opacity(1);
+		.opt-inner-wrap {
+			background-color: #F7F7DC;
+			border: 1px dotted;
+			border-right: 1px solid #eee;
+			@include border-radius(5px 0 0 5px);
+		}
+	}
+	.private-symbol {
+		display: none !important;
+	}
+}
+
+.custom-field-form {
+	&:not(.form-horizontal) {
+		.options-wrapper {
+			width: 33px;
+			@include left(-39px);
+		}
+		.control-group {
+			margin-bottom: 7px;
+		}
+		.custom-field {
+			margin-bottom: 0px;
+			@include margin-left(-10px);
+		}
+		.edit-field {
+			@include border-radius(5px 0 0 0px);
+			border-bottom: 1px solid #eee;
+			@include padding(8px);
+			@include float(left);
+		}
+		.delete-field {
+			@include border-radius(0 0 0 5px);
+			border-right: none;
+			@include padding-left(9px);
+		}
+		.dropdown, .custom-dropdown, .dropdown_blank {
+			padding-bottom: 14px;
+			display: inline-block;
+			width: 48.4%;
+		}
+		.checkbox {
+			padding-top: 7px;
+			padding-bottom: 7px;
+			.options-wrapper {
+				width: auto;
+				@include left(-71px);
+			}
+		}
+	}
+}
+
+// CREATE CONTACTS STYLES
+.contact-form {
+	.select2-container-multi {
+		width: 100%;
+	}
+	label {
+		display: inline;
+	}
+	.select2-container {
+		min-width: 125px;
+	}
+}
+
+.avatar-pic {
+	img{
+		max-width: 130px;
+		min-width: 90px;
+		max-height: 160px;
+		@include box-shadow(#dfdfdf 0 1px 3px);
+		@include border-radius(6px);
+	}
+}
+
+.avatar-options {
+	margin-top: 10px;
+	.option {
+		width: 44%;
+		@include padding(2.5%);
+		&.uplink {
+			cursor: default;
+		}
+	}
+	.opt {
+		position: relative;
+		overflow: hidden;
+		display: inline-block;
+		line-height: 20px;
+	}
+	input[type=file] {
+		position: absolute;
+		@include opacity(0);
+		top: 0;
+		width: 100%;
+		left: 0;
+		height: 100%;
+		font-size: 10000px;
+	}
+}

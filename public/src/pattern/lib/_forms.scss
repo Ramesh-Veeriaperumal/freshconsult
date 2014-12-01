@@ -607,6 +607,11 @@ legend + .control-group {
   .control-group {
     margin-bottom: $baseLineHeight;
     @include clearfix();
+    &.date {
+      .controls {
+        position: relative;
+      }
+    }
   }
   // Float the labels left
   .control-label {
@@ -644,4 +649,9 @@ legend + .control-group {
   .form-actions {
     @include padding-left($horizontalComponentOffset);
   }
+}
+
+input.date.datepicker_popover {
+  @include padding(4px 4px 4px 25px);
+  width: 92%;
 }

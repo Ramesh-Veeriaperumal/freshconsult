@@ -269,13 +269,8 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: "<p>&nbsp;</p>\r\n",
 		buffer: false,
 		visual: true,
-		setFontSettings: false,
-		wrapFontSettings: {
-				"font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif",
-				"font-size"  : "13px",
-				"line-height": "1"
-		},
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
+		allowTagsInCodeSnippet: false,
 
 		// modal windows container
 		modal_file: String() + 
@@ -955,7 +950,7 @@ Redactor.prototype = {
 	 			.replace(/\{[^}]*}/g, this.replaceLiquidHtml)
 	 			.replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) ;
 
-		return r_content;
+		this.$el.val(r_content);
 	},
 	replaceLiquidHtml: function(_match){
 		return _match.replace(/(<([^>]+)>)/ig, "");
@@ -969,22 +964,6 @@ Redactor.prototype = {
 		}
 		this.execCommand(cmd, value);
 	    $.event.trigger({ type:"textInserted", message:"success", time:new Date() });
-	},
-	wrapElementWithFont: function(content){
-		var temp_div = $("<div />");
-		var	div = $("<div />")
-			div.css(this.opts.wrapFontSettings)
-			div.html(content)
-		temp_div.append(div)
-
-		return temp_div.html();
-	},
-	changesInTextarea: function(){
-		var content = this.removeTagOnLiquid();
-		if(this.$el.data('wrapFontFamily') != undefined && this.$el.data('wrapFontFamily')){
-			content = this.wrapElementWithFont(content);
-		}
-		this.$el.val(content);
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -1297,10 +1276,6 @@ Redactor.prototype = {
 			if (this.opts.autoresize === false)
 			{
 				this.$editor.css('height', this.height);
-			}
-
-			if(this.opts.setFontSettings){
-				this.$editor.css(this.opts.wrapFontSettings);
 			}
 
 			// hide textarea
@@ -1947,7 +1922,7 @@ Redactor.prototype = {
 			{
 				html = html.replace(/<div(.*?)>([\w\W]*?)<\/div>/gi, '<p>$2</p>');	
 			}
-			var self = this;
+
 			//remove script and style tags
 			$.browser.chrome = /chrom(e|ium)/.test(navigator.userAgent.toLowerCase()); 
 			if($.browser.chrome && (navigator.appVersion.indexOf("Win")!=-1))
@@ -2029,11 +2004,7 @@ Redactor.prototype = {
 	                                              }
 	                                              else if(subParts[0] == 'font-family')
 	                                              {
-	                                              	if(self.opts.setFontSettings){
-	                                              		$(this).css('font-family',this.opts.wrapFontSettings.font_family);
-	                                              	} else {
-	                                              		$(this).css('font-family',subParts[1]);
-	                                              	}
+	                                                $(this).css('font-family',subParts[1]);
 	                                              }
 	                                              else if(subParts[0] == 'color')
 	                                              { 
@@ -2041,7 +2012,7 @@ Redactor.prototype = {
 	                                              }
 	                                              else if(subParts[0] == 'font-size')
 	                                              {
-	                                                $(this).css('font-size',subParts[1].replace("pt","px"));
+	                                                $(this).css('font-size',subParts[1]);
 	                                              }
 	                                              else if(subParts[0] == 'font-weight')
 	                                              {
@@ -4484,9 +4455,10 @@ $.fn.insertExternal = function(html)
 						this.$editor.$el.data('redactor').addNoneStyleForCursor();
 					}
 				}
-				this.$editor.removeTagOnLiquid();
+				if(!this.$editor.opts.allowTagsInCodeSnippet){
+					this.$editor.removeTagOnLiquid();
+				}
 			}
-			this.$editor.changesInTextarea();
 		}
 	}
 

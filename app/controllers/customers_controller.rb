@@ -105,10 +105,6 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
       expects.xml{ render :xml => @items.to_xml(options.merge(:root => 'customers'))}
     end
   end
-
-  def sla_policies # can i remove this?
-    render :layout => false
-  end
   
   protected
 

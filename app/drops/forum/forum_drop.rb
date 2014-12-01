@@ -63,6 +63,10 @@ class Forum::ForumDrop < BaseDrop
     @topics ||= filter_topics
   end 
 
+  def unmerged_topics
+    @unmerged_topics ||= @source.topics.unmerged.published.newest.filter(@per_page, @page)
+  end
+
   def popular_topics
     @popular_topics ||= filter_topics(:popular)
   end
@@ -113,12 +117,15 @@ class Forum::ForumDrop < BaseDrop
     toggle_monitor_support_discussions_forum_path(source)
   end
 
+  def topics_display_count
+    source.topics.published_and_unmerged.count
+  end
+
   private
     def filter_topics filter = self.current_topic_filter
       case filter
         when :popular
           @source.topics.published.popular(3.months.ago).filter(@per_page, @page)
-
         when :planned, :implemented, :nottaken, :deferred, :inprogress,
             :answered, :unanswered, :solved, :unsolved
             

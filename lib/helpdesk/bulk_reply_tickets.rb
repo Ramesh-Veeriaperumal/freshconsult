@@ -131,7 +131,7 @@ class Helpdesk::BulkReplyTickets
         if ticket.is_fb_message?
           Facebook::Core::Message.new(fb_page).send_reply(ticket, note)
         else
-          Facebook::Core::Comment.new(fb_page).send_reply(ticket, note)
+          Facebook::Core::Comment.new(fb_page, nil).send_reply(ticket, note)
         end
       end
     end

@@ -11,7 +11,7 @@
 				</div>
 				<div class="vertical-alignment reorder-content row-fluid">
 			  		<div class="comm-item-main span8 clear-left-margin">
-			  			<i class="forum-type-<%= forum.type_symbol %> type-icon mr15 tooltip" title="<%= forum.type_name%>"></i>
+			  			<i class="forum-type-<%= forum.type_symbol %> type-icon mr15 tooltip cursor-default" title="<%= forum.type_name%>"></i>
 						<div class="comm-item-title">
 							<%= pjax_link_to(h(forum.name), discussions_forum_path(forum))%>
 							<span class="muted">(<%= forum.topics_count %>)</span>

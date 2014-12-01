@@ -34,6 +34,7 @@ window.Fjax = window.Fjax || {};
 			"/discussions": 'discussions',
 			"/freshfone/call_history": 'freshfonecallhistory',
 			"/contacts": 'contacts',
+			"/users": 'contacts',
 			"/helpdesk/tickets": 'tickets'
 		},
 		LOADING_WAIT: 5

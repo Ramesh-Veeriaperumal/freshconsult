@@ -6,7 +6,7 @@
 
 		<%# render :partial => "helpdesk/tickets/show/info.html.erb" %>
 		<div id="forFixed" class="conversation_thread"></div>
-		<div id="tkt-inner" class="scollable_content">
+		<div id="tkt-inner" class="scollable_content clearfix" >
 
 			<% unless params[:format] == 'widget' %>
 				<%= render :partial => "helpdesk/tickets/show/sidebar.html.erb" %>

@@ -73,11 +73,18 @@ class Support::Discussions::TopicsController < SupportController
 
 
   def edit
-    respond_to do |format|
-      format.html {
-        set_portal_page :new_topic
-        render :new
-      }
+    if @topic.merged_topic_id?
+      flash[:notice] = I18n.t('discussions.topic_merge.merge_error_for_locked', 
+                      :title => h(@topic.merged_into.title), 
+                      :topic_link => discussions_topic_path(@topic.merged_topic_id)).html_safe
+      redirect_to discussions_topic_path(params[:id])
+    else
+      respond_to do |format|
+        format.html {
+          set_portal_page :new_topic
+          render :new
+        }
+      end
     end
   end
 
@@ -232,7 +239,6 @@ class Support::Discussions::TopicsController < SupportController
       @topic.account_id = current_account.id
       # admins and moderators can sticky and lock topics
       return unless privilege?(:manage_users) or current_user.moderator_of?(@topic.forum)
-      @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked]
       # only admins can move
       return unless privilege?(:manage_users)
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]

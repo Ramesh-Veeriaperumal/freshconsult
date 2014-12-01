@@ -11,7 +11,7 @@ namespace :facebook do
       Sharding.run_on_all_slaves do
         Account.active_accounts.each do |account|
           next if check_if_premium?(account)
-          facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1 and reauth_required = 0"])
+          facebook_pages = account.facebook_pages.valid_pages
           next if facebook_pages.empty?
           Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => account.id} )
         end
@@ -40,9 +40,9 @@ namespace :facebook do
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
       Sharding.run_on_all_slaves do
         Account.active_accounts.each do |account|
-          facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1 and reauth_required = 0"])
+          facebook_pages = account.facebook_pages.valid_pages
           next if facebook_pages.empty?
-          Resque.enqueue(Social::FacebookCommentsWorker ,{:account_id => account.id})
+          Resque.enqueue(Facebook::Worker::FacebookCommentsWorker ,{:account_id => account.id})
         end
       end
     else

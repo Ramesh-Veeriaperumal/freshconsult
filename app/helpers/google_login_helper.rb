@@ -32,12 +32,7 @@ module GoogleLoginHelper
     app_name = google_app_name(provider_key_name, oauth_keys)
     auth_url = "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" << consumer_token(provider_key_name, oauth_keys) << callback_url(app_name) << scopes(provider_key_name, oauth_keys) << options_name(app_name)
     if portal_url.present?
-      auth_url = auth_url << '&state=full_domain%3D' << current_account.full_domain << '%26portal_url%3D'
-      if current_portal.portal_url.present?
-        auth_url = auth_url << current_portal.portal_url
-      else
-        auth_url = auth_url << current_account.full_domain
-      end
+      auth_url = auth_url << '&state=full_domain%3D' << current_account.full_domain << '%26portal_url%3D' << request.host_with_port
     end
     auth_url
   end

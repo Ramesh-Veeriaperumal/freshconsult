@@ -33,7 +33,10 @@
   end
   map.connect '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :restore => :put, :quick_companys_contact => :post, :make_agent =>:put, :make_occasional_agent => :put} do |contacts|
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , 
+    :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :quick_contact_with_company => :post, 
+      :restore => :put, :make_agent =>:put, :make_occasional_agent => :put, :create_contact => :post, 
+      :update_contact => :put, :update_bg_and_tags => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
@@ -44,8 +47,7 @@
     profiles.resources :user_emails, :member => { :make_primary => :get, :send_verification => :put }
   end
   
-  map.resources :agents, :member => { :delete_avatar => :delete ,
-                                      :toggle_shortcuts => :put,
+  map.resources :agents, :member => { :toggle_shortcuts => :put,
                                       :restore => :put,
                                       :convert_to_user => :get,
                                       :reset_password=> :put },
@@ -139,6 +141,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
+    admin.resources :contact_fields, :only => :index
     admin.resources :chat_widgets
     admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
@@ -179,7 +182,7 @@
     admin.resources :quests, :member => { :toggle => :put }
     admin.resources :zen_import, :collection => {:import_data => :post, :status => :get }
     admin.resources :email_commands_setting, :member => { :update => :put }
-    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}, :collection => {:update_font => :put}
+    admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :freshfone, :only => [:index], :collection => { :search => :get, :toggle_freshfone => :put }
     admin.namespace :freshfone do |freshfone|
       freshfone.resources :numbers, :collection => { :purchase => :post }
@@ -209,6 +212,7 @@
   end
   map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
   map.connect '/search/all', :controller => 'search/home', :action => 'index'
+  map.connect '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
   map.connect '/search/topics.:format', :controller => 'search/forums', :action => 'index'
   map.connect '/mobile/tickets/get_suggested_solutions/:ticket.:format', :controller => 'search/solutions', :action => 'related_solutions'
 
@@ -537,6 +541,7 @@
       :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
 
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
+    discussion.resources :merge_topic, :collection => { :select => :post, :review => :put, :confirm => :post, :merge => :put }
   end
 
   map.connect '/discussions/categories.:format', :controller => 'discussions', :action => 'create', :conditions => { :method => :post }
@@ -563,7 +568,9 @@
     end
   end
 
-  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle', :method => :post
+
+  map.view_monitorship 'discussions/:object/:id/subscriptions/is_following.:format', :controller => 'monitorships', :action => 'is_following', :conditions => {:method => :get}
+  map.toggle_monitorship 'discussions/:object/:id/subscriptions/:type.:format', :controller => 'monitorships', :action => 'toggle'
   # Savage Beast route config entries ends from here
 
   # Theme for the support portal
@@ -589,8 +596,7 @@
     support.connect "/signup", :controller => 'signups', :action => :new
 
     # Signed in user profile edit and update routes
-    support.resource :profile, :only => [:edit, :update],
-      :member => { :delete_avatar => :delete }
+    support.resource :profile, :only => [:edit, :update]
 
     # Search for the portal, can search Articles, Topics and Tickets
     support.resource :search, :controller => 'search', :only => :show,
@@ -603,7 +609,7 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
-      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put }
+      discussion.resources :forums, :only => :show, :member => { :toggle_monitor => :put}
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
       discussion.connect "/forums/:id/page/:page", :controller => :forums,
@@ -684,6 +690,7 @@
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
+  map.route '/openid/google', :controller => 'google_login', :action => 'marketplace_login'
   map.route '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
   map.route '/google/login', :controller => 'google_login', :action => 'portal_login'
 

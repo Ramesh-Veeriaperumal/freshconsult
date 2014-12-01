@@ -378,6 +378,11 @@ module ApplicationHelper
     data
   end
 
+  def target_topic_path(topic_id)
+    topic = current_account.topics.find(topic_id)
+    link_to topic.title, discussions_topic_path(topic.id)
+  end
+
   def responder_path(args_hash)
     request.format == "application/json" ? args_hash['name'] : link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
@@ -728,7 +733,7 @@ module ApplicationHelper
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
         end
     end
     content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
@@ -1033,11 +1038,6 @@ module ApplicationHelper
   def shortcuts_enabled?
     logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
   end
-
-  def email_template_settings
-    current_account.account_additional_settings.email_template_settings.to_json
-  end
-
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|

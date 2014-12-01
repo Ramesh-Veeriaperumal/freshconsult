@@ -129,9 +129,8 @@ class Group < ActiveRecord::Base
   def next_available_agent
     return nil unless round_robin_enabled?
 
-    return next_agent unless self.account.features_included?(:round_robin_revamp)    
 
-    current_agent_id = get_others_redis_rpoplpush(new_round_robin_key, new_round_robin_key)
+    current_agent_id = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
     return account.agents.find_by_user_id(current_agent_id)
 
     #COMMENTING THE BELOW CODE to avoid complex logix . If required, we ll put back again.
@@ -140,7 +139,7 @@ class Group < ActiveRecord::Base
     # break_condition = false
 
     # until break_condition do
-    #   current_agent_id  = get_others_redis_rpoplpush(new_round_robin_key, new_round_robin_key)
+    #   current_agent_id  = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
 
     #   break if current_agent_id.blank? #Empty list
 
@@ -153,70 +152,28 @@ class Group < ActiveRecord::Base
     
   end
 
-  #old code; will be deprecated
-  def next_agent
-    #this method returns the next available agent
-    #for the group, provided the group has
-    #round robin scheduled.
-    return nil if !round_robin_enabled?
-
-    #Take from DB if its not available in redis.
-    last_assigned_agent = get_others_redis_key(old_round_robin_key)
-    
-
-    if last_assigned_agent.nil?
-      agent_ids = self.agents.all(:select => "users.id").map(&:id)
-    else
-      agent_ids = last_assigned_agent.split(",")
-    end
-
-    count = 1
-    agent_ids.each do |agent_id|
-      agent = account.agents.find_by_user_id(agent_id)
-      next if agent.nil?
-      if agent.available?
-          #rotating the array. Put the latest assigned agent at last.
-          agent_ids = agent_ids.push(agent_ids.shift(count)).flatten
-          store_in_redis(agent_ids)
-          return agent
-      end
-      count = count + 1
-    end
-    return nil
-
-  end
-
-  def store_in_redis(agent_arr)
-    set_others_redis_key(old_round_robin_key, agent_arr.join(","), false)
-  end
-
   def round_robin_enabled?
     (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and self.account.features_included?(:round_robin)
   end
 
   def round_robin_queue
-    get_others_redis_list(new_round_robin_key)
+    get_others_redis_list(round_robin_key)
   end
 
   def remove_agent_from_round_robin(user_id)
     delete_agent_from_round_robin(user_id) 
-    delete_old_round_robin_key
   end
 
-  def delete_old_round_robin_key #will be deprecated
-    remove_others_redis_key(old_round_robin_key)
-  end
-
-  #used only in spec for now. We will start using this instead of new_round_robin_key once we remove the feature
   def round_robin_key
-    account.features_included?(:round_robin_revamp) ? new_round_robin_key : old_round_robin_key
+    GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
+                               :group_id => self.id}
   end
 
   def add_or_remove_agent(user_id, add=true)
     newrelic_begin_rescue {
       $redis_others.multi do 
-        $redis_others.lrem(new_round_robin_key,0,user_id)
-        $redis_others.lpush(new_round_robin_key,user_id) if add
+        $redis_others.lrem(round_robin_key,0,user_id)
+        $redis_others.lpush(round_robin_key,user_id) if add
       end
     }
   end
@@ -225,7 +182,7 @@ class Group < ActiveRecord::Base
 
   def create_round_robin_list
     user_ids = self.agent_groups.available_agents.map(&:user_id)
-    set_others_redis_lpush(new_round_robin_key, user_ids) if user_ids.any?
+    set_others_redis_lpush(round_robin_key, user_ids) if user_ids.any?
   end
 
   def update_round_robin_list
@@ -234,26 +191,16 @@ class Group < ActiveRecord::Base
   end
 
   def delete_round_robin_list
-    remove_others_redis_key([old_round_robin_key, new_round_robin_key])
+    remove_others_redis_key(round_robin_key)
   end 
 
   def delete_agent_from_round_robin(user_id) #new key
-      get_others_redis_lrem(new_round_robin_key, user_id)
+      get_others_redis_lrem(round_robin_key, user_id)
   end
 
   def create_model_changes
     @model_changes = self.changes.clone
     @model_changes.symbolize_keys!
   end 
-
-  def old_round_robin_key
-    GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
-                            :group_id => self.id}
-  end
-
-  def new_round_robin_key
-    GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
-                               :group_id => self.id}
-  end
   
 end

@@ -1,10 +1,14 @@
 class Social::FacebookPage < ActiveRecord::Base
 
+  include Facebook::Constants
+  include MixpanelWrapper
+
   before_create :create_mapping
   before_destroy :unregister_stream_subscription
   after_destroy :remove_mapping
+  # after_commit_on_destroy :delete_default_streams
 
-  after_commit_on_create :subscribe_realtime
+  after_commit_on_create :subscribe_realtime, :send_mixpanel_event
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
 
@@ -27,8 +31,57 @@ class Social::FacebookPage < ActiveRecord::Base
       Facebook::PageTab::Configure.new(self).execute("add")
     end
   end
-
+  
+  
+  def build_default_streams
+    return unless account.features?(:social_revamp)
+    def_stream = default_stream
+    if def_stream.frozen? || def_stream.nil?
+      options = {
+        :replies_enabled => false
+      }
+      build_stream(page_name, STREAM_TYPE[:default], options)
+      build_stream(page_name, STREAM_TYPE[:dm])
+    else
+      error_params = {
+        :facebook_page => id,
+        :account_id    => account_id,
+        :stream        => def_stream.inspect
+      }
+      notify_social_dev("Default Stream already present for the facebook page", error_params)
+    end
+  end
+  
   private
+  
+  def build_stream(name, type, options = nil)
+    stream = facebook_streams.build(
+      :name     => name,
+      :includes => [],
+      :excludes => [],
+      :filter   => {},
+      :data     => data(type, options)
+      )
+    stream.save
+  end
+
+  def data(type, options)
+    data = {
+        :kind => type
+    }
+    data.merge!(options) if options
+    data
+  end
+  
+  def delete_default_streams
+    return unless account.features?(:social_revamp)
+    streams = facebook_streams
+    streams.each do |stream|
+      if stream.data[:kind] != STREAM_TYPE[:custom]
+        stream.destroy
+      end
+    end
+  end
   
   def create_mapping
     facebook_page_mapping = Social::FacebookPageMapping.new(:account_id => account_id)
@@ -61,6 +114,10 @@ class Social::FacebookPage < ActiveRecord::Base
                        :page_id => self.page_id
       })
     end
+  end
+
+  def send_mixpanel_event
+    send_to_mixpanel(self.class.name)
   end
 
 end

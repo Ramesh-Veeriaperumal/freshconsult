@@ -1,8 +1,6 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
   include Helpdesk::NotifierFormattingMethods
-
-  layout "email_font"
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -98,7 +96,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
                     :body => generate_body_html(params[:email_body_html], inline_attachments, params[:ticket].account), :cloud_files=>params[:cloud_files],
-                    :survey_handle => survey_handle, :account =>  params[:ticket].account,
+                    :survey_handle => survey_handle,
                     :surveymonkey_survey =>  surveymonkey_survey)
       end
     end
@@ -144,7 +142,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         html.body   render_message("reply.text.html.erb", :ticket => ticket, 
                     :body => generate_body_html(note.full_text_html, inline_attachments, note.account), :note => note, 
                     :cloud_files=>note.cloud_files, :survey_handle => survey_handle,
-                    :include_quoted_text => options[:quoted_text], :account => note.account,
+                    :include_quoted_text => options[:quoted_text],
                     :surveymonkey_survey =>  surveymonkey_survey
                     )
       end
@@ -181,7 +179,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/html" do |html|
         html.body   render_message("forward.text.html.erb",:ticket => ticket, 
                                     :body => generate_body_html(note.full_text_html, inline_attachments, note.account), 
-                                    :account => note.account,:cloud_files=>note.cloud_files)
+                                    :cloud_files=>note.cloud_files)
       end
     end
 
@@ -214,7 +212,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/html" do |html|
         html.body   render_message("send_cc_email.text.html.erb",:ticket => ticket, 
                                     :body => generate_body_html(ticket.description_html, inline_attachments, ticket.account), 
-                                    :account => ticket.account, :cloud_files=>ticket.cloud_files)
+                                    :cloud_files=>ticket.cloud_files)
       end
     end
 
@@ -249,8 +247,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/html" do |html|
         html.body  render_message("notify_comment.text.html.erb", :ticket => ticket, :note => note, 
                                       :body_html => generate_body_html(note.body_html, inline_attachments, note.account), 
-                                      :account => note.account,
-                                      :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
+                                      :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol))
       end
     end
 
@@ -274,9 +271,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         plain.body  Helpdesk::HTMLSanitizer.plain(content)
       end
       alt.part "text/html" do |html|
-        html.body render_message("email_to_requester.text.html.erb", :ticket => ticket,
-                                      :body_html => generate_body_html(content, inline_attachments, ticket.account), 
-                                      :account => ticket.account)
+        html.body generate_body_html(content, inline_attachments, ticket.account)
       end
     end
 
@@ -301,9 +296,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         plain.body  Helpdesk::HTMLSanitizer.plain(content)
       end
       alt.part "text/html" do |html|
-        html.body render_message("internal_email.text.html.erb", :ticket => ticket,
-                                      :body_html => generate_body_html(content, inline_attachments, ticket.account), 
-                                      :account => ticket.account)
+        html.body generate_body_html(content, inline_attachments, ticket.account)
       end
     end
 

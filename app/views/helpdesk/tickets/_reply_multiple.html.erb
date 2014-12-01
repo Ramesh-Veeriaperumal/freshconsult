@@ -7,7 +7,7 @@
               
         <li class="inline-field">
             <% f.fields_for(:note_body_attributes, Helpdesk::NoteBody.new) do |ff| %>
-                <%= ff.text_area :body_html, :id => "#{id}-#{cntid}-body", :value => "", :"data-wrap-font-family" => true %>
+                <%= ff.text_area :body_html, :id => "#{id}-#{cntid}-body", :value => "" %>
             <% end %>
             <%= f.hidden_field :private, :value=> 0 %>
             <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>

@@ -1,3 +1,4 @@
+<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
 <% if @note.user_id == @ticket.requester_id %>
 	<% @responder = t('helpdesk.tickets.add_watcher.mail.customer') %>
 <% else %>
@@ -39,3 +40,4 @@
                                             :host => @ticket.account.host,:protocol => @ticket.url_protocol)%>">
     <%=t('helpdesk.tickets.add_watcher.mail.stop_emails').html_safe %>
 </a> <br /> <br />
+</div>
