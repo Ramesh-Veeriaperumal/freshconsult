@@ -190,7 +190,7 @@ Authority::Authorization::PrivilegeList.build do
           :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
-    resource :"discussions/merge_topic"
+    resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
   end
 
   # delete_forum_topic
