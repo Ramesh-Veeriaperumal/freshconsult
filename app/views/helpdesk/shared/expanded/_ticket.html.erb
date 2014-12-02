@@ -7,7 +7,7 @@
   	<input class="selector" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
 
-  <td class="name <%= 'user-page' if user_page %>">
+  <td class="name td-ticket-details <%= 'user-page' if user_page %>">
   	<% unless user_page %>
 	<span class="hideForList">
 		<%= user_avatar(ticket.requester,:thumb, "preview_pic" , { :width => "45px", :height => "45px" }) %>
@@ -34,21 +34,25 @@
 		</h3>
 
 		<% unless ticket.requester.nil? %>
-			<div class="info-data hideForList">
-				<% sentence_type = user_page ? "ticket_user_list_status_" : "ticket_list_status_" %>
-				
-				<%= t("ticket." + sentence_type + ticket.ticket_states.current_state, 
-						:username => requester(ticket),
-						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))).html_safe 
-				%>
-				<div class="emphasize"><%= sla_status(ticket,@onhold_and_closed_statuses) %></div>
+			<div class="info-data hideForList">				
+				<div class="information ellipsis">
+					<%= t("ticket.ticket_from", :username => requester(ticket)).html_safe %>
+					<%= content_tag(:span, ticket.requester.customer.name.presence, 
+									:class => "company-name") if ticket.requester.customer.present? %>
+				</div>
+				<div class="emphasize">
+					<%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state, 
+							:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))
+						  ).html_safe %>, 
+					<%= sla_status(ticket,@onhold_and_closed_statuses) %>
+				</div>
 			</div>
 		<% end %>
 	</div>
   </td>
   <% style_tooltip = ticket_style == "customer_responded_overdue" ? t("helpdesk.tickets.friendly_status.overdue") : "" %>
   <% style_class = ticket_style == "customer_responded_overdue" ? 'customer_responded_overdue_hover' : "" %>
-  <td class="ralign hideForList">
+  <td class="td-ticket-status hideForList">
 		<%= ("<span class='#{ticket_style} subject_style tooltip' data-original-title = '#{style_tooltip}' data-placement = 'left'><span class= '#{style_class}' ></span>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>").html_safe unless ticket_style.blank? %>
 	</td>
   <td class="source-icon hideForList">

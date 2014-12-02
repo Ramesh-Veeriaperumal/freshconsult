@@ -3257,6 +3257,7 @@ de:
         ticket_updated_icon: "Ticket aktualisiert"
         reported_on: "von %{username}, zuletzt aktualisiert am %{date}"
         scenarios: "Szenarien"
+        ticket_from: "Von: %{username}"
         ticket_list_status_closed_at: "Von: %{username}, Geschlossen: <span class='emphasize'>vor %{time_ago}</span>"
         ticket_list_status_resolved_at: "Von: %{username}, Gelöst: <span class='emphasize'>vor %{time_ago}</span>"
         ticket_list_status_agent_responded_at: "Von: %{username}, Antwort vom Bearbeiter: <span class='emphasize'>vor %{time_ago}</span>"

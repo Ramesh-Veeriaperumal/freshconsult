@@ -950,9 +950,11 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class = 'user_name' href='/users/#{ticket.requester.id}' target='_blank'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>".html_safe
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+          <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
+       </a>".html_safe
     else
-      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
+      "<span class='user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
     end
   end
 

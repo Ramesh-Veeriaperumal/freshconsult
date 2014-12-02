@@ -282,25 +282,24 @@
 		@include border-left(solid 6px #EEE);
 	}
 	th.check{
-		@include padding(7px 16px 0 2px);
+		@include padding(8px 18px 0 0);
 		@include text-align(right);
 		vertical-align: top;
 	}
 }
+
 #tickets-expanded {
-	width:100%;
+	width:100%;	
 	color:#5f5f5f;
 	overflow:hidden;
+	table{
+		table-layout: fixed;
+	}
 	td.priority-border, th.priority-border {
 		padding:0;
 		width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE;
 	}
-	td.ralign {
-		@include text-align(right);
-		@include padding-right(0);
-	}
-	
-	th{
+	th {
 		background:none;
 		padding:0px 6px;
 		vertical-align:top;
@@ -328,9 +327,26 @@
 	}
 	.check{
 		width:25px;
-		@include padding(8px 16px 0 4px); 
+		@include padding(8px 16px 0 5px); 
 		@include text-align(right);
 		vertical-align: top;
+	}
+
+	.td-ticket-status {
+		@include text-align(right);
+		@include padding-right(0);
+		width: 130px;
+	}
+	
+	.td-ticket-details{
+		width: 60%;
+		.information{
+			width: 100%;
+		}		
+	}
+	.company-name{
+		&:before{ content: "("; }
+		&:after{ content: ")"; }
 	}
 
 	.headings td.check {
@@ -374,7 +390,7 @@
 			}
 
 		   &.assign {
-		   		@include padding-left(0); @include padding-right(0);
+		   		@include padding-left(5); @include padding-right(0);
 		   		vertical-align:middle;
 		   		width:180px;
 		   		*width:200px;
