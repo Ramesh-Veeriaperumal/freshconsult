@@ -3446,6 +3446,7 @@ en:
     success_signin: Successfully associated @%{twitter_screen_name} with %{helpdesk}.
     user_exists: Twitter account already associated with another product.
     not_authorized: You were not authorized by Twitter
+    not_valid: Status is over 140 characters.
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.

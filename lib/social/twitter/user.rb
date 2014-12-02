@@ -22,7 +22,6 @@ class Social::Twitter::User
       twitter = wrapper.get_twitter
       users = twitter.users([screen_name])
       user = Social::Twitter::User.new(users.first)
-      return user
     end
   end  
 
