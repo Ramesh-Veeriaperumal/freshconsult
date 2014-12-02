@@ -10,7 +10,9 @@ module Facebook::Constants
     :post             => "post",
     :status           => "status",
     :comment          => "comment",
-    :reply_to_comment => "reply_to_comment"
+    :reply_to_comment => "reply_to_comment",
+    :photo            => "photo",
+    :video            => "video"
   }
   
   POST_TYPE_CODE = {
