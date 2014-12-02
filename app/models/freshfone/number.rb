@@ -51,7 +51,7 @@ class Freshfone::Number < ActiveRecord::Base
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
-	validates_inclusion_of :queue_wait_time,  :in => [ 2, 5, 10, 15 ] #Temp options
+	validates_inclusion_of :queue_wait_time,  :in => [ 1, 2, 3, 4, 5, 10, 15 ] #Temp options
 	validates_inclusion_of :max_queue_length, :in => [ 0, 3, 5, 10 ] #Temp options
 	validates_inclusion_of :voice, :in => VOICE_HASH.values,
 		:message => "%{value} is not a valid voice type"

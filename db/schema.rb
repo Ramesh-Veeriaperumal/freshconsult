@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141127052851) do
+ActiveRecord::Schema.define(:version => 20141202074009) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1075,6 +1075,7 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
     t.integer  "rr_timeout",                                                            :default => 10
+    t.integer  "ringing_time",                                                            :default => 30
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
