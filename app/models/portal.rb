@@ -48,6 +48,8 @@ class Portal < ActiveRecord::Base
 
   has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
 
+  has_many :monitorships, :dependent => :nullify
+
   belongs_to_account
   belongs_to :product
   belongs_to :forum_category
