@@ -263,6 +263,7 @@ en:
     no_choice_message: "At least one valid choice has to be present"
     index:
       number: Number
+      decimal: Decimal
       add_custom_field: Add a Custom Field
       customize_form: "Customize your “New Ticket” form."
       single_line: Single Line Text
@@ -1758,6 +1759,7 @@ en:
         string: You have exceeded the maximum limit for this type of field.
         text: You are not allowed to create more than 10 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
+        decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
     cf:
       type:
