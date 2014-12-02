@@ -66,7 +66,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		end
 		
 		def build_freshfone_caller(freshfone_call, options)
-      return if options[:number].blank?
+      return freshfone_call.caller if options[:number].blank? #empty caller returned set it to null.
       account = freshfone_call.account
       caller  = account.freshfone_callers.find_or_initialize_by_number(options[:number])
       options.delete(:country) if options[:country].blank? # sometimes empty country is updated.
