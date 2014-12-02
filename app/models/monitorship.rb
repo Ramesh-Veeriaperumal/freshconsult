@@ -12,7 +12,7 @@ class Monitorship < ActiveRecord::Base
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   ALLOWED_TYPES = [:forum, :topic]
-  ACTIONS = [:follow, :unfollow]
+  ACTIONS = [:follow, :unfollow, :is_following]
 
   before_create :set_account_id
 
@@ -25,6 +25,10 @@ class Monitorship < ActiveRecord::Base
       host = portal.host
     end
     [sender,host]
+  end
+
+  def get_portal
+    @get_portal ||= portal_id? ? portal : account.main_portal
   end
 
   protected
@@ -40,5 +44,4 @@ class Monitorship < ActiveRecord::Base
       self.account_id = user.account_id
     end
   
-	
 end

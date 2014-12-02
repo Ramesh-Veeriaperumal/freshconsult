@@ -3,7 +3,7 @@ if Rails.env.test?
     t.account_id 1
     t.sequence(:name) { |n| "Fresh App #{n}" }
     t.platform 1
-    t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  '10', :debug_log_count => '50', :solutions => '2', :app_review_launch_count => '10'})
+    t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  Mobihelp::App::DEFAULT_BREADCRUMBS_COUNT, :debug_log_count => Mobihelp::App::DEFAULT_LOGS_COUNT, :solutions => '2', :app_review_launch_count => Mobihelp::App::DEFAULT_APP_REVIEW_LAUNCH_COUNT})
   end
 
   Factory.define :mobihelp_device, :class => Mobihelp::Device do |t|

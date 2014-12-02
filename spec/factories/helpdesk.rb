@@ -98,4 +98,20 @@ if Rails.env.test?
 
   Factory.define :tag_uses, :class => Helpdesk::TagUse do |d|
   end
+
+  Factory.define :contact_field, :class => ContactField do |t|
+    t.description Faker::Lorem.sentence(3)
+    t.field_type "custom_paragraph"
+    t.position 1
+    t.required false
+    t.visible_in_portal true
+    t.editable_in_portal true 
+    t.required_in_portal false
+  end
+
+  Factory.define :contact_flexifield, :class => ContactFlexifield do |d|
+  end
+
+  Factory.define :flexifield, :class => Flexifield do |d|
+  end
 end

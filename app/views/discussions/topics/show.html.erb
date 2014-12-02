@@ -40,7 +40,10 @@
 	</div>
 </div>
 <script type="text/javascript">
-jQuery('body').one('assetLoaded.fjax', function() {
-	App.Discussions.Sidebar.setActiveForumAs(<%= @forum.id %>);
-})
+
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Discussions.Sidebar.setActiveForumAs(<%= @forum.id %>);
+		App.Discussions.Merge.bindMergeEvent(<%= @topic.id %>);
+	});
+
 </script>

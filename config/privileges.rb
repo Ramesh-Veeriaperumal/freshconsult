@@ -163,6 +163,7 @@ Authority::Authorization::PrivilegeList.build do
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
+    resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
   end
 
@@ -184,11 +185,12 @@ Authority::Authorization::PrivilegeList.build do
   # edit_forum_topic
   edit_topic do
     resource :"discussions/topic", :only => [:edit, :update, :toggle_lock,
-          :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
+          :update_stamp, :remove_stamp, :merge_topic], :owned_by => { :scoper => :topics }
     resource :topic, :only => [:edit, :update, :update_lock,
           :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
+    resource :"discussions/merge_topic"
   end
 
   # delete_forum_topic
@@ -212,8 +214,8 @@ Authority::Authorization::PrivilegeList.build do
   # add_or_edit_contact
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
-               :contact_email, :edit, :update, :verify_email]
-    resource :customer, :only => [:new, :create, :edit, :update, :quick, :sla_policies] #should deprecate
+               :create_contact, :update_contact, :update_bg_and_tags, :contact_email, :edit, :update, :verify_email]
+    resource :customer, :only => [:new, :create, :edit, :update] #should deprecate
     resource :company,  :only => [:new, :create, :edit, :update, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :contact_import
@@ -311,6 +313,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/survey"
     resource :group
     resource :ticket_field
+    resource :"admin/contact_field"
     resource :"admin/role"
     resource :"admin/product"
     resource :"admin/portal"
@@ -336,6 +339,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
+    resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
   manage_account do
@@ -348,7 +352,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
-    resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
   client_manager do

@@ -11,8 +11,6 @@ class Facebook::Core::Feed
   def parse(feed)
     begin
       @feed=JSON.parse(feed)
-      #Send the fb realtime data to Splunk for debugging
-      #Monitoring::RecordMetrics.register(@feed) unless @feed["counter"]
       convert_to_object if @feed
     rescue Exception => e
       Rails.logger.error("Failed in parsing to json")
@@ -24,7 +22,7 @@ class Facebook::Core::Feed
 
   def entry_change=(change)
     @entry_change = change
-    meta_method_and_class if is_feed?
+    meta_method_and_class if feed?
   end
 
   def page_id
@@ -37,6 +35,10 @@ class Facebook::Core::Feed
 
   def comment_id
     return @entry_change["value"]["comment_id"].to_s if @entry_change["value"]["comment_id"]
+  end
+
+  def feed_id
+    post_id || comment_id
   end
 
   def parent_id
@@ -60,19 +62,19 @@ class Facebook::Core::Feed
     @clazz = ITEM_LIST.include?(item_data) ? item_data : nil
   end
 
-  def is_feed?
-    return true if @entry_change && @entry_change["field"]=="feed" && \
-      @entry_change["value"]
-  end
-
   private
 
     def convert_to_object
       @entry = @feed["entry"] if @feed["entry"]
       if @entry
         @entry_changes = @entry["changes"] if @entry["changes"]
-        # meta_method_and_class if is_feed?
+        # meta_method_and_class if feed?
       end
+    end
+    
+    def feed?
+      return true if @entry_change && @entry_change["field"]=="feed" && \
+      @entry_change["value"]
     end
 
 end

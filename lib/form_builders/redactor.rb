@@ -9,6 +9,7 @@ module FormBuilders::Redactor
         :convertDivs => false,
         :imageUpload => "/forums_uploaded_images",
         :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span","pre"],
+        :allowTagsInCodeSnippet => true,
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video','codeEditor']
       }
@@ -17,6 +18,7 @@ module FormBuilders::Redactor
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
+        :allowTagsInCodeSnippet => true,
         :imageUpload => "/solutions_uploaded_images",
         :imageGetJson => "/solutions_uploaded_images"
       }
@@ -26,6 +28,7 @@ module FormBuilders::Redactor
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
+        :allowTagsInCodeSnippet => true,
         :imageUpload => "/tickets_uploaded_images",
         :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link', 'image']

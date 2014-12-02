@@ -254,7 +254,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .c-row{
 	@include pie-clearfix;
-	padding-top:10px;
+	padding:10px;
 	border-top:1px solid $row-border-color;
   	.help-text{ font-size: 0.96em; }
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
@@ -316,6 +316,11 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		margin-top: 7px;
 		margin-bottom: 0;
 	}
+}
+
+/* Merged topics list in topic details page */
+.merged-topics-list a{
+	color: #049cdb;
 }
 
 .sol-feedback-message{
@@ -403,6 +408,11 @@ hr.content-divider{
 /* Topic label styles in forum list view */
 .topic-list .topic-labels .label{ @extend .label-small; }
 
+.lock-merge-topic-text{
+	font-size: 14px;
+	font-weight: normal;
+}
+
 .avatar-span{ margin-bottom: 15px; }
 .attach-wrapper, .attachments-list-form{ margin-top: 5px; }
 .dropbox_div{
@@ -481,6 +491,29 @@ hr.content-divider{
 			@include margin-right(0);
 		}
 
+	}
+}
+
+// for rendering contact_fields in profile
+.required_star {
+	color: #d00;
+	font-size: 20px;
+	font-weight: bold;
+	position: relative;
+	top: 2px;
+	margin-left: 3px;
+	margin-right: 1px;
+	line-height: 0;
+	display:inline;
+}
+
+.profile-edit-form{
+	input[type=text], input[type=url], input[type=email], textarea{
+		width:100%;
+	}
+	label{
+		display:inline;	
+		word-wrap: break-word;
 	}
 }
 
@@ -593,6 +626,26 @@ hr.content-divider{
 		font-size: 11px;
 		padding-bottom: 5px;
 	}
+}
+
+.icon-sticky-small {
+	vertical-align: middle;
+	padding-right: 18px;
+}
+
+#sticky-topic-icon{
+	float: left;
+	padding-top: 5px;
+	padding-right: 5px;
+}
+
+#sticky-small-topic-icon{
+	float: left;
+}
+
+.lock-merge-topic-text{
+	a{ color: #049CDB; }
+	a:hover{ color: #036690; }
 }
 
 //----------------------------------------------------------------------------------------------------------

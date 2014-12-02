@@ -1,0 +1,6 @@
+<div class="widget merged-topics-list">
+	<div class="muted mb10">
+		<%= t('portal.topic.merge_note', :count => @topic.merged_topics.size)%>
+	</div>
+	<%= merged_list(@topic) %>
+</div>

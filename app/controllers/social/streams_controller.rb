@@ -11,12 +11,11 @@ class Social::StreamsController < Social::BaseController
   before_filter :check_if_handles_exist, :only => [:index]
   before_filter :set_native_mobile, :only => [:stream_feeds, :show_old, :fetch_new, :interactions]
   before_filter :set_stream_params, :only => [:stream_feeds], :if => :is_mobile_meta_request?
-  before_filter :load_visible_handles, :only => [:index]
   before_filter :load_reply_handles, :only => [:index, :stream_feeds, :show_old, :fetch_new, :interactions]
 
   def index
-    @selected_tab = :social
     set_stream_params
+    @selected_tab = :social
   end
 
   def stream_feeds
@@ -172,6 +171,7 @@ class Social::StreamsController < Social::BaseController
   end
 
   def set_stream_params
+    load_visible_handles
     @streams        = all_visible_streams.select { |stream| stream.default_stream? }
     @custom_streams = all_visible_streams.select { |stream| stream.custom_stream? }
     @all_handles      = current_account.twitter_handles_from_cache

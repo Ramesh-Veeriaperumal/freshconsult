@@ -45,6 +45,8 @@ module MemcacheKeys
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
+  CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{contact_form_id}"
+
   # ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
   # Portal customization related keys
@@ -60,7 +62,7 @@ module MemcacheKeys
 
   WHITELISTED_IP_FIELDS = "v1/WHITELISTED_IP_FIELDS:%{account_id}"
 
-  FEATURES_LIST = "v3/FEATURES_LIST:%{account_id}"
+  FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
   
   SHARD_BY_DOMAIN = "v2/SHARD_BY_DOMAIN:%{domain}"
  

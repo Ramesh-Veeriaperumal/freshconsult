@@ -5,17 +5,20 @@ class ContactsController < ApplicationController
    include ExportCsvUtil
 
    before_filter :redirect_to_mobile_url
-   before_filter :clean_params, :only => [:update]
-   before_filter :check_demo_site, :only => [:destroy,:update,:create]
+   before_filter :clean_params, :only => [:update, :update_contact, :update_bg_and_tags]
+   before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_bg_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
-   before_filter :set_user_email, :only => :edit
+   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_bg_and_tags, :make_agent,:make_occasional_agent]
+   before_filter :set_user_email, :only => :edit                                                            
+
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :check_parent, :only => :restore
    before_filter :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
+   before_filter :set_required_fields, :only => [:create_contact, :update_contact]
+   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
    
   def check_demo_site
     if AppConfig['demo_site'][Rails.env] == current_account.full_domain
@@ -84,7 +87,7 @@ class ContactsController < ApplicationController
     else
       check_email_exist
       respond_to do |format|
-        format.html { render :action => :new}
+        format.html { render :action => :new }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
         format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
         format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
@@ -93,6 +96,10 @@ class ContactsController < ApplicationController
         format.js
       end
     end
+  end
+
+  def create_contact # new method to implement dynamic validations, as many forms post to create action 
+    create
   end
 
   def unblock
@@ -141,10 +148,12 @@ class ContactsController < ApplicationController
     @user = current_account.all_users.find(params[:id]) if @user.blank?
     @merged_user = @user.parent unless @user.parent.nil?
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
+
     respond_to do |format|
       format.html { 
-        @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible
-        @user_tickets = @total_user_tickets.newest(5).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester]) 
+        @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here
+        @total_user_tickets_size = current_account.tickets.permissible(current_user).requester_active(@user).visible.count
+        @user_tickets = @total_user_tickets.newest(10).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
       }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.as_json }
@@ -152,27 +161,38 @@ class ContactsController < ApplicationController
     end
   end
   
-  #probable dead code
-  def delete_avatar
-    load_item
-    @user.avatar.destroy
-    render :text => "success"
-  end
-  
   def update
     if @user.update_attributes(params[:user])
       respond_to do |format|
-        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html.erb', :locals => { :message => t('merge_contacts.contact_updated') } )
+        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice.html.erb', 
+                                  :locals => { :message => t('merge_contacts.contact_updated') } )
         format.html { redirect_to redirection_url }
-        format.xml  { head 200}
+        format.xml  { head 200 }
         format.json { head 200}
       end
     else
       check_email_exist
       respond_to do |format|
-        format.html { render :action => 'edit' }
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} #Bad request
-        format.json { render :json => @user.errors, :status => :unprocessable_entity}
+        format.html { render :action => :edit }
+        format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
+        format.json { render :json => @item.errors, :status => :unprocessable_entity}
+      end
+    end
+  end
+
+  def update_contact # new method to implement dynamic validations, so as not to impact update API
+    update
+  end
+
+  def update_bg_and_tags
+    if @user.update_attributes(params[:user])
+      updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
+      respond_to do |format|
+        format.json { render :json => updated_tags, :status => :ok}
+      end
+    else
+      respond_to do |format|
+        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
@@ -185,6 +205,10 @@ class ContactsController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+
+  def cname
+    @cname ='user'
   end
   
   def make_occasional_agent
@@ -206,9 +230,11 @@ class ContactsController < ApplicationController
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
+        # format.json {render :json => @item.as_json,:status => 200}
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
+        # format.json { render :json => @item.errors,:status => 500 }
       end   
     end
   end
@@ -244,10 +270,6 @@ protected
     @user.user_emails.build({:primary_role => true}) if current_account.features_included?(:contact_merge_ui)
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language
-  end
-
-  def cname
-      @cname ='user'
   end
 
   def check_parent
@@ -316,7 +338,7 @@ protected
   private
 
     def initialize_and_signup!
-      @user = current_account.users.new #by Shan need to check later  
+      @user ||= current_account.users.new #by Shan need to check later  
       @user.signup!(params)
     end
 
@@ -340,5 +362,17 @@ protected
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
       end
+    end
+
+    def set_required_fields
+      @user ||= current_account.users.new
+      @user.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields, 
+                                :error_label => :label }
+    end
+
+    def set_validatable_custom_fields
+      @user ||= current_account.users.new
+      @user.validatable_custom_fields = { :fields => current_account.contact_form.contact_custom_fields, 
+                                          :error_label => :label }
     end
 end

@@ -18,11 +18,8 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         '<span>#{company}</span>'+
         '</div></div></div></div></li>'
     ),
-
-    onFirstVisit: function (data) {
-      this.onVisit(data);
-    },
-    onVisit: function (data) {
+    
+    initialize: function (data) {
       App.Merge.initialize();
       this.bindHandlers();
     },
@@ -155,10 +152,6 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
       {
         jQuery('#new_merge_confirm').attr('disabled','disabled').addClass('disabled');
       }
-    },
-
-    onLeave: function(data) {
-
     }
   };
 }(window.jQuery));
