@@ -315,7 +315,7 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "Important: Deleting a folder will delete all the articles in it."
+    delete: "<b>Important:</b> Deleting a folder will delete all the articles in it."
     size: 
       one: "1 article will also be deleted."
       other: "%{count} articles will also be deleted."
@@ -1552,7 +1552,7 @@ en:
       announce: Announcement
       problem: Problems
     confim_msg1: Are you sure you want to delete this forum?
-    delete: "Important: Deleting a forum will delete all the topics in it."
+    delete: "<b>Important:</b> Deleting a forum will delete all the topics in it permanently."
     size: 
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
@@ -2258,6 +2258,7 @@ en:
     new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
+  delete_permanently: Delete Permanently
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
@@ -2271,13 +2272,13 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "Important: Deleting a category will delete all the folders and articles in it."
+    delete: "<b>Important:</b> Deleting a category will delete all the folders and articles in it."
     size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
-    delete: "Important: Deleting a category will delete all the forums and topics in it."
+    delete: "<b>Important:</b> Deleting a category will delete all the forums and topics in it permanently."
     size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
   billed_monthly: Billed monthly
   users:
@@ -2337,6 +2338,7 @@ en:
       upvote: "Yes"
       downvote: "No"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     status:
       draft: Draft
