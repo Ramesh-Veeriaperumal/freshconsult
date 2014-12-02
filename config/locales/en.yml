@@ -162,7 +162,7 @@ en:
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
-  attachment_failed_message: One or more attachments discarded since the 15MB limit was exceeded.
+  attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
