@@ -37,7 +37,8 @@
 <% if privilege?(:edit_topic, @topic) && !(@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) %>
 	<a href="#merge_topicdialog" 
 		class="btn hide_on_collapse" id="mergetopic" 
-		data-target="#merge_topicdialog" 
+		data-target="#merge_topicdialog"
+		data-track="Topic Merge Initiated"
 		data-title="<%= t('discussions.topic_merge.merge_title') %>" 
 		rel="freshdialog" 
 		data-width="800" data-template-footer=""><%= t('discussions.topics.merge_topic') %></a>
@@ -61,12 +62,15 @@
 		<%= link_to t('discussions.topics.close_topic'), toggle_lock_discussions_topic_path(@topic), 
 					:method => :put if privilege?(:edit_topic, @topic) %>
 
+	<% unless (@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) %>
 		<a href="#merge_topicdialog" 
 			id="mergetopic" rel="freshdialog"
-			data-target="#merge_topicdialog" 
+			data-target="#merge_topicdialog"
+			data-track="Topic Merge Initiated" 
 			data-title="<%= t('discussions.topic_merge.merge_title') %>" 
 			data-width="800" data-template-footer=""><%= t('discussions.topics.merge_topic') %></a>
-
+	<% end %>
+	
 	  </ul>
 	</div>
 <% end %>
