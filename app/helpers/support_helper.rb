@@ -406,12 +406,13 @@ module SupportHelper
 	# NON-FILTER HELPERS
 	# Search url for different tabs
 	def tab_based_search_url
-		case @current_tab
+		current_filter = defined?(@search) ? @search.current_filter.to_s : @current_tab
+		case current_filter
 			when 'tickets'
 				tickets_support_search_path
 			when 'solutions'
 				solutions_support_search_path
-			when 'forums'
+			when 'forums','topics'
 				topics_support_search_path
 			else
 				support_search_path
