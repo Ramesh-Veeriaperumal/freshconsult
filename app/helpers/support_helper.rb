@@ -351,7 +351,7 @@ module SupportHelper
 	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "widget_requester" then
 	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
-	      when "text", "number" then
+	      when "text", "number", "decimal" then
 			text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
 	      when "paragraph" then
 			text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))

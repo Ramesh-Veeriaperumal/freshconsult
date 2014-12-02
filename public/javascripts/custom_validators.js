@@ -321,4 +321,6 @@ $.validator.addMethod('validate_regexp', function(value, element) {
   return this.optional(element) || regExp.test(value);
 }, "Invalid Regular Expression");
 
+$.validator.addClassRules("decimal", { number: true });
+
 })(jQuery);
