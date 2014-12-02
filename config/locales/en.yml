@@ -414,6 +414,8 @@ en:
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
       mvp_trophie_label: "Most Valuable Player"
+      back_to_dashboard: "Back to Dashboard"
+      agents_in: "Agents in"
       mvp_trophie_info: "Agent with the most overall points this month"
       sharpshooter_trophie_label: "Sharpshooter"
       sharpshooter_trophie_info: "Agent with the highest First Call Resolution points this month"
@@ -421,6 +423,15 @@ en:
       speed_trophie_info: "Agent with the maximum points for fast resolution this month"
       love_trophie_label: "Customer Wow Champion"
       love_trophie_info: "Agent with the maximum Customer satisfaction points this month"
+      all_agents: "All Agents"
+      showing: "Showing"
+      agents_from_group: "Agents from group"
+      leaderboard_is_empty: "The leaderboard is empty"
+      date_range:
+        current_month: "Current Month"
+        last_month: "Last Month"
+        2_months_ago: "2 Months ago"
+        3_months_ago: "3 Months ago"
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"

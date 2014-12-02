@@ -448,6 +448,7 @@
 
     helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :agents => :get,
       :groups => :get }, :only => [ :mini_list, :agents, :groups ]
+    helpdesk.leaderboard_group_users '/leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents'
     helpdesk.resources :quests, :only => [ :active, :index, :unachieved ],
       :collection => { :active => :get, :unachieved => :get }
 
