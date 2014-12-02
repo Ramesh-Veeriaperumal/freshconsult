@@ -44,6 +44,7 @@
 	scriptLoader.load('360player');
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
+	jQuery(".search_field_item input").keypress(function(event) { return event.keyCode != 13; });
 });
 try {
 	freshfonePlayerSettings();
