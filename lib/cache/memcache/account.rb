@@ -62,7 +62,7 @@ module Cache::Memcache::Account
   end
 
   def features_included?(*feature_names)
-    feature_names.all? { |feature_name| feature_from_cache.include?(feature_name) }
+    feature_names.all? { |feature_name| feature_from_cache.include?(feature_name.to_sym) }
   end
 
   def companies_from_cache

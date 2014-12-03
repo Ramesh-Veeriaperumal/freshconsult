@@ -1,5 +1,6 @@
 class Freshfone::Filters::CallFilter < Wf::Filter
   ALLOWED_ORDERING = [ 'created_at', 'call_duration', 'call_cost' ]
+  ALLOWED_SORTING = ['asc', 'desc']
   def results
     @results ||= begin
       handle_empty_filter! 
@@ -27,8 +28,8 @@ class Freshfone::Filters::CallFilter < Wf::Filter
     
     @per_page             = params[:wf_per_page]    || default_per_page
     @page                 = params[:page]           || 1
-    @order_type           = params[:wf_order_type]  || default_order_type
-    @order                = params[:wf_order]       || default_order
+    @order_type           = ALLOWED_SORTING.include?(params[:wf_order_type]) ? params[:wf_order_type] : default_order_type
+    @order                = ALLOWED_ORDERING.include?(params[:wf_order] ) ? params[:wf_order] : default_order
     
     self.id   =  params[:wf_id].to_i  unless params[:wf_id].blank?
     self.name =  params[:wf_name]     unless params[:wf_name].blank?

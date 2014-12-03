@@ -128,8 +128,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     @per_page             = params[:wf_per_page]    || default_per_page
     @page                 = params[:page]           || 1
-    @order_type           = params[:wf_order_type]  || default_order_type
-    @order                = params[:wf_order]       || default_order
+    @order_type           = TicketsFilter::SORT_ORDER_FIELDS.map{|x| x[0].to_s }.include?(params[:wf_order_type]) ? params[:wf_order_type] : default_order_type
+    @order                = TicketsFilter.sort_fields_options.map{|x| x[1].to_s }.include?(params[:wf_order]) ? params[:wf_order] : default_order
     @without_pagination   = params[:without_pagination]         if params[:without_pagination]
     @filter_fields_to_select   = params[:select_fields]         if params[:select_fields]
     @html_format = params[:html_format] || false
