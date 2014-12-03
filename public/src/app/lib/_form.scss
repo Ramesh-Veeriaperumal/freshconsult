@@ -2070,10 +2070,12 @@ input[type="text"].points{
 	width: 70px;
 }
 
-input[type="text"].number{
-	width:70px;
-	&.phone_number {
-		width: 98%;
+input[type="text"]{
+	&.number, &.decimal{
+		width:70px;
+		&.phone_number {
+			width: 98%;
+		}
 	}
 }
 

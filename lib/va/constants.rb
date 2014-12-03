@@ -7,6 +7,7 @@ module Va
       :checkbox    => [ "selected", "not_selected" ],
       :choicelist  => [ "is", "is_not" ],
       :number      => [ "is", "is_not" ],
+      :decimal      => [ "is", "is_not" ],
       :hours       => [ "is", "greater_than", "less_than" ],
       :nestedlist  => [ "is" ],
       :greater     => [ "greater_than" ],
@@ -18,7 +19,8 @@ module Va
       "custom_dropdown" => "choicelist",
       "custom_checkbox" => "checkbox",
       "custom_number"   => "number",
-      "nested_field"    => "nestedlist",
+      "custom_decimal"   => "decimal",
+      "nested_field"    => "nestedlist"
     }
 
     OPERATOR_LIST =  {
