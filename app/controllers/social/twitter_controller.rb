@@ -351,7 +351,7 @@ class Social::TwitterController < Social::BaseController
   end
 
   def reply_for_ticket_tweets(tweet)
-    error_message, tweet_body = validate_tweet(params[:tweet][:body].strip, params[:screen_name])
+    error_message, tweet_body = validate_tweet(params[:tweet][:body].strip, "@#{params[:screen_name]}")
     if error_message.blank?
       item   = tweet.get_ticket
       ticket =  item.is_a?(Helpdesk::Ticket) ? item : item.notable
@@ -386,7 +386,7 @@ class Social::TwitterController < Social::BaseController
 
   def reply_for_non_ticket_tweets
     twt          = nil
-    error_message, tweet_text = validate_tweet(params[:tweet][:body].strip, params[:screen_name])
+    error_message, tweet_text = validate_tweet(params[:tweet][:body].strip, "@#{params[:screen_name]}")
     if error_message.blank?
       in_reply_to  = params[:tweet][:in_reply_to]
       tweet_params = {

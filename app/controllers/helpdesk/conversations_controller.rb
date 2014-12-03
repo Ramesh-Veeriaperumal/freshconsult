@@ -71,7 +71,7 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def twitter
-    tweet_text = params[:helpdesk_note][:note_body_attributes][:body]
+    tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     error_message, @tweet_body = validate_tweet(tweet_text, "@#{@parent.requester.twitter_id}")
     if error_message.blank?
       if @item.save_note 
