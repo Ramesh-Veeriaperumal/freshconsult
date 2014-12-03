@@ -1087,15 +1087,10 @@ ca:
           description: "Descripció de l'aplicació"
           platform: Plataforma
           configurations: "Configuracions SDK"
-          bread_crumbs: Traces
-          bread_crumbs_info: "Traces de la navegació que t'ajudaran a tornar sobre els passos de l'usuari"
-          debug_log_count: "Compte de registre de depuració"
-          debug_log_count_info: "El registre de depuració inclou la informació del registre de Logcat per a la teva aplicació"
           solutions: "Categoria de solució"
           solutions_info: "La categoria de la solució que seleccionis es mostrarà en l'App de Suport"
           app_store_id: "ID de la App Store"
           app_store_id_info: "App Store ID will be used to redirect users to App Store for Reviews"
-          not_included: "no està inclòs a la llista"
           should_be_unique: "ha de ser únic"
           select_a_platform: "Selecciona una plataforma"
           select_a_solution_category: "Selecciona una categoria de solució"
@@ -1104,10 +1099,6 @@ ca:
           app_key: "Clau App"
           app_secret: "App Secret"
           integration_details: "Detalls de la integració"
-          app_review: "Preguntar per l'aplicació d'Examen"
-          app_review_info: "Això llançarà automàticament la ràpida revisió després del nombre de llançaments configurats"
-          app_review_launch_count: "Desprès de %{count} llança"
-          app_review_launch_never: Mai
         index:
           title: "Apps Mobihelp"
           new_app: "Nova App"

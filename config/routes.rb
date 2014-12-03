@@ -234,6 +234,7 @@ Helpkit::Application.routes.draw do
       put :make_agent
       post :unblock
       post :restore
+      post :create_contact
     end
 
     member do
@@ -246,6 +247,9 @@ Helpkit::Application.routes.draw do
       put :make_occasional_agent
       put :verify_email
       get :unblock
+      post :create_contact
+      put :update_contact
+      put :update_bg_and_tags
     end
     resources :contact_merge do
       collection do
@@ -299,7 +303,6 @@ Helpkit::Application.routes.draw do
       get :info_for_node
     end
     member do
-      delete :delete_avatar
       put :toggle_shortcuts
       put :restore
       get :convert_to_user
@@ -586,6 +589,11 @@ Helpkit::Application.routes.draw do
 
   namespace :admin do
     resources :home, :only => :index
+    resources :contact_fields, :only => :index do
+      collection do
+        put :update
+      end
+    end
     resources :day_passes, :only => [:index, :update] do
       member do
         put :buy_now
@@ -889,6 +897,7 @@ Helpkit::Application.routes.draw do
   match '/search/all' => 'search/home#index'
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
+  match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
 
   namespace :reports do
     resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
@@ -1497,6 +1506,14 @@ Helpkit::Application.routes.draw do
     end
 
     match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter
+    resources :merge_topic do 
+      collection do  
+        post :select
+        put :review
+        post :confirm
+        put :merge
+      end
+    end
   end
 
   match 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships',
@@ -1563,10 +1580,18 @@ Helpkit::Application.routes.draw do
     end
   end
 
-
   match '/support/theme.:format' => 'theme/support#index'
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
+
+  match 'discussions/:object/:id/subscriptions/is_following.:format', 
+    :controller => 'monitorships', :action => 'is_following', 
+    :conditions => {:method => :get},
+    :as => :view_monitorship
+
+  match 'discussions/:object/:id/subscriptions/:type.:format',
+    :controller => 'monitorships', :action => 'toggle',
+    :as => :toggle_monitorship
 
 
 
@@ -1578,12 +1603,7 @@ Helpkit::Application.routes.draw do
     resource :signup, :only => [:new, :create]
     match '/signup' => 'signups#new'
 
-    resource :profile, :only => [:edit, :update] do
-      member do
-        delete :delete_avatar
-      end
-    end
-
+    resource :profile, :only => [:edit, :update]
     resource :search, :controller => "search", :only => :show do
       member do
         get :solutions
@@ -1747,6 +1767,7 @@ Helpkit::Application.routes.draw do
 
   resources :rabbit_mq, :only => [:index]
   match '/marketplace/login' => 'google_login#marketplace_login', :as => :route
+  match '/openid/google' => 'google_login#marketplace_login'
   match '/google/login' => 'google_login#portal_login', :as => :route
   match '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login', :as => :route
   match '/' => 'home#index'

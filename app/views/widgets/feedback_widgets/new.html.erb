@@ -65,6 +65,7 @@
 				<% end %>
 			</div>
 		</div>
+		<input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
 		<div class="span2 omega">
 			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega",
 				"data-loading-text" => t('ticket.submit_loading') %>

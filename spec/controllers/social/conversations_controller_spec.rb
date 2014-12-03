@@ -163,14 +163,14 @@ RSpec.describe Helpdesk::ConversationsController do
         comment_feeds = sample_fql_comment_feed(post_id)
         actor_id = comment_feeds.first["from"]["id"]
         # stub the calls
-        Social::FacebookPosts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:fql_query).returns(fql_feeds)
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(comment_feeds)
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:put_comment).returns(sample_put_comment)
+        Facebook::Fql::Posts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
+        Koala::Facebook::API.any_instance.stubs(:fql_query).returns(fql_feeds)
+        Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
+        Koala::Facebook::API.any_instance.stubs(:get_connections).returns(comment_feeds)
+        Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
         
         # Create FB post ticket
-        Social::FacebookPosts.new(@fb_page).fetch
+        Facebook::Fql::Posts.new(@fb_page).fetch
         fb_post = Social::FbPost.find_by_post_id(post_id)
         fb_post.should_not be_nil
         fb_post.is_ticket?.should be true
@@ -199,8 +199,8 @@ RSpec.describe Helpdesk::ConversationsController do
         thread_id = generate_thread_id
         msg_id = generate_msg_id
         sample_fb_dms = sample_dm_threads(thread_id, actor_id, msg_id)
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(sample_fb_dms)
+        Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
+        Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_fb_dms)
         Facebook::Core::Message.new(@fb_page).fetch_messages
         
         dm = Social::FbPost.find_by_post_id(msg_id)
@@ -210,7 +210,7 @@ RSpec.describe Helpdesk::ConversationsController do
         
         reply_dm_id = generate_msg_id
         sample_reply_dm = { "id" => reply_dm_id }
-        Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:put_object).returns(sample_reply_dm)
+        Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
         post :facebook, {   :helpdesk_note => 
                               { :source => 7, 
                                 :private => false, 

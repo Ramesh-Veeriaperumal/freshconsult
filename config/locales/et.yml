@@ -424,15 +424,10 @@ et:
           description: "Rakenduse kirjeldus"
           platform: Platvorm
           configurations: "SDK seadistused"
-          bread_crumbs: Jäljerida
-          bread_crumbs_info: "Jäljerida aitab sul kasutaja samme jälgida."
-          debug_log_count: "Silumislogide arv"
-          debug_log_count_info: "Silumislogid sisaldavad sinu rakenduse logcatist pärit logiandmeid."
           solutions: "Lahenduse kategooria"
           solutions_info: "Lahenduse kategooria, mille sa valid, kuvatakse rakenduse kasutajatoe all."
           app_store_id: "App Store'i ID"
           app_store_id_info: "Kasutajad suunatakse App Store'i ID abil arvustuste vaatamiseks App Store'i"
-          not_included: "ei ole loetelus"
           should_be_unique: "peaks olema kordumatu"
           select_a_platform: "Vali platvorm"
           select_a_solution_category: "Vali lahenduse kategooria"
@@ -441,10 +436,6 @@ et:
           app_key: "Rakenduse võti"
           app_secret: "Rakenduse saladus"
           integration_details: "Integratsiooni üksikasjad"
-          app_review: "Viip rakenduse ülevaatamiseks"
-          app_review_info: "See käivitab automaatselt viiba rakenduse ülevaatamiseks pärast eelnevalt seadistatud käivituste arvu."
-          app_review_launch_count: "Pärast %{count} käivitamist"
-          app_review_launch_never: "Mitte iial"
         index:
           title: "MobiHelpi rakendused"
           new_app: "Uus rakendus"

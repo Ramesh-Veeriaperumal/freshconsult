@@ -1,10 +1,10 @@
 class MonitorshipsController < ApplicationController
   before_filter :access_denied, :unless => :logged_in?
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :toggle
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:toggle,:is_following]
   before_filter :unprocessable_entity, :unless => :valid_request
   before_filter :fetch_monitorship, :only => :toggle
-
+  
   def toggle
     send(params[:type])
     respond_to do |format|
@@ -15,6 +15,15 @@ class MonitorshipsController < ApplicationController
       format.xml { head :ok }
       format.json { head :ok }
       format.js
+    end
+  end
+
+  def is_following
+    user_id = params[:user_id] || current_user.id
+    @monitorship = Monitorship.find(:first, :conditions => { :user_id => user_id,:monitorable_id => params[:id],:monitorable_type =>params[:object].capitalize}) || []  
+    respond_to do |format|
+      format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
+      format.json { render :json => @monitorship.as_json(:except=>:account_id) }
     end
   end
 
@@ -45,7 +54,7 @@ class MonitorshipsController < ApplicationController
     end
 
     def valid_action?
-      Monitorship::ACTIONS.include?(params[:type].to_sym)
+     Monitorship::ACTIONS.include?((params[:type] || params[:action]).to_sym)
     end
 
     def fetch_monitorship

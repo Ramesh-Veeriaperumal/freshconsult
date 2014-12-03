@@ -3,6 +3,8 @@ class Social::FbPost < ActiveRecord::Base
   self.table_name =  "social_fb_posts"
   self.primary_key = :id
   
+  has_ancestry :orphan_strategy => :rootify
+  
   belongs_to :postable, :polymorphic => true
   belongs_to_account
   belongs_to :facebook_page , :class_name => 'Social::FacebookPage'
@@ -11,6 +13,8 @@ class Social::FbPost < ActiveRecord::Base
   
   validates_presence_of   :post_id, :account_id
   validates_uniqueness_of :post_id, :scope => :account_id, :message => "Post already converted as a ticket/ticket"
+  
+  serialize :post_attributes, Hash
   
   scope :latest_thread, lambda {|thread_id , num| {:conditions => ["social_fb_posts.thread_id=? and postable_type=?", thread_id,'Helpdesk::Ticket'],
                                                    :order => 'created_at DESC',

@@ -3,7 +3,8 @@ module Gnip
   module Constants
 
     SOURCE = {
-      :twitter => "Twitter"
+      :twitter  => "Twitter",
+      :facebook => "Facebook"
     }
 
     DELIMITER = {

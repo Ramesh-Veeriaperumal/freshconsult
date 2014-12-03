@@ -5,6 +5,8 @@ class Topic < ActiveRecord::Base
   acts_as_voteable
   validates_presence_of :forum, :user, :title
 
+  concerned_with :merge
+
   belongs_to_account
   belongs_to :forum
   belongs_to :user
@@ -15,8 +17,9 @@ class Topic < ActiveRecord::Base
   before_create :set_unanswered_stamp, :if => :questions?
   before_create :set_unsolved_stamp, :if => :problems?
 
+  has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
+  belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
-  
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
@@ -72,6 +75,7 @@ class Topic < ActiveRecord::Base
     }
   }
 
+  scope :published_and_unmerged, :conditions => { :published => true, :merged_topic_id => nil }
 
   # The below namescope might be used later. DO NOT DELETE. @Thanashyam
   # scope :followed_by, lambda { |user_id|
@@ -112,6 +116,8 @@ class Topic < ActiveRecord::Base
   scope :by_stamp, lambda { |stamp_type|
     { :conditions => ["stamp_type = ?", stamp_type] }
   }
+
+  scope :unmerged, :conditions => { :merged_topic_id => nil }
 
   attr_accessor :trash
 

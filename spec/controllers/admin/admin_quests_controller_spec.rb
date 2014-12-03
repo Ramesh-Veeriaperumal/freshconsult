@@ -11,7 +11,7 @@ RSpec.describe Admin::QuestsController do
     @new_quest = create_article_quest(@account, quest_data)
 
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry, 
-                                         :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                          :flexifield_alias => "tkt_level_#{@account.id}",
                                          :flexifield_name => "ff_int01",
                                          :flexifield_coltype => "number",

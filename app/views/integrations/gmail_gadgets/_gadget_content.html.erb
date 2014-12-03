@@ -3,8 +3,8 @@
     <% if Rails.env.development? %>
         <%= render :partial => "integrations/gmail_gadgets/gadget_development_css_js.html"%>
     <% else %>
-        <%= include_cloudfront_css :gadget %>
-        <%= include_cloudfront_js :gadget %>
+        <%= stylesheet_link_tag_with_rtl :'cdn/gadget' %>
+        <%= javascript_include_tag :'cdn/gadget' %>
     <%end%>
 
     <style type="text/css">

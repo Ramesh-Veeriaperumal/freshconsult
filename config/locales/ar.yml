@@ -586,15 +586,10 @@ ar:
           description: وصف التطبيق
           platform: النظام الأساسي
           configurations: تكوينات حزمة أدوات تطوير البرامج
-          bread_crumbs: مسارات التنقل
-          bread_crumbs_info: ستساعدك مسارات التنقل في إعادة تتبع خطوات المستخدم
-          debug_log_count: تصحيح أخطاء أعداد السجلات
-          debug_log_count_info: يتضمن تصحيح أخطاء السجلات معلومات السجل من logcat للتطبيق الخاص بك
           solutions: فئة الحل
           solutions_info: ستظهر فئة الحل التي تحددها في دعم التطبيق 
           app_store_id: معرف App Store
           app_store_id_info: سيتم استخدام معرف App Store لإعادة توجيه المستخدمين إلى App Store لحصول على التعليقات
-          not_included: غير مضمن في القائمة
           should_be_unique: يجب أن يكون فريدًا
           select_a_platform: تحديد نظام أساسي
           select_a_solution_category: تحديد فئة حل
@@ -603,10 +598,6 @@ ar:
           app_key: مفتاح واجهة برمجة التطبيقات
           app_secret: المفتاح السري للتطبيق
           integration_details: تفاصيل التكامل
-          app_review: مطالبة بمراجعة التطبيق
-          app_review_info: يعمل ذلك على تشغيل مطالبة المراجعة تلقائيًا بعد عدد عمليات التشغيل المكوّن
-          app_review_launch_count: "بعد %{count} عملية تشغيل"
-          app_review_launch_never: مطلقًا
         index:
           title: تطبيقات Mobihelp
           new_app: تطبيق جديد

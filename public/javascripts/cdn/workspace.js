@@ -9,7 +9,7 @@
 //= require factory_ui.js
 //= require lib/json2.js
 //= require custom_validators.js
-//= require dates.js
+//= require util-dates.js
 //= require globalinit.js
 //= require app/app.js
 //= require security.js

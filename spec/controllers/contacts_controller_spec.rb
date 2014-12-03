@@ -16,10 +16,13 @@ describe ContactsController do
     @sample_contact.save
     @active_contact = FactoryGirl.build(:user, :name => "1111", :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
+
     @active_contact.save
     @new_company = FactoryGirl.build(:company)
     @new_company.save
-    Delayed::Job.delete_all
+
+    @contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)
+    @contact.save(validate: false)
   end
 
   after(:each) do
@@ -30,7 +33,7 @@ describe ContactsController do
 
   it "should create a new contact" do
     test_email = Faker::Internet.email
-    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
+    post :create_contact, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
     u = @account.user_emails.user_for_email(test_email)
@@ -41,7 +44,7 @@ describe ContactsController do
   it "should create a new contact with new company" do # with old company parameters(customer deprecation)
     test_email = Faker::Internet.email
     company_name = Faker::Name.name
-    post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :customer => company_name }
+    post :create_contact, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en", :customer => company_name }
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     @account.users.all.size.should eql @user_count+1
     u = @account.user_emails.user_for_email(test_email)
@@ -311,7 +314,9 @@ describe ContactsController do
     puts test_email
     puts "\n\n\n"
     test_phone_no = Faker::PhoneNumber.phone_number
-    put :update, :id => contact.id, :user => { :email => test_email, 
+    avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
+    put :update_contact, :id => @contact.id, :user => { :avatar_attributes => {:content => avatar_file},
+                                                :email => test_email, 
                                                 :job_title => "Developer",
                                                 :phone => test_phone_no,
                                                 :time_zone => contact.time_zone, 
@@ -322,6 +327,19 @@ describe ContactsController do
     edited_contact.phone.should be_eql(test_phone_no)
     Delayed::Job.last.handler.should include("user_activation")
     Delayed::Job.last.handler.should include(edited_contact.name)
+  end
+
+  it "should delete an existing avatar" do
+    @contact.reload
+    @contact.avatar.should_not be_nil
+    put :update_contact, :id => @contact.id, :user => { :avatar_attributes => {:id => @contact.avatar.id, :_destroy =>"1"},
+                                                :email => @contact.email, 
+                                                :job_title => "",
+                                                :phone => @contact.phone,
+                                                :time_zone => @contact.time_zone, 
+                                                :language => @contact.language }
+    @contact.reload
+    @contact.avatar.should be_nil
   end
 
   it "should update an existing contact" do # with new company parameters(customer deprecation)
@@ -350,7 +368,7 @@ describe ContactsController do
     response.body.should =~ /Edit Contact/
     test_email = Faker::Internet.email
     test_phone_no = Faker::PhoneNumber.phone_number
-    put :update, :id => contact.id, :user => { :email => test_email, 
+    put :update_contact, :id => contact.id, :user => { :email => test_email, 
                                                 :job_title => "Developer",
                                                 :phone => test_phone_no,
                                                 :time_zone => contact.time_zone,
@@ -375,18 +393,6 @@ describe ContactsController do
     full_time_agent.should be_an_instance_of(Agent)
     full_time_agent.occasional.should be false
   end
-
-  # it "should delete avatar" do
-  #   customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
-  #                             :user_role => 3, :avatar_attributes => { :content => fixture_file_upload('files/image4kb.png', 'image/png')})
-  #   customer.save  
-  #   customer.reload
-  #   put :delete_avatar, :id => customer.id
-  #   puts response.status.inspect
-  #   customer.reload
-  #   customer.avatar.should eql nil
-  #   response.body.should =~ /success/
-  # end
 
   it "should make a customer an occasional agent" do
     occasional_customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
@@ -424,6 +430,24 @@ describe ContactsController do
     customer.reload
     delete :destroy, :id => customer.id
     @account.all_users.find(customer.id).deleted.should be true
+  end
+
+  it "should create with multiple user emails" do
+    @account.features.multiple_user_emails.create
+    test_email = Faker::Internet.email
+    post :create_contact, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
+    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+    @account.features.multiple_user_emails.destroy
+  end
+
+  it "should create for wrong params with MUE feature" do
+    @account.features.multiple_user_emails.create
+    test_email = Faker::Internet.email
+    post :create_contact, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
+    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
+    @account.users.all.size.should eql @user_count+1
+    @account.features.multiple_user_emails.destroy
   end
 
   #### Company revamp specs - User Tags Revamp Specs
@@ -546,4 +570,201 @@ describe ContactsController do
     user.tag_names.should eql('')
   end
 
+  context "For Contacts with custom fields" do
+
+    before(:all) do
+      @user = FactoryGirl.build(:user, :account => @acc, :phone => Faker::PhoneNumber.phone_number, :email => Faker::Internet.email,
+                              :user_role => 3, :active => true)
+      @user.save
+      custom_field_params.each do |field|
+        params = cf_params(field)
+        create_contact_field params 
+      end
+    end
+
+    before(:each) do
+      login_admin
+    end
+
+    after(:all) do
+      Resque.inline = true
+      @user.destroy
+      custom_field_params.each { |params| 
+        @account.contact_form.contact_fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
+      Resque.inline = false
+    end
+
+    it "should render for new user template with custom fields" do
+      get :new
+      response.should be_success
+      response.should render_template('contacts/new')
+      custom_field_params.each {|field| response.body.should =~ /#{field[:label]}/ }
+    end
+
+    it "should create a new contact with custom fields" do
+      test_email = Faker::Internet.email
+      text = Faker::Lorem.words(4).join(" ")
+      url = Faker::Internet.url
+      avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')
+      post :create_contact, :user => { :avatar_attributes => {:content => avatar_file},
+                                       :name => Faker::Name.name,
+                                       :custom_field => contact_params({:linetext => text, :testimony => Faker::Lorem.paragraphs, :all_ticket => "false",
+                                                         :agt_count => "34", :fax => Faker::PhoneNumber.phone_number, :url => url, :date => date_time,
+                                                         :category => "Tenth"}),
+                                       :email => test_email, 
+                                       :time_zone => "Chennai", 
+                                       :language => "en" 
+                                      }
+      new_user = @account.user_emails.user_for_email(test_email)
+      new_user.should be_an_instance_of(User)
+      new_user.flexifield_without_safe_access.should_not be_nil
+      new_user.send("cf_linetext").should eql(text)
+      new_user.send("cf_category").should eql "Tenth"
+      new_user.send("cf_agt_count").should eql(34)
+      new_user.send("cf_show_all_ticket").should be_false
+      new_user.send("cf_file_url").should eql(url)
+      new_user.avatar.should_not be_nil
+      new_user.avatar.content_file_name.should eql "image33kb.jpg"
+    end
+
+    it "should create a new contact with custom fields value as null" do
+      test_email = Faker::Internet.email
+      name = Faker::Name.name
+      post :create_contact, :user => { :name => name,
+                                       :custom_field => contact_params,
+                                       :email => test_email, 
+                                       :job_title => "Developer", 
+                                       :time_zone => "Chennai", 
+                                       :language => "en" 
+                                      }
+      new_user = @account.user_emails.user_for_email(test_email)
+      new_user.should be_an_instance_of(User)
+      new_user.name.should eql(name)
+      new_user.job_title.should eql "Developer"
+      new_user.flexifield_without_safe_access.should be_nil
+    end
+
+    it "should update a contact with custom fields" do
+      text = Faker::Lorem.words(4).join(" ")
+      @user.flexifield_without_safe_access.should be_nil
+      avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')
+      put :update_contact, {:id => @user.id, 
+                            :user =>{ :avatar_attributes => {:content => avatar_file},
+                                      :name => Faker::Name.name,
+                                      :custom_field => contact_params({:linetext => "updated text", :testimony => text, 
+                                                        :all_ticket => "true", :agt_count => "7", :category => "First"}),
+                                      :email => @user.email, 
+                                      :job_title => "QA", 
+                                      :time_zone => "Chennai", 
+                                      :language => "en" 
+                                    }
+                            }
+      user = @account.users.find(@user.id)
+      user.job_title.should eql "QA"
+      user.flexifield_without_safe_access.should_not be_nil
+      user.send("cf_testimony").should eql(text)
+      user.send("cf_category").should eql "First"
+      user.send("cf_agt_count").should eql(7)
+      user.send("cf_show_all_ticket").should be_true
+      user.send("cf_file_url").should be_nil
+      user.send("cf_linetext").should eql("updated text")
+      user.avatar.should_not be_nil
+      user.avatar.content_file_name.should eql "image33kb.jpg"
+    end
+
+    it "should update a contact with custom fields with null values" do
+      @user.reload
+      @user.flexifield_without_safe_access.should_not be_nil
+      name = Faker::Name.name
+      avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
+      put :update_contact, {:id => @user.id, 
+                            :user => { :avatar_attributes => {:content => avatar_file, :id => @user.avatar.id, :_destroy =>"0"},
+                                       :name => name,
+                                       :custom_field => contact_params,
+                                       :email => @user.email, 
+                                       :time_zone => "Chennai", 
+                                       :language => "en" 
+                                      }
+                            }
+      user = @account.users.find(@user.id)
+      user.name.should eql(name)
+      user.flexifield_without_safe_access.should be_nil
+      user.avatar.content_file_name.should_not eql "image4kb.png"
+    end
+
+    it "should not create a user if mandatory fields is null" do
+      contact_field = @account.contact_form.contact_fields.find_by_name("cf_linetext")
+      contact_field.update_attributes(:required_for_agent => true)
+      test_email = Faker::Internet.email
+      post :create_contact, :user => { :name => Faker::Name.name,
+                                       :custom_field => contact_params({:testimony => Faker::Lorem.paragraphs, :all_ticket => "false",
+                                                         :agt_count => "34", :fax => Faker::PhoneNumber.phone_number, :url => Faker::Internet.url, 
+                                                         :date => date_time, :category => "Third"}),
+                                       :email => test_email, 
+                                       :time_zone => "Chennai", 
+                                       :language => "en" 
+                                      }
+      response.body.should =~ /prohibited this user from being saved/
+      response.body.should =~ /#{contact_field.label} cannot be blank/
+      @account.user_emails.user_for_email(test_email).should_not be_an_instance_of(User)
+    end
+
+    it "should not update a contact if mandatory fields is null" do
+      contact_field = @account.contact_form.contact_fields.find_by_name("cf_show_all_ticket")
+      contact_field.update_attributes(:required_for_agent => true)
+      #if check box is a mandatory field, value of the field should be always true.
+      put :update_contact, {:id => @user.id, 
+                            :user => { :name => Faker::Name.name,
+                                       :custom_field => contact_params({:linetext => Faker::Lorem.words(3), :all_ticket => "false",
+                                                         :fax => Faker::PhoneNumber.phone_number, :date => date_time,
+                                                         :category => "Second"}),
+                                       :email => @user.email, 
+                                       :time_zone => "Sydney", 
+                                       :language => "en" }
+                            }
+      user = @account.users.find(@user.id)
+      user.time_zone.should_not eql "Sydney"
+      user.time_zone.should eql "Chennai"
+      response.body.should =~ /prohibited this user from being saved/
+      response.body.should =~ /#{contact_field.label} cannot be blank/
+      user.flexifield_without_safe_access.should be_nil
+    end
+
+    # REGEX VALIDATION :
+    # custom_field "Linetext with regex validation" should either contain "desk" or "service" as a field value 
+    # if field_value doesn't contain either of these words, request should throw an error message as "invalid value"
+    
+    it "should not create a new contact with invalid value in regex field" do
+      test_email = Faker::Internet.email
+      text = Faker::Lorem.words(4).join(" ")
+      post :create_contact, :user => { :name => Faker::Name.name,
+                                       :custom_field => contact_params({:linetext => text, :all_ticket => "true", :text_regex_vdt => "Helpkit" }),
+                                       :email => test_email, 
+                                       :time_zone => "Chennai", 
+                                       :language => "en" 
+                                      }
+      response.body.should =~ /prohibited this user from being saved/
+      response.body.should =~ /Linetext with regex validation is not valid/
+      @account.user_emails.user_for_email(test_email).should_not be_an_instance_of(User)
+    end
+
+    it "should create a new contact" do # single line text with regex validation.
+      test_email = Faker::Internet.email
+      text = Faker::Lorem.words(4).join(" ")
+      post :create_contact, :user => { :name => Faker::Name.name,
+                                       :custom_field => contact_params({:linetext => text, :all_ticket => "true", 
+                                                          :text_regex_vdt => "Helpdesk Software", :category => "Third" }),
+                                       :email => test_email, 
+                                       :time_zone => "Chennai", 
+                                       :language => "en" 
+                                      }
+      new_user = @account.user_emails.user_for_email(test_email)
+      new_user.should be_an_instance_of(User)
+      new_user.flexifield_without_safe_access.should_not be_nil
+      new_user.send("cf_linetext").should eql(text)
+      new_user.send("cf_category").should eql "Third"
+      new_user.send("cf_show_all_ticket").should be_true
+      new_user.send("cf_linetext_with_regex_validation").should eql "Helpdesk Software"
+    end
+  end
 end

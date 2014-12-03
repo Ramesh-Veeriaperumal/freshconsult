@@ -13,8 +13,6 @@ module Features
   #
   class Feature < ActiveRecord::Base
     
-    # include ::MemcacheKeys
-
     abstract_class = true
 
     self.primary_key = :id
@@ -22,8 +20,8 @@ module Features
   
     LIST = []
   
-    after_create :reset_owner_association
-    after_destroy :reset_owner_association
+    after_create :reset_owner_association, :send_event_to_mixpanel
+    after_destroy :reset_owner_association, :send_event_to_mixpanel
     before_destroy :destroy_dependant_features, :clear_features_from_cache
     before_create :clear_features_from_cache
 
@@ -138,6 +136,10 @@ module Features
     def clear_features_from_cache
       key = ::MemcacheKeys::FEATURES_LIST % { :account_id => self.account_id }
       ::MemcacheKeys.delete_from_cache key
+    end
+
+    def send_event_to_mixpanel
+      ::MixpanelWrapper.send_to_mixpanel(self.class.name, { :enabled => self.account.features?(to_sym) })
     end
   end
 

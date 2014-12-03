@@ -1,9 +1,9 @@
 module SlaPoliciesHelper
 
 	def create_sla_policy(new_agent)
-		customer = FactoryGirl.build(:customer, :name => Faker::Lorem.words(1))
+		customer = FactoryGirl.build(:customer, :name => Faker::Lorem.words(5))
         customer.save
-		sla_policy = FactoryGirl.build(:sla_policies, :name => Faker::Lorem.words(1), :description => Faker::Lorem.paragraph, :account_id => @account.id, 
+		sla_policy = FactoryGirl.build(:sla_policies, :name => Faker::Lorem.words(5), :description => Faker::Lorem.paragraph, :account_id => @account.id, 
 			:datatype => {:ticket_type => "text"},:conditions =>{ "group_id" =>["1"], "company_id" =>["#{customer.id}"]},
 			:escalations =>{"response"=>{"1"=>{:time =>"1800", :agents_id =>["#{@agent.id}"]}}, 
 			                "resolution"=>{"1"=>{:time=>"3600", :agents_id=>["#{new_agent.id}"]}}

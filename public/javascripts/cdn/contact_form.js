@@ -1,1 +1,1 @@
-//= require app/contact_form
+//= require app/contact_form.js

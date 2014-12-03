@@ -116,11 +116,11 @@ RSpec.describe TicketFieldsController do
   end
 
   it "should edit a custom field" do
-    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
-                                             :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
-                                             :flexifield_alias => "solution_#{@account.id}",
-                                             :flexifield_name => "ff_text03",
-                                             :account_id => @account.id)
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry, 
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                         :flexifield_alias => "solution_#{@account.id}",
+                                         :flexifield_name => "ff_text03",
+                                         :account_id => @account.id)
     flexifield_def_entry.save
     custom_field = FactoryGirl.build( :ticket_field, :account_id => @account.id,
                                       :name => "solution_#{@account.id}",
@@ -235,13 +235,13 @@ RSpec.describe TicketFieldsController do
     labels = ['Nation', 'Memorial']
     # ffs_05 and ffs_06 are created here
     (0..1).each do |nested_field_id|
-      flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
-                                                                :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
-                                                                :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                                :flexifield_name => "ffs_0#{nested_field_id+5}",
-                                                                :flexifield_order => 5,
-                                                                :flexifield_coltype => "dropdown",
-                                                                :account_id => @account.id)
+      flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry, 
+                                                            :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                                            :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
+                                                            :flexifield_name => "ffs_0#{nested_field_id+5}",
+                                                            :flexifield_order => 5,
+                                                            :flexifield_coltype => "dropdown",
+                                                            :account_id => @account.id)
       flexifield_def_entry[nested_field_id].save
     end
 
@@ -327,11 +327,11 @@ RSpec.describe TicketFieldsController do
   end
 
   it "should delete a custom field" do
-    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
-                                             :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
-                                             :flexifield_alias => "incident_#{@account.id}",
-                                             :flexifield_name => "ff_text04",
-                                             :account_id => @account.id)
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry, 
+                                         :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                         :flexifield_alias => "incident_#{@account.id}",
+                                         :flexifield_name => "ff_text04",
+                                         :account_id => @account.id)
     flexifield_def_entry.save
     custom_field = FactoryGirl.build(:ticket_field, :account_id => @account.id,
                                      :name => "incident_#{@account.id}",
@@ -365,13 +365,13 @@ RSpec.describe TicketFieldsController do
     labels = ['Country', 'State', 'City']
     # ffs_07, ffs_08 and ffs_09 are created here
     (0..2).each do |nested_field_id|
-      flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
-                                                                :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
-                                                                :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                                :flexifield_name => "ffs_0#{nested_field_id+7}",
-                                                                :flexifield_order => 6,
-                                                                :flexifield_coltype => "dropdown",
-                                                                :account_id => @account.id)
+      flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry, 
+                                                            :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                                            :flexifield_alias => "#{labels[nested_field_id].downcase}_#{@account.id}",
+                                                            :flexifield_name => "ffs_0#{nested_field_id+7}",
+                                                            :flexifield_order => 6,
+                                                            :flexifield_coltype => "dropdown",
+                                                            :account_id => @account.id)
       flexifield_def_entry[nested_field_id].save
     end
 

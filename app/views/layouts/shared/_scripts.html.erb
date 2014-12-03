@@ -27,4 +27,7 @@
 
 	// Shortcuts variables
 	var Shortcuts = <%= Shortcut::KEY_BINDINGS.to_json.html_safe %>;
-<% end %>
+	
+	// Date formats
+	var DATE_FORMATS = <%= AccountConstants::DATA_DATEFORMATS.to_json.html_safe %>;
+<%- end -%>

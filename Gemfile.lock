@@ -185,6 +185,13 @@ PATH
     business_time (1.0.0)
 
 PATH
+  remote: vendor/gems/custom_fields-0.1
+  specs:
+    custom_fields (0.1)
+      acts_as_list (= 0.1.4)
+      rails (~> 3.2.18)
+
+PATH
   remote: vendor/gems/delayed_job
   specs:
     delayed_job (1.7.0)
@@ -852,6 +859,7 @@ DEPENDENCIES
   compass-rails (= 2.0.0)
   country_select!
   curb (~> 0.8.4)
+  custom_fields!
   dalli
   database_cleaner
   deadlock_retry!

@@ -29,10 +29,9 @@ RSpec.describe Social::FacebookPagesController do
       
       Koala::Facebook::OAuth.any_instance.stubs(:get_access_token).returns("23324324")
     
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(facebook_pages)
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(sample_facebook_profile)
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_object).returns(facebook_page_info)
-      Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_picture).returns(sample_page_picture)
+      Koala::Facebook::API.any_instance.stubs(:get_connections).returns(facebook_pages)
+      Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_facebook_profile, facebook_page_info)
+      Koala::Facebook::API.any_instance.stubs(:get_picture).returns(sample_page_picture)
       
         get :index, {
           :code => "CODE123"
@@ -81,9 +80,9 @@ RSpec.describe Social::FacebookPagesController do
     
     Koala::Facebook::OAuth.any_instance.stubs(:get_access_token).returns("23324324")
   
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:get_connections).returns(facebook_pages, [])
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:delete_connections).returns([])
-    Koala::Facebook::GraphAndRestAPI.any_instance.stubs(:put_connections).returns([])
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(facebook_pages, [])
+    Koala::Facebook::API.any_instance.stubs(:delete_connections).returns([])
+    Koala::Facebook::API.any_instance.stubs(:put_connections).returns([])
    
     put :edit, {
                 "code" => "PAGETABCODE123",

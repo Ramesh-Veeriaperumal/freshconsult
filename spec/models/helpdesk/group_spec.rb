@@ -59,19 +59,15 @@ describe Group do
  		@ag4 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
                                             :active => 1,
                                             :group_id => @group.id, :available => 0})
- 		if @group6.account.features?(:round_robin_revamp)
- 			value = get_others_redis_list(@group6.round_robin_key)
-			value.should_not be_nil
-		end
+ 		value = get_others_redis_list(@group6.round_robin_key)
+		value.should_not be_nil
 	end
 
 	it "should not create a list if group is created without round robin" do
 		@group7 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:default],
 	    								:name =>  "dummy group6"})
-		if @group7.account.features?(:round_robin_revamp)
-			value = get_others_redis_list(@group7.round_robin_key)
-			value.should be_nil
-		end
+		value = get_others_redis_list(@group7.round_robin_key)
+		value.should be_nil
 	end
 
 	it "should create a list if group is updated with round_robin" do
@@ -81,10 +77,8 @@ describe Group do
 		@ag1 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
                                             :active => 1,:group_id => @group8.id})
 
-		if @group8.account.features?(:round_robin_revamp)
-			value = get_others_redis_list(@group8.round_robin_key)
-			value.should_not be_nil
-		end
+		value = get_others_redis_list(@group8.round_robin_key)
+		value.should_not be_nil
 	end
 
 	it "should not have a list if group is updated without round_robin" do
@@ -92,14 +86,11 @@ describe Group do
 	    								:name =>  "dummy group6"})
 		@group9.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
 		@group.save
-		if @group9.account.features?(:round_robin_revamp)
-			value = get_others_redis_list(@group9.round_robin_key)
-			value.should be_nil
-		end
+		value = get_others_redis_list(@group9.round_robin_key)
+		value.should be_nil
 	end
 
 	it "should delete the round robin list after group deletion" do
-		@account.features.round_robin_revamp.create
 		@group9 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
 	    								:name =>  "dummy group6"})
 
@@ -113,7 +104,6 @@ describe Group do
 	end
 
 	it "should delete the round robin list after group is updated with round_robin turned off" do
-		@account.features.round_robin_revamp.create
 		@group9 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
 	    								:name =>  "dummy group6"})
 

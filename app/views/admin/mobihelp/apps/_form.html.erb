@@ -45,34 +45,10 @@
       <%= content_tag :h3, t('admin.mobihelp.apps.form.configurations').html_safe, :class => "lead title" %>
       <%= f.fields_for :config do |c| %>
         <div class="control-group">
-          <%= c.label :bread_crumbs, t('admin.mobihelp.apps.form.bread_crumbs').html_safe, :class => "control-label" %>
-          <div class="controls">
-            <%= c.select :bread_crumbs, Mobihelp::App::CONFIGURATIONS[:bread_crumbs], {:selected => @app.config[:bread_crumbs]}, :class => "select2 span2" %>
-            <%= content_tag( :div, t("admin.mobihelp.apps.form.bread_crumbs_info"), :class => "info-data span12" ) %>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <%= c.label :debug_log_count, t('admin.mobihelp.apps.form.debug_log_count').html_safe, :class => "control-label" %>
-          <div class="controls">
-            <%= c.select :debug_log_count, Mobihelp::App::CONFIGURATIONS[:debug_log_count], {:selected => @app.config[:debug_log_count]}, :class => "select2 span2"%>
-            <%= content_tag( :div, t("admin.mobihelp.apps.form.debug_log_count_info"), :class => "info-data span12" ) %>
-          </div>
-        </div>
- 
-        <div class="control-group">
           <%= c.label :solutions, t('admin.mobihelp.apps.form.solutions').html_safe, :class => "control-label" %>
           <div class="controls">
             <%= c.collection_select :solutions, current_account.solution_categories.find(:all, :conditions => "is_default = false"), :id, :name, {:selected => @app.config[:solutions].to_i}, :class => "select2 span5" %>
             <%= content_tag( :div, t("admin.mobihelp.apps.form.solutions_info"), :class => "info-data span12" ) %>
-          </div>
-        </div>
-        
-        <div class="control-group">
-          <%= c.label :app_review_launch_count, t('admin.mobihelp.apps.form.app_review').html_safe, :class => "control-label" %>
-          <div class="controls">
-            <%= c.select :app_review_launch_count, @app_review_launches , {:selected => @app.config[:app_review_launch_count]}, :class => "select2 span5" %>
-            <%= content_tag( :div, t("admin.mobihelp.apps.form.app_review_info"), :class => "info-data span12" ) %>
           </div>
         </div>
 
@@ -83,7 +59,7 @@
                 <%= c.label :app_store_id, "#{t('admin.mobihelp.apps.form.app_store_id')}".html_safe, :class => "control-label" %>
                 <div class = "controls">
                   <%= c.text_field :app_store_id, :value => @app.config[:app_store_id], :class => "text", :placeholder => t('admin.mobihelp.apps.form.app_store_id') %>
-                  <%= content_tag( :div, t("admin.mobihelp.apps.form.app_store_id_info"), :class => "info-data span12" ) %>
+                  <%= content_tag( :div, t("admin.mobihelp.apps.form.app_store_id_v12_info"), :class => "info-data span12" ) %>
                 </div>
               </div>
             </div>
@@ -106,8 +82,6 @@
           </div>
         <%end%>
       <%end%>
-
-
 
       <div class="button-container">
         <%= link_to t('cancel'), admin_mobihelp_apps_path, :class => "btn" %>

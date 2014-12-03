@@ -43,11 +43,13 @@ jQuery(document).ready(function(){
     	}
     	jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
     }
-			
-			
-			$J("#SearchResultsBar a").live("click", function(){
-				window.location = this.href; 
-			});
+
+    var handleFullSearch = function() {
+      var searchKey = encodeURIComponent(jQuery('#header_search').val());
+      var url = jQuery('.nav_search').attr('action')+'?term='+searchKey;
+      window.pjaxify(url);
+    }
+
 			$J("#SearchResultsBar a").die('hover');
 			$J("#SearchResultsBar a").live("hover", function(){
 				$J(currentactive).removeClass("active");
@@ -130,4 +132,7 @@ jQuery(document).ready(function(){
 					break;
 				}
 			});
+      jQuery('body').on('submit', '.nav_search', function(ev){ 
+        ev.preventDefault(); handleFullSearch();
+      });
 })

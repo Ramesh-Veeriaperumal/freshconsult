@@ -15,129 +15,17 @@ jQuery('body').on('assetLoaded.fjax', function() {
 	   	<%= error_messages_for :user %>
 	   	<%= error_messages_for :user_emails %>
 	 <%end%>
+	 	 
+<div class="row-fluid">
+  <div class="span3">
+    <%= render :partial => "/shared/profile_avatar.html", :locals => { :user => @user} %> 
+  </div>
 
-
-	<ul id="cont-form" class="form-horizontal">	
-		<li class="control-group">
-			<%= label(:user, :name, t('user.full_name'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_field(:user, :name, :class => "text required input-xlarge" )  %>
-			</div>
-		</li>
-		<li class="control-group">
-			<%= label(:user, :job_title, t('user.title'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_field(:user, :job_title, :class => "text input-xlarge" ) %>
-			</div>
-		</li>
-		<% if current_account.features_included?(:contact_merge_ui) %>
-		<div id="emails_con" class="email_con">
-			<li class="control-group closebottom">
-				<%= label_tag :email, "Email", :id => "email-label", :class => "control-label" %>
-					<%= f.fields_for :user_emails do |ue| %>
-					<div class="controls">
-						<% if !ue.object.primary_role %>
-							<%= ue.text_field :email, :id => "email_sec", :class => "email cont text input-xlarge" %> 
-							<%= f.object.new_record? ? "" : 
-							content_tag(:span, "", :class => "remove_image rem_mail", "data-email" => ue.object.id)%>
-						<% else %>
-							<%= ue.text_field :email, :id => "email_sec", :class => "email cont text input-xlarge default_email" %>
-							<% unless f.object.new_record? %>
-								<% unless @user.email_required? %>
-								<span class='email_primary remove_image rem_mail'></span>
-								<% end %>
-							<p class="primary_text"><b><%= t('merge_contacts.primary') %></b></p>
-							<% end %>
-						<% end %>
-                        <%= ue.hidden_field :_destroy, :value => false %>
-					</div> <!-- The hidden id field gets added after this -->
-					<% end %>
-			</li>
-		</div>
-		<div class="controls new_email_text"><a id="add_new_mail" class="<%= f.object.new_record? ? "disabled" : "" %>" href="#"><span id="add_email"></span><%= t('merge_contacts.add_another') %></a></div>
-		<% else %>
-		<li class="control-group">
-			<%= label(:user, :email, t('user.email'), :class => "control-label") %> 
-			<div class="controls">
-				<%= text_field(:user, :email, :id => "email_primary", :class => "email input-xlarge") %> 
-			</div>
-		</li>
-		<% end %>
-		<li class="control-group">
-			<%= label(:user, :phone, "#{t('user.work_phone')}.",:class => "control-label" ) %>
-			<div class="controls">
-				<%= text_field(:user, :phone, :class => "text input-xlarge", :id => "phone_work" , :placeholder => t('user.work') ) %>
-			</div>
-		</li>
-		<li class="control-group">
-			<%= label(:user, :mobile, "#{t('user.mobile_phone')}.",:class => "control-label" ) %>
-			<div class="controls">
-				<%= text_field(:user, :mobile, :class => "text input-xlarge", :id => "phone_mobile" , :placeholder => t('user.mobile') ) %>
-			</div>
-		</li>
-		<li class="control-group">
-			<%= label(:user, :twitter_id, t('user.twitter_id'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_field(:user, :twitter_id, :class => "text input-xlarge" ) %>
-			</div>
-		</li>
-		<li class="control-group">
-			<label class="control-label"><%=t("user.profile_picture")%></label>
-			<div class="controls">
-				<%= render :partial => "/shared/profileavatar", :formats => [:html], :locals => { :user => @user, :type => type } %> 
-			</div>
-		</li>
-
-
-		<li class="control-group">
-			<%= label(:user, :company_name, t('user.company'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_field(:user, :company_name, :class => "text input-xlarge" , :id => "contact_customer") %>
-			</div>
-		</li>
-		<li class="control-group">	
-			<label class="control-label"></label>
-			<div class="controls">		
-			<%= check_box(:user, :client_manager, { :disabled => @user.company_name.nil?, :id =>'contact_role' }, true, false) %>
-			   	<%= t('contacts.role.info') %>
-			</div>
-		</li>
-		<li class="control-group">
-			<%= label(:user, :address, t('user.address'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_area(:user, :address, :class => "text input-xlarge", :rows => 5 ) %>
-			</div>
-		</li>		
-		
-		<% if feature?(:multi_timezone) %>
-			<li class="control-group">
-				<%= label(:user, :time_zone, t('account.time_zone'), :class => "control-label") %>
-				<div class="controls">
-					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , {:default => @user.time_zone} , {:class => 'select2 input-large'} %>
-				</div>
-			</li>
-		<% end %>
-		
-		<% if feature?(:multi_language) %>  
-			<li class="control-group">
-				<%= label(:user, :language, t('account.language'), :class => "control-label") %>
-				<div class="controls">
-					<%= f.select :language, I18n.available_locales_with_name , {:selected => @user.language ? @user.language.to_sym() : current_portal.language.to_sym()} , :class => "select2 input-medium"%>
-				</div>
-			</li>
-		<% end %>
-		<li class="control-group">
-			<%= label(:user, :tag_names, t('tag.title'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_field :user, :tag_names, :class => "select2 input-xxlarge"%>
-			</div>
-		</li>
-		<li class="control-group">
-			<%= label(:user, :description, t('user.back_info'), :class => "control-label") %>
-			<div class="controls">
-				<%= text_area(:user, :description, :class => "text input-xxlarge", :id => "user_binfo", :rows => 5, 
-					:placeholder => "example - LA Lakers fan etc." ) %>
-			</div>
-		</li>		
-		
-	</ul>	 
+  <div class="span9">
+  	<ul class="form-horizontal contact-form">
+    <% contact_fields.each do |field| %>
+    <%=  render_as_list f, field %>
+    <% end %>
+  	</ul>	 
+  </div>
+</div>

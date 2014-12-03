@@ -51,6 +51,11 @@ RSpec.describe Helpdesk::TimeSheetsController do
   #   delete :destroy, {:id => time_sheet.id, :format => 'json'}
   #   response.status.should be_eql(200)   
   # end
+  it "should delete an existing time entry" do
+    time_sheet = create_test_time_entry({}, @test_ticket)
+    delete :destroy, {:id => time_sheet.id, :format => 'json'}
+    response.status.should be_eql(200)   
+  end
   
   it "should show an all time entries for the ticket" do
     time_sheet = create_test_time_entry({}, @test_ticket)

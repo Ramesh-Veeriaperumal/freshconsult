@@ -7,7 +7,7 @@ require 'spec_helper'
 #     Social::FacebookPage.any_instance.stubs(:after_commit_on_create => true)
 #     Social::FacebookPage.any_instance.stubs(:after_commit_on_update => true)
 #     FBClient.any_instance.stubs(:subscribe_for_page).returns(true)
-#     # Social::FacebookPosts.any_instance.stubs(:fetch).returns({})
+#     # Facebook::Fql::Posts.any_instance.stubs(:fetch).returns({})
 #     fb_page = FactoryGirl.build(:facebook_pages)
 #     fb_page.account_id = @account.id
 #     fb_page.save(validate: false)
@@ -15,7 +15,7 @@ require 'spec_helper'
 
 #   after(:all) do
 #     FBClient.any_instance.stubs(:subscribe_for_page).returns(true)
-#     # Social::FacebookPosts.any_instance.stubs(:fetch).returns({})
+#     # Facebook::Fql::Posts.any_instance.stubs(:fetch).returns({})
 #     Social::FacebookPage.destroy_all
 #   end
 

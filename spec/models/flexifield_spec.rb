@@ -25,7 +25,7 @@ def create_ticket_custom_fields
 end
 
 def create_essential_variables 
-  @flexifield_def = @account.flexi_field_defs.find_by_module('Ticket')
+  @flexifield_def = @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}")
   @flexifield_names = @flexifield_def.flexifield_def_entries.map &:flexifield_name
   @flexifield_aliases = @flexifield_def.flexifield_def_entries.map &:flexifield_alias
 end

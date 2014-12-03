@@ -146,7 +146,8 @@ class Freshfone::Number < ActiveRecord::Base
 			end
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
-			FreshfoneNotifier.number_renewal_failure(account, self.number)
+			notify_number_renewal_failure(e)
+			# FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
 		end
 	end
 
@@ -253,6 +254,13 @@ class Freshfone::Number < ActiveRecord::Base
 
 		def inuse_attachment_ids
 			MESSAGE_FIELDS.map { |message| self[message].attachment_id unless self[message].blank? }.compact
+		end
+
+		def notify_number_renewal_failure(e)
+			message = "The exception is #{e.message} :
+									#{e.backtrace.first(5).join(':::')}"
+			notification = "Number renewal failed for #{number} in account #{account.id}"
+			FreshfoneNotifier.deliver_ops_alert(account, notification, message)
 		end
 
 end

@@ -27,4 +27,10 @@ if Rails.env.test?
     factory :monitorship do
     end
   end
+
+  FactoryGirl.define do
+    factory :vote, :class => Vote do |v|
+    end
+  end
+
 end

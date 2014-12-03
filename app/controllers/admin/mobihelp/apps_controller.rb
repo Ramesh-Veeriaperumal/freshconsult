@@ -2,7 +2,6 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
 
 
   before_filter :load_app, :only => [:edit, :update, :destroy]
-  before_filter :load_app_review_launches, :only => [:new, :edit, :update, :create]
 
   def index
     @applist = current_account.mobihelp_apps.find_all_by_deleted(false)
@@ -60,14 +59,4 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
       @app = current_account.mobihelp_apps.find(params[:id])
     end
 
-    def load_app_review_launches
-      @app_review_launches = Hash.new
-      Mobihelp::App::CONFIGURATIONS[:app_review_launches].each do |count| 
-        if count == "0"
-          @app_review_launches[t(:'admin.mobihelp.apps.form.app_review_launch_never')] = count
-        else
-          @app_review_launches[t(:'admin.mobihelp.apps.form.app_review_launch_count', :count => count)] = count
-        end
-      end
-  end
 end

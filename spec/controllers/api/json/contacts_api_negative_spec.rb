@@ -24,8 +24,19 @@ RSpec.describe ContactsController do
 		error_status?(response.status).should be_truthy
   end
 
+     
+  it "should not make agent as agent again" do
+    contact = add_new_user(@account,{})   
+    put :make_agent, {:id => contact.id,:format => 'json'}    
+    put :make_agent, {:id => contact.id,:format => 'json'}
+    record_not_found_status?(response.status).should be_truthy
+  end
+ 
+  def record_not_found_status?(status)
+     status == 404
+  end
 
-    def error_status?(status)
+  def error_status?(status)
       status == 422
-    end
+  end
 end

@@ -147,7 +147,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def as_json(options = {})
     return super(options) unless options[:tailored_json].blank?
     options[:methods] = Array.new if options[:methods].nil?
-    options[:methods].push(:attachments)
+    options[:methods].push(:attachments, :support_email)
     options[:methods].push(:user_name, :source_name) unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options
@@ -165,12 +165,17 @@ class Helpdesk::Note < ActiveRecord::Base
     # }
     Helpdesk::NoteDrop.new self
   end
+
+  def support_email
+    hash = parse_email_text(self.from_email)
+    hash[:email]
+  end
   
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true, :include=>:attachments, 
+      super(:builder => xml, :skip_instruct => true, :include =>:attachments, :methods => [:support_email],
                           :except => [:account_id,:notable_id,:notable_type]) do |xml|
         unless options[:human].blank?
           xml.tag!(:source_name,self.source_name)

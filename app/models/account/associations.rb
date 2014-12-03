@@ -45,6 +45,8 @@ class Account < ActiveRecord::Base
     :conditions => Proc.new { 
       "name = 'Ticket_#{self.id}'"
     }
+  has_one  :contact_form
+  has_one  :company_form
   has_many :flexifield_def_entries
   
   has_many :data_exports
@@ -144,7 +146,6 @@ class Account < ActiveRecord::Base
   has_many :published_articles, :through => :public_folders,
               :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
    
-  has_one  :contact_form
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
 

@@ -15,6 +15,12 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   acts_as_list :scope => 'pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
    \'#{pickable_type}\''
   before_create :set_account_id
+  
+  # scope_condition for acts_as_list and as well for using index in fetching sub_picklist_values
+  def scope_condition
+    "pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
+    '#{pickable_type}'"
+  end
 
   def choices=(c_attr)
     sub_picklist_values.clear
@@ -29,6 +35,10 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def choices
     sub_picklist_values.collect { |c| [c.value, c.value]}
+  end
+
+  def self.with_exclusive_scope(method_scoping = {}, &block) # for account_id in sub_picklist_values query
+    with_scope(method_scoping, :overwrite, &block)
   end
 
   private

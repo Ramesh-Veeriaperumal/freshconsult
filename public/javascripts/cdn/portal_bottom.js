@@ -14,5 +14,5 @@
 //= require portal/portal_custom_validators.js
 //= require portal/portal-app-actions.js
 //= require portal/portal-compatibility.js
-//= require dates.js
+//= require util-dates.js
 //= require frameworks/plugins/jquery.unveil.js

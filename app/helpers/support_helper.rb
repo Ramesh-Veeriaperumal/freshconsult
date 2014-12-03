@@ -3,6 +3,7 @@ module SupportHelper
 	include Portal::PortalFilters
   include Redis::RedisKeys
   include Redis::PortalRedis
+  include Portal::Helpers::DiscussionsHelper
   include Portal::Helpers::Article
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
@@ -25,7 +26,7 @@ module SupportHelper
 					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic"
 					}
 
-    def time_ago(date_time)
+	def time_ago(date_time)
 		%( <span class='timeago' title='#{short_day_with_time(date_time)}' data-timeago='#{date_time}' data-livestamp='#{date_time}'>
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')}
 		   </span> ).html_safe unless date_time.nil?
@@ -225,13 +226,6 @@ module SupportHelper
 		dom.join("").html_safe
   end
 
-	# No content information for forums
-	def filler_for_forums portal
-		%( <div class='no-results'> #{I18n.t('portal.no_forums_info_1')} </div>
-		   <div class='no-results'> #{ I18n.t('portal.no_forums_info_2',
-		   		:start_topic_link => link_to_start_topic(portal))} </div> )
-	end
-
 	def filler_for_solutions portal
 		%( <div class="no-results">#{ I18n.t('portal.no_articles_info_1') }</div>
 		   <div class="no-results">#{ I18n.t('portal.no_articles_info_2') }</div> )
@@ -277,243 +271,10 @@ module SupportHelper
 		output << %(</ul>)
 	end
 
-	# Default topic filter that shows up in the topic list
-	def default_topic_filters forum
-		output = []
-		output << %(<ul class="nav nav-pills nav-filter">)
-			forum.allowed_filters.each do |f|
-				output << %(<li class="#{forum.current_topic_filter == f[:name] ? "active" : ""}">)
-				output << link_to(t("forums_order.#{f[:name]}"), f[:url])
-				output << %(</li>)
-			end
-		output << %(</ul>)
-	end
-
-	# Follow/unfollow button
-	# To modify label the liquid can be modified as so
-	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
-	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(topic, follow_label, unfollow_label)
-	end
-
-	def follow_forum_button forum, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
-		follow_button(forum, follow_label, unfollow_label)
-	end
-
-	def follow_button current_obj, follow_label, unfollow_label
-		if User.current
-			_monitoring = current_obj['followed_by_current_user?']
-
-			link_to _monitoring ? unfollow_label : follow_label, current_obj['toggle_follow_url'],
-				"data-remote" => true, "data-method" => :put,
-				:id => "topic-monitor-button",
-				:class => "btn btn-small #{_monitoring ? 'active' : ''}",
-				"data-toggle" => "button",
-				"data-button-active-label" => unfollow_label,
-				"data-button-inactive-label" => follow_label
-		end
-	end
-
 	def link_to_folder_with_count folder, *args
 		link_opts = link_args_to_options(args)
 		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>".html_safe
 		content_tag :a, label, { :href => folder['url'], :title => h(folder['name']) }.merge(link_opts)
-	end
-
-	def link_to_forum_with_count forum, *args
-		link_opts = link_args_to_options(args)
-		label = " #{h(forum['name'])} <span class='item-count'>#{forum['topics_count']}</span>".html_safe
-		content_tag :a, label, { :href => forum['url'], :title => h(forum['name']) }.merge(link_opts)
-	end
-
-	def link_to_start_topic portal, *args
-		link_opts = link_args_to_options(args)
-    	label = link_opts.delete(:label) || I18n.t('portal.topic.start_new_topic')
-    	content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(link_opts)
-	end
-
-	def topic_list forum, limit = 5
-		if(forum['topics_count'] > 0)
-			topics = forum['topics']
-			output = []
-			output << %(<ul>#{ topics.take(limit).map { |t| topic_list_item t.to_liquid } })
-			if topics.size > limit
-				output << %(<a href="#{forum['url']}" class="see-more">)
-				output << %(#{ I18n.t('portal.topic.see_all_topics', :count => forum['topics_count']) })
-				output << %(</a>)
-			end
-			output << %(</ul>)
-			output.join("")
-		end
-	end
-
-	def topic_list_item topic
-		output = <<HTML
-			<li>
-				<div class="ellipsis">
-					<a href="#{topic['url']}">#{h(topic['title'])}</a>
-				</div>
-				<div class="help-text">
-					#{ topic_info topic }
-				</div>
-			</li>
-HTML
-		output.html_safe
-	end
-
-	def topic_info topic
-		output = []
-		output << topic_brief(topic)
-		output << %(<div> #{last_post_brief(topic.to_liquid)} </div>) if topic.has_comments
-		output.join(", ")
-	end
-
-	def fb_topic_info topic
-		if topic.has_comments
-			post = topic.last_post.to_liquid
-			%(#{I18n.t('portal.topic.fb_reply_info',
-				:reply_url => topic.last_post_url,
-				:user_name => h(post.user.name),
-				:created_on => time_ago(post.created_on)
-				)}
-			)
-		else
-			%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
-		end
-	end
-
-	def my_topic_info topic
-		if topic.has_comments
-			post = topic.last_post.to_liquid
-			"#{I18n.t('portal.topic.my_topic_reply', :post_name => h(post.user.name), :created_on => time_ago(post.created_on))}"
-		else
-			topic_brief(topic)
-		end
-	end
-
-	def topic_info_with_votes topic
-		output = []
-		output << topic_brief(topic)
-		output << last_post_brief(topic.to_liquid) if topic.has_comments
-		output << bold(topic_votes(topic)) if(topic.votes > 0)
-		output.join(", ")
-	end
-
-	def last_post_brief topic, link_label = t('portal.topic.last_reply')
-		if topic.last_post.present?
-			post = topic.last_post.to_liquid
-			%(#{I18n.t('portal.topic.last_post_brief',
-					:last_post_url => topic.last_post_url,
-					:link_label => h(link_label),
-					:user_name => h(post.user.name),
-					:created_on => time_ago(post.created_on))
-				})
-		end
-	end
-
-	def topic_brief topic
-		%(#{I18n.t('portal.topic.topic_brief', :user_name => h(topic.user.name), :created_on => time_ago(topic.created_on))})
-	end
-
-	def topic_votes topic
-		pluralize topic.votes, "vote"
-	end
-
-	def topic_labels topic
-		output = []
-		output << %(<div class="topic-labels">)
-		output << %(<span class="label label-sticky">
-				#{t('topic.sticky')}</span>) if topic['sticky?']
-		output << %(<span class="label label-answered">
-				#{t('topic.questions.answered')}</span>) if topic['answered?']
-		output << %(<span class="label label-solved">
-				#{t('topic.problems.solved')}</span>) if topic['solved?']
-		output << %(<span class="label label-#{topic['stamp']}">
-				#{t('topic.ideas_stamps.'+topic['stamp'])}</span>) if topic['stamp'].present?
-		output << %(</div>)
-		output.join('')
-	end
-
-	def post_topic_in_portal portal, post_topic = false
-		output = []
-		output << %(<section class="lead">)
-
-		if portal['facebook_portal']
-			text_key = post_topic ? 'login_to_post_topic' : 'login_to_post_comment'
-			output << I18n.t("portal.#{text_key}")
-		elsif portal['can_signup_feature']
-			text_key = post_topic ? 'login_signup_to_post_topic' : 'login_signup_to_post_comment'
-			output << I18n.t("portal.#{text_key}", 
-												:topic_reply_url => portal['topic_reply_url'], 
-												:signup_url => portal['signup_url'])
-		end
-
-		output << %(</section>)
-
-		output.join('')
-	end
-
-	def link_to_topic_edit topic, label = I18n.t("topic.edit")
-		if User.current == topic.user
-			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
-		end
-	end
-
-	def link_to_mark_as_solved topic, solve_label = I18n.t("forum_shared.post.mark_as_solved"), unsolve_label = I18n.t("forum_shared.post.mark_as_unsolved")
-		if User.current == topic.user && topic.forum.problems?
-			link_to topic['solved?'] ? unsolve_label : solve_label, topic['toggle_solution_url'],
-						"data-method" => :put,
-						:class => "btn btn-small"
-		end
-	end
-
-	def link_to_see_all_topics forum
-		label = I18n.t('portal.topic.see_all_topics', :count => forum['topics_count'])
-		link_to label, forum['url'], :title => label, :class => "see-more"
-	end
-
-	def post_actions post
-		output = []
-		if User.current == post.user
-		output << %(<span class="pull-right post-actions" id="post-actions-#{post["id"]}">
-
-						<a href="#{ post["edit_url"] }" data-remote="true" data-type="GET" data-loadonce
-								 	data-update="#post-#{post["id"]}-edit" data-show-dom="#post-#{post["id"]}-edit"
-								    data-hide-dom="#post-#{post["id"]}-description">
-									<i class="icon-edit-post"></i>
-						</a>
-						<a href="#{ post["delete_url"] }" data-method="delete"
-				     			data-confirm="This post will be delete permanently. Are you sure?">
-				     			<i class="icon-delete-post"></i>
-				     		</a>
-
-					</span>)
-		elsif post.user_can_mark_as_answer?
-			label = post.answer? ? t('forum_shared.post.unmark_answer') : t('forum_shared.post.mark_answer')
-			unless post.topic.answered? and !post.answer?
-				output << %(<div class="pull-right post-actions">
-								<a 	href="#{post['toggle_answer_url']}"
-									data-method="put"
-									data-toggle="tooltip"
-									title="#{label}"
-									><i class="icon-#{post.answer? ? 'unmark' : 'mark'}-answer"></i></a>
-							</div>)
-			else
-                output << %(<div class="pull-right post-actions">
-			                	<a 	href="#{post.best_answer_url}"
-			                		data-target="#best_answer"  rel="freshdialog"
-			                		title="#{label}"
-			                		data-submit-label="#{label}" data-close-label="#{t('cancel')}"
-			                		data-submit-loading="#{t('ticket.updating')}..."
-			                		data-width="700px"
-			                		data-toggle="tooltip"
-									title="#{label}"
-			                		><i class="icon-mark-answer"></i></a>
-			                </div>)
-            end
-		end
-
-		output.join('')
 	end
 
 	# Ticket specific helpers
@@ -649,16 +410,6 @@ HTML
 	end
 
 	# NON-FILTER HELPERS
-	# Options list for forums in new and edit topics page
-	def forum_options
-		_forum_options = []
-		current_portal.forum_categories.each do |c|
-			_forums = c.forums.visible(current_user).reject(&:announcement?).map{ |f| [f.name, f.id] }
-			_forum_options << [ c.name, _forums ] if _forums.present?
-		end
-		_forum_options
-	end
-
 	# Search url for different tabs
 	def tab_based_search_url
 		case @current_tab
@@ -852,25 +603,6 @@ HTML
     end
     _output.join("").html_safe
   end
-
-	def post_attachments post
-		output = []
-
-		if(post.attachments.size > 0 or post.cloud_files.size > 0)
-			output << %(<div class="cs-g-c attachments" id="post-#{ post.id }-attachments">)
-
-			post.attachments.each do |a|
-				output << attachment_item(a.to_liquid)
-			end
-			(post.cloud_files || []).each do |c|
-				output << cloud_file_item(c.to_liquid)
-			end
-
-			output << %(</div>)
-		end
-
-		output.join('').html_safe
-	end
 
 	def ticket_attachemnts ticket
 		output = []

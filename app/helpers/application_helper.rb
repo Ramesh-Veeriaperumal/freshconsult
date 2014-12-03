@@ -379,6 +379,11 @@ module ApplicationHelper
     data
   end
 
+  def target_topic_path(topic_id)
+    topic = current_account.topics.find(topic_id)
+    link_to topic.title, discussions_topic_path(topic.id)
+  end
+
   def responder_path(args_hash)
     request.format == "application/json" ? args_hash['name'] : link_to(h(args_hash['name']), user_path(args_hash['id']))
   end

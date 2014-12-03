@@ -45,6 +45,8 @@ module MemcacheKeys
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
+  CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{contact_form_id}"
+
   # ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
   # Portal customization related keys

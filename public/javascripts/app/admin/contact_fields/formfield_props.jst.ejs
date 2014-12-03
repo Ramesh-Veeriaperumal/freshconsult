@@ -1,0 +1,197 @@
+<% 
+	var isDefault = /^default/.test(field_type) ? true : false,
+		isEmail = (field_type=='default_email') ? true : false,
+		spanClass = isEmail ? 'span12' : 'span6', 
+		hideIfEmail = isEmail ? 'hide' : '';
+%>
+<div class="custom-fields-props-dialog modal hide fade <%= isEmail? 'email' : '' %>" id='CustomPropsModal'>
+	<div class='modal-header clearfix'>
+		<h3 class="ellipsis modal-title pull-left">
+			<% icon = 'ficon-'+((dom_type=='email') ? 'mail' : dom_type) %>
+			<span class= '<%= icon %> dom-icon tooltip' title='<%= translate.get(dom_type) %>'></span>
+			<%= translate.get('formTitle') + " : " %> 
+			<span class='field-label'><%= label %></span>
+		</h3>
+		<% if (isDefault) { %>
+			<span class='label label-light pull-right default-tag'> <%= translate.get('default') %> </span>
+		<%  } %>
+	</div>
+	<div class='modal-body'>
+		<form id="CustomProperties" action="#">
+			<input type="hidden" 
+							name="custom-type" 
+							value="<%= field_type %>" />
+			<div class='sections-wrapper'>
+				<div class="section">
+					<h3 class="title"><%= translate.get('behavior') %></h3>
+					<div class="row-fluid">
+						<div class="span6 <%= hideIfEmail %>">
+							<label class='caption'> <%= translate.get('forAgent') %> </label>
+							<div>
+								<fieldset> 
+									<% isDisabled = ' ' %>
+									<% if (field_type == 'default_email' || field_type == 'default_twitter_id') { 
+													 isDisabled = ' disabled' 
+									 } %>
+									<label class="checkbox<%= isDisabled %>">
+										<input type="checkbox" 
+														name="agent-required" 
+														<%= required_for_agent ? 'checked ' : ' ' %>
+														<%= isDisabled %> />
+										<%= translate.get('agentMandatory') %> 
+									</label>
+								</fieldset>
+							</div>
+						</div>
+						<div class='<%= spanClass %>'>
+							<label class='caption <%= hideIfEmail %>'> <%= translate.get('forCustomer') %> </label>
+							<div>
+								<fieldset id="customNestedConfig">
+									<% isDisabled = disabled_customer_data['visible_in_portal'] ? 'disabled' : ''  %>
+									<label class="checkbox <%= isDisabled %>">
+										<% if(isEmail) { %>
+											<span class='ficon-checkmark-thick chkbox-img'></span>
+										<% } else { %> 
+											<input type="checkbox" 
+															toggle_ele="nestedlvl2" 
+															<%= visible_in_portal ? 'checked ' : ' ' %>
+															name="customer-visible"
+															<%= isDisabled %>/>
+										<% } %>
+										<%= translate.get('customerVisible') %> 
+									</label>
+									<fieldset data-nested-value="nestedlvl2" class="nestedChoices" data-disabled-by-default="<%= disabled_customer_data['editable_in_portal'] %>">
+										<% isDisabled = disabled_customer_data['editable_in_portal'] ||!visible_in_portal ? ' disabled' : ' '  %>
+										<label class="checkbox <%= isDisabled %> <%= hideIfEmail %>">
+											<input type="checkbox" 
+															toggle_ele="nestedlvl3" 
+															name="customer-editable" 
+															<%= visible_in_portal && editable_in_portal ? 'checked ' : ' ' %>
+															<%= isDisabled %> />
+											<%= translate.get('customerEditable') %> 
+										</label>
+										<fieldset data-nested-value="nestedlvl3" class="nestedChoices" data-disabled-by-default="<%= disabled_customer_data['editable_in_signup'] %>">
+											<% isDisabled = disabled_customer_data['editable_in_signup'] || !(visible_in_portal && editable_in_portal) ? ' disabled' : ' '  %>
+											<label class="checkbox <%= isDisabled %>">
+												<% if(isEmail) { %>
+													<span class='ficon-checkmark-thick chkbox-img'></span>
+												<% } else { %> 
+													<input type="checkbox" 
+																	name="customer-edit-signup" 
+																	<%= visible_in_portal && editable_in_portal && editable_in_signup ? 'checked ': ' ' %>
+																	<%= isDisabled %>/>
+												<% } %>
+												<%= translate.get('customerEditSignup') %> 
+											</label>
+										</fieldset>
+										<fieldset data-nested-value="nestedlvl3" class="nestedChoices <%= hideIfEmail %>" data-disabled-by-default="<%= disabled_customer_data['required_in_portal'] %>">
+											<% isDisabled = disabled_customer_data['required_in_portal'] || !(visible_in_portal && editable_in_portal) ? ' disabled' : ' '  %>
+											<label class="checkbox <%= isDisabled %>">
+												<input type="checkbox" 
+																name="customer-required" 
+																<%= visible_in_portal && editable_in_portal && required_in_portal ? 'checked ': ' ' %>
+																<%= isDisabled %> />
+												<%= translate.get('customerMandatory') %> 
+											</label>
+										</fieldset>
+									</fieldset>
+								</fieldset>  
+							</div>
+						</div>
+					</div>
+				</div> 
+				<div class="section">
+					<h3 class="title"><%= translate.get('label') %></h3>
+					<div class="row-fluid">
+						<% isDisabled = (isDefault) ? 'disabled' : '' %>
+						<fieldset class="<%= spanClass %>">
+							<input type="text" 
+											placeholder="<%= translate.get('labelAgent') %>" 
+											rel="companion" 
+											data-companion="#customlabelportal" 
+											name="custom-label" 
+											value="<%= label %>" 
+											class="<%= isDisabled %>" 
+											<%= isDisabled %>/>
+						</fieldset>
+						<fieldset class="<%= hideIfEmail %>">
+
+							<input type="text" 
+											placeholder="<%= translate.get('labelCustomer') %>" 
+											name="custom-label-in-portal" 
+											id="customlabelportal" 
+											value="<%= label_in_portal %>"
+											<%= isDisabled %>/>
+						</fieldset>
+					</div>
+				</div>
+				<% if (field_type == 'custom_text') { %>
+					<div class='section'>
+						<% regexValidation = (field_options != null 
+													&& typeof(field_options) === "object" 
+													&& field_options['regex']) ?
+														'checked' : ''; %>
+						<% regexValue = (regexValidation == 'checked') ? field_options['regex'] : ''; %>
+						<fieldset> 
+							<label class="checkbox<%= isDisabled %>">
+								<input type="checkbox" 
+												name="custom-regex-required" 
+												<%= regexValidation %> />
+								<%= translate.get('validateRegex') %> 
+							</label>
+						</fieldset>
+						<% 	isVisible = 'hide';
+							if (regexValidation == 'checked') { 
+								isVisible = 'show';
+						 	} 
+						%>
+						<div class="row-fluid <%= isVisible %>">
+							<fieldset class="span12">
+								<input type="text" 
+												placeholder="<%= translate.get('regExp') %>"  
+												name="custom-reg-exp" 
+												value="<%= regexValue %>" />
+								<p> <%= translate.get('regExpExample') %>
+									<a href='http://rubular.com/' target='_blank'><%= translate.get('learnMore') %> </a>
+								</p>
+							</fieldset>
+						</div>
+					</div>
+				<% } %>
+				<% if (field_type == 'custom_dropdown') { %>
+					<div class="section colsets">
+						<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
+						<input type="hidden" name="choicelist" value="" />
+						<div name="custom-choices" class="custom-choices">
+							<% _.each(choices, function(item){  %>
+								<% item = item || ['',0]; %>
+								<fieldset>
+									<span class="sort_handle"></span>
+									<span class='ficon-minus delete-choice'></span>
+									<span class="dropchoice">
+										<input type="text" 
+														name="choice" 
+														value="<%= item[0] %>"
+														data_id="<%= item[1] %>"/>
+									</span>
+								</fieldset>
+							<% }) %>
+						</div>
+						<a class="add-choice" id="addchoice" href="#"> 
+							<span class='ficon-plus'></span> 
+							<%= translate.get('addNewChoice') %> 
+						</a> 
+					</div> 
+				<% } %>
+			</div>
+		</form>
+	</div>
+	<span class="seperator"></span> 
+	<div class="alignright modal-footer">
+		<% if (!isDefault) { %>
+			<a class="btn pull-left delete-field"><%= translate.get('deleteField') %></a> 
+		<%  } %>
+		<a class="btn" id="cancel-btn"><%= translate.get('cancel') %></a> 
+		<input type="submit" value="<%= translate.get('done') %>" class="btn btn-primary" id='PropsSubmitBtn' /> 
+	</div>
+</div>

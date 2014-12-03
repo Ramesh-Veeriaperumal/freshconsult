@@ -1086,15 +1086,10 @@ es:
           description: "Descripción Aplicación"
           platform: Plataforma
           configurations: "Configuraciones SDK"
-          bread_crumbs: Breadcrumbs
-          bread_crumbs_info: "Las breadcrumbs te ayudará a conocer los pasos del usuario"
-          debug_log_count: "Total Debug Log"
-          debug_log_count_info: "Debug log incluye el registro de la información del logcat en tu aplicación"
           solutions: "Categoría Solución"
           solutions_info: "La categoría de la solución que selecciones se mostrará en la Aplicación de Soporte"
           app_store_id: "App Store ID"
           app_store_id_info: "App Store ID will be used to redirect users to App Store for Reviews"
-          not_included: "no está incluido en la lista"
           should_be_unique: "should be unique"
           select_a_platform: "Selecciona una plataforma"
           select_a_solution_category: "Selecciona una categoría para la solución"
@@ -1103,10 +1098,6 @@ es:
           app_key: "App Key"
           app_secret: "App Secret"
           integration_details: "Detalles de Integración"
-          app_review: "Recordatorio para Revisión de Aplicación"
-          app_review_info: "Esto lanzará automáticamente el recordatorio de revisión tras el No. de lanzamientos configurado"
-          app_review_launch_count: "Tras %{count} Lanzamientos"
-          app_review_launch_never: Nunca
         index:
           title: "Mobihelp Apps"
           new_app: "Nueva App"

@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
+  has_custom_fields :class_name => 'ContactFieldData', :discard_blank => false # coz of schema_less_user_columns
 
   has_many :user_emails , :class_name =>'UserEmail', :validate => true, :dependent => :destroy, :order => "primary_role desc"
   has_many :verified_emails, :class_name =>'UserEmail', :dependent => :destroy, :conditions => { :verified => true }
@@ -46,6 +47,8 @@ class User < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+
+  accepts_nested_attributes_for :avatar, :allow_destroy => true
 
   has_many :support_scores, :dependent => :delete_all
 
@@ -94,7 +97,7 @@ class User < ActiveRecord::Base
   has_many :forums, :through => :moderatorships, :order => "#{Forum.table_name}.name"
   has_many :posts
 
-  has_many :recent_posts, :class_name => 'Post', :order => "created_at desc", :limit => 5
+  has_many :recent_posts, :class_name => 'Post', :order => "created_at desc", :limit => 10
   has_many :topics
   has_many :monitorships
   has_many :monitored_topics, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :order => "#{Topic.table_name}.replied_at desc", :source => :monitorable, :source_type => "Topic"

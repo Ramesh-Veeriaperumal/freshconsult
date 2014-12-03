@@ -177,8 +177,9 @@ ul.activityfeed li{
 }
 
 div.profile_pic img{
-   @include box-shadow(#dfdfdf 0 1px 3px);
-   @include border-radius(6px);
+	@include box-shadow(rgba(0,0,0,0.3) 0 7px 14px -8px);
+	border: 1px solid rgba(0,0,0,0.1);
+	@include border-radius(6px);
 }
 
 .user_name{ font-weight:bold; color:#527eaa; }
@@ -2091,6 +2092,19 @@ a.submit_link:hover{
 		}
 	}
 }
+
+.merge-topics{
+	margin-top: 10px;
+	width:49%;
+	padding: 2px;
+	border: 1px;
+	@include float(left);
+	.selector{
+		@include margin-right(5px);
+		@include float(left);
+	}
+}
+
 // ------------------------------------------------------------------------------------------------------------
 //							 Export link in the Ticket list of Self Service Portal 
 // ------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,42 @@
+<% javascript_tag do %>
+  customMessages = {
+    confirmDelete: '<%= t("user.remove_profile_image_confirm") %>',
+    confirmNavigate: '<%= t("admin.products.portal.save_and_continue") %>'
+}
+<% end %>
+<%= javascript_include_tag 'cdn/profile_avatar' %>  
+<div class='avatar-pic'>
+  <%= image_tag user.avatar ? user.avatar.expiring_url(:medium) : '', 
+                :alt => user.name,
+                :onerror => "imgerror(this)" %>
+</div>
+<div class='avatar-options'>
+  <% isAvatar = user.avatar && user.avatar.id %>
+  <a href='javascript:;' class='option uplink'>
+    <span class='opt'>
+      <span class='avatar-text'>
+        <% if user.avatar && user.avatar.content_file_name %> 
+          <%= t('change') %>        
+        <% else %> 
+          <%= t('user.add_photo') %>
+        <% end %>
+      </span>
+      <% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
+        <%= avatar_form.file_field :content, 
+                                    :size => 10 , 
+                                    :class => 'upload_size_validity avatar-file', 
+                                    :accept => "image/jpeg, image/png"  %>
+      <% end %>
+      <%= hidden_field_tag (isAvatar ? 'user[avatar_attributes][id]' : nil), 
+                            (isAvatar ? user.avatar.id : "-1"),  
+                            {:class => 'avatar-id'} %>
+      <%= hidden_field_tag (isAvatar ? 'user[avatar_attributes][_destroy]' : nil), 
+                            (isAvatar ? "0" : "-1"), 
+                            { :class => 'avatar-destroy'} %>
+    </span>
+  </a>
+  <a href='#' class= 'option remove-avatar <%= isAvatar ? '' : 'hide' %>' >
+    <span class='opt'> <%= t('remove') %> </span>
+  </a>
+  <div class="info-data"><%=t('user.info1')%></div>
+</div>

@@ -4,6 +4,7 @@ class AccountsController < ApplicationController
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
+  include MixpanelWrapper
   
   layout :choose_layout 
   
@@ -465,7 +466,7 @@ class AccountsController < ApplicationController
     end
 
     def update_crm
-      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, current_account.id)
+      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, { :account_id => current_account.id })
     end      
 
     def deliver_mail(feedback)
@@ -490,6 +491,7 @@ class AccountsController < ApplicationController
 
     def clear_account_data
       Resque.enqueue(Workers::ClearAccountData, { :account_id => current_account.id })
+      ::MixpanelWrapper.send_to_mixpanel(self.class.name)
     end
 
     def customer_details
@@ -511,6 +513,6 @@ class AccountsController < ApplicationController
         :user_count => current_account.contacts.count,
         :account_created_on => current_account.created_at 
       }
-    end            
+    end         
 
 end

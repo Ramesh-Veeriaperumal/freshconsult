@@ -16,10 +16,19 @@
 </div>
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 <% if current_user && current_user.agent? && current_account.freshfone_active? %>
-  <% twilio_client_version = current_account.features?(:updated_twilio_client) ? 1.2 : 1.1%>
+  <% twilio_client_version = current_account.freshfone_account.twilio_client_version%>
 	<script type="text/javascript" src= <%= "https://static.twilio.com/libs/twiliojs/#{twilio_client_version}/twilio.min.js"%> >
 	</script>
 	<%= render :partial => 'layouts/shared/freshfone' %>
+<% end %>
+<% if current_account.features?(:client_debugging) %>
+    <script
+      src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
+      data-apikey= <%=AppConfig["client_debugging"]["bugsnag"][Rails.env]["api_key"]%> 
+      data-autonotify="false"
+      >
+    </script>
+    <%= javascript_include_tag :'cdn/client_logger' %>
 <% end %>
 <%if @debuging %>
 	<script type="text/javascript" src="/javascripts/labs/boomerang.js"></script>
@@ -47,6 +56,7 @@
     	}
     	window.widget_updated = false;
     	FreshWidget.show();	
-    });  
+    });
+  var APP_ENV = "<%= Rails.env %>";
 </script>
 <% end %>

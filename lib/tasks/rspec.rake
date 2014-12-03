@@ -15,11 +15,9 @@ if Rails.env.test?
     $LOAD_PATH.unshift("#{rspec_plugin_dir}/lib")
   end
 
-
   FacebookTests = [
     "spec/lib/facebook/comment_spec.rb", 
     "spec/lib/facebook/post_spec.rb",
-    "spec/lib/facebook/facebook_post_spec.rb",
     "spec/lib/facebook/facebook_core_message_spec.rb",
     "spec/lib/facebook/status_spec.rb",
     "spec/controllers/social/facebook_pages_controller_spec.rb",
@@ -83,10 +81,7 @@ if Rails.env.test?
     "spec/controllers/google_login_controller_spec.rb",
     "spec/controllers/google_signup_controller_spec.rb",
     "spec/controllers/integrations/integrated_resources_controller_spec.rb",
-    "spec/controllers/api_webhooks_controller_spec.rb",
-    "spec/lib/fd_text_filter_spec.rb",
-    "spec/lib/integration_util_spec.rb",
-    "spec/lib/integrations/survey_monkey_spec.rb"
+    "spec/controllers/api_webhooks_controller_spec.rb"
   ]
 
   FreshfoneTests = [
@@ -123,11 +118,13 @@ if Rails.env.test?
     "spec/controllers/contact_merge_controller_spec.rb",
     "spec/controllers/users_controller_spec.rb",
     "spec/controllers/user_emails_controller_spec.rb",
+    "spec/controllers/multiple_user_email_controller_spec.rb",
     "spec/controllers/activations_controller_spec.rb",
     "spec/controllers/customers_controller_spec.rb",
     "spec/controllers/companies_controller_spec.rb",
     "spec/controllers/profiles_controller_spec.rb",
     "spec/controllers/ticket_fields_controller_spec.rb",
+    "spec/controllers/admin/contact_fields_controller_spec.rb",
     "spec/controllers/password_resets_controller_spec.rb",
     "spec/controllers/helpdesk/*_spec.rb",
     "spec/controllers/admin/**/*_spec.rb",

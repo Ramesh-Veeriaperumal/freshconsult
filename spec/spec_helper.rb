@@ -127,6 +127,7 @@ Spork.prefork do
     config.include DynamicTemplateHelper
     config.include FactoryGirl::Syntax::Methods
     config.include ActionDispatch::TestProcess# to use fixture_file_upload
+    config.include ContactFieldsHelper
     config.infer_spec_type_from_file_location!
     config.add_setting :account
     config.add_setting :agent

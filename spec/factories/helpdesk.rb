@@ -107,7 +107,25 @@ if Rails.env.test?
     end
 
      #TODO-RAILS3
-     factory :agent_group, :class => AgentGroup do
-     end
+    factory :agent_group, :class => AgentGroup do
+    end
+
+    factory :contact_field, :class => ContactField do |t|
+      t.description Faker::Lorem.sentence(3)
+      t.field_type "custom_paragraph"
+      t.position 1
+      t.required false
+      t.visible_in_portal true
+      t.editable_in_portal true 
+      t.required_in_portal false
+    end
+
+    factory :contact_flexifield, :class => "ContactFlexifield" do |d|
+    end
+
+    factory :flexifield, :class => Flexifield do |d|
+    end
   end
+
+  
 end

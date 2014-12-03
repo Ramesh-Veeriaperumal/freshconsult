@@ -9,7 +9,7 @@ class Search::ForumsController < Search::SearchController
 			unless search_in.blank?
 				f.filter :term,  { 'forum.forum_category_id' => params[:category_id] } if params[:category_id]
 			end
-		end
+		end   
 
 		def search_highlight search
 			search.highlight :title, :options => highlight_options
@@ -25,4 +25,5 @@ class Search::ForumsController < Search::SearchController
 				end
 			end
 		end
+
 end
