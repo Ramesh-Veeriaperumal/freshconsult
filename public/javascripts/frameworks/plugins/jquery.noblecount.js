@@ -484,7 +484,7 @@
 // This hook will try and match the urls inside a given string to 22 char length, 
 // Similar to what twitter will do.
 jQuery.fn.NobleCount.settings['on_update'] = function(t_obj, char_area, c_settings, char_rem){
-	var url_regex = new RegExp(/(([a-z]{3,6}:\/\/)|(^|))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\-\:\#\+]*([^@\s]|$)/g),
+	var url_regex = new RegExp(/(([a-z]{3,6}:\/\/)|(^|))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\-\:\#\+\|]*([^@\s]|$)/g),
 		tweet = t_obj.val(),
 		tweet_link_length = new Array(23).join(' ');
 		tweet_length = tweet.replace(url_regex, function(match){ return tweet_link_length; }) || [],
