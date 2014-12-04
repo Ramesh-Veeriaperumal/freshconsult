@@ -220,6 +220,7 @@ en:
     remove_photo: "Remove photo"
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
+    ie9_file_change_msg: "%{filename} Save to update profile image"
     errors:
       required_field: cannot be blank
       custom_text : is not valid 
@@ -593,6 +594,76 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+    company_fields:
+      fields:
+        name: Full Name
+        email: Email
+        job_title: Title
+        tag_names: Tags
+        company_name: Company
+        client_manager: Can see all tickets from this company
+        address: Address
+        description: Description
+        phone: Phone
+        mobile: Mobile
+        twitter_id: Twitter
+        time_zone: Time Zone
+        language: Language
+        description: Background Information
+      untitled: Untitled
+      first_choice: First Choice
+      second_choice: Second Choice
+      confirm_delete: Are you sure you want to delete this field?
+      no_choice_message: "At least one valid choice has to be present"
+      index: 
+        add_custom_field: Add a Custom Field
+        customize_form: "Customize your “New Company form."
+        title: Company Fields
+        save: Save
+        saving: Saving
+      formfield_props: 
+        default: Default
+        form_title: Properties
+        behavior: "Behavior"
+        label: "Label"
+        nested_label: "Nested field labels"
+        level1: "Level 1"
+        level2: "Level 2"
+        level3: "Level 3"
+        nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
+        dropdown_items_edit: "Dropdown items - edit view"
+        dropdown_items_preview: "Dropdown items - Preview"
+        status_choices: "Status choices"
+        display_to_customer: "Display message for customer"
+        sla_timer: "SLA timer"
+        nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+        delete_field: "Delete field"
+        field_label_agents: "Field label for agents"
+        field_label_customer: "Field label for customers"
+        add_new_choice: Add Item
+        customer_mandatory: Required when submitting the form
+        customer_edit_signup: Customer can see this when they Sign up
+        customer_edit: Customer can edit
+        agent_info1: Field cannot be blank when submitting the ticket
+        agent_info2: Field cannot be blank when closing the ticket
+        agent_mandatory_submission: Required when submitting the form
+        customer_info1: Field cannot be blank when submitting the ticket online.
+        for_agents: For Agents
+        dropdown_choices: Dropdown Items
+        label_in_portal: Label in Portal
+        customer_visible: Display to customer
+        description: Description
+        for_customer: For Customers
+        agent_mandatory_closure: Required when closing the ticket
+        choices: Choices
+        label_in_portal_info: The label that is displayed in your self service portal
+        display_cc_field: Display CC Field
+        cc_company_contacts: Can CC only company contacts
+        cc_any_email: Can CC any email address
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
+        regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> /^fresh\w/ </b>."
+        max_choices: "Maximum items reached"
     contact_fields:
       fields:
         name: Full Name
@@ -662,6 +733,7 @@ en:
         regexp: Regular Expression
         validate_regexp: Validate using Regular Expression
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> /^fresh\w/ </b>."
+        max_choices: "Maximum items reached"
     portal:
       index:
         forums: "Forums"
@@ -1419,7 +1491,7 @@ en:
         observer: Observer
         sla: SLA Policies
         ticket-fields: Ticket Fields
-        contact-fields: Contact Fields
+        customer-fields: Customer Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
         email: Email
@@ -1480,6 +1552,7 @@ en:
         rebrand_portal: "Rebrand Portal"
         customize_new_ticket_form: "Customize new ticket Form"
         customize_new_contact_form: "Customize new contact Form"
+        customize_new_company_form: "Customize new company Form"
         signin_using_google: "sign in using google"
         signin_using_facebook: "sign in using facebook"
         signin_using_twitter: "sign in using twitter"
@@ -1764,6 +1837,7 @@ en:
     cf:
       type:
         contact_fields_controller: Contact Fields
+        company_fields_controller: Company Fields
       success: "%{type} have been successfully updated."
       delete:
         failure: deletion failed.
@@ -1773,11 +1847,6 @@ en:
         failure: creation failed.
       count_exceeded:
         generic : You are not allowed to create more fields of this type.
-        varchar_255: You are not allowed to create more than 76 string fields.
-        integer_11: You are not allowed to create more than 20 number fields.
-        tiny_int_1: You are not allowed to create more than 10 checkbox fields.
-        date_time: You are not allowed to create more than 10 date fields.    
-        text: You are not allowed to create more than 10 text fields.
     email_settings:
       send_activation:
         success: 'Verification email has been sent to %{reply_email}!'
@@ -2802,12 +2871,14 @@ en:
       tags: 'Tag Names'
     conversations:
       title: 'Conversations'
-      created_ticket: "Created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
+      user_ticket_list: "Created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
+      company_ticket_list: "%{user_name} created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
       created_forum: "Created a new topic <a href='%{topic_url}'>%{topic_title}</a>"
       replied_form: "Replied to topic <a href='%{topic_url}'>%{topic_title}</a>"
       forum_timeinfo: "%{time} ago in <a href='%{forum_url}'>%{forum_title}</a>"
       ticket_timeinfo: " %{time} ago,  Status : %{status}"
       contact: 'Contains ticket and forum activities'
+      company: 'Contains tickets raised by company contacts'
       no_conversations: 'No Conversations'
     info5: "No tickets by %{nick_name}"
     restore: Restore
@@ -3187,6 +3258,11 @@ en:
   how_to: Question
   customers: Customers
   companies:
+    no_contacts: '%{no_contacts} contacts'
+    contacts_more: '%{no_contacts} more'
+    add_contact: 'Add Contact'
+    add_contact_company: 'Add Contact in %{company_name}'
+    company_contacts: 'Company Contacts'
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
@@ -3771,6 +3847,13 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    errors:
+      required_field: cannot be blank
+      custom_text : is not valid 
+      custom_dropdown : should only contain one of the dropdown options
+      custom_phone_number : is not a valid phone number
+      custom_url : is not a valid URL
+      custom_date : is not a valid date
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics
@@ -5082,6 +5165,8 @@ en:
         options:
           incoming: "Incoming"
           outgoing: "Outgoing"
+          all_groups: "All Groups"
+          unassigned: Unassigned
         range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"

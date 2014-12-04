@@ -94,6 +94,8 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				self.makeAjaxCall();
 			});
 			$(window).on('scroll.contact-view', this.toggleUsername);
+			$('.sp_paragraph')
+					.height($('.sp_paragraph')[0].scrollHeight);
 		},
 		makeAjaxCall: function() {
 			var data = $('.edit_user').serializeArray(),
@@ -125,7 +127,9 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			this.switchToForm(false);
 			this.flashUpdatedDiv();
 			$('.tags-wrapper').find('.select2-search-field input').blur();
-			$('.sp_paragraph').blur();
+			$('.sp_paragraph')
+					.height($('.sp_paragraph')[0].scrollHeight)
+					.blur();
 		},
 		ajaxFailure: function(errors) {
 			var errorText;

@@ -3,7 +3,6 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
   # GET /customers
   # GET /customers.xml
   
-  helper ContactsHelper
   include HelpdeskControllerMethods
 
   before_filter :set_selected_tab

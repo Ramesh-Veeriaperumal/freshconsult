@@ -1,3 +1,5 @@
+window.ticket_view = true;
+
 var current_agents = {};
 var current_agents_replying = {};
 

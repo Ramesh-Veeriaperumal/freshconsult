@@ -28,10 +28,10 @@ module Inherits
                                     { :field_type => custom_field.similar_field_types })
 
             used_columns  = similar_form_fields.collect &:column_name
-            totol_columns =  custom_field.all_suitable_columns
-            available_columns = totol_columns - used_columns
+            total_columns =  custom_field.all_suitable_columns
+            available_columns = total_columns - used_columns
 
-            (custom_field.errors.add_to_base("#{I18n.t("flash.cf.create.failure")} #{I18n.t("flash.cf.count_exceeded.#{custom_field.db_column_type}")}") && 
+            (custom_field.errors.add_to_base("#{I18n.t("flash.cf.create.failure")} #{I18n.t("flash.cf.count_exceeded.generic")}") && 
               return) if available_columns.empty? #need to change the flash messages
             
             custom_field.column_name = available_columns.first
@@ -47,7 +47,7 @@ module Inherits
       module InstanceMethods
 
         def update_field(field_details)
-          field_details.except! :type, :dom_type, :deleted
+          field_details.except! :name, :column_name, :deleted, :type, :dom_type
           update_error(:edit) unless self.update_attributes(field_details)
 
           return self

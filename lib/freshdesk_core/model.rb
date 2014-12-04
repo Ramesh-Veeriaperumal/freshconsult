@@ -14,6 +14,8 @@ module FreshdeskCore::Model
                         "ca_folders", 
                         "company_forms",
                         "company_fields",
+                        "company_field_choices",
+                        "company_field_data",
                         "conversion_metrics",           
                         "contact_forms",
                         "contact_fields",

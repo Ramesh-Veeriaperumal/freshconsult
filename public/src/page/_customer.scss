@@ -259,7 +259,15 @@ $iconColorList: "ticket" $bg_color_ticket,
 		color: #999;
 		display: inline-block;
 		width: 240px;
-		line-height: 17px;
+		margin-bottom: -5px;
+	}
+	.company-btns {
+		display: none;
+	}
+	&.is_stuck {
+		.company-btns {
+			display: block;
+		}
 	}
 }
 
@@ -269,9 +277,9 @@ $iconColorList: "ticket" $bg_color_ticket,
 	@include border-left(1px solid #eee);
 	display: table-cell;
 	vertical-align: top;
-	width: 278px;
+	width: 258px;
 	.contact-sidebar-content {
-		width: 278px;
+		width: 258px;
 	}
 	.sidepanel {
 		border-bottom: none;
@@ -282,6 +290,12 @@ $iconColorList: "ticket" $bg_color_ticket,
 			font-size: 18px;
 			font-weight: 300;
 			@include padding(2px 0 15px 0);
+		}
+		.sub-title {
+			font-size: 12px;
+			font-weight: normal;
+			color: #999;
+			margin-bottom: 0;
 		}
 		a.view-detail {
 			display: block;
@@ -300,6 +314,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 	margin-bottom: -40px;
 	display: table;
 	width: 100%;
+	min-height: 500px;
 	.contact-info-fields {
 		background-color: #f1f1f1;
     	background-image: url('../../images/social/ribbon-bg.png');
@@ -317,6 +332,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 		border-top: none;
 		@include padding(10px 15px);
 		width: 230px;
+		position: relative;
 		.lead {
 			margin-bottom: 4px;
 		}
@@ -326,6 +342,45 @@ $iconColorList: "ticket" $bg_color_ticket,
 		.user-job-title {
 			color: #999;
 			margin-bottom: 3px;
+		}
+		.no-contacts {
+			position: relative;
+			@include padding(0);
+			overflow: visible;
+			@include margin(20px -15px 0 -15px);
+		}
+		.no-contacts-separator {
+			border-bottom: 1px solid green;
+		}
+		.no-contacts-msg {
+			background-color: rgba(0,0,0,0.5);
+			color: #fff;
+			@include padding(3px 10px);
+			@include border-radius(15px);
+			width: auto;
+			@include float(none);
+			text-transform: none;
+			font-weight: normal;
+			display: inline-block;
+			@include margin(0 10px);
+			a {
+				color: #FFF;
+			}
+			&:hover {
+				background-color: #333;
+			}
+		}
+		.border-wrap {
+			width: 5%;
+			border-bottom: 1px solid $common-border-color;
+			position: absolute;
+			top: 0px;
+			&.left {
+				@include left(0px);
+			}
+			&.right {
+				@include right(0px);
+			}
 		}
 	}
 	.contact-edit-fields {
@@ -398,7 +453,10 @@ $iconColorList: "ticket" $bg_color_ticket,
 .show-fields {
 	@include padding(15px 20px 20px);
 	border-top: 1px solid $common-border-color;
-	width: 230px;
+	width: 220px;
+	&.no-border {
+		border-top: none;
+	}
 	.show-field {
 		margin-bottom: 20px;
 	}
@@ -427,6 +485,10 @@ $iconColorList: "ticket" $bg_color_ticket,
 		&:last-child {
 			@include border-left(3px solid transparent);
 		}
+		.emphasize {
+			font-weight: normal;
+			color: $linkColor;
+		}
 	}
 	.timeline-icon {
 		font-size: 18px;
@@ -448,4 +510,59 @@ $iconColorList: "ticket" $bg_color_ticket,
 			display: block;
 		}
 	}
-}   
+}  
+
+
+ul.user_list{
+	@include no-bullets;
+	@include clearfix;
+	margin:0;
+	padding:0;
+	li{
+	  height:100px;
+		@include float(left);
+		width:120px;
+		
+		@include text-align(center);
+		.preview_pic{
+			@include margin(2px 34px);
+			img{
+				padding:0;
+				border:0;
+			}	
+		}
+		&.user-item {
+			height: auto;
+			width: auto;
+			@include margin-right(15px);
+			margin-bottom: 5px;
+			.preview_pic {
+				@include margin(0);
+				img {
+					@include border-radius(50%);
+					border: 1px solid $common-border-color;
+					width: 30px;
+					height: 30px;
+				}
+			}
+			.more-users-link {
+				display: inline-block;
+				@include margin(2px 14px 0 0);
+				background-color: #BBB;
+				color: white;
+				@include padding(5px 0);
+				text-align: center;
+				@include border-radius(50%);
+				width: 30px;
+				height: 30px;
+				@include box-sizing(border-box);
+				@include float(right);
+				font-weight: bold;
+			}
+		}
+		.username{
+			display:block;
+			word-wrap: break-word;
+		}
+	}
+} 

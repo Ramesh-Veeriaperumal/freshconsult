@@ -11,19 +11,21 @@ class User < ActiveRecord::Base
      [ :client_manager,"Client Manager", 5 ],
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
-  
-  API_OPTIONS = { 
+
+  COMMON_API_OPTIONS = { 
     :only     => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
-                  :phone,:mobile,:twitter_id,:description,:time_zone,
-                  :deleted,:helpdesk_agent,:fb_profile_id,:external_id,:language,:address],
+                  :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:helpdesk_agent,
+                  :fb_profile_id,:external_id,:language,:address]
+  }
+
+  USER_API_OPTIONS = { 
+    :only     => COMMON_API_OPTIONS[:only],
     :methods  => [:company_id]
   }
 
-  XML_API_OPTIONS = {
-    :only     => [:id,:name,:email,:created_at,:updated_at,:verified,:primary_role,:active,
-                  :customer_id,:job_title,:phone,:mobile,:twitter_id,:description,:time_zone,
-                  :deleted,:helpdesk_agent,:fb_profile_id,:external_id,:language,:address],
-    :methods  => [:company_id] # to_xml runs to_s on custom_field(hash), hence building inside
+  CONTACT_API_OPTIONS = { 
+    :only     => COMMON_API_OPTIONS[:only],
+    :methods  => [:company_id, :custom_field]
   }
 
   # For preventing non-agents from updating inaccessible user attibutes

@@ -13,6 +13,14 @@ window.Fjax = {
 		_prevBodyClass: null,
 
     callBeforeSend: function(evnt,xhr,settings,options) {
+      var form = $('.form-unsaved-changes-trigger');
+      if(form.data('formChanged')) {
+        var conf = confirm(customMessages.confirmNavigate);
+        if(conf) {
+          xhr.abort();  
+          return false;
+        }
+      }
       this._SocketCleanUp();
       this._FayeCleanUp();
       $.xhrPool_Abort();

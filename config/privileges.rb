@@ -216,7 +216,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
                :create_contact, :update_contact, :update_bg_and_tags, :contact_email, :edit, :update, :verify_email]
     resource :customer, :only => [:new, :create, :edit, :update] #should deprecate
-    resource :company,  :only => [:new, :create, :edit, :update, :quick, :sla_policies]
+    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :contact_import
     resource :contact_merge
@@ -314,6 +314,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :group
     resource :ticket_field
     resource :"admin/contact_field"
+    resource :"admin/company_field"
     resource :"admin/role"
     resource :"admin/product"
     resource :"admin/portal"

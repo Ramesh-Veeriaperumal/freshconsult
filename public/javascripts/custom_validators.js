@@ -325,6 +325,8 @@ $.validator.addMethod('validate_regexp', function(value, element) {
   return this.optional(element) || regExp.test(value);
 }, "Invalid Regular Expression");
 
+$.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Data is too long. Please enter data less than 255 characters" );   
+$.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
 $.validator.addClassRules("decimal", { number: true });
 
 })(jQuery);
