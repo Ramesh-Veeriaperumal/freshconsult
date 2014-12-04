@@ -63,7 +63,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 		populateTags: function(tags) {
 			var tagsHtml = "<div class='tag_list'>";
 			$.each(tags, function(idx, item) {
-				tagsHtml += "<a class='btn btn-flat' href='/contacts?tag=" + item.id + "' > " + item.name + " </a>";
+				tagsHtml += "<a class='btn btn-flat' href='/contacts?tag=" + item.id + "' > " + escapeHtml(item.name) + " </a>";
 			});
 			tagsHtml += "<a class='btn btn-flat add-new-tag' href='#'>"
 							+ "<span class='ficon-plus'></span>"

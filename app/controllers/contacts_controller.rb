@@ -185,14 +185,22 @@ class ContactsController < ApplicationController
   end
 
   def update_bg_and_tags
-    if @user.update_attributes(params[:user])
+    begin
+      if @user.update_attributes(params[:user])
+        updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
+        respond_to do |format|
+          format.json { render :json => updated_tags, :status => :ok}
+        end
+      else
+        respond_to do |format|
+          format.json { render :json => @item.errors, :status => :unprocessable_entity}
+        end
+      end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e) 
       updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
       respond_to do |format|
         format.json { render :json => updated_tags, :status => :ok}
-      end
-    else
-      respond_to do |format|
-        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
