@@ -108,6 +108,8 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io-1.0.6.js
     - public/javascripts/frameworks/faye.js
+    - public/javascripts/frameworks/socket.io-agent.js
+    - public/javascripts/helpdesk/socket_agent.js
     - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
