@@ -389,8 +389,13 @@
 													: null;
 							self.settings.currentData.set(key, regexValue);
 						}
-						else if(key != 'field_type') 
-							self.settings.currentData.set(key, self.dialogDOMMap[key].prop(value[1]));
+						else if(key != 'field_type') {
+							var value = self.dialogDOMMap[key].prop(value[1]);
+							if(key == 'label' || key == 'label_in_portal') {
+								value = escapeHtml(value);
+							}
+							self.settings.currentData.set(key, value);
+						}
 
 					});
 				}

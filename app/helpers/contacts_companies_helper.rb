@@ -33,8 +33,8 @@ module ContactsCompaniesHelper
     field_value = I18n.name_for_locale(field_value) if field.field_type == :default_language
     field_value = field_value ? I18n.t('plain_yes') : I18n.t('plain_no') if field.dom_type == :checkbox
     field_value = formated_date field_value, {:format => :short_day_separated,:include_year => true} if field.dom_type == :date
-    field_value = field_value.gsub(/\n/, '<br />').html_safe if field.dom_type == :paragraph
-    head = content_tag(:p, field.label, :class => 'field-label break-word')
+    field_value = h(field_value).gsub(/\n/, '<br />').html_safe if field.dom_type == :paragraph
+    head = content_tag(:p, CGI.unescapeHTML(field.label), :class => 'field-label break-word')
     case field.dom_type
       when :url
         value = content_tag(:a, field_value, :href => field_value, :target => '_blank', :class => 'field-value ellipsis')

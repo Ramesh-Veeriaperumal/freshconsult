@@ -56,8 +56,9 @@
 						</fieldset>
 					</div>
 				</div>
+				<!-- Forcibly hiding regex validation for now -->
 				<% if (field_type == 'custom_text') { %>
-					<div class='section'>
+					<div class='section hide'>
 						<% regexValidation = (field_options != null 
 													&& typeof(field_options) === "object" 
 													&& field_options['regex']) ?

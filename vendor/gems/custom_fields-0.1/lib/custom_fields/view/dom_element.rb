@@ -17,7 +17,7 @@ module CustomFields
         @field_value    = field_value.to_s.to_sym
         @field_class    = "#{ (required) ? 'required' : '' } #{dom_type} #{class_name}_#{dom_type}"
         @field_name     = field.name
-        @field_label    = field_label
+        @field_label    = CGI.unescapeHTML(field_label)
         @required_star  = "<span class='required_star'>*</span>".html_safe if required
         label           = label_tag "#{object_name}_#{field.field_name}", @field_label
         @label          = content_tag :div, label+@required_star, :class => 'control-label'
