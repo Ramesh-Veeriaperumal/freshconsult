@@ -474,7 +474,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if self.product && !self.product.portal_url.blank?
       return self.product.portal.ssl_enabled? ? 'https' : 'http'
     else
-      return account.ssl_enabled? ? 'https' : 'http'
+      account.url_protocol
     end
   end
   
