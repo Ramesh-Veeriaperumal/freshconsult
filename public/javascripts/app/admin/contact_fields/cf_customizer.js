@@ -389,8 +389,14 @@
 													: null;
 							self.settings.currentData.set(key, regexValue);
 						}
-						else if(key != 'field_type')
-							self.settings.currentData.set(key, self.dialogDOMMap[key].prop(value[1]));
+						else if(key != 'field_type') {
+							var val = self.dialogDOMMap[key].prop(value[1]);
+							if((key == 'label' || key == 'label_in_portal') && val !== undefined) {
+								val = escapeHtml(val);
+							}
+							self.settings.currentData.set(key, val);							
+						}
+
 					});
 				}
 				this.setAction(this.settings.currentData, "update");
