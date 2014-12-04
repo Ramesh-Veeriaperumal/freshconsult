@@ -34,13 +34,13 @@ module ContactsHelper
     icon = content_tag(:span, '', :class => 'ficon-timeline-forum')
     icon_wrapper = content_tag(:div, icon, :class => 'timeline-icon forum')
 
-    activity_text = post.original_post? ? 'contacts.conversations.created_forum' : 'contacts.conversations.replied_form'
+    activity_text = post.original_post? ? 'contacts.conversations.created_forum_title' : 'contacts.conversations.replied_forum_title'
     text = t(activity_text, 
                 :topic_url => discussions_topic_path(post.topic_id),
                 :topic_title => post.topic.title).html_safe
-    text_wrapper = content_tag(:p, text, :class => 'break-word')
+    text_wrapper = content_tag(:p, text, :class => 'break-word timeline-head')
 
-    time_info = t('contacts.conversations.forum_timeinfo',
+    time_info = t('contacts.conversations.user_forum_timeinfo',
                     :time => time_ago_in_words(post.created_at),
                     :forum_url => discussions_forum_path(post.forum_id),
                     :forum_title => post.forum.name).html_safe

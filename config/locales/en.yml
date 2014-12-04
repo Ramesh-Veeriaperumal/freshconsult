@@ -2871,12 +2871,12 @@ en:
       tags: 'Tag Names'
     conversations:
       title: 'Conversations'
-      user_ticket_list: "Created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
-      company_ticket_list: "%{user_name} created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum: "Created a new topic <a href='%{topic_url}'>%{topic_title}</a>"
-      replied_form: "Replied to topic <a href='%{topic_url}'>%{topic_title}</a>"
-      forum_timeinfo: "%{time} ago in <a href='%{forum_url}'>%{forum_title}</a>"
-      ticket_timeinfo: " %{time} ago,  Status : %{status}"
+      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      user_ticket_timeinfo: " %{time} ago,  Status: %{status}, Agent: %{agent_name}"
+      company_ticket_timeinfo: "by %{user_name}, %{time} ago, Status: %{status}, Agent: %{agent_name}"
       contact: 'Contains ticket and forum activities'
       company: 'Contains tickets raised by company contacts'
       no_conversations: 'No Conversations'
