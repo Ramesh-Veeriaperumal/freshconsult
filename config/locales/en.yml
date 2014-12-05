@@ -5313,8 +5313,14 @@ en:
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
   contact_field:
     helpcard:
-      title1: "Contact Fields"
-      info1: "The contact form is the easiest way to capture all the data you need about your customer. For example, having the customer’s PAN ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Contact Form in Freshdesk to include the right contact fields for your business, and let your customers and agents fill in the information you need in the format you want."
+      title2: "Customizing your contact fields"
+      info2: "The contact form in Freshdesk lets you capture important data from your customers so that you can support them better. You can help your team get additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets accordingly in your helpdesk."
+      info3: "Just like your ticket fields, you can add new fields to the customer sign up form and make them mandatory. You can also have private fields that are visible just to your agents."
+  company_field:
+    helpcard:
+      title1: "Customizing your company fields"
+      info1: "In addition to contacts, Freshdesk lets you create companies in your helpdesk and makes it easy for you to manage support requests from the same group of customers. You can add custom fields to companies and store important information about their account for your support team to access quickly. You can have fields like account manager, primary contact, monthly revenue etc. and anything that is common to the entire account."
+      info2: "Please note that your company fields are displayed only to your agents and are not visible to your customers."
   default_category: "Default Category"
   default_category_description: "All emails sent to %{full_domain} will be stored here as drafts"
   default_folder: "Drafts"
