@@ -13,11 +13,11 @@ module ContactsCompaniesHelper
     icon = content_tag(:span, '', :class => 'ficon-timeline-ticket')
     icon_wrapper = content_tag(:div, icon, :class => 'timeline-icon ticket')
 
-    grey_class = ticket.active? ? '' : 'muted';
+    grey_class = ticket.active? ? 'bold-title' : 'muted';
     text = t('contacts.conversations.ticket_subject',
                 :ticket_url => helpdesk_ticket_path(ticket.display_id),
-                :ticket_subject => ticket.subject.blank? ? "##{ticket.display_id}" : h(ticket.subject)).html_safe
-    text_wrapper = content_tag(:p, text, :class => "break-word timeline-head bold-title #{grey_class}")
+                :ticket_subject => "#{ticket.subject} ##{ticket.display_id}").html_safe
+    text_wrapper = content_tag(:p, text, :class => "break-word timeline-head #{grey_class}")
 
     sentence_type = user_page ? "user_ticket_timeinfo" : "company_ticket_timeinfo"
     time_info = t('contacts.conversations.' + sentence_type,

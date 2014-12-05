@@ -110,7 +110,7 @@
 											rel="companion" 
 											data-companion="#customlabelportal" 
 											name="custom-label" 
-											value="<%= label %>" 
+											value="<%= label.replace(/"/g, '&quot;') %>" 
 											class="<%= isDisabled %>" 
 											<%= isDisabled %>/>
 						</fieldset>
@@ -120,7 +120,7 @@
 											placeholder="<%= translate.get('labelCustomer') %>" 
 											name="custom-label-in-portal" 
 											id="customlabelportal" 
-											value="<%= label_in_portal %>"
+											value="<%= label_in_portal.replace(/"/g, '&quot;') %>"
 											<%= isDisabled %>/>
 						</fieldset>
 					</div>
@@ -173,7 +173,7 @@
 									<span class="dropchoice">
 										<input type="text" 
 														name="choice_<%= item[1] %>" 
-														value="<%= item[0] %>"
+														value="<%= item[0].replace(/"/g, '&quot;') %>"
 														data_id="<%= item[1] %>"
 														class='field_maxlength'/>
 									</span>

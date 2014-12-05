@@ -467,6 +467,7 @@ en:
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
   none: None
+  view_all: View All
   any_val:
     any: Any
     any_value: Any Value
@@ -2875,8 +2876,8 @@ en:
       created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
       replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
-      user_ticket_timeinfo: " %{time} ago,  Status: %{status}, Agent: %{agent_name}"
-      company_ticket_timeinfo: "by %{user_name}, %{time} ago, Status: %{status}, Agent: %{agent_name}"
+      user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
+      company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact: 'Contains ticket and forum activities'
       company: 'Contains tickets raised by company contacts'
       no_conversations: 'No Conversations'
@@ -3259,7 +3260,6 @@ en:
   customers: Customers
   companies:
     no_contacts: '%{no_contacts} contacts'
-    contacts_more: '%{no_contacts} more'
     add_contact: 'Add Contact'
     add_contact_company: 'Add Contact in %{company_name}'
     company_contacts: 'Company Contacts'

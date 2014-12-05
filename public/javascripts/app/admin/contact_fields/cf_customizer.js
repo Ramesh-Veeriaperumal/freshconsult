@@ -49,6 +49,7 @@
 			customFieldType: '', 
 			maxNoOfChoices: '50',
 			disabledCustomerDataTemplate: {
+				'required_for_agent': false,
 				'visible_in_portal': false,
 				'editable_in_portal': false,
 				'editable_in_signup': false,
@@ -329,23 +330,30 @@
 			$(this.settings.submitForm).trigger("submit");
 		},
 
+		deletePostData: function(data) {
+			if(data.column_name == 'default' && data.choices) {
+				delete data.choices;
+			}
+			delete data.dom_type;
+			delete data.validate_using_regex;
+			delete data.disabled_customer_data;
+			if(this.settings.customFieldType == 'company') {
+				// Undefined values are not sent to the server. Still, to be on the safer side, a force removal of unnecessary data for company Fields
+				delete data.required_in_portal;
+				delete data.visible_in_portal;
+				delete data.editable_in_signup;
+				delete data.editable_in_portal;
+				delete data.label_in_portal;
+			}
+			return data;
+		},
+
 		getCustomFieldJson: function(){
 			var allfields = $A(),
 				self = this;
 			$(this.settings.formContainer+" li").each(function(index, domLi){
 				var data = $(domLi).data("raw");
-				if(data.column_name == 'default' && data.choices.length > 0) {
-					delete data.choices;
-				}
-				delete data.dom_type;
-				delete data.validate_using_regex;
-				delete data.disabled_customer_data;
-				if(self.settings.customFieldType == 'company') {
-					delete data.required_in_portal;
-					delete data.visible_in_portal;
-					delete data.editable_in_signup;
-					delete data.editable_in_portal;
-				}
+				data = self.deletePostData(data);
 				allfields.push(data);
 			});
 			return allfields;
@@ -389,8 +397,14 @@
 													: null;
 							self.settings.currentData.set(key, regexValue);
 						}
-						else if(key != 'field_type')
-							self.settings.currentData.set(key, self.dialogDOMMap[key].prop(value[1]));
+						else if(key != 'field_type') {
+							var val = self.dialogDOMMap[key].prop(value[1]);
+							if((key == 'label' || key == 'label_in_portal') && val !== undefined) {
+								val = escapeHtml(val);
+							}
+							self.settings.currentData.set(key, val);							
+						}
+
 					});
 				}
 				this.setAction(this.settings.currentData, "update");

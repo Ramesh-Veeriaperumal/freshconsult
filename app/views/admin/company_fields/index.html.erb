@@ -80,7 +80,12 @@
     var customField = new CustomFields({existingFields : customFields, 
                     customMessages: tf_lang,
                     nonEditableFields: [],
-                    disabledByDefault: {},
+                    disabledByDefault: {
+                                    'default_name' : 
+                                      {
+                                        'required_for_agent' : true                        
+                                      }
+                    },
                     customFieldType: 'company'
                   });
     customField.init();

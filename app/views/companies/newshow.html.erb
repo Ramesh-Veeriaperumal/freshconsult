@@ -34,7 +34,8 @@
 						</div>
 					<% end %>
 				</div>
-				<ul class='show-fields no-border'>
+				<% no_border_class = @company_users_size > 0 ? 'no-border' : '' %>
+				<ul class='show-fields <%= no_border_class %>'>
 					<% view_company_fields.each do |field| %>
 				    	<%=  render_as_list nil, field %>
 				    <% end %>
@@ -44,7 +45,7 @@
 		</div>
 		<div class='contact-edit-fields'>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<h4 class="lead"><%=t('company.notes')%></h4>
+				<h4 class="conv-title"><%=t('company.notes')%></h4>
 				<% form_for :company, @company, :html => {:class => 'edit_user'} do |f| %>
 					
 					<%= f.text_area :note, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("company.info5") %>
@@ -59,7 +60,7 @@
 				<% end %>	
 			</div>
 			<div class='contact-edit-padding clearfix'>
-				<h1 class='lead conv-title'> <%= t('contacts.conversations.title') %> </h1>
+				<h1 class='conv-title'> <%= t('contacts.conversations.title') %> </h1>
 				<p class='muted'> <%= t('contacts.conversations.company') %> </p>
 				<div class='timeline'>
 					<ul class='timeline-list'>
@@ -144,7 +145,7 @@
 							  	</li>  
 							<%end%>
 							<% if @company_users_size > 9 %> 
-								<li class='tooltip user-item' title="<%= t('companies.contacts_more', :no_contacts => @company_users_size - 9) %>">
+								<li class='tooltip user-item' title="<%= t('view_all')%>">
 									<%= link_to '...', URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s), :class => 'more-users-link' %> 
 								</li>
 							<% end %>
