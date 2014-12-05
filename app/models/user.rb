@@ -195,7 +195,7 @@ class User < ActiveRecord::Base
         updated_tag_name.strip!
         next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
 
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name == updated_tag_name } ||
+        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
                       Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
       end
       self.tags = new_tags
