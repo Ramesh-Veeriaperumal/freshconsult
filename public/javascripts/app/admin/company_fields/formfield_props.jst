@@ -47,7 +47,7 @@
 							<input type="text" 
 											placeholder="<%= translate.get('labelAgent') %>" 
 											name="custom-label" 
-											value="<%= label %>" 
+											value="<%= label.replace(/"/g, '&quot;') %>" 
 											class="<%= isDisabled %>" 
 											<%= isDisabled %>/>
 						</fieldset>
@@ -101,7 +101,7 @@
 									<span class="dropchoice">
 										<input type="text" 
 														name="choice_<%= item[1] %>" 
-														value="<%= item[0] %>"
+														value="<%= item[0].replace(/"/g, '&quot;') %>"
 														data_id="<%= item[1] %>"
 														class='field_maxlength'/>
 									</span>

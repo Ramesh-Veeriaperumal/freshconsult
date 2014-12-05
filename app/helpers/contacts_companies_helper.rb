@@ -16,7 +16,7 @@ module ContactsCompaniesHelper
     grey_class = ticket.active? ? 'bold-title' : 'muted';
     text = t('contacts.conversations.ticket_subject',
                 :ticket_url => helpdesk_ticket_path(ticket.display_id),
-                :ticket_subject => ticket.subject.blank? ? "##{ticket.display_id}" : h(ticket.subject)).html_safe
+                :ticket_subject => "#{ticket.subject} ##{ticket.display_id}").html_safe
     text_wrapper = content_tag(:p, text, :class => "break-word timeline-head #{grey_class}")
 
     sentence_type = user_page ? "user_ticket_timeinfo" : "company_ticket_timeinfo"
