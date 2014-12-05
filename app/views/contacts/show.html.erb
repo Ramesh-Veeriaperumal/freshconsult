@@ -86,7 +86,7 @@
 		  		</div>
 			<% end %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<h4 class="lead"><%=t('user.background')%></h4>
+				<h4 class="conv-title"><%=t('user.background')%></h4>
 				<% form_for :user, @user, :html => {:class => 'edit_user'} do |f| %>
 					
 					<%= f.text_area :description, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("contacts.form_placeholder.description") %>
@@ -107,7 +107,7 @@
 				<% end %>	
 			</div>
 			<div class='contact-edit-padding clearfix'>
-				<h1 class='lead conv-title'> <%= t('contacts.conversations.title') %> </h1>
+				<h1 class='conv-title'> <%= t('contacts.conversations.title') %> </h1>
 				<p class='muted'> <%= t('contacts.conversations.contact') %> </p>
 				<div class='timeline'>
 					<ul class='timeline-list'>

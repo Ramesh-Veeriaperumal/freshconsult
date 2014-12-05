@@ -335,6 +335,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 		position: relative;
 		.lead {
 			margin-bottom: 4px;
+			font-weight: 500;
 		}
 		.user-job-title, .user-company-name {
 			@include padding(0)
@@ -406,6 +407,11 @@ $iconColorList: "ticket" $bg_color_ticket,
 		.contact-edit-padding {
 			@include padding(15px 25px 0 25px);
 		}
+		.conv-title {
+			font-size: 14px;
+			font-weight: bold;
+			@include margin(4px 0);
+		}
 	}
 	.sp_paragraph {
 		max-height: 95px;
@@ -474,6 +480,13 @@ $iconColorList: "ticket" $bg_color_ticket,
 	padding-left: 11px;
 	@include margin(30px 0 20px 3px);
 	font-size: 13px;
+	.middot {
+		margin: 0 3px;
+		font-size: 24px;
+		vertical-align: middle;
+		display: inline-block;
+		margin-top: -5px;
+	}
 	p {
 		margin-bottom: 2px;
 	}
@@ -482,7 +495,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 	}
 	p.muted {
 		a {
-			color: #999;
+			color: #777;
 			&:hover {
 				color: $linkColorHover;
 			}
@@ -501,6 +514,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 		}
 		.user_name {
 			font-weight: normal;
+			@include margin-right(-5px);			
 		}
 	}
 	.timeline-icon {

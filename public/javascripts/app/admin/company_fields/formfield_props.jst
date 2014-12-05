@@ -26,10 +26,7 @@
 							<label class='caption'> <%= translate.get('forAgent') %> </label>
 							<div>
 								<fieldset> 
-									<% isDisabled = ' ' %>
-									<% if (field_type == 'default_email' || field_type == 'default_twitter_id') { 
-													 isDisabled = ' disabled' 
-									 } %>
+									<% isDisabled = disabled_customer_data['required_for_agent'] ? 'disabled' : ''  %>
 									<label class="checkbox<%= isDisabled %>">
 										<input type="checkbox" 
 														name="agent-required" 
