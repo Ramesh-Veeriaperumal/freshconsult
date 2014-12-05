@@ -183,6 +183,7 @@ class Admin::VaRulesController < Admin::AutomationsController
                           :value => "---------------------" 
                           })
         cf.each do |field|
+          next if field.field_type == 'custom_decimal' # To be removed once decimal fields UI is enabled
           filter_hash.push({
             :id => field.id,
             :name => field.name,

@@ -3,7 +3,7 @@ module Conversations::Twitter
   include Social::Dynamo::Twitter
   include Social::Twitter::ErrorHandler
 
-  def send_tweet_as_mention(ticket = @parent, note = @item)
+  def send_tweet_as_mention(ticket = @parent, note = @item, tweet_body = @tweet_body)
     current_account = Account.current
     reply_handle_id = reply_twitter_handle(ticket)
     @reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
@@ -15,10 +15,10 @@ module Conversations::Twitter
       status_id = latest_tweet.tweet_id
 
       tweet_params = {
-        :body => validate_tweet(note.body.strip, "@#{ticket.requester.twitter_id}", true),
+        :body => tweet_body,
         :in_reply_to_id => status_id
       }
-      return_value, error_msg = twt_sandbox(@reply_handle) {
+      error_msg, return_value = twt_sandbox(@reply_handle) {
         twt = tweet_to_twitter(@reply_handle, tweet_params)
 
         #update dynamo
@@ -36,10 +36,10 @@ module Conversations::Twitter
         process_tweet note, twt, reply_handle_id, :mention
       }
     end
-    [return_value, twt]
+    [error_msg, twt]
   end
 
-  def send_tweet_as_dm(ticket = @parent, note = @item)
+  def send_tweet_as_dm(ticket = @parent, note = @item, tweet_body = @tweet_body)
     current_account = Account.current
     reply_handle_id = reply_twitter_handle(ticket)
     @reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
@@ -51,9 +51,9 @@ module Conversations::Twitter
       status_id = latest_tweet.tweet_id
       req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
 
-      return_value, error_msg = twt_sandbox(@reply_handle) {
-        twitter =  TwitterWrapper.new(@reply_handle).get_twitter
-        msg_body = note.body.strip[0..Social::Tweet::LENGTH - 1]
+      error_msg, return_value = twt_sandbox(@reply_handle) {
+        twitter  = TwitterWrapper.new(@reply_handle).get_twitter
+        msg_body = tweet_body
         resp = twitter.create_direct_message(req_twt_id, msg_body)
 
         #update dynamo
@@ -71,7 +71,7 @@ module Conversations::Twitter
         process_tweet note, resp, reply_handle_id, :dm
       }
     end
-    [return_value, resp]
+    [error_msg, resp]
   end
 
   def tweet_to_twitter(handle, tweet_params )
@@ -83,11 +83,6 @@ module Conversations::Twitter
   def update_dynamo_for_tweet(twt, status_id, stream_id, note)
     reply_params = agent_reply_params(twt, status_id, note)
     update_brand_streams_reply(stream_id, reply_params, note)
-  end
-
-  def validate_tweet(tweet, twitter_id, is_ticket = false)
-    twt_text = is_ticket ? (tweet.include?(twitter_id) ? tweet : "#{twitter_id} #{tweet}") : tweet
-    twt_text_body = twt_text[0,Social::Tweet::LENGTH - 1]
   end
 
   def agent_reply_params(twt, status_id, note)

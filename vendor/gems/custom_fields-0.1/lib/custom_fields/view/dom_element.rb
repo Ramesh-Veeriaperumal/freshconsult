@@ -17,7 +17,7 @@ module CustomFields
         @field_value    = field_value.to_s.to_sym
         @field_class    = "#{ (required) ? 'required' : '' } #{dom_type} #{class_name}_#{dom_type}"
         @field_name     = field.name
-        @field_label    = field_label
+        @field_label    = CGI.unescapeHTML(field_label)
         @required_star  = "<span class='required_star'>*</span>".html_safe if required
         label           = label_tag "#{object_name}_#{field.field_name}", @field_label
         @label          = content_tag :div, label+@required_star, :class => 'control-label'
@@ -34,7 +34,7 @@ module CustomFields
         def construct_text
           regex_validity = (@field.field_options and @field.field_options['regex']) ? true : false; 
           html_options = {
-                            :class => "#{@field_class} " + (regex_validity ? "regex_validity" : ''), 
+                            :class => "#{@field_class} field_maxlength " + (regex_validity ? "regex_validity" : ''), 
                             :disabled => @disabled, 
                             :type => 'text'
                           }
@@ -86,13 +86,13 @@ module CustomFields
 
         def construct_phone_number
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => "#{@field_class}", 
+                    {:class => "#{@field_class} field_maxlength", 
                       :disabled => @disabled})
         end
 
         def construct_url
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => @field_class, 
+                    {:class => "#{@field_class} field_maxlength", 
                       :disabled => @disabled, 
                       :type => 'url'})
         end
@@ -113,14 +113,14 @@ module CustomFields
         end
 
         def wrap element
-          div = content_tag :div, (element), :class => 'controls'
-          content_tag :li, (@label+div+@bottom_note), :class => "control-group #{ @dom_type }"
+          div = content_tag :div, (element+@bottom_note), :class => 'controls'
+          content_tag :li, (@label+div), :class => "control-group #{ @dom_type }"
         end
 
         def wrap_checkbox element
-          @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label.html_safe, :class => 'pull-left'
+          @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label.html_safe
           div    = content_tag(:div, (element + @label + @required_star), :class => 'controls')
-          content_tag(:li, div, :class => "control-group #{ @dom_type } #{ @field.field_type } field")
+          content_tag(:li, div, :class => "control-group #{ @dom_type } #{ @field.field_type } field checkbox-wrap")
         end
 
         def format_date

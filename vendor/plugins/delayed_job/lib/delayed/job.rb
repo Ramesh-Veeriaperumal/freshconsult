@@ -41,6 +41,11 @@ module Delayed
       update_all("locked_by = null, locked_at = null", ["locked_by = ?", worker_name])
     end
 
+    # When a worker is exiting, make sure we don't run the same job again
+    def update_run_at_for_syck_errors
+      update_attribute(:run_at, Delayed::Job.db_time_now + 1.year)
+    end
+
     def act_as_directory
     end
 
@@ -243,6 +248,9 @@ module Delayed
       raise DeserializationError,
         'Job failed to load: Unknown handler. Try to manually require the appropiate file.'
     rescue TypeError, LoadError, NameError => e
+      update_run_at_for_syck_errors
+      notification_topic = SNS["dev_ops_notification_topic"]
+      DevNotification.publish(notification_topic,"Delayed Job failed to load with job id #{self.id}", "Syck error unable to deserialize")
       raise DeserializationError,
         "Job failed to load: #{e.message}. Try to manually require the required file."
     end

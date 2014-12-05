@@ -88,7 +88,7 @@ class Social::Twitter::Feed
   def self.fetch_tweets(handle, search_params, max_id, since_id, options)
     query = feeds = next_results = refresh_url = next_fetch_id = nil
     sorted_feeds = []
-    response, error_msg = search(handle, search_params, max_id, since_id, options) # TODO Handle the case if response is nil due to rate limiting
+    error_msg, response = search(handle, search_params, max_id, since_id, options) # TODO Handle the case if response is nil due to rate limiting
     if response
       query         = response.attrs[:search_metadata][:query]
       next_results  = (response.attrs[:search_metadata][:next_results] ? response.attrs[:search_metadata][:next_results] : response.attrs[:search_metadata][:refresh_url])
@@ -114,7 +114,7 @@ class Social::Twitter::Feed
       original_feed = Social::Twitter::Feed.new(status.attrs)
       retweet_count = status[:retweet_count].to_i
       retweeted_feeds = retweet_count > 0  ? retweets(twitter, feed_id) : []
-      return {:count => retweet_count, :feeds => retweeted_feeds, :status => original_feed }
+      {:count => retweet_count, :feeds => retweeted_feeds, :status => original_feed }
     end
   end
 
@@ -123,7 +123,6 @@ class Social::Twitter::Feed
     twt_sandbox(handle) do
       twitter = TwitterWrapper.new(handle).get_twitter
       action_response = twitter.send(action, "#{param}")
-      return action_response
     end
   end  
 
@@ -146,7 +145,7 @@ class Social::Twitter::Feed
       elsif since_id
         options.merge!({:since_id => since_id})
       end
-      return twitter.search(query, options)
+      twitter.search(query, options)
     end
   end
   

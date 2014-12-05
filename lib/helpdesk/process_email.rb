@@ -3,6 +3,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
+  include EmailHelper
   include Helpdesk::ProcessByMessageId
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
@@ -443,7 +444,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_notification_text item
-      message = I18n.t('attachment_failed_message').html_safe
+      message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
       notification_text = "\n" << message
       notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
       if item.is_a?(Helpdesk::Ticket)

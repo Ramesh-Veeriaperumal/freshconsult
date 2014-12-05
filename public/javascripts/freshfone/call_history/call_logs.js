@@ -67,6 +67,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         freshfoneendcall.callerName = $(this).data("customer-name");
         freshfoneendcall.number = "+" + $(this).data("number");
         freshfoneendcall.date = $(this).data("date");
+        freshfoneendcall.agent = $(this).data("responder-id");
         freshfoneendcall.showEndCallForm();
       });
     },

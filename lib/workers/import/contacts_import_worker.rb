@@ -31,6 +31,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
                                     :company_id => nil
                                  }
                       }
+          @params_hash[:user][:name] = "" if @params_hash[:user][:name].nil? && @params_hash[:user][:email].blank?
           company_name = @params_hash[:user][:company].to_s.strip
           @params_hash[:user][:language] = current_account.language if @params_hash[:user][:language].nil?
           @params_hash[:user][:time_zone] = current_account.time_zone if @params_hash[:user][:time_zone].nil?

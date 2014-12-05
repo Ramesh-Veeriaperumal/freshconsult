@@ -316,6 +316,24 @@ module Helpdesk::TicketsHelper
     }.to_json.html_safe
   end
 
+  def socket_auth_params
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = Digest::SHA256.digest(NodeConfig["key"]) 
+    aes.iv  = NodeConfig["iv"]
+
+    account_data = {
+      :account_id => current_user.account_id, 
+      :user_id    => current_user.id
+    }.to_json
+    encoded_data = Base64.encode64(aes.update(account_data)+ aes.final)
+    return {:data => encoded_data}.to_json.html_safe
+  end
+
+  def agentcollision_socket_host
+    "#{request.protocol}#{NodeConfig["socket_host"]}"
+  end
+
   def auto_refresh_channel
     Faye::AutoRefresh.channel(current_account)
   end

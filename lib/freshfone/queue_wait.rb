@@ -7,7 +7,7 @@ class Freshfone::QueueWait
 		begin
 			@account = Account.current
 			queue_sid = args[:queue_sid]; call_sid = args[:call_sid]
-			host = @account.url_protocol + "://" + @account.full_domain + "/freshfone/queue/trigger_non_availability"
+			host = @account.main_url_protocol + "://" + @account.full_domain + "/freshfone/queue/trigger_non_availability"
 			queued_member = @account.freshfone_subaccount.queues.get(queue_sid).members.get(call_sid)
    		queued_member.dequeue(host)
 		rescue Exception => e

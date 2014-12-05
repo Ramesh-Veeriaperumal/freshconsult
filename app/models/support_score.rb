@@ -47,17 +47,16 @@ class SupportScore < ActiveRecord::Base
     :order => "tot_score desc, recent_created_at"
   }
 
-  named_scope :user_score,
-  { 
+  named_scope :user_score, lambda { |query|
+    {
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
+    :conditions => query[:conditions],
     :include => { :user => [ :avatar ] },
-    :joins => "INNER JOIN users ON users.id = support_scores.user_id and 
-      users.account_id = support_scores.account_id and users.deleted = false",
-    :conditions => ["user_id is not null and users.id is not null"],
     :group => "user_id",
     :order => "tot_score desc, recent_created_at"
+    }
   }
-
+  
   named_scope :limit, lambda { |num| { :limit => num } } 
 
   def self.add_happy_customer(scorable)

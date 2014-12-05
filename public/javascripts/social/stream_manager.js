@@ -49,8 +49,8 @@ var StreamManager = Class.create({
         j('.post-twt-submit').attr("disabled", "disabled");
         j(document).on("keyup", ".reply-input", function(e) {
             var _val = j(e.currentTarget).val(),
-                _len = _val.length;
-            if ((_val == "") || (_len > 140)) {
+                _len = j(this).data("tweet-count");
+            if ((_val == "") || (_len < 0)) {
                 j('.twt-submit').attr("disabled", "disabled");
             } else {
                 j('.twt-submit').removeAttr("disabled");

@@ -118,7 +118,7 @@ HTML
 	def article_feedback
 		output = []
 		output << %(<div class="hide" id="vote-feedback-container">)
-		output << %(	<div class="lead">#{t('feedback.down_vote_form_title')}</div>)
+		output << %(	<div class="lead">#{t('feedback.downvote_feedback_messasge')}</div>)
 		output << %(	<div id="vote-feedback-form">)
 		output << %(		<div class="sloading loading-small loading-block"></div>)
 		output << %(	</div>)

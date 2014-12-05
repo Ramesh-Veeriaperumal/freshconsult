@@ -1,3 +1,4 @@
 --colour
 --format progress
 --drb
+--format html:log/rspec_all_examples.html

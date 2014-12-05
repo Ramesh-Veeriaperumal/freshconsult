@@ -476,6 +476,7 @@ cs:
     ticket_updated_icon: "Požadavek Aktualizován"
     reported_on: "od %{username}, poslední aktualizace %{date}"
     scenarios: Scénáře
+    ticket_from: "Od: %{username}"
     ticket_list_status_closed_at: "Od: %{username}, Uzavřeno: <span class='emphasize'>před  %{time_ago}</span>"
     ticket_list_status_resolved_at: "Od: %{username}, Vyřešeno: <span class='emphasize'>před %{time_ago}</span>"
     ticket_list_status_agent_responded_at: "Od: %{username}, Zástupce odpověděl: <span class='emphasize'>před %{time_ago}</span>"

@@ -1,12 +1,13 @@
 # encoding: utf-8
 class CompaniesController < ApplicationController
   
-  helper ContactsHelper
   include HelpdeskControllerMethods
   
   before_filter :set_selected_tab
-  before_filter :load_item,  :only => [:show, :edit, :update, :sla_policies]
-  before_filter :build_item, :only => [:quick, :new, :create]
+  before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :sla_policies]
+  before_filter :build_item, :only => [:quick, :new, :create, :create_company]
+  before_filter :set_required_fields, :only => [:create_company, :update_company]
+  before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
 
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
@@ -28,8 +29,11 @@ class CompaniesController < ApplicationController
       format.html { 
         @total_company_tickets = 
           current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible
-        @company_tickets       = @total_company_tickets.newest(5).find(:all, 
+        @company_tickets       = @total_company_tickets.newest(10).find(:all, 
                                   :include => [:ticket_states,:ticket_status,:responder,:requester])
+        @company_users         = @company.users.contacts
+        @company_users_size    = @company_users.size
+        render :action => 'newshow'
       }
       format.xml  { render :xml => @company }
       format.json { render :json=> @company.to_json }
@@ -59,18 +63,26 @@ class CompaniesController < ApplicationController
     end
   end
 
+  def create_company # new method to implement dynamic validations, as many forms post to create action 
+    create
+  end
+
   def update
     respond_to do |format|
       if @company.update_attributes(params[:company])
         format.html { redirect_to(@company, :notice => t(:'company.updated')) }
         format.xml  { head :ok }
-        format.json { head :ok }
+        format.json { render :json => "", :status => :ok }
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
         format.json { render :json => @company.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  def update_company # new method to implement dynamic validations, as many forms post to update action 
+    update
   end
 
   def sla_policies
@@ -81,6 +93,11 @@ class CompaniesController < ApplicationController
 
     def scoper
       current_account.companies
+    end
+
+    def build_item
+      @company = scoper.new
+      @company.attributes = params[:company]
     end
 
     def es_scoper(per_page)
@@ -100,5 +117,17 @@ class CompaniesController < ApplicationController
 
     def after_destroy_url
       return companies_url
+    end
+
+    def set_required_fields
+      @company ||= scoper.new
+      @company.required_fields = { :fields => current_account.company_form.agent_required_company_fields, 
+                                :error_label => :label }
+    end
+
+    def set_validatable_custom_fields
+      @company ||= scoper.new
+      @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
+                                          :error_label => :label }
     end
 end

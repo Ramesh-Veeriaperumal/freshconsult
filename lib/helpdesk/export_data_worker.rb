@@ -32,7 +32,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       @data_export.save_hash!(hash_file_name)
       url = url_for(:controller => "download_file/#{@data_export.source}/#{hash_file_name}", 
                     :host => @current_account.host, 
-                    :protocol => 'http')
+                    :protocol => @current_account.url_protocol)
       DataExportMailer.deliver_data_backup({:email => params[:email], 
                                             :domain => params[:domain],
                                             :host => @current_account.host,

@@ -1829,7 +1829,7 @@ ol, ul, li{
 				height: auto;
 			}
 
-			.customSelect, select, input.text, input.number{
+			.customSelect, select, input.text, input.number, input.decimal{
 				width: 310px;
 				color: #333;
 				@include box-shadow(0 1px 3px rgba(0,0,0,.1));
@@ -2881,7 +2881,7 @@ $collision_delay: 1s;
 }
 
 .ticket_details .sticky_left {
-	width: 150px;
+	width: 220px;
 	display: inline-block;
 	.ticket-notifications {
 		position: static;

@@ -152,7 +152,7 @@ class Freshfone::Menu < Tree::TreeNode
 		end
 		
 		def host
-			account.url_protocol + "://" + account.full_domain
+			account.main_url_protocol + "://" + account.full_domain
 		end
 
 		def has_options?

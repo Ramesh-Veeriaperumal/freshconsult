@@ -5,6 +5,7 @@ va_handlers:
         text: Va::Handlers::Text
         text_array: Va::Handlers::TextArray
         numeric: Va::Handlers::Numeric
+        decimal: Va::Handlers::Decimal
         date_time: Va::Handlers::DateTime
         dropdown:  Va::Handlers::Text
         checkbox: Va::Handlers::Boolean

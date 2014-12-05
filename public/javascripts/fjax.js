@@ -13,6 +13,15 @@ window.Fjax = {
 		_prevBodyClass: null,
 
     callBeforeSend: function(evnt,xhr,settings,options) {
+      var form = $('.form-unsaved-changes-trigger');
+      if(form.data('formChanged')) {
+        var conf = confirm(customMessages.confirmNavigate);
+        if(conf) {
+          xhr.abort();  
+          return false;
+        }
+      }
+      this._SocketCleanUp();
       this._FayeCleanUp();
       $.xhrPool_Abort();
       this._beforeSendExtras(evnt,xhr,settings,options);
@@ -154,10 +163,19 @@ window.Fjax = {
 			$('.twipsy').remove();
     },
 
+    _SocketCleanUp: function(){
+      if(window.node_socket){
+        window.node_socket.disconnect();
+        $('[data-note-type]').off("click.agent_collsion");
+        $('.reply_agent_collision').off("click.agent_collsion");
+      }
+    },
+
     _FayeCleanUp: function()
     {
       $('[data-note-type]').off("click.agent_collsion");
       $('.reply_agent_collision').off("click.agent_collsion");
+
       if(window.FreshdeskNode.getValue('faye_realtime').fayeClient)
       {
         for(var i=0;i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)

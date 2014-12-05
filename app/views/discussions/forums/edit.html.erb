@@ -12,7 +12,7 @@
 					data-target="#forum-delete-confirmation" 
 			 		rel="freshdialog" 
 			 		title="<%= t('delete')%>"
-			 		data-submit-label="<%= t('delete') %>"
+			 		data-submit-label="<%= t('delete_permanently') %>"
 			 		data-width="500px"
 			 		data-close-label="<%= t('cancel') %>">
 			 		<%= t('delete')%></i>
@@ -26,8 +26,8 @@
 	<div class="hide" id="forum-delete-confirmation">
 		<p class="margin-bottom">
 		<% unless @forum.topics.size == 0 %>
-			<%= t('forum.delete') %>
-			<br />
+			<%= t('forum.delete').html_safe %>
+			<br /><br />
 			<%= t("forum.size", :count => @forum.topics_count) %>
 		<% else %>
 			<%= t('forum.confim_msg1') %>

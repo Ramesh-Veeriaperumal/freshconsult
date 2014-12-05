@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
   concerned_with :associations, :constants, :validations, :callbacks
   include CustomerDeprecationMethods
   
-  xss_sanitize  :only => [:name,:helpdesk_name]
+  xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
@@ -188,6 +188,15 @@ class Account < ActiveRecord::Base
   end
 
   def url_protocol
+    if main_portal.portal_url.blank?
+      self.ssl_enabled? ? 'https' : 'http'
+    else
+      main_portal.ssl_enabled? ? 'https' : 'http'
+    end
+  end
+
+  #used by freshfone and jira integration - they needed this method instead of def url_protocol
+  def main_url_protocol
     self.ssl_enabled? ? 'https' : 'http'
   end
   

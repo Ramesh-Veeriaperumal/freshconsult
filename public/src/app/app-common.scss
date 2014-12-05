@@ -646,31 +646,6 @@ ul.inactive{
 	}
 }
 
-ul.user_list{
-	@include no-bullets;
-	@include clearfix;
-	margin:0;
-	padding:0;
-	li{
-	  height:100px;
-		@include float(left);
-		width:120px;
-		
-		@include text-align(center);
-		.preview_pic{
-			margin:2px 34px;
-			img{
-				padding:0;
-				border:0;
-			}	
-		}
-		.username{
-			display:block;
-			word-wrap: break-word;
-		}
-	}
-}
-
 .padding6{
 	padding:6px;
 }
@@ -2990,7 +2965,8 @@ a.pill.help{
 }  
 
 .index-collision {
-  display: inline-block;
+  /*display: inline-block;*/
+	display: none;
   position: relative;
   top: -5px;
   @include padding-left(22px);

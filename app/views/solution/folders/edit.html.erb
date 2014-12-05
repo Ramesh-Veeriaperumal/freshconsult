@@ -10,7 +10,7 @@
 					data-target="#folder-delete-confirmation" 
 			 		rel="freshdialog" 
 			 		title="<%= t('delete')%>"
-			 		data-submit-label="<%= t('delete') %>"
+			 		data-submit-label="<%= t('delete_permanently') %>"
 			 		data-width="500px"
 			 		data-close-label="<%= t('cancel') %>">
 			 				<%= t('delete')%></i>
@@ -23,8 +23,8 @@
 	<div class="hide" id="folder-delete-confirmation">
 		<p class="margin-bottom">
 		<% unless @folder.articles.size == 0 %>
-			<%= t('folder.delete') %>
-			<br />
+			<%= t('folder.delete').html_safe %>
+			<br /><br />
 			<%= t("folder.size", :count => @folder.articles.size) %>
 		<% else %>
 			<%= t('folder.info1') %>
