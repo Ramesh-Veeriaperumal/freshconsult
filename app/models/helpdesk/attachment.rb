@@ -24,8 +24,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :storage => :s3,
     :s3_credentials => "#{Rails.root}/config/s3.yml",
     :path => "data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
-    :url => ":s3_alias_url",
-    :s3_host_alias => S3_CONFIG[:bucket],
+    :s3_protocol => :https,
+    :url => "/:s3_alias_url",
+    :s3_host_alias => S3_CONFIG[:bucket_name],
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
 
