@@ -16,7 +16,7 @@ class CreateCompanyFieldChoices < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :company_field_picklist_values
+    drop_table :company_field_choices
   end
 
 end

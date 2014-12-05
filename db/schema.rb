@@ -272,7 +272,7 @@ ActiveRecord::Schema.define(:version => 20141202074009) do
 
   add_index "company_field_choices", ["account_id", "company_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_company_field_id_and_position"
 
-  create_table "company_field_data", :id => false, :force => true do |t|
+  create_table "company_field_data", :force => true do |t|
     t.integer  "id",                  :limit => 8,                    :null => false
     t.integer  "account_id",          :limit => 8, :default => 0,     :null => false
     t.integer  "company_form_id",     :limit => 8
@@ -493,7 +493,7 @@ ActiveRecord::Schema.define(:version => 20141202074009) do
 
   add_index "contact_field_choices", ["account_id", "contact_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_contact_field_id_and_position"
 
-  create_table "contact_field_data", :id => false, :force => true do |t|
+  create_table "contact_field_data", :force => true do |t|
     t.integer  "id",               :limit => 8,                                                   :null => false
     t.integer  "account_id",       :limit => 8,                                :default => 0,     :null => false
     t.integer  "contact_form_id",  :limit => 8

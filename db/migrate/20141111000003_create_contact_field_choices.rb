@@ -16,7 +16,7 @@ class CreateContactFieldChoices < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :contact_field_picklist_values
+    drop_table :contact_field_choices
   end
 
 end
