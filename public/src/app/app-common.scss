@@ -2965,7 +2965,8 @@ a.pill.help{
 }  
 
 .index-collision {
-  display: inline-block;
+  /*display: inline-block;*/
+	display: none;
   position: relative;
   top: -5px;
   @include padding-left(22px);
