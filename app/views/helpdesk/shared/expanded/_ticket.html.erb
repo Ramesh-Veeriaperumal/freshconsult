@@ -38,7 +38,7 @@
 				<div class="information ellipsis">
 					<%= t("ticket.ticket_from", :username => requester(ticket)).html_safe %>
 					<%= content_tag(:span, ticket.requester.customer.name.presence, 
-									:class => "company-name") if ticket.requester.customer.present? %>
+									:class => "company-name") if ticket.requester.customer.present? && !ticket.requester.agent? %>
 				</div>
 				<div class="emphasize">
 					<%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state, 
