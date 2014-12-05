@@ -51,10 +51,12 @@
 					<%= f.text_area :note, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("company.info5") %>
 					<%= f.hidden_field :id, :value => @company.id, :id => 'companyid' %>
 					<% if privilege?(:manage_contacts) %>
-						<div class='error ajax-error pull-left'></div>
-						<div class="pull-right hide form-save"> 
-							<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
-							<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+						<div class='clearfix'>
+							<div class='error ajax-error pull-left'></div>
+							<div class="pull-right hide form-save"> 
+								<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
+								<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+							</div>
 						</div>
 					<% end %>
 				<% end %>	

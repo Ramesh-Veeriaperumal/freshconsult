@@ -98,10 +98,12 @@
 						<%= render :partial => "/helpdesk/tags/tag_list", :locals => {:tags => @user.tags, :add_tag => true} %>
 					</div>
 					<% if privilege?(:manage_contacts) %>
-						<div class='error ajax-error pull-left'></div>
-						<div class="pull-right hide form-save"> 
-							<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
-							<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+						<div class='clearfix'>
+							<div class='error ajax-error pull-left'></div>
+							<div class="pull-right hide form-save"> 
+								<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
+								<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+							</div>
 						</div>
 					<% end %>
 				<% end %>	
