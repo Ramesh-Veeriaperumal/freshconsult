@@ -102,20 +102,22 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     rec = params[:ticket][:recordingUrl]
     ticket_desc = params[:ticket][:description] + '<br/>'
     ticket_desc = ticket_desc + '<audio controls><source src="'+"#{rec}"+'" class="cti_recording" type="audio/ogg"/></source></audio>'
+    @usr = User.find_by_email(params[:email])
+    if @usr.nil?
+      @usr  = current_account.users.new 
+      @usr.name = params[:ticket][:number]
+      @usr.mobile = params[:ticket][:number]
+      @usr.email = params[:ticket][:email] unless params[:ticket][:email].blank?
+      @usr.save
+    end
     @ticket = current_account.tickets.build(
                   :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone],
-                  :email  => params[:ticket][:email],
+                  :requester_id => @usr.id,
                   :subject  => params[:ticket][:subject],
                   :ticket_body_attributes => { :description_html => ticket_desc }
               )
-
-      status = @ticket.save_ticket
-      if status
-      req = @ticket.requester
-      if req.phone.nil? and req.mobile.nil?
-        req.mobile = params[:ticket][:number]
-        req.save
-      end
+    status = @ticket.save_ticket
+    if status
       flash[:notice] = t(:'cti.create.success.with_link',
           { :human_name => t(:'cti.ticket.human_name'),
             :link => @template.link_to(t(:'cti.ticket.view'),
