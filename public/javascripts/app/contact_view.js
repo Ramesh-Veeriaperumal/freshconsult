@@ -61,15 +61,19 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			}
 		},
 		populateTags: function(tags) {
-			var tagsHtml = "<div class='tag_list'>";
+			var tagsHtml = "<div class='tag_list'>",
+				savedTags = [];
 			$.each(tags, function(idx, item) {
 				tagsHtml += "<a class='btn btn-flat' href='/contacts?tag=" + item.id + "' > " + escapeHtml(item.name) + " </a>";
+				savedTags.push(escapeHtml(item.name));
 			});
 			tagsHtml += "<a class='btn btn-flat add-new-tag' href='#'>"
 							+ "<span class='ficon-plus'></span>"
 							+ "Add Tags"
 							+ "</a>";
 			$('#tag-list').html(tagsHtml);
+			$('#user_tag_names').select2('val', savedTags);
+			this.tagList = $.extend({}, savedTags);
 		},
 		checkForInfoMsgs: function() {
 			if ($.trim( $('div.info-highlight').text() ).length != 0) {
