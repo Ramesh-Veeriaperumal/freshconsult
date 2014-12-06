@@ -18,6 +18,7 @@ function Keypad() {
 	this._keyCode = 0;
 	this.preventDefault = false;
 	this._specialKeys = [];
+	this.selectedCode = "";
 	this.addKeyDef('CLOSE', 'close', function(inst) {
 		plugin._curInst = (inst._inline ? inst : plugin._curInst);
 		plugin._hidePlugin();
