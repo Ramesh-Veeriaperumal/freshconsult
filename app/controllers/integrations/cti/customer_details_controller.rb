@@ -9,7 +9,8 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   
   def fetch
     mobile_number = params[:mobile]
-    usr = User.find(:first,:conditions => ["mobile=? or phone=?",params[:mobile],params[:mobile]])
+    mobile_number = mobile_number[-10,10]
+    usr = User.find(:first,:conditions => ["mobile=? or phone=?",mobile_number,mobile_number])
     href = ""
     if usr.nil?
       usr_hash = {:mobile => params[:mobile],:avatar => user_avatar(usr, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
@@ -46,27 +47,27 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   end
 
   def save_ticket_popup
-    mobile_number = params[:phone]
-    usr = User.find(:first,:conditions => ["mobile=? or phone=?",params[:mobile],params[:mobile]])
-    if usr.nil?
-      name = mobile_number
-    else 
-      name = usr.name
-    end
-    agent = User.find_by_email(URI.unescape(params[:userId]))
-    if agent.nil?
-      @user  = current_account.users.new 
-      @user.email = params[:userId]
-      status = @user.save
-    end
-    if(!(request.xhr?) && !(agent.nil?))
-        # publish_show_popup(agent,{:email => params[:userId],:crtObjectId => params[:crtObjectId],:cust_name => name})
-    end
-    respond_to do |format|
-      format.json do 
-        render :json => {:text => "success","agent_saved" => status || "already exist"}
-      end
-    end
+    # mobile_number = params[:phone]
+    # usr = User.find(:first,:conditions => ["mobile=? or phone=?",params[:mobile],params[:mobile]])
+    # if usr.nil?
+    #   name = mobile_number
+    # else 
+    #   name = usr.name
+    # end
+    # agent = User.find_by_email(URI.unescape(params[:userId]))
+    # if agent.nil?
+    #   @user  = current_account.users.new 
+    #   @user.email = params[:userId]
+    #   status = @user.save
+    # end
+    # if(!(request.xhr?) && !(agent.nil?))
+    #     # publish_show_popup(agent,{:email => params[:userId],:crtObjectId => params[:crtObjectId],:cust_name => name})
+    # end
+    # respond_to do |format|
+    #   format.json do 
+    #     render :json => {:text => "success","agent_saved" => status || "already exist"}
+    #   end
+    # end
   end
 
   def create_note
@@ -102,9 +103,9 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     rec = params[:ticket][:recordingUrl]
     ticket_desc = params[:ticket][:description] + '<br/>'
     ticket_desc = ticket_desc + '<audio controls><source src="'+"#{rec}"+'" class="cti_recording" type="audio/ogg"/></source></audio>'
-    @usr = User.find_by_email(params[:email])
+    @usr = User.find_by_email(params[:ticket][:email])
     if @usr.nil?
-      @usr  = current_account.users.new 
+      @usr  = current_account.users.new
       @usr.name = params[:ticket][:number]
       @usr.mobile = params[:ticket][:number]
       @usr.email = params[:ticket][:email] unless params[:ticket][:email].blank?
