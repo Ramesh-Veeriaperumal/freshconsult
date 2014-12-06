@@ -48,6 +48,7 @@ class Freshfone::Number < ActiveRecord::Base
 	VOICEMAIL_STATE_BY_VALUE = VOICEMAIL_STATE.invert
 	
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
+	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
@@ -84,6 +85,12 @@ class Freshfone::Number < ActiveRecord::Base
 	HUNT_TYPE.each do |k, v|
 		define_method("#{k}?") do
 			hunt_type == v
+		end
+	end
+
+	RECORDING_VISIBILITY.each do |k, v|
+		define_method("#{k}?") do 
+			recording_visibility == v
 		end
 	end
 

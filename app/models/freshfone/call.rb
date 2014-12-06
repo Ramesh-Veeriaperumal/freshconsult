@@ -203,11 +203,11 @@ class Freshfone::Call < ActiveRecord::Base
 		self.params = params
 		self.notable.attributes = {
 			:account_id => account_id,
-			:note_body_attributes => { :body_html => description_html },
+			:note_body_attributes => { :body_html =>  note_description_html },
 			:incoming => true,
 			:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
 			:user => params[:agent],
-			:private => false
+			:private => freshfone_number.private_recording?
 		}
 		self.notable.build_note_and_sanitize
 		self
@@ -273,6 +273,11 @@ class Freshfone::Call < ActiveRecord::Base
 			return country_code if ["US", "USA"].include?(country_code)
       country = Carmen::Country.coded(country_code)
       country ? country.name : nil
+		end
+
+		def note_description_html
+			return "<span></span>".html_safe if params[:is_recording_note].present? && params[:is_recording_note].to_bool
+			description_html
 		end
 
 		def description_html
