@@ -277,6 +277,7 @@ class Social::TwitterController < Social::BaseController
         end
       else
         flash.now[:notice] = error_message
+        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:validation_failed]
       end
       
     else
@@ -381,6 +382,7 @@ class Social::TwitterController < Social::BaseController
       end
     else
       flash.now[:notice] = error_message
+      MOBILE_TWITTER_RESPONSE_CODES[:validation_failed]
     end
   end
 
@@ -412,6 +414,7 @@ class Social::TwitterController < Social::BaseController
       end
     else
       flash.now[:notice] = error_message
+      MOBILE_TWITTER_RESPONSE_CODES[:validation_failed]
     end
   end
 
