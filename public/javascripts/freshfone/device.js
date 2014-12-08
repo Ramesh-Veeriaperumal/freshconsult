@@ -40,9 +40,6 @@
 			if (recordingMode()) { return freshfonecalls.setRecordingState(); }
 			$("#log").text("Successfully established call");
 			freshfoneNotification.resetJsonFix();
-			if(freshfonecalls.isOutgoing()){
-		    	$('#number').intlTelInput("updatePreferredCountries");
-	     	}
 			freshfoneNotification.popAllNotification(conn);
 			freshfonetimer.startCallTimer();
 			freshfonewidget.toggleWidgetInactive(false);

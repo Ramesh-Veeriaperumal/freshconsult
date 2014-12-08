@@ -1,4 +1,3 @@
-<input class="user_phone" id="number" type="tel">
 <% if current_account_freshfone_numbers.length == 1 %>
  <% number = current_account_freshfone_numbers.first %>
     <span data-number_id='<%= number[1] %>' class="outgoing_number hide"
@@ -12,11 +11,7 @@
 								 :"data-minimum-results-for-search" => 5,
 								 :"data-attachto-container-class" => ".popupbox-content" %>
 <% end %>
-<span class="invalid_phone_text hide">
-	<p class="invalid_text"><%=t('freshfone.dialpad.not_valid_number')%></p>
-</span>
-<span class="invalid_phone_num hide">
-	<p id="invalid_num"><%=t('freshfone.dialpad.could_be_invalid_number')%><br><%=t('freshfone.dialpad.invalid_number_continue_call')%></p>
-</span>
+<span class="invalid_phone_text hide"><%=t('freshfone.dialpad.not_valid_number')%></span>
 <span class="already_in_call_text hide"><%=t('freshfone.dialpad.already_in_call')%></span>
 <span class="info_message hide"><%=t('freshfone.dialpad.not_enough_credit')%></span>
+<input class="user_phone" id="number" type="tel">

@@ -5776,8 +5776,6 @@ en:
       followup_text: "worth Freshfone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
-      could_be_invalid_number: "Could be an invalid number."
-      invalid_number_continue_call: "Press call button again" 
       not_enough_credit: "Not Enough Credit"
       already_in_call: "Simultaneous outgoing call restricted"
     call_status:

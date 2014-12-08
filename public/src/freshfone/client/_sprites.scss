@@ -1,8 +1,3 @@
-/*Report tab icons */
-@import "cdn-ignored/sprites/flags/*.png";
-$flags-layout:horizontal;
-@include all-flags-sprites(true);
-
 $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 
 .freshfone-sprite{ background-image: sprite-url($freshfone-sprite); }

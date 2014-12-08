@@ -6,9 +6,6 @@
 		$callButtonContainer;
 	
 	// Defining two custom keys
-//Invoking intlTelInput plugin 
-    window.tel = $number.intlTelInput(); 
-// Defining two custom keys
 	$.keypad.addKeyDef('CALL', 'call', function (inst) { freshfonecalls.makeCall(); });
 	
  // Invoking keypad
@@ -33,12 +30,7 @@
 		},
 		onMousedown: function (keypad, inst) {
 
-			freshfonecalls.hideText();
-			if($(this).attr('class').indexOf("keypad-call") == -1){
-				freshfonecalls.exceptionalNumber = false;
-			}
-			$number.intlTelInput("updateFlag");
-      if (!freshfonecalls.isOngoingCall() && freshfonecalls.isMaxSizeReached()) {
+			if (!freshfonecalls.isOngoingCall() && freshfonecalls.isMaxSizeReached()) {
 			 return (keypad.preventDefault = true); 
 			}
 			freshfonecalls.toggleInvalidNumberText(false);
@@ -52,22 +44,16 @@
 			}
 		}
 	}).keypress(function (ev) {
-		freshfonecalls.hideText();
-		if (ev.keyCode === 13) { 
-			return freshfonecalls.makeCall(); }
-		else{
-			freshfonecalls.exceptionalNumber = false;
-		}
 
-		var key = String.fromCharCode(ev.charCode), key_element;
+		if (ev.keyCode === 13) { return freshfonecalls.makeCall(); }
 		
+		var key = String.fromCharCode(ev.charCode), key_element;
 		
 		if (freshfonecalls.isOngoingCall()) {
 			freshfonecalls.tConn.sendDigits(key);
 		} else if (freshfonecalls.isMaxSizeReached()) {
-			 return ev.preventDefault(); 
+		 return ev.preventDefault(); 
 		}
-		
 		
 		if (key === "+") { key = "0"; }
 		
@@ -83,10 +69,6 @@
 		
 		setTimeout(function () { freshfonecalls.removeExtraCharacters(); }, 1);
 		// setTimeout(function () { freshfonecalls.removeDisallowedCharacters(); }, 1);
-	}).keyup(function(ev){
-		if(ev.keyCode == 8){
-			freshfonecalls.hideText();
-		}
 	});
 	
 	
@@ -94,8 +76,6 @@
 	$('.ongoingDialpad, .showDialpad')
 		.on('shown', function (e) {
 			$number.keypad('show');
-			$number.intlTelInput("setPreferredCountries");
-			freshfonecalls.hideText();
 			$callButtonContainer = $('.freshfone_dialpad .keypad-call').parent();
 
 			if ($(this).hasClass('showDialpad')) {
