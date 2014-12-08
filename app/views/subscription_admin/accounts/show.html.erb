@@ -1,212 +1,34 @@
 <div class="page-header">
   <h2><%= @page_title = @account %></h2>                                                                         
 </div>
-<div class="row">     
-  <div class="span4">
-    <h3>Summary</h3>
-    <table id="subscription" class="table table-bordered">
-      <tr>
-        <th>Account ID</th>
-        <td><%= h(@account.id) %></td>
-      </tr>           
-      <tr>
-        <th>Name</th>
-        <td><%= h(@account) %></td>
-      </tr>           
-      <tr>
-        <th>Contact information</th>
-        <td><%= @account.admin_email %> <%= @account.admin_phone %> </td>
-      </tr>
-      <tr>
-        <th>Created</th>
-        <td><%= @account.created_at.to_s(:short_day) %></td>
-      </tr>
-      <tr>
-        <th>Billing site</th>
-        <td><%= link_to(@account.subscription.currency_billing_site, %(https://#{@account.subscription.currency_billing_site}.chargebee.com)) %></td>
-      </tr>
-      <tr>
-        <th>State</th>
-        <td><%= @account.subscription.state %></td>
-      </tr>
-      <tr>
-        <th>Plan</th>
-        <td><%= @account.subscription.subscription_plan.name %></td>
-      </tr>
-      <tr>
-        <th>Billing cycle (in months)</th>
-        <td><%= @account.subscription.renewal_period %></td>
-      </tr>
-      <tr>
-        <th>Monthly Revenue (adjusted to current exchange rate)</th>
-        <td>$<%= format_float_value(@account.subscription.cmrr) %></td>
-      </tr>
-      <tr>
-        <th>Next Renewal</th>
-        <td><%= @account.subscription.next_renewal_at.to_s(:short_day) %></td>
-      </tr>
-      <tr>
-        <th>Currency</th>
-        <td><%= @account.currency_name %></td>
-      </tr>
-      <tr>
-        <th>Amount (charged on next renewal)</th>
-        <td><%= (@account.subscription.amount) %> <%= @account.currency_name %></td>
-      </tr>
-      <tr>
-        <th>Lifetime Revenue</th>
-        <td><%= @account.subscription_payments.sum(:amount) %> <%= @account.currency_name %></td>
-      </tr>       
-      <tr>
-        <th>Remaining Day Passes</th>
-        <td><%= @account.day_pass_config.available_passes %></td>
-      </tr>
-      <tr>
-        <th>Freshfone Credits</th>
-        <% credit = @account.freshfone_credit %>
-        <td><%= number_to_currency(credit ? credit.available_credit : 0) %></td>
-      </tr>
-      <tr>
-        <th>Agents</th>
-        <td>Subscribed - <%=@account.subscription.agent_limit%>  Free - <%= @account.subscription.free_agents %>  Full time - <%= @account.full_time_agents.count %> Total - <%= @account.agents.count %> Ocassional - <%=@account.agents.count - (@account.full_time_agents.count ||= 0)%></td>
-      </tr>
-      <tr>
-        <th>Tickets</th>
-        <td><%= @account.tickets.count %></td>
-      </tr>
-       <tr>
-        <th>Chat</th>
-        <td>Chat - <%= @account.features?(:chat) %>  Enabled - <%= @account.chat_setting.display_id? && 
-                                                                    @account.chat_setting.active %></td>
-      </tr>
-      <tr>
-        <th>Multi product</th>
-        <td><%= @account.portals.count > 1 %></td>
-      </tr>
-      <tr>
-        <th>Social</th>
-        <td>Twitter - <%= !@account.twitter_handles.blank? %> Facebook - <%= !@account.facebook_pages.blank?%></td>
-      </tr>
-      <tr>
-        <th>Email Configured</th>
-        <td><%= (@account.all_email_configs.collect {|ec| "#{ec.name} - #{ec.reply_email} - #{ec.active}"}).join("<br>") %></td>
-      </tr>
-      <tr>
-        <th>Portals</th>
-        <td><%= (@account.portals.collect {|por| "#{por.name} - #{por.portal_url} - #{por.language}"}).join("<br>") %></td>
-      </tr>
-      <tr>
-        <th>Security</th>
-        <td>SSO - <%= @account.sso_enabled? %>  https - <%= @account.ssl_enabled? %>   Custom SSL - <%= @account.main_portal.ssl_enabled %> </td>
-      </tr>
-    </table>   
-  </div> 
-  <div class="span4">
-  <table id="sample-tickets" class="table table-bordered">
-    <tr><th>Sample tickets</th></tr>
-    <% @account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt| %>
-      <tr>
-      <td><%=tkt.subject%></td>
-      </tr>
-    <%end%>
+<div class="row">
+
+  <!-- Internal Tool Panes -->
+  <div class="container">
+    <!-- Pane Titles -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active">
+        <a href="#acc_details" role="tab" data-toggle="tab">
+            Account Details
+        </a>
+      </li>
+
+      <li>
+        <a href="#tools" role="tab" data-toggle="tab">
+          Toolbelt
+        </a>
+      </li>
+    </ul>
     
-    
-    <table> 
-  </div>        
-
-  <div class="span4">
-    <h3>Agents</h3>
-    <table class="table">
-      <tr>
-        <th>Email</th>
-        <th>Verified</th>
-        <th>Occasional</th>
-      </tr>
-      <% @account.agents.each do |agent| %>
-        <tr>
-          <td><%= agent.user.email %></td>
-          <td><%= agent.user.active %></td>
-          <td><%= agent.occasional %></td>
-        </tr>
-      <% end %>     
-    </table>
-
-    <b>Invoices are sent to</b>
-      <table class="table">
-        <% @account.invoice_emails.each do |email| %>
-          <tr><td><%= email %></td></tr>
-        <% end %>
-      </table>
-  </div>  
-
-  <div class="span4">
-    <% if current_user && current_user.has_role?(:manage_admin) %>
-      <h3>Add Day Passes</h3>
-
-      <% form_tag({:action => 'add_day_passes'}, :id => 'trial_form', :class => "well form-inline") do %>
-        <input type="text" name="passes_count" id="passes_count" placeholder="No. of day passes" />
-        <input type="submit" value="Add Passes" class="btn" />
-      <% end %>
-    
-
-      <h3>Add a feature</h3>
-       <% form_tag({:action => 'add_feature'}, :id => 'add_feature_form', :class => "well form-inline") do %>
-        <label for="feature_name"> Feature name</label>
-        <input type="text" name="feature_name" id="feature_name" style="width:150px"/>
-        <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
-        <input type="submit" value="Add" class="btn" />
-      <% end %>
-
-      <h3>Remove a feature</h3>
-       <% form_tag({:action => 'remove_feature'}, :id => 'remove_feature_form', :class => "well form-inline") do %>
-        <label for="feature_name"> Feature name</label>
-        <input type="text" name="feature_name" id="feature_name" style="width:150px"/>
-        <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
-        <input type="submit" value="Remove" class="btn" />
-      <% end %>
-
-      <h3>Change Account name</h3>
-      <% form_tag({:action => 'change_account_name'}, :id => 'account_name_change', :class => "well form-inline") do %>
-        <label for="feature_name"> Account name</label>
-        <input type="text" name="account_name" id="account_name" style="width:150px"/>
-        <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
-        <input type="submit" value="Add" class="btn" />
-      <% end %>
-    <% end %>
-
-    <% if current_user && current_user.has_role?(:manage_admin) %>
-      <h3>Change Account url</h3>
-      <% form_tag({:action => 'change_url'}, :id => 'change_url_form', :class => "well form-inline") do %>
-        <label for="old_url"> Your current url (ex: abc.domain.com) </label>
-        <input type="text" name="old_url" value="<%= @account.full_domain %>" disabled id="old_url" style="width:200px"/>
-        <br/><br/>
-        <label for="new_url"> Your new url (ex: xyz.domain.com) </label>
-        <input type="text" name="new_url" id="new_url" style="width:200px"/>
-        <input type="hidden" name="old_url" id="old_url" value="<%=@account.full_domain%>"/>
-        <input type="submit" value="Change" class="btn" />
-      <% end %>
-      <%if @account.subscription.state == "trial"%>
-        <h3>Block account</h3>
-        <% form_tag({:action => 'block_account'}, :id => 'block_account', :class => "well form-inline") do %>
-          <input type="hidden" name="account_id" value="<%=@account.id%>"/>
-          <input type="submit" value="Block account" class="btn" />
-        <% end %>
-      <%end%>
-    <% end %>
-    <%if @account.subscription.state == "suspended"%>
-        <h3>Unblock account</h3>
-        <% form_tag({:action => 'ublock_account'}, :id => 'unblock_account', :class => "well form-inline") do %>
-          <input type="hidden" name="account_id" value="<%=@account.id%>"/>
-          <input type="submit" value="Unblock Account" class="btn" />
-        <% end %>
-      <%end%>
-    <%if @account.subscription.state == "trial"%>
-      <h3>Whitelist</h3>
-        <% form_tag({:action => 'whitelist'}, :id => 'whitelist', :class => "well form-inline") do %>
-          <input type="hidden" name="account_id" value="<%=@account.id%>"/>
-          <input type="submit" value="Whitelist" class="btn" />
-        <% end %>
-    <%end%>
-      
+    <!-- Pane pages -->
+    <div class="tab-content">
+      <div class="tab-pane fade active in" id="acc_details">
+        <%= render :partial => "account_info" %>
+      </div>
+      <div class="tab-pane fade" id="tools">
+        <%= render :partial => "account_tools" %>
+      </div>
+    </div>
+  </div>
 
 </div>

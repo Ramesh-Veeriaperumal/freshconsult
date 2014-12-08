@@ -1,0 +1,138 @@
+<div>
+
+	<!-- Two columns max pls -->
+	<table class="table">
+		<tr>
+			<td>
+				<h3>Change Account name</h3>
+				<% form_tag({:action => 'change_account_name'}, :id => 'account_name_change', :class => "well form-inline") do %>
+					<p>Current Account Name : <b><%= @account.name %></b></p>
+					<label for="feature_name"> Account name:</label>
+					<input type="text" name="account_name" id="account_name" style="width:150px"/>
+					<input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
+					<input type="submit" value="Add" class="btn" />
+				<% end %>
+			</td>
+
+			<td>
+				<h3><sup>*</sup>Change Currency</h3>
+				<% form_tag({:action => 'change_currency'}, :id => 'currency_form', :class => "well form-inline") do %>
+					<%= select_tag :new_currency, options_for_select(Subscription::Currency.all.map(&:name), @account.currency_name) %>
+					<input type="submit" value="Change" class="btn" />
+				<% end %>
+			</td>
+		</tr>
+
+		<% if current_user && current_user.has_role?(:acc_ops) #Act "ADMIN" check here %>
+
+			<tr>
+				<td>
+					<h3>Add Day Passes</h3>
+					<% form_tag({:action => 'add_day_passes'}, :id => 'trial_form', :class => "well form-inline") do %>
+						<%= select_tag :passes_count, options_for_select((1..10).to_a + [20,30]) %>
+						<input type="submit" value="Add Passes" class="btn" />
+					<% end %>
+				</td>
+
+				<td>
+					<h3>Change Account url</h3>
+					<% form_tag({:action => 'change_url'}, :id => 'change_url_form', :class => "well form-inline") do %>
+						<label for="old_url"> Your current url (ex: abc.domain.com)</label>
+						<input type="text" name="old_url" value="<%= @account.full_domain %>" disabled id="old_url" style="width:200px"/>
+						<br/><br/>
+						<label for="new_url"> Your new url (ex: xyz.domain.com)</label>
+						<input type="text" name="new_url" id="new_url" style="width:200px"/>
+						<input type="hidden" name="old_url" id="old_url" value="<%=@account.full_domain%>"/>
+						<input type="submit" value="Change" class="btn" />
+					<% end %>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<h3>Add a feature</h3>
+					<% form_tag({:action => 'add_feature'}, :id => 'add_feature_form', :class => "well form-inline") do %>
+						<label for="feature_name"> Feature name:</label>
+						<input type="text" name="feature_name" id="feature_name" style="width:150px"/>
+						<input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
+						<input type="submit" value="Add" class="btn" />
+					<% end %>
+				</td>
+
+				<td>
+					<h3>Remove a feature</h3>
+					<% form_tag({:action => 'remove_feature'}, :id => 'remove_feature_form', :class => "well form-inline") do %>
+						<label for="feature_name"> Feature name:</label>
+						<input type="text" name="feature_name" id="feature_name" style="width:150px"/>
+						<input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
+						<input type="submit" value="Remove" class="btn" />
+					<% end %>
+				</td>
+			</tr>
+
+			<% if current_user.has_role?(:manage_admin) %>
+				<tr>
+					<td>
+						<h3><sup>*</sup>Kill Zendesk Import</h3>
+						<% form_tag({:action => 'kill_zd_import'}, :id => 'kill_zd_import_form', :class => "well form-inline") do %>
+							<input type="submit" value="Kill" class="btn" />
+						<% end %>
+					</td>
+
+					<td>
+						<h3><sup>*</sup>Kill Contact Import</h3>
+						<% form_tag({:action => 'kill_zd_import'}, :id => 'kill_zd_import_form', :class => "well form-inline") do %>
+							<input type="submit" value="Kill" class="btn" />
+						<% end %>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<h3><sup>*</sup>Change Email Address</h3>
+						<% form_tag({:action => 'change_email'}, :id => 'change_email_form', :class => "well form-inline") do %>
+						<%= text_field_tag :old_email, "", :placeholder => "Old email address" %>
+						<%= text_field_tag :new_email, "", :placeholder => "New email address" %>
+						<input type="submit" value="Change" class="btn" />
+						<% end %>
+					</td>
+
+					<td>
+					</td>
+				</tr>
+			<% end %>	
+
+		<% end %>
+
+		<tr>
+			<td>
+				<!-- Block, Unblock & Whitelist tools -->
+				<%if @account.subscription.state == "trial" and (current_user && current_user.has_role?(:manage_admin)) %>
+					<h3>Block account</h3>
+					<% form_tag({:action => 'block_account'}, :id => 'block_account', :class => "well form-inline") do %>
+						<input type="hidden" name="account_id" value="<%=@account.id%>"/>
+						<input type="submit" value="Block account" class="btn" />
+					<% end %>
+				<%elsif @account.subscription.state == "suspended"%>
+					<h3>Unblock account</h3>
+					<% form_tag({:action => 'ublock_account'}, :id => 'unblock_account', :class => "well form-inline") do %>
+						<%= text_area_tag :reason, "", :placeholder => "Reason to unblock", :required => true %>
+						<input type="hidden" name="account_id" value="<%=@account.id%>"/>
+						<input type="submit" value="Unblock Account" class="btn" />
+					<% end %>
+				<%end%>
+			</td>
+			
+			<td>
+				<%if @account.subscription.state == "trial"%>
+					<h3>Whitelist</h3>
+					<% form_tag({:action => 'whitelist'}, :id => 'whitelist', :class => "well form-inline") do %>
+						<input type="hidden" name="account_id" value="<%=@account.id%>"/>
+						<input type="submit" value="Whitelist" class="btn" />
+					<% end %>
+				<%end%>
+			</td>
+		</tr>
+	</table>
+
+</div>

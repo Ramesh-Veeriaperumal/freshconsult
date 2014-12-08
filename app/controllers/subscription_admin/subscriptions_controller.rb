@@ -9,7 +9,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     @customer_count = cumilative_count { Subscription.customer_count }
     @free_customers = cumilative_count { Subscription.free_customers }
     @monthly_revenue = cumilative_count { Subscription.monthly_revenue }
-    @cmrr = @monthly_revenue/(@customer_count - @free_customers)
+    @cmrr = 0#@monthly_revenue/(@customer_count - @free_customers)
     @customer_agent_count = cumilative_count { Subscription.paid_agent_count }
     @subscriptions = search(params[:search])
     @free_agent_count = cumilative_count { Subscription.free_agent_count }

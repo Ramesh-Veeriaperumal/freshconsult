@@ -70,7 +70,18 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     redirect_to :back
   end
 
+  def change_currency #Have to verify with pappu
+    Sharding.admin_select_shard_of(params[:account_id]) do
+      a = Account.find(params[:account_id])
+      s = a.subscription
+      s.currency = Subscription::Currency.find_by_name(params[:new_currency])
+      s.state = "active"
+      s.save!
+    end
+  end
+
   def ublock_account
+    FreshdeskErrorsMailer.deliver_unblock_notification(params.merge({ :email => current_user.email, :recipients => "hariharan.r@freshdesk.com"}))
     shard_mapping = ShardMapping.find(params[:account_id])
     shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
     shard_mapping.save
