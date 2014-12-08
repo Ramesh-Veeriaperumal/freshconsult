@@ -185,7 +185,7 @@ class Freshfone::Call < ActiveRecord::Base
     self.customer_id = params[:custom_requester_id] if customer_id.blank?
     self.notable.attributes = {
       :account_id => account_id,
-      :ticket_body_attributes => { :description_html => description_html },
+      :ticket_body_attributes => { :description_html => description_html(true) },
       :email => params[:requester_email],
       :name => requester_name,
       :phone => caller_number,
@@ -203,7 +203,7 @@ class Freshfone::Call < ActiveRecord::Base
 		self.params = params
 		self.notable.attributes = {
 			:account_id => account_id,
-			:note_body_attributes => { :body_html =>  note_description_html },
+			:note_body_attributes => { :body_html =>  description_html(false) },
 			:incoming => true,
 			:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
 			:user => params[:agent],
@@ -275,12 +275,7 @@ class Freshfone::Call < ActiveRecord::Base
       country ? country.name : nil
 		end
 
-		def note_description_html
-			return "<span></span>".html_safe if params[:is_recording_note].present? && params[:is_recording_note].to_bool
-			description_html
-		end
-
-		def description_html
+		def description_html(is_ticket)
 
 			i18n_params = {
 				:customer_name=> customer_name,
@@ -298,7 +293,7 @@ class Freshfone::Call < ActiveRecord::Base
 			end
 			i18n_label += valid_customer_name? ? "_with_name" : "_with_out_name"
 			desc = I18n.t(i18n_label, i18n_params)
-			desc << "#{params[:call_log]}"
+			desc << "#{params[:call_log]}" unless is_ticket && freshfone_number.private_recording?
 			desc.html_safe
 		end
 

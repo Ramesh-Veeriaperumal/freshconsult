@@ -261,9 +261,10 @@ class Social::TwitterController < Social::BaseController
   end
   
   def post_tweet
-    if privilege?(:reply_ticket)
-      handle_id = params[:twitter_handle_id]
-      handle = current_account.twitter_handles.find_by_id(handle_id)
+    handle_id = params[:twitter_handle_id]
+    handle = current_account.twitter_handles.find_by_id(handle_id)
+    stream_id = handle.default_stream.dynamo_stream_id
+    if has_permissions?(SEARCH_TYPE[:saved], stream_id)
       error_message, twt_text = validate_tweet(params[:tweet][:body].strip, nil, false)
       
       if error_message.blank?

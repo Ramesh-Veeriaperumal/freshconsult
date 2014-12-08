@@ -32,6 +32,7 @@ module ContactsCompaniesHelper
 
   def show_field field, field_value
     field_value = I18n.name_for_locale(field_value) if field.field_type == :default_language
+    field_value = CGI.unescapeHTML(field_value) if field.field_type == :custom_dropdown
     field_value = field_value ? I18n.t('plain_yes') : I18n.t('plain_no') if field.dom_type == :checkbox
     field_value = formated_date field_value, {:format => :short_day_separated,:include_year => true} if field.dom_type == :date
     field_value = h(field_value).gsub(/\n/, '<br />').html_safe if field.dom_type == :paragraph

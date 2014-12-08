@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "e586cef6691606bbdc0bf292e44e863d4c6409f4703959c91c736861adcd6b9b",
-    "current": "e586cef6691606bbdc0bf292e44e863d4c6409f4703959c91c736861adcd6b9b"
+    "previous": "e90d6d77378991ab588ba626ec42661040f29019cecc632a2fa5375f64485bea",
+    "current": "e90d6d77378991ab588ba626ec42661040f29019cecc632a2fa5375f64485bea"
   },
   "fonts": [
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.ttf",
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.svg",
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.woff",
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.eot"
+    "public/fonts/glyphs_e90d6d77378991ab588ba626ec426610.ttf",
+    "public/fonts/glyphs_e90d6d77378991ab588ba626ec426610.svg",
+    "public/fonts/glyphs_e90d6d77378991ab588ba626ec426610.woff",
+    "public/fonts/glyphs_e90d6d77378991ab588ba626ec426610.eot"
   ],
   "glyphs": {
     "account": {
@@ -109,6 +109,10 @@
     "caret-up": {
       "codepoint": 61705,
       "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "chat-bubble": {
+      "codepoint": 61856,
+      "source": "public/glyphs/vectors/chat-bubble.svg"
     },
     "chat-disable": {
       "codepoint": 61803,
@@ -594,7 +598,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

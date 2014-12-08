@@ -37,22 +37,24 @@ class Facebook::Core::Comment
     end    
   end
 
-  #reply to a ticket
-  def send_reply(ticket, note)
+  #send reply to a ticket/note
+  def send_reply(parent, note)
     return_value = sandbox(true) {
-      post_id =  ticket.fb_post.post_id
+      post_id =  parent.fb_post.post_id
       comment = @rest.put_comment(post_id, note.body)
-      comment.symbolize_keys!
+      comment_id = comment.is_a?(Hash) ? comment["id"] : comment
+      post_type = comment.is_a?(Hash) ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
 
       #create fb_post for this note
       unless comment.blank?
         note.create_fb_post({
-          :post_id          => comment[:id],
-          :facebook_page_id => ticket.fb_post.facebook_page_id,
-          :account_id       => ticket.account_id,
-          :parent_id        => ticket.fb_post.id,
+          :post_id          => comment_id,
+          :facebook_page_id => parent.fb_post.facebook_page_id,
+          :account_id       => parent.account_id,
+          :parent_id        => parent.fb_post.id,
           :post_attributes  => {
-            :can_comment => false
+            :can_comment => false,
+            :post_type => post_type
           }
         })
       end
