@@ -7,6 +7,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
 
   before_filter :set_selected_tab
   before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
+  before_filter :set_validatable_custom_fields, :only => [:create, :update]
   skip_before_filter :build_item , :only => [:create]
   
   def index
@@ -134,6 +135,12 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
 
     def after_destroy_url
       return companies_url
+    end
+
+    def set_validatable_custom_fields
+      @customer ||= scoper.new
+      @customer.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
+                                          :error_label => :label }
     end
   
 end
