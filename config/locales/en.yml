@@ -5963,9 +5963,9 @@ en:
         name_placeholder: Enter a friendly name for your number
         hunt_type: "Call Routing"
         routing_message: "When multiple agents are available online..."
-        recording_privacy: "Include Call Recording"
-        recording_privacy_public: "Yes"
-        recording_privacy_private: "No"
+        recording_privacy: "Recording Visibility"
+        recording_privacy_public: "Visible to customers and agents"
+        recording_privacy_private: "Visible only to agents"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."

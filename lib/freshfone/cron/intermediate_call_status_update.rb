@@ -18,7 +18,8 @@ class Freshfone::Cron::IntermediateCallStatusUpdate
       status = account.freshfone_subaccount.calls.get(sid).status
       Freshfone::Call::CALL_STATUS_STR_HASH[status]
     rescue => e
-      Rails.logger.debug "Twilio api request error in IntermediateCallStatusUpdate => #{e}"
+      Rails.logger.debug "Twilio api request error in IntermediateCallStatusUpdate for account #{account.id} => #{e}"
+      return nil
     end
   end
 
