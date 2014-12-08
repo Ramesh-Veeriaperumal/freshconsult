@@ -9,9 +9,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
-    if @installing_application.application_type == "CTI Integration"
-      cti_app = current_account.installed_applications.select {|app| app.application.application_type=="CTI Integration"}
-      unless cti_app.first.nil?
+    if @installing_application.cti?
+      cti_app = current_account.installed_applications.detect {|app| app.application.cti?}
+      unless cti_app.blank?
         flash[:notice] = t(:'flash.application.install.cti_error')
         redirect_to :controller=> 'applications', :action => 'index'
         return

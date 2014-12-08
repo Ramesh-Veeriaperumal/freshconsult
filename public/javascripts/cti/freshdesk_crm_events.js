@@ -4,7 +4,9 @@ function freshdeskShowCrm(phone, additionalParams) {
 	jQuery.ajax({
           url: '/integrations/cti/customer_details/fetch.json',
           type: 'GET',
-          data: {"mobile" : phone,"email" : cti_user.email},
+          data: {"user" : {"mobile" : phone},
+                 "agent" : {"email" : cti_user.email}
+               },
           success: function (response) {
             data = response.data;
             show_incomming_popup(data);
@@ -56,13 +58,10 @@ function show_incomming_popup(data){
             var myTable="";
             if(data.tickets!=null){
               var tickets = data.tickets;
-              var json = tickets.concat("]");
-              var obj =  JSON.parse(json);
-              
+              var obj =  JSON.parse(tickets);
               var len = obj.length;
-              if(len>2) len=2;
                 for (var i=0; i<len; i++) {
-                myTable+="<li><i class='ficon-ticket fsize-18 '></i><a href='/helpdesk/tickets/"+obj[i].display_id+"' target='_blank'>"+obj[i].subject+"</a></li>";
+                myTable+="<li><i class='ficon-ticket fsize-18 '></i><a href='/helpdesk/tickets/"+obj[i]["helpdesk_ticket"].display_id+"' target='_blank'>"+obj[i]["helpdesk_ticket"].subject+"</a></li>";
                 }
             }
             document.getElementById('tickets_table').innerHTML = myTable;

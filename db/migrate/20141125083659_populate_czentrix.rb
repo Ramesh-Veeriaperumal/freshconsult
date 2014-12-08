@@ -10,7 +10,7 @@ class PopulateCzentrix < ActiveRecord::Migration
         :options => {:direct_install => false,:keys_order => [:host_ip],
         :host_ip => { :type => :text, :required => true, :label => "integrations.czentrix.host_name", 
         :info => "integrations.czentrix.host_name_info"}},
-        :application_type => "CTI Integration",
+        :application_type => "cti_integration",
         :account_id => Integrations::Constants::SYSTEM_ACCOUNT_ID )
     czentrix.save
   end

@@ -110,6 +110,10 @@ class Integrations::Application < ActiveRecord::Base
     self.account_id == SYSTEM_ACCOUNT_ID
   end
 
+  def cti?
+    self.application_type == "cti_integration"
+  end
+
   private
     def self.nameify(name)
       "#{name.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}" unless name.blank?

@@ -1,10 +1,7 @@
 show_ajax_flash page
-unless @ticket.nil?
-	ticket = @ticket
-	
-
+unless @ticket.blank?
 	page << "jQuery('.assigned_ticket')
-						.html('#{link_to "##{ticket.display_id}", helpdesk_ticket_path(ticket),
+						.html('#{link_to "##{@ticket.display_id}", helpdesk_ticket_path(@ticket),
 											:target => "_blank", :class => "converted_ticket tooltip",
-											:title => ticket.subject}');"
+											:title => @ticket.subject}');"
 end
