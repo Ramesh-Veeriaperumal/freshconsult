@@ -1267,6 +1267,7 @@ ActiveRecord::Schema.define(:version => 20141202074009) do
     t.integer  "hunt_type",                                                               :default => 1
     t.integer  "rr_timeout",                                                            :default => 10
     t.integer  "ringing_time",                                                            :default => 30
+    t.boolean  "recording_visibility",                                                    :default => true
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"

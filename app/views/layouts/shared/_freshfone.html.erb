@@ -37,7 +37,7 @@
 	freshfone.widget_inactive = "<%= t('freshfone.widget.inactive') %>";
 	freshfone.new_requester = "<%= t('freshfone.widget.new_requester') %>";
 	freshfone.freshfone_nodejs_url = "<%= FreshfoneConfig['node_url'] %>";
-	freshfone.account_url = '<%= current_account.main_url_protocol + "://" + current_account.full_domain %>';
+	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	freshfone.numbersHash = JSON.parse('<%= Hash[*current_account_freshfone_numbers.collect(&:reverse).flatten].to_json.html_safe %>');
 	freshfone.namesHash =  JSON.parse('<%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>');
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_path %>';
