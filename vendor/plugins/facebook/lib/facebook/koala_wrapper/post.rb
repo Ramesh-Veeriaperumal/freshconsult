@@ -4,7 +4,7 @@ class Facebook::KoalaWrapper::Post
   include Facebook::Constants
 
   attr_accessor :post, :post_id, :feed_type, :requester, :description, :description_html, :subject,
-                 :created_at, :comments, :can_comment
+                 :created_at, :comments, :can_comment, :post_type
                  
   alias_attribute :feed_id, :post_id
   
@@ -33,6 +33,7 @@ class Facebook::KoalaWrapper::Post
     @created_at       =   Time.zone.parse(@post[:created_time])
     @comments         =   @post[:comments]["data"] if @post[:comments] && @post[:comments]["data"]
     @can_comment      =   true
+    @post_type        =   POST_TYPE_CODE[:post]
   end
 
   def company_post?

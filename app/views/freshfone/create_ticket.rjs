@@ -1,7 +1,7 @@
 show_ajax_flash page
 
-if @current_call.present? && !@current_call.ticket.nil?
-	ticket = @current_call.ticket
+if @current_call.present? && !@current_call.associated_ticket.nil?
+	ticket = @current_call.associated_ticket
 	parent = "#freshfone_call_#{@current_call.id}"
 
 	page << "jQuery('#{parent} .assigned_ticket')

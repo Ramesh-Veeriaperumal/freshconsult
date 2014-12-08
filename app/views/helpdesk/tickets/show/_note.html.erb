@@ -25,7 +25,23 @@ minimizable ||= false
 			<%= content_tag(:span, "", :class => "ficon-facebook-lock fsize-21 muted") %>
 		<% end %>
 		
-		<div class="helpdesk_note">
+		
+		<% if note.fb_post and note.fb_post.post_type_present? %>
+			<% if note.fb_post.comment? %>
+	      <span class="tooltip" data-original-title="Comment"> 
+	      	<%= content_tag(:span, "", :class => "ficon-chat-bubble fsize-21")%> 
+	      </span>
+	    <% elsif note.fb_post.reply_to_comment? %>
+	      <span class="tooltip" data-original-title="Reply to comment"> 
+	      	<%= content_tag(:span, "", :class => "ficon-reply fsize-21")%>
+	      </span>
+	    <% end %>
+      <% clazz = "fb-reply"%> 
+    <% else %>
+    	<% clazz = "helpdesk_note"%> 
+    <% end %>
+		
+		<div class="<%= clazz %>">
 			<% if note.deleted? %>
 			<div class="tag">
 				<%= t("helpdesk.tickets.note.deleted_note").html_safe %>
@@ -42,8 +58,12 @@ minimizable ||= false
 								{ :action => :split_the_ticket, :controller => 'helpdesk/tickets', :id => notable_object.display_id, :note_id => note.id }, 
 								:method => :post, :confirm => t("helpdesk.tickets.note.split_ticket_confirm"),
 								:class => "tooltip conv-action-icon conv-actions-split tooltip",
-								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.incoming and notable_object and !notable_object.fb_post %>
+								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.incoming and notable_object and !notable_object.fb_post %> 
         <% end %>
+        <% if privilege?(:reply_ticket) and note.fb_reply_allowed? %>
+						 <a href="#" class="conv-action-icon conv-actions-reply tooltip replyToComment" data-original-title="Reply" data-note-id = "<%= note.id %>"><span class="ficon-reply"></span>
+           </a>
+        <% end %>  
         <% if privilege?(:forward_ticket) %>
 					<%= link_to_function(t("fwd_to"), 
 								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
@@ -103,5 +123,15 @@ minimizable ||= false
 			TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;
 		if (typeof(TICKET_DETAILS_DATA['first_note_id']) == 'undefined' || TICKET_DETAILS_DATA['first_note_id']  == null || TICKET_DETAILS_DATA['first_note_id'] > <%= note.id %>)
 			TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;
+		
+		
+	  jQuery(".replyToComment").live('click', function(event){
+	    jQuery("#TicketPseudoReply [data-note-type='reply']").click();
+	    note_id = jQuery(this).data('noteId')
+	    jQuery("#parent_post_id").val(note_id);
+	  });
+	  
+	  
 	</script>
+	
 </div>

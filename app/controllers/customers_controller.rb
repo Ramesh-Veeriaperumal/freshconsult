@@ -7,6 +7,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
 
   before_filter :set_selected_tab
   before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
+  skip_before_filter :build_item , :only => [:create]
   
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
@@ -122,7 +123,8 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
     end
 
     def build_and_save
-      @customer = current_account.companies.new((params[:customer]))
+      @customer = scoper.new
+      @customer.attributes = params[:customer]
       @customer.save
     end
 

@@ -13,7 +13,14 @@ class Search::TicketsController < Search::SearchController
 					:load => { Helpdesk::Ticket => { :include => [:requester, :ticket_states, {:flexifield => :flexifield_def}] }},
 					:preference => :_primary_first, :page => 1}) if TICKET_SEARCH_FIELDS.include?(params[:search_field])
 			respond_to do |format|
-				format.any(:json, :nmobile) { render :json => @result_json }
+				format.json { render :json => @result_json }
+				format.nmobile {
+					array = [] 
+					@result_set.each { |item|
+					  array << item.to_mob_json_merge_search
+					}
+					render :json => array
+				}
 			end
 		else
 			super

@@ -4,7 +4,7 @@ class Facebook::KoalaWrapper::Comment
   include Facebook::Constants
 
   attr_accessor :comment, :comment_id, :requester, :feed_type, :description, :description_html, :created_at, 
-                 :parent, :subject, :parent_post, :comments, :can_comment
+                 :parent, :subject, :parent_post, :comments, :can_comment, :post_type
 
   alias_attribute :feed_id, :comment_id
   
@@ -36,6 +36,7 @@ class Facebook::KoalaWrapper::Comment
     @parent_post        =  "#{@fan_page.page_id}_#{@comment[:id].split('_').first}"
     @comments           =  @comment[:comments]["data"] if @comment[:comments]
     @can_comment        =  @comment[:can_comment]
+    @post_type          =  @parent.blank? ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
   end
 
   def visitor_post?
