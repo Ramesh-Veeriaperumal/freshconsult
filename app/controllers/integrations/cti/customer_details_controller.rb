@@ -9,11 +9,13 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   
   def fetch
     mobile_number = params[:mobile]
-    mobile_number = mobile_number[-10,10]
+    if mobile_number.length>10
+      mobile_number = mobile_number[-10,10]
+    end
     usr = User.find(:first,:conditions => ["mobile=? or phone=?",mobile_number,mobile_number])
     href = ""
     if usr.nil?
-      usr_hash = {:mobile => params[:mobile],:avatar => user_avatar(usr, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
+      usr_hash = {:mobile => mobile_number,:avatar => user_avatar(usr, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
     else
       avatar = user_avatar(usr, :thumb, "preview_pic", {:width => "30px", :height => "30px" })
       tkt = current_account.tickets.permissible(current_user)
