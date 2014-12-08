@@ -91,7 +91,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def facebook
     if @item.save_note
-      send_facebook_reply
+      send_facebook_reply(params[:parent_post])
       process_and_redirect
     else
       # Flash here

@@ -16,10 +16,10 @@ module Facebook::Constants
   }
   
   POST_TYPE_CODE = {
-    46  => "status",
-    56  => "post",
-    247 => "photo",
-    128 => "video"
+    :post               => 1,
+    :comment            => 2,
+    :reply_to_comment   => 3
+    
   }
   
   COMMENT_FIELDS = "id, from, can_comment, created_time, message, parent, attachment"

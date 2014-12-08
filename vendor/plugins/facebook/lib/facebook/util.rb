@@ -1,6 +1,7 @@
 module Facebook::Util
   
   include Gnip::Constants
+  include Facebook::Constants
   
   def add_as_ticket(fan_page, koala_feed, real_time_update, convert_args)
     ticket = nil
@@ -19,7 +20,8 @@ module Facebook::Util
           :facebook_page_id => fan_page.id,
           :parent_id        => nil,
           :post_attributes  => {
-            :can_comment => can_comment
+            :can_comment => can_comment,
+            :post_type   => koala_feed.post_type
           }
         },
         :ticket_body_attributes => {
@@ -46,6 +48,7 @@ module Facebook::Util
     return note if note # TODO what do we do here ? note will already be there in dynamoDB ...
     
     parent_id = koala_comment.parent.nil? ? koala_comment.parent_post : koala_comment.parent[:id]
+    
     parent_fb_post = @account.facebook_posts.find_by_post_id(parent_id, :select => :id)
     requester = facebook_user(koala_comment.requester)
     
@@ -67,7 +70,8 @@ module Facebook::Util
           :facebook_page_id => @fan_page.id ,
           :parent_id        => parent_fb_post[:id],
           :post_attributes  => {
-            :can_comment =>  koala_comment.can_comment 
+            :can_comment =>  koala_comment.can_comment,
+            :post_type   => koala_comment.post_type
           }
         }
       )
