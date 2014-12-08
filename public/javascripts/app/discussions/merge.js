@@ -106,10 +106,7 @@ window.App.Discussions = window.App.Discussions || {};
 				var search_type = "title",
 						minChars = 2;
 				$('.merge_results').hide();
-				if(($(this).val() != "") && ($(this).val().length >= minChars))
-				  $('#'+search_type+'_results').show();
-				else
-				  $('#'+search_type+'_results').hide();
+				$('#'+search_type+'_results , .visible-merge-note').toggle(($(this).val() != "") && ($(this).val().length >= minChars));
 			});
 		},
 

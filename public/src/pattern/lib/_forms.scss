@@ -613,6 +613,14 @@ legend + .control-group {
       }
     }
   }
+  .checkbox-wrap {
+    @include padding-left(0);
+    &.checkbox input[type=checkbox] {
+      float: none;
+      @include margin(-2px 5px 0 0);
+      @include padding-left(0px);
+    }
+  }
   // Float the labels left
   .control-label {
     @include float(left);

@@ -140,6 +140,7 @@ GIT
   branch: rails-2-3
   specs:
     rails-dev-boost (0.1.1)
+
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:

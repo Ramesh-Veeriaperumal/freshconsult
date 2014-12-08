@@ -33,8 +33,8 @@
 									<p class="text-info">
 										<strong><%= link_to(h(company.name), company_path(company), :class => 
 																					"item_info" ) %><br/></strong>
-										<% if company.users.size>=1 %>
-											<% updated_contact_count = pluralize(company.users.size, t('contacts.contact'), t('contacts.contacts')) %>
+										<% if company.users.contacts.size>=1 %>
+											<% updated_contact_count = pluralize(company.users.contacts.size, t('contacts.contact'), t('contacts.contacts')) %>
 									    	<span class="muted"><%= t('contacts.contacts_in_companies', :contacts => updated_contact_count) %></span>
 									    <% else %>
 									    	<span class="muted">-</span>

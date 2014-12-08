@@ -4506,6 +4506,7 @@ vi:
     ticket_updated_icon: "Đã cập nhật các ticket"
     reported_on: "từ %{username}, lần cập nhật cuối cùng: vào lúc %{date}"
     scenarios: "tình huống"
+    ticket_from: "từ %{username}"
     ticket_list_status_closed_at: "từ %{username}, đã đóng <span class='emphasize'>%{time_ago} trước đây </span>"
     ticket_list_status_resolved_at: "từ %{username}, đã giải quyết <span class='emphasize'>%{time_ago} trước đây </span>"
     ticket_list_status_agent_responded_at: "từ %{username}, chuyên viên đã trả lời: <span class='emphasize'>%{time_ago} trước đây </span>"

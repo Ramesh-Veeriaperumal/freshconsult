@@ -4,6 +4,11 @@ class SubscriptionAdmin::FreshfoneStatsController < ApplicationController
     @calls = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(live_calls) })
     @payments = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(freshfone_payments) })
     @signups = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(freshfone_signups) })
+    @freshfone_accounts = Sharding.run_on_all_slaves { 
+        Freshfone::Account.count(:conditions => {
+          :state => Freshfone::Account::STATE_HASH[:active],
+          :deleted => false }) 
+      }.inject(&:+)
   end
 
   private
@@ -20,7 +25,8 @@ class SubscriptionAdmin::FreshfoneStatsController < ApplicationController
     def freshfone_payments
       #INTERVAL 1 DAY
       "SELECT accounts.id, accounts.name, 
-      freshfone_payments.purchased_credit AS 'credits', freshfone_payments.created_at
+      freshfone_payments.purchased_credit AS 'credits', freshfone_payments.created_at,
+      freshfone_payments.status
       FROM freshfone_payments 
       JOIN accounts ON freshfone_payments.account_id = accounts.id 
       WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) 

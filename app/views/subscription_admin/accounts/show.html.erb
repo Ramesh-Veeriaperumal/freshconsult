@@ -156,6 +156,22 @@
         <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
         <input type="submit" value="Add" class="btn" />
       <% end %>
+
+      <h3>Remove a feature</h3>
+       <% form_tag({:action => 'remove_feature'}, :id => 'remove_feature_form', :class => "well form-inline") do %>
+        <label for="feature_name"> Feature name</label>
+        <input type="text" name="feature_name" id="feature_name" style="width:150px"/>
+        <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
+        <input type="submit" value="Remove" class="btn" />
+      <% end %>
+
+      <h3>Change Account name</h3>
+      <% form_tag({:action => 'change_account_name'}, :id => 'account_name_change', :class => "well form-inline") do %>
+        <label for="feature_name"> Account name</label>
+        <input type="text" name="account_name" id="account_name" style="width:150px"/>
+        <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
+        <input type="submit" value="Add" class="btn" />
+      <% end %>
     <% end %>
 
     <% if current_user && current_user.has_role?(:manage_admin) %>

@@ -33,4 +33,11 @@ describe Monitorship do
  		mail_options.last.should == portal.host
  	end
 
+ 	it "should assign the default sender and host when the portal_id is that of a non-existent portal" do
+ 		random_portal_id = Portal.last.id + Time.now.utc.to_i
+ 		@monitorship.update_attributes(:portal_id => random_portal_id)
+ 		mail_options = @monitorship.reload.sender_and_host
+ 		mail_options.first.should == @monitorship.account.default_friendly_email
+ 		mail_options.last.should == @monitorship.account.host
+ 	end
 end

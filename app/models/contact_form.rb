@@ -13,11 +13,11 @@ class ContactForm < ActiveRecord::Base
   end
 
   def default_contact_fields
-    contact_fields.select{ |cf| cf.column_name == 'default' }
+    contact_fields.select{ |cf| cf.default_field? }
   end
 
   def custom_contact_fields
-    contact_fields.select{ |cf| cf.column_name != 'default' }
+    contact_fields.select{ |cf| cf.custom_field? }
   end
 
   def customer_visible_contact_fields
@@ -44,10 +44,6 @@ class ContactForm < ActiveRecord::Base
     contact_fields.select{ |cf| cf.required_for_agent }
   end
 
-  def contact_custom_fields
-    contact_fields.select{ |cf| cf.custom_field? }
-  end
-
   private
 
     def fetch_contact_fields
@@ -55,11 +51,8 @@ class ContactForm < ActiveRecord::Base
       filter_fields fields, contact_field_conditions
     end
 
-    def filter_fields(f_list, conditions)
-      to_ret = []
-
-      f_list.each { |field| to_ret.push(field) if conditions.fetch(field.name, true) }
-      to_ret
+    def filter_fields(field_list, conditions)
+      field_list.select{ |field| conditions.fetch(field.name, true) }
     end
 
     def contact_field_conditions

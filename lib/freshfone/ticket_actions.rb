@@ -65,7 +65,8 @@ module Freshfone::TicketActions
 		end
 
 		def agent
-			fetch_calling_agent(params[:agent]) || current_user
+			agent_id =  call_history? ? params[:responder_id] : params[:agent]
+			fetch_calling_agent(agent_id) || current_user
 		end
 
 		def fetch_calling_agent(agent_id)
@@ -77,7 +78,7 @@ module Freshfone::TicketActions
 		end
 		
 		def call_history?
-			params[:call_history].to_bool
+			params[:call_history].present? && params[:call_history].to_bool
 		end
 
 end

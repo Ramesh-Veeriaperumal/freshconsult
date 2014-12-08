@@ -495,3 +495,28 @@ li.dashboard-quest-points {
 	@include inline-block;
 	width: 15px; height: 15px;	
 }
+
+.leaderboard{
+	.lb-report-title{
+		border-left: 1px solid #fff;
+		margin-left: -1px;
+		background-color: #fff;
+		.lbr-trophy{
+			float: none;
+			margin-left: 110px;
+		}
+		.title{
+			text-align: center
+		}
+	}
+	.lb-mvp{
+		border: none;
+	}
+	.nav-tabs{
+		margin-right: -20px;
+		margin-left: -20px;
+		padding-right: 20px;
+		padding-left: 20px;
+		margin-bottom: 20px;
+	}
+}

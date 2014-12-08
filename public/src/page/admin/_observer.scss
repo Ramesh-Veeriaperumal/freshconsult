@@ -68,10 +68,12 @@
       .select2-container{width:303px;}
 
       .dependent{ 	
-				input[type="text"].number{
-					width:70px;
-					height:18px;	
-					margin:2px 4px;
+				input[type="text"]{
+					&.number, &.decimal{
+						width:70px;
+						height:18px;	
+						margin:2px 4px;
+					}
 				}
 				.select2-container{
 					@include margin-left(3px);

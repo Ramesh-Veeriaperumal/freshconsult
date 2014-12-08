@@ -1,0 +1,17 @@
+<div class='page-header-sticky custom-field-header' rel='sticky'>
+  <div class='sticky-header-wrapper'>
+    <div class="nav-tabs-underlined pull-left">
+      <%= link_to t('contacts.title'), admin_contact_fields_path, {
+            :class => "tooltip tab #{'active' if params[:controller] == 'admin/contact_fields'}"
+          } %>
+      <%= link_to t('company.title'), admin_company_fields_path, {
+          :class => "tooltip tab #{'active' if params[:controller] == 'admin/company_fields'}",
+          } %>
+    </div>
+    <div class="pull-right">
+      <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
+      <%= submit_tag t("save"), :class => "btn btn-primary save-custom-form", "data-commit" => t('saving') %>
+    </div>
+  </div>
+  <%= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => field_class } %>
+</div>

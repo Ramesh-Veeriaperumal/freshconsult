@@ -62,7 +62,7 @@ module Social::Twitter::ErrorHandler
         #notify_error(exception) if @social_error_msg and exception
       end
       
-      return [return_value, @social_error_msg]
+      return [@social_error_msg, return_value]
     end
 
     def notify_error(error)

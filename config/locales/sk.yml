@@ -2140,6 +2140,7 @@ sk:
     reported: reportované
     reported_on: "od %{username}, poslednej aktualizácie %{date}"
     scenarios: Scenáre
+    ticket_from: "Od: %{username}"
     ticket_list_status_closed_at: "Od: %{username}, Uzavreté: <span class='emphasize'>pred %{time_ago}</span>"
     ticket_list_status_resolved_at: "Od: %{username}, Vyriešené: <span class='emphasize'>pred %{time_ago}</span>"
     ticket_list_status_agent_responded_at: "Od: %{username},Agent odpovedal: <span class='emphasize'>pred %{time_ago}</span>"

@@ -478,6 +478,7 @@ tr:
     ticket_updated_icon: "Ticket Updated"
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: Scenarios
+    ticket_from: "Yazan: %{username}"
     ticket_list_status_closed_at: "Yazan: %{username}, Kapanışı: <span class='emphasize'>%{time_ago} önce</span>"
     ticket_list_status_resolved_at: "Yazan: %{username}, Çözülüşü: <span class='emphasize'>%{time_ago} önce</span>"
     ticket_list_status_agent_responded_at: "Yazan: %{username}, Destek Ekibi Cevabı: <span class='emphasize'>%{time_ago} önce</span>"

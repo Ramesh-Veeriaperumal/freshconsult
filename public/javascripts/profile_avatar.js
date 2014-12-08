@@ -4,6 +4,7 @@
   var AvatarReader = function(options) {
     var defaults = {
       confirmDeleteMessage : 'Are you sure you want to delete this picture?',
+      ie9FileChangeMessage : 'You have selected %{filename}. Click save to see the changes.',
       // Path of the default avatar pic
       defaultPath: PROFILE_BLANK_MEDIUM_PATH,
       // Array of supported image formats
@@ -22,7 +23,8 @@
         avatarRemove : '.remove-avatar',
         // destroy param to indicate whether the avatar is removed
         avatarDestroy : '.avatar-destroy',
-        avatarText : '.avatar-text'
+        avatarText : '.avatar-text',
+        ie9FileChangeElmt: '.ie9-file-change-msg'
       }
     };
     this.options = $.extend({}, defaults, options);
@@ -30,12 +32,26 @@
 
   AvatarReader.prototype = {
     onFileChange : function(e) {
-      var fileField = e.currentTarget;
-      if(fileField.files && fileField.files[0] && this.checkSupportedImageFormats(fileField.files[0].type)) {
-        this.readLocalFile(fileField.files[0]);
-        this.toggleRemoveOption('show');
-        this.changeAvatarText('Change');
-        this.updateDestroyValue("0");
+      var fileField = e.currentTarget,
+          fileName = this.options.fields.avatarFile.val(),
+          isIE9 = $('html').hasClass('ie9'),
+          extension = '';
+      if( (isIE9 && fileName != "" ) || 
+            (fileField.files && fileField.files[0] && this.checkSupportedImageFormats(fileField.files[0].type)) ){
+            if(isIE9) {
+              fileName = fileName.replace(/^.*\\/, "");
+              extension = fileName.match(/\.[0-9a-z]{1,5}$/i);
+              fileName = (fileName.length > 25) ? fileName.substring(0,25) + '...' + extension : fileName;
+              fileName = this.options.ie9FileChangeMessage.replace('%{filename}', '<b>' + fileName + '</b>');
+              this.setDefaultPic();
+              (this.options.fields.ie9FileChangeElmt).html(fileName).show();
+            }
+            else {
+              this.readLocalFile(fileField.files[0]);
+            }
+            this.toggleRemoveOption('show');
+            this.changeAvatarText('Change');
+            this.updateDestroyValue("0");
       }
       else {
         this.setDefaultPic();
@@ -76,7 +92,8 @@
       (this.options.fields.avatarPic).attr('src', this.options.defaultPath);
     },
     resetPicField : function() {
-      (this.options.fields.avatarFile).val('');
+      (this.options.fields.avatarFile).replaceWith( (this.options.fields.avatarFile) = (this.options.fields.avatarFile).clone( true ) );
+      (this.options.fields.ie9FileChangeElmt).html('').hide();
     },
     removePic : function() {
       var confDelete = confirm(this.options.confirmDeleteMessage);
@@ -91,7 +108,7 @@
     init : function() {
       var self = this;
       for(var prop in this.options.fields) {
-        if(prop == 'avatarPic') {
+        if(prop == 'avatarPic' || prop == 'ie9FileChangeElmt') {
           this.options.fields[prop] = $(this.options.fields[prop]);
         }
         else {
@@ -115,7 +132,8 @@
 
   $(document).ready(function(){
     var avatarRdr = new AvatarReader({
-                          confirmDeleteMessage : customMessages.confirmDelete
+                          confirmDeleteMessage : customMessages.confirmDelete,
+                          ie9FileChangeMessage : customMessages.ie9FileChangeMsg
                         });
     avatarRdr.init();
   });

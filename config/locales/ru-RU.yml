@@ -2800,6 +2800,7 @@ ru-RU:
     ticket_updated_icon: Заявка обновлена
     reported_on: "отправитель: %{username}, дата последнего обновления: %{date}"
     scenarios: Сценарии
+    ticket_from: "Отправитель: %{username}"
     ticket_list_status_closed_at: "Отправитель: %{username}, закрыто: <span class='emphasize'>%{time_ago} назад</span>"
     ticket_list_status_resolved_at: "Отправитель: %{username}, решено: <span class='emphasize'>%{time_ago} назад</span>"
     ticket_list_status_agent_responded_at: "Отправитель: %{username}, агент ответил: <span class='emphasize'>%{time_ago} назад</span>"

@@ -50,7 +50,7 @@ class Support::SignupsController < SupportController
     end
 
     def set_validatable_custom_fields
-      @user.validatable_custom_fields = { :fields => current_account.contact_form.contact_custom_fields, 
+      @user.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
                                           :error_label => :label_in_portal }
     end
 

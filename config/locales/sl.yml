@@ -4051,6 +4051,7 @@ sl:
     ticket_updated_icon: "Zahtevek osvežen"
     reported_on: "Od %{username}, Nazadnje osveženo: %{date}"
     scenarios: Scenariji
+    ticket_from: "Od: %{username}"
     ticket_list_status_closed_at: "Od: %{username}, Zaključeno: <span class='emphasize'> pred %{time_ago}</span>"
     ticket_list_status_resolved_at: "Od: %{username}, Rešeno: <span class='emphasize'> pred %{time_ago}</span>"
     ticket_list_status_agent_responded_at: "Od: %{username}, Agent je odgovoril: <span class='emphasize'> pred %{time_ago} </span>"

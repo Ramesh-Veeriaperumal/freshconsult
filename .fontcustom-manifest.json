@@ -11,7 +11,7 @@
   ],
   "glyphs": {
     "account": {
-      "codepoint": 61766,
+      "codepoint": 61855,
       "source": "public/glyphs/vectors/account.svg"
     },
     "agent": {
@@ -146,10 +146,6 @@
       "codepoint": 61813,
       "source": "public/glyphs/vectors/comments.svg"
     },
-    "contact-fields": {
-      "codepoint": 61849,
-      "source": "public/glyphs/vectors/contact-fields.svg"
-    },
     "conversation": {
       "codepoint": 61707,
       "source": "public/glyphs/vectors/conversation.svg"
@@ -161,6 +157,10 @@
     "crown": {
       "codepoint": 61709,
       "source": "public/glyphs/vectors/crown.svg"
+    },
+    "customer-fields": {
+      "codepoint": 61853,
+      "source": "public/glyphs/vectors/customer-fields.svg"
     },
     "customer-portal": {
       "codepoint": 61771,

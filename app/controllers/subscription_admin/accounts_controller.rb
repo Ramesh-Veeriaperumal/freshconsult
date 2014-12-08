@@ -3,7 +3,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   include AdminControllerMethods
   
   around_filter :select_account_shard, :only => [:show]
-  before_filter :check_super_admin_role, :only => [:add_day_passes, :add_feature, :change_url, :block_account]
+  before_filter :check_super_admin_role, :only => [:add_day_passes, :add_feature, :change_url, :block_account, :remove_feature, :change_account_name]
 
 
   def show
@@ -36,6 +36,36 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       else
         flash[:notice] = "Feature is already added for this account"
       end
+    end
+    redirect_to :back
+  end
+
+  def remove_feature
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      @account = Account.find(params[:account_id])
+      if @account.features?(params[:feature_name])
+        feature = @account.features.send(params[:feature_name])
+        if feature.destroy
+          flash[:notice] = "Feature removed"
+        else
+          flash[:notice] = "Unable to remove feature"
+        end
+      else
+        flash[:notice] = "The account doesn't have the feature - #{params[:feature_name]}"
+      end
+    end
+    redirect_to :back
+  end
+
+  def change_account_name
+    Sharding.admin_select_shard_of(params[:account_id]) do
+       @account = Account.find(params[:account_id])
+       @account.name = params[:account_name]
+       if @account.save
+          flash[:notice] = "Successfully changed"
+        else
+          flash[:notice] = "Unable to change the name, Errors:: #{@account.errors}"
+        end
     end
     redirect_to :back
   end
