@@ -201,8 +201,8 @@ class CRM::Salesforce < Resque::Job
 
     def contact_attributes(account, crm_account_id)
       { 
-        :FirstName => account.admin_first_name,
-        :LastName => account.admin_last_name,
+        :FirstName => account.admin_last_name,
+        :LastName => account.admin_first_name,
         :Email => account.admin_email,
         :AccountId => crm_account_id
       }

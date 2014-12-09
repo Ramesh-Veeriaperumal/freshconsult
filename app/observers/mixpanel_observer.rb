@@ -73,12 +73,9 @@ class MixpanelObserver < ActiveRecord::Observer
     end
 
     def send_plan_update_event(model)
-      plans = model.changes.clone["subscription_plan_id"]
-      unless plans == nil
-        new_plan = SubscriptionPlan.find(plans[1]).name
-        old_plan = SubscriptionPlan.find(plans[0]).name
-        data = { :new_plan => new_plan, :old_plan => old_plan }
-        send_to_mixpanel(model.class.name, data)
+      changes = model.changes.clone
+      unless changes.blank?
+        send_to_mixpanel(model.class.name, changes)
       end
     end
 

@@ -327,10 +327,17 @@ protected
 
  def check_agent_limit
     if current_account.reached_agent_limit? 
-    flash[:notice] = t('maximum_agents_msg') 
-    redirect_to :back 
-   end
-  end
+      error_message = { :errors => { :message => t('maximum_agents_msg') }}  
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = t('maximum_agents_msg') 
+          redirect_to :back 
+        }
+        format.json { render :json => error_message, :status => :unprocessable_entity}
+        format.xml { render :xml => error_message.to_xml , :status => :unprocessable_entity}
+      end
+    end
+ end
 
   def redirection_url # Moved out to overwrite in Freshservice
     contacts_url

@@ -118,7 +118,7 @@ module CustomFields
         end
 
         def wrap_checkbox element
-          @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label.html_safe
+          @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label
           div    = content_tag(:div, (element + @label + @required_star), :class => 'controls')
           content_tag(:li, div, :class => "control-group #{ @dom_type } #{ @field.field_type } field checkbox-wrap")
         end
