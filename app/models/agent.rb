@@ -43,8 +43,8 @@ class Agent < ActiveRecord::Base
   # State => Fulltime, Occational or Deleted
   # 
   def self.filter(state = "active",letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
-    order = "name" unless order
-    order_type = "ASC" unless order_type
+    order = "name" unless order && AgentsHelper::AGENT_SORT_ORDER_COLUMN.include?(order.to_sym)
+    order_type = "ASC" unless order_type && AgentsHelper::AGENT_SORT_ORDER_TYPE.include?(order_type.to_sym)
     paginate :per_page => per_page, 
              :page => page,
              :include => { :user => :avatar },
