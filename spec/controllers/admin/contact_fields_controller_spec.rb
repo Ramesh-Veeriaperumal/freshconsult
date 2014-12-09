@@ -27,7 +27,7 @@ describe Admin::ContactFieldsController do
 
 	it "should go to the index page" do
 		get 'index'
-		# response.should render_template "admin/contact_fields/index.html.erb"
+		response.should render_template "admin/contact_fields/index.html.erb"
 		response.body.should =~ /Customizing your contact fields/
 	end
 

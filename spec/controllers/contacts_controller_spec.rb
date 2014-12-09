@@ -23,7 +23,7 @@ describe ContactsController do
     @new_company.save
 
     @contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)
-    @contact.save(false)
+    @contact.save
   end
 
   after(:each) do
@@ -295,7 +295,7 @@ describe ContactsController do
                                       }
     new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
-    new_contact.company_id.should be_eql(new_company.id)
+    new_contact.company_id.should be_eql(@new_company.id)
     Delayed::Job.last.handler.should include("deliver_user_activation")
     Delayed::Job.last.handler.should include(new_contact.name)
   end
@@ -586,7 +586,7 @@ describe ContactsController do
       Resque.inline = true
       @user.destroy
       custom_field_params.each { |params| 
-        @account.contact_form.contact_fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
+        @account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
       Resque.inline = false
     end
 
@@ -637,7 +637,10 @@ describe ContactsController do
       new_user.should be_an_instance_of(User)
       new_user.name.should eql(name)
       new_user.job_title.should eql "Developer"
-      new_user.flexifield_without_safe_access.should be_nil
+
+      # if account contains contact_custom_fields, ContactfieldData will be build and saved even though custom_field values are null
+      # Only if the account doesn't have custom_fields, ContactfieldData will not build.
+      new_user.flexifield_without_safe_access.should_not be_nil 
     end
 
     it "should update a contact with custom fields" do
@@ -684,12 +687,15 @@ describe ContactsController do
                             }
       user = @account.users.find(@user.id)
       user.name.should eql(name)
-      user.flexifield_without_safe_access.should be_nil
-      user.avatar.content_file_name.should_not eql "image4kb.png"
+      
+      # if account contains contact_custom_fields, ContactfieldData will be build and saved even though custom_field values are null
+      # Only if the account doesn't have custom_fields, ContactfieldData will not build.
+      user.flexifield_without_safe_access.should_not be_nil
+      user.avatar.content_file_name.should eql "image4kb.png"
     end
 
     it "should not create a user if mandatory fields is null" do
-      contact_field = @account.contact_form.contact_fields.find_by_name("cf_linetext")
+      contact_field = @account.contact_form.fields.find_by_name("cf_linetext")
       contact_field.update_attributes(:required_for_agent => true)
       test_email = Faker::Internet.email
       post :create_contact, :user => { :name => Faker::Name.name,
@@ -706,7 +712,7 @@ describe ContactsController do
     end
 
     it "should not update a contact if mandatory fields is null" do
-      contact_field = @account.contact_form.contact_fields.find_by_name("cf_show_all_ticket")
+      contact_field = @account.contact_form.fields.find_by_name("cf_show_all_ticket")
       contact_field.update_attributes(:required_for_agent => true)
       #if check box is a mandatory field, value of the field should be always true.
       put :update_contact, {:id => @user.id, 
@@ -723,7 +729,7 @@ describe ContactsController do
       user.time_zone.should eql "Chennai"
       response.body.should =~ /prohibited this user from being saved/
       response.body.should =~ /#{contact_field.label} cannot be blank/
-      user.flexifield_without_safe_access.should be_nil
+      user.flexifield_without_safe_access.should_not be_nil
     end
 
     # REGEX VALIDATION :
