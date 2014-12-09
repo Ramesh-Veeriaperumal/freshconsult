@@ -1,5 +1,5 @@
 show_ajax_flash page
-if !@ticket.requester_id.blank?
+if !@ticket.blank? and !@ticket.requester_id.blank?
 	
 
 	page << "jQuery('.assigned_ticket')

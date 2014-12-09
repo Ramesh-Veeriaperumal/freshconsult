@@ -1,14 +1,14 @@
 <div class="main_content">
-	<%= render :partial => 'layouts/shared/freshfone/end_call_main_page' %>
+	<%= render :partial => 'layouts/shared/cti/end_call_main_page' %>
 </div>
 <div class="ticket_search_pane hide">
-	<span class="title back">&lt; <%= t('freshfone.widget.back') %> - </span>
-	<b class="title"> <%= t('freshfone.widget.save_to_existing') %></b>
+	<span class="title back">&lt; <%= t('cti.widget.back') %> - </span>
+	<b class="title"> <%= t('cti.widget.save_to_existing') %></b>
 	<form>
 	<%= render :partial => 'layouts/shared/ticket_search', 
 						 :locals => { :container => 'integration-ticket-search' } %>
 	</form>
 </div>
 <div class="new_ticket_details_form hide">
-	<%= render :partial => 'layouts/shared/freshfone/end_call_new_tickets' %>
+	<%= render :partial => 'layouts/shared/cti/end_call_new_tickets' %>
 </div>

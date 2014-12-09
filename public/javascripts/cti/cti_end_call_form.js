@@ -34,7 +34,6 @@ var CtiEndCall;
 			width: "480px",
 			classes: 'persistent_modal'
 		};
-		$(this.$endCall.find('.end_call_cancel').find(".btn-notes")[0]).html("No ticket will be created");
 		this.init();
 		var self = this;
 		

@@ -5670,6 +5670,18 @@ en:
     ticket:
       human_name: "ticket"
       view: "View"
+    widget:
+      ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
+      note_placeholder: "Add call notes..."
+      new_ticket: "Save as new ticket"
+      save_to_existing: "Save to an existing ticket"
+      ignore_ticket: "Do not convert to Ticket"
+      ignore_ticket_info: "No ticket will be created"
+      back: "Go Back"
+      subject: "Ticket Subject"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      save: "Save"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"

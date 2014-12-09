@@ -6,9 +6,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   
   def fetch
     mobile_number = params[:user][:mobile]
-    if mobile_number.length>10
-      mobile_number = mobile_number[-10,10]
-    end
+    mobile_number = mobile_number[-10..-1] || mobile_number
     user = User.with_contact_number(mobile_number).first
     href = ""
     if user.blank?
@@ -16,10 +14,10 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     else
       avatar = user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })
       user_tickets = current_account.tickets.permissible(user).requester_active(user).newest(2)
-      json = user_tickets.to_json
+      tickets_json = user_tickets.to_json
       href = "/contacts/" + (user.id).to_s
       user_hash = { :name => user.name, :email => user.email, :mobile => mobile_number, :description => user.description,
-      :job_title => user.job_title, :company_name => user.company_name, :tickets => json,:avatar => avatar,:href => href}
+      :job_title => user.job_title, :company_name => user.company_name, :tickets => tickets_json,:avatar => avatar,:href => href}
     end
     agent = User.find_by_email(params[:agent][:email])
     if agent.blank?
