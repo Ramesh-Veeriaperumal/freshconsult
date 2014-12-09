@@ -428,24 +428,6 @@ describe ContactsController do
     @account.all_users.find(customer.id).deleted.should be_true
   end
 
-  it "should create with multiple user emails" do
-    @account.features.multiple_user_emails.create
-    test_email = Faker::Internet.email
-    post :create_contact, :user => { :name => Faker::Name.name, :user_emails_attributes => {"0" => {:email => test_email}} , :time_zone => "Chennai", :language => "en" }
-    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
-    @account.users.all.size.should eql @user_count+1
-    @account.features.multiple_user_emails.destroy
-  end
-
-  it "should create for wrong params with MUE feature" do
-    @account.features.multiple_user_emails.create
-    test_email = Faker::Internet.email
-    post :create_contact, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
-    @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
-    @account.users.all.size.should eql @user_count+1
-    @account.features.multiple_user_emails.destroy
-  end
-
   #### Company revamp specs - User Tags Revamp Specs
 
   it "should create a contact given the names of the tags as :tag_names in params" do #newway
