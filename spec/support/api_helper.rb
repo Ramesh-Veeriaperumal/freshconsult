@@ -38,7 +38,7 @@ module APIHelper
     clear_json
   end
 
-  TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id", "attachments", "custom_field","tags"]
+  TICKET_ATTRIBS = ["cc_email", "created_at", "deleted", "delta", "description", "description_html", "display_id", "due_by", "email_config_id", "frDueBy", "fr_escalated", "group_id", "id", "isescalated", "notes", "owner_id", "priority", "requester_id", "responder_id", "source", "spam", "status", "subject", "ticket_type", "to_email", "trained", "updated_at", "urgent", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id", "attachments", "custom_field"]
   
   NOTE_ATTRIBS = ["body", "body_html", "created_at", "deleted", "id", "incoming", "private", "source", "updated_at", "user_id", "attachments", "support_email"]
 

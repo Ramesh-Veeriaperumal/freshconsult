@@ -27,13 +27,6 @@ describe Helpdesk::TicketsController do
     # expected.should be(true)
   end
 
-  it "should create a ticket with tags and response contain tags" do
-     tag_params = {:tags => "exampletag1,exmapletag2"}
-     post :create, ticket_params.merge!({:format => 'xml',:helpdesk => tag_params}),:content_type => 'application/xml'
-     result =  parse_xml(response)
-     expected = (response.status =~ /201 Created/) && result['helpdesk_ticket']['tags'][0]['name'] == 'exampletag1' && result['helpdesk_ticket']['tags'][1]['name'] == 'exampletag2'  
-   end
- 
   it "should show a ticket" do
     new_ticket = create_ticket({:status => 2})
     get :show, { :id => new_ticket.display_id, :format => 'xml' }
