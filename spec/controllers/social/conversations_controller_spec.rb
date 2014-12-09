@@ -155,16 +155,15 @@ describe Helpdesk::ConversationsController do
       it "must reply to a FB post(ticket)" do
         post_id = "#{(Time.now.ago(9.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(8.minutes).utc.to_f*100000).to_i}"
         put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
-        fql_feeds = sample_fql_feed(post_id, false)
+        fql_feeds = sample_fql_feed(post_id, true)
+        facebook_feed = sample_facebook_feed(true, post_id).symbolize_keys!
         sample_put_comment = { "id" => put_comment_id }
-        comment_feeds = sample_fql_comment_feed(post_id)
-        actor_id = comment_feeds.first["from"]["id"]
+
         # stub the calls
         Facebook::Fql::Posts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
         Koala::Facebook::API.any_instance.stubs(:fql_query).returns(fql_feeds)
-        Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
-        Koala::Facebook::API.any_instance.stubs(:get_connections).returns(comment_feeds)
-        Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+        Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed) 
+        Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment) 
         
         # Create FB post ticket
         Facebook::Fql::Posts.new(@fb_page).fetch
@@ -182,7 +181,7 @@ describe Helpdesk::ConversationsController do
                             :format => "js",
                             :ticket_status => "",
                             :showing => "notes",
-                            :ticket_id => ticket.display_id,
+                            :ticket_id => ticket.display_id
                         }
         comment = Social::FbPost.find_by_post_id(put_comment_id)
         comment.should_not be_nil
