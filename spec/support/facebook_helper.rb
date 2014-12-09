@@ -13,6 +13,134 @@ module FacebookHelper
     fb_page
   end
   
+  def sample_facebook_pages(page_id, name)
+    [
+      {
+        "category" => Faker::Name.name, 
+        "name" => "#{name}",
+        "access_token" => "#{get_social_id}",
+        "perms" => ["ADMINISTER", "EDIT_PROFILE", "CREATE_CONTENT", "MODERATE_CONTENT", "CREATE_ADS", "BASIC_ADMIN"], 
+        "id" => "#{page_id}"
+      }
+    ]
+  end
+  
+  def sample_dm_threads(thread_id, actor_id, msg_id)
+    [
+      {   
+        "id" => thread_id, 
+        "snippet"=> Faker::Lorem.sentence(1), 
+        "updated_time"=> "#{Time.now.utc.iso8601}", 
+        "message_count" => 1, 
+        "messages" => 
+          {
+            "data" => [
+              sample_dm_msg(actor_id, msg_id)
+            ]
+          }
+      }
+    ]
+  end
+  
+  def sample_facebook_profile
+    first_name = Faker::Name.name
+    last_name = Faker::Name.name
+    {
+      "id" => "#{get_social_id}", 
+      "email" => Faker::Internet.email , 
+      "first_name" => "#{first_name}", 
+      "gender" => "male", 
+      "last_name" => "#{last_name}", 
+      "link" => Faker::Internet.url, 
+      "locale" => "en_US", 
+      "name" => "#{first_name} #{last_name}", 
+      "timezone" => 5.5, 
+      "updated_time" => "2013-12-10T04:40:02+0000", 
+      "username" => "rikacho.paul", 
+      "verified" => true
+    }
+  end
+  
+  def sample_dm_msg(actor_id, msg_id)
+    name = Faker::Name.name
+    { 
+      "id" =>  msg_id, 
+      "created_time" => "#{Time.now.utc.iso8601}", 
+      "from" => 
+        {
+          "name" => name,
+          "email"=> Faker::Internet.email(name.split.last) , 
+          "id"=> "#{actor_id}" 
+        }, 
+      "attachments" => {
+        "data" => [
+          {
+            "image_data" => {
+              "preview_url" => "http://img.com",
+              "url" => "http://img.com"
+            }
+          }
+       ]
+      },
+      "message"=> Faker::Lorem.sentence(4)
+    } 
+  end
+  
+  def sample_page_info(page_id, name)
+    {
+      "id" => "#{page_id}", 
+      "about" => Faker::Lorem.sentence(3), 
+      "can_post" => true, 
+      "category" => "Community", 
+      "checkins" => 0, 
+      "has_added_app" => true, 
+      "is_community_page" => false, 
+      "is_published" => true, 
+      "new_like_count" => 0, 
+      "likes" => 0, 
+      "link" => Faker::Internet.url, 
+      "name" => "#{name}", 
+      "offer_eligible" => false, 
+      "parking" => {
+        "lot"=>0, 
+        "street"=>0, 
+        "valet"=>0
+        }, 
+      "promotion_eligible" => false, 
+      "promotion_ineligible_reason" => "BOOSTED_POST__NOT_ENOUGH_PAGE_LIKES", 
+      "talking_about_count" => 0, 
+      "unread_message_count" => 0, 
+      "unread_notif_count" => 0, 
+      "unseen_message_count" => 0, 
+      "were_here_count" => 0
+    }
+  end
+  
+  def sample_enable_page_params(page_id)
+    pages = {
+      "profile_id" => "100005115430108",
+      "access_token" => "sdsdfdsf",
+      "page_id" => "#{page_id}",
+      "page_name" => "TEST",
+      "page_token" => "sdfsdf",
+      "page_img_url" => "https => //m-static.ak.fbcdn.net/rsrc.php/v2/yv/r/zxpGQEKWB25.png",
+      "page_link" => "https => //www.facebook.com/pages/TEST/1463329723913690",
+      "fetch_since" => 0,
+      "reauth_required" => false,
+      "last_error" => nil
+    }
+    pages = pages.to_json
+    {
+      "enable" => 
+        {
+          "pages" =>
+          [
+            pages
+          ]
+        }
+    }
+  end
+  
   def sample_realtime_feed(feed_id, post)
     realtime_feed = {
       "entry" => {
@@ -73,6 +201,10 @@ module FacebookHelper
     sample_feeds = [fql_feed]
   end
   
+  def sample_page_picture
+    "https://m-static.ak.fbcdn.net/rsrc.php/v2/yv/r/zxpGQEKWB25.png"
+  end
+  
   def sample_facebook_feed(visitor_post, feed_id, comments = false, reply_to_comments = false)
     actor_id = visitor_post ? "#{get_social_id}" : "#{@fb_page.page_id}"
     page_id = "#{feed_id.split('_').first}"
@@ -80,9 +212,9 @@ module FacebookHelper
     fb_feed = {
       "id" => "#{feed_id}", 
       "from" => {
-        :category => "Community", 
-        :name => "Helloworld", 
-        :id => actor_id.to_i
+        "category" => "Community", 
+        "name" => "Helloworld", 
+        "id" => "#{actor_id}"
       }, 
       "message" => "facebook post", 
       "privacy" => {
@@ -221,6 +353,31 @@ module FacebookHelper
     [ticket, comment_id]
   end
   
+  def sample_fql_comment_feed(post_id)
+    [
+      {
+        "id" => "#{post_id.split("_").last}_#{(Time.now.utc.to_f * 1000).to_i}",
+        "from" => {
+          "category" =>  Faker::Lorem.sentence(1), 
+          "name" => Faker::Lorem.sentence(1), 
+          "id" => (Time.now.utc.to_f * 1000).to_i
+        }, 
+        "message" => Faker::Lorem.sentence(3),
+        "can_remove" => true, 
+        "created_time" => Time.now.utc.iso8601, 
+        "like_count" => 0, 
+        "user_likes" => false
+      }
+    ]
+  end
+  
+  def generate_thread_id
+    "t_id.#{(Time.now.utc.to_f * 1000).to_i}"
+  end
+  
+  def generate_msg_id
+    "m_mid.#{(Time.now.utc.to_f * 1000).to_i}:#{rand(36**15).to_s(36)}"
+  end  
   
   def sample_fql_comment(post_id, comment_id)
    [ {

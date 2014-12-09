@@ -29,7 +29,7 @@
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
   
   map.resources :companies ,:member => {:quick => :post, :sla_policies => :get, :create_company => :post, 
-      :update_company => :put } do |customer|
+      :update_company => :put, :update_notes => :put } do |customer|
     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
   map.connect '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
@@ -37,7 +37,7 @@
   map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , 
     :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :quick_contact_with_company => :post, 
       :restore => :put, :make_agent =>:put, :make_occasional_agent => :put, :create_contact => :post, 
-      :update_contact => :put, :update_bg_and_tags => :put} do |contacts|
+      :update_contact => :put, :update_description_and_tags => :put} do |contacts|
     contacts.resources :contact_merge, :collection => { :search => :get }
   end
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'

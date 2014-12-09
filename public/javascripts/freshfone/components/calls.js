@@ -4,16 +4,13 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
     "use strict";
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },
 		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 },
-		numbersHash = freshfone.numbersHash,
-		phoneNumber;
+		numbersHash = freshfone.numbersHash;
 	FreshfoneCalls = function () {
 		this.init();
 		this.currentUser = freshfone.current_user;
 		this.ALLOWED_DIGITS = 15;
 		this.cached = {};
 		this.freshfoneCallTransfer = {};
-		this.exceptionalNumber=false;
-		this.recentCaller = 0;
 	};
 
 	FreshfoneCalls.prototype = {
@@ -41,10 +38,6 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		$invalidNumberText: function () {
 			return this.cached.$invalidNumberText = this.cached.$invalidNumberText ||
 																							this.$container.find('.invalid_phone_text');
-		},
-		$invalidPhoneNumber: function () {
-			return this.cached.$invalidPhoneNumber = this.cached.$invalidPhoneNumber ||
-																							this.$container.find('.invalid_phone_num');
 		},
 		$alreadyInCallText: function () {
 			return this.cached.$alreadyInCallText = this.cached.$alreadyInCallText ||
@@ -182,40 +175,16 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 
 		toggleInvalidNumberText: function (show) {
+			this.$invalidNumberText().toggle(show || false);
 			if (this.$alreadyInCallText().is(":visible")) { this.toggleAlreadyInCallText(false);}
-			if(show && !(this.exceptionalNumberValidation(phoneNumber))){
-			 this.$invalidNumberText().toggle(show || false);
-			 this.$invalidPhoneNumber().toggle(!show || false);
-			}
-		},
-		exceptionalNumberValidation: function(number){
-			return (/[0-9]{8,15}$/.test(number) == true);
 		},
 		toggleAlreadyInCallText: function(show) {
 			this.$alreadyInCallText().toggle(show || false);
 		},
-		canDialNumber: function () {	 
-			if(this.number.indexOf('+') == -1){
-				this.number = $.keypad.selectedCode + this.number;
-   			}
-			phoneNumber = this.number;
-			return (this.number !== this.outgoingNumber()) && (isValidNumber(this.number) || this.numberValidation());
+		canDialNumber: function () {
+			return (this.number !== this.outgoingNumber()) && isValidNumber(this.number);
 		},
-		numberValidation: function () {
-			if(!(isValidNumber(this.number)) && this.exceptionalNumberValidation(this.number)){
-   			 if (this.exceptionalNumber) {
-				return true;
-			 }
-				this.exceptionalNumber = true;
-				this.$invalidNumberText().toggle(false);
-				this.$invalidPhoneNumber().toggle(true);				
-		}
-			return false;
-		},
-		hideText: function() {
-			$('.invalid_phone_text').hide();
-		    $('.invalid_phone_num').hide();
-		},
+
 		previewIvr: function (id) {
 			var params = {
 				preview: true,
@@ -289,9 +258,6 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		isOngoingCall : function () {
 		return	(this.tConn && this.tConn._status === "open")
-		},
-		updateCountriesPreferred : function () {
-			$('#number').intlTelInput("updatePreferredCountries");
 		},
 
 		onCallStopSound : function () {

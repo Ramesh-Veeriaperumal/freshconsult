@@ -282,11 +282,10 @@ javascripts:
     - public/javascripts/freshfone/components/socket.js
     - public/javascripts/freshfone/components/end_call_form.js
     - public/javascripts/freshfone/components/components_main.js
-    - public/javascripts/freshfone/intlTelInput.js
     - public/javascripts/freshfone/device.js
     - public/javascripts/freshfone/client.js
-    - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/dialpad.js
+    - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/components/call_transfer.js
     - public/javascripts/freshfone/freshfone_logger.js
 
