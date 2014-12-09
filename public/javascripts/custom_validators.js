@@ -322,7 +322,15 @@ $.validator.addClassRules("regex_validity", { regex_validity: true });
 
 $.validator.addMethod('validate_regexp', function(value, element) {
   var regExp = new RegExp('^/(.*?)/([gimy]*)$');
-  return this.optional(element) || regExp.test(value);
+  var match = value.match(regExp);
+  var is_valid = true;
+  try {
+      new RegExp(match[1], match[2]);
+  }
+  catch(err) {
+    is_valid = false;
+  }
+  return is_valid;
 }, "Invalid Regular Expression");
 
 $.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Data is too long. Please enter data less than 255 characters" );   

@@ -320,6 +320,25 @@
 					break;
 			}
 		},
+
+		setRegexValue: function(key, value) {
+			var regexValue = null,
+				regexParts = [];
+
+			if(this.dialogDOMMap['validate_using_regex'].prop('checked')) {
+				regexValue = {};
+				regexValue['regex'] = {};
+				regexParts = this.dialogDOMMap[key]
+								.prop(value[1])
+								.match(new RegExp('^/(.*?)/([gimy]*)$'));
+
+				if(regexParts && regexParts.length > 0) {
+					regexValue['regex']['pattern'] = escapeHtml(regexParts[1]);
+					regexValue['regex']['modifier'] = regexParts[2];	
+				}
+			}
+			this.settings.currentData.set(key, regexValue);
+		},
 			
 		saveCustomFields: function(ev) {
 			ev.preventDefault();
@@ -392,10 +411,7 @@
 							}
 						}
 						else if(key=='field_options' && field_type == 'custom_text') {
-							var regexValue = self.dialogDOMMap['validate_using_regex'].prop('checked')
-													? {'regex' : self.dialogDOMMap[key].prop(value[1])} 
-													: null;
-							self.settings.currentData.set(key, regexValue);
+							self.setRegexValue(key, value);
 						}
 						else if(key != 'field_type') {
 							var val = self.dialogDOMMap[key].prop(value[1]);

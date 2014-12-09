@@ -39,7 +39,7 @@ module CustomFields
                             :type => 'text'
                           }
           if regex_validity 
-            html_options['data-regex-pattern'] = "#{@field.field_options['regex']}"
+            html_options['data-regex-pattern'] = "/#{CGI.unescapeHTML(@field.field_options['regex']['pattern'])}/#{@field.field_options['regex']['modifier']}"
           end
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, html_options);
         end

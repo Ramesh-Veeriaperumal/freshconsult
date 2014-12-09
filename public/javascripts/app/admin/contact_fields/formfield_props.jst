@@ -125,14 +125,15 @@
 						</fieldset>
 					</div>
 				</div>
-				<!-- Forcibly hiding regex validation for now -->
 				<% if (field_type == 'custom_text') { %>
-					<div class='section hide'>
+					<div class='section'>
 						<% regexValidation = (field_options != null 
 													&& typeof(field_options) === "object" 
 													&& field_options['regex']) ?
 														'checked' : ''; %>
-						<% regexValue = (regexValidation == 'checked') ? field_options['regex'] : ''; %>
+						<% regexValue = (regexValidation == 'checked') ? 
+												new RegExp(unescapeHtml(field_options['regex']['pattern']), field_options['regex']['modifier']).toString() : 
+												''; %>
 						<fieldset> 
 							<label class="checkbox<%= isDisabled %>">
 								<input type="checkbox" 
