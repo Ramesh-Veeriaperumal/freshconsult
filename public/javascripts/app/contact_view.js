@@ -26,10 +26,13 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				this.prevBgInfo = $('.sp_paragraph').val();
 				this.tagList = $('#user_tag_names').select2('val');
 			} else {
-				$('.form-save').slideUp();
 				$('#tag-list').slideDown();
 				$('.tags-wrapper').slideUp();
-				$('.sp_paragraph').removeClass('editarea');
+				$('.sp_paragraph').removeClass('editarea').height(0);
+				$('.form-save').slideUp(400, function() {
+					$('.sp_paragraph')
+						.height($('.sp_paragraph')[0].scrollHeight)
+				});
 			}
 		},
 		flashUpdatedDiv: function() {
@@ -62,14 +65,15 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 		},
 		populateTags: function(tags) {
 			var tagsHtml = "<div class='tag_list'>",
-				savedTags = [];
+				savedTags = [],
+				option = tags.length > 0 ? 'edit' : 'add';
 			$.each(tags, function(idx, item) {
 				tagsHtml += "<a class='btn btn-flat' href='/contacts?tag=" + item.id + "' > " + escapeHtml(item.name) + " </a>";
 				savedTags.push(escapeHtml(item.name));
 			});
 			tagsHtml += "<a class='btn btn-flat add-new-tag' href='#'>"
 							+ "<span class='ficon-plus'></span>"
-							+ "Add Tags"
+							+ tagsOptions[option]
 							+ "</a>";
 			$('#tag-list').html(tagsHtml);
 			$('#user_tag_names').select2('val', savedTags);
@@ -93,7 +97,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				e.preventDefault();
 				self.cancelSave();
 			});
-			$('body').on('click.contact-view', '.save-form', function(e) {
+			$('body').on('submit.contact-view', '.edit_user', function(e) {
 				e.preventDefault();
 				self.makeAjaxCall();
 			});
@@ -104,11 +108,10 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 		makeAjaxCall: function() {
 			var data = $('.edit_user').serializeArray(),
 				self = this;
-				data._method = 'PUT';
 	
 			$.ajax({
-				type: "POST",
-				url: "/contacts/update_bg_and_tags/" + $('#userid').val(),
+				type: "PUT",
+				url: "/contacts/" + $('#userid').val() + "/update_description_and_tags",
 				data: data,
 				dataType: "json",
 				success: function(result, status, xhr){
@@ -132,7 +135,6 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			this.flashUpdatedDiv();
 			$('.tags-wrapper').find('.select2-search-field input').blur();
 			$('.sp_paragraph')
-					.height($('.sp_paragraph')[0].scrollHeight)
 					.blur();
 		},
 		ajaxFailure: function(errors) {

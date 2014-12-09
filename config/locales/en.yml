@@ -3201,6 +3201,7 @@ en:
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
   save: Save
   import_added_newly: Added Newly
+  quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
   import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
   contact_import:
@@ -3826,6 +3827,7 @@ en:
   company:
     created: Company was successfully created.
     updated: Company was successfully updated.
+    created_view: Company was successfully created. <a href="%{company_url}"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA Policy
     name: Company name
@@ -3870,6 +3872,7 @@ en:
   state: State
   deactivate: Deactivate
   add_tags: Add Tag
+  edit_tags: Edit Tags
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
   tkt_assigned_to_group: Ticket Assigned to Group
