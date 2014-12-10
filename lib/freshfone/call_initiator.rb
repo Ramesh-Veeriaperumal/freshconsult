@@ -268,4 +268,17 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 					end
 			end.text
 		end
+
+		def dial_to_agent_group(agents, call_back)
+			Twilio::TwiML::Response.new do |r|
+				r.Dial :callerId => params[:outgoing] ? params[:To] : params[:From],
+						 :record => current_number.record?, :action => transfer_call_status_url(call_back),
+ 						 :timeLimit => time_limit do |d|
+								agents.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent, params[:source_agent], call_back),
+							 		current_number, call_transfer_success_url(agent, params[:source_agent], call_back)) 
+								}
+						 end
+			end.text
+		end
+
 end
