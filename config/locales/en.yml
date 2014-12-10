@@ -5125,6 +5125,13 @@ en:
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
+    remote_login:
+      connect: "Connect"
+      sign_up: "Sign Up"
+      freshdesk_url: "Freshdesk URL"
+      freshdesk_api_key: "Freshdesk API key"
+      api_key_available: "You can get the API key under Profile Settings in your Freshdesk account "
+      new_to_freshdesk: "New to Freshdesk? "
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

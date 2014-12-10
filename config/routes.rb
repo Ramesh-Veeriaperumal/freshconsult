@@ -23,6 +23,8 @@
 
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
+  map.resources :health_status
+
   map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
    end
@@ -122,6 +124,7 @@
 
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
+    integration.resources :remote_configurations
     integration.resources :applications, :member=>{:custom_widget_preview => :post}
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}

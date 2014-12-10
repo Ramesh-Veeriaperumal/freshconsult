@@ -37,6 +37,7 @@ Authority::Authorization::PrivilegeList.build do
        :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
     resource :"social/twitter",
         :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
+    resource :"health_status"
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -324,6 +325,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/application"
     resource :"integrations/installed_application"
     resource :"integrations/google_account"
+    resource :"integrations/remote_configuration"
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"
