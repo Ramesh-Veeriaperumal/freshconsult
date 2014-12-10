@@ -36,7 +36,8 @@ module CustomFields
           html_options = {
                             :class => "#{@field_class} field_maxlength " + (regex_validity ? "regex_validity" : ''), 
                             :disabled => @disabled, 
-                            :type => 'text'
+                            :type => 'text',
+                            :maxlength => '255'
                           }
           if regex_validity 
             html_options['data-regex-pattern'] = "/#{CGI.unescapeHTML(@field.field_options['regex']['pattern'])}/#{@field.field_options['regex']['modifier']}"
@@ -87,12 +88,13 @@ module CustomFields
         def construct_phone_number
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
                     {:class => "#{@field_class} field_maxlength", 
-                      :disabled => @disabled})
+                      :disabled => @disabled,
+                      :maxlength => '255'})
         end
 
         def construct_url
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => "#{@field_class} field_maxlength", 
+                    {:class => "#{@field_class}", 
                       :disabled => @disabled, 
                       :type => 'url'})
         end
