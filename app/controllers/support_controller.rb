@@ -99,6 +99,7 @@ class SupportController < ApplicationController
     # The helper method can be found in SupportHelper class      
     def page_message
       output = []
+      output << %( <div class="alert alert-with-close notice" id="noticeajax" style="display:none;"></div> )
       [:notice, :warning, :error].collect do |type| 
         if flash[type]
           output << %( <div id="#{type}" class="alert alert-page alert-#{type}"> )

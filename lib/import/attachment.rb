@@ -41,8 +41,8 @@ class Import::Attachment
           file.close
           file.unlink
         end
+        increment_key 'attachments_completed'
       end
     end
-    increment_key 'attachments_completed'
   end
 end

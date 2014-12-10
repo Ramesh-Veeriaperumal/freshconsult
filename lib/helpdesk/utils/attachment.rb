@@ -2,8 +2,8 @@ module Helpdesk
   module Utils
     module Attachment
 
-      def create_attachment_from_params(parent,attachment_params,attachment_info,default_name)
-        created_attachment = parent.attachments.build(attachment_params)
+      def create_attachment_from_params(parent,attachment_params,attachment_info,default_name, options = {})
+        created_attachment = parent.attachments.build(attachment_params, options)
         if attachment_info
           attachment_name = utf8_name(attachment_info["filename"],default_name)
           if attachment_name

@@ -174,8 +174,9 @@ class Helpdesk::NotesController < ApplicationController
         end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
-          twt_success, reply_twt = send("send_tweet_as_#{twt_type}")
-          if twt_success
+          @tweet_body = @note.body.strip
+          error_message, reply_twt = send("send_tweet_as_#{twt_type}")
+          if error_message.blank?
             flash[:notice] = t(:'flash.tickets.reply.success') 
           else
             flash.now[:notice] = t('twitter.not_authorized')

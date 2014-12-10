@@ -48,7 +48,7 @@ class PopulateCompanyFields < ActiveRecord::Migration
       { :name               => "note", 
         :label              => "Notes" },
 
-      { :name               => "domain_name", 
+      { :name               => "domains", 
         :label              => "Domain Names for this company" }
     ]
 end

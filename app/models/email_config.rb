@@ -19,6 +19,8 @@ class EmailConfig < ActiveRecord::Base
   validates_format_of :reply_email, :with => ParserUtil::VALID_EMAIL_REGEX, :message => I18n.t('activerecord.errors.messages.invalid')
   validates_format_of :to_email, :with => ParserUtil::VALID_EMAIL_REGEX, :message => I18n.t('activerecord.errors.messages.invalid')
   
+  xss_sanitize  :only => [:to_email,:reply_email], :plain_sanitizer => [:to_email,:reply_email]
+  
   def active?
     active
   end

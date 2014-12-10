@@ -3446,6 +3446,7 @@ da:
     ticket_updated_icon: "Billet opdateret"
     reported_on: "fra %{username}, Sidst opdateret: den %{date}"
     scenarios: Scenarier
+    ticket_from: "Fra: %{username}"
     ticket_list_status_closed_at: "Fra: %{username}, Lukket: <span class='emphasize'>%{time_ago} siden </span>"
     ticket_list_status_resolved_at: "Fra: %{username}, Løst: <span class='emphasize'>%{time_ago} siden </span>"
     ticket_list_status_agent_responded_at: "Fra: %{username}, Agent svarede: <span class='emphasize'>%{time_ago} siden </span>"

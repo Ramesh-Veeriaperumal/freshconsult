@@ -61,9 +61,9 @@ class Agent < ActiveRecord::Base
   end
 
   def assumable_agents
-    account.users.technicians.select do |agent|
-      user.can_assume?(agent)
-    end
+    account.agents_from_cache.map do |agent|
+      agent.user if user.can_assume?(agent.user)
+    end.compact
   end
 
   #This method returns true if atleast one of the groups that he belongs to has round robin feature

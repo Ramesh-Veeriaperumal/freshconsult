@@ -2781,6 +2781,7 @@ zh-CN:
         ticket_updated_icon: "工单已更新"
         reported_on: "来自%{username}，最后一次更新：于%{date}"
         scenarios: "场景"
+        ticket_from: "来自：%{username}"
         ticket_list_status_closed_at: "来自：%{username}，关闭于：<span class='emphasize'>%{time_ago}前</span>"
         ticket_list_status_resolved_at: "来自：%{username}，解决于：<span class='emphasize'>%{time_ago}前</span>"
         ticket_list_status_agent_responded_at: "来自：%{username}，客服响应于：<span class='emphasize'>%{time_ago} 前</span>"

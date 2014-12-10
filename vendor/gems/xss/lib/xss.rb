@@ -1,4 +1,1 @@
-require "xss/engine"
-
-module Xss
-end
+require 'xss/railtie' if defined?(Rails)

@@ -12,6 +12,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Helpdesk::Activities
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Social::Util
   helper Helpdesk::NotesHelper
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
@@ -70,17 +71,20 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def twitter
-    if @item.save_note 
-      twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
-      twt_success, reply_twt = send("send_tweet_as_#{twt_type}")
-      if twt_success
-        flash[:notice] = t(:'flash.tickets.reply.success') 
+    tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
+    error_message, @tweet_body = validate_tweet(tweet_text, "@#{@parent.requester.twitter_id}")
+    if error_message.blank?
+      if @item.save_note 
+        twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
+        error_message, reply_twt = send("send_tweet_as_#{twt_type}")
+        flash[:notice] = error_message.blank? ?  t(:'flash.tickets.reply.success') : error_message
+        process_and_redirect
       else
-        flash.now[:notice] = t('twitter.not_authorized')
+        flash.now[:notice] = t(:'flash.tickets.reply.failure')
+        create_error(:twitter)
       end
-      process_and_redirect
     else
-      flash[:error] = "failure"
+      flash[:error] = error_message
       create_error(:twitter)
     end
   end

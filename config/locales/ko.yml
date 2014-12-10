@@ -2783,6 +2783,7 @@ ko:
         ticket_updated_icon: "티켓이 업데이트됨"
         reported_on: "보낸 사람: %{username}, 마지막 업데이트: %{date}"
         scenarios: "시나리오"
+        ticket_from: "보낸 사람: %{username}"
         ticket_list_status_closed_at: "보낸 사람: %{username}, 종료됨: <span class='emphasize'>%{time_ago} 전</span>"
         ticket_list_status_resolved_at: "보낸 사람: %{username}, 해결됨: <span class='emphasize'>%{time_ago} 전</span>"
         ticket_list_status_agent_responded_at: "보낸 사람: %{username}, 에이전트가 응답함: <span class='emphasize'>%{time_ago} 전</span>"

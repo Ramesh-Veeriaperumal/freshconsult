@@ -6,6 +6,7 @@ class Social::TwitterController < Social::BaseController
   include Social::Twitter::TicketActions
   include Social::Twitter::Constants
   include Mobile::Actions::Social
+  include Social::Util
 
   before_filter :fetch_live_feeds, :only => [:twitter_search, :show_old, :fetch_new]
   before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
@@ -75,7 +76,7 @@ class Social::TwitterController < Social::BaseController
     @user, @interactions =  [{},{}]
     screen_name = params[:user][:screen_name].gsub("@","")
     twt_handle = current_account.random_twitter_handle
-    @user[:twitter], @social_error_msg = Social::Twitter::User.fetch(twt_handle, screen_name)
+    @social_error_msg, @user[:twitter] = Social::Twitter::User.fetch(twt_handle, screen_name)
     @user[:image] = (@social_error_msg.blank? ? process_img_url(@user[:twitter].prof_img_url.to_s) : process_img_url(params[:user][:normal_img_url]))
     @user.merge!(
       :screen_name => params[:user][:screen_name],
@@ -98,7 +99,7 @@ class Social::TwitterController < Social::BaseController
   def retweets
     retweeted_id = params[:retweeted_id]
     twt_handle   = current_account.random_twitter_handle
-    @retweets, @social_error_msg = Social::Twitter::Feed.fetch_retweets(twt_handle,retweeted_id)
+    @social_error_msg , @retweets = Social::Twitter::Feed.fetch_retweets(twt_handle,retweeted_id)
     respond_to do |format|
       format.js
     end
@@ -136,7 +137,7 @@ class Social::TwitterController < Social::BaseController
     @feed_id   = params[:tweet][:feed_id]
     if has_permissions?(params[:search_type], params[:stream_id])
       twt_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
-      retweet_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:retweet])
+      @social_error_msg, retweet_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:retweet])
       unless retweet_status.blank?
         flash.now[:notice] = t('social.streams.twitter.retweet_success')
         mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:retweet_success]
@@ -161,7 +162,7 @@ class Social::TwitterController < Social::BaseController
     mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:favorite_success]
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
-      favourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:favorite])
+      @social_error_msg, favourite_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:favorite])
       update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
       if favourite_status.blank?
         flash.now[:notice] = @social_error_msg if @social_error_msg
@@ -186,7 +187,7 @@ class Social::TwitterController < Social::BaseController
     mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:unfavorite_success]
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
-      unfavourite_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
+      @social_error_msg, unfavourite_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
       update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
       if unfavourite_status.blank? 
         flash.now[:notice] = @social_error_msg unless not_valid_error?(@social_error_msg)
@@ -210,7 +211,7 @@ class Social::TwitterController < Social::BaseController
   def followers
     screen_name = params[:screen_name].gsub("@","")
     twt_handle  = current_account.random_twitter_handle
-    follower_ids, @social_error_msg = Social::Twitter::User.get_followers(twt_handle, screen_name)
+    @social_error_msg, follower_ids = Social::Twitter::User.get_followers(twt_handle, screen_name)
     if @social_error_msg.blank? and !follower_ids.nil?
       visible_handles  = @visible_handles.select {|handle| handle.screen_name != screen_name }
       @follow_hash = Hash[*visible_handles.collect { |handle| [ handle.screen_name, following?(follower_ids, handle.twitter_user_id) ] }.flatten]
@@ -226,7 +227,7 @@ class Social::TwitterController < Social::BaseController
   def follow
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = current_account.twitter_handles.find_by_screen_name(@screen_name)
-      follow_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @screen_name_to_follow, TWITTER_ACTIONS[:follow])
+      @social_error_msg, follow_status = Social::Twitter::Feed.twitter_action(twt_handle, @screen_name_to_follow, TWITTER_ACTIONS[:follow])
       if follow_status.blank?
         flash.now[:notice] = @social_error_msg || t('social.streams.twitter.already_followed')         
       else
@@ -244,7 +245,7 @@ class Social::TwitterController < Social::BaseController
   def unfollow
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = current_account.twitter_handles.find_by_screen_name(@screen_name)
-      unfollow_status, @social_error_msg = Social::Twitter::Feed.twitter_action(twt_handle, @screen_name_to_follow, TWITTER_ACTIONS[:unfollow])
+      @social_error_msg, unfollow_status = Social::Twitter::Feed.twitter_action(twt_handle, @screen_name_to_follow, TWITTER_ACTIONS[:unfollow])
       if unfollow_status.blank?
         flash.now[:notice] = @social_error_msg || t('social.streams.twitter.already_unfollowed') 
       else
@@ -263,14 +264,21 @@ class Social::TwitterController < Social::BaseController
     if privilege?(:reply_ticket)
       handle_id = params[:twitter_handle_id]
       handle = current_account.twitter_handles.find_by_id(handle_id)
-      @tweet_obj, @social_error_msg = Social::Twitter::Feed.twitter_action(handle, params[:tweet][:body], TWITTER_ACTIONS[:post_tweet])
-      unless @tweet_obj.blank?
-        flash.now[:notice] = t('social.streams.twitter.tweeted')
-        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:tweeted]
+      error_message, twt_text = validate_tweet(params[:tweet][:body].strip, nil, false)
+      
+      if error_message.blank?
+        @social_error_msg, @tweet_obj = Social::Twitter::Feed.twitter_action(handle, twt_text, TWITTER_ACTIONS[:post_tweet])
+        unless @tweet_obj.blank?
+          flash.now[:notice] = t('social.streams.twitter.tweeted')
+          mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:tweeted]
+        else
+          flash.now[:notice] = @social_error_msg
+          mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:social_error_msg]
+        end
       else
-        flash.now[:notice] = @social_error_msg
-        mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:social_error_msg]
+        flash.now[:notice] = error_message
       end
+      
     else
       flash.now[:notice] = t('social.streams.twitter.cannot_post')
       mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:cannot_post]
@@ -343,58 +351,67 @@ class Social::TwitterController < Social::BaseController
   end
 
   def reply_for_ticket_tweets(tweet)
-    item   = tweet.get_ticket
-    ticket =  item.is_a?(Helpdesk::Ticket) ? item : item.notable
-    note = ticket.notes.build(
-      :note_body_attributes => {
-        :body_html => params[:tweet][:body].strip
-      },
-      :incoming   => false,
-      :private    => false,
-      :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-      :account_id => current_account.id,
-      :user_id    => current_user.id
-    )
-    saved = note.save_note
-    if saved
-      twt_success, reply_twt = send_tweet_as_mention(ticket, note)
-      if twt_success
-        @interactions[:current] << recent_agent_reply(reply_twt, note) if reply_twt
-        MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
+    error_message, tweet_body = validate_tweet(params[:tweet][:body].strip, "@#{params[:screen_name]}")
+    if error_message.blank?
+      item   = tweet.get_ticket
+      ticket =  item.is_a?(Helpdesk::Ticket) ? item : item.notable
+      note = ticket.notes.build(
+        :note_body_attributes => {
+          :body_html => tweet_body
+        },
+        :incoming   => false,
+        :private    => false,
+        :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+        :account_id => current_account.id,
+        :user_id    => current_user.id
+      )
+      saved = note.save_note
+      if saved
+        error_message, reply_twt = send_tweet_as_mention(ticket, note, tweet_body)
+        if error_message.blank?
+          @interactions[:current] << recent_agent_reply(reply_twt, note) if reply_twt
+          MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
+        else
+          flash.now[:notice] = error_message
+          MOBILE_TWITTER_RESPONSE_CODES[:not_authorized]
+        end
       else
-        flash.now[:notice] = t('twitter.not_authorized')
-        MOBILE_TWITTER_RESPONSE_CODES[:not_authorized]
+        flash.now[:notice] = t(:'flash.tickets.reply.failure')
+        MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
       end
     else
-      flash.now[:notice] = t(:'flash.tickets.reply.failure')
-      MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
+      flash.now[:notice] = error_message
     end
   end
 
   def reply_for_non_ticket_tweets
     twt          = nil
-    tweet_text   = validate_tweet(params[:tweet][:body].strip, params[:screen_name])
-    in_reply_to  = params[:tweet][:in_reply_to]
-    tweet_params = {
-      :body           => tweet_text,
-      :in_reply_to_id => in_reply_to
-    }
-    reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
-    return_value, @sandbox_error_msg = twt_sandbox(reply_handle) {
-      twt = tweet_to_twitter(reply_handle, tweet_params)
-      @interactions[:current] << recent_agent_reply(twt, nil) if twt
-    }
-    if return_value
-      if params[:search_type] == SEARCH_TYPE[:saved]
-        update_dynamo_for_tweet(twt, in_reply_to, params[:stream_id], nil)
-      elsif params[:search_type] == SEARCH_TYPE[:custom]
-        reply_params = agent_reply_params(twt, in_reply_to, nil)
-        update_custom_streams_reply(reply_params, params[:stream_id], nil)
+    error_message, tweet_text = validate_tweet(params[:tweet][:body].strip, "@#{params[:screen_name]}")
+    if error_message.blank?
+      in_reply_to  = params[:tweet][:in_reply_to]
+      tweet_params = {
+        :body           => tweet_text,
+        :in_reply_to_id => in_reply_to
+      }
+      reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
+      @sandbox_error_msg, return_value = twt_sandbox(reply_handle) {
+        twt = tweet_to_twitter(reply_handle, tweet_params)
+        @interactions[:current] << recent_agent_reply(twt, nil) if twt
+      }
+      if return_value
+        if params[:search_type] == SEARCH_TYPE[:saved]
+          update_dynamo_for_tweet(twt, in_reply_to, params[:stream_id], nil)
+        elsif params[:search_type] == SEARCH_TYPE[:custom]
+          reply_params = agent_reply_params(twt, in_reply_to, nil)
+          update_custom_streams_reply(reply_params, params[:stream_id], nil)
+        end
+        MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
+      else
+        flash.now[:notice] = @sandbox_error_msg
+        MOBILE_TWITTER_RESPONSE_CODES[:sandbox_error_msg]
       end
-      MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
     else
-      flash.now[:notice] = @sandbox_error_msg
-      MOBILE_TWITTER_RESPONSE_CODES[:sandbox_error_msg]
+      flash.now[:notice] = error_message
     end
   end
 

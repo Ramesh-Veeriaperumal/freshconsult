@@ -7,10 +7,11 @@ class Portal < ActiveRecord::Base
 
   attr_protected  :account_id
 
-  # xss_sanitize  :only => [:name]
+  xss_sanitize  :only => [:name,:language], :plain_sanitizer => [:name,:language]
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
+  validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
   after_commit :update_users_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
@@ -48,6 +49,8 @@ class Portal < ActiveRecord::Base
     :order => "portal_solution_categories.position"
 
   has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
+
+  has_many :monitorships, :dependent => :nullify
 
   belongs_to_account
   belongs_to :product
@@ -186,6 +189,18 @@ class Portal < ActiveRecord::Base
 
     def downcase_portal_url
       self.portal_url = portal_url.downcase if portal_url
+    end
+
+    def validate_preferences
+      preferences.each do |key, value|
+        if ["header_color", "tab_color", "bg_color"].include?(key)
+          errors.add_to_base("Please enter a valid hex color value.") unless value =~ /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+        elsif key == 'contact_info'
+          next if value.blank?
+          phone = GlobalPhone.parse(value)
+          errors.add_to_base("Please enter a valid phone number.") unless phone && phone.valid?
+        end
+      end
     end
 
     def ticket_field_conditions

@@ -8,6 +8,7 @@ class Support::Mobihelp::TicketsController < SupportController
   before_filter :load_ticket, :only => [:show,:notes,:close]
   before_filter :check_ticket_permissions, :only => [:show,:notes,:close]
   before_filter :pre_process_mobihelp_params, :only => [:create]
+  skip_before_filter :check_day_pass_usage
 
   def create
     status = false;

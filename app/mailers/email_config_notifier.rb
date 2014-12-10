@@ -13,7 +13,7 @@ class EmailConfigNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @activation_url = admin_register_email_url(email_config.activator_token, 
-                        :host => email_config.account.host)
+                        :host => email_config.account.host, :protocol => email_config.account.url_protocol)
     @email_config   = email_config
     mail(headers) do |part|
       part.html { render "activation_instructions.html" }

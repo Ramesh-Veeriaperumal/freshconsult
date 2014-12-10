@@ -594,6 +594,13 @@ Helpkit::Application.routes.draw do
         put :update
       end
     end
+    
+    resources :company_fields, :only => :index do
+      collection do
+        put :update
+      end
+    end
+
     resources :day_passes, :only => [:index, :update] do
       member do
         put :buy_now
@@ -1271,6 +1278,22 @@ Helpkit::Application.routes.draw do
         end
       end
 
+      resources :leaderboard, :only => [ :mini_list, :agents, :groups ] do
+        collection do 
+          get :mini_list 
+          get :agents
+          get :groups
+        end
+      end
+
+      resources :quests, :only => [ :active, :index, :unachieved ] do
+        collection do
+          get :active
+          get :unachieved
+        end
+      end
+
+      match '/leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
       resources :tag_uses
       resources :reminders
       resources :time_sheets

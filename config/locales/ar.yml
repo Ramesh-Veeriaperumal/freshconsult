@@ -3274,6 +3274,7 @@ ar:
     ticket_updated_icon: تم تحديث البطاقة
     reported_on: "من %{username}، أخر تحديث: في %{date}"
     scenarios: وحدات السيناريو
+    ticket_from: "من: %{username}"
     ticket_list_status_closed_at: "من: %{username}، تم إغلاقها: <span class='emphasize'>منذ %{time_ago}</span>"
     ticket_list_status_resolved_at: "من: %{username}، تم حلها: <span class='emphasize'>منذ %{time_ago}</span>"
     ticket_list_status_agent_responded_at: "من: %{username}، استجاب الوكيل: <span class='emphasize'>منذ %{time_ago}</span>"

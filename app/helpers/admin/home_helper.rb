@@ -41,7 +41,7 @@
         :url                           =>   "/ticket_fields",
         :privilege                     =>   privilege?(:admin_tasks)
       },
-      :"contact-fields"                 =>   {
+      :"customer-fields"                 =>   {
         :url                           =>   "/admin/contact_fields",
         :privilege                     =>   (!Rails.env.production?) && privilege?(:admin_tasks)
       },
@@ -189,7 +189,7 @@
 
     ADMIN_GROUP = {
       :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter", "facebook-setting", "feedback", "mobihelp"],
-      :"general-settings"       =>    ["rebranding", "ticket-fields", "contact-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
+      :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
@@ -232,8 +232,8 @@
       :"ticket-fields"            =>      {
           :open_keywords          =>      [:customize_new_ticket_form]
       },
-      :"contact-fields"            =>      {
-          :open_keywords          =>      [:customize_new_contact_form]
+      :"customer-fields"            =>      {
+          :open_keywords          =>      [:customize_new_contact_form, :customize_new_company_form]
       },
       :"customer-portal"          =>      {
           :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions],

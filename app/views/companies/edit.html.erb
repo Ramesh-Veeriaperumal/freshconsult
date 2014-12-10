@@ -1,14 +1,31 @@
-<% content_for :sidebar do -%>&nbsp;<%- end %>
-<h3 class="title"><%=t('company.edit')%> <span class="info_data">"<%=h(@company.name)%>"</span></h3>
-<%= form_for(@company) do |f| %>
+<% content_for :sidebar do -%><%- end %>
+<%= form_for @company, :url => { :controller => "companies", :action => "update_company" },
+					:html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger'}  do |f| %>
+
+	<div class='page-header-sticky' rel='sticky'>
+		<div class='sticky-header-wrapper'>
+			<h3 class='lead pull-left'> 
+				<%= t('company.edit') %> 
+				<span class='info_data'> "
+					<%= h(@company.name) %>"
+				</span>
+			</h3>
+		<div class="pull-right company-btns">
+				<%= link_to t('cancel'), company_path(@company), :class => "btn" %>
+				<%= f.submit t('save'), {:class => "btn btn-primary"} %> 
+			</div>
+		</div>
+	</div>
+
+	<br/>
 	<%= render :partial => "form", :locals => { :f => f } %>
-	<div class="button-container">
-	   <div class="floatl">
-    <% if privilege?(:delete_contact) %>
-			<%= link_to(t('delete'), @company, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "uiButton red" ) %>
-    <% end %>
-	   </div>
-	   <%= f.submit t('save'), {:class => "uiButton"} %> 
-	   <%= link_to t('cancel'), company_path(@company), :class => "uiButton grey" %>
+    <div class="floatl mt20">
+	    <% if privilege?(:delete_contact) %>
+				<%= link_to(t('delete'), @company, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "btn" ) %>
+	    <% end %>
+    </div>
+	<div class="pull-right mt20">
+	   <%= link_to t('cancel'), company_path(@company), :class => "btn" %>
+	   <%= f.submit t('save'), {:class => "btn btn-primary"} %> 
 	</div>
 <% end %>

@@ -4,9 +4,7 @@
 (function($){
 
   // Tweet custom class
-  $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
-  $.validator.addClassRules("tweet", { tweet: 140 });
   $.validator.addClassRules("facebook", { facebook: 8000 });
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
@@ -24,6 +22,12 @@
      return valid;
   }, 'One or more email addresses are invalid.');
   $.validator.addClassRules("multiemail", { multiemail: true });
+
+  $.validator.addMethod("tweet", function(value, element) {
+    if($(element).data('tweet-count') >= 0){
+      return true;
+    }
+  }, "Your Tweet was over 140 characters. You'll have to be more clever." );
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
@@ -320,5 +324,9 @@ $.validator.addMethod('validate_regexp', function(value, element) {
   var regExp = new RegExp('^/(.*?)/([gimy]*)$');
   return this.optional(element) || regExp.test(value);
 }, "Invalid Regular Expression");
+
+$.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Data is too long. Please enter data less than 255 characters" );   
+$.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
+$.validator.addClassRules("decimal", { number: true });
 
 })(jQuery);

@@ -75,8 +75,10 @@
 										"data-id" => call.id, "data-customer-id" => call.customer_id,
 										"data-number" => call.caller_number,
 										"data-date" => call.created_at,
-										"data-customer-name" => call.customer_name,
-										:title => t('freshfone.call_history.save_ticket') %>
+										"data-customer-name" => call.customer_name, 
+										"data-responder-id" => call.agent ? call.agent.id : "",
+										:title => t('freshfone.call_history.save_ticket')
+										%>
 			<% end %>
 		</div>
 	</td>

@@ -2956,6 +2956,7 @@ nb-NO:
     include_quoted_text: "Inkluder tidligere svar"
     more_details: "Flere detaljer..."
     reported_on: "fra %{username}, Sist oppdatert: den %{date}"
+    ticket_from: "Fra: %{username}"
     ticket_list_status_closed_at: "Fra: %{username}, Lukket: <span class='emphasize'>%{time_ago} siden</span>"
     ticket_list_status_resolved_at: "Fra: %{username}, Løst: <span class='emphasize'>%{time_ago} siden</span>"
     ticket_list_status_agent_responded_at: "Fra: %{username}, Agent svarte: <span class='emphasize'>%{time_ago} siden</span>"

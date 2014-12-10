@@ -195,6 +195,7 @@ var FreshfoneEndCall;
 					'custom_requester_id' : this.custom_requester_id(),
 					'ticket_subject': this.ticketSubject(),
 					'requester_email': this.requesterEmail(),
+					'responder_id': this.agent || "", 
 					'call_history': !this.inCall
 				}
 			});

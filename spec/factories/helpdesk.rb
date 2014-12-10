@@ -91,10 +91,6 @@ if Rails.env.test?
       status 4
       token Digest::SHA1.hexdigest "#{Time.now.to_f}"
     end
-    
-    factory :achieved_quest, :class => AchievedQuest do
-      quest_id 1
-    end
 
     factory :tag, :class => Helpdesk::Tag do
       sequence(:name) { |n| "HelpdeskTag#{n}" }
@@ -125,7 +121,9 @@ if Rails.env.test?
 
     factory :flexifield, :class => Flexifield do |d|
     end
-  end
 
-  
+    factory :achieved_quest, :class => AchievedQuest do |d|
+      d.quest_id 1
+    end
+  end
 end

@@ -165,7 +165,7 @@ en:
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
-  attachment_failed_message: One or more attachments discarded since the 15MB limit was exceeded.
+  attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
@@ -224,6 +224,7 @@ en:
     remove_photo: "Remove photo"
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
+    ie9_file_change_msg: "%{filename} Save to update profile image"
     errors:
       required_field: cannot be blank
       custom_text : is not valid 
@@ -267,6 +268,7 @@ en:
     no_choice_message: "At least one valid choice has to be present"
     index:
       number: Number
+      decimal: Decimal
       add_custom_field: Add a Custom Field
       customize_form: "Customize your “New Ticket” form."
       single_line: Single Line Text
@@ -318,7 +320,7 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "Important: Deleting a folder will delete all the articles in it."
+    delete: "<b>Important:</b> Deleting a folder will delete all the articles in it."
     size: 
       one: "1 article will also be deleted."
       other: "%{count} articles will also be deleted."
@@ -418,6 +420,8 @@ en:
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
       mvp_trophie_label: "Most Valuable Player"
+      back_to_dashboard: "Back to Dashboard"
+      agents_in: "Agents in"
       mvp_trophie_info: "Agent with the most overall points this month"
       sharpshooter_trophie_label: "Sharpshooter"
       sharpshooter_trophie_info: "Agent with the highest First Call Resolution points this month"
@@ -425,6 +429,15 @@ en:
       speed_trophie_info: "Agent with the maximum points for fast resolution this month"
       love_trophie_label: "Customer Wow Champion"
       love_trophie_info: "Agent with the maximum Customer satisfaction points this month"
+      all_agents: "All Agents"
+      showing: "Showing"
+      agents_from_group: "Agents from group"
+      leaderboard_is_empty: "The leaderboard is empty"
+      date_range:
+        current_month: "Current Month"
+        last_month: "Last Month"
+        2_months_ago: "2 Months ago"
+        3_months_ago: "3 Months ago"
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"
@@ -458,6 +471,7 @@ en:
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
   none: None
+  view_all: View All
   any_val:
     any: Any
     any_value: Any Value
@@ -588,6 +602,76 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+    company_fields:
+      fields:
+        name: Full Name
+        email: Email
+        job_title: Title
+        tag_names: Tags
+        company_name: Company
+        client_manager: Can see all tickets from this company
+        address: Address
+        description: Description
+        phone: Phone
+        mobile: Mobile
+        twitter_id: Twitter
+        time_zone: Time Zone
+        language: Language
+        description: Background Information
+      untitled: Untitled
+      first_choice: First Choice
+      second_choice: Second Choice
+      confirm_delete: Are you sure you want to delete this field?
+      no_choice_message: "At least one valid choice has to be present"
+      index: 
+        add_custom_field: Add a Custom Field
+        customize_form: "Customize your “New Company form."
+        title: Company Fields
+        save: Save
+        saving: Saving
+      formfield_props: 
+        default: Default
+        form_title: Properties
+        behavior: "Behavior"
+        label: "Label"
+        nested_label: "Nested field labels"
+        level1: "Level 1"
+        level2: "Level 2"
+        level3: "Level 3"
+        nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
+        dropdown_items_edit: "Dropdown items - edit view"
+        dropdown_items_preview: "Dropdown items - Preview"
+        status_choices: "Status choices"
+        display_to_customer: "Display message for customer"
+        sla_timer: "SLA timer"
+        nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+        delete_field: "Delete field"
+        field_label_agents: "Field label for agents"
+        field_label_customer: "Field label for customers"
+        add_new_choice: Add Item
+        customer_mandatory: Required when submitting the form
+        customer_edit_signup: Customer can see this when they Sign up
+        customer_edit: Customer can edit
+        agent_info1: Field cannot be blank when submitting the ticket
+        agent_info2: Field cannot be blank when closing the ticket
+        agent_mandatory_submission: Required when submitting the form
+        customer_info1: Field cannot be blank when submitting the ticket online.
+        for_agents: For Agents
+        dropdown_choices: Dropdown Items
+        label_in_portal: Label in Portal
+        customer_visible: Display to customer
+        description: Description
+        for_customer: For Customers
+        agent_mandatory_closure: Required when closing the ticket
+        choices: Choices
+        label_in_portal_info: The label that is displayed in your self service portal
+        display_cc_field: Display CC Field
+        cc_company_contacts: Can CC only company contacts
+        cc_any_email: Can CC any email address
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
+        regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
+        max_choices: "Maximum items reached"
     contact_fields:
       fields:
         name: Full Name
@@ -657,6 +741,7 @@ en:
         regexp: Regular Expression
         validate_regexp: Validate using Regular Expression
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
+        max_choices: "Maximum items reached"
     portal:
       index:
         forums: "Forums"
@@ -1414,7 +1499,7 @@ en:
         observer: Observer
         sla: SLA Policies
         ticket-fields: Ticket Fields
-        contact-fields: Contact Fields
+        customer-fields: Customer Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
         email: Email
@@ -1475,6 +1560,7 @@ en:
         rebrand_portal: "Rebrand Portal"
         customize_new_ticket_form: "Customize new ticket Form"
         customize_new_contact_form: "Customize new contact Form"
+        customize_new_company_form: "Customize new company Form"
         signin_using_google: "sign in using google"
         signin_using_facebook: "sign in using facebook"
         signin_using_twitter: "sign in using twitter"
@@ -1547,7 +1633,7 @@ en:
       announce: Announcement
       problem: Problems
     confim_msg1: Are you sure you want to delete this forum?
-    delete: "Important: Deleting a forum will delete all the topics in it."
+    delete: "<b>Important:</b> Deleting a forum will delete all the topics in it permanently."
     size: 
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
@@ -1754,10 +1840,12 @@ en:
         string: You have exceeded the maximum limit for this type of field.
         text: You are not allowed to create more than 10 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
+        decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
     cf:
       type:
         contact_fields_controller: Contact Fields
+        company_fields_controller: Company Fields
       success: "%{type} have been successfully updated."
       delete:
         failure: deletion failed.
@@ -1767,11 +1855,6 @@ en:
         failure: creation failed.
       count_exceeded:
         generic : You are not allowed to create more fields of this type.
-        varchar_255: You are not allowed to create more than 76 string fields.
-        integer_11: You are not allowed to create more than 20 number fields.
-        tiny_int_1: You are not allowed to create more than 10 checkbox fields.
-        date_time: You are not allowed to create more than 10 date fields.    
-        text: You are not allowed to create more than 10 text fields.
     email_settings:
       send_activation:
         success: 'Verification email has been sent to %{reply_email}!'
@@ -2252,6 +2335,7 @@ en:
     new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
+  delete_permanently: Delete Permanently
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
@@ -2265,13 +2349,13 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "Important: Deleting a category will delete all the folders and articles in it."
+    delete: "<b>Important:</b> Deleting a category will delete all the folders and articles in it."
     size: "%{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted."
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
-    delete: "Important: Deleting a category will delete all the forums and topics in it."
+    delete: "<b>Important:</b> Deleting a category will delete all the forums and topics in it permanently."
     size: "%{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted."
   billed_monthly: Billed monthly
   users:
@@ -2331,6 +2415,7 @@ en:
       upvote: "Yes"
       downvote: "No"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     status:
       draft: Draft
@@ -2794,12 +2879,14 @@ en:
       tags: 'Tag Names'
     conversations:
       title: 'Conversations'
-      created_ticket: "Created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum: "Created a new topic <a href='%{topic_url}'>%{topic_title}</a>"
-      replied_form: "Replied to topic <a href='%{topic_url}'>%{topic_title}</a>"
-      forum_timeinfo: "%{time} ago in <a href='%{forum_url}'>%{forum_title}</a>"
-      ticket_timeinfo: " %{time} ago,  Status : %{status}"
+      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
+      company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact: 'Contains ticket and forum activities'
+      company: 'Contains tickets raised by company contacts'
       no_conversations: 'No Conversations'
     info5: "No tickets by %{nick_name}"
     restore: Restore
@@ -3177,6 +3264,10 @@ en:
   how_to: Question
   customers: Customers
   companies:
+    no_contacts: '%{no_contacts} contacts'
+    add_contact: 'Add Contact'
+    add_contact_company: 'Add Contact in %{company_name}'
+    company_contacts: 'Company Contacts'
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
@@ -3436,6 +3527,7 @@ en:
     success_signin: Successfully associated @%{twitter_screen_name} with %{helpdesk}.
     user_exists: Twitter account already associated with another product.
     not_authorized: You were not authorized by Twitter
+    not_valid: Status is over 140 characters.
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
@@ -3506,6 +3598,7 @@ en:
     ticket_updated_icon: Ticket Updated
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
+    ticket_from: "From: %{username}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -3759,6 +3852,13 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    errors:
+      required_field: cannot be blank
+      custom_text : is not valid 
+      custom_dropdown : should only contain one of the dropdown options
+      custom_phone_number : is not a valid phone number
+      custom_url : is not a valid URL
+      custom_date : is not a valid date
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics
@@ -5070,6 +5170,8 @@ en:
         options:
           incoming: "Incoming"
           outgoing: "Outgoing"
+          all_groups: "All Groups"
+          unassigned: Unassigned
         range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
@@ -5216,8 +5318,14 @@ en:
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
   contact_field:
     helpcard:
-      title1: "Contact Fields"
-      info1: "The contact form is the easiest way to capture all the data you need about your customer. For example, having the customer’s PAN ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Contact Form in Freshdesk to include the right contact fields for your business, and let your customers and agents fill in the information you need in the format you want."
+      title2: "Customizing your contact fields"
+      info2: "The contact form in Freshdesk lets you capture important data from your customers so that you can support them better. You can help your team get additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets accordingly in your helpdesk."
+      info3: "Just like your ticket fields, you can add new fields to the customer sign up form and make them mandatory. You can also have private fields that are visible just to your agents."
+  company_field:
+    helpcard:
+      title1: "Customizing your company fields"
+      info1: "In addition to contacts, Freshdesk lets you create companies in your helpdesk and makes it easy for you to manage support requests from the same group of customers. You can add custom fields to companies and store important information about their account for your support team to access quickly. You can have fields like account manager, primary contact, monthly revenue etc. and anything that is common to the entire account."
+      info2: "Please note that your company fields are displayed only to your agents and are not visible to your customers."
   default_category: "Default Category"
   default_category_description: "All emails sent to %{full_domain} will be stored here as drafts"
   default_folder: "Drafts"

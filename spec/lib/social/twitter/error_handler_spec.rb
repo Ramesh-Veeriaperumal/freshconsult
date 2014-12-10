@@ -18,49 +18,49 @@ RSpec.describe "Twitter Error Handler" do
   end
   
   it "must raise tweet already posted exception " do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error::AlreadyPosted
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.already_tweeted')}")
   end
   
   it "must raise tweet already retweeted exception " do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error::AlreadyRetweeted
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.already_retweeted')}")
   end
   
   it " must raise ratelimit reached exception " do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error::TooManyRequests
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.rate_limit_reached')}")
   end
   
   it "must raise forbidden error" do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error::Forbidden
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.client_error')}")
   end
   
   it "must raise gateway timeout exception" do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error::GatewayTimeout
     end
     error_msg.should eql("GatewayTimeout Error")
   end
   
   it "must raise twitter exception" do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.client_error')}")
   end
   
   it "must raise authentication error" do
-    return_value, error_msg = twt_sandbox(@handle) do
+    error_msg, return_value = twt_sandbox(@handle) do
       raise Twitter::Error::Unauthorized
     end
     error_msg.should eql("#{I18n.t('social.streams.twitter.handle_auth_error')}")
@@ -72,7 +72,7 @@ RSpec.describe "Twitter Error Handler" do
   it "must pass an handle that requires reauth to the block" do
     @handle.update_attributes(:state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required])
     @handle.reload
-    return_value, error_msg = twt_sandbox(@handle) {}
+    error_msg, return_value = twt_sandbox(@handle) {}
     error_msg.should eql("#{I18n.t('social.streams.twitter.handle_auth_error')}")
   end
   

@@ -21,7 +21,10 @@ module Admin::Freshfone::NumbersHelper
 
 	def queue_wait_time_options
 		[
+			["1 min", 1],
 			["2 mins", 2],
+			["3 mins", 3],
+			["4 mins", 4],
 			["5 mins", 5],
 			["10 mins", 10],
 			["15 mins", 15]

@@ -357,7 +357,7 @@ module SupportHelper
 	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "widget_requester" then
 	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
-	      when "text", "number" then
+	      when "text", "number", "decimal" then
 			text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
 	      when "paragraph" then
 			text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))
@@ -412,12 +412,13 @@ module SupportHelper
 	# NON-FILTER HELPERS
 	# Search url for different tabs
 	def tab_based_search_url
-		case @current_tab
+		current_filter = defined?(@search) ? @search.current_filter.to_s : @current_tab
+		case current_filter
 			when 'tickets'
 				tickets_support_search_path
 			when 'solutions'
 				solutions_support_search_path
-			when 'forums'
+			when 'forums','topics'
 				topics_support_search_path
 			else
 				support_search_path

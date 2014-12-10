@@ -20,6 +20,13 @@ module Social::Util
       NewRelic::Agent.notice_error(e, :custom_params => custom_params)
     end
   end
+  
+  def validate_tweet(tweet, twitter_id, is_reply = true)
+    twt_text = (is_reply and !tweet.include?(twitter_id)) ? "#{twitter_id} #{tweet}" : tweet
+    tweet_length = twt_text.gsub(URL_REGEX, " "*22).length;
+    twitter_error_message = t('twitter.not_valid') if (tweet_length > Social::Tweet::LENGTH)
+    [twitter_error_message, twt_text]
+  end
 
   def helpdesk_ticket_link(item)
     return nil if item.nil? or item.id.nil? #if the ticket/note save failed or we requeue the feed

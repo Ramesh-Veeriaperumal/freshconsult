@@ -48,7 +48,7 @@ module MailgunHelper
 		number.times do |i|
 			if large
 				buffer = ("a" * 1024).freeze
-				file = File.open("spec/fixtures/files/tmp15.doc", 'wb') { |f| 20.kilobytes.times { f.write buffer } }
+				file = File.open("spec/fixtures/files/tmp15.doc", 'wb') { |f| 25.kilobytes.times { f.write buffer } }
 				attach["attachment-#{i+1}"] = fixture_file_upload("files/tmp15.doc", 'text')
 			else
 				file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')

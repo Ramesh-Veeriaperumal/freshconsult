@@ -3255,6 +3255,7 @@ es-LA:
         ticket_updated_icon: "Ticket actualizado"
         reported_on: "De %{username}, Última actualización: %{date}"
         scenarios: "Escenarios"
+        ticket_from: "De: %{username}"
         ticket_list_status_closed_at: "De: %{username}, Cerrado: <span class='emphasize'>hace %{time_ago}</span>"
         ticket_list_status_resolved_at: "De: %{username}, Resuelto <span class='emphasize'>hace %{time_ago}</span>"
         ticket_list_status_agent_responded_at: "De: %{username}, el agente respondió: <span class='emphasize'>hace %{time_ago}</span>"

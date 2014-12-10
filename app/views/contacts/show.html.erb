@@ -12,7 +12,7 @@
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
 	<div class='sticky-header-wrapper'>
 		<h3 class='lead pull-left'> 
-			<%= t('contacts.title') %> 
+			<%= link_to t('contacts.title'), '/contacts' %> 
 			<span class='contact-name ellipsis'> / <%= h(@user.display_name) %></span>
 		</h3>
 		<% unless @user.deleted? %>
@@ -24,7 +24,7 @@
 				<%= link_to t('contacts.info2'), '#', {
 											:class => "drop-toggle btn",
 											"data-toggle" => "dropdown"
-										} if privilege?(:manage_users) and @user.has_email? and !@user.blocked? %>
+										} if privilege?(:manage_users) and @user.has_email? and !@user.blocked? and !@user.helpdesk_agent? %>
 
 				<%= link_to(t('edit'), edit_contact_path(@user),{
 											:class => "btn"
@@ -80,13 +80,13 @@
 			        <% end %>
 
 			        <% if privilege?(:view_contacts) %>
-			  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked? and @user.parent.nil?%>
+			  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.active? and @user.has_email? and !@user.deleted and !@user.spam? and !@user.blocked? and @user.parent.nil?%>
 			        <% end %>
 		  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }".html_safe) if @user.blocked? || @user.spam? %>
 		  		</div>
 			<% end %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<h4 class="lead"><%=t('user.background')%></h4>
+				<h4 class="conv-title"><%=t('user.background')%></h4>
 				<% form_for :user, @user, :html => {:class => 'edit_user'} do |f| %>
 					
 					<%= f.text_area :description, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("contacts.form_placeholder.description") %>
@@ -98,16 +98,18 @@
 						<%= render :partial => "/helpdesk/tags/tag_list", :locals => {:tags => @user.tags, :add_tag => true} %>
 					</div>
 					<% if privilege?(:manage_contacts) %>
-						<div class='error ajax-error pull-left'></div>
-						<div class="pull-right hide form-save"> 
-							<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
-							<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+						<div class='clearfix'>
+							<div class='error ajax-error pull-left'></div>
+							<div class="pull-right hide form-save"> 
+								<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
+								<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+							</div>
 						</div>
 					<% end %>
 				<% end %>	
 			</div>
 			<div class='contact-edit-padding clearfix'>
-				<h1 class='lead conv-title'> <%= t('contacts.conversations.title') %> </h1>
+				<h1 class='conv-title'> <%= t('contacts.conversations.title') %> </h1>
 				<p class='muted'> <%= t('contacts.conversations.contact') %> </p>
 				<div class='timeline'>
 					<ul class='timeline-list'>
@@ -119,7 +121,7 @@
 									<%= forum_activity(item) %>
 								<% else %>
 									<% no_tickets_shown = no_tickets_shown + 1 %>
-									<%= ticket_activity(item) %>
+									<%= ticket_activity(item, true) %>
 								<% end %>
 							</li>
 						<% end %>

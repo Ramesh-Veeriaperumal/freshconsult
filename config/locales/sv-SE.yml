@@ -2798,6 +2798,7 @@ sv-SE:
     ticket_updated_icon: Ärendet uppdaterat
     reported_on: "Från: %{username}, Senast uppdaterad: %{date}"
     scenarios: Scenarier
+    ticket_from: "Från: %{username}"
     ticket_list_status_closed_at: "Från: %{username}, Stängd: <span class='emphasize'>%{time_ago} sedan</span>"
     ticket_list_status_resolved_at: "Från: %{username}, Löst: <span class='emphasize'>%{time_ago} sedan</span>"
     ticket_list_status_agent_responded_at: "Från: %{username}, Representant svarade: <span class='emphasize'>%{time_ago} sedan</span>"

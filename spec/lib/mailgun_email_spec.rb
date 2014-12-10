@@ -34,7 +34,7 @@ RSpec.describe Helpdesk::Email::Process do
 	#All attachment related tests have been commented out.
 	#In order to test spec on attachments please place a test file in spec/fixtures/files
 	#Then change the attachment name in the test clause and then run the tests.
-	#When checking for attachments please check for those above 15MB too.
+	#When checking for attachments please check for those above 20MB too.
 	#Also check S3.yml and change the test credentials to that in staging.
 
 	describe "Create ticket" do
@@ -184,7 +184,7 @@ RSpec.describe Helpdesk::Email::Process do
 			ticket.attachments.size.should eql 1
 		end
 
-		it "with attachments above 15 mb" do
+		it "with attachments above 20 mb" do
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :attachments => 1, :large => 1})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = @account.tickets.last

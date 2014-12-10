@@ -39,10 +39,12 @@
             <div class="tab-pane fade active in" id="home">
             	<div id="cust-list">
             		<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
-	            	<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
+            		<% if params[:query].nil? %>
+	            		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
+	            	<% end %>
 	            	<%= form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 		        		<% if @contacts.present? %>
-					        <div class="list-page-body">
+					        <div class="list-page-body <%= 'mt20' if params[:query].present? %>">
 					        	<!-- Add content here for top of the table-->
 					        	<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "user", :path => contacts_path}) %>
 					        		<table class="table table-striped" id = "contacts-table">

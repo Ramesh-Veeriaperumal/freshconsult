@@ -113,11 +113,9 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def body_html_with_formatting(body,email_cmds_regex)
-	  body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
-	  body_html = auto_link(body, :sanitize => false) { |text| truncate(text, :length => 100) }#autolink is removed from rails and available as gem https://github.com/tenderlove/rails_autolink
-	  textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
-	  textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
-	  white_list(textilized.to_html)
+	  body_html = auto_link(body) { |text| truncate(text, 100) }
+	  line_break_body = body_html.gsub(/(\n|\r)/, '<br />')
+	  white_list(line_break_body)
 	end
 
 	def get_email_config

@@ -1000,6 +1000,7 @@ et:
     ticket_updated_icon: "Pilet on uuendatud"
     reported_on: "Kellelt: %{username}; viimati uuendatud: %{date}"
     scenarios: Stsenaariumid
+    ticket_from: "Kellelt: %{username}"
     ticket_list_status_closed_at: "Kellelt: %{username}; suletud: <span class='emphasize'>%{time_ago} tagasi</span>"
     ticket_list_status_resolved_at: "Kellelt: %{username}; lahendatud: <span class='emphasize'>%{time_ago} tagasi</span>"
     ticket_list_status_agent_responded_at: "Kellelt: %{username}; agent vastas: <span class='emphasize'>%{time_ago} tagasi</span>"

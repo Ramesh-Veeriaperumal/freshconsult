@@ -11,11 +11,15 @@ class Company < ActiveRecord::Base
 
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
-  attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id
+  attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id, :domain_name
   attr_accessor :highlight_name
-  xss_sanitize  :only => [:name]
+
+  xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
+  alias_attribute :domain_name, :domains
   
   belongs_to_account
+
+  has_custom_fields :class_name => 'CompanyFieldData', :discard_blank => false # coz of schema_less_company_columns
   
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify,
            :order => :name, :foreign_key => 'customer_id'
@@ -37,7 +41,7 @@ class Company < ActiveRecord::Base
 
   scope :custom_search, lambda { |search_string| 
     { :conditions => ["name like ?" ,"%#{search_string}%"],
-      :select => "name, id",
+      :select => "name, id, account_id",
       :limit => 1000  }
   }
 
@@ -52,9 +56,9 @@ class Company < ActiveRecord::Base
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
   CUST_TYPES = [
-    [ :customer,    "Customer",         1 ], 
+    [ :customer,    "Customer",      1 ], 
     [ :prospect,    "Prospect",      2 ], 
-    [ :partner,     "Partner",        3 ], 
+    [ :partner,     "Partner",       3 ], 
   ]
 
   CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
@@ -105,20 +109,31 @@ class Company < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-      options[:indent] ||= 2
-      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.instruct! unless options[:skip_instruct]
-      options[:skip_instruct] ||= true
-      options[:except]        ||= [:account_id,:import_id,:delta]
-      super(options)
+    options[:indent] ||= 2
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    options[:skip_instruct] ||= true
+    options[:except]        ||= [:account_id,:import_id,:delta]
+    super options do |builder|
+      builder.custom_field do
+        custom_field.each do |name, value|
+          builder.tag!(name,value) unless value.nil?
+        end
+      end
+    end
   end
 
   def to_json(options = {}) # Any change in to_json or as_json needs a change in elasticsearch as well
     return super(options) unless options[:tailored_json].blank?
+    options[:methods] = options[:methods].blank? ? [:custom_field] : options[:methods].push(:custom_field)
     options[:except] = [:account_id,:import_id,:delta]
     super options
   end
 
+  def respond_to? attribute, include_private_methods = false # avoiding pointless flexifield loading
+    return false if [:to_ary, :after_initialize_without_slave].include? attribute
+    super(attribute, include_private_methods)
+  end
   # Elasticsearch related methods starts
 
   def to_indexed_json
@@ -147,6 +162,14 @@ class Company < ActiveRecord::Base
   def search_fields_updated?
     all_fields = ['name', 'description', 'note']
     (@model_changes.keys & all_fields).any?
+  end
+
+  def custom_form
+    account.company_form
+  end
+
+  def custom_field_aliases 
+    @custom_field_aliases ||= custom_form.custom_company_fields.map(&:name)
   end
 
   private

@@ -3255,6 +3255,7 @@ nl:
         ticket_updated_icon: "Ticket bijgewerkt"
         reported_on: "van %{username}, voor het laatst bijgewerkt op %{date}"
         scenarios: "Scenario's"
+        ticket_from: "Van: %{username}"
         ticket_list_status_closed_at: "Van: %{username}, gesloten: <span class='emphasize'>%{time_ago} geleden</span>"
         ticket_list_status_resolved_at: "Van: %{username}, opgelost: <span class='emphasize'>%{time_ago} geleden </span>"
         ticket_list_status_agent_responded_at: "Van: %{username}, antwoord van medewerker: <span class='emphasize'>%{time_ago} geleden</span>"

@@ -2800,6 +2800,7 @@ pl:
     ticket_updated_icon: Zaktualizowano zgłoszenie
     reported_on: "od %{username}, Ostatnia aktualizacja: dnia %{date}"
     scenarios: Scenariusze
+    ticket_from: "Od: %{username}"
     ticket_list_status_closed_at: "Od: %{username}, Zamknięto: <span class='emphasize'>%{time_ago} temu</span>"
     ticket_list_status_resolved_at: "Od: %{username}, Rozwiązano: <span class='emphasize'>%{time_ago} temu</span>"
     ticket_list_status_agent_responded_at: "Od: %{username}, Konsultant odpowiedział: <span class='emphasize'>%{time_ago} temu</span>"

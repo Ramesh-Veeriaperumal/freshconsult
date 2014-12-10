@@ -183,7 +183,7 @@ class AuthorizationsController < ApplicationController
         key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
         Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
         port = (Rails.env.development? ? ":#{request.port}" : '')
-        fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}" : portal_url(user_account))
+        fb_url = (params[:state] ? "#{user_account.main_url_protocol}://#{user_account.full_domain}" : portal_url(user_account))
         redirect_to fb_url + "#{port}#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
       end
     end

@@ -272,7 +272,7 @@ ul.ui-form .ui-form-inline{
 	.hidden{
 	   display:none;
 	}    
-   li.dropdown, li.small, li.dropdown_blank, li.number{
+   li.dropdown, li.small, li.dropdown_blank, li.number, li.decimal{
       width:46%;
       input{ width:auto; }
    }
@@ -2034,10 +2034,12 @@ input[type="text"].points{
 	width: 70px;
 }
 
-input[type="text"].number{
-	width:70px;
-	&.phone_number {
-		width: 98%;
+input[type="text"]{
+	&.number, &.decimal{
+		width:70px;
+		&.phone_number {
+			width: 98%;
+		}
 	}
 }
 

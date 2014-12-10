@@ -3384,6 +3384,7 @@ fi:
     include_quoted_text: "Sisällytä aikaisemmat vastaukset"
     more_details: Lisätietoja...
     reported_on: "käyttäjältä %{username}, päivitetty viimeksi %{date}"
+    ticket_from: "Lähettäjä: %{username}"
     ticket_list_status_closed_at: "Lähettäjä: %{username}, Suljettu: <span class='emphasize'>%{time_ago} sitten </span>"
     ticket_list_status_resolved_at: "Lähettäjä: %{username}, Selvitetty: <span class='emphasize'>%{time_ago} sitten </span>"
     ticket_list_status_agent_responded_at: "Lähettäjä: %{username}, Edustajan vastaus: <span class='emphasize'>%{time_ago} sitten </span>"

@@ -151,7 +151,6 @@ class Helpdesk::TicketState <  ActiveRecord::Base
       end
     rescue Exception => e
       puts "Exception occurred while inserting data into stats table ::: #{e.message}" 
-      puts e.backtrace.join("\n\t")
       NewRelic::Agent.notice_error(e)
     end
   end

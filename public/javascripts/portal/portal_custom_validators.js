@@ -48,5 +48,5 @@ $('body').on("change", "[data-select-one]", function(){
 
 	_validator.element(_textarea);
 });
-
+$.validator.addClassRules("decimal", { number: true });
 })(jQuery);

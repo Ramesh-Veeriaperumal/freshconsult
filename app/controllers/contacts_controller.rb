@@ -181,14 +181,22 @@ class ContactsController < ApplicationController
   end
 
   def update_bg_and_tags
-    if @user.update_attributes(params[:user])
+    begin
+      if @user.update_attributes(params[:user])
+        updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
+        respond_to do |format|
+          format.json { render :json => updated_tags, :status => :ok}
+        end
+      else
+        respond_to do |format|
+          format.json { render :json => @item.errors, :status => :unprocessable_entity}
+        end
+      end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e) 
       updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
       respond_to do |format|
         format.json { render :json => updated_tags, :status => :ok}
-      end
-    else
-      respond_to do |format|
-        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
@@ -226,11 +234,11 @@ class ContactsController < ApplicationController
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
-        # format.json {render :json => @item.as_json,:status => 200}
+        format.json {render :json => @item.as_json,:status => 200}
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
-        # format.json { render :json => @item.errors,:status => 500 }
+        format.json { render :json => @item.errors,:status => 500 }
       end   
     end
   end
@@ -368,7 +376,7 @@ protected
 
     def set_validatable_custom_fields
       @user ||= current_account.users.new
-      @user.validatable_custom_fields = { :fields => current_account.contact_form.contact_custom_fields, 
+      @user.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
                                           :error_label => :label }
     end
 end

@@ -5,6 +5,7 @@ class Helpdesk::Email::HandleTicket
 
   include ParserUtil
   include EmailCommands
+  include EmailHelper
   include Helpdesk::Utils::Attachment
   include Helpdesk::Email::ParseEmailData
   include Helpdesk::Email::NoteMethods
@@ -84,7 +85,7 @@ class Helpdesk::Email::HandleTicket
   def create_attachment item, attachment_name
     begin
       create_attachment_from_params(item, attachment_params(attachment_name), nil,
-                                    attachment_name)
+                                    attachment_name, {:attachment_limit => HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE})
     rescue HelpdeskExceptions::AttachmentLimitException => ex
       Rails.logger.error("ERROR ::: #{ex.message}")
       add_notification_text item
@@ -94,7 +95,7 @@ class Helpdesk::Email::HandleTicket
   end
 
   def add_notification_text item
-    message = I18n.t('attachment_failed_message').html_safe
+    message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
     notification_text = "\n" << message
     notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
     if item.is_a?(Helpdesk::Ticket)

@@ -489,7 +489,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v11","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
       ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
@@ -580,7 +580,7 @@ module ApplicationHelper
    if !item[:preferences].blank?
      color = item[:preferences].fetch(type, '')
    end
-   color
+   sanitize(color)
  end
 
  # def get_time_in_hours seconds
@@ -708,7 +708,7 @@ module ApplicationHelper
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field if !is_edit and !current_user
-      when "text", "number" then
+      when "text", "number", "decimal" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
@@ -951,9 +951,11 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class = 'user_name' href='/users/#{ticket.requester.id}' target='_blank'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>".html_safe
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+          <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
+       </a>".html_safe
     else
-      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
+      "<span class='user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
     end
   end
 

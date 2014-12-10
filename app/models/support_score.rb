@@ -36,10 +36,14 @@ class SupportScore < ActiveRecord::Base
       group("group_id").order("tot_score desc, recent_created_at")
   }
   
-  scope :user_score, -> { select("support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at").
-      includes(:user => :avatar ).joins("INNER JOIN users ON users.id = support_scores.user_id and 
-      users.account_id = support_scores.account_id and users.deleted = false").
-        where("user_id is not null and users.id is not null").group('user_id').order("tot_score desc, recent_created_at")# TODO-RAILS3 check include condition
+  scope :user_score, lambda { |query|
+    {
+    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
+    :conditions => query[:conditions],
+    :include => { :user => [ :avatar ] },
+    :group => "user_id",
+    :order => "tot_score desc, recent_created_at"
+    }
   }
   
   # RAILS3 by default has this feature

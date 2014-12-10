@@ -39,7 +39,7 @@ RSpec.describe Helpdesk::LeaderboardController do
 
 	it "should display Agent Leaderboard" do
 		get :agents
-		response.body.should =~ /Agent Leaderboard/
+		response.body.should =~ /Agent/
 		response.body.should =~ /Most Valuable Player/
 		response.body.should =~ /Sharpshooter/
 		response.body.should =~ /#{ERB::Util.html_escape(@agent_1.name)}/
@@ -77,7 +77,7 @@ RSpec.describe Helpdesk::LeaderboardController do
 
 	it "should display Group Leaderboard" do
 		get :groups
-		response.body.should =~ /Group Leaderboard/
+		response.body.should =~ /Group/
 		response.body.should =~ /Speed Racer/
 		response.body.should =~ /#{@group_1.name}/
 		response.body.should_not =~ /#{@group_2.name}/
@@ -105,7 +105,7 @@ RSpec.describe Helpdesk::LeaderboardController do
 								:scorable_id=>@tkt_quest_2.id,:scorable_type=> "Helpdesk::Ticket" } )
 
 		get :groups
-		response.body.should =~ /Group Leaderboard/
+		response.body.should =~ /Group/
 		response.body.should =~ /Speed Racer/
 		response.body.should =~ /#{@group_1.name}/
 		response.body.should =~ /#{@group_2.name}/
@@ -157,8 +157,47 @@ RSpec.describe Helpdesk::LeaderboardController do
 		response.should be_success
 	end
 
+	it "should display scores of users belonging to a particular group" do
+		quest_data = {:value=>"10", :date=>"6"}
+		@tkt_quest_3 = create_ticket_quest(@account, quest_data)
+		create_support_score( { :user_id => @agent_2.id,:group_id => @group_1.id,:score_trigger=> FAST_RESOLUTION,:score => 700,
+								:scorable_id=>@tkt_quest_2.id,:scorable_type=> "Helpdesk::Ticket" } )
+		get :group_agents, :id => @group_1.id
+		response.body.should =~ /Most Valuable Player/
+		response.body.should =~ /Sharpshooter/
+		response.body.should =~ /Speed Racer/
+		response.body.should =~ /Customer Wow Champion/
+		response.body.should =~ /#{@group_1.name}/
+		response.should be_success
+	end
+
+	it "should show agents within a particular date range" do
+		get :agents, :date_range => "current_month"
+		response.body.should =~ /Most Valuable Player/
+		response.body.should =~ /Sharpshooter/
+		response.should be_success
+	end
+
+	it "should show empty when no scores are available for a particular date range" do
+		get :agents, :date_range => "2_months_ago"
+		@start_date = Time.zone.parse(2.month.ago.beginning_of_month.to_s)
+		@end_date = Time.zone.parse(2.month.ago.end_of_month.to_s)
+		assigns[:mvp_scorecard].should be_empty
+		user_support_score.should be_empty
+		assigns[:fast_scorecard].should be_empty
+		user_support_score.fast.should be_empty
+		assigns[:first_call_scorecard].should be_empty
+		user_support_score.first_call.should be_empty
+		assigns[:customer_champion_scorecard].should be_empty
+		user_support_score.customer_champion.should be_empty
+	end
+
 	def user_support_score
-		@account.support_scores.by_performance.user_score.created_at_inside(@start_date,@end_date)
+		@account.support_scores.by_performance.user_score(user_scope_params).created_at_inside(@start_date,@end_date)
+	end
+
+	def group_agent_support_score
+		@account.support_scores.by_performance.user_score(group_agent_scope_params).created_at_inside(@start_date,@end_date)
 	end
 
 	def group_support_score
@@ -173,5 +212,13 @@ RSpec.describe Helpdesk::LeaderboardController do
 												:scorable_id=> params[:scorable_id],
 												:scorable_type=> params[:scorable_type])
 		new_ss.save(:validate => false)
+	end
+
+	def user_scope_params
+		{ :conditions => ["user_id is not null"] }
+	end
+
+	def group_agent_scope_params
+		{ :conditions => ["support_scores.group_id = ?", @group.id] }
 	end
 end

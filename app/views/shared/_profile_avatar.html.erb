@@ -1,6 +1,7 @@
 <% javascript_tag do %>
   customMessages = {
     confirmDelete: '<%= t("user.remove_profile_image_confirm") %>',
+    ie9FileChangeMsg: '<%= t('user.ie9_file_change_msg') %>',
     confirmNavigate: '<%= t("admin.products.portal.save_and_continue") %>'
 }
 <% end %>
@@ -9,6 +10,7 @@
   <%= image_tag user.avatar ? user.avatar.expiring_url(:medium) : '', 
                 :alt => user.name,
                 :onerror => "imgerror(this)" %>
+  <p class='ie9-file-change-msg break-word'> </p>
 </div>
 <div class='avatar-options'>
   <% isAvatar = user.avatar && user.avatar.id %>

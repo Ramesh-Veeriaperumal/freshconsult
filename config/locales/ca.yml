@@ -479,6 +479,7 @@ ca:
     ticket_updated_icon: "Tiquet actualitzat"
     reported_on: "de %{username}, Actualitzat per darrera vegada: el %{date}"
     scenarios: Escenaris
+    ticket_from: "De: %{username}"
     ticket_list_status_closed_at: "De: %{username}, Tancat fa: <span class='emphasize'>%{time_ago}</span>"
     ticket_list_status_resolved_at: "De: %{username}, Resolt fa: <span class='emphasize'>%{time_ago}</span>"
     ticket_list_status_agent_responded_at: "De: %{username}, l'Agent va respondre fa: <span class='emphasize'>%{time_ago}</span>"
