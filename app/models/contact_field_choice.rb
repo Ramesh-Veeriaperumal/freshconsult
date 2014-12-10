@@ -5,4 +5,5 @@ class ContactFieldChoice < ActiveRecord::Base
   stores_custom_field_choice  :custom_field_class => 'ContactField', 
                                 :custom_field_id => :contact_field_id
 
+  validates_length_of :value, :in => 1..255
 end
