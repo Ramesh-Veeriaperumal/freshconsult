@@ -106,7 +106,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
-    - public/javascripts/frameworks/socket.io-1.0.6.js
+    - public/javascripts/frameworks/socket.io-1.2.1.js
     - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js
