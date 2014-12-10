@@ -48,8 +48,8 @@ describe Integrations::Cti::CustomerDetailsController do
 
 	it "should fetch user details and tickets of existing users" do
 		get :fetch , {
-			:mobile => @cust_mob,
-			:email => @agent.email
+			:user => {:mobile => @cust_mob},
+			:agent => {:email => @agent.email}
 		}
 		resp=JSON.parse(response.body)
 		resp["data"]["mobile"].should eql @cust_mob
@@ -57,14 +57,13 @@ describe Integrations::Cti::CustomerDetailsController do
 
 	it "should create agent as contact if it does not exist" do
 		get :fetch , {
-			:mobile => @cust_mob,
-			:email => "test@email.com",
-			:is_ajax => true
+			:user => {:mobile => @cust_mob},
+			:agent => {:email => "test@email.com"}
 		}
 		usr = User.find(:first,:conditions => {:email => "test@email.com"})
 		usr.nil?.should be_false
 	end
-
+=begin
 	it "auth success for valid session" do
 		get :get_session , {
 			:email => @agent.email,
@@ -87,4 +86,5 @@ describe Integrations::Cti::CustomerDetailsController do
 		a=Hash.from_xml(response.body)
 		a["response"]["status"].should eql "failed"
 	end
+=end
 end
