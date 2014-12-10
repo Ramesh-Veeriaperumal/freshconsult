@@ -117,6 +117,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     end
     Sharding.admin_select_shard_of(old_url) do
       current_account = Account.find_by_full_domain(params[:old_url])
+      current_account.make_current
       email_configs = current_account.all_email_configs
       email_configs.each do |email_config|
         old_to_email = email_config.to_email
