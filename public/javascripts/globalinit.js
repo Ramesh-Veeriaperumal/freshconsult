@@ -509,6 +509,8 @@ window.xhrPool = [];
                                           }else{
                                             setTimeout(function(){ 
                                               add_csrf_token(form);
+                                              // Nullifies the form data changes flag, which is checked to prompt the user before leaving the page.
+                                              $(form).data('formChanged', false);
                                               form.submit();
                                             }, 50)
                                           }
@@ -705,8 +707,6 @@ window.xhrPool = [];
 
       $('.form-unsaved-changes-trigger').on('change', function() {
         $(this).data('formChanged', true);
-      }).find('input[type=submit]').on('click', function(ev) {
-        $('.form-unsaved-changes-trigger').data('formChanged', false);
       });
       
    });
