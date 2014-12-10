@@ -180,11 +180,10 @@
 
 		addChoiceinDialog: function(data, dom){
 			dom	= dom  || this.dialogDOMMap.choices;
-			data	= data || [ '', Math.random()*100 ];
-			var inputData = $("<input type='text' />")
+			data	= data || [ '', 0 ];
+			var inputData = $("<input type='text' maxlength='255' />")
 													.val(unescapeHtml(data[0]))
-													.attr("data_id", data[1])
-													.attr('name', 'choice_'+data[1])
+													.attr('name', 'choice_'+ (new Date().getTime()))
 													.addClass('field_maxlength');
 			var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
@@ -194,7 +193,6 @@
 					.append(dropSpan)            
 					.appendTo(dom);  
 
-			$(this.settings.addChoice).appendTo(fieldSet); 
 			var no_choices = dom.find('fieldset:visible').length;
 			if(no_choices >= this.settings.maxNoOfChoices) {
 				$(this.settings.addChoice).hide();
@@ -212,7 +210,7 @@
 							input_box = $(this).find("span.dropchoice input");
 							
 							temp[0] = escapeHtml(input_box.val());
-							temp[1] = input_box.attr("data_id");
+							temp[1] = escapeHtml(input_box.val());
 							
 					if($.trim(temp[0]) !== '') choices.push(temp);
 			 });
@@ -228,9 +226,6 @@
 
 		deleteDropDownChoice: function($this){
 			if($this.parent().siblings().size() !== 0) {
-				if($this.parent().find(this.settings.addChoice).length > 0) {
-					$(this.settings.addChoice).appendTo($this.parent().prev());
-				}
 				$this.parent().remove();
 			}
 			var no_choices = (this.dialogDOMMap.choices).find('fieldset:visible').length;

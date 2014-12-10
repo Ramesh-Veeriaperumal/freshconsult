@@ -132,7 +132,7 @@
 													&& field_options['regex']) ?
 														'checked' : ''; %>
 						<% regexValue = (regexValidation == 'checked') ? 
-												new RegExp(unescapeHtml(field_options['regex']['pattern']), field_options['regex']['modifier']).toString() : 
+												new RegExp(unescapeHtml(field_options['regex']['pattern']).replace(/"/g, '&quot;'), field_options['regex']['modifier']).toString() : 
 												''; %>
 						<fieldset> 
 							<label class="checkbox<%= isDisabled %>">
@@ -165,7 +165,6 @@
 						<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
 						<input type="hidden" name="choicelist" value="" />
 						<div name="custom-choices" class="custom-choices">
-							<% choicesLength = choices.length %>
 							<% _.each(choices, function(item, index){  %>
 								<% item = item || ['',0]; %>
 								<fieldset>
@@ -175,17 +174,16 @@
 										<input type="text" 
 														name="choice_<%= item[1] %>" 
 														value="<%= item[0].replace(/"/g, '&quot;') %>"
-														data_id="<%= item[1] %>"
-														class='field_maxlength'/>
+														data_id="<%= item[0] %>"
+														class='field_maxlength'
+														maxlength='255'/>
 									</span>
-									<% if (index == choicesLength-1) { %>
-										<a class="add-choice" id="addchoice" href="#"> 
-											<span class='ficon-plus'></span> 
-											<span><%= translate.get('addNewChoice') %> </span>
-										</a> 
-									<% } %>
 								</fieldset>
 							<% }) %>
+							<a class="add-choice" id="addchoice" href="#"> 
+								<span class='ficon-plus'></span> 
+								<span><%= translate.get('addNewChoice') %> </span>
+							</a> 
 						</div>
 					</div> 
 				<% } %>
