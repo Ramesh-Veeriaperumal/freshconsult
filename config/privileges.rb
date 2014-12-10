@@ -70,6 +70,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
 
+    #canned_response
+    resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
+    resource :"helpdesk/canned_responses/response"
 	end
 
   reply_ticket do
@@ -276,8 +279,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_canned_responses do
-    resource :"admin/canned_responses/folder"
-    resource :"admin/canned_responses/response"
+    resource :"helpdesk/canned_responses/folder"
   end
 
   manage_dispatch_rules do

@@ -1352,35 +1352,7 @@ en:
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
-      product_label_msg: "Product"
-    canned_responses:
-      helpnote:
-          title: Canned responses
-          tour: Help me use canned responses
-          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      folders:
-        helpnote:
-          title: Canned responses
-          tour: Help me use canned responses
-          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      responses:
-        edit:
-          title: Edit Canned response
-        new:
-          title: Add Canned response
-        form:
-          groups: Agents in group
-          response_name: Response title
-          all_agents: All agents
-          me_only: Myself
-          available_for: Available for
-      index:
-        new: Add Canned response
-        title: Canned responses
-    ca_response:
-      delete_confirm: Are you sure you want to delete this canned response?
+      product_label_msg: "Product"    
     twitters:
       index:
         new: Add Twitter account
@@ -4382,6 +4354,34 @@ en:
         target_note_description3:
           one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
           other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
+    canned_responses:
+      helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      folders:
+        helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      responses:
+        edit:
+          title: Edit Canned response
+        new:
+          title: Add Canned response
+        form:
+          groups: Agents in group
+          response_name: Response title
+          all_agents: All agents
+          me_only: Myself
+          available_for: Available for
+      index:
+        new: Add Canned response
+        title: Canned responses
+    ca_response:
+      delete_confirm: Are you sure you want to delete this canned response?
   import_ticket_group: Tickets
   or: or
   tickets_filter:
@@ -5483,6 +5483,42 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+    select_group: "Select Group"
+    visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."
+    pfolder_visibility_alert: "<span class=\"label label-important\">Important</span> - The selected canned responses will be available only for you when you move it to Personal Folder"
+    moved_responses_update: "{{responses}} response(s) could not be moved as the title already exists in folder {{folder_name}}"
+    folder_validation: "Folder does not exists."
+    Personal: "Personal"
+    General: "General"
+  canned_responses:
+    groups: Agents in group
+    response_name: Response title
+    all_agents: All agents
+    me_only: Myself
+    available_for: Available for
+    helpnote:
+      title: Canned responses
+      tour: Help me use canned responses
+      info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+      info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+    folders:
+      helpnote:
+        title: Canned responses
+        tour: Help me use canned responses
+        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+    responses:
+      edit:
+        title: Edit Canned response
+      new:
+        title: Add Canned response
+    index:
+      new: Add Canned response
+      title: Canned responses
+    errors:
+      duplicate_title: "Duplicate response. Title already exists"
+  ca_response:
+    delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:
     header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"

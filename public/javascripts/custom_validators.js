@@ -290,7 +290,7 @@ $.validator.addClassRules("required_redactor", { required_redactor : true });
 // validator to check the folder name presence in canned response
 
   $.validator.addMethod("presence_in_list", function(value, element) {
-    return $(element).data("list").indexOf(value) == -1;
+    return $(element).data("list").indexOf(value.toLowerCase()) == -1;
   }, "The name already exists.")
   $.validator.addClassRules("presence_in_list", { presence_in_list : true });
 
@@ -332,6 +332,16 @@ $.validator.addMethod('validate_regexp', function(value, element) {
   }
   return is_valid;
 }, "Invalid Regular Expression");
+
+$.validator.addMethod("ca_same_folder_validity", function(value, element) {
+  var is_valid = true;
+  var current_folder = $(element).data('currentFolder');
+  if(current_folder == value)
+    is_valid = false;
+  return is_valid;
+}, "Cannot move to the same folder.");
+
+$.validator.addClassRules("ca_same_folder_validity", { ca_same_folder_validity: true });
 
 $.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );   
 $.validator.addClassRules("field_maxlength", { field_maxlength: 255 });

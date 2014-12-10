@@ -102,7 +102,7 @@
         :privilege                     =>   privilege?(:manage_email_settings)
       },
       :"canned-response"               =>   {
-        :url                           =>   "/admin/canned_responses/folders",
+        :url                           =>   "/helpdesk/canned_responses/folders",
         :privilege                     =>   privilege?(:manage_canned_responses)
       },
       :"survey-settings"               =>   {

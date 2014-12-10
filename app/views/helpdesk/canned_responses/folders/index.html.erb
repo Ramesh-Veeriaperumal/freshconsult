@@ -1,0 +1,241 @@
+<% content_for :helpcard do -%><%= render :partial => 'helpnote' %><%- end %>
+
+<div class="canned-response-page list-page"  id="can-res-full">
+  <div class="list-page-header">
+    <div class="row-fluid">
+      <div class="span6"><h3 class="lead"><%= t('canned_folders.responses') %></h3></div>
+      <div class="span6 pull-right pagination-right ">
+        <b>
+          <%= link_to t('canned_folders.new_response'), 
+                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
+                :id => "new_resp", :class => "btn btn-primary" %>
+        </b> 
+      </div>
+    </div>
+    <div id="folder-list">
+		<div id="folders-panel" >
+			<div class='ca-resp-folder-header'>
+				<div class="dropdown">
+					<%= t('canned_folders.viewing') %>
+					<a class="dropdown-toggle" data-toggle="dropdown" id="CaLabel" href="#"><b class='ca_text'>loading...</b>
+						<% if privilege?(:manage_canned_responses) %><b class="caret"></b><% end %>
+					</a>
+
+					<ul class="dropdown-menu folder-dropdown" role="menu" id="ca_new_menu" aria-labelledby="CaLabel">
+						<% @ca_res_folders.each do |folder| %>
+	  					<li>
+	  						<%
+	                if privilege?(:manage_canned_responses) and !(folder.personal?)
+	                  count = current_account.canned_responses.count(:conditions => {:folder_id => folder.id})
+	                else
+	                  count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => folder.id})
+	                end
+	              %>
+	  						<a id="folder<%= folder.id %>" href= "<%= helpdesk_canned_responses_folders_path %>/<%= folder.id %>" data-folder="<%= folder.id %>" data-pjax="#body-container"
+	  						data-name="<%= folder.display_name %>"
+	  						class="catch js-pjax <%= "default-folder" unless !(folder.is_default)%>"><%= folder.display_name %> (<%= count %>)
+	  						</a>
+	  					</li>
+						<%end%>
+					</ul>
+	        
+				</div>
+				<% if privilege?(:manage_canned_responses) %>
+					<div id="folder-controls">
+
+						<%= link_to( content_tag(:i, "", 
+							            :class => "icon-edit tooltip ", 
+							            :title => t('canned_folders.edit'), 
+							            :"data-placement" => 'below'
+							    ), "#folder_edit_form", 
+							    :"data-width" => "400", 
+							    :"data-submit-label" => t('save'), 
+							    :"data-close-label" => t('cancel'), 
+							    :rel => 'freshdialog', 
+							    :id => "edit-ca-folder",
+							    :class => "spacing_left", 
+							    :"data-title" => t('canned_folders.rename_folder') )%>
+						<%= link_to( content_tag(:i, "", 
+							           :class => "icon-trash tooltip ", 
+							           :title => t('canned_folders.delete'), 
+							           :"data-placement" => 'below'
+							    ), helpdesk_canned_responses_folder_path(@current_folder), 
+							    :id => "del",
+							    :class => "spacing_right",
+							    :method => :delete,
+							    :confirm => @ca_responses.present? ? t('canned_folders.delete_folder').html_safe : t('canned_folders.delete_empty_folder')) %>
+				  	</div>
+			  	<%end%>
+			</div>
+
+			<% if privilege?(:manage_canned_responses) %>
+			  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe, 
+									:class => "create_new_folder tooltip pull-right", 
+									:title => t('canned_folders.create'),
+									:"data-placement" => 'below'
+							), "#create_folder",
+                	    	:"data-width" => "400",
+                	    	:"data-submit-label" => t('save'), 
+                	    	:"data-close-label" => t('cancel'),
+	                	    :id => "create-folder",
+	                	    :"data-title" => t('canned_folders.create'),
+	                        :rel => 'freshdialog' )%>
+	        <% end %>
+			<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
+      <div class="hide canned_create_folder" id="create_folder">
+        <% form_for @new_ca_res_folder, :url => helpdesk_canned_responses_folders_path, :html => { :rel => "validate", 
+            	:method => :post } do |f| %>
+			     <%= render :partial => "folder_form", :locals => { :f => f } %>
+	     <% end %>
+      </div> 
+
+
+
+			<div id="editing" class="hide">
+				<div id="edit_form" class="center">
+					<% form_for(@current_folder, :url => helpdesk_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
+          <%= f.error_messages :object_name => 'canned_response_folder' %>
+					<div class="form-horizontal">
+						<%= f.error_messages :object_name => 'canned_response_folder' %>
+						<%= f.text_field :name, :class => "text required presence_in_list", :minlength => "3" %>
+					</div>
+					<% end %>
+				</div>
+			</div>
+		</div>
+
+		<div id="folder-drop-list">
+			<ul id="drop-list"></ul>
+		</div>
+
+		<% remote_form_for :admin_canned_response,
+				:url => delete_multiple_helpdesk_canned_responses_folder_responses_path(@current_folder), 
+				:html => {:method => :delete, :id => "ca_res_form"} do |f|%>
+
+			<div class="response-list list-page-body">
+				<div class="list-page-table-header">
+					<input type="checkbox" id="responses-select-all" class="adjust-margin" />
+					<%= f.submit t('canned_folders.del') , :class => "btn", :disabled => "disabled",
+					:confirm => t('canned_folders.delete_canned_response') %>
+					<% if privilege?(:manage_canned_responses) %>
+				        <button id="move" class="btn", disabled="disabled"
+						  rel="freshdialog"
+					      data-target="#moves"
+					      data-title="<%= t('canned_folders.Move_to_folder') %>"
+					      data-width="500"
+					      data-submit-label= "<%= t('canned_folders.move') %>" data-close-label = "<%= t('cancel') %>"><%= t('canned_folders.move') %>
+					    </button>
+				    <% end %>
+				</div>
+				<div id="responses" class="load"><%= render :partial => 'show' %></div>
+			</div>
+		<% end %>
+
+		<div id="moves" class="hide ca-response-move-options">
+	    <% form_for :admin_canned_response,
+			:url => update_folder_helpdesk_canned_responses_folder_responses_path(@current_folder), 
+			:html => {:method => "put", :id => "ca_move_form"} do |f|%>
+	    	<div class="row-fluid form-horizontal">
+	    		<div class="hide" id="visibility">
+	    			<div class='alert alert-msg visibility-msg'>
+		    			<%= t('canned_folders.visibility_change').html_safe %>
+		    		</div>
+		    		<% if @current_folder.id == @pfolder.id%>
+							<% f.fields_for :visibility do |access| %>	
+								<div class='control-group mt20'>
+									<label class="control-label"><%=t('canned_responses.available_for').html_safe%> :</label>
+									<div class="controls">
+										<label class="radio" id="all_agent">
+										<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], {:onclick =>"toggleGroup(this.value)",:class => "radio required", :name => 'visibility'} %> 
+										<%= t('canned_responses.all_agents') %>
+										<%= access.hidden_field :user_id, :value =>current_user.id %>
+										</label>
+									</div>
+									<div class="controls">
+										<label class="radio" id="group_agent">
+										<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],{:onclick =>"toggleGroup(this.value)" , :class => "radio required",  :name => 'visibility'} %> 
+										<%= t('canned_responses.groups') %>
+					    				</label>
+					    			</div>
+					    			<div class='controls'>
+					    				<label for="admin_canned_response_visibility_visibility_1" class='error'></label>
+					    			</div>
+					    			<div class='controls'>
+										<div class="hide tabbed" id="accessible_group">
+					        			<%= access.collection_select :group_id, current_account.groups.all(:order=>'name') , :id, :name, {:prompt=> t('canned_folders.select_group')}, :class =>"select2" %>
+					        			</div>
+									</div>
+								</div>
+							<%end%>
+					  <%end%>
+				  </div>
+				  <div class='control-group' id="move_to_folder" >
+					  <label class='control-label'> <%= t('canned_folders.folder') %> : </label>
+					  <div class='controls'>
+			    		<%= f.select_tag "move_folder_id", content_tag(:option,"",:value=>"")+options_from_collection_for_select(@ca_res_folders, 'id', 'display_name'), :class =>"select2 span8 required ca_same_folder_validity", 'data-dropdown-css-class' => 'folder-select', 'data-current-folder' => @current_folder.id, :placeholder => t("canned_folders.select_folder"), :onchange=>"pfolderCheck(this.value)"%>
+		    		</div>
+		    	</div>
+
+	    		<div id="pfolder_visibility" class="hide alert alert-msg">
+	    			<%= t('canned_folders.pfolder_visibility_alert').html_safe %>
+	    		</div>
+        </div>   
+      <% end %>
+		</div>
+	</div>
+</div>
+
+<% javascript_tag do -%>
+	var folder_id   = <%= @current_folder.id %>;
+	var folder_name = "<%= @current_folder.name %>";
+
+	var pfolder_id = <%= @pfolder.id %>;
+	var pfolder_visibility = <%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]%>;
+	var visibility_change_message = '<%= t('canned_folders.visibility_change').html_safe %>';
+	var new_ca_path = "<%= new_helpdesk_canned_responses_folder_path %>";
+	var ca_path = "<%= helpdesk_canned_responses_folders_path %>/";
+
+
+	jQuery(document).on('shown', '.modal', function(){
+		if(jQuery(this).attr('id') == 'moves') {
+			var length = jQuery('input[type=checkbox][name="ids[]"]:checked').length;
+			jQuery('.visibility-msg').html(visibility_change_message.replace("{{num_responses}}", length));
+		}
+	});
+  jQuery('#ca_move_form').off('dialog:submit').on('dialog:submit', function(e){
+    e.preventDefault();
+    var $form = jQuery(this),
+    	selected_responses = jQuery('input[type=checkbox][name="ids[]"]:checked');
+
+    jQuery.each(selected_responses, function(index,response) {		
+		$form.append(jQuery('<input/>').attr({
+			name : 'ids[]',
+			value: jQuery(response).val(),
+			type: 'hidden'
+		}));
+    });
+
+  });
+
+  function pfolderCheck(sel_folder_id) {
+    var sel_folder_name=jQuery('#move_folder_id :selected').text();
+    if(sel_folder_id==pfolder_id && folder_id!=pfolder_id) {
+      jQuery('#pfolder_visibility').show();
+    } else {
+      jQuery('#pfolder_visibility').hide();
+    }
+  }
+
+  function toggleGroup(access_id) { 
+    if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>') {
+      jQuery('#accessible_group').show().find('select').addClass('required');
+    } else {
+      jQuery('#admin_canned_response_visibility_group_id').select2('val',"");
+      jQuery('#accessible_group').hide().find('select').removeClass('required');         
+    }
+  }
+
+  jQuery(".presence_in_list").data("list", <%= raw @ca_res_folders.map(&:name).map(&:downcase).to_json%>)
+<% end %>
+
+<script src="/javascripts/app/ca_admin_view.js" type="text/javascript"></script>

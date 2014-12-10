@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -229,9 +229,11 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "folder_type"
+    t.boolean  "deleted",      :default => false
   end
 
-  add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
+  add_index "ca_folders", ["account_id","folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
 
   create_table "chat_settings", :force => true do |t|
     t.integer  "account_id",      :limit => 8
@@ -1320,7 +1322,7 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
     t.boolean  "available_on_phone",               :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-        t.datetime "mobile_token_refreshed_at"
+    t.datetime "mobile_token_refreshed_at"
     t.datetime "last_call_at"
   end
 

@@ -20,6 +20,26 @@ jQuery(document).ready(function(){
         		jQuery(this).groupPlaceholders({'truncateItems': false});
 			});			
 	});
+	
+    if (<%=@folder.id == @pfolder.id%>)
+    {
+      jQuery('#select_folder').hide();
+    }
+
+	if (!<%=privilege?(:manage_canned_responses)%>)
+	{ 
+	  jQuery('#all_agent,#group_agent,#only_me').children().attr('disabled','disabled');
+	  jQuery('#all_agent,#group_agent').addClass("muted");
+    }
+    else
+    {
+      jQuery('#only_me').on("click", function(){
+        jQuery('#select_folder').hide();
+      });
+      jQuery('#all_agent,#group_agent').on("click", function(){
+        jQuery('#select_folder').show();
+      });
+    }
 });
 
 
@@ -62,49 +82,48 @@ function toggleGroup(access_id)
         </div>
 	</li>
 
-	<li class="folder-pane form-horizontal">
-		<div class="control-group">
-              <%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "control-label") %>
-              <div class="controls">
-                <%= select_tag(:new_folder_id, options_from_collection_for_select(@ca_res_folders, 'id', 'name', 
-    			@folder.id), :class => 'select2') %>	
-              </div>
-    	</div>
-	</li>
-
 	<li class="inline-field  form-horizontal">
 		<div class="control-group">
 		<% f.fields_for :visibility do |access| %>	
-			<label class="control-label"><%=t('.available_for').html_safe%>:</label>
+			<label class="control-label"><%=t('.available_for').html_safe%> :</label>
 			<div class="controls">
-				<label class="radio">
+				<label class="radio" id="only_me">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]== @ca_response.accessible.visibility } %> 
 					<%= t('.me_only') %>
 					<%= access.hidden_field :user_id, :value =>current_user.id %>	
 				</label>
 			</div>
 			<div class="controls">
-				<label class="radio">
+				<label class="radio" id="all_agent">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]== @ca_response.accessible.visibility } %> 
 					<%= t('.all_agents') %>
 				</label>
 			</div>
 			<div class="controls">
-				<label class="radio">
+				<label class="radio" id="group_agent">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]== @ca_response.accessible.visibility} %> 
 					<%= t('.groups') %>
+				</label>
 					<div style="display:none;" class="tabbed" id="accessible_group">
 			        <%= access.collection_select :group_id, Group.find_all_by_account_id(current_account.id , :order=>'name') , :id, :name, {:class =>"dropdown", :selected => @ca_response.accessible.group_id} %>
 			        </div>
-			    </label>
 			</div>
 		<%end%>
 		</div>
 	</li>
+	<li class="folder-pane form-horizontal" id="select_folder">
+		<div class="control-group">
+              <%= label_tag(:new_folder_id, t('canned_folders.folder')+ " : ", :class => "control-label") %>
+              <div class="controls">
+                <%= select_tag(:new_folder_id, options_from_collection_for_select(@response_folders, 'id', 'name', 
+    			@folder.id), :class => 'select2') %>	
+              </div>
+    	</div>
+	</li>
 </ul>
 <div class="button-container">
 	<%= f.submit t('save'), :class => "btn btn-primary" %>	      	
-	<%= link_to(t('cancel'), admin_canned_responses_folders_path , :class => "btn" ) %>
+	<%= link_to(t('cancel'), helpdesk_canned_responses_folder_path(:id => params[:folder_id]) , :class => "btn" ) %>
 </div>
 
 <% content_for :pagefixed do %>

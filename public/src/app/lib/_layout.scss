@@ -357,7 +357,7 @@ label.overlabel{
 // 											Header Tab styles
 // --------------------------------------------------------------------------------------------
 .top_nav_bg{
-	position: relative;
+	// position: relative;
 	background:$tab_color;
 }
 ul.header-tabs{
@@ -387,9 +387,52 @@ ul.header-tabs{
 		color:#000000;
 	}
 }
-a.new_ticket, .nav_search{
+a.new_ticket, .nav_search, .nav_settings{
 	@include float(left);
 }
+
+.nav_settings {
+	@include padding(7px 20px);
+	font-size: $default-font-size;
+	&.dropdown .dropdown-toggle {
+		color: #FFF;
+		font-weight: 500;
+	}
+	&.dropdown.open {
+		.dropdown-toggle {
+			background-color: transparent !important;
+			color: #FFF;
+		}
+	}
+	[class*="ficon-"] {
+		color: #FFF;
+		font-size: 15px;
+		@include margin-right(5px);
+	}
+	.dropdown-menu {
+		@include left(-30px);
+		top: 92%;
+		li {
+			border-bottom: 1px solid #ccc;
+			&:last-child {
+				border-bottom: none;
+			}
+		}
+		a {
+			@include padding(7px 24px);
+		}
+		&::before {
+			content: "";
+			border: 6px solid transparent;
+			content: "";
+			top: -12px;
+			position: absolute;
+			@include left(90px);
+			border-bottom-color: #FFF;
+		}
+	}
+}
+
 a.new_ticket{
 	@include text-shadow(rgba(0, 0, 0, 0.1) 1px 1px 1px);
 	padding: 8px 20px;
