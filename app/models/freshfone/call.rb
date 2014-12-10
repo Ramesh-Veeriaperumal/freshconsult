@@ -17,18 +17,18 @@ class Freshfone::Call < ActiveRecord::Base
 
   belongs_to :caller, :class_name => 'Freshfone::Caller', :foreign_key => 'caller_number_id'
 
+  belongs_to :group
+
   has_ancestry :orphan_strategy => :destroy
 
   before_save   :update_call_changes
   after_commit_on_update :recording_attachment_job, :if => :trigger_recording_job?
 
   has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
-  has_one :meta, :class_name => 'Freshfone::CallMeta', :dependent => :destroy
 
   delegate :number, :to => :freshfone_number
   delegate :name, :to => :agent, :allow_nil => true, :prefix => true
   delegate :name, :to => :customer, :allow_nil => true, :prefix => true
-  delegate :group, :to => :meta, :allow_nil => true
 
   attr_protected :account_id
   attr_accessor :params
@@ -219,6 +219,7 @@ class Freshfone::Call < ActiveRecord::Base
 			:account_id => account_id,
 			:freshfone_number_id => freshfone_number_id,
 			:agent => params[:agent],
+			:group_id => params[:group_id],
 			:customer_id => child_call_customer_id(params),
 			:params => params
 		)

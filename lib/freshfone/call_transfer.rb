@@ -1,5 +1,5 @@
 class Freshfone::CallTransfer
-	include FreshfoneHelper
+	include Freshfone::FreshfoneHelper
 	attr_accessor :params, :current_account, :current_user, :current_number, :call_sid
 	
 	def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)

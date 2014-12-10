@@ -313,6 +313,8 @@ javascripts:
   freshfone_welcome_page:
     - public/javascripts/freshfone/freshfone_admin_welcome_page.js
 
+  freshfonereports:
+    - public/javascripts/app/freshfonereports.js
   soundmanager:
     - public/javascripts/sound/soundmanager2-jsmin.js
 

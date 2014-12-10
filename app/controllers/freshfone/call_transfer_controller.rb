@@ -1,5 +1,5 @@
 class Freshfone::CallTransferController < FreshfoneBaseController
-	include FreshfoneHelper
+	include Freshfone::FreshfoneHelper
 	include Freshfone::NumberMethods
   include Freshfone::CallsRedisMethods
 

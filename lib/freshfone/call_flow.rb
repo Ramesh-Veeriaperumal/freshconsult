@@ -1,5 +1,5 @@
 class Freshfone::CallFlow
-  include FreshfoneHelper
+  include Freshfone::FreshfoneHelper
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Freshfone::CallsRedisMethods
@@ -52,6 +52,7 @@ class Freshfone::CallFlow
   end
 
   def call_user_with_id(performer_id, freshfone_user=nil)
+    set_direct_dial_agent(performer_id)
     find_user_with_id(performer_id, freshfone_user)
     set_hunt_options(:agent, performer_id)
     incoming
@@ -115,6 +116,13 @@ class Freshfone::CallFlow
         :type => type,
         :performer => performer.to_s
       }
+    end
+
+    def set_direct_dial_agent(agent_id)
+      return if params[:CallSid].blank?
+      call = current_account.freshfone_calls.find_by_call_sid(params[:CallSid]) 
+      call.user_id = agent_id
+      call.save
     end
 
     def direct_dialled_number_busy?(number)

@@ -1,5 +1,5 @@
 class FreshfoneController < FreshfoneBaseController
-	include FreshfoneHelper
+	include Freshfone::FreshfoneHelper
 	include Freshfone::TicketActions
 	include Freshfone::NumberMethods
 

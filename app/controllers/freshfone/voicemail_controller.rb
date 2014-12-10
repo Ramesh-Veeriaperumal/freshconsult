@@ -1,6 +1,6 @@
 class Freshfone::VoicemailController <  FreshfoneBaseController
   
-  include FreshfoneHelper
+  include Freshfone::FreshfoneHelper
   include Freshfone::CallHistory
   include Freshfone::TicketActions
   

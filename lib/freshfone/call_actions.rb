@@ -53,9 +53,8 @@ class Freshfone::CallActions
 	end
 
 	def save_call_meta(group)
-		current_call.create_meta(
-			:account => current_account, 
-			:group_id => group)
+		current_call.group_id = group
+		current_call.save
 	end
 
 
@@ -69,6 +68,7 @@ class Freshfone::CallActions
 			if current_call.customer_id.blank?
 				params[:customer] = search_customer_with_number(params["#{direction}"])
 			end
+			params[:group_id] = current_call.group_id unless current_call.group_id.blank?
 			current_call.build_child_call(params)
 		end
 		
