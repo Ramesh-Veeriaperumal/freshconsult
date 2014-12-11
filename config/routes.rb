@@ -246,6 +246,10 @@ ActionController::Routing::Routes.draw do |map|
       freshfone.resources :summary_reports, :controller => 'summary_reports',
         :collection => {:generate => :post, :export_csv => :post }
     end
+    report.namespace :freshchat do |freshchat|
+      freshchat.resources :summary_reports, :controller => 'summary_reports', 
+      :collection => {:generate => :post } 
+    end
   end
 
   map.resources :reports

@@ -256,6 +256,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/helpdesk_report"
       resource :"reports/survey_report"
       resource :"reports/freshfone/summary_report"
+      resource :"reports/freshchat/summary_report"
    	resource :"reports/timesheet_report"
     resource :"reports/report_filter"
 	end

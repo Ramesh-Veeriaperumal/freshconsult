@@ -27,3 +27,4 @@ run "ln -nfs #{shared_path}/config/s3_static_files.yml #{rel_path}/config/s3_sta
 run "ln -nfs #{shared_path}/config/dalli.yml #{rel_path}/config/dalli.yml"
 run "ln -nfs #{shared_path}/config/statsd.yml #{rel_path}/config/statsd.yml"
 run "ln -nfs #{shared_path}/config/redis_display_id.yml #{rel_path}/config/redis_display_id.yml"
+run "ln -nfs #{shared_path}/config/chat.yml #{rel_path}/config/chat.yml"
