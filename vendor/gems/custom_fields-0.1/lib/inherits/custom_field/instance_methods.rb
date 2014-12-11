@@ -86,7 +86,7 @@ module Inherits
               end
             end
 
-            Regexp.new(field_options['regex']['pattern'], combined_flag_constant)
+            Regexp.new(CGI.unescapeHTML(field_options['regex']['pattern']), combined_flag_constant)
           end
         end
       end
