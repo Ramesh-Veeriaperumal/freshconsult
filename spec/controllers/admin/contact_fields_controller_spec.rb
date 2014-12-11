@@ -76,7 +76,7 @@ describe Admin::ContactFieldsController do
 	end
 
 	it "should create a single_line_text field with regex validation" do
-		regex_condn = {"regex"=>"/^.*(desk)$/"}
+		regex_condn = {"regex"=>{"pattern" => "^.*(desk)$","modifier" => ""}}
 		put :update, :jsonData => 
 			@default_contact_fields.push(
 				cf_params({ :type=>"text", :field_type=>"custom_text", :label=> "text_fd with validation", 
@@ -97,7 +97,7 @@ describe Admin::ContactFieldsController do
 	it "should edit a custom and default field" do
 		cf_org = create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_text", :label=> "Org details", :editable_in_signup => "true"}))
 		cf_company = @account.contact_form.fields.find_by_name("company_name")
-		regex_condn = {"regex"=>"/^FreSh/i"}
+		regex_condn = {"regex"=>{"pattern" => "^FreSh","modifier" => "i"}}
 
 		put :update, :jsonData => 
 			@default_contact_fields.push(
