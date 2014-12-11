@@ -2,7 +2,7 @@ module CannedResponsesHelper
 
   def create_response(params = {})
     group = create_group(@account, {:name => "Response"})
-    folder_id = @account.canned_response_folders.default_folder.first.id
+    folder_id = @account.canned_response_folders.default_folder.last.id
     test_response= Factory.build(:admin_canned_responses, :title => params[:title],
                                  :content_html => params[:content_html],
                                  :visibility => {"user_id" => params[:user_id] || @agent.id,

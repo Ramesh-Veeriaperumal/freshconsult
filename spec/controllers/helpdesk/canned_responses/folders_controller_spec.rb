@@ -8,7 +8,7 @@ describe Helpdesk::CannedResponses::FoldersController do
   before(:all) do
     @cr_folder_1 = create_cr_folder({:name => "CR Folder"})
     @cr_folder_2 = create_cr_folder({:name => "Additional CR Folder"})
-    @folder = @account.canned_response_folders.default_folder.first
+    @folder = @account.canned_response_folders.default_folder.last
     @pfolder = @account.canned_response_folders.personal_folder.first
   end
 

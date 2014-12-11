@@ -9,7 +9,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
     @now = (Time.now.to_f*1000).to_i
     @group = create_group(@account, {:name => "Response grp #{@now}"})
     @group_new = create_group(@account, {:name => "Response new grp #{@now}"})
-    @folder_id = @account.canned_response_folders.default_folder.first.id
+    @folder_id = @account.canned_response_folders.default_folder.last.id
     @pfolder_id = @account.canned_response_folders.personal_folder.first.id
     file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
     # Create canned responses
@@ -497,7 +497,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
 
   # title uniqueness check - while updating response
 
-  it "should not update visibility of Canned Responses when title present in personal folder " do
+  it "should update visibility of Canned Responses when title present in personal folder " do
     test_response= create_response({:title => "Test response",:content_html => Faker::Lorem.paragraph,
                                     :visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],:folder_id=>@test_cr_folder_1.id
                                     })
@@ -515,9 +515,9 @@ describe Helpdesk::CannedResponses::ResponsesController do
     }
     canned_response   = @account.canned_responses.find_by_id(test_response.id)
     access_visibility = @account.user_accesses.find_by_accessible_id(test_response.id)
-    canned_response.title.should eql(test_response.title)
-    canned_response.folder_id.should eql test_response.folder_id
-    access_visibility.visibility.should_not eql 3
+    canned_response.title.should eql(@personal_response_1.title)
+    canned_response.folder_id.should eql @personal_response_1.folder_id
+    access_visibility.visibility.should eql 3
   end
 
   # Bulk move cases starts from here
