@@ -7,7 +7,6 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
 
   before_filter :set_selected_tab
   before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
-  skip_before_filter :build_item , :only => [:create]
   before_filter :build_item , :only => [:create]
   before_filter :set_validatable_custom_fields, :only => [:create, :update]
   
