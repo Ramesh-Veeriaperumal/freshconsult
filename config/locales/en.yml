@@ -5283,6 +5283,34 @@ en:
           filter_by: Satisfaction Views
           view_report_date: View reports during
           helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
+      freshchat:
+        report_title: "Freshchat Summary"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        widget: "Widget"
+        group: "Group"
+        chat_type: "Chat Type"
+        summary: "Summary"
+        filter_report: "Edit Filter"
+        select_widget: "Select Widget"
+        select_group: "Select Group"
+        select_chat_type: "Select Chat Type"
+        all: "All"
+        chat_type_visitor: "Visitor Initiated"
+        chat_type_agent: "Agent Initiated"
+        chat_type_proactive: "Proactive"
+        generate_summary: "Generate"
+        filter_close: "Close"
+        total_chats: Total
+        num_of_chats: No of Chats
+        answered_chats: Answered
+        missed_chats: Missed
+        num_of_transfer: Transfers
+        avg_handle_time: Avg Handle Time
+        avg_time_queue: Time in Queue
+        total_duration: "Duration"
+        agent_chat_summary: Agent Chat Summary
+        agent: "Agent"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
