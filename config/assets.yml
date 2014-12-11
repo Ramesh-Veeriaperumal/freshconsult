@@ -179,6 +179,7 @@ javascripts:
     - public/javascripts/app/metrics.js
     - public/javascripts/app/dashboard.js
     - public/javascripts/app/product_notifications.js
+    - public/javascripts/app/admin_font_settings.js
     - public/javascripts/app/merge.js
 
   freshchat:

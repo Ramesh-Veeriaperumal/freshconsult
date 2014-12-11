@@ -9,14 +9,14 @@ class DataExportMailer < ActionMailer::Base
     bcc           "reports@freshdesk.com"
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
-    body(:url => options[:url])
+    body(:url => options[:url], :account => Account.current)
     content_type  "text/html"
   end 
 
   def ticket_export(options={})
     subject       formatted_export_subject(options)
     recipients    options[:user].email
-    body          :user => options[:user], :url => options[:url]
+    body          :user => options[:user], :url => options[:url], :account => Account.current
     from          "support@freshdesk.com"
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.
@@ -28,7 +28,7 @@ class DataExportMailer < ActionMailer::Base
   def no_tickets(options={})
     subject       "No tickets in range - #{options[:domain]}"
     recipients    options[:user][:email]
-    body          :user => options[:user]
+    body          :user => options[:user], :account => Account.current
     from          "support@freshdesk.com"
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.

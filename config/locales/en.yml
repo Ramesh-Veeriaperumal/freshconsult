@@ -3300,6 +3300,7 @@ en:
   tag:
     title: Tags
   email_notifications:
+    default_font: "Default Font : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
