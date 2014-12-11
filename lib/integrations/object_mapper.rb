@@ -139,7 +139,7 @@ class Integrations::ObjectMapper
   PRIVATE_NOTE_CONFIG = clone(generic_config)
   # PRIVATE_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email", 
-                         :using=>{:select=>"users.email",
+                         :using=>{:select=>"users.email,users.account_id",
                                   :joins=>"INNER JOIN helpdesk_tickets INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id and  helpdesk_tickets.responder_id = users.id 
                                   and users.account_id = helpdesk_tickets.account_id",
                                   :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}})
@@ -149,7 +149,7 @@ class Integrations::ObjectMapper
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user.emailAddress}}"]}
 
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email",
-                         :using=>{:select=>"users.email",
+                         :using=>{:select=>"users.email,users.account_id",
                                   :joins=>"INNER JOIN helpdesk_tickets INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id and  helpdesk_tickets.responder_id = users.id 
                                   and users.account_id = helpdesk_tickets.account_id",
                                   :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}})
