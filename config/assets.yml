@@ -50,7 +50,8 @@ stylesheets:
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
   :freshchat_admin  => [ "chat/admin"],
-  :remote_configurations  => [ "page/remote-configurations"]
+  :remote_configurations  => [ "page/remote-configurations"],
+  :cti => ["cti/cti"]
 } %>
 
 <%  @stylesheets_list = []

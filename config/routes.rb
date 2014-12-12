@@ -136,6 +136,9 @@
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
     integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
+    integration.namespace :cti do |c|
+      c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post}
+    end
   end
 
   map.namespace :admin do |admin|

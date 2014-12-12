@@ -1680,6 +1680,8 @@ en:
       install:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
+        cti_error: "Multiple integrations of type CTI can not be enabled."
+        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -4701,6 +4703,7 @@ en:
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
+    cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
     no_freshplugs: You do not have any FreshPlugs.
     add_new_freshplug: Add new FreshPlug
@@ -4717,6 +4720,12 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    czentrix:
+      label: "C-Zentrix"
+      desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
@@ -5794,6 +5803,28 @@ en:
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date
+  cti:
+    create:
+      success:
+        with_link: "The %{human_name} has been created  %{link}"
+    note:
+      human_name: "note"
+      view: "View"
+    ticket:
+      human_name: "ticket"
+      view: "View"
+    widget:
+      ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
+      note_placeholder: "Add call notes..."
+      new_ticket: "Save as new ticket"
+      save_to_existing: "Save to an existing ticket"
+      ignore_ticket: "Do not convert to Ticket"
+      ignore_ticket_info: "No ticket will be created"
+      back: "Go Back"
+      subject: "Ticket Subject"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      save: "Save"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
