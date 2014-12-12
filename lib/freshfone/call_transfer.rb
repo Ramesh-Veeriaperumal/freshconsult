@@ -23,13 +23,13 @@ class Freshfone::CallTransfer
 		def transfer_outgoing_call
 			scoper_for_calls.list({
 				:ParentCallSid => call_sid }).first.update({
-				:url => transfer_outgoing_call_url, :method => 'POST' })
+				:url =>  params[:group_id].blank? ? transfer_outgoing_call_url : transfer_outgoing_to_group_url, :method => 'POST' })
 		end
 
 		
 		def transfer_incoming_call
 			scoper_for_calls.get(first_leg_call).update({
-				:url => transfer_incoming_call_url, :method => 'POST' })
+				:url => params[:group_id].blank? ? transfer_incoming_call_url : transfer_incoming_to_group_url, :method => 'POST' })
 		end
 
 		def first_leg_call
@@ -42,6 +42,18 @@ class Freshfone::CallTransfer
 
 		def transfer_outgoing_call_url
 			"#{host}/freshfone/call_transfer/transfer_outgoing_call?id=#{params[:id]}&source_agent=#{self.current_user.id}"
+		end
+
+		def transfer_incoming_to_group_url
+			"#{host}/freshfone/call_transfer/transfer_incoming_to_group?id=#{params[:id]}&source_agent=#{self.current_user.id}#{group_transfer_url}"
+		end
+
+		def transfer_outgoing_to_group_url
+			"#{host}/freshfone/call_transfer/transfer_outgoing_to_group?id=#{params[:id]}&source_agent=#{self.current_user.id}#{group_transfer_url}"
+		end
+
+		def group_transfer_url
+			params[:group_id].blank? ? "" : "&group_id=#{params[:group_id]}"
 		end
 		
 		def outgoing?

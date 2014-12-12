@@ -5884,6 +5884,7 @@ en:
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Search Available Agents..."
       unavailable_agents: "Agents are not available to transfer call"
+      agents_count_in_group: "%{count} agents available"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
