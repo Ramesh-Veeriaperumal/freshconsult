@@ -188,15 +188,6 @@ class Account < ActiveRecord::Base
   end
 
   def url_protocol
-    if main_portal.portal_url.blank?
-      self.ssl_enabled? ? 'https' : 'http'
-    else
-      main_portal.ssl_enabled? ? 'https' : 'http'
-    end
-  end
-
-  #used by freshfone and jira integration - they needed this method instead of def url_protocol
-  def main_url_protocol
     self.ssl_enabled? ? 'https' : 'http'
   end
   

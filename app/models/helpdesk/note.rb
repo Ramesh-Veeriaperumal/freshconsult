@@ -268,6 +268,10 @@ class Helpdesk::Note < ActiveRecord::Base
                         }
             })
   end
+  
+  def fb_reply_allowed?
+    self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
+  end
 
   protected
 

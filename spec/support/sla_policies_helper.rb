@@ -1,7 +1,7 @@
 module SlaPoliciesHelper
 
 	def create_sla_policy(new_agent)
-		customer = Factory.build(:customer, :name => Faker::Lorem.words(1))
+		customer = Factory.build(:customer, :name => Faker::Name.name)
         customer.save
 		sla_policy = Factory.build(:sla_policies, :name => Faker::Lorem.words(1), :description => Faker::Lorem.paragraph, :account_id => @account.id, 
 			:datatype => {:ticket_type => "text"},:conditions =>{ "group_id" =>["1"], "company_id" =>["#{customer.id}"]},

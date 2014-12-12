@@ -39,8 +39,9 @@ module FormBuilders::Redactor
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
+        :setFontSettings => true,
         :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
-                      '|','fontcolor', 'backcolor', '|' ,'link']
+                      '|','fontcolor', 'backcolor', '|' ,'link', 'removeFormat']
       }
 
       def rich_editor(method, options = {})

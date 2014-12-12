@@ -135,7 +135,8 @@ class Support::TicketsController < SupportController
           ticket_scope.created_at_inside(params[:start_date], params[:end_date])
       @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
       per_page = params[:wf_per_page] || 10
-      current_order = visible_fields.include?(current_wf_order.to_s) ? "#{current_wf_order} #{current_wf_order_type}" :
+      is_correct_order_type = TicketsFilter::SORT_ORDER_FIELDS_BY_KEY.keys.include?(current_wf_order_type)
+      current_order = visible_fields.include?(current_wf_order.to_s) && is_correct_order_type  ? "#{current_wf_order} #{current_wf_order_type}" :
         "#{TicketsFilter::DEFAULT_PORTAL_SORT} #{TicketsFilter::DEFAULT_PORTAL_SORT_ORDER}" 
       @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, 
           :order => current_order) 

@@ -66,25 +66,28 @@ module Inherits
       end
 
       def regex # only for regex field
-        if field_type.to_sym == :custom_text && field_options.is_a?(Hash)
-          # Need to receive regex as two parts like rubular instead of splitting everytime while using
-          dummy, pattern, flags = field_options['regex'].split("/")
-          combined_flag_constant = 0
+        @regex ||= begin
+          if field_type.to_sym == :custom_text && field_options.is_a?(Hash)
+            # Need to receive regex as two parts like rubular instead of splitting everytime while using
 
-          if flags.present?
-            flags.each_char do |c|
-              case c
-              when "i"
-                combined_flag_constant |= Regexp::IGNORECASE
-              when "m"
-                combined_flag_constant |= Regexp::MULTILINE
-              when "x"
-                combined_flag_constant |= Regexp::EXTENDED
+            flags = field_options['regex']['modifier']
+            combined_flag_constant = 0
+
+            if flags.present?
+              flags.each_char do |c|
+                case c
+                when "i"
+                  combined_flag_constant |= Regexp::IGNORECASE
+                when "m"
+                  combined_flag_constant |= Regexp::MULTILINE
+                when "x"
+                  combined_flag_constant |= Regexp::EXTENDED
+                end
               end
             end
-          end
 
-          Regexp.new(pattern, combined_flag_constant)
+            Regexp.new(CGI.unescapeHTML(field_options['regex']['pattern']), combined_flag_constant)
+          end
         end
       end
 

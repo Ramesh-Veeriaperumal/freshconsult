@@ -130,10 +130,6 @@ class Company < ActiveRecord::Base
     json_str
   end
 
-  def respond_to? attribute, include_private_methods = false # avoiding pointless flexifield loading
-    return false if [:to_ary, :after_initialize_without_slave].include? attribute
-    super(attribute, include_private_methods)
-  end
   # Elasticsearch related methods starts
 
   def to_indexed_json

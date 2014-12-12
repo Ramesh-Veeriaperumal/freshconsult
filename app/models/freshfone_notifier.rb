@@ -36,7 +36,7 @@ class FreshfoneNotifier < ActionMailer::Base
     recipients    account.admin_email
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     from          AppConfig['billing_email']
-    body          :freshfone_number => number
+    body          :freshfone_number => number, :account => account
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -46,7 +46,7 @@ class FreshfoneNotifier < ActionMailer::Base
     recipients    account.admin_email
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     from          AppConfig['billing_email']
-    body          :recharge_amount => recharge_amount, :balance => balance
+    body          :recharge_amount => recharge_amount, :balance => balance, :account => account
     sent_on       Time.now
     content_type  "text/html"
   end

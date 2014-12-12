@@ -2,37 +2,39 @@
 namespace :db do
   desc 'Load an initial set of data'
   task :bootstrap => :environment do
-    puts 'Creating tables...'
-    Rake::Task["db:schema:load"].invoke
-#    Rake::Task["db:migrate"].invoke
-    Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
-    
-    Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
-    Rake::Task["db:perform_table_partition"].invoke
+    if RAILS_ENV != "production"
+      puts 'Creating tables...'
+      Rake::Task["db:schema:load"].invoke
+  #    Rake::Task["db:migrate"].invoke
+      Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
+      
+      Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
+      Rake::Task["db:perform_table_partition"].invoke
 
-    create_es_indices
-    
-    puts 'Loading data...'
-    ENV["FIXTURE_PATH"] = "db/fixtures/global"
-    Rake::Task["db:seed_fu"].invoke
+      create_es_indices
+      
+      puts 'Loading data...'
+      ENV["FIXTURE_PATH"] = "db/fixtures/global"
+      Rake::Task["db:seed_fu"].invoke
 
-    #We do not need savage_beast migration here, all the forums
-    #related tables should have been created as part of 'db:schema:load' rake.
-    #puts 'Bootstraping savage_beast...'
-    #Rake::Task["savage_beast:bootstrap_db"].invoke
+      #We do not need savage_beast migration here, all the forums
+      #related tables should have been created as part of 'db:schema:load' rake.
+      #puts 'Bootstraping savage_beast...'
+      #Rake::Task["savage_beast:bootstrap_db"].invoke
 
-    puts "Populating the default record for global_blacklisted_ips table"
-    PopulateGlobalBlacklistIpsTable.create_default_record
-    
-    puts 'Changing secret in environment.rb...'
-    new_secret = ActiveSupport::SecureRandom.hex(64)
-    config_file_name = File.join(Rails.root, 'config', 'environment.rb')
-    config_file_data = File.read(config_file_name)
-    File.open(config_file_name, 'w') do |file|
-      file.write(config_file_data.sub('9cb7f8ec7e560956b38e35e5e3005adf68acaf1f64600950e2f7dc9e6485d6d9c65566d193204316936b924d7cc72f54cad84b10a70a0257c3fd16e732152565', new_secret))
+      puts "Populating the default record for global_blacklisted_ips table"
+      PopulateGlobalBlacklistIpsTable.create_default_record
+      
+      puts 'Changing secret in environment.rb...'
+      new_secret = ActiveSupport::SecureRandom.hex(64)
+      config_file_name = File.join(Rails.root, 'config', 'environment.rb')
+      config_file_data = File.read(config_file_name)
+      File.open(config_file_name, 'w') do |file|
+        file.write(config_file_data.sub('9cb7f8ec7e560956b38e35e5e3005adf68acaf1f64600950e2f7dc9e6485d6d9c65566d193204316936b924d7cc72f54cad84b10a70a0257c3fd16e732152565', new_secret))
+      end
+      
+      puts "All done!  You can now login to the test account at the localhost domain with the login #{Helpdesk::EMAIL[:sample_email]} and password test.\n\n"
     end
-    
-    puts "All done!  You can now login to the test account at the localhost domain with the login #{Helpdesk::EMAIL[:sample_email]} and password test.\n\n"
   end
 
   task :create_reporting_tables => :environment do

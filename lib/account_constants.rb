@@ -18,7 +18,15 @@ module AccountConstants
       :short_day_with_week => "%a, %-d %b, %Y",
       :short_day_with_time => "%a, %-d %b, %Y at %l:%M %p",
     }
-  }
+  } 
+  
+  # Default email settings for additional settings
+  DEFAULTS_FONT_SETTINGS = { 
+    :email_template => { 
+      "font-size"   => '13px',
+      "font-family" => 'Helvetica Neue, Helvetica, Arial, sans-serif'
+    }
+  } 
 
   DATA_DATEFORMATS = { 
     :non_us => {

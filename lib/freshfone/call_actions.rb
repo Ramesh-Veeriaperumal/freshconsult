@@ -52,10 +52,15 @@ class Freshfone::CallActions
 		current_call.root.increment(:children_count).save if build_child.save
 	end
 
+	def register_group_call_transfer(outgoing = false)
+    self.outgoing = outgoing
+    return if current_call.blank?
+    current_call.root.increment(:children_count).save if build_child.save
+  end
+
 	def save_call_meta(group)
-		current_call.create_meta(
-			:account => current_account, 
-			:group_id => group)
+		current_call.group_id = group
+		current_call.save
 	end
 
 
@@ -69,6 +74,8 @@ class Freshfone::CallActions
 			if current_call.customer_id.blank?
 				params[:customer] = search_customer_with_number(params["#{direction}"])
 			end
+			Rails.logger.debug "Child Call Id:: #{current_call.id} :: Group_id::  #{current_call.group_id} :: params :: #{params[:group_id]}"
+			params[:group_id] ||= current_call.group_id unless current_call.group_id.blank?
 			current_call.build_child_call(params)
 		end
 		

@@ -477,6 +477,10 @@ module ApplicationHelper
     place_holders
   end
 
+
+  def group_avatar
+    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
+  end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
   def user_avatar(user, profile_size = :thumb, profile_class = "preview_pic", options = {})
@@ -733,7 +737,7 @@ module ApplicationHelper
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
     end
     content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
@@ -1040,6 +1044,11 @@ module ApplicationHelper
   def shortcuts_enabled?
     logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
   end
+
+  def email_template_settings
+    current_account.account_additional_settings.email_template_settings.to_json
+  end
+
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|

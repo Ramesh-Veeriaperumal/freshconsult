@@ -16,4 +16,17 @@ class Admin::AccountAdditionalSettingsController < Admin::AdminController
     @account_additional_settings = current_account.account_additional_settings
     render :partial => "bcc_email"
   end
+
+  def update_font
+    unless params["font-family"].blank?
+      @account_additional_settings = current_account.account_additional_settings
+      @account_additional_settings.font_settings = {"font-family" => params["font-family"]}
+    end
+    
+    respond_to do |format|
+      format.js { 
+       render :partial => '/admin/email_notifications/fontsettings.rjs'
+      }
+    end
+  end
 end
