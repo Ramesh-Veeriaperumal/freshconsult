@@ -16,7 +16,6 @@ var FreshfoneSocket;
 		this.$freshfoneAvailableAgentsListContainer = this.$freshfoneAvailableAgentsList.find('.transfer_call_container');
 		this.onlineAgents = 0;
 		this.onloadUserarray = [];
-     this.onloadGrouparray = [];
 		this.connectionCreatedAt = "";
 		this.connectionClosedAt = "";
 		this.connection = null;
@@ -52,7 +51,6 @@ var FreshfoneSocket;
       });
     },
     $freshfoneAvailableAgentsListSearch: $('.ffone_available_agents .search'),
-    $freshfoneAvailableAgentsListSearchSpan: $('.ffone_available_agents #search-agents'),
     $noAvailableAgent: $('.ffone_available_agents .no_available_agents'),
     $availableAgentsList: $('.ffone_available_agents #online-agents-list'),
     handleFailure: function () {
@@ -103,7 +101,6 @@ var FreshfoneSocket;
 							user_id: data.user.id,
 							user_name: data.user.name
 						});
-            self.updateAvailableGroups();
 					}
 				});
 
@@ -116,8 +113,6 @@ var FreshfoneSocket;
 						user_id: data.user.id,
 						user_name: data.user.name
 					});
-          self.updateAvailableGroups();
-          self.noAvailableAgentsToggle();
 				});
 				
 				this.freshfone_socket_channel.on('agent_busy', function (data) {
@@ -223,49 +218,22 @@ var FreshfoneSocket;
 				} else {
 					this.agentList = new List('online-agents-list', options);
 				}
-        this.agentList.sort('sortname', { asc: true });
-        this.updateAvailableGroups();
-				this.$freshfoneAvailableAgentsListSearchSpan.toggle(this.agentList.items.length > 7);
+        this.agentList.sort('available_agents_name', { asc: true });
+				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
 				if(freshfonecalls.tConn) { this.bindTransfer();	}
 			}
-      this.$freshfoneAvailableAgentsListSearch.focus();
 			// else {
 				// this.agentList.add(this.onloadUserarray); // temporary
 			// }
 		},
 
-    updateAvailableGroups: function(){
-      self = this;
-      var groupArray =[];
-      var userArray = [];
-      this.$freshfoneAvailableAgentsList.find('span.id').each(function(v,i){  
-        var val = jQuery(i).html();
-        if(val != undefined && val != ""){ userArray.push(parseInt(val)); }
-      });
-      userArray = userArray.without(0,freshfone.current_user);
-
-      this.onloadGrouparray.each(function(group) { 
-      self.agentList.remove("id",0);
-      var agent_ids = userArray.reject(function(id) { 
-          return (group.agents_ids.indexOf(id) == -1);
-        });
-        group.agents_count = agent_ids.length+" agents available";
-        if(agent_ids.length > 0){
-          groupArray.push(group);
-        }
-      });
-      groupArray.each(function(grp){
-        self.agentList.add(grp);
-      }); 
-    },
-
 		addToAvailableAgents: function (user) {
 			if (user.id === freshfone.current_user || this.agentList === undefined) { return false; }
 			if (!this.agentList.get("id", user.id)) {
 				this.agentList.add(this.formatListItem(user));
-        this.agentList.sort('sortname', { asc: true });
-				this.$freshfoneAvailableAgentsListSearchSpan.toggle(this.agentList.items.length > 7);
+				this.agentList.sort('available_agents_name', { asc: true });
+				this.$freshfoneAvailableAgentsListSearch.toggle(this.agentList.items.length > 7);
 				this.noAvailableAgentsToggle();
 			}
 		},
@@ -315,8 +283,7 @@ var FreshfoneSocket;
 			var self = this;
 			$('#freshfone_available_agents .available_agents_list li').die('click');
 			$('#freshfone_available_agents .available_agents_list li').live('click', function () {
-        var group_id = $(this).find('.group_id').html();
-        self.freshfonecalls.transferCall($(this).find('.id').html(), group_id);
+				self.freshfonecalls.transferCall($(this).find('.id').html());
 			});
 		},
 
@@ -344,7 +311,7 @@ var FreshfoneSocket;
 			freshfonecalls.freshfoneCallTransfer.successTransferCall(transfer_success);
 		},
 		formatListItem: function (user) {
-      return {"id":user.id, "available_agents_name" : user.name, "sortname" : "A_"+user.name, "available_agents_avatar": user.avatar }
+			return {"id":user.id, "available_agents_name" : user.name, "available_agents_avatar": user.avatar }
 		}
 	};
 }(jQuery));

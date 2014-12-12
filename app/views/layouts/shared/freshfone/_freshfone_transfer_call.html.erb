@@ -4,26 +4,17 @@
 	</div>
 	<div class="add_call_note">
 		<div id="online-agents-list">
-		<span id='search-agents'>
 			<span class="available_agents_searchicon searchicon"></span>
 				<input class="search" placeholder="<%= t('freshfone.widget.transfer_agents') %>" />
-				</span>
 		    <ul class="available_agents_list"></ul>
 		</div>
 
 		<div class="hide">
 		    <!-- A template element is needed when list is empty, TODO: needs a better solution -->
-		    <li id="agents-item" >
+		    <li id="agents-item">
 		       <h3 class="available_agents_avatar avatar"></h3>
 		       <p class="available_agents_name name"></p>
-		       <span class="hide sortname"></span>
-		       <div class="agent-group-name ">
-		       		<div class="available_group_agents_name"></div>
-		       		<div class="agents_count"></div>
-		       </div>
 					 <span class="hide id"></span>
-					 <span class="hide agents_ids"></span>
-					 <span class="hide group_id"></span>
 		    </li>
 		</div>
 		<div class="no_available_agents">

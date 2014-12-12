@@ -109,7 +109,7 @@
 			height: 46px;
 			border: none;
 			border-bottom: 1px solid $transfer-search-border;
-			@include padding-left(46px);
+			@include padding-left(40px);
 		}
 	}
 	.available_agents_avatar {
@@ -120,7 +120,6 @@
 			width: 30px;
 			height: 30px;
 			@include border-radius(20px);
-			opacity: 1;
 		}
 		.preview_pic {
 			margin:0;
@@ -136,31 +135,20 @@
 			padding: 7px;
 			@include box-sizing(border-box);
 			cursor:pointer;
-			&:hover{
-					background-color: darken($transfer-call-background, 5%);
-			}
-		}
-		.avatar{
-			width:40px;
 		}
 	}
 	.available_agents_searchicon {
 	 @include right(0);
-	 @include left(15px);
+	 @include left(10px);
 		top: 15px;
 	}
-	.available_agents_name, .agent-group-name {
+	.available_agents_name {
 		@include margin(7px 0 0 7px);
 		width: 190px;
-		font-weight: 500;
+		font-weight: 600;
 		color: $available-agent-name;
-		@include padding-left(35px);	
-		.agents_count{
-			font-weight: normal;
-		}
-	}
-	.agent-group-name {
-		margin-top:-7px;	
+		@include padding-left(35px);
+		
 	}
 	.transfering_call {
 		@include box-sizing(border-box);

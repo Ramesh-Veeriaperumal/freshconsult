@@ -5,8 +5,7 @@ module TwilioMaster
 	PUBLIC_METHODS = {
 		:freshfone => [:voice, :ivr_flow, :voice_fallback, :preview_ivr],
 		:call => [:in_call, :status, :direct_dial_success, :call_transfer_success],
-		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call, :transfer_incoming_to_group, 
-			:transfer_outgoing_to_group],
+		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call],
 		:device => [:record],
 		:queue => [:enqueue, :dequeue, :trigger_voicemail, :trigger_non_availability, :hangup, :quit_queue_on_voicemail],
 		:voicemail => [:quit_voicemail],

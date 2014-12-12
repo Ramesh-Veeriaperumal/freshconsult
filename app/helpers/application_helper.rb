@@ -477,10 +477,6 @@ module ApplicationHelper
     place_holders
   end
 
-
-  def group_avatar
-    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
-  end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
   def user_avatar(user, profile_size = :thumb, profile_class = "preview_pic", options = {})

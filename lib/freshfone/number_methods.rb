@@ -37,7 +37,7 @@ module Freshfone::NumberMethods
 	private
 		def is_outgoing_call?
 			params[:To].blank? || 
-				params[:action] == "transfer_outgoing_call" || params[:outgoing] || params[:action] == "transfer_outgoing_to_group"
+				params[:action] == "transfer_outgoing_call" || params[:outgoing]
 		end
 
 		def transfer_incoming?

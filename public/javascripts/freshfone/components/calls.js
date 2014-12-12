@@ -27,11 +27,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.errorcode = null;
 			this.transfered = false;
 			this.recordingInstance = null;
-			this.group_id = null;
 			$('#freshfone_available_agents .transfering_call').hide();
-		},
-		initGroup: function (group_id){
-			this.group_id = group_id
 		},
 		$container: $('.freshfone_content_container'),
 		loadDependencies: function (freshfoneuser, timer, freshfoneUserInfo) {
@@ -214,9 +210,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.isMute ^= 1;
 			}
 		},
-		transferCall: function (id, group_id) {
+		transferCall: function (id) {
 			this.transfered = true;
-			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id);
+			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id);
 		},
 
 		dontShowEndCallForm: function () {
