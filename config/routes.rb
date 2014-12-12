@@ -215,6 +215,7 @@ Helpkit::Application.routes.draw do
     collection do
       delete :destroy
       post :quick
+      post :create_company
     end
     resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
