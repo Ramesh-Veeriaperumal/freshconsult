@@ -87,7 +87,7 @@
 			<% end %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
 				<h4 class="conv-title"><%=t('user.background')%></h4>
-				<% form_for :user, @user, :html => {:class => 'edit_user'} do |f| %>
+				<%= form_for @user, :html => {:class => 'edit_user'} do |f| %>
 					
 					<%= f.text_area :description, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("contacts.form_placeholder.description") %>
 					<%= f.hidden_field :id, :value => @user.id, :id => 'userid' %>
