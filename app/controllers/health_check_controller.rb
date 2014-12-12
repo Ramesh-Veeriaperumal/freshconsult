@@ -1,4 +1,4 @@
-class HealthStatusController < ApplicationController
+class HealthCheckController < ApplicationController
 
   def index
     respond_to do |format|

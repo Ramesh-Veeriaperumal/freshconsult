@@ -37,7 +37,7 @@ Authority::Authorization::PrivilegeList.build do
        :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
     resource :"social/twitter",
         :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
-    resource :"health_status"
+    resource :"health_check"
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"

@@ -35,7 +35,7 @@ private
   def authorize_freshdesk_user
     begin
       # site = RestClient::Resource.new("#{params[:domain]}/ticket_fields.json", params[:key], "X")
-      site = RestClient::Resource.new("#{params[:domain]}/health_status.json", params[:key], "X")
+      site = RestClient::Resource.new("#{params[:domain]}/health_check.json", params[:key], "X")
       response = site.get(:accept => "application/json")
       # if !response.body.include? "ticket_field"
       if !response.body.include? "success"

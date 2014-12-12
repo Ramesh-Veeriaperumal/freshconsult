@@ -23,7 +23,7 @@
 
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
-  map.resources :health_status
+  map.resources :health_check
 
   map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
