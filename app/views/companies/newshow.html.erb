@@ -46,7 +46,7 @@
 		<div class='contact-edit-fields'>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
 				<h4 class="conv-title"><%=t('company.notes')%></h4>
-				<% form_for :company, @company, :html => {:class => 'edit_user'} do |f| %>
+				<%= form_for @company, :html => {:class => 'edit_user'} do |f| %>
 					
 					<%= f.text_area :note, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("company.info5") %>
 					<%= f.hidden_field :id, :value => @company.id, :id => 'companyid' %>
