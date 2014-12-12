@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Admin::CannedResponses::ResponsesControllerTest < ActionController::TestCase
+class Helpdesk::CannedResponses::ResponsesControllerTest < ActionController::TestCase
   # Replace this with your real tests.
   test "the truth" do
     assert true
