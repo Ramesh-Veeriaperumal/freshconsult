@@ -99,10 +99,13 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   end
 
   def validate_title
-    response = Account.current.canned_responses.folder_responses_by_title(self) unless visible_only_to_me?
-    if !response.nil? && response.any?
-      self.errors.add_to_base(I18n.t('canned_responses.errors.duplicate_title'))
-      return false
+    if (!visible_only_to_me? && (self.title_changed? || self.folder_id_changed?))
+      response = Account.current.canned_responses.folder_responses_by_title(self)
+      if !response.nil? && response.any?
+        self.errors.add_to_base(I18n.t('canned_responses.errors.duplicate_title'))
+        return false
+      end
+      true
     end
     true
   end
