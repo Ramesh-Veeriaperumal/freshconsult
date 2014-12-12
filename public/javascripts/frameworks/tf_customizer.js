@@ -166,6 +166,7 @@
          switch(dataItem.dom_type) {           
             case 'text':
             case 'number':
+            case 'decimal':
                field.append('<input type="text" '+fieldAttr+' disabled="true" />');
                fieldContainer.append(label);
             break;

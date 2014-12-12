@@ -3247,6 +3247,7 @@ id:
     ticket_updated_icon: "tiket diperbarui"
     reported_on: "dari %{username}, Terakhir diperbaharui: pada %{date}"
     scenarios: Skenario
+    ticket_from: "Dari: %{username}"
     ticket_list_status_closed_at: "Dari: %{username}, Ditutup: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "Dari: %{username}, Diselesaikan: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "Dari: %{username}, Agen Merespon: <span class='emphasize'>%{time_ago} yang lalu</span>"

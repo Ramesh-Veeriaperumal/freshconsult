@@ -1,0 +1,16 @@
+class HealthStatusController < ApplicationController
+
+  skip_before_filter :check_privilege
+
+  def index
+    respond_to do |format|
+      format.xml do
+        render :xml => { :success => true }
+      end
+      format.json do
+        render :json => { :success => true }
+      end
+    end
+  end
+  
+end

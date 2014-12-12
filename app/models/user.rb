@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
-                  :description, :time_zone, :avatar_attributes, :customer_id, :company_id, 
+                  :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
 
@@ -195,7 +195,7 @@ class User < ActiveRecord::Base
         updated_tag_name.strip!
         next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
 
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name == updated_tag_name } ||
+        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
                       Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
       end
       self.tags = new_tags
@@ -469,8 +469,8 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-  def to_xml(options=XML_API_OPTIONS)
-    process_api_options XML_API_OPTIONS, options
+  def to_xml(options=USER_API_OPTIONS)
+    process_api_options USER_API_OPTIONS, options
     super options do |builder|
       unless helpdesk_agent
         builder.custom_field do
@@ -482,8 +482,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def as_json(options=API_OPTIONS, do_not_process_options = false)
-    process_api_options API_OPTIONS, options unless do_not_process_options
+  def as_json(options = nil, do_not_process_options = false)
+    default_options = helpdesk_agent? ? USER_API_OPTIONS : CONTACT_API_OPTIONS
+    options ||= default_options
+    process_api_options default_options, options unless do_not_process_options
     super(options)
   end
 
@@ -589,8 +591,7 @@ class User < ActiveRecord::Base
   end
 
   def custom_field_aliases
-    helpdesk_agent? ? [] : 
-      (@custom_field_aliases ||= [])
+    @custom_field_aliases ||= helpdesk_agent? ? [] : custom_form.custom_contact_fields.map(&:name)
   end
   
   #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F

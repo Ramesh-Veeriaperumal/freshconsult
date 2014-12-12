@@ -19,11 +19,11 @@ end
 FacebookTests = [
   "spec/lib/facebook/comment_spec.rb", 
   "spec/lib/facebook/post_spec.rb",
-  "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
   "spec/lib/facebook/status_spec.rb",
   "spec/controllers/social/facebook_pages_controller_spec.rb",
-  "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb"
+  "spec/lib/facebook/facebook_core_message_spec.rb",
+  "spec/lib/facebook/faceboook_fql_post_spec.rb"
 ]
 
 GnipTests = [

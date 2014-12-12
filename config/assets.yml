@@ -50,6 +50,7 @@ stylesheets:
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
   :freshchat_admin  => [ "chat/admin"],
+  :remote_configurations  => [ "page/remote-configurations"],
   :cti => ["cti/cti"]
 } %>
 
@@ -109,6 +110,8 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io-1.0.6.js
     - public/javascripts/frameworks/faye.js
+    - public/javascripts/frameworks/socket.io-agent.js
+    - public/javascripts/helpdesk/socket_agent.js
     - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
@@ -394,6 +397,10 @@ javascripts:
     - public/javascripts/app/admin/contact_fields/cf_customizer.js
     - public/javascripts/app/admin/contact_fields/formfield_props.jst
 
+  company_fields:
+    - public/javascripts/app/admin/contact_fields/cf_customizer.js
+    - public/javascripts/app/admin/company_fields/formfield_props.jst
+
   survey:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
@@ -458,6 +465,10 @@ javascripts:
     - public/javascripts/app/contacts_merge.js
     - public/javascripts/app/contact_view.js
 
+  companies:
+    - public/javascripts/app/companies.js
+    - public/javascripts/app/company_view.js
+
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js
     # - public/javascripts/mousetrap/dictionary.js
@@ -475,20 +486,9 @@ javascripts:
   client_logger:
     - public/javascripts/client_logger.js
 
-  cti_ticket_search:
-    - public/javascripts/cti/plugin/ticket_search.js
-
-  cti_client:
-    - public/javascripts/cti/cti_end_call_form.js
-    - public/javascripts/frameworks/plugins/jquery.popupbox.js
-    - public/javascripts/cti/freshdesk_crm_events.js
-    - public/javascripts/cti/popup.js
-
-  czentrix:
-    - public/javascripts/cti/czentrix/czentrix_logout.js
-    - public/javascripts/cti/czentrix/czentrix_custom.js
-    - public/javascripts/cti/czentrix/click2Dial.js
-    - public/javascripts/cti/czentrix/czentrix.js
+  remote_configurations:
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
 
 <% 
   # Adding specific javascript assets to the package list

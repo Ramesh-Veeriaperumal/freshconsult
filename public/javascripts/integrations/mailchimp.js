@@ -122,8 +122,8 @@ MailChimpWidget.prototype= {
 	},
 
 	subscribeLists: function(list){
-		subscribeEmailEndpoint = "1.3/?method=listSubscribe&email_address=#{email}&id=#{listId}&double_optin=false"
-		return { rest_url: subscribeEmailEndpoint.interpolate({listId: list, email: mailchimpBundle.reqEmail}) };
+		subscribeEmailEndpoint = "1.3/?method=listSubscribe&email_address=#{email}&id=#{listId}&double_optin=false&merge_vars[FNAME]=#{fname}&merge_vars[LNAME]=#{lname}"
+		return { rest_url: subscribeEmailEndpoint.interpolate({listId: list, email: mailchimpBundle.reqEmail, fname: mailchimpBundle.fname, lname:mailchimpBundle.lname}) };
 	},
 
 	unsubscribeLists: function(list){

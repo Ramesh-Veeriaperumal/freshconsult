@@ -99,6 +99,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
                   :custom_checkbox      => { :type => :custom, :dom_type => "checkbox"},
                   :custom_number        => { :type => :custom, :dom_type => "number"},
+                  :custom_decimal        => { :type => :custom, :dom_type => "decimal"},
                   :custom_dropdown      => { :type => :custom, :dom_type => "dropdown_blank"},
                   :nested_field         => { :type => :custom, :dom_type => "dropdown_blank"}
                 }

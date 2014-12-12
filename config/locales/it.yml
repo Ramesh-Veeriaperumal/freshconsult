@@ -2801,6 +2801,7 @@ it:
     ticket_updated_icon: Ticket aggiornato
     reported_on: "da %{username}, ultimo aggiornamento: il %{date}"
     scenarios: Scenario
+    ticket_from: "Da: %{username}"
     ticket_list_status_closed_at: "Da: %{username}, Chiuso: <span class='emphasize'>%{time_ago} fa</span>"
     ticket_list_status_resolved_at: "Da: %{username}, Risolto: <span class='emphasize'>%{time_ago} fa</span>"
     ticket_list_status_agent_responded_at: "Da: %{username}, Agente ha risposto: <span class='emphasize'>%{time_ago} fa</span>"

@@ -35,8 +35,9 @@ window.Fjax = window.Fjax || {};
 			"/freshfone/call_history": 'freshfonecallhistory',
 			"/contacts": 'contacts',
 			"/users": 'contacts',
+			"/companies": 'companies',
 			"/helpdesk/tickets": 'tickets'
 		},
-		LOADING_WAIT: 5
+		LOADING_WAIT: 60
 	};
 }(window.jQuery));

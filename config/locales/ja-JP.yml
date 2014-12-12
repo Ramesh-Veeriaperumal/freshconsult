@@ -478,7 +478,8 @@ ja-JP:
     ticket_updated_icon: チケットが更新されました
     reported_on: "%{username}より、最新の更新日：%{date}"
     scenarios: シナリオ
-    ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago </span>"
+    ticket_from: "送信者： %{username}"
+    ticket_list_status_closed_at: "送信者： %{username}, Closed: <span class='emphasize'>%{time_ago} ago </span>"
     ticket_list_status_resolved_at: "送信者： %{username}, 解消者: <span class='emphasize'>%{time_ago} 前 </span>"
     ticket_list_status_agent_responded_at: "送信者：%{username}, 返信したエージェント: <span class='emphasize'>%{time_ago} ago </span>"
     ticket_list_status_requester_responded_at: "送信者： %{username}, Customer responded: <span class='emphasize'>%{time_ago} 前 </span>"

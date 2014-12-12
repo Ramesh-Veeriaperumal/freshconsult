@@ -97,6 +97,14 @@ module Mobile::Actions::Ticket
     to_json(options,false)
   end
 
+  def to_mob_json_merge_search
+    options = { 
+      :only => [ :id, :display_id, :subject, :created_at ],
+      :methods => [ :requester_name ]
+    }
+    as_json(options)
+  end
+
   def formatted_created_at(format = "%B %e %Y @ %I:%M %p")
     format = format.gsub(/.\b[%Yy]/, "") if (created_at.year == Time.now.year)
     created_at.strftime(format)

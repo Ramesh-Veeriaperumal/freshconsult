@@ -23,12 +23,15 @@
 
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
+  map.resources :health_status
+
   map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
      customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
   
-  map.resources :companies ,:member => {:quick => :post, :sla_policies => :get } do |customer|
+  map.resources :companies ,:member => {:quick => :post, :sla_policies => :get, :create_company => :post, 
+      :update_company => :put } do |customer|
     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
   map.connect '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
@@ -121,6 +124,7 @@
 
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
+    integration.resources :remote_configurations
     integration.resources :applications, :member=>{:custom_widget_preview => :post}
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
@@ -142,6 +146,7 @@
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
     admin.resources :contact_fields, :only => :index
+    admin.resources :company_fields, :only => :index
     admin.resources :chat_widgets
     admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
@@ -251,6 +256,10 @@
     report.namespace :freshfone do |freshfone|
       freshfone.resources :summary_reports, :controller => 'summary_reports', 
       :collection => {:generate => :post, :export_csv => :post } 
+    end
+    report.namespace :freshchat do |freshchat|
+      freshchat.resources :summary_reports, :controller => 'summary_reports', 
+      :collection => {:generate => :post } 
     end
   end
 
@@ -451,6 +460,7 @@
 
     helpdesk.resources :leaderboard, :collection => { :mini_list => :get, :agents => :get,
       :groups => :get }, :only => [ :mini_list, :agents, :groups ]
+    helpdesk.leaderboard_group_users '/leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents'
     helpdesk.resources :quests, :only => [ :active, :index, :unachieved ],
       :collection => { :active => :get, :unachieved => :get }
 

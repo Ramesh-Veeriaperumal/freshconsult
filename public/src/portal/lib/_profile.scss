@@ -38,12 +38,26 @@
 
 .avatar-pic {
 	margin-bottom: 10px;
+	position: relative;
 	img{
 		max-width: 130px;
 		min-width: 90px;
 		max-height: 160px;
 		@include box-shadow(#dfdfdf 0 1px 3px);
 		@include border-radius(6px);
+	}
+	.ie9-file-change-msg {
+		position: absolute;
+		@include padding(5px);
+		max-width: 120px;
+		display: block;
+		background-color: rgba(255, 209, 109, 0.3);
+		@include border-radius(5px);
+		@include margin-left(5px);
+		bottom: -1px;
+		display: none;
+		font-size: 12px;
+		line-height: 17px;
 	}
 }
 

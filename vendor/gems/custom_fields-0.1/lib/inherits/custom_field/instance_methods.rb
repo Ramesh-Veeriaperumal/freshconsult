@@ -97,7 +97,7 @@ module Inherits
             return @choices.each    { |c| [c[0], c[1]] } unless @choices.nil?
             custom_field_choices.collect { |c| [c.value, c.face_value] }
           when :"default_time_zone" then
-            ActiveSupport::TimeZone.all.map do |time_zone| [time_zone.to_s, time_zone.name.to_sym] end
+            TIME_ZONE_CHOICES
           when :"default_language" then
             I18n.available_locales_with_name
           else
@@ -114,7 +114,7 @@ module Inherits
             return @choices.each    { |c| [CGI.unescapeHTML(c[0]), c[0].to_sym] } if @choices
             custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.face_value.to_sym] }
           when :'default_time_zone' then
-            ActiveSupport::TimeZone.all.map do |time_zone| [time_zone.to_s, time_zone.name.to_sym] end
+            TIME_ZONE_CHOICES
           when :'default_language' then
             I18n.available_locales_with_name
           else

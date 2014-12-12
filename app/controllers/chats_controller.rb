@@ -40,7 +40,7 @@ class ChatsController < ApplicationController
     site = current_account.chat_setting
     site.update_attributes({ :active => true, :display_id => params[:site_id]})
     chat_widget = current_account.main_chat_widget
-    if chat_widget.update_attributes({ :widget_id => params['widget_id'], :name => params['name']})
+    if chat_widget.update_attributes({ :widget_id => params['widget_id']})
       render :json => { :status=> "success"}
     else
       render :json => { :status=> "error", :message => "Record Not Found"}
@@ -148,7 +148,7 @@ class ChatsController < ApplicationController
   end
 
   def verify_chat_token
-    generatedToken = Digest::SHA512.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{params['site_id']}")
+    generatedToken = Digest::SHA512.hexdigest("#{ChatConfig['secret_key']}::#{params['site_id']}")
     if(generatedToken != params['token'])
       Rails.logger.error('ChatsController : Authentication Failed - Invalid Token') 
       render :json => { :status=> "error", :message => "Authentication Failed"}

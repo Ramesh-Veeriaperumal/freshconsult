@@ -186,6 +186,7 @@ class Admin::AutomationsController < Admin::AdminController
     def add_custom_actions action_hash
       special_case = [['', t('none')]]
        current_account.ticket_fields.custom_fields.each do |field|
+         next if field.field_type == 'custom_decimal' # To be removed once decimal fields UI is enabled
          action_hash.push({ 
            :id => field.id,
            :name => field.name,
