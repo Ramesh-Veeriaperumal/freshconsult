@@ -33,12 +33,17 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
 
 private
   def authorize_freshdesk_user
-    # site = RestClient::Resource.new("#{params[:domain]}/ticket_fields.json", params[:key], "X")
-    site = RestClient::Resource.new("#{params[:domain]}/health_status.json", params[:key], "X")
-    response = site.get(:accept => "application/json")
-    # if !response.body.include? "ticket_field"
-    if !response.body.include? "success"
-      show_notice "Unable to authorize user in Freshdesk..... Please check your domain and API Key....."
+    begin
+      # site = RestClient::Resource.new("#{params[:domain]}/ticket_fields.json", params[:key], "X")
+      site = RestClient::Resource.new("#{params[:domain]}/health_status.json", params[:key], "X")
+      response = site.get(:accept => "application/json")
+      # if !response.body.include? "ticket_field"
+      if !response.body.include? "success"
+        show_notice "Unable to authorize user in Freshdesk..... Please check your domain and API Key....."
+      end
+    rescue Exception => exe
+      logger.debug "Exception with authorize_freshdesk_user #{exe}"
+      show_notice "Unable to authorize freshdesk user"
     end
   end
 

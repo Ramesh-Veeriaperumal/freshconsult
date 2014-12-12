@@ -1,7 +1,5 @@
 class HealthStatusController < ApplicationController
 
-  skip_before_filter :check_privilege
-
   def index
     respond_to do |format|
       format.xml do
