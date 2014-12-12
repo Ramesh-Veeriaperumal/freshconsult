@@ -1,7 +1,7 @@
 <%= render :partial => 'layouts/shared/cti/toolbar' %>
 <div id="czentrixIframeDiv"></div>
 	<script>
-		var zentrixBaseUrl = "http://";
+		var zentrixBaseUrl = location.protocol + "//";
       function initialise(agent_id) {
 	        zentrixBaseUrl = zentrixBaseUrl + cti_user.host_ip + '/';
 	        crmOrigin = window.location.href;
