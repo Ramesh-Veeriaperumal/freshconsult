@@ -53,7 +53,7 @@ class Social::FbPost < ActiveRecord::Base
   post_type == POST_TYPE_CODE[:reply_to_comment]
  end
  
- def post?
+ def fb_post?
   post_type == POST_TYPE_CODE[:post]
  end
  
