@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "e586cef6691606bbdc0bf292e44e863d4c6409f4703959c91c736861adcd6b9b",
-    "current": "e586cef6691606bbdc0bf292e44e863d4c6409f4703959c91c736861adcd6b9b"
+    "previous": "e63733a22c2c8d95cfcd70cece4ff73f5208afefce4f885b4d3cac1a95057abe",
+    "current": "e63733a22c2c8d95cfcd70cece4ff73f5208afefce4f885b4d3cac1a95057abe"
   },
   "fonts": [
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.ttf",
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.svg",
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.woff",
-    "public/fonts/glyphs_e586cef6691606bbdc0bf292e44e863d.eot"
+    "public/assets/glyphs_e63733a22c2c8d95cfcd70cece4ff73f.ttf",
+    "public/assets/glyphs_e63733a22c2c8d95cfcd70cece4ff73f.svg",
+    "public/assets/glyphs_e63733a22c2c8d95cfcd70cece4ff73f.woff",
+    "public/assets/glyphs_e63733a22c2c8d95cfcd70cece4ff73f.eot"
   ],
   "glyphs": {
     "account": {
@@ -193,6 +193,7 @@
     "dropbox": {
       "codepoint": 61828,
       "source": "public/glyphs/vectors/dropbox.svg"
+    },
     "dropdown_blank": {
       "codepoint": 61837,
       "source": "public/glyphs/vectors/dropdown_blank.svg"
@@ -433,12 +434,13 @@
       "codepoint": 61727,
       "source": "public/glyphs/vectors/paperplane.svg"
     },
-    "pencil": {
-      "codepoint": 61830,
-      "source": "public/glyphs/vectors/pencil.svg"
     "paragraph": {
       "codepoint": 61831,
       "source": "public/glyphs/vectors/paragraph.svg"
+    },
+    "pencil": {
+      "codepoint": 61830,
+      "source": "public/glyphs/vectors/pencil.svg"
     },
     "phone": {
       "codepoint": 61764,
@@ -609,7 +611,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": false,
+    "debug": true,
     "font_name": "glyphs",
     "force": false,
     "input": {
@@ -624,7 +626,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"
