@@ -207,7 +207,7 @@ class Freshfone::Call < ActiveRecord::Base
 			:incoming => true,
 			:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
 			:user => params[:agent],
-			:private => freshfone_number.private_recording?
+			:private => private_recording_note?
 		}
 		self.notable.build_note_and_sanitize
 		self
@@ -294,7 +294,7 @@ class Freshfone::Call < ActiveRecord::Base
 			end
 			i18n_label += valid_customer_name? ? "_with_name" : "_with_out_name"
 			desc = I18n.t(i18n_label, i18n_params)
-			desc << "#{params[:call_log]}" unless is_ticket && freshfone_number.private_recording?
+			desc << "#{params[:call_log]}" unless is_ticket && private_recording_note?
 			desc.html_safe
 		end
 
@@ -360,5 +360,9 @@ class Freshfone::Call < ActiveRecord::Base
 
 		def agent_scoper
 			account.users.technicians.visible
+		end
+
+		def private_recording_note?
+			freshfone_number.private_recording? && freshfone_number.record?
 		end
 end
