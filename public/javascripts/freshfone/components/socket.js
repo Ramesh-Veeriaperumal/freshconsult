@@ -213,7 +213,7 @@ var FreshfoneSocket;
 				valueNames: [ 'available_agents_name', 'available_agents_avatar' ]
 				// page: 10
 			}, list;
-			freshfonesocket.totalAgents = this.onloadUserarray.length;
+			freshfonesocket.totalAgents = this.onloadUserarray.length - this.onloadGrouparray.length;
 			freshfonesocket.tryUpdateDashboard();
 
 			if (!this.agentList) {
