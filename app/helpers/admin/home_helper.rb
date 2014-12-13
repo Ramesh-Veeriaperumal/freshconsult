@@ -43,7 +43,7 @@
       },
       :"customer-fields"                 =>   {
         :url                           =>   "/admin/contact_fields",
-        :privilege                     =>   (!Rails.env.production?) && privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks)
       },
       :"customer-portal"               =>   {
         :url                           =>   "/admin/portal",
