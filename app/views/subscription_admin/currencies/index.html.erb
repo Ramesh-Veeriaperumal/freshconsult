@@ -26,7 +26,7 @@
       <p class="help-block">
       </p>
       <% Subscription::Currency.all.each do |currency|%>
-        <%= form_for :currency, currency, :url => admin_currency_path(currency), :html => { :method => 'put' } do |form| %>
+        <%= form_for currency, :url => admin_currency_path(currency), :html => { :method => 'put' } do |form| %>
           <%= form.error_messages %>
           <% unless currency.name.eql?("USD") %>
             <tr>

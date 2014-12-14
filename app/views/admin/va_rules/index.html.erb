@@ -18,7 +18,7 @@
       <i class="ficon-arrow-down-2 fsize-18"></i>
     </span>
     <span class="vertical-alignment"><%= t('dispatch.cascade_text') %> &nbsp;</span>
-      <%= form_for :cascade_dispatcher, @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>
+      <%= form_for @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>
 
         <%= select "cascade_dispatchr", "cascade", VaRule.cascade_dispatchr_option, 
                          {:selected => current_account.features?(:cascade_dispatchr) ? 1 : 0 }, { :class => "select2 select2-flat span12", :id => "cascade_dispatchr" } %>

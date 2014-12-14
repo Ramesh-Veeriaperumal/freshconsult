@@ -90,7 +90,7 @@
 		  		</div>
 			<% end %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<%= form_for :user, @user,
+				<%= form_for @user,
 					:url => {:controller => 'contacts', :action => 'update_description_and_tags'},
 					:html => {
 						:class => 'edit_user',

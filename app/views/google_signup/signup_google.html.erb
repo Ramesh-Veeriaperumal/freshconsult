@@ -14,7 +14,7 @@
 	<div class="tab-content">
 	  <div class="tab-pane active" id="new-account">
 	  	<div class="ui-form signup-form" id="signup-form">
-				<%= form_for :google_signup, @account, :url => {:controller => :google_signup, :action=> :create_account_google} , :html => { :method => "put", :id => "google_sign_up_form" } do |f| %>
+				<%= form_for @account, :url => {:controller => :google_signup, :action=> :create_account_google} , :html => { :method => "put", :id => "google_sign_up_form" } do |f| %>
 					<%= f.error_messages %>
 					<%= show_flash %>
 				  <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />

@@ -45,7 +45,7 @@
 		</div>
 		<div class='contact-edit-fields'>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<%= form_for :company, @company, 
+				<%= form_for @company, 
 					:url => {:controller => 'companies', :action => 'update_notes'},
 					:html => {
 						:class => 'edit_user',

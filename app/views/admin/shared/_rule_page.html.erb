@@ -38,7 +38,7 @@
   </ul>
   <div class="sortable" id="Sortable" style="display:none;">
     <h4 class="title"><%= t('dispatch.reorder') %></h4>
-    <%= form_for :reorder, @va_rules, :url => { :action => "reorder" }, :html => { :method => :reorder, :id => "Reorderform" } do |f| %>
+    <%= form_for @va_rules, :url => { :action => "reorder" }, :html => { :method => :reorder, :id => "Reorderform" } do |f| %>
       <input name="reorderlist" type="hidden" value="" />
       <ul class="sort-list">
         <%= yield :page_reorder_list %>

@@ -61,7 +61,7 @@
 	<br />
 
 	<div id="AddCcToTicket" class="request_panel" style="display:none;">
-		<%= form_for :ticket, @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
+		<%= form_for @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
 				<ul class="ui-form">
 					<li>			
 					       <%= f.fields_for :cc_email do |cc| %>
