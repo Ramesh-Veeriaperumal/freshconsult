@@ -17,6 +17,7 @@ describe SolutionsUploadedImagesController do
     post :create, { :image => { :uploaded_data => fixture_file_upload(SAMPLE_FILES.first, 'image/png', :binary) } }
     response.status.should eql(200)
     JSON.parse(response.body)['filelink'].should =~ /#{File.basename(SAMPLE_FILES.first)}/
+    JSON.parse(response.body)['filelink'].should =~ /^https:\/\//
   end
 
   it "should list all the images created in index action" do

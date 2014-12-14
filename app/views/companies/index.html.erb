@@ -2,7 +2,7 @@
 	<%content_for :sidebar do%>
 		<% if privilege?(:manage_contacts) %>
 		<div class="sidepanel">
-		<h3 class="lead"><%=t('company.quick_company')%></h3> 
+		<h3 class="lead"><%=t('quick_create')%></h3> 
 		<%= form_tag :action=> :quick, :method =>:post do %> 
 		<div class="control-group">
 			<div class="controls">

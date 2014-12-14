@@ -1,7 +1,9 @@
 <script type='text/javascript'>
 	jQuery( document ).ready(function() {
-		var asset = <%= ChatConfig['asset_url'][Rails.env].to_json.html_safe %>;
-		var isSecured = (window.location && window.location.protocol == 'https:');
+		var asset = <%= ChatConfig['asset_url'].to_json.html_safe %>;
+		var http_only = ((<%=ChatConfig['http_only']%> == "1")? true : false);
+		window.FC_HTTP_ONLY = http_only;
+		var isSecured = ((window.location && window.location.protocol == 'https:') && !window.FC_HTTP_ONLY);
 		var fc_CSS = document.createElement('link');
 		fc_CSS.setAttribute('rel','stylesheet');
 		fc_CSS.setAttribute('type','text/css');

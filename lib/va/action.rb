@@ -132,6 +132,26 @@ class Va::Action
     
     add_activity(note.private ? "Added a <b>private note</b>" : "Added a <b>note</b>")
   end
+  
+  def add_watcher(act_on)
+    watchers = Array.new
+    watcher_value = value.kind_of?(Array) ? value : value.to_a
+    watcher_value.each do |watcher_id|
+      watcher = act_on.subscriptions.find_by_user_id(watcher_id)
+      unless watcher.present?
+        user = Account.current.users.find_by_id(watcher_id)
+        subscription = act_on.subscriptions.build(:user_id => watcher_id)
+        if user && user.agent? && subscription.save
+          watchers.push subscription.user.name
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
+                                                act_on, 
+                                                subscription, 
+                                                "automations rule")
+        end
+      end
+    end
+    add_activity("#{I18n.t('automations.activity.added_watcher(s)')} - <b>#{watchers.to_sentence}</b>") if watchers.present?
+  end
 
   def add_tag(act_on)
     value.split(',').each do |tag_name|

@@ -42,8 +42,8 @@
 					<%=render :partial =>"time_sheets_metric.html.erb" %>
 				</div>
 			</div>
+			<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
 			<% if generate_pdf_action? %>
-				<% grp_data = [] %>
 				<div class="row-fluid control-group">
 					<div class="vertical-alignment">
 						<strong><%=t('helpdesk.time_sheets.group_by')%>: </strong>
@@ -58,8 +58,7 @@
 					<strong><%=t('helpdesk.time_sheets.group_by')%>: </strong>
 				</div>
 				<div class="vertical-alignment">
-					<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
-								<%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
+					<%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
 									{ :multiple => false, :class => "select2 filter_item"}%>
 				</div>
 				<span class="pull-right time-sheet-top-margin">

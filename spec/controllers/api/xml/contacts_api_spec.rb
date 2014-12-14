@@ -115,61 +115,61 @@ RSpec.describe ContactsController do
 			# Hence not using Faker for phonenumber generation.
 			# This needs to be addressed. change filter expresssion in api_helper_methods
 			contact = FactoryGirl.build(:user, :account => @account,
-	                                    :name => Faker::Name.name, 
-	                                    :email => Faker::Internet.email,
-	                                    :phone => 42345678,
-	                                    :time_zone => "Chennai", 
-	                                    :delta => 1, 
-	                                    :language => "en")
-	    	contact.save
-		 	check_phone  = contact.phone
-		 	get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'xml'}
-		 	result = parse_xml(response)
-		 	expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
-		 	expected.should be(true)
+											:name => Faker::Name.name, 
+											:email => Faker::Internet.email,
+											:phone => "42345678",
+											:time_zone => "Chennai", 
+											:delta => 1, 
+											:language => "en")
+			contact.save
+			check_phone  = contact.phone
+			get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'xml'}
+			result = parse_xml(response)
+			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected.should be(true)
 		end
 
 		it "should fetch contacts filtered by mobile" do
 			# This needs to be addressed. change filter expresssion in api_helper_methods
 			contact = FactoryGirl.build(:user, :account => @account,
-	                                    :name => Faker::Name.name, 
-	                                    :email => Faker::Internet.email,
-	                                    :mobile => 9876543210,
-	                                    :time_zone => "Chennai", 
-	                                    :delta => 1, 
-	                                    :language => "en")
+											:name => Faker::Name.name, 
+											:email => Faker::Internet.email,
+											:mobile => "9876543210",
+											:time_zone => "Chennai", 
+											:delta => 1, 
+											:language => "en")
 			contact.save
-		 	check_mobile  = contact.mobile
-		 	get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'xml'}
-		 	result = parse_xml(response)
-		 	expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
-		 	expected.should be(true)
+			check_mobile  = contact.mobile
+			get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'xml'}
+			result = parse_xml(response)
+			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected.should be(true)
 		end
 
-	  it "should fetch contacts filtered by company id" do
-	    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
-	    new_company.save
-	    contact = FactoryGirl.build(:user, :account => @account,
-	                                    :name => Faker::Name.name, 
-	                                    :email => Faker::Internet.email,
-	                                    :mobile => 9876543210,
-	                                    :time_zone => "Chennai", 
-	                                    :delta => 1, 
-	                                    :language => "en",
-	                                    :customer_id => new_company.id)
-	    contact.save
-	    check_id  = new_company.id
-	    get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'xml'}
-	    result = parse_xml(response)
-	    expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
-	    expected.should be(true)
-	  end
+		it "should fetch contacts filtered by company id" do
+			new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
+			new_company.save
+			contact = FactoryGirl.build(:user, :account => @account,
+											:name => Faker::Name.name, 
+											:email => Faker::Internet.email,
+											:mobile => "9876543210",
+											:time_zone => "Chennai", 
+											:delta => 1, 
+											:language => "en",
+											:customer_id => new_company.id)
+			contact.save
+			check_id  = new_company.id
+			get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'xml'}
+			result = parse_xml(response)
+			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected.should be(true)
+		end
 
-	  it "should make user as agent" do
-	    contact = add_new_user(@account,{})
-	    put :make_agent, {:id => contact.id,:format => 'xml'}
-	    response.status.should eql(200)
-	  end
+		it "should make user as agent" do
+			contact = add_new_user(@account,{})
+			put :make_agent, {:id => contact.id,:format => 'xml'}
+			response.status.should eql("200 OK")
+		end
 	end
 
 	context "For Contacts with custom fields" do
@@ -196,7 +196,7 @@ RSpec.describe ContactsController do
 			Resque.inline = true
 			@user.destroy
 			custom_field_params.each { |params| 
-				@account.contact_form.contact_fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
+				@account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
 			Resque.inline = false
 		end
 
@@ -207,7 +207,7 @@ RSpec.describe ContactsController do
 			post :create, :user => {:name => Faker::Name.name,
 									:custom_field => contact_params({:linetext => text, :testimony => Faker::Lorem.paragraphs, :all_ticket => "false",
 														:agt_count => "34", :fax => Faker::PhoneNumber.phone_number, :url => url, :date => date_time,
-														:category => "Tenth"}),
+														:category => "Tenth", :text_regex_vdt => "Helpdesk Software"}),
 									:email => test_email, 
 									:time_zone => "Chennai", 
 									:language => "en" 
@@ -326,7 +326,10 @@ RSpec.describe ContactsController do
 						}
 			user = @account.users.find(@user.id)
 			user.job_title.should eql "Consultant"
-			user.flexifield_without_safe_access.should be_nil
+
+			# if account contains contact_custom_fields, ContactfieldData will be build and saved even though custom_field values are null
+			# Only if the account doesn't have custom_fields, ContactfieldData will not build.
+			user.flexifield_without_safe_access.should_not be_nil
 			user.name.should eql(name)
 		end
 	end

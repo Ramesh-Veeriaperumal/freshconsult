@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::CannedResponses::FoldersController do
+describe Helpdesk::CannedResponses::FoldersController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 

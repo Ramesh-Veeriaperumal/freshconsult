@@ -2,6 +2,8 @@ class Social::FbPost < ActiveRecord::Base
   
   self.table_name =  "social_fb_posts"
   self.primary_key = :id
+  include Facebook::Constants
+  
   
   has_ancestry :orphan_strategy => :rootify
   
@@ -35,5 +37,34 @@ class Social::FbPost < ActiveRecord::Base
  def is_note?
   postable_type.eql?('Helpdesk::Note')
  end
-  
+ 
+ def post_type_present?
+  post_attributes_present? and !self.post_attributes[:post_type].blank?
+ end
+ 
+ def can_comment?
+  post_attributes_present? and self.post_attributes[:can_comment]
+ end
+ 
+ def comment?
+  post_type == POST_TYPE_CODE[:comment]
+ end
+ 
+ def reply_to_comment?
+  post_type == POST_TYPE_CODE[:reply_to_comment]
+ end
+ 
+ def fb_post?
+  post_type == POST_TYPE_CODE[:post]
+ end
+ 
+ private
+   def post_attributes_present?
+    !self.post_attributes.blank?
+   end
+   
+   def post_type
+    self.post_attributes[:post_type] if post_attributes_present?
+   end
+ 
 end

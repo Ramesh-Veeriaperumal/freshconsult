@@ -4,13 +4,14 @@ module Has
     module MetaMethods
 
       def respond_to? attribute, include_private_methods = false
+        return false if [:to_ary, :after_initialize_without_slave].include? attribute
         super(attribute, include_private_methods) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
       end
 
       def method_missing method, *args, &block
         begin
           super(method, *args, &block)
-        rescue NoMethodError, NoMethodError => e
+        rescue NoMethodError => e
           Rails.logger.debug "#{self.class.name} method_missing :: args is #{args.inspect} and method:: #{method}"
           return custom_field_attribute(method, args) if custom_field_aliases.include?(
                                                                       method.to_s.chomp("=").chomp("?"))

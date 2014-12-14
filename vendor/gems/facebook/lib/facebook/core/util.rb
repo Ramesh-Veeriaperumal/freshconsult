@@ -72,15 +72,16 @@ module Facebook::Core::Util
     end
   end
 
-  def send_facebook_reply
+  def send_facebook_reply(parent_post_id = nil)
     fb_page = @parent.fb_post.facebook_page
+    parent_post = parent_post_id.blank? ? @parent : @parent.notes.find(parent_post_id)
     if fb_page
       if @parent.is_fb_message?
         unless Facebook::Core::Message.new(fb_page).send_reply(@parent, @item)
           return flash[:notice] = t(:'facebook.error_on_reply_fb')
         end
       else
-        unless Facebook::Core::Comment.new(fb_page).send_reply(@parent, @item)
+        unless Facebook::Core::Comment.new(fb_page, nil).send_reply(parent_post, @item)
           return flash[:notice] = t(:'facebook.error_on_reply_fb')
         end
       end

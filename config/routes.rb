@@ -211,6 +211,9 @@ Helpkit::Application.routes.draw do
     member do
       post :quick
       get :sla_policies
+      post :create_company
+      put :update_company
+      put :update_notes
     end
     collection do
       delete :destroy
@@ -250,7 +253,7 @@ Helpkit::Application.routes.draw do
       get :unblock
       post :create_contact
       put :update_contact
-      put :update_bg_and_tags
+      put :update_description_and_tags
     end
     resources :contact_merge do
       collection do
@@ -801,6 +804,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :assign_bcc_email
         put :update
+        put :update_font
       end
       member do
         put :update
@@ -1025,6 +1029,14 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+
+    namespace :freshchat do
+      resources :summary_reports, :controller => 'summary_reports' do
+        collection do
+          post :generate
+        end
+      end
+    end
   end
 
   resources :reports
@@ -1074,7 +1086,6 @@ Helpkit::Application.routes.draw do
         get :edit
       end
     end
-
 
     resources :gnip, :controller => "gnip_twitter" do
       collection do
@@ -1343,6 +1354,16 @@ Helpkit::Application.routes.draw do
       resources :folders do
         collection do
           get :edit
+        end
+        resources :responses do
+          collection do
+            delete :delete_multiple
+            put :update_folder
+          end
+          member do
+            get :delete_shared_attachments
+            post :delete_shared_attachments
+          end
         end
       end
     end

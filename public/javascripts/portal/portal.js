@@ -197,6 +197,10 @@
 			  	    }else{
 			  	    	// For all other form it will be a direct page submission			  	
 			  	    	add_csrf_token(form)
+
+			  	    	// Nullifies the form data changes flag, which is checked to prompt the user before leaving the page.
+        				$(form).data('formChanged', false);
+
 			  	    	form.submit()
 			  	    }
 				}
@@ -220,8 +224,6 @@
 		
 		$('.form-unsaved-changes-trigger').on('change', function() {
 			$(this).data('formChanged', true);
-		}).find('input[type=submit]').on('click', function(ev) {
-        	$('.form-unsaved-changes-trigger').data('formChanged', false);
 		});
 
     	// Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'

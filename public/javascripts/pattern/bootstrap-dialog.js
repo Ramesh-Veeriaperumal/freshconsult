@@ -95,8 +95,11 @@
          var form = this.$dynamicTarget.find('form:first')       
 
          if(form.get(0) && form.valid()){
-           if(this.options.submitLoading != "") this.$submitBtn.button('loading');
-             form.submit();
+         	$(form).trigger("dialog:submit");
+            if(this.options.submitLoading != ""){
+            	this.$submitBtn.button('loading');
+            }
+            form.submit();
          }
       
          if(this.options.closeOnSubmit) this.$dynamicTarget.modal("hide")

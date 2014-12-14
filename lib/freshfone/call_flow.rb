@@ -1,5 +1,5 @@
 class Freshfone::CallFlow
-  include FreshfoneHelper
+  include Freshfone::FreshfoneHelper
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Freshfone::CallsRedisMethods
@@ -14,9 +14,10 @@ class Freshfone::CallFlow
 	delegate :read_welcome_message, :to => :ivr
   delegate :connect_caller_to_agent, :add_caller_to_queue, :block_incoming_call,
           :initiate_recording, :initiate_voicemail, :initiate_outgoing, :connect_caller_to_numbers,
-          :return_non_availability, :return_non_business_hour_call, :make_transfer_to_agent, :to => :call_initiator
+          :return_non_availability, :return_non_business_hour_call, :make_transfer_to_agent, 
+          :dial_to_agent_group, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
-           :register_direct_dial, :save_call_meta, :to => :call_actions
+           :register_direct_dial, :save_call_meta, :register_group_call_transfer, :to => :call_actions
 
   def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)
     self.params = params
@@ -52,6 +53,7 @@ class Freshfone::CallFlow
   end
 
   def call_user_with_id(performer_id, freshfone_user=nil)
+    set_direct_dial_agent(performer_id)
     find_user_with_id(performer_id, freshfone_user)
     set_hunt_options(:agent, performer_id)
     incoming
@@ -74,6 +76,14 @@ class Freshfone::CallFlow
     params.merge!({:source_agent => current_user_id, :outgoing => self.outgoing_transfer})
     find_user_with_id(params[:id], agent.freshfone_user)
     make_transfer_to_agent(params[:id])
+  end
+
+  def transfer_to_group(agents, current_user_id, outgoing = false)
+    self.outgoing_transfer = outgoing
+    self.transfered = true
+    params.merge!({:source_agent => current_user_id, :outgoing => self.outgoing_transfer})
+    register_group_call_transfer(outgoing)
+    return dial_to_agent_group(agents, false)
   end
   
   def dequeue(agent)
@@ -115,6 +125,13 @@ class Freshfone::CallFlow
         :type => type,
         :performer => performer.to_s
       }
+    end
+
+    def set_direct_dial_agent(agent_id)
+      return if params[:CallSid].blank?
+      call = current_account.freshfone_calls.find_by_call_sid(params[:CallSid]) 
+      call.user_id = agent_id
+      call.save
     end
 
     def direct_dialled_number_busy?(number)

@@ -7,21 +7,12 @@ module Freshfone::NodeEvents
 	include ActionView::Helpers::AssetTagHelper
 
   def notify_socket(channel, message)
-    begin
-      node_uri = "#{FreshfoneConfig['node_url']}/freshfone/#{channel}"
-      options = {
-        :body => message, 
-        :headers => { "X-Freshfone-Session" => freshfone_node_session },
-        :timeout => 15
-      }
-      HTTParty.post(node_uri, options)  # TODO-RAILS3 EXCEPTION
-    rescue Timeout::Error
-      Rails.logger.error "Timeout trying to publish freshfone event for #{node_uri}. \n#{options.inspect}"
-      NewRelic::Agent.notice_error(StandardError.new("Error publishing data to Freshfone node. Timed out."))
-    rescue Exception => e
-      Rails.logger.error "Error publishing data to Freshfone Node. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      NewRelic::Agent.notice_error(e, {:description => "Timeout trying to publish freshfone event for #{node_uri}"})
-    end
+    options = {
+      :channel => channel,
+      :message => message,
+      :freshfone_node_session => freshfone_node_session
+    }
+    Resque.enqueue(Freshfone::Jobs::NodeNotifier, options)
   end
 
   def unpublish_live_call(params)

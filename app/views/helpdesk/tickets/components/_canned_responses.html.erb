@@ -16,7 +16,7 @@
 		<div id="fold-list" class="pick-response">
 		  <div id="canned_response_list">
 	      <ul class="small-list-left">
-  	    	<%= each_or_message("helpdesk/tickets/components/ca_res_folder", current_account.canned_response_folders.accessible_for(current_user), t('canned_folders.no_folders')) %>
+  	    	<%= each_or_message("helpdesk/tickets/components/ca_res_folder", @visible_folders, t('canned_folders.no_folders')) %>
 	      </ul>
 	    </div>
 		<div id="responses" class="list2"></div>

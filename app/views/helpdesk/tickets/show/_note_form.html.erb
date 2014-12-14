@@ -41,7 +41,7 @@
       <li class="inline-field field clearField message">
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
         <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body" %>
+            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", :"data-wrap-font-family" => true %>
         <% end %>
       </li>
       <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">

@@ -13,7 +13,8 @@ module ContactFieldsHelper
 			{ :type=>"url", :field_type=>"custom_url", :label=>"File URL", :editable_in_portal=> "false"},
 			{ :type=>"date", :field_type=>"custom_date", :label=>"Date", :label_in_portal => "Calendar"},
 			{ :type=>"checkbox", :field_type=>"custom_checkbox", :label=>"Show all ticket", :required_in_portal => "true"},
-			{ :type=>"text", :field_type=>"custom_text", :label=>"Linetext with regex validation", :field_options => {"regex"=>"/(desk|service)/"}, 
+			{ :type=>"text", :field_type=>"custom_text", :label=>"Linetext with regex validation", 
+				:field_options => {"regex"=>{"pattern"=>"(desk|service)", "modifier"=>"i"}}, 
 				:editable_in_signup=> "true"},
 			{ :type => "dropdown", :field_type => "custom_dropdown", :label => "Category", 
 				:choices => [["First", "0"], ["Second", "0"], ["Third", "0"], ["Tenth", "0"]]}
@@ -32,7 +33,7 @@ module ContactFieldsHelper
 			:editable_in_portal=> options[:editable_in_portal] || true, 
 			:required_in_portal=> options[:required_in_portal] || false, 
 			:editable_in_signup=> options[:editable_in_signup] || false,
-			:id=>nil, :choices=> options[:choices] || [], :levels=>[], :position=>rand(1..21)
+			:id=>nil, :choices=> options[:choices] || [], :levels=>[], :position=>rand(15..1000)
 		}
 	end
 

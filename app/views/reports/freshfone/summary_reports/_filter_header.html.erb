@@ -1,0 +1,16 @@
+<ul class="inline" >
+ <li><%=t('reports.freshfone.filter_by_title')%>:</li>
+  <li><%=t('reports.freshfone.time_period')%> : <strong><%= @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date%></strong></li>
+
+  <% unless @freshfone_number.blank? %>
+      <li><%=t('reports.freshfone.number')%> : <strong><%=freshfone_numbers.find(@freshfone_number).number_name%></strong></li>
+  <%end%>
+    <% unless @call_type.blank? || (@call_type.to_i == 0)%>
+    <% call_type_str = Freshfone::Call::CALL_TYPE_REVERSE_HASH[@call_type.to_i]%>
+    <li><%=t('reports.freshfone.call_type')%> : <strong>
+    <%=t("reports.freshfone.options.#{call_type_str}")%></strong></li>
+  <%end%>
+  <% unless @group_id.blank? %>
+    <li><%=t('reports.freshfone.group')%> : <strong><%=agent_groups_hash[@group_id.to_i]%></strong></li>
+  <%end%>
+</ul>

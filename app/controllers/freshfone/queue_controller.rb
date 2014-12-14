@@ -1,6 +1,6 @@
 class Freshfone::QueueController < FreshfoneBaseController
 
-  include FreshfoneHelper
+  include Freshfone::FreshfoneHelper
   include Freshfone::NumberMethods
   include Freshfone::Queue
   include Freshfone::CallHistory

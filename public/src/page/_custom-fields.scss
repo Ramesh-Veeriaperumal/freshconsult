@@ -163,10 +163,17 @@
 		border-radius: 50%;
 		@include padding(2px 5px);
 	}
+	.section.colsets {
+		position: relative;
+	}
 	.add-choice {
 		font-size: 12px;
 		color: #333;
 		line-height: 26px;
+		position: absolute;
+		left: 270px;
+		bottom: 10px;
+		z-index: 99999;
 		.#{$font-class-name}plus {
 			background-color: #76ad20;
 			font-size: 14px;

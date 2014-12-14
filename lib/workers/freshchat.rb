@@ -8,10 +8,10 @@ class Workers::Freshchat
 	require 'base64'
 	@queue = "freshchat_queue"
 	@subUrl = (Rails.env == "development") ? ":4000" : ""
-	@url = "http://" + ChatConfig['communication_url'][Rails.env] + @subUrl
+	@url = "http://" + ChatConfig['communication_url'] + @subUrl
 
 	def self.perform(args)
-		token = Digest::SHA512.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{args[:siteId]}")
+		token = Digest::SHA512.hexdigest("#{ChatConfig['secret_key']}::#{args[:siteId]}")
 		args["token"] = token
 		send(args[:worker_method],args)
 	end

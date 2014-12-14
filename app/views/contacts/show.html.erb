@@ -7,6 +7,10 @@
 		tags: tags_options.split(","),
 		tokenSeparators: [',']
 	});
+	tagsOptions = {
+		'add' : '<%= t("add_tags") %>',
+		'edit' : '<%= t("edit_tags") %>'
+	}
 <% end %>
 
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
@@ -86,9 +90,14 @@
 		  		</div>
 			<% end %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<h4 class="conv-title"><%=t('user.background')%></h4>
-				<%= form_for @user, :html => {:class => 'edit_user'} do |f| %>
-					
+				<%= form_for :user, @user,
+					:url => {:controller => 'contacts', :action => 'update_description_and_tags'},
+					:html => {
+						:class => 'edit_user',
+						:method => :put
+					} do |f| %>
+					<%= f.error_messages %>
+					<h4 class="conv-title"><%=t('user.background')%></h4>
 					<%= f.text_area :description, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("contacts.form_placeholder.description") %>
 					<%= f.hidden_field :id, :value => @user.id, :id => 'userid' %>
 					<div class='tags-wrapper clearfix hide'>
@@ -102,7 +111,7 @@
 							<div class='error ajax-error pull-left'></div>
 							<div class="pull-right hide form-save"> 
 								<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
-								<%= link_to t('save'),'#', :class=>"btn btn-primary save-form" %> 
+								<%= f.submit t('save'), :class=>"btn btn-primary save-form" %> 
 							</div>
 						</div>
 					<% end %>

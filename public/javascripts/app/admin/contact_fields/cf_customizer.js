@@ -180,11 +180,10 @@
 
 		addChoiceinDialog: function(data, dom){
 			dom	= dom  || this.dialogDOMMap.choices;
-			data	= data || [ '', Math.random()*100 ];
-			var inputData = $("<input type='text' />")
+			data	= data || [ '', 0 ];
+			var inputData = $("<input type='text' maxlength='255' />")
 													.val(unescapeHtml(data[0]))
-													.attr("data_id", data[1])
-													.attr('name', 'choice_'+data[1])
+													.attr('name', 'choice_'+ (new Date().getTime()))
 													.addClass('field_maxlength');
 			var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
@@ -194,7 +193,6 @@
 					.append(dropSpan)            
 					.appendTo(dom);  
 
-			$(this.settings.addChoice).appendTo(fieldSet); 
 			var no_choices = dom.find('fieldset:visible').length;
 			if(no_choices >= this.settings.maxNoOfChoices) {
 				$(this.settings.addChoice).hide();
@@ -212,7 +210,7 @@
 							input_box = $(this).find("span.dropchoice input");
 							
 							temp[0] = escapeHtml(input_box.val());
-							temp[1] = input_box.attr("data_id");
+							temp[1] = escapeHtml(input_box.val());
 							
 					if($.trim(temp[0]) !== '') choices.push(temp);
 			 });
@@ -228,9 +226,6 @@
 
 		deleteDropDownChoice: function($this){
 			if($this.parent().siblings().size() !== 0) {
-				if($this.parent().find(this.settings.addChoice).length > 0) {
-					$(this.settings.addChoice).appendTo($this.parent().prev());
-				}
 				$this.parent().remove();
 			}
 			var no_choices = (this.dialogDOMMap.choices).find('fieldset:visible').length;
@@ -319,6 +314,25 @@
 					break;
 			}
 		},
+
+		setRegexValue: function(key, value) {
+			var regexValue = null,
+				regexParts = [];
+
+			if(this.dialogDOMMap['validate_using_regex'].prop('checked')) {
+				regexValue = {};
+				regexValue['regex'] = {};
+				regexParts = this.dialogDOMMap[key]
+								.prop(value[1])
+								.match(new RegExp('^/(.*?)/([gimy]*)$'));
+
+				if(regexParts && regexParts.length > 0) {
+					regexValue['regex']['pattern'] = escapeHtml(regexParts[1]);
+					regexValue['regex']['modifier'] = regexParts[2];	
+				}
+			}
+			this.settings.currentData.set(key, regexValue);
+		},
 			
 		saveCustomFields: function(ev) {
 			ev.preventDefault();
@@ -391,10 +405,7 @@
 							}
 						}
 						else if(key=='field_options' && field_type == 'custom_text') {
-							var regexValue = self.dialogDOMMap['validate_using_regex'].prop('checked')
-													? {'regex' : self.dialogDOMMap[key].prop(value[1])} 
-													: null;
-							self.settings.currentData.set(key, regexValue);
+							self.setRegexValue(key, value);
 						}
 						else if(key != 'field_type') {
 							var val = self.dialogDOMMap[key].prop(value[1]);

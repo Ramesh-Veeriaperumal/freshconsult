@@ -28,7 +28,7 @@
 //= require lib/nestedtree.js
 //= require helpdesk/multifile.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
-//= require frameworks/socket.io-1.0.6.js
+//= require frameworks/socket.io-1.2.1.js
 //= require frameworks/faye.js
 //= require helpdesk/freshdesk_node.js
 //= require ticket_list.js

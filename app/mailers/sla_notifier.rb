@@ -1,5 +1,7 @@
 class SlaNotifier < ActionMailer::Base
 	
+	layout "email_font"
+
 	def escalation(ticket, agent, params)
 		headers = {
 			:subject                   => params[:subject],
@@ -17,6 +19,7 @@ class SlaNotifier < ActionMailer::Base
 			end
 			part.html do
 				@body = params[:email_body]
+        @account = ticket.account
 				render "escalation.text.html" 
 			end
 		end.deliver

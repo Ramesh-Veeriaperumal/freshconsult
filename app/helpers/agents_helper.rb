@@ -7,6 +7,8 @@ module AgentsHelper
                             :"data-loading-classes" => 'sloading loading-small'
                           }
 
+  AGENT_SORT_ORDER_COLUMN = [:name, :last_login_at, :created_at]
+  AGENT_SORT_ORDER_TYPE = [:ASC, :DESC]
   
   def check_agents_limit
     content_tag(:div, fetch_upgrade_error_msg,:class => "errorExplanation") if current_account.reached_agent_limit?
@@ -86,10 +88,10 @@ module AgentsHelper
   end
   
   def agent_list_sort
-    sort_list = [:name, :last_login_at, :created_at].map{ |sort| 
+    sort_list = AGENT_SORT_ORDER_COLUMN.map{ |sort| 
       [t("agent_list.sort.#{sort}"), "?order=#{sort}", (@current_agent_order == sort)]
     }
-    order_list = [:ASC, :DESC].map{ |o_type| 
+    order_list = AGENT_SORT_ORDER_TYPE.map{ |o_type| 
       [t("agent_list.sort.#{o_type.to_s.downcase}"), "?order_type=#{o_type}", (@current_agent_order_type == o_type)]
     }
 

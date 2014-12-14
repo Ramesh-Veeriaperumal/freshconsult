@@ -603,13 +603,6 @@ class User < ActiveRecord::Base
   def custom_field_aliases
     @custom_field_aliases ||= (helpdesk_agent? || account.blank?) ? [] : custom_form.custom_contact_fields.map(&:name)
   end
-  
-  #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F
-  def respond_to? attribute, include_private_methods = false # avoiding pointless flexifield loading
-    # return false if (attribute.to_s.include?("callbacks") and attribute.to_s.include?("_initialize_"))
-    return false if [:to_ary, :after_initialize_without_slave].include? attribute
-    super(attribute, include_private_methods)
-  end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?

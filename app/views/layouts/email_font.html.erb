@@ -1,3 +1,5 @@
-<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
+<% font = @account.present? ? @account.account_additional_settings.email_template_settings : 
+											AccountConstants::DEFAULTS_FONT_SETTINGS[:email_template] %>
+<div style="font-family:<%= font["font-family"] %>; font-size:<%=font["font-size"]%>;">
 	<%= yield %>
 </div>

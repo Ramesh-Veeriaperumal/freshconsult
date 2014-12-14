@@ -95,7 +95,7 @@ class Freshfone::Account < ActiveRecord::Base
 	end
 
 	def host
-		"#{account.main_url_protocol}://#{account.full_domain}"
+		"#{account.url_protocol}://#{account.full_domain}"
 	end
 
 	def twilio_subaccount

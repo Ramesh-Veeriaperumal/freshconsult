@@ -1,5 +1,5 @@
 module Freshfone::CallbackUrls
-  include FreshfoneHelper
+  include Freshfone::FreshfoneHelper
 
   def ops_call_notify_url
     "#{host}/freshfone/ops_notification/voice_notification"

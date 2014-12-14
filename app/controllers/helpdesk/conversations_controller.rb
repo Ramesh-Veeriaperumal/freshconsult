@@ -91,7 +91,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def facebook
     if @item.save_note
-      send_facebook_reply
+      send_facebook_reply(params[:parent_post])
       process_and_redirect
     else
       # Flash here
@@ -196,6 +196,7 @@ class Helpdesk::ConversationsController < ApplicationController
       respond_to do |format|
         format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type} }
         format.html { redirect_to @parent }
+        format.nmobile { render :json => { :server_response => false } }
       end
     end
     

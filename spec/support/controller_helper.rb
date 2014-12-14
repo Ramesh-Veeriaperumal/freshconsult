@@ -15,7 +15,7 @@ module ControllerHelper
   def get_admin()
     agents = @account.account_managers
     agents.each do |agent|
-      return agent if agent.can_view_all_tickets?
+      return agent if agent.can_view_all_tickets? and agent.privilege?(:manage_canned_responses)
     end
     add_test_agent(@account)
   end

@@ -2,8 +2,8 @@
 	<% content_for :sidebar do %>
     <div class="sidepanel">
 	  	<% if privilege?(:manage_contacts) %>
-    		<h3 class="lead"><%=t('contacts.quick_contact')%></h3>	
-    		<%= form_tag contacts_path, :method => :post, :rel => "validate" do %>
+    		<h3 class="lead"><%=t('quick_create')%></h3>	
+    		<% form_tag contacts_path, :method => :post, :rel => "validate" do %>
     			<%= error_messages_for :user %> 	
     			<div class="quick-contact">
     				<div class="control-group">

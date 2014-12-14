@@ -106,7 +106,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
-    - public/javascripts/frameworks/socket.io-1.0.6.js
+    - public/javascripts/frameworks/socket.io-1.2.1.js
     - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js
@@ -178,6 +178,7 @@ javascripts:
     - public/javascripts/app/metrics.js
     - public/javascripts/app/dashboard.js
     - public/javascripts/app/product_notifications.js
+    - public/javascripts/app/admin_font_settings.js
     - public/javascripts/app/merge.js
 
   freshchat:
@@ -312,6 +313,8 @@ javascripts:
   freshfone_welcome_page:
     - public/javascripts/freshfone/freshfone_admin_welcome_page.js
 
+  freshfonereports:
+    - public/javascripts/app/freshfonereports.js
   soundmanager:
     - public/javascripts/sound/soundmanager2-jsmin.js
 

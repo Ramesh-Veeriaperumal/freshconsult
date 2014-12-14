@@ -17,7 +17,7 @@ describe AgentsController do
                                   :language => "en", :delta => 1,:role_ids => ["#{@agent_role.id}"],
                                   :privileges => @agent_role.privileges,:active => 1)
     @user.agent = agent
-    @user.save(validate: false)
+    @user.save
   end
 
   before(:each) do

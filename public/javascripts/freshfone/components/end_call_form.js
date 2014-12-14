@@ -21,7 +21,6 @@ var FreshfoneEndCall;
 		this.$requesterTicketSearch = this.$endCall.find('.end_call_ticket_search');
 		this.$callNote = $('#call_notes');
 		
-		this.isNotePrivate = false;
 		this.freshdialogOption = {
 			backdrop: "static",
 			height: "480px",
@@ -212,7 +211,6 @@ var FreshfoneEndCall;
 					'ticket': this.ticketId,
 					'call_log': this.ticket_notes,
 					'CallSid': this.callSid,
-					'private': this.isNotePrivate,
 					'call_history': !this.inCall
 				}
 			});

@@ -5,6 +5,8 @@ if Rails.env.test?
       time_zone "Chennai"
       active 1
       user_role 1
+      phone Faker::PhoneNumber.phone_number
+      mobile Faker::PhoneNumber.phone_number
       crypted_password "5ceb256c792bcf9dab05c8a00775fc13b42a6abd516f130acd76ab81af046d49a1fc5062bec4f27b77580348de6d8c510c7ff6b29f720694ff39a5bfd69c604d"
       sequence(:single_access_token) { |n| "#{Faker::Lorem.characters(19)}#{n}" }
       password_salt "Hd8iUst0Jr5TWnulZhgf"

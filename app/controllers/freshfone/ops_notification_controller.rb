@@ -1,5 +1,5 @@
 class Freshfone::OpsNotificationController < FreshfoneBaseController
-  include FreshfoneHelper
+  include Freshfone::FreshfoneHelper
     
   skip_before_filter :check_freshfone_feature
 

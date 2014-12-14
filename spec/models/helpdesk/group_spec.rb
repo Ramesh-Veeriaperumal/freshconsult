@@ -67,7 +67,7 @@ describe Group do
 		@group7 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:default],
 	    								:name =>  "dummy group6"})
 		value = get_others_redis_list(@group7.round_robin_key)
-		value.should be_nil
+		value.should be_empty
 	end
 
 	it "should create a list if group is updated with round_robin" do
@@ -87,7 +87,7 @@ describe Group do
 		@group9.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
 		@group.save
 		value = get_others_redis_list(@group9.round_robin_key)
-		value.should be_nil
+		value.should be_empty
 	end
 
 	it "should delete the round robin list after group deletion" do

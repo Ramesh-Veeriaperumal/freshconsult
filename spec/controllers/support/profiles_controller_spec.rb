@@ -98,7 +98,7 @@ describe Support::ProfilesController do
       Resque.inline = true
       @user.destroy
       custom_field_params.each { |params| 
-        @account.contact_form.contact_fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
+        @account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
       Resque.inline = false
     end
 
@@ -148,7 +148,7 @@ describe Support::ProfilesController do
                               :language => @user.language 
                               }
       user = @account.users.find(@user.id)
-      contact_field = @account.contact_form.contact_fields.find_by_name("cf_testimony")
+      contact_field = @account.contact_form.fields.find_by_name("cf_testimony")
       response.body.should =~ /prohibited this user from being saved/
       response.body.should =~ /#{contact_field.label} cannot be blank/
       user.send("cf_category").should_not eql "third"
@@ -170,7 +170,7 @@ describe Support::ProfilesController do
                               :language => @user.language 
                               }
       user = @account.users.find(@user.id)
-      contact_field = @account.contact_form.contact_fields.find_by_name("cf_show_all_ticket")
+      contact_field = @account.contact_form.fields.find_by_name("cf_show_all_ticket")
       response.body.should =~ /prohibited this user from being saved/
       response.body.should =~ /#{contact_field.label} cannot be blank/
       user.send("cf_category").should_not eql "Second"
@@ -251,7 +251,7 @@ describe Support::ProfilesController do
     it "should not update a contact with invalid value in regex field" do
       text = Faker::Lorem.words(4).join(" ")
       put :update, :id => @user.id,
-                    :user => {:name => "",
+                    :user => {:name => Faker::Name.name,
                               :custom_field => contact_params({:linetext => text, :all_ticket => "true", :testimony => Faker::Lorem.paragraph, 
                                                                :category => "Second", :text_regex_vdt => "Customer happiness"}),
                               :job_title => @user.job_title,

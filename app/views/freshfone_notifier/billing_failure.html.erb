@@ -5,6 +5,8 @@
   <div><br></div>
   And the current call is :: <%= @call.inspect %>
   <div><br></div>
+  And the caller is :: <%= @call.caller.inspect %>
+  <div><br></div>
   The exception is <%= @exception.message %> : 
   <div><br></div>
   <%= @exception.backtrace.first(5).join(":::") %>

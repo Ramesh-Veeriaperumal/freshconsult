@@ -3,6 +3,8 @@ class AccountAdditionalSettings < ActiveRecord::Base
   self.table_name =  "account_additional_settings" 
   self.primary_key = :id
   
+  include AccountAdditionalSettings::AdditionalSettings
+
   belongs_to :account
   serialize :supported_languages
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
