@@ -133,7 +133,7 @@ module CustomFields
           date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
           unless @field_value.empty?
             time_format = Account.current.date_type(:short_day_separated)
-            @field_value = I18n.l Time.parse(@field_value.to_s), :format => time_format
+            @field_value = (Time.parse(@field_value.to_s)).strftime(time_format)
           end 
           date_format
         end
