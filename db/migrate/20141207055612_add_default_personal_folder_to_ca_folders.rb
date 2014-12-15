@@ -2,7 +2,7 @@ class AddDefaultPersonalFolderToCaFolders < ActiveRecord::Migration
   shard :all
 
   def self.up
-    type = Admin::CannedResponses::Folder::FOLDER_TYPE_KEYS_BY_TOKEN[:personal]    
+    type = 100 #Admin::CannedResponses::Folder::FOLDER_TYPE_KEYS_BY_TOKEN[:personal]    
 
     Sharding.run_on_all_shards do
       failed_accounts = []

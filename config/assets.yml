@@ -49,7 +49,9 @@ stylesheets:
   :freshfone_admin  => [ "freshfone/admin"],
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
-  :freshchat_admin  => [ "chat/admin"]
+  :freshchat_admin  => [ "chat/admin"],
+  :remote_configurations  => [ "page/remote-configurations"],
+  :cti => ["cti/cti"]
 } %>
 
 <%  @stylesheets_list = []
@@ -486,6 +488,10 @@ javascripts:
 
   client_logger:
     - public/javascripts/client_logger.js
+
+  remote_configurations:
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
 
 <% 
   # Adding specific javascript assets to the package list

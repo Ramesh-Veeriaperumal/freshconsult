@@ -7,8 +7,8 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
 
   before_filter :set_selected_tab
   before_filter :load_item, :only => [:show, :edit, :update, :sla_policies]
+  before_filter :build_item , :only => [:create]
   before_filter :set_validatable_custom_fields, :only => [:create, :update]
-  skip_before_filter :build_item , :only => [:create]
   
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
@@ -50,7 +50,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
   # POST /customers.xml
   def create
     respond_to do |format|
-      if build_and_save
+      if @customer.save
         format.xml  { render  :xml => @customer.to_xml(:root => 'customer'), 
                               :status => :created, :location => @customer }
         format.json  { render :json => @customer.to_json(:root => 'customer'), :status => :created }
@@ -123,10 +123,9 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
         @selected_tab = :customers
     end
 
-    def build_and_save
+    def build_item
       @customer = scoper.new
       @customer.attributes = params[:customer]
-      @customer.save
     end
 
     def get_domain(domains) # Possible dead code
@@ -138,7 +137,6 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
     end
 
     def set_validatable_custom_fields
-      @customer ||= scoper.new
       @customer.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
                                           :error_label => :label }
     end

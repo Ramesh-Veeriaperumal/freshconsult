@@ -1,0 +1,18 @@
+<%= render :partial => 'layouts/shared/cti/toolbar' %>
+<div id="czentrixIframeDiv"></div>
+	<script>
+		var zentrixBaseUrl = location.protocol + "//";
+      function initialise(agent_id) {
+	        zentrixBaseUrl = zentrixBaseUrl + cti_user.host_ip + '/';
+	        crmOrigin = window.location.href;
+	        iframeDiv = document.getElementById("czentrixIframeDiv");
+	       // iframeUrl = zentrixBaseUrl + "czhandler/cti_handler.php?e="+agent_id;
+	      	iframeUrl = zentrixBaseUrl + "bar/cti_handler.php?e="+agent_id;
+	        iframeHtml = '<iframe height="350px" width="250px" id="czentrixIframe" src="' + iframeUrl + '"></iframe>';
+	        iframeDiv.innerHTML = iframeHtml;
+        }
+		jQuery(document).ready(function() {
+		 czentrix_widget = new CZentrixWidget();
+		 czentrix_widget.loadAgentIFrame(initialise,cti_user.email);
+	});
+	</script>

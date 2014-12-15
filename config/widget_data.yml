@@ -132,7 +132,7 @@
             </div>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/mailchimp.js");
-            mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}"  } ;
+            mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}" , fname: "{{requester.firstname}}" , lname: "{{requester.lastname}}"  } ;
            </script>
   name: mailchimp_widget
   id: 11

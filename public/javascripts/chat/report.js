@@ -308,7 +308,7 @@ var chatReport = function(){
 
 		var list = {};
 		$.map(data, function(value, key) {
-			if(key != ""){
+			if(key != "null"){
 				var res = handleTime(value);
 				list[key] = {answered: value.length, count: res['count'], handleTime: res['time']};
 			}

@@ -23,6 +23,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
+  map.resources :health_check
+
   map.resources :customers ,:member => {:quick => :post, :sla_policies => :get } do |customer|
     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
@@ -122,6 +124,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
+    integration.resources :remote_configurations
     integration.resources :applications, :member=>{:custom_widget_preview => :post}
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
@@ -133,6 +136,9 @@ ActionController::Routing::Routes.draw do |map|
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
     integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
+    integration.namespace :cti do |c|
+      c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post}
+    end
   end
 
   map.namespace :admin do |admin|
@@ -245,6 +251,10 @@ ActionController::Routing::Routes.draw do |map|
     report.namespace :freshfone do |freshfone|
       freshfone.resources :summary_reports, :controller => 'summary_reports',
         :collection => {:generate => :post, :export_csv => :post }
+    end
+    report.namespace :freshchat do |freshchat|
+      freshchat.resources :summary_reports, :controller => 'summary_reports', 
+      :collection => {:generate => :post } 
     end
     report.namespace :freshchat do |freshchat|
       freshchat.resources :summary_reports, :controller => 'summary_reports', 

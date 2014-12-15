@@ -11,7 +11,8 @@ module HtmlSanitizer
         :only => (options[:only]||[]),
         :html_sanitize => (options[:html_sanitize] || []),
         :full_sanitizer => (options[:full_sanitizer] || []),
-        :plain_sanitizer => (options[:plain_sanitizer] || [])
+        :plain_sanitizer => (options[:plain_sanitizer] || []),
+        :article_sanitizer => (options[:article_sanitizer] || [])
       }
       
       begin
@@ -31,6 +32,8 @@ module HtmlSanitizer
         generate_setters_html_sanitizer(column)
       elsif xss_terminate_options[:plain_sanitizer].include?(column)
         generate_setters_plain_sanitizer(column)
+      elsif xss_terminate_options[:article_sanitizer].include?(column)
+        generate_setters_article_sanitizer(column)
       else
         generate_setters_plain(column)
       end
@@ -61,6 +64,14 @@ module HtmlSanitizer
       class_eval %Q(
         def #{attr_name.to_s}=(value)
           write_attribute("#{attr_name.to_sym}",RailsSanitizer.full_sanitizer.sanitize(value))
+        end
+      )
+    end
+
+    def generate_setters_article_sanitizer(attr_name)
+      class_eval %Q(
+        def #{attr_name.to_s}=(value)
+          write_attribute("#{attr_name.to_sym}",Helpdesk::HTMLSanitizer.sanitize_article(value))
         end
       )
     end

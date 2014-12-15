@@ -9,6 +9,19 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
+    if @installing_application.cti?
+      cti_app = current_account.installed_applications.detect {|app| app.application.cti?}
+      unless cti_app.blank?
+        flash[:notice] = t(:'flash.application.install.cti_error')
+        redirect_to :controller=> 'applications', :action => 'index'
+        return
+      end
+      if current_account.freshfone_active?
+        flash[:notice] = t(:'flash.application.install.freshfone_enabled')
+        redirect_to :controller=> 'applications', :action => 'index'
+        return
+      end
+    end
     begin
       successful = @installed_application.save!
       if successful

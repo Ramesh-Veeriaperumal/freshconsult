@@ -645,7 +645,7 @@ module ApplicationHelper
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter]).html_safe  # replace the liquid objs with real values.
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil,disabled=false)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -662,7 +662,7 @@ module ApplicationHelper
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
+        element = label + text_field(object_name, field_name, :disabled => disabled, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
@@ -675,7 +675,7 @@ module ApplicationHelper
         field[:choices].each do |choice|
           choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
-        element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
+        element = label + select(object_name, field_name, choices, {:class => element_class, :selected => field_value},{:disabled => disabled})
       when "custom" then
         rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
