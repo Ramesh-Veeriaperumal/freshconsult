@@ -197,11 +197,11 @@ class Freshfone::CallInitiator
 			"#{status_url}?transfer_call=true&target_agent=#{params[:id] || params[:source_agent]}&source_agent=#{params[:source_agent]}&call_back=#{call_back}&outgoing=#{params[:outgoing]}"
 		end
 
-		def call_transfer_success_url (agent, current_user, call_back)
-			"#{host}/freshfone/call/call_transfer_success?agent=#{agent.user_id}&transfer_call=true&source_agent=#{current_user}&call_back=#{call_back}"
+		def call_transfer_success_url (agent, current_user, call_back , group_transfer = false)
+			"#{host}/freshfone/call/call_transfer_success?agent=#{agent.user_id}&transfer_call=true&source_agent=#{current_user}&call_back=#{call_back}&group_transfer=#{group_transfer}"
 		end
 
-		def forward_call_url (agent, current_user, call_back)
+		def forward_call_url (agent, current_user, call_back, group_transfer = false)
 			"#{call_transfer_success_url(agent, current_user, call_back)}&forward=true"
 		end
 
@@ -274,8 +274,8 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 				r.Dial :callerId => params[:outgoing] ? params[:To] : params[:From],
 						 :record => current_number.record?, :action => transfer_call_status_url(call_back),
  						 :timeLimit => time_limit do |d|
-								agents.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent, params[:source_agent], call_back),
-							 		current_number, call_transfer_success_url(agent, params[:source_agent], call_back)) 
+								agents.each { |agent| agent.call_agent_twiml(d, forward_call_url(agent, params[:source_agent], call_back , true),
+							 		current_number, call_transfer_success_url(agent, params[:source_agent], call_back, true)) 
 								}
 						 end
 			end.text
