@@ -60,6 +60,17 @@ en:
       x_seconds:
         one: "1 second"
         other: "%{count} seconds"
+  validation:
+    required: "This field is required."
+    remote: "Please fix this field."
+    email: "Please enter a valid email address."
+    url: "Please enter a valid URL."
+    date: "Please enter a valid date."
+    dateISO: "Please enter a valid date ( ISO )."
+    number: "Please enter a valid number."
+    digits: "Please enter only digits."
+    creditcard: "Please enter a valid credit card number."
+    equalTo: "Please enter the same value again."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
   or: or
