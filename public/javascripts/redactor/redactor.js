@@ -2164,7 +2164,11 @@ Redactor.prototype = {
             {
                 if (htmls[i].search('{replace') == -1)
                 {
-                    html += '<p>' +  htmls[i].replace(/^\n+|\n+$/g, "") + "</p>";
+                	if($.browser.mozilla == true) {
+                		html += htmls[i].replace(/^\n+|\n+$/g, "");
+                	} else {
+                		html += '<p>' + htmls[i].replace(/^\n+|\n+$/g, "") + '</p>';
+                	}
                 }
                 else html += htmls[i];
             }
