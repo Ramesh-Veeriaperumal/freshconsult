@@ -27,7 +27,7 @@ class Facebook::Core::Feed
 
   def entry_change=(change)
     @entry_change = change
-    meta_method_and_class if is_feed?
+    meta_method_and_class if feed?
   end
 
   def page_id
@@ -40,6 +40,10 @@ class Facebook::Core::Feed
 
   def comment_id
     return @entry_change["value"]["comment_id"].to_s if @entry_change["value"]["comment_id"]
+  end
+
+  def feed_id
+    post_id || comment_id
   end
 
   def parent_id
@@ -63,11 +67,6 @@ class Facebook::Core::Feed
     @clazz = ITEM_LIST.include?(item_data) ? map_class(item_data) : nil
   end
 
-  def is_feed?
-    return true if @entry_change && @entry_change["field"]=="feed" && \
-      @entry_change["value"]
-  end
-
   private
   
     def map_class(item_data)
@@ -82,7 +81,7 @@ class Facebook::Core::Feed
       @entry = @feed["entry"] if @feed["entry"]
       if @entry
         @entry_changes = @entry["changes"] if @entry["changes"]
-        # meta_method_and_class if is_feed?
+        # meta_method_and_class if feed?
       end
     end
     

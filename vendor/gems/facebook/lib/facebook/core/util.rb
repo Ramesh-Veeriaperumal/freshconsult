@@ -1,7 +1,6 @@
 module Facebook::Core::Util
 
   def truncate_subject(subject, count)
-    #Rails.logger.debug "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
 
@@ -9,7 +8,7 @@ module Facebook::Core::Util
   def facebook_user(profile)
     if(profile.is_a?Hash)
       profile.symbolize_keys!
-      profile_id = profile[:id]
+      profile_id   = profile[:id]
       profile_name = profile[:name]
     else
       profile_id = profile
@@ -21,18 +20,18 @@ module Facebook::Core::Util
       unless(profile.is_a?Hash)
         profile =  @rest.get_object(profile_id)
         profile.symbolize_keys!
-        profile_id = profile[:id]
+        profile_id   = profile[:id]
         profile_name = profile[:name]
       end
 
       user = @account.contacts.new
       if user.signup!({
-                        :user => {
-                          :fb_profile_id => profile_id,
-                          :name => profile_name.blank? ? profile_id : profile_name,
-                          :active => true,
-                          :helpdesk_agent => false
-                        }
+          :user => {
+            :fb_profile_id => profile_id,
+            :name => profile_name.blank? ? profile_id : profile_name,
+            :active => true,
+            :helpdesk_agent => false
+          }
         })
       else
         Rails.logger.debug "unable to save the contact:: #{user.errors.inspect}"
@@ -40,13 +39,31 @@ module Facebook::Core::Util
     end
     user
   end
+  
+  def feed_converted?(feed_id)
+    Account.current.facebook_posts.find_by_post_id(feed_id).present?
+  end
+
+  def default_stream
+    @fan_page.default_stream
+  end
 
   def new_data_set(data_set)
-    message_id_arr = data_set[:data].collect{|x| x["id"]}
-    existing_msg_arr = @account.facebook_posts.find(:all, :select =>:post_id, :conditions => {:post_id =>message_id_arr}).collect{|a|a.post_id}
+    message_id_arr   = data_set[:data].collect{|x| x["id"]}
+    existing_msg_arr = Account.current.facebook_posts.find(:all, :select =>:post_id, :conditions => {:post_id =>message_id_arr}).collect{|a|a.post_id}
     return data_set[:data].reject{|d| existing_msg_arr.include? d["id"]}
   end
 
+  def convert_args(koala_feed, force = false)    
+    convert = koala_feed.visitor_post? ? @fan_page.import_visitor_posts :  @fan_page.import_company_posts
+    convert_feed = (force or convert)
+    convert_args = {
+      :group_id   => @fan_page.group_id,
+      :product_id => @fan_page.product_id
+    }
+    [convert_feed, convert_args]
+   end
+  
   #push the feed into dynamo db to process it later when the app is reautharized
   def self.add_to_dynamo_db(hash_key, range_key, attribute)
     #id is page id
@@ -90,9 +107,8 @@ module Facebook::Core::Util
   end
 
   #Parse the content from facebook
-  def get_html_content_from_feed(feed)
-    #Rails.logger.debug "get_html_content"
-    html_content =  CGI.escapeHTML(feed[:message])
+  def html_content_from_feed(feed)
+    html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
 
     if "video".eql?(feed[:type])
       desc = feed[:description] || ""
@@ -106,11 +122,30 @@ module Facebook::Core::Util
 
     return html_content
   end
-
-  def get_html_content_from_message(message)
-    #Rails.logger.debug "get_html_content"
+  
+  def html_content_from_comment(feed)
+    html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
+    
+    if feed[:attachment]        
+      attachment = feed[:attachment].symbolize_keys!     
+      if "share".eql?(attachment[:type])
+        desc = feed[:description] || ""
+        html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{attachment[:target]["url"]}\" target=\"_blank\"><img src=\"#{attachment[:media]["image"]["src"]}\"></a>
+          <div><p><a href=\"#{attachment[:url]}\" target=\"_blank\"> #{attachment[:description]}</a></p>
+          <p><strong>#{html_content}</strong></p>
+          <p>#{desc}</p></div></div>"
+      elsif "photo".eql?(attachment[:type])
+        html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{attachment[:target]["url"]}\" target=\"_blank\"><img src=\"#{attachment[:media]["image"]["src"]}\"></a></p></div>"
+      end      
+    end
+    
+    return html_content
+  end
+  
+  def html_content_from_message(message)
     message = HashWithIndifferentAccess.new(message)
-    html_content =  CGI.escapeHTML(message[:message])
+    html_content =  CGI.escapeHTML(message[:message]) if message[:message]
+
     if message[:attachments]
       if message[:attachments][:data]
         html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
@@ -123,8 +158,7 @@ module Facebook::Core::Util
         html_content = "#{html_content} </p></div>"
       end
     end
-
     return html_content
   end
-
+  
 end
