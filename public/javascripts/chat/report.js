@@ -182,11 +182,28 @@ var chatReport = function(){
 		return '<small><span class="'+CLASSES[icon_class]+'"></span>'+Math.abs(percentage_val)+'%</small>';
 	}
 
-	var TimeFormat = function(duration){
-		var minutes = Math.floor(duration / 60000);
-  		var seconds = ((duration % 60000) / 1000).toFixed(0);
-		return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+var TimeFormat = function(milliseconds){
+	//format will be hrs:mins:sec
+	var duration_formatted = '00:00:00';
+	var duration = moment.duration(milliseconds, 'milliseconds');
+	var mins = Math.floor(duration.asMinutes());
+	var sec = Math.floor(duration.asSeconds());
+	if(mins > 60){
+		var hours = Math.floor(duration.asHours());
+		duration_formatted = (hours >= 10 ? hours : '0'+hours) + ':';
+		mins -= hours*60;
+		mins >= 1 ? mins : 0;
+		sec -= (((hours)*60)+mins)*60;
+		sec < 0 ? sec : 0;
+		duration_formatted = duration_formatted + (mins >= 10 ? mins : '0'+mins) + ':' + (sec >= 10 ? sec : '0'+sec);
+	}else{
+		duration_formatted = '00:'+(mins >= 10 ? mins : '0'+mins) + ':';
+		sec = sec - (mins*60);
+		sec >= 1 ? sec : 0;
+		duration_formatted = duration_formatted + (sec >= 10 ? sec : '0'+sec);
 	}
+	return duration_formatted ;
+}
 
 	var showMetrics = function(data, chatType){
 		var current = data.current;
@@ -295,7 +312,7 @@ var chatReport = function(){
 	}
 
 	var getAgentData = function(data){
-		function handleTime(agent) {
+		function handleTime(agent, key) {
 			var count = 0, time = 0;
 			$.map(agent, function(chat) {
 				if(chat.last_msg_at){
@@ -309,7 +326,7 @@ var chatReport = function(){
 		var list = {};
 		$.map(data, function(value, key) {
 			if(key != "null"){
-				var res = handleTime(value);
+				var res = handleTime(value, key);
 				list[key] = {answered: value.length, count: res['count'], handleTime: res['time']};
 			}
 		});
@@ -320,7 +337,6 @@ var chatReport = function(){
 	var agentSummary = function(resp){
 		var data = groupBy(resp.current, 'agent_id');
 		var agent_list = getAgentData(data);
-
 		$("#agent_summary tr:gt(0)").remove();
 
 		var list = [], len = 0;
@@ -356,7 +372,7 @@ var chatReport = function(){
 
 		constructFilter(dateRange);
 
-		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType};
+		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType, attributes : 1};
 
 		if(widget_id != "all"){
 			data.widget_id = widget_id;
@@ -372,7 +388,7 @@ var chatReport = function(){
 			success: function(resp){
 				showMetrics(resp, chatType);
 				agentSummary(resp);
-			}
+				}
 		});
 	}
 
