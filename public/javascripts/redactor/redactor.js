@@ -2327,6 +2327,12 @@ Redactor.prototype = {
 				keep_selection.removeAllRanges();
 				keep_range.selectNodeContents(this.$editor.get(0));
 				keep_selection.addRange(keep_range);
+
+				if ($.browser.mozilla)
+				{
+					this.$editor.focus();
+				}
+
 				this.execCommand('inserthtml',this.$el.val());
 			}
 		} catch(e){ }
