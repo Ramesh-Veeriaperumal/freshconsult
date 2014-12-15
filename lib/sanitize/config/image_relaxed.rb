@@ -31,7 +31,7 @@ class Sanitize
       ],
       :remove_contents => [ 'style','title','script'],
       :attributes => {
-        :all         => ['dir', 'lang', 'title', 'style', 'id', 'align'],
+        :all         => ['dir', 'lang', 'title', 'style', 'id', 'align', 'class', 'rel'],
         'a'          => ['href','target'],
         'blockquote' => ['cite',"class"],
         'col'        => ['span', 'width'],
@@ -41,7 +41,7 @@ class Sanitize
         'ins'        => ['cite', 'datetime'],
         'ol'         => ['start', 'reversed', 'type'],
         'q'          => ['cite'],
-        'table'      => ['summary', 'width'],
+        'table'      => ['summary', 'width', 'border', 'cellspacing', 'cellpadding'],
         'td'         => ['abbr', 'axis', 'colspan', 'rowspan', 'width'],
         'th'         => ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
         'time'       => ['datetime', 'pubdate'],

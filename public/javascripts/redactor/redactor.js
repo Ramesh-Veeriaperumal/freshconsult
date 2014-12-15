@@ -3106,7 +3106,7 @@ Redactor.prototype = {
 		var table_box = $('<div></div>');
 		
 		var tableid = Math.floor(Math.random() * 99999);
-		var table = $('<table id="table' + tableid + '"><tbody></tbody></table>');
+		var table = $('<table id="table' + tableid + '" border="1" cellspacing="0" cellpadding="0"><tbody></tbody></table>');
 		
 		for (var i = 0; i < rows; i++)
 		{
