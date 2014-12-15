@@ -591,6 +591,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
   map.connect "/support/theme_rtl.:format", :controller => 'theme/support_rtl', :action => :index
   map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
+  
+  map.connect "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index
+  map.connect "/facebook/theme_rtl.:format", :controller => 'theme/facebook_rtl', :action => :index
 
   # Support Portal routes
   map.namespace :support do |support|

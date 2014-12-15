@@ -60,6 +60,13 @@ module ApplicationHelper
     query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
     "/support/#{stylesheet_name}?v=#{query_string}"
   end
+  
+  def facebook_theme_url
+    stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
+    query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
+    "/facebook/#{stylesheet_name}?v=#{query_string}"
+  end
+  
 
   def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
     include_cloudfront_js locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
