@@ -223,6 +223,10 @@ class Topic < ActiveRecord::Base
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
   }
 
+  TOPIC_ATTR_TO_REMOVE = ["int_tc01", "int_tc02", "int_tc03", "int_tc04", "int_tc05", 
+    "long_tc01", "long_tc02", "datetime_tc01", "datetime_tc02", "boolean_tc01", "boolean_tc02", "string_tc01", 
+    "string_tc02", "text_tc01", "text_tc02"]
+
   def monitorship_emails
     user_emails = Array.new
     for monitorship in self.monitorships.active_monitors
@@ -334,7 +338,7 @@ class Topic < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => ([:account_id,:import_id]+TOPIC_ATTR_TO_REMOVE))
   end
 
   def to_indexed_json
@@ -351,6 +355,11 @@ class Topic < ActiveRecord::Base
                       }
        )
   end
+
+  def to_json(options = {})
+    super(:except => TOPIC_ATTR_TO_REMOVE)
+  end
+
 
   # Added for portal customisation drop
   def self.filter(_per_page = self.per_page, _page = 1)
