@@ -1,5 +1,7 @@
 class SlaNotifier < ActionMailer::Base
 	
+	layout "email_font"
+
 	def escalation(ticket, agent, params)
 		subject       params[:subject]
 		# body          params[:email_body].html_safe
@@ -13,7 +15,7 @@ class SlaNotifier < ActionMailer::Base
         		plain.body  render_message("escalation.text.plain.erb", :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]))
       		end
       		alt.part "text/html" do |html|
-	        	html.body   render_message("escalation.text.html.erb", :body => params[:email_body])
+	        	html.body   render_message("escalation.text.html.erb", :body => params[:email_body], :account => ticket.account)
 	      	end
 		end
 	end

@@ -33,10 +33,6 @@
     <% unless (ticket.nil?) %> 
       hashed_params["agent_collision_view"] = "<%= agent_collision_ticket_view_channel(ticket.display_id) %>"
       hashed_params["user_name"] = "<%= escape_javascript(current_user.name) %>";
-      window.agentcollision_reply_params = {
-        "reply_channel" : "<%= agent_collision_ticket_reply_channel(ticket.display_id) %>",
-        "user_name" : "<%= escape_javascript(current_user.name) %>"
-      };
       window.agentcollision(server,hashed_params,"<%= escape_javascript(current_user.name) %>","<%=current_user.id%>",draft);
     <% end %>
   });

@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   named_scope :visible, :conditions => { :deleted => false }
   named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-
+  named_scope :with_contact_number, lambda { |number| { :conditions => ["mobile=? or phone=?",number,number]}}
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  
@@ -592,12 +592,6 @@ class User < ActiveRecord::Base
 
   def custom_field_aliases
     @custom_field_aliases ||= helpdesk_agent? ? [] : custom_form.custom_contact_fields.map(&:name)
-  end
-  
-  #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F
-  def respond_to? attribute, include_private_methods = false # avoiding pointless flexifield loading
-    return false if [:to_ary, :after_initialize_without_slave].include? attribute
-    super(attribute, include_private_methods)
   end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }

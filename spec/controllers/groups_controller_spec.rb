@@ -113,9 +113,6 @@ describe GroupsController do
 		@test_group.name.should eql("Updated: Spec Testing Grp #{@now}")
 		@test_group.escalate_to.should eql(@agent.id)
 		@test_group.ticket_assign_type.should eql 0
-		agent_list = [ @agent.id, @user_1.id ]
-		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
 		value = get_others_redis_list(@test_group.round_robin_key)
 		value.should be_empty
 	end
@@ -134,7 +131,7 @@ describe GroupsController do
 		@test_group.reload
 		@test_group.name.should eql("Updated: Spec Testing Grp #{@now}")
 		@test_group.escalate_to.should eql(@agent.id)
-		@test_group.ticket_assign_type.should eql 0
+		@test_group.ticket_assign_type.should eql 1
 		value = get_others_redis_list(@test_group.round_robin_key)
 		value.include?(@user_1.id).should be_true
 	end

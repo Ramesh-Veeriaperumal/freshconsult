@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -10,7 +10,8 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20141206104028) do
+ActiveRecord::Schema.define(:version => 20141027114632) do
+
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -230,9 +231,11 @@ ActiveRecord::Schema.define(:version => 20141206104028) do
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "folder_type"
+    t.boolean  "deleted",      :default => false
   end
 
-  add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
+  add_index "ca_folders", ["account_id","folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
 
   create_table "chat_settings", :force => true do |t|
     t.integer  "account_id",      :limit => 8
@@ -1200,14 +1203,15 @@ ActiveRecord::Schema.define(:version => 20141206104028) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "direct_dial_number"
+    t.integer  "group_id",            :limit => 8
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
-  add_index "freshfone_calls", ["account_id", "customer_number"], :name => "index_freshfone_calls_on_account_id_and_customer_number", :length => {"account_id"=>nil, "customer_number"=>16}
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "freshfone_calls", ["account_id", "notable_type", "notable_id"], :name => "index_ff_calls_on_account_id_notable_type_id"
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
@@ -1267,8 +1271,8 @@ ActiveRecord::Schema.define(:version => 20141206104028) do
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
     t.integer  "rr_timeout",                                                            :default => 10
-    t.boolean  "recording_visibility",                                                    :default => true
     t.integer  "ringing_time",                                                            :default => 30
+    t.boolean  "recording_visibility",                                                    :default => true
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1320,7 +1324,7 @@ ActiveRecord::Schema.define(:version => 20141206104028) do
     t.boolean  "available_on_phone",               :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-        t.datetime "mobile_token_refreshed_at"
+    t.datetime "mobile_token_refreshed_at"
     t.datetime "last_call_at"
   end
 

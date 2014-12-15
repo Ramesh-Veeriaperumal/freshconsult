@@ -23,6 +23,7 @@ window.App = window.App || {};
 			switch (App.namespace) {
 
 			case 'companies/show':
+			case 'companies/update_notes':
 				this.current_module = 'Company_show';
 				break;
 			}

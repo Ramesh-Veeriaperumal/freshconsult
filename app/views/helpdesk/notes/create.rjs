@@ -9,6 +9,8 @@ else
 	@notes = @parent.conversation_since(params[:since_id])
 	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
 	page << "trigger_event('note_created', #{to_event_data(@item)} );"
+    
+  page << "jQuery('#parent_post_id').val('')" unless @parent.fb_post.blank?
 end
 
 # Replacing the new quoted text back into the reply quoted textarea

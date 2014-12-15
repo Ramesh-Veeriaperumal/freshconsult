@@ -7,7 +7,7 @@ describe Support::SignupsController do
 
   before(:all) do
     @account.features.send(:signup_link).create
-    @account.contact_form.contact_fields.find_by_field_type("default_email").update_attributes(:editable_in_signup => true)
+    @account.contact_form.fields.find_by_name("email").update_attributes(:editable_in_signup => true)
     @notification = @account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
     @notification.update_attributes(:requester_notification => true)
   end
@@ -30,26 +30,26 @@ describe Support::SignupsController do
 
     it "should be successfully create new user" do
       test_email = Faker::Internet.email
-      post 'create', :user => { :email => test_email }
+      post 'create', :user => { :name => Faker::Name.name, :email => test_email }
       @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
-      response.session[:flash][:notice].should eql "Successfully registered activation link has been sent to #{test_email}"
+      response.session[:flash][:notice].should eql "Activation link has been sent to #{test_email}"
     end
 
     it "should be successfully create new user without activation email" do
       @notification.update_attributes(:requester_notification => false)
       test_email = Faker::Internet.email
-      post 'create', :user => { :email => test_email }
+      post 'create', :user => { :name => Faker::Name.name, :email => test_email }
       response.session[:flash][:notice].should eql "Successfully registered"
       @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     end
 
     it "should not create a new user without a email" do
-      post :create, :user => { :email => "" }
+      post :create, :user => { :name => Faker::Name.name, :email => "" }
       response.should render_template 'support/signups/new.portal'
     end
 
     it "should not create a new user with an invalid email" do
-      post :create, :user => { :email => Faker::Lorem.sentence }
+      post :create, :user => { :name => Faker::Name.name, :email => Faker::Lorem.sentence }
       response.should render_template 'support/signups/new.portal'
     end
   end
@@ -67,12 +67,12 @@ describe Support::SignupsController do
     after(:all) do
       Resque.inline = true
       custom_field_params.each { |params| 
-        @account.contact_form.contact_fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
+        @account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
       Resque.inline = false
     end
 
     it "should render new signup with custom fields" do
-      @account.contact_form.contact_fields.find_by_field_type("default_job_title").update_attributes(:editable_in_signup => true)
+      @account.contact_form.fields.find_by_name("job_title").update_attributes(:editable_in_signup => true)
       get :new
       response.should render_template 'support/signups/new.portal'
       response.should be_success
@@ -84,7 +84,8 @@ describe Support::SignupsController do
       test_email = Faker::Internet.email
       text = Faker::Lorem.words(4).join(" ")
       para = Faker::Lorem.paragraph
-      post :create, :user => { :email => test_email,
+      post :create, :user => { :name => Faker::Name.name,
+                               :email => test_email,
                                :custom_field => {:cf_linetext => text, :cf_testimony => para}
                              }
       new_user = @account.user_emails.user_for_email(test_email)
@@ -122,7 +123,7 @@ describe Support::SignupsController do
 
     it "should not create a user if mandatory fields has null values" do
       test_email = Faker::Internet.email
-      post :create, :user => { :email => test_email,
+      post :create, :user => { :name => Faker::Name.name, :email => test_email,
                              :custom_field => {:cf_linetext => Faker::Lorem.words(4).join(" "), :cf_testimony => ""}
                            }
       response.body.should =~ /prohibited this user from being saved/
@@ -137,7 +138,7 @@ describe Support::SignupsController do
     it "should not create a new contact with invalid value in regex field" do
       test_email = Faker::Internet.email
       text = Faker::Lorem.words(4).join(" ")
-      post :create, :user => { :email => test_email,
+      post :create, :user => { :name => Faker::Name.name, :email => test_email,
                                :custom_field => {:cf_linetext => text, :cf_testimony => Faker::Lorem.paragraph, 
                                                  :cf_linetext_with_regex_validation => "Freshkit" }
                              }
@@ -149,7 +150,7 @@ describe Support::SignupsController do
     it "should create a new contact" do # single line text with regex validation.
       test_email = Faker::Internet.email
       text = Faker::Lorem.words(4).join(" ")
-      post :create, :user => { :email => test_email,
+      post :create, :user => { :name => Faker::Name.name, :email => test_email,
                                :custom_field => {:cf_linetext => text, :cf_testimony => Faker::Lorem.paragraph, 
                                                  :cf_linetext_with_regex_validation => "Freshservice product" }
                              }

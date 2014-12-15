@@ -1,5 +1,7 @@
 class AccountAdditionalSettings < ActiveRecord::Base
 
+  include AccountAdditionalSettings::AdditionalSettings
+
   set_table_name "account_additional_settings" 
   belongs_to :account
   serialize :supported_languages

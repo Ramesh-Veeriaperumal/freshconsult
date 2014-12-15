@@ -84,7 +84,7 @@ def save_ticket ticket_xml
 
     ticket_state = {:assigned_at => ticket_prop.assigned_at , :created_at =>ticket_prop.created_at.to_datetime(), 
                           :updated_at => ticket_prop.updated_at.to_datetime() ,:first_assigned_at => ticket_prop.first_assigned_at }
-    ticket_state.store(:resolved_at ,ticket_prop.resolved_at.to_datetime() ) if ticket_prop.status.to_i >2
+    ticket_state.store(:resolved_at ,(ticket_prop.resolved_at || ticket_prop.status_upated_at).to_datetime() ) if ticket_prop.status.to_i >2
     ticket_state.store(:closed_at ,ticket_prop.status_upated_at.to_datetime() ) if ticket_prop.status.to_i >3
     ticket_state.store(:opened_at ,ticket_prop.status_upated_at.to_datetime() ) if ticket_prop.status.to_i == 1
     ticket_state.store(:pending_since ,ticket_prop.status_upated_at.to_datetime() ) if ticket_prop.status.to_i == 2

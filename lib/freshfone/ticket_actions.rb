@@ -27,7 +27,7 @@ module Freshfone::TicketActions
 		json_response = {}
 		if build_ticket(params.merge!({ :agent => agent })).save
 			@ticket = current_call.notable
-			build_note(params.merge({ :is_recording_note => 'true' })).save if current_call.freshfone_number.private_recording?
+			build_note(params.merge({ :is_recording_note => 'true' })).save if private_recording?
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.ticket.human_name'),
 					:link => @template.link_to(t(:'freshfone.ticket.view'),
@@ -50,7 +50,7 @@ module Freshfone::TicketActions
 	def voicmail_ticket(args)
 		build_ticket(args).save
 		@ticket = current_call.notable
-		build_note(args.merge({ :is_recording_note => 'true' })).save if current_call.freshfone_number.private_recording?
+		build_note(args.merge({ :is_recording_note => 'true' })).save if private_recording?
 	end
 
 	private
@@ -79,6 +79,10 @@ module Freshfone::TicketActions
 		
 		def call_history?
 			params[:call_history].present? && params[:call_history].to_bool
+		end
+
+		def private_recording?
+			current_call.freshfone_number.private_recording? && current_call.freshfone_number.record?
 		end
 
 end

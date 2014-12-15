@@ -88,3 +88,11 @@
   margin: 0;
   @include text-align(center);
 }
+
+.alert-msg {
+  padding: 8px 14px;
+  margin: 0;
+  .close {
+    display: none;
+  }
+}

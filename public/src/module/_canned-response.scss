@@ -140,6 +140,7 @@
 
 #folder-controls a{
 	@include padding-left(10px);
+	display: inline-block;
 }
 
 #create-folder, #edit-ca-folder, #del{
@@ -177,9 +178,17 @@
 	}
 }
 
+.ca-resp-folder-header {
+	display: inline-block;
+	.dropdown {
+		@include float(left);
+	}
+}
+
 #folders-panel {
 	#folder-controls {
-		display: inline-block;
+		@include float(left);
+		visibility: hidden;
 		@include opacity(0.8);
 	}
 }
@@ -741,5 +750,38 @@ height: auto;
 .canned_create_folder{
 	height: 40px;
 	overflow: hidden;
+}
+
+.ca-response-move-options {
+	.select2-container {
+		min-width: 162px;
+		float: none;
+	}
+	.form-horizontal {
+		.controls {
+			margin-left: 150px;
+		} 
+		.control-label {
+			width: 140px;
+		}
+	}
+}
+
+.personal-separator {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 3px;
+	padding-bottom: 3px;
+}
+
+.folder-dropdown {
+	li:first-child {
+		@extend .personal-separator;
+	}
+}
+
+.folder-select {
+	.select2-result:first-child {
+		@extend .personal-separator;
+	}
 }
 /* end */	

@@ -2,5 +2,7 @@ page << "jQuery('.ffone_available_agents').removeClass('loading-small sloading')
 jQuery('.transfer_call_container').show();
 if(freshfonesocket.agentList) { freshfonesocket.agentList.clear();freshfonesocket.agentList = undefined; }"
 page << "freshfonesocket.onloadUserarray.push.apply(freshfonesocket.onloadUserarray,#{@freshfone_users.to_json});
+Array.prototype.push.apply(freshfonesocket.onloadUserarray,#{@available_groups.to_json});
+Array.prototype.push.apply(freshfonesocket.onloadGrouparray,#{@available_groups.to_json});
  freshfonesocket.removeOfflineAgents(#{@offline_users_id.to_json});
 freshfonesocket.populateAvailableAgents();"

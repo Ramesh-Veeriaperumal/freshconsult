@@ -5,11 +5,13 @@ jQuery(".ca_text").text(jQuery("#folder1").text());
 
 jQuery("#new_resp").bind('click', function(ev){
 	ev.preventDefault();
-	window.location = '/admin/canned_responses/folders/'+folder_id+'/responses/new';
+	window.location = '/helpdesk/canned_responses/folders/'+folder_id+'/responses/new';
 })
 
 jQuery("#responses-select-all").live("change", function(ev){
-	jQuery("#responses").find("input[type=checkbox]").prop("checked", jQuery(this).prop("checked")).trigger('change');
+	jQuery("#responses").find("input[type=checkbox]")
+						.prop("checked", jQuery(this).prop("checked"))
+						.trigger('change');
 	jQuery("#responses").trigger('click');
 });
 
@@ -18,6 +20,15 @@ jQuery("#responses").click(function() {
             if (checkStatus > 0) 
             {
                 jQuery('#move, #admin_canned_response_submit').removeAttr('disabled');
+                jQuery("#move_to_folder").show();
+                if(folder_id == pfolder_id)
+                {
+                	jQuery("#visibility").show();
+                }
+                else
+                {
+                	jQuery("#visibility").hide();
+                }
             } 
             else 
             {
@@ -41,8 +52,10 @@ jQuery("[data-folder]").live('click', function(){
 
 var makeFolderActive = function(folder_id) {
 	url = ca_path+folder_id;
+	jQuery('#folder-controls').removeClass('custom-folder');
+
 	if(!jQuery('[data-folder='+folder_id+']').hasClass('default-folder'))
-		jQuery('#edit-ca-folder, #del').show();
+		jQuery('#folder-controls').addClass('custom-folder');
 	jQuery('#move, #admin_canned_response_submit').attr('disabled', 'disabled');
 	jQuery('#folder_edit_form').attr('action', url);
 	jQuery(".catch").css("font-weight","normal").find('.ticksymbol').remove();
@@ -56,7 +69,17 @@ var makeFolderActive = function(folder_id) {
 }
 
 jQuery(".default-folder").live('click', function(){
-	jQuery('#edit-ca-folder, #del').hide();
+	jQuery('#folder-controls').css('visibility', 'hidden');
 });
+
+jQuery('.ca-resp-folder-header').on('mouseover', function() {
+	if(jQuery('#folder-controls').hasClass('custom-folder')) {
+		jQuery('#folder-controls').css('visibility', 'visible');
+	}
+}).on('mouseout', function() {
+	if(jQuery('#folder-controls').hasClass('custom-folder')) {
+		jQuery('#folder-controls').css('visibility', 'hidden');
+	}
+})
 
 makeFolderActive(folder_id);

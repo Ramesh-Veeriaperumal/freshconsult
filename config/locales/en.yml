@@ -1352,35 +1352,7 @@ en:
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
-      product_label_msg: "Product"
-    canned_responses:
-      helpnote:
-          title: Canned responses
-          tour: Help me use canned responses
-          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      folders:
-        helpnote:
-          title: Canned responses
-          tour: Help me use canned responses
-          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      responses:
-        edit:
-          title: Edit Canned response
-        new:
-          title: Add Canned response
-        form:
-          groups: Agents in group
-          response_name: Response title
-          all_agents: All agents
-          me_only: Myself
-          available_for: Available for
-      index:
-        new: Add Canned response
-        title: Canned responses
-    ca_response:
-      delete_confirm: Are you sure you want to delete this canned response?
+      product_label_msg: "Product"    
     twitters:
       index:
         new: Add Twitter account
@@ -1680,6 +1652,8 @@ en:
       install:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
+        cti_error: "Multiple integrations of type CTI can not be enabled."
+        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -3201,6 +3175,7 @@ en:
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
   save: Save
   import_added_newly: Added Newly
+  quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
   import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
   contact_import:
@@ -3327,6 +3302,7 @@ en:
   tag:
     title: Tags
   email_notifications:
+    default_font: "Default Font : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
@@ -3826,6 +3802,7 @@ en:
   company:
     created: Company was successfully created.
     updated: Company was successfully updated.
+    created_view: Company was successfully created. <a href="%{company_url}"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA Policy
     name: Company name
@@ -3870,6 +3847,7 @@ en:
   state: State
   deactivate: Deactivate
   add_tags: Add Tag
+  edit_tags: Edit Tags
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
   tkt_assigned_to_group: Ticket Assigned to Group
@@ -4379,6 +4357,34 @@ en:
         target_note_description3:
           one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
           other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
+    canned_responses:
+      helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      folders:
+        helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      responses:
+        edit:
+          title: Edit Canned response
+        new:
+          title: Add Canned response
+        form:
+          groups: Agents in group
+          response_name: Response title
+          all_agents: All agents
+          me_only: Myself
+          available_for: Available for
+      index:
+        new: Add Canned response
+        title: Canned responses
+    ca_response:
+      delete_confirm: Are you sure you want to delete this canned response?
   import_ticket_group: Tickets
   or: or
   tickets_filter:
@@ -4701,6 +4707,7 @@ en:
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
+    cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
     no_freshplugs: You do not have any FreshPlugs.
     add_new_freshplug: Add new FreshPlug
@@ -4717,6 +4724,12 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    czentrix:
+      label: "C-Zentrix"
+      desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
@@ -5125,6 +5138,13 @@ en:
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
+    remote_login:
+      connect: "Connect"
+      sign_up: "Sign Up"
+      freshdesk_url: "Freshdesk URL"
+      freshdesk_api_key: "Freshdesk API key"
+      api_key_available: "You can get the API key under Profile Settings in your Freshdesk account "
+      new_to_freshdesk: "New to Freshdesk? "
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -5276,6 +5296,34 @@ en:
           filter_by: Satisfaction Views
           view_report_date: View reports during
           helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
+      freshchat:
+        report_title: "Freshchat Summary"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        widget: "Widget"
+        group: "Group"
+        chat_type: "Chat Type"
+        summary: "Summary"
+        filter_report: "Edit Filter"
+        select_widget: "Select Widget"
+        select_group: "Select Group"
+        select_chat_type: "Select Chat Type"
+        all: "All"
+        chat_type_visitor: "Visitor Initiated"
+        chat_type_agent: "Agent Initiated"
+        chat_type_proactive: "Proactive"
+        generate_summary: "Generate"
+        filter_close: "Close"
+        total_chats: Total
+        num_of_chats: No of Chats
+        answered_chats: Answered
+        missed_chats: Missed
+        num_of_transfer: Transfers
+        avg_handle_time: Avg Handle Time
+        avg_time_queue: Time in Queue
+        total_duration: "Duration"
+        agent_chat_summary: Agent Chat Summary
+        agent: "Agent"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
@@ -5480,6 +5528,42 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+    select_group: "Select Group"
+    visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."
+    pfolder_visibility_alert: "<span class=\"label label-important\">Important</span> - The selected canned responses will be available only for you when you move it to Personal Folder"
+    moved_responses_update: "{{responses}} response(s) could not be moved as the title already exists in folder {{folder_name}}"
+    folder_validation: "Folder does not exists."
+    Personal: "Personal"
+    General: "General"
+  canned_responses:
+    groups: Agents in group
+    response_name: Response title
+    all_agents: All agents
+    me_only: Myself
+    available_for: Available for
+    helpnote:
+      title: Canned responses
+      tour: Help me use canned responses
+      info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+      info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+    folders:
+      helpnote:
+        title: Canned responses
+        tour: Help me use canned responses
+        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+    responses:
+      edit:
+        title: Edit Canned response
+      new:
+        title: Add Canned response
+    index:
+      new: Add Canned response
+      title: Canned responses
+    errors:
+      duplicate_title: "Duplicate response. Title already exists"
+  ca_response:
+    delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:
     header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
@@ -5759,6 +5843,28 @@ en:
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date
+  cti:
+    create:
+      success:
+        with_link: "The %{human_name} has been created  %{link}"
+    note:
+      human_name: "note"
+      view: "View"
+    ticket:
+      human_name: "ticket"
+      view: "View"
+    widget:
+      ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
+      note_placeholder: "Add call notes..."
+      new_ticket: "Save as new ticket"
+      save_to_existing: "Save to an existing ticket"
+      ignore_ticket: "Do not convert to Ticket"
+      ignore_ticket_info: "No ticket will be created"
+      back: "Go Back"
+      subject: "Ticket Subject"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      save: "Save"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
@@ -5816,6 +5922,7 @@ en:
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Search Available Agents..."
       unavailable_agents: "Agents are not available to transfer call"
+      agents_count_in_group: "%{count} agents available"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -5961,9 +6068,9 @@ en:
         name_placeholder: Enter a friendly name for your number
         hunt_type: "Call Routing"
         routing_message: "When multiple agents are available online..."
-        recording_privacy: "Include Call Recording"
-        recording_privacy_public: "Yes"
-        recording_privacy_private: "No"
+        recording_privacy: "Recording Visibility"
+        recording_privacy_public: "Visible to customers and agents"
+        recording_privacy_private: "Visible only to agents"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."

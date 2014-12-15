@@ -53,7 +53,7 @@ describe CompaniesController do
   it "should display the company information on the show page" do
     company = create_company
     get :show, :id => company.id
-    response.should render_template 'companies/show'
+    response.should render_template 'companies/newshow.html.erb'
     response.body.should =~ /Recent tickets from #{company.name}/
   end
 

@@ -1,0 +1,41 @@
+<% form_for :account, @account, :url => {:action=> :create}, :html => { :class => "form", :method => "post", :rel => "validate" } do |f| %>
+  <div class="logo">
+    <i class="remote-configurations-freshdesk-logo"></i><i class="remote-configurations-arrow"></i><i class="remote-configurations-<%= page %>-logo"></i>
+  </div>
+
+  <div class="input_box">
+    <div class="input_group">
+      <label class="input_label" for="fd_input"><%= t("integrations.remote_login.freshdesk_url") %></label>
+      <input type="text" class="input_field required url" id="fd_input" name="domain" placeholder="https://test.freshdesk.com"/>
+    </div>
+
+    <div class="input_group">
+      <label class="input_label" for="fd_key"><%= t("integrations.remote_login.freshdesk_api_key") %></label>
+      <input type="text" class="input_field" id="fd_key" placeholder="UHKBkj5cvBr" name="key" required/>
+    </div>
+    
+    <div style="clear: both;"></div> 
+    <p class="agent_link"><%= t("integrations.remote_login.api_key_available") %>
+    </p>
+  </div>
+    
+  <div class="submit_box">
+      <%= submit_tag t('integrations.remote_login.connect'), :class => "button" %>
+      <p class="seo_agent_link">
+        <%= t("integrations.remote_login.new_to_freshdesk") %>
+        <a href="http://getseoshop.freshdesk.com/" class="anchor"><%= t("integrations.remote_login.sign_up") %></a>
+      </p>
+  </div>
+  <input type="hidden" name="app_params" value="<%=params.inspect%>"/>
+<% end %>
+<% if flash[:notice] %>
+<div id="noti" class="notice"><%= flash[:notice] %></div>
+<% end %>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  setTimeout(function(){
+    $('#noti').remove();
+  }, 5000);
+ })
+</script>

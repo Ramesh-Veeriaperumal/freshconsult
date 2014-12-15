@@ -1,5 +1,5 @@
 class Agent < ActiveRecord::Base
-  
+
   include ArExtensions
   include Cache::Memcache::Agent
   include Agents::Preferences
@@ -12,7 +12,8 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit_on_update :enqueue_round_robin_process
-  
+  after_commit_on_destroy :destroy_agent_canned_responses
+
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
   xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
@@ -21,10 +22,10 @@ class Agent < ActiveRecord::Base
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
   named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
-  named_scope :list , lambda {{ :include => :user , :order => :name }}  
-  
-  def self.technician_list account_id  
-    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
+  named_scope :list , lambda {{ :include => :user , :order => :name }}
+
+  def self.technician_list account_id
+    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')
   end
 
   def all_ticket_permission
@@ -41,15 +42,15 @@ class Agent < ActiveRecord::Base
   # end
 
   # State => Fulltime, Occational or Deleted
-  # 
+  #
   def self.filter(state = "active",letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
-    order = "name" unless order
-    order_type = "ASC" unless order_type
-    paginate :per_page => per_page, 
-             :page => page,
-             :include => { :user => :avatar },
-             :conditions => filter_condition(state,letter),
-             :order => "#{order} #{order_type}"
+    order = "name" unless order && AgentsHelper::AGENT_SORT_ORDER_COLUMN.include?(order.to_sym)
+    order_type = "ASC" unless order_type && AgentsHelper::AGENT_SORT_ORDER_TYPE.include?(order_type.to_sym)
+    paginate :per_page => per_page,
+      :page => page,
+      :include => { :user => :avatar },
+      :conditions => filter_condition(state,letter),
+      :order => "#{order} #{order_type}"
   end
 
   def self.filter_condition(state,letter)
@@ -61,15 +62,15 @@ class Agent < ActiveRecord::Base
   end
 
   def assumable_agents
-    account.users.technicians.select do |agent|
-      user.can_assume?(agent)
-    end
+    account.agents_from_cache.map do |agent|
+      agent.user if user.can_assume?(agent.user)
+    end.compact
   end
 
   #This method returns true if atleast one of the groups that he belongs to has round robin feature
   def in_round_robin?
-    return self.agent_groups.count(:conditions => ['ticket_assign_type = ?', 
-            Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+    return self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
+                                                   Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
   end
 
   def group_ticket_permission
@@ -89,7 +90,7 @@ class Agent < ActiveRecord::Base
     user.account.scoreboard_levels.next_level_for_points(points).first
   end
 
-  def remove_escalation                                        
+  def remove_escalation
     Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
     clear_group_cache
   end
@@ -115,9 +116,13 @@ class Agent < ActiveRecord::Base
 
   def enqueue_round_robin_process
     return unless @model_changes.key?(:available)
-    Resque.enqueue(Helpdesk::ToggleAgentFromGroups, 
-          { :account_id => account.id,
-            :user_id => self.user_id })
+    Resque.enqueue(Helpdesk::ToggleAgentFromGroups,
+                   { :account_id => account.id,
+                     :user_id => self.user_id })
+  end
+
+  def destroy_agent_canned_responses
+    account.canned_responses.only_me(user).destroy_all
   end
 
 end

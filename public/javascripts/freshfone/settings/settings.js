@@ -39,6 +39,7 @@ var FreshfoneMessage;
 
 				$('.queue_setting_div').toggle(!($('#admin_freshfone_number_max_queue_length').val()==="0"));
 				$('.voicmail_message_div').toggle(!($('#admin_freshfone_number_voicemail_active_false').is(":checked")===true));
+				$('.recording_visibility_div').toggle(!($('#admin_freshfone_number_record_false').is(":checked")===true));
 				// $('.non_business_hours_message_container').toggle(!($('#admin_freshfone_number_non_business_hour_calls_false').is(":checked")===true));
 		}
 	};
@@ -80,7 +81,11 @@ var FreshfoneMessage;
 	$("input[name='admin_freshfone_number[voicemail_active]']:radio").change(function(){
 		($(this).val() === 'true') ? $('.voicmail_message_div').slideDown() : $('.voicmail_message_div').slideUp();
 	});
-
+	
+	$("input[name='admin_freshfone_number[record]']:radio").change(function(){
+		($(this).val() === 'true') ? $('.recording_visibility_div').slideDown() : $('.recording_visibility_div').slideUp();
+	});
+	
 	$("input[name='non_business_hour_calls']:radio").change(function(){
 		if($(this).val() === 'true'){
 			$('.non_business_hours_message_container').slideUp();

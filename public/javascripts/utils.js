@@ -265,30 +265,7 @@ function reply_multiple_submit( url, method, params){
   form.submit();
 }
 
-function canned_response_submit(url, method, params){
-   var form = $("ca_res_form");
-   if(method) form.down('input[name=_method]').value = method;
-   var source  = $('move_folder_id');
-    var field = new Element('input', {
-                     type: 'hidden',
-                     value: source.value
-                  });
-    field.name = source.name;
-    if(field.value == 0)
-    {
-      alert('Please select a valid folder!!');
-    }
-    else if(field.value == folder_id)
-    {
-      alert('Cannot move to the same folder!!!');
-    }
-    else
-    {
-      form.appendChild(field);
-      form.action = url;
-      form.submit();
-    }
-}
+
 
 function setSelRange(inputEl, selStart, selEnd) {
    if (inputEl.setSelectionRange) {
@@ -1007,4 +984,15 @@ function preventDefault(event) {
     event.preventDefault();
   else
     event.returnValue = false;
+}
+
+function getKeyFromValue(object,value){
+  var key;
+  for(var i in object){
+      if (object.hasOwnProperty(i) && object[i] === value) {
+          key = i;
+          break;
+      }
+  }
+  return key;
 }

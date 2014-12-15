@@ -30,6 +30,7 @@ window.App = window.App || {};
 				break;
 
 			case 'contacts/show':
+			case 'contacts/update_description_and_tags':
 				this.current_module = 'Contact_show';
 				break;
 			}

@@ -477,6 +477,10 @@ module ApplicationHelper
     place_holders
   end
 
+
+  def group_avatar
+    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
+  end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
   def user_avatar(user, profile_size = :thumb, profile_class = "preview_pic", options = {})
@@ -641,7 +645,7 @@ module ApplicationHelper
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter]).html_safe  # replace the liquid objs with real values.
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil,disabled=false)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -658,7 +662,7 @@ module ApplicationHelper
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
+        element = label + text_field(object_name, field_name, :disabled => disabled, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
@@ -671,7 +675,7 @@ module ApplicationHelper
         field[:choices].each do |choice|
           choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
-        element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
+        element = label + select(object_name, field_name, choices, {:class => element_class, :selected => field_value},{:disabled => disabled})
       when "custom" then
         rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
@@ -733,7 +737,7 @@ module ApplicationHelper
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
     end
     content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
@@ -1040,6 +1044,11 @@ module ApplicationHelper
   def shortcuts_enabled?
     logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
   end
+
+  def email_template_settings
+    current_account.account_additional_settings.email_template_settings.to_json
+  end
+
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|
