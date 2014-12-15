@@ -69,7 +69,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		end
 
 		def update_freshfone_credit(freshfone_number, account)
-			account.freshfone_credit.update_credit(freshfone_number.rate)
+			account.freshfone_credit.deduce(freshfone_number.rate)
 			account.freshfone_other_charges.create(
 				:action_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_purchase],
 				:debit_payment => freshfone_number.rate,

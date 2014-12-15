@@ -69,7 +69,7 @@ class Freshfone::CallCostCalculator
 			# we don't store call data for record twiml but twilio charge needs to be deducted
 			if total_charge > 0
 				current_call.root.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
-				current_account.freshfone_credit.update_credit(total_charge)
+				current_account.freshfone_credit.deduce(total_charge)
 				#Otherbilling for preview & Message_records
 				current_account.freshfone_other_charges.create(
 					:debit_payment => total_charge,

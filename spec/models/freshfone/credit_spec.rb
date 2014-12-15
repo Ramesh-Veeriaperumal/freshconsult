@@ -21,7 +21,7 @@ describe Freshfone::Credit do
     Billing::Subscription.any_instance.stubs(:purchase_freshfone_credits).raises(StandardError.new("Auto recharge prevented!"))
     StandardError.any_instance.stubs(:error_code).returns("500. Your auto recharge is prevented")
     
-    @credit.update_attributes(:available_credit => 10, :recharge_quantity => 25)
+    @credit.update_attributes(:available_credit => 5, :recharge_quantity => 25)
     
     @credit.perform_auto_recharge
     
