@@ -248,7 +248,7 @@ module ApplicationHelper
   def dropdown_menu(list, options = {})
     return if list.blank?
     output = ""
-    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    output << %(<ul class="dropdown-menu #{options['ul_class']}" role="menu" aria-labelledby="dropdownMenu">) 
 
     list.each do |item|
       unless item.blank?
@@ -256,7 +256,8 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          additional_element = options['ul_class'] == 'tick' ? "<span class='ficon-checkmark-thick'></span>".html_safe : ""; #TODO: Remove this span element and extend the font-icon in after pseudo element of active class
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to (additional_element + item[0]), item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end

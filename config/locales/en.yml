@@ -2855,6 +2855,7 @@ en:
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
       tags: 'Tag Names'
+      enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
       ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
@@ -2863,9 +2864,15 @@ en:
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
-      contact: 'Contains ticket and forum activities'
+      contact_all: 'Recent ticket and forum activities'
       company: 'Contains tickets raised by company contacts'
+      company_all: 'Recent tickets raised by company contacts'
       no_conversations: 'No Conversations'
+      all: 'All conversations'
+      tickets: Tickets
+      forums: Forums
+      contact_tickets: 'Recent ticket activities'
+      contact_forums: 'Recent forum activities'
     info5: "No tickets by %{nick_name}"
     restore: Restore
     activation : Send Activation
