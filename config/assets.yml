@@ -504,10 +504,10 @@ javascripts:
     - public/javascripts/cti/popup.js
 
   czentrix:
+    - public/javascripts/cti/czentrix/czentrix_logout.js
     - public/javascripts/cti/czentrix/czentrix_custom.js
     - public/javascripts/cti/czentrix/click2Dial.js
     - public/javascripts/cti/czentrix/czentrix.js
-    - public/javascripts/cti/czentrix/czentrix_logout.js
 
 <% 
   # Adding specific javascript assets to the package list
