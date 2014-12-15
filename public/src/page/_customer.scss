@@ -411,6 +411,9 @@ $iconColorList: "ticket" $bg_color_ticket,
 			font-weight: bold;
 			@include margin(4px 0);
 		}
+		.conv-menu {
+			cursor: pointer;
+		}
 	}
 	.sp_paragraph {
 		max-height: 95px;
