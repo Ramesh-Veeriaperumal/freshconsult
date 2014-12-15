@@ -4,7 +4,7 @@ class CompaniesController < ApplicationController
   include HelpdeskControllerMethods
   
   before_filter :set_selected_tab
-  before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :sla_policies]
+  before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies]
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]
   before_filter :set_required_fields, :only => [:create_company, :update_company]
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
@@ -27,13 +27,8 @@ class CompaniesController < ApplicationController
   def show
     respond_to do |format|
       format.html { 
-        @total_company_tickets = 
-          current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible
-        @company_tickets       = @total_company_tickets.newest(10).find(:all, 
-                                  :include => [:ticket_states,:ticket_status,:responder,:requester])
-        @company_users         = @company.users.contacts
-        @company_users_size    = @company_users.size
-        render :action => 'newshow'
+        define_company_properties
+        render :action => :newshow
       }
       format.xml  { render :xml => @company }
       format.json { render :json=> @company.to_json }
@@ -52,7 +47,8 @@ class CompaniesController < ApplicationController
   def create
     respond_to do |format|
       if @company.save
-        format.html { redirect_to(@company, :notice => t(:'company.created')) }
+        flash[:notice] = t('company.created_view', :company_url => company_path(@company)).html_safe
+        format.html { redirect_to companies_url }
         format.xml  { render :xml => @company, :status => :created, :location => @company }
         format.json { render :json => @company, :status => :created }
       else
@@ -85,11 +81,35 @@ class CompaniesController < ApplicationController
     update
   end
 
+  def update_notes
+    respond_to do |format|
+      if @company.update_attributes(params[:company])
+        format.html { redirect_to(@company, :notice => t(:'company.updated')) }
+        format.json { render :json => "", :status => :ok }
+      else
+        format.html { 
+          define_company_properties
+          render :action => :newshow 
+        }
+        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
   def sla_policies
     render :layout => false
   end
   
   protected
+
+    def define_company_properties 
+      @total_company_tickets = 
+        current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible
+      @company_tickets       = @total_company_tickets.newest(10).find(:all, 
+                                :include => [:ticket_states,:ticket_status,:responder,:requester])
+      @company_users         = @company.users.contacts
+      @company_users_size    = @company_users.size
+    end
 
     def scoper
       current_account.companies

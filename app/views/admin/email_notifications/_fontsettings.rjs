@@ -1,0 +1,1 @@
+page.replace "font_setting_partial", :partial => '/admin/email_notifications/fontsettings'

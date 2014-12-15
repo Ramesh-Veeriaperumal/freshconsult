@@ -3,11 +3,13 @@ window.ticket_view = true;
 var current_agents = {};
 var current_agents_replying = {};
 
+var ticket_status = {
+  connected : false,
+  ticket_draft: false
+};
+
 function update_notification_ui_ticket (viewing,replying) {
-    // console.log('The value of the difference is '+viewing.toString());
     viewing = jQuery(viewing).not(replying).get();
-    // console.log('the value of viewing is ',viewing);
-    // console.log('The value of replying is ',replying);
     jQuery("#agents_viewing").toggleClass("active", (viewing.length != 0)).effect("highlight", {
         color: "#fffff3"
     }, 400);
@@ -16,7 +18,6 @@ function update_notification_ui_ticket (viewing,replying) {
         color: "#fffff3"
     }, 400);
     jQuery("#agents_replying .flip-back").html(replying.length);
-    // jQuery(".list_agents_replying").toggleClass("hide", (agents.replying.size() == 0)).html(humanize_name_list(agents.replying, 'replying'));
 };
 
 function AddAgents(params){
@@ -102,11 +103,13 @@ function RemoveAgentsSocket(params){
 
 var setEvents = function (hashed_params,current_username,current_userid) {   
     // console.log('setting events');      
+    
     jQuery(function(){  
       jQuery('#agent_collision_placeholder').append(jQuery('#agent_collision_show').detach());
       jQuery('[data-note-type]').on("click.agent_collsion",function (e) {
         // console.log('clicking reply note');
-        if(hashed_params){
+        if(hashed_params && ticket_status.connected){
+          ticket_status.draft = true;
           window.node_socket.emit('agent_collision_reply',{
             "user_name" : current_username,
             "user_id" : current_userid
@@ -117,6 +120,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
       jQuery('.reply_agent_collision').on("click.agent_collsion",function () {
         // console.log('clicking reply exit');
         if(hashed_params){
+          ticket_status.draft = false;
           window.node_socket.emit('agent_collision_reply_stop',{
             "user_name" : current_username,
             "user_id" : current_userid
@@ -176,12 +180,13 @@ var setEvents = function (hashed_params,current_username,current_userid) {
 
 window.agentcollision = function(server,hashed_params,current_username,current_userid,draft)
 {
-  setEvents(hashed_params,current_username,current_userid);
-  console.log('The value of server is ',server);
+  setEvents(hashed_params,current_username,current_userid,draft);
+  ticket_status.draft = draft;
+  // console.log('The value of server is ',server);
   var node_socket = agentio.connect(server,{'force new connection':true});
   window.node_socket = node_socket;
   node_socket.on('connect', function(){
-    // console.log('I have connected');
+    // console.log('I have ticket_status.connected');
   });
   node_socket.on('agent_collision',function(data){
     if(data.action === 'connect'){
@@ -194,8 +199,9 @@ window.agentcollision = function(server,hashed_params,current_username,current_u
   });
 
   node_socket.on('connection_complete',function(){
-      // console.log('I have connection complete');
-      if(draft){
+      // console.log('I have connection complete '+draft);
+      ticket_status.connected = true;
+      if(ticket_status.draft){
         node_socket.emit('agent_collision_reply',{
           "user_name" : current_username,
           "user_id" : current_userid
@@ -240,6 +246,10 @@ window.agentcollision = function(server,hashed_params,current_username,current_u
 
   node_socket.on('disconnect', function(){  
     // console.log('I am in disconnect');
+    current_agents = {};
+    current_agents_replying = {};
+    ticket_status.connected = false;
+    update_notification_ui_ticket(Object.keys(current_agents), Object.keys(current_agents_replying));
   });
 };
 

@@ -21,8 +21,11 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 				$('.sp_paragraph').addClass('editarea');
 				this.prevBgInfo = $('.sp_paragraph').val();
 			} else {
-				$('.form-save').slideUp();
-				$('.sp_paragraph').removeClass('editarea');
+				$('.sp_paragraph').removeClass('editarea').height(0);
+				$('.form-save').slideUp(400, function() {
+					$('.sp_paragraph')
+						.height($('.sp_paragraph')[0].scrollHeight)
+				});
 			}
 		},
 		flashUpdatedDiv: function() {
@@ -63,7 +66,7 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 				e.preventDefault();
 				self.cancelSave();
 			});
-			$('body').on('click.company-view', '.save-form', function(e) {
+			$('body').on('submit.company-view', '.edit_user', function(e) {
 				e.preventDefault();
 				self.makeAjaxCall();
 			});
@@ -74,11 +77,10 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 		makeAjaxCall: function() {
 			var data = $('.edit_user').serializeArray(),
 				self = this;
-				data._method = 'PUT';
 	
 			$.ajax({
 				type: "POST",
-				url: "/companies/update/" + $('#companyid').val(),
+				url: "/companies/"+ $('#companyid').val() + "/update_notes",
 				data: data,
 				dataType: "json",
 				success: function(result, status, xhr){
@@ -100,7 +102,6 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 			this.switchToForm(false);
 			this.flashUpdatedDiv();
 			$('.sp_paragraph')
-					.height($('.sp_paragraph')[0].scrollHeight)
 					.blur();
 		},
 		ajaxFailure: function(errors) {

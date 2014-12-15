@@ -1,6 +1,6 @@
 class Freshfone::Jobs::NodeNotifier
   extend Resque::AroundPerform
-  @queue = "freshfone_default_queue"
+  @queue = "freshfone_node_queue"
   def self.perform(args)
     begin
       node_uri = "#{FreshfoneConfig['node_url']}/freshfone/#{args[:channel]}"

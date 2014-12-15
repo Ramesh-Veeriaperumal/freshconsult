@@ -43,7 +43,7 @@
       },
       :"customer-fields"                 =>   {
         :url                           =>   "/admin/contact_fields",
-        :privilege                     =>   (!Rails.env.production?) && privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks)
       },
       :"customer-portal"               =>   {
         :url                           =>   "/admin/portal",
@@ -102,7 +102,7 @@
         :privilege                     =>   privilege?(:manage_email_settings)
       },
       :"canned-response"               =>   {
-        :url                           =>   "/admin/canned_responses/folders",
+        :url                           =>   "/helpdesk/canned_responses/folders",
         :privilege                     =>   privilege?(:manage_canned_responses)
       },
       :"survey-settings"               =>   {

@@ -29,6 +29,7 @@ module Mobile::Constants
     :favorite_success => 17,
     :unfavorite_success => 18,
     :unfavorite_error => 19,
-    :cannot_unfavorite => 20
+    :cannot_unfavorite => 20,
+    :validation_failed => 21
   }
 end

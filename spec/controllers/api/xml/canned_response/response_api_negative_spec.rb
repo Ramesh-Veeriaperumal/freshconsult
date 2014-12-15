@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::CannedResponses::ResponsesController do
+describe Helpdesk::CannedResponses::ResponsesController do
 	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false

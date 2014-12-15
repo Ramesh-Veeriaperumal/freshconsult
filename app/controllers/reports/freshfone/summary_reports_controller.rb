@@ -17,7 +17,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   end
 
   def generate
-    render :partial => 'call_list' ,:status=> :ok
+    #Render default rjs
   end
 
   def export_csv
@@ -37,12 +37,13 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
     end
 
     def csv_hash
-      { "Agent" => :agent_name,
+      headers = { "Agent" => :agent_name,
         "Total Duration" => :call_handle_time,
         "Average Handle Time" => :avg_handle_time,
-        "Unanswered Calls" => :unanswered_calls_count,
         "Answer %" => :answered_percentage,
         "Total Calls" => :calls_count }
+      headers.merge!("Unanswered Calls" => :all_unanswered) if(@call_type.to_i == Freshfone::Call::CALL_TYPE_HASH[:incoming])
+      headers
     end
 
     def csv_string(headers)

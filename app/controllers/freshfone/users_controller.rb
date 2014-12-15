@@ -1,5 +1,5 @@
 class Freshfone::UsersController < ApplicationController
-	include FreshfoneHelper
+	include Freshfone::FreshfoneHelper
 	include Freshfone::Presence
 	include Freshfone::NodeEvents
 	include Redis::RedisKeys

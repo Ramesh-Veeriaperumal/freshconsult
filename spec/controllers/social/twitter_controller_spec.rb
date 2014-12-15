@@ -532,7 +532,7 @@ describe Social::TwitterController do
                           {
                             :body => "Text"
                           },
-                        :twitter_handle_id => "10"
+                        :twitter_handle_id => "#{@handle.id}"
                       }
   end
   
