@@ -6,7 +6,7 @@ class Facebook::Fql::Posts
   
   def initialize(fb_page, options = {})
     @account = options[:current_account]  || fb_page.account
-    @rest = Koala::Facebook::API.new(fb_page.access_token)
+    @rest = Koala::Facebook::API.new(fb_page.page_token)
     @fan_page = fb_page
   end
 
