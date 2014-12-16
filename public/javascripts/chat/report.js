@@ -372,7 +372,7 @@ var TimeFormat = function(milliseconds){
 
 		constructFilter(dateRange);
 
-		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType, attributes : 1};
+		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType};
 
 		if(widget_id != "all"){
 			data.widget_id = widget_id;
@@ -443,6 +443,7 @@ var TimeFormat = function(milliseconds){
 		$("#widget_id").val(CURRENT_ACCOUNT.widget_id);
 
 		$("#date_range").daterangepicker({
+			earliestDate: Date.parse('12/01/2014'),
 			latestDate: new Date(),
 			presetRanges: [
 				{text: freshchat_i18n.this_week, dateStart: 'Today-8', dateEnd: 'Today-1' },
@@ -453,8 +454,7 @@ var TimeFormat = function(milliseconds){
 				dateRange: freshchat_i18n.custom_days
 			},
 			dateFormat: getDateFormat('datepicker'),
-			closeOnSelect: true,
-			earliestDate: Date.parse('t - 6 m')
+			closeOnSelect: true
 		});
 
 		$("#cancel, #filter-close-icon").on('click', function(){
