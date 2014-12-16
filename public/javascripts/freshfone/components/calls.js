@@ -4,7 +4,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
     "use strict";
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },
 		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 },
-		numbersHash = freshfone.numbersHash;
+		numbersHash = freshfone.numbersHash,
 		phoneNumber;
 	FreshfoneCalls = function () {
 		this.init();
