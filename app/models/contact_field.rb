@@ -49,7 +49,7 @@ class ContactField < ActiveRecord::Base
   # Can't clear cache on every ContactField or ContactFieldChoices save
 
   def default_contact_form
-    account.contact_form
+    (Account.current || account).contact_form
   end
 
   def set_portal_edit

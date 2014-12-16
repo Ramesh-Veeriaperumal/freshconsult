@@ -6,7 +6,7 @@ module Stores
         belongs_to :parent, :foreign_key => args[:parent_id], :class_name => args[:parent_class]
         belongs_to :custom_form, :foreign_key => args[:form_id], :class_name => args[:form_class] #, :include => :custom_fields -- Need to ensure
 
-        delegate :to_ff_alias, :to_ff_field, :ff_aliases, :ff_fields, :to => :custom_form
+        delegate :to_ff_alias, :to_ff_field, :ff_aliases, :ff_fields, :to => args[:custom_form_cache_method]
 
         include Stores::CustomFieldData::Methods
 

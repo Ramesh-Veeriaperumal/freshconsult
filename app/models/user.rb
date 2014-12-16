@@ -587,7 +587,7 @@ class User < ActiveRecord::Base
   end
 
   def custom_form
-    helpdesk_agent? ? nil : account.contact_form # memcache this 
+    helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this 
   end
 
   def custom_field_aliases
