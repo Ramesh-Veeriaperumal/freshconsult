@@ -32,7 +32,6 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 
-gem 'debugger', "~> 1.6.8"
 
 gem 'test-unit', '1.2.3'
 
