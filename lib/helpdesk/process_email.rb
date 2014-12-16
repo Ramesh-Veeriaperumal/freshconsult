@@ -20,6 +20,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def perform
     # from_email = parse_from_email
     to_email = parse_to_email
+    shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
+    return unless (shardmapping.present? and shardmapping.ok?)
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
