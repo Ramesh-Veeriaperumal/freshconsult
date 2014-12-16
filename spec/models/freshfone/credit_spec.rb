@@ -26,7 +26,7 @@ describe Freshfone::Credit do
     @credit.perform_auto_recharge
     
     @credit.reload
-    @credit.available_credit.to_i.should be_eql(10)
+    @credit.available_credit.to_i.should be_eql(5)
     freshfone_payments = @account.freshfone_payments.find(:first, 
       :conditions => {:status_message => "500. Your auto recharge is prevented"},
       :order => "created_at DESC")
