@@ -2170,7 +2170,7 @@ Redactor.prototype = {
             {
                 if (htmls[i].search('{replace') == -1)
                 {
-                	if($.browser.mozilla == true) {
+                	if($.browser.mozilla == true || $.browser.msie == true) {
                 		html += htmls[i].replace(/^\n+|\n+$/g, "");
                 	} else {
                 		html += '<p>' + htmls[i].replace(/^\n+|\n+$/g, "") + '</p>';
