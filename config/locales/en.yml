@@ -3834,6 +3834,7 @@ en:
     notes: Notes
     edit_notes: Edit
     add_notes: Add Notes
+    delete_company: Delete Company
     info1: Are you sure you want to delete this company?
     info11: Are you sure you want to delete
     info10: "Note: Deleting a company will not delete its contacts."

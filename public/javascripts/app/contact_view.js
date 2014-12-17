@@ -108,6 +108,10 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				e.preventDefault();
 				self.switchConversationView($(this));
 			});
+			$('body').on('click.contact-view', '#customer-delete-confirmation-submit', function(e) {
+				e.preventDefault();
+				$('#delete_customer').trigger('click');
+			});
 			$(window).on('scroll.contact-view', this.toggleUsername);
 			$('.sp_paragraph')
 					.height($('.sp_paragraph')[0].scrollHeight);
