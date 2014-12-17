@@ -37,13 +37,13 @@ module ContactsHelper
     activity_text = post.original_post? ? 'contacts.conversations.created_forum_title' : 'contacts.conversations.replied_forum_title'
     text = t(activity_text, 
                 :topic_url => discussions_topic_path(post.topic_id),
-                :topic_title => post.topic.title).html_safe
+                :topic_title => h(post.topic.title)).html_safe
     text_wrapper = content_tag(:p, text, :class => 'break-word timeline-head')
 
     time_info = t('contacts.conversations.user_forum_timeinfo',
                     :time => time_ago_in_words(post.created_at),
                     :forum_url => discussions_forum_path(post.forum_id),
-                    :forum_title => post.forum.name).html_safe
+                    :forum_title => h(post.forum.name)).html_safe
     time_div = content_tag(:p, time_info, :class => 'muted')
 
     (icon_wrapper + text_wrapper + time_div)
