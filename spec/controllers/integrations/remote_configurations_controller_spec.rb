@@ -80,12 +80,13 @@ describe Integrations::RemoteConfigurationsController do
 
   it "Missing param" do
     post :create, fd_cred.merge(:app_params => 
-        "{\"id\" => \"uninstall\",\"app\" => \"seoshop\",\"token\" => \"2aacd91389603a2f6e18e7131124246c\",\"shop_id\" => \"28929\",\"signature\" => \"ea14a519520817e81fd79c043f822966\",\"timestamp\" => \"1416899677\"}")
+        "{\"id\" => \"uninstall\",\"app\" => \"seoshop\",\"token\" => \"0b9c828e8c4583db1bdb61cd3c28069e\",\"shop_id\" => \"44897\",\"signature\" => \"a9a2db00498a6bcecfbd3b3d43bda8ec\",\"timestamp\" => \"1418822235\"}")
     response.session[:flash][:notice].should =~ /Could not validate the application credentials..... Please try again...../
   end
 
   def app_params
-    "{\"app\" => \"seoshop\",\"token\" => \"2aacd91389603a2f6e18e7131124246c\",\"language\" => \"nl\",\"shop_id\" => \"28929\",\"signature\" => \"ea14a519520817e81fd79c043f822966\",\"timestamp\" => \"1416899677\"}"
+    "{\"app\" => \"seoshop\",\"token\" => \"0b9c828e8c4583db1bdb61cd3c28069e\",\"language\" => \"en\",\"shop_id\" => \"44897\",\"signature\" => \"a9a2db00498a6bcecfbd3b3d43bda8ec\",\"timestamp\" => \"1418822235\"}"
+ 
   end
   
 
