@@ -6,11 +6,25 @@
 			<%= link_to t('company.title'), '/companies'%>  
 			<span class='contact-name ellipsis'> / <%= h(@company.name) %></span>
 		</h3>
-		<% if privilege?(:manage_contacts) %>
-			<div class="pull-right">
+		<div class='btn-group pull-right'>
+			<% if privilege?(:manage_contacts) %>
 				<%= link_to t('edit'), edit_company_path(@company), :class => "btn" %>
-			</div>
-		<% end %>
+			<% end %>
+			<% if privilege?(:delete_contact) %>
+				<%= link_to("<i class='icon-trash'></i>".html_safe, @company, :method => :delete, :class => "btn hide", :id => 'delete_customer' ) %>
+					<button 
+						class="btn"
+						data-target="#customer-delete-confirmation" 
+							rel="freshdialog" 
+							title="<%= t('company.delete_company')%>"
+							data-submit-label="<%= t('delete_permanently') %>"
+							data-submit-class="btn"
+							data-width="500px"
+							data-close-label="<%= t('cancel') %>">
+							<i class='icon-trash'></i>
+					</button>
+			<% end %>
+	    </div>
 	</div>
 </div>
 
@@ -172,4 +186,11 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+
+<div class="hide" id="customer-delete-confirmation">
+ 	<p class="margin-bottom">
+		<%= "#{t('company.info1')}<br/><br/>#{t('company.info10')}".html_safe %>
+	</p>
 </div>

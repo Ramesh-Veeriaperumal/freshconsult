@@ -1,6 +1,3 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
-
 <% content_for :onload_script do %>  
 	var tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
 	jQuery("input[name='user[tag_names]']").select2({
@@ -49,11 +46,24 @@
 						</ul>
 					<% end %>
 				<% end %>
-				<%= link_to("<i class='icon-trash'></i>".html_safe, "/contacts/#{@user.id}", 
-												:method => 'delete', 
-												:confirm => "#{t('company.info11')} #{@user.name}?", 
-												:class => "btn") if privilege?(:delete_contact) and @user != current_user and 
+				<% if privilege?(:delete_contact) and @user != current_user and 
 											!@user.deleted? and !@user.spam? and !@user.blocked? %>
+					<%= link_to("<i class='icon-trash'></i>".html_safe, "/contacts/#{@user.id}", 
+												:method => 'delete', 
+												:class => "btn hide",
+												:id => 'delete_customer')  %>
+					<button 
+						class="btn"
+						data-target="#customer-delete-confirmation" 
+							rel="freshdialog" 
+							title="<%= t('contacts.delete_contact')%>"
+							data-submit-label="<%= t('delete_permanently') %>"
+							data-submit-class="btn"
+							data-width="500px"
+							data-close-label="<%= t('cancel') %>">
+							<i class='icon-trash'></i>
+					</button>
+				<% end %>
 			</div>
 		<% end %>
 	</div>
@@ -219,4 +229,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="hide" id="customer-delete-confirmation">
+ 	<p class="margin-bottom">
+		<%= t('contacts.delete_confirmation') %>
+	</p>
 </div>

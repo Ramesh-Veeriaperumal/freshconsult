@@ -6,15 +6,16 @@
       <div class="span6"><h3 class="lead"><%= t('canned_folders.responses') %></h3></div>
       <div class="span6 pull-right pagination-right ">
         <b>
-          <%= link_to t('canned_folders.new_response'), 
-                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
+          <%= link_to t('canned_folders.new_response'),
+                new_helpdesk_canned_responses_folder_response_path(@current_folder),
                 :id => "new_resp", :class => "btn btn-primary" %>
-        </b> 
+        </b>
       </div>
     </div>
     <div id="folder-list">
 		<div id="folders-panel" >
 			<div class='ca-resp-folder-header'>
+			<% if privilege?(:manage_canned_responses) %>
 				<div class="dropdown">
 					<%= t('canned_folders.viewing') %>
 					<a class="dropdown-toggle" data-toggle="dropdown" id="CaLabel" href="#"><b class='ca_text'>loading...</b>
@@ -38,8 +39,13 @@
 	  					</li>
 						<%end%>
 					</ul>
-	        
+
 				</div>
+				<%else%>
+				<%= t('canned_folders.viewing') %>
+				<%count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => @pfolder.id})%>
+				<b ><%= @pfolder.display_name %> (<%= count %>)</b>
+				<%end%>
 				<% if privilege?(:manage_canned_responses) %>
 					<div id="folder-controls">
 
@@ -69,8 +75,8 @@
 			</div>
 
 			<% if privilege?(:manage_canned_responses) %>
-			  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe, 
-									:class => "create_new_folder tooltip pull-right", 
+			  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe,
+									:class => "create_new_folder tooltip pull-right btn btn-flat",
 									:title => t('canned_folders.create'),
 									:"data-placement" => 'below'
 							), "#create_folder",
