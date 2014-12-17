@@ -13,6 +13,7 @@
 //= require freshfone/components/components_main.js
 //= require freshfone/device.js
 //= require freshfone/client.js
-//= require freshfone/dialpad.js
 //= require freshfone/phoneformatutil.js
+//= require freshfone/dialpad.js
 //= require freshfone/components/call_transfer.js
+//= require freshfone/freshfone_logger.js

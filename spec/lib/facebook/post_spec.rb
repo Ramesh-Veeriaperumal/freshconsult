@@ -36,7 +36,7 @@ RSpec.describe Facebook::Core::Post do
       
       post = @account.facebook_posts.find_by_post_id(feed_id)
       post.should_not be_nil
-      post.is_ticket?.should be_true
+      post.is_ticket?.should be true
       
       ticket = post.postable
       user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -60,7 +60,7 @@ RSpec.describe Facebook::Core::Post do
       
       post = @account.facebook_posts.find_by_post_id(feed_id)
       post.should_not be_nil
-      post.is_ticket?.should be_true
+      post.is_ticket?.should be true
       
       ticket = post.postable
       user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -70,7 +70,7 @@ RSpec.describe Facebook::Core::Post do
       comment_feed = facebook_feed[:comments]["data"]
       post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
       post_comment.should_not be_nil
-      post_comment.is_note?.should be_true
+      post_comment.is_note?.should be true
       
       note = post_comment.postable
       note.notable.should eql ticket
@@ -110,7 +110,7 @@ RSpec.describe Facebook::Core::Post do
     
   #   post = Social::FbPost.find_by_post_id(feed_id)
   #   post.should_not be_nil
-  #   post.is_ticket?.should be_true
+  #   post.is_ticket?.should be true
     
   #   ticket = post.postable
   #   user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -145,7 +145,7 @@ RSpec.describe Facebook::Core::Post do
     
   #   post = Social::FbPost.find_by_post_id(feed_id)
   #   post.should_not be_nil
-  #   post.is_ticket?.should be_true
+  #   post.is_ticket?.should be true
     
   #   ticket = post.postable
   #   user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -158,7 +158,7 @@ RSpec.describe Facebook::Core::Post do
   #   user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
   #   post_comment = Social::FbPost.find_by_post_id(comment[:id])
   #   post_comment.should_not be_nil
-  #   post_comment.is_note?.should be_true
+  #   post_comment.is_note?.should be true
     
   #   note = post_comment.postable
   #   note.notable.should eql ticket
@@ -180,7 +180,7 @@ RSpec.describe Facebook::Core::Post do
     
   #   post = Social::FbPost.find_by_post_id(feed_id)
   #   post.should_not be_nil
-  #   post.is_ticket?.should be_true
+  #   post.is_ticket?.should be true
     
   #   ticket = post.postable
   #   user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -192,7 +192,7 @@ RSpec.describe Facebook::Core::Post do
   #   comment = comments[:data].first
   #   post_comment = Social::FbPost.find_by_post_id(comment[:id])
   #   post_comment.should_not be_nil
-  #   post_comment.is_note?.should be_true
+  #   post_comment.is_note?.should be true
     
   #   note = post_comment.postable
   #   user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
@@ -204,7 +204,7 @@ RSpec.describe Facebook::Core::Post do
   #   reply_to_comment = reply_to_comments[:data].first
   #   post_reply_to_comment = Social::FbPost.find_by_post_id(reply_to_comment[:id])
   #   post_reply_to_comment.should_not be_nil
-  #   post_reply_to_comment.is_note?.should be_true
+  #   post_reply_to_comment.is_note?.should be true
     
   #   note = post_reply_to_comment.postable
   #   note.notable.should eql ticket

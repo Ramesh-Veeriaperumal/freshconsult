@@ -1,6 +1,6 @@
 # source :gemcutter
 Encoding.default_external = Encoding::UTF_8
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem "rake", "~> 10.4.0"
 gem "rack", "~> 1.4.5"

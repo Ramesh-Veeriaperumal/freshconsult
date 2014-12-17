@@ -1,0 +1,1 @@
+//= require app/admin/contact_fields/cf_customizer.js

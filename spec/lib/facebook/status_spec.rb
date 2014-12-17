@@ -35,7 +35,7 @@ RSpec.describe Facebook::Core::Status do
       
       post = @account.facebook_posts.find_by_post_id(feed_id)
       post.should_not be_nil
-      post.is_ticket?.should be_true
+      post.is_ticket?.should be true
       
       ticket = post.postable
       user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -59,7 +59,7 @@ RSpec.describe Facebook::Core::Status do
       
       post = @account.facebook_posts.find_by_post_id(feed_id)
       post.should_not be_nil
-      post.is_ticket?.should be_true
+      post.is_ticket?.should be true
       
       ticket = post.postable
       user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -69,7 +69,7 @@ RSpec.describe Facebook::Core::Status do
       comment_feed = facebook_feed[:comments]["data"]
       post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
       post_comment.should_not be_nil
-      post_comment.is_note?.should be_true
+      post_comment.is_note?.should be true
       
       note = post_comment.postable
       note.notable.should eql ticket
@@ -107,7 +107,7 @@ RSpec.describe Facebook::Core::Status do
   #   Facebook::Core::Parser.new(realtime_feed).parse
   #   post = @account.facebook_posts.find_by_post_id(feed_id)
   #   post.should_not be_nil
-  #   post.is_ticket?.should be_true
+  #   post.is_ticket?.should be true
     
   #   ticket = post.postable
   #   user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -127,7 +127,7 @@ RSpec.describe Facebook::Core::Status do
   #   Facebook::Core::Parser.new(realtime_feed).parse
   #   post = @account.facebook_posts.find_by_post_id(feed_id)
   #   post.should_not be_nil
-  #   post.is_ticket?.should be_true
+  #   post.is_ticket?.should be true
   #   ticket = post.postable
   #   user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
   #   ticket.description.should eql facebook_feed[:message]
@@ -138,7 +138,7 @@ RSpec.describe Facebook::Core::Status do
   #   user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
   #   post_comment = @account.facebook_posts.find_by_post_id(comment[:id])
   #   post_comment.should_not be_nil
-  #   post_comment.is_note?.should be_true    
+  #   post_comment.is_note?.should be true    
   #   note = post_comment.postable
   #   note.notable.should eql ticket
   #   note.body.should eql comment[:message]
@@ -173,8 +173,8 @@ RSpec.describe Facebook::Core::Status do
     
     AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
     Facebook::Core::Parser.new(realtime_feed).parse
-    @account.facebook_pages.find_by_page_id(@fb_page.page_id).reauth_required.should be_true
-    @account.facebook_pages.find_by_page_id(@fb_page.page_id).enable_page.should be_false
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).reauth_required.should be true
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).enable_page.should be false
   end
   
   # it "should not create a ticket when a post arrives and import company post is not enabled" do

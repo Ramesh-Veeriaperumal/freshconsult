@@ -30,7 +30,7 @@ RSpec.describe ContactsController do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'json'} 
-    error_status?(response.status).should be_true
+    error_status?(response.status).should be true
     @account.subscription.update_attributes(:state => state, :agent_limit => agent_limit)
   end  
 

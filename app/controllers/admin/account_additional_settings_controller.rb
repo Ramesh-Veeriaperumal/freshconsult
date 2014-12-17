@@ -25,7 +25,7 @@ class Admin::AccountAdditionalSettingsController < Admin::AdminController
     
     respond_to do |format|
       format.js { 
-       render :partial => '/admin/email_notifications/fontsettings.rjs'
+       render :partial => '/admin/email_notifications/fontsettings', :formats => [:rjs]
       }
     end
   end

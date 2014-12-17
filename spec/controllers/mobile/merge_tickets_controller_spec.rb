@@ -41,7 +41,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
     end
 
@@ -58,7 +58,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false                      
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 
@@ -75,7 +75,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false                      
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 
@@ -99,7 +99,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 
@@ -126,7 +126,7 @@ describe Helpdesk::MergeTicketsController do
                           }
     Resque.inline = false
 
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 end

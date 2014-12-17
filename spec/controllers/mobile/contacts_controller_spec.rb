@@ -81,7 +81,7 @@ describe ContactsController do
                       })
                    
     json_response.should include("error")
-    json_response["error"].should be_true
+    json_response["error"].should be true
     json_response["message"][0][1].should include("has already been taken")
   end
 end

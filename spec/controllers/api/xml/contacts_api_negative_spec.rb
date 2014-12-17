@@ -44,7 +44,7 @@ RSpec.describe ContactsController do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'xml'} 
-    error_status?(response.status).should be_true
+    error_status?(response.status).should be true
     @account.subscription.update_attributes(:state => state, :agent_limit => agent_limit)
   end  
 
@@ -52,11 +52,11 @@ RSpec.describe ContactsController do
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'xml'}    
     put :make_agent, {:id => contact.id,:format => 'xml'}
-    record_not_found_status?(response.status).should be_true
+    record_not_found_status?(response.status).should be true
   end
  
   def record_not_found_status?(status)
-     status =~ /404 Not Found/
+     status == 404
   end
 
   def error_status?(status)

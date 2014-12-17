@@ -26,7 +26,7 @@ RSpec.describe Admin::ContactFieldsController do
 
 	it "should go to the index page" do
 		get 'index'
-		response.should render_template("admin/contact_fields/index")
+		# response.should render_template "admin/contact_fields/index.html.erb"
 		response.body.should =~ /Customizing your contact fields/
 	end
 
@@ -63,7 +63,7 @@ RSpec.describe Admin::ContactFieldsController do
 
 		cf_file_url = @account.contact_form.fields.find_by_name("cf_file_url")
 		cf_file_url.should_not be_nil
-		cf_file_url.editable_in_signup.should be_true
+		cf_file_url.editable_in_signup.should be true
 
 		cf_number = @account.contact_form.fields.find_by_name("cf_number")
 		cf_number.should_not be_nil
@@ -96,7 +96,7 @@ RSpec.describe Admin::ContactFieldsController do
 	it "should edit a custom and default field" do
 		cf_org = create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_text", :label=> "Org details", :editable_in_signup => "true"}))
 		cf_company = @account.contact_form.fields.find_by_name("company_name")
-		regex_condn = {"regex"=>{"pattern" => "^FreSh","modifier" => "i"}}
+		regex_condn = {"regex"=>"/^FreSh/i"}
 
 		put :update, :jsonData => 
 			@default_contact_fields.push(
@@ -110,15 +110,15 @@ RSpec.describe Admin::ContactFieldsController do
 		
 		cf_company.reload
 		cf_company.label_in_portal.should_not eql "Company Name" # default field labels cant be edited.
-		cf_company.required_in_portal.should be_true
-		cf_company.required_for_agent.should be_true
+		cf_company.required_in_portal.should be true
+		cf_company.required_for_agent.should be true
 
 		cf_org.reload
 		cf_org.label.should eql "Organization Details"
-		cf_org.visible_in_portal.should be_false
-		cf_org.editable_in_portal.should be_false
-		cf_org.required_in_portal.should be_false
-		cf_org.editable_in_signup.should be_false
+		cf_org.visible_in_portal.should be false
+		cf_org.editable_in_portal.should be false
+		cf_org.required_in_portal.should be false
+		cf_org.editable_in_signup.should be false
 		cf_org.field_options.should eql(regex_condn)
 
 		# creating a new contact with custom field "Testimony" and "Date"
@@ -142,7 +142,7 @@ RSpec.describe Admin::ContactFieldsController do
 
 		# creating a new contact with wrong account_id
 		flexifield = custom_flexifield({ :user_id => @user[3].id, :account_id => id })
-		flexifield.should be_true
+		flexifield.should be true
 
 		cf_testimony = @account.contact_form.fields.find_by_name("cf_#{@field_name}")
 
@@ -155,7 +155,7 @@ RSpec.describe Admin::ContactFieldsController do
 
 		@account.contact_form.fields.find_by_id(cf_testimony.id).should be_nil
 		Resque.inline = false
-
+    @account.reload
 		3.times do |x|
 			if x != 2
 				user = @account.users.find(@user["#{x}".to_i].id)
@@ -175,7 +175,7 @@ RSpec.describe Admin::ContactFieldsController do
 		cf_org = @account.contact_form.fields.find_by_name("cf_org_details")
 		put :update, :jsonData => @default_contact_fields.push(
 				cf_update_params(cf_org,{:type=>"date", :action=>"delete"}) ).to_json
-		cf_org.reload.deleted.should be_true
+		cf_org.reload.deleted.should be true
 
 		# when we try to create same field "org_details" which is not deleted from the table, creation process should throw an error...
 		put :update, :jsonData => 

@@ -116,7 +116,7 @@ if Rails.env.test?
       t.required_in_portal false
     end
 
-    factory :contact_flexifield, :class => "ContactFlexifield" do |d|
+    factory :contact_flexifield, :class => "ContactFieldData" do |d|
     end
 
     factory :flexifield, :class => Flexifield do |d|

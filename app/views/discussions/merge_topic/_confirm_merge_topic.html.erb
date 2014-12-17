@@ -45,6 +45,6 @@
   </div>
 <% end %>
 
-<% javascript_tag do %>  
+<%= javascript_tag do %>  
   	App.Discussions.Merge.activateRedactor('<%= escape_javascript(t("discussions.topic_merge.add_note")).html_safe %>');
 <% end %>

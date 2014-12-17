@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CompaniesController do
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id ]
+                    :delta, :import_id, :custom_field ]
 
   # integrate_views
   setup :activate_authlogic
@@ -31,7 +31,7 @@ describe CompaniesController do
     post :create, @params.merge!(:format => 'json')
     @comp = @account.companies.find_by_name(@company_name)
     response.status.should eql 201
-    @company_params.should be_eql(json SKIPPED_KEYS)
+    @company_params.should be_eql(json(SKIPPED_KEYS))
   end
 
   it "should fetch a company using the API" do

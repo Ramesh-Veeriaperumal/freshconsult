@@ -125,7 +125,7 @@ RSpec.describe ContactsController do
 			check_phone  = contact.phone
 			get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -142,7 +142,7 @@ RSpec.describe ContactsController do
 			check_mobile  = contact.mobile
 			get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -161,14 +161,14 @@ RSpec.describe ContactsController do
 			check_id  = new_company.id
 			get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
 		it "should make user as agent" do
 			contact = add_new_user(@account,{})
 			put :make_agent, {:id => contact.id,:format => 'xml'}
-			response.status.should eql("200 OK")
+			response.status.should eql(200)
 		end
 	end
 
@@ -215,7 +215,8 @@ RSpec.describe ContactsController do
 						  :format => 'xml'
 
 			result = parse_xml(response)
-			expected = (response.status == "201 Created") && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
+			expected = (response.status == 201
+        ) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
 							result["user"]["custom_field"].keys.sort == @custom_field.sort
 			expected.should be(true)
 
@@ -225,7 +226,7 @@ RSpec.describe ContactsController do
 			new_user.send("cf_linetext").should eql(text)
 			new_user.send("cf_category").should eql "Tenth"
 			new_user.send("cf_agt_count").should eql(34)
-			new_user.send("cf_show_all_ticket").should be_false
+			new_user.send("cf_show_all_ticket").should be false
 			new_user.send("cf_file_url").should eql(url)
 		end
 
@@ -244,7 +245,7 @@ RSpec.describe ContactsController do
 						  :format => 'xml'
 
 			result = parse_xml(response)
-			expected = (response.status == "201 Created") && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
+			expected = (response.status == 201) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
 							result["user"]["custom_field"].keys.sort == custom_field.map {|k,v| k.to_s}.sort
 			expected.should be(true)
 
@@ -252,7 +253,7 @@ RSpec.describe ContactsController do
 			new_user.should be_an_instance_of(User)
 			new_user.flexifield_without_safe_access.should_not be_nil
 			new_user.send("cf_linetext").should eql(text)
-			new_user.send("cf_show_all_ticket").should be_true
+			new_user.send("cf_show_all_ticket").should be true
 			new_user.send("cf_file_url").should eql(url)
 			new_user.send("cf_agt_count").should be_nil
 			new_user.send("cf_testimony").should be_nil
@@ -277,7 +278,7 @@ RSpec.describe ContactsController do
 			user.send("cf_testimony").should eql(@text)
 			user.send("cf_category").should eql "First"
 			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be_true
+			user.send("cf_show_all_ticket").should be true
 			user.send("cf_file_url").should be_nil
 			user.send("cf_linetext").should eql("updated text")
 		end
@@ -304,7 +305,7 @@ RSpec.describe ContactsController do
 			user.send("cf_testimony").should eql(@text)
 			user.send("cf_category").should eql "First"
 			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be_true
+			user.send("cf_show_all_ticket").should be true
 			user.send("cf_file_url").should be_nil
 			user.send("cf_linetext").should eql("updated text")
 		end

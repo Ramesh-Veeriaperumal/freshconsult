@@ -31,7 +31,7 @@
   </li>
 </ul>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 var freshchat_i18n = {"filter_title": "<%=t('reports.freshchat.filter_by_title')%>", "time_period": "<%=t('reports.freshchat.time_period')%>", "widget": "<%=t('reports.freshchat.widget')%>", "group": "<%=t('reports.freshchat.group')%>", type: "<%=t('reports.freshchat.chat_type')%>", "this_week": "<%=t('reports.date_ranges.last_7_days') %>", "this_month": "<%= t('reports.date_ranges.last_30_days') %>", "three_months": "<%= t('reports.date_ranges.last_90_days') %>", "custom_days": "<%= t('reports.date_ranges.custom') %>", "total_chats": "<%=t('reports.freshchat.total_chats')%>", "num_of_chats": "<%=t('reports.freshchat.num_of_chats')%>", "answered_chats": "<%=t('reports.freshchat.answered_chats')%>", "missed_chats": "<%=t('reports.freshchat.missed_chats')%>", "avg_handle_time": "<%=t('reports.freshchat.avg_handle_time')%>", "num_of_transfer": "<%=t('reports.freshchat.num_of_transfer')%>","avg_time_queue": "<%=t('reports.freshchat.avg_time_queue')%>","no_data":"<%=t('reports.no_data')%>"};
 
 var freshchat_agents = <%= @agents_list %>

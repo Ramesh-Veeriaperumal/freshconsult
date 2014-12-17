@@ -54,8 +54,8 @@ describe Discussions::MergeTopicController do
 			@source1.reload
 			@source2.reload
 			
-			@source1.locked.should be_true
-			@source2.locked.should be_true
+			@source1.locked.should be true
+			@source2.locked.should be true
 		end
 
 		it 'should set target id in all source topics' do
@@ -66,11 +66,11 @@ describe Discussions::MergeTopicController do
 			@source1.merged_topic_id.should be_eql @target.id
 			@source2.merged_topic_id.should be_eql @target.id
 			
-			@target.merged_topic_id?.should_not be_true
+			@target.merged_topic_id?.should_not be true
 		end
 
 		it 'should not lock the target topic' do
-			@target.locked.should_not be_true
+			@target.locked.should_not be true
 		end
 
 		it 'should add a reply to all source topics if source note is not blank' do
@@ -95,32 +95,32 @@ describe Discussions::MergeTopicController do
 			monitorship = @user1.monitorships.last
 			monitorship.monitorable_id.should eql @target.id
 			monitorship.monitorable_type.should eql 'Topic'
-			monitorship.active.should be_true
+			monitorship.active.should be true
 
 			monitorship = @user2.monitorships.last
 			monitorship.monitorable_id.should eql @target.id
 			monitorship.monitorable_type.should eql 'Topic'
-			monitorship.active.should be_true
+			monitorship.active.should be true
 		end
 
 		it 'should copy votes from source to target topic' do
 			vote = @user1.votes.last
 			vote.voteable_id.should eql @target.id
 			vote.voteable_type.should eql 'Topic'
-			vote.vote.should be_true
+			vote.vote.should be true
 
 			vote = @user2.votes.last
 			vote.voteable_id.should eql @target.id
 			vote.voteable_type.should eql 'Topic'
-			vote.vote.should be_true
+			vote.vote.should be true
 		end
 
 		it 'should send merge email notification to target topic followers' do
 		end
 
 		it 'should add a new post activity for all source topics if source is not blank' do
-			@source1.posts.last.activities.first.present?.should be_true
-			@source2.posts.last.activities.first.present?.should be_true
+			@source1.posts.last.activities.first.present?.should be true
+			@source2.posts.last.activities.first.present?.should be true
 		end
 
 	end
@@ -160,7 +160,7 @@ describe Discussions::MergeTopicController do
 		end
 
 		it 'should not add a new post activity for all source topics if source is blank' do
-			@source.posts.last.activities.first.present?.should_not be_true
+			@source.posts.last.activities.first.present?.should_not be true
 		end
 
 	end

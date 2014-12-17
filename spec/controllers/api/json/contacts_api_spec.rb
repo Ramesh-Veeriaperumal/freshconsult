@@ -100,7 +100,7 @@ RSpec.describe ContactsController do
 			# US numbers format is not searched 812.123.1232 or (802)-123-1232
 			# Hence not using Faker for phonenumber generation.
 			# This needs to be addressed. change filter expresssion in api_helper_methods
-			contact = FactoryGirl.build(:user, :account => @account,
+			contact = Factory.build(:user, :account => @account,
 											:name => Faker::Name.name, 
 											:email => Faker::Internet.email,
 											:phone => "42345678",
@@ -111,7 +111,7 @@ RSpec.describe ContactsController do
 			check_phone  = contact.phone
 			get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'json'}
 			result = parse_json(response)
-			expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -128,7 +128,7 @@ RSpec.describe ContactsController do
 			check_mobile  = contact.mobile
 			get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'json'}
 			result = parse_json(response)
-			expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -147,14 +147,14 @@ RSpec.describe ContactsController do
 			check_id  = new_company.id
 			get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'json'}
 			result = parse_json(response)
-			expected = (response.status =~ /200 OK/) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result.first["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
 		it "should make user as agent" do
 			contact = add_new_user(@account,{})
 			put :make_agent, {:id => contact.id,:format => 'json'}
-			response.status.should eql("200 OK")
+			response.status.should eql(200)
 		end
 	end
 	
@@ -213,7 +213,7 @@ RSpec.describe ContactsController do
 			new_user.send("cf_linetext").should eql(text)
 			new_user.send("cf_category").should eql "Tenth"
 			new_user.send("cf_agt_count").should eql(34)
-			new_user.send("cf_show_all_ticket").should be_false
+			new_user.send("cf_show_all_ticket").should be false
 			new_user.send("cf_file_url").should eql(url)
 		end
 
@@ -262,7 +262,7 @@ RSpec.describe ContactsController do
 			user.send("cf_testimony").should eql(@text)
 			user.send("cf_category").should eql "First"
 			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be_true
+			user.send("cf_show_all_ticket").should be true
 			user.send("cf_file_url").should be_nil
 			user.send("cf_linetext").should eql("updated text")
 			user.avatar.should_not be_nil
@@ -291,7 +291,7 @@ RSpec.describe ContactsController do
 			user.send("cf_testimony").should eql(@text)
 			user.send("cf_category").should eql "First"
 			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be_true
+			user.send("cf_show_all_ticket").should be true
 			user.send("cf_file_url").should be_nil
 			user.send("cf_linetext").should eql("updated text")
 		end

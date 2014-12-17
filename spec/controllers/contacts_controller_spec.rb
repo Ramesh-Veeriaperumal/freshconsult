@@ -300,7 +300,7 @@ describe ContactsController do
     new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
     new_contact.company_id.should be_eql(@new_company.id)
-    Delayed::Job.last.handler.should include("user_activation")
+    Delayed::Job.last.handler.should include("deliver_user_activation")
     Delayed::Job.last.handler.should include(new_contact.name)
   end
 
@@ -603,7 +603,7 @@ describe ContactsController do
       new_user.send("cf_linetext").should eql(text)
       new_user.send("cf_category").should eql "Tenth"
       new_user.send("cf_agt_count").should eql(34)
-      new_user.send("cf_show_all_ticket").should be_false
+      new_user.send("cf_show_all_ticket").should be false
       new_user.send("cf_file_url").should eql(url)
       new_user.avatar.should_not be_nil
       new_user.avatar.content_file_name.should eql "image33kb.jpg"
@@ -650,7 +650,7 @@ describe ContactsController do
       user.send("cf_testimony").should eql(text)
       user.send("cf_category").should eql "First"
       user.send("cf_agt_count").should eql(7)
-      user.send("cf_show_all_ticket").should be_true
+      user.send("cf_show_all_ticket").should be true
       user.send("cf_file_url").should be_nil
       user.send("cf_linetext").should eql("updated text")
       user.avatar.should_not be_nil
@@ -751,7 +751,7 @@ describe ContactsController do
       new_user.flexifield_without_safe_access.should_not be_nil
       new_user.send("cf_linetext").should eql(text)
       new_user.send("cf_category").should eql "Third"
-      new_user.send("cf_show_all_ticket").should be_true
+      new_user.send("cf_show_all_ticket").should be true
       new_user.send("cf_linetext_with_regex_validation").should eql "Helpdesk Software"
     end
   end

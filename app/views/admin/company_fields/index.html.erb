@@ -7,7 +7,7 @@
 
 <%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => CompanyField} %>
 <br/>
-<%= include_cloudfront_js :company_fields %>
+<%= javascript_include_tag :'cdn/company_fields' %>
 <% form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
  
   <div class="custom_form_outer">
@@ -28,7 +28,7 @@
 <% end %>
 
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     // Localizing ticket fields js elements
     customFields = <%= @fields_json.html_safe %>;
     tf_lang = {

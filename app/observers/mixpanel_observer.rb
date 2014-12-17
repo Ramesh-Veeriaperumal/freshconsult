@@ -75,7 +75,7 @@ class MixpanelObserver < ActiveRecord::Observer
     def send_plan_update_event(model)
       changes = model.changes.clone
       unless changes.blank?
-        send_to_mixpanel(model.class.name, changes)
+        ::MixpanelWrapper.send_to_mixpanel(model.class.name, changes)
       end
     end
 

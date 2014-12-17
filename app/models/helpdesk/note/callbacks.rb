@@ -76,7 +76,7 @@ class Helpdesk::Note < ActiveRecord::Base
       if user.customer?
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
-        Helpdesk::TicketNotifier.send_later(:deliver_notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
                                               notable, self) if notable.responder && e_notification.agent_notification?
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
@@ -86,7 +86,7 @@ class Helpdesk::Note < ActiveRecord::Base
         end
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
-        Helpdesk::TicketNotifier.send_later(:deliver_notify_by_email, EmailNotification::COMMENTED_BY_AGENT,
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,
            notable, self)
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
