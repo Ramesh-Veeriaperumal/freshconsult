@@ -38,14 +38,5 @@ class FreshdeskErrorsMailer < ActionMailer::Base
     body(:additional_info => options[:additional_info])
     content_type  "text/html"
   end 
-
-  def unblock_notification(params={})
-    recipients    (params[:recipients] || (Rails.env.production? ? Helpdesk::EMAIL[:production_dev_ops_email] : "dev-ops@freshpo.com") )
-    from          Helpdesk::EMAIL[:default_requester_email]
-    subject       "Account #{params[:account_id]} unblocked"
-    sent_on       Time.now
-    body(:params => params)
-    content_type  "text/html"
-  end
   
 end
