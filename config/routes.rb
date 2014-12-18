@@ -148,7 +148,6 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :contact_fields, :only => :index
     admin.resources :company_fields, :only => :index
     admin.resources :chat_widgets
-    admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
@@ -253,8 +252,8 @@ ActionController::Routing::Routes.draw do |map|
         :collection => {:generate => :post, :export_csv => :post }
     end
     report.namespace :freshchat do |freshchat|
-      freshchat.resources :summary_reports, :controller => 'summary_reports', 
-      :collection => {:generate => :post } 
+      freshchat.resources :summary_reports, :controller => 'summary_reports',
+        :collection => {:generate => :post }
     end
     report.namespace :freshchat do |freshchat|
       freshchat.resources :summary_reports, :controller => 'summary_reports', 
@@ -486,6 +485,7 @@ ActionController::Routing::Routes.draw do |map|
       end
     end
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
+    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get, :reorder => :put}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}
 
