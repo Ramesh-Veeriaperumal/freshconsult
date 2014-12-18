@@ -5,7 +5,7 @@ describe HttpRequestProxyController do
   self.use_transactional_fixtures = false
 
 	before(:all) do
-		@account = create_test_account
+		#@account = create_test_account
 	  @user = add_test_agent(@account)
 	  test = create_application({ :name => "pivotal_tracker",
 		     								:display_name => "pivotal_tracker",:listing_order => 23,

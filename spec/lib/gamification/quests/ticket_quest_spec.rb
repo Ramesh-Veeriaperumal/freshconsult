@@ -10,7 +10,7 @@ describe Gamification::Quests::ProcessTicketQuests do
   OVERALL_RESOLUTION_POINTS = FAST_RESOLUTION_POINTS + FIRST_CALL_RESOLUTION_POINTS
   
   before(:all) do
-    @account  = create_test_account
+    #@account = create_test_account
     @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
   end
   

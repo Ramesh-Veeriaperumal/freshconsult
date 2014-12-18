@@ -7,7 +7,7 @@ describe Mobihelp::DevicesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @mobihelp_app = create_mobihelp_app
   end
 
