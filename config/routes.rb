@@ -352,7 +352,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.with_options(:conditions => {:subdomain => AppConfig['freshops_subdomain']}) do |subdom|
-    subdom.with_options(:namespace => 'fdadmin/', :path_prefix => nil) do |admin|
+    subdom.with_options(:namespace => 'fdadmin/',:name_prefix => "fdadmin_", :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :only => :none, :collection => {:display_subscribers => :get }
       admin.resources :accounts, :only => :show, :collection => {:add_day_passes => :put ,
                                                                  :add_feature => :put ,
