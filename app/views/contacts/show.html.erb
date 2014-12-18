@@ -33,7 +33,6 @@
 
 
 				<% if privilege?(:manage_users) %>
-					<%= link_to t('ticket.merge_btn'), { :controller => 'contact_merge', :action => "new" , :id => @user.id }, :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "685", :rel => "freshdialog", "data-target" => "#mergebox1", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features?(:contact_merge_ui) %>
 					<% if @user.has_email? and !@user.blocked?%>
 						<ul class="dropdown-menu pull-right" role="menu">
 							<% if current_account.features?(:contact_merge_ui) %>
