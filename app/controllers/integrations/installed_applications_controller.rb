@@ -4,6 +4,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
+  before_filter :check_application_installable, :only => [:install, :update]
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
 
@@ -106,6 +107,14 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   private
+  #Since enabling SEOshop from Freshdesk is disabled, this check is made
+  def check_application_installable
+    app = params[:action] == "install" ? @installing_application.name : @installed_application.application.name
+    if app == "seoshop"
+      redirect_to :controller=> 'applications', :action => 'index'
+    end
+  end
+
   def convert_to_configs_hash(params) #possible dead code
     if params[:configs].blank?
       {:inputs => {}}
