@@ -12,6 +12,13 @@
         </b>
       </div>
     </div>
+    <% if privilege?(:manage_canned_responses) && @current_folder== @pfolder%>
+    <div class="alert notice cr-info-msg" id="notice">
+    	All canned responses with availability set to <b>"Myself"</b> will be under the <b>"Personal"</b> folder.
+    	<a href='https://support.freshdesk.com/support/solutions/articles/37577-creating-common-reply-templates-with-canned-responses' target='_blank'>Learn more</a>
+
+    </div>
+    <%end%>
     <div id="folder-list">
 		<div id="folders-panel" >
 			<div class='ca-resp-folder-header'>
