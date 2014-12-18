@@ -1,4 +1,4 @@
-<% form_tag :action => :complete, :controller => 'contact_merge', :method => :post do |f| %>
+<% form_tag :action => :merge, :controller => 'contact_merge', :method => :post do |f| %>
   <%= hidden_field_tag 'parent_user',  @source_user.id %>
   <div class="contact-special">
  	  <br>
@@ -13,9 +13,9 @@
       </div>
     </div>
     <div id="merge-ready">
-      <% @target_user.each do |target| %>
+      <% @target_users.each do |target| %>
         <div id="one-contact">
-          <% if target == @target_user.last %>
+          <% if target == @target_users.last %>
             <span class="line last-line"></span>
           <% else %>
             <span class="line"></span>
@@ -36,7 +36,7 @@
     </div>
   </div>
   <div class="info-text">
-    <h3><%= t("merge_contacts.header",{:number => @target_user.size, :name => @source_user.name}).html_safe %></h3>
+    <h3><%= t("merge_contacts.header",{:number => @target_users.size, :name => @source_user.name}).html_safe %></h3>
     <%= t("merge_contacts.info", {:name => @source_user.name}).html_safe %>
   </div>
   <div class="button-container">

@@ -33,4 +33,7 @@ class User < ActiveRecord::Base
                           "user_emails_attributes", "customer_id", "client_manager", 
                           "helpdesk_agent", "role_ids", "customer_attributes", "company_name"]
 
+  USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
+                                "external_id", "job_title", "language"]
+
 end

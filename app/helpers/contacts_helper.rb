@@ -1,6 +1,7 @@
 module ContactsHelper
 
 	include ContactsCompaniesHelper
+  include UserEmailsHelper
 
   def contact_fields
     @user.helpdesk_agent? ? current_account.contact_form.default_contact_fields : current_account.contact_form.contact_fields
@@ -9,10 +10,14 @@ module ContactsHelper
   def render_as_list form_builder, field
     field_value = (field_value = @user.send(field.name)).blank? ? field.default_value : field_value
     if form_builder.nil? 
-      show_field field,field_value
+      if field.name == "email" and current_account.features_included?(:contact_merge_ui)
+        render_user_email_field field
+      else
+        show_field field,field_value
+      end
     else
-      CustomFields::View::DomElement.new(form_builder, :user, :contact, field, field.label, field.dom_type, 
-              field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note).construct
+      UserEmailsHelper::FreshdeskDomElement.new(form_builder, :user, :contact, field, field.label, field.dom_type, 
+              field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note, {:account => current_account}).construct
     end
   end
 
@@ -47,6 +52,31 @@ module ContactsHelper
     time_div = content_tag(:p, time_info, :class => 'muted')
 
     (icon_wrapper + text_wrapper + time_div)
+  end
+
+  def render_user_email_field field
+    output = []
+    output << %(<ul class="user-email-bullet">)
+    @user.user_emails.sort_by(&:email).each do |mail|
+      output2 = <<HTML
+      <p class="primary_email_text">#{h(mail.email)}</p>
+HTML
+      output3 = <<HTML
+      <p class="verify">#{link_to_remote t('merge_contacts.verify'), 
+    :url => {:controller => "contacts", :id => params[:id], :action => "verify_email", :email_id => mail.id.to_s},
+    :method => :put, :loading => "jQuery('[data-verify-id=#{mail.id}]').text('#{t('merge_contacts.please_wait')}').addClass('disabled');", :complete => "jQuery('[data-verify-id=#{mail.id}]').text('#{t('merge_contacts.verify_mail')}');", :html => {:id => "verify_email", 'data-verify-id' => mail.id}}</p>
+HTML
+      output << %(<li>)
+      output << content_tag(:span, "", :class => "email-tick #{(!mail.primary_role && !mail.verified) ? "ficon-notice unverified" : "ficon-checkmark-round"} fsize-18 #{mail.primary_role ? "primary" : "secondary"}")
+      output << output2 if mail.primary_role
+      output << content_tag(:p, "#{h(mail.email)}", :class => "helper ellipsis tooltip", :title => h(mail.email)) if !mail.primary_role
+      output << output3 if !mail.verified and !mail.primary_role
+      output << %(</li>)
+    end
+    output << %(</ul>)
+    head = content_tag(:p, field.label, :class => 'field-label break-word')
+    output.join("").html_safe
+    li = content_tag(:li, (head+output.join("").html_safe), :class => 'show-field')
   end
 
 end
