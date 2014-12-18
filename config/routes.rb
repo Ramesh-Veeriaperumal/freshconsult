@@ -1350,6 +1350,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :search
         get :recent
+        get :folders
       end
       resources :folders do
         collection do

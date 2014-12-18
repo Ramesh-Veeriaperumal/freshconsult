@@ -40,6 +40,7 @@ window.App = window.App || {};
 				$("#font-btn").empty().addClass('sloading');
 				$.ajax({
 					type: "POST",
+          dataType: "script",
 				    data: { "_method" : "put",  
 				    		"font-family" : $("#family-text").attr('rel')
 				    	},
