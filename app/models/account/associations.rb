@@ -120,6 +120,9 @@ class Account < ActiveRecord::Base
   has_many :scn_automations, :class_name => 'ScenarioAutomations', :conditions =>{
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "position"
 
+  has_many :all_scn_automations, :class_name => 'VARule',:conditions => {
+  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
+   
   has_many :email_notifications
   has_many :groups
   has_many :agent_groups
