@@ -18,7 +18,7 @@ describe GroupsController do
 	end
 
 	after(:all) do
-		@test_group.destroy
+		@test_group.destroy	
 		@calendar.destroy
 	end
 
@@ -30,7 +30,7 @@ describe GroupsController do
 		}
 		result = parse_json(response)
 		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
-					(compare(result["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+					(compare(result["group"]["agents"].first.keys,APIHelper::AGENT_USER_ATTRIBS,{}).empty?)
 		expected.should be(true)
 		@account.groups.find_by_name("Spec Testing Grp - json").should_not be_nil
 	end
@@ -79,7 +79,7 @@ describe GroupsController do
 		get :index, :format => 'json'
 		result = parse_json(response)
 		expected = (response.status == "200 OK") && (compare(result.first["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
-					(compare(result.last["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+					(compare(result.last["group"]["agents"].first.keys,APIHelper::AGENT_USER_ATTRIBS,{}).empty?)
 		expected.should be(true)
 	end
 

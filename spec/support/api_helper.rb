@@ -45,6 +45,10 @@ module APIHelper
   TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id"]
   
   CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id", "custom_field"]
+ 
+  COMPANY_ATTRIBS  = ["created_at", "cust_identifier", "description", "domains", "id", "name", "note", "sla_policy_id", "updated_at","custom_field"]
+
+  AGENT_USER_ATTRIBS =  ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id"]
 
   FORUM_CATEGORY_ATTRIBS = ["created_at", "description", "id", "name", "position", "updated_at"]
 
@@ -70,5 +74,5 @@ module APIHelper
    
   USER_ATTRIBS = ["active", "address", "created_at", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
   
-  AGENT_ATTRIBS = ["available", "created_at", "id", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"]
+  AGENT_ATTRIBS = ["active_since","available", "created_at", "id", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"]
 end
