@@ -1586,8 +1586,6 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match 'discussions/:object/:id/subscriptions/:type', :controller => 'monitorships',
-    :action => 'toggle', :as => :toggle_monitorship
 
   get 'discussions' => 'discussions#index', as: :discussions
 
@@ -1659,7 +1657,7 @@ Helpkit::Application.routes.draw do
     :conditions => {:method => :get},
     :as => :view_monitorship
 
-  match 'discussions/:object/:id/subscriptions/:type.:format',
+  match 'discussions/:object/:id/subscriptions/:type(.:format)',
     :controller => 'monitorships', :action => 'toggle',
     :as => :toggle_monitorship
 
