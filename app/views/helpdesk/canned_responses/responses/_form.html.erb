@@ -123,7 +123,7 @@ function toggleGroup(access_id)
 </ul>
 <div class="button-container">
 	<%= f.submit t('save'), :class => "btn btn-primary" %>	      	
-	<%= link_to(t('cancel'), helpdesk_canned_responses_folder_path(:id => params[:folder_id]) , :class => "btn" ) %>
+	<%= link_to(t('cancel'), helpdesk_show_canned_responses_folder_path(:id => params[:folder_id]) , :class => "btn" ) %>
 </div>
 
 <% content_for :pagefixed do %>
