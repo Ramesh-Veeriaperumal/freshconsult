@@ -90,7 +90,8 @@ ActionController::Routing::Routes.draw do |map|
     freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :caller_data => :get, :call_transfer_success => :post }
     freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
-    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get }
+    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :transfer_incoming_to_group => :post , 
+      :transfer_outgoing_to_group => :post , :available_agents => :get }
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                         :children => :get, :recent_calls => :get }
