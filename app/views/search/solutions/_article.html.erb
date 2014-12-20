@@ -12,9 +12,9 @@
 			<div class='actions-menu-wrapper'>
 				<div class="actions-menu">
 					<%= t('ticket.insert') %>:
-					<% if article.folder.visible?(current_user) && article.published? %>
+					<% if article.folder.visible?(@ticket.requester) && article.published? %>
 						<%= link_to_function t('ticket.suggested_solutions.link'), 
-										"respondWithSol('link', '#{article.id}', '#{article_url}', '#{article.title}')", 
+										"respondWithSol('link', '#{article.id}', '#{article_url}', '#{escape_javascript(article.title)}')", 
 										:class => "btn btn-mini btn-flat" %>
 					<% end %>
 					<% unless @ticket.is_twitter? or @ticket.is_facebook? or @ticket.mobihelp? %>

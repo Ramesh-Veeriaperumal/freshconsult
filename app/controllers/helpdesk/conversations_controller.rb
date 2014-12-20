@@ -72,10 +72,14 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def twitter
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
-    error_message, @tweet_body = validate_tweet(tweet_text, "@#{@parent.requester.twitter_id}")
+    twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
+    if twt_type.eql?"mention"
+      error_message, @tweet_body = validate_tweet(tweet_text, "@#{@parent.requester.twitter_id}") 
+    else
+      error_message, @tweet_body = validate_tweet(tweet_text, nil, false) 
+    end
     if error_message.blank?
       if @item.save_note 
-        twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
         error_message, reply_twt = send("send_tweet_as_#{twt_type}")
         flash[:notice] = error_message.blank? ?  t(:'flash.tickets.reply.success') : error_message
         process_and_redirect

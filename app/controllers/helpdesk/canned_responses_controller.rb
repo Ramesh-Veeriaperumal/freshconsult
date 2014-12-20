@@ -1,17 +1,23 @@
 class Helpdesk::CannedResponsesController < ApplicationController
 
+  include HelpdeskAccessMethods
   before_filter :load_canned_response, :set_mobile, :only => :show
   before_filter :set_native_mobile,:only => [:show,:index]
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder]))
+    folders = @ca_responses.map(&:folder)
+    @ca_folders = folders.uniq.sort_by &:name
+    @ca_folders.each do |folder|
+      folder.visible_responses_count = folders.count(folder)
+    end
     respond_to do |format|
       format.html { 
-        @visible_folders = current_account.canned_response_folders.accessible_for(current_user).all
         render :partial => "helpdesk/tickets/components/canned_responses"
       }
       format.nmobile {
-        canned_responses = current_account.canned_responses.accessible_for(current_user).map{ |canned_response| canned_response.to_mob_json }
+        canned_responses = @ca_responses.map{ |canned_response| canned_response.to_mob_json }
         render :json => canned_responses
       }
     end
@@ -19,7 +25,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def show
     render_parsed_content if ticket_present?
-    @attachments = @ca_resp.attachments_sharable
+    @attachments = @ca_resp.attachments_sharable	
     respond_to do |format|
       format.html{ render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
       format.nmobile{ render :json => @a_template }
@@ -27,10 +33,9 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def recent
-    @id_data = ActiveSupport::JSON.decode params[:ids]
+    @id_data = ActiveSupport::JSON.decode params[:ids] || []
     @ticket = current_account.tickets.find(params[:ticket_id].to_i) unless params[:ticket_id].blank?
-    @ca_responses = @id_data.collect {|id| scoper.accessible_for(current_user).find(:all, :conditions => { :id => @id_data }).detect {|resp| resp.id == id}}
-    @ca_responses.delete_if { |x| x == nil }
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id IN (?)",@id_data]))
     respond_to do |format|
       format.html
       format.js {
@@ -41,8 +46,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def search
     @ticket = current_account.tickets.find(params[:ticket].to_i) unless params[:ticket].blank?
-    @ca_responses = scoper.accessible_for(current_user).find(:all,
-                                                             :conditions => ["title like ? ", "%#{params[:search_string]}%"])
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"]))
     respond_to do |format|
       format.html
       format.js {
@@ -68,8 +72,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def load_canned_response
-    @ca_resp = current_account.canned_responses.accessible_for(current_user).
-      find_by_id(params[:ca_resp_id])
+    @ca_resp = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id = #{params[:ca_resp_id].to_i}"]))[0]
     render :text => "" and return unless @ca_resp
   end
 

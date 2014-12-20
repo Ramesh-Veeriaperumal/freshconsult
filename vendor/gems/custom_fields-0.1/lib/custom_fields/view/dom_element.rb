@@ -6,7 +6,7 @@ module CustomFields
       include ActionView::Helpers
 
       def initialize(form_builder, object_name, class_name, field, field_label, dom_type, required, enabled,
-                      field_value = '', dom_placeholder = '', bottom_note = '')
+                      field_value = '', dom_placeholder = '', bottom_note = '', args = {})
         @object_name    = "#{object_name.to_s}#{ ( !field.default_field? ) ? '[custom_field]' : '' }"
         @form_builder   = form_builder
         @field          = field
@@ -133,7 +133,7 @@ module CustomFields
           date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
           unless @field_value.empty?
             time_format = Account.current.date_type(:short_day_separated)
-            @field_value = I18n.l Time.parse(@field_value.to_s), :format => time_format
+            @field_value = (Time.parse(@field_value.to_s)).strftime(time_format)
           end 
           date_format
         end

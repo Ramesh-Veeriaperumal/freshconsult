@@ -17,3 +17,5 @@ RateLimitConfig = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml
 ChromeExtensionConfig = YAML.load_file(File.join(Rails.root, 'config', 'chrome_extension.yml'))[Rails.env]
 
 MobileConfig = YAML.load_file(File.join(Rails.root, 'config', 'mobile_config.yml'))
+
+AdminApiConfig = YAML.load_file(File.join(Rails.root,'config','fdadmin_api_config.yml'))

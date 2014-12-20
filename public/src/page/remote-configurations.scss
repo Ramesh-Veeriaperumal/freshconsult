@@ -1,0 +1,131 @@
+
+// Base settings for app
+@import "settings/settings";
+
+// CSS Reset
+@import "app/lib/reset";
+
+// Icons
+@import "cdn-ignored/sprites/remote-configurations/*.png";
+@include all-remote-configurations-sprites(true);
+
+[class^="remote-configurations-"],
+[class*="remote-configurations-"]{
+  display:inline-block;
+  vertical-align: middle;
+}
+
+.remote-configurations-arrow{
+  margin: 0 15px;
+}
+
+.remote-configurations{
+  background: #d3d3d3;
+  box-sizing: border-box;
+  font-family: "Helvetica Neue";
+  font-weight: 300;
+  font-size: 14px;
+
+  .logo{
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+
+  .form{
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 120px;
+    background: #fff;
+    border: 1px solid #c5c5c5;
+    border-radius: 5px;
+    label.error{
+      color: rgb(215, 0, 0);
+      @include margin-left(145px);
+      font-size: 12px;
+    }
+  }
+
+  .input_box{
+    background: #eaeaea;
+    padding: 20px 40px;
+  }
+
+  .input_group{
+    width: 100%;
+    @include float(left);
+    .input_label{
+      @include text-align(right);
+      @include float(left);
+      width: 120px;
+      margin: 10px 0;
+      line-height: 30px;
+    }
+    .input_field{
+      @include float(left);
+      box-sizing: border-box;
+      width: 270px;
+      margin:10px 0 10px 20px;
+      border-radius: 4px;
+      padding: 7px 15px;
+      font-size: 14px;
+      border: 1px solid #d3d3d3; 
+    }
+  }
+  
+  .anchor{
+    text-decoration: none;
+    font-weight: 400;
+    color: #4387fd;
+  }
+
+  .anchor:hover{
+    color: #4387fe;
+  }
+  
+  .agent_link{
+    text-align: center;
+    font-size: 12px;
+    color: #a7a7a7;
+    margin-top: 5px;
+  }
+
+  .submit_box{
+    text-align: center;
+    padding: 25px;
+  }
+
+  .button{
+    color: #fff;
+    font-size: 13px;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+    background-color: #373737;
+    @include background-image(linear-gradient(to bottom,#444,#222));
+    background-repeat: repeat-x;
+    border-color: #222 #222222 black;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+
+  .notice{
+    position: absolute;
+    /*display: none;*/
+    top: 50px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 300px;
+    padding: 7px 15px;
+    border-radius: 4px;
+    color: #a90329;
+    text-align: center;
+    border: 1px solid #efefef;
+    background: #fefcea;
+  }
+}

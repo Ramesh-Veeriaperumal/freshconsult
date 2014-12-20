@@ -106,7 +106,7 @@
             _preventDefault(ev);
             var currentActiveForm = $('body').data('current-active-form');
 
-            if (currentActiveForm) {
+            if (currentActiveForm && $(currentActiveForm).is(":visible")) {
                 $(currentActiveForm).trigger('submit');
                 $('body').removeData('current-active-form');
             }

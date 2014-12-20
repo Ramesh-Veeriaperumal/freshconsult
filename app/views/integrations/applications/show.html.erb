@@ -21,6 +21,8 @@
   </ul>
   <div class="button-container">
     <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "uiButton floatl" %>
-    <%= f.submit t('application.enable'), :class => "uiButton special" %>
+    <% if @installing_application.name != "seoshop" %>
+      <%= f.submit t('application.enable'), :class => "uiButton special" %>
+    <%end%>
   </div>
 <% end %>

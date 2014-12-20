@@ -3,14 +3,14 @@ require 'spec_helper'
 describe CompaniesController do
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id ]
+                    :delta, :import_id, :custom_field ]
 
   integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @user = add_test_agent(@account)
   end
 
@@ -30,14 +30,16 @@ describe CompaniesController do
     fake_a_company
     post :create, @params.merge!(:format => 'json')
     @comp = @account.companies.find_by_name(@company_name)
-    response.status.should be_eql '201 Created'
-    @company_params.should be_eql(json SKIPPED_KEYS)
+    result =  parse_json(response)
+    expected = (response.status =~ /201 Created/) && compare(result['company'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
+    expected.should be(true)
   end
 
   it "should fetch a company using the API" do
     get :show, { :id => company.id, :format => 'json' }
-    json SKIPPED_KEYS
-    { :company => company_attributes(company, SKIPPED_KEYS) }.should be_eql(json)
+    result =  parse_json(response)
+    expected = compare(result['company'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
+    expected.should be(true)
   end
 
   it "should update a company using the API" do

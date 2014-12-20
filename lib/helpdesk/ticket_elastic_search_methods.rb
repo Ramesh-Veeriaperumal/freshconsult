@@ -4,7 +4,7 @@ module Helpdesk::TicketElasticSearchMethods
     base.class_eval do
 
       def es_flexifield_columns
-        @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text|_int)/}
+        @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text|_int|_decimal)/}
       end
 
       def es_from

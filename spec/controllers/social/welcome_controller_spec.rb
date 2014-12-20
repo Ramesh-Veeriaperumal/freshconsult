@@ -8,7 +8,7 @@ describe Social::WelcomeController do
   
   before(:all) do
     Resque.inline = true
-    @account = create_test_account
+    #@account = create_test_account
     unless GNIP_ENABLED
       GnipRule::Client.any_instance.stubs(:list).returns([])
       Gnip::RuleClient.any_instance.stubs(:delete).returns(delete_response)

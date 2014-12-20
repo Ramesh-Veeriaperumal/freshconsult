@@ -37,6 +37,7 @@ Authority::Authorization::PrivilegeList.build do
        :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
     resource :"social/twitter",
         :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
+    resource :"health_check"
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -44,7 +45,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce" 
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
-    
+    resource :"integrations/cti/customer_detail"
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
     resource :"freshfone/ivr"
@@ -293,7 +294,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_scenario_automation_rules do
-    resource :"admin/automation"
+    resource :"helpdesk/scenario_automation"
   end
 
   manage_email_settings do
@@ -327,6 +328,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/application"
     resource :"integrations/installed_application"
     resource :"integrations/google_account"
+    resource :"integrations/remote_configuration"
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"

@@ -66,6 +66,10 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 				e.preventDefault();
 				self.cancelSave();
 			});
+			$('body').on('click.company-view', '#customer-delete-confirmation-submit', function(e) {
+				e.preventDefault();
+				$('#delete_customer').trigger('click');
+			});
 			$('body').on('submit.company-view', '.edit_user', function(e) {
 				e.preventDefault();
 				self.makeAjaxCall();

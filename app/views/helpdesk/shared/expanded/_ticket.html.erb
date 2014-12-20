@@ -4,7 +4,7 @@
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
   <td class="check">
-  	<input class="selector" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
+  	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
 
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
