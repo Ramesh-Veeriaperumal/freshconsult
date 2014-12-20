@@ -37,10 +37,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         return if email_config && (from_email[:email] == email_config.reply_email)
         user = get_user(account, from_email, email_config)
         if !user.blocked?
-          self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
             # Workaround for params[:html] containing empty tags
-            sanitized_html = Helpdesk::HTMLSanitizer.plain(params[:html])
-            
+          sanitized_html = Helpdesk::HTMLSanitizer.plain(params[:html])
+          self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
             #need to format this code --Suman
             if sanitized_html.blank? && !params[:text].blank? 
              email_cmds_regex = get_email_cmd_regex(account) 
