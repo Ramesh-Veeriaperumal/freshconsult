@@ -35,7 +35,6 @@ describe Group do
  		Resque.inline = true
  		@group_6.agents << @ag1.user
  		@group_6.agents << @ag2.user
- 		puts @group_6.agent_groups.available_agents.inspect
  		user_ids = @group_6.agent_groups.available_agents.map(&:user_id)
  		value = set_others_redis_lpush(@group_6.round_robin_key, user_ids) if user_ids.any?
  		@group_6.next_available_agent.should_not be_nil
