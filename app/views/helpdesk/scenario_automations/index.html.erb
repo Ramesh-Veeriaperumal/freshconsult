@@ -14,7 +14,7 @@
 
   <div>
   <%= render :partial => "/shared/reorder_list", :locals => {
-      :items => @va_rules.active,
+      :items => @va_rules,
       :action_url => reorder_helpdesk_scenario_automations_path,
       :title => :name, :container_id => "va_rules_sort",
       :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
