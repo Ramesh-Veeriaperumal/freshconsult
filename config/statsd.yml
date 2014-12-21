@@ -10,3 +10,5 @@ slave:
 
 test:
   <<: *defaults
+staging:
+  <<: *defaults

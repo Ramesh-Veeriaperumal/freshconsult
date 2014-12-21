@@ -39,12 +39,13 @@ Helpkit::Application.configure do
     Sass::Plugin.options[:never_update] = true
     ActiveMerchant::Billing::Base.gateway_mode = :test
   end   
-
-  config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
-    asset_host_url = "http://assets%d.freshpo.com" % (rand(9)+1)
-    asset_host_url = "https://d31jxxr9fvyo78.cloudfront.net" if request && request.ssl?
-    asset_host_url
-  }
+  if defined?(PhusionPassenger)
+    config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
+      asset_host_url = "https://d31jxxr9fvyo78.cloudfront.net" 
+      asset_host_url = "http://assets%d.freshpo.com" % (rand(9)+1) if request && !request.ssl?
+      asset_host_url
+    }
+  end
 end
 
 

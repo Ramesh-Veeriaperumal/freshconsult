@@ -189,6 +189,8 @@ module Helpkit
 
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
 
+    config.assets.handle_expiration = true
+    config.assets.expire_after= 2.months
   end
 end
 
