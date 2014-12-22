@@ -5340,7 +5340,7 @@ en:
         num_of_transfer: Transfers
         avg_handle_time: Avg Handle Time
         avg_time_queue: Time in Queue
-        total_duration: "Duration"
+        total_duration: "Total Duration"
         agent_chat_summary: Agent Chat Summary
         agent: "Agent"
 
