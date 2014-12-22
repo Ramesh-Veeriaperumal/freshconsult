@@ -62,6 +62,7 @@ class Admin::ProductsController < Admin::AdminController
       @solution_categories = current_account.solution_categories
       @forums_categories = current_account.forum_categories
       @product.build_portal unless @product.portal
+      @portal = @product.portal
       @product.email_configs.build(:primary_role => true) if @product.email_configs.empty?
     end
     
