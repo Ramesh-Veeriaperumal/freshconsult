@@ -1,0 +1,4 @@
+page << "jQuery('#post_#{@spam_post.timestamp.to_i} .post-ban-user').removeTip();"
+page.replace_html "post_#{@spam_post.timestamp.to_i}", render(:partial => "after_ban")
+page << "App.Discussions.Moderation.banPostUser(#{@spam_post.timestamp.to_i}, 10);"
+page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"

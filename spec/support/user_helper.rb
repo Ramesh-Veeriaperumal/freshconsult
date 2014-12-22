@@ -43,7 +43,7 @@ module UsersHelper
       return user if user
     end
     new_user = Factory.build(:user, :account => account,
-                                    :name => Faker::Name.name,
+                                    :name => options[:name] || Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
                                     :time_zone => "Chennai",
                                     :delta => 1,

@@ -1,0 +1,38 @@
+<% content_for :layoutType do %>community<% end %>
+
+<% content_for :sticky_left do %>
+	<div class="all-post-heading">
+		<%= pjax_link_to (t('.waiting') + " <span rel='count-waiting' class='muted'>(#{@counts[:unpublished]})</span> ").html_safe, discussions_unpublished_filter_path(:unpublished),
+									:class => "tooltip #{'selected-tab' if @moderation_scope.to_s == 'ForumUnpublished'}",
+									:title => t('.waiting_desc') if moderation_enabled? or @counts[:unpublished] > 0 %>
+		<%= pjax_link_to (t('.title') + " <span rel='count-spam' class='muted'>(#{@counts[:spam]})</span> ").html_safe,
+									discussions_unpublished_filter_path(:spam),
+									:class => "#{'selected-tab' unless @moderation_scope.to_s == 'ForumUnpublished'}" %>
+	</div>
+<% end %>
+
+<% content_for :sticky_right do %>
+	<% if (@spam_posts.size > 0) %>
+		<%= link_to t('.empty_folder'), empty_folder_discussions_unpublished_path, :method => :delete, :class => 'btn btn-primary' unless @moderation_scope == ForumUnpublished %>
+	<% end %>
+	<%= link_to(t('.moderation_solution'), 'https://support.freshdesk.com/support/solutions/articles/195476', :class => 'mini-link', :target => '_blank') if @moderation_scope == ForumUnpublished %>
+<% end %>
+
+<%= render :partial => '/discussions/shared/sticky', :locals => { :sticky_class => "sticky_border" } %>
+
+<div class="clearfix comm-items">
+	<% if @spam_posts.blank? %>
+		<div class="big-info">
+			<div class="no-info-text mt20 mb20"><%= t(".no_#{@moderation_scope.to_s.underscore}")%></div>
+		</div>
+	<% else %>
+		<%= render :partial => 'post', :collection => @spam_posts %>
+	<% end %>
+</div>
+<%= pageless_dynamo(more_discussions_unpublished_path(:next => @spam_posts.last.timestamp, :filter => @spam_posts.first.type)) unless @spam_posts.blank? || @spam_posts.last_evaluated_key.nil? %>
+
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Discussions.setSpamCounts(<%= @counts.to_json.html_safe %>);
+	});
+</script>

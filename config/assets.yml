@@ -226,6 +226,10 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
 
+  admin:
+    - public/javascripts/app/admin/admin.js
+    - public/javascripts/app/admin/portal.js
+
   search:
     - public/javascripts/app/search.js
     - app/views/search/template/*.jst
@@ -484,7 +488,7 @@ javascripts:
     # - public/javascripts/mousetrap/record.js
     - public/javascripts/mousetrap/shortcut.js
 
-  admin:
+  admin_search:
     - public/javascripts/admin/ui_search.js
 
   profile_avatar:

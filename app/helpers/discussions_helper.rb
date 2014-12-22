@@ -78,10 +78,10 @@ module DiscussionsHelper
 	end
 
 	def moderation_count(counts)
-		if counts[:waiting] > 0
-			return pjax_link_to t('discussions.moderation.index.waiting') + " (#{counts[:waiting]}) ", discussions_moderation_filter_path(:waiting), :class => 'mini-link mr20'
+		if (counts[:waiting] || counts[:unpublished]) > 0
+			return pjax_link_to t('discussions.moderation.index.waiting') + " (#{counts[:waiting] || counts[:unpublished]}) ", moderation_index_path(:waiting), :class => 'mini-link mr20'
 		elsif counts[:spam] > 0
-			return pjax_link_to t('discussions.moderation.index.title') + " (#{@counts[:spam]}) ", discussions_moderation_filter_path(:spam), :class => 'mini-link mr20'
+			return pjax_link_to t('discussions.moderation.index.title') + " (#{@counts[:spam]}) ", moderation_index_path(:spam), :class => 'mini-link mr20'
 		end
 	end
 
@@ -186,6 +186,79 @@ module DiscussionsHelper
     output.html_safe
   end
 
+	def pageless_dynamo(url)
+		_output = []
+		_output << %(<div id="dynamo-next-page">)
+		_output << 	link_to_remote(
+										t('discussions.show_more'), 
+										:url => url,
+										:method => :get,
+										:html => {
+										:onclick => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')"
+										})
+		_output << %(</div>)
+		_output.join('').html_safe
+	end
+
+	def spam_modal_header(topic, type)
+		op = "<div class='modal-header'>"
+		op << heading(topic, type)
+		op << "</div>"
+		op
+	end
+
+	def heading(topic, type)
+		op = "<div id='modal-heading-#{type}'><h3 class='ellipsis'>"
+		op << t("discussions.unpublished.index.#{type}")
+		op << " (#{topic.send("#{type}_count")})" if topic.send("#{type}_count") > 0
+		op << "</h3>"
+		op << empty_link(topic.id) if topic.send("#{type}_count") > 1 && type.eql?('spam')
+		op << "</div>"
+		op
+	end
+
+	def empty_link(topic_id)
+		op = "<span class='empty-trash'>"
+		op << link_to(t('discussions.unpublished.empty_spam'), empty_topic_spam_discussions_unpublished_path(topic_id), :method => :delete)
+		op << "</span>"
+		op
+	end
+
+	def shorten(text, opts = {})
+		opts = shorten_defaults.merge!(opts)
+		op = [ h(text.first(opts[:length])) ]
+		op << shorten_links(opts, text) if text.length > opts[:length]
+		op.join('').html_safe
+	end
+
+	def shorten_defaults
+		{
+			:length => 200,
+			:more => t('discussions.unpublished.more'),
+			:less => t('discussions.unpublished.less')
+		}
+	end
+
+	def shorten_links(opts, text)
+		op = []
+		op << %(<a href class='more-link'>#{opts[:more]}</a>)
+		op << %(<span class='hide more'>)
+		op << h(text[opts[:length]..-1])
+		op << link_to(opts[:less], '', :class => 'less-link')
+		op << %(</span>)
+		op
+	end
+
+	def mark_as_spam_path(post)
+		current_account.features_included?(:spam_dynamo) ? 
+			mark_as_spam_discussions_unpublished_path(post) : mark_as_spam_discussions_moderation_path(post)
+	end
+
+	def moderation_index_path(filter)
+		current_account.features_included?(:spam_dynamo) ? 
+			discussions_unpublished_filter_path(filter.eql?(:spam) ? :spam : :unpublished) : discussions_moderation_filter_path(filter)
+	end
+
   def display_topic_icons(topic)
 		output = ""
   	output << content_tag(:span, font_icon('lock-2', :class => 'widget-icon-list').html_safe, {
@@ -203,5 +276,18 @@ module DiscussionsHelper
   			:title => t('discussions.topics.sticky')
 		}).html_safe if topic.sticky?
     output.html_safe
-   end
+  end
+
+  def unpublished_post_body(post, truncate_length, shorten_length)
+  	post_body = post.body
+  	if post_body.strip.blank?
+  		post.body_html.html_safe
+  	else
+  		shorten( truncate( post_body, :length => truncate_length ), :length => shorten_length)
+  	end
+  end
+
+  def display_count(count)
+  	"(#{count})" if count > 0
+  end
 end

@@ -202,6 +202,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/topic", :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
+    resource :"discussions/unpublished"
   end
 
   # ************** CONTACTS **************************

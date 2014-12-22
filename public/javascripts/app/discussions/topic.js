@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global App */
+/*global App, highlight_code  */
 
 window.App = window.App || {};
 window.App.Discussions = window.App.Discussions || {};
@@ -38,6 +38,8 @@ window.App.Discussions = window.App.Discussions || {};
 			this.bindPostUpdateForm();
 			this.bindReplyLink();
 			this.bindReplyCancelLink();
+			App.Discussions.Moderation.bindShowMore();
+			highlight_code();
 		},
 
 		bindReplyLink: function () {
@@ -84,7 +86,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindPostEditLink: function () {
-      var $this = this;
+			var $this = this;
 			$('body').on('click.topic_show', "[rel=post-edit]", function (ev) {
 				ev.preventDefault();
 				var conv = $this.findPostElement(this);
@@ -94,7 +96,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindPostEditCancelLink: function () {
-      var $this = this;
+			var $this = this;
 			$('body').on('click.topic_show', "[rel=post-edit-cancel]", function (ev) {
 				ev.preventDefault();
 				var conv = $this.findPostElement(this);
@@ -106,7 +108,7 @@ window.App.Discussions = window.App.Discussions || {};
 		bindPostUpdateForm: function () {
 			var $this = this;
 			$('body').on('submit.topic_show', '[rel=post-update]', function (ev) {
-				if($(this).valid()){
+				if ($(this).valid()) {
 					$this.blockElement($this.findPostElement(this));
 				}
 			});
@@ -114,6 +116,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		unbindHandlers: function () {
 			$('body').off('.topic_show');
+			App.Discussions.Moderation.unbindShowMore();
 		},
 
 		blockElement: function (element) {

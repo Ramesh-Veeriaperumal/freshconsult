@@ -1,7 +1,9 @@
 class Support::Discussions::PostsController < SupportController
 
+	include SpamAttachmentMethods
 	include CloudFilesHelper
 	include Community::Moderation
+
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
  	before_filter { |c| c.check_portal_scope :open_forums }
@@ -12,9 +14,6 @@ class Support::Discussions::PostsController < SupportController
  	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
-		params[:post].merge!(post_request_params)
-
-		@post = @topic.posts.new(params[:post])
 		if @topic.locked? and !@topic.published?
 			respond_to do |format|
 				format.html do
@@ -28,31 +27,70 @@ class Support::Discussions::PostsController < SupportController
 			return
 		end
 
-		@forum = @topic.forum
-		@post  = @topic.posts.build(params[:post])
-		@post.user = current_user
-		@post.account_id = current_account.id
-		@post.portal = current_portal.id
-		@post.save!
-		create_attachments
-		respond_to do |format|
-		  format.html do
-				flash[:notice] = flash_msg_on_post_create
-		    redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
-		  end
-		  format.xml {
-		  	return render :xml => @post
-		  }
+		params[:post].merge!(post_request_params)
+
+		if current_user.customer? and current_account.features_included?(:spam_dynamo)
+			sqs_create
+		else
+			@forum = @topic.forum
+			@post  = @topic.posts.build(params[:post])
+			@post.user = current_user
+			@post.account_id = current_account.id
+			@post.portal = current_portal.id
+			@post.save!
+			create_attachments
+			respond_to do |format|
+				format.html do
+					flash[:notice] = flash_msg_on_post_create
+					redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
+				end
+				format.xml {
+					return render :xml => @post
+				}
+			end
 		end
 		rescue ActiveRecord::RecordInvalid
-		flash[:bad_reply] = 'Please post a valid message...'
 		respond_to do |format|
-		  format.html do
-		  	redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
-		  end
-		  format.xml {
-		  	return render :xml => @post.errors.to_xml, :status => 400
-		  }
+			format.html do
+				flash[:bad_reply] = 'Please post a valid message...'
+				redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
+			end
+			format.xml {
+				return render :xml => @post.errors.to_xml, :status => 400
+			}
+		end
+	end
+
+	def sqs_create
+		post_params = params[:post].clone.delete_if {|k,v| k == "attachments"}
+		post_params[:topic] = { :id => @topic.id }
+
+		sqs_post = SQSPost.new(post_params)
+		sqs_post[:attachments] = processed_attachments
+		sqs_post[:cloud_file_attachments] = params["cloud_file_attachments"] || []
+		sqs_post[:portal] = current_portal.id
+		sqs_post_saved = sqs_post.save
+
+		if sqs_post_saved
+			respond_to do |format|
+				format.html {
+					flash[:notice] = t('.flash.portal.discussions.posts.spam_check')
+					redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
+				}
+				format.json {
+					return render :json => sqs_post
+				}
+			end
+		else
+			respond_to do |format|
+				format.html do
+					flash[:bad_reply] = 'Please post a valid message...'
+					redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
+				end
+				format.xml {
+					return render :xml => sqs_post.errors.to_xml, :status => 400
+				}
+			end
 		end
 	end
 
@@ -73,15 +111,15 @@ class Support::Discussions::PostsController < SupportController
 	end
 
 	def update
-	    @post.attributes = params[:post]
-	    @post.save!
+		@post.attributes = params[:post]
+		@post.save!
 		rescue ActiveRecord::RecordInvalid
 			flash[:error] = 'An error occurred'
 		ensure
 		respond_to do |format|
-		  format.html do
-		    redirect_to support_discussions_topic_path(:id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
-		  end
+			format.html do
+				redirect_to support_discussions_topic_path(:id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
+			end
 		end
 	end
 
@@ -98,11 +136,11 @@ class Support::Discussions::PostsController < SupportController
 	def toggle_answer
 		@post.toggle_answer
 		respond_to do |format|
-	      format.html do
-	        redirect_to support_discussions_topic_path(params[:topic_id])
-	      end
-	      format.xml { head 200 }
-	    end
+			format.html do
+				redirect_to support_discussions_topic_path(params[:topic_id])
+			end
+			format.xml { head 200 }
+		end
 	end
 
 	def best_answer
@@ -129,10 +167,10 @@ private
 		@post = Post.find_by_id_and_topic_id(params[:id], params[:topic_id]) || raise(ActiveRecord::RecordNotFound)
 		(raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
 		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
-    end
+	end
 
 	def scoper
-	    current_account.portal_topics
+		current_account.portal_topics
 	end
 
 	def post_request_params

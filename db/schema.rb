@@ -1124,6 +1124,13 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
 
+  create_table "forum_moderators", :force => true do |t|
+    t.integer "account_id",   :limit => 8
+    t.integer "moderator_id", :limit => 8
+  end
+
+  add_index "forum_moderators", ["account_id", "moderator_id"], :name => "index_forum_moderators_on_account_id_and_moderator_id", :unique => true
+
   create_table "forums", :force => true do |t|
     t.string  "name"
     t.string  "description"

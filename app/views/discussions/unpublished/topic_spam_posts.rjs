@@ -1,0 +1,6 @@
+page << "jQuery('.comm-items').append('#{escape_javascript(render(:partial => 'spam_post', :collection => @spam_posts))}')"
+unless @spam_posts.last_evaluated_key.nil?
+	page.replace 'dynamo-next-page', pageless_dynamo(topic_spam_posts_discussions_unpublished_path(params[:id], :filter => @spam_posts.first.type, :last =>@spam_posts.last_evaluated_key.to_json))
+else
+	page.remove 'dynamo-next-page'
+end

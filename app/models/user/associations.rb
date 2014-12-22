@@ -112,4 +112,6 @@ class User < ActiveRecord::Base
     :join_table => 'user_accesses'
 
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device', :dependent => :destroy
+
+  has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
 end
