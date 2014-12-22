@@ -64,42 +64,44 @@
 						:open_solutions => t('.everyone')}) %> 
 		</div>
 	</div>
-
-	<div class="control-group">
-		<div class="control-label"><%= t('.view_forums') %></div>
-		<div class="controls">
-		<%= multiple_feature_radio_btn(
-					"forums_visibility",
-					{ :default => t('.logged_in'),
-						:open_forums => t('.everyone'),
-						:hide_portal_forums => t('.none')}) %>
+	<% if current_account.features_included?(:forums) %>
+		<div class="control-group">
+			<div class="control-label"><%= t('.view_forums') %></div>
+			<div class="controls">
+			<%= multiple_feature_radio_btn(
+						"forums_visibility",
+						{ :default => t('.logged_in'),
+							:open_forums => t('.everyone'),
+							:hide_portal_forums => t('.none')}) %>
+			</div>
 		</div>
-	</div>
-</div>
-
-<div class="portal-section">
-	<%= content_tag( :div,  t('.moderation'),	:class => "heading" ) %>
-	<div class="<%= 'span6 right-border' if current_account.features_included?(:spam_dynamo) %> ml0">
-		<%= multiple_feature_radio_btn(
-						"moderation", 
-						{ :moderate_posts_with_links => 
-								[t('.moderate_links'),  t('.moderate_links_help')],
-							:moderate_all_posts => 
-								[t('.moderate_all'),t('.moderate_all_help')], 
-							:default => 
-								[t('.moderate_none'), t('.moderate_none_help')]
-						}) %>
-	</div>
-	<% if current_account.features_included?(:spam_dynamo) %>
-	<div class="span4">
-		<%= content_tag( :div, t('.notify_agents'), :class => "control-label pb10")%>
-		<%= select_tag :forum_moderators, 
-				options_for_select( current_account.technicians.collect { |a| [a.name, a.id]}, 
-										:selected => current_account.forum_moderators.map(&:moderator_id)), 
-				{ :multiple => true, "data-placeholder"=>"Select Moderators", :class => "select2 span4 ml0" } %>
-	</div>
 	<% end %>
 </div>
+<% if current_account.features_included?(:forums) %>
+	<div class="portal-section">
+		<%= content_tag( :div,  t('.moderation'),	:class => "heading" ) %>
+		<div class="<%= 'span6 right-border' if current_account.features_included?(:spam_dynamo) %> ml0">
+			<%= multiple_feature_radio_btn(
+							"moderation", 
+							{ :moderate_posts_with_links => 
+									[t('.moderate_links'),  t('.moderate_links_help')],
+								:moderate_all_posts => 
+									[t('.moderate_all'),t('.moderate_all_help')], 
+								:default => 
+									[t('.moderate_none'), t('.moderate_none_help')]
+							}) %>
+		</div>
+		<% if current_account.features_included?(:spam_dynamo) %>
+		<div class="span4">
+			<%= content_tag( :div, t('.notify_agents'), :class => "control-label pb10")%>
+			<%= select_tag :forum_moderators, 
+					options_for_select( current_account.technicians.collect { |a| [a.name, a.id]}, 
+											:selected => current_account.forum_moderators.map(&:moderator_id)), 
+					{ :multiple => true, "data-placeholder"=>"Select Moderators", :class => "select2 span4 ml0" } %>
+		</div>
+		<% end %>
+	</div>
+<% end %>
 <div class="clear"></div>
 <div class="form-button itil-hide">
 	<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
