@@ -16,9 +16,8 @@
                 :class => "select2 filter_item", 
                      "data-placeholder".to_sym() => t('reports.freshchat.select_widget') } %>
 
-    <% chat_types = [[t('reports.freshchat.all'), "0"], [t('reports.freshchat.chat_type_visitor'), "1"], [t('reports.freshchat.chat_type_agent'), "2"], [t('reports.freshchat.chat_type_proactive'), "3"]]%>
     <label class="control-label"><%=t('reports.freshchat.chat_type')%></label>
-      <%= select_tag :chat_type, options_for_select(chat_types), 
+      <%= select_tag :chat_type, options_for_select(@chat_types), 
               { :multiple => false, 
                 :class => "select2 filter_item",
                       "data-placeholder".to_sym() => t('reports.freshchat.select_chat_type')} %>

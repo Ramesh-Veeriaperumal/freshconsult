@@ -8,7 +8,7 @@ describe 'UsageTrigger' do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @agent = get_admin
     create_test_freshfone_account
   end

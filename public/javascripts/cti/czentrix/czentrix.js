@@ -1,3 +1,4 @@
+//Czentrix Widget
 var CZentrixWidget = Class.create();
 var agentId;
 CZentrixWidget.prototype = {

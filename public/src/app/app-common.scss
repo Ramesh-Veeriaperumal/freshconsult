@@ -3437,13 +3437,18 @@ body.popup-body{ min-width: 0px; }
 //------------------------------------------------------------------------------------
 
 .email_con{
+	background-color: #fbfbfb;
+	border: 1px solid #eaeaea;
+	@include border-radius(2px);
 	.control-group{
 		margin-bottom: 0;
 	}
 
 	.fieldWithErrors{
-		display: inline-block;
-		border: 2px solid #fabfbf;
+		display: inline;
+		.ue_input{
+			border: 1px solid #ff9291;
+		}
 	}
 
 	#cancel_email{
@@ -3451,12 +3456,66 @@ body.popup-body{ min-width: 0px; }
 	}
 
 	label.error{
-		position: absolute;
-		@include margin-left(112px);
+		display: none;
+		@include margin-left(21px);
+		padding-bottom: 0px;
 	}
 
 	p.primary_text{
 		display: inline-block;
+	}
+
+	input.ue_input{
+		width: 85%;
+	}
+
+	span.email-tick{
+		color: #888888;
+		@include margin-left(5px);
+		vertical-align: middle;
+		cursor: pointer;
+	}
+
+	span.email-tick.primary{
+		color: #202020;
+		cursor: default;
+	}
+
+	span.email-tick.unverified{
+		color: #888888;
+		cursor: default;
+	}
+
+	ul.user_emails{
+		li{
+			@include padding(10px 0 10px 5px);
+			border-bottom: 1px solid #dadada;
+		}
+	}
+
+	div.ue_add_email{
+		@include padding(10px 0 10px 5px);
+	}
+	.ue_action_icons{
+		@include border-radius(100%);
+		padding: 1px 5px;
+		@include margin-right(5px);
+		vertical-align: middle;
+		cursor: pointer;
+		color: #ffffff;
+	}
+
+	.ue_action_icons.disabled{
+		cursor: default;
+		background-color: #c9c9c9;
+	}
+
+	.remove_pad{
+		background-color: #ff9291;
+	}
+
+	.add_pad{
+		background-color: #98bf47;
 	}
 
 }
@@ -3465,7 +3524,7 @@ body.popup-body{ min-width: 0px; }
 	margin-bottom: 8px;
 }
 
-.user-info{
+.show-field{
 	span.def_text{
 		float: none;
 		color: #999999;
@@ -3476,27 +3535,42 @@ body.popup-body{ min-width: 0px; }
 	}
 
 	.user-email-bullet{
-			@include margin-left(12px);
-			li:before{
-				content:"";
-				@include border-radius(100%);
-				position: absolute;
-				width: 0px;
-				height: 0px;
-				border: 3px solid #666;
-				margin-top: 6px;
-				@include margin-left(-12px);
-				margin-bottom:5px;
+		margin-top: 8px;
+
+		li{
+			margin-bottom: 8px;
+			p{
+				margin: 0;
+				display: inline-block;
 			}
-			li{
-				margin-bottom: 5px;
-				p{
-					margin: 0;
-				}
-				p.helper{
-					color: #666;
-				}
+			p.helper{
+				color: #666;
+				@include margin-left(2px);
+				vertical-align: top;
+				width: 195px;
 			}
+			p.primary_email_text{
+				width: 195px;
+				overflow-wrap: break-word;
+			}
+			p.verify{
+				@include margin-left(9%);
+			}
+		}
+
+		span.email-tick{
+			color: #888888;
+			@include margin-right(5px);
+			vertical-align: middle;
+		}
+
+		span.email-tick.primary{
+			color: #202020;
+		}
+
+		span.email-tick.unverified{
+			color: #888888;
+		}
 	}
 }
 

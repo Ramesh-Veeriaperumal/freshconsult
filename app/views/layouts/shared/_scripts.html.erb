@@ -5,6 +5,10 @@
 		// Setting the locale for moment js
 		moment.lang('<%=I18n.locale.to_s.downcase%>');
 
+		var validation_meassages = <%= I18n.translate('validation').to_json.html_safe %>	
+
+		jQuery.extend(jQuery.validator.messages, validation_meassages );
+
 		<% if flash[:highlight] %>
 			var ele = jQuery("#<%= flash[:highlight] %>");
 			if(ele.is('tr'))

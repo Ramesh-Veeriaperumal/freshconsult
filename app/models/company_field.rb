@@ -35,7 +35,7 @@ class CompanyField < ActiveRecord::Base
   # Can't clear cache on every CompanyField or CompanyFieldChoices save
 
   def default_company_form
-    account.company_form
+    (Account.current || account).company_form
   end
 
   def label

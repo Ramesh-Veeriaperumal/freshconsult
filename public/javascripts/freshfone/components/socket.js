@@ -236,7 +236,7 @@ var FreshfoneSocket;
 		},
 
     updateAvailableGroups: function(){
-      self = this;
+      var self = this;
       var groupArray =[];
       var userArray = [];
       this.$freshfoneAvailableAgentsList.find('span.id').each(function(v,i){  

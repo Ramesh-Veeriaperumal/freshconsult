@@ -60,6 +60,13 @@ module ApplicationHelper
     query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
     "/support/#{stylesheet_name}?v=#{query_string}"
   end
+  
+  def facebook_theme_url
+    stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
+    query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
+    "/facebook/#{stylesheet_name}?v=#{query_string}"
+  end
+  
 
   def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
     include_cloudfront_js locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
@@ -241,7 +248,7 @@ module ApplicationHelper
   def dropdown_menu(list, options = {})
     return if list.blank?
     output = ""
-    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    output << %(<ul class="dropdown-menu #{options['ul_class']}" role="menu" aria-labelledby="dropdownMenu">) 
 
     list.each do |item|
       unless item.blank?
@@ -249,7 +256,8 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          additional_element = options['ul_class'] == 'tick' ? "<span class='ficon-checkmark-thick'></span>".html_safe : ""; #TODO: Remove this span element and extend the font-icon in after pseudo element of active class
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to (additional_element + item[0]), item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
@@ -985,6 +993,17 @@ module ApplicationHelper
     current_account.freshfone_credit.below_calling_threshold?
   end
 
+  def recent_countries
+    recent_calls = current_user.freshfone_calls.roots.find(
+         :all, :conditions =>  { :call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing] }
+         ).last(2).reverse
+    favorites = (recent_calls || []).map{|call| call.caller_country.downcase if !call.caller_country.nil? }.compact.uniq
+    if favorites.length > 0
+      favorites.to_json
+    else
+     favorites
+    end
+  end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
 		can_make_calls(number, 'phone-icons', freshfone_number_id)

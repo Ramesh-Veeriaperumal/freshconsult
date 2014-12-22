@@ -5,7 +5,8 @@ class ContactForm < ActiveRecord::Base
   serialize :form_options
   belongs_to_account
   attr_protected  :account_id
-  acts_as_custom_form :custom_field_class => 'ContactField'
+  acts_as_custom_form :custom_field_class => 'ContactField',
+                      :custom_fields_cache_method => :custom_contact_fields
 
   def contact_fields
     # fetching just once per request, reducing memcache calls

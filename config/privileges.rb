@@ -294,7 +294,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_scenario_automation_rules do
-    resource :"admin/automation"
+    resource :"helpdesk/scenario_automation"
   end
 
   manage_email_settings do

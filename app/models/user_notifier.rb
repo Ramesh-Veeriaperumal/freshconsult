@@ -57,7 +57,7 @@ class UserNotifier < ActionMailer::Base
 
       alt.part "text/html" do |html|
         html.body   render_message("admin_activation.text.html.erb", :admin => admin, 
-          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol , :account => admin.account ))
+          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol), :account => admin.account )
       end
     end
   end

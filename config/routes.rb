@@ -90,7 +90,8 @@ ActionController::Routing::Routes.draw do |map|
     freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :caller_data => :get, :call_transfer_success => :post }
     freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
-    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get }
+    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :transfer_incoming_to_group => :post , 
+      :transfer_outgoing_to_group => :post , :available_agents => :get }
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                         :children => :get, :recent_calls => :get }
@@ -148,7 +149,6 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :contact_fields, :only => :index
     admin.resources :company_fields, :only => :index
     admin.resources :chat_widgets
-    admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
@@ -253,8 +253,8 @@ ActionController::Routing::Routes.draw do |map|
         :collection => {:generate => :post, :export_csv => :post }
     end
     report.namespace :freshchat do |freshchat|
-      freshchat.resources :summary_reports, :controller => 'summary_reports', 
-      :collection => {:generate => :post } 
+      freshchat.resources :summary_reports, :controller => 'summary_reports',
+        :collection => {:generate => :post }
     end
     report.namespace :freshchat do |freshchat|
       freshchat.resources :summary_reports, :controller => 'summary_reports', 
@@ -351,6 +351,18 @@ ActionController::Routing::Routes.draw do |map|
       billing.resources :billing, :collection => { :trigger => :post }
     end
   end
+
+  map.with_options(:conditions => {:subdomain => AppConfig['freshops_subdomain']}) do |subdom|
+    subdom.with_options(:namespace => 'fdadmin/',:name_prefix => "fdadmin_", :path_prefix => nil) do |admin|
+      admin.resources :subscriptions, :only => :none, :collection => {:display_subscribers => :get }
+      admin.resources :accounts, :only => :show, :collection => {:add_day_passes => :put ,
+                                                                 :add_feature => :put ,
+                                                                 :change_url => :put,
+                                                                 :single_sign_on => :get
+                                                                }
+    end
+  end
+
 
   map.namespace :widgets do |widgets|
     widgets.resource :feedback_widget, :member => { :loading => :get }
@@ -474,6 +486,7 @@ ActionController::Routing::Routes.draw do |map|
       end
     end
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
+    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get, :reorder => :put}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}
 
@@ -591,6 +604,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect "/support/theme.:format", :controller => 'theme/support', :action => :index
   map.connect "/support/theme_rtl.:format", :controller => 'theme/support_rtl', :action => :index
   map.connect "/helpdesk/theme.:format", :controller => 'theme/helpdesk', :action => :index
+  
+  map.connect "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index
+  map.connect "/facebook/theme_rtl.:format", :controller => 'theme/facebook_rtl', :action => :index
 
   # Support Portal routes
   map.namespace :support do |support|

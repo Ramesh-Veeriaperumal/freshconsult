@@ -59,7 +59,11 @@
 
       // !BOOTSTRAP New change done so as to have a 
       // location hash change without moveing the scroll down
-      window.location.hash = selector
+      // New change added a condition to do the same : if the data-hash-url is not set to false, 
+      // location hash changes without moving the scroll down
+      if($this.data('hash-url') !== false) {
+        window.location.hash = selector
+      }
 
       $this.trigger(e)
 

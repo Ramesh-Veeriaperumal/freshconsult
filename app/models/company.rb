@@ -156,7 +156,7 @@ class Company < ActiveRecord::Base
   end
 
   def custom_form
-    account.company_form
+    (Account.current || account).company_form
   end
 
   def custom_field_aliases 

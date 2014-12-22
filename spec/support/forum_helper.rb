@@ -99,6 +99,19 @@ module ForumHelper
 		monitorship.save(true)
 	end
 
+	def monitor_forum(forum, user = @user, portal_id = nil)
+		monitorship = Factory.build(
+									:monitorship,
+									:monitorable_id => forum.id,
+									:user_id => user.id,
+									:active => 1,
+									:account_id => @account.id,
+									:monitorable_type => "Forum",
+									:portal_id => portal_id
+									)
+		monitorship.save(true)
+	end
+
 	def vote_topic(topic, user = @user)
 		vote = Factory.build(
 									:vote,
