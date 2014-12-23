@@ -386,9 +386,8 @@ $bdr-color:#e1e1e1;
     margin-top: -20px;
     padding-top: 20px;
     padding-bottom: 10px;
-    background-image: inline-image("cdn-ignored/inline-images/ribbon-bg.png");
-    background-color: #fff;
-    background-repeat: repeat;
+    background: #fff inline-image('cdn-ignored/inline-images/ribbon-bg.png');
+    background-size: 50px;
   }
   #current_interaction{
     border-bottom: 1px solid #ddd;

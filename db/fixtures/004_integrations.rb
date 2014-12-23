@@ -690,4 +690,51 @@ if Integrations::Application.count == 0
     s.application_type = "shopify"
   end
 
+  #populate seoshop
+  seoshop_app = Integrations::Application.seed(:name) do |s|
+    s.name = "seoshop"
+    s.display_name = "integrations.seoshop.label"
+    s.description = "integrations.seoshop.desc"
+    s.account_id = 0
+    s.listing_order = 24
+    s.options = {
+   :keys_order => [:api_key, :api_secret, :language], 
+   :api_key => {  :type => :text,
+    :required => true,
+    :label => "integrations.seoshop.form.api_key",
+    :info => "integrations.seoshop.form.api_key_info"
+    }, 
+    :api_secret => { :type => :text, 
+      :required  => true, 
+      :label => "integrations.seoshop.form.api_secret",
+      :info => "integrations.seoshop.form.api_secret_info"
+      },
+      :language => { :type => :dropdown,
+        :choices => [
+          ["integrations.seoshop.form.bg", "bg"],
+          ["integrations.seoshop.form.da", "da"],
+          ["integrations.seoshop.form.de", "de"],
+          ["integrations.seoshop.form.en", "en"],
+          ["integrations.seoshop.form.nl", "nl"],
+          ["integrations.seoshop.form.fr", "fr"],
+          ["integrations.seoshop.form.el", "el"],
+          ["integrations.seoshop.form.it", "it"],
+          ["integrations.seoshop.form.fr", "fr"],
+          ["integrations.seoshop.form.nor", "\'no\'"],
+          ["integrations.seoshop.form.pt", "pt"],
+          ["integrations.seoshop.form.pl", "pl"],
+          ["integrations.seoshop.form.ru", "ru"],
+          ["integrations.seoshop.form.es", "es"],
+          ["integrations.seoshop.form.sv", "sv"],
+          ["integrations.seoshop.form.tr", "tr"]
+          ],
+          :required => true,
+          :default_value => "en",
+          :label => "integrations.seoshop.form.language"
+        }
+      }
+    s.application_type = "seoshop"
+
+  end
+
 end

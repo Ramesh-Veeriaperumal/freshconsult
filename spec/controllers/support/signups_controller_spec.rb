@@ -15,7 +15,7 @@ describe Support::SignupsController do
 
     it "should display new signup page" do
       get :new
-      response.should render_template 'support/signups/new.portal'
+      response.should render_template 'support/signups/new'
       response.should be_success
     end
 
@@ -23,7 +23,7 @@ describe Support::SignupsController do
       user = add_test_agent(@account)
       log_in(user)
       get :new
-      response.redirected_to.should =~ /login/
+      should redirect_to "/support/login"
       response.should_not be_success
     end
 
@@ -31,25 +31,25 @@ describe Support::SignupsController do
       test_email = Faker::Internet.email
       post 'create', :user => { :name => Faker::Name.name, :email => test_email }
       @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
-      response.session[:flash][:notice].should eql "Activation link has been sent to #{test_email}"
+      session[:flash][:notice].should eql "Activation link has been sent to #{test_email}"
     end
 
     it "should be successfully create new user without activation email" do
       @notification.update_attributes(:requester_notification => false)
       test_email = Faker::Internet.email
       post 'create', :user => { :name => Faker::Name.name, :email => test_email }
-      response.session[:flash][:notice].should eql "Successfully registered"
+      session[:flash][:notice].should eql "Successfully registered"
       @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     end
 
     it "should not create a new user without a email" do
       post :create, :user => { :name => Faker::Name.name, :email => "" }
-      response.should render_template 'support/signups/new.portal'
+      response.should render_template 'support/signups/new'
     end
 
     it "should not create a new user with an invalid email" do
       post :create, :user => { :name => Faker::Name.name, :email => Faker::Lorem.sentence }
-      response.should render_template 'support/signups/new.portal'
+      response.should render_template 'support/signups/new'
     end
   end
 
@@ -73,7 +73,7 @@ describe Support::SignupsController do
     it "should render new signup with custom fields" do
       @account.contact_form.fields.find_by_name("job_title").update_attributes(:editable_in_signup => true)
       get :new
-      response.should render_template 'support/signups/new.portal'
+      response.should render_template 'support/signups/new'
       response.should be_success
       @account.contact_form.customer_signup_contact_fields.each { |field| response.body.should =~ /#{field[:label_in_portal]}/ }
       @account.contact_form.customer_signup_invisible_contact_fields.each { |field| response.body.should_not =~ /#{field[:label_in_portal]}/ }

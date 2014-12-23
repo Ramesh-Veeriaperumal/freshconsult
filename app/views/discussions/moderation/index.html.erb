@@ -1,5 +1,4 @@
-<% content_for :layoutType do %>community<% end %>
-
+<% content_for :layoutType do %>community moderation cs-show cs-always-show<% end %>
 <% content_for :sticky_left do %>
 	<div class="all-post-heading">
 		<%= pjax_link_to (t('.waiting') + " <span rel='count-waiting' class='muted'>(#{@counts[:waiting]})</span> ").html_safe,

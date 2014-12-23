@@ -948,7 +948,7 @@ Redactor.prototype = {
 			this.storedRange.insertNode(this.imgTag[0]);
 		}
 	},
-	removeTagOnLiquid: function(){
+	removeTagOnLiquid: function(content){
 		var content = this.$editor.html();
 
 		var r_content = content.replace(/\{[^{]*}/g,this.replaceLiquidHtml)
@@ -980,10 +980,16 @@ Redactor.prototype = {
 		return temp_div.html();
 	},
 	changesInTextarea: function(){
-		var content = this.removeTagOnLiquid();
+		var content = this.$editor.html();
+
+		if(!this.opts.allowTagsInCodeSnippet){
+			content = this.removeTagOnLiquid(content);
+		}
+		
 		if(this.$el.data('wrapFontFamily') != undefined && this.$el.data('wrapFontFamily')){
 			content = this.wrapElementWithFont(content);
 		}
+
 		this.$el.val(content);
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
@@ -2164,7 +2170,11 @@ Redactor.prototype = {
             {
                 if (htmls[i].search('{replace') == -1)
                 {
-                    html += '<p>' +  htmls[i].replace(/^\n+|\n+$/g, "") + "</p>";
+                	if($.browser.mozilla == true || $.browser.msie == true) {
+                		html += htmls[i].replace(/^\n+|\n+$/g, "");
+                	} else {
+                		html += '<p>' + htmls[i].replace(/^\n+|\n+$/g, "") + '</p>';
+                	}
                 }
                 else html += htmls[i];
             }
@@ -2327,6 +2337,12 @@ Redactor.prototype = {
 				keep_selection.removeAllRanges();
 				keep_range.selectNodeContents(this.$editor.get(0));
 				keep_selection.addRange(keep_range);
+
+				if ($.browser.mozilla)
+				{
+					this.$editor.focus();
+				}
+
 				this.execCommand('inserthtml',this.$el.val());
 			}
 		} catch(e){ }
@@ -3100,7 +3116,7 @@ Redactor.prototype = {
 		var table_box = $('<div></div>');
 		
 		var tableid = Math.floor(Math.random() * 99999);
-		var table = $('<table id="table' + tableid + '"><tbody></tbody></table>');
+		var table = $('<table id="table' + tableid + '" border="1" cellspacing="0" cellpadding="0"><tbody></tbody></table>');
 		
 		for (var i = 0; i < rows; i++)
 		{
@@ -4484,11 +4500,10 @@ $.fn.insertExternal = function(html)
 						this.$editor.$el.data('redactor').addNoneStyleForCursor();
 					}
 				}
-				if(!this.$editor.opts.allowTagsInCodeSnippet){
-					this.$editor.removeTagOnLiquid();
-				}
+				
+				this.$editor.changesInTextarea();
 			}
-			this.$editor.changesInTextarea();
+			
 		}
 	}
 

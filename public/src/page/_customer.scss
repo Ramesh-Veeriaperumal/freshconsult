@@ -256,7 +256,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 		color: #999;
 		display: inline-block;
 		width: 240px;
-		margin-bottom: -5px;
+		vertical-align: top;
 	}
 	.company-btns {
 		display: none;
@@ -316,7 +316,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 	height: 500px;
 	.contact-info-fields {
 		background-color: #f1f1f1;
-    	background-image: image-url('/images/social/ribbon-bg.png');
+    	background-image: inline-image('/cdn-ignored/inline-images/ribbon-bg.png');
     	background-size: 20%;
     	display: table-cell;
 		width: 260px;
@@ -410,6 +410,9 @@ $iconColorList: "ticket" $bg_color_ticket,
 			font-size: 14px;
 			font-weight: bold;
 			@include margin(4px 0);
+		}
+		.conv-menu {
+			cursor: pointer;
 		}
 	}
 	.sp_paragraph {

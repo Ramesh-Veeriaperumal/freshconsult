@@ -5,7 +5,7 @@ module Wf::FilterFunctionalTestsHelper
   DROPDOWN  = { :field_type=>"custom_dropdown", :label=>Faker::Name.name, :label_in_portal=>"Dropdown", :description=>"", :position=>115, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :choices=>[["First Choice", "First Choice"], ["Second Choice", "Second Choice"]], :picklist_values_attributes => [{:value => "First Choice"}, {:value => "Second Choice"}], :levels=>nil, :field_options=>nil, :type=>"dropdown"  }
 
   def before_all
-    @account = create_test_account
+    #@account = create_test_account
     @user = add_test_agent(@account)
     @user.make_current
   end

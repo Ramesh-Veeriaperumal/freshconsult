@@ -27,12 +27,13 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email,:language, :phone, :mobile, :job_title], :plain_sanitizer => [:name,:email,:language, :phone, :mobile, :job_title]
+
   scope :contacts, :conditions => { :helpdesk_agent => false }
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-
+  scope :with_contact_number, lambda { |number| { :conditions => ["mobile=? or phone=?",number,number]}}
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  
@@ -286,7 +287,7 @@ class User < ActiveRecord::Base
 
   scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
@@ -543,7 +544,6 @@ class User < ActiveRecord::Base
     if new_primary
       self.user_emails.update_all(:primary_role => false)
       new_primary.toggle!(:primary_role) #can refactor
-      self.save
     end
     return true
   end
@@ -597,7 +597,7 @@ class User < ActiveRecord::Base
   end
 
   def custom_form
-    helpdesk_agent? ? nil : account.contact_form # memcache this 
+    helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this 
   end
 
   def custom_field_aliases

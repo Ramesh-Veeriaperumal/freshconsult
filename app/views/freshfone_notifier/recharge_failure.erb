@@ -1,0 +1,17 @@
+<div>
+  Hi,<div><br></div>
+  <div>
+    There has been an issue with your Freshfone recharge payment <%= number_to_currency(@recharge_amount) %>. We attempted to charge the payment method on your Freshdesk account, but the charge failed.
+  </div> 
+    <div>Please recharge your Freshfone account immediately to avoid losing your account.</div>
+  <div><br></div>
+  <div>You currently have a credit of <%= number_to_currency(@balance) %> in your account.</div>
+
+  <div><br></div>
+  <div>Regards,</div>
+  <div>Vijay Shankar&nbsp;</div>
+  <div><%= AppConfig['from_email'] %></div>
+  <div>Customer Support Advocate</div>
+  <div>Freshdesk - refreshing customer support!</div>
+  <div><br></div>
+</div>

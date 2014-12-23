@@ -13,6 +13,7 @@ window.App = window.App || {};
 		},
 		onVisit: function (data) {
 			this.Sidebar.start();
+			this.Sidebar.hide();
 			this.setSubModule();
 			this.bindHandlers();
 			$('.pagination a').attr('data-pjax', '#body-container');

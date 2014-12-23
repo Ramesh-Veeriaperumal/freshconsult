@@ -91,9 +91,21 @@ class Helpdesk::Access < ActiveRecord::Base
     end
     
     def agent_groups_join
-      "LEFT JOIN agent_groups ON agent_groups.group_id = group_accesses.group_id"
+      "LEFT JOIN agent_groups ON agent_groups.group_id = group_accesses.group_id AND 
+          agent_groups.account_id = group_accesses.account_id"
+    end
+
+    def all_user_accessible_sql(type,user)
+      self.all_user_accessible(type,user).to_sql
     end
   end
+
+  scope :all_user_accessible, lambda { |type, user|
+    { :select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
+      :joins => "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
+      :conditions => "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})"
+    }
+  }
         
   scope :user_accessible_items_via_group, lambda { |type, user|
     {

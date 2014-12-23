@@ -95,9 +95,4 @@ class User < ActiveRecord::Base
     freshfone_user.destroy if freshfone_user
   end
 
-  def made_helpdesk_agent?
-    @model_changes[:helpdesk_agent] == [false, true]
-  end
-
-
 end

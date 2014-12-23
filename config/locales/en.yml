@@ -63,6 +63,17 @@ en:
       x_seconds:
         one: "1 second"
         other: "%{count} seconds"
+  validation:
+    required: "This field is required."
+    remote: "Please fix this field."
+    email: "Please enter a valid email address."
+    url: "Please enter a valid URL."
+    date: "Please enter a valid date."
+    dateISO: "Please enter a valid date ( ISO )."
+    number: "Please enter a valid number."
+    digits: "Please enter only digits."
+    creditcard: "Please enter a valid credit card number."
+    equalTo: "Please enter the same value again."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
   or: or
@@ -1659,6 +1670,8 @@ en:
       install:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
+        cti_error: "Multiple integrations of type CTI can not be enabled."
+        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -2849,6 +2862,7 @@ en:
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
       tags: 'Tag Names'
+      enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
       ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
@@ -2857,9 +2871,15 @@ en:
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
-      contact: 'Contains ticket and forum activities'
+      contact_all: 'Recent ticket and forum activities'
       company: 'Contains tickets raised by company contacts'
+      company_all: 'Recent tickets raised by company contacts'
       no_conversations: 'No Conversations'
+      all: 'All conversations'
+      tickets: Tickets
+      forums: Forums
+      contact_tickets: 'Recent ticket activities'
+      contact_forums: 'Recent forum activities'
     info5: "No tickets by %{nick_name}"
     restore: Restore
     activation : Send Activation
@@ -3819,6 +3839,7 @@ en:
     notes: Notes
     edit_notes: Edit
     add_notes: Add Notes
+    delete_company: Delete Company
     info1: Are you sure you want to delete this company?
     info11: Are you sure you want to delete
     info10: "Note: Deleting a company will not delete its contacts."
@@ -4710,6 +4731,7 @@ en:
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
+    cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
     no_freshplugs: You do not have any FreshPlugs.
     add_new_freshplug: Add new FreshPlug
@@ -4726,6 +4748,12 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    czentrix:
+      label: "C-Zentrix"
+      desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
@@ -4753,16 +4781,16 @@ en:
         api_key_info: ""
         widget_title: "Widget Title"
     seoshop:
-      label: "SeoShop"
+      label: "SEOshop"
       desc: "Pull up order details instantly when your customers submit tickets in Freshdesk and help them to receive their answers as quickly as possible."
-      helptext: "<h4>SeoShop Integration Help</h4><p><br/>To enable the integration, get the API token key and API secret from the SEOshop support and paste them here. Choose your store language. Once this is done you can view your customer’s latest orders right in your helpdesk as they submit tickets</p>"
+      helptext: "<h4>SEOshop Integration Help</h4><p><br/>Install Freshdesk add-on from the SEOshop App store - http://apps.getseoshop.com/. To enable the integration, enter your Freshdesk domain url and API Key on the SEOshop settings page that appears (you can get the API key under Profile Settings in your Freshdesk account). Once it is successfully installed, you can see order information of customers who have raised tickets in the ticket details view in Freshdesk.</p>"
       form:
         shop_name: "Shop Name/ ID"
-        shop_name_info: "For example, if your SeoShop URL is <strong>https://my_shop_name.webshopapp.com</strong>, please enter <strong>my_shop_name</strong>."
+        shop_name_info: "For example, if your SEOshop URL is <strong>https://my_shop_name.webshopapp.com</strong>, please enter <strong>my_shop_name</strong>."
         api_key: "Api Key"
-        api_key_info: "Get the Api key for the store from the Seoshop support"
+        api_key_info: "Get the Api key for the store from the SEOshop support"
         api_secret: "Api Secret"
-        api_secret_info: "Get the Api Secret for the store from Seoshop support"
+        api_secret_info: "Get the Api Secret for the store from SEOshop support"
         language: "Language"
         language_info: "Select your store language"
         bg: "Bulgarian" 
@@ -5134,6 +5162,13 @@ en:
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
+    remote_login:
+      connect: "Connect"
+      sign_up: "Sign Up"
+      freshdesk_url: "Freshdesk URL"
+      freshdesk_api_key: "Freshdesk API key"
+      api_key_available: "You can get the API key under Profile Settings in your Freshdesk account "
+      new_to_freshdesk: "New to Freshdesk? "
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -5310,7 +5345,7 @@ en:
         num_of_transfer: Transfers
         avg_handle_time: Avg Handle Time
         avg_time_queue: Time in Queue
-        total_duration: "Duration"
+        total_duration: "Total Duration"
         agent_chat_summary: Agent Chat Summary
         agent: "Agent"
 
@@ -5569,13 +5604,13 @@ en:
     activation_sent: "Activation mail sent. Please verify within a week"
     client_manager: "You have selected a Client Manager %{name} to merge."
     cannot_restore: "Merged user cannot be restored"
-    primary: "Default"
-    not_verified: "Not Verified"
+    primary: "Default Email"
+    not_verified: "Unverified"
     merge_contact: "Merge Contact"
-    verify: "Verify Now"
+    verify: "Send Verification"
     remove: "Remove"
     success: "Contacts have been successfully merged"
-    verify_mail: "Verification email sent. Please verify within a week"
+    verify_mail: "Verification email sent"
     show_primary: "  (Default)"
     unverified: "Email Unverified"
     make_primary: "Mark as Default"
@@ -5832,6 +5867,28 @@ en:
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date
+  cti:
+    create:
+      success:
+        with_link: "The %{human_name} has been created  %{link}"
+    note:
+      human_name: "note"
+      view: "View"
+    ticket:
+      human_name: "ticket"
+      view: "View"
+    widget:
+      ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
+      note_placeholder: "Add call notes..."
+      new_ticket: "Save as new ticket"
+      save_to_existing: "Save to an existing ticket"
+      ignore_ticket: "Do not convert to Ticket"
+      ignore_ticket_info: "No ticket will be created"
+      back: "Go Back"
+      subject: "Ticket Subject"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      save: "Save"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
@@ -5849,6 +5906,8 @@ en:
       followup_text: "worth Freshfone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
+      could_be_invalid_number: "Could be an invalid number."
+      invalid_number_continue_call: "Press call button again" 
       not_enough_credit: "Not Enough Credit"
       already_in_call: "Simultaneous outgoing call restricted"
     call_status:

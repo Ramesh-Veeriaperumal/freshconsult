@@ -330,14 +330,14 @@ p.imp{
 // ------------------------------------------------------------------------------------------------------------
 .recently_used{
     background: #f3f3f3;
-    @include border-right(1px #dbdbdb solid);
     @include float(left);
     font-size: 12px;
     color: #333;
-    height: 328px;
-    width: 187px;
+    height: 327px;
+    width: 199px;
     @include border-left-radius(5px);
     border: 1px #eaeaea solid;
+    border-right: 0;
     .close-dialog{
     	margin-top: 10px;
     }
@@ -780,4 +780,8 @@ height: auto;
 		@extend .personal-separator;
 	}
 }
-/* end */	
+/* end */	/* end */
+.alert.notice.cr-info-msg {
+	@include margin(0 0 16px 0);
+}
+/* end */

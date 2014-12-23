@@ -25,7 +25,8 @@ class Helpdesk::Email::Process
   end
 
 	def perform
-    return unless ShardMapping.fetch_by_domain(to_email[:domain])
+    shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
+    return unless shardmapping.present?
 		Sharding.select_shard_of(to_email[:domain]) do 
 			accept_email if get_active_account
 		end

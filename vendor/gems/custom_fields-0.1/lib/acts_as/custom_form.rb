@@ -16,6 +16,12 @@ module ActAs
         has_many  :custom_fields, :class_name => args[:custom_field_class],
                   :conditions => "field_type > #{MAX_DEFAULT_FIELDS} and deleted = 0",
                   :include => [:custom_field_choices], :order => :position
+
+        class_eval <<-EOV
+          def custom_fields_cache
+            #{args[:custom_fields_cache_method]}
+          end
+        EOV
             
         include ActAs::CustomForm::Methods
       end

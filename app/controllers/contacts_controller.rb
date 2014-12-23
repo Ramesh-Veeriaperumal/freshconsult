@@ -10,7 +10,6 @@ class ContactsController < ApplicationController
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
    before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
-   before_filter :set_user_email, :only => :edit                                                            
 
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
@@ -205,8 +204,12 @@ class ContactsController < ApplicationController
 
   def verify_email
     @user_mail = current_account.user_emails.find(params[:email_id])
-    @user_mail.deliver_contact_activation_email
-    @user_mail.user.reset_primary_email(params[:email_id]) if !@user_mail.user.active?
+    if !@user_mail.user.active?
+      @user_mail.user.reset_primary_email(params[:email_id]) 
+      @user_mail.user.save
+    else
+      @user_mail.deliver_contact_activation_email
+    end
     flash[:notice] = t('merge_contacts.activation_sent')
     respond_to do |format|
       format.js
@@ -299,10 +302,6 @@ protected
 
     @item || raise(ActiveRecord::RecordNotFound)
   end
-
-  def set_user_email
-    @user.user_emails.build if current_account.features_included?(:contact_merge_ui) and @user.user_emails.blank?
-  end
    
   def set_selected_tab
       @selected_tab = :customers
@@ -317,7 +316,7 @@ protected
       end
       @user.user_emails.build({:primary_role => true}) if @user.user_emails.blank?
     else
-      if((@user.errors.messages[:base]).include? "Email has already been taken")
+      if((@user.errors.messages[:base] || []).include? "Email has already been taken")
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
       end
     end

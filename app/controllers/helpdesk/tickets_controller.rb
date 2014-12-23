@@ -735,6 +735,7 @@ class Helpdesk::TicketsController < ApplicationController
     count = 0
     tries = 3
     begin
+      params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
       set_tickets_redis_key(draft_key, params[:draft_data])
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 

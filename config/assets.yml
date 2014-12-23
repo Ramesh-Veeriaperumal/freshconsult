@@ -49,7 +49,9 @@ stylesheets:
   :freshfone_admin  => [ "freshfone/admin"],
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
-  :freshchat_admin  => [ "chat/admin"]
+  :freshchat_admin  => [ "chat/admin"],
+  :remote_configurations  => [ "page/remote-configurations"],
+  :cti => ["cti/cti"]
 } %>
 
 <%  @stylesheets_list = []
@@ -184,6 +186,9 @@ javascripts:
   freshchat:
     - public/javascripts/freshchat/freshchat.js
 
+  freshchatreports:
+    - public/javascripts/chat/report.js
+
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
     # - public/javascripts/pattern/bootstrap-alert.js
@@ -282,10 +287,11 @@ javascripts:
     - public/javascripts/freshfone/components/socket.js
     - public/javascripts/freshfone/components/end_call_form.js
     - public/javascripts/freshfone/components/components_main.js
+    - public/javascripts/freshfone/intlTelInput.js
     - public/javascripts/freshfone/device.js
     - public/javascripts/freshfone/client.js
-    - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/phoneformatutil.js
+    - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/components/call_transfer.js
     - public/javascripts/freshfone/freshfone_logger.js
 
@@ -485,6 +491,25 @@ javascripts:
 
   client_logger:
     - public/javascripts/client_logger.js
+
+  remote_configurations:
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
+
+  cti_ticket_search:
+    - public/javascripts/cti/plugin/ticket_search.js
+
+  cti_client:
+    - public/javascripts/cti/cti_end_call_form.js
+    - public/javascripts/frameworks/plugins/jquery.popupbox.js
+    - public/javascripts/cti/freshdesk_crm_events.js
+    - public/javascripts/cti/popup.js
+
+  czentrix:
+    - public/javascripts/cti/czentrix/czentrix_logout.js
+    - public/javascripts/cti/czentrix/czentrix_custom.js
+    - public/javascripts/cti/czentrix/click2Dial.js
+    - public/javascripts/cti/czentrix/czentrix.js
 
 <% 
   # Adding specific javascript assets to the package list

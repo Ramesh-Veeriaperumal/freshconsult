@@ -78,7 +78,7 @@ class TopicMailer < ActionMailer::Base
     @port = monitor.get_portal
     mail(headers) do |part|
       part.text do
-        render_message("mailer/topic/merge_topic_notification_email.text.plain.erb")
+        render "mailer/topic/merge_topic_notification_email.text.plain"
       end
       part.html do
         Premailer.new(render_message("mailer/topic/merge_topic_notification_email.text.html.erb"), 

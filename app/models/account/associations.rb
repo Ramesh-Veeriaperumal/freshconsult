@@ -101,28 +101,31 @@ class Account < ActiveRecord::Base
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
-  
-  has_many :va_rules, :class_name => 'VaRule', :conditions => { 
-    :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
+
+  has_many :va_rules, :class_name => 'VaRule', :conditions => {
+  :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
   has_many :all_va_rules, :class_name => 'VaRule', :conditions => {
-    :rule_type => VAConfig::BUSINESS_RULE }, :order => "position"
-    
-  has_many :supervisor_rules, :class_name => 'VaRule', :conditions => { 
-    :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
+  :rule_type => VAConfig::BUSINESS_RULE }, :order => "position"
+
+  has_many :supervisor_rules, :class_name => 'VaRule', :conditions => {
+  :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
   has_many :all_supervisor_rules, :class_name => 'VaRule', :conditions => {
-    :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
+  :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
 
-  has_many :observer_rules, :class_name => 'VaRule', :conditions => { 
-    :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
+  has_many :observer_rules, :class_name => 'VaRule', :conditions => {
+  :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
   has_many :all_observer_rules, :class_name => 'VaRule', :conditions => {
-    :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
+  :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
 
-  has_many :api_webhook_rules, :class_name => 'VaRule', :conditions => { 
-    :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
-  
-  has_many :scn_automations, :class_name => 'VaRule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  has_many :all_scn_automations, :class_name => 'VaRule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  
+  has_many :api_webhook_rules, :class_name => 'VaRule', :conditions => {
+  :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
+
+  has_many :scn_automations, :class_name => 'ScenarioAutomations', :conditions =>{
+  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "position"
+
+  has_many :all_scn_automations, :class_name => 'VaRule',:conditions => {
+  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
+   
   has_many :email_notifications
   has_many :groups
   has_many :agent_groups
@@ -154,6 +157,7 @@ class Account < ActiveRecord::Base
   has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
+
 
   has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'folder_type , name'
 
@@ -227,6 +231,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_users, :class_name => "Freshfone::User"
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
+
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
   has_one :chat

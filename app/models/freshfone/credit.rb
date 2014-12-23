@@ -31,15 +31,14 @@ class Freshfone::Credit < ActiveRecord::Base
     end
 
     if response
-      update_attributes({
-      	:available_credit => total_credit, 
-      	:last_purchased_credit => selected_credit
-      })
+			update_credit(selected_credit)
       account.freshfone_payments.create(
         :status => true,
         :purchased_credit => selected_credit
       )
       FreshfoneNotifier.recharge_success(account, selected_credit, available_credit)
+    else
+     	FreshfoneNotifier.recharge_failure(account, selected_credit, available_credit)
     end
     response
 	end
@@ -56,18 +55,16 @@ class Freshfone::Credit < ActiveRecord::Base
 		account.freshfone_account.suspended? if account.freshfone_account.present?
 	end
 
-	def update_credit(rate)
-		update_attributes!(:available_credit => 
-											self.available_credit - rate)
+	def deduce(rate)
+		update_credit(-rate)
 	end
 
 	def renew_number(rate, freshfone_number_id)
-		if update_credit(rate)
+		if deduce(rate)
 			account.freshfone_other_charges.create(
 				:action_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_renew],
 				:debit_payment => rate,
 				:freshfone_number_id => freshfone_number_id)
-			self.available_credit >= CREDIT_LIMIT[:minimum]
 		else
 			false
 		end
@@ -75,7 +72,7 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	def perform_auto_recharge
 		self.selected_credit = recharge_quantity
-		purchase
+		purchase if valid_auto_recharge?
 	end
 
 	def zero_balance?
@@ -104,15 +101,31 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	private
 
-		def total_credit
-			available_credit + selected_credit
-		end
-
 		def failed_purchase(selected_credit, error)
 	    account.freshfone_payments.create(
 	        :status => false,
 	        :purchased_credit => selected_credit,
 	        :status_message => error.error_code
 	      )
+	  end
+
+	  def valid_auto_recharge?
+	  	credit = Freshfone::Credit.find_by_account_id(account_id)
+	  	credit.available_credit <= CREDIT_LIMIT[:auto_recharge_threshold]
+	  end
+
+	  def update_credit(credits)
+      return false unless credits.is_a? Numeric
+    	connection.execute(update_sql_query(credits))
+    	self.reload
+    	credit_observer = Freshfone::CreditObserver.instance
+    	credit_observer.after_credit_update(self)
+	  end
+
+	  def update_sql_query(credits)
+	  	updated_at = Time.now.to_s(:db)
+    	sql_query = "UPDATE freshfone_credits set available_credit = available_credit + #{credits},"
+    	sql_query << " last_purchased_credit = #{credits}," if (credits > 0 )
+    	sql_query << "updated_at = '#{updated_at}' WHERE account_id= #{account.id}"
 	  end
 end

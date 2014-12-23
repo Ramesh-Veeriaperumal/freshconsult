@@ -38,6 +38,16 @@ describe Integrations::InstalledApplicationsController do
     response.should redirect_to 'http://localhost.freshpo.com/integrations/applications'
   end
 
+  it "should not install seoshop from freshdesk" do
+    application_id = @installaling_applications.find_by_name("seoshop").id
+    put :install, {
+      :configs => {},
+      :commit => "Enable",
+      :id => application_id
+    }
+    response.should redirect_to 'http://localhost.freshpo.com/integrations/applications'
+  end
+
   it "should install for google contacts" do
     google_app = @account.installed_applications.find_by_application_id(4)
     google_app.destroy if !google_app.nil?

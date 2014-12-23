@@ -195,6 +195,8 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :health_check
+
   resources :customers do
     member do
       post :quick
@@ -500,6 +502,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :remote_configurations
+
     resources :applications do
       member do
         post :custom_widget_preview
@@ -579,6 +583,17 @@ Helpkit::Application.routes.draw do
         get :authcode
       end
     end
+
+    namespace :cti do
+      resources :customer_details do
+        collection do 
+          get :fetch 
+          post :create_note
+          post :create_ticket
+        end
+      end
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :custom_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
@@ -621,15 +636,6 @@ Helpkit::Application.routes.draw do
     resources :chat_widgets do
       member do
         post :update
-      end
-    end
-
-    resources :automations do
-      collection do
-        put :reorder
-      end
-      member do
-        get :clone_rule
       end
     end
 
@@ -1304,13 +1310,13 @@ Helpkit::Application.routes.draw do
           get :unachieved
         end
       end
-
-      match '/leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
       resources :tag_uses
       resources :reminders
       resources :time_sheets
       resources :mobihelp_ticket_extras, :only => :index
     end
+    
+    match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
 
     resources :leaderboard, :only => [:mini_list, :agents, :groups] do
       collection do
@@ -1480,6 +1486,16 @@ Helpkit::Application.routes.draw do
     match 'commons/group_agents/(:id)' => "commons#group_agents"
 
     
+    resources :scenario_automations do
+      member do 
+        get :clone_rule
+      end 
+      collection do 
+        get :search
+        get :recent
+        put :reorder
+      end
+    end
   end
 
   #match '/helpdesk/canned_responses/index/:id' => 'helpdesk/canned_responses#index'
@@ -1651,10 +1667,11 @@ Helpkit::Application.routes.draw do
   match '/support/theme.:format' => 'theme/support#index'
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
+  match "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index
+  match "/facebook/theme_rtl.:format", :controller => 'theme/facebook_rtl', :action => :index
 
-  match 'discussions/:object/:id/subscriptions/is_following.:format', 
+  get 'discussions/:object/:id/subscriptions/is_following(.:format)', 
     :controller => 'monitorships', :action => 'is_following', 
-    :conditions => {:method => :get},
     :as => :view_monitorship
 
   match 'discussions/:object/:id/subscriptions/:type(.:format)',
@@ -1881,6 +1898,25 @@ Helpkit::Application.routes.draw do
       end
     end
     # end
+  end
+
+  constraints(lambda {|req| req.subdomain == AppConfig['freshops_subdomain'] })  do 
+    namespace :fdadmin, :name_prefix => "fdadmin_", :path_prefix => nil do
+      resources :subscriptions, :only => [:none] do
+        collection do
+          get :display_subscribers
+        end
+      end
+
+      resources :accounts, :only => :show do
+        collection do
+          put :add_day_passes
+          put :add_feature
+          put :change_url
+          get :single_sign_on
+        end
+      end
+    end
   end
 
 

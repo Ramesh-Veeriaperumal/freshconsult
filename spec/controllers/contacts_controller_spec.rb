@@ -225,7 +225,7 @@ describe ContactsController do
     contact.save
     contact.reload
     get :show, :email => contact.email
-    response.body.should =~ /#{contact.phone}/
+    response.body.should =~ /#{contact.phone}/i
   end
 
   it "should show hover card" do
@@ -305,17 +305,17 @@ describe ContactsController do
   end
 
   it "should edit an existing contact" do
-    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+    test_email = Faker::Internet.email
+    contact = FactoryGirl.build(:user, :account => @acc, :email => test_email,
                               :user_role => 3, :active => 1, :password => "test")
     contact.save
     get :edit, :id => contact.id
     response.body.should =~ /Edit Contact/
-    test_email = Faker::Internet.email
     puts test_email
     puts "\n\n\n"
     test_phone_no = Faker::PhoneNumber.phone_number
     avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
-    put :update_contact, :id => @contact.id, :user => { :avatar_attributes => {:content => avatar_file},
+    put :update_contact, :id => contact.id, :user => { :avatar_attributes => {:content => avatar_file},
                                                 :email => test_email, 
                                                 :job_title => "Developer",
                                                 :phone => test_phone_no,
@@ -325,8 +325,6 @@ describe ContactsController do
     edited_contact = @account.user_emails.user_for_email(test_email)
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
-    Delayed::Job.last.handler.should include("user_activation")
-    Delayed::Job.last.handler.should include(edited_contact.name)
   end
 
   it "should delete an existing avatar" do
@@ -361,12 +359,12 @@ describe ContactsController do
   end
 
   it "should edit an existing contact and create new company" do # with old company parameters(customer deprecation)
-    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+    test_email = Faker::Internet.email
+    contact = FactoryGirl.build(:user, :account => @acc, :email => test_email,
                               :user_role => 3, :active => 1, :password => "test")
     contact.save
     get :edit, :id => contact.id
     response.body.should =~ /Edit Contact/
-    test_email = Faker::Internet.email
     test_phone_no = Faker::PhoneNumber.phone_number
     put :update_contact, :id => contact.id, :user => { :email => test_email, 
                                                 :job_title => "Developer",
@@ -378,8 +376,6 @@ describe ContactsController do
     edited_contact.should be_an_instance_of(User)
     edited_contact.phone.should be_eql(test_phone_no)
     @account.companies.find_by_name("testcompany").should be_an_instance_of(Customer)
-    Delayed::Job.last.handler.should include("user_activation")
-    Delayed::Job.last.handler.should include(edited_contact.name)
   end
 
   it "should make a customer a full-time agent" do
@@ -435,12 +431,15 @@ describe ContactsController do
   #### Company revamp specs - User Tags Revamp Specs
 
   it "should create a contact given the names of the tags as :tag_names in params" do #newway
-    tag_names = "#{Faker::Name.first_name}, #{Faker::Name.first_name}"
+    tag_name1 = Faker::Name.first_name
+    tag_name2 = Faker::Name.first_name
+    tag_names = "#{tag_name1}, #{tag_name2}"
     fake_a_contact
     @params[:user].merge!(:tag_names => tag_names)
     post :create, @params
     contact = @account.contacts.find_by_name(@params[:user][:name])
-    contact.tag_names.should eql(tag_names)
+    contact.tag_names.should include(tag_name1)
+    contact.tag_names.should include(tag_name2)
   end
 
   it "should create a contact given the names of the tags as :tags in params" do #oldway
@@ -449,7 +448,7 @@ describe ContactsController do
     @params[:user].merge!(:tags => tags)
     post :create, @params
     contact = @account.contacts.find_by_name(@params[:user][:name])
-    contact.tag_names.should eql(tags)
+    contact.tag_names.split(',').sort.should eql(tags.split(',').sort)
   end
 
   it "should update a contact given the names of the tags as :tag_names in params" do #newway

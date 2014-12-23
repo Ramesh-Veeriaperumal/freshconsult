@@ -6,11 +6,25 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
+  before_filter :check_application_installable, :only => [:install, :update]
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
 
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
+    if @installing_application.cti?
+      cti_app = current_account.installed_applications.detect {|app| app.application.cti?}
+      unless cti_app.blank?
+        flash[:notice] = t(:'flash.application.install.cti_error')
+        redirect_to :controller=> 'applications', :action => 'index'
+        return
+      end
+      if current_account.freshfone_active?
+        flash[:notice] = t(:'flash.application.install.freshfone_enabled')
+        redirect_to :controller=> 'applications', :action => 'index'
+        return
+      end
+    end
     begin
       successful = @installed_application.save!
       if successful
@@ -95,6 +109,23 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   private
+  
+  #Since enabling SEOshop from Freshdesk is disabled, this check is made
+  def check_application_installable
+    app = params[:action] == "install" ? @installing_application.name : @installed_application.application.name
+    if app == "seoshop"
+      redirect_to :controller=> 'applications', :action => 'index'
+    end
+  end
+
+  def convert_to_configs_hash(params) #possible dead code
+    if params[:configs].blank?
+      {:inputs => {}}
+    else
+      params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
+      {:inputs => params[:configs].to_hash || {}}
+    end
+  end
 
   def load_object
     if params[:action] == "install"

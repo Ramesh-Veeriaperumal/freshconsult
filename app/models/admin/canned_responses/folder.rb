@@ -9,6 +9,7 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
     :foreign_key => "folder_id",
     :dependent => :destroy
 
+  attr_accessor :visible_responses_count
   attr_accessible :name
   validates_length_of :name, :in => 3..240
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false

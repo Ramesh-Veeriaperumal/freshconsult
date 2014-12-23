@@ -48,7 +48,8 @@ module Freshfone::Call::Branches::Transfer
     def transfer_complete?
       transferred_calls = JSON.parse(@transferred_calls)
       called_agent_id = current_call.user_id.to_s
-      if transferred_calls.last == called_agent_id
+      called_group_id = current_call.group_id.to_s
+      if transferred_calls.last == called_agent_id || transferred_calls.last == called_group_id
         remove_key @transfer_key
         return true
       end

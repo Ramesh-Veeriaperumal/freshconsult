@@ -1,14 +1,14 @@
 module VA::RuleHelper
 
   PERFORMER = :dummy_constant
-  TESTS = { Admin::AutomationsController     => { :tester_class => VA::Tester::Action,                :test_cases => [VA::RandomCase::Action],                :test_variable => :action_defs },
+  TESTS = { Helpdesk::ScenarioAutomationsController     => { :tester_class => VA::Tester::Action,                :test_cases => [VA::RandomCase::Action],                :test_variable => :action_defs },
             Admin::VaRulesController         => { :tester_class => VA::Tester::Condition::Dispatcher, :test_cases => [VA::RandomCase::Condition::Dispatcher], :test_variable => :filter_defs },
             Admin::SupervisorRulesController => { :tester_class => VA::Tester::Condition::Supervisor, :test_cases => [VA::RandomCase::Condition::Supervisor], :test_variable => :filter_defs },
             Admin::ObserverRulesController   => { :tester_class => VA::Tester::Event,                 :test_cases => [VA::RandomCase::Event],                 :test_variable => :event_defs },
             PERFORMER                        => { :tester_class => VA::Tester::Performer,             :test_cases => [VA::RandomCase::Performer],             :test_variable => :event_defs }
           } # Order determines the method definition as they are overridden by these modules
 
-  FETCH_FROM_CONTROLLERS = [Admin::AutomationsController, Admin::VaRulesController, Admin::SupervisorRulesController, Admin::ObserverRulesController]
+  FETCH_FROM_CONTROLLERS = [Helpdesk::ScenarioAutomationsController, Admin::VaRulesController, Admin::SupervisorRulesController, Admin::ObserverRulesController]
   FETCH_VARIABLES = [:action_defs, :filter_defs, :event_defs, :time_based_filters, :op_types]
 
   def before_each

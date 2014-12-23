@@ -100,7 +100,7 @@ RSpec.describe ContactsController do
 			# US numbers format is not searched 812.123.1232 or (802)-123-1232
 			# Hence not using Faker for phonenumber generation.
 			# This needs to be addressed. change filter expresssion in api_helper_methods
-			contact = Factory.build(:user, :account => @account,
+			contact = FactoryGirl.build(:user, :account => @account,
 											:name => Faker::Name.name, 
 											:email => Faker::Internet.email,
 											:phone => "42345678",

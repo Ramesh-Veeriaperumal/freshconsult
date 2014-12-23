@@ -2,9 +2,8 @@ module AccountHelper
   include Redis::RedisKeys
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
-    @acc = Account.first
-    @account = @acc
-    if @acc.present?
+    @acc = Account.active_accounts.first
+    unless @acc.nil?
       @acc.make_current
       create_dummy_customer
       return @acc

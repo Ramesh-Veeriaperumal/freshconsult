@@ -13,7 +13,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '<div><span class="info btn">{status_name}</span></div>',
                                 '<div class="subject">',
                                         '<tpl if="need_attention"><span class="need_attention"></span></tpl>',
-                                        '{subject}<span class="info">&nbsp;#{display_id}</span>',
+                                        '{subject:htmlEncode}<span class="info">&nbsp;#{display_id}</span>',
                                 '</div>',
                                 '<div>',
                                         '<tpl if="responder_id">{responder_name},',

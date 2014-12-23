@@ -10,7 +10,7 @@ RSpec.describe Facebook::Core::Post do
   
   before(:all) do
     @account.features.send(:facebook_realtime).create
-    @account = create_test_account
+    #@account = create_test_account
     @account.make_current
     @fb_page = create_test_facebook_page(@account, false)
     Social::FacebookPage.update_all("import_visitor_posts = true", "page_id = #{@fb_page.page_id}")

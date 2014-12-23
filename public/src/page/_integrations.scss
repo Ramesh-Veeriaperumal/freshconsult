@@ -1,0 +1,270 @@
+// --------------------------------------------------------------------------------------------//
+// 												CTI STYLES 									  //
+// -------------------------------------------------------------------------------------------//
+.cti{
+	width:250px;
+	.cti-header{
+		display: block;
+		background: #444;
+		position: relative;
+		@include padding(5px);
+	}
+	.profile-pic{
+		position: absolute;
+		top: -30px;
+		text-align: center;
+		width: 100%;
+	}
+	.preview_pic{
+		@include margin(0 auto);
+		@include float(none);
+		img{
+			border-radius: 100%;
+			@include box-shadow(0px 0px 10px rgba(0,0,0,0.3));
+			border: 1px solid #444;
+		}
+	}
+	.cti-name{
+		width: 100%;
+		text-align: center;
+		padding-top: 20px;
+		font-size: 18px;
+		color: #fff;
+	}
+	.cti-mobile-number, .cti-comp-name{
+		text-align: center;
+		@include padding(0 2px);
+		color: white;
+	}
+	.ficon-ticket{
+		padding-right: 10px;
+		@include float(left);
+	}
+	.cti-ticket-list{
+		@include padding(5px 0 11px);
+		background: #fff;
+		width: 100%;
+		li{
+			@include padding(5px 10px 0);
+		}
+	}
+}
+
+.cti_widget {
+	position: fixed;
+	bottom: 0;
+	height: 39px;
+	color: #FFF;
+ 	@include right(10px);
+	z-index: 2;
+	.popupbox-tabs {
+		max-width: 500px;
+		li {
+			display: inline-block;
+			vertical-align: top;
+
+			a, &.active a {
+				text-align: center;
+				width: 38px;
+				height: 26px;
+				display: block;
+
+				@include box-sizing(border-box);
+
+				background-color: #7B7B7B;
+				background-repeat: no-repeat;
+			}
+			a.active {
+				background-color: #4B4B4B;
+			}
+
+		}
+		li:first-child a { 
+			@include border-left-radius(4px);
+		}
+		li:last-child a {
+			@include border-right-radius(4px);
+		}
+		[class*='ficon-'] {
+			color: #FFF;
+			line-height: 27px;
+		}
+	}
+}
+
+.cti_content_container {
+	&.popupbox-content {
+		position: fixed;
+		bottom: 48px;
+		border: 3px solid $popup-content-border;
+		z-index: 999;
+		@include border-radius(4px);
+		.triangle {
+			@include triangle(down, $popup-content-border, 8px);
+			position: absolute;
+			@include right(10px);
+			top: 100%;
+			margin-top: 3px;
+		}
+		.no-call-msg {
+			width: 250px;
+		}	
+	}
+}
+
+.end_call_form_btns {
+	direction: ltr;
+	.btn { 
+		margin-bottom: 4px;
+		@include box-sizing(border-box);
+		min-height: 35px;
+		font-size: 14px;
+		font-weight: 400;
+		@include text-align(left);
+		@include padding-left(10px);
+	}
+	.end_call_cancel, .end_call_save, .save_to_existing {
+		width: 99%;
+		height: 40px;
+	}
+	.end_call_cancel {
+		height: 55px;
+		@include padding-right(0px);
+	}
+	.end_call_cancel {
+		margin-top:10px;
+	}
+	.btn-notes {
+		color: $ec-btn-text;
+		font-size: 12px;
+		font-style: italic;
+	}
+	.arrow-right {
+		color: $ec-btn-right-arrow;
+		@include float(right);
+		font-size: 9px;
+		@include border-radius(3px);
+		margin-top: 2px;
+	}
+}
+
+// Call notes and end call notes
+.end_call_notes_container {
+	direction: ltr;
+	.final_call_notes {
+		width: 99%;
+		height: 140px;
+		padding-bottom: 0px;
+		margin-bottom: 5px;
+		@include box-sizing(border-box);
+	}
+	.final_call_notes{
+		margin-top: 10px;
+	}
+	.main_content {
+		padding: 12px;
+	}
+	.notes_label {
+		font-weight: bold;
+		margin: 10px 0 0;
+	}
+	.ticket_search_pane {
+		padding: 10px;
+	}
+}
+
+.integration-ticket-search {
+	direction: ltr;
+	border: 1px solid $ec-ticket-search-border;
+	height: 290px;
+	padding-top: 10px;
+	margin-top: 12px;
+	@include border-radius(4px);
+	.searchticket {
+		@include float(left);
+		@include margin-left(4px);
+	}
+	.search_input {
+		height: 18px;
+		width: 260px;
+	}
+	.search-type {
+		@include margin-left(10px);
+	}
+	.searchicon {
+		top: 113px;
+	 	@include right(45px);
+	}
+	.search_header {
+		border-bottom: 1px solid $ec-ticket-header-border;
+		height: 40px;
+	}
+	.sloading {
+		padding:0;
+		max-height: 230px;
+	}
+	.ticket_search_results {
+		background-color: $ec-search-results-background;
+		border-bottom-radius:4px;
+	}
+	.autocompletepane {
+		height: 249px;
+		overflow:auto;
+		.selected, li {
+			font-size: 13px;
+			@include padding(8px 8px 0 8px);
+			color: $ec-autocomplete-result-color;
+			background-color: transparent;
+			border: none;
+			border-bottom: 1px solid $ec-autocomplete-result-border;
+			&:hover {
+				background-color:$ec-result-hover-background;
+			}
+		}
+	}
+	.autocompletepane li:hover {
+		.save_to_ticket {
+			display:inline-block;
+			margin-top: 11px;
+		}
+	}
+	.save_to_ticket {
+		@include float(right);
+	}
+// ticket search ends
+}
+
+.integration-end-call {
+	.form-horizontal {
+		border: 1px solid $ec-newticket-form-border;
+		padding: 10px;
+		margin-top: 10px;
+		@include border-radius(6px);
+		background-color: $ec-newticket-form-background;
+		input {
+			width:94%;
+		}
+		.select2-container{
+			width: auto;
+			min-width: 200px;
+		}
+	}
+	.controls {
+		@include margin-left(0);
+	}
+	.back {
+		font-weight: 700;
+		color: $ec-go-back;
+		cursor: pointer;
+	}
+	.save_ticket {
+		@include float(right);
+		margin-top: 10px;
+	}
+	.requester_name_container {
+		margin-top:16px;
+	}
+	.control-group {
+		margin-bottom:8px;
+	}
+}

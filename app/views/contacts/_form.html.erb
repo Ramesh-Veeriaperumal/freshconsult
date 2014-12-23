@@ -3,6 +3,9 @@
 jQuery('body').on('assetLoaded.fjax', function() {
 	window.App.Contacts.Contact_form.confirm_text = "<%= t('merge_contacts.email_remove') %>";
 	window.App.Contacts.Contact_form.tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
+	window.App.Contacts.Contact_form.primary_text = "<%= t('merge_contacts.primary') %>";
+	window.App.Contacts.Contact_form.unverified_text = "<%= t('merge_contacts.not_verified') %>";
+	window.App.Contacts.Contact_form.mark_text = "<%= t('merge_contacts.make_primary') %>";
 });
 </script>
 

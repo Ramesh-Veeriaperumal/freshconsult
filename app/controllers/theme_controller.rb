@@ -58,6 +58,7 @@ class ThemeController < ApplicationController
 		end
 
 		def scss_template
+			
 			_output = []
 
 			# Getting settings from model pref
@@ -67,7 +68,7 @@ class ThemeController < ApplicationController
 			_output << read_scss_file(self.class::THEME_URL) if(File.exists?(self.class::THEME_URL))
 
 			# Appending custom css if it is a portal theme
-			_output << scoper.custom_css if(feature?(:css_customization) && scoper.respond_to?(:custom_css))
+			_output << custom_css
 
 			_output.join("")
 		end	
@@ -81,6 +82,9 @@ class ThemeController < ApplicationController
 		def read_scss_file(file_url)
 			@theme_template ||= render_to_string(:file => file_url)
 		end
-
+		
+		def custom_css
+			scoper.custom_css if(feature?(:css_customization) && scoper.respond_to?(:custom_css))
+		end
 		
 end

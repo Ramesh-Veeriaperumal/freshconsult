@@ -8,7 +8,7 @@ end
 RSpec.describe Facebook::Core::Status do
   
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @account.make_current
     @fb_page = create_test_facebook_page(@account, false)
     @account.features.send(:facebook_realtime).create

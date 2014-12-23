@@ -17,7 +17,7 @@ RSpec.describe GroupsController do
 	end
 
 	after(:all) do
-		@test_group.destroy
+		@test_group.destroy	
 		@calendar.destroy
 	end
 
@@ -29,7 +29,7 @@ RSpec.describe GroupsController do
 		}
 		result = parse_json(response)
 		expected = (response.status == 201) && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
-					(compare(result["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+					(compare(result["group"]["agents"].first.keys,APIHelper::AGENT_USER_ATTRIBS,{}).empty?)
 		expected.should be(true)
 		@account.groups.find_by_name("Spec Testing Grp - json").should_not be_nil
 	end
@@ -78,7 +78,7 @@ RSpec.describe GroupsController do
 		get :index, :format => 'json'
 		result = parse_json(response)
 		expected = (response.status == 200) && (compare(result.first["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
-					(compare(result.last["group"]["agents"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+					(compare(result.last["group"]["agents"].first.keys,APIHelper::AGENT_USER_ATTRIBS,{}).empty?)
 		expected.should be(true)
 	end
 

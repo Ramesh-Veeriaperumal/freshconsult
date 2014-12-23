@@ -95,6 +95,7 @@
 		}
 		.select2-container {
 			z-index: 1;
+			max-width: 100%;
 			&.select2-container-disabled .select2-choice, &.select2-container-disabled .select2-choice div {
 				background-color: #FFF;
 				cursor: move;
@@ -165,6 +166,9 @@
 	}
 	.section.colsets {
 		position: relative;
+		.dropchoice {
+			width: 200px;
+		}
 	}
 	.add-choice {
 		font-size: 12px;
@@ -364,6 +368,7 @@
 	}
 	.select2-container {
 		min-width: 125px;
+		max-width: 100%;
 	}
 }
 

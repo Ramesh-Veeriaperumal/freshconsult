@@ -4,7 +4,7 @@ describe Integrations::UserCredentialsController do
   self.use_transactional_fixtures = false
 
 	before(:all) do
-		@account = create_test_account
+		#@account = create_test_account
   	@user = add_test_agent(@account)
   	@app_name = 'google_calendar'
   	create_installed_applications({ :configs => { :inputs => {} }, :account_id => @account.id, :application_name => @app_name})

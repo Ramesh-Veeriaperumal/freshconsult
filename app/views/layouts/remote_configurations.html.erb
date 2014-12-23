@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<%= open_html_tag %>
+  <head>
+    <%= stylesheet_link_tag_with_rtl :'cdn/remote_configurations' %>
+    <%= javascript_include_tag :'cdn/remote_configurations' %>
+  </head>
+  
+  <body class="remote-configurations">
+    <%= yield %>
+  </body>
+
+  <script>
+    $(document).ready(function() {
+      $('[rel="validate"]').validate();
+    })
+  </script>
+</html>

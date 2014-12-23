@@ -163,8 +163,16 @@ window.App.Discussions = window.App.Discussions || {};
 			var $this = this;
 			$('body').removeClass('cs-show');
 			setTimeout(function () {
-				$("#community-sidebar").hide();
-				$this.sidebarActive = false;
+				var canShow = $('body').hasClass('cs-always-show');
+				if(!canShow){
+					$("#community-sidebar").hide();
+					$this.sidebarActive = false;
+				}
+				else
+				{
+					$("#community-sidebar").show();
+					$this.sidebarActive = true;
+				}
 			}, 300);
 		},
 		

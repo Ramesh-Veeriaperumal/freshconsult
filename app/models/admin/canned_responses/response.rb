@@ -70,13 +70,15 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   scope :only_me, lambda { |user|
     {
-      :joins => %(JOIN admin_user_accesses acc ON
+      :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = admin_canned_responses.id AND
                   acc.accessible_type = 'Admin::CannedResponses::Response' AND
                   admin_canned_responses.account_id=%<account_id>i AND
-                  acc.account_id = admin_canned_responses.account_id) % { :account_id => user.account_id },
-      :conditions => %(acc.VISIBILITY=%<only_me>s and acc.user_id=%<user_id>i ) % {
-        :only_me => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me],
+                  acc.account_id = admin_canned_responses.account_id
+                  inner join user_accesses ON acc.id= user_accesses.access_id AND
+                  acc.account_id= user_accesses.account_id) % { :account_id => user.account_id },
+      :conditions => %(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
+        :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
         :user_id => user.id
       }
     }

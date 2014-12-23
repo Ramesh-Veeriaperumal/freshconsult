@@ -151,6 +151,6 @@ RSpec.describe Integrations::ApplicationsController do
     post 'oauth_install', :id => provider
     get_redis_key(provider).should_not be_nil
     Integrations::InstalledApplication.with_name(provider).should_not be_nil
-    response.should render_template("integrations/applications/_salesforce_fields.html.erb", :layout => :application)
+    response.should render_template("integrations/applications/_salesforce_fields")
   end
 end

@@ -4,7 +4,7 @@ describe Helpdesk::MergeTicketsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @user = add_test_agent(@account)
     @group = create_group(@account, {:name => "Merge"})
     @target_ticket = create_ticket({ :status => 2}, @group)
@@ -106,9 +106,9 @@ describe Helpdesk::MergeTicketsController do
   it "should merge tickets with header_info" do
     ids = ["newreply@gamil.com","replynote@gamil.com"]
     @target_ticket.header_info = {:message_ids => [ids[0]]}
-    @target_ticket.save(false)
+    @target_ticket.save(validate: false)
     @source_ticket2.header_info = {:message_ids => [ids[1]]}
-    @source_ticket2.save(false)
+    @source_ticket2.save(validate: false)
 
     # Before merge
     @target_ticket.schema_less_ticket.text_tc01[:message_ids].should_not include(ids[1])

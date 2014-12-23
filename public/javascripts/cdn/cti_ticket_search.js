@@ -1,0 +1,1 @@
+//= require cti/plugin/ticket_search

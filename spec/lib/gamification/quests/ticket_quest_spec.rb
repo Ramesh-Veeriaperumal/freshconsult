@@ -6,7 +6,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
   self.use_transactional_fixtures = false
   
   before(:all) do
-    @account  = create_test_account
+    #@account = create_test_account
     @account.quests.ticket_quests.each { |quest| quest.destroy } # destroying default ticket quests
     FAST_RESOLUTION_POINTS = @account.scoreboard_ratings.find_by_resolution_speed(FAST_RESOLUTION).score
     FIRST_CALL_RESOLUTION_POINTS = @account.scoreboard_ratings.find_by_resolution_speed(FIRST_CALL_RESOLUTION).score

@@ -561,6 +561,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if deep
       self[:notes] = self.notes
       options[:methods].push(:attachments)
+      options[:include] = options[:include] || {}
+      options[:include][:tags] = {:only => [:name]} if options[:include].is_a? Hash
     end
     options[:except] = [:account_id,:import_id]
     options[:methods].push(:custom_field)
@@ -579,6 +581,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
     ticket_attributes = [:notes,:attachments]
+    ticket_attributes = {:notes => {},:attachments => {},:tags=> {:only => [:name]}}
     ticket_attributes = [] if options[:shallow]
     super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name, :product_id]) do |xml|

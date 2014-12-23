@@ -106,7 +106,18 @@ if Rails.env.test?
     "spec/controllers/forum_categories_controller_spec.rb",
     "spec/controllers/forums_controller_spec.rb",
     "spec/controllers/topics_controller_spec.rb",
-    "spec/models/monitorship_spec.rb"
+    "spec/models/monitorship_spec.rb",
+    "spec/controllers/support/discussions/*_spec.rb",
+    "spec/controllers/support/discussions_controller_spec.rb"
+  ]
+
+  SolutionTests = [
+    "spec/controllers/support/articles_controller_spec.rb",
+    "spec/controllers/support/solutions_controller_spec.rb",
+    "spec/controllers/support/folders_controller_spec.rb",
+    "spec/controllers/helpdesk/solution_articles_controller_spec.rb",
+    "spec/controllers/helpdesk/solution_folders_controller_spec.rb",
+    "spec/controllers/helpdesk/solution_categories_controller_spec.rb"
   ]
 
   HelpdeskTests = [ 
@@ -181,8 +192,8 @@ if Rails.env.test?
   ]
     
   UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
-                GnipTests, HelpdeskTests, IntegrationTests, MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests ]
+                GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
+                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests]
 
   UnitTests.flatten!.uniq!
 
@@ -437,6 +448,15 @@ if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(MobileAppTests)
+        end
+      end
+
+      namespace :community_tests do
+        desc "Running all community tests"
+        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+        RSpec::Core::RakeTask.new(:all) do |t|
+          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.spec_files = FileList.new(ForumTests+SolutionTests).uniq
         end
       end
       

@@ -17,6 +17,8 @@ module Import::CustomField
   TEXT_FIELDS = (1..10).collect { |n| "ff_text#{"%02d" % n}" }
   DECIMAL_FIELDS = (1..10).collect { |n| "ff_decimal#{"%02d" % n}" }
 
+  # Whenever you add new fields here, ensure that you add it in search indexing.
+
   FIELD_COLUMN_MAPPING = {
     "text"      => [["text" , "dropdown"], CHARACTER_FIELDS],
     "dropdown"  => [["text" , "dropdown"], CHARACTER_FIELDS],

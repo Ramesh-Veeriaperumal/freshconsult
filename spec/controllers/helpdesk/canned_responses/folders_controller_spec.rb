@@ -30,7 +30,7 @@ describe Helpdesk::CannedResponses::FoldersController do
   it "should create a new folder" do
     @now = (Time.now.to_f*1000).to_i
     get :new
-    response.redirected_to.should eql "/helpdesk/canned_responses/folders"
+    should redirect_to "/helpdesk/canned_responses/folders"
     post :create, { :admin_canned_responses_folder => {:name => "New CR Folder #{@now}"} }
     @account.canned_response_folders.find_by_name("New CR Folder #{@now}").should_not be_nil
   end

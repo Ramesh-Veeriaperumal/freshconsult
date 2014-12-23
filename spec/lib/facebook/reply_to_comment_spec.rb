@@ -7,7 +7,7 @@ include Facebook::Core::Util
 describe Facebook::Core::Post do
   
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @account.features.send(:facebook_realtime).create
     @account.make_current
     @fb_page = create_test_facebook_page(@account, true)

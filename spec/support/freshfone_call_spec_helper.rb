@@ -78,9 +78,9 @@ module FreshfoneCallSpecHelper
   private
     def create_call_with_caller_and_meta
       call = @account.freshfone_calls.create( :freshfone_number_id => @number.id, 
-               :call_status => 0, :call_type => 1, :agent => @agent,
-               :params => { :CallSid => "CA9cdcef5973752a0895f598a3413a88d5", :From => @caller_number } )
-      call.create_meta( :account => @account, :group_id => Group.first)
+               :call_status => 0, :call_type => 1, :agent => @agent, :group_id => Group.first,
+               :params => { :CallSid => "CA9cdcef5973752a0895f598a3413a88d5", :From => @caller_number
+                } )#group_id moved from meta to freshfone_calls. 
     end
 
 end

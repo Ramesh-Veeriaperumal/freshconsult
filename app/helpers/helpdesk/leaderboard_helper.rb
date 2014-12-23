@@ -37,7 +37,7 @@ module Helpdesk::LeaderboardHelper
 		content << "#{t('gamification.leaderboard.showing')}<a role='button' class='dropdown-toggle' id='sorting_dropdown' data-toggle='dropdown' href='#''> <b> #{current_group}</b><b class='caret'></b></a>"
 		content << "<ul class='dropdown-menu' role='menu' aria-labelledby='sorting_dropdown_list' id='sorting_dropdown_list'>"
 		content << "<span class='icon ticksymbol'></span>" if params[:action] == "agents"
-		content << "<li>#{ link_to "#{t('gamification.leaderboard.all_agents')}", agents_helpdesk_leaderboard_path(:date_range => params[:date_range]), 'data-option' => 'all' }</li>"
+		content << "<li>#{ link_to "#{t('gamification.leaderboard.all_agents')}", agents_helpdesk_leaderboard_index_path(:date_range => params[:date_range]), 'data-option' => 'all' }</li>"
 		content << "<li class='dropdown-header agents_list_info'><b>#{t('gamification.leaderboard.agents_from_group')}</b></li>"
 		current_account.groups.each do |group|
 			content << "<span class='icon ticksymbol'></span>" if (params[:action] == "group_agents" && @group.id == group.id)
@@ -54,8 +54,8 @@ module Helpdesk::LeaderboardHelper
 		content << "<a href='/'>< #{ t('gamification.leaderboard.back_to_dashboard') }</a>"
 		group_action? ? group_class = "active" : agent_class = "active"
 		content << "<ul class='nav nav-tabs'>"
-		content << "<li id='agent-tab' class='#{agent_class}'>#{ link_to 'Agent', agents_helpdesk_leaderboard_path(:date_range => @date_range_val) }</li>"
-		content << "<li id='group-tab' class='#{group_class}'>#{ link_to 'Group', groups_helpdesk_leaderboard_path(:date_range => @date_range_val) }</li>"
+		content << "<li id='agent-tab' class='#{agent_class}'>#{ link_to 'Agent', agents_helpdesk_leaderboard_index_path(:date_range => @date_range_val) }</li>"
+		content << "<li id='group-tab' class='#{group_class}'>#{ link_to 'Group', groups_helpdesk_leaderboard_index_path(:date_range => @date_range_val) }</li>"
 		content << "<div class='pull-right'>"
 		content << (render :partial => "filter")
 		content << "</div>"

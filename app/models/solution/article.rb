@@ -12,7 +12,7 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to_account
   
-  # xss_sanitize :only => [:description],  :html_sanitize => [:description]
+  xss_sanitize :only => [:title, :description],  :article_sanitizer => [:title, :description]
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   
   has_many_attachments

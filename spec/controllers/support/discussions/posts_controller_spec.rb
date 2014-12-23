@@ -23,7 +23,7 @@ describe Support::Discussions::PostsController do
 
 
 	it "should create a new post on post 'create'" do
-		topic = publish_topic(create_test_topic(@forum))
+		topic = publish_topic(create_test_topic(@forum, @user))
 		post_body = Faker::Lorem.paragraph
 		old_follower_count = Monitorship.count
 
@@ -36,7 +36,7 @@ describe Support::Discussions::PostsController do
 		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
 		new_post.should_not be_nil
 		new_post.topic_id.should eql topic.id
-		new_post.user_id.should eql @user.id
+		new_post.user_id.should eql @customer.id
 		new_post.account_id.should eql @account.id
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil

@@ -24,8 +24,15 @@ RSpec.describe MonitorshipsController do
     response.status.should === 200
   end
 
-  it "should be able to view monitoring status of a forum" do
+  it "should be able to view monitoring status of an unfollowed forum" do
     get :is_following, {:id => @forum.id, :object => "forum", :format => 'json'}
+    result = parse_json(response)
+    response.status.should === 200 && result==[]
+  end
+
+  it "should be able to view monitoring status of a followed forum" do
+    monitor_forum(@forum, User.current)
+    get :is_following, {:id => @forum.id, :object => "forum", :format => 'json', :user_id => User.current.id}
     result = parse_json(response)
     response.status.should === 200 && compare(result['monitorship'].keys, APIHelper::MONITOR_ATTRIBS,{}).empty?
   end

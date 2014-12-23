@@ -16,6 +16,10 @@ describe Helpdesk::DashboardController do
     @agent.make_current
   end
 
+  after(:all) do
+    @account.subscription.update_attributes(:state => "trial")
+  end
+
   it "should display the Dashboard page" do
     xhr :get, :index
     response.body.should =~ /#{@forum.name}/

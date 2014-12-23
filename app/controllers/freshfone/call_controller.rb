@@ -130,7 +130,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		def validate_twilio_request
 			@callback_params = params.except(*[:agent, :direct_dial_number, :preview,
 							:batch_call, :force_termination, :number_id, :below_safe_threshold, 
-							:forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing])
+							:forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing, :group_transfer])
 			super
 		end
 end

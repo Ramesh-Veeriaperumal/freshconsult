@@ -23,9 +23,6 @@ describe Discussions::MergeTopicController do
 	end
 
 	after(:all) do
-		@user.destroy
-		@user1.destroy
-		@user2.destroy
 		Resque.inline = false
 	end
 

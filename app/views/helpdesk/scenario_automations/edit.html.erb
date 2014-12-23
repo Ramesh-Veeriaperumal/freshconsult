@@ -1,0 +1,8 @@
+<% content_for :helpcard do %>
+ <%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
+<h3 class="lead"><%=t('automations.title')%></h3>
+<%= form_for @va_rule, :url => helpdesk_scenario_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+<% end %>

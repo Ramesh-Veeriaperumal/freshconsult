@@ -13,7 +13,7 @@
   </ul>
   <div class="button-container">
     <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "floatl uiButton" %>
-	<% if @installing_application.name != "google_contacts"%>
+	<% if (@installing_application.name != "google_contacts" && @installing_application.name != "seoshop")%>
 	    <%= f.submit t('update'), :class => "uiButton" %>
     <% else %>
 		<%= yield :special_buttons %>    

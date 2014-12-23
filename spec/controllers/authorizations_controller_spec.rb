@@ -5,7 +5,7 @@ describe AuthorizationsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @user = add_test_agent(@account)
     @new_installed_application = FactoryGirl.build(:installed_application, 
                                                 {

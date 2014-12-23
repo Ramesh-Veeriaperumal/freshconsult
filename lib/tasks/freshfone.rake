@@ -74,7 +74,9 @@ namespace :freshfone do
 	task :renew_numbers => :environment do
 		Sharding.execute_on_all_shards do
 			Freshfone::Number.find_due.each do |number|
-		    number.renew
+				number.account.make_current
+				number.renew
+				Account.reset_current_account
 		  end
 		end
 	end
