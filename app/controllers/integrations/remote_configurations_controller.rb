@@ -13,7 +13,7 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
   end
 
   def create
-    domain = params[:domain].partition('://').last
+    domain = params[:domain].partition('://').last.sub('/', '')
     domain_mapping = DomainMapping.find_by_domain(domain)
     if domain_mapping
       Sharding.select_shard_of(domain) do
