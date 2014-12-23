@@ -4753,7 +4753,7 @@ en:
       label: "Five9"
       desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
       helptext: "This is Five9 helptext"
-      recording_path_info: "Same path should be configured in same admin to store the call recording"
+      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
       recording_path: "Directory path for the call recording"
     drishti:
       label: "Drishti"
