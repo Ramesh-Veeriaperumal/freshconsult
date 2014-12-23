@@ -63,7 +63,6 @@ describe Integrations::Cti::CustomerDetailsController do
 		usr = User.find(:first,:conditions => {:email => "test@email.com"})
 		usr.nil?.should be_false
 	end
-=begin
 	it "auth success for valid session" do
 		get :get_session , {
 			:email => @agent.email,
@@ -86,5 +85,4 @@ describe Integrations::Cti::CustomerDetailsController do
 		a=Hash.from_xml(response.body)
 		a["response"]["status"].should eql "failed"
 	end
-=end
 end

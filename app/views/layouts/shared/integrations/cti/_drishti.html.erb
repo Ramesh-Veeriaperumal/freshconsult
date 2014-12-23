@@ -1,0 +1,20 @@
+<%= include_cloudfront_css :cti %>
+<%= include_cloudfront_js :cti_ticket_search %>
+<%= include_cloudfront_js :cti_client %>
+<div class="cti_widget">
+	<%= render 'layouts/shared/cti/cti_popup_tabs' %>
+</div>
+
+<div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
+<div class="popupbox-content hide cti_content_container" rel="cti_widget">
+	<%= render 'layouts/shared/cti/cti_popupbox_content' %>
+</div>
+
+<% javascript_tag do %>
+	if (typeof cti_user === "undefined") { cti_user = {}; }
+	cti_user.current_user = <%= current_user.id %>;
+	cti_user.current_account = <%= current_account.id%>;
+	cti_user.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
+	cti_user.host_ip = '<%= get_app_config('drishti')[:host_ip] %>';
+	cti_user.email = '<%= current_user.email %>';
+<% end %>

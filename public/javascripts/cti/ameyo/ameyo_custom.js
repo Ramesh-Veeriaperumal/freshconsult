@@ -1,0 +1,37 @@
+var a=0;
+var crtObjectId;
+function customShowCrm(phone, additionalParams) {
+	var params = JSON.parse(additionalParams);
+	crtObjectId = params.crtObjectId;
+	freshdeskShowCrm(phone, additionalParams);
+}
+
+function handleOnLoad() {
+	if(a) return;
+	a++;
+	jQuery.ajax({
+          url: '/integrations/cti/customer_details/get_session',
+          type: 'GET',
+          data: {"email" : cti_user.email},
+          success: function (response) {
+            session = response.sessionId;
+            doLogin(cti_user.email,session,'auth.type.crm.http');
+        	},
+          error: function (data) {
+          }
+    }); 
+}
+
+function handleHangup(reason) {
+	var recordingUrl = 'http://'+cti_user.host_ip+'/ameyowebaccess/command?command=downloadVoiceLog&data={"crtObjectId":"'+crtObjectId+'"}';
+	freshdeskHandleEndCall(recordingUrl);
+}
+
+customIntegration = {};
+customIntegration.showCrm = customShowCrm;
+customIntegration.onLoadHandler = handleOnLoad;
+customIntegration.hangupHandler = handleHangup;
+
+registerCustomFunction("showCrm", customIntegration);
+registerCustomFunction("onLoadHandler", customIntegration);
+registerCustomFunction("hangupHandler", customIntegration);
