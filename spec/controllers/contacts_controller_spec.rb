@@ -306,21 +306,21 @@ describe ContactsController do
 
   it "should edit an existing contact" do
     test_email = Faker::Internet.email
-    contact = FactoryGirl.build(:user, :account => @acc, :email => test_email,
+    @contact = FactoryGirl.build(:user, :account => @acc, :email => test_email,
                               :user_role => 3, :active => 1, :password => "test")
-    contact.save
-    get :edit, :id => contact.id
+    @contact.save
+    get :edit, :id => @contact.id
     response.body.should =~ /Edit Contact/
     puts test_email
     puts "\n\n\n"
     test_phone_no = Faker::PhoneNumber.phone_number
     avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
-    put :update_contact, :id => contact.id, :user => { :avatar_attributes => {:content => avatar_file},
+    put :update_contact, :id => @contact.id, :user => { :avatar_attributes => {:content => avatar_file},
                                                 :email => test_email, 
                                                 :job_title => "Developer",
                                                 :phone => test_phone_no,
-                                                :time_zone => contact.time_zone, 
-                                                :language => contact.language }
+                                                :time_zone => @contact.time_zone, 
+                                                :language => @contact.language }
     @account.reload
     edited_contact = @account.user_emails.user_for_email(test_email)
     edited_contact.should be_an_instance_of(User)

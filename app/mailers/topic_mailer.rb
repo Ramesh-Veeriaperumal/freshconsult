@@ -25,7 +25,7 @@ class TopicMailer < ActionMailer::Base
       part.text { render "mailer/topic/monitor_email.text.plain" }
       part.html do 
         Premailer.new(
-          render_message("mailer/topic/monitor_email.text.html"), 
+          render("mailer/topic/monitor_email.text.html"), 
           :with_html_string => true, 
           :input_encoding => 'UTF-8'
         ).to_inline_css 
@@ -54,7 +54,7 @@ class TopicMailer < ActionMailer::Base
       part.text { render "mailer/topic/stamp_change_notification_email.text.plain" }
       part.html do
         Premailer.new(
-          render_message("mailer/topic/stamp_change_notification_email.text.html"),
+          render("mailer/topic/stamp_change_notification_email.text.html"),
           with_html_string: true, 
           :input_encoding => 'UTF-8'
         ).to_inline_css
@@ -75,13 +75,13 @@ class TopicMailer < ActionMailer::Base
     @target_topic = target_topic
     @user = monitor.user
     @host = host
-    @port = monitor.get_portal
+    @portal = monitor.get_portal
     mail(headers) do |part|
       part.text do
-        render "mailer/topic/merge_topic_notification_email.text.plain"
+        render("mailer/topic/merge_topic_notification_email.text.plain")
       end
       part.html do
-        Premailer.new(render_message("mailer/topic/merge_topic_notification_email.text.html.erb"), 
+        Premailer.new(render("mailer/topic/merge_topic_notification_email.text.html"), 
                             with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
       end
     end.deliver

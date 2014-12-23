@@ -1567,6 +1567,7 @@ Helpkit::Application.routes.draw do
         put :remove_stamp
         put :vote
         delete :destroy_vote
+        get :reply
       end
 
       resources :posts, :except => :new do
