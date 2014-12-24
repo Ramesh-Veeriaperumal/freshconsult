@@ -24,7 +24,7 @@
 		</div>
 		<% unless post.spam? %>
 		<div class="action-icon<%= '-popup' if popup %>">
-			<%= link_to_remote("", :url => ban_discussions_unpublished_path(post, :timestamp => post.timestamp, :scope => @moderation_scope),
+			<%= link_to_remote("", :url => ban_discussions_unpublished_path(post, :timestamp => post.timestamp, :scope => @moderation_scope, :popup => popup),
 					:method => :put,
 					:confirm => t('.ban_confirm'),
 					:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
