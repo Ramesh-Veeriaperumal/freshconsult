@@ -7,6 +7,7 @@ class Solution::Category < ActiveRecord::Base
 
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  include Mobihelp::AppSolutionsUtils
   
   set_table_name "solution_categories"
   
@@ -31,7 +32,12 @@ class Solution::Category < ActiveRecord::Base
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
    
   after_create :assign_portal
-  after_destroy :clear_mobihelp_solutions_cache
+  
+  after_save    :set_mobihelp_solution_updated_time
+  before_destroy :set_mobihelp_app_updated_time
+
+  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :dependent => :destroy
+  has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
 
   acts_as_list :scope => :account
 
@@ -74,7 +80,12 @@ class Solution::Category < ActiveRecord::Base
    
   private 
 
-    def clear_mobihelp_solutions_cache
-      clear_solutions_cache(self.id)
+    def set_mobihelp_solution_updated_time
+      update_mh_solutions_category_time(self.id)
     end
+
+    def set_mobihelp_app_updated_time
+      update_mh_app_time(self.id)
+    end
+
 end

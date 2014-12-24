@@ -800,8 +800,8 @@ en:
           description: Application Description
           platform: Platform
           configurations: SDK Configurations
-          solutions: Solution Category
-          solutions_info: The Solution Category you select will be shown in the App Support 
+          solution_categories: Solution Categories
+          solution_categories_info: The solution categories you select will be shown in the App Support 
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           app_store_id_v12_info: Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer Integration guide.

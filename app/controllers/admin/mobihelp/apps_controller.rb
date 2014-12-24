@@ -2,6 +2,7 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
 
 
   before_filter :load_app, :only => [:edit, :update, :destroy]
+  before_filter :build_mobihelp_app, :only => [:create, :update]
 
   def index
     @applist = current_account.mobihelp_apps.find_all_by_deleted(false)
@@ -14,11 +15,9 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
   end
 
   def create
-    @app = current_account.mobihelp_apps.build(params[:mobihelp_app])
-    @app.platform = @app.platform.to_i
     if @app.save
-        flash[:notice] = t(:'flash.general.create.success', :human_name => t('admin.mobihelp.human_name'))
-        redirect_to edit_admin_mobihelp_app_path(@app)
+      flash[:notice] = t(:'flash.general.create.success', :human_name => t('admin.mobihelp.human_name'))
+      redirect_to edit_admin_mobihelp_app_path(@app)
     else
       flash[:error] = t(:'flash.general.create.failure', :human_name => t('admin.mobihelp.human_name'))
       render :action => 'new'
@@ -26,11 +25,11 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
   end
 
   def edit
-
+    @app.category_ids = @app.app_solutions(:order => :position).map(&:category_id)
   end
 
   def update
-    if @app.update_attributes(params[:mobihelp_app])
+    if @app.save
       flash[:notice] = t(:'flash.general.update.success', :human_name => t('admin.mobihelp.human_name'))
       redirect_to :action => 'index'
     else
@@ -58,5 +57,18 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
     def load_app
       @app = current_account.mobihelp_apps.find(params[:id])
     end
-
+    
+    def build_mobihelp_app
+      @app = Mobihelp::App.new if @app.nil?
+      @app.attributes = params[:mobihelp_app]
+      @app.app_solutions.clear  
+  
+      if @app.category_ids
+        @app.category_ids.each_with_index do |category_id, index|
+          @app.app_solutions.build({ 
+              :category_id => category_id, 
+              :position => index+1 })
+        end
+      end
+    end
 end
