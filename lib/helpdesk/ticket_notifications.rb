@@ -55,7 +55,7 @@ module Helpdesk::TicketNotifications
   def notify_by_email(notification_type)
     if notify_enabled?(notification_type)
       if (self.requester.language != nil)
-        Helpdesk::TicketNotifier.send_later(:deliver_notify_by_email, notification_type, self)
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self)
       else
         args = [notification_type, self]
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), 
