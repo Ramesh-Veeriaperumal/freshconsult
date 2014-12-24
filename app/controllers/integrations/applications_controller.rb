@@ -4,8 +4,8 @@ class Integrations::ApplicationsController < Admin::AdminController
   include Integrations::SalesforceUtil
   include Integrations::OauthHelper
   
-  before_filter :load_object, :only => [:show, :edit, :update, :destroy]
-
+  before_filter :load_object, :only => [:show, :edit, :update]
+  before_filter :load_installed_application, :only => [:destroy]
   def index
     @applications = Integrations::Application.available_apps(current_account)
     @installed_applications = get_installed_apps
@@ -106,5 +106,9 @@ class Integrations::ApplicationsController < Admin::AdminController
   private
     def load_object
      @installing_application = Integrations::Application.available_apps(current_account).find(params[:id])
+    end
+
+    def load_installed_application
+     @installing_application = Integrations::Application.freshplugs_apps(current_account).find(params[:id])
     end
 end
