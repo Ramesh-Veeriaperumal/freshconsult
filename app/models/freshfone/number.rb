@@ -141,8 +141,11 @@ class Freshfone::Number < ActiveRecord::Base
 	def renew
 		begin
 			next_renewal = self.next_renewal_at.advance(:months => 1) - 1.day
-			account.freshfone_credit.renew_number(rate, id)
-			update_attributes(:next_renewal_at => next_renewal)
+			if account.freshfone_credit.renew_number(rate, id)
+				update_attributes(:next_renewal_at => next_renewal)
+			else
+				handle_number_renewal_failure(next_renewal)
+			end
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
 			notify_number_renewal_failure(e)
@@ -153,6 +156,16 @@ class Freshfone::Number < ActiveRecord::Base
 	def insufficient_renewal_amount?
 		credit = account.freshfone_credit
 		credit.available_credit < rate
+	end
+
+	def handle_number_renewal_failure(next_renewal)
+		if account.subscription.active?
+			update_attributes(:state => STATE[:expired], 
+												:next_renewal_at => next_renewal)
+			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
+		else
+			update_attributes(:deleted => true)
+		end
 	end
 
 	def queue_wait_time_in_minutes
