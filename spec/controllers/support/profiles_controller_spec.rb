@@ -9,6 +9,8 @@ describe Support::ProfilesController do
 
     before(:all) do
       @user = add_new_user(@account, {:active => true})
+      @account.contact_form.default_contact_fields.map {|cf| 
+                cf.update_attributes(:required_in_portal => false) unless cf.field_type == :default_name}
     end
 
     before(:each) do
