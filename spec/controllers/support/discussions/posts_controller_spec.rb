@@ -198,7 +198,7 @@ describe Support::Discussions::PostsController do
 	end
 
 	it "should mark a post as answer on 'toggle_answer'" do
-		topic = create_test_topic(@forum)
+		topic = create_test_topic(@forum, @user)
 		post = create_test_post(topic)
 
 		# Error Cause: Current user is being reset
@@ -213,7 +213,7 @@ describe Support::Discussions::PostsController do
 	end
 
 	it "should unmark a post as answer on 'toggle_answer'" do
-		topic = create_test_topic(@forum)
+		topic = create_test_topic(@forum, @user)
 		post = mark_as_answer(create_test_post(topic))
 
 		# Error Cause: Current user is being reset
