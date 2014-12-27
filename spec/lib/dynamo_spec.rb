@@ -47,7 +47,7 @@ describe Dynamo do
 
 		dynamo_test1 = Class.new(Dynamo) do 
 
-			hash "id", :n
+			hash_key "id", :n
 			range "created_at", :n
 
 			local_secondary_index "user_id", :n
