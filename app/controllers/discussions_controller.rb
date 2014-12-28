@@ -2,6 +2,7 @@ class DiscussionsController < ApplicationController
 
 	include ModelControllerMethods
 	include Helpdesk::ReorderUtility
+	include Community::ModerationCount
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]
@@ -14,7 +15,7 @@ class DiscussionsController < ApplicationController
 	before_filter :set_selected_tab
 	before_filter :content_scope
 
-	before_filter :fetch_spam_counts, :only => [:index, :your_topics]
+	before_filter :fetch_spam_counts, :only => [:index, :your_topics, :sidebar]
 
 	def index
 		@topics = current_account.topics.as_activities.paginate(:page => params[:page])
@@ -92,13 +93,6 @@ class DiscussionsController < ApplicationController
 
 		def cname
 			@cname ||= "forum_category"
-		end
-
-		def fetch_spam_counts
-			@counts = {}
-			Post::SPAM_SCOPES.each do |key, filter|
-				@counts[key] = current_account.posts.send(filter).count
-			end
 		end
 
 		def content_scope

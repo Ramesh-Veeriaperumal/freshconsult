@@ -1,0 +1,15 @@
+page << "jQuery('#post_#{@spam_post.timestamp.to_i}').html('#{escape_javascript( render :partial => 'after_approve')}');
+		App.Discussions.Moderation.approvePost(#{@spam_post.timestamp.to_i}, 5);"
+
+page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"
+
+if params[:popup]
+	if @topic.has_unpublished_posts?
+		page.replace "spam-count", render(:partial => 'discussions/topics/widgets/spam', :locals => { :topic => @topic })
+	else
+		page.remove "spam-count"
+	end
+	page << "App.Discussions.Moderation.closeModal('#{Post::SPAM_SCOPES_DYNAMO.key(@spam_post.class)}', 6);"
+	page.replace "modal-heading-#{Post::SPAM_SCOPES_DYNAMO.key(@spam_post.class)}",
+						heading(@topic, Post::SPAM_SCOPES_DYNAMO.key(@spam_post.class).to_s)
+end

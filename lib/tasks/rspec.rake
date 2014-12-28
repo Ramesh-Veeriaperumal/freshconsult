@@ -102,6 +102,11 @@ APITests = [
 ]
 
 ForumTests = [
+  "spec/lib/community/*_spec.rb",
+  "spec/lib/community/moderation/*_spec.rb",
+  "spec/lib/forum_unpublished_spec.rb",
+  "spec/lib/forum_spam_spec.rb",
+  "spec/lib/dynamo_spec.rb",
   "spec/controllers/discussions_controller_spec.rb",
   "spec/controllers/discussions/*_spec.rb",
   "spec/controllers/forum_categories_controller_spec.rb",
@@ -424,6 +429,15 @@ unless ARGV.any? {|a| a =~ /^gems/}
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(EmailTests)
+      end
+    end
+
+    namespace :forum_tests do
+      desc "Running all forum tests"
+      Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(ForumTests)
       end
     end
 

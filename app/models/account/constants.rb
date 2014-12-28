@@ -83,7 +83,8 @@ class Account < ActiveRecord::Base
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => true, :sort_by_customer_response => false, 
-    :round_robin_revamp =>  false, :contact_merge_ui => false, :client_debugging => false, :collision_socket => false}
+    :round_robin_revamp =>  false, :contact_merge_ui => false, :client_debugging => false, :collision_socket => false,
+    :spam_dynamo => false}
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

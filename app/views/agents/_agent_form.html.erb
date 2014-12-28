@@ -171,7 +171,7 @@
           				<li id = <%= "role_#{role.id}" %> 
                         <%= label( :agent, :ticket_permission, 
                         "<div class='icon_remove tooltip' title='Remove role' id = 'remove_role_#{role.id}' rel='#{role.id}'><span></span>
-        							   </div><b>#{role.name}</b><span class='muted info_data ellipsis'>#{role.description}</span>".html_safe) %>
+        							   </div><b>#{h(role.name)}</b><span class='muted info_data ellipsis'>#{h(role.description)}</span>".html_safe) %>
                       <input type='hidden' name='user[role_ids][]' value= <%= "#{role.id}" %> />
           				</li>
                 <% end %>				 			

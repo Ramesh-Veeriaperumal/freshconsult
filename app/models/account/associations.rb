@@ -239,4 +239,5 @@ class Account < ActiveRecord::Base
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
 
+  has_many :forum_moderators
 end

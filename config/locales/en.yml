@@ -748,11 +748,29 @@ en:
         max_choices: "Maximum items reached"
     portal:
       index:
+        portal_customizer_title: "Customer Portal Configuration"
+        signup_login: "User Signup and Login"
+        allow_signup: "Allow users to Sign Up from the customer portal"
+        allow_signin: "Allow users to Sign in using..."
+        google: "Google"
+        twitter: "Twitter"
+        facebook: "Facebook"
+        user_permissions: "User Permissions for portal"
+        submit_ticket: "Who can submit a new ticket on portal"
+        logged_in: "Logged in users"
+        everyone: "Everyone"
+        none: "No one"
+        auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
+        auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
+        captcha: "Enable CAPTCHA to help avoid spam"
+        view_solutions: "Who can view solutions"
+        view_forums: "Who can view forums"
+        notify_agents: "Send Moderation and Spam Notification to:"
         forums: "Forums"
         enable: "Enabled"
         disable: "Disabled"
         moderation: "Moderate Forums"
-        moderate_links: "Moderate only suspicious topics and replies"
+        moderate_links: "Moderate all topics and replies containing external links"
         moderate_links_help: "Enable this feature for advanced spam protection. System will check all topics and replies for third party links and other spam activity."
         moderate_links_help_2: "Suspicious posts will be sent for your approval before publishing."
         moderate_all: "Moderate all topics and replies"
@@ -782,8 +800,8 @@ en:
           description: Application Description
           platform: Platform
           configurations: SDK Configurations
-          solutions: Solution Category
-          solutions_info: The Solution Category you select will be shown in the App Support 
+          solution_categories: Solution Categories
+          solution_categories_info: The solution categories you select will be shown in the App Support 
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           app_store_id_v12_info: Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer Integration guide.
@@ -1433,7 +1451,7 @@ en:
         create_topic: Create or Edit a forum topic
         edit_topic: Edit everyone's forum topic
         edit_topic_false: Edit only their own forum topic
-        delete_topic: Delete a forum topic
+        delete_topic: Delete and Moderate forum topic
         customers: Customers
         view_contacts: View customers tab
         manage_contacts: Create or edit new contact or company
@@ -1683,10 +1701,12 @@ en:
       discussions:
         topics:
           moderation_none: 
-            topic: "Thank you for starting a new topic. Your topic will appear in the forum, after checking for spam."
-            post: "Thank you for posting. Your reply will appear in the topic, after checking for spam."
-          spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
-          success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
+            topic: "Thank you for starting a new topic. Your topic will appear in the forum after checking for spam."
+            post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
+          spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
+          success: "Thank you for posting. Your reply will appear in the topic after a standard moderation process."
+        posts:
+          spam_check: "Thank you for posting in our forums. Your post will appear once it has been approved."
       tickets:
         create:
           success: Your ticket has been created.
@@ -2506,6 +2526,9 @@ en:
     view_answer: Click here to view answer
     mark_answer: Mark as Answer
     unmark_answer: Unmark as answer
+    delete_confirm:  "Are you sure you want to delete the selected topic(s) permanently?"
+    spam_delete_confirm: "Marking a topic as spam will move the topic to spam and permanently delete all of its replies.\nAre you sure you want to mark the selected topic(s) as spam?"
+    spam_confirm:  "Are you sure you want to mark the selected topic(s) as spam?"
     spam_info:
       spam: Reply was marked as spam
       waiting: Reply waiting for your approval
@@ -6515,6 +6538,7 @@ en:
     folders: Folders
     views_categories: Views and Categories
     tour: Help me setup my forums
+    show_more: Show more
     helpnote:
       title: Organizing your community
       para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
@@ -6560,6 +6584,7 @@ en:
       reply: Reply
       add_note: Add note
       mark_as_spam: Mark as Spam
+      confirm_spam:  "Marking the topic as spam will move the topic to spam and delete all of its replies.\nAre you sure you want to mark the topic as spam ?"
       merge_topic: Merge Topic
       close_topic: Lock Topic
       reopen_topic: Reopen Topic
@@ -6577,6 +6602,7 @@ en:
         delete_confirm: Delete this comment?  Are you sure?
         created_topic: created a topic
         replied_to: replied to topic
+        replied: replied
       title_meta:
         replies:
           one: "1 reply"
@@ -6624,6 +6650,7 @@ en:
       after_approve:
         published: Post has been published
         goto_post: Goto Post
+        go_to_post: Go to Post
       spam_folder: Spam Folder
       flash:
         empty_folder: "All the posts in your spam folder have been removed."
@@ -6635,6 +6662,51 @@ en:
         no_waiting_for_approval: "All topics and replies have been reviewed."
         no_unpublished_spam: "There's no spam here. We swear!"
         moderation_solution: Learn more about Forum Moderation
+      spam:
+        approve: "Approve and Publish"
+        new_topic:
+          title: "New Topic"
+          posted: "posted a new topic"
+        reply:
+          title: Reply
+          posted: "replied to"
+    unpublished:
+      page_title: Forum Moderation
+      empty_spam: Delete all Spam
+      more: " more"
+      less: " less"
+      after_ban:
+        marked: Marked as Spam
+        restore_contact: Restore contact
+        contact_deleted: To avoid further Spam the contact was deleted -
+        cleared_rest: All older posts by this user have also been marked as Spam
+      after_approve:
+        published: Post has been published
+        goto_post: Goto Post
+      invalid_topic:
+        went_wrong: Something went wrong
+        try_later: Unable to approve the post. Please try again later.
+      spam_folder: Spam Folder
+      flash:
+        empty_folder: "All spam posts are being deleted. Your forum will be spam free in less than a minute!"
+        empty_topic_spam: "All spam posts in this topics are being deleted. Please wait as this might take up to a minute."
+      index:
+        title: Spam
+        spam: Spam
+        unpublished: Waiting for approval
+        waiting: Waiting for Approval
+        waiting_desc: "Review and publish"
+        empty_folder: "Empty Folder"
+        no_forum_unpublished: "All topics and replies have been reviewed."
+        no_forum_spam: "There's no spam here. We swear!"
+        moderation_solution: Learn more about Forum Moderation
+        unpublished_posts: Unpublished replies
+      spam_actions:
+        approve: Approve
+        approve_tooltip: Approve and Publish
+        ban_tooltip: Mark user and all his posts as Spam
+        ban_confirm: "Are you sure you want to delete the user and mark all his/her posts as Spam?"
+        spam: Spam
       spam:
         approve: "Approve and Publish"
         new_topic:

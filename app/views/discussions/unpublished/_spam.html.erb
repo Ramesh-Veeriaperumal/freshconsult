@@ -1,0 +1,43 @@
+<%
+	new_topic_str =  spam.original_post? ? 'new_topic' : 'reply'
+%>
+<li id="<%= dom_id(spam) %>" class="pb0">
+	<div class="pull-right actions p5">
+		<%= link_to_remote "",	
+						:url => approve_discussions_moderation_path(spam),
+						:method => :put,
+						:html => {
+							:class => 'spam_action tooltip',
+							:title => t('.approve')
+						} %>
+
+	</div>
+
+	<div class="content pr10">
+		<%= user_avatar(spam.user) %>
+		<div class='post-info mb5'>
+			<span class="label <%= new_topic_str %>"><%= t(".#{new_topic_str}.title") %></span>
+			<% if spam.spam? && params[:filter] != 'spam' %>
+			<span class="label spam">Spam</span>
+			<% end %>
+			<span>
+				<abbr data-livestamp='<%= spam.created_at.to_i %>'><%= formated_date(spam.created_at) %></abbr>,
+				In
+				<%= link_to spam.topic.forum.name,
+							category_forum_path(spam.topic.forum.forum_category_id, spam.topic.forum) %>
+			</span>
+		</div>
+
+		<div class="post-content">
+			<strong><%= spam.user.name %></strong>
+			<%= t(".#{new_topic_str}.posted") %>
+			<%= link_to spam.topic.title,
+						category_forum_topic_path(spam.topic.forum.forum_category_id, spam.topic.forum, spam.topic) %>
+		</div>
+
+		<blockquote class="mt10 pl15">
+			<%= truncate(spam.body, :length => 1000) %>
+		</blockquote>
+	</div>
+
+</li>

@@ -239,7 +239,41 @@ $community-types: problem #e65e63,
 	.item-selected{
 		background-color: #FFFFF0;
 	}
+	.inline-flash{
+		text-align: center;
+		background: #fffbed;
+		padding: 22px;
+		border-bottom: 1px solid #D8D8D8;
+		display: inline-block;
+		width: 100%;
+	}
 }
+
+.modal-body .comm-items .comm-item:first-child{
+	border-top: 1px solid #D8D8D8;
+}
+
+.modal-body .comm-items .comm-item{
+	padding: 10px 0 10px 10px;
+}
+
+
+#dynamo-next-page{
+	float: left;
+	width: 100%;
+	min-height: 56px;
+	text-align: center;
+	a{
+		display: block;
+		padding: 20px;
+		color: #333;
+		font-weight: 500;
+	}
+	a:hover{
+		background: #f8f8f8;
+	}
+}
+
 .stamp-badge{
 	@include float(right);
 	position:relative;
@@ -343,6 +377,10 @@ $community-types: problem #e65e63,
 .post-desc{
 	@include border-left(1px solid  #dedede);
 	color: #666;
+	padding: 0 20px;
+	margin-top: 5px;
+	max-height: 300px;
+	overflow-y: auto;
 }
 
 .post-action-bar{
@@ -363,6 +401,13 @@ $community-types: problem #e65e63,
 		height: 25px;
 		width: 30px;
 		@include padding-right(10px);
+	}
+	
+	.action-icon-popup{
+		float: left;
+		height: 25px;
+		width: 30px;
+		padding-left: 5px;
 	}
 }
 

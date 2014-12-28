@@ -3,7 +3,7 @@ class ModerationObserver < ActiveRecord::Observer
 	observe Post
 
 	def after_create(post)
-		add_to_moderation_queue(post) unless (post.user.agent? or post.import_id?)
+		add_to_moderation_queue(post) unless (post.published or post.user.agent? or post.import_id?)
 	end
 
 	private

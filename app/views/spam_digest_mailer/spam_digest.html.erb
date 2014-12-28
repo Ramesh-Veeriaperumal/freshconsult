@@ -1,0 +1,34 @@
+<style>
+	<%= render :file => "spam_digest_mailer/css/spam_digest_mailer.css" %>
+</style>
+<div class="body">
+	<div>Hey <%= @moderator.name %>,</div>
+	<br/>
+	<div>There are topics waiting for your approval. Please take appropriate action. </div>
+	<br/>
+	<br/>
+	<table>
+		<% unpublished_types = { "unpublished" => "Moderator approval", "spam" => "Spam" } %>
+		<% unpublished_types.each do |unpublished_type, label| %>
+			<% unless @moderation_digest["#{unpublished_type}_count"].blank? %>
+				<tr>
+					<td class="unpublished-type">
+						<a href='<%= @host %>/discussions/unpublished/filter/<%= unpublished_type %>'><%= label %></a>
+					</td>
+					<% @moderation_digest["#{unpublished_type}_count"].each do |entity,count| %>
+						<% if count.zero? %>
+							<td class="count-container middle">-</td>
+						<% else %>
+							<td class='count-container'>
+								<div class='count'><%= count %></div>
+								<div class='entity'><%= (count.to_i == 1) ? entity.to_s.singularize : entity.to_s %></div>
+							</td>
+						<% end %>
+					<% end %>
+				</tr>
+			<% end %>
+		<% end %>
+	</table>
+	<br/>
+	<br/>
+</div>
