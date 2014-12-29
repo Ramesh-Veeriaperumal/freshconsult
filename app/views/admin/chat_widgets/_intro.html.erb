@@ -37,7 +37,12 @@
 											"url"					      : window.location.hostname , 
 											"protocol" 				  : window.location.protocol, 
 											"widget_site_url"		: '<%= current_account.full_domain %>',
-											"name"              : '<%= current_account.main_portal.name %>' 
+											"name"              : '<%= current_account.main_portal.name %>', 
+											"prechat_message"		: "<%=t('freshchat.prechat_message').html_safe%>",
+											"widget_preferences": <%= default_preferences %>,
+											"prechat_fields"		: <%= default_prechat_fields %>,
+											"active"						: false,
+											"non_availability_message" : <%= default_non_avail_message %>, 
 										};
 										
 										$.ajax({
