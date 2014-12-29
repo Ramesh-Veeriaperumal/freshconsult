@@ -32,6 +32,7 @@ window.Fjax = window.Fjax || {};
 	Fjax.Config = {
 		paths: {
 			"/discussions": 'discussions',
+			"/admin": 'admin',
 			"/freshfone/call_history": 'freshfonecallhistory',
 			"/reports/freshfone/summary_reports": 'freshfonereports',
 			"/contacts": 'contacts',

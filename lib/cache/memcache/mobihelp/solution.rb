@@ -3,46 +3,52 @@ module Cache::Memcache::Mobihelp::Solution
   include MemcacheKeys
 
   def clear_solutions_cache(category_id)
-    MemcacheKeys.delete_from_cache(MOBIHELP_SOLUTIONS % { :account_id => self.account_id, :category_id => category_id })
-    MemcacheKeys.delete_from_cache(MOBIHELP_SOLUTION_UPDATED_TIME % { :account_id => self.account_id, 
-        :category_id => category_id })
+    MemcacheKeys.delete_from_cache(mobihelp_solutions_key(category_id))
   end
 
-  def fetch_recently_updated_time(category_id)
-    account_id = self.account_id
-    app_id = self.id
-    key = MOBIHELP_SOLUTION_UPDATED_TIME % { :account_id => account_id, :category_id => category_id }
+  def clear_last_updated_time(app_id)
+    MemcacheKeys.delete_from_cache(mobihelp_solution_updated_time_key(app_id))
+  end
 
-    MemcacheKeys.fetch(key) { 
-      result = ActiveRecord::Base.connection.execute(%(SELECT MAX(updated_at) AS RECENTLY_UPDATED_TIME FROM (
-          (SELECT `updated_at` FROM solution_folders 
-            WHERE `account_id` = #{account_id} AND `category_id` = #{category_id} AND `is_default` = 0 AND 
-              `visibility` = #{Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]}) 
-          UNION 
-          (SELECT a.`updated_at` FROM solution_folders f JOIN solution_articles a 
-            ON f.`Id` = a.`folder_id` 
-            WHERE a.`status` = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]} AND 
-              a.`account_id` = #{account_id} AND f.`account_id` = #{account_id} AND
-              f.`category_id` = #{category_id} AND f.`is_default` = 0 AND 
-              f.`visibility` = #{Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]} )
-          UNION
-          (SELECT `updated_at` FROM `mobihelp_apps` WHERE account_id = #{account_id} AND id = #{app_id})) 
-        AS UPDATED_TIME))
-      result_hash = result.fetch_hash
-      result_hash["RECENTLY_UPDATED_TIME"]
+  def last_updated_time
+    MemcacheKeys.fetch(mobihelp_solution_updated_time_key(id)) { 
+      updated_time = self.app_solutions.find(:first, :select => :updated_at, :order => 'updated_at desc')
+      updated_time.blank? ? nil : updated_time.updated_at 
     }
   end
 
-  def fetch_solutions(category)
-    key = MOBIHELP_SOLUTIONS % { :account_id => self.account_id, :category_id => category.id }
-    MemcacheKeys.fetch(key) { 
-      folder_json_strings = []
-      category.public_folders.each do |folder|
-        folder_json_strings << folder.to_json(:include=>:published_articles) unless folder.published_articles.blank?
+  def solutions_with_category(categories)
+    category_json_strings = []
+    categories.each do |category|
+      category_json_strings << solutions(category)
+    end
+    "[#{category_json_strings.join(",")}]"
+  end
+
+  def solutions_without_category(categories)
+    category_json_strings = []
+    categories.each do |category|
+      category_hash = ActiveSupport::JSON.decode(solutions(category))
+      category_hash["category"]["public_folders"].each do |f|
+        category_json_strings << {"folder" => f}.to_json
       end
-      solution_data = "[#{folder_json_strings.join(",")}]"
-      solution_data 
-    }
+    end
+    "[#{category_json_strings.join(",")}]"
   end
+
+  private
+    def mobihelp_solutions_key(category_id)
+      MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => category_id }
+    end
+
+    def mobihelp_solution_updated_time_key(app_id)
+      MOBIHELP_SOLUTION_UPDATED_TIME % { :account_id => account_id, :app_id => app_id }
+    end
+
+    def solutions(category)
+      MemcacheKeys.fetch(mobihelp_solutions_key(category.id)) { 
+        category.to_json(:except => :account_id, :include => {:public_folders => {:include => :published_articles}} )
+      }
+    end
 
 end

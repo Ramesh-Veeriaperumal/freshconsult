@@ -18,6 +18,7 @@ describe "SpamWatcher" do
   end
 
   after(:each) do
+    @account.make_current #Account reset in core_spam_watcher
     @agent1.destroy
     @user1.destroy
     Account.reset_current_account

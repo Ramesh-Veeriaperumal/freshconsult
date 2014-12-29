@@ -1,0 +1,21 @@
+<% user =  @fetched_users[spam_post.user_id] %>
+<% if !user.nil? %>
+<div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= spam_post.timestamp.to_i %>" data-user="<%= user.id %>">
+	<div class="pull-left pt5">
+		<%= user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+	</div>
+	<div class="comm-item-main row-fluid">
+		<div class="comm-item-main-content">
+			<div class="comm-item-details">
+				<strong><%= link_to_user(user, :class => 'hover-link') %></strong>
+				<span class="muted"><%= t('discussions.topics.post.replied') %>,</span>
+				<abbr data-livestamp='<%= spam_post.timestamp %>'><%= formated_date(Time.at(spam_post.timestamp).utc) %></abbr>
+			</div>
+			<div class="post-desc">
+				<%= unpublished_post_body(spam_post, 500, 250) %>
+			</div>
+		</div>
+	</div>
+	<%= render :partial => "spam_actions", :locals => { :post => spam_post }%>
+</div>
+<% end %>

@@ -565,9 +565,15 @@ ActionController::Routing::Routes.draw do |map|
     end
     discussion.resources :moderation,
       :collection => { :empty_folder => :delete, :spam_multiple => :put },
-      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
+      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put, :delete_unpublished => :delete }
+
+    discussion.resources :unpublished,
+      :collection => { :empty_folder => :delete, :spam_multiple => :put, :more => :get},
+      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put, :delete_unpublished => :delete, 
+              :topic_spam_posts => :get, :empty_topic_spam => :delete }
 
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
+    discussion.unpublished_filter '/unpublished/filter/:filter', :controller => 'unpublished', :action => 'index'
     discussion.resources :merge_topic, :collection => { :select => :post, :review => :put, :confirm => :post, :merge => :put }
   end
 

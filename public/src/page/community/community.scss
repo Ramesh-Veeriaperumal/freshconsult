@@ -262,6 +262,9 @@ body.community.moderation.cs-always-show {
 	.comm-items, .no-data {
 		@include margin-left(280px);
 	}
+	.notice{
+		@include margin-left(300px);
+	}
 	#sticky_header{
 		@include margin-left(265px);
 		#cm-sb-toggle{

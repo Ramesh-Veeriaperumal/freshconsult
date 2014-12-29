@@ -177,7 +177,9 @@ describe Admin::ContactFieldsController do
 		put :update, :jsonData => @default_contact_fields.push(
 				cf_update_params(cf_org,{:type=>"date", :action=>"delete"}) ).to_json
 		cf_org.reload.deleted.should be_true
+	end
 
+	it "should not create a field with the same deleted field label when it is not hard deleted from table" do
 		# when we try to create same field "org_details" which is not deleted from the table, creation process should throw an error...
 		put :update, :jsonData => 
 			@default_contact_fields.push(

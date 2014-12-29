@@ -3,7 +3,7 @@ class Mobihelp::App < ActiveRecord::Base
   before_create       :set_key_and_secret
   after_initialize    :fix_config
   before_validation   :remove_white_space
-  after_commit        :clear_app_cache, :clear_mobihelp_solutions_cache
+  after_commit        :clear_app_cache
 
   private
 
@@ -22,7 +22,7 @@ class Mobihelp::App < ActiveRecord::Base
       if config.nil?
         self.config ||= default_values # set default values if it is nil
       else
-        if platform == PLATFORM_ID_BY_KEY[:android] && !push_notification_enabled?
+        if config[:gcm_api_key].nil? && platform == PLATFORM_ID_BY_KEY[:android] && !push_notification_enabled?
           self.config[:gcm_api_key] = ""
         end
       end
@@ -34,14 +34,9 @@ class Mobihelp::App < ActiveRecord::Base
 
     def default_values
       default_config = {
-        :solutions => "",
-        :push_notification => 'false',
+        :push_notification => 'false'
       }
       default_config[:app_store_id] = "" if platform == PLATFORM_ID_BY_KEY[:ios]
       default_config
-    end
-
-    def clear_mobihelp_solutions_cache
-      clear_solutions_cache(self.config[:solutions].to_i)
     end
 end

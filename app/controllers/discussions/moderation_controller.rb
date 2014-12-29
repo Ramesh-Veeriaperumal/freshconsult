@@ -2,8 +2,13 @@ class Discussions::ModerationController < ApplicationController
 
 	helper DiscussionsHelper
 
+	include Community::ModerationCount
+
 	before_filter :set_selected_tab
-	before_filter :fetch_counts, :only => :index
+
+	before_filter :dynamo_feature_check, :only => :index
+
+	before_filter :fetch_counts_mysql, :only => :index
 	before_filter :default_scope, :only => :index
 	before_filter :load_posts, :only => :index
 	before_filter :load_post, :only => [:approve, :mark_as_spam, :ban, :restore_contact]
@@ -80,7 +85,7 @@ class Discussions::ModerationController < ApplicationController
 		end
 
 		def respond_back(html_redirect = :back)
-			fetch_counts
+			fetch_counts_mysql
 
 			respond_to do |format|
 				format.html { redirect_to html_redirect}
@@ -91,13 +96,6 @@ class Discussions::ModerationController < ApplicationController
 		def set_selected_tab
 			@selected_tab = :forums
 			@page_title = t('discussions.moderation.spam_folder')
-		end
-
-		def fetch_counts
-			@counts = {}
-			Post::SPAM_SCOPES.each do |key, filter|
-				@counts[key] = current_account.posts.send(filter).count
-			end
 		end
 
 		def load_posts
@@ -121,4 +119,8 @@ class Discussions::ModerationController < ApplicationController
 			})
 		end
 
+		def dynamo_feature_check
+			return unless current_account.features_included?(:spam_dynamo)
+			redirect_to request.path.gsub('/discussions/moderation', '/discussions/unpublished')
+		end
 end

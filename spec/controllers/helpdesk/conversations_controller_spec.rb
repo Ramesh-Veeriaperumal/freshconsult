@@ -266,18 +266,15 @@ describe Helpdesk::ConversationsController do
     end
   end
 
-  context "For Mobihelp requests" do
-    before(:all) do
-      @mobihelp_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Convo"}))
-      @group = @account.groups.first
-    end
+  describe "Reply to Mobihelp Ticket" do
 
     before(:each) do
+      @mobihelp_ticket = create_ticket({:status => 2, :source => 8})
       log_in(@agent)
-    end    
+    end
 
     it "should reply to a mobihelp ticket" do
-      now = (Time.now.to_f*1000).to_i
+      now = (Time.now.to_f*1000).to_i    
       post :mobihelp, {
                      :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{now}</div>"},
                                           :private => "false",
@@ -286,7 +283,8 @@ describe Helpdesk::ConversationsController do
                      :ticket_status => "",
                      :format => "js",
                      :showing => "notes",
-                     :since_id => "197",
+                     :since_id => "1",
+                     :quoted_text_html => "",
                      :ticket_id => @mobihelp_ticket.display_id
                     }
       response.should render_template "helpdesk/notes/create.rjs"
@@ -298,18 +296,19 @@ describe Helpdesk::ConversationsController do
     it "should not reply to a mobihelp ticket if the source is invalid" do
       now = (Time.now.to_f*1000).to_i
       post :mobihelp, {
-                     :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{now}</div>"},
-                                          :private => "false",
-                                          :source => "100"
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => "<div>#{now}</div>"},
+                                        :private => "false",
+                                        :source => "100"
                                         },
                      :ticket_status => "",
                      :format => "js",
                      :showing => "notes",
-                     :since_id => "197",
+                     :since_id => "1",
+                     :quoted_text_html => "",
                      :ticket_id => @mobihelp_ticket.display_id
                     }
       mobihelp_reply = @account.tickets.find(@mobihelp_ticket.id).notes.last
-      mobihelp_reply.full_text_html.should_not be_eql("<div>#{now}</div>")
+      mobihelp_reply.should be_nil
     end
   end
 end

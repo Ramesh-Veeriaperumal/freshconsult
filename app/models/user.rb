@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
-  xss_sanitize  :only => [:name,:email,:language, :phone, :mobile, :job_title], :plain_sanitizer => [:name,:email,:language, :phone, :mobile, :job_title]
+  xss_sanitize  :only => [:name,:email,:language, :job_title], :plain_sanitizer => [:name,:email,:language, :job_title]
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
   named_scope :technicians, :conditions => { :helpdesk_agent => true }
   named_scope :visible, :conditions => { :deleted => false }
@@ -619,6 +619,18 @@ class User < ActiveRecord::Base
       []
     end 
   end
+
+  # Hack to sanitize phone, mobile from api when passed as integer
+  def phone=(value)
+    value = value.nil? ? value : value.to_s
+    write_attribute(:phone, RailsFullSanitizer.sanitize(value))
+  end
+
+  def mobile=(value)
+    value = value.nil? ? value : value.to_s 
+    write_attribute(:mobile, RailsFullSanitizer.sanitize(value))
+  end
+  # Hack ends here
 
   protected
   
