@@ -49,10 +49,46 @@ module ChatHelper
     return Base64.strict_encode64(freshchat_setting(current_chat_widget))
   end
 
+  def default_preferences
+    return {
+      :window_color    => "#777777",
+      :window_position => "Bottom Right",
+      :window_offset   => "30",
+      :minimized_title => t('freshchat.minimized_title'),
+      :maximized_title => t('freshchat.maximized_title'),
+      :text_place      => t("freshchat.text_placeholder"),
+      :welcome_message => t('freshchat.welcome_message'),
+      :thank_message   => t('freshchat.thank_message'),
+      :wait_message    => t('freshchat.wait_message'),
+      :agent_joined_msg=> t('freshchat.agent_joined_msg'),
+      :agent_left_msg  => t('freshchat.agent_left_msg'),
+      :connecting_msg  => t('freshchat.connecting_msg')
+    }.to_json.html_safe
+  end
+
+  def default_prechat_fields
+    return {
+      :name      => { :title => t("freshchat.name"), "show" => "2" },
+      :email     => { :title => t("freshchat.mail"), "show" => "1" },
+      :phone     => { :title => t("freshchat.phone"), "show" => "1" },
+      :textfield => { :title => t("freshchat.textfield"), "show" => "0" },
+      :dropdown  => { :title => t("freshchat.dropdown"), "show"=> "0", "options"=> ["list1","list2","list3"]}
+    }.to_json.html_safe
+  end
+
+  def default_non_avail_message
+    return {
+      :text                => t('freshchat.non_availability_message'),
+      :ticket_link_option  => 0,
+      :custom_link_url     => ""
+    }.to_json.html_safe
+  end
+
   def freshchat_setting widget
     freshchat_setting = {
       :widget_site_url => widget.main_widget ? current_account.full_domain : widget.product.portal ? widget.product.portal.portal_url : current_account.full_domain,
-      :widget_external_id => widget.product_id,
+      :product_id => widget.product_id,
+      :name => widget.main_widget ? current_account.name : widget.product.name,
       :widget_id => widget.widget_id,
       :show_on_portal => widget.show_on_portal,
       :portal_login_required => widget.portal_login_required,
@@ -229,7 +265,12 @@ module ChatHelper
             :chat_disabled_label => t('freshchat.chat_disabled_label'),
             :transfer_limt_exceeded_msg => t('freshchat.transfer_limt_exceeded_msg'),
             :concurrent_pick_attempt_msg => t('freshchat.concurrent_pick_attempt_msg'),
-            :maximum_chat_error => t('freshchat.maximum_chat_error')
+            :maximum_chat_error => t('freshchat.maximum_chat_error'),
+            :name => t("freshchat.name"),
+            :email => t("freshchat.mail"),
+            :phone => t("freshchat.phone"),
+            :textfield => t("freshchat.textfield"),
+            :dropdown => t("freshchat.dropdown")
         }
         return text.to_json.html_safe
   end
