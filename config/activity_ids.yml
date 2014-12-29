@@ -1,6 +1,7 @@
 defaults: &defaults
     shard_1: 1
     shard_2: 1
+    shard_6: 1
 
 development:
   <<: *defaults
@@ -9,6 +10,9 @@ slave:
   <<: *defaults
 
 test:
+  <<: *defaults
+
+staging:
   <<: *defaults
 
 production:
