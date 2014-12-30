@@ -315,6 +315,6 @@ class SubscriptionsController < ApplicationController
     end
 
     def coupon_applicable?      
-      billing_subscription.coupon_applicable?(@subscription, @coupon)
+      @coupon.blank? ? false : billing_subscription.coupon_applicable?(@subscription, @coupon)
     end
 end
