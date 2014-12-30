@@ -43,7 +43,7 @@
 				required_in_portal : ["customer-required", "checked"],
 				validate_using_regex : ["custom-regex-required", "checked"],
 				field_options: ["custom-reg-exp", "value"],
-				choices : ["custom-choices", "function"]
+				admin_choices : ["custom-choices", "function"]
 			},
 			disabledByDefault: [],
 			customFieldType: '', 
@@ -71,7 +71,7 @@
 			editable_in_signup:     false, 
 			required_in_portal:     false,
 			id:                     null, 
-			choices:                [],
+			admin_choices:          [],
 			field_options: 			{},
 			action:                 "create" // delete || update || create
  		});
@@ -131,8 +131,10 @@
 				case 'dropdown':
 				case 'dropdown_blank':  
 					dataItem.dom_type = 'dropdown_blank';
-					$(dataItem.choices).each(function(ci, choice){
-						field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
+					$(dataItem.admin_choices).each(function(ci, choice){
+						if(!choice['_destroy']) {
+							field.append("<option " + choice['value'] + " data_id = "+ choice['id'] + ">" + choice['name'] + "</option>");
+						}
 					});
 					field.wrapInner("<select class='select2' disabled/>");
 					controlGroup.append(controlLabel);
@@ -173,17 +175,24 @@
 					freshField.field_type  = field_type;
 					freshField.dom_type    = type;
 			if (field_type == 'custom_dropdown'){
-				freshField.choices = [[this.settings.customMessages.firstChoice, 0], [this.settings.customMessages.secondChoice, 0]];
+				freshField.admin_choices = [
+							{'value' : this.settings.customMessages.firstChoice,
+							 'name' : this.settings.customMessages.firstChoice
+							}, 
+							{'value' : this.settings.customMessages.secondChoice,
+							 'name' : this.settings.customMessages.secondChoice
+							}
+						];
 			}		 
 			return freshField;
 		},
 
 		addChoiceinDialog: function(data, dom){
-			dom	= dom  || this.dialogDOMMap.choices;
-			data	= data || [ '', 0 ];
+			dom	= dom  || this.dialogDOMMap.admin_choices;
+			data	= data || {'value' : ''};
 			var inputData = $("<input type='text' maxlength='255' />")
-													.val(unescapeHtml(data[0]))
-													.attr('name', 'choice_'+ (new Date().getTime()))
+													.val(unescapeHtml(data['value']))
+													.attr('name', 'choice_'+ (new Date().getTime())) // Using random to have a unique name for validating choices.
 													.addClass('field_maxlength');
 			var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
@@ -204,34 +213,49 @@
 		},
 
 		getAllChoices: function(dom){      
-			 var choices = $A();         
+			 var choices = $A(),
+			 		position = 0;        
 			 dom.find('fieldset').each(function(choiceset){
-					var temp = [ '', 0 ],
-							input_box = $(this).find("span.dropchoice input");
+					var temp = {'value' : ''},
+							input_box = $(this).find("span.dropchoice input"),
+							isDestroyed = $(this).data('destroy'),
+							choice_id = input_box.attr("data_id");
 							
-							temp[0] = escapeHtml(input_box.val());
-							temp[1] = escapeHtml(input_box.val());
+							temp['value'] = escapeHtml(input_box.val());
+							if( choice_id != "undefined" && choice_id != 0) {
+								temp['id'] = choice_id;
+							}
+							temp['position'] = isDestroyed ? -1 : (++position);
+							temp['_destroy'] = isDestroyed ? 1 : 0;
+							temp['name'] = temp['value'];
 							
-					if($.trim(temp[0]) !== '') choices.push(temp);
+					if($.trim(temp['name']) !== '') choices.push(temp);
 			 });
 			 return choices;
 		},
 
 		saveAllChoices: function(){
 			this.settings.currentData = $H($(this.settings.currentField).data("raw"));
-			this.settings.currentData.set("choices", this.getAllChoices(this.dialogDOMMap.choices));
+			this.settings.currentData.set("admin_choices", this.getAllChoices(this.dialogDOMMap.admin_choices));
 			this.setAction(this.settings.currentData, "update");
 			this.constructFieldDom(this.settings.currentData.toObject(), $(this.settings.currentField));
 		},
 
 		deleteDropDownChoice: function($this){
-			if($this.parent().siblings().size() !== 0) {
-				$this.parent().remove();
-			}
-			var no_choices = (this.dialogDOMMap.choices).find('fieldset:visible').length;
-			if(no_choices < this.settings.maxNoOfChoices) {
-				$(this.settings.addChoice).show();
-				$(this.dialogDOMMap.choices).find('.max-item-error').remove();
+			if($this.parent().siblings(':visible').size() !== 0) {
+				var no_choices = (this.dialogDOMMap.admin_choices).find('fieldset:visible').length,
+						choice_id = $this.parent().find('input').attr('data_id');
+				if(no_choices < this.settings.maxNoOfChoices) {
+					$(this.settings.addChoice).show();
+					$(this.dialogDOMMap.admin_choices).find('.max-item-error').remove();
+					if(choice_id != 0 && choice_id != "undefined") {
+						$this.parent().hide();
+						$this.parent().data('destroy', '1');
+					} 
+					else {
+						$this.parent().remove();
+					}
+				}
 			}
 		},
 
@@ -345,8 +369,10 @@
 		},
 
 		deletePostData: function(data) {
-			if(data.column_name == 'default' && data.choices) {
-				delete data.choices;
+			data.custom_field_choices_attributes = data.admin_choices;
+			delete data.admin_choices;
+			if(data.column_name == 'default') {
+				delete data.custom_field_choices_attributes;
 			}
 			delete data.dom_type;
 			delete data.validate_using_regex;
@@ -400,7 +426,7 @@
 				else {
 					var self = this;
 					$.each(this.settings.fieldMap, function(key, value) {
-						if(key == 'choices') {
+						if(key == 'admin_choices') {
 							if(self.settings.currentData.get('column_name') != 'default') {
 								self.settings.currentData.set(key, self.getAllChoices(self.dialogDOMMap[key]));
 							}
@@ -607,7 +633,7 @@
 		initializeDialogDomMap: function() {
 			var self = this;
 			$.each(this.settings.fieldMap, function(key, value) {
-				if(key == 'choices') 
+				if(key == 'admin_choices') 
 					self.dialogDOMMap[key] = $(self.settings.dialogContainer+" div[name='"+ value[0] + "']");
 				else
 					self.dialogDOMMap[key] = $(self.settings.dialogContainer + " input[name='" + value[0] + "']");

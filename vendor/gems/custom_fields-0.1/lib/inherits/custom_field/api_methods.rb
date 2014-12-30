@@ -8,10 +8,10 @@ module Inherits
         xml.instruct! unless options[:skip_instruct]
         super(:builder => xml, :skip_instruct => true, :except => [:account_id]) do |xml|
           xml.choices do
-            choices.each do |k,v|  
+            choices.each do |choice|  
               xml.option do
-                xml.tag!('id',k.to_s)
-                xml.tag!('value',v.to_s)
+                xml.tag!('name',choice[:name].to_s)
+                xml.tag!('value',choice[:value].to_s)
               end
             end
           end

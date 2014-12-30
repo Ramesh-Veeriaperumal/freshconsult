@@ -13,7 +13,7 @@ module CustomFields
         @dom_type       = dom_type
         @required       = required
         @disabled       = !enabled
-        @choices        = field.html_unescaped_choices
+        @choices        = field.ui_choices
         @field_value    = field_value.to_s.to_sym
         @field_class    = "#{ (required) ? 'required' : '' } #{dom_type} #{class_name}_#{dom_type}"
         @field_name     = field.name
