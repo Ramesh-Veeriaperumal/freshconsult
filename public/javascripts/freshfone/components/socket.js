@@ -68,7 +68,7 @@ var FreshfoneSocket;
       this.connectionClosedAt = new Date();
     },
     connect: function () {
-      this.freshfone_socket_channel = io.connect(this.freshfone_nodejs_url(), 
+      this.freshfone_socket_channel = freshfone_io.connect(this.freshfone_nodejs_url(), 
                                         {'sync disconnect on unload': false,
                                         'max reconnection attempts': MAX_RECONNECT_ATTEMPTS});
       this.connectionCreatedAt = new Date();
