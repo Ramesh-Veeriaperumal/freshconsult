@@ -124,6 +124,20 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       NewRelic::Agent.notice_error(error)      
     end
   end
+
+  # API to check if coupon can be applied to a plan and max redemptions have not reached.
+  def coupon_applicable?(subscription, coupon_code)
+    begin
+      result = retrieve_coupon(coupon_code)
+      coupon = JSON.parse(result.coupon.to_json)["values"]
+
+      return true if applicable_to_plan?(coupon, subscription) and can_be_redeemed?(coupon)      
+      false
+    rescue ChargeBee::APIError => error
+      return false if error.http_code == 404
+      NewRelic::Agent.notice_error(error)
+    end
+  end
   
   private
     def create_subscription_params(account, subscription_params)
@@ -208,6 +222,15 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       merge_addon_data(data, subscription, addons)
       data.merge!(:coupon => discount)      
       { :subscription => data, :end_of_term => true, :replace_addon_list => true }
+    end
+
+    def applicable_to_plan?(coupon, subscription)
+      coupon["plan_ids"].blank? or coupon["plan_ids"].include?(plan_code(subscription))
+    end
+
+    def can_be_redeemed?(coupon)
+      coupon["max_redemptions"].to_i.eql?(0) or 
+        coupon["max_redemptions"].to_i > coupon["redemptions"].to_i
     end
     
 end

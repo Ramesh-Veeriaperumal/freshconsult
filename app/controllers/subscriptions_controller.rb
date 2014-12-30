@@ -314,9 +314,7 @@ class SubscriptionsController < ApplicationController
       }
     end
 
-    # To be replaced with chargebee coupon api verification
     def coupon_applicable?      
-      (@cached_subscription.subscription_plan == scoper.subscription_plan) and 
-        (@cached_subscription.renewal_period == scoper.renewal_period)
+      billing_subscription.coupon_applicable?(@subscription, @coupon)
     end
 end
