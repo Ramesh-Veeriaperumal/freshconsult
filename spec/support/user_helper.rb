@@ -77,4 +77,22 @@ module UsersHelper
                         }
               }
   end
+
+  def add_new_user_without_email(account,options={})
+    if options[:phone]
+      user = User.find_by_phone(options[:phone])
+      return user if user
+    end
+    new_user = Factory.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :phone => options[:phone] || Faker::PhoneNumber.phone_number,
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :customer_id => options[:customer_id] || nil,
+                                    :language => "en")
+    new_user.save
+    new_user.reload
+  end
 end

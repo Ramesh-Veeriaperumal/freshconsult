@@ -8,7 +8,7 @@ class ContactsController < ApplicationController
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
-   before_filter :check_agent_limit, :only =>  :make_agent
+   before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
    before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
 
    skip_before_filter :build_item , :only => [:new, :create]
@@ -334,12 +334,22 @@ protected
           flash[:notice] = t('maximum_agents_msg') 
           redirect_to :back 
         }
-        format.json { render :json => error_message, :status => :unprocessable_entity}
-        format.xml { render :xml => error_message.to_xml , :status => :unprocessable_entity}
+        format.json { render :json => error_message, :status => :bad_request}
+        format.xml { render :xml => error_message.to_xml , :status => :bad_request}
       end
     end
- end
-
+  end
+  
+  def can_make_agent
+    unless @item.has_email?
+      error_message = { :errors => { :message => t('contact_without_email_id') }} 
+      respond_to do |format|
+          format.json { render :json => error_message, :status => :bad_request}
+          format.xml { render :xml => error_message.to_xml , :status => :bad_request}
+      end 
+    end
+  end
+  
   def redirection_url # Moved out to overwrite in Freshservice
     contacts_url
   end

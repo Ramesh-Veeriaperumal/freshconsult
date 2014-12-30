@@ -45,7 +45,7 @@ describe ContactsController do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'xml'} 
-    error_status?(response.status).should be_true
+    bad_request_status?(response.status).should be_true
     @account.subscription.update_attributes(:state => state, :agent_limit => agent_limit)
   end  
 
@@ -55,26 +55,36 @@ describe ContactsController do
     put :make_agent, {:id => contact.id,:format => 'xml'}
     record_not_found_status?(response.status).should be_true
   end
- 
+
+  it "should not convert contact to agent if contact doesn't have email" do
+    contact = add_new_user_without_email(@account,{})
+    put :make_agent, {:id => contact.id,:format => 'xml'} 
+    bad_request_status?(response.status).should be_true
+  end
+
   def record_not_found_status?(status)
-     status =~ /404 Not Found/
+    status =~ /404 Not Found/
   end
 
   def error_status?(status)
-      status =~ /422 Unprocessable Entity/ 
-   end
+    status =~ /422 Unprocessable Entity/ 
+  end
 
-   def error_message(message)
+  def error_message(message)
     result = parse_xml(message)
     #puts "#{result['errors']['error']}"
     ["Email has already been taken","Email is invalid"].include?(result["errors"]["error"])
-   end
+  end
 
-   def query_error(message)
+  def bad_request_status?(status)
+    status =~ /400 Bad Request/
+  end
+
+  def query_error(message)
     result = parse_xml(message)
     # need to change this when we set this error msg under "error" root node
     # in the api impl.
     #puts "#{result["users"]["error"]}"
     ["Not able to parse the query."].include?(result["users"]["error"])
-   end
+  end
 end
