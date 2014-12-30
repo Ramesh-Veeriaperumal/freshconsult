@@ -6,6 +6,8 @@ gem "rake", "~> 10.4.0"
 gem "rack", "~> 1.4.5"
 gem "rails","3.2.18"
 
+gem "syck"
+
 gem "json", "~> 1.8"
 
 gem "mysql2", "~> 0.3.0"
