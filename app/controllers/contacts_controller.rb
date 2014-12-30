@@ -239,11 +239,12 @@ class ContactsController < ApplicationController
   
   def make_agent
     respond_to do |format|
-      if @item.make_agent        
+      if @item.make_agent  
+        agent = Agent.find_by_user_id(@item.id)      
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
-        format.xml  { render :xml => @item, :status => 200 }
-        format.json {render :json => @item.as_json,:status => 200}
+        format.xml  { render :xml => agent, :status => 200 }
+        format.json {render :json => agent.as_json,:status => 200}
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
