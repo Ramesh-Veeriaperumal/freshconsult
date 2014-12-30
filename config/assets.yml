@@ -391,6 +391,9 @@ javascripts:
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/security.js
 
+  plans_and_billing:
+    - public/javascripts/app/select_plan.js
+
   observer_event:
     - public/javascripts/observer_events.js
 

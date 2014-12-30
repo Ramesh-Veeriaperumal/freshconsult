@@ -322,15 +322,23 @@ class Subscription < ActiveRecord::Base
       (state == 'active') and (subscription_payments.count > 0)
     end
     alias :is_paid_account :paid_account?
+
+    def subscription_estimate(addons, coupon_code)
+      unless active?
+        @response ||= Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
+      else
+        @response ||= Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
+      end
+    end
     
     def total_amount(addons, coupon_code)      
-      unless active?
-        response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
-        self.amount = to_currency(response.estimate.amount)
-      else
-        response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
-        self.amount = to_currency(response.estimate.amount)
-      end
+      subscription_estimate(addons, coupon_code)
+      self.amount = to_currency(@response.estimate.amount)
+    end
+
+    def discount_amount(addons, coupon_code)
+      subscription_estimate(addons, coupon_code)
+      @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
     end
     
     def cache_old_model

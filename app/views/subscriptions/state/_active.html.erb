@@ -1,72 +1,66 @@
-<ul class="ui-form mb20">
-  <li class="inline-field">
-    <div class="current-plan">
-        <div class="caption">
-          <%= t('current_plan').html_safe %>
-          <div class="plan-name">
-            <% if @subscription.classic? %>
-            <b class="big-text"> <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %></b>
-            <%= content_tag(:span, "Classic", :class => "classic-account") %>
-            <% else %>
-              <b class="big-text"> <%= " #{ @subscription.subscription_plan.name }" %></b>
-            <% end %>
-          </div>
-        </div>
-        <div class="subscribed-plan-details">
-          <% plan = @subscription.subscription_plan %>
-          <table class="summary">
-            <tr>
-              <td><%= content_tag(:label, t('subscription.billing').html_safe, :class => "caption" ) %> </td>
-              <td>
-                <%= content_tag(:label, "<strong> #{ SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] } </strong>".html_safe) %>
-                <% unless @subscription.offline_subscription? %>
-                  <a href="#" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
-                <% end %>
-              </td>
-            </tr>
-            <tr>
-              <td><%= content_tag(:label, t('subscription.agents').html_safe, :class => "caption" ) %> </td>
-              <td>
-                <%= content_tag(:label, "<strong> #{ @subscription.agent_limit } </strong>".html_safe) %>
-                <% unless @subscription.offline_subscription? %>
-                  <a href="#" data-plan="<%= plan.name %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=true><%= t('change') %></a>
-                <% end %>
-              </td>
-            </tr>
-            <tr>
-              <td><%= content_tag(:label, t('subscription.total').html_safe, :class => "caption" ) %> </td>
-              <td><%= content_tag(:label, "<strong> #{ (format_amount(@subscription.amount, @currency)) } </strong>".html_safe) %></td>
-            </tr>
-          </table>
-        </div>
+<div>
+  <label class="accounted-created muted">
+    <%= t('account_created', :total_time => distance_of_time_in_words(current_account.created_at, Time.now.to_s), :date => formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) ) %>
+  </label>
+</div>
+<div class="well-active">
+  <div class="current-plan" >
+    <h1 class="plan-title">
+      <%= t('plan') %> :
+      <strong>
+        <% if @subscription.classic? %>
+          <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %>
+          <%= content_tag(:span, "Classic", :class => "label") %>
+        <% else %>
+          <%= " #{ @subscription.subscription_plan.name }" %>
+        <% end %>
+      </strong>
+    </h1>  
+  </div>
+  
+  <% plan = @subscription.subscription_plan %>
 
-        <div class="billing-details">
-          <table class="summary">
-            <tr>
-              <td><%= content_tag(:label, t('account.active_since').html_safe, :class => "caption" ) %> </td>
-              <td><%= content_tag(:label, "<strong> #{ formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) }</strong>".html_safe) %></td>
-            </tr>
-            <tr>
-              <% subscription_end = @subscription.next_renewal_at - Time.now
-                if subscription_end > 0 %>
-                  <td><%= content_tag(:label, t('next_charge_date').html_safe, :class => "caption" ) %> </td>
-                  <td><%= content_tag(:label, "<strong> #{ formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_year => true}) }</strong> <div>(#{distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s)} left)</div>".html_safe) %></td>
-                <% else %>
-                  <td><%= content_tag(:label, t('next_charge_date').html_safe, :class => "caption sub-end" ) %> </td>
-                  <td><%= content_tag(:label, "<strong style='color:red;'> #{ formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_year => true}) }</strong>".html_safe, :class => "sub-end") %></td>
-                <% end %>
-            </tr>
-          </table>
-        </div>
+  <div class="subscribed-plan-details current-plan-info">
+    <div id="info_1" class="subscription-info-divider">
+      <ul>
+        <li>
+          <%= t('agent_seats',:no_of_agents => @subscription.agent_limit) %> 
+        </li>
+        <li>
+          <%= t('subscribed_billing', :billing_cycle => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]) %>
+          <a href="#" data-plan="<%= plan.name %>" 
+                      data-plan-id = "<%= plan.id %>" 
+                      class="plan-button edit-plan" 
+                      id='<%= "#{ plan.name }_button" %>' 
+                      data-current-plan=true>
+            <%= t('edit_plan') %>
+          </a>
+        </li>
+      </ul>
     </div>
-  </li> 
-</ul>
+    <div class="billing-info-divider">
+      <% subscription_end = @subscription.next_renewal_at - Time.now %>
+      <ul>
+        <li class="price"> <%= format_amount(@subscription.amount, @currency) %> </li>
+        <% if subscription_end > 0 %>
+          <li class="muted"> <%= t('next_renewal', :renewal_period => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
+        <% else %>
+          <li class="muted"> <%= t('suspended_since', :days => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
+        <% end %>
+        <li class="muted"> <%= formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_year => true}) %> </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <%= render :partial => "/subscriptions/freshfone_subscription" %>
 
 <% unless @subscription.offline_subscription? %>
+<div class="plan-section-title">
   <div class="choose-plan-title"><a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a></div>
-  <%= t('downgrade_plan') %>
+  <%= content_tag(:h5, t('downgrade_plan'), :class => "lead-note pb15") %>
   <div class="choose-plan-drop" style="display:none;" ><%= render :partial => "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
+</div>
 <% end %>
 
 <script type="text/javascript">
