@@ -135,7 +135,6 @@ HelpdeskTests = [
   "spec/controllers/contacts_controller_spec.rb",
   "spec/controllers/contact_merge_controller_spec.rb",
   "spec/controllers/users_controller_spec.rb",
-  "spec/controllers/user_emails_controller_spec.rb",
   "spec/controllers/multiple_user_email_controller_spec.rb",
   "spec/controllers/activations_controller_spec.rb",
   "spec/controllers/customers_controller_spec.rb",
