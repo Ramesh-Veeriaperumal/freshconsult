@@ -8,7 +8,7 @@
 <%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => CompanyField} %>
 <br/>
 <%= javascript_include_tag :'cdn/company_fields' %>
-<% form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+<%= form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
  
   <div class="custom_form_outer">
     <input type="hidden" name="jsonData" id="field_values" value="" />

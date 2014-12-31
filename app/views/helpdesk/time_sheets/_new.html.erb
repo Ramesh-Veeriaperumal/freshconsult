@@ -1,6 +1,6 @@
 <%= content_tag :div, :id => "timeentry_add" do %>
 	<div class="request_panel timeentry_edit">
-  <% form_for :time_entry, 
+  <%= form_for :time_entry, 
                    :url => helpdesk_ticket_time_sheet_path(@ticket), :remote => true, 
                    :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
                    :html => { :id => "add_new_time_entry", :class => "ui-form dont-validate" } do |f| %>
