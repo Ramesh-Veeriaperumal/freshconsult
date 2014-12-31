@@ -130,7 +130,7 @@ module TicketsFilter
       to_ret = to_ret.where(conditions[af])
     end unless ADDITIONAL_FILTERS[filter].nil?
     join = JOINS[filter]
-    to_ret = to_ret.all(:joins => join) if join
+    to_ret = to_ret.joins(join) if join
     to_ret
   end
 
