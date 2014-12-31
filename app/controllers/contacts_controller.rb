@@ -212,6 +212,7 @@ class ContactsController < ApplicationController
       @user_mail.user.reset_primary_email(params[:email_id]) 
       @user_mail.user.save
     else
+      @user_mail.reset_perishable_token
       @user_mail.deliver_contact_activation_email
     end
     flash[:notice] = t('merge_contacts.activation_sent')
