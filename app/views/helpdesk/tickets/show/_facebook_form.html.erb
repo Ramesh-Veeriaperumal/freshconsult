@@ -34,7 +34,7 @@
 
     <div class="btn-toolbar">
       <span>
-        <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body", :onclick => "jQuery('#parent_post_id').val('')") %>
+        <%= link_to(t('cancel'), '#', :id => "facebook-cancel-reply", :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body") %>
       </span>
 
       <span class="btn-group  <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
