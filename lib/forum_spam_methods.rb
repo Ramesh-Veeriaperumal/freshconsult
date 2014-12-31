@@ -4,7 +4,7 @@ module ForumSpamMethods
 
 	def self.included(base)
 		base.extend(ClassMethods)
-		base.include(Community::Moderation::ForumSpamTables)
+		base.send(:include, Community::Moderation::ForumSpamTables)
 
 		base.hash_key(:account_id, :n)
 		base.range(:timestamp, :n)

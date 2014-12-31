@@ -6,7 +6,7 @@ module SpamCounterMethods
 
 	def self.included(base)
 		base.extend(ClassMethods)
-		base.include(Community::Moderation::ForumSpamTables)
+		base.send(:include, Community::Moderation::ForumSpamTables)
 		base.hash_key(:account_id, :n)
 		base.range(:type_and_date, :s)
 		base.provisioned_throughput(DYNAMO_THROUGHPUT[:inactive], DYNAMO_THROUGHPUT[:write])
