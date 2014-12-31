@@ -973,7 +973,7 @@ function highlight_code() {
     if( jQuery.browser.msie && parseInt(jQuery.browser.version, 10) == 11){
         SyntaxHighlighter.defaults['quick-code'] = false;
     }
-    SyntaxHighlighter.all();
+    SyntaxHighlighter.highlight();
 }
 
 function inMobile(){

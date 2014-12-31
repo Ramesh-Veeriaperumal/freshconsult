@@ -14,7 +14,6 @@ describe Support::Discussions::PostsController do
 	before(:each) do
     @request.env['HTTP_REFERER'] = 'support/discussions'
     log_in(@user)
-    @account.features.hide_portal_forums.destroy#TODO-RAILS3 fix
 	end
 
 	after(:all) do
@@ -23,9 +22,10 @@ describe Support::Discussions::PostsController do
 
 
 	it "should create a new post on post 'create'" do
-		topic = publish_topic(create_test_topic(@forum, @user))
+		topic = publish_topic(create_test_topic(@forum))
 		post_body = Faker::Lorem.paragraph
 		old_follower_count = Monitorship.count
+		@user.make_current
 
 		post :create, 
       :post => {
@@ -36,12 +36,76 @@ describe Support::Discussions::PostsController do
 		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
 		new_post.should_not be_nil
 		new_post.topic_id.should eql topic.id
-		new_post.user_id.should eql @customer.id
+		new_post.user_id.should eql @user.id
 		new_post.account_id.should eql @account.id
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
 
 		response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{new_post.id}"
+	end
+
+	describe "it should create a post in sqs when spam_dynamo feature is enabled" do
+
+		before(:all) do
+			@account.features.spam_dynamo.create
+		end
+
+		before(:each) do
+			sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
+			@moderation_queue = AWS::SQS.new.queues.named(sqs_config["test"]["forums_moderation_queue"])
+			SQSPost::SQS_CLIENT = @moderation_queue
+			@sample_topic = publish_topic(create_test_topic(@forum))
+		end
+
+		it "should create a post with attachments on post 'create' but the details must go to sqs if spam_dynamo feature is enabled" do
+			post_body = Faker::Lorem.paragraph
+		
+			post :create,
+				:topic_id => @sample_topic.id,
+				:post => { :body_html =>"<p>#{post_body}</p>",
+					:attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
+
+			received_message = @moderation_queue.receive_message
+			sqs_message = JSON.parse(received_message.body)['sqs_post']
+
+			sqs_message["topic"]["id"].should eql @sample_topic.id
+			sqs_message["user"]["id"].should eql @user.id
+			sqs_message["account_id"].should eql @account.id
+			
+			folder_name = sqs_message["attachments"]["folder"]
+			s3_bucket_objects = AWS::S3::Bucket.new(S3_CONFIG[:bucket]).objects.with_prefix("spam_attachments")
+			sqs_message["attachments"]["file_names"].each do |file_name|
+				s3_bucket_objects.map(&:key).include?("#{folder_name}/#{file_name}").should eql true
+			end
+
+			response.should redirect_to "support/discussions/topics/#{@sample_topic.id}?page=1"
+
+			# moderation_queue.delete
+			@moderation_queue.batch_delete(received_message)
+			begin
+				s3_bucket_objects.delete_all
+			rescue Exception => e
+				p "*******Exception********"
+				p e
+			end
+		end
+
+		it "should not create a post in sqs on post 'create' when the post is invalid" do
+			
+			post :create, 
+						:post => {
+								:body_html =>""
+								},
+						:topic_id => @sample_topic.id
+
+			@moderation_queue.receive_message.should be nil
+
+			response.should redirect_to "support/discussions/topics/#{@sample_topic.id}?page=1"
+		end
+
+		after(:all) do
+			@account.features.spam_dynamo.destroy
+		end
 	end
 
 	it "should not create a new post on post 'create' when post is invalid" do
@@ -132,10 +196,11 @@ describe Support::Discussions::PostsController do
 		response.should redirect_to "/support/discussions/topics/#{topic.id}?page=1"
 	end
 
-	it "should mark a post as answer on 'toggle_answer' if author or agent" do
+	it "should mark a post as answer on 'toggle_answer'" do
 		topic = create_test_topic(@forum, @user)
-		post = create_test_post(topic, @user)
+		post = create_test_post(topic)
 
+		# Error Cause: Current user is being reset
 		put :toggle_answer, :id => post.id, :topic_id => topic.id
 
 		post.reload
@@ -146,11 +211,11 @@ describe Support::Discussions::PostsController do
 		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
-	it "should unmark a post as answer on 'toggle_answer' if author or agent" do
+	it "should unmark a post as answer on 'toggle_answer'" do
 		topic = create_test_topic(@forum, @user)
-		post = mark_as_answer(create_test_post(topic, @user))
+		post = mark_as_answer(create_test_post(topic))
 
-
+		# Error Cause: Current user is being reset
 		put :toggle_answer, :id => post.id, :topic_id => topic.id
 
 		post.reload
@@ -216,7 +281,8 @@ describe Support::Discussions::PostsController do
 
 	describe "should check for spam" do
 
-		after(:each) do
+		before(:each) do
+			@account.reload
 			@account.features.moderate_all_posts.destroy
 			@account.features.moderate_posts_with_links.destroy
 			@account.reload
@@ -225,7 +291,7 @@ describe Support::Discussions::PostsController do
 		it "with 'do not moderate feature' and should mark as published" do
 			topic = publish_topic(create_test_topic(@forum))
 			post_body = Faker::Lorem.paragraph
-
+			
 			Resque.inline = true
 
 			post :create, 

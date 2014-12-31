@@ -28,6 +28,8 @@ class ControllerDataFetcher
                           Admin::ObserverRulesController          => [:action_defs, :filter_defs, :event_defs,
                                                                         :op_types] }
 
+  CONTROLLER_ATTR_ACCESSORS = [:action_defs, :filter_defs, :event_defs, :op_types]
+
   attr_accessor :controller
 
   def initialize controller_class
@@ -35,6 +37,9 @@ class ControllerDataFetcher
       raise 'Class should be defined in ControllerDataFetcher::RETRIEVE_VARIABLES'
     end
     @controller = controller_class.new
+    CONTROLLER_ATTR_ACCESSORS.each do |accessor_variable|
+      @controller.class.send :attr_accessor, accessor_variable
+    end
   end
 
   def fetch_data

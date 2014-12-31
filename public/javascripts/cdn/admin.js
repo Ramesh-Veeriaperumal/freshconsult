@@ -1,1 +1,2 @@
-//= require admin/ui_search
+//= require app/admin/admin
+//= require app/admin/portal

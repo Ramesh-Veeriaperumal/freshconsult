@@ -1,0 +1,39 @@
+<% 
+new_topic = post.topic_id.nil?
+topic = new_topic ? { 'title' => post['title'] } :  @fetched_topics[post.topic_id]
+forum = new_topic || topic.nil? ? @fetched_forums[post['forum_id']] : topic.forum
+post_type = new_topic ? 'new_topic' : 'reply'
+user =  @fetched_users[post.user_id]
+%>
+<% if !user.nil? && !topic.nil? && !forum.nil? %>
+<div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= post.timestamp.to_i %>" data-user="<%= user.id %>">
+	<div class="pull-left pl10">
+		<%= user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+	</div>
+	<div class="comm-item-main row-fluid">
+		<div class="comm-item-main-content">
+			<div>
+				<span class="label <%= post_type %>">
+								<%= t("contacts.#{post_type}") %></span>
+				<span class='muted'>
+					<abbr data-livestamp='<%= post.timestamp %>'><%= formated_date(Time.at(post.timestamp).utc) %></abbr>,
+					In <%= pjax_link_to forum.name, discussions_forum_path(forum.id), :class => 'muted' %>
+				</span>
+			</div>
+			<div class="comm-item-details">
+				<strong><%= link_to_user(user, :class => 'hover-link') %></strong>
+				<%= new_topic ? t('discussions.topics.post.created_topic') : t('discussions.topics.post.replied_to') %>
+				<% if new_topic %>
+					<strong><%=topic['title']%></strong>
+				<% else %> 
+				  <%= pjax_link_to(topic['title'], discussions_topic_path(topic)) %>
+				<% end %>
+			</div>
+			<div class="post-desc">
+				<%= unpublished_post_body(post, 1800, 600) %>
+			</div>
+		</div>
+	</div>
+	<%= render :partial => "spam_actions", :locals => { :post => post }%>
+</div>
+<% end %>

@@ -53,6 +53,13 @@ module MobihelpHelper
     @mh_ticket_extras.save
   end
 
+  def create_mobihelp_app_solutions(params = {})
+    @mh_solutions = FactoryGirl.build(:mobihelp_app_solutions, :app_id => params[:app_id], :category_id => params[:category_id], :position => params[:position], :account_id => params[:account_id])
+    @mh_solutions.save
+    Rails.logger.debug("Created mobihelp app solutions : #{@mh_solutions}")
+    @mh_solutions
+  end
+
   def get_app_auth_key(app)
     Base64.encode64("#{app.app_key}:#{app.app_secret}");
   end

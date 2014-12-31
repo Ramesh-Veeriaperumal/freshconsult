@@ -196,9 +196,10 @@ class Portal < ActiveRecord::Base
         if ["header_color", "tab_color", "bg_color"].include?(key)
           errors.add_to_base("Please enter a valid hex color value.") unless value =~ /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
         elsif key == 'contact_info'
-          next if value.blank?
-          phone = GlobalPhone.parse(value)
-          errors.add_to_base("Please enter a valid phone number.") unless phone && phone.valid?
+          value.to_s.split(',').each do |ph|
+            phone = GlobalPhone.parse(ph.strip)
+            errors.add_to_base("Please enter a valid phone number.") and return unless phone && phone.valid?
+          end
         end
       end
     end

@@ -1246,7 +1246,9 @@ ol, ul, li{
 		margin-top: 30px;
 		overflow-x: auto;
 		@include text-formatting();
-
+		table, table td, table th {		
+			border: none;		
+		}
 		.freshdesk_satisfaction_survey {
 			display: none;
 		}

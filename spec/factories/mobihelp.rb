@@ -4,7 +4,8 @@ if Rails.env.test?
       t.account_id 1
       t.sequence(:name) { |n| "Fresh App #{n}" }
       t.platform 1
-      t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  Mobihelp::App::DEFAULT_BREADCRUMBS_COUNT, :debug_log_count => Mobihelp::App::DEFAULT_LOGS_COUNT, :solutions => '2', :app_review_launch_count => Mobihelp::App::DEFAULT_APP_REVIEW_LAUNCH_COUNT})
+      t.category_ids ["2"]
+      t.config HashWithIndifferentAccess.new({ :bread_crumbs =>  Mobihelp::App::DEFAULT_BREADCRUMBS_COUNT, :debug_log_count => Mobihelp::App::DEFAULT_LOGS_COUNT, :app_review_launch_count => Mobihelp::App::DEFAULT_APP_REVIEW_LAUNCH_COUNT})
     end
 
     factory :mobihelp_device, :class => Mobihelp::Device do
@@ -30,5 +31,13 @@ if Rails.env.test?
       device_model "Nexus 5"
       device_id 2
     end
+
+    factory :mobihelp_app_solutions, :class => Mobihelp::AppSolution do |m|
+      app_id 1
+      category_id 1
+      position 1
+      account_id 1
+    end
   end
+
 end

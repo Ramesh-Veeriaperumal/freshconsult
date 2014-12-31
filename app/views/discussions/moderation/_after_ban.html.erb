@@ -2,16 +2,14 @@
 	<div><strong><%= t('.marked') %></strong></div>
 	<div id='restore_contact_<%= @post.id %>'>
 		<%= t('.contact_deleted') %>
-		<%= link_to t('.restore_contact'), restore_contact_path(@post.user_id),
-			:method => :put,
-			:class => 'restore',
-			:"data-track" => 'Restore Banned User',
-			:"data-hide-before" => 'this',
-			:"data-loading" => "restore_contact_#{ @post.id }",
-			:"data-loading-classes" => 'sloading loading-small',
-			:remote => true,
-			:id => 'restore-ban'
-		%>
+		<%= link_to_remote t('.restore_contact'), 
+					:url => restore_contact_path(@post.user_id),
+					:method => :put,
+					:html => {
+						:class => 'restore',
+						:onclick => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
+						:"data-track" => 'Restore Banned User'
+					} %>
 	</div>
 	<div><%= t('.cleared_rest') %></div>
 </div>

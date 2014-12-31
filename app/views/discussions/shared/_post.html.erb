@@ -24,7 +24,7 @@ entry_delete_path << "/posts/#{post.id}" if post_type=='reply'
 				<%= post.original_post? ? t('discussions.topics.post.created_topic') : t('discussions.topics.post.replied_to') %>
 				<%= pjax_link_to topic.title, "#{discussions_topic_path(topic.id)}/page/last/##{dom_id(post)}" %>
 			</div>
-			<div class="post-desc pl20 mt5">
+			<div class="post-desc">
 				<%= truncate( post.body, :length => 400 )%>
 			</div>
 		</div>

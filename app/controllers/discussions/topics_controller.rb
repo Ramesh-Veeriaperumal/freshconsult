@@ -118,7 +118,7 @@ class Discussions::TopicsController < ApplicationController
 			format.html do
 
 				if @topic.published?
-					@posts = @topic.posts.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
+					load_posts
 					@post  = Post.new
 				end
 
@@ -219,6 +219,14 @@ class Discussions::TopicsController < ApplicationController
 	end
 
 	private
+
+		def load_posts
+			if current_account.features_included?(:spam_dynamo)
+				@posts = @topic.posts.published.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
+			else
+				@posts = @topic.posts.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
+			end
+		end
 
 		def assign_protected
 			if @topic.new_record?

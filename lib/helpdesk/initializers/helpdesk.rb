@@ -17,6 +17,8 @@ if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
   ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
 end
 
+RECENT_ACTIVITY_IDS = YAML.load_file(File.join(Rails.root,'config','activity_ids.yml'))[Rails.env]
+
 #I18n fallbacks if the it doesn't exists in a prticular language
 I18n.backend.class.send(:include, I18n::Backend::Fallbacks)
 I18n.fallbacks.map('it' => 'en')

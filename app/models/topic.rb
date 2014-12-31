@@ -212,7 +212,7 @@ class Topic < ActiveRecord::Base
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY,
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY,
     Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY,
-    Forum::TYPE_KEYS_BY_TOKEN[:announce] => [],
+    Forum::TYPE_KEYS_BY_TOKEN[:announce] => {},
   }
   STAMPS_BY_KEY = IDEAS_STAMPS_BY_TOKEN.merge(QUESTIONS_STAMPS_BY_TOKEN).merge(PROBLEMS_STAMPS_BY_TOKEN)
   NAMES_BY_KEY = IDEAS_STAMPS_NAMES_BY_TOKEN.merge(QUESTIONS_STAMPS_NAMES_BY_TOKEN).merge(PROBLEMS_STAMPS_NAMES_BY_TOKEN)
@@ -381,6 +381,23 @@ class Topic < ActiveRecord::Base
 
   def topic_desc
     truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), :length => 300)
+  end
+
+  def approve!
+    self.published = true
+    self.save!
+  end
+
+  def spam_count
+    SpamCounter.count(id, :spam, account_id)
+  end
+
+  def unpublished_count
+    SpamCounter.count(id, :unpublished, account_id)
+  end
+
+  def has_unpublished_posts?
+    spam_count > 0 || unpublished_count > 0
   end
 
 end

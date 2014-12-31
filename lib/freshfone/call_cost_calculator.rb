@@ -17,7 +17,7 @@ class Freshfone::CallCostCalculator
 			calculate_cost
 		rescue => exp
 			puts "Freshfone ERROR: TOTAL Call Cost :#{total_charge}:  #{exp} : \n #{exp.backtrace}"
-			FreshfoneNotifier.billing_failure(Account.current, args[:call_sid], exp)
+			FreshfoneNotifier.billing_failure(Account.current, args, current_call, exp)
 		ensure
 			puts "Freshfone INFO ::Credit Updated >>> USD:  #{total_charge} :: isrecord :#{args[:record].present?}"
 			update_call_cost

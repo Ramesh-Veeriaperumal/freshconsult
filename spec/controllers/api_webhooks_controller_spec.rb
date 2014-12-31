@@ -22,6 +22,11 @@ RSpec.describe ApiWebhooksController do
 	  log_in(@user)
 	end
 
+	after(:all) do
+		# Destroying as otherwise webhooks getting triggered for ticket/user creation/update in following specs
+		@account.account_va_rules.map(&:destroy)
+	end
+
 	it "should create webhooks for user" do
 		post :create, {"url"=>"http://requestb.in/14beecl1","name"=>"user_create","description"=>"testing",
 									 "event_data"=>[{"name"=>"user_action","value"=>"create"}]}

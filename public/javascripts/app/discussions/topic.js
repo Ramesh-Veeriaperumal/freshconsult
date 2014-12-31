@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global App */
+/*global App, highlight_code  */
 
 window.App = window.App || {};
 window.App.Discussions = window.App.Discussions || {};
@@ -38,6 +38,8 @@ window.App.Discussions = window.App.Discussions || {};
 			this.bindPostUpdateForm();
 			this.bindReplyLink();
 			this.bindReplyCancelLink();
+			App.Discussions.Moderation.bindShowMore();
+			highlight_code();
 		},
 
 		bindReplyLink: function () {
@@ -114,6 +116,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		unbindHandlers: function () {
 			$('body').off('.topic_show');
+			App.Discussions.Moderation.unbindShowMore();
 		},
 
 		blockElement: function (element) {

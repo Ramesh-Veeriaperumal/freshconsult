@@ -1,6 +1,7 @@
 class Group < ActiveRecord::Base
   self.primary_key = :id
   
+  xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
   belongs_to_account
   include Cache::Memcache::Group
   include Redis::RedisKeys

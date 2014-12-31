@@ -20,7 +20,8 @@ describe Mobihelp::SolutionsController do
       :updated_since => update_since
     }
     result = JSON.parse(response.body)
-    result.should have(0).items
+    result.should have(1).items
+    result["no_update"].should be_true
   end
 
   
@@ -33,8 +34,9 @@ describe Mobihelp::SolutionsController do
     @test_article = create_article( {:title => "new article", :description => "new test article", :folder_id => @test_folder.id,
                                       :user_id => @user.id, :status => "2", :art_type => "1" } )
 
-    @mobihelp_app.config[:solutions] = @test_category.id
-    @mobihelp_app.save
+    @mobihelp_app_solution = create_mobihelp_app_solutions({:app_id => @mobihelp_app.id, :category_id => @test_category.id, 
+                              :position => 1, :account_id => @mobihelp_app.account_id})
+    @mobihelp_app_solution.save
 
     get  :articles, {
       :updated_since => update_since
@@ -55,6 +57,22 @@ describe Mobihelp::SolutionsController do
     result = JSON.parse(response.body)
     result.should have(1).items
     result[0]["folder"].should_not be_nil
+    result[0]["category"].should be_nil
+  end
+
+  it "should fetch solutions with category when the api version is 2" do 
+    @request.env['X-API-Version'] = "2"
+    now = Time.now
+    @mobihelp_app.name = "Fresh app #{now}"
+    @mobihelp_app.save
+    update_since = (1.day.ago).utc.strftime('%FT%TZ') 
+
+    get  :articles, {
+      :updated_since => update_since
+    }
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result[0]["category"].should_not be_nil
   end
 
   it "should render no_update json for no updates and solution updated time is greater than the mobihelp app updated time" do
@@ -87,15 +105,18 @@ describe Mobihelp::SolutionsController do
 
   it "should fetch empty solutions when category id is invalid" do
     update_since = (1.day.ago).utc.strftime('%FT%TZ') 
-    solution_category = @mobihelp_app.config[:solutions]
-    @mobihelp_app.config[:solutions] = 0
-    @mobihelp_app.save
+
+    dummy_mh_app = create_mobihelp_app
+    dummy_solution_category = create_mobihelp_app_solutions({:app_id => dummy_mh_app.id, :category_id => 0, :position => 1, :account_id => dummy_mh_app.account_id})
+    
+    @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(dummy_mh_app)
+    
     get  :articles, {
       :updated_since => update_since
     }
     JSON.parse(response.body).should have(0).items
-
-    @mobihelp_app.config[:solutions] = solution_category
+    dummy_mh_app.delete
+    dummy_solution_category.delete
   end
 
 end

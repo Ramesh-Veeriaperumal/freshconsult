@@ -11,16 +11,8 @@ RSpec.describe Helpdesk::TicketsController do
     @group = @account.groups.first
     user = add_test_agent(@account)
     sla_policy = create_sla_policy(user)
-    @installing_application = Integrations::Application.available_apps(@account.id).find(10)
-    @installed_application = @account.installed_applications.find_by_application_id(@installing_application)
-      if @installed_application.blank?
-      @installed_application = Integrations::InstalledApplication.new()
-      @installed_application.application = @installing_application
-      @installed_application.account = @account
-      app_param = {:title => "LogMeIn Rescue", :company_id => "sample@freshdesk.com", :password => "test"}
-      @installed_application.set_configs app_param
-      @installed_application.save(validate: false)
-    end
+    $redis_tickets.keys("HELPDESK_TICKET_FILTERS*").each {|key| $redis_tickets.del(key)}
+    $redis_tickets.keys("HELPDESK_TICKET_ADJACENTS*").each {|key| $redis_tickets.del(key)}
   end
 
   before(:each) do

@@ -31,7 +31,7 @@ class Helpdesk::DashboardController < ApplicationController
   def latest_activities
     begin
       previous_id = params[:previous_id]
-      activities = Helpdesk::Activity.freshest(current_account).activity_since(previous_id).permissible(current_user)
+      activities = Helpdesk::Activity.freshest(current_account).activity_since(previous_id).permissible(current_user).limit(20)
       render :partial => "ticket_note", :collection => activities
     rescue Exception => e
         NewRelic::Agent.notice_error(e,{:description => "Error occoured in la"})
@@ -80,7 +80,12 @@ class Helpdesk::DashboardController < ApplicationController
 
   private
     def load_items
-      @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)
+      @items = recent_activities(params[:activity_id]).activity_since(recent_activity_id).paginate(:page => params[:page], :per_page => 10)
+    end
+
+    def recent_activity_id
+      shard = Thread.current[:shard_selection].shard
+      RECENT_ACTIVITY_IDS[shard] || 1
     end
     
     def set_selected_tab

@@ -60,15 +60,22 @@ describe Discussions::ModerationController do
 
 	it "should trash multiple posts when 'delete 'empty_folder''" do
 		unpublished_spam = []
+		unpublished_spam << mark_as_spam(create_test_topic(@forum).posts.first)
 		5.times do |n|
 			unpublished_spam << mark_as_spam(create_test_post(@topic))
 		end
+
+		Resque.inline = true
+
 		delete :empty_folder
+
+		Resque.inline = false
+
 		unpublished_spam.each do |post|
-			post.reload
-			post.trash.should be_truthy
+			@account.posts.find_by_id(post.id).should be_nil
 		end
-		response.should redirect_to '/discussions'
+
+		response.should redirect_to discussions_path
 	end
 
 	it "should mark as spam multiple posts when 'put 'spam_multiple''" do
@@ -77,13 +84,46 @@ describe Discussions::ModerationController do
 		published_topics = [topic_1, topic_2]
 		publish_post(create_test_post(topic_1))
 		publish_post(create_test_post(topic_2))
+
 		put :spam_multiple, :ids => [topic_1.id, topic_2.id]
+
 		published_topics.each do |topic|
 			topic.reload
 			topic.published.should be_falsey
 			topic.posts.first.published.should be_falsey
 			topic.posts.first.spam.should be_truthy
 		end
+	end
+
+	it "should spam all posts of a user when 'put 'ban_user'' " do
+		user_posts = []
+		user_posts << publish_topic(create_test_topic(@forum)).posts.first
+		user_posts << publish_post(create_test_post(@topic))
+
+		#approval posts
+		user_posts << create_test_topic(@forum).posts.first
+		user_posts << create_test_post(@topic)
+
+		spam_post = mark_as_spam(create_test_post(@topic))
+
+		put :ban, :id => spam_post.id
+
+		user_posts.each do |post|
+			post.reload
+			post.published.should be_false
+			post.spam.should be_true
+		end
+
+	end
+
+	it "should redirect to unpublished controller when account has dynamo feature" do
+		@account.features.spam_dynamo.create
+		@account.reload
+
+		get 'index'
+		response.should redirect_to "/discussions/unpublished"
+
+		@account.features.spam_dynamo.destroy
 	end
 
 end

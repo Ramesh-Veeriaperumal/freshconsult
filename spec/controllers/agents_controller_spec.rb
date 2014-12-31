@@ -447,7 +447,7 @@ describe AgentsController do
     agent = user.agent
     post :toggle_availability, :id => user.id, :value => "false"
     agent.reload
-    agent.available.should be_false
+    agent.available.should be_falsey
     response.should be_success
   end
 

@@ -2,7 +2,8 @@ module AccountHelper
   include Redis::RedisKeys
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
-    @acc = Account.active_accounts.first
+    subscription = Subscription.where("state != 'suspended'").first
+    @acc = Account.find_by_id(subscription.account_id) unless subscription.nil?
     unless @acc.nil?
       @acc.make_current
       create_dummy_customer

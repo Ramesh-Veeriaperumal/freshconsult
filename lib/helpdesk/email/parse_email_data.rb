@@ -113,7 +113,7 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def body_html_with_formatting(body,email_cmds_regex)
-	  body_html = auto_link(body) { |text| truncate(text, 100) }
+	  body_html = auto_link(body) { |text| truncate(text, :length => 100) }
 	  line_break_body = body_html.gsub(/(\n|\r)/, '<br />')
 	  white_list(line_break_body)
 	end

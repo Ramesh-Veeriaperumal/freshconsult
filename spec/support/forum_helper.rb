@@ -43,6 +43,33 @@ module ForumHelper
 		topic.reload
 	end
 
+	def create_test_topic_with_attachments(forum, user = @customer )
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
+		topic = FactoryGirl.build(
+							:topic, 
+							:account_id => @account.id, 
+							:forum_id => forum.id,
+							:user_id => user.id,
+							:stamp_type => stamp_type
+							)
+		topic.save(true)
+		post = FactoryGirl.build(
+							:post,
+							:account_id => @account.id,
+							:topic_id => topic.id,
+							:user_id => user.id,
+							)
+		post.save!
+		attachment = post.attachments.build(
+									:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+                  :description => Faker::Name.first_name, 
+                  :account_id => post.account_id)
+		attachment.save
+		publish_post(post)
+		topic.reload
+	end
+
 	def create_test_post(topic, user = @customer)
 		post = FactoryGirl.build(:post, 
 							:account_id => @account.id, 

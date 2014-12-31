@@ -11,6 +11,9 @@ class Workers::Community::CheckForSpam
   APPROVED_DOMAINS = YAML::load_file(File.join(Rails.root, 'config', 'whitelisted_link_domains.yml'))
 
   class << self
+
+    include ModerationUtil
+    
 	  def perform(params)
 	  	params.symbolize_keys!
 	  	post = build_post(params[:id])
@@ -29,82 +32,5 @@ class Workers::Community::CheckForSpam
   		post.published = !post.spam? && !to_be_moderated?(post)
   		post.save
   	end
-
-  	def is_spam?(post, request_params)
-  		Akismetor.spam?(akismet_params(post, request_params))
-  	end
-
-  	def akismet_params(post, request_params)
-  		env_params = { :is_test => 1 } unless (Rails.env.production? or Rails.env.staging?)
-
-			{
-				:key => AkismetConfig::KEY,
-
-				:comment_type => 'forum-post',
-
-				:blog => post.account.full_url,
-				:permalink => post.topic_url,
-
-				:comment_author			=> post.user.name,
-				:comment_author_email	=> post.user.email,
-				:comment_content		=> post.body,
-			}.merge((request_params || {}).symbolize_keys).merge(env_params || {})
-		end
-
-    def to_be_moderated?(post)
-      return true if Account.current.features?(:moderate_all_posts)
-
-      Account.current.features?(:moderate_posts_with_links) && suspicious?(post)
-    end
-
-    def suspicious?(post)
-      content = post_content(post)
-      email_or_phone?(content.gsub(URI.regexp,'')) || unsafe_links?(content)
-    end
-
-    def post_content(post)
-      content = post.body_html.clone
-      content.prepend "#{post.topic.title} " if post.original_post?
-      content
-    end
-
-    def email_or_phone?(content)
-      content.scan(NUMBER_PATTERN).present? || content.scan(EMAIL_PATTERN).present?
-    end
-
-    def unsafe_links?(content)
-      links = URI.extract(content)
-      links.present? && any_unsafe_link?(links, add_www(acceptable_domains))
-    end
-
-    def acceptable_domains
-      APPROVED_DOMAINS | ([Account.current.full_domain] | portal_urls ).delete_if { |url| url.blank? }
-    end
-
-    def portal_urls
-      Account.current.portals.map { |p| [p.portal_url, url_host(p.preferences[:logo_link])] }.flatten
-    end
-
-    def add_www(hosts)
-      hosts | hosts.map{ |h| h.starts_with?('www.') ? h[4..-1] : "www.#{h}"}
-    end
-
-    def any_unsafe_link?(links, domain_list)
-      links.each do |link|
-        host = url_host(link)
-        next if host.blank?
-        return true unless domain_list.include? host
-      end
-      false
-    end
-
-    def url_host(url)
-      begin
-        return URI.parse(url).host
-      rescue Exception => e
-        # There can be many malformed urls being sent.
-        return ""
-      end
-    end
 	end
 end

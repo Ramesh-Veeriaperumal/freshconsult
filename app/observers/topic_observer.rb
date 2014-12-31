@@ -3,7 +3,7 @@ class TopicObserver < ActiveRecord::Observer
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
     topic.posts_count = 1 #Default count
-    topic.published = (topic.user.agent? or topic.import_id?) #Agent Topics are approved by default.
+    topic.published ||= (topic.user.agent? || topic.import_id?) #Agent Topics are approved by default.
     topic
 	end
 
@@ -59,14 +59,12 @@ class TopicObserver < ActiveRecord::Observer
     end
   end
   
-  def before_destroy(topic)
-    create_activity(topic, 'delete_topic', User.current) unless topic.trash#TODO-RAILS3
-  end
 
 	def after_destroy(topic)
     topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-#    add_activity(topic, 'delete_topic', User.current) unless topic.trash#TODO-RAILS3
+    create_activity(topic, 'delete_topic', User.current) unless topic.trash
+    delete_spam_posts(topic) if topic.account.features_included?(:spam_dynamo)
 	end
 
 private
@@ -130,6 +128,17 @@ private
                           :version      => 2
                         }
     )
+  end
+
+  def delete_spam_posts(topic)
+    Post::SPAM_SCOPES_DYNAMO.each do |k, klass|
+      Resque.enqueue(Workers::Community::DeleteTopicSpam, 
+                            {
+                              :account_id => topic.account.id,
+                              :topic_id => topic.id,
+                              :klass => klass.to_s  
+                            })
+    end
   end
 
 end

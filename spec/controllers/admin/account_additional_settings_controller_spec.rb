@@ -26,6 +26,7 @@ describe Admin::AccountAdditionalSettingsController do
 	end
 
 	it "should update the font settings in account_additional_settings" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
 		put :update_font, {
 			"font-family" => 'times new roman, serif'
 		}

@@ -10,13 +10,17 @@ describe Admin::PortalController do
 
   it "should display Customize poratl page" do
     get :index
-    response.body.should =~ /Customize your Public Customer Portal/
+    response.body.should =~ /Customer Portal Configuration/
     response.should be_success
   end
 
   it "should update" do
     @account.sso_enabled = false
-    @account.save(:validate => false)
+    @account.save(:validate =>false)
+    agent_ids = []
+    3.times do
+      agent_ids << add_test_agent(@account).id
+    end
 
     put :update, { 
       :id => @account.id,
@@ -31,11 +35,16 @@ describe Admin::PortalController do
           :twitter_signin=>"0", 
           :signup_link=>"1", 
           :captcha=>"1",
-          :hide_portal_forums=>"0"
+          :hide_portal_forums=>"0",
+          :moderate_all_posts=>"1",
+          :moderate_posts_with_links=>"0"
         }
-      }
+      },
+      :forum_moderators => agent_ids
     }
-    available_feature = ["OpenSolutionsFeature","OpenForumsFeature","GoogleSigninFeature","SignupLinkFeature","CaptchaFeature"]
+    @account.reload
+    available_feature = ["OpenSolutionsFeature","OpenForumsFeature","GoogleSigninFeature","SignupLinkFeature","CaptchaFeature",
+                        "ModerateAllPostsFeature"]
     available_feature.each do |feature|
       @account.features.find_by_type("#{feature}").should_not be_nil
     end
@@ -45,5 +54,6 @@ describe Admin::PortalController do
     restricted_feature.each do |feature|
       @account.features.find_by_type("#{feature}").should be_nil
     end
+    @account.forum_moderators.map(&:moderator_id).should =~ agent_ids
   end
 end

@@ -1,0 +1,14 @@
+<div>
+	<div><strong><%= t('.marked') %></strong></div>
+	<div>
+		<%= t('.contact_deleted') %>
+		<%= link_to_remote t('.restore_contact'), :url => restore_contact_path(@spam_post.user_id),
+													:method => :put,
+													:html => {
+															:class => 'restore',
+															:onclick => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
+															:"data-track" => 'Restore Banned User'
+														} %>
+	</div>
+	<div><%= t('.cleared_rest') %></div>
+</div>

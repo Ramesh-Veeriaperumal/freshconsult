@@ -27,8 +27,7 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   scope :activity_since, lambda { |id|
     { :conditions => ["helpdesk_activities.id > ? ", id],
-      :order => "helpdesk_activities.id DESC",
-      :limit => 20
+      :order => "helpdesk_activities.id DESC"
     }
   }
 
@@ -37,6 +36,8 @@ class Helpdesk::Activity < ActiveRecord::Base
       :order => "helpdesk_activities.id DESC"
     }
   }
+
+  scope :limit, lambda { |num| { :limit => num } }
 
   scope :newest_first, :order => "helpdesk_activities.id DESC"
 

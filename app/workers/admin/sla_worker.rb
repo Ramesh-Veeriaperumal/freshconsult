@@ -63,7 +63,7 @@ module Admin
       def resolution_overdue(sla_default, sla_rule_based)
         account = Account.current
         overdue_tickets =  execute_on_db {
-                            account.tickets.visible.updated_in(2.month.ago).find(:all, 
+                            account.tickets.unresolved.visible.updated_in(2.month.ago).find(:all, 
                                 :readonly => false, 
                                 :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
                                  Time.zone.now.to_s(:db),false, 
@@ -79,7 +79,7 @@ module Admin
       def response_overdue(sla_default, sla_rule_based)
         account = Account.current
         froverdue_tickets = execute_on_db {
-                            account.tickets.updated_in(2.month.ago).visible.find(:all, 
+                            account.tickets.unresolved.updated_in(2.month.ago).visible.find(:all, 
                                 :joins => "inner join helpdesk_ticket_states 
                                          on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                                          and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , 
@@ -102,7 +102,7 @@ module Admin
         ##Tickets left unassigned in group
         account = Account.current
         tickets_unpicked =  execute_on_db {
-                              account.tickets.updated_in(2.month.ago).visible.find(:all, 
+                              account.tickets.unresolved.updated_in(2.month.ago).visible.find(:all, 
                                 :joins => "inner join helpdesk_ticket_states 
                                 on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                                 and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 

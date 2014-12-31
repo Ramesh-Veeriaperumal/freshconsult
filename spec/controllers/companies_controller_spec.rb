@@ -54,7 +54,7 @@ describe CompaniesController do
     company = create_company
     get :show, :id => company.id
     response.should render_template 'companies/newshow'
-    response.body.should =~ /Recent tickets from #{company.name}/i
+    response.body.should =~ /Recent tickets raised by company contacts/
   end
 
   it "should display the sla_policy associated with the company on the show page" do

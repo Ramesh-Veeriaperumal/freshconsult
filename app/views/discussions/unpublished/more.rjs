@@ -1,0 +1,8 @@
+page << "jQuery('.comm-items').append('#{escape_javascript(render(:partial => 'post', :collection => @spam_posts))}')"
+unless @spam_posts.last_evaluated_key.nil?
+	page.replace 'dynamo-next-page', pageless_dynamo(more_discussions_unpublished_path(:next => @spam_posts.last.timestamp, :filter => @spam_posts.first.type))
+else
+	page.remove 'dynamo-next-page'
+end
+
+page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"

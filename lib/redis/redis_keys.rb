@@ -67,6 +67,7 @@ module Redis::RedisKeys
 	TICKET_DISPLAY_ID = "TICKET_DISPLAY_ID:%{account_id}"
 	DISPLAY_ID_LOCK = "DISPLAY_ID_LOCK:%{account_id}"
 
+	SPAM_MIGRATION = "SPAM_MIGRATION:%{account_id}"
 	USER_EMAIL_MIGRATED = "user_email_migrated"
 
 	def newrelic_begin_rescue

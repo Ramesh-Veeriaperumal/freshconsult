@@ -57,6 +57,14 @@ window.App.Discussions = window.App.Discussions || {};
 					$('#community-sidebar [data-page-name=spam]').parent().addClass('active');
 				}
 				break;
+			case 'discussions/unpublished/index':
+				if (window.location.pathname === '/discussions/unpublished/filter/unpublished' || 
+						window.location.pathname === '/discussions/moderation/filter/waiting') {
+					$('#community-sidebar [data-page-name=waiting]').parent().addClass('active');
+				} else {
+					$('#community-sidebar [data-page-name=spam]').parent().addClass('active');
+				}
+				break;
 			case 'discussions/show':
 			case 'discussions/edit':
 				category_id = parseInt(window.location.pathname.replace('/discussions/', ''), 10);

@@ -4,10 +4,8 @@ class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
   before_create :set_default_version
-  after_find :set_requester_and_agent_template
-  after_create :set_requester_and_agent_template
-
-  # xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :html_sanitize => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
+  
+  xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :article_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
   def set_requester_and_agent_template
     if (self.version == 1)

@@ -26,6 +26,10 @@ window.App = window.App || {};
 		setSubModule: function () {
 			switch (App.namespace) {
 
+			case 'discussions/moderation/index':
+			case 'discussions/unpublished/index':
+				this.current_module = 'Moderation';
+				break;
 			case 'discussions/topics/show':
 				this.current_module = 'Topic';
 				break;
@@ -70,6 +74,14 @@ window.App = window.App || {};
 			if (typeof (counts.waiting) !== 'undefined') {
 				if (parseInt(counts.waiting, 10) > 0) {
 					$('[rel=count-waiting]').text(" (" + parseInt(counts.waiting, 10) + ") ");
+				} else {
+					$('[rel=count-waiting]').empty();
+				}
+			}
+
+			if (typeof (counts.unpublished) !== 'undefined') {
+				if (parseInt(counts.unpublished, 10) > 0) {
+					$('[rel=count-waiting]').text(" (" + parseInt(counts.unpublished, 10) + ") ");
 				} else {
 					$('[rel=count-waiting]').empty();
 				}

@@ -32,6 +32,7 @@ describe ContactMergeController do
   end
 
   it "should pass contact merge confirm" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     post :confirm, :parent_user => @user1.id, :ids => [@user2.id], :id => @user1.id
     response.body.should =~ /Please note that merging will move the entire set of emails, tickets, notes and contact information/
   end

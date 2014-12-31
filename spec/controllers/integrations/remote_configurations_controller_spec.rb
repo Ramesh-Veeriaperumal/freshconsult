@@ -86,9 +86,7 @@ describe Integrations::RemoteConfigurationsController do
 
   def app_params
     "{\"app\" => \"seoshop\",\"token\" => \"0b9c828e8c4583db1bdb61cd3c28069e\",\"language\" => \"en\",\"shop_id\" => \"44897\",\"signature\" => \"a9a2db00498a6bcecfbd3b3d43bda8ec\",\"timestamp\" => \"1418822235\"}"
- 
   end
-  
 
   def fd_cred
     {

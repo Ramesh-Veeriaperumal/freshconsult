@@ -270,6 +270,7 @@ Helpkit::Application.routes.draw do
       post :new
       post :confirm
       post :complete
+      post :merge
     end
   end
 
@@ -375,6 +376,8 @@ Helpkit::Application.routes.draw do
         post :initiate
         post :transfer_incoming_call
         post :transfer_outgoing_call
+        post :transfer_incoming_to_group
+        post :transfer_outgoing_to_group
         get :available_agents
       end
     end
@@ -1589,6 +1592,23 @@ Helpkit::Application.routes.draw do
         put :approve
         put :ban
         put :mark_as_spam
+        delete :delete_unpublished
+      end
+    end
+
+    resources :unpublished do
+      collection do
+        delete :empty_folder
+        put :spam_multiple
+        get :more
+      end
+      member do
+        put :approve
+        put :ban
+        put :mark_as_spam
+        delete :delete_unpublished
+        get :topic_spam_posts
+        delete :empty_topic_spam
       end
     end
 

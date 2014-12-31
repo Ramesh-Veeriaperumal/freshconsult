@@ -40,9 +40,13 @@ module UsersHelper
   end
 
   def add_new_user(account, options={})
-    new_user = FactoryGirl.build(:user,
-                                    :account_id => account.id,
-                                    :name => Faker::Name.name,
+
+    if options[:email]
+      user = User.find_by_email(options[:email])
+      return user if user
+    end
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
                                     :time_zone => "Chennai",
                                     :delta => 1,
