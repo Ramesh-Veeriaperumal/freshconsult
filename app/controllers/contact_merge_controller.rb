@@ -38,6 +38,7 @@ class ContactMergeController < ApplicationController
     @target_users.each do |target|
       target.deleted = true
       target.user_emails.update_all({:user_id => @source_user.id, :primary_role => false})
+      target.email = nil
       target.save
     end
     

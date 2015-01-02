@@ -58,9 +58,11 @@ jQuery(document).ready(function(){
           wf_model: "Helpdesk::Ticket",
           wf_order: jQuery('#FilterOptions input[name=wf_order]').val(),
           wf_order_type: jQuery('#FilterOptions input[name=wf_order_type]').val(),
-          visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
-          "user_id": <%= current_user.id %>,
-          "group_id":  jQuery('#visibility_group_id').val() }
+          custom_ticket_filter: {
+            visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
+            "user_id": <%= current_user.id %>,
+            "group_id":  jQuery('#visibility_group_id').val() }
+          }
         },
         success: function(msg){}
       });

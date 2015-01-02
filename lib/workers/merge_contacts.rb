@@ -11,11 +11,11 @@ class Workers::MergeContacts
     @target_users = account.all_users.find(:all, :conditions => {:id => args[:targets]})
     move_target_resources_to_source(account)
     move_if_exists(User::USER_SECONDARY_ATTRIBUTES)
-    @source_user.save
     @target_users.each do |target|
       target.parent_id = @source_user.id
       target.save
     end
+    @source_user.save
   end
 
   private
@@ -39,7 +39,7 @@ class Workers::MergeContacts
   def self.move_if_exists(user_att)
     user_att.each do |att|
       if @source_user.send(att).blank?
-        related = @target_users.detect{|i| i.send(att).blank?}
+        related = @target_users.detect{|i| i.send(att).present?}
         @source_user.send("#{att}=", related.send(att)) unless related.nil?
         @target_users.each{|x| x.send("#{att}=", nil)}
       end

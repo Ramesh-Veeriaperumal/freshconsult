@@ -115,59 +115,60 @@
 							<%= t('companies.add_contact_company', :company_name => @company.name) %> 
 						</p>
 					</h4>
-						<% form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix", :rel=> 'validate'} ) do %>
+						<% form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix add-contact", :rel=> 'validate'} ) do %>
 						<ul>
 							<li class='control-group'>
-								<div class='control-label'> 
-									<label for="user_name"><%=t('user.full_name')%></label> 
-								</div>
 								<div class='controls'>
-									<input class="text required" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+									<input class="text required" id="user_name" name="user[name]" size="30" type="text" value="" placeholder="<%= t('user.full_name') %>" /> 
 								</div>
 							</li> 
 							<li class='control-group'>
-								<div class='control-label'>
-									<label for="email_primary"><%=t('user.email')%></label> 
-								</div>
 								<div class='controls'>
-									<input class="text require_from_group user_info" id="email_primary" name="user[email]" size="30" type="text" />
+									<input class="text require_from_group user_info" id="email_primary" name="user[email]" size="30" type="text" placeholder="<%= t('user.email') %>" />
 								</div>
 							</li>
 							<li class='control-group'>
-								<div class='control-label'>
-									<label for="user_phone"><%=t('user.phone_no')%></label> 
-								</div>
 								<div class='controls'>
-									<input class="text require_from_group user_info" id="phone_work" name="user[phone]" size="30" type="text" /> 
+									<input class="text require_from_group user_info" id="phone_work" name="user[phone]" size="30" type="text" placeholder="<%= t('user.phone_no') %>" /> 
 								</div>
 							</li>
 				    	<%= hidden_field_tag 'user[company_name]', @company.name %>   
 						</ul>
-						<div class="pull-right"><%= submit_tag t('create'), :class => "btn btn-primary" %></div>
+						<div class="pull-right"><%= submit_tag t('companies.add_contact'), :class => "btn" %></div>
 						<% end %>
 					</div>
 				<% end %>
 				<div class="sidepanel">
 					<h4 class="app-title"><%= t('company.sla_policy_name') %></h4> 
-					<div id="sla_policy" class="sloading loading-small sla-policy-loading"
+					<div id="sla_policy" class="sloading loading-small loading-center"
 						 rel="remote-load" 
 						 data-unique="true" 
-						 data-extra-loading-classes = "sla-policy-loading"
 						 data-url="/companies/<%=@company.id%>/sla_policies"></div>
 				</div>
 				<% unless @company_users.empty? %>
 					<div class='sidepanel'>
-						<h4 class="app-title margin-set"><%=t('companies.company_contacts')%> (<%= @company_users_size %>) </h4>
+						<h4 class="app-title margin-set"><%=t('contacts.title')%> (<%= @company_users_size %>) </h4>
 						<ul class="user_list">	  
-							<% users = @company_users.take(9) %>
+							<% users = @company_users.take(5) %>
 							<% users.each do |user| %>
-							  	<li title="<%= h(user.name) %>" class='tooltip user-item'>
-						      		<%= link_to(user_avatar(user, :thumb), user ) %>
+							  	<li class='user-item'>
+							  		<a href='<%= contact_path(user) %>' class='clearfix'>
+							      		<%= user_avatar(user, :thumb) %>
+							      		<div class='vertical-alignment'>
+							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
+							      			<p class='email ellipsis'> <%= h(user.email) %> </p>
+							      		</div>
+						      		</a>
 							  	</li>  
 							<%end%>
-							<% if @company_users_size > 9 %> 
-								<li class='tooltip user-item' title="<%= t('view_all')%>">
-									<%= link_to '...', URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s), :class => 'more-users-link' %> 
+							<% if @company_users_size > 5 %> 
+								<li class='user-item clearfix'>
+									<a href='<%= URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s) %>' class='user-link clearfix'>
+										<p class='more-users-link'>...</p>
+										<span class='see-all'>
+											<%= t('view_all')%>
+										</span>
+									</a>
 								</li>
 							<% end %>
 						</ul>

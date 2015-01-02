@@ -31,7 +31,7 @@ describe ContactsController do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'json'} 
-    error_status?(response.status).should be_true
+    bad_request_status?(response.status).should be_true
     @account.subscription.update_attributes(:state => state, :agent_limit => agent_limit)
   end  
 
@@ -42,11 +42,21 @@ describe ContactsController do
     record_not_found_status?(response.status).should be_true
   end
  
+  it "should not convert contact to agent if contact doesn't have email" do
+    contact = add_new_user_without_email(@account,{})
+    put :make_agent, {:id => contact.id,:format => 'json'} 
+    bad_request_status?(response.status).should be_true
+  end
+
   def record_not_found_status?(status)
-     status =~ /404 Not Found/
+    status =~ /404 Not Found/
   end
 
   def error_status?(status)
-      status =~ /422 Unprocessable Entity/ 
+    status =~ /422 Unprocessable Entity/ 
+  end
+
+  def bad_request_status?(status)
+    status =~ /400 Bad Request/
   end
 end

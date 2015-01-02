@@ -599,6 +599,30 @@ legend + .control-group {
   margin-top: $baseLineHeight;
   -webkit-margin-top-collapse: separate;
 }
+
+// Special inputs
+// --------------------------
+input[type="text"].input-special{
+  @include border-radius(4px);
+  border-color: #ccc;
+  font-size:16px;
+  margin-bottom: 0;
+  padding:6px 10px;
+  @include box-shadow(rgba(0, 0, 0, 0.1) 0 1px 2px inset);
+}
+
+// Required label
+// --------------------------
+label.required:after{
+  content: "*";
+  color: #d00;
+  font-size: $baseFontSize * 1.2;
+  font-weight: bold;
+  position: relative;
+  top: 4px;
+  @include margin-left(5px);
+}
+
 // Horizontal-specific styles
 // --------------------------
 

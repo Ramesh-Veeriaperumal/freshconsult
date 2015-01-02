@@ -35,7 +35,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindMergeEvent: function (topic_id) {
-			$("#mergetopic").click(function(ev){
+			$(".mergetopic").click(function(ev){
 				ev.preventDefault();
 
 				$.ajax({

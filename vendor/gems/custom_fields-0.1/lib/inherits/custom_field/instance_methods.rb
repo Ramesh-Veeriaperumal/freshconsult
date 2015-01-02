@@ -65,6 +65,10 @@ module Inherits
         (bottom_note = field_class[field_type.to_sym][:bottom_note]).nil? ? '' : I18n.t("#{bottom_note}")
       end
 
+      def choices_value
+        choices.map{|choice| choice.fetch(:value)}
+      end
+
       def regex # only for regex field
         @regex ||= begin
           if field_type.to_sym == :custom_text && field_options.is_a?(Hash)
@@ -91,35 +95,34 @@ module Inherits
         end
       end
 
-      def choices(model = nil)
+      def admin_choices
         case field_type
           when :"custom_dropdown" then
-            return @choices.each    { |c| [c[0], c[0].to_sym] } unless @choices.nil? # to re-render choices while fields are with errors
-            custom_field_choices.collect { |c| [c.value, c.value.to_sym] }
+            custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
+              :position => choice.position, :_destroy => choice._destroy} }
           when :"custom_survey_radio" then
-            return @choices.each    { |c| [c[0], c[1]] } unless @choices.nil?
-            custom_field_choices.collect { |c| [c.value, c.face_value] }
+            custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
+              :face_value => choice.face_value, :position => choice.position, :_destroy => choice._destroy} }
           when :"default_time_zone" then
-            TIME_ZONE_CHOICES
+            self.class::TIME_ZONE_ADMIN_CHOICES 
           when :"default_language" then
-            I18n.available_locales_with_name
+            self.class::LANGUAGE_ADMIN_CHOICES
           else
            []
         end
       end
+      alias_method :choices, :admin_choices
 
-      def html_unescaped_choices(model = nil)
+      def ui_choices
         case field_type
           when :"custom_dropdown" then
-            return @choices.each    { |c| [CGI.unescapeHTML(c[0]), c[0].to_sym] } if @choices
-            custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.value.to_sym] }
+            @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.value.to_sym] }
           when :"custom_survey_radio" then
-            return @choices.each    { |c| [CGI.unescapeHTML(c[0]), c[0].to_sym] } if @choices
-            custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.face_value.to_sym] }
+            @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.face_value.to_sym] }
           when :'default_time_zone' then
-            TIME_ZONE_CHOICES
+            self.class::TIME_ZONE_UI_CHOICES
           when :'default_language' then
-            I18n.available_locales_with_name
+            self.class::LANGUAGE_UI_CHOICES
           else
             []
          end
@@ -136,20 +139,6 @@ module Inherits
         end
       end
 
-      protected
-        def populate_choices # Query Optimization # TODO
-          return unless @choices
-          if( :"custom_dropdown" == self.field_type && 
-            custom_field_choices.collect{ |c| [c.value, c.value] } != @choices )
-            custom_field_choices.clear
-            @choices.each{ |c| custom_field_choices.build({:value => c[0]}) }
-          elsif( :"custom_survey_radio" == self.field_type && 
-            custom_field_choices.collect{ |c| [c.value, c.face_value] } != @choices )
-            custom_field_choices.clear
-            @choices.each{ |c| custom_field_choices.build({:value => c[0], :face_value => c[1]}) }
-          end
-        end
-        
       private
         def return_account_property
           (account || Account.current).send(name)

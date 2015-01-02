@@ -1,6 +1,14 @@
 module SubscriptionsHelper 
   include Subscription::Currencies::Constants
 
+  PLANS_FEATURES = {
+    "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations" ],
+    "blossom" => [ "everything_in_sprout", "multiple_mailboxes", "custom_domain", "social_support", "satisfaction_survey", "forums", "gamification" ],
+    "garden" => [ "everything_in_blossom", "chat", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization" ],
+    "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization" ],
+    "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ]
+  }
+
   def get_payment_string(period,amount)
     amount = format_amount(amount, current_account.currency_name)
     if period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
@@ -74,6 +82,14 @@ module SubscriptionsHelper
     format_amount(amount, currency)
   end
 
+  def cost_per_agent(plan_name, period=1, currency)
+    billing_subscription = Billing::Subscription.new
+    period = 1 if period.nil?
+    plan_info = billing_subscription.retrieve_plan(plan_name, period)
+    amount = (plan_info.plan.price/plan_info.plan.period)/100
+    format_amount(amount, currency)
+  end
+    
   def format_amount(amount, currency)    
     number_to_currency(amount, :unit => CURRENCY_UNITS[currency], :separator => ".", 
       :delimiter => ",", :format => "%u%n", :precision => 0)
@@ -89,6 +105,27 @@ module SubscriptionsHelper
 
   def default_currency?
     current_account.currency_name.eql?(DEFAULT_CURRENCY)
+  end
+
+  def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog, title = "", data_submit_label = "", data_close_label = "", data_classes = "", data_submit_loading = t('please_wait'))
+    output = []
+    output << %(<button data-plan="#{ plan.name }" 
+                  data-plan-id="#{ plan.id }" 
+                  class="#{button_classes}" 
+                  id="#{ plan.name }_button" 
+                  data-current-plan="false"
+                  data-free-plan="#{ free_plan_flag }" )
+    if add_freshdialog
+      output << %(data-target="#confirm-message-#{plan.id}"  
+                    title="#{ title }"
+                    data-classes = "#{ data_classes }"
+                    data-submit-label="#{ data_submit_label }"
+                    data-close-label="#{ data_close_label }"
+                    data-submit-loading="#{ data_submit_loading }"
+                    rel="freshdialog" )
+    end
+    output << %( > #{button_label} </button>)
+    output.join("").html_safe
   end
 
  end
