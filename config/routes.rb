@@ -53,7 +53,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :agents, :member => { :toggle_shortcuts => :put,
                                       :restore => :put,
                                       :convert_to_user => :get,
-  :reset_password=> :put },
+  :reset_password=> :put,
+  :api_key => :get },
     :collection => { :create_multiple_items => :put,
   :info_for_node => :get} do |agent|
     agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'

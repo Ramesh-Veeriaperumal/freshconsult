@@ -347,6 +347,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"helpdesk/dashboard",:only => [:agent_status]
+    resource :"agent", :only => [:api_key]
   end
 
   manage_account do

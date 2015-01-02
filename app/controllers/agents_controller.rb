@@ -11,7 +11,8 @@ class AgentsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
-    :convert_to_contact ]
+    :convert_to_contact, :api_key] 
+  before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
   before_filter :load_roles, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
@@ -233,6 +234,13 @@ class AgentsController < ApplicationController
     end
   end
 
+  def api_key
+    api_key = {:user_id => @agent.user_id, :api_key => @agent.user.single_access_token}
+     respond_to do |format|
+          format.any(:xml, :json) { render request.format.to_sym => api_key }
+      end
+  end 
+
  protected
  
   def scoper
@@ -292,6 +300,24 @@ class AgentsController < ApplicationController
   
   def redirection_url(user) # Moved out to overwrite in Freshservice
     redirect_to contact_path(user)
+  end
+
+  def ssl_check
+    unless request.ssl?
+      error = {:errors => {:message=> t('non_ssl_request')} }
+      respond_to do |format|
+          format.any(:xml, :json) { render request.format.to_sym => error, :status => :forbidden }
+      end
+    end
+  end
+
+  def can_assume_identity 
+    unless is_allowed_to_assume?(@agent.user)
+      error = {:errors => {:message=> t('flash.general.access_denied')} }
+        respond_to do |format|
+            format.any(:xml, :json) { render request.format.to_sym => error, :status => :forbidden }
+        end 
+    end  
   end
   
 end
