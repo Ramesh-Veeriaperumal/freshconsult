@@ -1894,6 +1894,7 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
+  add_index "helpdesk_tickets", ["status", "account_id"], :name => "index_helpdesk_tickets_status_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
     t.datetime "start_time"
