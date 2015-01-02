@@ -136,7 +136,7 @@
 							field.append("<option " + choice['value'] + " data_id = "+ choice['id'] + ">" + choice['name'] + "</option>");
 						}
 					});
-					field.wrapInner("<select class='select2' disabled/>");
+					field.wrapInner("<select class='select2 input-xlarge' disabled/>");
 					controlGroup.append(controlLabel);
 					break;
 				case 'paragraph':

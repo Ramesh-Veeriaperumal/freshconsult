@@ -70,7 +70,7 @@ module CustomFields
         def construct_dropdown_blank
           select(@object_name, @field_name, @choices, 
                                         {:include_blank => "...", :selected => @field_value}, 
-                                        {:class => "#{@field_class} dropdown-min-width select2", 
+                                        {:class => "#{@field_class} input-xlarge select2", 
                                          :disabled => @disabled})
         end
 
