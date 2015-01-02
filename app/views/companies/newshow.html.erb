@@ -154,8 +154,10 @@
 							  	<li class='user-item'>
 							  		<a href='<%= contact_path(user) %>' class='clearfix'>
 							      		<%= user_avatar(user, :thumb) %>
-							      		<p class='name ellipsis'> <%= h(user.name) %> </p>
-							      		<p class='email ellipsis'> <%= h(user.email) %> </p>
+							      		<div class='vertical-alignment'>
+							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
+							      			<p class='email ellipsis'> <%= h(user.email) %> </p>
+							      		</div>
 						      		</a>
 							  	</li>  
 							<%end%>
