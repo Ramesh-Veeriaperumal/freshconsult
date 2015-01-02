@@ -307,7 +307,7 @@
               <div class="error"></div>
           </div>
           <script type="text/javascript">
-            jQuery("#seoshop").prepend('<h3 class="title">SeoShop</h3>');
+            jQuery("#seoshop").prepend('<h3 class="title">SEOshop</h3>');
             seoshopBundle={domain:"https://api.webshopapp.com/{{seoshop.language}}", reqEmail:"{{requester.email}}"} ;
             CustomWidget.include_js("/javascripts/integrations/seoshop.js");
           </script>
@@ -315,3 +315,4 @@
   id: 20
   description: integrations.seoshop.desc
   application_type: seoshop
+
