@@ -3083,7 +3083,8 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true
-
+  add_index "users", ["account_id", "helpdesk_agent"], :name => "index_users_on_account_id_and_helpdesk_agent"
+  
   create_table "va_rules", :force => true do |t|
     t.string   "name"
     t.text     "description"
