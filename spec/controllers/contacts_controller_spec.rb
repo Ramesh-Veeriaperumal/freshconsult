@@ -565,11 +565,8 @@ describe ContactsController do
     end
 
     after(:all) do
-      Resque.inline = true
       @user.destroy
-      custom_field_params.each { |params| 
-        @account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
-      Resque.inline = false
+      destroy_custom_fields
     end
 
     it "should render for new user template with custom fields" do
