@@ -1,6 +1,5 @@
 if Rails.env.test?
   Factory.define :mobihelp_app, :class => Mobihelp::App do |t|
-    t.account_id 1
     t.sequence(:name) { |n| "Fresh App #{n}" }
     t.platform 1
     t.category_ids ["2"]
@@ -8,7 +7,6 @@ if Rails.env.test?
   end
 
   Factory.define :mobihelp_device, :class => Mobihelp::Device do |t|
-    t.account_id 1
     t.app_id 1
     t.user_id 1
     t.device_uuid "1123-123123-123123123"
@@ -35,6 +33,5 @@ if Rails.env.test?
     m.app_id 1
     m.category_id 1
     m.position 1
-    m.account_id 1
   end
 end

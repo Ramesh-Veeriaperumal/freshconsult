@@ -17,7 +17,10 @@ module ContactFieldsHelper
 				:field_options => {"regex"=>{"pattern"=>"(desk|service)", "modifier"=>"i"}}, 
 				:editable_in_signup=> "true"},
        { :type => "dropdown", :field_type => "custom_dropdown", :label => "Category", 
-        :choices => [["First", "0"], ["Second", "0"], ["Third", "0"], ["Tenth", "0"]]}
+        :custom_field_choices_attributes => [ {"value"=>"First", "position"=>1, "_destroy"=>0, "name"=>"First"}, 
+                                              {"value"=>"Second", "position"=>2, "_destroy"=>0, "name"=>"Second"}, 
+                                              {"value"=>"Third", "position"=>3, "_destroy"=>0, "name"=>"Third"}, 
+                                              {"value"=>"Tenth", "position"=>4, "_destroy"=>0, "name"=>"Tenth"}]}
       ]
     end
 
@@ -33,7 +36,7 @@ module ContactFieldsHelper
        :editable_in_portal=> options[:editable_in_portal] || true, 
        :required_in_portal=> options[:required_in_portal] || false, 
        :editable_in_signup=> options[:editable_in_signup] || false,
-       :id=>nil, :choices=> options[:choices] || [], :position=>rand(15..1000)
+       :id=>nil, :custom_field_choices_attributes => options[:custom_field_choices_attributes] || [], :position=>rand(15..1000)
      }
    end
 
@@ -57,7 +60,7 @@ module ContactFieldsHelper
 
   def destroy_custom_fields
     Resque.inline = true
-    contact_custom_field = @account.contact_form.fields.find(:all,:conditions=> ["column_name != ?", "default"])
+    contact_custom_field = @account.contact_form.all_fields.find(:all,:conditions=> ["column_name != ?", "default"])
     contact_custom_field.each { |field| field.delete_field }
     Resque.inline = false
   end
