@@ -18,21 +18,27 @@ class Subscription::UpdateResellerSubscription
       account = Account.current
       return if account.subscription.affiliate.nil?
       
-      send(%(trigger_#{args[:event_type]}_event), account)
+      send(%(trigger_#{args[:event_type]}_event), account, args)
     end
 
     private
-      def trigger_subscription_updated_event(account)
+      def trigger_subscription_updated_event(account, args)
         data = { :account_id => account.id, :state => account.subscription.state, 
                   :cmrr => (account.subscription.amount/account.subscription.renewal_period), 
                   :currency => account.currency_name }        
         http_connect(:subscription_updated, data, "post")
       end
 
-      def trigger_contact_updated_event(account)
+      def trigger_contact_updated_event(account, args)
         data = { :account_id => account.id, :email => account.admin_email, :phone => account.admin_phone }
         http_connect(:contact_updated, data, "post")
       end 
+
+      def trigger_payment_added_event(account, args)
+        data = { :account_id => account.id, :invoice_id => args[:invoice_id] }
+        http_connect(:payment_added, data, "post")
+      end
+
 
       def http_connect(event_type, data, req_type)        
         hrp = HttpRequestProxy.new

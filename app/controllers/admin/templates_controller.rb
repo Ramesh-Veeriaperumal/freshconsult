@@ -33,6 +33,7 @@ class Admin::TemplatesController < Admin::AdminController
   def update
     # Merging preferences as it may be used in multiple forms
     if params[:portal_template][:preferences].present?
+      sanitize_preferences
       params[:portal_template][:preferences] = @portal_template.preferences.merge(params[:portal_template][:preferences])
     end
 
@@ -78,5 +79,14 @@ class Admin::TemplatesController < Admin::AdminController
         |t| @portal_template[t[0]] = render_to_string(:partial => t[1], 
           :content_type => 'text/plain') if (@portal_template[t[0]].nil?)
       }   
+    end
+
+    def sanitize_preferences
+      pref = @portal_template.default_preferences.keys - [:baseFont, :headingsFont, :nonResponsive]
+      params[:portal_template][:preferences].each do |key, value|
+        col = key.to_sym
+        next if pref.exclude?(col)
+        params[:portal_template][:preferences].delete(col) unless value =~ Portal::HEX_COLOR_REGEX
+      end
     end
 end

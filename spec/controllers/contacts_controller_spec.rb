@@ -24,6 +24,9 @@ describe ContactsController do
 
     @contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)
     @contact.save
+
+    @account.contact_form.default_contact_fields.map {|cf| 
+                cf.update_attributes(:required_for_agent => false) unless cf.field_type == :default_name}
   end
 
   after(:each) do
@@ -295,7 +298,7 @@ describe ContactsController do
                                       }
     new_contact = @account.user_emails.user_for_email(test_email)
     new_contact.should be_an_instance_of(User)
-    new_contact.company_id.should be_eql(@new_company.id)
+    new_contact.company_id.should eql(@new_company.id)
     Delayed::Job.last.handler.should include("deliver_user_activation")
     Delayed::Job.last.handler.should include(new_contact.name)
   end
@@ -565,11 +568,8 @@ describe ContactsController do
     end
 
     after(:all) do
-      Resque.inline = true
       @user.destroy
-      custom_field_params.each { |params| 
-        @account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
-      Resque.inline = false
+      destroy_custom_fields
     end
 
     it "should render for new user template with custom fields" do

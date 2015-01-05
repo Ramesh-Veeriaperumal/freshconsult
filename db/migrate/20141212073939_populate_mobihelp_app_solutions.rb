@@ -18,7 +18,7 @@ class PopulateMobihelpAppSolutions < ActiveRecord::Migration
             MemcacheKeys.delete_from_cache("MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}" % { :account_id => account_id, :category_id => category_id })
           end
         rescue Exception => e
-          puts "Mobihelp App Solutions Migration failed for app_id => #{app_id} :: Exception => #{e}"
+          puts "Mobihelp App Solutions Migration failed for app_id => #{app.id} :: Exception => #{e}"
         ensure
           Account.reset_current_account
         end

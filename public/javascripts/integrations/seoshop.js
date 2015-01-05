@@ -137,7 +137,7 @@ SEOshopWidget.prototype= {
 				for (var j=0; j<line_details.length; j++){		
 					line_items_html += "<div class='row-fluid product'> "+ 
 										"<div class='span8'>" + line_details[j].title +" </div>" +
-										"<div class='span4 align-right'>" + line_details[j].priceIncl+"</div>" +
+										"<div class='span4 align-right'>" + line_details[j].priceExcl+"</div>" +
 										"</div>"
 				}
 			}
