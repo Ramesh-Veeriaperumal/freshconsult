@@ -19,7 +19,8 @@ var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
             'id'        : '<%=current_user.id%>',
             'username'  : '<%=current_user.name%>',
             'isAdmin'   : <%=current_user.privilege?(:admin_tasks)%>,
-            'email'     : '<%=current_user.email%>'
+            'email'     : '<%=current_user.email%>',
+            'groups'    : <%=current_user.agent_groups.collect{|g| g.group_id}.to_json%>,
     };
     var CURRENT_ACCOUNT = {
             'id'         : '<%=current_account.id%>',
@@ -27,7 +28,8 @@ var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
             'domain'     : '<%=current_account.full_domain%>',
             'product_id' : '<%=current_portal.product ? current_portal.product.id : ""%>',
             'chat_enabled': <%=current_account.chat_setting.active%>,
-            'widget_id'  : '<%=current_chatwidget.widget_id%>'
+            'widget_id'  : '<%=current_chatwidget.widget_id%>',
+            'chat_routing': <%=feature?(:chat_routing)%>
     };
     
 

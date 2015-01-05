@@ -228,6 +228,7 @@ module ChatHelper
             :chat_enabled_label => t('freshchat.chat_enabled_label'),
             :chat_disabled_label => t('freshchat.chat_disabled_label'),
             :transfer_limt_exceeded_msg => t('freshchat.transfer_limt_exceeded_msg'),
+            :choice_info => t('freshchat.choice_info').html_safe,
             :concurrent_pick_attempt_msg => t('freshchat.concurrent_pick_attempt_msg'),
             :maximum_chat_error => t('freshchat.maximum_chat_error')
         }
