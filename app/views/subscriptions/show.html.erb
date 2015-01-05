@@ -1,12 +1,18 @@
-<% content_for :sidebar do -%>
-
 <% if !@subscription.trial? and @subscription.card_number.present? %>
-  <div class="sidepanel">    
-    <%= render :partial => "/subscriptions/payment_info" %>  
-  </div>
+	<% content_for :sidebar do -%>
+  		<div class="sidepanel">    
+    		<%= render :partial => "/subscriptions/payment_info" %>  
+  		</div>
+  	<% end %>
 <% end %>
 
-<% end %>
+<h3 class="lead"><%= @page_title = t("admin.home.index.billing") %></h3>
 
-<h3 class= "title"><%= @page_title = t("admin.home.index.billing") %></h3>
-<%= render :partial => "/subscriptions/state/#{@subscription.state}", :locals => { :subscription => @subscription, :plans => @plans } %>
+<%= render :partial => "/subscriptions/state/#{@subscription.state}", 
+		   :locals => { :subscription => @subscription, :plans => @plans } %>
+
+<script type="text/javascript">
+
+  Fjax.afterNextPage = function(){ App.SelectPlan.destroy()}
+
+</script>

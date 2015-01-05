@@ -15,6 +15,13 @@ p {
   font-weight: 200;
   line-height: $baseLineHeight * 1.5;
 }
+
+.lead-info{
+   font-size: 14px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
 .no-results{
  color: #ccc;
  font-size:$baseFontSize;

@@ -93,7 +93,7 @@
 		border: 1px solid rgba(0, 0, 0, 0.2);
 		@include border-radius(5px);
 		margin-bottom: 11px;
-		background: rgba(0,0,0, 0.7);
+		background-color: rgba(0,0,0, 0.7);
 		cursor:pointer;
 		a{
 			color: #fff;
@@ -119,14 +119,16 @@
 		}
 	}
 }
+
 .symbols-trial-red-alert{
-		height: 50px;
-		width: 35px;
-		display: inline-block;
-		position: absolute;
-		top: 4px;
-	 	@include right(0);
-	}
+	height: 50px;
+	width: 35px;
+	display: inline-block;
+	position: absolute;
+	top: 4px;
+ 	@include right(0);
+}
+
 .more_than_ten{
 	h3{ color: #337035;}
 	background-color: #F7FFEB;
@@ -136,6 +138,7 @@
 	h3{	color: #790711;	}
 	background-color: #FFF2F3;
 }
+
 
 // -------------------------------------------------------------------------------------------- 
 //											Todo

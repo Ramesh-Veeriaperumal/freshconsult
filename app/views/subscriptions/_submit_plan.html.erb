@@ -1,0 +1,26 @@
+<% form_for :account, :url => "/subscription/plan", 
+                      :html => {  :method => "post",
+                                  :id => "plan-change-confirm-#{plan.id}" } do |f| %>
+  
+  <% if downgrade_message_flag %>
+  	<%= downgrade_msg.html_safe %>
+	<% end %>
+
+  <input type="hidden" name="billing_cycle" value="1" />
+  <input type="hidden" name="agent_limit" value="<%= agent_limit %>" />
+  <input type="hidden" name="plan_id" value="<%= plan.id %>" />
+  <input type="hidden" name="currency" value="<%= currency %>" />
+  <% if plan_switch %>
+  	<input type="hidden" name="plan_switch" value="1" />
+  <% end %>
+  <% if submit_flag %>
+  	<input type="submit" value="<%= t('choose_plan') %>" class="btn btn-flat upgrade-plan" data-loading-text="<%= t('selecting_plan') %>" />
+  <% end %>
+<% end %>
+
+<% javascript_tag do %>
+  jQuery('.upgrade-plan').on("click", function(){
+    jQuery(this).button("loading");
+    jQuery('.activate-options').hide();
+  })
+<% end %>

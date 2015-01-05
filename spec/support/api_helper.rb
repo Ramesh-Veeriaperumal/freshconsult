@@ -75,4 +75,7 @@ module APIHelper
   USER_ATTRIBS = ["active", "address", "created_at", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
   
   AGENT_ATTRIBS = ["active_since","available", "created_at", "id", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"]
+
+  ROLE_ATTRIBS = ["created_at", "default_role", "description", "id", "name", "updated_at"]
+
 end
