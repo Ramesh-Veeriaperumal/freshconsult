@@ -290,6 +290,33 @@
 							</div>
 						</div>
 					</li>
+					<%if feature?(:chat_routing)%>
+							<li class="inline-field">
+								<h3 class="title space_top"><%=t('freshchat.routing')%></h3>
+								<div class="fields marginleftnone">
+									<div class="ff_item"> 
+										<label class="item-large">
+											<div class="info-data"><%=t('freshchat.routing_info')%></div>
+										</label>
+									</div>
+								</div>
+							</li>
+							<li>
+							</li>
+							<li class="routing_loader sloading loading-small"></li>
+							<li class="inline-field routing dropdown hide" id="dropdown_routing">
+								<%= check_box_tag :dropdown_routing_enable,false, :class => 'filter_item', :id => 'dropdown_routing_enable' %> 
+								<i class = "dropdown_enable_info">&nbsp;<%=t('freshchat.enable')%></i>
+								<label class="caption form_divider"><%=t('freshchat.dropdown_based_routing')%></label>
+								<div class="fields clearfix dropdown_routing_choices">
+								</div>
+							</li>
+							<li class="inline-field routing hide" id="default_routing">
+								<label class="caption form_divider"><%=t('freshchat.default_routing')%></label>
+								<div class="fields clearfix default_routing_choice">
+								</div>
+							</li>
+					<%end%>
 				</ul>
 				<hr>
 				<div class="row-fluid text-right">

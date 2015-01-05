@@ -7,6 +7,7 @@ module Freshfone::Call::CallCallbacks
 
   def in_call
     update_presence_and_publish_call(params, message) if params[:agent].present?
+    in_call_meta_info if current_call.incoming?
     current_call.update_call(params)
     return empty_twiml
   end
@@ -35,4 +36,10 @@ module Freshfone::Call::CallCallbacks
                       :DialCallStatus => params[:CallStatus] })
     end
 
+    def in_call_meta_info
+      return if (/client/.match(params[:To]))
+      Freshfone::CallMeta.create( :account_id => current_account.id, :call_id => current_call.id,
+                :meta_info => params[:To], 
+                :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone]) if current_call.meta.blank?
+    end
 end

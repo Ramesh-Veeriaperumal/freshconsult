@@ -13,6 +13,7 @@ class Group < ActiveRecord::Base
   after_commit_on_destroy :delete_round_robin_list
   before_save :create_model_changes
 
+  after_destroy :remove_group_from_chat_routing
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   
@@ -203,5 +204,22 @@ class Group < ActiveRecord::Base
     @model_changes = self.changes.clone
     @model_changes.symbolize_keys!
   end 
-  
+
+  def old_round_robin_key
+    GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
+                            :group_id => self.id}
+  end
+
+  def new_round_robin_key
+    GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
+                               :group_id => self.id}
+  end
+
+  def remove_group_from_chat_routing
+    siteId = account.chat_setting.display_id
+    if account.features?(:chat) && siteId
+      Resque.enqueue(Workers::Freshchat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
+    end
+  end
+
 end
