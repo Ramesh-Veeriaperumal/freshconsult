@@ -44,6 +44,7 @@ dump.rdb
 coverage/*
 coverage/**/*
 spec/fixtures/files/temp/*
+spec/fixtures/files/*
 
 # RVM
 .ruby-gemset
