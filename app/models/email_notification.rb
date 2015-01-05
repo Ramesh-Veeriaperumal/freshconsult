@@ -3,7 +3,7 @@ class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
   before_create :set_default_version
-  # xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :article_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
+  xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
   def after_find
     if (self.version == 1)
