@@ -539,7 +539,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :solution do |solution|
     solution.resources :categories, :collection => {:reorder => :put}  do |category|
       category.resources :folders, :collection => {:reorder => :put}  do |folder|
-        folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
+        folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put, :delete_tag => :post, :reset_ratings => :put }, :collection => {:reorder => :put} do |article|
           article.resources :tag_uses
         end
       end

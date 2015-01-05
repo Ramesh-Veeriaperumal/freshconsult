@@ -3196,6 +3196,13 @@ en:
       article_useful: Glad we could be helpful. Thanks for the feedback.
       article_not_useful: "Thanks for the feedback. We will improve this article."
       error_message: "There is an error %{error_msg}"
+      reset_rating:
+        link: "Reset Article Rating"
+        dialog_title: "Reset likes and dislikes"
+        dialog_submit: "Reset"
+        resetting: "Resetting"
+        dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
+        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
@@ -5770,7 +5777,6 @@ en:
   add_a_new_folder: add a new folder
   likes: Likes
   dislikes: Dislikes
-  for_this_article: For this article
   export: Export
   helpdesk_quests:
     see_all: See all

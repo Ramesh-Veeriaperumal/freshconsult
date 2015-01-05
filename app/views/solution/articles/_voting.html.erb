@@ -1,4 +1,34 @@
 <i class="icons-like"></i> <%= @article.thumbs_up %> <b><%= t('likes') %></b>, 
 <i class="icons-dislike"></i> <%= @article.thumbs_down %> <b><%= t('dislikes') %></b>
-			 
-<%= t('for_this_article') %>
+
+<% unless @article.thumbs_up == 0 && @article.thumbs_down == 0 
+		reset_url = reset_ratings_solution_category_folder_article_path(@article.folder.category, @article.folder, @article)
+	%>
+
+ - 
+	<%= link_to(t('solution.articles.reset_rating.link'),reset_url, 
+			"data-target" => "#article-reset-rating-confirmation", 
+			:rel => "freshdialog", 
+			"title" => t('solution.articles.reset_rating.dialog_title'), 
+			"data-submit-label" => t('solution.articles.reset_rating.dialog_submit'), 
+			"data-width" => "500px", 
+			"data-close-label" => t('cancel'),
+			"data-submit-loading" => t('solution.articles.reset_rating.resetting')
+	) %>
+
+	<div class="hide" id="article-reset-rating-confirmation">
+		<% remote_form_for :solution_article, @article, 
+						:url => reset_url,
+						:html => {:method => :put} do |f|  %>
+		
+		<%= t('solution.articles.reset_rating.dialog_msg')%>
+		<p class="margin-bottom">
+			<br />
+			<%= t("solution.articles.reset_rating.count", 
+			 						:no_of_likes => @article.thumbs_up,
+	        				:no_of_dislikes => @article.thumbs_down) %>
+		</p>
+		<% end %>
+	</div>
+
+<% end %>

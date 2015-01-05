@@ -71,10 +71,10 @@
 </div>
 </div>
 </div> 
-<% javascript_tag do -%>
+
+<script type="text/javascript">
   if(jQuery("#folder-section").height() > jQuery("#article-section").height())
     jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
 
   highlight_code();
-<%- end %>
-
+</script>

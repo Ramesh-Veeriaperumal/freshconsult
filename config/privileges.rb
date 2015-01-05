@@ -144,7 +144,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_solution do
-    resource :"solution/article", :only => [:destroy], :owned_by =>
+    resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
   end
 
