@@ -12,9 +12,12 @@
 			<li>
 				<a data-hide="app-native" data-show="app-custom" href="#"><%= t('integrations.freshplugs_title') %></a>
 			</li>
+			<li>
+				<a data-hide="app-native" data-show="app-cti" href="#"><%= t('integrations.cti_app_title') %></a>
+			</li>
 		</ul>
 	</div>
-	<div class="app-custom clearfix">
+	<div class="app-custom clearfix app_type">
 		<%= link_to t('integrations.new_freshplug').html_safe, new_integrations_application_path, 
 					:class => "uiButton new_custom_app floatr" %>
 	</div>
@@ -23,8 +26,11 @@
 			no_custom_app = true
 			@applications.each do |application| %>
 			<%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
+			<% class_name = application.system_app? ? "native" : "custom"
+			   class_name = "cti" if application.cti?
+			%>
 
-			<li class="app-<%= application.system_app? ? "native" : "custom" %>">
+			<li class='app-<%=class_name%> app_type'>
 				<div class="application">
 				<span class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></span>
 		  		<div class="actions"> 
@@ -92,7 +98,7 @@
 	<% end %>
 	</ul>
 	<%if no_custom_app%>
-		<div class="app-custom list-noinfo">
+		<div class="app-custom list-noinfo app_type">
 			<%= t('integrations.no_freshplugs') %>
 			<br />
 			<%= link_to t('integrations.add_new_freshplug'), new_integrations_application_path %>
@@ -110,7 +116,10 @@
 	jQuery(document).ready(function() {
 		jQuery('#integrations-list .tabs a').click(function(ev) {
 			ev.preventDefault();
-			jQuery('#integrations-list .' + jQuery(this).data('hide')).hide();
+			jQuery('#integrations-list .app_type').hide();
+			// jQuery('#integrations-list .app-native').hide();
+			// jQuery('#integrations-list .app-cti').hide();
+			// jQuery('#integrations-list .' + jQuery(this).data('hide')).hide();
 			jQuery('#integrations-list .' + jQuery(this).data('show')).show();
 
 			jQuery('#integrations-list .tabs li').removeClass('active');
