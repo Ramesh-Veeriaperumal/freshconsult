@@ -23,6 +23,21 @@
 		</div>
 	</div>
 
+	<div class="control-group recording_visibility_div">
+		<%= f.label :recording_visibility, t('freshfone.admin.number_settings.recording_privacy'),
+								:class => "control-label settings-label" %>
+		<div class="controls">
+			<div class="radio inline">
+				<%= f.radio_button :recording_visibility, true, :class => "radio" %> 
+				<%= f.label :recording_visibility, t('freshfone.admin.number_settings.recording_privacy_public'), :class => "radiolabel", :value => 1 %>
+			</div>
+			<div class="radio inline">
+				<%= f.radio_button :recording_visibility, false, :class => "radio" %> 
+				<%= f.label :recording_visibility, t('freshfone.admin.number_settings.recording_privacy_private'), :class => "radiolabel", :value => 0 %>
+			</div>
+		</div>
+	</div>
+
 	<div class="control-group">
 		<%= f.label :hunt_type, t('freshfone.admin.number_settings.hunt_type'),
 								:class => "control-label settings-label" %>
@@ -73,7 +88,7 @@
 				<div class="queue_wait_time_options">
 					<label> <%= t('freshfone.admin.number_settings.call_wait_time') %> </label>
 					<%= f.select :queue_wait_time, queue_wait_time_options, 
-							{}, {:class => "select2 queue_wait_time_select2"} %>
+							{}, {:class => "queue_wait_time_select2"} %>
 					<label> <%= t('freshfone.admin.number_settings.call_wait_time_suffix') %></label>
 				</div>
 			</div>

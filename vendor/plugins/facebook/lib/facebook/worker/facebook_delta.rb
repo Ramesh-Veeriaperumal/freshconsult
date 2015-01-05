@@ -36,7 +36,7 @@ class Facebook::Worker::FacebookDelta
         query_options = query_options.merge({ :exclusive_start_key => response[:last_evaluated_key]})
       end
     rescue Exception => e
-      SocialErrorsMailer.deliver_facebook_exception(e)
+      SocialErrorsMailer.deliver_facebook_exception(e) unless Rails.env.test?
       Rails.logger.error "cannot read data from dynamo db"
       NewRelic::Agent.notice_error(e,{:description => "cannot read data from dynamo db"})
     end

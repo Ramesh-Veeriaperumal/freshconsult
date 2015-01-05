@@ -197,6 +197,10 @@
 			  	    }else{
 			  	    	// For all other form it will be a direct page submission			  	
 			  	    	add_csrf_token(form)
+
+			  	    	// Nullifies the form data changes flag, which is checked to prompt the user before leaving the page.
+        				$(form).data('formChanged', false);
+
 			  	    	form.submit()
 			  	    }
 				}
@@ -210,20 +214,17 @@
 		});
 		
 		// If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
-		// $(window).on('beforeunload', function(ev){
-		// 	var form = $('.form-unsaved-changes-trigger');
-		// 	if(form.data('formChanged')) {
-		// 		ev.preventDefault();
-		// 		return customMessages.confirmNavigate;
-		// 	}
-		// });
+		$(window).on('beforeunload', function(ev){
+			var form = $('.form-unsaved-changes-trigger');
+			if(form.data('formChanged')) {
+				ev.preventDefault();
+				return customMessages.confirmNavigate;
+			}
+		});
 		
-		// $('.form-unsaved-changes-trigger').on('change', function() {
-		// 	$(this).data('formChanged', true);
-		// }).on('submit', function() {
-		// 	ev.stopPropagation();
-		// 	$(this).data('formChanged', false);
-		// });
+		$('.form-unsaved-changes-trigger').on('change', function() {
+			$(this).data('formChanged', true);
+		});
 
     	// Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
 		$("input.datepicker_popover").livequery(function() {

@@ -8,13 +8,14 @@ class Support::Mobihelp::TicketsController < SupportController
   before_filter :load_ticket, :only => [:show,:add_note,:close]
   before_filter :check_ticket_permissions, :only => [:show,:add_note,:close]
   before_filter :pre_process_mobihelp_params, :only => [:create]
+  skip_before_filter :check_day_pass_usage
 
   def create
-    status = false;
+    status = false
     if create_the_ticket(nil)
       create_tag(@assoc_device.app.name) if @assoc_device && @assoc_device.app
       store_debug_logs
-      status = true;
+      status = true
     else
       logger.debug "Ticket Errors is #{@ticket.errors.inspect}"
     end
@@ -80,9 +81,9 @@ class Support::Mobihelp::TicketsController < SupportController
         @assoc_device = current_user.mobihelp_devices.find_by_device_uuid(params[:device_uuid])
         @tickets = @assoc_device.tickets
       else # fallback to mobihelp filter
-        @tickets = current_user.tickets.find_by_source( TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp] );
+        @tickets = current_user.tickets.find_by_source( TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp] )
       end
-      @tickets ||= [];
+      @tickets ||= []
     end
 
     def pre_process_mobihelp_params
@@ -93,8 +94,8 @@ class Support::Mobihelp::TicketsController < SupportController
         render :json => unregistered_device
       end
       if params[:helpdesk_ticket][:mobihelp_ticket_info_attributes]  && @assoc_device
-        params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:account_id] = current_account.id;
-        params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:device_id] = @assoc_device.id;
+        params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:account_id] = current_account.id
+        params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:device_id] = @assoc_device.id
       end
     end
 
@@ -113,8 +114,8 @@ class Support::Mobihelp::TicketsController < SupportController
     def store_debug_logs
       @mobihelp_ticket_info = @ticket.mobihelp_ticket_info
       if params[:helpdesk_ticket][:mobihelp_ticket_info_attributes] and params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:debug_data]
-        a = params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:debug_data];
-        @mobihelp_ticket_info.create_debug_data(:content => a[:resource], :description => a[:description],:account_id => @ticket.account_id);
+        a = params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:debug_data]
+        @mobihelp_ticket_info.create_debug_data(:content => a[:resource], :description => a[:description],:account_id => @ticket.account_id)
       end
     end
 
@@ -128,8 +129,13 @@ class Support::Mobihelp::TicketsController < SupportController
 
     def mobihelp_user_login
       unless current_user # override validated user check for mobihelp tickets
-        @current_user = User.find_by_single_access_token(params['k']); #ignore active / check
-        User.current = @current_user
+        user = User.find_by_single_access_token(params['k']) #ignore active / check
+        if user.deleted? or user.blocked?
+          render :json => {:success => false, :status_code => Mobihelp::MobihelpHelperMethods::MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED]}
+        else
+          @current_user = user
+          User.current = @current_user
+        end
       end
     end
 end

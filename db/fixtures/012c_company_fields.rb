@@ -17,7 +17,7 @@ def self.company_fields_data
     { :name               => "note", 
       :label              => "Notes" },
 
-    { :name               => "domain_name", 
+    { :name               => "domains", 
       :label              => "Domain Names for this company" }
   ]
 end
@@ -31,7 +31,7 @@ CompanyField.seed_many(:account_id, :name,
       :column_name        => 'default',
       :label              => f[:label],
       :deleted            => false,
-      :field_type         => CompanyField::DEFAULT_FIELD_PROPS[:"default_#{f[:name]}"][:type],
+      :field_type         => :"default_#{f[:name]}",
       :position           => i+1,
       :required_for_agent => f[:required_for_agent] || false
     }

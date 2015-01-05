@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_1f60be62cd1f575849504a376bd0f71f.eot");
-  src: font-url("glyphs_1f60be62cd1f575849504a376bd0f71f.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_1f60be62cd1f575849504a376bd0f71f.woff") format("woff"),
-       font-url("glyphs_1f60be62cd1f575849504a376bd0f71f.ttf") format("truetype"),
-       font-url("glyphs_1f60be62cd1f575849504a376bd0f71f.svg#glyphs") format("svg");
+  src: font-url("glyphs_53c60276fb65f1a7a044d5be8f421476.eot");
+  src: font-url("glyphs_53c60276fb65f1a7a044d5be8f421476.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_53c60276fb65f1a7a044d5be8f421476.woff") format("woff"),
+       font-url("glyphs_53c60276fb65f1a7a044d5be8f421476.ttf") format("truetype"),
+       font-url("glyphs_53c60276fb65f1a7a044d5be8f421476.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_1f60be62cd1f575849504a376bd0f71f.svg#glyphs") format("svg");
+    src: font-url("glyphs_53c60276fb65f1a7a044d5be8f421476.svg#glyphs") format("svg");
   }
 }
 
@@ -48,6 +48,7 @@
 .ficon-caret-left:before,
 .ficon-caret-right:before,
 .ficon-caret-up:before,
+.ficon-chat-bubble:before,
 .ficon-chat-disable:before,
 .ficon-chat-enable:before,
 .ficon-checkbox:before,
@@ -57,10 +58,10 @@
 .ficon-checkmark-thick:before,
 .ficon-comment-multi:before,
 .ficon-comments:before,
-.ficon-contact-fields:before,
 .ficon-conversation:before,
 .ficon-cross:before,
 .ficon-crown:before,
+.ficon-customer-fields:before,
 .ficon-customer-portal:before,
 .ficon-date:before,
 .ficon-day_pass:before,
@@ -139,6 +140,8 @@
 .ficon-reply:before,
 .ficon-retweet:before,
 .ficon-role:before,
+.ficon-save:before,
+.ficon-save-as:before,
 .ficon-scenario:before,
 .ficon-search:before,
 .ficon-security:before,
@@ -178,7 +181,7 @@
   font-smoothing: antialiased;
 }
 
-.ficon-account:before { content: "\f146"; }
+.ficon-account:before { content: "\f19f"; }
 .ficon-agent:before { content: "\f147"; }
 .ficon-all-streams:before { content: "\f100"; }
 .ficon-answer-checked:before { content: "\f12e"; }
@@ -203,28 +206,29 @@
 .ficon-caret-left:before { content: "\f107"; }
 .ficon-caret-right:before { content: "\f108"; }
 .ficon-caret-up:before { content: "\f109"; }
+.ficon-chat-bubble:before { content: "\f1a0"; }
 .ficon-chat-disable:before { content: "\f16b"; }
 .ficon-chat-enable:before { content: "\f16c"; }
-.ficon-checkbox:before { content: "\f18c"; }
+.ficon-checkbox:before { content: "\f181"; }
 .ficon-checkmark:before { content: "\f10a"; }
 .ficon-checkmark-round:before { content: "\f12f"; }
 .ficon-checkmark-round-o:before { content: "\f130"; }
-.ficon-checkmark-thick:before { content: "\f195"; }
+.ficon-checkmark-thick:before { content: "\f182"; }
 .ficon-comment-multi:before { content: "\f131"; }
 .ficon-comments:before { content: "\f175"; }
-.ficon-contact-fields:before { content: "\f199"; }
 .ficon-conversation:before { content: "\f10b"; }
 .ficon-cross:before { content: "\f10c"; }
 .ficon-crown:before { content: "\f10d"; }
+.ficon-customer-fields:before { content: "\f19d"; }
 .ficon-customer-portal:before { content: "\f14b"; }
 .ficon-date:before { content: "\f184"; }
 .ficon-day_pass:before { content: "\f14c"; }
 .ficon-dispatcher:before { content: "\f14d"; }
 .ficon-dots:before { content: "\f10e"; }
-.ficon-dropdown_blank:before { content: "\f18d"; }
+.ficon-dropdown_blank:before { content: "\f185"; }
 .ficon-earth:before { content: "\f10f"; }
-.ficon-edit:before { content: "\f194"; }
-.ficon-edit-strike-thru:before { content: "\f190"; }
+.ficon-edit:before { content: "\f110"; }
+.ficon-edit-strike-thru:before { content: "\f186"; }
 .ficon-ellipsis:before { content: "\f111"; }
 .ficon-email:before { content: "\f14e"; }
 .ficon-email-notifications:before { content: "\f14f"; }
@@ -264,28 +268,28 @@
 .ficon-link:before { content: "\f119"; }
 .ficon-linkedin:before { content: "\f11a"; }
 .ficon-lock:before { content: "\f11b"; }
-.ficon-lock-2:before { content: "\f19a"; }
+.ficon-lock-2:before { content: "\f187"; }
 .ficon-lock-open:before { content: "\f11c"; }
 .ficon-mail:before { content: "\f143"; }
 .ficon-map-marker:before { content: "\f11d"; }
-.ficon-merge:before { content: "\f19b"; }
+.ficon-merge:before { content: "\f188"; }
 .ficon-message:before { content: "\f165"; }
 .ficon-minus:before { content: "\f11e"; }
 .ficon-mobihelp:before { content: "\f158"; }
 .ficon-multi-product:before { content: "\f159"; }
 .ficon-notice:before { content: "\f134"; }
 .ficon-notice-o:before { content: "\f135"; }
-.ficon-number:before { content: "\f186"; }
+.ficon-number:before { content: "\f189"; }
 .ficon-observer:before { content: "\f15a"; }
 .ficon-open-in-new-window:before { content: "\f13e"; }
 .ficon-paperplane:before { content: "\f11f"; }
-.ficon-paragraph:before { content: "\f187"; }
+.ficon-paragraph:before { content: "\f18a"; }
 .ficon-phone:before { content: "\f144"; }
 .ficon-phone-disable:before { content: "\f16f"; }
 .ficon-phone-enable:before { content: "\f170"; }
 .ficon-plus:before { content: "\f120"; }
 .ficon-post-edit:before { content: "\f136"; }
-.ficon-pushpin:before { content: "\f19c"; }
+.ficon-pushpin:before { content: "\f18b"; }
 .ficon-rearrange:before { content: "\f145"; }
 .ficon-rebranding:before { content: "\f15b"; }
 .ficon-refresh:before { content: "\f171"; }
@@ -294,6 +298,8 @@
 .ficon-reply:before { content: "\f121"; }
 .ficon-retweet:before { content: "\f122"; }
 .ficon-role:before { content: "\f15c"; }
+.ficon-save:before { content: "\f190"; }
+.ficon-save-as:before { content: "\f191"; }
 .ficon-scenario:before { content: "\f15d"; }
 .ficon-search:before { content: "\f123"; }
 .ficon-security:before { content: "\f15e"; }
@@ -304,15 +310,15 @@
 .ficon-supervisor:before { content: "\f160"; }
 .ficon-survey-settings:before { content: "\f161"; }
 .ficon-tags:before { content: "\f162"; }
-.ficon-text:before { content: "\f18f"; }
+.ficon-text:before { content: "\f18c"; }
 .ficon-ticket:before { content: "\f125"; }
 .ficon-ticket-fields:before { content: "\f163"; }
 .ficon-ticket2:before { content: "\f126"; }
-.ficon-timeline-forum:before { content: "\f196"; }
-.ficon-timeline-ticket:before { content: "\f197"; }
+.ficon-timeline-forum:before { content: "\f18d"; }
+.ficon-timeline-ticket:before { content: "\f18e"; }
 .ficon-trash:before { content: "\f13f"; }
 .ficon-trash-o:before { content: "\f127"; }
-.ficon-trash-strike-thru:before { content: "\f193"; }
+.ficon-trash-strike-thru:before { content: "\f18f"; }
 .ficon-twitter:before { content: "\f128"; }
 .ficon-twitter-lock:before { content: "\f174"; }
 .ficon-unlock:before { content: "\f129"; }

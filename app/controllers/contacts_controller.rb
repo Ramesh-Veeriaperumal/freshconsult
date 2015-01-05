@@ -5,12 +5,11 @@ class ContactsController < ApplicationController
    include ExportCsvUtil
 
    before_filter :redirect_to_mobile_url
-   before_filter :clean_params, :only => [:update, :update_contact, :update_bg_and_tags]
-   before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_bg_and_tags, :create, :create_contact]
+   before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
+   before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
-   before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_bg_and_tags, :make_agent,:make_occasional_agent]
-   before_filter :set_user_email, :only => :edit                                                            
+   before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
+   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
 
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
@@ -146,14 +145,11 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.user_emails.user_for_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
-    @merged_user = @user.parent unless @user.parent.nil?
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
       format.html { 
-        @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here
-        @total_user_tickets_size = current_account.tickets.permissible(current_user).requester_active(@user).visible.count
-        @user_tickets = @total_user_tickets.newest(10).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+        define_contact_properties
       }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.as_json }
@@ -184,23 +180,41 @@ class ContactsController < ApplicationController
     update
   end
 
-  def update_bg_and_tags
-    if @user.update_attributes(params[:user])
+  def update_description_and_tags
+    begin
+      if @user.update_attributes(params[:user])
+        updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
+        respond_to do |format|
+          format.html { redirect_to contact_path(@user.id) }
+          format.json { render :json => updated_tags, :status => :ok}
+        end
+      else
+        respond_to do |format|
+          format.html {
+            define_contact_properties
+            render :show
+          }
+          format.json { render :json => @item.errors, :status => :unprocessable_entity}
+        end
+      end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e) 
       updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
       respond_to do |format|
         format.json { render :json => updated_tags, :status => :ok}
-      end
-    else
-      respond_to do |format|
-        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
 
   def verify_email
     @user_mail = current_account.user_emails.find(params[:email_id])
-    @user_mail.deliver_contact_activation_email
-    @user_mail.user.reset_primary_email(params[:email_id]) if !@user_mail.user.active?
+    if !@user_mail.user.active?
+      @user_mail.user.reset_primary_email(params[:email_id]) 
+      @user_mail.user.save
+    else
+      @user_mail.reset_perishable_token
+      @user_mail.deliver_contact_activation_email
+    end
     flash[:notice] = t('merge_contacts.activation_sent')
     respond_to do |format|
       format.js
@@ -226,15 +240,16 @@ class ContactsController < ApplicationController
   
   def make_agent
     respond_to do |format|
-      if @item.make_agent        
+      if @item.make_agent  
+        agent = Agent.find_by_user_id(@item.id)      
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
-        format.xml  { render :xml => @item, :status => 200 }
-        # format.json {render :json => @item.as_json,:status => 200}
+        format.xml  { render :xml => agent, :status => 200 }
+        format.json {render :json => agent.as_json,:status => 200}
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
-        # format.json { render :json => @item.errors,:status => 500 }
+        format.json { render :json => @item.errors,:status => 500 }
       end   
     end
   end
@@ -293,10 +308,6 @@ protected
 
     @item || raise(ActiveRecord::RecordNotFound)
   end
-
-  def set_user_email
-    @user.user_emails.build if current_account.features_included?(:contact_merge_ui) and @user.user_emails.blank?
-  end
    
   def set_selected_tab
       @selected_tab = :customers
@@ -319,11 +330,28 @@ protected
 
  def check_agent_limit
     if current_account.reached_agent_limit? 
-    flash[:notice] = t('maximum_agents_msg') 
-    redirect_to :back 
-   end
+      error_message = { :errors => { :message => t('maximum_agents_msg') }}  
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = t('maximum_agents_msg') 
+          redirect_to :back 
+        }
+        format.json { render :json => error_message, :status => :bad_request}
+        format.xml { render :xml => error_message.to_xml , :status => :bad_request}
+      end
+    end
   end
-
+  
+  def can_make_agent
+    unless @item.has_email?
+      error_message = { :errors => { :message => t('contact_without_email_id') }} 
+      respond_to do |format|
+          format.json { render :json => error_message, :status => :bad_request}
+          format.xml { render :xml => error_message.to_xml , :status => :bad_request}
+      end 
+    end
+  end
+  
   def redirection_url # Moved out to overwrite in Freshservice
     contacts_url
   end
@@ -336,6 +364,13 @@ protected
   end
 
   private
+
+    def define_contact_properties 
+      @merged_user = @user.parent unless @user.parent.nil?
+      @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here
+      @total_user_tickets_size = current_account.tickets.permissible(current_user).requester_active(@user).visible.count
+      @user_tickets = @total_user_tickets.newest(10).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+    end
 
     def initialize_and_signup!
       @user ||= current_account.users.new #by Shan need to check later  
@@ -372,7 +407,7 @@ protected
 
     def set_validatable_custom_fields
       @user ||= current_account.users.new
-      @user.validatable_custom_fields = { :fields => current_account.contact_form.contact_custom_fields, 
+      @user.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
                                           :error_label => :label }
     end
 end

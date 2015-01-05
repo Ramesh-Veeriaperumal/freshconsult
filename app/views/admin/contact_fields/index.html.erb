@@ -4,19 +4,9 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<div class='page-header-sticky custom-field-header' rel='sticky'>
-  <div class='sticky-header-wrapper'>
-    <h3 class='lead pull-left'> 
-      <%= t('.title') %> 
-    </h3>
-    <div class="pull-right">
-      <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
-      <%= submit_tag t(".save"), :class => "btn btn-primary save-custom-form", "data-commit" => t('.saving') %>
-    </div>
-  </div>
-  <%= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => ContactField } %>
-</div>
+<%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => ContactField} %>
 <br/>
+<%= include_cloudfront_js :contact_fields %>
 <% form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
 
   <div class="custom-form-outer">
@@ -81,15 +71,34 @@
       email:      '<%= t("custom_fields.email") %>',
       learnMore:     '<%= t("group.learn_more") %>',
       cancel:     '<%= t("cancel") %>',
-      done:     '<%= t("done") %>'
+      done:     '<%= t("done") %>',
+      maxItemsReached: '<%= t("admin.contact_fields.formfield_props.max_choices") %>'
     };
 
     window['translate'] = {}; 
     translate.get = function(name){
       return tf_lang[name] || "";
     };
+
+
+    var customField = new CustomFields({existingFields : customFields, 
+                        customMessages: tf_lang,
+                        nonEditableFields: ['default_tag_names', 'default_description', 'default_client_manager'],
+                        disabledByDefault: {
+                                'default_company_name' : 
+                                      {
+                                        'visible_in_portal' : false,
+                                        'editable_in_portal' : true,
+                                        'editable_in_signup' : true,
+                                        'required_in_portal' : true                         
+                                      }
+                        },
+                        customFieldType: 'contact'
+                      });
+    customField.init();
+    // Show ProfilePic Holder
+    jQuery('.profile-pic-placeholder img').removeClass('hide');
   <% end %>
-  <%= include_cloudfront_js :contact_fields %>
 <% end %> 
 
 <% content_for :layoutType do -%>antipattern<%- end %>

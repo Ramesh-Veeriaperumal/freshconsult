@@ -8,10 +8,10 @@ class Workers::FreshchatCalendarUpdate
 	require 'base64'
 	@queue = "freshchatQueue"
 	@subUrl = (Rails.env == "development") ? ":4000" : ""
-	@url = "http://" + ChatConfig['communication_url'][Rails.env] + @subUrl +"/sites/calendarupdate"
+	@url = "http://" + ChatConfig['communication_url'] + @subUrl +"/sites/calendarupdate"
 
 	def self.perform(args)
-		token = Digest::SHA512.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{args[:display_id]}")
+		token = Digest::SHA512.hexdigest("#{ChatConfig['secret_key']}::#{args[:display_id]}")
 		body = {"siteId" => args[:display_id],"token" => token, "business_calendar" => args[:calendarData], "proactive_chat" => args[:proactive_chat] || nil, "proactive_time" => args[:proactive_time] || nil}
 		response = HTTParty.post(@url,:body => body)
 	end

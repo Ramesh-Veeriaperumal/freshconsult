@@ -53,7 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def set_default_values
-    self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
+    self.status = OPEN if (!Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type = nil if self.ticket_type.blank?
     self.subject ||= ''
@@ -371,6 +371,7 @@ private
       :email => self.email, 
       :twitter_id => twitter_id,
       :external_id => external_id,
+      :fb_profile_id => facebook_id,
       :phone => phone })
     
     create_requester unless requester

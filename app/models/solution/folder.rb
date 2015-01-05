@@ -2,6 +2,7 @@ class Solution::Folder < ActiveRecord::Base
 
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  include Mobihelp::AppSolutionsUtils
 
   attr_protected :category_id, :account_id
   validates_presence_of :name
@@ -17,7 +18,7 @@ class Solution::Folder < ActiveRecord::Base
   after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
   after_commit_on_update :update_search_index, :if => :visibility_updated?
-  after_commit        :clear_mobihelp_solutions_cache
+  after_commit        :set_mobihelp_solution_updated_time
 
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
@@ -137,7 +138,8 @@ class Solution::Folder < ActiveRecord::Base
       @all_changes.has_key?(:visibility)
     end
     
-    def clear_mobihelp_solutions_cache
-      clear_solutions_cache(self.category_id)
+    def set_mobihelp_solution_updated_time
+      update_mh_solutions_category_time(self.category_id)
     end
+
 end

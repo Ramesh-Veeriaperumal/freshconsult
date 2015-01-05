@@ -1,0 +1,65 @@
+
+.customer-portal{
+	.portal-section{
+		margin-bottom: 40px;
+		.heading{
+			font-size: 18px;
+			font-weight: 200;
+			border-top: 1px solid #CCC;
+			padding: 5px 0 30px;
+		}
+		.sub-section{
+			padding-bottom: 15px;
+			border-bottom: 1px solid #F1F1F1;
+		}
+		label{
+			display: inline;
+			@include margin-left(5px);
+			@include margin-right(20px);
+		}
+		.control-label{
+			padding-top: 0;
+			width: 320px;
+		}
+		.controls{
+			@include margin-left(320px);
+			@include padding-left(10px);
+		}
+		.captcha{
+			@include margin(10px 0 0 130px);
+			min-height: 0px;
+		}
+		.checkbox label{ @include margin-left(0); }
+		.multiple-check{
+			input[type="checkbox"]{
+				margin-top: -2px;
+			}
+			label{
+				display: inline-block;
+			}
+		}
+	}
+	.form-button{
+		@include text-align(right);
+		margin-top: 30px;
+		padding-top: 15px;
+		border-top: 1px solid #CCC;
+	}
+}
+
+.multiple_radio {
+	input[type="radio"], input[type="checkbox"]{
+			margin-top: -2px;
+	}
+	&.moderation{
+		span{
+			display: block;
+		}
+		label{
+			font-weight: 500;
+		}
+	}
+}
+.right-border #moderation{
+	@include border-right(1px solid #F1F1F1);
+}

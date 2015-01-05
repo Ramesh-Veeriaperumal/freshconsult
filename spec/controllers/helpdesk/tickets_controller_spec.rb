@@ -12,6 +12,8 @@ describe Helpdesk::TicketsController do
     @group = @account.groups.first
     user = add_test_agent(@account)
     sla_policy = create_sla_policy(user)
+    $redis_tickets.keys("HELPDESK_TICKET_FILTERS*").each {|key| $redis_tickets.del(key)}
+    $redis_tickets.keys("HELPDESK_TICKET_ADJACENTS*").each {|key| $redis_tickets.del(key)}
   end
 
   before(:each) do

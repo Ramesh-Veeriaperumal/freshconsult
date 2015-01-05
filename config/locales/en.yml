@@ -60,6 +60,17 @@ en:
       x_seconds:
         one: "1 second"
         other: "%{count} seconds"
+  validation:
+    required: "This field is required."
+    remote: "Please fix this field."
+    email: "Please enter a valid email address."
+    url: "Please enter a valid URL."
+    date: "Please enter a valid date."
+    dateISO: "Please enter a valid date ( ISO )."
+    number: "Please enter a valid number."
+    digits: "Please enter only digits."
+    creditcard: "Please enter a valid credit card number."
+    equalTo: "Please enter the same value again."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
   or: or
@@ -76,6 +87,7 @@ en:
   tip_off: "Click to Disable"
   credit_card: "Card on file"
   country: "Country"
+  city: "City"
   referral: "Referral credit"
   status_deleted: "Status deleted"
   success: "Success"
@@ -162,7 +174,7 @@ en:
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
-  attachment_failed_message: One or more attachments discarded since the 15MB limit was exceeded.
+  attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
@@ -220,6 +232,7 @@ en:
     remove_photo: "Remove photo"
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
+    ie9_file_change_msg: "%{filename} Save to update profile image"
     errors:
       required_field: cannot be blank
       custom_text : is not valid 
@@ -263,6 +276,7 @@ en:
     no_choice_message: "At least one valid choice has to be present"
     index:
       number: Number
+      decimal: Decimal
       add_custom_field: Add a Custom Field
       customize_form: "Customize your “New Ticket” form."
       single_line: Single Line Text
@@ -314,7 +328,7 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "Important: Deleting a folder will delete all the articles in it."
+    delete: "<b>Important:</b> Deleting a folder will delete all the articles in it."
     size: 
       one: "1 article will also be deleted."
       other: "%{count} articles will also be deleted."
@@ -332,6 +346,9 @@ en:
   basic_details: "Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
   choose_plan: Choose Plan
   select_plan: Select Plan
+  change_plan_title: "Sure you want to change plan?"
+  downgrade_plan_title: "Sure you want to Downgrade?"
+  activate_free_plan: Activate Free Plan
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
@@ -414,6 +431,8 @@ en:
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
       mvp_trophie_label: "Most Valuable Player"
+      back_to_dashboard: "Back to Dashboard"
+      agents_in: "Agents in"
       mvp_trophie_info: "Agent with the most overall points this month"
       sharpshooter_trophie_label: "Sharpshooter"
       sharpshooter_trophie_info: "Agent with the highest First Call Resolution points this month"
@@ -421,6 +440,15 @@ en:
       speed_trophie_info: "Agent with the maximum points for fast resolution this month"
       love_trophie_label: "Customer Wow Champion"
       love_trophie_info: "Agent with the maximum Customer satisfaction points this month"
+      all_agents: "All Agents"
+      showing: "Showing"
+      agents_from_group: "Agents from group"
+      leaderboard_is_empty: "The leaderboard is empty"
+      date_range:
+        current_month: "Current Month"
+        last_month: "Last Month"
+        2_months_ago: "2 Months ago"
+        3_months_ago: "3 Months ago"
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"
@@ -454,6 +482,7 @@ en:
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
   none: None
+  view_all: View All
   any_val:
     any: Any
     any_value: Any Value
@@ -581,6 +610,76 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+    company_fields:
+      fields:
+        name: Full Name
+        email: Email
+        job_title: Title
+        tag_names: Tags
+        company_name: Company
+        client_manager: Can see all tickets from this company
+        address: Address
+        description: Description
+        phone: Phone
+        mobile: Mobile
+        twitter_id: Twitter
+        time_zone: Time Zone
+        language: Language
+        description: Background Information
+      untitled: Untitled
+      first_choice: First Choice
+      second_choice: Second Choice
+      confirm_delete: Are you sure you want to delete this field?
+      no_choice_message: "At least one valid choice has to be present"
+      index: 
+        add_custom_field: Add a Custom Field
+        customize_form: "Customize your “New Company form."
+        title: Company Fields
+        save: Save
+        saving: Saving
+      formfield_props: 
+        default: Default
+        form_title: Properties
+        behavior: "Behavior"
+        label: "Label"
+        nested_label: "Nested field labels"
+        level1: "Level 1"
+        level2: "Level 2"
+        level3: "Level 3"
+        nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
+        dropdown_items_edit: "Dropdown items - edit view"
+        dropdown_items_preview: "Dropdown items - Preview"
+        status_choices: "Status choices"
+        display_to_customer: "Display message for customer"
+        sla_timer: "SLA timer"
+        nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+        delete_field: "Delete field"
+        field_label_agents: "Field label for agents"
+        field_label_customer: "Field label for customers"
+        add_new_choice: Add Item
+        customer_mandatory: Required when submitting the form
+        customer_edit_signup: Customer can see this when they Sign up
+        customer_edit: Customer can edit
+        agent_info1: Field cannot be blank when submitting the ticket
+        agent_info2: Field cannot be blank when closing the ticket
+        agent_mandatory_submission: Required when submitting the form
+        customer_info1: Field cannot be blank when submitting the ticket online.
+        for_agents: For Agents
+        dropdown_choices: Dropdown Items
+        label_in_portal: Label in Portal
+        customer_visible: Display to customer
+        description: Description
+        for_customer: For Customers
+        agent_mandatory_closure: Required when closing the ticket
+        choices: Choices
+        label_in_portal_info: The label that is displayed in your self service portal
+        display_cc_field: Display CC Field
+        cc_company_contacts: Can CC only company contacts
+        cc_any_email: Can CC any email address
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
+        regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> /^fresh\w/ </b>."
+        max_choices: "Maximum items reached"
     contact_fields:
       fields:
         name: Full Name
@@ -650,13 +749,32 @@ en:
         regexp: Regular Expression
         validate_regexp: Validate using Regular Expression
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> /^fresh\w/ </b>."
+        max_choices: "Maximum items reached"
     portal:
       index:
+        portal_customizer_title: "Customer Portal Configuration"
+        signup_login: "User Signup and Login"
+        allow_signup: "Allow users to Sign Up from the customer portal"
+        allow_signin: "Allow users to Sign in using..."
+        google: "Google"
+        twitter: "Twitter"
+        facebook: "Facebook"
+        user_permissions: "User Permissions for portal"
+        submit_ticket: "Who can submit a new ticket on portal"
+        logged_in: "Logged in users"
+        everyone: "Everyone"
+        none: "No one"
+        auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
+        auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
+        captcha: "Enable CAPTCHA to help avoid spam"
+        view_solutions: "Who can view solutions"
+        view_forums: "Who can view forums"
+        notify_agents: "Send Moderation and Spam Notification to:"
         forums: "Forums"
         enable: "Enabled"
         disable: "Disabled"
         moderation: "Moderate Forums"
-        moderate_links: "Moderate only suspicious topics and replies"
+        moderate_links: "Moderate all topics and replies containing external links"
         moderate_links_help: "Enable this feature for advanced spam protection. System will check all topics and replies for third party links and other spam activity."
         moderate_links_help_2: "Suspicious posts will be sent for your approval before publishing."
         moderate_all: "Moderate all topics and replies"
@@ -686,8 +804,8 @@ en:
           description: Application Description
           platform: Platform
           configurations: SDK Configurations
-          solutions: Solution Category
-          solutions_info: The Solution Category you select will be shown in the App Support 
+          solution_categories: Solution Categories
+          solution_categories_info: The solution categories you select will be shown in the App Support 
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           app_store_id_v12_info: Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer Integration guide.
@@ -1267,35 +1385,7 @@ en:
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
-      product_label_msg: "Product"
-    canned_responses:
-      helpnote:
-          title: Canned responses
-          tour: Help me use canned responses
-          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      folders:
-        helpnote:
-          title: Canned responses
-          tour: Help me use canned responses
-          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
-      responses:
-        edit:
-          title: Edit Canned response
-        new:
-          title: Add Canned response
-        form:
-          groups: Agents in group
-          response_name: Response title
-          all_agents: All agents
-          me_only: Myself
-          available_for: Available for
-      index:
-        new: Add Canned response
-        title: Canned responses
-    ca_response:
-      delete_confirm: Are you sure you want to delete this canned response?
+      product_label_msg: "Product"    
     twitters:
       index:
         new: Add Twitter account
@@ -1365,7 +1455,7 @@ en:
         create_topic: Create or Edit a forum topic
         edit_topic: Edit everyone's forum topic
         edit_topic_false: Edit only their own forum topic
-        delete_topic: Delete a forum topic
+        delete_topic: Delete and Moderate forum topic
         customers: Customers
         view_contacts: View customers tab
         manage_contacts: Create or edit new contact or company
@@ -1407,7 +1497,7 @@ en:
         observer: Observer
         sla: SLA Policies
         ticket-fields: Ticket Fields
-        contact-fields: Contact Fields
+        customer-fields: Customer Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
         email: Email
@@ -1468,6 +1558,7 @@ en:
         rebrand_portal: "Rebrand Portal"
         customize_new_ticket_form: "Customize new ticket Form"
         customize_new_contact_form: "Customize new contact Form"
+        customize_new_company_form: "Customize new company Form"
         signin_using_google: "sign in using google"
         signin_using_facebook: "sign in using facebook"
         signin_using_twitter: "sign in using twitter"
@@ -1540,7 +1631,7 @@ en:
       announce: Announcement
       problem: Problems
     confim_msg1: Are you sure you want to delete this forum?
-    delete: "Important: Deleting a forum will delete all the topics in it."
+    delete: "<b>Important:</b> Deleting a forum will delete all the topics in it permanently."
     size: 
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
@@ -1594,6 +1685,8 @@ en:
       install:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
+        cti_error: "Multiple integrations of type CTI can not be enabled."
+        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -1612,10 +1705,12 @@ en:
       discussions:
         topics:
           moderation_none: 
-            topic: "Thank you for starting a new topic. Your topic will appear in the forum, after checking for spam."
-            post: "Thank you for posting. Your reply will appear in the topic, after checking for spam."
-          spam_check: "Thank you for starting a new topic. Your topic will appear in the forum, after a standard moderation process."
-          success: "Thank you for posting. Your reply will appear in the topic, after a standard moderation process."
+            topic: "Thank you for starting a new topic. Your topic will appear in the forum after checking for spam."
+            post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
+          spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
+          success: "Thank you for posting. Your reply will appear in the topic after a standard moderation process."
+        posts:
+          spam_check: "Thank you for posting in our forums. Your post will appear once it has been approved."
       tickets:
         create:
           success: Your ticket has been created.
@@ -1747,10 +1842,12 @@ en:
         string: You have exceeded the maximum limit for this type of field.
         text: You are not allowed to create more than 10 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
+        decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
     cf:
       type:
         contact_fields_controller: Contact Fields
+        company_fields_controller: Company Fields
       success: "%{type} have been successfully updated."
       delete:
         failure: deletion failed.
@@ -1760,11 +1857,6 @@ en:
         failure: creation failed.
       count_exceeded:
         generic : You are not allowed to create more fields of this type.
-        varchar_255: You are not allowed to create more than 76 string fields.
-        integer_11: You are not allowed to create more than 20 number fields.
-        tiny_int_1: You are not allowed to create more than 10 checkbox fields.
-        date_time: You are not allowed to create more than 10 date fields.    
-        text: You are not allowed to create more than 10 text fields.
     email_settings:
       send_activation:
         success: 'Verification email has been sent to %{reply_email}!'
@@ -2215,6 +2307,7 @@ en:
   portal_customizer_option_tickets_i: Disable this feature if you want to force users to login before submitting a ticket
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
+  make_payment: Make Payment
   add_new_email: Add new email
   chatwidget_title: Chat Widgets
   feedbackwidget_title: Feedback widget
@@ -2245,6 +2338,7 @@ en:
     new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
+  delete_permanently: Delete Permanently
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
@@ -2258,13 +2352,13 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "Important: Deleting a category will delete all the folders and articles in it."
+    delete: "<b>Important:</b> Deleting a category will delete all the folders and articles in it."
     size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
-    delete: "Important: Deleting a category will delete all the forums and topics in it."
+    delete: "<b>Important:</b> Deleting a category will delete all the forums and topics in it permanently."
     size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
   billed_monthly: Billed monthly
   users:
@@ -2324,6 +2418,7 @@ en:
       upvote: "Yes"
       downvote: "No"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     status:
       draft: Draft
@@ -2436,6 +2531,9 @@ en:
     view_answer: Click here to view answer
     mark_answer: Mark as Answer
     unmark_answer: Unmark as answer
+    delete_confirm:  "Are you sure you want to delete the selected topic(s) permanently?"
+    spam_delete_confirm: "Marking a topic as spam will move the topic to spam and permanently delete all of its replies.\nAre you sure you want to mark the selected topic(s) as spam?"
+    spam_confirm:  "Are you sure you want to mark the selected topic(s) as spam?"
     spam_info:
       spam: Reply was marked as spam
       waiting: Reply waiting for your approval
@@ -2785,15 +2883,24 @@ en:
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
       tags: 'Tag Names'
+      enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
-      created_ticket: "Created a new ticket <a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum: "Created a new topic <a href='%{topic_url}'>%{topic_title}</a>"
-      replied_form: "Replied to topic <a href='%{topic_url}'>%{topic_title}</a>"
-      forum_timeinfo: "%{time} ago in <a href='%{forum_url}'>%{forum_title}</a>"
-      ticket_timeinfo: " %{time} ago,  Status : %{status}"
-      contact: 'Contains ticket and forum activities'
+      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
+      company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
+      contact_all: 'Recent ticket and forum activities'
+      company: 'Contains tickets raised by company contacts'
+      company_all: 'Recent tickets raised by company contacts'
       no_conversations: 'No Conversations'
+      all: 'All conversations'
+      tickets: Tickets
+      forums: Forums
+      contact_tickets: 'Recent ticket activities'
+      contact_forums: 'Recent forum activities'
     info5: "No tickets by %{nick_name}"
     restore: Restore
     activation : Send Activation
@@ -3114,6 +3221,7 @@ en:
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
   save: Save
   import_added_newly: Added Newly
+  quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
   import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
   contact_import:
@@ -3144,6 +3252,7 @@ en:
   current_plan_details: "%{plan_name}"
   free_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
   add_more_free: "Adding more than %{free_agents} agents?"
+  add_more_agents: "Add more agents at %{amount} per agent/month"
   zendesk_backup: Backup file
   twoday: 2 Days
   profile:
@@ -3161,17 +3270,46 @@ en:
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
-  sprout_details: "Single Support Email <br>Feedback Widget <br>Knowledge Base <br>All Automations <br>Phone Integration <br>Mobile Apps <br>Built-in Integrations"
-  blossom_details: "Everything in Sprout <br>Multiple Mailboxes <br>Custom Domain <br>Social Support <br>Satisfaction surveys <br>Community Forums <br>Advanced Reporting"
-  garden_details: "Everything in Blossom <br>Integrated Live Chat <br>Multiple Languages <br>Multi Product Support <br>Multiple SLA Policies <br>Multiple Timezones <br>CSS Customization"
-  estate_details: "Everything in Garden <br>Gamification <br>Agent Collision <br>Custom Roles <br>Custom SSL <br>Enterprise Reporting <br>Portal Customization"
-  forest_details: "Everything in Estate <br>Custom Mail Servers <br>Secure IP Restriction"
+  features:
+    email_ticketing: "Email Ticketing"
+    feedback_widget: "Feedback Widget"
+    knowledge_base: "Knowledge Base"
+    automations: "Automations"
+    phone_integration: "Phone Integration"
+    mobile_apps: "Mobile Apps"
+    integrations: "Built-in Integrations"
+    everything_in_sprout: "Everything in Sprout" 
+    multiple_mailboxes: "Multiple Mailboxes" 
+    custom_domain: "Custom Domain" 
+    social_support: "Social Support" 
+    satisfaction_survey: "Satisfaction surveys" 
+    forums: "Community Forums" 
+    gamification: "Gamification"
+    everything_in_blossom: "Everything in Blossom"
+    chat: "Integrated Live Chat"
+    multiple_languages: "Multiple Languages"
+    multiple_products: "Multi Product Support"
+    multiple_timezones: Multiple Timezones 
+    css_customization: "CSS Customization"
+    everything_in_garden: "Everything in Garden"
+    agent_collision: "Agent Collision"
+    custom_roles: "Custom Roles"
+    custom_ssl: "Custom SSL"
+    enterprise_reports: "Enterprise Reporting"
+    portal_customization: "Portal Customization"
+    everything_in_estate: "Everything in Estate"
+    custom_mailbox: "Custom Mail Servers"
+    ip_restriction: "Secure IP Restriction"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
   companies:
+    no_contacts: '%{no_contacts} contacts'
+    add_contact: 'Add Contact'
+    add_contact_company: 'Add Contact in %{company_name}'
+    company_contacts: 'Company Contacts'
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
@@ -3236,6 +3374,7 @@ en:
   tag:
     title: Tags
   email_notifications:
+    default_font: "Default Font : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
@@ -3337,6 +3476,9 @@ en:
   password: "Password"
   enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  sprout_free_plan: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You have chosen to end trial and activate <b>%{new_plan}</b> Plan - 3 agents free forever. Please note that due to downgrade from <b>%{current_plan}</b> to <b>%{new_plan}</b> plan, all data and configurations associated with features in %{current_plan} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  downgrade_to_sprout: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You have chosen to end trial and activate <b>%{new_plan}</b> Plan. Please note that due to downgrade from <b>%{current_plan}</b> to <b>%{new_plan}</b> plan, all data and configurations associated with features in %{current_plan} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  trial_plan_name: "Downgrade Trial to %{name}"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     delete_confirm: Are you sure you want to delete this config?
@@ -3431,6 +3573,7 @@ en:
     success_signin: Successfully associated @%{twitter_screen_name} with %{helpdesk}.
     user_exists: Twitter account already associated with another product.
     not_authorized: You were not authorized by Twitter
+    not_valid: Status is over 140 characters.
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
@@ -3501,6 +3644,7 @@ en:
     ticket_updated_icon: Ticket Updated
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
+    ticket_from: "From: %{username}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -3733,6 +3877,7 @@ en:
   company:
     created: Company was successfully created.
     updated: Company was successfully updated.
+    created_view: Company was successfully created. <a href="%{company_url}"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA Policy
     name: Company name
@@ -3746,6 +3891,7 @@ en:
     notes: Notes
     edit_notes: Edit
     add_notes: Add Notes
+    delete_company: Delete Company
     info1: Are you sure you want to delete this company?
     info11: Are you sure you want to delete
     info10: "Note: Deleting a company will not delete its contacts."
@@ -3754,6 +3900,13 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    errors:
+      required_field: cannot be blank
+      custom_text : is not valid 
+      custom_dropdown : should only contain one of the dropdown options
+      custom_phone_number : is not a valid phone number
+      custom_url : is not a valid URL
+      custom_date : is not a valid date
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics
@@ -3770,6 +3923,7 @@ en:
   state: State
   deactivate: Deactivate
   add_tags: Add Tag
+  edit_tags: Edit Tags
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
   tkt_assigned_to_group: Ticket Assigned to Group
@@ -4279,6 +4433,34 @@ en:
         target_note_description3:
           one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
           other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
+    canned_responses:
+      helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      folders:
+        helpnote:
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      responses:
+        edit:
+          title: Edit Canned response
+        new:
+          title: Add Canned response
+        form:
+          groups: Agents in group
+          response_name: Response title
+          all_agents: All agents
+          me_only: Myself
+          available_for: Available for
+      index:
+        new: Add Canned response
+        title: Canned responses
+    ca_response:
+      delete_confirm: Are you sure you want to delete this canned response?
   import_ticket_group: Tickets
   or: or
   tickets_filter:
@@ -4601,6 +4783,7 @@ en:
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
+    cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
     no_freshplugs: You do not have any FreshPlugs.
     add_new_freshplug: Add new FreshPlug
@@ -4617,6 +4800,12 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    czentrix:
+      label: "C-Zentrix"
+      desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
@@ -4644,16 +4833,16 @@ en:
         api_key_info: ""
         widget_title: "Widget Title"
     seoshop:
-      label: "SeoShop"
+      label: "SEOshop"
       desc: "Pull up order details instantly when your customers submit tickets in Freshdesk and help them to receive their answers as quickly as possible."
-      helptext: "<h4>SeoShop Integration Help</h4><p><br/>To enable the integration, get the API token key and API secret from the SEOshop support and paste them here. Choose your store language. Once this is done you can view your customer’s latest orders right in your helpdesk as they submit tickets</p>"
+      helptext: "<h4>SEOshop Integration Help</h4><p><br/>Install Freshdesk add-on from the SEOshop App store - http://apps.getseoshop.com/. To enable the integration, enter your Freshdesk domain url and API Key on the SEOshop settings page that appears (you can get the API key under Profile Settings in your Freshdesk account). Once it is successfully installed, you can see order information of customers who have raised tickets in the ticket details view in Freshdesk.</p>"
       form:
         shop_name: "Shop Name/ ID"
-        shop_name_info: "For example, if your SeoShop URL is <strong>https://my_shop_name.webshopapp.com</strong>, please enter <strong>my_shop_name</strong>."
+        shop_name_info: "For example, if your SEOshop URL is <strong>https://my_shop_name.webshopapp.com</strong>, please enter <strong>my_shop_name</strong>."
         api_key: "Api Key"
-        api_key_info: "Get the Api key for the store from the Seoshop support"
+        api_key_info: "Get the Api key for the store from the SEOshop support"
         api_secret: "Api Secret"
-        api_secret_info: "Get the Api Secret for the store from Seoshop support"
+        api_secret_info: "Get the Api Secret for the store from SEOshop support"
         language: "Language"
         language_info: "Select your store language"
         bg: "Bulgarian" 
@@ -5025,6 +5214,13 @@ en:
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
+    remote_login:
+      connect: "Connect"
+      sign_up: "Sign Up"
+      freshdesk_url: "Freshdesk URL"
+      freshdesk_api_key: "Freshdesk API key"
+      api_key_available: "You can get the API key under Profile Settings in your Freshdesk account "
+      new_to_freshdesk: "New to Freshdesk? "
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -5065,6 +5261,8 @@ en:
         options:
           incoming: "Incoming"
           outgoing: "Outgoing"
+          all_groups: "All Groups"
+          unassigned: Unassigned
         range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
@@ -5174,6 +5372,34 @@ en:
           filter_by: Satisfaction Views
           view_report_date: View reports during
           helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
+      freshchat:
+        report_title: "Freshchat Summary"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        widget: "Widget"
+        group: "Group"
+        chat_type: "Chat Type"
+        summary: "Summary"
+        filter_report: "Edit Filter"
+        select_widget: "Select Widget"
+        select_group: "Select Group"
+        select_chat_type: "Select Chat Type"
+        all: "All"
+        chat_type_visitor: "Visitor Initiated"
+        chat_type_agent: "Agent Initiated"
+        chat_type_proactive: "Proactive"
+        generate_summary: "Generate"
+        filter_close: "Close"
+        total_chats: Total
+        num_of_chats: No of Chats
+        answered_chats: Answered
+        missed_chats: Missed
+        num_of_transfer: Transfers
+        avg_handle_time: Avg Handle Time
+        avg_time_queue: Time in Queue
+        total_duration: "Total Duration"
+        agent_chat_summary: Agent Chat Summary
+        agent: "Agent"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
@@ -5211,8 +5437,14 @@ en:
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
   contact_field:
     helpcard:
-      title1: "Contact Fields"
-      info1: "The contact form is the easiest way to capture all the data you need about your customer. For example, having the customer’s PAN ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Contact Form in Freshdesk to include the right contact fields for your business, and let your customers and agents fill in the information you need in the format you want."
+      title2: "Customizing your contact fields"
+      info2: "The contact form in Freshdesk lets you capture important data from your customers so that you can support them better. You can help your team get additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets accordingly in your helpdesk."
+      info3: "Just like your ticket fields, you can add new fields to the customer sign up form and make them mandatory. You can also have private fields that are visible just to your agents."
+  company_field:
+    helpcard:
+      title1: "Customizing your company fields"
+      info1: "In addition to contacts, Freshdesk lets you create companies in your helpdesk and makes it easy for you to manage support requests from the same group of customers. You can add custom fields to companies and store important information about their account for your support team to access quickly. You can have fields like account manager, primary contact, monthly revenue etc. and anything that is common to the entire account."
+      info2: "Please note that your company fields are displayed only to your agents and are not visible to your customers."
   default_category: "Default Category"
   default_category_description: "All emails sent to %{full_domain} will be stored here as drafts"
   default_folder: "Drafts"
@@ -5223,6 +5455,7 @@ en:
   always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
+  contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
@@ -5372,6 +5605,42 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+    select_group: "Select Group"
+    visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."
+    pfolder_visibility_alert: "<span class=\"label label-important\">Important</span> - The selected canned responses will be available only for you when you move it to Personal Folder"
+    moved_responses_update: "{{responses}} response(s) could not be moved as the title already exists in folder {{folder_name}}"
+    folder_validation: "Folder does not exists."
+    Personal: "Personal"
+    General: "General"
+  canned_responses:
+    groups: Agents in group
+    response_name: Response title
+    all_agents: All agents
+    me_only: Myself
+    available_for: Available for
+    helpnote:
+      title: Canned responses
+      tour: Help me use canned responses
+      info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+      info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+    folders:
+      helpnote:
+        title: Canned responses
+        tour: Help me use canned responses
+        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+    responses:
+      edit:
+        title: Edit Canned response
+      new:
+        title: Add Canned response
+    index:
+      new: Add Canned response
+      title: Canned responses
+    errors:
+      duplicate_title: "Duplicate response. Title already exists"
+  ca_response:
+    delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:
     header: "Important:<br />You are about to merge {{number}} contacts with {{name}}."
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into {{name}}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into {{name}}"
@@ -5388,13 +5657,13 @@ en:
     activation_sent: "Activation mail sent. Please verify within a week"
     client_manager: "You have selected a Client Manager {{name}} to merge."
     cannot_restore: "Merged user cannot be restored"
-    primary: "Default"
-    not_verified: "Not Verified"
+    primary: "Default Email"
+    not_verified: "Unverified"
     merge_contact: "Merge Contact"
-    verify: "Verify Now"
+    verify: "Send Verification"
     remove: "Remove"
     success: "Contacts have been successfully merged"
-    verify_mail: "Verification email sent. Please verify within a week"
+    verify_mail: "Verification email sent"
     show_primary: "  (Default)"
     unverified: "Email Unverified"
     make_primary: "Mark as Default"
@@ -5651,6 +5920,28 @@ en:
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date
+  cti:
+    create:
+      success:
+        with_link: "The %{human_name} has been created  %{link}"
+    note:
+      human_name: "note"
+      view: "View"
+    ticket:
+      human_name: "ticket"
+      view: "View"
+    widget:
+      ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
+      note_placeholder: "Add call notes..."
+      new_ticket: "Save as new ticket"
+      save_to_existing: "Save to an existing ticket"
+      ignore_ticket: "Do not convert to Ticket"
+      ignore_ticket_info: "No ticket will be created"
+      back: "Go Back"
+      subject: "Ticket Subject"
+      requester_name: "Requester Name"
+      requester_email: "Requester Email"
+      save: "Save"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
@@ -5668,6 +5959,8 @@ en:
       followup_text: "worth Freshfone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
+      could_be_invalid_number: "Could be an invalid number."
+      invalid_number_continue_call: "Press call button again" 
       not_enough_credit: "Not Enough Credit"
       already_in_call: "Simultaneous outgoing call restricted"
     call_status:
@@ -5708,6 +6001,7 @@ en:
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Search Available Agents..."
       unavailable_agents: "Agents are not available to transfer call"
+      agents_count_in_group: "%{count} agents available"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -5821,7 +6115,7 @@ en:
         voicemail_off: "Off"
         record_all: "Record all calls"
         record_none: "Do not record calls"
-        record_alert: "The call recording guidelines require notifying customers on the call being recorded and the purpose for recording. Please configure the greetings message accordingly."
+        record_alert: "Call recording guidelines in most countries require notifying customers that their calls are being recorded. Please configure the greetings message accordingly."
         max_queue_calls: "Maximum Calls in Queue"
         call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
@@ -5853,6 +6147,9 @@ en:
         name_placeholder: Enter a friendly name for your number
         hunt_type: "Call Routing"
         routing_message: "When multiple agents are available online..."
+        recording_privacy: "Recording Visibility"
+        recording_privacy_public: "Visible to customers and agents"
+        recording_privacy_private: "Visible only to agents"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -6276,6 +6573,7 @@ en:
     folders: Folders
     views_categories: Views and Categories
     tour: Help me setup my forums
+    show_more: Show more
     helpnote:
       title: Organizing your community
       para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
@@ -6321,6 +6619,7 @@ en:
       reply: Reply
       add_note: Add note
       mark_as_spam: Mark as Spam
+      confirm_spam:  "Marking the topic as spam will move the topic to spam and delete all of its replies.\nAre you sure you want to mark the topic as spam ?"
       merge_topic: Merge Topic
       close_topic: Lock Topic
       reopen_topic: Reopen Topic
@@ -6338,6 +6637,7 @@ en:
         delete_confirm: Delete this comment?  Are you sure?
         created_topic: created a topic
         replied_to: replied to topic
+        replied: replied
       title_meta:
         replies:
           one: "1 reply"
@@ -6385,6 +6685,7 @@ en:
       after_approve:
         published: Post has been published
         goto_post: Goto Post
+        go_to_post: Go to Post
       spam_folder: Spam Folder
       flash:
         empty_folder: "All the posts in your spam folder have been removed."
@@ -6396,6 +6697,51 @@ en:
         no_waiting_for_approval: "All topics and replies have been reviewed."
         no_unpublished_spam: "There's no spam here. We swear!"
         moderation_solution: Learn more about Forum Moderation
+      spam:
+        approve: "Approve and Publish"
+        new_topic:
+          title: "New Topic"
+          posted: "posted a new topic"
+        reply:
+          title: Reply
+          posted: "replied to"
+    unpublished:
+      page_title: Forum Moderation
+      empty_spam: Delete all Spam
+      more: " more"
+      less: " less"
+      after_ban:
+        marked: Marked as Spam
+        restore_contact: Restore contact
+        contact_deleted: To avoid further Spam the contact was deleted -
+        cleared_rest: All older posts by this user have also been marked as Spam
+      after_approve:
+        published: Post has been published
+        goto_post: Goto Post
+      invalid_topic:
+        went_wrong: Something went wrong
+        try_later: Unable to approve the post. Please try again later.
+      spam_folder: Spam Folder
+      flash:
+        empty_folder: "All spam posts are being deleted. Your forum will be spam free in less than a minute!"
+        empty_topic_spam: "All spam posts in this topics are being deleted. Please wait as this might take up to a minute."
+      index:
+        title: Spam
+        spam: Spam
+        unpublished: Waiting for approval
+        waiting: Waiting for Approval
+        waiting_desc: "Review and publish"
+        empty_folder: "Empty Folder"
+        no_forum_unpublished: "All topics and replies have been reviewed."
+        no_forum_spam: "There's no spam here. We swear!"
+        moderation_solution: Learn more about Forum Moderation
+        unpublished_posts: Unpublished replies
+      spam_actions:
+        approve: Approve
+        approve_tooltip: Approve and Publish
+        ban_tooltip: Mark user and all his posts as Spam
+        ban_confirm: "Are you sure you want to delete the user and mark all his/her posts as Spam?"
+        spam: Spam
       spam:
         approve: "Approve and Publish"
         new_topic:
@@ -6464,4 +6810,15 @@ en:
     search_articles: "Search Article"
     contact_us: "Contact Us"
     whats_new: "What's New"
-
+  trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
+  discounted_sum: "After Discount"
+  selecting_plan: "Selecting..."
+  proceed_billing_info: "Yes, Proceed to Billing"
+  buy_plan: "Buy this Plan"
+  agent_seats: "%{no_of_agents} Agent seats"
+  subscribed_billing: "%{billing_cycle} billing"
+  next_renewal: "Next Renewal in %{renewal_period}"
+  suspended_since: "Suspended since %{days}"
+  plan: "Plan"
+  edit_plan: "Edit Plan"
+  account_created: "Account created %{total_time} ago on %{date}"

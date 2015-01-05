@@ -24,13 +24,13 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
-  xss_sanitize  :only => [:name,:email]
+  xss_sanitize  :only => [:name,:email,:language, :job_title], :plain_sanitizer => [:name,:email,:language, :job_title]
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
   named_scope :technicians, :conditions => { :helpdesk_agent => true }
   named_scope :visible, :conditions => { :deleted => false }
   named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-
+  named_scope :with_contact_number, lambda { |number| { :conditions => ["mobile=? or phone=?",number,number]}}
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  
@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
-                  :description, :time_zone, :avatar_attributes, :customer_id, :company_id, 
+                  :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
 
@@ -133,6 +133,7 @@ class User < ActiveRecord::Base
       #return self.find(options[:id]) if options.key?(:id)
       return UserEmail.user_for_email(options[:email]) if options.key?(:email)
       return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
+      return self.find_by_fb_profile_id(options[:fb_profile_id]) if options.key?(:fb_profile_id)
       return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
       return self.find_by_phone(options[:phone]) if options.key?(:phone)
     end 
@@ -195,7 +196,7 @@ class User < ActiveRecord::Base
         updated_tag_name.strip!
         next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
 
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name == updated_tag_name } ||
+        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
                       Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
       end
       self.tags = new_tags
@@ -276,7 +277,7 @@ class User < ActiveRecord::Base
 
   named_scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.account_id, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
@@ -388,8 +389,8 @@ class User < ActiveRecord::Base
   end
 
   def search_data
-    if defined?(additional_email)
-      [additional_email.split(",").map{|x| {:id => id, :details => "#{name} <#{x}>", :value => name}}]
+    if has_contact_merge?
+      self.user_emails.map{|x| {:id => id, :details => "#{name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]
     end
@@ -469,8 +470,8 @@ class User < ActiveRecord::Base
     !can_view_all_tickets?
   end
 
-  def to_xml(options=XML_API_OPTIONS)
-    process_api_options XML_API_OPTIONS, options
+  def to_xml(options=USER_API_OPTIONS)
+    process_api_options USER_API_OPTIONS, options
     super options do |builder|
       unless helpdesk_agent
         builder.custom_field do
@@ -482,8 +483,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def as_json(options=API_OPTIONS, do_not_process_options = false)
-    process_api_options API_OPTIONS, options unless do_not_process_options
+  def as_json(options = nil, do_not_process_options = false)
+    default_options = helpdesk_agent? ? USER_API_OPTIONS : CONTACT_API_OPTIONS
+    options ||= default_options
+    process_api_options default_options, options unless do_not_process_options
     super(options)
   end
 
@@ -494,7 +497,9 @@ class User < ActiveRecord::Base
               :only => [ :name, :email, :description, :job_title, :phone, :mobile,
                          :twitter_id, :fb_profile_id, :account_id, :deleted,
                          :helpdesk_agent, :created_at, :updated_at ], 
-              :include => { :customer => { :only => [:name] } } }, true
+              :include => { :customer => { :only => [:name] },
+                            :user_emails => { :only => [:email] }, 
+                            :flexifield => { :only => ES_CONTACT_FIELD_DATA_COLUMNS } } }, true
            ).to_json
   end
 
@@ -531,7 +536,6 @@ class User < ActiveRecord::Base
     if new_primary
       self.user_emails.update_all(:primary_role => false)
       new_primary.toggle!(:primary_role) #can refactor
-      self.save
     end
     return true
   end
@@ -585,18 +589,11 @@ class User < ActiveRecord::Base
   end
 
   def custom_form
-    helpdesk_agent? ? nil : account.contact_form # memcache this 
+    helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this 
   end
 
   def custom_field_aliases
-    helpdesk_agent? ? [] : 
-      (@custom_field_aliases ||= [])
-  end
-  
-  #http://apidock.com/rails/v2.3.8/ActiveRecord/AttributeMethods/respond_to%3F
-  def respond_to? attribute, include_private_methods = false # avoiding pointless flexifield loading
-    return false if [:to_ary, :after_initialize_without_slave].include? attribute
-    super(attribute, include_private_methods)
+    @custom_field_aliases ||= helpdesk_agent? ? [] : custom_form.custom_contact_fields.map(&:name)
   end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
@@ -607,9 +604,9 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.match ["name", "email"], SearchUtil.es_filter_exact(search_by) } 
+              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by) } 
             else
-              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email'], :analyzer => "include_stop" }
+              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email', 'user_emails.email'], :analyzer => "include_stop" }
             end
             f.filter :term, { :account_id => account_id }
             f.filter :term, { :deleted => false }
@@ -625,12 +622,22 @@ class User < ActiveRecord::Base
     end 
   end
 
+  # Hack to sanitize phone, mobile from api when passed as integer
+  def phone=(value)
+    value = value.nil? ? value : value.to_s
+    write_attribute(:phone, RailsFullSanitizer.sanitize(value))
+  end
+
+  def mobile=(value)
+    value = value.nil? ? value : value.to_s 
+    write_attribute(:mobile, RailsFullSanitizer.sanitize(value))
+  end
+  # Hack ends here
+
   protected
   
     def search_fields_updated?
-      all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
-                    :twitter_id, :fb_profile_id, :customer_id, :deleted, :helpdesk_agent]
-      (@all_changes.keys & all_fields).any?
+      (@all_changes.keys & ES_COLUMNS).any?
     end
 
 
@@ -646,6 +653,7 @@ class User < ActiveRecord::Base
 
     def backup_user_changes
       @all_changes = self.changes.clone
+      @all_changes.merge!(flexifield.changes)
       @all_changes.symbolize_keys!
     end
 

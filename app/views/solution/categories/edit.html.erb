@@ -10,7 +10,7 @@
 					data-target="#category-delete-confirmation" 
 			 		rel="freshdialog" 
 			 		title="<%= t('delete')%>"
-			 		data-submit-label="<%= t('delete') %>"
+			 		data-submit-label="<%= t('delete_permanently') %>"
 			 		data-width="500px"
 			 		data-close-label="<%= t('cancel') %>">
 			 				<%= t('delete')%></i>
@@ -23,8 +23,8 @@
 	<div class="hide" id="category-delete-confirmation">
 		<p class="margin-bottom">
 		<% unless (@category.folders.size == 0) && (@category.articles.size == 0) %>
-			<%= t('solution_category.delete') %>
-			<br />
+			<%= t('solution_category.delete').html_safe %>
+			<br /><br />
 			<%= t("solution_category.size", 
 						:no_of_folders => @category.folders.size,
 						:no_of_articles => @category.articles.size) %>

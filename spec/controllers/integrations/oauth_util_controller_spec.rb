@@ -5,7 +5,7 @@ describe Integrations::OauthUtilController do
   self.use_transactional_fixtures = false
 
 	before(:all) do
-		@account = create_test_account
+		#@account = create_test_account
 	  @user = add_test_agent(@account)
 	  app = create_user_credentials({:user_id => @user.id, :auth_info => { 'refresh_token' => "1/9zS19IiB-SkYeg6MjUE6cfIvTZIqbEEXzn3J-uw8ils", 
 		     								'oauth_token' => "ya29.NAABYWd0ZOrbyxkAAAC6NPsuDQwcBaz9x1s4fyV0JbtgzNmFDfZ4O8XVJEHz2w", 

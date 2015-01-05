@@ -6,7 +6,8 @@ module Import::CustomField
     'FieldText' => 'text',
     'FieldTagger' => 'dropdown',
     'FieldInteger' => 'number',
-    'FieldTextarea' => 'paragraph'
+    'FieldTextarea' => 'paragraph',
+    'FieldDecimal' => 'decimal'
   }
   
   CHARACTER_FIELDS = (1..80).collect { |n| "ffs_#{"%02d" % n}" }
@@ -14,6 +15,9 @@ module Import::CustomField
   DATE_FIELDS = (1..10).collect { |n| "ff_date#{"%02d" % n}" }
   CHECKBOX_FIELDS = (1..10).collect { |n| "ff_boolean#{"%02d" % n}" }
   TEXT_FIELDS = (1..10).collect { |n| "ff_text#{"%02d" % n}" }
+  DECIMAL_FIELDS = (1..10).collect { |n| "ff_decimal#{"%02d" % n}" }
+
+  # Whenever you add new fields here, ensure that you add it in search indexing.
 
   FIELD_COLUMN_MAPPING = {
     "text"      => [["text" , "dropdown"], CHARACTER_FIELDS],
@@ -21,7 +25,8 @@ module Import::CustomField
     "number"    => ["number", NUMBER_FIELDS],
     "checkbox"  => ["checkbox", CHECKBOX_FIELDS],
     "date"      => ["date", DATE_FIELDS],
-    "paragraph" => ["paragraph", TEXT_FIELDS]
+    "paragraph" => ["paragraph", TEXT_FIELDS],
+    "decimal"   => ["decimal", DECIMAL_FIELDS]
   }
 
   def import_flexifields (base_dir, account = current_account)

@@ -32,11 +32,14 @@ window.Fjax = window.Fjax || {};
 	Fjax.Config = {
 		paths: {
 			"/discussions": 'discussions',
+			"/admin": 'admin',
 			"/freshfone/call_history": 'freshfonecallhistory',
+			"/reports/freshfone/summary_reports": 'freshfonereports',
 			"/contacts": 'contacts',
 			"/users": 'contacts',
+			"/companies": 'companies',
 			"/helpdesk/tickets": 'tickets'
 		},
-		LOADING_WAIT: 5
+		LOADING_WAIT: 60
 	};
 }(window.jQuery));

@@ -1,5 +1,5 @@
 class Freshfone::CallController < FreshfoneBaseController
-	include FreshfoneHelper
+	include Freshfone::FreshfoneHelper
 	include Freshfone::CallHistory
 	include Freshfone::Presence
 	include Freshfone::NumberMethods
@@ -63,11 +63,11 @@ class Freshfone::CallController < FreshfoneBaseController
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
 	    call = current_account.freshfone_calls.first(:joins => [:caller], 
-	            :include => [:freshfone_number, {:meta => :group}], 
+	            :include => [:freshfone_number], 
 	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]}, :order => "freshfone_calls.created_at DESC")
 	    if call.present?
 		    { :number => call.freshfone_number.number_name,
-		    	:group 	=> ((call.meta.present? && call.meta.group.present?) ? call.meta.group.name : "")
+		    	:group 	=> (call.group.present?) ? call.group.name : ""
 		    }
 		  end
 	  end
@@ -130,7 +130,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		def validate_twilio_request
 			@callback_params = params.except(*[:agent, :direct_dial_number, :preview,
 							:batch_call, :force_termination, :number_id, :below_safe_threshold, 
-							:forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing])
+							:forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing, :group_transfer])
 			super
 		end
 end

@@ -6,18 +6,18 @@ module CustomFields
       include ActionView::Helpers
 
       def initialize(form_builder, object_name, class_name, field, field_label, dom_type, required, enabled,
-                      field_value = '', dom_placeholder = '', bottom_note = '')
+                      field_value = '', dom_placeholder = '', bottom_note = '', args = {})
         @object_name    = "#{object_name.to_s}#{ ( !field.default_field? ) ? '[custom_field]' : '' }"
         @form_builder   = form_builder
         @field          = field
         @dom_type       = dom_type
         @required       = required
         @disabled       = !enabled
-        @choices        = field.html_unescaped_choices
+        @choices        = field.ui_choices
         @field_value    = field_value.to_s.to_sym
         @field_class    = "#{ (required) ? 'required' : '' } #{dom_type} #{class_name}_#{dom_type}"
         @field_name     = field.name
-        @field_label    = field_label
+        @field_label    = CGI.unescapeHTML(field_label)
         @required_star  = "<span class='required_star'>*</span>".html_safe if required
         label           = label_tag "#{object_name}_#{field.field_name}", @field_label
         @label          = content_tag :div, label+@required_star, :class => 'control-label'
@@ -33,14 +33,19 @@ module CustomFields
       private
         def construct_text
           regex_validity = (@field.field_options and @field.field_options['regex']) ? true : false; 
+          maxlength_validity = @field.field_type != :default_domains ? true : false # Temp fix
+
           html_options = {
-                            :class => "#{@field_class} " + (regex_validity ? "regex_validity" : ''), 
+                            :class => "#{@field_class}" +
+                                (regex_validity ? " regex_validity" : '') +
+                                (maxlength_validity ? ' field_maxlength' : ""), 
                             :disabled => @disabled, 
                             :type => 'text'
                           }
-          if regex_validity 
-            html_options['data-regex-pattern'] = "#{@field.field_options['regex']}"
-          end
+          
+          html_options['data-regex-pattern'] = "/#{CGI.unescapeHTML(@field.field_options['regex']['pattern'])}/#{@field.field_options['regex']['modifier']}" if regex_validity
+          html_options['maxlength'] = '255' if maxlength_validity
+          
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, html_options);
         end
 
@@ -65,7 +70,7 @@ module CustomFields
         def construct_dropdown_blank
           select(@object_name, @field_name, @choices, 
                                         {:include_blank => "...", :selected => @field_value}, 
-                                        {:class => "#{@field_class} dropdown-min-width select2", 
+                                        {:class => "#{@field_class} input-xlarge select2", 
                                          :disabled => @disabled})
         end
 
@@ -86,13 +91,14 @@ module CustomFields
 
         def construct_phone_number
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => "#{@field_class}", 
-                      :disabled => @disabled})
+                    {:class => "#{@field_class} field_maxlength", 
+                      :disabled => @disabled,
+                      :maxlength => '255'})
         end
 
         def construct_url
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => @field_class, 
+                    {:class => "#{@field_class}", 
                       :disabled => @disabled, 
                       :type => 'url'})
         end
@@ -113,21 +119,21 @@ module CustomFields
         end
 
         def wrap element
-          div = content_tag :div, (element), :class => 'controls'
-          content_tag :li, (@label+div+@bottom_note), :class => "control-group #{ @dom_type }"
+          div = content_tag :div, (element+@bottom_note), :class => 'controls'
+          content_tag :li, (@label+div), :class => "control-group #{ @dom_type }"
         end
 
         def wrap_checkbox element
-          @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label.html_safe, :class => 'pull-left'
+          @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label
           div    = content_tag(:div, (element + @label + @required_star), :class => 'controls')
-          content_tag(:li, div, :class => "control-group #{ @dom_type } #{ @field.field_type } field")
+          content_tag(:li, div, :class => "control-group #{ @dom_type } #{ @field.field_type } field checkbox-wrap")
         end
 
         def format_date
           date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
           unless @field_value.empty?
             time_format = Account.current.date_type(:short_day_separated)
-            @field_value = I18n.l Time.parse(@field_value.to_s), :format => time_format
+            @field_value = (Time.parse(@field_value.to_s)).strftime(time_format)
           end 
           date_format
         end

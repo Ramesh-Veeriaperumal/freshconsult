@@ -9,7 +9,8 @@ class CustomFieldsController < Admin::AdminController
     :text => 10,
     :number => 20,
     :date => 10,
-    :boolean => 10
+    :boolean => 10,
+    :decimal => 10
   }
 
   def update #To Do - Sending proper status messages to UI.
@@ -80,7 +81,8 @@ class CustomFieldsController < Admin::AdminController
                               :string =>  calculate_string_fields_count(field_data_group),
                               :text => field_data_group["paragraph"].length,
                               :number => field_data_group["number"].length,
-                              :boolean => field_data_group["checkbox"].length 
+                              :boolean => field_data_group["checkbox"].length,
+                              :decimal => field_data_group["decimal"].length
                               }
     error_str = ""
     field_data_count_by_type.keys.each do |key|

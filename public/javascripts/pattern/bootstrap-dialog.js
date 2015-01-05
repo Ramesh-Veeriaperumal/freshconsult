@@ -70,7 +70,7 @@
 		if(this.options.templateFooter != ""){
 			this.$closeBtn = $('<a href="#" data-dismiss="modal" class="btn">' +
 								this.options.closeLabel + '</a>').attr('id', this.$dialogid + '-cancel')
-			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary">' +
+			this.$submitBtn = $('<a href="#" data-submit="modal" class="' + this.options.submitClass + '">' +
 								this.options.submitLabel + '</a>').attr('id', this.$dialogid + '-submit')
 			if(this.options.submitLoading != "") {
 				this.$submitBtn.data('loadingText',this.options.submitLoading )
@@ -95,8 +95,11 @@
          var form = this.$dynamicTarget.find('form:first')       
 
          if(form.get(0) && form.valid()){
-           if(this.options.submitLoading != "") this.$submitBtn.button('loading');
-             form.submit();
+         	$(form).trigger("dialog:submit");
+            if(this.options.submitLoading != ""){
+            	this.$submitBtn.button('loading');
+            }
+            form.submit();
          }
       
          if(this.options.closeOnSubmit) this.$dynamicTarget.modal("hide")
@@ -150,6 +153,7 @@
 		templateBody:		'<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>',
 	    templateFooter: 	'<div class="modal-footer"></div>',
 	    submitLabel: 		"Submit",
+	    submitClass: 		"btn btn-primary", 
 	    submitLoading: 		"", 
 	    closeLabel: 		"Close",
 	    showClose: 			true,

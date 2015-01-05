@@ -3257,6 +3257,7 @@ pt-BR:
         ticket_updated_icon: "Ticket atualizado"
         reported_on: "de %{username}, atualizado pela última vez em %{date}"
         scenarios: "Cenários"
+        ticket_from: "De: %{username}"
         ticket_list_status_closed_at: "De: %{username}, Fechado: <span class='emphasize'>%{time_ago} atrás</span>"
         ticket_list_status_resolved_at: "De: %{username}, Resolvido: <span class='emphasize'>%{time_ago} atrás </span>"
         ticket_list_status_agent_responded_at: "De: %{username}, Analista respondeu: <span class='emphasize'>%{time_ago} atrás </span>"

@@ -6,7 +6,8 @@ module Freshfone::CallsRedisMethods
     key = FRESHFONE_TRANSFER_LOG % { :account_id => current_account.id, :call_sid => call_sid }
     calls = get_key(key)
     transferred_calls = (calls) ? JSON.parse(calls) : []
-    transferred_calls << user_id
+    transfer_id = (user_id == "0" && params[:group_id].present?) ?  params[:group_id] : user_id
+    transferred_calls << transfer_id
     set_key(key, transferred_calls.to_json)
   end
 

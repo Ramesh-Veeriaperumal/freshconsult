@@ -1,5 +1,6 @@
 class Mobihelp::App < ActiveRecord::Base
   include ApplicationHelper
+  include  Mobihelp::AppSolutionsUtils
   include Cache::Memcache::Mobihelp::App
   include Cache::Memcache::Mobihelp::Solution
   
@@ -7,6 +8,7 @@ class Mobihelp::App < ActiveRecord::Base
   concerned_with :associations, :callbacks, :constants, :validations
   serialize :config, Hash
   attr_protected :account_id
+  attr_accessor :category_ids
   
   belongs_to_account
 

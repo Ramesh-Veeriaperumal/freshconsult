@@ -44,6 +44,33 @@ module ForumHelper
 		topic.reload
 	end
 
+	def create_test_topic_with_attachments(forum, user = @customer )
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
+		topic = Factory.build(
+							:topic, 
+							:account_id => @account.id, 
+							:forum_id => forum.id,
+							:user_id => user.id,
+							:stamp_type => stamp_type
+							)
+		topic.save(true)
+		post = Factory.build(
+							:post,
+							:account_id => @account.id,
+							:topic_id => topic.id,
+							:user_id => user.id,
+							)
+		post.save!
+		attachment = post.attachments.build(
+									:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+                  :description => Faker::Name.first_name, 
+                  :account_id => post.account_id)
+		attachment.save
+		publish_post(post)
+		topic.reload
+	end
+
 	def create_test_post(topic, user = @customer)
 		post = Factory.build(
 							:post, 
@@ -94,6 +121,19 @@ module ForumHelper
 									:active => 1,
 									:account_id => @account.id,
 									:monitorable_type => "Topic",
+									:portal_id => portal_id
+									)
+		monitorship.save(true)
+	end
+
+	def monitor_forum(forum, user = @user, portal_id = nil)
+		monitorship = Factory.build(
+									:monitorship,
+									:monitorable_id => forum.id,
+									:user_id => user.id,
+									:active => 1,
+									:account_id => @account.id,
+									:monitorable_type => "Forum",
 									:portal_id => portal_id
 									)
 		monitorship.save(true)

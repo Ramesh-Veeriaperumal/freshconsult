@@ -57,6 +57,14 @@ window.App.Discussions = window.App.Discussions || {};
 					$('#community-sidebar [data-page-name=spam]').parent().addClass('active');
 				}
 				break;
+			case 'discussions/unpublished/index':
+				if (window.location.pathname === '/discussions/unpublished/filter/unpublished' || 
+						window.location.pathname === '/discussions/moderation/filter/waiting') {
+					$('#community-sidebar [data-page-name=waiting]').parent().addClass('active');
+				} else {
+					$('#community-sidebar [data-page-name=spam]').parent().addClass('active');
+				}
+				break;
 			case 'discussions/show':
 			case 'discussions/edit':
 				category_id = parseInt(window.location.pathname.replace('/discussions/', ''), 10);
@@ -163,8 +171,16 @@ window.App.Discussions = window.App.Discussions || {};
 			var $this = this;
 			$('body').removeClass('cs-show');
 			setTimeout(function () {
-				$("#community-sidebar").hide();
-				$this.sidebarActive = false;
+				var canShow = $('body').hasClass('cs-always-show');
+				if(!canShow){
+					$("#community-sidebar").hide();
+					$this.sidebarActive = false;
+				}
+				else
+				{
+					$("#community-sidebar").show();
+					$this.sidebarActive = true;
+				}
 			}, 300);
 		},
 		

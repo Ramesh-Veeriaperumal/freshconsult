@@ -1,0 +1,9 @@
+<div>
+	<div><strong><%= t('.published') %></strong></div>
+	<% unless params[:popup] %>
+	<div>
+		<%= pjax_link_to t('.goto_post'),
+			@published_post.original_post? ? discussions_topic_path(@published_post.topic_id) : "#{discussions_topic_path(@published_post.topic_id)}/page/last#post_#{@published_post.id}"%>
+	</div>
+	<% end %>
+</div>

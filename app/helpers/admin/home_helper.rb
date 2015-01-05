@@ -1,5 +1,5 @@
  module Admin::HomeHelper
-  
+
   ######### Admin Items ########
 
   def admin_items
@@ -41,9 +41,9 @@
         :url                           =>   "/ticket_fields",
         :privilege                     =>   privilege?(:admin_tasks)
       },
-      :"contact-fields"                 =>   {
+      :"customer-fields"                 =>   {
         :url                           =>   "/admin/contact_fields",
-        :privilege                     =>   (!Rails.env.production?) && privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks)
       },
       :"customer-portal"               =>   {
         :url                           =>   "/admin/portal",
@@ -76,7 +76,7 @@
       :"multi-product"                 =>   {
         :url                           =>   "/admin/products",
         :privilege                     =>   feature?(:multi_product) && privilege?(:admin_tasks)
-      },    
+      },
       :tags                            =>   {
         :url                           =>   "/helpdesk/tags",
         :privilege                     =>   privilege?(:admin_tasks)
@@ -94,7 +94,7 @@
         :privilege                     =>   privilege?(:manage_dispatch_rules)
       },
       :scenario                        =>   {
-        :url                           =>   "/admin/automations",
+        :url                           =>   "/helpdesk/scenario_automations",
         :privilege                     =>   feature?(:scenario_automations) && privilege?(:manage_scenario_automation_rules)
       },
       :"email-notifications"           =>   {
@@ -102,7 +102,7 @@
         :privilege                     =>   privilege?(:manage_email_settings)
       },
       :"canned-response"               =>   {
-        :url                           =>   "/admin/canned_responses/folders",
+        :url                           =>   "/helpdesk/canned_responses/folders",
         :privilege                     =>   privilege?(:manage_canned_responses)
       },
       :"survey-settings"               =>   {
@@ -189,15 +189,15 @@
 
     ADMIN_GROUP = {
       :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter", "facebook-setting", "feedback", "mobihelp"],
-      :"general-settings"       =>    ["rebranding", "ticket-fields", "contact-fields", "customer-portal", "agent", "group", "role", "security", "sla", 
+      :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-fields", "customer-portal", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
-      :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response", 
+      :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
       :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
     }
 
   ######### keywords Constant ########
-    
+
     ####### Keywords HASH Structure ###################
 
     #### Each :keyword will used as a key of its i18n content ####
@@ -225,15 +225,15 @@
           :open_keywords          =>      [:customize_feedback_widget, :embedded_widget, :popup_widget]
       },
       :rebranding                 =>      {
-          :open_keywords          =>      [:set_time_zone, :set_helpdesk_language, :set_portal_url, :set_ticket_id, 
+          :open_keywords          =>      [:set_time_zone, :set_helpdesk_language, :set_portal_url, :set_ticket_id,
                                               :set_portal_name, :supported_languages, :portal_customization],
           :closed_keywords        =>      [:layout_customization, :stylesheet_customization, :custom_domain_name]
       },
       :"ticket-fields"            =>      {
           :open_keywords          =>      [:customize_new_ticket_form]
       },
-      :"contact-fields"            =>      {
-          :open_keywords          =>      [:customize_new_contact_form]
+      :"customer-fields"            =>      {
+          :open_keywords          =>      [:customize_new_contact_form, :customize_new_company_form]
       },
       :"customer-portal"          =>      {
           :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions],
@@ -283,7 +283,7 @@
           :open_keywords          =>      [:invoice_emails, :export_data],
           :closed_keywords        =>      [:cancel_service]
       },
-      :mobihelp                   =>      { 
+      :mobihelp                   =>      {
           :open_keywords          =>      [:inapp_support , :ios_sdk , :android_sdk]
       }
     }
@@ -318,7 +318,7 @@
   ######### Constructing Admin Page ########
 
   def admin_link(items)
-    link_item = 
+    link_item =
       items.map do |item|
         admin_item = admin_items[item.to_sym]
         next unless admin_item[:privilege]      ## Skip according to the item privilege
@@ -337,15 +337,15 @@ HTML
   end
 
   def build_admin_prefpane
-    admin_html = 
+    admin_html =
       ADMIN_GROUP.map do |group_title, items|
-        
+
         url = admin_link(items)
         next if url.blank?
-        
-        content_tag(:div, 
+
+        content_tag(:div,
           content_tag(:h3, "<span>#{t('.'+group_title.to_s)}</span>".html_safe, :class => "title") +
-          content_tag(:ul, url, :class => "admin_icons").html_safe, 
+          content_tag(:ul, url, :class => "admin_icons").html_safe,
               :class => "admin #{ cycle('odd', 'even') } #{group_title} ")
       end
 
@@ -376,19 +376,19 @@ HTML
       url = admin_items[item.to_sym][:url]
       meta = KEYWORDS_META[item.to_sym]
 
-      kw_items[t(".#{item}")] = 
+      kw_items[t(".#{item}")] =
                     [url, "ficon-#{item}"].concat(meta.blank? ? [] : [meta.map { |e| t("admin.home.keywords.#{e}") }])
 
       ## if item has keywords
-      if( (kw_item = ADMIN_KEYWORDS[item.to_sym]).present? )      
+      if( (kw_item = ADMIN_KEYWORDS[item.to_sym]).present? )
         # Collecting open items
-        (kw_item[:open_keywords] || []).each { |kw| 
-          kw_items.merge!(collect_keywords(kw, url, item)) 
+        (kw_item[:open_keywords] || []).each { |kw|
+          kw_items.merge!(collect_keywords(kw, url, item))
         }
 
         # Collecting privilege based meta items
         (kw_item[:closed_keywords] || []).each { |kw|
-          kw_items.merge!(collect_keywords(kw, 
+          kw_items.merge!(collect_keywords(kw,
             (admin_items[kw][:url] || url), item)) if (admin_items[kw][:privilege].nil? || admin_items[kw][:privilege])
         }
       end

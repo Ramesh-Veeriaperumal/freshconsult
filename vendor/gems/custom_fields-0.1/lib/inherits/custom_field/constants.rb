@@ -27,8 +27,22 @@ module Inherits
             field_pools
           end
           base.const_set(:CUSTOM_FIELD_POOLS, field_pools)
+          constantize_default_choices base
         end
       end
+
+      def self.constantize_default_choices base
+        base.const_set(:TIME_ZONE_ADMIN_CHOICES, ActiveSupport::TimeZone.all.map { |time_zone|
+                                   {:name => time_zone.to_s, :value => time_zone.name.to_sym} })
+        base.const_set(:LANGUAGE_ADMIN_CHOICES, I18n.available_locales_with_name.map { |language|
+                                                {:name => language[0], :value => language[1]} })
+
+        base.const_set(:TIME_ZONE_UI_CHOICES, ActiveSupport::TimeZone.all.map { |time_zone|
+                                             [time_zone.to_s, time_zone.name.to_sym] })
+        base.const_set(:LANGUAGE_UI_CHOICES, I18n.available_locales_with_name.map { |language|
+                                                                 [language[0], language[1]] })
+      end
+
 
     end
   end

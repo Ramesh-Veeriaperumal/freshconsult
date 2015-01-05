@@ -1,15 +1,18 @@
 var FreshfoneCallTransfer
 (function ($) {
   "use strict";
-  FreshfoneCallTransfer = function (freshfone_call, id) {
+  FreshfoneCallTransfer = function (freshfone_call, id, group_id) {
     this.freshfone_call = freshfone_call;
-    this.init(id);
+    this.init(id, group_id);
   }; 
 
   FreshfoneCallTransfer.prototype = {
-    init: function (id) {
+    init: function (id, group_id) {
       var self = this;
       id = parseInt(id, 10);
+      if (group_id) {
+        group_id = parseInt(group_id, 10);
+      }
       if (!this.freshfone_call.tConn || isNaN(id)) { return false; }
       this.$transferAgent.show();
         ffLogger.log({
@@ -22,6 +25,7 @@ var FreshfoneCallTransfer
         url: '/freshfone/call_transfer/initiate',
         data: { "call_sid": this.freshfone_call.getCallSid(),
                 "id": id,
+                "group_id": group_id,
                 "outgoing": this.freshfone_call.isOutgoing() },
         error: function () {
           self.freshfone_call.transfered = false;

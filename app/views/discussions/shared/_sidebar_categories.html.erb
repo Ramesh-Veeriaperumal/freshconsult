@@ -7,12 +7,16 @@
 </li>
 <% if privilege?(:delete_topic) %>
 	<% if moderation_enabled? %>
-	<li class="<%= disabled_class %>">
-		<%= pjax_link_to (t('discussions.moderation.index.waiting') + " <span rel='count-waiting' class='muted'></span> ").html_safe, discussions_moderation_filter_path(:waiting), {:"data-page-name" => :waiting} %>
+	<li>
+		<%= pjax_link_to( 
+					(t('discussions.moderation.index.waiting') + " <span rel='count-waiting' class='muted'>#{display_count(@counts[:waiting] || @counts[:unpublished])}</span> ").html_safe,
+						moderation_index_path(:waiting), {:"data-page-name" => :waiting}) %>
 	</li>
 	<% end %>
-	<li class="<%= disabled_class %>">
-		<%= pjax_link_to (t('discussions.moderation.index.title') + " <span rel='count-spam' class='muted'></span> ").html_safe, discussions_moderation_filter_path(:spam), {:"data-page-name" => :spam} %>
+	<li>
+		<%= pjax_link_to( 
+					(t('discussions.moderation.index.title') + " <span rel='count-spam' class='muted'>#{display_count(@counts[:spam])}</span> ").html_safe, 
+						moderation_index_path(:spam), {:"data-page-name" => :spam}) %>
 	</li>
 <% end %>
 <li>

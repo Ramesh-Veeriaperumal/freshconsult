@@ -34,9 +34,7 @@ describe Admin::Mobihelp::AppsController do
       "mobihelp_app"=> {
         "name"=>"FreshApp #{now}", 
         "platform"=>"1", 
-        "config"=> {
-          "solutions"=>"2"
-          }
+        "category_ids" => ["2"]
         }
       }
     @account.mobihelp_apps.find_by_name("FreshApp #{now}").should be_an_instance_of(Mobihelp::App)
@@ -45,7 +43,7 @@ describe Admin::Mobihelp::AppsController do
 
   it "should reject invalid mobihelp app and render new page " do
     get :new, :platform => 1
-    post :create, :mobihelp_app => {:name => "", :platform => 1, :config => {"solutions"=>"2"}}
+    post :create, :mobihelp_app => {:name => "", :platform => 1, :category_ids => ["2"]}
     response.should render_template('new')
   end
 
@@ -56,9 +54,7 @@ describe Admin::Mobihelp::AppsController do
       "mobihelp_app"=>{
         "name"=> "", 
         "platform"=> mobihelp_app.platform, 
-        "config"=>{
-          "solutions"=> mobihelp_app.config[:solutions]
-          }
+        "category_ids" => mobihelp_app.app_solutions.map(&:category_id)
         },
         "id" => mobihelp_app.id
       }
@@ -87,9 +83,7 @@ describe Admin::Mobihelp::AppsController do
       "mobihelp_app"=>{
         "name"=> "#{mobihelp_app.name} #{now}", 
         "platform"=> mobihelp_app.platform, 
-        "config"=>{
-          "solutions"=> mobihelp_app.config[:solutions]
-          }
+        "category_ids" => mobihelp_app.app_solutions.map(&:category_id)
         },
         "id" => mobihelp_app.id
     }

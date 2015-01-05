@@ -4,13 +4,13 @@
 		spanClass = isEmail ? 'span12' : 'span6', 
 		hideIfEmail = isEmail ? 'hide' : '';
 %>
-<div class="custom-fields-props-dialog modal hide fade <%= isEmail? 'email' : '' %>" id='CustomPropsModal'>
+<div class="custom-fields-props-dialog modal hide fade <%= isEmail? 'single-column' : '' %>" id='CustomPropsModal'>
 	<div class='modal-header clearfix'>
 		<h3 class="ellipsis modal-title pull-left">
 			<% icon = 'ficon-'+((dom_type=='email') ? 'mail' : dom_type) %>
 			<span class= '<%= icon %> dom-icon tooltip' title='<%= translate.get(dom_type) %>'></span>
 			<%= translate.get('formTitle') + " : " %> 
-			<span class='field-label'><%= label %></span>
+			<span class='field-label ellipsis'><%= label %></span>
 		</h3>
 		<% if (isDefault) { %>
 			<span class='label label-light pull-right default-tag'> <%= translate.get('default') %> </span>
@@ -110,28 +110,30 @@
 											rel="companion" 
 											data-companion="#customlabelportal" 
 											name="custom-label" 
-											value="<%= label %>" 
+											value="<%= label.replace(/"/g, '&quot;') %>" 
 											class="<%= isDisabled %>" 
 											<%= isDisabled %>/>
 						</fieldset>
-						<fieldset class="<%= hideIfEmail %>">
+						<fieldset class="span6 <%= hideIfEmail %>">
 
 							<input type="text" 
 											placeholder="<%= translate.get('labelCustomer') %>" 
 											name="custom-label-in-portal" 
 											id="customlabelportal" 
-											value="<%= label_in_portal %>"
+											value="<%= label_in_portal.replace(/"/g, '&quot;') %>"
 											<%= isDisabled %>/>
 						</fieldset>
 					</div>
 				</div>
 				<% if (field_type == 'custom_text') { %>
-					<div class='section'>
+					<div class='section hide'>
 						<% regexValidation = (field_options != null 
 													&& typeof(field_options) === "object" 
 													&& field_options['regex']) ?
 														'checked' : ''; %>
-						<% regexValue = (regexValidation == 'checked') ? field_options['regex'] : ''; %>
+						<% regexValue = (regexValidation == 'checked') ? 
+												new RegExp(unescapeHtml(field_options['regex']['pattern']).replace(/"/g, '&quot;'), field_options['regex']['modifier']).toString() : 
+												''; %>
 						<fieldset> 
 							<label class="checkbox<%= isDisabled %>">
 								<input type="checkbox" 
@@ -163,24 +165,28 @@
 						<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
 						<input type="hidden" name="choicelist" value="" />
 						<div name="custom-choices" class="custom-choices">
-							<% _.each(choices, function(item){  %>
-								<% item = item || ['',0]; %>
-								<fieldset>
+							<% _.each(admin_choices, function(item, index){  %>
+								<% isDeleted = item._destroy ? true : false %>
+								<% deletedClassName = isDeleted ? 'hide' : '' %>
+								<fieldset class='<%= deletedClassName %>'
+													data-destroy="<%= isDeleted %>">
 									<span class="sort_handle"></span>
 									<span class='ficon-minus delete-choice'></span>
 									<span class="dropchoice">
 										<input type="text" 
-														name="choice" 
-														value="<%= item[0] %>"
-														data_id="<%= item[1] %>"/>
+											name="choice_<%= item['id'] || (new Date().getTime()) %>" 
+											value="<%= item['name'].replace(/"/g, '&quot;') %>"
+											data_id="<%= item['id'] ? item['id'] : '0' %>"
+											class='field_maxlength'
+											maxlength='255'/>
 									</span>
 								</fieldset>
 							<% }) %>
+							<a class="add-choice" id="addchoice" href="#"> 
+								<span class='ficon-plus'></span> 
+								<span><%= translate.get('addNewChoice') %> </span>
+							</a> 
 						</div>
-						<a class="add-choice" id="addchoice" href="#"> 
-							<span class='ficon-plus'></span> 
-							<%= translate.get('addNewChoice') %> 
-						</a> 
 					</div> 
 				<% } %>
 			</div>

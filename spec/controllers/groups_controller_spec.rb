@@ -94,8 +94,6 @@ describe GroupsController do
 		agent_list = [ @agent.id, @user_1.id ]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
 		(agent_list.sort == agents_in_group.sort).should be_true
-		value = get_others_redis_list(@test_group.round_robin_key)
-		value.include?(@user_1.id).should be_true
 	end
 
 	it "should add agents to the group with non-round robin but not create the list" do
@@ -113,9 +111,6 @@ describe GroupsController do
 		@test_group.name.should eql("Updated: Spec Testing Grp #{@now}")
 		@test_group.escalate_to.should eql(@agent.id)
 		@test_group.ticket_assign_type.should eql 0
-		agent_list = [ @agent.id, @user_1.id ]
-		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
 		value = get_others_redis_list(@test_group.round_robin_key)
 		value.should be_empty
 	end
@@ -134,9 +129,11 @@ describe GroupsController do
 		@test_group.reload
 		@test_group.name.should eql("Updated: Spec Testing Grp #{@now}")
 		@test_group.escalate_to.should eql(@agent.id)
-		@test_group.ticket_assign_type.should eql 0
-		value = get_others_redis_list(@test_group.round_robin_key)
-		value.include?(@user_1.id).should be_true
+		@test_group.ticket_assign_type.should eql 1
+		user_ids = @test_group.agent_groups.available_agents.map(&:user_id).compact
+		set_others_redis_lpush(@test_group.round_robin_key, user_ids) if user_ids.any?
+		value = get_others_redis_rpoplpush(@test_group.round_robin_key, @test_group.round_robin_key)
+		value.should_not be_nil
 	end
 
 	it "should remove agents from the group" do

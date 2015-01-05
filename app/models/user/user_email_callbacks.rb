@@ -9,8 +9,7 @@ class User < ActiveRecord::Base
   before_validation_on_create :assign_primary_email, :if => :has_contact_merge?
   before_validation_on_create :update_user_table_email, :if => :has_contact_merge?
 
-  before_validation_on_update :set_primary_email, :if => [:has_contact_merge?, :user_email_absent?]
-  before_validation_on_update :update_user_table_email, :if => :has_contact_merge?
+  before_validation_on_update :set_primary_email, :if => [:has_contact_merge?]
 
   # before_save :remove_duplicate_emails, :if => :has_contact_merge?
 
@@ -29,7 +28,7 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present?
+    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? and ((has_contact_merge? and !self.primary_email.verified?) or no_contact_merge)
   end
 
   private
@@ -79,10 +78,17 @@ class User < ActiveRecord::Base
     if self.user_emails.present?
       available_emails = self.user_emails.reject(&:marked_for_destruction?)
       if available_emails.present?
-        available_emails.first.primary_role = true if available_emails.select(&:primary_role?).empty?
-        self.primary_email = available_emails.select(&:primary_role?).first
+        current_primary = available_emails.detect(&:primary_role?) || available_emails.first
+        if primary_email
+          reset_primary_email(current_primary.id) if current_primary.email != primary_email.email
+        else
+          current_primary.primary_role = true
+          self.primary_email = current_primary
+        end
+        self.email = current_primary.email
       else
         self.primary_email = nil
+        self.email = nil
       end
     end
   end

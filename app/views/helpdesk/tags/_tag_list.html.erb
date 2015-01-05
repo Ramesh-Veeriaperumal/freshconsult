@@ -1,11 +1,11 @@
 <div class="tag_list">
-<%tags.each { |tag| %>
+<% tags.each { |tag| %>
 	<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}, :class => 'btn btn-flat') %>
 <% } %> 
 <% if add_tag %>
 	<a class='btn btn-flat add-new-tag' href='#'>
 		<span class='ficon-plus'></span>
-		<%= t('add_tags') %>
+		<%= tags.count > 0 ? t('edit_tags') : t('add_tags') %>
 	</a>
 <% end %>
 </div>

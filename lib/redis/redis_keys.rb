@@ -41,6 +41,8 @@ module Redis::RedisKeys
 	FRESHFONE_AGENTS_BATCH = "FRESHFONE:AGENTS_BATCH:%{account_id}:%{call_sid}"
 	FRESHFONE_CALLS_BEYOND_THRESHOLD = "FRESHFONE:CALLS_BEYOND_THRESHOLD:%{account_id}"
 	FRESHFONE_OUTGOING_CALLS_DEVICE = "FRESHFONE:FRESHFONE_OUTGOING_CALLS_DEVICE:%{account_id}"
+	FRESHFONE_DISABLED_WIDGET_ACCOUNTS = "FRESHFONE:DISABLED_WIDGET_ACCOUNTS"
+	FRESHFONE_LOW_CREDITS_NOTIFIY = "FRESHFONE:LOW_CREDITS_NOTIFIY"
 	
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
@@ -65,6 +67,7 @@ module Redis::RedisKeys
 	TICKET_DISPLAY_ID = "TICKET_DISPLAY_ID:%{account_id}"
 	DISPLAY_ID_LOCK = "DISPLAY_ID_LOCK:%{account_id}"
 
+	SPAM_MIGRATION = "SPAM_MIGRATION:%{account_id}"
 	USER_EMAIL_MIGRATED = "user_email_migrated"
 
 	def newrelic_begin_rescue

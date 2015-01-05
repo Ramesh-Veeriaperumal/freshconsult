@@ -4,7 +4,7 @@ module Freshfone::TicketActions
 	def create_note
 		@ticket = current_account.tickets.find_by_display_id(params[:ticket])
 		
-		if @ticket.present? && build_note.save
+		if @ticket.present? && build_note(params.merge({ :agent => agent })).save
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.note.human_name'),
 					:link => @template.comment_path({ 'ticket_id' => current_call.notable.notable.display_id, 
@@ -26,11 +26,13 @@ module Freshfone::TicketActions
 	def create_ticket
 		json_response = {}
 		if build_ticket(params.merge!({ :agent => agent })).save
+			@ticket = current_call.notable
+			build_note(params.merge({ :is_recording_note => 'true' })).save if private_recording?
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.ticket.human_name'),
 					:link => @template.link_to(t(:'freshfone.ticket.view'),
-						helpdesk_ticket_path(current_call.notable), :'data-pjax' => "#body-container") }).html_safe
-			json_response = {:success => true, :ticket => {:display_id =>current_call.notable.display_id , :subject => current_call.notable.subject , :status_name => current_call.notable.status_name, :priority => current_call.notable.priority}}
+						helpdesk_ticket_path(@ticket), :'data-pjax' => "#body-container") }).html_safe
+			json_response = {:success => true, :ticket => {:display_id =>@ticket.display_id , :subject => @ticket.subject , :status_name => @ticket.status_name, :priority => @ticket.priority}}
 		else
 			flash[:notice] = t(:'flash.general.create.failure',
 													{ :human_name => t(:'freshfone.ticket.human_name') })
@@ -47,6 +49,8 @@ module Freshfone::TicketActions
 
 	def voicmail_ticket(args)
 		build_ticket(args).save
+		@ticket = current_call.notable
+		build_note(args.merge({ :is_recording_note => 'true' })).save if private_recording?
 	end
 
 	private
@@ -55,13 +59,14 @@ module Freshfone::TicketActions
 			current_call.initialize_ticket(args)
 		end
 
-		def build_note
+		def build_note(args)
 			current_call.notable = @ticket.notes.build
-			current_call.initialize_notes(params.merge({ :agent => agent }))
+			current_call.initialize_notes(args)
 		end
 
 		def agent
-			fetch_calling_agent(params[:agent]) || current_user
+			agent_id =  call_history? ? params[:responder_id] : params[:agent]
+			fetch_calling_agent(agent_id) || current_user
 		end
 
 		def fetch_calling_agent(agent_id)
@@ -73,7 +78,11 @@ module Freshfone::TicketActions
 		end
 		
 		def call_history?
-			params[:call_history].to_bool
+			params[:call_history].present? && params[:call_history].to_bool
+		end
+
+		def private_recording?
+			current_call.freshfone_number.private_recording? && current_call.freshfone_number.record?
 		end
 
 end

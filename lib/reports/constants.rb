@@ -62,38 +62,7 @@ module Reports
     # Timezones with Time Mapping in UTC
     # List of Countries in which Time falls to midnight at 0th,1st,2nd .... hour in UTC
 
-    TIMEZONES_BY_UTC_TIME = {
-      "0" => ["Casablanca","Dublin","Edinburgh","Lisbon","London","Monrovia","UTC","Europe/London"],
-      "1" => ["Azores","Cape Verde Is."],
-      "2" => ["Mid-Atlantic"],
-      "3" => ["Brasilia","Buenos Aires","Georgetown","Greenland"],
-      "4" => ["Newfoundland","Atlantic Time (Canada)","La Paz","Santiago"],
-      "5" => ["Caracas","Bogota","America/Bogota","Eastern Time (US & Canada)","Indiana (East)","Lima","Quito"],
-      "6" => ["Central America","Central Time (US & Canada)","Guadalajara","Mexico City","Monterrey",
-               "Saskatchewan","America/Chicago"],
-      "7" => ["Arizona","Chihuahua","Mazatlan","Mountain Time (US & Canada)"],
-      "8" => ["Pacific Time (US & Canada)","Tijuana", "America/Los_Angeles"],
-      "9" => ["Alaska"],
-      "10" => ["Hawaii"],
-      "11" => ["International Date Line West","Midway Island","Samoa","Nuku'alofa"],
-      "12" => ["Auckland","Fiji","Kamchatka","Marshall Is.","Wellington"],
-      "13" => ["Magadan","New Caledonia","Solomon Is."],
-      "14" => ["Brisbane","Canberra","Guam","Hobart","Melbourne","Port Moresby","Sydney","Vladivostok"],
-      "15" => ["Adelaide","Darwin","Osaka","Sapporo","Seoul","Tokyo","Yakutsk"],
-      "16" => ["Beijing","Chongqing","Hong Kong","Irkutsk","Kuala Lumpur","Perth","Singapore",
-               "Taipei","Ulaan Bataar","Urumqi"],
-      "17" => ["Bangkok","Hanoi","Jakarta","Krasnoyarsk"],
-      "18" => ["Rangoon","Almaty","Astana","Dhaka","Novosibirsk"],
-      "19" => ["Kathmandu","Chennai","Kolkata","Mumbai","New Delhi","Sri Jayawardenepura",
-               "Ekaterinburg","Islamabad","Karachi","Tashkent"],
-      "20" => ["Kabul","Abu Dhabi","Baku","Muscat","Tbilisi","Yerevan"],
-      "21" => ["Tehran","Baghdad","Kuwait","Moscow","Nairobi","Riyadh","St. Petersburg","Volgograd"],
-      "22" => ["Athens","Bucharest","Cairo","Harare","Helsinki","Istanbul","Jerusalem","Kyev","Minsk",
-               "Pretoria","Riga","Sofia","Tallinn","Vilnius"],
-      "23" => ["Amsterdam","Belgrade","Berlin","Bern","Bratislava","Brussels","Budapest","Copenhagen",
-               "Ljubljana","Madrid","Paris","Prague","Rome","Sarajevo","Skopje","Stockholm","Vienna",
-               "Warsaw","West Central Africa","Zagreb"]
-    }
+    TIMEZONES_BY_UTC_TIME = Timezone::Constants::UTC
    
     TOP_N_ANALYSIS_COLUMNS = [
       {:id => 'resolved_tickets' ,:label_name => I18n.t('adv_reports.tickets_resolved'),:calculate_percent =>false, 
@@ -189,7 +158,8 @@ module Reports
       :group_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85338-how-to-read-group-at-a-glance-report',
       :helpdesk_peformance_analysis => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85343-how-to-read-helpdesk-performance-analysis-report',
       :helpdesk_load_analysis       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report',
-      :freshfone_summary            => 'https://support.freshdesk.com/solution/categories/157866/folders/267839/articles/197502-freshfone-call-summary'
+      :freshfone_summary            => 'https://support.freshdesk.com/solution/categories/157866/folders/267839/articles/197502-freshfone-call-summary',
+      :freshchat_summary            => 'https://support.freshdesk.com/solution/categories/149846/folders/268837/articles/203631-freshchat-summary-report'
     }
 
     REPORTS_GLANCE_TICKET_VIEW = {

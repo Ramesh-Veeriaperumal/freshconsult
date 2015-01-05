@@ -31,6 +31,7 @@ class Helpdesk::Note < ActiveRecord::Base
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
   named_scope :private, :conditions => { :private => true } 
+ 
   
   named_scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =
@@ -141,6 +142,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def email_conversation?
     email? or fwd_email?
+  end
+  
+  def can_split?
+    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true)
   end
   
   def to_json(options = {})
@@ -268,7 +273,11 @@ class Helpdesk::Note < ActiveRecord::Base
                         }
             })
   end
-
+  
+  def fb_reply_allowed?
+    self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
+  end
+  
   protected
 
     def send_reply_email  

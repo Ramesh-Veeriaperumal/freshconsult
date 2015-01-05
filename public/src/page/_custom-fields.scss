@@ -18,9 +18,11 @@
 		.control-group {
 			margin-bottom: 0px; 
 		}
+		.custom-field.checkbox-wrap{
+			@include padding-left(10px);
+		}
 	}
 	.select2-container {
-		min-width: 125px;
 		.select2-choice {
 			height: 24px;
 		}
@@ -80,10 +82,10 @@
 		overflow: visible;
 		padding-top: 10px;
 		padding-bottom: 9px;
-		input[type=checkbox] {
-			@include margin (2px 6px 0 0);
-			@include float(none);
-		}
+	}
+	input[disabled], textarea[disabled], select[disabled] {
+		background-color: #FFF;
+		cursor: move;
 	}
 	&.dropdown, &.custom-dropdown, &.dropdown_blank {
 		position: relative;
@@ -92,6 +94,11 @@
 		}
 		.select2-container {
 			z-index: 1;
+			&.select2-container-disabled .select2-choice, &.select2-container-disabled .select2-choice div {
+				background-color: #FFF;
+				cursor: move;
+				border-color: #c6c6c6;
+			}
 		}
 	}
 	.options {
@@ -135,10 +142,16 @@
 	.field-label {
 		color: #999;
 		font-weight: 200;
+		width: 475px;
+		display: inline-block;
+		margin-bottom: -13px;
 	}
-	&.modal.email {
+	&.modal.single-column {
 		width: 450px;
 		@include margin-left(-280px);
+		.field-label {
+			width: 225px;
+		}
 	}
 	.delete-choice {
 		font-size: 16px;
@@ -149,34 +162,45 @@
 		border-radius: 50%;
 		@include padding(2px 5px);
 	}
+	.section.colsets {
+		position: relative;
+		.dropchoice {
+			width: 200px;
+		}
+	}
 	.add-choice {
-		@include margin-left(16px);
 		font-size: 12px;
 		color: #333;
-		font-weight: bold;
+		line-height: 26px;
+		position: absolute;
+		bottom: 10px;
+		@include left(270px);
+		z-index: 99999;
 		.#{$font-class-name}plus {
 			background-color: #76ad20;
-			font-size: 16px;
-			@include margin-right(7px);
+			font-size: 14px;
 			color: #FFF;
 			border-radius: 50%;
 			@include padding(1px 5px);
 		}
+	}
+	.max-item-error {
+		line-height: 26px;
 	}
 	span.default-tag {
 		cursor: default;
 		@include margin(10px 0 0 0);
 		text-shadow: none;
 	}
-	.sections-wrapper {
-		max-height: 375px;
-		overflow-y: scroll;	
-	}
 	.section {
 		margin-bottom: 10px;
 		.delete-choice {
 			@include float(left);
-
+		}
+		input[type=checkbox] {
+			float: none;
+			margin-top: -3px;
+			@include padding-left(5px);
 		}
 	}
 	.chkbox-img {
@@ -210,9 +234,6 @@
 .page-header-sticky {
 	&.custom-field-header {
 		padding-bottom: 0px;
-		.sticky-header-wrapper {
-			padding-bottom: 15px;
-		}
 		&.is_stuck {
 			.field-picker {
 				@include margin-right(-19px);
@@ -226,13 +247,9 @@
 	@include margin(0 -20px);
 	border-top: 1px solid #ccc;
 	.field {
-		@include padding(10px 20px);
 		cursor: move;
 		@include float(left);
 		border-right: 1px solid #eee;
-		&:hover {
-			background-color: #FFF;
-		}
 	}
 	.field-name {
 		@include margin-left(5px);
@@ -244,6 +261,11 @@
 	.dom-icon {
 		color: #555;
 		font-size: 16px;
+		@include padding(10px 20px);
+		display: inline-block;
+		&:hover {
+			background-color: #FFF;
+		}
 	}
 	.field-info-wrapper {
 		@include pie-clearfix;
@@ -319,6 +341,21 @@
 	}
 }
 
+.nav-tabs-underlined {
+	margin-top: 5px;
+	clear: both;
+	font-size: 16px;
+	.tab {
+		@include margin(0 15px 0 0);
+		@include float(left);
+		&.active {
+			border-bottom: 5px solid #CCC;
+			padding-bottom: 14px;
+			color: #000;
+		}
+	}
+}
+
 // CREATE CONTACTS STYLES
 .contact-form {
 	.select2-container-multi {
@@ -327,18 +364,29 @@
 	label {
 		display: inline;
 	}
-	.select2-container {
-		min-width: 125px;
-	}
 }
 
 .avatar-pic {
+	position: relative;
 	img{
 		max-width: 130px;
 		min-width: 90px;
 		max-height: 160px;
 		@include box-shadow(#dfdfdf 0 1px 3px);
 		@include border-radius(6px);
+	}
+	.ie9-file-change-msg {
+		position: absolute;
+		@include padding(5px);
+		max-width: 110px;
+		display: block;
+		background-color: rgba(255, 209, 109, 0.3);
+		@include border-radius(5px);
+		@include margin-left(5px);
+		bottom: -1px;
+		display: none;
+		font-size: 12px;
+		line-height: 17px;
 	}
 }
 
@@ -365,5 +413,17 @@
 		left: 0;
 		height: 100%;
 		font-size: 10000px;
+	}
+}
+
+.ui-draggable-dragging {
+	&.field {
+		list-style-type: none;
+		&:hover {
+			color: #FFF;
+		}
+	}
+	.dom-icon {
+		font-size: 16px;
 	}
 }

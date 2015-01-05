@@ -26,10 +26,13 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				this.prevBgInfo = $('.sp_paragraph').val();
 				this.tagList = $('#user_tag_names').select2('val');
 			} else {
-				$('.form-save').slideUp();
 				$('#tag-list').slideDown();
 				$('.tags-wrapper').slideUp();
-				$('.sp_paragraph').removeClass('editarea');
+				$('.sp_paragraph').removeClass('editarea').height(0);
+				$('.form-save').slideUp(400, function() {
+					$('.sp_paragraph')
+						.height($('.sp_paragraph')[0].scrollHeight)
+				});
 			}
 		},
 		flashUpdatedDiv: function() {
@@ -61,20 +64,28 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			}
 		},
 		populateTags: function(tags) {
-			var tagsHtml = "<div class='tag_list'>";
+			var tagsHtml = "<div class='tag_list'>",
+				savedTags = [],
+				option = tags.length > 0 ? 'edit' : 'add';
 			$.each(tags, function(idx, item) {
-				tagsHtml += "<a class='btn btn-flat' href='/contacts?tag=" + item.id + "' > " + item.name + " </a>";
+				tagsHtml += "<a class='btn btn-flat' href='/contacts?tag=" + item.id + "' > " + escapeHtml(item.name) + " </a>";
+				savedTags.push(escapeHtml(item.name));
 			});
 			tagsHtml += "<a class='btn btn-flat add-new-tag' href='#'>"
 							+ "<span class='ficon-plus'></span>"
-							+ "Add Tags"
+							+ tagsOptions[option]
 							+ "</a>";
 			$('#tag-list').html(tagsHtml);
+			$('#user_tag_names').select2('val', savedTags);
+			this.tagList = $.extend({}, savedTags);
 		},
 		checkForInfoMsgs: function() {
 			if ($.trim( $('div.info-highlight').text() ).length != 0) {
 				$('div.info-highlight').show();
 			}
+		},
+		switchConversationView: function(element) {
+			$('.conv-menu .sub-info').text(element.text());
 		},
 		bindEvents: function() {
 			var self = this;
@@ -89,20 +100,29 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				e.preventDefault();
 				self.cancelSave();
 			});
-			$('body').on('click.contact-view', '.save-form', function(e) {
+			$('body').on('submit.contact-view', '.edit_user', function(e) {
 				e.preventDefault();
 				self.makeAjaxCall();
 			});
+			$('body').on('click.contact-view', '.dropdown-menu .item', function(e) {
+				e.preventDefault();
+				self.switchConversationView($(this));
+			});
+			$('body').on('click.contact-view', '#customer-delete-confirmation-submit', function(e) {
+				e.preventDefault();
+				$('#delete_customer').trigger('click');
+			});
 			$(window).on('scroll.contact-view', this.toggleUsername);
+			$('.sp_paragraph')
+					.height($('.sp_paragraph')[0].scrollHeight);
 		},
 		makeAjaxCall: function() {
 			var data = $('.edit_user').serializeArray(),
 				self = this;
-				data._method = 'PUT';
 	
 			$.ajax({
-				type: "POST",
-				url: "/contacts/update_bg_and_tags/" + $('#userid').val(),
+				type: "PUT",
+				url: "/contacts/" + $('#userid').val() + "/update_description_and_tags",
 				data: data,
 				dataType: "json",
 				success: function(result, status, xhr){
@@ -125,7 +145,8 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			this.switchToForm(false);
 			this.flashUpdatedDiv();
 			$('.tags-wrapper').find('.select2-search-field input').blur();
-			$('.sp_paragraph').blur();
+			$('.sp_paragraph')
+					.blur();
 		},
 		ajaxFailure: function(errors) {
 			var errorText;

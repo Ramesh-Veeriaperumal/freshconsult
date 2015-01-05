@@ -11,8 +11,8 @@ class FreshfoneNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
-  def number_renewal_failure(account, number)
-    subject       "Renewal failed for your Freshfone Number #{number}"
+  def number_renewal_failure(account, number, low_balance_message='')
+    subject       "Renewal failed for your Freshfone Number #{number} #{low_balance_message}"
     recipients    account.admin_email
     from          AppConfig['billing_email']
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
@@ -36,7 +36,7 @@ class FreshfoneNotifier < ActionMailer::Base
     recipients    account.admin_email
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     from          AppConfig['billing_email']
-    body          :freshfone_number => number
+    body          :freshfone_number => number, :account => account
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -46,7 +46,7 @@ class FreshfoneNotifier < ActionMailer::Base
     recipients    account.admin_email
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     from          AppConfig['billing_email']
-    body          :recharge_amount => recharge_amount, :balance => balance
+    body          :recharge_amount => recharge_amount, :balance => balance, :account => account
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -119,6 +119,16 @@ class FreshfoneNotifier < ActionMailer::Base
     headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     from          FreshfoneConfig['ops_alert']['mail']['from']
     body          :account => account
+    sent_on       Time.now
+    content_type  "text/html"
+  end
+
+  def recharge_failure(account, recharge_amount, balance)
+    subject       "Recharge failed for your Freshfone account"
+    recipients    account.admin_email
+    from          AppConfig['billing_email']
+    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    body          :account => account, :recharge_amount => recharge_amount, :balance => balance
     sent_on       Time.now
     content_type  "text/html"
   end

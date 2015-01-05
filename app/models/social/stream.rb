@@ -48,4 +48,8 @@ class Social::Stream < ActiveRecord::Base
     
     (accessible.group_access_type? &&  accessible_user_ids_in_groups.include?(user.id))
   end
+  
+  def dynamo_stream_id
+     "#{self.account_id}_#{self.id}"
+  end
 end

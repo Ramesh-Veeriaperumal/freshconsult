@@ -60,6 +60,13 @@ module ApplicationHelper
     query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
     "/support/#{stylesheet_name}?v=#{query_string}"
   end
+  
+  def facebook_theme_url
+    stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
+    query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
+    "/facebook/#{stylesheet_name}?v=#{query_string}"
+  end
+  
 
   def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
     include_cloudfront_js locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
@@ -241,7 +248,7 @@ module ApplicationHelper
   def dropdown_menu(list, options = {})
     return if list.blank?
     output = ""
-    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    output << %(<ul class="dropdown-menu #{options['ul_class']}" role="menu" aria-labelledby="dropdownMenu">) 
 
     list.each do |item|
       unless item.blank?
@@ -249,7 +256,8 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          additional_element = options['ul_class'] == 'tick' ? "<span class='ficon-checkmark-thick'></span>".html_safe : ""; #TODO: Remove this span element and extend the font-icon in after pseudo element of active class
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to (additional_element + item[0]), item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
@@ -477,6 +485,10 @@ module ApplicationHelper
     place_holders
   end
 
+
+  def group_avatar
+    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
+  end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
   def user_avatar(user, profile_size = :thumb, profile_class = "preview_pic", options = {})
@@ -488,7 +500,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v10","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v11","avatar",profile_size,user],30.days.to_i) do
       img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
       content_tag( :div, image_tag("/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     end
@@ -579,7 +591,7 @@ module ApplicationHelper
    if !item[:preferences].blank?
      color = item[:preferences].fetch(type, '')
    end
-   color
+   sanitize(color)
  end
 
  # def get_time_in_hours seconds
@@ -641,7 +653,7 @@ module ApplicationHelper
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter]).html_safe  # replace the liquid objs with real values.
   end
 
-  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
+  def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil,disabled=false)
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
@@ -658,7 +670,7 @@ module ApplicationHelper
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
+        element = label + text_field(object_name, field_name, :disabled => disabled, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
       when "password" then
         pwd_element_class = " #{ (required) ? 'required' : '' }  text"
@@ -671,7 +683,7 @@ module ApplicationHelper
         field[:choices].each do |choice|
           choices[i] = (choice.kind_of? Array ) ? [t(choice[0]), choice[1]] : t(choice); i=i+1
         end
-        element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
+        element = label + select(object_name, field_name, choices, {:class => element_class, :selected => field_value},{:disabled => disabled})
       when "custom" then
         rendered_partial = (render :partial => field[:partial], :locals => {:installed_app=>installed_app, :f=>form})
         element = "#{label} #{rendered_partial}"
@@ -707,7 +719,7 @@ module ApplicationHelper
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field if !is_edit and !current_user
-      when "text", "number" then
+      when "text", "number", "decimal" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
@@ -733,7 +745,7 @@ module ApplicationHelper
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
     end
     content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
@@ -950,9 +962,11 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class = 'user_name' href='/users/#{ticket.requester.id}' target='_blank'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>".html_safe
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+          <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
+       </a>".html_safe
     else
-      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
+      "<span class='user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
     end
   end
 
@@ -979,6 +993,17 @@ module ApplicationHelper
     current_account.freshfone_credit.below_calling_threshold?
   end
 
+  def recent_countries
+    recent_calls = current_user.freshfone_calls.roots.find(
+         :all, :conditions =>  { :call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing] }
+         ).last(2).reverse
+    favorites = (recent_calls || []).map{|call| call.caller_country.downcase if !call.caller_country.nil? }.compact.uniq
+    if favorites.length > 0
+      favorites.to_json
+    else
+     favorites
+    end
+  end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
 		can_make_calls(number, 'phone-icons', freshfone_number_id)
@@ -1038,6 +1063,11 @@ module ApplicationHelper
   def shortcuts_enabled?
     logged_in? and current_user.agent? and current_user.agent.shortcuts_enabled?
   end
+
+  def email_template_settings
+    current_account.account_additional_settings.email_template_settings.to_json
+  end
+
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|

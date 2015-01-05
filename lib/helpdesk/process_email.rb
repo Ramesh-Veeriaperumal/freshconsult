@@ -3,6 +3,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
+  include EmailHelper
   include Helpdesk::ProcessByMessageId
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
@@ -19,6 +20,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def perform
     # from_email = parse_from_email
     to_email = parse_to_email
+    shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
+    return unless shardmapping.present?
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
@@ -29,23 +32,26 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return if from_email.nil?
       kbase_email = account.kbase_email
       
-      # Workaround for params[:html] containing empty tags
-      sanitized_html = Helpdesk::HTMLSanitizer.plain(params[:html])
-      
-      #need to format this code --Suman
-      if sanitized_html.blank? && !params[:text].blank? 
-       email_cmds_regex = get_email_cmd_regex(account) 
-       params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
-      end
-      
-      params[:text] = params[:text] || sanitized_html
-      
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
-        user = get_user(account, from_email, email_config)
+        sanitized_html = Helpdesk::HTMLSanitizer.plain(params[:html])
+        params[:text] = params[:text] || sanitized_html
+        user = get_user(account, from_email, email_config)        
         if !user.blocked?
+            # Workaround for params[:html] containing empty tags
+          
+          self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
+            #need to format this code --Suman
+            if sanitized_html.blank? && !params[:text].blank? 
+             email_cmds_regex = get_email_cmd_regex(account) 
+             params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
+            end
+          end  
+            
+          
           add_to_or_create_ticket(account, from_email, to_email, user, email_config)
+
         end
       end
       
@@ -270,9 +276,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       message_key = zendesk_email || message_id
       begin
-        build_attachments(ticket, ticket)
-        (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
-        ticket.save_ticket!
+        self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/attachments_tickets']) do
+          build_attachments(ticket, ticket)
+          (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
+          ticket.save_ticket!
+        end
       rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         raise e
@@ -299,7 +307,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || ((headers =~ /Precedence: (bulk|junk)/i) && (headers =~ /Reply-To: <>/i) )))
+      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || (headers =~ /Precedence: (bulk|junk)/i)))
         ticket.skip_notification = true
       end
     end
@@ -374,10 +382,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      build_attachments(ticket, note)
-      # ticket.save
-      note.notable = ticket
-      note.save_note
+      self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/attachments_notes']) do
+        build_attachments(ticket, note)
+        # ticket.save
+        note.notable = ticket
+        note.save_note
+      end
     end
     
     def can_be_added_to_ticket?(ticket,user)
@@ -443,7 +453,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_notification_text item
-      message = I18n.t('attachment_failed_message').html_safe
+      message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
       notification_text = "\n" << message
       notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
       if item.is_a?(Helpdesk::Ticket)

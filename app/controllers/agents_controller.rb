@@ -37,7 +37,7 @@ class AgentsController < ApplicationController
   def index    
     unless params[:query].blank?
       #for using query string in api calls
-      @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])).filter 
+      @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])) 
     else
       @agents = scoper.filter(params[:state],params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end

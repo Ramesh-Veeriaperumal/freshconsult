@@ -23,17 +23,22 @@ describe Group do
  	end
 
  	it "should return next available agent for round robin groups if available" do
+ 		
+ 		@group_6 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
+	    								:name =>  "dummy group6"})
  		@ag1 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
-                                            :active => 1, :role => 4,
-                                            :group_id => @group.id})
+                                            :active => 1, :available => true})
  		#creating an unavailable agent
  		@ag2 = add_agent_to_account(@account, { :name => "testing", :email => Faker::Internet.email, 
-                                            :active => 1, :role => 4,
-                                            :group_id => @group.id, :available => 0})
+                                            :active => 1,:available => false})
 
- 		@group.next_available_agent.should == @ag1
- 		#next available agent should not be the one created as unavailable.
- 		@group.next_available_agent.should_not == @ag2
+ 		Resque.inline = true
+ 		@group_6.agents << @ag1.user
+ 		@group_6.agents << @ag2.user
+ 		user_ids = @group_6.agent_groups.available_agents.map(&:user_id)
+ 		value = set_others_redis_lpush(@group_6.round_robin_key, user_ids) if user_ids.any?
+ 		@group_6.next_available_agent.should_not be_nil
+ 		Resque.inline = false
 
  	end
 
@@ -67,7 +72,7 @@ describe Group do
 		@group7 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:default],
 	    								:name =>  "dummy group6"})
 		value = get_others_redis_list(@group7.round_robin_key)
-		value.should be_nil
+		value.should be_empty
 	end
 
 	it "should create a list if group is updated with round_robin" do
@@ -87,7 +92,7 @@ describe Group do
 		@group9.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
 		@group.save
 		value = get_others_redis_list(@group9.round_robin_key)
-		value.should be_nil
+		value.should be_empty
 	end
 
 	it "should delete the round robin list after group deletion" do

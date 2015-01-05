@@ -1,0 +1,32 @@
+<div class="widget" id="spam-count">
+	<span class="muted">
+		<%= t('discussions.unpublished.index.unpublished_posts')%>
+	</span>
+	<% if topic.spam_count > 0 %>
+	<div>
+		<a href="<%= topic_spam_posts_discussions_unpublished_path(topic.id, :filter => 'spam')%>" 
+			data-target="#spam" rel="freshdialog" data-width="700px" 
+			title="<%= t('discussions.unpublished.index.title')%> (<%= topic.spam_count %>)"
+			data-template-footer="" data-template-header="<%= spam_modal_header(topic, 'spam') %>" >
+			<span class="spam-count-label">
+				<%= topic.spam_count %>
+			</span>
+			<%= t('discussions.unpublished.index.title')%>
+		</a>
+	</div>
+	<% end %>
+	<% if topic.unpublished_count > 0 %>
+	<div>
+		<a href="<%= topic_spam_posts_discussions_unpublished_path(topic.id, :filter => 'waiting')%>" 
+			data-target="#unpublished" rel="freshdialog" data-width="700px" 
+			title="<%= t('discussions.unpublished.index.waiting')%> (<%= topic.unpublished_count %>)" 
+			data-template-footer="" data-template-header="<%= spam_modal_header(topic, 'unpublished') %>" > 
+			<span class="spam-count-label">
+				<%= topic.unpublished_count %>
+			</span>
+			<%= t('discussions.unpublished.index.waiting')%>
+		</a>
+	</div>
+	<% end %>
+</div>
+

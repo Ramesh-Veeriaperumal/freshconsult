@@ -1,0 +1,197 @@
+<% content_for :layoutType %>
+
+<div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
+	<div class='sticky-header-wrapper'>
+		<h3 class='lead pull-left'>
+			<%= link_to t('company.title'), '/companies'%>  
+			<span class='contact-name ellipsis'> / <%= h(@company.name) %></span>
+		</h3>
+		<div class='btn-group pull-right'>
+			<% if privilege?(:manage_contacts) %>
+				<%= link_to t('edit'), edit_company_path(@company), :class => "btn" %>
+			<% end %>
+			<% if privilege?(:delete_contact) %>
+				<%= link_to("<i class='icon-trash'></i>".html_safe, @company, :method => :delete, :class => "btn hide", :id => 'delete_customer' ) %>
+					<button 
+						class="btn"
+						data-target="#customer-delete-confirmation" 
+							rel="freshdialog" 
+							title="<%= t('company.delete_company')%>"
+							data-submit-label="<%= t('delete_permanently') %>"
+							data-submit-class="btn"
+							data-width="500px"
+							data-close-label="<%= t('cancel') %>">
+							<i class='icon-trash'></i>
+					</button>
+			<% end %>
+	    </div>
+	</div>
+</div>
+
+<div class="contact-show-wrapper">
+	<div class='contact-show'>
+		<div class='contact-info-fields'>
+			<div class='contact-info-fields-content'>
+				<div class="profile_pic avatar-pic">
+					<img alt="<%= @company.name %>" src='/images/fillers/company_default_pic.png'>
+				</div>
+				<div class='user-info'>
+					<h1 class='lead break-word'><%= h(@company.name) %></h1>
+					<div class='break-word user-job-title'><%= h(@company.description).gsub(/\n/, '<br />') %></div>
+					<% if @company_users_size > 0 %>
+						<div class='no-contacts'>
+							<div class='border-wrap left'></div>
+							<div class='no-contacts-msg'>
+								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s) %>
+							</div>
+							<div class='border-wrap right'></div>
+						</div>
+					<% end %>
+				</div>
+				<% no_border_class = @company_users_size > 0 ? 'no-border' : '' %>
+				<ul class='show-fields <%= no_border_class %>'>
+					<% view_company_fields.each do |field| %>
+				    	<%=  render_as_list nil, field %>
+				    <% end %>
+				</ul>
+			</div>
+
+		</div>
+		<div class='contact-edit-fields'>
+			<div id='updateForm' class='contact-edit-padding clearfix'>
+				<% form_for :company, @company, 
+					:url => {:controller => 'companies', :action => 'update_notes'},
+					:html => {
+						:class => 'edit_user',
+						:method => :put
+					} do |f| %>	
+					<%= f.error_messages %>
+					<h4 class="conv-title"><%=t('company.notes')%></h4>
+					<%= f.text_area :note, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("company.info5") %>
+					<%= f.hidden_field :id, :value => @company.id, :id => 'companyid' %>
+					<% if privilege?(:manage_contacts) %>
+						<div class='clearfix'>
+							<div class='error ajax-error pull-left'></div>
+							<div class="pull-right hide form-save"> 
+								<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
+								<%= f.submit t('save'), :class=>"btn btn-primary save-form" %> 
+							</div>
+						</div>
+					<% end %>
+				<% end %>	
+			</div>
+			<div class='contact-edit-padding'>
+				<h1 class='conv-title'> <%= t('contacts.conversations.tickets') %> </h1>
+				<p class='muted'> <%= t('contacts.conversations.company_all') %> </p>
+				<div class='timeline'>
+					<ul class='timeline-list'>
+						
+						<% company_activities.each do |item| %>
+							<li class='timeline-item'>
+								<%= ticket_activity(item) %>
+							</li>
+
+						<% end %>
+					</ul>
+				</div>
+				<% if @total_company_tickets.size > 10 %>
+					<div class='contact_tickets'>
+						<div class="more_results">
+							<%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
+						</div>
+					</div>
+				<% end %>
+				<% if company_activities.empty? %>
+					<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
+				<% end %>
+			</div>
+		</div>
+		<div class='contact-sidebar'>
+			<div class='contact-sidebar-content'>	
+				<% if privilege?(:manage_contacts) %> 
+					<div class="sidepanel">
+					<h4 class="app-title"><%=t('companies.add_contact')%> 	
+						<p class='sub-title break-word'>
+							<%= t('companies.add_contact_company', :company_name => @company.name) %> 
+						</p>
+					</h4>
+						<% form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix add-contact", :rel=> 'validate'} ) do %>
+						<ul>
+							<li class='control-group'>
+								<div class='controls'>
+									<input class="text required" id="user_name" name="user[name]" size="30" type="text" value="" placeholder="<%= t('user.full_name') %>" /> 
+								</div>
+							</li> 
+							<li class='control-group'>
+								<div class='controls'>
+									<input class="text require_from_group user_info" id="email_primary" name="user[email]" size="30" type="text" placeholder="<%= t('user.email') %>" />
+								</div>
+							</li>
+							<li class='control-group'>
+								<div class='controls'>
+									<input class="text require_from_group user_info" id="phone_work" name="user[phone]" size="30" type="text" placeholder="<%= t('user.phone_no') %>" /> 
+								</div>
+							</li>
+				    	<%= hidden_field_tag 'user[company_name]', @company.name %>   
+						</ul>
+						<div class="pull-right"><%= submit_tag t('companies.add_contact'), :class => "btn" %></div>
+						<% end %>
+					</div>
+				<% end %>
+				<div class="sidepanel">
+					<h4 class="app-title"><%= t('company.sla_policy_name') %></h4> 
+					<div id="sla_policy" class="sloading loading-small loading-center"
+						 rel="remote-load" 
+						 data-unique="true" 
+						 data-url="/companies/<%=@company.id%>/sla_policies"></div>
+				</div>
+				<% unless @company_users.empty? %>
+					<div class='sidepanel'>
+						<h4 class="app-title margin-set"><%=t('contacts.title')%> (<%= @company_users_size %>) </h4>
+						<ul class="user_list">	  
+							<% users = @company_users.take(5) %>
+							<% users.each do |user| %>
+							  	<li class='user-item'>
+							  		<a href='<%= contact_path(user) %>' class='clearfix'>
+							      		<%= user_avatar(user, :thumb) %>
+							      		<div class='vertical-alignment'>
+							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
+							      			<p class='email ellipsis'> <%= h(user.email) %> </p>
+							      		</div>
+						      		</a>
+							  	</li>  
+							<%end%>
+							<% if @company_users_size > 5 %> 
+								<li class='user-item clearfix'>
+									<a href='<%= URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s) %>' class='user-link clearfix'>
+										<p class='more-users-link'>...</p>
+										<span class='see-all'>
+											<%= t('view_all')%>
+										</span>
+									</a>
+								</li>
+							<% end %>
+						</ul>
+					</div>
+				<% end %>
+				<% unless @company.domains.blank? %>
+					<div class="sidepanel hide">
+						<div class="first">
+							<h4 class="app-title"><%=t('company.info2')%></h4>
+							<p>
+								<%= h(@company.domains) %>	
+							</p>	
+						</div>
+					</div>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="hide" id="customer-delete-confirmation">
+ 	<p class="margin-bottom">
+		<%= "#{t('company.info1')}<br/><br/>#{t('company.info10')}".html_safe %>
+	</p>
+</div>

@@ -19,11 +19,11 @@ end
 FacebookTests = [
   "spec/lib/facebook/comment_spec.rb", 
   "spec/lib/facebook/post_spec.rb",
-  "spec/lib/facebook/facebook_post_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
   "spec/lib/facebook/status_spec.rb",
   "spec/controllers/social/facebook_pages_controller_spec.rb",
-  "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb"
+  "spec/lib/facebook/facebook_core_message_spec.rb",
+  "spec/lib/facebook/faceboook_fql_post_spec.rb"
 ]
 
 GnipTests = [
@@ -102,12 +102,28 @@ APITests = [
 ]
 
 ForumTests = [
+  "spec/lib/community/*_spec.rb",
+  "spec/lib/community/moderation/*_spec.rb",
+  "spec/lib/forum_unpublished_spec.rb",
+  "spec/lib/forum_spam_spec.rb",
+  "spec/lib/dynamo_spec.rb",
   "spec/controllers/discussions_controller_spec.rb",
   "spec/controllers/discussions/*_spec.rb",
   "spec/controllers/forum_categories_controller_spec.rb",
   "spec/controllers/forums_controller_spec.rb",
   "spec/controllers/topics_controller_spec.rb",
-  "spec/models/monitorship_spec.rb"
+  "spec/models/monitorship_spec.rb",
+  "spec/controllers/support/discussions/*_spec.rb",
+  "spec/controllers/support/discussions_controller_spec.rb"
+]
+
+SolutionTests = [
+  "spec/controllers/support/articles_controller_spec.rb",
+  "spec/controllers/support/solutions_controller_spec.rb",
+  "spec/controllers/support/folders_controller_spec.rb",
+  "spec/controllers/helpdesk/solution_articles_controller_spec.rb",
+  "spec/controllers/helpdesk/solution_folders_controller_spec.rb",
+  "spec/controllers/helpdesk/solution_categories_controller_spec.rb"
 ]
 
 HelpdeskTests = [ 
@@ -119,7 +135,6 @@ HelpdeskTests = [
   "spec/controllers/contacts_controller_spec.rb",
   "spec/controllers/contact_merge_controller_spec.rb",
   "spec/controllers/users_controller_spec.rb",
-  "spec/controllers/user_emails_controller_spec.rb",
   "spec/controllers/multiple_user_email_controller_spec.rb",
   "spec/controllers/activations_controller_spec.rb",
   "spec/controllers/customers_controller_spec.rb",
@@ -398,12 +413,30 @@ unless ARGV.any? {|a| a =~ /^gems/}
       end
     end
 
+    namespace :community_tests do
+      desc "Running all community tests"
+      Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(ForumTests+SolutionTests).uniq
+      end
+    end
+
     namespace :email_tests do
       desc "Running all email tests"
       Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
       Spec::Rake::SpecTask.new(:all) do |t|
         t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList.new(EmailTests)
+      end
+    end
+
+    namespace :forum_tests do
+      desc "Running all forum tests"
+      Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+      Spec::Rake::SpecTask.new(:all) do |t|
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+        t.spec_files = FileList.new(ForumTests)
       end
     end
 

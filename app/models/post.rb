@@ -51,6 +51,12 @@ class Post < ActiveRecord::Base
     :spam => :unpublished_spam,
     :waiting => :waiting_for_approval
   }
+
+  SPAM_SCOPES_DYNAMO = {
+    :spam => ForumSpam,
+    :unpublished => ForumUnpublished
+  }
+
   attr_accessor :request_params, :portal
 
   def to_xml(options = {})
@@ -123,7 +129,7 @@ class Post < ActiveRecord::Base
 
   def approve!
     self.published = true
-    self.save
+    self.save!
   end
 
   def mark_as_spam!

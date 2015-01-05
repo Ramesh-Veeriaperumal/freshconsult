@@ -1,44 +1,44 @@
-<ul class="ui-form mb20">
-  <li class="inline-field">
-    <div class="trial-info">
-      <div class="caption">
-        <%= t('current_plan').html_safe %>
-        <div class="plan-name">
-          <% if @subscription.classic? %>
-          <b class="big-text"> <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %></b>
-          <%= content_tag(:span, "Classic", :class => "classic-account") %>
-          <% else %>
-            <b class="big-text"> <%= " #{ @subscription.subscription_plan.name }" %></b>
-          <% end %>
-        </div>
-      </div>
-      <% trial_days = current_account.subscription.trial_days %>
-      <%= trial_expiry_title(trial_days) %>
-      <div class = "choose-plan">
-        <%= t('choose_plan_trial').html_safe %>
-      </div>
-    </div>    
-    <br /><br />
-  </li> 
-</ul>
-
-<div class= "pull-right"> 
-  <%= select_tag :currency, fetch_currencies, :id => "switch-currency", :class => "select2 pull-right" %>       
+<% trial_days = current_account.subscription.trial_days %>
+<div class="well well-trial well-<%= trial_days > 10 ? 'info' : 'danger' %>">
+  <h1 class="lead">
+    <%= t('current_plan').html_safe %> :
+    <strong>
+      <% if @subscription.classic? %>
+        <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %>
+        <%= content_tag(:span, "Classic", :class => "classic-account") %>
+      <% else %>
+        <%= " #{ @subscription.subscription_plan.name }" %>
+      <% end %>
+    </strong>
+  </h1>
+  <span class="label label-<%= trial_days > 10 ? 'success' : 'important' %> label-lead">
+    <%= trial_expiry_title(trial_days) %>
+  </span>
+  <p>
+    <%= t('choose_plan_trial').html_safe %>
+  </p>
 </div>
 
-<div class="choose-plan-title">
-  <%= content_tag(:h4, t('choose_plan'), :class => "title") %>
-  <%= t('downgrade_plan') %>
+<div class="plan-section-title">
+  <div class="pull-right"> 
+    <span class="lead">
+      Currency :
+    </span>
+    <%= select_tag :currency, fetch_currencies, :id => "switch-currency", :class => "select2" %>
+  </div>
+  <%= content_tag(:h3, t('choose_plan'), :class => "lead mb0") %>
+  <%= content_tag(:h5, t('downgrade_plan'), :class => "lead-note") %>
 </div>
+
 <%= render :partial => "select_plans", :locals => { :plans => plans, :subscription => @subscription, :show_all => true } %>
 
-<script type="text/javascript">
-  
+<script type="text/javascript">  
   function render_currency_partial(currency){    
     calculate_request = jQuery.post( "/subscriptions/calculate_plan_amount", { "currency": currency }, 
       function(data){  
         jQuery("#ChangePlan").removeClass("sloading");
-        jQuery("#ChangePlan").html(data); } );
+        jQuery("#ChangePlan").html(data); 
+      } );
   }
 
   jQuery('#switch-currency').live('change', function(){
@@ -49,4 +49,3 @@
   });
   
 </script>
-

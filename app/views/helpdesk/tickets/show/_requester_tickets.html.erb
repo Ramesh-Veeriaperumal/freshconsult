@@ -1,4 +1,4 @@
-<% @user_tickets = current_account.tickets.requester_active(@ticket.requester).visible.newest(5).find(:all, 
+<% @user_tickets = current_account.tickets.permissible(current_user).requester_active(@ticket.requester).visible.newest(5).find(:all, 
       :include => [ :ticket_states,:ticket_status,:responder,:requester ]) %>
 <div id="tickets-expanded" class="contact_tickets row-fluid">
 	<div class="detailed_view">

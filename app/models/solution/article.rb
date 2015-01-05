@@ -2,6 +2,8 @@
 class Solution::Article < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
+  include Mobihelp::AppSolutionsUtils
+  
   set_table_name "solution_articles"
   serialize :seo_data, Hash
 
@@ -12,7 +14,7 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to_account
   
-  # xss_sanitize :only => [:description],  :html_sanitize => [:description]
+  xss_sanitize :only => [:title, :description],  :article_sanitizer => [:title, :description]
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   
   has_many_attachments
@@ -44,9 +46,8 @@ class Solution::Article < ActiveRecord::Base
 
   attr_protected :account_id ,:attachments
   
-  after_commit_on_create  :clear_mobihelp_solutions_cache
-  after_commit_on_update  :clear_mobihelp_solutions_cache
-  before_destroy          :clear_mobihelp_solutions_cache
+  before_save     :set_mobihelp_solution_updated_time, :if => :content_changed?
+  before_destroy  :set_mobihelp_solution_updated_time
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
@@ -215,7 +216,13 @@ class Solution::Article < ActiveRecord::Base
 
   private
   
-    def clear_mobihelp_solutions_cache
-      clear_solutions_cache(self.folder.category_id)
+    def set_mobihelp_solution_updated_time
+      update_mh_solutions_category_time(self.folder.category_id)
+    end
+
+    def content_changed?
+      all_fields = [:title, :description, :status, :position]
+      changed_fields = self.changes.symbolize_keys.keys
+      (changed_fields & all_fields).any?
     end
 end

@@ -6,11 +6,12 @@ include Facebook::Core::Util
 describe Facebook::Core::Status do
   
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @account.make_current
     @fb_page = create_test_facebook_page(@account, false)
     @account.features.send(:facebook_realtime).create
     Social::FacebookPage.update_all("import_company_posts = true", "page_id = #{@fb_page.page_id}")
+    @fb_page.reload
     if @account.features?(:social_revamp)
       @default_stream = @fb_page.default_stream
       @ticket_rule = create_test_ticket_rule(@default_stream, @account)
@@ -162,22 +163,22 @@ describe Facebook::Core::Status do
   # end
   
   
-  # it "authentication error check if it is pushed into dynamo db" do
-  #   feed_id = "#{@fb_page.page_id}_#{get_social_id}"
-  #   realtime_feed = sample_realtime_feed(feed_id, "status")
+  it "authentication error check if it is pushed into dynamo db" do
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
+    realtime_feed = sample_realtime_feed(feed_id, "status")
     
-  #   error_info = {
-  #     "code" => 190,
-  #     "message" => "manage_pages"
-  #   }
+    error_info = {
+      "code" => 190,
+      "message" => "manage_pages"
+    }
     
-  #   Koala::Facebook::API.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new(400, "message is pushed to dynamo db access token", error_info))
+    Koala::Facebook::API.any_instance.stubs(:get_object).raises(Koala::Facebook::APIError.new(400, "message is pushed to dynamo db access token", error_info))
     
-  #   AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
-  #   Facebook::Core::Parser.new(realtime_feed).parse
-  #   @account.facebook_pages.find_by_page_id(@fb_page.page_id).reauth_required.should be_true
-  #   @account.facebook_pages.find_by_page_id(@fb_page.page_id).enable_page.should be_false
-  # end
+    AwsWrapper::DynamoDb.any_instance.expects(:write).returns(true)
+    Facebook::Core::Parser.new(realtime_feed).parse
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).reauth_required.should be_true
+    @account.facebook_pages.find_by_page_id(@fb_page.page_id).enable_page.should be_false
+  end
   
   # it "should not create a ticket when a post arrives and import company post is not enabled" do
   #    @fb_page.update_attributes(:import_company_posts => false)

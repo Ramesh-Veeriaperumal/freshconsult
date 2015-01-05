@@ -10,6 +10,7 @@ class Sharding
 
   def admin_select_shard_of(shard_key, &block)
     shard = is_numeric?(shard_key) ? ShardMapping.lookup_with_account_id(shard_key) : ShardMapping.lookup_with_domain(shard_key)
+    raise ActiveRecord::RecordNotFound  if shard.nil?
     shard_name = shard.shard_name 
     ActiveRecord::Base.on_shard(shard_name.to_sym,&block)
   end

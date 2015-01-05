@@ -6,7 +6,7 @@ describe "Ticket and Agent score specs" do
   self.use_transactional_fixtures = false
   
   before(:all) do
-    @account  = create_test_account
+    #@account = create_test_account
   end
   
   context "For first call resolution and fast resolution of tickets" do

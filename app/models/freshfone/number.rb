@@ -48,10 +48,11 @@ class Freshfone::Number < ActiveRecord::Base
 	VOICEMAIL_STATE_BY_VALUE = VOICEMAIL_STATE.invert
 	
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
+	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
-	validates_inclusion_of :queue_wait_time,  :in => [ 2, 5, 10, 15 ] #Temp options
+	validates_inclusion_of :queue_wait_time,  :in => [ 1, 2, 3, 4, 5, 10, 15 ] #Temp options
 	validates_inclusion_of :max_queue_length, :in => [ 0, 3, 5, 10 ] #Temp options
 	validates_inclusion_of :voice, :in => VOICE_HASH.values,
 		:message => "%{value} is not a valid voice type"
@@ -84,6 +85,12 @@ class Freshfone::Number < ActiveRecord::Base
 	HUNT_TYPE.each do |k, v|
 		define_method("#{k}?") do
 			hunt_type == v
+		end
+	end
+
+	RECORDING_VISIBILITY.each do |k, v|
+		define_method("#{k}?") do 
+			recording_visibility == v
 		end
 	end
 
@@ -134,11 +141,8 @@ class Freshfone::Number < ActiveRecord::Base
 	def renew
 		begin
 			next_renewal = self.next_renewal_at.advance(:months => 1) - 1.day
-			if account.freshfone_credit.renew_number(rate, id)
-				update_attributes(:next_renewal_at => next_renewal)
-			else
-				handle_number_renewal_failure(next_renewal)
-			end
+			account.freshfone_credit.renew_number(rate, id)
+			update_attributes(:next_renewal_at => next_renewal)
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
 			notify_number_renewal_failure(e)
@@ -149,16 +153,6 @@ class Freshfone::Number < ActiveRecord::Base
 	def insufficient_renewal_amount?
 		credit = account.freshfone_credit
 		credit.available_credit < rate
-	end
-
-	def handle_number_renewal_failure(next_renewal)
-		if account.subscription.active?
-			update_attributes(:state => STATE[:expired], 
-												:next_renewal_at => next_renewal)
-			FreshfoneNotifier.deliver_number_renewal_failure(account, self.number)
-		else
-			update_attributes(:deleted => true)
-		end
 	end
 
 	def queue_wait_time_in_minutes

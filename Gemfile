@@ -1,5 +1,5 @@
 # source :gemcutter
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
@@ -32,7 +32,6 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 
-gem 'debugger', "~> 1.6.8"
 
 gem 'test-unit', '1.2.3'
 

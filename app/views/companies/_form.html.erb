@@ -1,24 +1,17 @@
+<% javascript_tag do %>
+  customMessages = {
+    confirmNavigate: '<%= t("admin.products.portal.save_and_continue") %>'
+}
+<% end %>
 <%= f.error_messages %> 
-<ul class="ui-form"> 
-  <li>
-    <%= f.label :name, t('company.name') %>
-    <%= f.text_field :name , :class => "text required trim_spaces" %>
-  </li>   
-  <li>
-    <%= f.label :description, t('description')  %>
-  <%= f.label :description, t('company.info8'), :for => "comp_desc", :class => "overlabel" %>
-    <%= f.text_area :description, :id => "comp_desc", :class => "smallpara"  %>
-  </li> 
-  <li>
-    <%= f.label :note, t('company.notes') %>
-    <%= f.label :note, t('company.info5'), :for => "comp_notes", :class => "overlabel" %>
-  <%= f.text_area :note, :id => "comp_notes", :class => "smallpara"  %>
-  </li>
-  <li>
-    <%= f.label :domains, t('company.info2') %>   
-    <%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
-    <div class="info-data">
-      <b><%= t('note') %></b> <%=t('company.info9')%> 
-    </div>
-  </li> 
-</ul>
+<div class="row-fluid">
+  <div class="span12">
+    <ul class="form-horizontal contact-form">
+
+    <% company_fields.each do |field| %>
+    <%=  render_as_list f, field %>
+    <% end %>
+
+    </ul>  
+  </div>
+</div>

@@ -4,9 +4,7 @@
 (function($){
 
   // Tweet custom class
-  $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
-  $.validator.addClassRules("tweet", { tweet: 140 });
   $.validator.addClassRules("facebook", { facebook: 8000 });
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
@@ -24,6 +22,12 @@
      return valid;
   }, 'One or more email addresses are invalid.');
   $.validator.addClassRules("multiemail", { multiemail: true });
+
+  $.validator.addMethod("tweet", function(value, element) {
+    if($(element).data('tweet-count') >= 0){
+      return true;
+    }
+  }, "Your Tweet was over 140 characters. You'll have to be more clever." );
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
@@ -286,7 +290,7 @@ $.validator.addClassRules("required_redactor", { required_redactor : true });
 // validator to check the folder name presence in canned response
 
   $.validator.addMethod("presence_in_list", function(value, element) {
-    return $(element).data("list").indexOf(value) == -1;
+    return $(element).data("list").indexOf(value.toLowerCase()) == -1;
   }, "The name already exists.")
   $.validator.addClassRules("presence_in_list", { presence_in_list : true });
 
@@ -318,7 +322,29 @@ $.validator.addClassRules("regex_validity", { regex_validity: true });
 
 $.validator.addMethod('validate_regexp', function(value, element) {
   var regExp = new RegExp('^/(.*?)/([gimy]*)$');
-  return this.optional(element) || regExp.test(value);
+  var match = value.match(regExp);
+  var is_valid = true;
+  try {
+      new RegExp(match[1], match[2]);
+  }
+  catch(err) {
+    is_valid = false;
+  }
+  return is_valid;
 }, "Invalid Regular Expression");
+
+$.validator.addMethod("ca_same_folder_validity", function(value, element) {
+  var is_valid = true;
+  var current_folder = $(element).data('currentFolder');
+  if(current_folder == value)
+    is_valid = false;
+  return is_valid;
+}, "Cannot move to the same folder.");
+
+$.validator.addClassRules("ca_same_folder_validity", { ca_same_folder_validity: true });
+
+$.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );   
+$.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
+$.validator.addClassRules("decimal", { number: true });
 
 })(jQuery);

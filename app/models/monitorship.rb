@@ -17,12 +17,12 @@ class Monitorship < ActiveRecord::Base
   before_create :set_account_id
 
   def sender_and_host
-    if !portal_id? || ( portal_id? && portal.main_portal? )
-      sender = user.account.default_friendly_email
-      host = user.account.host
-    else
+    if portal && !portal.main_portal?
       sender = portal.friendly_email
       host = portal.host
+    else
+      sender = user.account.default_friendly_email
+      host = user.account.host
     end
     [sender,host]
   end

@@ -21,7 +21,6 @@ var FreshfoneEndCall;
 		this.$requesterTicketSearch = this.$endCall.find('.end_call_ticket_search');
 		this.$callNote = $('#call_notes');
 		
-		this.isNotePrivate = false;
 		this.freshdialogOption = {
 			backdrop: "static",
 			height: "480px",
@@ -195,6 +194,7 @@ var FreshfoneEndCall;
 					'custom_requester_id' : this.custom_requester_id(),
 					'ticket_subject': this.ticketSubject(),
 					'requester_email': this.requesterEmail(),
+					'responder_id': this.agent || "", 
 					'call_history': !this.inCall
 				}
 			});
@@ -211,7 +211,6 @@ var FreshfoneEndCall;
 					'ticket': this.ticketId,
 					'call_log': this.ticket_notes,
 					'CallSid': this.callSid,
-					'private': this.isNotePrivate,
 					'call_history': !this.inCall
 				}
 			});

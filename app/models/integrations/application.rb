@@ -11,6 +11,11 @@ class Integrations::Application < ActiveRecord::Base
     :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
     :order => :listing_order }}
 
+  # hack to only get the apps which belongs to the same account
+  named_scope :freshplugs_apps, lambda {|account_id| { 
+    :conditions => ["account_id  in (?)", [account_id]], 
+    :order => :listing_order }}
+
   has_many :app_business_rules, 
     :class_name => 'Integrations::AppBusinessRule',
     :dependent => :destroy
@@ -108,6 +113,10 @@ class Integrations::Application < ActiveRecord::Base
 
   def system_app?
     self.account_id == SYSTEM_ACCOUNT_ID
+  end
+
+  def cti?
+    self.application_type == "cti_integration"
   end
 
   private

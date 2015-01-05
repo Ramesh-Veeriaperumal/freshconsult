@@ -3,6 +3,7 @@ MailChimpWidget.prototype= {
 	initialize: function(mailchimpBundle){
 		this.ERROR_MAPPER = {"-99": "Unknown Exception", "-98": "Request Timed Out", "-50": "Too many connections. Try again later", "100": "Unknown User", "101": "User disabled", "102": "User does not exist", "104": "Invalid APIKey. Try re-installing the MailChimp addon.", "232": "Contact does not exist", "301": "Campaign stats not available" };
 		mailchimpWidget = this;
+		if (mailchimpBundle.lname == mailchimpBundle.fname) mailchimpBundle.lname = "";
 		mailchimpBundle.integratable_type = "email_marketing";
 		mailchimpBundle.app_name = "MailChimp";
 		mailchimpBundle.domain = mailchimpBundle.api_endpoint;
@@ -21,8 +22,8 @@ MailChimpWidget.prototype= {
 	},
 
 	contactRequest: function(list){
-		subscribeEmailEndpoint = "1.3/?method=listSubscribe&email_address=#{email}&id=#{listId}&double_optin=false"
-		return { rest_url: subscribeEmailEndpoint.interpolate({listId: list, email: mailchimpBundle.reqEmail}) };
+		subscribeEmailEndpoint = "1.3/?method=listSubscribe&email_address=#{email}&id=#{listId}&double_optin=false&merge_vars[FNAME]=#{fname}&merge_vars[LNAME]=#{lname}"
+		return { rest_url: subscribeEmailEndpoint.interpolate({listId: list, email: mailchimpBundle.reqEmail, fname: mailchimpBundle.fname, lname:mailchimpBundle.lname}) };
 	},
 
 	getCampaignsForEmailSuccess: function(response){
@@ -122,8 +123,8 @@ MailChimpWidget.prototype= {
 	},
 
 	subscribeLists: function(list){
-		subscribeEmailEndpoint = "1.3/?method=listSubscribe&email_address=#{email}&id=#{listId}&double_optin=false"
-		return { rest_url: subscribeEmailEndpoint.interpolate({listId: list, email: mailchimpBundle.reqEmail}) };
+		subscribeEmailEndpoint = "1.3/?method=listSubscribe&email_address=#{email}&id=#{listId}&double_optin=false&merge_vars[FNAME]=#{fname}&merge_vars[LNAME]=#{lname}"
+		return { rest_url: subscribeEmailEndpoint.interpolate({listId: list, email: mailchimpBundle.reqEmail, fname: mailchimpBundle.fname, lname:mailchimpBundle.lname}) };
 	},
 
 	unsubscribeLists: function(list){

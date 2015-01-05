@@ -1,8 +1,11 @@
 class Facebook::Core::Feed
+  
+  include Facebook::Constants
+  
   attr_accessor :feed, :entry, :entry_change, :entry_changes, :method, :clazz
 
   VERB_LIST = ["add"]
-  ITEM_LIST = ["status","post","comment"]
+  ITEM_LIST = ["status","post","comment", "photo", "video"]
 
   def initialize(feed)
     parse(feed)
@@ -59,10 +62,18 @@ class Facebook::Core::Feed
   #returns a string containing type of feed is either status,post,comment
   def meta_class
     item_data = @entry_change["value"]["item"].downcase if @entry_change["value"]["item"]
-    @clazz = ITEM_LIST.include?(item_data) ? item_data : nil
+    @clazz = ITEM_LIST.include?(item_data) ? map_class(item_data) : nil
   end
 
   private
+  
+    def map_class(item_data)
+      case item_data
+        when POST_TYPE[:photo] then feed_class
+        when POST_TYPE[:video] then feed_class
+        else item_data
+      end
+    end
 
     def convert_to_object
       @entry = @feed["entry"] if @feed["entry"]
@@ -75,6 +86,18 @@ class Facebook::Core::Feed
     def feed?
       return true if @entry_change && @entry_change["field"]=="feed" && \
       @entry_change["value"]
+    end
+    
+    def sender_id
+      return @entry_change["value"]["sender_id"].to_s
+    end
+    
+    def feed_class
+      company_post? ? POST_TYPE[:status] : POST_TYPE[:post]
+    end
+     
+    def company_post?
+      sender_id == page_id
     end
 
 end

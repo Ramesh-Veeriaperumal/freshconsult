@@ -7,20 +7,24 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
 	def before_save(freshfone_call)
 		set_customer_on_ticket_creation(freshfone_call) if freshfone_call.customer_id.blank?
+    update_caller_data(freshfone_call)
 	end
 
 	private
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
 			freshfone_call.call_sid = params[:CallSid]
-
-			if freshfone_call.blocked?
-				blocked_customer_data(freshfone_call, params) 
-			else
-				freshfone_call.incoming? ? incoming_customer_data(freshfone_call, params) : 
-				outgoing_customer_data(freshfone_call, params)
-			end
 		end
+
+    def update_caller_data(freshfone_call)
+      params = freshfone_call.params || {}
+      if freshfone_call.blocked?
+        blocked_customer_data(freshfone_call, params) 
+      else
+        freshfone_call.incoming? ? incoming_customer_data(freshfone_call, params) : 
+        outgoing_customer_data(freshfone_call, params)
+      end
+    end
 
 		def incoming_customer_data(freshfone_call, params)
       options = {
@@ -62,8 +66,10 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		end
 		
 		def build_freshfone_caller(freshfone_call, options)
+      return freshfone_call.caller if options[:number].blank? #empty caller returned set it to null.
       account = freshfone_call.account
       caller  = account.freshfone_callers.find_or_initialize_by_number(options[:number])
+      options.delete(:country) if options[:country].blank? # sometimes empty country is updated.
       caller.update_attributes(options)
       caller
     end

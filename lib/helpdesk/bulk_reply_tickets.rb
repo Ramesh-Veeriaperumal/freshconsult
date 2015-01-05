@@ -138,7 +138,7 @@ class Helpdesk::BulkReplyTickets
     
     def twitter_reply ticket, note
       twt_type = ticket.tweet.tweet_type || :mention.to_s
-      send("send_tweet_as_#{twt_type}", ticket, note)
+      send("send_tweet_as_#{twt_type}", ticket, note, note.body.strip)
     end
 
 end

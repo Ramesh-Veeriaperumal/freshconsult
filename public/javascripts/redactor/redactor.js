@@ -269,6 +269,11 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: "<p>&nbsp;</p>\r\n",
 		buffer: false,
 		visual: true,
+		setFontSettings: false,
+		wrapFontSettings: {
+				"font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+				"font-size"  : "13px"
+		},
 		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
 		allowTagsInCodeSnippet: false,
 
@@ -943,14 +948,14 @@ Redactor.prototype = {
 			this.storedRange.insertNode(this.imgTag[0]);
 		}
 	},
-	removeTagOnLiquid: function(){
+	removeTagOnLiquid: function(content){
 		var content = this.$editor.html();
 
 		var r_content = content.replace(/\{[^{]*}/g,this.replaceLiquidHtml)
 	 			.replace(/\{[^}]*}/g, this.replaceLiquidHtml)
 	 			.replace(/\{\%.*?\%\}|\{\{.*?\}\}?/ig, this.replaceLiquidHtml) ;
 
-		this.$el.val(r_content);
+		return r_content;
 	},
 	replaceLiquidHtml: function(_match){
 		return _match.replace(/(<([^>]+)>)/ig, "");
@@ -964,6 +969,28 @@ Redactor.prototype = {
 		}
 		this.execCommand(cmd, value);
 	    $.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+	},
+	wrapElementWithFont: function(content){
+		var temp_div = $("<div />");
+		var	div = $("<div />")
+			div.css(this.opts.wrapFontSettings)
+			div.html(content)
+		temp_div.append(div)
+
+		return temp_div.html();
+	},
+	changesInTextarea: function(){
+		var content = this.$editor.html();
+
+		if(!this.opts.allowTagsInCodeSnippet){
+			content = this.removeTagOnLiquid(content);
+		}
+		
+		if(this.$el.data('wrapFontFamily') != undefined && this.$el.data('wrapFontFamily')){
+			content = this.wrapElementWithFont(content);
+		}
+
+		this.$el.val(content);
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -1276,6 +1303,10 @@ Redactor.prototype = {
 			if (this.opts.autoresize === false)
 			{
 				this.$editor.css('height', this.height);
+			}
+
+			if(this.opts.setFontSettings){
+				this.$editor.css(this.opts.wrapFontSettings);
 			}
 
 			// hide textarea
@@ -1922,7 +1953,7 @@ Redactor.prototype = {
 			{
 				html = html.replace(/<div(.*?)>([\w\W]*?)<\/div>/gi, '<p>$2</p>');	
 			}
-
+			var self = this;
 			//remove script and style tags
 			$.browser.chrome = /chrom(e|ium)/.test(navigator.userAgent.toLowerCase()); 
 			if($.browser.chrome && (navigator.appVersion.indexOf("Win")!=-1))
@@ -2004,7 +2035,11 @@ Redactor.prototype = {
 	                                              }
 	                                              else if(subParts[0] == 'font-family')
 	                                              {
-	                                                $(this).css('font-family',subParts[1]);
+	                                              	if(self.opts.setFontSettings){
+	                                              		$(this).css('font-family',self.opts.wrapFontSettings.font_family);
+	                                              	} else {
+	                                              		$(this).css('font-family',subParts[1]);
+	                                              	}
 	                                              }
 	                                              else if(subParts[0] == 'color')
 	                                              { 
@@ -2012,7 +2047,7 @@ Redactor.prototype = {
 	                                              }
 	                                              else if(subParts[0] == 'font-size')
 	                                              {
-	                                                $(this).css('font-size',subParts[1]);
+	                                                $(this).css('font-size',subParts[1].replace("pt","px"));
 	                                              }
 	                                              else if(subParts[0] == 'font-weight')
 	                                              {
@@ -2135,7 +2170,11 @@ Redactor.prototype = {
             {
                 if (htmls[i].search('{replace') == -1)
                 {
-                    html += '<p>' +  htmls[i].replace(/^\n+|\n+$/g, "") + "</p>";
+                	if($.browser.mozilla == true || $.browser.msie == true) {
+                		html += htmls[i].replace(/^\n+|\n+$/g, "");
+                	} else {
+                		html += '<p>' + htmls[i].replace(/^\n+|\n+$/g, "") + '</p>';
+                	}
                 }
                 else html += htmls[i];
             }
@@ -2298,6 +2337,12 @@ Redactor.prototype = {
 				keep_selection.removeAllRanges();
 				keep_range.selectNodeContents(this.$editor.get(0));
 				keep_selection.addRange(keep_range);
+
+				if ($.browser.mozilla)
+				{
+					this.$editor.focus();
+				}
+
 				this.execCommand('inserthtml',this.$el.val());
 			}
 		} catch(e){ }
@@ -2690,7 +2735,9 @@ Redactor.prototype = {
 
 		selectedhtml.html(this.formatting(selectedhtml.html())); // Format the html
 
-		replacehtml = selectedhtml.text().replace(/\n+/g,'\n'); // Obtain innertext of the selected content
+		replacehtml = selectedhtml.text().replace(/\n+/g,'\n')
+									.replace(/</g,'&lt;')
+									.replace(/>/g,'&gt;'); // Obtain innertext of the selected content
 
 		return replacehtml;
 	},
@@ -3069,7 +3116,7 @@ Redactor.prototype = {
 		var table_box = $('<div></div>');
 		
 		var tableid = Math.floor(Math.random() * 99999);
-		var table = $('<table id="table' + tableid + '"><tbody></tbody></table>');
+		var table = $('<table id="table' + tableid + '" border="1" cellspacing="0" cellpadding="0"><tbody></tbody></table>');
 		
 		for (var i = 0; i < rows; i++)
 		{
@@ -3449,7 +3496,8 @@ Redactor.prototype = {
 		{
 			if ($(parent).get(0).tagName !== 'A')
 			{
-				$(el).replaceWith('<a href="' + link + '">' + this.outerHTML(el) + '</a>');
+				var anchor = $('<a >').attr('href',link ).html( this.outerHTML(el)).get(0).outerHTML;
+				$(el).replaceWith(anchor);
 			}
 			else
 			{
@@ -4452,10 +4500,10 @@ $.fn.insertExternal = function(html)
 						this.$editor.$el.data('redactor').addNoneStyleForCursor();
 					}
 				}
-				if(!this.$editor.opts.allowTagsInCodeSnippet){
-					this.$editor.removeTagOnLiquid();
-				}
+				
+				this.$editor.changesInTextarea();
 			}
+			
 		}
 	}
 

@@ -27,11 +27,7 @@ module Reports
 				accounts_re_job_id = get_reports_hash_value(export_hash, "re_job_id")
 				accounts_re_job = Resque::Plugins::Status::Hash.get(accounts_re_job_id)
 				if accounts_re_job.nil? or accounts_re_job.completed?
-					if Account.current.features?(:reports_regenerate_data)
-						re_job_id = Reports::Workers::RegenerateReportData.create({:account_id => id, :dates => set_of_dates})
-					else
-						re_job_id = Reports::Workers::RegenerateArchiveData.create({:account_id => id, :dates => set_of_dates})
-					end
+					re_job_id = Reports::Workers::RegenerateReportData.create({:account_id => id, :dates => set_of_dates})
 					add_to_reports_hash(export_hash, "re_job_id", re_job_id, 604800)
 				elsif Rails.env.production?
 					FreshdeskErrorsMailer.deliver_error_email(nil,accounts_re_job,nil,

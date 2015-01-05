@@ -37,6 +37,7 @@ Authority::Authorization::PrivilegeList.build do
        :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
     resource :"social/twitter",
         :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
+    resource :"health_check"
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -44,7 +45,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce" 
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
-    
+    resource :"integrations/cti/customer_detail"
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
     resource :"freshfone/ivr"
@@ -70,6 +71,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
 
+    #canned_response
+    resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
+    resource :"helpdesk/canned_responses/response"
 	end
 
   reply_ticket do
@@ -190,7 +194,7 @@ Authority::Authorization::PrivilegeList.build do
           :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
-    resource :"discussions/merge_topic"
+    resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
   end
 
   # delete_forum_topic
@@ -198,6 +202,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/topic", :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
+    resource :"discussions/unpublished"
   end
 
   # ************** CONTACTS **************************
@@ -214,9 +219,9 @@ Authority::Authorization::PrivilegeList.build do
   # add_or_edit_contact
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
-               :create_contact, :update_contact, :update_bg_and_tags, :contact_email, :edit, :update, :verify_email]
+               :create_contact, :update_contact, :update_description_and_tags, :contact_email, :edit, :update, :verify_email]
     resource :customer, :only => [:new, :create, :edit, :update] #should deprecate
-    resource :company,  :only => [:new, :create, :edit, :update, :quick, :sla_policies]
+    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :contact_import
     resource :contact_merge
@@ -253,6 +258,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/helpdesk_report"
       resource :"reports/survey_report"
       resource :"reports/freshfone/summary_report"
+      resource :"reports/freshchat/summary_report"
    	resource :"reports/timesheet_report"
     resource :"reports/report_filter"
 	end
@@ -276,8 +282,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_canned_responses do
-    resource :"admin/canned_responses/folder"
-    resource :"admin/canned_responses/response"
+    resource :"helpdesk/canned_responses/folder"
   end
 
   manage_dispatch_rules do
@@ -290,7 +295,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_scenario_automation_rules do
-    resource :"admin/automation"
+    resource :"helpdesk/scenario_automation"
   end
 
   manage_email_settings do
@@ -314,6 +319,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :group
     resource :ticket_field
     resource :"admin/contact_field"
+    resource :"admin/company_field"
     resource :"admin/role"
     resource :"admin/product"
     resource :"admin/portal"
@@ -323,6 +329,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/application"
     resource :"integrations/installed_application"
     resource :"integrations/google_account"
+    resource :"integrations/remote_configuration"
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"

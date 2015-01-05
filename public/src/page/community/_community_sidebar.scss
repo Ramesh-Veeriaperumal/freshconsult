@@ -56,11 +56,13 @@ $sidebar-width: 284px;
 .community-sidebar{
 	@include transition(left 0.2s ease-in, opacity 0.2s ease-in);
 	position: absolute;
-	z-index: 1000;
+	z-index: 2;
 	padding: 10px 0 10px;
 	top:0;
 	width: $sidebar-width;
 	background-color: #fff;
+	height: 400px;
+	@include box-shadow(0px 0 6px rgba(0, 0, 0, 0.1));
 	&:after{
 		content:"";
 		position:absolute;
@@ -68,13 +70,12 @@ $sidebar-width: 284px;
 		top: 0;
 		width: 0;
 		height: 100%;
-		@include border-left(1px solid #afafaf);
+		@include border-left(1px solid #EEE);
 		background: transparent;
-		@include box-shadow(2px 1px 3px rgba(0, 0, 0, 0.4));
+		
 	}
 }
 .cm-sb-list{
-	@include margin-right(2px);
 	overflow:auto;
 	.disabled a {
 		color: #EEE;
@@ -217,14 +218,21 @@ body .community-sidebar {
 	-webkit-animation-name: fadeOutLeft;
 	animation-name: fadeOutLeft;
 }
-body.community.cs-show .community-sidebar {
+body.community.cs-show{
+	.community-sidebar {
+		display: block;
+		-webkit-animation-duration: 0.20s;
+	  animation-duration: 0.20s;
+	  -webkit-animation-fill-mode: both;
+	  animation-fill-mode: both;
+		-webkit-animation-name: fadeInLeft;
+		animation-name: fadeInLeft;
+	}
+}
+body.community.cs-always-show .community-sidebar {
 	display: block;
-	-webkit-animation-duration: 0.20s;
-  animation-duration: 0.20s;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-	-webkit-animation-name: fadeInLeft;
-	animation-name: fadeInLeft;
+	animation: none;
+	-webkit-animation: none;
 }
 
 

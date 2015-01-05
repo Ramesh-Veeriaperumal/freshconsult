@@ -10,7 +10,8 @@ module Mobihelp::MobihelpHelperMethods
     [:MHC_FAILED, 10, "Registration failed"],
     [:MHC_INVALID_APPCREDS, 20, "Invalid App Credentials. Check Configuration"],
     [:MHC_APP_DELETED, 30, "Mobihelp App has been deleted"],
-    [:MHC_DUPLICATE_DEVICE_ID, 40, "Device id should be unique"]
+    [:MHC_DUPLICATE_DEVICE_ID, 40, "Device id should be unique"],
+    [:MHC_USER_DELETED, 50, "User has been blocked or deleted"]
   ]
   MOBIHELP_STATUS_CODE_BY_NAME = Hash[*MOBIHELP_STATUS.map{ |s| [s[0], s[1]] }.flatten]
   MOBIHELP_STATUS_MESSAGE_BY_NAME = Hash[*MOBIHELP_STATUS.map{ |s| [s[0], s[2]] }.flatten]

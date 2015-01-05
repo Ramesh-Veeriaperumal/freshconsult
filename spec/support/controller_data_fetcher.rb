@@ -22,11 +22,13 @@ class ControllerDataFetcher
 
   REQUEST  = ActionController::Request.new ENV
 
-  RETRIEVE_VARIABLES = {  Admin::AutomationsController      => [:action_defs],
-                          Admin::VaRulesController          => [:action_defs, :filter_defs, :op_types],
-                          Admin::SupervisorRulesController  => [:action_defs, :filter_defs, :time_based_filters, :op_types],
-                          Admin::ObserverRulesController    => [:action_defs, :filter_defs, :event_defs,
-                                                                :op_types] }
+  RETRIEVE_VARIABLES = {  Helpdesk::ScenarioAutomationsController => [:action_defs],
+                          Admin::VaRulesController                => [:action_defs, :filter_defs, :op_types],
+                          Admin::SupervisorRulesController        => [:action_defs, :filter_defs, :time_based_filters, :op_types],
+                          Admin::ObserverRulesController          => [:action_defs, :filter_defs, :event_defs,
+                                                                        :op_types] }
+
+  CONTROLLER_ATTR_ACCESSORS = [:action_defs, :filter_defs, :event_defs, :op_types]
 
   attr_accessor :controller
 
@@ -35,6 +37,9 @@ class ControllerDataFetcher
       raise 'Class should be defined in ControllerDataFetcher::RETRIEVE_VARIABLES'
     end
     @controller = controller_class.new
+    CONTROLLER_ATTR_ACCESSORS.each do |accessor_variable|
+      @controller.class.send :attr_accessor, accessor_variable
+    end
   end
 
   def fetch_data

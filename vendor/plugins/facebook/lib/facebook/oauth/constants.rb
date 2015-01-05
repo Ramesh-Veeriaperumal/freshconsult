@@ -5,8 +5,7 @@ module Facebook
         "public_profile",
         "manage_pages",
         "email",
-        "read_stream",
-        "publish_stream",
+        "publish_actions",
         "read_page_mailboxes"
       ]
 

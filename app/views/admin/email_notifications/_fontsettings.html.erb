@@ -1,0 +1,30 @@
+<% font_setting = JSON.parse(email_template_settings) %>
+<% font_family = font_setting["font-family"] %>
+<div id="font_setting_partial" class="font-setting-wrapper">
+	<div class="pull-right mt10" id="font-show">
+		<span id="font-tab" class="show-font-title"><%= t('email_notifications.default_font')%><span id="font-name" rel="<%= font_family %>" style="font-family:<%= font_family %>"><%= font_family %></span> -
+			<a href="#"id="font-change" class="font-change"> Change  </a>
+		</span>
+	</div>
+	<div class="hide pull-right font-edit" id="font-edit">
+		<span class="edit-font-family" id="font-family-select">
+			<div class="family-selected-text" id="family-selected-text"> 
+				<div id="family-text" class="font-content" rel="<%= font_family %>" style="font-family:<%= font_family %>" ><%= font_family %></div>
+				<span class="pr5 pull-right"><%= font_icon "caret-down", :size => 12 %> </span>
+			</div>
+		</span>
+
+		<span class="font-btn" id="font-btn">
+			<a href="#" class="vertical-alignment tooltip ml15" id="save-font" data-placement="below" data-original-title="Save" twipsy-content-set="true">
+				<%= font_icon "save", :size => 18 %> 
+			</a>
+			<a href="#" class="vertical-alignment tooltip ml15" id="font-cancel" data-placement="below" data-original-title="Cancel" twipsy-content-set="true">
+				<%= font_icon "cross", :size => 18 %> 
+			</a>
+		</span>
+	</div>
+</div>
+<% javascript_tag do %>
+	App.AdminFontSettings.destroy();
+	App.AdminFontSettings.initialize();
+<% end %>

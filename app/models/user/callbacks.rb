@@ -21,8 +21,10 @@ class User < ActiveRecord::Base
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
   after_commit_on_update :subscribe_event_update, :if => :allow_api_webhook?
+  after_commit_on_update :delete_forum_moderator, :if => :helpdesk_agent_updated?
+
   after_commit_on_update :update_search_index, :if => :company_info_updated?
-  after_commit_on_update :discard_contact_field_data, :if => :made_helpdesk_agent?
+  after_commit_on_update :discard_contact_field_data, :if => [:helpdesk_agent_updated?, :agent?]
 
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
 
@@ -90,9 +92,7 @@ class User < ActiveRecord::Base
     freshfone_user.destroy if freshfone_user
   end
 
-  def made_helpdesk_agent?
-    @model_changes[:helpdesk_agent] == [false, true]
+  def delete_forum_moderator
+    forum_moderator.destroy if forum_moderator
   end
-
-
 end

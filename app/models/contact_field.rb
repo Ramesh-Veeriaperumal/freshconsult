@@ -1,7 +1,5 @@
 class ContactField < ActiveRecord::Base
 
-  include Cache::Memcache::ContactField
-
   serialize :field_options
 
   belongs_to_account
@@ -28,14 +26,14 @@ class ContactField < ActiveRecord::Base
     :default_language       => { :type => 11, :dom_type => :dropdown, :label => 'account.language' },
     :default_tag_names      => { :type => 12, :dom_type => :text, :label => 'tag.title' },
     :default_description    => { :type => 13, :dom_type => :paragraph, :label => 'user.back_info',
-                                 :dom_placeholder => 'contacts.info_example'}
+                                 :dom_placeholder => 'contacts.info_example' }
   }
 
   CUSTOM_FIELDS_SUPPORTED = [ :custom_text, :custom_paragraph, :custom_checkbox, :custom_number,
                               :custom_dropdown, :custom_phone_number, :custom_url, :custom_date ]
 
   DB_COLUMNS = {
-    :varchar_255  => { :column_name => "cf_str",      :column_limits => 76 }, 
+    :varchar_255  => { :column_name => "cf_str",      :column_limits => 70 }, 
     :integer_11   => { :column_name => "cf_int",      :column_limits => 20 }, 
     :date_time    => { :column_name => "cf_date",     :column_limits => 10 }, 
     :tiny_int_1   => { :column_name => "cf_boolean",  :column_limits => 10 },
@@ -47,10 +45,11 @@ class ContactField < ActiveRecord::Base
                         :field_data_class => 'ContactFieldData',
                         :field_choices_class => 'ContactFieldChoice'
 
-  after_commit :clear_cache
+  # after_commit :clear_contact_fields_cache # Clearing cache in ContactFieldsController#update action
+  # Can't clear cache on every ContactField or ContactFieldChoices save
 
   def default_contact_form
-    account.contact_form
+    (Account.current || account).contact_form
   end
 
   def set_portal_edit
@@ -70,5 +69,4 @@ class ContactField < ActiveRecord::Base
   def label_in_portal
     self.default_field? ? I18n.t("#{self.default_field_label}") : read_attribute(:label_in_portal)
   end
-
 end

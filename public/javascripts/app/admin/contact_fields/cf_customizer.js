@@ -1,10 +1,11 @@
 !(function($){
-	
-	var CustomFields = function(options) {
+	window.CustomFields = function(options) {
 		var defaults = {
 			existingFields : {},
 			currentField : null,
 			currentData : null,
+			customFieldsWrapper : '#custom-fields',
+			customFieldItem: '#custom-fields li',
 			dialogContainer : '#CustomFieldsPropsDialog',
 			formContainer : '#custom-field-form',
 			clonedFormContainer : '#cloned-custom-field-form',
@@ -42,10 +43,13 @@
 				required_in_portal : ["customer-required", "checked"],
 				validate_using_regex : ["custom-regex-required", "checked"],
 				field_options: ["custom-reg-exp", "value"],
-				choices : ["custom-choices", "function"]
+				admin_choices : ["custom-choices", "function"]
 			},
 			disabledByDefault: [],
+			customFieldType: '', 
+			maxNoOfChoices: '50',
 			disabledCustomerDataTemplate: {
+				'required_for_agent': false,
 				'visible_in_portal': false,
 				'editable_in_portal': false,
 				'editable_in_signup': false,
@@ -67,15 +71,15 @@
 			editable_in_signup:     false, 
 			required_in_portal:     false,
 			id:                     null, 
-			choices:                [],
+			admin_choices:          [],
 			field_options: 			{},
 			action:                 "create" // delete || update || create
  		});
-		self = this;
 	};
 
 	CustomFields.prototype = {
 		feedJsonForm: function(formInput){
+			var self = this;
 			$(formInput).each(function(index, dataItem){
 				var dom = self.constructFieldDom(dataItem);
 				$(self.settings.formContainer).append(dom);  
@@ -111,30 +115,33 @@
 				case 'url':
 				case 'number':
 				case 'email':
-					field.append('<input type="text"/>');
+					field.append('<input type="text" disabled/>');
 					controlGroup.append(controlLabel);
 					break;
 				case 'date':
-					field.append('<input type="text"/>');
+					field.append('<input type="text" disabled/>');
 					field.append('<span class="ficon-date"></span>');
 					controlGroup.append(controlLabel).addClass('date');
 					break;
 				case 'checkbox':               
-					field.append('<input type="checkbox"/>' + '<span>'+dataItem.label+'</span>' );
+					field.append('<input type="checkbox" disabled/>' + '<span>'+dataItem.label+'</span>' );
+					fieldContainer.addClass('checkbox-wrap');
 					break;
 				case 'time_zone_dropdown':
 				case 'dropdown':
 				case 'dropdown_blank':  
 					dataItem.dom_type = 'dropdown_blank';
-					$(dataItem.choices).each(function(ci, choice){
-						field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
+					$(dataItem.admin_choices).each(function(ci, choice){
+						if(!choice['_destroy']) {
+							field.append("<option " + choice['value'] + " data_id = "+ choice['id'] + ">" + choice['name'] + "</option>");
+						}
 					});
-					field.wrapInner("<select class='select2'/>");
+					field.wrapInner("<select class='select2 input-xlarge' disabled/>");
 					controlGroup.append(controlLabel);
 					break;
 				case 'paragraph':
 				case 'description':
-					field.append('<textarea rows="5"></textarea>');
+					field.append('<textarea rows="5" disabled></textarea>');
 					controlGroup.append(controlLabel);
 					break;
 			}
@@ -146,115 +153,153 @@
 			controlGroup.append(field);
 
 			$(field).prepend("<span class='overlay-field' />");         
-			if(self.settings.disabledByDefault[dataItem.field_type]) {
-				dataItem['disabled_customer_data'] = self.settings.disabledByDefault[dataItem.field_type];
+			if(this.settings.disabledByDefault[dataItem.field_type]) {
+				dataItem['disabled_customer_data'] = this.settings.disabledByDefault[dataItem.field_type];
 			}
 			else {
-				dataItem['disabled_customer_data'] = self.settings.disabledCustomerDataTemplate;
+				dataItem['disabled_customer_data'] = this.settings.disabledCustomerDataTemplate;
 			}
 			fieldContainer.data("raw", dataItem);
 			fieldContainer.addClass(dataItem.dom_type).append(controlGroup);
 			
-			self.showSecurityIconForAgentFields(fieldContainer);
-			self.hideDeleteIconForDefaultFields(fieldContainer);
-			self.hideEditIconForFields(fieldContainer);
+			if(this.settings.customFieldType != 'company') {
+				this.showSecurityIconForAgentFields(fieldContainer);
+			}
+			this.hideDeleteIconForDefaultFields(fieldContainer);
+			this.hideEditIconForFields(fieldContainer);
 
 			return fieldContainer;
 		},
 		getFreshField: function(type, field_type){
-			var freshField             = self.fieldTemplate.toObject();
+			var freshField             = this.fieldTemplate.toObject();
 					freshField.field_type  = field_type;
 					freshField.dom_type    = type;
 			if (field_type == 'custom_dropdown'){
-				freshField.choices = [[self.settings.customMessages.firstChoice, 0], [self.settings.customMessages.secondChoice, 0]];
+				freshField.admin_choices = [
+							{'value' : this.settings.customMessages.firstChoice,
+							 'name' : this.settings.customMessages.firstChoice
+							}, 
+							{'value' : this.settings.customMessages.secondChoice,
+							 'name' : this.settings.customMessages.secondChoice
+							}
+						];
 			}		 
 			return freshField;
 		},
 
 		addChoiceinDialog: function(data, dom){
-			dom	= dom  || self.dialogDOMMap.choices;
-			data	= data || [ '', 0 ];
-			var inputData = $("<input type='text' />")
-													.val(unescapeHtml(data[0]))
-													.attr("data_id", data[1]);
+			dom	= dom  || this.dialogDOMMap.admin_choices;
+			data	= data || {'value' : ''};
+			var inputData = $("<input type='text' maxlength='255' />")
+													.val(unescapeHtml(data['value']))
+													.attr('name', 'choice_'+ (new Date().getTime())) // Using random to have a unique name for validating choices.
+													.addClass('field_maxlength');
 			var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
-			$("<fieldset />")
+			var fieldSet = $("<fieldset />")
 					.append("<span class='sort_handle' />")
 					.append("<span class='ficon-minus delete-choice' />")
 					.append(dropSpan)            
 					.appendTo(dom);  
+
+			var no_choices = dom.find('fieldset:visible').length;
+			if(no_choices >= this.settings.maxNoOfChoices) {
+				$(this.settings.addChoice).hide();
+				$('<div>').addClass('max-item-error error')
+							.text(translate.get('maxItemsReached'))
+							.appendTo(fieldSet);
+			}
+			inputData.focus();
 		},
 
 		getAllChoices: function(dom){      
-			 var choices = $A();         
+			 var choices = $A(),
+			 		position = 0;        
 			 dom.find('fieldset').each(function(choiceset){
-					var temp = [ '', 0 ],
-							input_box = $(this).find("span.dropchoice input");
+					var temp = {'value' : ''},
+							input_box = $(this).find("span.dropchoice input"),
+							isDestroyed = $(this).data('destroy'),
+							choice_id = input_box.attr("data_id");
 							
-							temp[0] = escapeHtml(input_box.val());
-							temp[1] = input_box.attr("data_id");
+							temp['value'] = escapeHtml(input_box.val());
+							if( choice_id != "undefined" && choice_id != 0) {
+								temp['id'] = choice_id;
+							}
+							temp['position'] = isDestroyed ? -1 : (++position);
+							temp['_destroy'] = isDestroyed ? 1 : 0;
+							temp['name'] = temp['value'];
 							
-					if($.trim(temp[0]) !== '') choices.push(temp);
+					if($.trim(temp['name']) !== '') choices.push(temp);
 			 });
 			 return choices;
 		},
 
 		saveAllChoices: function(){
-			self.settings.currentData = $H($(self.settings.currentField).data("raw"));
-			self.settings.currentData.set("choices", self.getAllChoices(self.dialogDOMMap.choices));
-			self.setAction(self.settings.currentData, "update");
-			self.constructFieldDom(self.settings.currentData.toObject(), $(self.settings.currentField));
+			this.settings.currentData = $H($(this.settings.currentField).data("raw"));
+			this.settings.currentData.set("admin_choices", this.getAllChoices(this.dialogDOMMap.admin_choices));
+			this.setAction(this.settings.currentData, "update");
+			this.constructFieldDom(this.settings.currentData.toObject(), $(this.settings.currentField));
 		},
 
-		deleteDropDownChoice: function(){
-			if($(this).parent().siblings().size() !== 0) {
-				$(this).parent().remove();
-				self.saveAllChoices();
+		deleteDropDownChoice: function($this){
+			if($this.parent().siblings(':visible').size() !== 0) {
+				var no_choices = (this.dialogDOMMap.admin_choices).find('fieldset:visible').length,
+						choice_id = $this.parent().find('input').attr('data_id');
+				if(no_choices < this.settings.maxNoOfChoices) {
+					$(this.settings.addChoice).show();
+					$(this.dialogDOMMap.admin_choices).find('.max-item-error').remove();
+					if(choice_id != 0 && choice_id != "undefined") {
+						$this.parent().hide();
+						$this.parent().data('destroy', '1');
+					} 
+					else {
+						$this.parent().remove();
+					}
+				}
 			}
 		},
 
 		deleteField: function(sourcefield){
-			self.settings.currentData = $H($(sourcefield).data("raw"));
-			if(/^default/.test(self.settings.currentData.get('field_type'))) {
+			this.settings.currentData = $H($(sourcefield).data("raw"));
+			if(/^default/.test(this.settings.currentData.get('field_type'))) {
 				return;
 			}
-			if (confirm(self.settings.customMessages.confirmDelete)) {
+			if (confirm(this.settings.customMessages.confirmDelete)) {
 				$(sourcefield).data('clone').remove();
-				self.setAction(self.settings.currentData, "delete");
-				$(sourcefield).data("raw", self.settings.currentData);
-				if( !($(self.settings.currentField).data("fresh") || self.settings.currentData.id === '' || self.settings.currentData.id === null) ){
+				this.setAction(this.settings.currentData, "delete");
+				$(sourcefield).data("raw", this.settings.currentData);
+				if( !($(this.settings.currentField).data("fresh") || this.settings.currentData.id === '' || this.settings.currentData.id === null) ){
 					$(sourcefield).hide();
 				} else {
 					$(sourcefield).remove();
 				}
-				self.hideDialog();
+				this.hideDialog();
 			}
 		},
 
 		showFieldDialog: function(element){
-			self.settings.currentData = $(element).data("raw");
-			var fieldtype = self.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
+			this.settings.currentData = $(element).data("raw");
+			var fieldtype = this.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
 
-			if ($.inArray(fieldtype, self.settings.nonEditableFields) == -1) {
-				$(self.settings.dialogContainer).html(JST['formfield_props'](self.settings.currentData));
-				self.dialogOnLoad(element);
-				$(self.settings.customPropsModal).modal('show');
+			if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
+				$(this.settings.dialogContainer).html(JST['formfield_props'](this.settings.currentData));
+				this.dialogOnLoad(element);
+				$(this.settings.customPropsModal).modal('show');
 			}
 		},
 
 		closeDialog: function(e) {
-			if($(self.settings.currentField).data("fresh")) {
-				if($(self.settings.currentField).data('clone')) {
-					$(self.settings.currentField).data('clone').remove();
+			if($(this.settings.currentField).data("fresh")) {
+				if($(this.settings.currentField).data('clone')) {
+					$(this.settings.currentField).data('clone').remove();
 				}
-				$(self.settings.currentField).remove(); 
+				$(this.settings.currentField).remove(); 
 			}
-			$(self.settings.currentField).removeClass('active');
+			$(this.settings.currentField).removeClass('active');
 		},
 
 		hideDialog: function(){ 
-			$(self.settings.customPropsModal).modal('hide');
+			$(this.settings.customPropsModal).modal('hide');
 		},
 
 		hideDeleteIconForDefaultFields: function(listItem) {
@@ -272,7 +317,7 @@
 			var editIcon = listItem.find('.edit-field');
 			editIcon.removeClass('ficon-edit-strike-thru').addClass('ficon-edit');
 
-			if ($.inArray(fieldtype, self.settings.nonEditableFields) >= 0) {
+			if ($.inArray(fieldtype, this.settings.nonEditableFields) >= 0) {
 				editIcon.removeClass('ficon-edit').addClass('ficon-edit-strike-thru');  
 			}
 		},
@@ -280,7 +325,7 @@
 		showSecurityIconForAgentFields: function(listItem) {
 			var isVisible = $H(listItem.data("raw")).get('visible_in_portal');
 			if(!isVisible) {
-				listItem.find(self.settings.privateSymbol).show();
+				listItem.find(this.settings.privateSymbol).show();
 			}
 		},
 
@@ -294,90 +339,133 @@
 					break;
 			}
 		},
+
+		setRegexValue: function(key, value) {
+			var regexValue = null,
+				regexParts = [];
+
+			if(this.dialogDOMMap['validate_using_regex'].prop('checked')) {
+				regexValue = {};
+				regexValue['regex'] = {};
+				regexParts = this.dialogDOMMap[key]
+								.prop(value[1])
+								.match(new RegExp('^/(.*?)/([gimy]*)$'));
+
+				if(regexParts && regexParts.length > 0) {
+					regexValue['regex']['pattern'] = escapeHtml(regexParts[1]);
+					regexValue['regex']['modifier'] = regexParts[2];	
+				}
+			}
+			this.settings.currentData.set(key, regexValue);
+		},
 			
 		saveCustomFields: function(ev) {
 			ev.preventDefault();
-			var jsonData = self.getCustomFieldJson();
-			$(self.settings.fieldValues).val(jsonData.toJSON());
+			var jsonData = this.getCustomFieldJson();
+			$(this.settings.fieldValues).val(jsonData.toJSON());
 			this.value = $(this).data("commit")
-			$(self.settings.saveBtn).prop("disabled", true);
-			$(self.settings.submitForm).trigger("submit");
+			$(this.settings.saveBtn).prop("disabled", true);
+			$(this.settings.submitForm).trigger("submit");
+		},
+
+		deletePostData: function(data) {
+			data.custom_field_choices_attributes = data.admin_choices;
+			delete data.admin_choices;
+			if(data.column_name == 'default') {
+				delete data.custom_field_choices_attributes;
+			}
+			delete data.dom_type;
+			delete data.validate_using_regex;
+			delete data.disabled_customer_data;
+			if(this.settings.customFieldType == 'company') {
+				// Undefined values are not sent to the server. Still, to be on the safer side, a force removal of unnecessary data for company Fields
+				delete data.required_in_portal;
+				delete data.visible_in_portal;
+				delete data.editable_in_signup;
+				delete data.editable_in_portal;
+				delete data.label_in_portal;
+			}
+			return data;
 		},
 
 		getCustomFieldJson: function(){
-			var allfields = $A();
-			$(self.settings.formContainer+" li").each(function(index, domLi){
+			var allfields = $A(),
+				self = this;
+			$(this.settings.formContainer+" li").each(function(index, domLi){
 				var data = $(domLi).data("raw");
-				delete data.dom_type;
-				delete data.validate_using_regex;
-				delete data.disabled_customer_data;
+				data = self.deletePostData(data);
 				allfields.push(data);
 			});
 			return allfields;
 		},
 
 		setCurrentData: function(addInDom) {
-			if(self.settings.currentField !== null){            
-				self.settings.currentData = $H($(self.settings.currentField).data("raw"));
-				var field_type = self.dialogDOMMap['field_type'].val();
+			if(this.settings.currentField !== null){            
+				this.settings.currentData = $H($(this.settings.currentField).data("raw"));
+				var field_type = this.dialogDOMMap['field_type'].val();
 				if($(this).is('input') && $(this).attr('type')!='submit') {
 					var inputFieldName = this.name;
-					var currentInput = jQuery.grep(Object.keys(self.settings.fieldMap), function(item, index){
-							return self.settings.fieldMap[item][0]==inputFieldName;
+					var currentInput = jQuery.grep(Object.keys(this.settings.fieldMap), function(item, index){
+							return this.settings.fieldMap[item][0]==inputFieldName;
 					});
 					if(currentInput.length>0) {
 						currentInput = currentInput[0];
 						if(currentInput == 'field_options') {
-							self.settings.currentData.set(currentInput,{'regex': self.dialogDOMMap[currentInput].prop(self.settings.fieldMap[currentInput][1])});
+							this.settings.currentData.set(currentInput,{'regex': this.dialogDOMMap[currentInput].prop(this.settings.fieldMap[currentInput][1])});
 						}
 						else
-							self.settings.currentData.set(currentInput, self.dialogDOMMap[currentInput].prop(self.settings.fieldMap[currentInput][1]));
+							this.settings.currentData.set(currentInput, this.dialogDOMMap[currentInput].prop(this.settings.fieldMap[currentInput][1]));
 						if(currentInput == 'custom-label') {
 							field_label = $.trim(this.value);
-							if(field_label === '') field_label = self.settings.customMessages.untitled;
-							self.settings.currentData.set("label_in_portal", field_label);
+							if(field_label === '') field_label = this.settings.customMessages.untitled;
+							this.settings.currentData.set("label_in_portal", field_label);
 							this.value = field_label;
 						}
 					}
 				}
 				else {
-					$.each(self.settings.fieldMap, function(key, value) {
-						if(key == 'choices') {
-							self.settings.currentData.set(key, self.getAllChoices(self.dialogDOMMap[key]));
+					var self = this;
+					$.each(this.settings.fieldMap, function(key, value) {
+						if(key == 'admin_choices') {
+							if(self.settings.currentData.get('column_name') != 'default') {
+								self.settings.currentData.set(key, self.getAllChoices(self.dialogDOMMap[key]));
+							}
 						}
 						else if(key=='field_options' && field_type == 'custom_text') {
-							var regexValue = self.dialogDOMMap['validate_using_regex'].prop('checked')
-													? {'regex' : self.dialogDOMMap[key].prop(value[1])} 
-													: null;
-							self.settings.currentData.set(key, regexValue);
+							self.setRegexValue(key, value);
 						}
-						else if(key != 'field_type') 
-							self.settings.currentData.set(key, self.dialogDOMMap[key].prop(value[1]));
+						else if(key != 'field_type') {
+							var val = self.dialogDOMMap[key].prop(value[1]);
+							if((key == 'label' || key == 'label_in_portal') && val !== undefined) {
+								val = escapeHtml(val);
+							}
+							self.settings.currentData.set(key, val);							
+						}
 
 					});
 				}
-				self.setAction(self.settings.currentData, "update");
+				this.setAction(this.settings.currentData, "update");
 				if(addInDom === true) {
-					self.constructFieldDom(self.settings.currentData.toObject(), $(self.settings.currentField));
-					$(self.settings.formContainer).sortable('refresh');
-					$(self.settings.currentField).data("fresh", false);
+					this.constructFieldDom(this.settings.currentData.toObject(), $(this.settings.currentField));
+					$(this.settings.formContainer).sortable('refresh');
+					$(this.settings.currentField).data("fresh", false);
 				}
 			}
 		},
 
 		dialogOnLoad: function(sourceField){ 
 			try {
-				$(self.settings.currentField).removeClass('active');
-				self.settings.currentField = sourceField;
+				$(this.settings.currentField).removeClass('active');
+				this.settings.currentField = sourceField;
 				$(sourceField).addClass("active");
-				self.initializeDialogDomMap();
-				self.initializeChoicesSort();
-				$(self.settings.customPropertiesDiv).validate(self.settings.validateOptions);
+				this.initializeDialogDomMap();
+				this.initializeChoicesSort();
+				$(this.settings.customPropertiesDiv).validate(this.settings.validateOptions);
 			}catch(e){}
 		},
 
 		innerLevelExpand: function(checkbox){ 
-			var next_ele=$(self.settings.dialogContainer)
+			var next_ele=$(this.settings.dialogContainer)
 							.find('[data-nested-value='+checkbox.getAttribute("toggle_ele")+']');
 			if(checkbox.checked && !next_ele.data('disabledByDefault')){
 				next_ele
@@ -413,21 +501,21 @@
 					var item_clone = item;
 					if(isClicked) {
 						item_clone = item.clone();
-						$(self.settings.formContainer).prepend(item_clone);
+						$(this.settings.formContainer).prepend(item_clone);
 						$('body').animate({
 							scrollTop:0
 						}, '500')
 					}
-					fieldContainer = self.constructFieldDom(self.getFreshField(type, field_type), item_clone);
+					fieldContainer = this.constructFieldDom(this.getFreshField(type, field_type), item_clone);
 					fieldContainer.trigger('click');
-					$(self.settings.formContainer).sortable('refresh');
+					$(this.settings.formContainer).sortable('refresh');
 
-					item_clone = self.cloneField(fieldContainer);
-					$(self.settings.clonedFormContainer).children().eq(fieldContainer.index()).before(item_clone);
-					self.movePositions();
+					item_clone = this.cloneField(fieldContainer);
+					$(this.settings.clonedFormContainer).children().eq(fieldContainer.index()).before(item_clone);
+					this.movePositions();
 				}
 			}
-			$(self.settings.formContainer).find(".custom-field.exclude-me").each(function() {
+			$(this.settings.formContainer).find(".custom-field.exclude-me").each(function() {
 				var item = $(this);
 				var clone = item.data("clone");
 				var position = item.position();
@@ -438,15 +526,13 @@
 
 				item.removeClass("exclude-me");
 			});
-
-			self.rearrangePositions();
-
-			$(self.settings.formContainer).find('.custom-field').css("visibility", "visible");
-			$(self.settings.clonedFormContainer).find('.custom-field').removeClass('in-movement')
+			this.rearrangePositions();
+			$(this.settings.formContainer).find('.custom-field').css("visibility", "visible");
+			$(this.settings.clonedFormContainer).find('.custom-field').removeClass('in-movement')
 		},
 
 		movePositions: function() {
-			$(self.settings.formContainer).find(".custom-field:not(.exclude-me)").each(function() {
+			$(this.settings.formContainer).find(".custom-field:not(.exclude-me)").each(function() {
 				var item = $(this);
 				var clone = item.data("clone");
 				clone.stop(true, false);
@@ -459,7 +545,7 @@
 		},
 
 		rearrangePositions: function() {
-			$(self.settings.formContainer).find('.custom-field').each(function() {
+			$(this.settings.formContainer).find('.custom-field').each(function() {
 				var item = $(this);
 				var clone = item.data("clone");
 
@@ -481,8 +567,9 @@
 		},
 
 		cloneAllFields: function() {
-			$(self.settings.clonedFormContainer).empty();
-			$(self.settings.formContainer).find(".custom-field").each(function(i) {
+			var self = this;
+			$(this.settings.clonedFormContainer).empty();
+			$(this.settings.formContainer).find(".custom-field").each(function(i) {
 				var item_clone = self.cloneField($(this));
 				item_clone.attr("data-pos", i+1);
 				if(item_clone.find('.select2-container').length > 0)
@@ -492,8 +579,23 @@
 		},
 
 		initializeDragDropSortElements: function() {
+
+			var self = this;
+			// List of custom fields dialog
+			$(this.settings.customFieldsWrapper).find('.field')
+				.draggable({
+					connectToSortable: this.settings.formContainer,
+					helper: function() {
+						var clone = $(this).clone();
+						clone.find('.dom-icon').removeAttr('title').removeAttr('data-original-title').removeClass('tooltip');
+						return clone;
+					},
+					stack:  this.settings.customFieldsWrapper + " li",
+					revert: "invalid",
+					appendTo: 'body'
+			});
 			// Custom Fields Form
-			$(self.settings.formContainer)
+			$(this.settings.formContainer)
 				.sortable({
 					revert: true,
 					forceHelperSize: true,
@@ -513,16 +615,12 @@
 					}
 				})
 				.droppable();
-
-			$(self.settings.formContainer).on('hover', 'li', function() {
-				self.hideDeleteIconForDefaultFields($(this));
-				self.hideEditIconForFields($(this));
-			});
 		},
 
 		initializeChoicesSort: function() {
 			// Choices in dropdown properites box
-			$(self.settings.dropdownChoiceDiv)
+			var self = this;
+			$(this.settings.dropdownChoiceDiv)
 				.sortable({
 					items: 'fieldset',
 					handle: ".sort_handle",
@@ -533,8 +631,9 @@
 		},
 
 		initializeDialogDomMap: function() {
-			$.each(self.settings.fieldMap, function(key, value) {
-				if(key == 'choices') 
+			var self = this;
+			$.each(this.settings.fieldMap, function(key, value) {
+				if(key == 'admin_choices') 
 					self.dialogDOMMap[key] = $(self.settings.dialogContainer+" div[name='"+ value[0] + "']");
 				else
 					self.dialogDOMMap[key] = $(self.settings.dialogContainer + " input[name='" + value[0] + "']");
@@ -542,23 +641,27 @@
 		},
 
 		init: function() {
-
+			var self = this;
 			// Populating the fields
-			self.feedJsonForm(self.settings.existingFields);
+			this.feedJsonForm(this.settings.existingFields);
 
 			// CLONING THE CUSTOM FIELDS FOR ANIMATION EFFECT
-			self.cloneAllFields();
+			this.cloneAllFields();
 
-			self.initializeDragDropSortElements();															
-			self.initializeDialogDomMap();
+			this.initializeDragDropSortElements();															
+			this.initializeDialogDomMap();
 
-			$(self.settings.formContainer).on('click', '.custom-field', function(e) {
+			$(this.settings.formContainer).on('click', '.custom-field', function(e) {
 				if(!$(this).hasClass('ui-sortable-helper')) { // to ignore if its being dragged
 					self.showFieldDialog($(this));
 				}
 			});
 
-			$(self.settings.formContainer).on('click', '.delete-field', function(e) {
+			$(this.settings.formContainer).on('hover', 'li', function() {
+				self.hideDeleteIconForDefaultFields($(this));
+				self.hideEditIconForFields($(this));
+			});
+			$(this.settings.formContainer).on('click', '.delete-field', function(e) {
 				e.stopPropagation();
 				self.deleteField($(this).parents('.custom-field'));
 			});
@@ -567,67 +670,84 @@
 				self.deleteField(self.settings.currentField);
 			});
 
-			$(document).on('click.custom-fields', self.settings.cancelBtn, self.hideDialog);
+			$(document).on('click.custom-fields', this.settings.cancelBtn, function(e) {
+				self.hideDialog();
+			});
 
-			$(document).live("change.custom-fields", self.settings.nestedConfig + " input:checkbox", function(e){
+			$(document).live("change.custom-fields", this.settings.nestedConfig + " input:checkbox", function(e){
 				self.innerLevelExpand(e.target);
 			});
 
-			$(document).on("change.custom-fields", self.dialogDOMMap['validate_using_regex'].selector, function(e){
+			$(document).on("change.custom-fields", this.dialogDOMMap['validate_using_regex'].selector, function(e){
 				self.toggleRegexValidation(e.target);
 			});
 
-			$(document).on("keyup.custom-fields", self.dialogDOMMap['label'].selector, function(e){
+			$(document).on("keyup.custom-fields", this.dialogDOMMap['label'].selector, function(e){
 				$(self.settings.fieldLabel).text($(this).val());
 			});
 
 			if($.browser.msie) {
-				$(self.settings.formContainer).hover(function(){
+				$(this.settings.formContainer).hover(function(){
 						$(this).addClass("hover");
 				}, function(){
 						$(this).removeClass("hover");
 				});
 			}
 
-
-			$(document).on('click.custom-fields', self.settings.deleteChoice, self.deleteDropDownChoice);
-			$(document).on('click.custom-fields', self.settings.addChoice, function(e) { e.preventDefault(); self.addChoiceinDialog() }); 
+			$(document).on('click.custom-fields', this.settings.deleteChoice, function(e) {
+				self.deleteDropDownChoice($(this));
+			});
+			$(document).on('click.custom-fields', this.settings.addChoice, function(e) { e.preventDefault(); self.addChoiceinDialog() }); 
 			$(document).on('hidden.custom-fields', '.modal', function(){
 				if($(this).attr('id') == self.settings.customPropsModal.slice(1)) {
 					self.closeDialog();
 				}
 			});
 
-			$(document).on('change.custom-fields', "input", self.setCurrentData);
-			$(document).on('click.custom-fields', self.settings.propsSubmitBtn, function(){
+			$(document).on('change.custom-fields', "input", function(e) {
+				self.setCurrentData();
+			});
+			$(document).on('click.custom-fields', this.settings.propsSubmitBtn, function(){
 				$(self.settings.customPropertiesDiv).trigger('submit');
 			});
 
-			$(self.settings.customPropertiesDiv)
+			$(document).on('click.custom-fields', this.settings.customFieldItem, function() {
+				self.customFieldSort($(this), true);
+			});
+
+			$(document).on('keypress.custom-fields', this.settings.customPropertiesDiv + " input", function(e) {
+				e.stopPropagation();
+				var keyCode = e.which || e.keyCode || e.charCode;
+				if(keyCode == 13) {
+					$(self.settings.customPropertiesDiv).submit();
+				}
+			});
+
+			$(this.settings.customPropertiesDiv)
 					.live('submit',function(){ return false; });
 
-			self.settings.validateOptions = {
+			this.settings.validateOptions = {
 							submitHandler: function(){
 								self.setCurrentData(true);
-								$(self.settings.currentField).removeClass('active');
+								$(this.settings.currentField).removeClass('active');
 								self.cloneAllFields();
 								self.hideDialog();
 							},
 							rules: {
-								 choicelist: {
-										"required":{
-											 depends: function(element) {
-																	if($(self.settings.dropdownChoiceDiv).css("display") == "block"){
-																			choiceValues = "";
-																			$.each($(self.settings.dropdownChoiceDiv).find("input"), function(index, item){
-																				 choiceValues += item.value;
-																			});
-																			return ($.trim(choiceValues) == "");
-																	}else{
-																		 return false;
-																	}
-															 }
-										}
+								choicelist: {
+									"required":{
+										depends: function(element) {
+											if($(self.settings.dropdownChoiceDiv).css("display") == "block"){
+													choiceValues = "";
+													$.each($(self.settings.dropdownChoiceDiv).find("input"), function(index, item){
+														choiceValues += item.value;
+													});
+													return ($.trim(choiceValues) == "");
+											}else{
+												 return false;
+											}
+									 	}
+									}
 								},
 								"custom-label": {
 									"required": true
@@ -654,13 +774,15 @@
 							},
 
 							messages: {
-								 choicelist: self.settings.customMessages.noChoiceMessage
+								 choicelist: this.settings.customMessages.noChoiceMessage
 							},
 							onkeyup: false,
 							onclick: false
 					 };
 
-			$(self.settings.saveBtn).on('click', self.saveCustomFields);
+			$(this.settings.saveBtn).on('click', function(e) {
+				self.saveCustomFields(e);
+			});
 
 		},
 		destroy: function() {
@@ -668,39 +790,4 @@
 			$(document).off('change.custom-fields');
 		}
 	};
-
-	$(document).ready( function() {
-
-		// List of custom fields dialog
-		$("#custom-fields .field")
-			.draggable({
-				connectToSortable: "#custom-field-form",
-				helper: "clone",
-				stack:  "#custom-fields li",
-				revert: "invalid"
-		});
-
-		var customField = new CustomFields({existingFields : customFields, 
-											customMessages: tf_lang,
-											nonEditableFields: ['default_tag_names', 'default_description', 'default_client_manager'],
-											disabledByDefault: {
-												'default_company_name' : 
-													{
-														'visible_in_portal' : false,
-														'editable_in_portal' : true,
-														'editable_in_signup' : true,
-														'required_in_portal' : true													
-													}	
-											}
-										});
-		customField.init();
-
-		$("#custom-fields li")
-			.on('click.custom-field-picker', function() {
-				customField.customFieldSort($(this), true);
-		});
-		// Show buttons
-		$('.button-container, .profile-pic-placeholder img').removeClass('hide');
-	});
 })(window.jQuery);
-

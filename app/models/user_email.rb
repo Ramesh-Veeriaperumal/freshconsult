@@ -12,6 +12,7 @@ class UserEmail < ActiveRecord::Base
 
   belongs_to :user
   belongs_to_account
+  delegate :update_es_index, :to => :user
 
   validates_presence_of :email
   validates_format_of :email, :with => EMAIL_REGEX
@@ -19,6 +20,7 @@ class UserEmail < ActiveRecord::Base
 
   before_validation :downcase_email
   before_update :change_email_status, :if => [:email_changed?, :multiple_email_feature]
+  before_update :set_token, :if => [:email_changed?, :contact_merge_ui_feature]
   before_update :save_model_changes
 
   before_create :set_token 
@@ -51,6 +53,11 @@ class UserEmail < ActiveRecord::Base
       user_email = find_by_email(email)
       user_email ? user_email.user : nil
     end
+  end
+
+  def reset_perishable_token
+    set_token
+    save
   end
 
   def mark_as_verified
@@ -92,6 +99,10 @@ class UserEmail < ActiveRecord::Base
 
     def multiple_email_feature
       self.account.features_included?(:multiple_user_emails)
+    end
+
+    def contact_merge_ui_feature
+      self.account.features_included?(:contact_merge_ui)
     end
 
     def check_for_email_change?

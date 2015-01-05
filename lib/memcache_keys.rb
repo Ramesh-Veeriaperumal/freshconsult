@@ -45,7 +45,9 @@ module MemcacheKeys
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
-  CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{contact_form_id}"
+  CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
+
+  COMPANY_FORM_FIELDS = "v1/COMPANY_FORM_FIELDS:%{account_id}:%{company_form_id}"
 
   # ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
@@ -90,7 +92,7 @@ module MemcacheKeys
 
   MOBIHELP_SOLUTIONS = "MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
   
-  MOBIHELP_SOLUTION_UPDATED_TIME = "MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{category_id}"
+  MOBIHELP_SOLUTION_UPDATED_TIME = "v2/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
 
   PRODUCT_NOTIFICATION = "v2/PRODUCT_NOTIFICATION"
 

@@ -212,6 +212,7 @@ $bdr-color:#e1e1e1;
   .tw-explorer{
     width:37.87%;
     float:left;
+    z-index:10;
     .fs-notify{
       padding: 13px;
       text-align: left;
@@ -386,7 +387,7 @@ $bdr-color:#e1e1e1;
     margin-top: -20px;
     padding-top: 20px;
     padding-bottom: 10px;
-    background: #fff url('../../images/social/ribbon-bg.png');
+    background: #fff inline-image('/cdn-ignored/bg-repeats/ribbon-bg.png');
     background-size: 50px;
   }
   #current_interaction{

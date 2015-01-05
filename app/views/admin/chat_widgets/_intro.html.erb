@@ -24,7 +24,7 @@
                   if(typeof CHAT_ENV != 'undefined' && CHAT_ENV == 'development'){
 									    comm_url = "http://"+CS_URL+":4000";
 									}
-									if(window.location && window.location.protocol=="http:" && fc_helper.ieVersionCompatability){
+									if(window.location && window.location.protocol=="http:" && (fc_helper.ieVersionCompatability || FC_HTTP_ONLY)){
 									    comm_url = "http://"+CS_URL+":80";
 									}
 
@@ -33,10 +33,10 @@
 					          var data = {	
 											"id" 					      : <%= current_account.id %>, 
 		            		  "siteId"				    : window.SITE_ID,
-											"domain"				    : '<%= current_account.domain %>', 
+											"domain"				    : '<%= current_account.full_domain %>', 
 											"url"					      : window.location.hostname , 
 											"protocol" 				  : window.location.protocol, 
-											"widget_site_url"		: '<%= current_account.domain %>',
+											"widget_site_url"		: '<%= current_account.full_domain %>',
 											"name"              : '<%= current_account.main_portal.name %>' 
 										};
 										

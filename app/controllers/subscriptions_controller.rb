@@ -29,7 +29,8 @@ class SubscriptionsController < ApplicationController
   def calculate_amount
     scoper.set_billing_params(params[:currency])
     coupon = coupon_applicable? ? @coupon : nil
-    render :partial => "calculate_amount", :locals => { :amount => scoper.total_amount(@addons, coupon) }
+    render :partial => "calculate_amount", :locals => { :amount => scoper.total_amount(@addons, coupon),
+      :discount => scoper.discount_amount(@addons, coupon) }
   end
 
   def calculate_plan_amount
@@ -204,6 +205,18 @@ class SubscriptionsController < ApplicationController
     def perform_next_billing_action
       if free_plan?
         convert_subscription_to_free
+      elsif scoper.trial? && params["plan_switch"]
+        flash[:notice] = t('plan_info_update')
+        coupon = coupon_applicable? ? @coupon : nil
+        if request.xhr?
+          render :partial => "calculate_amount", 
+                    :locals => { 
+                      :amount => scoper.total_amount(@addons, coupon),
+                      :discount => scoper.discount_amount(@addons, coupon) 
+                    }
+        else
+          redirect_to :action => "show"
+        end
       elsif card_needed_for_payment?
         redirect_to :action => "billing"
       else 
@@ -215,7 +228,7 @@ class SubscriptionsController < ApplicationController
     def handle_error(error, custom_error_msg)
       Rails.logger.debug "Subscription Error::::: #{error}"      
 
-      if (error_msg = error.message.match(/[A-Z][\w\W]*\./).to_s )
+      if (error_msg = error.message.split(/error_msg/).last.sub(/http.*/,""))
         flash[:notice] = error_msg #chargebee_error_message
       else
         flash[:notice] = custom_error_msg
@@ -301,9 +314,7 @@ class SubscriptionsController < ApplicationController
       }
     end
 
-    # To be replaced with chargebee coupon api verification
     def coupon_applicable?      
-      (@cached_subscription.subscription_plan == scoper.subscription_plan) and 
-        (@cached_subscription.renewal_period == scoper.renewal_period)
+      @coupon.blank? ? false : billing_subscription.coupon_applicable?(@subscription, @coupon)
     end
 end

@@ -148,7 +148,7 @@ class ChatsController < ApplicationController
   end
 
   def verify_chat_token
-    generatedToken = Digest::SHA512.hexdigest("#{ChatConfig['secret_key'][Rails.env]}::#{params['site_id']}")
+    generatedToken = Digest::SHA512.hexdigest("#{ChatConfig['secret_key']}::#{params['site_id']}")
     if(generatedToken != params['token'])
       Rails.logger.error('ChatsController : Authentication Failed - Invalid Token') 
       render :json => { :status=> "error", :message => "Authentication Failed"}

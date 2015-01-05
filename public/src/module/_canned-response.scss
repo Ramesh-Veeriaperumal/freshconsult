@@ -1,6 +1,6 @@
 
 // ------------------------------------------------------------------------------------------------------------
-// 												Admin-canned-response-folders 
+// 												Admin-canned-response-folders
 // ------------------------------------------------------------------------------------------------------------
 
 .folder_list
@@ -86,7 +86,7 @@
 	font-size: 15px;
 	}
 }
-#folders { 
+#folders {
 	width: 100px;
 }
 
@@ -122,24 +122,25 @@
 }
 
 .create_new_folder{
-	text-decoration:none; 
-	position:relative; 
-	span{ 
+	text-decoration:none;
+	position:relative;
+	span{
 		background:none;
 		&:before{
 			content:"+";
 			@include padding-right(3px);
 			font-size:22px;
-			font-weight:bold;		
+			font-weight:bold;
 			line-height:0;
 			position:relative;
 			top:1px;
 		}
-	}	
+	}
 }
 
 #folder-controls a{
 	@include padding-left(10px);
+	display: inline-block;
 }
 
 #create-folder, #edit-ca-folder, #del{
@@ -177,9 +178,17 @@
 	}
 }
 
+.ca-resp-folder-header {
+	display: inline-block;
+	.dropdown {
+		@include float(left);
+	}
+}
+
 #folders-panel {
 	#folder-controls {
-		display: inline-block;
+		@include float(left);
+		visibility: hidden;
 		@include opacity(0.8);
 	}
 }
@@ -237,9 +246,9 @@
 			position:absolute;
 			border-style:solid;
 		    border-color:#AAA transparent;
-		    display:block; 
+		    display:block;
 		    width:0;
-		    top:-6px; 
+		    top:-6px;
 			bottom:auto;
 		 @include left(auto);
 		 @include right(123px);
@@ -252,7 +261,7 @@
 			position:absolute;
 			border-style:solid;
 			border-color:#FFF transparent;
-		    display:block; 
+		    display:block;
 		    width:0;
 		    top:-5px;
 			bottom:auto;
@@ -271,7 +280,7 @@
 	margin-top: 13px;
 }
 
-#ca_new_menu .ticksymbol{ 
+#ca_new_menu .ticksymbol{
 	@include padding-right(19px);
 	@include margin-left(-18px);
 }
@@ -294,7 +303,7 @@ p.imp{
 
 #canned_table_big tr.selected_resp td{
 	background-color: #F9ECD8;
-	border-top: 1px solid white; 
+	border-top: 1px solid white;
 }
 
 .delete-buttons{
@@ -323,7 +332,7 @@ p.imp{
 
 /* end */
 // ------------------------------------------------------------------------------------------------------------
-// 													canned response ticket view 
+// 													canned response ticket view
 // ------------------------------------------------------------------------------------------------------------
 .recently_used{
     background: #f3f3f3;
@@ -395,7 +404,7 @@ p.imp{
 .canned-icons{
     margin-bottom: 5px;
     position: relative;
-    
+
     input[type="text"]{
     width: 187px;
     @include clear(both);
@@ -675,7 +684,7 @@ height: auto;
 				}
 				#searchbox{
 					top: 31px;
-				 @include right(22px);	
+				 @include right(22px);
 				}
 			}
 		}
@@ -742,4 +751,41 @@ height: auto;
 	height: 40px;
 	overflow: hidden;
 }
-/* end */	
+
+.ca-response-move-options {
+	.select2-container {
+		min-width: 162px;
+		float: none;
+	}
+	.form-horizontal {
+		.controls {
+			margin-left: 150px;
+		}
+		.control-label {
+			width: 140px;
+		}
+	}
+}
+
+.personal-separator {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 3px;
+	padding-bottom: 3px;
+}
+
+.folder-dropdown {
+	li:first-child {
+		@extend .personal-separator;
+	}
+}
+
+.folder-select {
+	.select2-result:first-child {
+		@extend .personal-separator;
+	}
+}
+/* end */	/* end */
+.alert.notice.cr-info-msg {
+	@include margin(0 0 16px 0);
+}
+/* end */

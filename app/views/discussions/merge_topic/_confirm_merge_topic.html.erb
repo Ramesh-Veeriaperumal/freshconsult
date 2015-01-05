@@ -37,8 +37,11 @@
   <div class="button-container">
     <%= button_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "btn", :id  => "back-user-merge") %>
     <a class="btn" id="cancel-user-merge"><%= t('discussions.topic_merge.cancel') %></a>
-  	<%= submit_tag t("discussions.topic_merge.confirm_and_merge"), :class => "btn btn-primary", :id => "merge_completion",
-    "data-loading-text" => t('please_wait')  %>
+  	<%= submit_tag t("discussions.topic_merge.confirm_and_merge"), 
+        :class => "btn btn-primary", 
+        :id => "merge_completion",
+        "data-loading-text" => t('please_wait'),
+        "data-track" => "Topic Merge Completed"  %>
   </div>
 <% end %>
 

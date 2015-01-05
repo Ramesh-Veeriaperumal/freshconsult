@@ -15,19 +15,19 @@
           <div class="radio inline">
             <label>
               <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], (local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.only_me? : true, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
-              <%= t('admin.canned_responses.responses.form.me_only') %>
+              <%= t('helpdesk.canned_responses.responses.form.me_only') %>
             </label>
           </div>
           <div class="inline radio">
             <label>
               <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], (local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.all_agents? : false, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
-              <%= t('admin.canned_responses.responses.form.all_agents') %>
+              <%= t('helpdesk.canned_responses.responses.form.all_agents') %>
             </label>
           </div>
           <div class="inline radio">
             <label>
               <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], (local_assigns.has_key? :visible_to and !visible_to.blank?) ? visible_to.group_agents_visibility? : false,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
-              <%= t('admin.canned_responses.responses.form.groups') %>
+              <%= t('helpdesk.canned_responses.responses.form.groups') %>
             </label>
           </div>
         </div>
@@ -58,9 +58,11 @@ jQuery(document).ready(function(){
           wf_model: "Helpdesk::Ticket",
           wf_order: jQuery('#FilterOptions input[name=wf_order]').val(),
           wf_order_type: jQuery('#FilterOptions input[name=wf_order_type]').val(),
-          visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
-          "user_id": <%= current_user.id %>,
-          "group_id":  jQuery('#visibility_group_id').val() }
+          custom_ticket_filter: {
+            visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
+            "user_id": <%= current_user.id %>,
+            "group_id":  jQuery('#visibility_group_id').val() }
+          }
         },
         success: function(msg){}
       });

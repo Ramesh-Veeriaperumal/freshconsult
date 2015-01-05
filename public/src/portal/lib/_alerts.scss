@@ -107,3 +107,25 @@
 .alert-invalid-attach-text{
   color:$errorText;
 }
+
+
+// Hack for portal forum page
+// -----------------------------
+
+.alert-with-close{
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  a.close{
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    line-height: 18px;
+  }
+  a.close::before{
+    content: "\00d7";
+    font-size: 18px;
+    font-weight: bold;
+    color: #888;
+  }
+}

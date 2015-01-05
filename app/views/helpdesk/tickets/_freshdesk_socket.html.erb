@@ -1,0 +1,39 @@
+<% if (!(ticket.nil?) && current_account.features?(:collision_socket) && current_account.agents_from_cache.count > 1 ) %>
+    <!-- **** Agent Collision flip animation start **** -->
+  <div class="ticket-notifications" id="agent_collision_show">
+    <div class="view-flip" rel="notice-popover"  id="agents_viewing" data-object="viewing" data-placement="right" title="Currently viewing">
+      <a href="#">
+        <div class="flip-front"></div>
+        <div class="flip-back">0</div>
+      </a>
+    </div>
+
+    <div class="reply-flip" rel="notice-popover" id="agents_replying" data-object="replying" data-placement="right" title="Currently replying">
+      <a href="#">
+        <div class="flip-front"></div>
+        <div class="flip-back">0</div>
+      </a>
+    </div>
+  </div>
+
+  <% content_for :pagefixed do %>
+
+  <% end %>
+<% end %>
+
+<script type="text/javascript">
+  var data = <%= socket_auth_params %>;
+  var server = "<%= agentcollision_socket_host %>"
+  var hashed_params = data;
+  var draft = false; 
+  <% unless @draft.nil? %>
+    draft = true;
+  <% end %>
+  jQuery(document).ready(function() {
+    <% unless (ticket.nil?) %> 
+      hashed_params["agent_collision_view"] = "<%= agent_collision_ticket_view_channel(ticket.display_id) %>"
+      hashed_params["user_name"] = "<%= escape_javascript(current_user.name) %>";
+      window.agentcollision(server,hashed_params,"<%= escape_javascript(current_user.name) %>","<%=current_user.id%>",draft);
+    <% end %>
+  });
+</script>

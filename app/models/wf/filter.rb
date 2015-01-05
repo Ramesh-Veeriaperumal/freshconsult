@@ -31,6 +31,7 @@ class Wf::Filter < ActiveRecord::Base
   
   belongs_to :user
   belongs_to_account
+  xss_sanitize :only => [:name], :plain_sanitizer => [:name]
   
   attr_accessor :visibility 
   
@@ -38,6 +39,14 @@ class Wf::Filter < ActiveRecord::Base
     :class_name => 'Admin::UserAccess',
     :as => 'accessible',
     :dependent => :destroy
+
+  has_one :helpdesk_accessible,
+    :class_name => "Helpdesk::Access",
+    :as => 'accessible',
+    :dependent => :destroy
+ 
+   delegate :groups, :users, :to => :helpdesk_accessible
+ 
   
   has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
   

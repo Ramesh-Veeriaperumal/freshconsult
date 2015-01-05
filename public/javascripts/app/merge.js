@@ -52,6 +52,7 @@ window.App = window.App || {};
         if (active_dialog){
           active_dialog.dialog('close');
         }
+        jQuery('#mergebox1').modal('hide');
         jQuery('#merge_freshdialog').modal('hide');
         jQuery('#merge_freshdialog-content').html('<span class="loading-block sloading loading-small">');
       });

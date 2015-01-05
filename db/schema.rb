@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141127052851) do
+ActiveRecord::Schema.define(:version => 20141224162250) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -229,9 +229,11 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "folder_type"
+    t.boolean  "deleted",      :default => false
   end
 
-  add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
+  add_index "ca_folders", ["account_id","folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
 
   create_table "chat_settings", :force => true do |t|
     t.integer  "account_id",      :limit => 8
@@ -256,9 +258,201 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.boolean  "main_widget"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
+
+  create_table "company_field_choices", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "company_field_id", :limit => 8
+    t.string   "value"
+    t.integer  "position"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_field_choices", ["account_id", "company_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_company_field_id_and_position"
+
+  create_table "company_field_data", :force => true do |t|
+    t.integer  "id",                  :limit => 8,                    :null => false
+    t.integer  "account_id",          :limit => 8, :default => 0,     :null => false
+    t.integer  "company_form_id",     :limit => 8
+    t.integer  "company_id",          :limit => 8
+    t.integer  "health"
+    t.string   "priority"
+    t.string   "company_external_id"
+    t.string   "cf_str01"
+    t.string   "cf_str02"
+    t.string   "cf_str03"
+    t.string   "cf_str04"
+    t.string   "cf_str05"
+    t.string   "cf_str06"
+    t.string   "cf_str07"
+    t.string   "cf_str08"
+    t.string   "cf_str09"
+    t.string   "cf_str10"
+    t.string   "cf_str11"
+    t.string   "cf_str12"
+    t.string   "cf_str13"
+    t.string   "cf_str14"
+    t.string   "cf_str15"
+    t.string   "cf_str16"
+    t.string   "cf_str17"
+    t.string   "cf_str18"
+    t.string   "cf_str19"
+    t.string   "cf_str20"
+    t.string   "cf_str21"
+    t.string   "cf_str22"
+    t.string   "cf_str23"
+    t.string   "cf_str24"
+    t.string   "cf_str25"
+    t.string   "cf_str26"
+    t.string   "cf_str27"
+    t.string   "cf_str28"
+    t.string   "cf_str29"
+    t.string   "cf_str30"
+    t.string   "cf_str31"
+    t.string   "cf_str32"
+    t.string   "cf_str33"
+    t.string   "cf_str34"
+    t.string   "cf_str35"
+    t.string   "cf_str36"
+    t.string   "cf_str37"
+    t.string   "cf_str38"
+    t.string   "cf_str39"
+    t.string   "cf_str40"
+    t.string   "cf_str41"
+    t.string   "cf_str42"
+    t.string   "cf_str43"
+    t.string   "cf_str44"
+    t.string   "cf_str45"
+    t.string   "cf_str46"
+    t.string   "cf_str47"
+    t.string   "cf_str48"
+    t.string   "cf_str49"
+    t.string   "cf_str50"
+    t.string   "cf_str51"
+    t.string   "cf_str52"
+    t.string   "cf_str53"
+    t.string   "cf_str54"
+    t.string   "cf_str55"
+    t.string   "cf_str56"
+    t.string   "cf_str57"
+    t.string   "cf_str58"
+    t.string   "cf_str59"
+    t.string   "cf_str60"
+    t.string   "cf_str61"
+    t.string   "cf_str62"
+    t.string   "cf_str63"
+    t.string   "cf_str64"
+    t.string   "cf_str65"
+    t.string   "cf_str66"
+    t.string   "cf_str67"
+    t.string   "cf_str68"
+    t.string   "cf_str69"
+    t.string   "cf_str70"
+    t.string   "cf_str71"
+    t.string   "cf_str72"
+    t.string   "cf_str73"
+    t.string   "cf_str74"
+    t.string   "cf_str75"
+    t.string   "cf_str76"
+    t.text     "cf_text01"
+    t.text     "cf_text02"
+    t.text     "cf_text03"
+    t.text     "cf_text04"
+    t.text     "cf_text05"
+    t.text     "cf_text06"
+    t.text     "cf_text07"
+    t.text     "cf_text08"
+    t.text     "cf_text09"
+    t.text     "cf_text10"
+    t.integer  "cf_int01",            :limit => 8
+    t.integer  "cf_int02",            :limit => 8
+    t.integer  "cf_int03",            :limit => 8
+    t.integer  "cf_int04",            :limit => 8
+    t.integer  "cf_int05",            :limit => 8
+    t.integer  "cf_int06",            :limit => 8
+    t.integer  "cf_int07",            :limit => 8
+    t.integer  "cf_int08",            :limit => 8
+    t.integer  "cf_int09",            :limit => 8
+    t.integer  "cf_int10",            :limit => 8
+    t.integer  "cf_int11",            :limit => 8
+    t.integer  "cf_int12",            :limit => 8
+    t.integer  "cf_int13",            :limit => 8
+    t.integer  "cf_int14",            :limit => 8
+    t.integer  "cf_int15",            :limit => 8
+    t.integer  "cf_int16",            :limit => 8
+    t.integer  "cf_int17",            :limit => 8
+    t.integer  "cf_int18",            :limit => 8
+    t.integer  "cf_int19",            :limit => 8
+    t.integer  "cf_int20",            :limit => 8
+    t.datetime "cf_date01"
+    t.datetime "cf_date02"
+    t.datetime "cf_date03"
+    t.datetime "cf_date04"
+    t.datetime "cf_date05"
+    t.datetime "cf_date06"
+    t.datetime "cf_date07"
+    t.datetime "cf_date08"
+    t.datetime "cf_date09"
+    t.datetime "cf_date10"
+    t.boolean  "cf_boolean01"
+    t.boolean  "cf_boolean02"
+    t.boolean  "cf_boolean03"
+    t.boolean  "cf_boolean04"
+    t.boolean  "cf_boolean05"
+    t.boolean  "cf_boolean06"
+    t.boolean  "cf_boolean07"
+    t.boolean  "cf_boolean08"
+    t.boolean  "cf_boolean09"
+    t.boolean  "cf_boolean10"
+    t.decimal  "cf_decimal01",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal02",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal03",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal04",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal05",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal06",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal07",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal08",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal09",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal10",        :precision => 15, :scale => 4
+    t.integer  "long_cc01",           :limit => 8
+    t.integer  "long_cc02",           :limit => 8
+    t.integer  "long_cc03",           :limit => 8
+    t.integer  "long_cc04",           :limit => 8
+    t.integer  "long_cc05",           :limit => 8
+    t.integer  "int_cc01"
+    t.integer  "int_cc02"
+    t.integer  "int_cc03"
+    t.integer  "int_cc04"
+    t.integer  "int_cc05"
+    t.string   "string_cc01"
+    t.string   "string_cc02"
+    t.string   "string_cc03"
+    t.string   "string_cc04"
+    t.string   "string_cc05"
+    t.string   "string_cc06"
+    t.datetime "datetime_cc01"
+    t.datetime "datetime_cc02"
+    t.boolean  "boolean_cc01",        :default => false
+    t.boolean  "boolean_cc02",        :default => false
+    t.boolean  "boolean_cc03",        :default => false
+    t.boolean  "boolean_cc04",        :default => false
+    t.boolean  "boolean_cc05",        :default => false
+    t.text     "text_cc01"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_field_data", ["account_id", "company_external_id"], :name => "index_company_field_data_on_account_id_and_company_external_id", :length => {"account_id"=>nil, "company_external_id"=>30}
+  add_index "company_field_data", ["account_id", "company_form_id"], :name => "index_company_field_data_on_account_id_and_company_form_id"
+  add_index "company_field_data", ["account_id", "company_id"], :name => "index_company_field_data_on_account_id_and_company_id"
+  add_index "company_field_data", ["account_id", "int_cc01"], :name => "index_company_field_data_on_account_id_and_int_cc01"
+  add_index "company_field_data", ["account_id", "long_cc01"], :name => "index_company_field_data_on_account_id_and_long_cc01"
+  add_index "company_field_data", ["account_id", "priority"], :name => "index_company_field_data_on_account_id_and_priority", :length => {"account_id"=>nil, "priority"=>20}
+  add_index "company_field_data", ["id"], :name => "index_company_field_data_id"
 
   create_table "company_fields", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -301,7 +495,7 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
 
   add_index "contact_field_choices", ["account_id", "contact_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_contact_field_id_and_position"
 
-  create_table "contact_field_data", :id => false, :force => true do |t|
+  create_table "contact_field_data", :force => true do |t|
     t.integer  "id",               :limit => 8,                                                   :null => false
     t.integer  "account_id",       :limit => 8,                                :default => 0,     :null => false
     t.integer  "contact_form_id",  :limit => 8
@@ -928,6 +1122,13 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
 
+  create_table "forum_moderators", :force => true do |t|
+    t.integer "account_id",   :limit => 8
+    t.integer "moderator_id", :limit => 8
+  end
+
+  add_index "forum_moderators", ["account_id", "moderator_id"], :name => "index_forum_moderators_on_account_id_and_moderator_id", :unique => true
+
   create_table "forums", :force => true do |t|
     t.string  "name"
     t.string  "description"
@@ -1007,14 +1208,15 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "direct_dial_number"
+    t.integer  "group_id",            :limit => 8
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
-  add_index "freshfone_calls", ["account_id", "customer_number"], :name => "index_freshfone_calls_on_account_id_and_customer_number", :length => {"account_id"=>nil, "customer_number"=>16}
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "freshfone_calls", ["account_id", "notable_type", "notable_id"], :name => "index_ff_calls_on_account_id_notable_type_id"
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
@@ -1074,6 +1276,8 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
     t.integer  "rr_timeout",                                                            :default => 10
+    t.integer  "ringing_time",                                                            :default => 30
+    t.boolean  "recording_visibility",                                                    :default => true
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1125,7 +1329,7 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.boolean  "available_on_phone",               :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-		t.datetime "mobile_token_refreshed_at"
+    t.datetime "mobile_token_refreshed_at"
     t.datetime "last_call_at"
   end
 
@@ -1690,6 +1894,7 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
+  add_index "helpdesk_tickets", ["status", "account_id"], :name => "index_helpdesk_tickets_status_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
     t.datetime "start_time"
@@ -1822,6 +2027,18 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
   add_index "mobihelp_ticket_infos", ["account_id", "device_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_device_id"
   add_index "mobihelp_ticket_infos", ["account_id", "ticket_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_ticket_id", :unique => true
 
+  create_table "mobihelp_app_solutions", :force => true do |t|
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "app_id",      :limit => 8, :null => false
+    t.integer  "category_id", :limit => 8, :null => false
+    t.integer  "position",                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
+  add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -1848,6 +2065,16 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "portal_forum_categories", :force => true do |t|
+    t.integer "portal_id",         :limit => 8
+    t.integer "forum_category_id", :limit => 8
+    t.integer "account_id",        :limit => 8
+    t.integer "position"
+  end
+
+  add_index "portal_forum_categories", ["account_id", "portal_id"], :name => "index_portal_forum_categories_on_account_id_and_portal_id"
+  add_index "portal_forum_categories", ["portal_id", "forum_category_id"], :name => "index_portal_forum_categories_on_portal_id_and_forum_category_id"
 
   create_table "portal_pages", :force => true do |t|
     t.integer  "template_id", :limit => 8,        :null => false
@@ -2857,7 +3084,8 @@ ActiveRecord::Schema.define(:version => 20141127052851) do
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true
-
+  add_index "users", ["account_id", "helpdesk_agent"], :name => "index_users_on_account_id_and_helpdesk_agent"
+  
   create_table "va_rules", :force => true do |t|
     t.string   "name"
     t.text     "description"

@@ -1,6 +1,11 @@
 /*
  * @author venom
  */
+window.Helpdesk = window.Helpdesk || {};
+(function ($) {
+  Helpdesk.settings = {}   
+}(window.jQuery));
+
 var $J = jQuery.noConflict();
 is_touch_device = function() {
   return !!('ontouchstart' in window) // works on most browsers
@@ -46,7 +51,7 @@ window.xhrPool = [];
         original_complete(xhr,status);
       }
       var xhr = $.oldajax(options);
-      window.xhrPool.push(xhr);
+      if (xhr) window.xhrPool.push(xhr);
       return xhr;
     }
 
@@ -509,6 +514,8 @@ window.xhrPool = [];
                                           }else{
                                             setTimeout(function(){ 
                                               add_csrf_token(form);
+                                              // Nullifies the form data changes flag, which is checked to prompt the user before leaving the page.
+                                              $(form).data('formChanged', false);
                                               form.submit();
                                             }, 50)
                                           }
@@ -695,20 +702,18 @@ window.xhrPool = [];
 			});
 
       // If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
-      // $(window).on('beforeunload', function(ev){
-      //   var form = $('.form-unsaved-changes-trigger');
-      //   if(form.data('formChanged')) {
-      //     ev.preventDefault();
-      //     return customMessages.confirmNavigate;
-      //   }
-      // });
+      $(window).on('beforeunload', function(ev){
+        var form = $('.form-unsaved-changes-trigger');
+        if(form.data('formChanged')) {
+          ev.preventDefault();
+          return customMessages.confirmNavigate;
+        }
+      });
 
-      // $('.form-unsaved-changes-trigger').on('change', function() {
-      //   $(this).data('formChanged', true);
-      // }).on('submit', function(ev) {
-      //   ev.stopPropagation();
-      //   $(this).data('formChanged', false);
-      // });
+      $('.form-unsaved-changes-trigger').on('change', function() {
+        $(this).data('formChanged', true);
+      });
+      
    });
 })(jQuery);
 

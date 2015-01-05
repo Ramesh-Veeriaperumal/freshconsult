@@ -96,7 +96,7 @@ describe Discussions::ForumsController do
 			another_forum = create_test_forum(@forum_category)
 			put :update, :id => another_forum.id, 
 				:forum => { :name => forum.name }
-			response.body.should =~ /Name has already been taken/
+			response.body.should =~ /Name already exists in the selected category/
 			response.should render_template 'discussions/forums/edit'
 		end
 	end

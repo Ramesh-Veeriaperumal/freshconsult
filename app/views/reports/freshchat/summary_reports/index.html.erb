@@ -1,0 +1,29 @@
+<!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
+<% content_for :layoutType do -%>reports_page<%- end %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+<%= include_cloudfront_rtl_css :reports %>
+<%= include_cloudfront_js :reports  %>
+<%= include_cloudfront_js :freshchatreports  %>
+  <div id="loading-box">
+   <div class="sloading loading-left loading-small reports-loading"><%=t('adv_reports.glance.loading_msg')%></div> 
+   </div>
+<!--report header-->
+<div class="row-fluid">
+  <div class="span12 report-breadcrum-wrapper">
+    <ul class="breadcrumb">
+      <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
+      <li><%=t('adv_reports.glance.report_view')%></li>
+    </ul>
+  </div>
+</div>
+ <!--end report header-->
+<!-- report content -->
+<div class="row-fluid" id="freshchat_summary_report">
+       <%= render :partial => "chat_reports" %>
+  </div>
+<!--end report content-->
+
+
+</div>

@@ -20,9 +20,8 @@ class Admin::ProductsController < Admin::AdminController
   
   def update
     portal_params = params[:product].delete(:portal_attributes)
-
-    if @product.update_attributes(params[:product])
-      post_process_on_update portal_params
+    if @product.update_attributes(params[:product]) && post_process_on_update(portal_params)
+      
       flash.now[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
 
       redirect_to params[:customize_portal] ? admin_portal_template_path(@product.portal) : redirect_url
@@ -63,6 +62,7 @@ class Admin::ProductsController < Admin::AdminController
       @solution_categories = current_account.solution_categories
       @forums_categories = current_account.forum_categories
       @product.build_portal unless @product.portal
+      @portal = @product.portal
       @product.email_configs.build(:primary_role => true) if @product.email_configs.empty?
     end
     
@@ -72,13 +72,16 @@ class Admin::ProductsController < Admin::AdminController
           @product.build_portal
           @product.portal.account_id = @product.account_id
           @product.portal.attributes = portal_params
-          @product.portal.save
+          return @product.portal.save
         end
-        return
+        return true
       end
       portal_params[:updated_at] = Time.now
-      @product.portal.update_attributes(portal_params) and return if @product.portal_enabled?
-      @product.portal.destroy
+      if @product.portal_enabled?
+        return @product.portal.update_attributes(portal_params)
+      else
+        return @product.portal.destroy
+      end
     end
     
     def delete_icon(icon_type)

@@ -48,5 +48,19 @@ $('body').on("change", "[data-select-one]", function(){
 
 	_validator.element(_textarea);
 });
+$.validator.addClassRules("decimal", { number: true });
 
+$.validator.addMethod("regex_validity", function(value, element) {
+        var patternString = $(element).data('regex-pattern');
+        var match = patternString.match(new RegExp('^/(.*?)/([gimy]*)$'));
+        var regExp;
+        if(match) {
+          regExp = new RegExp(match[1], match[2]);
+        }
+        return this.optional(element) || regExp.test(value);
+    }, "Invalid value");
+$.validator.addClassRules("regex_validity", { regex_validity: true });
+
+$.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );   
+$.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
 })(jQuery);

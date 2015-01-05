@@ -106,7 +106,7 @@ module Search::SearchResultJson
 			:created_at => topic.created_at,
 			:info => %{#{time_ago_in_words(topic.created_at)} #{t('search.ago')}},
 			:description => truncate(topic.topic_desc, :length => 250),
-			:searchKey => topic.title
+			:searchKey => h(topic.title)
 		}
 	end
 
