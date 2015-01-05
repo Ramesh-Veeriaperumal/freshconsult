@@ -3819,6 +3819,7 @@ en:
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via
+    created_by: "Created by:"
     reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
