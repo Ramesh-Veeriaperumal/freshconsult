@@ -65,7 +65,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -347,6 +347,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"helpdesk/dashboard",:only => [:agent_status]
+    resource :"agent", :only => [:api_key]
   end
 
   manage_account do

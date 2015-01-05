@@ -53,7 +53,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :agents, :member => { :toggle_shortcuts => :put,
                                       :restore => :put,
                                       :convert_to_user => :get,
-  :reset_password=> :put },
+  :reset_password=> :put,
+  :api_key => :get },
     :collection => { :create_multiple_items => :put,
   :info_for_node => :get} do |agent|
     agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
@@ -744,10 +745,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
   map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
   map.connect '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
-
+  map.connect '/freshchat/get_groups', :controller => 'chats', :action => 'groups', :method => :get
 
   map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
-
   map.connect '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
 
   map.connect '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post

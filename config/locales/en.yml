@@ -1665,6 +1665,7 @@ en:
   import_user_org: Users, Organizations & Groups
   to_do: To Do
   does_not_contain: Does not contain
+  non_ssl_request: This request needs a secure connection.You need to enable SSL encryption from /admin/security
   flash:
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
@@ -6457,7 +6458,15 @@ en:
     no_matching_agents: "No matching agents"
     chat_disabled_label: "Chat is disabled for helpdesk"
     chat_enabled_label: "Chat is enabled for helpdesk"
+    routing: "Chat routing"
+    routing_info: "Route all incoming chats to specific groups"
+    dropdown_based_routing: "Dropdown based routing"
+    default_routing: "Default routing"
+    choice_info: "<b>$</b> then notify group"
+    select_groups: "Select groups"
+    routing_note: "Note: If agents from the selected groups are not accepting chats, chat will be routed to all available agents."
     concurrent_pick_attempt_msg: "This chat has been already accepted by"
+    enable: "Enable"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

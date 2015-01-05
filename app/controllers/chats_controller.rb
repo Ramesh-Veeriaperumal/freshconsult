@@ -1,5 +1,6 @@
 class ChatsController < ApplicationController
   
+  include ChatHelper
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
   before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
   before_filter  :load_ticket, :only => [:add_note, :chat_note]
@@ -18,7 +19,14 @@ class ChatsController < ApplicationController
 
     render :json => { :ticket_id=> @ticket.display_id , :status => status }
 
-  end  
+  end
+
+  def groups
+    groups = []
+    groups.push([ t("freshchat.everyone"), 0 ])
+    groups.concat(current_account.groups.collect{|c| [c.name, c.id]})
+    render :json => {:groups => groups.to_json}
+  end
 
   def add_note 
     params[:userId] = current_user.id
@@ -41,6 +49,7 @@ class ChatsController < ApplicationController
     site.update_attributes({ :active => true, :display_id => params[:site_id]})
     chat_widget = current_account.main_chat_widget
     if chat_widget.update_attributes({ :widget_id => params['widget_id']})
+      create_widget_for_product
       render :json => { :status=> "success"}
     else
       render :json => { :status=> "error", :message => "Record Not Found"}
@@ -155,5 +164,24 @@ class ChatsController < ApplicationController
       return
     end
   end
+
+  def create_widget_for_product
+    products = current_account.products
+    unless products.blank?
+      products.each do |product|
+        if product.chat_widget.blank?
+          product.build_chat_widget
+          product.chat_widget.account_id = current_account.id
+          product.chat_widget.chat_setting_id = current_account.chat_setting.id
+          product.chat_widget.main_widget = false
+          product.chat_widget.show_on_portal = false
+          product.chat_widget.portal_login_required = false
+          product.chat_widget.name = product.name
+          product.chat_widget.save
+        end
+      end
+    end
+  end
+
 
 end
