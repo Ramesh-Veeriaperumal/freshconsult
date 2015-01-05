@@ -108,7 +108,7 @@ class Admin::QuestsController < Admin::AdminController
 
     def add_custom_filters filter_hash
       current_account.ticket_fields.custom_fields.each do |field|
-        if field.field_type == 'custom_dropdown' || field.field_type == 'custom_checkbox' || field.field_type == 'custom_number'
+        if ['custom_dropdown', 'custom_checkbox', 'custom_number', 'custom_decimal'].include?(field.field_type)
           filter_hash.push({
             :id => field.id,
             :name => field.name,

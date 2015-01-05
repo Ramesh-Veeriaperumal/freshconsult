@@ -1,6 +1,6 @@
 
 // ------------------------------------------------------------------------------------------------------------
-// 												Admin-canned-response-folders 
+// 												Admin-canned-response-folders
 // ------------------------------------------------------------------------------------------------------------
 
 .folder_list
@@ -86,7 +86,7 @@
 	font-size: 15px;
 	}
 }
-#folders { 
+#folders {
 	width: 100px;
 }
 
@@ -122,20 +122,20 @@
 }
 
 .create_new_folder{
-	text-decoration:none; 
-	position:relative; 
-	span{ 
+	text-decoration:none;
+	position:relative;
+	span{
 		background:none;
 		&:before{
 			content:"+";
 			@include padding-right(3px);
 			font-size:22px;
-			font-weight:bold;		
+			font-weight:bold;
 			line-height:0;
 			position:relative;
 			top:1px;
 		}
-	}	
+	}
 }
 
 #folder-controls a{
@@ -246,9 +246,9 @@
 			position:absolute;
 			border-style:solid;
 		    border-color:#AAA transparent;
-		    display:block; 
+		    display:block;
 		    width:0;
-		    top:-6px; 
+		    top:-6px;
 			bottom:auto;
 		 @include left(auto);
 		 @include right(123px);
@@ -261,7 +261,7 @@
 			position:absolute;
 			border-style:solid;
 			border-color:#FFF transparent;
-		    display:block; 
+		    display:block;
 		    width:0;
 		    top:-5px;
 			bottom:auto;
@@ -280,7 +280,7 @@
 	margin-top: 13px;
 }
 
-#ca_new_menu .ticksymbol{ 
+#ca_new_menu .ticksymbol{
 	@include padding-right(19px);
 	@include margin-left(-18px);
 }
@@ -303,7 +303,7 @@ p.imp{
 
 #canned_table_big tr.selected_resp td{
 	background-color: #F9ECD8;
-	border-top: 1px solid white; 
+	border-top: 1px solid white;
 }
 
 .delete-buttons{
@@ -332,7 +332,7 @@ p.imp{
 
 /* end */
 // ------------------------------------------------------------------------------------------------------------
-// 													canned response ticket view 
+// 													canned response ticket view
 // ------------------------------------------------------------------------------------------------------------
 .recently_used{
     background: #f3f3f3;
@@ -404,7 +404,7 @@ p.imp{
 .canned-icons{
     margin-bottom: 5px;
     position: relative;
-    
+
     input[type="text"]{
     width: 187px;
     @include clear(both);
@@ -684,7 +684,7 @@ height: auto;
 				}
 				#searchbox{
 					top: 31px;
-				 @include right(22px);	
+				 @include right(22px);
 				}
 			}
 		}
@@ -760,7 +760,7 @@ height: auto;
 	.form-horizontal {
 		.controls {
 			margin-left: 150px;
-		} 
+		}
 		.control-label {
 			width: 140px;
 		}
@@ -784,4 +784,8 @@ height: auto;
 		@extend .personal-separator;
 	}
 }
-/* end */	
+/* end */	/* end */
+.alert.notice.cr-info-msg {
+	@include margin(0 0 16px 0);
+}
+/* end */

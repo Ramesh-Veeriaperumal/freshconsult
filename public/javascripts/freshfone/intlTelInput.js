@@ -810,12 +810,12 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             freshfone.country_preference = unescape(freshfone.country_preference);
             if(freshfone.country_preference.length == 0){
              freshfone.country_preference = $.parseJSON('[' + JSON.stringify(this._getCountryData(this._getCountryCode(freshfonecalls.outgoingNumber())).iso2) + ']');
-             localStorage.setItem("callerPreference",JSON.stringify(freshfone.country_preference));
             }
             else{
                 freshfone.country_preference = $.parseJSON(freshfone.country_preference);
             }
-              return freshfone.country_preference;
+            localStorage.setItem("callerPreference",JSON.stringify(freshfone.country_preference));
+            return freshfone.country_preference;
         },
         getLSObject: function(country_preference_string){
             return $.parseJSON(JSON.parse(country_preference_string));

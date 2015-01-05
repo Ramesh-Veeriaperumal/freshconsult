@@ -48,11 +48,11 @@ module Mobile::Controllers::Ticket
     
   def get_summary_count
       summary_count_array = [
-        { :id => "overdue",    :value => filter_count(:overdue),      :name => t("helpdesk.dashboard.summary.overdue")},
-        { :id => "open",       :value => filter_count(:open),         :name => t("helpdesk.dashboard.summary.open")},
-        { :id => "on_hold",    :value => filter_count(:on_hold),      :name => t("helpdesk.dashboard.summary.on_hold")},
-        { :id => "due_today",  :value => filter_count(:due_today),    :name => t("helpdesk.dashboard.summary.due_today")},
-        { :id => "new",        :value => filter_count(:new),          :name => t("helpdesk.dashboard.summary.unassigned")}
+        { :id => "overdue",    :value => filter_count(:overdue, true),      :name => t("helpdesk.dashboard.summary.overdue")},
+        { :id => "open",       :value => filter_count(:open, true),         :name => t("helpdesk.dashboard.summary.open")},
+        { :id => "on_hold",    :value => filter_count(:on_hold, true),      :name => t("helpdesk.dashboard.summary.on_hold")},
+        { :id => "due_today",  :value => filter_count(:due_today, true),    :name => t("helpdesk.dashboard.summary.due_today")},
+        { :id => "new",        :value => filter_count(:new, true),          :name => t("helpdesk.dashboard.summary.unassigned")}
       ]
       summary_count_array;
   end

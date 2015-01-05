@@ -33,7 +33,7 @@ describe TicketFieldsController do
                             :action => "create"})
     end
     put :update, :jsonData => @default_fields.to_json
-    flash[:error].should eql " #{label} : has already been taken <br />"
+    flash[:error].should eql " #{label} : has already been taken "
   end
 
   it "should throw not allowed to create more than 10 checkbox error" do
@@ -56,7 +56,7 @@ describe TicketFieldsController do
                             :action => "create"})
     end
     put :update, :jsonData => @default_fields.to_json
-    flash[:error].should eql 'You are not allowed to create more than 10 checkbox fields.<br />'
+    flash[:error].should eql 'You are not allowed to create more than 10 checkbox fields.'
   end
   
 end

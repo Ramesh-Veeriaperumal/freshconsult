@@ -254,20 +254,22 @@ body.community {
 }
 
 .indent-topic-merge-link{
-	padding-left: 19px;
+	@include padding-left(19px);
 }
 
 // For Sticky Side navbar
 body.community.moderation.cs-always-show {
 	.comm-items, .no-data {
-		margin-left: 280px;
+		@include margin-left(280px);
+	}
+	.notice{
+		@include margin-left(300px);
 	}
 	#sticky_header{
-		margin-left:265px;
+		@include margin-left(265px);
 		#cm-sb-toggle{
 			display: none;
 		}
-
 	}
 	
 	.sidebar-close {

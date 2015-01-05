@@ -54,7 +54,7 @@ window.App.Discussions = window.App.Discussions || {};
 			var $this = this;
 			$('body').on('click.discussions.topic_list', 'a[rel=topic-sort-item]', function (ev) {
 				ev.preventDefault();
-				$(this).parent().siblings(".active").removeClass("active")
+				$(this).parent().siblings(".active").removeClass("active");
 				$(this).parent().addClass("active");
 				$this.refreshTopics();
 			});
@@ -168,11 +168,13 @@ window.App.Discussions = window.App.Discussions || {};
 
 		bindBulkSubmit: function () {
 			$('body').on('click.discussions.topic_list', '#topic-bulk-action-btn .btn', function () {
-				var $this = $(this),
-					form = $("#topic-bulk-form");
-				form.find('input[name=_method]').attr('value', $this.data('method'));
-				form.attr('action', $this.data('actionUrl'));
-				form.submit();
+				if (confirm($(this).data('confirm'))) {
+					var $this = $(this),
+						form = $("#topic-bulk-form");
+					form.find('input[name=_method]').attr('value', $this.data('method'));
+					form.attr('action', $this.data('actionUrl'));
+					form.submit();
+				}
 			});
 		},
 

@@ -1,0 +1,9 @@
+page << "jQuery('##{dom_id(@post)} .ficon-notice-o').removeTip();"
+page << "jQuery('##{dom_id(@post)}').fadeOut(500, function(){ jQuery(this).remove() });"
+page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"
+
+page << "if(jQuery('#spam-count').length !== 0){
+						jQuery('#spam-count').replaceWith('#{escape_javascript(render :partial => 'discussions/topics/widgets/spam', :locals => { :topic => @post.topic })}');
+				} else {
+			    jQuery('.rightcontent').prepend('#{escape_javascript(render :partial => 'discussions/topics/widgets/spam', :locals => { :topic => @post.topic })}');
+			  }"

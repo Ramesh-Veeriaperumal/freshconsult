@@ -19,6 +19,7 @@
   @include text-align(center);
   vertical-align: middle;
   cursor: pointer;
+  background-color: $grayDark;
   @include buttonBackground($btnBackground, $btnBackgroundHighlight, $grayDark, 0 1px 1px rgba(255,255,255,.75));
   border: 1px solid $btnBorder;
   *border: 0; // Remove the border to prevent IE7's black border on input:focus
@@ -205,10 +206,6 @@ input[type="button"] {
 .btn-inverse {
   @include buttonBackground($btnInverseBackground, $btnInverseBackgroundHighlight);
 }
-// Flat Button
-.btn-flat {
-  background:none;
-}
 // Cross-browser Jank
 // --------------------------------------------------
 
@@ -276,11 +273,10 @@ input[type="submit"].btn {
   }
 }
 
-.btn-flat {
-  background: #F9F9F9;
-  color: #333;
-  border: 1px solid #d4d4d4;
-  @include box-shadow(none);
-  @include text-shadow(none);
-  -webkit-font-smoothing: antialiased;
+// Flat buttons for special cases
+// --------------------------------------------------
+
+// Removes gradient from buttons
+.btn-flat{
+  background-image: none;
 }

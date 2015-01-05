@@ -94,7 +94,7 @@ class User < ActiveRecord::Base
   has_many :forums, :through => :moderatorships, :order => "#{Forum.table_name}.name"
   has_many :posts
 
-  has_many :recent_posts, :class_name => 'Post', :order => "created_at desc", :limit => 10
+  has_many :recent_posts, :class_name => 'Post', :conditions => ["#{Post.table_name}.published = ?", true], :order => "created_at desc", :limit => 10
   has_many :topics
   has_many :monitorships
   has_many :monitored_topics, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :order => "#{Topic.table_name}.replied_at desc", :source => :monitorable, :source_type => "Topic"
@@ -112,4 +112,6 @@ class User < ActiveRecord::Base
     :join_table => 'user_accesses'
 
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device', :dependent => :destroy
+
+  has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
 end

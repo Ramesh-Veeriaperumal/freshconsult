@@ -33,7 +33,8 @@ module FreshdeskCore::Model
 
                         "forums",
                           "customer_forums",
-                          "forum_categories", 
+                          "forum_categories",
+                          "forum_moderators",
 
                         "groups", 
                           "agent_groups",

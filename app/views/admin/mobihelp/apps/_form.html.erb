@@ -1,20 +1,22 @@
 <% content_for :pagefixed do -%>
   <% javascript_tag do %>
-  jQuery(function() {
-    jQuery("#push_notification").bind("change",
-          function(ev){
-            if(this.checked){
-              jQuery("#gcm").slideDown(400);
-              jQuery("#mobihelp_app_config_gcm_api_key").addClass("required");
-            }else{
-              jQuery("#gcm").slideUp(200);
-              jQuery("#mobihelp_app_config_gcm_api_key").removeClass("required");
+    jQuery(function() {
+      jQuery("#push_notification").bind("change",
+            function(ev){
+        if(this.checked){
+          jQuery("#gcm").slideDown(400);
+          jQuery("#mobihelp_app_config_gcm_api_key").addClass("required");
+        }else{
+          jQuery("#gcm").slideUp(200);
+          jQuery("#mobihelp_app_config_gcm_api_key").removeClass("required");
+        }
+      }
+      ).trigger("change");
 
-            }
-          }
-        ).trigger("change");
+      showItemsInOrder(<%=@app.category_ids.to_json%>, "mobihelp_app_solution_categories");
     });
-<%- end %>
+  <%- end %>
+  <%= include_cloudfront_js :mobihelp %>
 <%- end %>
 
 <% content_for :helpcard do -%>
@@ -43,15 +45,14 @@
       <span class="seperator"></span>
 
       <%= content_tag :h3, t('admin.mobihelp.apps.form.configurations').html_safe, :class => "lead title" %>
-      <% f.fields_for :config do |c| %>
         <div class="control-group">
-          <%= c.label :solutions, t('admin.mobihelp.apps.form.solutions').html_safe, :class => "control-label" %>
-          <div class="controls">
-            <%= c.collection_select :solutions, current_account.solution_categories.find(:all, :conditions => "is_default = false"), :id, :name, {:selected => @app.config[:solutions].to_i}, :class => "select2 span5" %>
-            <%= content_tag( :div, t("admin.mobihelp.apps.form.solutions_info"), :class => "info-data span12" ) %>
+          <%= f.label :solution_categories, t('admin.mobihelp.apps.form.solution_categories').html_safe, :class => "control-label" %>
+          <div class="controls category_selection" rel = "ordered_dropdown" id = "mobihelp_app_solution_categories">
+            <%= f.collection_select :category_ids, current_account.solution_categories.reject(&:is_default?), :id, :name, {:selected => @app.category_ids}, :class => "select2 span7", :multiple => true, :placeholder => t("admin.mobihelp.apps.form.select_a_solution_category") %>
+            <%= content_tag( :div, t("admin.mobihelp.apps.form.solution_categories_info"), :class => "info-data span12" ) %>
           </div>
         </div>
-
+      <% f.fields_for :config do |c| %>
         <% if @app.platform == Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
           <div class="row-fluid">
             <div class="app-fields">

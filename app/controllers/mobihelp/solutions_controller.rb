@@ -3,15 +3,21 @@ class Mobihelp::SolutionsController < MobihelpController
   include ReadsToSlave
   include Cache::Memcache::Mobihelp::Solution
 
-  before_filter :load_mobihelp_solution_category, :only => :articles
   before_filter :check_solution_updated, :only => :articles
-  FOLDER_TABLE_NAME = Solution::Folder.table_name
-  ARTICLE_TABLE_NAME = Solution::Article.table_name
-  
+  before_filter :load_mobihelp_solution_category, :only => :articles
+
+  # version 1 - Supports single solution category.
+  # version 2 - Supports multiple solution categories with the order of position. Mobihelp SDK version 1.3
+  #             or later support multiple solution categories.
+
   def articles
     solution_data = "[]"
-    if @category
-      solution_data = @mobihelp_app.fetch_solutions(@category)
+    unless @categories.blank?
+      if request_version_2?
+        solution_data = @mobihelp_app.solutions_with_category(@categories)
+      else
+        solution_data = @mobihelp_app.solutions_without_category(@categories)
+      end
     end
     render_json(solution_data)
   end
@@ -19,18 +25,22 @@ class Mobihelp::SolutionsController < MobihelpController
   private
 
   def load_mobihelp_solution_category
-    category_id = @mobihelp_app.config[:solutions].to_i
-    if category_id > 0
-      @category = current_portal.solution_categories.find_by_id(category_id)
+    category_ids = @mobihelp_app.app_solutions.all(:order => "position").map(&:category_id)
+    if category_ids.any?
+      @categories = Solution::Category.find(category_ids, :order => "field(id, #{category_ids.join(',')})")
     end
   end
 
   def render_json(data)
     respond_to do |format|
       format.json {
-        render :json => data;
+        render :json => data
       }
     end
+  end
+
+  def request_version_2?
+    request.headers["X-API-Version"] == Mobihelp::App::API_VERSIONS_BY_NAME[:v_2]
   end
 
   def check_solution_updated
@@ -42,9 +52,12 @@ class Mobihelp::SolutionsController < MobihelpController
         return ""
       end
 
-      category_id = @mobihelp_app.config[:solutions].to_i;
-      recently_updated_time = @mobihelp_app.fetch_recently_updated_time(category_id)
-      render_json({:no_update => true}) if updated_since > recently_updated_time
+      last_updated_time =  @mobihelp_app.last_updated_time
+      if last_updated_time.nil?
+        render_json("[]")
+      else
+        render_json({:no_update => true})  if updated_since > last_updated_time
+      end
     end
   end
 end

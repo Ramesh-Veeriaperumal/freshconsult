@@ -1,0 +1,4 @@
+<div class="comm-items">
+	<%= render :partial => 'spam_post', :collection => @spam_posts %>
+</div>
+<%= pageless_dynamo(topic_spam_posts_discussions_unpublished_path(params[:id], :filter => @spam_posts.first.type, :last =>@spam_posts.last_evaluated_key.to_json)) unless @spam_posts.last_evaluated_key.nil? %>

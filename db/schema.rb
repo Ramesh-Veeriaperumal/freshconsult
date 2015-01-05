@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20141027114632) do
-
+ActiveRecord::Schema.define(:version => 20141224162250) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1124,6 +1122,13 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
 
+  create_table "forum_moderators", :force => true do |t|
+    t.integer "account_id",   :limit => 8
+    t.integer "moderator_id", :limit => 8
+  end
+
+  add_index "forum_moderators", ["account_id", "moderator_id"], :name => "index_forum_moderators_on_account_id_and_moderator_id", :unique => true
+
   create_table "forums", :force => true do |t|
     t.string  "name"
     t.string  "description"
@@ -1889,6 +1894,7 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
+  add_index "helpdesk_tickets", ["status", "account_id"], :name => "index_helpdesk_tickets_status_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
     t.datetime "start_time"
@@ -2021,6 +2027,18 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
   add_index "mobihelp_ticket_infos", ["account_id", "device_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_device_id"
   add_index "mobihelp_ticket_infos", ["account_id", "ticket_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_ticket_id", :unique => true
 
+  create_table "mobihelp_app_solutions", :force => true do |t|
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "app_id",      :limit => 8, :null => false
+    t.integer  "category_id", :limit => 8, :null => false
+    t.integer  "position",                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
+  add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -2047,6 +2065,16 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "portal_forum_categories", :force => true do |t|
+    t.integer "portal_id",         :limit => 8
+    t.integer "forum_category_id", :limit => 8
+    t.integer "account_id",        :limit => 8
+    t.integer "position"
+  end
+
+  add_index "portal_forum_categories", ["account_id", "portal_id"], :name => "index_portal_forum_categories_on_account_id_and_portal_id"
+  add_index "portal_forum_categories", ["portal_id", "forum_category_id"], :name => "index_portal_forum_categories_on_portal_id_and_forum_category_id"
 
   create_table "portal_pages", :force => true do |t|
     t.integer  "template_id", :limit => 8,        :null => false
@@ -3056,7 +3084,8 @@ ActiveRecord::Schema.define(:version => 20141027114632) do
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true
-
+  add_index "users", ["account_id", "helpdesk_agent"], :name => "index_users_on_account_id_and_helpdesk_agent"
+  
   create_table "va_rules", :force => true do |t|
     t.string   "name"
     t.text     "description"

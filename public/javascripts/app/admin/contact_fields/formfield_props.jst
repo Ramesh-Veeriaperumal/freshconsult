@@ -165,18 +165,20 @@
 						<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
 						<input type="hidden" name="choicelist" value="" />
 						<div name="custom-choices" class="custom-choices">
-							<% _.each(choices, function(item, index){  %>
-								<% item = item || ['',0]; %>
-								<fieldset>
+							<% _.each(admin_choices, function(item, index){  %>
+								<% isDeleted = item._destroy ? true : false %>
+								<% deletedClassName = isDeleted ? 'hide' : '' %>
+								<fieldset class='<%= deletedClassName %>'
+													data-destroy="<%= isDeleted %>">
 									<span class="sort_handle"></span>
 									<span class='ficon-minus delete-choice'></span>
 									<span class="dropchoice">
 										<input type="text" 
-														name="choice_<%= item[1] %>" 
-														value="<%= item[0].replace(/"/g, '&quot;') %>"
-														data_id="<%= item[0] %>"
-														class='field_maxlength'
-														maxlength='255'/>
+											name="choice_<%= item['id'] || (new Date().getTime()) %>" 
+											value="<%= item['name'].replace(/"/g, '&quot;') %>"
+											data_id="<%= item['id'] ? item['id'] : '0' %>"
+											class='field_maxlength'
+											maxlength='255'/>
 									</span>
 								</fieldset>
 							<% }) %>

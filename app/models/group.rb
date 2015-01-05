@@ -1,5 +1,6 @@
 class Group < ActiveRecord::Base
   
+  xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
   belongs_to_account
   include Cache::Memcache::Group
   include Redis::RedisKeys

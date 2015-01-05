@@ -40,4 +40,26 @@ describe AgentsController do
                 (compare(result["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
+
+  
+  it "should show agents filtered by email" do
+    user = add_agent(@account, { :name => "1#{Faker::Name.name}",
+                                 :email => Faker::Internet.email,
+                                 :active => 1,
+                                 :role => 1,
+                                 :agent => 1,
+                                 :ticket_permission => 3,
+                                 :role_ids => ["#{@agent_role.id}"],
+                                 :privileges => @agent_role.privileges })
+    check_email  = user.email
+    get :index, {:query=>"email is #{check_email}", :format => 'json'}
+    result = parse_json(response)
+    expected = (response.status == "200 OK") && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+          (compare(result.first["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
+    expected.should be(true)
+    expected_email = result.first["agent"]["user"]["email"]
+    expected_email.should =~ /#{check_email}/
+  end
+
+
 end

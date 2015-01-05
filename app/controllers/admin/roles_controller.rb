@@ -5,9 +5,13 @@ class Admin::RolesController < Admin::AdminController
   before_filter :load_object, :only => [ :show, :edit, :update, :destroy ]
   before_filter :check_default, :only => [ :update, :destroy ]
   before_filter :check_users, :only => :destroy
-  
+
   def index
     @roles = scoper.all
+    respond_to do |format|
+      format.html
+      format.any(:xml, :json) { render request.format.to_sym => @roles }
+    end
   end
   
   def show
@@ -81,4 +85,5 @@ class Admin::RolesController < Admin::AdminController
         redirect_to :back
       end
     end
+
 end

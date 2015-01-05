@@ -4,7 +4,7 @@ class PostObserver < ActiveRecord::Observer
 
 	def before_create(post)
 		post.forum_id = post.topic.forum_id
-		post.published = (post.user.agent?  || !post.import_id.nil?) #Agent posts are approved by default.
+		post.published ||= (post.user.agent?  || !post.import_id.nil?) #Agent posts are approved by default.
 	end
 
 	def before_save(post)

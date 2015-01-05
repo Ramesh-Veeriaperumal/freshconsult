@@ -90,7 +90,8 @@ ActionController::Routing::Routes.draw do |map|
     freshfone.resources :call, :collection => {:status => :post, :in_call => :post, :direct_dial_success => :post, :inspect_call => :get, :caller_data => :get, :call_transfer_success => :post }
     freshfone.resources :queue, :collection => {:enqueue => :post, :dequeue => :post, :quit_queue_on_voicemail => :post, :trigger_voicemail => :post, :trigger_non_availability => :post, :bridge => :post, :hangup => :post}
     freshfone.resources :voicemail, :collection => {:quit_voicemail => :post}
-    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :available_agents => :get }
+    freshfone.resources :call_transfer, :collection => {:initiate => :post, :transfer_incoming_call => :post, :transfer_outgoing_call => :post, :transfer_incoming_to_group => :post , 
+      :transfer_outgoing_to_group => :post , :available_agents => :get }
     freshfone.resources :device, :collection => { :record => :post, :recorded_greeting => :get }
     freshfone.resources :call_history, :collection => { :custom_search => :get,
                                                         :children => :get, :recent_calls => :get }
@@ -148,7 +149,6 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :contact_fields, :only => :index
     admin.resources :company_fields, :only => :index
     admin.resources :chat_widgets
-    admin.resources :automations, :member => { :clone_rule => :get },:collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put, :clone_rule => :get }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put, :clone_rule => :get },
       :collection => { :reorder => :put }
@@ -253,8 +253,8 @@ ActionController::Routing::Routes.draw do |map|
         :collection => {:generate => :post, :export_csv => :post }
     end
     report.namespace :freshchat do |freshchat|
-      freshchat.resources :summary_reports, :controller => 'summary_reports', 
-      :collection => {:generate => :post } 
+      freshchat.resources :summary_reports, :controller => 'summary_reports',
+        :collection => {:generate => :post }
     end
     report.namespace :freshchat do |freshchat|
       freshchat.resources :summary_reports, :controller => 'summary_reports', 
@@ -353,7 +353,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.with_options(:conditions => {:subdomain => AppConfig['freshops_subdomain']}) do |subdom|
-    subdom.with_options(:namespace => 'fdadmin/', :path_prefix => nil) do |admin|
+    subdom.with_options(:namespace => 'fdadmin/',:name_prefix => "fdadmin_", :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :only => :none, :collection => {:display_subscribers => :get }
       admin.resources :accounts, :only => :show, :collection => {:add_day_passes => :put ,
                                                                  :add_feature => :put ,
@@ -486,6 +486,7 @@ ActionController::Routing::Routes.draw do |map|
       end
     end
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
+    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get, :reorder => :put}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}
 
@@ -564,9 +565,15 @@ ActionController::Routing::Routes.draw do |map|
     end
     discussion.resources :moderation,
       :collection => { :empty_folder => :delete, :spam_multiple => :put },
-      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put }
+      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put, :delete_unpublished => :delete }
+
+    discussion.resources :unpublished,
+      :collection => { :empty_folder => :delete, :spam_multiple => :put, :more => :get},
+      :member => { :approve => :put, :ban => :put, :mark_as_spam => :put, :delete_unpublished => :delete, 
+              :topic_spam_posts => :get, :empty_topic_spam => :delete }
 
     discussion.moderation_filter '/moderation/filter/:filter', :controller => 'moderation', :action => 'index'
+    discussion.unpublished_filter '/unpublished/filter/:filter', :controller => 'unpublished', :action => 'index'
     discussion.resources :merge_topic, :collection => { :select => :post, :review => :put, :confirm => :post, :merge => :put }
   end
 

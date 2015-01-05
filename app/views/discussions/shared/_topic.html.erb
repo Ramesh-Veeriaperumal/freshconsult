@@ -20,7 +20,7 @@
 				
 				<%= pjax_link_to topic.title, "#{discussions_topic_path(topic.id)}/page/last/##{dom_id(post)}" %>
 			</div>
-			<div class="post-desc pl20 mt5">
+			<div class="post-desc">
 				<%= truncate( post.body, :length => 400 )%>
 			</div>
 		</div>

@@ -7,7 +7,7 @@ describe ApiWebhooksController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-		@account = create_test_account
+		#@account = create_test_account
 	  @user = add_test_agent(@account)
 	  f = { :field_type=>"custom_text", :label=>"abcd123", :label_in_portal=>"abcd1234", :description=>"", 
 	  	:position=>10, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, 
@@ -17,6 +17,11 @@ describe ApiWebhooksController do
 
 	before(:each) do
 	  log_in(@user)
+	end
+
+	after(:all) do
+		# Destroying as otherwise webhooks getting triggered for ticket/user creation/update in following specs
+		@account.account_va_rules.map(&:destroy)
 	end
 
 	it "should create webhooks for user" do

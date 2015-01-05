@@ -9,11 +9,14 @@
 		  <input class="btn" type="button" id="topic-delete"
 				value="<%=t('delete')%>"
 				data-action-url='<%= destroy_multiple_discussions_topics_path %>'
-				data-method='delete' />
+				data-method='delete'
+				data-confirm="<%= t('topic.delete_confirm') %>" />
 			<input class="btn" type="button" id="topic-spam"
-				data-action-url='<%= spam_multiple_discussions_moderation_path %>'
+				data-action-url='<%= current_account.features_included?(:spam_dynamo) ?
+				spam_multiple_discussions_unpublished_path : spam_multiple_discussions_moderation_path %>'
 				value="<%=t('topic.mark_as_spam')%>"
-				data-method='put' />
+				data-method='put'
+				data-confirm="<%= current_account.features_included?(:spam_dynamo) ? t('topic.spam_delete_confirm') : t('topic.spam_confirm')%>" />
 		</li>
 		<li class="lf-item lf-hover" id="lf-item-sort">
 			<div class="item-sort">

@@ -184,9 +184,10 @@ module Helpdesk::TicketFilterMethods
     selector ||= current_selector
   end
   
-  def filter_count(selector=nil)
+  def filter_count(selector=nil, unresolved=false)
+    filter = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
     Sharding.run_on_slave do
-     TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user)).count
+      unresolved ? filter.unresolved.count : filter.count
     end
   end
 

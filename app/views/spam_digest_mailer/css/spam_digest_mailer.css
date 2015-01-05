@@ -1,0 +1,35 @@
+.body{
+	font-size: 14px;
+	font-weight: 200;
+}
+table{
+	width:80%;
+	border-top: 2px solid #c5c5c5;
+	border-collapse: collapse;
+}
+tbody{
+	width:100%;
+}
+tr{
+	width:100%;
+	border-bottom: 2px solid #c5c5c5;
+}
+td{
+	padding: 20px 0px 20px;
+}
+.unpublished-type{
+	width: 60%;
+}
+.count-container{
+	width: 20%;
+}
+.count{
+	font-size:18px;
+	width: 100%;
+}
+.entity{
+	font-size: 12px;
+}
+.middle{
+	vertical-align: middle;
+}

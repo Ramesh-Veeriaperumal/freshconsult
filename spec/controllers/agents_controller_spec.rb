@@ -419,19 +419,21 @@ describe AgentsController do
 
   it "should disable toggle_availability for an agent" do
     user = add_test_agent(@account)
+    agent = user.agent
     post :toggle_availability, :id => user.id, :value => "false"
-    user.reload
-    user.agent.available.should be_false
+    agent.reload
+    agent.available.should be_false
     response.should be_success
   end
 
   it "should enable toggle_availability for an agent" do
     user = add_test_agent(@account)
-    user.agent.available = false
-    user.save
+    agent = user.agent
+    agent.available = false
+    agent.save
     post :toggle_availability, :id => user.id, :value => "true"
-    user.reload
-    user.agent.available.should be_true
+    agent.reload
+    agent.available.should be_true
     response.should be_success
   end
 

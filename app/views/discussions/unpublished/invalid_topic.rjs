@@ -1,0 +1,2 @@
+page.insert_html :after, "post_#{@spam_post.timestamp.to_i}", render(:partial => 'invalid_topic')
+page << "App.Discussions.Moderation.invalidPost(#{@spam_post.timestamp.to_i}, 5);"

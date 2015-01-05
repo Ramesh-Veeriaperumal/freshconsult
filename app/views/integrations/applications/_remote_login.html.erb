@@ -23,10 +23,12 @@
       <%= submit_tag t('integrations.remote_login.connect'), :class => "button" %>
       <p class="seo_agent_link">
         <%= t("integrations.remote_login.new_to_freshdesk") %>
-        <a href="http://getseoshop.freshdesk.com/" class="anchor"><%= t("integrations.remote_login.sign_up") %></a>
+        <a href="http://getseoshop.freshdesk.com/" class="anchor" target="_blank"><%= t("integrations.remote_login.sign_up") %></a>
       </p>
   </div>
-  <input type="hidden" name="app_params" value="<%=params.inspect%>"/>
+  <input type="hidden" name="app" value="<%= params[:app] %>" />
+  <input type="hidden" name="id" value="<%= params[:id] %>"/>
+  <input type="hidden" name="app_params" value="<%= params[:app_params]%>"/>
 <% end %>
 <% if flash[:notice] %>
 <div id="noti" class="notice"><%= flash[:notice] %></div>

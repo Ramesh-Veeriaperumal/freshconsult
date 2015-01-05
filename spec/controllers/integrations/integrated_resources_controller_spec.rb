@@ -6,7 +6,7 @@ describe Integrations::IntegratedResourcesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @account = create_test_account
+    #@account = create_test_account
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     new_application = Factory.build(:application, :name => "pivotal_tracker",
                                     :display_name => "pivotal_tracker",

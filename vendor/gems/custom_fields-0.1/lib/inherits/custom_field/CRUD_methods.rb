@@ -5,7 +5,6 @@ module Inherits
       module ClassMethods
 
         def create_field(field_details, account = Account.current)
-          field_details.except! :id, :levels, :deleted
           #can remove levels after removing nested levels from cf_customizer.js        
           custom_field      = self.new field_details
           custom_field.name = field_name field_details[:label]
@@ -47,21 +46,23 @@ module Inherits
       module InstanceMethods
 
         def update_field(field_details)
-          field_details.except! :name, :column_name, :deleted, :type, :dom_type
           update_error(:edit) unless self.update_attributes(field_details)
 
           return self
         end
 
         def delete_field
-          if self.custom_field? && self.update_attributes({ :deleted => true })
-            self.remove_from_list
-            Resque.enqueue( CustomFields::Workers::NullifyDeletedCustomFieldData, 
-              { :custom_field => { :id => self.id, :class => self.class.name } }) if self.custom_field?
-            return nil
-          else
-            update_error :delete
-            return self
+          if self.custom_field?
+            self.deleted = true #since deleted is a protected atrtibute
+            if self.save
+              self.remove_from_list
+              Resque.enqueue( CustomFields::Workers::NullifyDeletedCustomFieldData, 
+                { :custom_field => { :id => self.id, :class => self.class.name } }) if self.custom_field?
+              return nil
+            else
+              update_error :delete
+              return self
+            end
           end
         end
 
