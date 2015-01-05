@@ -37,7 +37,7 @@ class Helpdesk::KbaseArticles
     article = add_knowledge_base_article(account, user, title, description)        
 
     (attachments || []).each do |attachment|
-      article.attachments.create(:content => attachment[:file], :description => attachment[:description], :account_id => article.account_id)
+      article.attachments.create(:content => attachment[:resource], :account_id => article.account_id)
     end
   end
 
