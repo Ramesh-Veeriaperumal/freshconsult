@@ -15,46 +15,49 @@
         </div>
       </h3>
     </div>
-    <div class="list-page">
-	   <div class="list-page-body chat-widget-index <% unless @chat_enabled %> disable-widgets <%end%>" id="chat_widgets_list" >
-      <table class="table table-striped" >
-        <% @widgets.each do |widget| %>
-          <tr id="<%= dom_id(widget)%>">
-            <td rel="<%=widget.id%>">
-              <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => "on", "data-unchecked-label" => "off" %>
-            </td>
-            <td>
-              <%= pjax_link_to(h(widget.product ? widget.product.name : widget.account.name), edit_admin_chat_widget_path(widget), :class => "item_info") %>
-            </td>
-            <td>
-              <div class="item_actions" align="right">
-                <%= pjax_link_to(t('edit'), edit_admin_chat_widget_path(widget), :class => "btn btn-mini", :rel => widget.id ) %>
-              </div>
-            </td>
-          </tr>
-        <% end %> 
-      </table>  
-    </div>
-  </div>
-  <div class="row-fluid fc-mxchat">
-      <div class="span8"><p class="lead"><%=t('freshchat.maximum_chat_title')%></p></div>
-      <div class="span4 text-right">
-        <div class="fc-mxc-count">
-          <span>1</span>
-          <ul>
-            <% (1..10).each do |i| %>
-            <li value="<%= i%>"><%= i%></li>
-            <% end %>
+    <div id="chat_widgets_list">
+      <div class="list-page">
+  	   <div class="list-page-body chat-widget-index <% unless @chat_enabled %> disable-widgets <%end%>" >
+        <table class="table table-striped" >
+          <% @widgets.each do |widget| %>
+            <tr id="<%= dom_id(widget)%>">
+              <td rel="<%=widget.id%>">
+                <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => "on", "data-unchecked-label" => "off" %>
+              </td>
+              <td>
+                <%= pjax_link_to(h(widget.product ? widget.product.name : widget.account.name), edit_admin_chat_widget_path(widget), :class => "item_info") %>
+              </td>
+              <td>
+                <div class="item_actions" align="right">
+                  <%= pjax_link_to(t('edit'), edit_admin_chat_widget_path(widget), :class => "btn btn-mini", :rel => widget.id ) %>
+                </div>
+              </td>
+            </tr>
+          <% end %> 
+        </table>  
+      </div>
+      <div class="row-fluid fc-mxchat">
+        <div class="span8"><p class="lead"><%=t('freshchat.maximum_chat_title')%></p></div>
+        <div class="span4 text-right">
+          <div class="fc-mxc-count">
+            <span>1</span>
+            <ul>
+              <% (1..10).each do |i| %>
+              <li value="<%= i%>"><%= i%></li>
+              <% end %>
+            </ul>
+          </div>
+          <span class="fc-mxc-edit"><%=t('freshchat.maximum_change_label')%></span>
+          <ul class="fc-mxc-options">
+            <li class="fc-mxc-save" title="Save"><i class="ficon icon-ok"></i></li>
+            <li class="fc-mxc-cancel" title="Cancel"><i>+</i></li>
           </ul>
         </div>
-        <span class="fc-mxc-edit"><%=t('freshchat.maximum_change_label')%></span>
-        <ul class="fc-mxc-options">
-          <li class="fc-mxc-save" title="Save"><i class="ficon icon-ok"></i></li>
-          <li class="fc-mxc-cancel" title="Cancel"><i>+</i></li>
-        </ul>
+        <p class="span12 muted lead-desc"> <%=t('freshchat.maximum_chat_desc')%></p>
       </div>
-      <p class="span12 muted lead-desc"> <%=t('freshchat.maximum_chat_desc')%></p>
+    </div>
   </div>
+
   <% javascript_tag do %>
       (function($){
           $(document).one('ready pjax:success' ,function(){

@@ -15,7 +15,19 @@ class AgentGroup < ActiveRecord::Base
 		:select => "agents.user_id",
         :conditions => ["agents.available = ?",true]
 
-  after_commit_on_destroy :clear_cache_agent_group
-  after_commit_on_create :clear_cache_agent_group
+  after_commit_on_destroy :clear_cache_agent_group, :remove_from_chatgroup_channel
+  after_commit_on_create :clear_cache_agent_group, :add_to_chatgroup_channel
+
+  def remove_from_chatgroup_channel
+    if account.features?(:chat) && account.chat_setting.display_id
+      Resque.enqueue(Workers::Freshchat, {:worker_method =>"group_channel", :siteId => account.chat_setting.display_id, :agent_id => user_id, :group_id => group_id, :type => 'remove'})
+    end
+  end
+
+  def add_to_chatgroup_channel
+    if account.features?(:chat) && account.chat_setting.display_id
+      Resque.enqueue(Workers::Freshchat, {:worker_method =>"group_channel", :siteId => account.chat_setting.display_id, :agent_id => user_id, :group_id => group_id, :type => 'add'})
+    end
+  end
 
 end
