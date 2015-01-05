@@ -4806,18 +4806,6 @@ en:
       helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
       host_name: "Host ip:Port"
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
-    five9:
-      label: "Five9"
-      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
-      helptext: "This is Five9 helptext"
-      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
-      recording_path: "Directory path for the call recording"
-    drishti:
-      label: "Drishti"
-      desc: "Lets you to integrate the drishti client into the Freshdesk"
-      helptext: "This is drishti helptext"
-      host_name: "Host ip:Port"
-      host_name_info: "Host ip of the customer"
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
