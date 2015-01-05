@@ -237,6 +237,7 @@ class AgentsController < ApplicationController
   def api_key
     api_key = {:user_id => @agent.user_id, :api_key => @agent.user.single_access_token}
      respond_to do |format|
+          format.html{render_404}
           format.any(:xml, :json) { render request.format.to_sym => api_key }
       end
   end 
@@ -306,6 +307,7 @@ class AgentsController < ApplicationController
     unless request.ssl?
       error = {:errors => {:message=> t('non_ssl_request')} }
       respond_to do |format|
+          format.html {render_404}
           format.any(:xml, :json) { render request.format.to_sym => error, :status => :forbidden }
       end
     end
@@ -315,6 +317,7 @@ class AgentsController < ApplicationController
     unless is_allowed_to_assume?(@agent.user)
       error = {:errors => {:message=> t('flash.general.access_denied')} }
         respond_to do |format|
+            format.html{render_404}
             format.any(:xml, :json) { render request.format.to_sym => error, :status => :forbidden }
         end 
     end  
