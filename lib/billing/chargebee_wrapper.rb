@@ -80,7 +80,7 @@ class Billing::ChargebeeWrapper
 	end
 
 	def retrieve_coupon(coupon_code)
-		ChargeBee::Coupon.retrieve(coupon_code)
+		ChargeBee::Coupon.retrieve(URI.encode(coupon_code))
 	end
 
 end
