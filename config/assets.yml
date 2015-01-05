@@ -207,6 +207,7 @@ javascripts:
     - public/javascripts/jquery.pageslide.js
     - public/javascripts/pattern/sticky.js
     - public/javascripts/pattern/stickyinit.js
+    - public/javascripts/pattern/delete-confirm.js
 
   discussions:
     - public/javascripts/app/discussions/discussions.js

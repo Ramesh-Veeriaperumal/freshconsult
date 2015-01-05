@@ -328,10 +328,11 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "<b>Important:</b> Deleting a folder will delete all the articles in it."
-    size: 
-      one: "1 article will also be deleted."
-      other: "%{count} articles will also be deleted."
+    delete_confirm:
+      one: "Deleting this folder will delete one article in it."
+      other: "Deleting this folder will delete all %{count} articles in it."
+      zero: "Are you sure you want to delete this folder?"
+
   amount_per_month: $%{amount} %{period}
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
@@ -1630,8 +1631,10 @@ en:
       ideas: Ideas
       announce: Announcement
       problem: Problems
-    confim_msg1: Are you sure you want to delete this forum?
-    delete: "<b>Important:</b> Deleting a forum will delete all the topics in it permanently."
+    delete_confirm:
+      zero: Are you sure you want to delete this forum?
+      one: "Deleting this forum will delete one topic in it."
+      other: "Deleting this forum will delete all %{count} topics in it."
     size: 
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
@@ -2273,11 +2276,10 @@ en:
       mark_this_problem_as: Mark this problem as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
-    delete: "Important: Deleting a topic will delete all the replies in it."
-    size: 
-      one: "1 reply will also be deleted."
-      other: "%{count} replies will also be deleted."
-    delete_empty: "Are you sure you want to delete this topic?"
+    delete_confirm:
+      one: "Deleting this topic will delete one reply in it."
+      other: "Deleting this topic will delete all %{count} replies in it."
+      zero: "Are you sure you want to delete this topic?"
   non_covered_feature_error: This feature is currently locked
   unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
   requester_replies: Requester Replies to Ticket
@@ -2338,7 +2340,19 @@ en:
     new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
+  delete_confirm:
+    confirm: Please Confirm...
+    hard_delete: This action is irreversible
+    confirm_msg: To avoid accidental deletion, we request you to re-enter the %{item_type} name
+    confirm_title: <b> Re-enter the %{item_type} name </b>
   delete_permanently: Delete Permanently
+  deletion_titles:
+    solution_category: "solution category"
+    solution_folder: "solution folder"
+    solution_article: "solution article"
+    forumcategory: "forum category"
+    forum: "forum"
+    topic: "topic"
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
@@ -2352,14 +2366,12 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "<b>Important:</b> Deleting a category will delete all the folders and articles in it."
-    size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
+    delete_confirm: "Deleting this category will delete all %{folders} folders and %{articles} articles in it."
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
-    delete: "<b>Important:</b> Deleting a category will delete all the forums and topics in it permanently."
-    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
+    delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
     activations:
