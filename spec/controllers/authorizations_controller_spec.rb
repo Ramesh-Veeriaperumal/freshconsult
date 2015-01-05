@@ -20,7 +20,7 @@ describe AuthorizationsController do
   end
 
   it "should create authorization for google calendar" do
-    @request.env["omniauth.origin"] = "id=1&app_name=google_calendar"
+    @request.env["omniauth.origin"] = "id=#{@account.id}&app_name=google_calendar"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
       { :credentials => { :expires => true,
                           :expires_at => "1403449470",
@@ -75,7 +75,7 @@ describe AuthorizationsController do
   end
 
   it "should create authorization for mailchimp" do 
-    @request.env["omniauth.origin"] = "id=1"
+    @request.env["omniauth.origin"] = "id=#{@account.id}"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
       { :credentials => {
                           :expires => true, 
@@ -119,7 +119,7 @@ describe AuthorizationsController do
   end
 
   it "should create authorization for facebook" do
-    @request.env["omniauth.origin"] = "id=1&portal_id=1"
+    @request.env["omniauth.origin"] = "id=#{@account.id}&portal_id=#{@account.main_portal.id}"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
     {
       :credentials => { :expires => true,
@@ -146,7 +146,7 @@ describe AuthorizationsController do
   end
 
   it "should create authorization for google calendar" do
-    @request.env["omniauth.origin"] = "id=1&app_name=google_calendar"
+    @request.env["omniauth.origin"] = "id=#{@account.id}&app_name=google_calendar"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
       { :credentials => { :expires => true,
                           :expires_at => "1403449470",
@@ -182,7 +182,7 @@ describe AuthorizationsController do
   end
 
   it "should fail for mailchimp" do 
-    @request.env["omniauth.origin"] = "id=1"
+    @request.env["omniauth.origin"] = "id=#{@account.id}"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new()
     get :create, :code=>"5e1f89f7246defb1586b31d12ddbadd5", :provider=>"mailchimp"
     response.should redirect_to "#{portal_url}/integrations/applications"

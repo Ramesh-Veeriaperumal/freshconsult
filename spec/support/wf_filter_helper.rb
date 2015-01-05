@@ -1,9 +1,9 @@
 module WfFilterHelper
 
   PARAMS1 = {:data_hash=>"[{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"0,-1\"}, {\"condition\": \"group_id\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"0,3\"}, {\"condition\": \"status\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"2\"}]", 
-    :wf_model=>"Helpdesk::Ticket", :wf_order=>"created_at", :wf_order_type=>"desc", :visibility=>{"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}}
+    :wf_model=>"Helpdesk::Ticket", :wf_order=>"created_at", :wf_order_type=>"desc", :visibility=>{"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}, :custom_ticket_filter => { :visibility => {"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}}}
   PARAMS2 = {:data_hash=>"[{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"0,-1\"}, {\"condition\": \"group_id\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"0,3\"}, {\"condition\": \"created_at\", \"operator\": \"is_greater_than\", \"ff_name\": \"default\", \"value\": \"60\"}, {\"condition\": \"due_by\", \"operator\": \"due_by_op\", \"ff_name\": \"default\", \"value\": \"4\"}, {\"condition\": \"status\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"2,5\"}, {\"condition\": \"priority\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"4\"}, {\"condition\": \"ticket_type\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"Incident\"}, {\"condition\": \"source\", \"operator\": \"is_in\", \"ff_name\": \"default\", \"value\": \"8\"}]", 
-    :filter_name=>"Blah", :wf_model=>"Helpdesk::Ticket", :wf_order=>"created_at", :wf_order_type=>"desc", :visibility=>{"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}}
+    :filter_name=>"Blah", :wf_model=>"Helpdesk::Ticket", :wf_order=>"created_at", :wf_order_type=>"desc", :visibility=>{"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}, :custom_ticket_filter => { :visibility => {"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}}}
 
   COMPARABLE_KEYS = [:wf_order, :wf_model, :wf_order_type]
   DEFAULT_FILTER = 'all_tickets'

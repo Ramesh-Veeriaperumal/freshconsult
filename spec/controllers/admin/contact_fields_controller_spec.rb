@@ -13,15 +13,12 @@ RSpec.describe Admin::ContactFieldsController do
 
 	before(:each) do
 		login_admin
-		contact_fields = Admin::ContactFieldsController.new.send(:fields_as_json, @account.contact_form.fields)
-		@default_contact_fields = ActiveSupport::JSON.decode contact_fields
+		@default_contact_fields = []
+		@account.contact_form.fields.map { |field| @default_contact_fields << field.as_json.values.first }
 	end
 
 	after(:all) do
-		Resque.inline = true
-		contact_custom_field = @account.contact_form.fields.find(:all,:conditions=> ["column_name != ?", "default"])
-		contact_custom_field.each { |field| field.delete_field }
-		Resque.inline = false
+		destroy_custom_fields
 	end
 
 	it "should go to the index page" do
@@ -49,7 +46,11 @@ RSpec.describe Admin::ContactFieldsController do
 				cf_params({ :type=>"url", :field_type=>"custom_url", :label=>"File URL", :editable_in_signup => "true"}).merge!(:action => "create"),
 				cf_params({ :type=>"number", :field_type=>"custom_number", :label=>"Number"}).merge!(:action => "create"),
 				cf_params({ :type => "dropdown", :field_type => "custom_dropdown", :label => "Category",
-							:choices => [["First", "0"], ["Second", "0"], ["Third", "0"], ["Tenth", "0"]]}).merge!(:action => "create")
+							:custom_field_choices_attributes => [ 
+											{"value"=>"First", "position"=>1, "_destroy"=>0, "name"=>"First"}, 
+                                            {"value"=>"Second", "position"=>2, "_destroy"=>0, "name"=>"Second"}, 
+                                            {"value"=>"Third", "position"=>3, "_destroy"=>0, "name"=>"Third"}, 
+                                            {"value"=>"Tenth", "position"=>4, "_destroy"=>0, "name"=>"Tenth"}]}).merge!(:action => "create")
 			).to_json
 
 		cf_testimony = @account.contact_form.fields.find_by_name("cf_testimony")
@@ -220,21 +221,19 @@ RSpec.describe Admin::ContactFieldsController do
 				:editable_in_portal => options[:editable_in_portal] || contact_field.editable_in_portal,
 				:required_in_portal=> options[:required_in_portal] || contact_field.required_in_portal,
 				:editable_in_signup=> options[:editable_in_signup] || contact_field.required_in_portal,
-				:choices=>[], 
 				:type=> options[:type], :action=> options[:action]
 			}
 		end
 
-		def custom_flexifield options = {}, tkt_flexifield = false
+		def custom_flexifield options = {}
 			testimony = @account.contact_form.fields.find_by_name("cf_testimony").column_name
 			date = @account.contact_form.fields.find_by_name("cf_date").column_name
-
-			contact_flexifield = FactoryGirl.build(:contact_flexifield, 
+			contact_field_data = FactoryGirl.build(:contact_field_data, 
 												:contact_form_id => options[:def_id] || @account.contact_form.id,
 												:user_id => options[:user_id],
 												:"#{date}" => options[:date] || date_time,
 												:"#{testimony}" => options[:testimony] || Faker::Lorem.words(7).join(" "),
 												:account_id => options[:account_id] || @account.id)
-			contact_flexifield.save
+			contact_field_data.save
 		end
 end

@@ -21,7 +21,8 @@ RSpec.describe Integrations::ApplicationsController do
                                                       :label => "integrations.new_application.api_key",
                                                       :info => "integrations.new_application.api_key_info"}
                                                   },
-                                    :application_type => "freshplug")
+                                    :application_type => "freshplug",
+                                    :account_id => @account.id)
     @new_application.save(validate: false)
     @widget = FactoryGirl.build(:widget, :application_id => @new_application.id)
     @widget.save(validate: false)

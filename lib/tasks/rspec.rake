@@ -22,7 +22,9 @@ if Rails.env.test?
     "spec/lib/facebook/status_spec.rb",
     "spec/controllers/social/facebook_pages_controller_spec.rb",
     "spec/lib/facebook/facebook_core_message_spec.rb",
-    "spec/lib/facebook/faceboook_fql_post_spec.rb"
+    "spec/lib/facebook/faceboook_fql_post_spec.rb",
+    "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb",
+    "spec/lib/facebook/reply_to_comment_spec.rb"
   ]
 
   GnipTests = [
@@ -143,6 +145,7 @@ if Rails.env.test?
     "spec/controllers/admin/contact_fields_controller_spec.rb",
     "spec/controllers/password_resets_controller_spec.rb",
     "spec/controllers/helpdesk/*_spec.rb",
+    "spec/controllers/helpdesk/canned_responses/*_spec.rb",
     "spec/controllers/admin/**/*_spec.rb",
     "spec/controllers/support/**/*_spec.rb",
     "spec/controllers/negative/**/*_spec.rb",
@@ -271,6 +274,13 @@ if Rails.env.test?
         t.rcov_opts = lambda do
           IO.readlines("#{Rails.root}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
         end
+        Rake::Task["db:schema:load".to_sym].invoke
+        Rake::Task["db:create_reporting_tables".to_sym].invoke
+        Rake::Task["db:create_trigger".to_sym].invoke
+        Rake::Task["db:perform_table_partition".to_sym].invoke
+
+        auto_increment_query = "ALTER TABLE shard_mappings AUTO_INCREMENT = #{Time.now.to_i}"
+        ActiveRecord::Base.connection.execute(auto_increment_query)
       end
 
       desc "Print Specdoc for all specs (excluding plugin specs)"

@@ -295,16 +295,6 @@ class Subscription < ActiveRecord::Base
      errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
     end  
   end
-  
-  def total_amount(addons, coupon_code)      
-    unless active?
-      response = Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
-      self.amount = to_currency(response.estimate.amount)
-    else
-      response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
-      self.amount = to_currency(response.estimate.amount)
-    end
-  end
 
   def non_free_agents 
     non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
@@ -353,6 +343,11 @@ class Subscription < ActiveRecord::Base
   end
   alias :is_paid_account :paid_account?
 
+  def total_amount(addons, coupon_code)      
+    subscription_estimate(addons, coupon_code)
+    self.amount = to_currency(@response.estimate.amount)
+  end
+    
   protected
   
     def non_social_plans
@@ -393,11 +388,6 @@ class Subscription < ActiveRecord::Base
       else
         @response ||= Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
       end
-    end
-    
-    def total_amount(addons, coupon_code)      
-      subscription_estimate(addons, coupon_code)
-      self.amount = to_currency(@response.estimate.amount)
     end
 
     def discount_amount(addons, coupon_code)
