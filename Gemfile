@@ -8,7 +8,7 @@ gem "rails","2.3.18"
 gem "json", "~> 1.8"
 gem "json-compare", "0.1.8"
 
-gem "mysql2", "0.2.23" #:git => 'git://github.com/sumakumardey/mysql2.git',:branch => 'mysql_logs'
+gem "mysql2", "0.2.18"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
@@ -31,7 +31,6 @@ gem "httparty", "0.10.0"
 gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
-gem "debugger"
 
 
 gem 'test-unit', '1.2.3'
