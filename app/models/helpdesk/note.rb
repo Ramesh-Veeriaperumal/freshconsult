@@ -32,7 +32,7 @@ class Helpdesk::Note < ActiveRecord::Base
   scope :visible, :conditions => { :deleted => false } 
   scope :public, :conditions => { :private => false } 
   scope :private, :conditions => { :private => true } 
-  
+   
   scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =
  'Helpdesk::Note'"],
@@ -144,6 +144,10 @@ class Helpdesk::Note < ActiveRecord::Base
     email? or fwd_email?
   end
   
+  def can_split?
+    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true)
+  end
+
   def as_json(options = {})
     return super(options) unless options[:tailored_json].blank?
     options[:methods] = Array.new if options[:methods].nil?
@@ -273,7 +277,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def fb_reply_allowed?
     self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
   end
-
+  
   protected
 
     def send_reply_email  

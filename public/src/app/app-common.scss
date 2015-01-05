@@ -1397,14 +1397,14 @@ p.info-text{
 .cvv-help-text{
 	background-color:#ece6e1;
 	border:1px solid darken(#ece6e1, 10%);
-	position:absolute;
 	@include padding(0 8px 0 8px);
 	width:200px;
-	@include margin-left(280px);
-	margin-top:-130px;
+	@include margin-left(480px);
+	margin-top:-140px;
 	@include text-align(center);
 	z-index:9999;
 	@include border-radius(8px);
+	position:absolute;
 }
 
 .small-select select{

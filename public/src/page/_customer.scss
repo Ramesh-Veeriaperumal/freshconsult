@@ -299,6 +299,11 @@ $iconColorList: "ticket" $bg_color_ticket,
 			text-align: center;
 		}
 	} 
+	.add-contact {
+		.control-group {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .contact-show-wrapper {
@@ -565,9 +570,11 @@ ul.user_list{
 			height: auto;
 			width: auto;
 			@include margin-right(15px);
-			margin-bottom: 5px;
+			margin-bottom: 15px;
+			float: none;
+			@include text-align(left);
 			.preview_pic {
-				@include margin(0);
+				@include margin(0 10px 0 0);
 				img {
 					@include border-radius(50%);
 					border: 1px solid $common-border-color;
@@ -575,20 +582,44 @@ ul.user_list{
 					height: 30px;
 				}
 			}
+			.name, .email {
+				margin-bottom: 0px;
+				line-height: 15px;
+			}
+			.name {
+				color: $default_txt_color;
+				font-weight: 400;
+			}
+			.email {
+				color: #999;
+			}
 			.more-users-link {
 				display: inline-block;
-				@include margin(2px 14px 0 0);
+				@include margin(2px 10px 0 0);
 				background-color: #BBB;
 				color: white;
-				@include padding(5px 0);
+				@include padding(2px 0);
 				text-align: center;
 				@include border-radius(50%);
-				width: 30px;
-				height: 30px;
+				width: 32px;
+				height: 32px;
 				@include box-sizing(border-box);
-				@include float(right);
 				font-weight: bold;
+				vertical-align: middle;
 			}
+			.user-link {
+				display: inline-block;
+				vertical-align: middle;
+			}
+			.see-all {
+				vertical-align: middle;
+				font-size: 14px;
+			}
+			&:hover {
+				.name {
+					color: $linkColor;
+				}
+			}	
 		}
 		.username{
 			display:block;

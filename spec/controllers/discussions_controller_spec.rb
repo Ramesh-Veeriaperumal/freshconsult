@@ -121,4 +121,12 @@ describe DiscussionsController do
 			response.should render_template("discussions/shared/_sidebar_categories")
 		end
 	end
+
+	describe "assigning to main portal after creation" do
+		it "should create a record in portal_forum_categories" do
+			@forum_category = create_test_category
+			result = @account.main_portal.portal_forum_categories.find_by_forum_category_id(@forum_category.id)
+			result.should_not be_nil
+		end
+	end
 end

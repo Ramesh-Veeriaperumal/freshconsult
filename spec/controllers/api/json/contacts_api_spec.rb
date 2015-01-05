@@ -154,7 +154,10 @@ RSpec.describe ContactsController do
 		it "should make user as agent" do
 			contact = add_new_user(@account,{})
 			put :make_agent, {:id => contact.id,:format => 'json'}
-			response.status.should eql(200)
+			result = parse_json(response)
+			expected = (response.status == 200) && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+                (compare(result["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
+            expected.should be(true)
 		end
 	end
 	

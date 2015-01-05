@@ -120,6 +120,7 @@ class Freshfone::Credit < ActiveRecord::Base
     	self.reload
     	credit_observer = Freshfone::CreditObserver.instance
     	credit_observer.after_credit_update(self)
+      return true
 	  end
 
 	  def update_sql_query(credits)

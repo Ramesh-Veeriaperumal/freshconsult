@@ -104,46 +104,49 @@
         </div>
       </div>
     </div>
-      
-    <div id="conv-panel" class="tw-explorer conv-panel tweets-open">
+    <% content_for :pagefixed do -%>
+    <div class="tw-wrapper row-fluid">
+      <div id="conv-panel" class="tw-explorer conv-panel tweets-open">
 
-      <div id="conv-floater" style="display:block;">
-        <div class="pane-head">
-          <h3 class="ph conv-title"> <%= t('social.streams.interactions')%> </h3>
-          <span class="floatr ph-icons conv-closebtn">
-            <%= font_icon "cross", :size => 24 %>
-          </span>
+        <div id="conv-floater" style="display:block;">
+          <div class="pane-head">
+            <h3 class="ph conv-title"> <%= t('social.streams.interactions')%> </h3>
+            <span class="floatr ph-icons conv-closebtn">
+              <%= font_icon "cross", :size => 24 %>
+            </span>
+          </div>
+          <div id="conv-wrapper"></div>
         </div>
-        <div id="conv-wrapper"></div>
-      </div>
 
-      <div id="userinfo-floater" style="display:none;">
-        <div class="pane-head">
-          <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
-            <%= font_icon "arrow-left", :size => 24 %>
-          </a>
-          <h3 class="ph"> <%= t('social.streams.twitter.user_profile')%></h3>
-          <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
-            <%= font_icon "cross", :size => 24 %>
-          </a>
+        <div id="userinfo-floater" style="display:none;">
+          <div class="pane-head">
+            <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
+              <%= font_icon "arrow-left", :size => 24 %>
+            </a>
+            <h3 class="ph"> <%= t('social.streams.twitter.user_profile')%></h3>
+            <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
+              <%= font_icon "cross", :size => 24 %>
+            </a>
+          </div>
+          <div id="stream_userinfo"></div>
         </div>
-        <div id="stream_userinfo"></div>
-      </div>
 
-      <div id="retweet-floater" style="display:none">
-        <div class="pane-head">
-          <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
-            <%= font_icon "arrow-left", :size => 24 %>
-          </a>
-          <span id="default_rt_header"> <h3 class="ph span10">Retweets</h3> </span>
-          <span id="changed_rt_header" style="display:none"> <h3 class="ph span10"></h3></span>
-          <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
-            <%= font_icon "cross", :size => 24 %>
-          </a>
+        <div id="retweet-floater" style="display:none">
+          <div class="pane-head">
+            <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
+              <%= font_icon "arrow-left", :size => 24 %>
+            </a>
+            <span id="default_rt_header"> <h3 class="ph span10">Retweets</h3> </span>
+            <span id="changed_rt_header" style="display:none"> <h3 class="ph span10"></h3></span>
+            <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
+              <%= font_icon "cross", :size => 24 %>
+            </a>
+          </div>
+          <div id="retweet-info"></div>
         </div>
-        <div id="retweet-info"></div>
       </div>
     </div>
+    <%- end %>
   </div>
 </div>
 

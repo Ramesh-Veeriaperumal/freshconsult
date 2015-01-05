@@ -10,10 +10,21 @@ module ProductsHelper
 		test_email_config.save(validate: false)
 
 		if option[:portal_url]
-			test_portal = FactoryGirl.build(:portal, :name=> option[:portal_name] || Faker::Name.name, :portal_url => option[:portal_url], :language=>"en",
-				                                 :product_id => test_product.id, :forum_category_id=>"", :solution_category_ids=>[""],:account_id => @account.id,
-				                                 :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=>"#252525", :tab_color=>"#006063", 
-	                                     		            :bg_color=>"#efefef" })
+			test_portal = FactoryGirl.build(:portal, 
+												:name=> option[:portal_name] || Faker::Name.name, 
+												:portal_url => option[:portal_url], 
+												:language=>"en",
+												:product_id => test_product.id, 
+												:forum_category_id => (option[:forum_category_id] || ""),
+												:solution_category_ids => [""],
+												:account_id => @account.id,
+												:preferences=>{ 
+													:logo_link=>"", 
+													:contact_info=>"", 
+													:header_color=>"#252525",
+													:tab_color=>"#006063", 
+                                 		            :bg_color=>"#efefef" 
+                                 		        })
 			test_portal.save(validate: false)
 		end
 		test_product

@@ -369,6 +369,7 @@ private
       :email => self.email, 
       :twitter_id => twitter_id,
       :external_id => external_id,
+      :fb_profile_id => facebook_id,
       :phone => phone })
     
     create_requester unless requester

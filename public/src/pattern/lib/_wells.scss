@@ -27,3 +27,16 @@
   padding: 9px;
   @include border-radius(3px);
 }
+
+// Colors and backgrounds
+.well.well-info{
+  $well-color: #F7FFEB;
+  background-color: $well-color;
+  border-color:mix(#000000, $well-color, 20%);
+}
+
+.well.well-danger{
+  $well-color: #FFF2F3;
+  background-color: $well-color;
+  border-color:mix(#000000, $well-color, 20%);
+}

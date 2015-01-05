@@ -30,7 +30,7 @@ RSpec.describe ContactsController do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'json'} 
-    error_status?(response.status).should be true
+    bad_request_status?(response.status).should be true
     @account.subscription.update_attributes(:state => state, :agent_limit => agent_limit)
   end  
 
@@ -41,11 +41,21 @@ RSpec.describe ContactsController do
     record_not_found_status?(response.status).should be_truthy
   end
  
+  it "should not convert contact to agent if contact doesn't have email" do
+    contact = add_new_user_without_email(@account,{})
+    put :make_agent, {:id => contact.id,:format => 'json'} 
+    bad_request_status?(response.status).should be true
+  end
+
   def record_not_found_status?(status)
      status == 404
   end
 
   def error_status?(status)
-      status == 422
+    status == 422
+  end
+
+  def bad_request_status?(status)
+    status == 400
   end
 end

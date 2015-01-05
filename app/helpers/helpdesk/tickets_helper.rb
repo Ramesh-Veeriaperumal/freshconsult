@@ -371,6 +371,16 @@ module Helpdesk::TicketsHelper
     "#{request.protocol}#{NodeConfig["autorefresh_server"]}"
   end
 
+  def facebook_link
+    ids = @ticket.fb_post.post_id.split('_')
+    page_id = @ticket.fb_post.facebook_page.page_id
+    if @ticket.fb_post.comment?
+      "http://www.facebook.com/permalink.php?story_fbid=#{ids[0]}&id=#{page_id}&comment_id=#{ids[1]}"
+    else
+      "http://www.facebook.com/#{page_id}/posts/#{ids[1]}"
+    end
+  end
+
   def freshfone_audio_dom(notable = nil)
       notable = notable || @ticket
       call = notable.freshfone_call

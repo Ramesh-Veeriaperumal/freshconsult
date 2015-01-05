@@ -1,6 +1,6 @@
 class EsIndexObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, User, Customer, Solution::Article, Topic, Post, Helpdesk::Tag, Freshfone::Caller
+	observe Helpdesk::Ticket, User, UserEmail, Customer, Solution::Article, Topic, Post, Helpdesk::Tag, Freshfone::Caller
   
   def after_commit(model)
     if model.send(:transaction_include_action?, :create)

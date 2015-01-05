@@ -12,6 +12,7 @@ class UserEmail < ActiveRecord::Base
 
   belongs_to :user
   belongs_to_account
+  delegate :update_es_index, :to => :user
 
   validates_presence_of :email
   validates_format_of :email, :with => EMAIL_REGEX
@@ -53,6 +54,11 @@ class UserEmail < ActiveRecord::Base
       user_email = find_by_email(email)
       user_email ? user_email.user : nil
     end
+  end
+
+  def reset_perishable_token
+    set_token
+    save
   end
 
   def mark_as_verified

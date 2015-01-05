@@ -41,7 +41,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone 
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -251,6 +251,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def is_fb_wall_post?
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
+  end
+  
+  def is_fb_comment?
+    (fb_post) and (fb_post.comment?)
   end
   
   def mobihelp?

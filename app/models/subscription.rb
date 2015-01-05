@@ -348,6 +348,11 @@ class Subscription < ActiveRecord::Base
     self.billing_id = nil
   end
 
+  def paid_account?
+    (state == 'active') and (subscription_payments.count > 0)
+  end
+  alias :is_paid_account :paid_account?
+
   protected
   
     def non_social_plans
@@ -381,8 +386,24 @@ class Subscription < ActiveRecord::Base
         self.amount = to_currency(response.estimate.amount)
       end
     end
+
+    def subscription_estimate(addons, coupon_code)
+      unless active?
+        @response ||= Billing::Subscription.new.calculate_estimate(self, addons, coupon_code)
+      else
+        @response ||= Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
+      end
+    end
     
-    
+    def total_amount(addons, coupon_code)      
+      subscription_estimate(addons, coupon_code)
+      self.amount = to_currency(@response.estimate.amount)
+    end
+
+    def discount_amount(addons, coupon_code)
+      subscription_estimate(addons, coupon_code)
+      @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
+    end
     
     def cache_old_model
       @old_subscription = Subscription.find id

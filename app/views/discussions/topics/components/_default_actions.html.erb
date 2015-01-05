@@ -35,9 +35,10 @@
 <%= link_to t('discussions.topics.close_topic'), toggle_lock_discussions_topic_path(@topic), :method => :put,
 					:class => 'btn hide_on_collapse' if privilege?(:edit_topic, @topic) %>
 
-<% if privilege?(:edit_topic, @topic) && !(@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) %>
+<% if privilege?(:edit_topic) && !(@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) %>
 	<a href="#merge_topicdialog" 
-		class="btn hide_on_collapse" id="mergetopic" 
+		class="btn hide_on_collapse mergetopic"
+		id="mergetopic"
 		data-target="#merge_topicdialog"
 		data-track="Topic Merge Initiated"
 		data-title="<%= t('discussions.topic_merge.merge_title') %>" 
@@ -64,8 +65,9 @@
 		<%= link_to t('discussions.topics.close_topic'), toggle_lock_discussions_topic_path(@topic), 
 					:method => :put if privilege?(:edit_topic, @topic) %>
 
-	<% unless (@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) %>
-		<a href="#merge_topicdialog" 
+	<% unless (@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) && !privilege?(:edit_topic) %>
+		<a href="#merge_topicdialog"
+			class="mergetopic"
 			id="mergetopic" rel="freshdialog"
 			data-target="#merge_topicdialog"
 			data-track="Topic Merge Initiated" 

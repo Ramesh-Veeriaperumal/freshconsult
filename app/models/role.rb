@@ -14,6 +14,10 @@ class Role < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   
+  API_OPTIONS = { 
+    :except     => [:account_id, :privileges]
+  } 
+
   attr_protected :privileges 
 
   def privilege_list=(privilege_data)
@@ -23,6 +27,22 @@ class Role < ActiveRecord::Base
 
   def self.privileges_mask(privilege_data)
     (privilege_data & PRIVILEGES_BY_NAME).map { |r| 2**PRIVILEGES[r] }.sum
+  end
+
+  def to_json(options={})
+    options.merge!(API_OPTIONS)
+    #(options[:methods] ||= []).push(:system_role)
+    super options
+  end
+
+  def to_xml(options={})
+    options.merge!(API_OPTIONS)
+    #(options[:methods] ||= []).push(:system_role)
+    super options
+  end
+
+  def system_role
+    self.default_role
   end
 
   private

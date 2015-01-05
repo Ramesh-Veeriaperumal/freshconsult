@@ -10,16 +10,16 @@ module Inherits
         const_set('CUSTOM_FORM_ID_COLUMN', args[:form_id])
 
         attr_accessor :action
-        attr_protected :account_id, args[:form_id]
+        attr_protected :account_id, args[:form_id], :name, :column_name, :deleted
         alias_attribute :custom_form_id, args[:form_id]
 
         belongs_to :custom_form, :class_name => args[:form_class], :foreign_key => args[:form_id] #:flexifield_def
         has_many  :custom_field_choices, :class_name => args[:field_choices_class],
                   :order => :position, :dependent => :destroy #picklist_values
 
-        before_validation     :populate_choices # need to build this once assigned and do autosave like flexifield- next version
         validates_presence_of :name, :column_name, :position #flexifield_alias, flexifield_name, flexifield_order
 
+        accepts_nested_attributes_for :custom_field_choices, :allow_destroy => true
         acts_as_list # helps in reordering
         # hack.. no better way in Rails 2 - removing from list in builder methods when deleted => true
         # before_destroy.reject!{ |callback| callback.method == :remove_from_list } #coz we are doing hard delete only later

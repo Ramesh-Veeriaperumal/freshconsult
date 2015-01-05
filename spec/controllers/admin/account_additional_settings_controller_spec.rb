@@ -33,7 +33,7 @@ describe Admin::AccountAdditionalSettingsController do
 		@account.reload
 		@email_template = @account.account_additional_settings.email_template_settings
 		@email_template["font-family"].should be_eql('times new roman, serif')
-		response.should render_template("admin/email_notifications/_fontsettings.rjs")
+		response.should render_template("admin/email_notifications/_fontsettings")
 	end
 
 	it "should not update the account_additional_settings without emailId" do

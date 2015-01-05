@@ -64,6 +64,10 @@ class Company < ActiveRecord::Base
   CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
+
+  ES_COMPANY_FIELD_DATA_COLUMNS = CompanyFieldData.column_names.select{ |column_name| 
+                                      column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_s
+  ES_COLUMNS = ['name', 'description', 'note'].concat(ES_COMPANY_FIELD_DATA_COLUMNS)
   
   def self.filter(letter, page, per_page = 50)
   paginate :per_page => per_page, :page => page,
@@ -136,8 +140,9 @@ class Company < ActiveRecord::Base
     as_json( 
               :root => "customer",
               :tailored_json => true,
-              :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ] 
-           ).to_json
+              :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ],
+              :include => { :flexifield => { :only => ES_COMPANY_FIELD_DATA_COLUMNS } }
+           )
   end
 
   # May not need this after ES re-indexing
@@ -156,8 +161,7 @@ class Company < ActiveRecord::Base
   end
 
   def search_fields_updated?
-    all_fields = ['name', 'description', 'note']
-    (@model_changes.keys & all_fields).any?
+    (@model_changes.keys & ES_COLUMNS).any?
   end
 
   def custom_form
@@ -188,6 +192,7 @@ class Company < ActiveRecord::Base
 
     def backup_company_changes
       @model_changes = self.changes.clone
+      @model_changes.merge!(flexifield.changes)
     end
   
 end

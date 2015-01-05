@@ -1,43 +1,51 @@
-<%= content_for :helpcard do %>
-	<div class="sidepanel"> 
+<% if @subscription.trial? or @subscription.trial_expired? %>
+	<%= content_for :helpcard do -%>
+		<h3 class="lead"><%= t("accounts.billing.billing").html_safe %></h3>
+		<p><%= t("accounts.billing.begin_subscription_info").html_safe %></p>
+	<%- end %>
+<% end %>	
+
+<h3 class="lead">
+	<%= @page_title = t('plans_billing') %>
+</h3>
+
+<% if @subscription.trial? or @subscription.trial_expired? %>
+	<div class="well well-info"> 
+		<h4 class="sub-lead">
+				Selected Plan : 
+				<%= t('current_plan_details', 
+						:plan_name => @subscription.subscription_plan.name, 
+						:agent_limit => @subscription.agent_limit).html_safe %>
+		</h4>
+		<div class="lead-info">
+			<%= get_payment_string(@subscription.renewal_period, @subscription.amount.to_i) if @subscription.amount > 0 %>
+			<%= t('currency_note').html_safe %>
+		</div>
+	</div>
+<% end %>
+
+
+<h3 class="lead"><%= t("credit_card_info") %></h3>
+<%= form_for @creditcard, :url => { :action => 'billing' }, :html => {
+		:id => "credit-card-form", :class => "form-horizontal" } do |f| %>
+
+	<%= render :partial => 'shared/credit_card_form' %>
+	<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
+	<span class="seperator"></span>
+	<div class="button-container">
 		<% if @subscription.trial? or @subscription.trial_expired? %>
-			<h3 class="title"><%= t("accounts.billing.billing").html_safe %></h3>
-			<p><%= t("accounts.billing.begin_subscription_info").html_safe %></p>
+			<%= link_to( "&larr; #{t('select_another_plan')}".html_safe, subscription_url, :class => "btn floatl" ) %>
+			<%= submit_tag t('accounts.billing.begin_subscription'), 
+													:class => "btn btn-primary", 
+													:id => "begin_subscription", 
+													:"data-loading-text" => t('please_wait') %>	
+		<% else %>
+			<%= link_to( "&larr; #{t("cancel_and_back")}".html_safe, subscription_url, :class => "btn floatl" ) %>
+			<%= submit_tag t('accounts.billing.update_billing_info'), 
+													:class => "btn btn-primary", 
+													:"data-loading-text" => t('please_wait') %>
 		<% end %>
 	</div>
-<%- end %>
-
-<h3 class= "title"><%= @page_title = t('plans_billing').html_safe %></h3>
-<%= form_for :creditcard, :url => { :action => 'billing' }, :html => {
-		:id => "credit-card-form"} do |f| %>
-	<ul class="ui-form">
-		<li class="inline-field">  
-			<% if @subscription.trial? or @subscription.trial_expired?  %>
-				<div class="info-highlight"> 
-					<h3 class="title">
-  					<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit).html_safe %>
-					</h3>	
-					<% if @subscription.amount > 0 %>			
-					<%= get_payment_string( @subscription.renewal_period,@subscription.amount.to_i ) %>
-					<%end%>
-					<%= t('currency_note').html_safe %>		
-				</div>
-			<% end %>
-			<%= content_tag(:h3, t("credit_card_info").html_safe, :class => "title") %>
-		   	<%= render :partial => '/shared/credit_card_form' %>
-				<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
-				<span class="seperator"></span>
-				<div class="button-container">
-					<% if @subscription.trial? or @subscription.trial_expired? %>
-						<%= link_to( "&larr; #{t('select_another_plan')}".html_safe, subscription_url, :class => "btn floatl" ) %>
-						<%= submit_tag t('accounts.billing.begin_subscription'), :class => "uiButton special", :id => "begin_subscription", "data-loading-text" => t('please_wait') %>	
-					<% else %>
-						<%= link_to( "&larr; #{t("cancel_and_back")}".html_safe, subscription_url, :class => "btn floatl" ) %>
-						<%= submit_tag t('accounts.billing.update_billing_info'), :class => "uiButton", "data-loading-text" => t('please_wait') %>
-					<% end %>
-				</div>
-		</li>
-	</ul> 
 <% end %>
 <% content_for :pagefixed do %>
 	<%= javascript_tag do %>
@@ -45,13 +53,14 @@
 			.click(function(){
 				if (jQuery('#credit-card-form').valid()) {
 					$("chargenow").value = true;
-					<%if @subscription.amount.to_i == 0 %>
+					<% if @subscription.amount.to_i == 0 %>
 					  return true;
-					<%end%>
-					return confirm("<%= t('begin_subscription_confirm', :cost => format_amount(@subscription.amount.to_i, @subscription.currency_name) ) %>") ;
+					<% end %>
+						<% amount = format_amount(@subscription.amount.to_i, @subscription.currency_name) %>
+						return confirm("<%= t('begin_subscription_confirm', :cost => amount) %>") ;
 				}
 			});
-		jQuery('body').on('click', '.uiButton', function(){
+		jQuery('body').on('click', '.btn-primary', function(){
 			if (jQuery('#credit-card-form').valid()) {
 				jQuery(this).button('loading');
 			}

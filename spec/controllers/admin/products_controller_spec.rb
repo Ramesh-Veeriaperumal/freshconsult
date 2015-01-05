@@ -6,11 +6,33 @@ describe Admin::ProductsController do
 
   before(:all) do
     @portal_url = "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
+
+    @test_category_1 = create_test_category
+    @test_category_2 = create_test_category
+
     @test_product = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
                                     :portal_name=> "New test_product portal", 
                                     :portal_url => @portal_url})
     @test_product_1 = create_product({:name => "New Product without Portal", 
                                       :email => "#{Faker::Internet.domain_word}@#{@account.full_domain}"})
+    @test_product_2 = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
+                                    :portal_name=> "New test_product portal 1", 
+                                    :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
+                                    :enable_portal => "1",
+                                    :forum_category_id => @test_category_1.id
+                                    })
+    @test_product_3 = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
+                                    :portal_name=> "New test_product portal 2", 
+                                    :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
+                                    :enable_portal => "1",
+                                    :forum_category_id => ""
+                                    })
+    @test_product_4 = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
+                                    :portal_name=> "New test_product portal 3", 
+                                    :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
+                                    :enable_portal => "1",
+                                    :forum_category_id => @test_category_1.id
+                                    })
   end
 
   before(:each) do
@@ -202,5 +224,72 @@ describe Admin::ProductsController do
     flash[:notice].should eql "The product has been deleted."
     response.should redirect_to "/admin/products"
     @account.products.find_by_id(@test_product.id).should be_nil
+  end
+
+  describe "associating forum category" do
+    it "should not create a record in portal_forum_categories" do
+      result = @test_product_3.portal.portal_forum_categories
+      result.length.should eql 0
+    end
+
+    it "should create a record in portal forum categories table" do
+      result = @test_product_2.portal.portal_forum_categories
+      result.length.should eql 1
+      result.first.forum_category_id.should eql @test_product_2.portal.forum_category_id
+    end
+
+    it "should create one record and delete another record in portal forum categories table when forum_category_id is updated from 1 value to another" do
+      @test_product_4.portal.forum_category_id = @test_category_2.id
+      @test_product_4.save
+
+      put :update, 
+          :id => @test_product_4.id,
+          :product => { :portal_attributes =>
+                          { :forum_category_id => @test_category_1.id
+                        }
+                      }
+
+      @test_product_4.reload
+
+      result = @test_product_4.portal.portal_forum_categories
+      result.length.should eql 1
+      result.first.forum_category_id.should eql @test_product_4.portal.forum_category_id
+    end
+
+    it "should create a record in portal forum categories when forum_category_id is updated to some value from nil" do
+      # Making this nil and then testing it.
+      @test_product_4.portal.forum_category_id = nil
+      @test_product_4.save
+
+      put :update, 
+          :id => @test_product_4.id,
+          :product => { :portal_attributes =>
+                          { :forum_category_id => @test_category_2.id
+                        }
+                      }
+
+      @test_product_4.reload
+
+      result = @test_product_4.portal.portal_forum_categories
+      result.length.should eql 1
+      result.first.forum_category_id.should eql @test_product_4.portal.forum_category_id
+    end
+
+    it "should delete a record from portal forum categories when forum_category_id is updated to nil" do
+      @test_product_4.portal.forum_category_id = @test_category_1.id
+      @test_product_4.save
+
+      put :update, 
+          :id => @test_product_4.id,
+          :product => { :portal_attributes =>
+                          { :forum_category_id => ""
+                        }
+                      }
+
+      @test_product_4.reload
+
+      result = @test_product_4.portal.portal_forum_categories
+      result.length.should eql 0
+    end
   end
 end

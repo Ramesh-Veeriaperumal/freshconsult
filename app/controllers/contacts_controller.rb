@@ -8,7 +8,7 @@ class ContactsController < ApplicationController
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
-   before_filter :check_agent_limit, :only =>  :make_agent
+   before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
    before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
 
    skip_before_filter :build_item , :only => [:new, :create]
@@ -208,6 +208,7 @@ class ContactsController < ApplicationController
       @user_mail.user.reset_primary_email(params[:email_id]) 
       @user_mail.user.save
     else
+      @user_mail.reset_perishable_token
       @user_mail.deliver_contact_activation_email
     end
     flash[:notice] = t('merge_contacts.activation_sent')
@@ -235,11 +236,12 @@ class ContactsController < ApplicationController
   
   def make_agent
     respond_to do |format|
-      if @item.make_agent        
+      if @item.make_agent  
+        agent = Agent.find_by_user_id(@item.id)      
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
-        format.xml  { render :xml => @item, :status => 200 }
-        format.json {render :json => @item.as_json,:status => 200}
+        format.xml  { render :xml => agent, :status => 200 }
+        format.json {render :json => agent.as_json,:status => 200}
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
@@ -330,12 +332,22 @@ protected
           flash[:notice] = t('maximum_agents_msg') 
           redirect_to :back 
         }
-        format.json { render :json => error_message, :status => :unprocessable_entity}
-        format.xml { render :xml => error_message.to_xml , :status => :unprocessable_entity}
+        format.json { render :json => error_message, :status => :bad_request}
+        format.xml { render :xml => error_message.to_xml , :status => :bad_request}
       end
     end
- end
-
+  end
+  
+  def can_make_agent
+    unless @item.has_email?
+      error_message = { :errors => { :message => t('contact_without_email_id') }} 
+      respond_to do |format|
+          format.json { render :json => error_message, :status => :bad_request}
+          format.xml { render :xml => error_message.to_xml , :status => :bad_request}
+      end 
+    end
+  end
+  
   def redirection_url # Moved out to overwrite in Freshservice
     contacts_url
   end
