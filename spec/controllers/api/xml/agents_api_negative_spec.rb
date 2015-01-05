@@ -14,6 +14,7 @@ describe AgentsController do
 
   before(:each) do
     http_login(@agent)
+  end
 
   it "should not get agent's api key if the request is not ssl" do
     user = add_agent(@account, {:name => "1#{Faker::Name.name}",
