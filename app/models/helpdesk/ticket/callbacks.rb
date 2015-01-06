@@ -532,7 +532,7 @@ private
     regenerate_fields = [:deleted, :spam,:responder_id]
     if account.features?(:report_field_regenerate)
       regenerate_fields.concat([:source, :ticket_type, :group_id, :priority, :status])
-      account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
+      #account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
     end
     regenerate_fields
   end
