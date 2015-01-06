@@ -140,7 +140,7 @@ module AutomationControllerMethods
   end
 
   def automations_controller?
-    controller_name == "automations"
+    controller_name == "scenario_automations"
   end
 
   def va_rules_controller?
