@@ -3987,7 +3987,7 @@ fr:
                 enter_ticket_id: "Saisissez un numéro d'identifiant de ticket"#
                 merge: "Fusionner"
             confirm_merge: 
-                source_merge_description: "Ce ticket est fermé et fusionné avec le ticket <a href='%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>"
+                source_merge_description: "Ce ticket est fermé et fusionné avec le ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>"
                 source_ticket_close_info: "Ce ticket sera clôturé avec la note suivante"
                 target_ticket_updated_info: "Ce ticket sera actualisé avec la note suivante et toutes les conversations seront déplacées"
                 will_be_merged_into: "Sera fusionné avec..."
@@ -4001,7 +4001,7 @@ fr:
                 primary_ticket: "Ceci est votre ticket principal"
                 remove: "Retirer ce ticket"
                 target_merge_description: "Le ticket {{ticket.id}}{{ticket.subject}} est fusionné avec cette demande"
-                target_merge_description1: "Fusionné à partir du ticket<a href='/helpdesk/tickets/%{full_domain}' target='_blank'>%{ticket_id}</a>"
+                target_merge_description1: "Fusionné à partir du ticket<a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
                 target_note_description1: 
                     one: "Ticket avec l'dentifiant"
                     other: "Tickets avec les identifiants"
