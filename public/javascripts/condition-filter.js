@@ -97,6 +97,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			delete_last        : false,
 			selectListArr      : [],
 			empty_dom 	 	   : ".empty_choice",
+			criteria 		   : "ticket",
+			is_requester	   : false,
+			orig_filter_data   : filter_data,
 			onRuleSelect       : function(){},
 			change_filter_data : function(_filter_data){return _filter_data}
 		};
@@ -146,6 +149,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		dom_size: 0,
 		add_dom: 
 			function(){
+				if(setting.is_requester) {
+					setting.criteria = 'ticket';
+					filter_data = $A(setting.orig_filter_data[setting.criteria]);
+				}
 				// Adding a new Filter DOM element to the Filter Container
 				var r_dom = domUtil.getContainer(name);
 				var filterList = [];
@@ -162,6 +169,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				if(parentDom=='#actionDOM')
 					jQuery($filter_select_list).data('formatResult', disableSingleSelectOnly);
 
+				if(setting.is_requester && parentDom=='#filterDOM'){
+					jQuery.data(r_dom, "inner").append('<div class="btn-group condn-group-selection">'
+															+ '<a href="#" class="ficon-ticket btn active tooltip" data-criteria="ticket" title="Ticket Fields"></a>'
+															+ '<a href="#" class="ficon-user btn tooltip" data-criteria="requester" title="Contact Fields"></a>'
+															+ '<a href="#" class="ficon-company btn tooltip" data-criteria="company" title="Company Fields"></a>'
+														+ '</div>'
+														+ '<input type="hidden" name="evaluate_on" value="ticket" />');
+				}
 
 				jQuery.data(r_dom, "inner")
 					  .append($filter_select_list)
@@ -173,8 +188,22 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				this.dom_size++;
 				this.populateEmpty();
 			},
+		// To manage unmigrated data
+		format_old_data:
+			function(rule) {
+				if(rule['name'] == 'contact_name') {
+      				rule['name'] = 'name';
+      				rule['evaluate_on'] = 'requester';
+      			}
+      			else if(rule['name'] == 'company_name') {
+      				rule['name'] = 'name';
+      				rule['evaluate_on'] = 'company';
+      			}else{
+      				rule['evaluate_on'] = rule['evaluate_on'] || 'ticket';                  				
+      			}
+			},
 		// Used to Edit pre-population
-      feed_data:
+		feed_data:
 
          function(dataFeed){	
             dataFeed.each(function(rule){            	
@@ -185,6 +214,13 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
                   if(rule.operator){	
                   	try{
+                  		if(setting.is_requester) {
+                  			// To manage unmigrated data
+                  			domUtil.format_old_data(rule);
+
+                  			filter_data = $A(setting.orig_filter_data[rule.evaluate_on]);
+                  			domUtil.add_to_hash(filter_data);
+                  		}
                      	opType = hg_data.get(rule.name).operatortype;
                      	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator", 'operator select2', {'minimumResultsForSearch':'10'}).val(rule.operator));
                     }catch(e){}
@@ -238,6 +274,16 @@ rules_filter = function(_name, filter_data, parentDom, options){
 											$filter_list_select.data("prevValue", rule.name);
 									}
 
+									if(setting.is_requester && parentDom=='#filterDOM'){
+										jQuery.data(r_dom, "inner").append('<div class="btn-group condn-group-selection">' 
+																				+ '<a href="#" class="ficon-ticket tooltip btn" data-criteria="ticket" title="Ticket Fields"></a>'
+																				+ '<a href="#" class="ficon-user tooltip btn" data-criteria="requester" title="Contact Fields"></a>'
+																				+ '<a href="#" class="ficon-company tooltip btn" data-criteria="company" title="Company Fields"></a>'
+																			+'</div>')
+																	.append('<input type="hidden" name="evaluate_on" value="' + rule.evaluate_on + '" />');
+										jQuery(r_dom).find('.btn[data-criteria='+rule.evaluate_on+']').addClass('active');
+									}
+
                   jQuery.data(r_dom, "inner")
                      .append($filter_list_select)
                      .append(inner);	
@@ -250,6 +296,22 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			this.dom_size = dataFeed.size()+1;
     },
 
+    	refresh_item: 
+    		function($element){
+				filter_data = $A(setting.orig_filter_data[setting.criteria]);
+				filterList = setting.change_filter_data(filter_data);
+
+				var $controls = $element.parents('.controls'),
+					$select = $controls.find('select');
+
+				$select.select2('destroy').remove();
+				$filter_list_select = FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_filter"+' select2', 
+                     											{'minimumResultsForSearch':'10', 'specialFormatting': true})
+																	.data('dropdownCssClass', "align_options");
+				$controls.find('.dependent').empty();
+				$controls.find('input[name=evaluate_on]').after($filter_list_select);
+				domUtil.add_to_hash(filter_data);
+    	},
         populateEmpty: 
         	function(){
 				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size < 1);
@@ -281,7 +343,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							flag = true;
 						}
 						else if (item.value == 'end'){
-						  if(tempConstruct.size())
+						  if(tempConstruct.size() && !(tempConstruct.size() == 1 && tempConstruct.get('evaluate_on')!='undefined'))
 							  serialHash.get(name).push(tempConstruct.toObject());
 
 							flag = false;
@@ -326,7 +388,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		init: 
 			function(){
-				// console.log(filter_data)
+				filter_data = $A(setting.orig_filter_data);
+				if(setting.is_requester) {
+					filter_data = $A(setting.orig_filter_data[setting.criteria]);
+				}
+
 				filter_data.each(function(item){
 					if(item.value != undefined){
 						item.value = unescapeHtml(item.value)
@@ -529,6 +595,17 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 							var formObj = jQuery(parentDom).parents('form:first');
 							setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj]);
+						});
+			jQuery(parentDom+' .condn-group-selection .btn')
+				.live('click',
+						function(e) {
+							e.preventDefault();
+							var $this = jQuery(this);
+							setting.criteria = $this.data('criteria');
+							$this.parent().siblings('input[name=evaluate_on]').val(setting.criteria);
+							$this.siblings().removeClass('active');
+							$this.addClass('active');
+							domUtil.refresh_item($this);
 						});
 			domUtil.init();
 			invokeRedactor("paragraph-redactor","cnt-fwd","class");

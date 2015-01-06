@@ -17,11 +17,17 @@
         case 'text':
         case 'number':
         case 'decimal':
+        case 'url':
+        case 'phone_number':
         case 'autocompelete':
           c_dom = FactoryUI.text("", value, initFeed[value], type + ' required text row-fluid ');
           jQuery(c_dom).prop("id", id);
         break;
+        case 'date':
+          c_dom = FactoryUI.date("", value, initFeed[value], 'date text required datepicker_popover', "<%=AccountConstants::DATA_DATEFORMATS[AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]][:datepicker] %>");
+        break;
         case 'dropdown':
+        case 'dropdown_blank':
           var choices = [];
           var agent_updated_flag;
           // hack for agent updated event to avoid migration - Setting a flag
@@ -283,9 +289,19 @@
     ObserverDom.init();
   <% end %>
   <% if (filter_type == "va_rule" || filter_type == "observer") %>
+    var filter_array = <%= @filter_defs.html_safe if @filter_defs %>;
     var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>);
-    filter_rule = new rules_filter("filter", $A(<%= @filter_defs.html_safe if @filter_defs %>), "#filterDOM", {"operators": op_hash, 
-     "init_feed":$A(<%= @filter_input.html_safe if @filter_input %>)});
+    var options = {
+        "operators"   : op_hash, 
+        "init_feed"   :$A(<%= @filter_input.html_safe if @filter_input %>),
+        "is_requester":true
+      }
+    if(<%= @is_supervisor ? true : false %>) {
+      options['is_requester'] = false
+      if(filter_array['ticket'])
+        filter_array = filter_array['ticket'];
+    }
+    filter_rule = new rules_filter("filter", filter_array, "#filterDOM", options);
   <% end %>   
   action_rule = new rules_filter("action", $A(<%= @action_defs.html_safe if @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input.html_safe if @action_input %>)});
 <% end %>

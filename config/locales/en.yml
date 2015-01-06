@@ -160,6 +160,12 @@ en:
   add_note: Add Note
   set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
+  requester_email: Requester Email
+  requester_name: Requester Name
+  requester_title: Requester Title
+  requester_time_zone: Requester Timezone
+  requester_language: Requester Language
+  company_domain: Company Domain
   eight: 8 Hours
   security_code: Security code
   example: example

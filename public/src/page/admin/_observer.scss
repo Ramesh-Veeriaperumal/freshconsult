@@ -120,3 +120,11 @@
 		}
 	}	
 }
+
+form:not(.supervisor-form) {
+	.controls {
+		.nested_field {
+			@include margin-left(121px);
+		}
+	}
+}

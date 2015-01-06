@@ -163,6 +163,14 @@ module AutomationControllerMethods
     current_account.features?(:surveys, :survey_links)
   end
 
+  def multi_timezone_account?
+    current_account.features?(:multi_timezone)
+  end
+
+  def multi_language_account?
+    current_account.features?(:multi_language)
+  end
+
   def add_custom_actions action_hash
     special_case = [['', t('none')]]
     current_account.ticket_fields.custom_fields.each do |field|
