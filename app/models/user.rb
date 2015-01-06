@@ -95,6 +95,7 @@ class User < ActiveRecord::Base
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
         paginate :per_page => per_page, :page => page,
+             :include => {:flexifield => {}},
              :conditions => filter_condition(state, letter) ,
              :order => order_by
       rescue Exception =>exp
