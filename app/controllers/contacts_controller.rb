@@ -8,8 +8,9 @@ class ContactsController < ApplicationController
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
-   before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
    before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
+   before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
+
 
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
