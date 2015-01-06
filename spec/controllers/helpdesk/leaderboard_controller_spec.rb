@@ -183,13 +183,13 @@ RSpec.describe Helpdesk::LeaderboardController do
 		@start_date = Time.zone.parse(2.month.ago.beginning_of_month.to_s)
 		@end_date = Time.zone.parse(2.month.ago.end_of_month.to_s)
 		assigns[:mvp_scorecard].should be_empty
-		user_support_score.should be_empty
+		user_support_score.all.should be_empty
 		assigns[:fast_scorecard].should be_empty
-		user_support_score.fast.should be_empty
+		user_support_score.fast.all.should be_empty
 		assigns[:first_call_scorecard].should be_empty
-		user_support_score.first_call.should be_empty
+		user_support_score.first_call.all.should be_empty
 		assigns[:customer_champion_scorecard].should be_empty
-		user_support_score.customer_champion.should be_empty
+		user_support_score.customer_champion.all.should be_empty
 	end
 
 	def user_support_score

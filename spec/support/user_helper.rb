@@ -86,7 +86,7 @@ module UsersHelper
       user = User.find_by_phone(options[:phone])
       return user if user
     end
-    new_user = Factory.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name] || Faker::Name.name,
                                     :phone => options[:phone] || Faker::PhoneNumber.phone_number,
                                     :time_zone => "Chennai",

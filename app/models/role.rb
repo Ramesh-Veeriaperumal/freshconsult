@@ -29,7 +29,7 @@ class Role < ActiveRecord::Base
     (privilege_data & PRIVILEGES_BY_NAME).map { |r| 2**PRIVILEGES[r] }.sum
   end
 
-  def to_json(options={})
+  def as_json(options={})
     options.merge!(API_OPTIONS)
     #(options[:methods] ||= []).push(:system_role)
     super options

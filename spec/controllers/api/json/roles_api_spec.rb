@@ -15,7 +15,7 @@ describe Admin::RolesController do
   it "should list all the roles in the index page" do
     get :index, :format => 'json'
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result.first["role"].keys,APIHelper::ROLE_ATTRIBS,{}).empty?)
+    expected = (response.status == 200) && (compare(result.first["role"].keys,APIHelper::ROLE_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
 

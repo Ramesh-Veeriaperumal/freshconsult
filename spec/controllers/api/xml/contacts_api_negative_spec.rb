@@ -52,7 +52,7 @@ RSpec.describe ContactsController do
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'xml'}    
     put :make_agent, {:id => contact.id,:format => 'xml'}
-    record_not_found_status?(response.status).should be true
+    bad_request_status?(response.status).should be true
   end
 
   it "should not convert contact to agent if contact doesn't have email" do
@@ -76,7 +76,7 @@ RSpec.describe ContactsController do
   end
 
   def bad_request_status?(status)
-    status =~ /400 Bad Request/
+    status == 400
   end
 
   def query_error(message)

@@ -36,9 +36,9 @@ RSpec.describe ContactsController do
 
   it "should not make agent as agent again" do
     contact = add_new_user(@account,{})   
-    put :make_agent, {:id => contact.id,:format => 'json'}    
     put :make_agent, {:id => contact.id,:format => 'json'}
-    record_not_found_status?(response.status).should be_truthy
+    put :make_agent, {:id => contact.id,:format => 'json'}
+    bad_request_status?(response.status).should be_truthy
   end
  
   it "should not convert contact to agent if contact doesn't have email" do

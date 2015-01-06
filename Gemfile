@@ -87,7 +87,7 @@ gem "riddle", "1.2.2"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
-gem "newrelic_rpm","3.8.0.218"
+gem "newrelic_rpm","3.9.9.275"
 
 gem "faraday" , "0.8.7"
 gem "twitter", "~> 5.5.1"

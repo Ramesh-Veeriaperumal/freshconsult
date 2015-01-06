@@ -54,7 +54,7 @@ describe AgentsController do
     check_email  = user.email
     get :index, {:query=>"email is #{check_email}", :format => 'json'}
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
           (compare(result.first["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
     expected_email = result.first["agent"]["user"]["email"]

@@ -53,7 +53,7 @@ describe AgentsController do
     check_email  = user.email
     get :index, {:query=>"email is #{check_email}", :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status == "200 OK") && (compare(result["agents"].first.keys, APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result["agents"].first.keys, APIHelper::AGENT_ATTRIBS,{}).empty?) && 
           (compare(result["agents"].first["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
     expected_email = result["agents"].first["user"]["email"]

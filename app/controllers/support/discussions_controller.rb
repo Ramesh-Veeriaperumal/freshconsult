@@ -33,7 +33,7 @@ class Support::DiscussionsController < SupportController
 	    @topics = current_account.topics.paginate(options)
 	    respond_to do |format|
 	      format.xml { render :xml => @topics.to_xml(:except=>:account_id) }
-	      format.json { render :json => @topics.as_json(:except=>:account_id) }
+	      format.json { render :json => @topics.as_json(:except=>[:account_id]) }
 	    end
   	end
 

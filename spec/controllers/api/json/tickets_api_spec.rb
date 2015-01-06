@@ -36,7 +36,7 @@ RSpec.describe Helpdesk::TicketsController do
     tag_params = {:tags => "exampletag1,exampletag2"}
     post :create, ticket_params.merge!({:format => 'json',:helpdesk => tag_params}),:content_type => 'application/json'
     result =  parse_json(response)
-    expected = (response.status =~ /200 OK/) && result['helpdesk_ticket']['tags'][0]['name'] == "exampletag1" && result['helpdesk_ticket']['tags'][1]['name'] == "exampletag2"
+    expected = (response.status == 200) && result['helpdesk_ticket']['tags'][0]['name'] == "exampletag1" && result['helpdesk_ticket']['tags'][1]['name'] == "exampletag2"
     expected.should be(true)
   end
 

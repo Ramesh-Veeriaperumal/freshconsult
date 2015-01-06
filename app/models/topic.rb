@@ -355,7 +355,7 @@ class Topic < ActiveRecord::Base
        ).to_json
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     options[:except] = ((options[:except] || []) +  TOPIC_ATTR_TO_REMOVE).uniq
     super(options)
   end

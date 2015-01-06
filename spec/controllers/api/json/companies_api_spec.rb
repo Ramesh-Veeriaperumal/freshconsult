@@ -12,6 +12,8 @@ describe CompaniesController do
   before(:all) do
     #@account = create_test_account
     @user = add_test_agent(@account)
+    @account.companies.destroy
+    @company = company
   end
 
   before(:each) do
@@ -36,14 +38,14 @@ describe CompaniesController do
   end
 
   it "should fetch a company using the API" do
-    get :show, { :id => company.id, :format => 'json' }
+    get :show, { :id => @company.id, :format => 'json' }
     result =  parse_json(response)
     expected = compare(result['company'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
     expected.should be(true)
   end
 
   it "should update a company using the API" do
-    id = company.id
+    id = @company.id
     fake_a_company
     put :update, (@params).merge!({ :id => id, :format => 'json' })
     { :company => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
@@ -51,16 +53,16 @@ describe CompaniesController do
   end
 
   it "should delete a company using the API" do
-    delete :destroy, { :id => company.id, :format => 'json' }
+    delete :destroy, { :id => @company.id, :format => 'json' }
     response.status.should eql(200)
-    @company = nil
+    # @company = nil
   end
 
   it "should delete multiple companies using the API" do
     another_company = create_company
-    delete :destroy, { :ids => [company.id, another_company.id], :format => 'json' }
+    delete :destroy, { :ids => [@company.id, another_company.id], :format => 'json' }
     response.status.should eql(200)
-    @company = nil
+    # @company = nil
   end
 
   # Can't restore a deleted company, its a hard delete

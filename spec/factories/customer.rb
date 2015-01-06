@@ -16,7 +16,7 @@ if Rails.env.test?
     end
 
     factory :company, :class => Customer do
-      sequence(:name) { |n| "Company#{n}" }
+      sequence(:name) { |n| "Foo#{n}" }
       description {Faker::Lorem.sentence(2)}
       note {Faker::Lorem.sentence(2)}
       domains {Faker::Internet.domain_name}
