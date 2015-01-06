@@ -31,7 +31,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
           end
           
         #Exception due to change of permission given to the app
-        elsif exception.http_status.between?(HTTP_STATUS_CLIENT_ERROR.first,  HTTP_STATUS_CLIENT_ERROR.last)
+        elsif !exception.http_status.blank? and exception.http_status.between?(HTTP_STATUS_CLIENT_ERROR.first,  HTTP_STATUS_CLIENT_ERROR.last)
           
           #Too Many Requests (Ratelimit exception)
           if exception.fb_error_code == APP_RATE_LIMIT or exception.fb_error_code == USER_RATE_LIMIT
@@ -41,7 +41,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
           end
         
         #Exception due to change of permission for the user who authorised the app
-        elsif exception.http_status.between?(HTTP_STATUS_SERVER_ERROR.first, HTTP_STATUS_SERVER_ERROR.last)
+        elsif !exception.http_status.blank? and exception.http_status.between?(HTTP_STATUS_SERVER_ERROR.first, HTTP_STATUS_SERVER_ERROR.last)
           
           if exception.fb_error_code.between?(PERMISSION_ERROR.first, PERMISSION_ERROR.last)
             update_error_and_notify(error_params)
