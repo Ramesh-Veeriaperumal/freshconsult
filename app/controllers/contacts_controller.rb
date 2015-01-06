@@ -388,7 +388,7 @@ protected
        per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
        order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
        order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
-       @sort_state = params[:state] || cookies[:contacts_sort] || 'verified'
+       @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
           scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by)
