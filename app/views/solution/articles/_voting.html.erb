@@ -1,7 +1,7 @@
 <i class="icons-like"></i> <%= @article.thumbs_up %> <b><%= t('likes') %></b>, 
 <i class="icons-dislike"></i> <%= @article.thumbs_down %> <b><%= t('dislikes') %></b>
 
-<% unless @article.thumbs_up == 0 && @article.thumbs_down == 0 
+<% if current_user.privilege?(:delete_solution) && (@article.thumbs_up > 0 || @article.thumbs_down > 0)
 		reset_url = reset_ratings_solution_category_folder_article_path(@article.folder.category, @article.folder, @article)
 	%>
 
