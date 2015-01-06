@@ -3,8 +3,6 @@ class Freshfone::Call < ActiveRecord::Base
 	include Mobile::Actions::Freshfone
 	set_table_name :freshfone_calls
 
-  serialize :customer_data, Hash
-
   belongs_to :agent, :class_name => 'User', :foreign_key => 'user_id'
   belongs_to_account
   belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
