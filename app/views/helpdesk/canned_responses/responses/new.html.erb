@@ -2,7 +2,7 @@
 <%= render :partial => 'helpnote_without_tour' %>
 <%- end %>
 <h3 class="title itil-hide"><%=t('.title')%></h3>
-<%= form_for @ca_response,  :url => helpdesk_canned_responses_path(:folder_id => params[:folder_id]), :html => { :method => :post , :id => "new_canned_response", :multipart => true, :rel => "validate" } do |f| %>
-	<%= generate_breadcrumbs(params, f, :cancel_url => helpdesk_show_canned_responses_folder_path(:id => params[:folder_id]), :back_url => helpdesk_show_canned_responses_folder_path(:id => params[:folder_id])) %>
+<% form_for @ca_response,  :url => helpdesk_canned_responses_folder_responses_path(@ca_response.folder_id), :html => { :method => :post , :id => "new_canned_response", :multipart => true, :rel => "validate" } do |f| %>
+	<%= generate_breadcrumbs(params, f, :cancel_url => helpdesk_canned_responses_folder_path(:id => params[:folder_id]), :back_url => helpdesk_canned_responses_folder_path(:id => params[:folder_id])) %>
 	<%= render :partial => "form", :locals => { :f => f,:ca_response => @ca_response } %>
 <% end %>

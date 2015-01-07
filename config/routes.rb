@@ -1355,52 +1355,28 @@ Helpkit::Application.routes.draw do
 
     resources :ca_folders
 
-    get 'canned_responses/folders(.:format)' => 'canned_responses/folders#index',
-      as: :folders_canned_responses
-    get 'canned_responses/folders/:folder_id/responses/new' => 'canned_responses/responses#new',
-      as: :new_canned_responses_folder_response
-    get 'canned_responses/folders/:id(.:format)' => 'canned_responses/folders#show',
-      as: :show_canned_responses_folder
-    put 'canned_responses/folders/:folder_id/responses/update_folder(.:format)' => 'canned_responses/responses#update_folder',
-      as: :canned_responses_folder_responses_update_folder
-    get 'canned_responses/folders/:folder_id/responses/:id/edit(.:format)' => 'canned_responses/responses#edit',
-      as: :edit_canned_responses_folder
-    put 'canned_responses/folders/:folder_id/responses/:id(.:format)' => 'canned_responses/responses#update',
-      as: :update_canned_responses_folder
-    delete 'canned_responses/folders/:folder_id/responses/delete_multiple(.:format)' => 'canned_responses/responses#delete_multiple',
-      as: :canned_responses_folder_responses_delete_multiple
-    
-    get 'canned_responses/folders/new' => 'canned_responses/folders#new',
-      as: :canned_responses_folder_responses_new
-
-    get 'canned_responses/folders/:folder_id/responses(.:format)' =>  'canned_responses/responses#index',
-      as: :canned_responses
-    post 'canned_responses/folders/:folder_id/responses(.:format)' => 'canned_responses/responses#create',
-      as: :create_canned_responses
-
     resources :canned_responses do
       collection do
         get :search
         get :recent
+        get :folders
       end
-      # resources :folders do
-      #   collection do
-      #     get :edit
-      #   end
-      #   resources :responses do
-      #     collection do
-      #       delete :delete_multiple
-      #       put :update_folder
-      #     end
-      #     member do
-      #       get :delete_shared_attachments
-      #       post :delete_shared_attachments
-      #     end
-      #   end
-      # end
+      resources :folders do
+        collection do
+          get :edit
+        end
+        resources :responses do
+          collection do
+            delete :delete_multiple
+            put :update_folder
+          end
+          member do
+            get :delete_shared_attachments
+            post :delete_shared_attachments
+          end
+        end
+      end
     end
-
-
 
     match 'canned_responses/show/:id'  => 'canned_responses#show'
     match 'canned_responses/index/:id' => 'canned_responses#index'

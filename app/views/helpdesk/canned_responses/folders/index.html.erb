@@ -7,7 +7,7 @@
       <div class="span6 pull-right pagination-right ">
         <b>
           <%= link_to t('canned_folders.new_response'), 
-                helpdesk_new_canned_responses_folder_response_path(@current_folder), 
+                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
                 :id => "new_resp", :class => "btn btn-primary" %>
         </b>
       </div>
@@ -39,7 +39,7 @@
 	                  count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => folder.id})
 	                end
 	              %>
-	  						<a id="folder<%= folder.id %>" href= "<%= helpdesk_folders_canned_responses_path %>/<%= folder.id %>" data-folder="<%= folder.id %>" data-pjax="#body-container"
+	  						<a id="folder<%= folder.id %>" href= "<%= helpdesk_canned_responses_folders_path %>/<%= folder.id %>" data-folder="<%= folder.id %>" data-pjax="#body-container"
 	  						data-name="<%= folder.display_name %>"
 	  						class="catch js-pjax <%= "default-folder" unless !(folder.is_default)%>"><%= folder.display_name %> (<%= count %>)
 	  						</a>
@@ -72,7 +72,7 @@
 							           :class => "icon-trash tooltip ", 
 							           :title => t('canned_folders.delete'), 
 							           :"data-placement" => 'below'
-							    ), helpdesk_show_canned_responses_folder_path(@current_folder), 
+							    ), helpdesk_canned_responses_folder_path(@current_folder), 
 							    :id => "del",
 							    :class => "spacing_right",
 							    :method => :delete,
@@ -96,7 +96,7 @@
 	        <% end %>
 			<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
       <div class="hide canned_create_folder" id="create_folder">
-        <%= form_for @new_ca_res_folder, :url => helpdesk_folders_canned_responses_path, :html => { :rel => "validate", 
+        <% form_for @new_ca_res_folder, :url => helpdesk_canned_responses_folders_path, :html => { :rel => "validate", 
             	:method => :post } do |f| %>
 			     <%= render :partial => "folder_form", :locals => { :f => f } %>
 	     <% end %>
@@ -106,7 +106,7 @@
 
 			<div id="editing" class="hide">
 				<div id="edit_form" class="center">
-					<%= form_for(@current_folder, :url => helpdesk_show_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
+					<% form_for(@current_folder, :url => helpdesk_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
           <%= f.error_messages :object_name => 'canned_response_folder' %>
 					<div class="form-horizontal">
 						<%= f.error_messages :object_name => 'canned_response_folder' %>
@@ -121,8 +121,8 @@
 			<ul id="drop-list"></ul>
 		</div>
 
-		<%= remote_form_for :admin_canned_response,
-				:url => helpdesk_canned_responses_folder_responses_delete_multiple_path(@current_folder), 
+		<% remote_form_for :admin_canned_response,
+				:url => delete_multiple_helpdesk_canned_responses_folder_responses_path(@current_folder), 
 				:html => {:method => :delete, :id => "ca_res_form"} do |f|%>
 
 			<div class="response-list list-page-body">
@@ -145,8 +145,8 @@
 		<% end %>
 
 		<div id="moves" class="hide ca-response-move-options">
-	    <%= form_for :admin_canned_response,
-			:url => helpdesk_canned_responses_folder_responses_update_folder_path(@current_folder), 
+	    <% form_for :admin_canned_response,
+			:url => update_folder_helpdesk_canned_responses_folder_responses_path(@current_folder), 
 			:html => {:method => "put", :id => "ca_move_form"} do |f|%>
 	    	<div class="row-fluid form-horizontal">
 	    		<div class="hide" id="visibility">
@@ -154,7 +154,7 @@
 		    			<%= t('canned_folders.visibility_change').html_safe %>
 		    		</div>
 		    		<% if @current_folder.id == @pfolder.id%>
-							<%= f.fields_for :visibility do |access| %>	
+							<% f.fields_for :visibility do |access| %>	
 								<div class='control-group mt20'>
 									<label class="control-label"><%=t('canned_responses.available_for').html_safe%> :</label>
 									<div class="controls">
@@ -205,8 +205,8 @@
 	var pfolder_id = <%= @pfolder.id %>;
 	var pfolder_visibility = <%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]%>;
 	var visibility_change_message = '<%= t('canned_folders.visibility_change').html_safe %>';
-	var new_ca_path = "<%= helpdesk_canned_responses_folder_responses_new_path %>";
-	var ca_path = "<%= helpdesk_folders_canned_responses_path %>/";
+	var new_ca_path = "<%= new_helpdesk_canned_responses_folder_path %>";
+	var ca_path = "<%= helpdesk_canned_responses_folders_path %>/";
 
 
 	jQuery(document).on('shown', '.modal', function(){

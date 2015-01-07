@@ -38,7 +38,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
     respond_to do |format|
       if @ca_response.save
         create_helpdesk_accessible(@ca_response, "admin_canned_responses_response")
-        format.html {redirect_to(helpdesk_show_canned_responses_folder_path(@folder),
+        format.html {redirect_to(helpdesk_canned_responses_folder_path(@folder),
                                  :notice => t('canned_folders.created'))
                      }
         format.xml  { render :xml => @ca_response,
@@ -62,7 +62,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
       if @ca_response.update_attributes(params[:admin_canned_responses_response])
         update_helpdesk_accessible(@ca_response, "admin_canned_responses_response")
         format.html {
-          redirect_to(helpdesk_show_canned_responses_folder_path(@ca_response.folder_id), :notice => t('canned_folders.update'))
+          redirect_to(helpdesk_canned_responses_folder_path(@ca_response.folder_id), :notice => t('canned_folders.update'))
         }
         format.xml  {
           render :xml => @ca_response, :status => :updated, :location => @ca_response

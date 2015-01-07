@@ -1,3 +1,3 @@
-<%= form_for @current_folder,:url => helpdesk_folders_canned_responses_path, :html => { :method => :post , :id => "new_canned_response_folder" } do |f| %>
+<%= form_for @current_folder,:url => helpdesk_canned_responses_folders_path, :html => { :method => :post , :id => "new_canned_response_folder" } do |f| %>
 	<%= render :partial => "folder_form", :locals => { :f => f } %>
 <% end %>

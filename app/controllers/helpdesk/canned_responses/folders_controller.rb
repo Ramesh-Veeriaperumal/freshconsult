@@ -29,7 +29,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
         if request.xhr?
           render :layout => false
         else
-          redirect_to helpdesk_folders_canned_responses_path
+          redirect_to helpdesk_canned_responses_folders_path
         end
       }
       format.xml  { render :xml => @current_folder }
@@ -41,7 +41,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
     respond_to do |format|
       if @current_folder.save
         format.html {
-          redirect_to(helpdesk_show_canned_responses_folder_path(@current_folder),
+          redirect_to(helpdesk_canned_responses_folder_path(@current_folder),
                       :notice => t('canned_folders.folder_created'))
         }
         format.xml  { render :xml => @current_folder,
@@ -66,13 +66,13 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
     respond_to do |format|
       if @current_folder.update_attributes(params[:admin_canned_responses_folder])
         format.html {
-          redirect_to(helpdesk_show_canned_responses_folder_path(@current_folder) ,
+          redirect_to(helpdesk_canned_responses_folder_path(@current_folder) ,
                       :notice => t('canned_folders.updated'))
         }
         format.xml  { head :ok }
       else
         format.html {
-          redirect_to(helpdesk_show_canned_responses_folder_path(@current_folder) ,
+          redirect_to(helpdesk_canned_responses_folder_path(@current_folder) ,
                       :notice => @current_folder.errors.full_messages.to_s)
         }
       end
@@ -83,7 +83,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
     flash[:notice] = t('canned_folders.deleted') if @current_folder.destroy
 
     respond_to do |format|
-      format.html { redirect_to(helpdesk_folders_canned_responses_path ,
+      format.html { redirect_to(helpdesk_canned_responses_folders_path ,
                                 :notice => t('canned_folders.deleted')) }
       format.js {
         render :update do |page|
