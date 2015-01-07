@@ -33,11 +33,11 @@ module Freshfone::FreshfoneHelper
     user_agent = request.env["HTTP_USER_AGENT"]
     call_meta = call.meta ||  Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
               :meta_info => user_agent )
-    call_meta.device_type = is_native_mobile? ? mobile_device : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
+    call_meta.device_type = is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
     call_meta.save
   end
 
-  def mobile_device
+  def mobile_device(user_agent)
     user_agent[/#{AppConfig['app_name']}_Native_Android/].present? ?
       Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:android] : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:ios]
   end
