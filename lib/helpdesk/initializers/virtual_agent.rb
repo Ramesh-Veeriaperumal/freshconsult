@@ -24,7 +24,7 @@ module VAConfig
 
   CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
 
-  def self.handler(field, account, evaluate_on)
+  def self.handler(field, account, evaluate_on=nil)
     @evaluate_on = evaluate_on
     fetch_handler field, account, :rule
   end
