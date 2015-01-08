@@ -96,7 +96,7 @@
 	        <% end %>
 			<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
       <div class="hide canned_create_folder" id="create_folder">
-        <% form_for @new_ca_res_folder, :url => helpdesk_canned_responses_folders_path, :html => { :rel => "validate", 
+        <%= form_for @new_ca_res_folder, :url => helpdesk_canned_responses_folders_path, :html => { :rel => "validate", 
             	:method => :post } do |f| %>
 			     <%= render :partial => "folder_form", :locals => { :f => f } %>
 	     <% end %>
@@ -106,7 +106,7 @@
 
 			<div id="editing" class="hide">
 				<div id="edit_form" class="center">
-					<% form_for(@current_folder, :url => helpdesk_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
+					<%= form_for(@current_folder, :url => helpdesk_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
           <%= f.error_messages :object_name => 'canned_response_folder' %>
 					<div class="form-horizontal">
 						<%= f.error_messages :object_name => 'canned_response_folder' %>
@@ -121,7 +121,7 @@
 			<ul id="drop-list"></ul>
 		</div>
 
-		<% remote_form_for :admin_canned_response,
+		<%= remote_form_for :admin_canned_response,
 				:url => delete_multiple_helpdesk_canned_responses_folder_responses_path(@current_folder), 
 				:html => {:method => :delete, :id => "ca_res_form"} do |f|%>
 
@@ -145,7 +145,7 @@
 		<% end %>
 
 		<div id="moves" class="hide ca-response-move-options">
-	    <% form_for :admin_canned_response,
+	    <%= form_for :admin_canned_response,
 			:url => update_folder_helpdesk_canned_responses_folder_responses_path(@current_folder), 
 			:html => {:method => "put", :id => "ca_move_form"} do |f|%>
 	    	<div class="row-fluid form-horizontal">

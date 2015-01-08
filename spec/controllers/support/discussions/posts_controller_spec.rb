@@ -78,7 +78,7 @@ describe Support::Discussions::PostsController do
 				s3_bucket_objects.map(&:key).include?("#{folder_name}/#{file_name}").should eql true
 			end
 
-			response.should redirect_to "support/discussions/topics/#{@sample_topic.id}?page=1"
+			response.should redirect_to "/support/discussions/topics/#{@sample_topic.id}?page=1"
 
 			# moderation_queue.delete
 			@moderation_queue.batch_delete(received_message)
@@ -100,7 +100,7 @@ describe Support::Discussions::PostsController do
 
 			@moderation_queue.receive_message.should be nil
 
-			response.should redirect_to "support/discussions/topics/#{@sample_topic.id}?page=1"
+			response.should redirect_to "/support/discussions/topics/#{@sample_topic.id}?page=1"
 		end
 
 		after(:all) do

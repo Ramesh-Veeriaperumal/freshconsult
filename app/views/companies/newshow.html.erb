@@ -115,7 +115,7 @@
 							<%= t('companies.add_contact_company', :company_name => @company.name) %> 
 						</p>
 					</h4>
-						<% form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix add-contact", :rel=> 'validate'} ) do %>
+						<%= form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix add-contact", :rel=> 'validate'} ) do %>
 						<ul>
 							<li class='control-group'>
 								<div class='controls'>

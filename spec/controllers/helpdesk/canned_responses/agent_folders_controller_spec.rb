@@ -20,7 +20,7 @@ describe Helpdesk::CannedResponses::FoldersController do
 
   it "should go to the folder index page" do
     get :index
-    response.should render_template("helpdesk/canned_responses/folders/index.html.erb")
+    response.should render_template("helpdesk/canned_responses/folders/index")
     response.body.should =~ /Personal/
   end
 

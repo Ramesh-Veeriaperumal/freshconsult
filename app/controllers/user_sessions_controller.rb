@@ -400,7 +400,7 @@ include GoogleLoginHelper
       if params[:timestamp].blank?
         Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
       else
-        digest  = OpenSSL::Digest::Digest.new('MD5')
+        digest  = OpenSSL::Digest.new('MD5')
         OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,params[:name]+params[:email]+params[:timestamp])
       end
     end

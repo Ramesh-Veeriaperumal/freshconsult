@@ -27,7 +27,7 @@ class MailgunController < ApplicationController
     # end
 
     def mailgun_verifed
-      return params["signature"] == OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new('sha256'),
+      return params["signature"] == OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'),
                                                             MailgunConfig['api_key'],
                                                             '%s%s' % [params["timestamp"], params["token"]])
     end

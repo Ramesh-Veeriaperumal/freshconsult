@@ -32,7 +32,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 			{
 				:available_group_agents_name => group.name,
 				:sortname => "G_#{group.name}",#to order agents,groups correspondingly
-				:available_agents_avatar => group_avatar,
+				:available_agents_avatar => view_context.group_avatar,
 				:agents_count => t("freshfone.widget.agents_count_in_group", :count => agent_groups.length),
 				:agents_ids => agent_groups.map(&:user_id),
 				:id => 0,

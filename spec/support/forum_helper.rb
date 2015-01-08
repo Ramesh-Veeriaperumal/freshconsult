@@ -53,7 +53,7 @@ module ForumHelper
 							:user_id => user.id,
 							:stamp_type => stamp_type
 							)
-		topic.save(true)
+		topic.save
 		post = FactoryGirl.build(
 							:post,
 							:account_id => @account.id,

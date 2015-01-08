@@ -16,7 +16,7 @@
 				<a class='btn default-pic <%= isAvatar ? "hide" : "" %>' href='javascript:;'>
 					<%= t('user.change_photo') %>  
 					<b class="caret invisible"></b>
-					<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+					<%= fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
 						<%= avatar_form.file_field :content, 
 													:size => 10 , 
 													:class => 'upload_size_validity avatar-file', 
@@ -33,7 +33,7 @@
 								<span class='opt'>
 									<span><%= t('user.choose_another_photo') %></span>
 
-									<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+									<%= fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
 										<%= avatar_form.file_field :content, 
 																	:size => 10 , 
 																	:class => 'upload_size_validity avatar-file', 

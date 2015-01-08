@@ -14,6 +14,7 @@ RSpec.describe EmailCommands do
 		@comp = create_company
 		restore_default_feature("reply_to_based_tickets")
 		f = { :field_type=>"custom_text", :label=>"abcd", :label_in_portal=>"abcd", :description=>"", :position=>4, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :field_options=>nil, :type=>"text" }
+		@invalid_fields ||= []
 		create_field(f, @account)
 		@account.reload
 	end

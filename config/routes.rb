@@ -1361,6 +1361,9 @@ Helpkit::Application.routes.draw do
         get :recent
         get :folders
       end
+    end
+    
+    namespace :canned_responses do
       resources :folders do
         collection do
           get :edit
@@ -1589,6 +1592,7 @@ Helpkit::Application.routes.draw do
     end
 
     match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter
+    match '/unpublished/filter/:filter' => 'unpublished#index', :as => :unpublished_filter
     resources :merge_topic do 
       collection do  
         post :select

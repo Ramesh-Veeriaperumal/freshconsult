@@ -119,7 +119,7 @@ describe Support::Discussions::TopicsController do
 				s3_bucket_objects.map(&:key).include?("#{folder_name}/#{file_name}").should eql true
 			end
 
-			response.should redirect_to 'support/discussions'
+			response.should redirect_to '/support/discussions'
 
 			# moderation_queue.delete
 			@moderation_queue.batch_delete(received_message)
@@ -140,8 +140,8 @@ describe Support::Discussions::TopicsController do
 				:post => { :attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
 
 			@moderation_queue.receive_message.should be nil
-
-			response.should render_template 'support/discussions/topics/new.portal'
+			
+			response.should render_template 'support/discussions/topics/new'
 		end
 
 		after(:all) do

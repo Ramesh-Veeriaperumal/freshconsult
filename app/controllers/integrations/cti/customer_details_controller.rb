@@ -51,7 +51,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     if note.save_note
       flash[:notice] = t(:'cti.create.success.with_link',
       { :human_name => t(:'cti.note.human_name'),
-        :link => @template.comment_path({ 'ticket_id' => note.notable.display_id, 
+        :link => view_context.comment_path({ 'ticket_id' => note.notable.display_id, 
                                           'comment_id' => note.id }, 
                                         t(:'cti.note.view'), 
                                         { :'data-pjax' => "#body-container" }),
@@ -86,7 +86,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     if @ticket.save_ticket
       flash[:notice] = t(:'cti.create.success.with_link',
           { :human_name => t(:'cti.ticket.human_name'),
-            :link => @template.link_to(t(:'cti.ticket.view'),
+            :link => view_context.link_to(t(:'cti.ticket.view'),
               helpdesk_ticket_path(@ticket), :'data-pjax' => "#body-container") }).html_safe
     else
       flash[:notice] = t(:'flash.general.create.failure',

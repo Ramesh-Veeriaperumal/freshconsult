@@ -17,7 +17,8 @@ RSpec.describe Facebook::Worker::FacebookMessage do
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
     facebook_feed = sample_fql_feed(feed_id, true)
     Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_feed, [])
-    sample_feed = sample_facebook_feed(feed_id)
+    
+    sample_feed = sample_facebook_feed(false,feed_id)
     sample_feed["type"] = "video"
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(@fb_page.page_id),  sample_feed)  
     

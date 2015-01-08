@@ -110,8 +110,8 @@ describe Discussions::ModerationController do
 
 		user_posts.each do |post|
 			post.reload
-			post.published.should be_false
-			post.spam.should be_true
+			post.published.should be false
+			post.spam.should be true
 		end
 
 	end

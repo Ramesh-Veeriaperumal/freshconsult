@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Integrations::RemoteConfigurationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-  integrate_views
 
   before(:all) do
     dm = DomainMapping.new
@@ -35,7 +34,7 @@ describe Integrations::RemoteConfigurationsController do
     params = {:app_params => app_params.gsub("}", ", \"id\" => \"install\"}")}
     post :create, params.merge(fd_cred) #.merge(:id => "install")
     response.should redirect_to "https://integrations.freshdesk.com/helpdesk/dashboard"
-    response.session[:flash][:notice].should =~ /Application is successfully installed in this domain/
+    session[:flash][:notice].should =~ /Application is successfully installed in this domain/
     params = {:app_params => app_params.gsub("}", ", \"id\" => \"uninstall\"}")}
     post :create, params.merge(fd_cred) #.merge(:id => "uninstall")
   end
@@ -45,7 +44,7 @@ describe Integrations::RemoteConfigurationsController do
     post :create, params.merge(fd_cred) #.merge(:id => "install")
     params = {:app_params => app_params.gsub("}", ", \"id\" => \"install\"}")}
     post :create, params.merge(fd_cred) #.merge(:id => "install")
-    response.session[:flash][:notice].should =~ /Application is already installed for this domain/
+    session[:flash][:notice].should =~ /Application is already installed for this domain/
     params = {:app_params => app_params.gsub("}", ", \"id\" => \"uninstall\"}")}
     post :create, params.merge(fd_cred) #.merge(:id => "uninstall")
   end
@@ -56,7 +55,7 @@ describe Integrations::RemoteConfigurationsController do
     params = {:app_params => app_params.gsub("}", ", \"id\" => \"uninstall\"}")}
     post :create, params.merge(fd_cred) #.merge(:id => "uninstall")
     response.should redirect_to "https://integrations.freshdesk.com/helpdesk/dashboard"
-    response.session[:flash][:notice].should =~ /Application is successfully uninstalled in this domain/
+    session[:flash][:notice].should =~ /Application is successfully uninstalled in this domain/
   end
 
   it "should give application not available message" do
@@ -66,7 +65,7 @@ describe Integrations::RemoteConfigurationsController do
     post :create, params.merge(fd_cred) #.merge(:id => "uninstall")
     params = {:app_params => app_params.gsub("}", ", \"id\" => \"uninstall\"}")}
     post :create, params.merge(fd_cred) #.merge(:id => "uninstall")
-    response.session[:flash][:notice].should =~ /Application is not installed in this Domain!/
+    session[:flash][:notice].should =~ /Application is not installed in this Domain!/
   end
 
   it "should say unable to authorize user" do
@@ -75,13 +74,13 @@ describe Integrations::RemoteConfigurationsController do
       :key => "Zi9wklsdf0lEsUepRNYtLFFl0",
       :app_params => "{}"
     }
-    response.session[:flash][:notice].should =~ /Unable to authorize user in Freshdesk..... Please check your domain and API Key...../
+    session[:flash][:notice].should =~ /Unable to authorize user in Freshdesk..... Please check your domain and API Key...../
   end
 
   it "Missing param" do
     post :create, fd_cred.merge(:app_params => 
         "{\"id\" => \"uninstall\",\"app\" => \"seoshop\",\"token\" => \"0b9c828e8c4583db1bdb61cd3c28069e\",\"shop_id\" => \"44897\",\"signature\" => \"a9a2db00498a6bcecfbd3b3d43bda8ec\",\"timestamp\" => \"1418822235\"}")
-    response.session[:flash][:notice].should =~ /Could not validate the application credentials..... Please try again...../
+    session[:flash][:notice].should =~ /Could not validate the application credentials..... Please try again...../
   end
 
   def app_params

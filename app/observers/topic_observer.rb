@@ -59,11 +59,13 @@ class TopicObserver < ActiveRecord::Observer
     end
   end
   
+  def before_destroy(topic)
+    create_activity(topic, 'delete_topic', User.current) unless topic.trash
+  end
 
 	def after_destroy(topic)
     topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-    create_activity(topic, 'delete_topic', User.current) unless topic.trash
     delete_spam_posts(topic) if topic.account.features_included?(:spam_dynamo)
 	end
 

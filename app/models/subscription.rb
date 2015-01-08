@@ -347,6 +347,11 @@ class Subscription < ActiveRecord::Base
     subscription_estimate(addons, coupon_code)
     self.amount = to_currency(@response.estimate.amount)
   end
+
+  def discount_amount(addons, coupon_code)
+    subscription_estimate(addons, coupon_code)
+    @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
+  end
     
   protected
   
@@ -390,11 +395,6 @@ class Subscription < ActiveRecord::Base
       end
     end
 
-    def discount_amount(addons, coupon_code)
-      subscription_estimate(addons, coupon_code)
-      @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
-    end
-    
     def cache_old_model
       @old_subscription = Subscription.find id
     end

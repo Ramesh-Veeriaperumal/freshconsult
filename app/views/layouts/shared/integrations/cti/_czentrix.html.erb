@@ -12,7 +12,7 @@
 	<%= render 'layouts/shared/cti/cti_popupbox_content' %>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	if (typeof cti_user === "undefined") { cti_user = {}; }
 	cti_user.current_user = <%= current_user.id %>;
 	cti_user.current_account = <%= current_account.id%>;

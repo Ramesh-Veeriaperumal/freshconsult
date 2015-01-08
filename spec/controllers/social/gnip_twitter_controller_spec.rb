@@ -12,7 +12,7 @@ RSpec.describe Social::GnipTwitterController do
       epoch = now.to_i / TIME[:reconnect_timeout]
 
       data    = "#{time}#{epoch}"
-      digest  = OpenSSL::Digest::Digest.new('sha512')
+      digest  = OpenSSL::Digest.new('sha512')
       hash    = OpenSSL::HMAC.hexdigest(digest, GnipConfig::GNIP_SECRET_KEY, data)
 
       post :reconnect, {:reconnect_time => time, :hash => hash}

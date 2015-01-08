@@ -64,7 +64,7 @@ describe CompaniesController do
     sla_policy.conditions["company_id"] = [company.id]
     sla_policy.save
     get :sla_policies, :id => company.id
-    response.body.should =~ /#{sla_policy.name}/
+    sla_policy.name.all?{|x| response.body.should =~ /#{x}/}
     response.should be_success
   end
 end

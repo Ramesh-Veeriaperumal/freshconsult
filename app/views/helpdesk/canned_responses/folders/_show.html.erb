@@ -1,6 +1,6 @@
 <table id="canned_table_big" class="table table-striped">
   <tbody>
-  	<% fields_for :ids do |f| %>
+  	<%= fields_for :ids do |f| %>
   		<%= each_or_message("ca_response", @ca_responses, t('canned_folders.no_response_admin', {:link => new_helpdesk_canned_responses_folder_response_path(@current_folder)}), { :f => f }).html_safe %>
   	<% end %>
   </tbody>

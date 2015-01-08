@@ -43,7 +43,7 @@
       <input type="hidden" value='<%= @redirect_back %>' id="merge-redirect"/>
     </div>
 
-      <% form_remote_tag( :url => review_discussions_merge_topic_path,
+      <%= form_remote_tag( :url => review_discussions_merge_topic_path,
                           :html => { :id => "merge_topics_form", :method => :put }) do %>  
       <div class="divide"></div>
       <input type="hidden" name="target_topic_id" id="target_topic" />

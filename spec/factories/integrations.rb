@@ -29,6 +29,14 @@ if Rails.env.test?
       t.local_integratable_type "issue-tracking"
     end
 
+    factory :widget, :class => Integrations::Widget do |t|
+      t.name "Test Application"
+      t.description "Test description"
+      t.script "script"
+      t.application_id 1
+      t.options HashWithIndifferentAccess.new({:display_in_pages => [:helpdesk_tickets_show_page_side_bar]})
+    end
+
     factory :integration_user_credential, :class => Integrations::UserCredential do |t|
       t.installed_application_id 1
       t.user_id 1

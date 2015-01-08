@@ -21,7 +21,7 @@ jQuery('body').on('assetLoaded.fjax', function() {
 	 	 
 <div class="row-fluid">
   <div class="span3">
-    <%= render :partial => "/shared/profile_avatar.html", :locals => { :user => @user} %> 
+    <%= render :partial => "/shared/profile_avatar", :formats => [:html], :locals => { :user => @user} %> 
   </div>
 
   <div class="span9">

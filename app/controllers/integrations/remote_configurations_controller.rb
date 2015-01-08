@@ -97,6 +97,6 @@ private
   end
 
   def partial_link
-    render :partial => "integrations/applications/remote_login", :locals => {:page => "seoshop"}, :layout => 'remote_configurations'
+    render "integrations/applications/_remote_login", :locals => {:page => "seoshop"}, :layout => 'remote_configurations'
   end
 end

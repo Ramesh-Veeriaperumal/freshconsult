@@ -217,7 +217,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
   it "should delete multiple Canned Responses" do
     new_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
     ids = ["#{@test_response_1.id}","#{new_response.id}"]
-    delete :delete_multiple, :ids => ids
+    delete :delete_multiple, :ids => ids, :folder_id =>@test_response_1.folder.id
     ids.each do |id|
       @account.canned_responses.find_by_id(id).should be_nil
     end

@@ -23,7 +23,7 @@
           <%= t('user.add_photo') %>
         <% end %>
       </span>
-      <% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
+      <%= fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
         <%= avatar_form.file_field :content, 
                                     :size => 10 , 
                                     :class => 'upload_size_validity avatar-file', 

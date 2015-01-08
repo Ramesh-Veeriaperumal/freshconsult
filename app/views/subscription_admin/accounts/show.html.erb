@@ -158,7 +158,7 @@
       <% end %>
 
       <h3>Remove a feature</h3>
-       <% form_tag({:action => 'remove_feature'}, :id => 'remove_feature_form', :class => "well form-inline") do %>
+       <%= form_tag({:action => 'remove_feature'}, :id => 'remove_feature_form', :class => "well form-inline") do %>
         <label for="feature_name"> Feature name</label>
         <input type="text" name="feature_name" id="feature_name" style="width:150px"/>
         <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
@@ -166,7 +166,7 @@
       <% end %>
 
       <h3>Change Account name</h3>
-      <% form_tag({:action => 'change_account_name'}, :id => 'account_name_change', :class => "well form-inline") do %>
+      <%= form_tag({:action => 'change_account_name'}, :id => 'account_name_change', :class => "well form-inline") do %>
         <label for="feature_name"> Account name</label>
         <input type="text" name="account_name" id="account_name" style="width:150px"/>
         <input type="hidden" id="account_id" name="account_id" value = "<%= @account.id%>"/>
@@ -187,7 +187,7 @@
       <% end %>
       <%if @account.subscription.state == "trial"%>
         <h3>Block account</h3>
-        <% form_tag({:action => 'block_account'}, :id => 'block_account', :class => "well form-inline") do %>
+        <%= form_tag({:action => 'block_account'}, :id => 'block_account', :class => "well form-inline") do %>
           <input type="hidden" name="account_id" value="<%=@account.id%>"/>
           <input type="submit" value="Block account" class="btn" />
         <% end %>
@@ -195,14 +195,14 @@
     <% end %>
     <%if @account.subscription.state == "suspended"%>
         <h3>Unblock account</h3>
-        <% form_tag({:action => 'ublock_account'}, :id => 'unblock_account', :class => "well form-inline") do %>
+        <%= form_tag({:action => 'ublock_account'}, :id => 'unblock_account', :class => "well form-inline") do %>
           <input type="hidden" name="account_id" value="<%=@account.id%>"/>
           <input type="submit" value="Unblock Account" class="btn" />
         <% end %>
       <%end%>
     <%if @account.subscription.state == "trial"%>
       <h3>Whitelist</h3>
-        <% form_tag({:action => 'whitelist'}, :id => 'whitelist', :class => "well form-inline") do %>
+        <%= form_tag({:action => 'whitelist'}, :id => 'whitelist', :class => "well form-inline") do %>
           <input type="hidden" name="account_id" value="<%=@account.id%>"/>
           <input type="submit" value="Whitelist" class="btn" />
         <% end %>

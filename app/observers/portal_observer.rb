@@ -45,7 +45,7 @@ class PortalObserver < ActiveRecord::Observer
 
     def create_template(portal)
       portal.build_template()
-      portal.template.save()
+      portal.template.save
     end
 
     def backup_changes(portal)

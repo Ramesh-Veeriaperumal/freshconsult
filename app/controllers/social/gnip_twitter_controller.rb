@@ -32,7 +32,7 @@ class Social::GnipTwitterController < ApplicationController
       return false unless (params[:reconnect_time] && params[:hash])
       epoch = Time.now.to_i / TIME[:reconnect_timeout]
       data = "#{params[:reconnect_time]}#{epoch}"
-      digest  = OpenSSL::Digest::Digest.new('sha512')
+      digest  = OpenSSL::Digest.new('sha512')
       hash = OpenSSL::HMAC.hexdigest(digest, GnipConfig::GNIP_SECRET_KEY, data)
       valid_request = (hash == params[:hash])
     end

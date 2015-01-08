@@ -1,4 +1,4 @@
-<% form_for :account, :url => "/subscription/plan", 
+<%= form_for :account, :url => "/subscription/plan", 
                       :html => {  :method => "post",
                                   :id => "plan-change-confirm-#{plan.id}" } do |f| %>
   
@@ -18,7 +18,7 @@
   <% end %>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery('.upgrade-plan').on("click", function(){
     jQuery(this).button("loading");
     jQuery('.activate-options').hide();

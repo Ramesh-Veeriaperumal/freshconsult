@@ -1,6 +1,6 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-
+include Redis::IntegrationsRedis
 RSpec.configure do |c|
   c.include FreshfoneSpecHelper
 end
@@ -68,7 +68,7 @@ RSpec.describe FreshfoneController do
 
   it 'should render valid json on dashboard_stats' do
     log_in(@agent)
-    key = NEW_CALL % {:account_id => @account.id}
+    key = Redis::RedisKeys::NEW_CALL % {:account_id => @account.id}
     add_to_set(key, "1234")
     get :dashboard_stats, { :format => "json" }
     expected = {
