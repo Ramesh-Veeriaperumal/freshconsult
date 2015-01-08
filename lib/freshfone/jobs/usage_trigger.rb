@@ -53,7 +53,7 @@ class Freshfone::Jobs::UsageTrigger
       else
         previous_balance = previous_trigger_balance
       end
-      topup_credit = (topup_credit * 0.9) + previous_balance
+      topup_credit = (topup_credit.to_i * 0.9) + previous_balance
       topup_credit = (available_credit * 0.9) if topup_credit > available_credit
 
       trigger_value = (topup_credit > 0) ? topup_credit.to_i : 0
