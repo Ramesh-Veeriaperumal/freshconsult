@@ -31,7 +31,11 @@ module Freshfone::FreshfoneHelper
 
   def update_call_meta(call)
     user_agent = request.env["HTTP_USER_AGENT"]
-    call_meta = call.meta ||  Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
+    unless call.meta.blank?
+      Rails.logger.debug "Call Meta Already found for account: #{current_account.id} :: call : #{call.inspect} :: User Agent :: #{user_agent}"
+      return
+    end
+    call_meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
               :meta_info => user_agent )
     call_meta.device_type = is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
     call_meta.save
