@@ -6770,6 +6770,7 @@ en:
         no_forum_spam: "There's no spam here. We swear!"
         moderation_solution: Learn more about Forum Moderation
         unpublished_posts: Unpublished replies
+        deletion_alert: "Topics/replies more than 30 days old will be automatically deleted from here"
       spam_actions:
         approve: Approve
         approve_tooltip: Approve and Publish

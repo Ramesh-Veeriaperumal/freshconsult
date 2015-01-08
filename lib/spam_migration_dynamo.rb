@@ -12,6 +12,7 @@ module SpamMigrationDynamo
 
 					Account.active_accounts.find_in_batches(:batch_size => 100) do |accounts|
 						accounts.each do |account|
+							next if account.features_included?(:spam_dynamo)
 							migrate_for_account(account)
 						end
 					end

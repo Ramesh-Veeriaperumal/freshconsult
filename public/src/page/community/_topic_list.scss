@@ -524,6 +524,12 @@ $community-types: problem #e65e63,
 			@include opacity(0.5);
 		}
 	}
+	.deletion-alert{
+		border-bottom: 1px solid #D8D8D8;
+		box-sizing: border-box;
+		padding: 5px;
+		text-align: center;
+	}
 }
 
 //-------------- Reorder ------------------
