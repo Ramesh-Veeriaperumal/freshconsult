@@ -8,7 +8,7 @@
     <span class="tags-checkbox-label">
         <span class="tags-total-counter"><%= ticket_tags + article_tags + customer_tags  %></span>
         <span> <strong>
-          <a href="#" class="tag_name tooltip" id="tag_name_<%= tag.id.to_s %>" data-tag-name="<%= tag.name %>" title="<%= if tag.name.length>12 then  h(tag.name) end %>" ><%= tag.name.length>26 ? h(tag.name).slice(0,25)+"..." : h(tag.name) %></a> </strong>
+          <a href="#" class="tag_name tooltip" id="tag_name_<%= tag.id.to_s %>" data-tag-name="<%= tag.name %>" title="<%= if tag.name.length>12 then  h(tag.name) end %>" ><%= tag.name.length>12 ? h(tag.name).slice(0,10)+"..." : h(tag.name) %></a> </strong>
         <span id="tag_text_container_<%= tag.id.to_s %>" class="hide">
           <input type="text" tag_id="<%= tag.id.to_s %>" class="textbox tag_text" value="<%= tag.name %>" >
         </span>
