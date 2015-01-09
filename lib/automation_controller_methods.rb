@@ -140,7 +140,7 @@ module AutomationControllerMethods
   end
 
   def automations_controller?
-    controller_name == "automations"
+    controller_name == "scenario_automations"
   end
 
   def va_rules_controller?
@@ -161,6 +161,14 @@ module AutomationControllerMethods
 
   def survey_featured_account?
     current_account.features?(:surveys, :survey_links)
+  end
+
+  def multi_timezone_account?
+    current_account.features?(:multi_timezone)
+  end
+
+  def multi_language_account?
+    current_account.features?(:multi_language)
   end
 
   def add_custom_actions action_hash

@@ -65,7 +65,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -144,7 +144,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_solution do
-    resource :"solution/article", :only => [:destroy], :owned_by =>
+    resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
   end
 
@@ -359,6 +359,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
+    resource :"agent", :only => [:api_key]
   end
 
   client_manager do

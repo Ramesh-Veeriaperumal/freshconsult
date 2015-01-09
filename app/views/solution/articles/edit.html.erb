@@ -4,7 +4,7 @@
 	<div class="button-container align-right">
 	    <% if privilege?(:delete_solution, @article) %>
 	  		<div class="pull-left itil-hide">
-	  			<%= link_to(t('delete'), solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :method => 'delete', :confirm => "#{t('solution.info8')}?", :class => "btn" ) %>
+	  			<%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
 	  		</div>
 	    <% end %>   
 		<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn" ) %>

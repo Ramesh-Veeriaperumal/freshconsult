@@ -9,9 +9,18 @@ describe CustomersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
+  
+  before(:all) do
+    @comp = create_company
+  end
+
   before(:each) do
     login_admin
     clear_xml
+  end
+
+  after(:all) do
+    @comp.destroy
   end
 
   # CompaniesController Xml and Json Index Actions and filter actions, require Elastic Search. 
@@ -28,14 +37,15 @@ describe CustomersController do
   end
 
   it "should fetch a company using the API" do
-    get :show, { :id => company.id, :format => 'xml' }
+    id = @account.companies.find_by_name(@comp.name).id
+    get :show, { :id => id, :format => 'xml' }
     result =  parse_xml(response)
     expected = compare(result['customer'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
     expected.should be(true)
   end
 
   it "should update a company using the API" do
-    id = company.id
+    id = @account.companies.find_by_name(@comp.name).id
     fake_a_customer
     put :update, (@params).merge!({ :id => id, :format => 'xml' })
     { :customer => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
@@ -43,18 +53,20 @@ describe CustomersController do
   end
 
   it "should delete a company using the API" do
-    delete :destroy, { :id => company.id, :format => 'xml' }
-    xml SKIPPED_KEYS
-    { :customers => [company_attributes(@company, SKIPPED_KEYS)] }.should be_eql(xml)
+    @comp = create_company
+    id = @account.companies.find_by_name(@comp.name).id
+    delete :destroy, { :id => id, :format => 'xml' }
+    response.status.should be_eql("200 OK")
     @company = nil
   end
 
   it "should delete multiple companies using the API" do
-    another_company = create_company
-    delete :destroy, { :ids => [company.id, another_company.id], :format => 'xml' }
-    xml SKIPPED_KEYS
-    { :customers => [ company_attributes(@company, SKIPPED_KEYS), 
-                      company_attributes(another_company, SKIPPED_KEYS) ] }.should be_eql(xml)
+    @comp = create_company
+    id = @account.companies.find_by_name(@comp.name).id
+    @another_comp = create_company
+    another_id = @account.companies.find_by_name(@another_comp.name).id
+    delete :destroy, { :ids => [id, another_id], :format => 'xml' }
+    response.status.should be_eql("200 OK")
     @company = nil
   end
 

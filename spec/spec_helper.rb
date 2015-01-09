@@ -173,8 +173,8 @@ Spork.prefork do
     config.before(:suite) do
       ES_ENABLED = false
       GNIP_ENABLED = false
-      DatabaseCleaner.clean_with(:truncation,
-                                 {:pre_count => true, :reset_ids => false})
+      # DatabaseCleaner.clean_with(:truncation,
+      #                            {:pre_count => true, :reset_ids => false})
       logfile_name = 'log/rspec_file_times.log'
       logfile = "#{File.dirname(__FILE__)}/../#{logfile_name}"
       File.delete(logfile) if File.exist?(logfile)

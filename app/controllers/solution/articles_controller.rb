@@ -11,6 +11,7 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
+  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings] 
   
   
 
@@ -39,9 +40,8 @@ class Solution::ArticlesController < ApplicationController
     end
   end
 
-  def edit
-    @article = current_account.solution_articles.find(params[:id])      
-      respond_to do |format|
+  def edit 
+    respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @article }
     end
@@ -73,7 +73,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    @article = current_account.solution_articles.find(params[:id]) 
     build_attachments
     set_solution_tags    
     respond_to do |format|    
@@ -89,7 +88,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def destroy
-    @article = current_account.solution_articles.find(params[:id])
     @article.destroy
     
     respond_to do |format|
@@ -109,8 +107,17 @@ class Solution::ArticlesController < ApplicationController
     flash[:notice] = t(:'flash.solutions.remove_tag.success')
     redirect_to :back    
    end
+
+  def reset_ratings
+    @article.update_attributes(:thumbs_up => 0, :thumbs_down => 0 )
+    @article.votes.destroy_all
+  end
   
   protected
+
+    def load_article
+      @article = current_account.solution_articles.find(params[:id])
+    end
 
     def scoper #possible dead code
       eval "Solution::#{cname.classify}"

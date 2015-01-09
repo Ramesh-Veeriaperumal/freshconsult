@@ -39,12 +39,12 @@ production:
 
 test:
   feeds:
-    suffix: test
+    suffix: dev
     start_read_capacity: 10
     final_read_capacity: 10
     write_capacity: 5
   interactions:
-    suffix: test
+    suffix: dev
     start_read_capacity: 10
     final_read_capacity: 10
     write_capacity: 5
