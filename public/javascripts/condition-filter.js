@@ -343,7 +343,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							flag = true;
 						}
 						else if (item.value == 'end'){
-						  if(tempConstruct.size() && !(tempConstruct.size() == 1 && tempConstruct.get('evaluate_on')!='undefined'))
+						  if(tempConstruct.size() && !(tempConstruct.size() == 1 && (typeof tempConstruct.get('evaluate_on') != 'undefined')))
 							  serialHash.get(name).push(tempConstruct.toObject());
 
 							flag = false;
