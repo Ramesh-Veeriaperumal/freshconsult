@@ -8,14 +8,13 @@ class Helpdesk::TagsController < ApplicationController
   def index
 
     tag_id = params[:tag_id].present? ? [params[:tag_id]] : :all
-    sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc 
-    
-    @tags = Helpdesk::Tag.sort_tags(sort_order).tag_search(params["name"]).find(tag_id).paginate(
+    @tags = Helpdesk::Tag.sort_tags(params[:sort] || :activity_desc).tag_search(params["name"]).find(tag_id).paginate(
         :page => params[:page],
         :include => [:tag_uses],
         :per_page => 50)
 
-    cookies[:tag_sort_key] = sort_order;
+
+
     if params[:sort].present? and params[:page].blank?
       render :partial => "sort_results"
     end
