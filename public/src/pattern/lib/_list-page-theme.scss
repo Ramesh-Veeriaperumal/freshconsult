@@ -172,10 +172,10 @@
     table{
       table-layout:fixed;
       td.name{
-        width: 33%;
+        width: 39%;
       }
       td{
-        width:22%;
+        width:21%;
         height:35px;
         @include padding-right(0);
         .tag_text{
