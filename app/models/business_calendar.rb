@@ -68,6 +68,13 @@ class BusinessCalendar < ActiveRecord::Base
     :fullweek => false
   }  
 
+
+  def time_zone
+    tz = self.read_attribute(:time_zone)
+    tz = "Kyiv" if tz.eql?("Kyev")
+    tz
+  end
+  
   # setting correct timezone and business_calendar based on the context of the ticket getting updated
   def self.execute(groupable)
     begin
