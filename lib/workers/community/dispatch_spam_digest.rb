@@ -8,29 +8,26 @@ class Workers::Community::DispatchSpamDigest
 		def perform(args)
 			args.symbolize_keys!
 
-			Sharding.select_shard_of(args[:account_id]) do 
+			account = Account.current
 
-				account = Account.find(args[:account_id])
+			moderation_digest = HashWithIndifferentAccess.new({
+									:unpublished_count => SpamCounter.elaborate_count(account.id, "unpublished"), 
+									:spam_count => SpamCounter.elaborate_count(account.id, "spam")
+								})
 
-				moderation_digest = HashWithIndifferentAccess.new({
-										:unpublished_count => SpamCounter.elaborate_count(account.id, "unpublished"), 
-										:spam_count => SpamCounter.elaborate_count(account.id, "spam")
-									})
+			moderation_digest.delete(:unpublished_count) unless can_send_approval_digest?(account, moderation_digest)
 
-				moderation_digest.delete(:unpublished_count) unless can_send_approval_digest?(account, moderation_digest)
-
-				unless counters_blank(moderation_digest)
-					Time.zone = account.time_zone
-					account.forum_moderators.each do |moderator|
-						SpamDigestMailer.deliver_spam_digest({
-								:account => account,
-								:recipients => moderator.email,
-								:moderator => moderator.user,
-								:subject => %(Topics waiting for approval in #{account.helpdesk_name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
-								:moderation_digest => moderation_digest,
-								:host => account.full_url 
-							}) unless moderator.email.blank?
-					end
+			unless counters_blank(moderation_digest)
+				Time.zone = account.time_zone
+				account.forum_moderators.each do |moderator|
+					SpamDigestMailer.spam_digest({
+							:account => account,
+							:recipients => moderator.email,
+							:moderator => moderator.user,
+							:subject => %(Topics waiting for approval in #{account.helpdesk_name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
+							:moderation_digest => moderation_digest,
+							:host => account.full_url 
+						}) unless moderator.email.blank?
 				end
 			end
 		end
