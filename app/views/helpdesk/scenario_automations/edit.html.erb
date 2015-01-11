@@ -3,6 +3,6 @@
 <% end %>
 
 <h3 class="lead"><%=t('automations.title')%></h3>
-<%= form_for @va_rule, :url => helpdesk_scenario_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
+<%= form_for @va_rule, :as => :va_rule, :url => helpdesk_scenario_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>
 <% end %>
