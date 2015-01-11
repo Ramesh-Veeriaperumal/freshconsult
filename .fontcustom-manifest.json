@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "74eee9c184d4ae80a7d0ba1f239112ffb73a9e30975fa8f3b1e4d6d70fcbd7f7",
-    "current": "74eee9c184d4ae80a7d0ba1f239112ffb73a9e30975fa8f3b1e4d6d70fcbd7f7"
+    "previous": "c286e8639366d9a44d9f83cd87a5d497d9039cb83ba3beb41a3d36ca1001f8ff",
+    "current": "c286e8639366d9a44d9f83cd87a5d497d9039cb83ba3beb41a3d36ca1001f8ff"
   },
   "fonts": [
-    "public/assets/glyphs_74eee9c184d4ae80a7d0ba1f239112ff.ttf",
-    "public/assets/glyphs_74eee9c184d4ae80a7d0ba1f239112ff.svg",
-    "public/assets/glyphs_74eee9c184d4ae80a7d0ba1f239112ff.woff",
-    "public/assets/glyphs_74eee9c184d4ae80a7d0ba1f239112ff.eot"
+    "public/assets/glyphs_c286e8639366d9a44d9f83cd87a5d497.ttf",
+    "public/assets/glyphs_c286e8639366d9a44d9f83cd87a5d497.svg",
+    "public/assets/glyphs_c286e8639366d9a44d9f83cd87a5d497.woff",
+    "public/assets/glyphs_c286e8639366d9a44d9f83cd87a5d497.eot"
   ],
   "glyphs": {
     "account": {
@@ -91,7 +91,7 @@
       "source": "public/glyphs/vectors/business-hours.svg"
     },
     "calling": {
-      "codepoint": 61827,
+      "codepoint": 61858,
       "source": "public/glyphs/vectors/calling.svg"
     },
     "canned-response": {
@@ -154,6 +154,10 @@
       "codepoint": 61813,
       "source": "public/glyphs/vectors/comments.svg"
     },
+    "company": {
+      "codepoint": 61857,
+      "source": "public/glyphs/vectors/company.svg"
+    },
     "conversation": {
       "codepoint": 61707,
       "source": "public/glyphs/vectors/conversation.svg"
@@ -183,7 +187,7 @@
       "source": "public/glyphs/vectors/day_pass.svg"
     },
     "dislike": {
-      "codepoint": 61823,
+      "codepoint": 61859,
       "source": "public/glyphs/vectors/dislike.svg"
     },
     "dispatcher": {
@@ -195,7 +199,7 @@
       "source": "public/glyphs/vectors/dots.svg"
     },
     "dropbox": {
-      "codepoint": 61828,
+      "codepoint": 61860,
       "source": "public/glyphs/vectors/dropbox.svg"
     },
     "dropdown_blank": {
@@ -303,7 +307,7 @@
       "source": "public/glyphs/vectors/folder-open-o.svg"
     },
     "forward": {
-      "codepoint": 61824,
+      "codepoint": 61861,
       "source": "public/glyphs/vectors/forward.svg"
     },
     "freshchat": {
@@ -407,7 +411,7 @@
       "source": "public/glyphs/vectors/mobihelp.svg"
     },
     "mobile": {
-      "codepoint": 61829,
+      "codepoint": 61862,
       "source": "public/glyphs/vectors/mobile.svg"
     },
     "multi-product": {
@@ -443,7 +447,7 @@
       "source": "public/glyphs/vectors/paragraph.svg"
     },
     "pencil": {
-      "codepoint": 61830,
+      "codepoint": 61863,
       "source": "public/glyphs/vectors/pencil.svg"
     },
     "phone": {
@@ -531,7 +535,7 @@
       "source": "public/glyphs/vectors/sla.svg"
     },
     "split": {
-      "codepoint": 61825,
+      "codepoint": 61864,
       "source": "public/glyphs/vectors/split.svg"
     },
     "star": {
@@ -599,7 +603,7 @@
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
     "twitter-o": {
-      "codepoint": 61826,
+      "codepoint": 61865,
       "source": "public/glyphs/vectors/twitter-o.svg"
     },
     "unlock": {

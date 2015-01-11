@@ -1,14 +1,12 @@
 if Rails.env.test?
   FactoryGirl.define do
-    factory :freshfone_call, :class => Freshfone::Call do
+    factory :freshfone_call, :class => Freshfone::Call do |f|
       call_sid "CA2db76c748cb6f081853f80dace462a04"
       call_duration "59"
-      recording_url "http://api.twilio.com/2010-04-01/Accounts/ACcb66690d4a703515a22f3aa080aa782e/Recordings/REc77ce1f6b56d2081e297f79d8b0d3b15"
+      recording_url
       call_status 1
       call_type 1
-      customer_data HashWithIndifferentAccess.new({ :number => "+16617480240",:country => 'US',:state => 'CA',:city => 'BAKERSFIELD' })
       dial_call_sid "CA2db76c748cb6f081853f80dace462a04"
-      customer_number "+16617480240"
     end
 
     factory :freshfone_account, :class => Freshfone::Account do

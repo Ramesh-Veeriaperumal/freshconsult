@@ -9,6 +9,7 @@ module ApplicationHelper
   include ChatHelper
 
   include AttachmentHelper
+  include ConfirmDeleteHelper
   include RtlHelper
   include MemcacheKeys
   include Integrations::Util

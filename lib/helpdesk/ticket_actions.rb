@@ -25,18 +25,10 @@ module Helpdesk::TicketActions
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
+    @ticket.meta_data = params[:meta] if params[:meta]
+    
     return false unless @ticket.save_ticket
 
-    if params[:meta]
-      note = @ticket.notes.build(
-        :note_body_attributes => {:body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n")},
-        :private => true,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
-        :account_id => current_account.id,
-        :user_id => current_user && current_user.id
-      )
-      note.save_note
-    end
     notify_cc_people cc_emails unless cc_emails.blank? 
     @ticket
     

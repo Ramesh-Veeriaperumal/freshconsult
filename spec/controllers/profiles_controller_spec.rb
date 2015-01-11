@@ -4,11 +4,12 @@ describe ActivationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  before(:all) do
-    @key_state = mue_key_state(@account)
-    enable_mue_key(@account)
-    @account.features.multiple_user_emails.create
-    @user2 = add_user_with_multiple_emails(@account, 4)
+  before(:each) do
+    log_in(@agent)
+  end
+
+  after(:all) do
+    Delayed::Job.destroy_all
   end
 
   after(:all) do
@@ -24,12 +25,23 @@ describe ActivationsController do
     Delayed::Job.last.handler.should include("user_activation")
   end
 
-  it "should send invite to user js" do
-    login_admin
-    u = add_new_user(@account)
-    put :send_invite, :id => u.id, :format => 'js'
-    response.body.should =~ /activation_sent/
-    Delayed::Job.last.handler.should include("user_activation")
+
+  it "should change password" do
+    @agent.password = "test"
+    @agent.password_confirmation = "test"
+    @agent.save
+    @agent.reload
+    password_before_update = @agent.crypted_password
+    post :change_password, {"user_id"=>"#{@agent.id}",
+      "user"=>{"current_password"=>"test",
+      "password"=>"test1234",
+      "password_confirmation"=>"test1234"}
+      }
+    @agent.reload
+    user = User.find_by_id(@agent.id)
+    password_after_update = user.crypted_password
+    password_before_update.should_not be_eql(password_after_update)
+    Delayed::Job.last.handler.should include("Your Password in #{@account.name} has been updated")
   end
 
   it "should accept to new activation" do

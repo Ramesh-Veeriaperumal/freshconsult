@@ -34,6 +34,21 @@ window.FactoryUI = {
 				.addClass(className)
 				.val(value);
 	},
+	date: function(_placeholder, _name, _value, _className, _date_format) {
+		var className	= _className || "datepicker_popover",
+			placeholder = _placeholder || "",
+			name		= _name || "",
+			value		= _value || "",
+			date_format = _date_format || "mm-dd-YY";
+
+		return jQuery("<div class='date-wrapper'/>")
+				.append(jQuery("<input type='text' />")
+					.prop({ "name": name, "placeholder":placeholder })
+					.addClass(className)
+					.val(value)
+					.data('showImage',"true")
+					.data('dateFormat', date_format));
+	},
 	password:function(_placeholder, _name, _value, _className){
 		var className	= _className || "text password",
 			placeholder = _placeholder || "",

@@ -3,6 +3,8 @@ require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
 
   self.primary_key = :id
+  HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+
   serialize :preferences, Hash
 
   attr_protected  :account_id
@@ -211,7 +213,7 @@ class Portal < ActiveRecord::Base
     def validate_preferences
       preferences.each do |key, value|
         if ["header_color", "tab_color", "bg_color"].include?(key)
-          errors.add_to_base("Please enter a valid hex color value.") unless value =~ /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+          errors.add_to_base("Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
           value.to_s.split(',').each do |ph|
             phone = GlobalPhone.parse(ph.strip)

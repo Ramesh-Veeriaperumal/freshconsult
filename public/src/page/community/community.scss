@@ -280,3 +280,77 @@ body.community.moderation.cs-always-show {
 		@include box-shadow(none);
 	}
 }
+
+.modal-body {
+
+	.delete-confirm-warning {
+		background-color: #535353;
+		color: white;
+		overflow: hidden;
+		border-radius: 4px 4px 0px 0px;
+		padding: 15px;
+
+		.delete-confirm-warning-icon{
+			float: left;
+			font-size: 40px;
+			display: inline-block;
+			margin-right: 30px;
+			border-radius: 50%;
+			background: white;
+		}
+
+		.delete-confirm-warning-message{
+			display: inline-block;
+			width: 80%;
+		}
+
+		p {
+			margin: 0px;
+		}
+	}
+
+	.delete-confirm-form {
+		background-color: #EFEFEF;
+		padding: 15px;
+		padding-top: 20px;
+		border-radius: 0px 0px 4px 4px;
+		margin-bottom: -10px;
+	}
+}
+
+/* Animations used in Confirm Delete */
+
+.btnFadeIn{
+	@include animation-name(btnFadeIn);
+	@include animation-duration(0.05s);
+	@include animation-fill-mode(both);
+}
+
+.btnFadeOut{
+	@include animation-name(btnFadeOut);
+	@include animation-duration(0.1s);
+	@include animation-fill-mode(both);
+}
+
+@include keyframes(btnFadeIn) {
+	0% {
+  	@include opacity(0);
+    @include margin-right(-170px);
+  }
+
+  100% {
+  	@include opacity(1);
+    @include margin-right(0);
+  }	
+}
+@include keyframes(btnFadeOut) {
+  0% {
+  	@include opacity(1);
+    @include margin-right(0px);
+  }
+
+  100% {
+  	@include opacity(0);
+    @include margin-right(-170px);
+  }
+}

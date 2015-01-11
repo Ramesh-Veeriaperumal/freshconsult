@@ -26,7 +26,9 @@
         <a href="http://getseoshop.freshdesk.com/" class="anchor" target="_blank"><%= t("integrations.remote_login.sign_up") %></a>
       </p>
   </div>
-  <input type="hidden" name="app_params" value="<%=params.inspect%>"/>
+  <input type="hidden" name="app" value="<%= params[:app] %>" />
+  <input type="hidden" name="id" value="<%= params[:id] %>"/>
+  <input type="hidden" name="app_params" value="<%= params[:app_params]%>"/>
 <% end %>
 <% if flash[:notice] %>
 <div id="noti" class="notice"><%= flash[:notice] %></div>

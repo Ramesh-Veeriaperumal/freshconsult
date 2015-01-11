@@ -163,6 +163,12 @@ en:
   add_note: Add Note
   set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
+  requester_email: Requester Email
+  requester_name: Requester Name
+  requester_title: Requester Title
+  requester_time_zone: Requester Timezone
+  requester_language: Requester Language
+  company_domain: Company Domain
   eight: 8 Hours
   security_code: Security code
   example: example
@@ -332,10 +338,11 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "<b>Important:</b> Deleting a folder will delete all the articles in it."
-    size: 
-      one: "1 article will also be deleted."
-      other: "%{count} articles will also be deleted."
+    delete_confirm:
+      one: "Deleting this folder will delete one article in it."
+      other: "Deleting this folder will delete all %{count} articles in it."
+      zero: "Are you sure you want to delete this folder?"
+
   amount_per_month: $%{amount} %{period}
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
@@ -1637,8 +1644,10 @@ en:
       ideas: Ideas
       announce: Announcement
       problem: Problems
-    confim_msg1: Are you sure you want to delete this forum?
-    delete: "<b>Important:</b> Deleting a forum will delete all the topics in it permanently."
+    delete_confirm:
+      zero: Are you sure you want to delete this forum?
+      one: "Deleting this forum will delete one topic in it."
+      other: "Deleting this forum will delete all %{count} topics in it."
     size: 
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
@@ -1669,6 +1678,7 @@ en:
   import_user_org: Users, Organizations & Groups
   to_do: To Do
   does_not_contain: Does not contain
+  non_ssl_request: This request needs a secure connection.You need to enable SSL encryption from /admin/security
   flash:
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
@@ -2280,11 +2290,10 @@ en:
       mark_this_problem_as: Mark this problem as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
-    delete: "Important: Deleting a topic will delete all the replies in it."
-    size: 
-      one: "1 reply will also be deleted."
-      other: "%{count} replies will also be deleted."
-    delete_empty: "Are you sure you want to delete this topic?"
+    delete_confirm:
+      one: "Deleting this topic will delete one reply in it."
+      other: "Deleting this topic will delete all %{count} replies in it."
+      zero: "Are you sure you want to delete this topic?"
   non_covered_feature_error: This feature is currently locked
   unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
   requester_replies: Requester Replies to Ticket
@@ -2345,7 +2354,19 @@ en:
     new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
+  delete_confirm:
+    confirm: Please Confirm...
+    hard_delete: This action is irreversible
+    confirm_msg: To avoid accidental deletion, we request you to re-enter the %{item_type} name
+    confirm_title: <b> Re-enter the %{item_type} name </b>
   delete_permanently: Delete Permanently
+  deletion_titles:
+    solution_category: "solution category"
+    solution_folder: "solution folder"
+    solution_article: "solution article"
+    forumcategory: "forum category"
+    forum: "forum"
+    topic: "topic"
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
@@ -2359,14 +2380,12 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "<b>Important:</b> Deleting a category will delete all the folders and articles in it."
-    size: "%{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted."
+    delete_confirm: "Deleting this category will delete all %{folders} folders and %{articles} articles in it."
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
-    delete: "<b>Important:</b> Deleting a category will delete all the forums and topics in it permanently."
-    size: "%{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted."
+    delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
     activations:
@@ -3188,6 +3207,13 @@ en:
       article_useful: Glad we could be helpful. Thanks for the feedback.
       article_not_useful: "Thanks for the feedback. We will improve this article."
       error_message: "There is an error %{error_msg}"
+      reset_rating:
+        link: "Reset Article Rating"
+        dialog_title: "Reset likes and dislikes"
+        dialog_submit: "Reset"
+        resetting: "Resetting"
+        dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
+        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
@@ -3804,6 +3830,7 @@ en:
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via
+    created_by: "Created by:"
     reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
@@ -5762,7 +5789,6 @@ en:
   add_a_new_folder: add a new folder
   likes: Likes
   dislikes: Dislikes
-  for_this_article: For this article
   export: Export
   helpdesk_quests:
     see_all: See all
@@ -6450,7 +6476,15 @@ en:
     no_matching_agents: "No matching agents"
     chat_disabled_label: "Chat is disabled for helpdesk"
     chat_enabled_label: "Chat is enabled for helpdesk"
+    routing: "Chat routing"
+    routing_info: "Route all incoming chats to specific groups"
+    dropdown_based_routing: "Dropdown based routing"
+    default_routing: "Default routing"
+    choice_info: "<b>$</b> then notify group"
+    select_groups: "Select groups"
+    routing_note: "Note: If agents from the selected groups are not accepting chats, chat will be routed to all available agents."
     concurrent_pick_attempt_msg: "This chat has been already accepted by"
+    enable: "Enable"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
@@ -6741,6 +6775,7 @@ en:
         no_forum_spam: "There's no spam here. We swear!"
         moderation_solution: Learn more about Forum Moderation
         unpublished_posts: Unpublished replies
+        deletion_alert: "Topics/replies more than 30 days old will be automatically deleted from here"
       spam_actions:
         approve: Approve
         approve_tooltip: Approve and Publish

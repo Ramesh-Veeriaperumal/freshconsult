@@ -131,8 +131,8 @@ gem "rack-throttle", "~> 0.3.0"
 gem "static_model", "~> 1.0.4"
 
 gem 'clockwork', '0.4.1'
-gem "wkhtmltopdf-binary", "~> 0.9.9.1"
-gem "wicked_pdf", "~> 0.9.2"
+gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary_gem.git"
+gem "wicked_pdf", "~> 0.9.10"
 gem "pg"
 gem "routing-filter", "~> 0.3.1"
 

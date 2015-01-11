@@ -210,7 +210,9 @@
           wf_model: "Helpdesk::Ticket",
           wf_order: jQuery('#FilterOptions input[name=wf_order]').val(),
           wf_order_type: jQuery('#FilterOptions input[name=wf_order_type]').val(),
-          visibility: ""
+          custom_ticket_filter: {
+            visibility: ""
+          }
         },
         success: function(msg){}
       });

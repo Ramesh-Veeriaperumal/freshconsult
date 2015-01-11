@@ -33,7 +33,8 @@ class Admin::ChatWidgetsController < Admin::AdminController
                                             :widget_id => @widget.widget_id,
                                             :attributes => { :business_calendar => @CalendarData, 
                                                              :proactive_chat => proactive_chat, 
-                                                             :proactive_time => proactive_time
+                                                             :proactive_time => proactive_time,
+                                                             :routing => params[:routing]
                                                             }})
         render :json => {:status => "success"}
       else

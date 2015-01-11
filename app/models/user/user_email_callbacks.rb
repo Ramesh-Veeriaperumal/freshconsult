@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   private
 
   def verify_details
-    unless Rails.env.production?
+    unless ["production", "test"].include?(Rails.env)
       self.reload
       if user_emails_migrated? and email_available? and no_contact_merge
         raise error_text unless (self.primary_email.present? and (self.email == self.primary_email.email and self.active == self.primary_email.verified))

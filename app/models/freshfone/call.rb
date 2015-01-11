@@ -4,9 +4,7 @@ class Freshfone::Call < ActiveRecord::Base
 	self.table_name =  :freshfone_calls
     self.primary_key = :id
 
-  serialize :customer_data, Hash
-
-  belongs_to :agent, :class_name => '::User', :foreign_key => 'user_id'
+  belongs_to :agent, :class_name => 'User', :foreign_key => 'user_id'
   belongs_to_account
   belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
   belongs_to :ticket, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Ticket'
@@ -26,6 +24,8 @@ class Freshfone::Call < ActiveRecord::Base
   after_commit :recording_attachment_job, on: :update, :if => :trigger_recording_job?
 
   has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
+
+  has_one :meta, :class_name => 'Freshfone::CallMeta', :dependent => :destroy
 
   delegate :number, :to => :freshfone_number
   delegate :name, :to => :agent, :allow_nil => true, :prefix => true
@@ -107,6 +107,13 @@ class Freshfone::Call < ActiveRecord::Base
 					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db),
 					CALL_STATUS_HASH[:'in-progress'], 15.minutes.ago.to_s(:db), Time.zone.now.to_s(:db)
 				]
+		}
+	}
+
+	scope :customer_in_progess_calls, lambda{ |customer_id|
+			{ :conditions => ["customer_id = ? and (call_status in (?) and created_at > ? and created_at < ?)", customer_id, 
+				INTERMEDIATE_CALL_STATUS, 4.hours.ago.to_s(:db), Time.zone.now.to_s(:db)
+			], :order => "created_at DESC"
 		}
 	}
 

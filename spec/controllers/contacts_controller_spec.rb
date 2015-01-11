@@ -18,8 +18,9 @@ describe ContactsController do
                               :user_role => 3, :active => true)
 
     @active_contact.save
-    @new_company = FactoryGirl.build(:company)
+    @new_company = FactoryGirl.build(:company, :name => Faker::Name.name)
     @new_company.save
+    @new_company.reload
 
     @contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)
     @contact.save
@@ -124,8 +125,7 @@ describe ContactsController do
   end
   
   it "should list all non-verified contacts" do
-    unverified_contact = FactoryGirl.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
-                              :user_role => 3, :active => false)
+    unverified_contact = FactoryGirl.build(:user, :account => @account, :name => "101010", :phone => "2342353454234234", :email => "10#{Faker::Internet.email}", :user_role => 3, :active => false)
     unverified_contact.save
     get :index, {:state => "unverified", :letter => []}
     response.body.should =~ /#{unverified_contact.email}/
@@ -169,7 +169,7 @@ describe ContactsController do
     contact = FactoryGirl.build(:user, :account => @acc, :phone => "2342342456454234", :email => Faker::Internet.email,
                               :user_role => 3, :active => true)
     contact.save
-    contact.tags.create({:name => "amazing"})
+    contact.tags.create({:name => Faker::Name.name})
     tag = contact.tags.first
     get :index, :tag => tag.id
     response.body.should =~ /#{contact.email}/
@@ -254,8 +254,9 @@ describe ContactsController do
     response.should redirect_to(contact_path(contact.id))
   end
 
-  it "should find contact with partial name" do
-    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
+
+  it "should find company with partial name" do
+    new_company = FactoryGirl.build(:company)
     new_company.save
     get :autocomplete, :v => new_company.name[0..2], :format => 'json'
     response.body.should =~ /#{new_company.name}/

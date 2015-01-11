@@ -236,6 +236,17 @@ ul.ui-form .ui-form-inline{
 		@include padding(6px 2% 10px 2%);
 		@include pie-clearfix; 		
 	}
+	.condn-group-selection {
+		.btn:not(:last-child) {
+			@include margin-right(0);
+		}
+		.btn {
+			color: #999;
+		}
+		.active {
+			color: $default_txt_color;
+		}
+	}
 	li{
 		h3{
 			padding:0px;
@@ -494,7 +505,7 @@ ul.ui-form .ui-form-inline{
 			}
 			
 			input.text{
-				width:300px;
+				width:280px;
 				height:18px;
 				font-size:10pt;
 			}
@@ -576,6 +587,16 @@ ul.ui-form .ui-form-inline{
 			label.checkbox{
 				width:100%;
 				font-size:13px;
+			}
+			.date-wrapper {
+				position: relative;
+			}
+			input.datepicker_popover {
+				width: 260px;
+			}
+			button.ui-datepicker-trigger {
+				@include left(2px);
+				top: 4px;
 			}
 		}
 		div{ margin:0; padding:0; }

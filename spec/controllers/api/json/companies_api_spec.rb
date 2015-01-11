@@ -13,7 +13,7 @@ describe CompaniesController do
     #@account = create_test_account
     @user = add_test_agent(@account)
     @account.companies.destroy
-    @company = company
+    @comp = create_company
   end
 
   before(:each) do
@@ -23,6 +23,11 @@ describe CompaniesController do
     http_login(@user)
     clear_json
   end
+
+  after(:all) do
+    @comp.destroy
+  end
+
 
   # CompaniesController Xml and Json Index Actions and filter actions, require Elastic Search. 
   # ES updates over resque which has to happen inline and many issues in consistency 
@@ -38,14 +43,15 @@ describe CompaniesController do
   end
 
   it "should fetch a company using the API" do
-    get :show, { :id => @company.id, :format => 'json' }
+    id = @account.companies.find_by_name(@comp.name).id
+    get :show, { :id => id, :format => 'json' }
     result =  parse_json(response)
     expected = compare(result['company'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
     expected.should be(true)
   end
 
   it "should update a company using the API" do
-    id = @company.id
+    id = @account.companies.find_by_name(@comp.name).id
     fake_a_company
     put :update, (@params).merge!({ :id => id, :format => 'json' })
     { :company => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
@@ -53,16 +59,21 @@ describe CompaniesController do
   end
 
   it "should delete a company using the API" do
-    delete :destroy, { :id => @company.id, :format => 'json' }
-    response.status.should eql(200)
-    # @company = nil
+    @comp = create_company
+    id = @account.companies.find_by_name(@comp.name).id
+    delete :destroy, { :id => id, :format => 'json' }
+    response.status.should be_eql(200)
+    @company = nil
   end
 
   it "should delete multiple companies using the API" do
-    another_company = create_company
-    delete :destroy, { :ids => [@company.id, another_company.id], :format => 'json' }
-    response.status.should eql(200)
-    # @company = nil
+    @comp = create_company
+    id = @account.companies.find_by_name(@comp.name).id
+    @another_comp = create_company
+    another_id = @account.companies.find_by_name(@another_comp.name).id
+    delete :destroy, { :ids => [id, another_id], :format => 'json' }
+    response.status.should be_eql(200)
+    @company = nil
   end
 
   # Can't restore a deleted company, its a hard delete

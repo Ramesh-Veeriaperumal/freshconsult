@@ -4,40 +4,9 @@
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 	<div class="button-container align-right itil-hide">
 		<div class="pull-left">
-			<%= link_to(t('delete'), solution_category_path(@category), :method => 'delete', :class => "hide", :id => "delete_category") %>
-			<button id="del"
-					class="btn"
-					data-target="#category-delete-confirmation" 
-			 		rel="freshdialog" 
-			 		title="<%= t('delete')%>"
-			 		data-submit-label="<%= t('delete_permanently') %>"
-			 		data-width="500px"
-			 		data-close-label="<%= t('cancel') %>">
-			 				<%= t('delete')%></i>
-			 		</button>
-
+			<%= confirm_delete(@category, solution_category_path(@category)) %>
 		</div>
 		<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
 	    <%= submit_tag t('save'), :class => "btn btn-primary" %>	   
 	</div>
-	<div class="hide" id="category-delete-confirmation">
-		<p class="margin-bottom">
-		<% unless (@category.folders.size == 0) && (@category.articles.size == 0) %>
-			<%= t('solution_category.delete').html_safe %>
-			<br /><br />
-			<%= t("solution_category.size", 
-						:no_of_folders => @category.folders.size,
-						:no_of_articles => @category.articles.size) %>
-		<% else %>
-			<%= t('solution_category.info1') %>
-		<% end %>
-		</p>
-	</div>
-<% end %>
-
-<%= javascript_tag do -%>
-	jQuery('#category-delete-confirmation-submit').live('click',function(){
-		jQuery('#category-delete-confirmation').hide();
-		jQuery('#delete_category').trigger('click');
-});
 <% end %>

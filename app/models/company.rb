@@ -65,14 +65,10 @@ class Company < ActiveRecord::Base
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
 
-  ES_COMPANY_FIELD_DATA_COLUMNS = CompanyFieldData.column_names.select{ |column_name| 
-                                      column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_s
-  ES_COLUMNS = ['name', 'description', 'note'].concat(ES_COMPANY_FIELD_DATA_COLUMNS)
-  
   def self.filter(letter, page, per_page = 50)
-  paginate :per_page => per_page, :page => page,
-           :conditions => ['name like ?', "#{letter}%"],
-           :order => 'name'
+    paginate :per_page => per_page, :page => page,
+             :conditions => ['name like ?', "#{letter}%"],
+             :order => 'name'
   end
   
   def self.es_filter(account_id, letter,page, field_name, sort_order, per_page)
@@ -141,10 +137,19 @@ class Company < ActiveRecord::Base
               :root => "customer",
               :tailored_json => true,
               :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ],
-              :include => { :flexifield => { :only => ES_COMPANY_FIELD_DATA_COLUMNS } }
+              :include => { :flexifield => { :only => es_company_field_data_columns } }
            )
   end
 
+  def es_company_field_data_columns
+    @@es_company_field_data_columns ||= CompanyFieldData.column_names.select{ |column_name| 
+                                      column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
+  end
+
+  def es_columns
+    @@es_columns ||= [:name, :description, :note].concat(es_company_field_data_columns)
+  end
+  
   # May not need this after ES re-indexing
   def self.document_type # Required to override the model name
     'customer'
@@ -161,7 +166,7 @@ class Company < ActiveRecord::Base
   end
 
   def search_fields_updated?
-    (@model_changes.keys & ES_COLUMNS).any?
+    (@model_changes.keys & es_columns).any?
   end
 
   def custom_form

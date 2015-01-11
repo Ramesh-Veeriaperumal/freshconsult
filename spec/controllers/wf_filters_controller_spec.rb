@@ -45,7 +45,7 @@ describe Wf::FilterController do
     log_in(user)
 
     params = WfFilterHelper::PARAMS1
-    params[:visibility]['user_id'] = get_admin.id
+    params[:custom_ticket_filter]['visibility']['user_id'] = get_admin.id
     filter = create_filter(params)
     
     @request.cookies['filter_name'] = filter.id

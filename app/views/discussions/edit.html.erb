@@ -11,32 +11,9 @@
   <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
 	<div class="button-container">
 		<div class="floatl">
-			<%= link_to(t('delete'), discussion_path(@forum_category), :method => 'delete', :class => "hide", :id => "delete_object") %>
-			<button id="del"
-					class="btn"
-					data-target="#forum-category-delete-confirmation" 
-			 		rel="freshdialog" 
-			 		title="<%= t('delete')%>"
-			 		data-submit-label="<%= t('delete_permanently') %>"
-			 		data-width="500px"
-			 		data-close-label="<%= t('cancel') %>">
-			 		<%= t('delete')%></i>
-			 </button>
+			<%= confirm_delete(@forum_category, discussion_path(@forum_category)) %>
 		</div>
 		<%= pjax_link_to(t('cancel'), discussion_path(@forum_category), :class => "btn" ) -%>
 	    <%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%>
 	 </div>
-	 <div class="hide" id="forum-category-delete-confirmation">
-	 	<p class="margin-bottom">
-		<% unless (@forum_category.forums.size == 0) && (@forum_category.topics.size == 0) %>
-			<%= t('forum_category.delete').html_safe %>
-			<br /><br />
-			<%= t("forum_category.size",
-					:no_of_forums => @forum_category.forums.size,
-					:no_of_topics => @forum_category.topics.size) %>
-		<% else %>
-			<%= t('forum_confirm_msg1') %>
-		<% end %>
-		</p>
-	</div>
 <% end %>

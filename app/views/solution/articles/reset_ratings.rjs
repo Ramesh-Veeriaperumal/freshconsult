@@ -1,0 +1,3 @@
+page << "jQuery('#article-reset-rating-confirmation').modal('hide');"
+page.replace_html "article_voting", :partial => "voting.html.erb"
+page << "jQuery('#article_voting').animateHighlight();"

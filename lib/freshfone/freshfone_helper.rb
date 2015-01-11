@@ -29,4 +29,25 @@ module Freshfone::FreshfoneHelper
     NewRelic::Agent.notice_error(StandardError.new(error_message))
   end
 
+  def update_call_meta(call)
+    user_agent = request.env["HTTP_USER_AGENT"]
+    unless call.meta.blank?
+      Rails.logger.debug "Call Meta Already found for account: #{current_account.id} :: call : #{call.inspect} :: User Agent :: #{user_agent}"
+      return
+    end
+    call_meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
+              :meta_info => user_agent )
+    call_meta.device_type = is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
+    call_meta.save
+  end
+
+  def mobile_device(user_agent)
+    user_agent[/#{AppConfig['app_name']}_Native_Android/].present? ?
+      Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:android] : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:ios]
+  end
+
+  def find_customer_by_number(phone_number)
+    current_account.users.find_by_phone(phone_number) || current_account.users.find_by_mobile(phone_number)
+  end
+
 end

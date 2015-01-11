@@ -94,16 +94,6 @@ class Product < ActiveRecord::Base
         chat_widget.portal_login_required = false
         chat_widget.name = name
         chat_widget.save
-        Resque.enqueue( Workers::Freshchat, {
-          :id     => account_id,
-          :url    => account.full_domain, 
-          :status => 0,
-          :name => name,
-          :external_id => id,
-          :protocol => account.url_protocol+':',
-          :siteId => chat_setting.display_id, 
-          :worker_method => "create_widget"
-        }) unless chat_setting.display_id.blank? 
       end
     end
 end

@@ -104,6 +104,7 @@ class User < ActiveRecord::Base
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
         paginate :per_page => per_page, :page => page,
+             :include => {:flexifield => {}},
              :conditions => filter_condition(state, letter) ,
              :order => order_by
       rescue Exception =>exp
@@ -509,8 +510,18 @@ class User < ActiveRecord::Base
                          :helpdesk_agent, :created_at, :updated_at ], 
               :include => { :customer => { :only => [:name] },
                             :user_emails => { :only => [:email] }, 
-                            :flexifield => { :only => ES_CONTACT_FIELD_DATA_COLUMNS } } }, true
+                            :flexifield => { :only => es_contact_field_data_columns } } }, true
            ).to_json
+  end
+
+  def es_contact_field_data_columns
+    @@es_contact_field_data_columns ||= ContactFieldData.column_names.select{ |column_name| 
+                                    column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
+  end
+  
+  def es_columns
+    @@es_columns ||= [:name, :email, :description, :job_title, :phone, :mobile, :twitter_id, 
+      :fb_profile_id, :customer_id, :deleted, :helpdesk_agent].concat(es_contact_field_data_columns)
   end
 
   def has_company?
@@ -646,7 +657,7 @@ class User < ActiveRecord::Base
   # Hack ends here
   
   def search_fields_updated?
-    (@all_changes.keys & ES_COLUMNS).any?
+    (@all_changes.keys & es_columns).any?
   end
 
 

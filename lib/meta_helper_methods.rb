@@ -1,19 +1,13 @@
 module MetaHelperMethods
   
   def metainfo(ticket)
-    meta = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
-    return "" if meta.blank?
-    unless @ticket.mobihelp?
-      begin
-        meta = YAML::load(meta.body) 
-      rescue
-        Rails.logger.info "Error parsing metainfo as YAML"
-        Rails.logger.info "Meta:: #{meta.body}"
-        return ""
-      end
-      meta['user_agent'] = UserAgent.parse(meta['user_agent']) if meta['user_agent'].present?
+    info = ""
+    meta = load_meta(ticket)
+    if !meta.blank? && meta['user_agent'].present?
+      meta['user_agent'] = UserAgent.parse(meta['user_agent'])
+      info = metainfo_element(meta, ticket)
     end
-    metainfo_element(meta, ticket)
+    info
   end
 
   def metainfo_element(meta, ticket)
@@ -28,6 +22,15 @@ module MetaHelperMethods
           "data-widget-container" => 'ticket_meta_info') +
       content_tag(:textarea, content.join("").html_safe, 
           :class => 'hide', :id => 'ticket_meta_info')
+  end
+
+  def created_by_agent(ticket)
+    meta = load_meta(ticket)
+    if !meta.blank? && meta["created_by"].present?
+      user_id = meta["created_by"] 
+      user = ticket.account.users.find_by_id(user_id, :select => "name") if user_id
+      user.name if user
+    end
   end
 
   def user_agent_browser(user_agent)
@@ -81,5 +84,21 @@ module MetaHelperMethods
       truncate(url, :length => 20)
     end
   end
+
+
+  private
+
+  def load_meta(ticket)
+    meta = ""
+    begin
+      meta_note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+      meta = YAML::load(meta_note.body) unless meta_note.blank?
+    rescue
+      Rails.logger.info "Error parsing metainfo as YAML"
+      Rails.logger.info "Meta:: #{meta.body}"
+    end
+    meta
+  end
+
 
 end

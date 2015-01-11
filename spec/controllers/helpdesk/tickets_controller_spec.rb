@@ -43,7 +43,34 @@ RSpec.describe Helpdesk::TicketsController do
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
   end
-  
+
+
+  it "should create a meta for created by for phone tickets" do
+    ticket = create_ticket({:status => 2, :source => 3})
+    get :show, :id => ticket.display_id
+    note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    note.body.should_not be_nil
+  end
+
+  it "should not create a meta for created by if user and requester are the same" do
+    user = Factory.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
+                                    :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
+    user.save
+    user.make_current
+    ticket = create_ticket({:status => 2, :source => 3, :requester_id => user.id})
+    get :show, :id => ticket.display_id
+    note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    note.body.should be_nil
+  end
+
+
+  it "should create a meta for created by for portal tickets" do
+    ticket = create_ticket({:status => 2, :source => 2})
+    get :show, :id => ticket.display_id
+    note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    note.should_not be_nil
+  end
+
   # Added this test case for covering note_actions.rb and attachment_helper.rb
   it "should view a ticket with notes(having to_emails & attachments)" do
     file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)

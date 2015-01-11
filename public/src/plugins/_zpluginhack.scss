@@ -230,9 +230,9 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	color:#fff;
 }
 
-.contact-form {
+.contact-form, .ui-form .conditionset fieldset {
 	.ui-datepicker-trigger {
-		@include left(-4px);
+		@include left(-2px);
 		top: 0px;
 		font-size: 20px;
 		position: absolute;
@@ -241,6 +241,11 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 		height: 25px;
 		background: none;
 		border: 0;
+		@include margin(0);
+		.ficon-date {
+			@include margin(0);
+			color: #999;
+		}
 	}
 }
 

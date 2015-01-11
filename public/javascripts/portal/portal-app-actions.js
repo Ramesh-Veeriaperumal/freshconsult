@@ -189,12 +189,16 @@
 					$(this).parent().find(".freshdesk_quote").toggle();
 				})
 			case 'article_view':
-				$("#article_thumbs_up, #article_thumbs_down").click( function() {
-					localStorage["vote_" + $(this).data('article-id') + "_" + $(this).data('user-id') ] = true;
-				});
+				if(!($("#voting-container").data('user-id'))) {
+					
+					// Handling Voting Container using JS is applicable only for Guest users.
+					$("#article_thumbs_up, #article_thumbs_down").click( function() {
+						localStorage["vote_" + $(this).data('article-id') ] = true;
+					});
 
-				if(localStorage["vote_" + $("#voting-container").data('article-id') + "_" + $("#voting-container").data('user-id') ]){
-					$("#voting-container").hide();
+					if(localStorage["vote_" + $("#voting-container").data('article-id') ]) {
+						$("#voting-container").hide();
+					}
 				}
 				highlight_code();
 				break;

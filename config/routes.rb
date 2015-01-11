@@ -316,6 +316,7 @@ Helpkit::Application.routes.draw do
       put :reset_password
       put :convert_to_contact
       post :toggle_availability
+      get :api_key
     end
     resources :time_sheets
   end
@@ -1508,6 +1509,7 @@ Helpkit::Application.routes.draw do
             put :thumbs_down
             post :delete_tag
             delete :destroy
+            put :reset_ratings
           end
           resources :tag_uses
         end
@@ -1979,6 +1981,8 @@ Helpkit::Application.routes.draw do
   match '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
 
   match '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
+
+  match '/freshchat/get_groups', :controller => 'chats', :action => 'groups', :method => :get
 
   match '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
 

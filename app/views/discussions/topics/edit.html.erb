@@ -13,32 +13,10 @@
   <div class="button-container">
     <% if privilege?(:delete_topic, @topic) %>
       <div class="pull-left">
-        <%= link_to(t('delete'), discussions_topic_path(@topic), :method => 'delete', :class => "hide", :id => "delete_object") %>
-      <button id="del"
-          class="btn"
-          data-target="#topic-delete-confirmation" 
-          rel="freshdialog" 
-          title="<%= t('delete')%>"
-          data-submit-label="<%= t('delete') %>"
-          data-width="500px"
-          data-close-label="<%= t('cancel') %>">
-          <%= t('delete')%></i>
-      </button>
+        <%= confirm_delete(@topic, discussions_topic_path(@topic)) %>
       </div>
     <% end %>
     <%= pjax_link_to(t('cancel') , discussions_topic_path(@topic), :class => "btn" ) %>
     <%= f.submit t('save'), :class => "btn btn-primary" %>
   </div>
 <% end -%>
-
-<div class="hide" id="topic-delete-confirmation">
-  <p class="margin-bottom">
-  <% unless @topic.posts_count < 2 %>
-    <%= t('topics.delete') %>
-    <br />
-    <%= t("topics.size", :count => (@topic.posts_count - 1)) %>
-  <% else %>
-    <%= t('topics.delete_empty') %>
-  <% end %>
-  </p>
-</div>
