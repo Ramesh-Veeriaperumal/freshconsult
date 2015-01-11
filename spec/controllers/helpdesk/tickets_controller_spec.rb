@@ -53,7 +53,7 @@ RSpec.describe Helpdesk::TicketsController do
   end
 
   it "should not create a meta for created by if user and requester are the same" do
-    user = Factory.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
+    user = FactoryGirl.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
                                     :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
     user.save
     user.make_current
