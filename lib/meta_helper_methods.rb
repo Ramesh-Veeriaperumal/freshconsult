@@ -95,7 +95,7 @@ module MetaHelperMethods
       meta = YAML::load(meta_note.body) unless meta_note.blank?
     rescue
       Rails.logger.info "Error parsing metainfo as YAML"
-      Rails.logger.info "Meta:: #{meta.body}"
+      Rails.logger.info "Meta:: #{meta}"
     end
     meta
   end
