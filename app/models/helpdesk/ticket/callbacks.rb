@@ -127,7 +127,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def add_created_by_meta
     if User.current and User.current.id != requester.id and import_id.blank?
       meta_info = { "created_by" => User.current.id, "time" => Time.zone.now }
-      self.meta_data = self.meta_data.blank? ? meta_info : self.meta_data.merge(meta_info)
+      if self.meta_data.blank?
+        self.meta_data = meta_info
+      elsif self.meta_data.is_a?(Hash)
+        self.meta_data.merge!(meta_info)
+      end
     end
   end
 
