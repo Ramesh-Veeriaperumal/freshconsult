@@ -143,6 +143,7 @@ class Freshfone::UsersController < ApplicationController
 		def customer_in_progress_calls
 			return if params[:From].blank?
 			customer = find_customer_by_number(params[:From])
+			return if customer.nil?
 			current_account.freshfone_calls.customer_in_progess_calls(customer.id).first
 		end
 
