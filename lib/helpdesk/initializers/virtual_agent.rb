@@ -24,7 +24,8 @@ module VAConfig
 
   CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
 
-  def self.handler(field, account)
+  def self.handler(field, account, evaluate_on=nil)
+    @evaluate_on = evaluate_on
     fetch_handler field, account, :rule
   end
 
@@ -53,19 +54,27 @@ module VAConfig
     end
   
     def self.custom_field_handler_type field, account
-      t_field = fetch_ticket_field field.to_s, account
-      t_field.present? && t_field.parent_id.nil? ? t_field.field_type.to_sym : :default
+      case @evaluate_on
+      when "ticket"
+        fetch_ticket_field field, account
+      when "requester"
+        contact_field = account.contact_form.custom_contact_fields.detect{ |cnf| cnf.name == field }
+        contact_field.present? ? contact_field.field_type.to_sym : :default
+      when "company"
+        company_field = account.company_form.custom_company_fields.detect{ |csf| csf.name == field }
+        company_field.present? ? company_field.field_type.to_sym : :default
+      else
+        fetch_ticket_field field, account
+      end
     end
 
     def self.fetch_ticket_field field, account
       ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff| 
-            ff.flexifield_name == field || ff.flexifield_alias == field }
-      ff.ticket_field unless ff.nil?
+          ff.flexifield_name == field || ff.flexifield_alias == field }
+      ticket_field = ff.present? ? ff.ticket_field : nil
+      ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
     end
-
 end
-
-
 
 YAML.load_file("#{Rails.root}/config/virtual_agent.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))

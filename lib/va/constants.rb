@@ -7,20 +7,32 @@ module Va
       :checkbox    => [ "selected", "not_selected" ],
       :choicelist  => [ "is", "is_not" ],
       :number      => [ "is", "is_not" ],
-      :decimal      => [ "is", "is_not" ],
+      :decimal     => [ "is", "is_not" ],
       :hours       => [ "is", "greater_than", "less_than" ],
       :nestedlist  => [ "is" ],
       :greater     => [ "greater_than" ],
       :object_id   => [ "is", "is_not"],
-      :date_time     => [ "during" ]
+      :date_time   => [ "during" ],
+      :date        => [ "is" , "is_not", "greater_than", "less_than" ],
+      :number_for_contacts => [ "is", "is_not", "greater_than", "less_than" ]
     }
 
     CF_OPERATOR_TYPES = {
       "custom_dropdown" => "choicelist",
       "custom_checkbox" => "checkbox",
       "custom_number"   => "number",
-      "custom_decimal"   => "decimal",
+      "custom_decimal"  => "decimal",
       "nested_field"    => "nestedlist"
+    }
+
+    CF_CUSTOMER_TYPES = {
+      "custom_dropdown"     => "choicelist",
+      "custom_checkbox"     => "checkbox",
+      "custom_number"       => "number_for_contacts",
+      "custom_url"          => "text",
+      "custom_phone_number" => "text",
+      "custom_paragraph"    => "text",
+      "custom_date"         => "date"
     }
 
     OPERATOR_LIST =  {
@@ -41,5 +53,8 @@ module Va
 
     AUTOMATIONS_MAIL_NAME = "automations rule"
 
+    AVAILABLE_LOCALES = I18n.available_locales_with_name.map{ |a| a.reverse }
+
+    AVAILABLE_TIMEZONES = ActiveSupport::TimeZone.all.map { |time_zone| [time_zone.name.to_sym, time_zone.to_s] }
   end
 end

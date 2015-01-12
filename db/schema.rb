@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141224162250) do
+ActiveRecord::Schema.define(:version => 20150102142624) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1197,8 +1197,6 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
     t.integer  "call_duration"
     t.string   "recording_url"
     t.integer  "caller_number_id",    :limit => 8
-    t.string   "customer_number",     :limit => 50
-    t.text     "customer_data"
     t.float    "call_cost"
     t.string   "currency",            :limit => 20, :default => "USD"
     t.string   "ancestry"
@@ -1214,6 +1212,7 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
+  add_index "freshfone_calls", ["account_id", "customer_id", "created_at"], :name => "index_ff_calls_on_account_id_customer_id_created_at"
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
   add_index "freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
   add_index "freshfone_calls", ["account_id", "notable_type", "notable_id"], :name => "index_ff_calls_on_account_id_notable_type_id"
@@ -1340,12 +1339,15 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
   create_table "freshfone_calls_meta", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "call_id",    :limit => 8
-    t.integer  "group_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "meta_info"
+    t.integer  "device_type"
   end
 
-  add_index "freshfone_calls_meta", ["account_id", "call_id", "group_id"], :name => "index_ff_calls_on_account_id_call_id_group_id"
+  add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_calls_meta_on_account_id_call_id"
+  add_index "freshfone_calls_meta", ["account_id", "device_type"], :name => "index_ff_calls_meta_on_account_id_device_type"
+  add_index "freshfone_calls_meta", ["id", "account_id"], :name => "index_freshfone_calls_meta_on_id_and_account_id", :unique => true
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
@@ -2413,9 +2415,23 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
     t.text     "seo_data"
     t.datetime "modified_at"
     t.integer  "hits",                               :default => 0
+    t.integer  "language"
+    t.integer  "parent_id",    :limit => 8
+    t.boolean  "outdated",                           :default => false
+    t.integer  "modified_by",  :limit => 8
+    t.integer  "int_01",       :limit => 8
+    t.integer  "int_02",       :limit => 8
+    t.integer  "int_03",       :limit => 8
+    t.boolean  "bool_01"
+    t.datetime "datetime_01"
+    t.string   "string_01"
+    t.string   "string_02"
   end
 
-  add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
+  add_index "solution_articles", ["account_id", "folder_id", "created_at"], :name => "index_solution_articles_on_acc_folder_created_at"
+  add_index "solution_articles", ["account_id", "folder_id", "position"], :name => "index_solution_articles_on_account_id_and_folder_id_and_position"
+  add_index "solution_articles", ["account_id", "folder_id", "title"], :name => "index_solution_articles_on_account_id_and_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>10}
+  add_index "solution_articles", ["account_id", "parent_id", "language"], :name => "index_solution_articles_on_account_id_and_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
 
   create_table "solution_categories", :force => true do |t|
@@ -2455,7 +2471,10 @@ ActiveRecord::Schema.define(:version => 20141224162250) do
     t.integer  "account_id",  :limit => 8
   end
 
+  add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
+  add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
+
 
   create_table "subscription_addon_mappings", :force => true do |t|
     t.integer "subscription_addon_id", :limit => 8

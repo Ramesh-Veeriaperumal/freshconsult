@@ -55,6 +55,7 @@ jQuery.fn.daterangepicker = function(settings){
 		onClose: function(){},
 		onOpen: function(){},
 		onChange: function(){},
+		rangeDurationMonths: null,
 		datepickerOptions: null //object containing native UI datepicker API options
 	}, settings);
 	
@@ -288,6 +289,17 @@ jQuery.fn.daterangepicker = function(settings){
 		}
 		if (which == 'range-end') {
 			rp.find('.range-start').datepicker( "option", "maxDate", rp.find('.range-end').datepicker('getDate'));
+		}
+
+		if(options.rangeDurationMonths){
+			if (which == 'range-start') {
+				var maxDate = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
+				rp.find('.range-end').datepicker( "option", "maxDate", maxDate);
+			}
+			if (which == 'range-end') {
+				var minDate = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
+				rp.find('.range-start').datepicker( "option", "minDate", minDate);
+			}
 		}
 	}
 

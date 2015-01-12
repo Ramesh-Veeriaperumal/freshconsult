@@ -36,9 +36,4 @@ class User < ActiveRecord::Base
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
                                 "external_id", "job_title", "language"]
 
-  ES_CONTACT_FIELD_DATA_COLUMNS = ContactFieldData.column_names.select{ |column_name| 
-                                    column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
-  ES_COLUMNS = [:name, :email, :description, :job_title, :phone, :mobile, :twitter_id, 
-      :fb_profile_id, :customer_id, :deleted, :helpdesk_agent].concat(ES_CONTACT_FIELD_DATA_COLUMNS)
-
 end

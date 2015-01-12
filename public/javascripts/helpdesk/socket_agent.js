@@ -183,7 +183,7 @@ window.agentcollision = function(server,hashed_params,current_username,current_u
   setEvents(hashed_params,current_username,current_userid,draft);
   ticket_status.draft = draft;
   // console.log('The value of server is ',server);
-  var node_socket = agentio.connect(server,{'force new connection':true});
+  var node_socket = agentio.connect(server,{'force new connection':true, 'sync disconnect on unload':true});
   window.node_socket = node_socket;
   node_socket.on('connect', function(){
     // console.log('I have ticket_status.connected');

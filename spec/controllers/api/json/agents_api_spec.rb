@@ -61,5 +61,19 @@ describe AgentsController do
     expected_email.should =~ /#{check_email}/
   end
 
+  it "should get agent's api key" do
+    user = add_agent(@account, {:name => "1#{Faker::Name.name}",
+                                 :email => Faker::Internet.email,
+                                 :active => 1,
+                                 :role => 1,
+                                 :agent => 1,
+                                 :ticket_permission => 3,
+                                 :role_ids => ["#{@agent_role.id}"],
+                                 :privileges => @agent_role.privileges })
+    @request.env['HTTPS'] = 'on'
+    get :api_key, {:id => user.agent.id, :format => 'json'}
+    response.status.should eql("200 OK")
+  end
+
 
 end

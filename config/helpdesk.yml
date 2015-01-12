@@ -130,7 +130,7 @@ EMAIL:
           port: 25
           domain: freshpo.com
           authentication: :plain
-          user_name: freshdeskstaging
+          user_name: admin@freshpo.com
           password: opmanager123
           
             

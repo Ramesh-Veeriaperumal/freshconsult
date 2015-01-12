@@ -91,6 +91,12 @@ GIT
       rest-client (~> 1.6)
 
 GIT
+  remote: git://github.com/freshdesk/wkhtmltopdf_binary_gem.git
+  revision: 77a62c35e4a9bb8d6583ffeadf0073ac92748a91
+  specs:
+    wkhtmltopdf-binary (0.9.9.3)
+
+GIT
   remote: git://github.com/jim/carmen.git
   revision: 964e2ceeef601b792c4c99cd30f4667dbade587d
   tag: ruby-18
@@ -545,10 +551,9 @@ GEM
       rack (>= 1.0.0)
     wasabi (2.3.0)
       nokogiri (>= 1.4.0)
-    wicked_pdf (0.9.2)
+    wicked_pdf (0.9.10)
       rails
     will_paginate (2.3.16)
-    wkhtmltopdf-binary (0.9.9.1)
     xml-simple (1.1.2)
 
 PLATFORMS
@@ -680,8 +685,8 @@ DEPENDENCIES
   uglifier (~> 2.1.2)
   useragent (~> 0.4.16)
   white_list!
-  wicked_pdf (~> 0.9.2)
+  wicked_pdf (~> 0.9.10)
   will_paginate (~> 2.3.16)
-  wkhtmltopdf-binary (~> 0.9.9.1)
+  wkhtmltopdf-binary!
   xml-simple (~> 1.1.2)
   yui-compressor!

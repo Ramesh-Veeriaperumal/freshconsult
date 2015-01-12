@@ -8,7 +8,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def index
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder]))
     folders = @ca_responses.map(&:folder)
-    @ca_folders = folders.uniq.sort_by &:name
+    @ca_folders = folders.uniq.sort_by{|folder | [folder.folder_type,folder.name]}
     @ca_folders.each do |folder|
       folder.visible_responses_count = folders.count(folder)
     end

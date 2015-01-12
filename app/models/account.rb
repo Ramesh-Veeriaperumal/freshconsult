@@ -69,7 +69,11 @@ class Account < ActiveRecord::Base
   end
 
   def freshchat_enabled?
-    features?(:chat)
+    features?(:chat) and !chat_setting.display_id.blank?
+  end
+
+  def freshchat_routing_enabled?
+    freshchat_enabled? and features?(:chat_routing)
   end
 
   def freshfone_active?

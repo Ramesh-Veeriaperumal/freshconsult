@@ -144,7 +144,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_solution do
-    resource :"solution/article", :only => [:destroy], :owned_by =>
+    resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
   end
 
@@ -359,6 +359,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
+    resource :"agent", :only => [:api_key]
   end
 
   client_manager do

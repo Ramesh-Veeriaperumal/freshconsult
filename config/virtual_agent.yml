@@ -57,6 +57,9 @@ fields:
         custom_decimal: decimal
         custom_dropdown: dropdown 
         nested_field: nested_field
+        custom_phone_number: text
+        custom_url: text
+        custom_date: date
 
     event:
         default: default
