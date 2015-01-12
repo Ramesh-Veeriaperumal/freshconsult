@@ -26,6 +26,7 @@
 			<div class="no-info-text mt20 mb20"><%= t(".no_#{@moderation_scope.to_s.underscore}")%></div>
 		</div>
 	<% else %>
+		<div class="deletion-alert"><%= t(".deletion_alert")%></div>
 		<%= render :partial => 'post', :collection => @spam_posts %>
 	<% end %>
 </div>

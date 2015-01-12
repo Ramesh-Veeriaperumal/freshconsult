@@ -2415,9 +2415,23 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.text     "seo_data"
     t.datetime "modified_at"
     t.integer  "hits",                               :default => 0
+    t.integer  "language"
+    t.integer  "parent_id",    :limit => 8
+    t.boolean  "outdated",                           :default => false
+    t.integer  "modified_by",  :limit => 8
+    t.integer  "int_01",       :limit => 8
+    t.integer  "int_02",       :limit => 8
+    t.integer  "int_03",       :limit => 8
+    t.boolean  "bool_01"
+    t.datetime "datetime_01"
+    t.string   "string_01"
+    t.string   "string_02"
   end
 
-  add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
+  add_index "solution_articles", ["account_id", "folder_id", "created_at"], :name => "index_solution_articles_on_acc_folder_created_at"
+  add_index "solution_articles", ["account_id", "folder_id", "position"], :name => "index_solution_articles_on_account_id_and_folder_id_and_position"
+  add_index "solution_articles", ["account_id", "folder_id", "title"], :name => "index_solution_articles_on_account_id_and_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>10}
+  add_index "solution_articles", ["account_id", "parent_id", "language"], :name => "index_solution_articles_on_account_id_and_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
 
   create_table "solution_categories", :force => true do |t|
@@ -2457,7 +2471,10 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.integer  "account_id",  :limit => 8
   end
 
+  add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
+  add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
+
 
   create_table "subscription_addon_mappings", :force => true do |t|
     t.integer "subscription_addon_id", :limit => 8

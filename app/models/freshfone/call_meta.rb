@@ -9,7 +9,8 @@ class Freshfone::CallMeta < ActiveRecord::Base
       [:browser, 1],
       [:android, 2 ],
       [:ios, 3],
-      [:available_on_phone, 4]
+      [:available_on_phone, 4],
+      [:direct_dial, 5]
     ]
 
     USER_AGENT_TYPE_HASH = Hash[*USER_AGENT_TYPE.map { |i| [i[0], i[1]] }.flatten]

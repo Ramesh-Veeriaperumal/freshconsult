@@ -65,7 +65,7 @@ module ConfirmDeleteHelper
 	end
 
 	def topic_delete_message(topic)
-    t('topics.delete_confirm', :count => (topic.posts_count - 1))
+		t('topics.delete_confirm', :count => ([0, topic.posts_count - 1].max))
 	end
 
 	def forum_delete_message(forum)

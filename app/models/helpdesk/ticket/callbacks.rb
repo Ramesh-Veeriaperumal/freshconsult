@@ -127,7 +127,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def add_created_by_meta
     if User.current and User.current.id != requester.id and import_id.blank?
       meta_info = { "created_by" => User.current.id, "time" => Time.zone.now }
-      self.meta_data = self.meta_data.blank? ? meta_info : self.meta_data.merge(meta_info)
+      if self.meta_data.blank?
+        self.meta_data = meta_info
+      elsif self.meta_data.is_a?(Hash)
+        self.meta_data.merge!(meta_info)
+      end
     end
   end
 
@@ -531,8 +535,8 @@ private
   def report_regenerate_fields
     regenerate_fields = [:deleted, :spam,:responder_id]
     if account.features?(:report_field_regenerate)
-      regenerate_fields.concat([:source, :ticket_type, :group_id, :priority, :status])
-      account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
+      regenerate_fields.concat([:source, :ticket_type, :group_id, :priority])
+      #account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
     end
     regenerate_fields
   end

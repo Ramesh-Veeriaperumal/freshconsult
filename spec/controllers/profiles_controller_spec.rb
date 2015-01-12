@@ -7,6 +7,9 @@ describe ProfilesController do
 
   before(:each) do
     log_in(@agent)
+  end
+
+  after(:all) do
     Delayed::Job.destroy_all
   end
 
@@ -39,12 +42,17 @@ describe ProfilesController do
   end
 
   it "should change password" do
+    @agent.password = "test"
+    @agent.password_confirmation = "test"
+    @agent.save
+    @agent.reload
     password_before_update = @agent.crypted_password
     post :change_password, {"user_id"=>"#{@agent.id}",
       "user"=>{"current_password"=>"test",
-      "password"=>"test1",
-      "password_confirmation"=>"test1"}
+      "password"=>"test1234",
+      "password_confirmation"=>"test1234"}
       }
+    @agent.reload
     user = User.find_by_id(@agent.id)
     password_after_update = user.crypted_password
     password_before_update.should_not be_eql(password_after_update)
