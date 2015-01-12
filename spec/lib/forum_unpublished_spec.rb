@@ -65,7 +65,7 @@ describe ForumUnpublished do
 		@dynamo_topic.user.should eql @customer
 		@dynamo_post.user.should eql @customer
 
-		@dynamo_topic.send("spam?").should be_false
+		@dynamo_topic.send("spam?").should be false
 	end
 
 	it "should return only last one month topics" do

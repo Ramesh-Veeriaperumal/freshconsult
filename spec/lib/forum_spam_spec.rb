@@ -65,7 +65,7 @@ describe ForumSpam do
 		@dynamo_topic.user.should eql @customer
 		@dynamo_post.user.should eql @customer
 
-		@dynamo_topic.send("spam?").should be_true
+		@dynamo_topic.send("spam?").should be true
 	end
 
 	it "should return only last one month topics" do

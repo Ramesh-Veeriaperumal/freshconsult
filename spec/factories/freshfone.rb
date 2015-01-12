@@ -3,7 +3,7 @@ if Rails.env.test?
     factory :freshfone_call, :class => Freshfone::Call do |f|
       call_sid "CA2db76c748cb6f081853f80dace462a04"
       call_duration "59"
-      recording_url
+      recording_url 'https://api.twilio.com/2010-04-01/Accounts/AC54ddcb0256672a9391007d423c4e9ab5/Recordings/RE83efe5492ec9922301e052fdcf0b15c9.mp3'
       call_status 1
       call_type 1
       dial_call_sid "CA2db76c748cb6f081853f80dace462a04"

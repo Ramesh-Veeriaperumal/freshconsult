@@ -72,7 +72,7 @@ describe AgentsController do
                                  :privileges => @agent_role.privileges })
     @request.env['HTTPS'] = 'on'
     get :api_key, {:id => user.agent.id, :format => 'json'}
-    response.status.should eql("200 OK")
+    response.status.should eql(200)
   end
 
 

@@ -21,7 +21,7 @@ describe Mobihelp::SolutionsController do
     }
     result = JSON.parse(response.body)
     result.should have(1).items
-    result["no_update"].should be_true
+    result["no_update"].should be true
   end
 
   

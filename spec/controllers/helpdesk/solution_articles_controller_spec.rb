@@ -227,7 +227,7 @@ describe Solution::ArticlesController do
       @test_article.votes.build(:vote => 1, :user_id => @user.id)
       @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
       @test_article.save
-      put :reset_ratings, :id => @test_article.id
+      put :reset_ratings, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
       @test_article.reload
       @test_article.thumbs_up.should eql 0
       @test_article.thumbs_down.should eql 0

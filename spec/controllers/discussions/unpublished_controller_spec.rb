@@ -36,7 +36,7 @@ describe Discussions::UnpublishedController do
 
     get 'index'
 
-    response.should render_template "discussions/unpublished/index.html.erb"
+    response.should render_template "discussions/unpublished/index"
 	end
 
 	it "should publish a topic on 'approve'" do
@@ -248,7 +248,7 @@ describe Discussions::UnpublishedController do
 
 		posts_from_controller = controller.instance_variable_get("@spam_posts").records.map(&:attributes)
 		posts_from_controller.should =~ approval_posts
-		response.should render_template "discussions/unpublished/topic_spam_posts.html.erb"
+		response.should render_template "discussions/unpublished/topic_spam_posts"
 	end
 
 	it "should render more for pagination" do

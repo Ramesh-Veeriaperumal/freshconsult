@@ -64,7 +64,7 @@ describe Helpdesk::DashboardController do
   # For covering check_account_state method in application controller
   it "should redirect to subscriptions page when the account is not active" do
     @account.subscription.update_attributes(:state => "suspended")
-    xhr :get, :index
+    get :index
     response.should be_redirect
     response.body =~ /#{@account.full_domain}\/subscription/
     @account.subscription.update_attributes(:state => "trial")
@@ -74,7 +74,7 @@ describe Helpdesk::DashboardController do
   it "should access denied page when the account is inactive and non-admin agents" do
     @account.subscription.update_attributes(:state => "suspended")
     controller.class.any_instance.stubs(:privilege?).returns(false)
-    xhr :get, :index
+    get :index
     response.should be_redirect
     response.body =~ /#{@account.full_domain}\/support\/login/
     @account.subscription.update_attributes(:state => "trial")

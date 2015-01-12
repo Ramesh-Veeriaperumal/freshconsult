@@ -25,8 +25,8 @@ RSpec.describe Integrations::ApplicationsController do
                                     :account_id => @account.id)
     @new_application.save(validate: false)
     @widget = FactoryGirl.build(:widget, :application_id => @new_application.id)
-    @widget.save(false)
-    @new_installed_app = Factory.build(:installed_application, :application_id => @new_application.id,
+    @widget.save(:validate => false)
+    @new_installed_app = FactoryGirl.build(:installed_application, :application_id => @new_application.id,
                                               :account_id => @account.id,
                                               :configs => { :inputs => { "refresh_token" => "7977697105566556112", 
                                                             "oauth_token" => "61837911-03ab-485a-9903-fb6dbbbf7b46", 

@@ -42,6 +42,7 @@ describe AgentsController do
   end
 
   def forbidden_status?(status)
-    status =~ 403
+    status == 403
+  end
 
 end
