@@ -10,14 +10,7 @@
 				<div class="placeholder-category">
 					<div class='placeholder-category-title'> <%= t('admin.placeholders.' +category.to_s) %> </div>
 					<div class='placeholder-category-list'>
-						<ul class='ph-list'>
-							<% subcategories.each do |sc| %>	
-								<li class='ph-item' id="placeholder-btn-<%= sc[3] %>"><button class="btn btn-flat tooltip" data-placeholder="<%= sc[0] %>" title="<%= sc[2] %>"><%= sc[1] %></button></li> 
-							<% end %>
-							<li class = 'ph-more-less'><button class="btn btn-flat tooltip ficon-ellipsis ph-more" title="Show More"></button></li>  
-							<li class = 'ph-more-less'><button class="btn btn-flat tooltip ficon-ellipsis ph-less" title="Show Less"></button></li> 
-
-						</ul>
+						<%= placeholder_list(subcategories) %>
 					</div>
 				</div>
 			<% end %>
