@@ -39,6 +39,17 @@ describe AgentsController do
                                  :role_ids => ["#{@admin_role.id}"],
                                  :privileges => @admin_role.privileges })
     get :api_key, {:id => user.agent.id, :format => 'xml'}
+    response.body =~ /access_denied/
+  end
+ 
+  it "should not update an logged in agent's role" do
+    put :update, {:id => @agent.agent.id, :agent => {:user => {:role_ids => ["#{@agent_role.id}","#{@admin_role.id}"]},
+                                              },:format => 'xml'}                                                                                               
+    forbidden_status?(response.status).should be_true
+  end
+  
+  it "should not update an logged in agent's ticket permission" do
+    put :update, {:id => @agent.agent.id, :agent => {:ticket_permission => 2}, :format => 'xml'}                                                                                               
     forbidden_status?(response.status).should be_true
   end
 

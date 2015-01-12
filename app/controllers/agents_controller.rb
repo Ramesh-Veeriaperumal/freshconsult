@@ -18,8 +18,8 @@ class AgentsController < ApplicationController
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
     :convert_to_contact, :reset_password ]
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
-  before_filter :check_agent_limit, :only =>  [:restore, :create]
-  before_filter :check_agent_limit_on_update, :only => :update
+  before_filter :check_agent_limit, :only =>  [:restore, :create] 
+  before_filter :check_agent_limit_on_update, :validate_params, :can_edit_roles_and_permissions, :only => [:update]
   before_filter :set_selected_tab
   before_filter :set_native_mobile, :only => :show
   
@@ -30,8 +30,7 @@ class AgentsController < ApplicationController
 
   def check_demo_site
     if AppConfig['demo_site'][Rails.env] == current_account.full_domain
-      flash[:notice] = t(:'flash.not_allowed_in_demo_site')
-      redirect_to :back
+      error_responder(t(:'flash.not_allowed_in_demo_site'), 'forbidden')
     end
   end
     
@@ -162,17 +161,32 @@ class AgentsController < ApplicationController
     
     if @agent.update_attributes(params[nscname])            
         if @user.update_attributes(params[:user])
-          flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
-          redirect_to :action => 'index'
+          respond_to do |format|
+            format.html { flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
+                          redirect_to :action => 'index'
+                        }        
+            format.json {head :ok}
+            format.xml {head :ok } 
+          end  
         else
-           check_email_exist
-           @agent.user =@user       
-           render :action => :edit 
+          check_email_exist
+          @agent.user =@user       
+          result = {:errors=>@user.errors.full_messages }    
+          respond_to do |format|
+            format.html { render :action => :edit }
+            format.json { render :json => result.to_json, :status => :bad_request }
+            format.xml {render :xml => result.to_xml, :status => :bad_request } 
+          end    
        end
     else
       @agent.user = @user       
-      render :action => :edit
-    end    
+      result = {:errors=>@agent.errors.full_messages }    
+      respond_to do |format|
+        format.html { render :action => :edit }
+        format.json { render :json => result.to_json, :status => :bad_request }
+        format.xml {render :xml => result.to_xml, :status => :bad_request } 
+      end    
+    end 
   end
 
   def convert_to_contact
@@ -287,8 +301,7 @@ class AgentsController < ApplicationController
   
   def restrict_current_user
     unless can_edit?(@agent)
-      flash[:notice] = t(:'flash.agents.edit.not_allowed')
-      redirect_to :back
+      error_responder(t(:'flash.agents.edit.not_allowed'), 'forbidden')
     end    
   end
     
@@ -302,6 +315,8 @@ class AgentsController < ApplicationController
   def redirection_url(user) # Moved out to overwrite in Freshservice
     redirect_to contact_path(user)
   end
+ 
+private
 
   def ssl_check
     unless request.ssl?
@@ -322,5 +337,64 @@ class AgentsController < ApplicationController
         end 
     end  
   end
-  
+
+  def validate_scoreboard_level
+    #validating Score board level ids
+    params[:agent].delete(:scoreboard_level_id) unless @scoreboard_levels.map(&:id).include?(params[:agent][:scoreboard_level_id].to_i)
+  end
+
+  def validate_roles  
+    #Validating role ids. API - CSV(To maintain consistency across all APIs), HTML - array
+    role_ids = params[:user][:role_ids] #[],[1,2],"","1,2,3" --> [],[1,2,3],[],[1,2,3]
+    role_ids = params[:user][:role_ids].split(',').map{|x| x.to_i} if role_ids.is_a? String
+    role_ids = current_account.roles.find_all_by_id(role_ids, :select => "id").map(&:id) unless role_ids.blank?
+    if role_ids.blank?
+      params[:user].delete(:role_ids)
+    else
+      params[:user][:role_ids] = role_ids
+    end
+  end
+
+  def validate_ticket_permission
+    #validating permissions
+     params[:agent].delete(:ticket_permission) if Agent::PERMISSION_TOKENS_BY_KEY[params[:agent][:ticket_permission].to_i].blank?
+  end
+
+  def format_api_params
+    #if not specified in API request, updated as null
+    params[:agent][:occasional] ||= @agent.occasional
+    params[:agent][:scoreboard_level_id] ||= @agent.scoreboard_level_id
+    #conforming API params to html params
+    params[:user] = params[:user] || params[:agent][:user] || {}
+    params[:agent].delete(:user)
+  end
+ 
+  def clean_params
+    params[:agent].except!(:user_id, :available, :active_since) # should we expose "available" ?
+    params[:user].except!(:helpdesk_agent, :deleted, :active)
+  end
+
+  def validate_params
+    validate_scoreboard_level
+    validate_ticket_permission
+    format_api_params
+    clean_params
+    validate_roles
+  end
+
+  def can_edit_roles_and_permissions # Should be checked after validate_params as params hash is unified in validate_params
+    if(params[:agent][:ticket_permission]  || params[:user][:role_ids]) && (current_user == @agent.user)
+     error_responder(t('agent.cannot_edit_roles'), 'forbidden')
+    end
+  end
+
+  def error_responder error_message, status
+    error = {:errors => {:message=> error_message } }
+    respond_to do |format|
+        format.html { flash[:notice] = error_message
+                              redirect_to :back }
+        format.any(:xml, :json) {render request.format.to_sym => error, :status => status.to_sym}
+    end
+  end
+
 end
