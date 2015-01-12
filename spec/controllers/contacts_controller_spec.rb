@@ -227,7 +227,7 @@ describe ContactsController do
                               :user_role => 3)
     contact.save
     contact.reload
-    get :show, :email => contact.email
+    get :show, :email => contact.email, :id => contact.id
     response.body.should =~ /#{contact.phone}/i
   end
 
@@ -332,6 +332,8 @@ describe ContactsController do
   end
 
   it "should delete an existing avatar" do
+    avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
+    put :update_contact, :id => @contact.id, :user => { :avatar_attributes => {:content => avatar_file}}
     @contact.reload
     @contact.avatar.should_not be_nil
     put :update_contact, :id => @contact.id, :user => { :avatar_attributes => {:id => @contact.avatar.id, :_destroy =>"1"},
