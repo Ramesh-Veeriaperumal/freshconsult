@@ -53,7 +53,9 @@ class Wf::FilterController < ApplicationController
       wf_filter.deserialize_from_params params
       wf_filter.visibility = params[:custom_ticket_filter][:visibility]
       wf_filter.save
+
       update_helpdesk_accessible(wf_filter,"custom_ticket_filter") unless (params[:custom_ticket_filter][:visibility].blank? || params[:custom_ticket_filter][:visibility][:visibility].blank?)
+
       flash[:notice] = t(:'flash.filter.save_success')
     else
       flash[:error] = t('admin.getting_started.index.problem_updating') #possible dead code- if wf_filter is nil, code below will error out

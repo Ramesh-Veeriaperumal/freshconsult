@@ -38,11 +38,24 @@
 		.ph-list{
 			@include padding(0);
 			@include margin(0);
-			@include clearfix;
 			.ph-item{	
-				@include float(left);
-				@include margin(0 6px 6px 0);
+				display: inline-block;
+				@include margin(0 4px 6px 0);
 			}
+		}
+		.dropdown-menu {
+			@include right(0);
+			min-width: 170px;
+			li a {
+				word-wrap: break-word;
+				white-space: normal;
+			}
+		}
+		.dropdown-toggle {
+			@include border-left(0);
+		}
+		.placeholder-category-list {
+			@include padding-left(90px);
 		}
 	}
 
@@ -82,7 +95,6 @@
 }
 
 .placeholder-category {
-	@include clearfix;
 	@include padding(10px);
 	.placeholder-category-title {
 		@include float(left);
