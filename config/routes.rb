@@ -289,7 +289,6 @@ Helpkit::Application.routes.draw do
   resources :profiles do
     collection do
       post :reset_api_key
-      post :change_password
       put :notification_read
     end
     member do

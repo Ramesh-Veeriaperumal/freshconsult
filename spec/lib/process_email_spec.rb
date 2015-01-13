@@ -503,13 +503,14 @@ RSpec.describe Helpdesk::ProcessEmail do
 			email = new_email({:email_config => @account.primary_email_config.to_email})
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.first
+			notes_count = ticket.notes.count
 			@account.tickets.update_all(:cc_email => nil)
 			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
 			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
 			Helpdesk::ProcessEmail.new(another).perform
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+1
-			ticket.notes.size.should eql 1
+			ticket.notes.count.should eql notes_count+1
 		end
 
 		it "as reply with new CC emails" do

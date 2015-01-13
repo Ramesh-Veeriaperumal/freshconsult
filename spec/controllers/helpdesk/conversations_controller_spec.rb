@@ -241,8 +241,7 @@ RSpec.describe Helpdesk::ConversationsController do
                      :quoted_text_html => "",
                      :ticket_id => @mobihelp_ticket.display_id
                     }
-      mobihelp_reply = @account.tickets.find(@mobihelp_ticket.id).notes.last
-      mobihelp_reply.should be_nil
+      assigns['note'].errors.messages[:source].should include("is not included in the list")
     end
   end
 end

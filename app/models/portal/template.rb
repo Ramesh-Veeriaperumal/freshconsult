@@ -25,6 +25,13 @@ class Portal::Template < ActiveRecord::Base
     [:head,    "portal/head.portal"]
   ]
 
+  TEMPLATE_MAPPING_RAILS3 = [ 
+    [:header,  "portal/header", :portal],    
+    [:footer,  "portal/footer", :portal],
+    [:layout,  "portal/layout", :portal],
+    [:head,    "portal/head", :portal]
+  ]
+
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
   TEMPLATE_OPTIONS = Portal::Template::TEMPLATE_MAPPING.map { |i| i[0] }
 
