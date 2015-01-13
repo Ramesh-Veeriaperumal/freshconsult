@@ -17,7 +17,24 @@ class Sanitize
       :protocols => {
         'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }
       }.merge(HTML_RELAXED[:protocols].except('img')),
-      :remove_contents => HTML_RELAXED[:remove_contents]
+      :remove_contents => HTML_RELAXED[:remove_contents],
+      :transformers => lambda do |env|
+        node      = env[:node]
+        
+        return if env[:is_whitelisted] || !node.element? || ARTICLE_WHITELIST[:elements].exclude?(node.name)
+
+        data_attrs = node.attribute_nodes.select{|a_n| a_n.name =~ /^data-/ }
+        
+        return if data_attrs.empty?
+        
+        Sanitize.clean_node!(node, {
+          :elements => [node.name],
+          :attributes => {node.name => (ARTICLE_WHITELIST[:attributes][node.name] || []) + data_attrs.collect(&:name) },
+          :protocols => {node.name => (ARTICLE_WHITELIST[:protocols][node.name] || {}) }
+        })
+        
+        {:node_whitelist => [node]}
+      end
     }
   end
 end
