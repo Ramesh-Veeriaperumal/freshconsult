@@ -13,6 +13,9 @@ YAML.load_file("#{Rails.root}/config/helpdesk.yml").each do |k, v|
   Helpdesk.const_set(k.upcase, Helpdesk::prepare(v))
 end
 
+#Loading email credentials
+Helpdesk::EMAIL.merge!(Helpdesk::prepare(YAML.load_file(File.join(Rails.root, 'config', 'email.yml'))))
+
 if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
   ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
 end
