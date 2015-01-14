@@ -4,7 +4,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation_on_create :set_token
 
-  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
+  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta
 
   before_create :assign_display_id, :if => :set_display_id?
 
@@ -115,13 +115,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def create_meta_note
       # Added for storing metadata from MobiHelp
-      self.notes.create(
-        :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
-        :private => true,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
-        :account_id => self.account.id,
-        :user_id => self.requester.id
-      ) if meta_data.present?
+      if meta_data.present?
+        meta_note = self.notes.build(
+          :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
+          :private => true,
+          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+          :account_id => self.account.id,
+          :user_id => self.requester.id
+        ) 
+        meta_note.save_note
+      end
+  end
+
+  def add_created_by_meta
+    if User.current and User.current.id != requester.id and import_id.blank?
+      meta_info = { "created_by" => User.current.id, "time" => Time.zone.now }
+      if self.meta_data.blank?
+        self.meta_data = meta_info
+      elsif self.meta_data.is_a?(Hash)
+        self.meta_data.merge!(meta_info)
+      end
+    end
   end
 
   def pass_thro_biz_rules
@@ -518,9 +532,16 @@ private
   end
 
   def regenerate_data?
-    regenerate_fields = [:deleted, :spam]
-    regenerate_fields.push(:responder_id) if account.features?(:report_field_regenerate)
-    (@model_changes.keys & regenerate_fields).any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
+    (@model_changes.keys & report_regenerate_fields).any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
+  end
+
+  def report_regenerate_fields
+    regenerate_fields = [:deleted, :spam,:responder_id]
+    if account.features?(:report_field_regenerate)
+      regenerate_fields.concat([:source, :ticket_type, :group_id, :priority])
+      #account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
+    end
+    regenerate_fields
   end
 
   def manual_sla?

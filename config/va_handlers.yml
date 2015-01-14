@@ -7,6 +7,7 @@ va_handlers:
         numeric: Va::Handlers::Numeric
         decimal: Va::Handlers::Decimal
         date_time: Va::Handlers::DateTime
+        date: Va::Handlers::Date
         dropdown:  Va::Handlers::Text
         checkbox: Va::Handlers::Boolean
         object_id: Va::Handlers::ObjectId

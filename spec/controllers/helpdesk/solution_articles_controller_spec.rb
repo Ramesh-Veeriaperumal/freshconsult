@@ -7,6 +7,7 @@ describe Solution::ArticlesController do
 
   before(:all) do
     @user = create_dummy_customer
+    @user_1 = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
@@ -223,6 +224,19 @@ describe Solution::ArticlesController do
                   }
       @article.reload
       @article.updated_at.should_not eql @article.modified_at
+    end
+
+    it "should reset thumbs_up and thumbs_down & destroy the votes for that article when reset ratings is done" do
+      @test_article.thumbs_up = rand(5..10)
+      @test_article.thumbs_down = rand(5..10)
+      @test_article.votes.build(:vote => 1, :user_id => @user.id)
+      @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
+      @test_article.save
+      put :reset_ratings, :id => @test_article.id
+      @test_article.reload
+      @test_article.thumbs_up.should eql 0
+      @test_article.thumbs_down.should eql 0
+      @test_article.votes.should eql []
     end
   end
 

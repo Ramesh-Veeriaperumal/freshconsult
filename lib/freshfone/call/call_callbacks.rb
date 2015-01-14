@@ -7,11 +7,13 @@ module Freshfone::Call::CallCallbacks
 
   def in_call
     update_presence_and_publish_call(params, message) if params[:agent].present?
+    in_call_meta_info if current_call.incoming?
     current_call.update_call(params)
     return empty_twiml
   end
 
   def direct_dial_success
+    in_call_meta_info if current_call.incoming?
     current_call.update_call(params)
     publish_live_call(params)
     return empty_twiml
@@ -35,4 +37,12 @@ module Freshfone::Call::CallCallbacks
                       :DialCallStatus => params[:CallStatus] })
     end
 
+    def in_call_meta_info
+      return if (/client/.match(params[:To]))
+      device_type = params[:direct_dial_number].blank? ? Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone] :
+        Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial]
+      Freshfone::CallMeta.create( :account_id => current_account.id, :call_id => current_call.id,
+                :meta_info => params[:To], 
+                :device_type => device_type) if current_call.meta.blank?
+    end
 end

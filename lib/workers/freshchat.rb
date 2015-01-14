@@ -32,4 +32,20 @@ class Workers::Freshchat
 		response = HTTParty.post(@url+"/sites/update",:body => args)
 	end
 
+	def self.delete_group(args)
+		response = HTTParty.post(@url+"/widgets/delete_group",:body => args)
+	end
+
+	def self.group_channel(args)
+		response = HTTParty.post(@url+"/agent/group_channel",:body => args)
+	end
+
+	def self.remove_group_from_routing(args)
+		response = HTTParty.post(@url+"/sites/updaterouting",:body => args)
+	end
+
+	def self.disable_routing(args)
+		response = HTTParty.post(@url+"/sites/disablerouting",:body => args)
+	end
+
 end

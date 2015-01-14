@@ -64,6 +64,7 @@ class Freshfone::UsersController < ApplicationController
 	end
 	
 	def in_call
+		call_meta_info
 		respond_to do |format|
 			format.any(:json, :nmobile) { render :json => {
 				:update_status => update_presence_and_publish_call(params),
@@ -132,6 +133,18 @@ class Freshfone::UsersController < ApplicationController
 
 		def node_user
 			@freshfone_user = current_account.freshfone_users.find_by_user_id(params[:node_user])
+		end
+
+		def call_meta_info
+			call = outgoing? ? current_user.freshfone_calls.call_in_progress : customer_in_progress_calls
+			update_call_meta(call) unless call.blank? #sometimes in_call reaches after call:in_call and status is already not in-progress.
+		end
+ 
+		def customer_in_progress_calls
+			return if params[:From].blank?
+			customer = find_customer_by_number(params[:From])
+			return if customer.nil?
+			current_account.freshfone_calls.customer_in_progess_calls(customer.id).first
 		end
 
 end

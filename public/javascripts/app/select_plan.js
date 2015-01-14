@@ -37,7 +37,6 @@ window.App = window.App || {};
       $(document).on('change'+$this.namespace(), '#agents-text-box', function(ev){ $this.agentChange(ev, this) })
       $(document).on('change'+$this.namespace(), '#billing_cycle', function(){ $this.billingCycleChange(this) })
       $(document).on('click'+$this.namespace(),  '.trial-plan-change', function(){ $this.trialPlanChange(this) })
-      $(document).on('click'+$this.namespace(),  '.upgrade-plan', function(){ $this.makeActive(this) })
     },
     billingCancel: function (ev) {
       ev.preventDefault();
@@ -58,6 +57,10 @@ window.App = window.App || {};
     },
     cloneButton: function (button) {
       this.clone_button = button;
+      if($('.trial-plan-change').length > 0){
+        $('#billing-template').hide();
+        $('.trial-plan-change').show()
+      }
     },
     closeModal: function () {
       $('.downgrade-modal').modal('hide');
@@ -91,12 +94,6 @@ window.App = window.App || {};
         $this.addClass('hide').hide();
         this.choosePlan($this);
       }
-    },
-    makeActive: function (plan) {
-      $('#billing-template').hide();
-      $('.pricelist.active').removeClass('active');
-      $('.trial-plan-change').show()
-      $(plan).parents('.pricelist').addClass('active');
     },
     IsNumeric: function(input){
       return (input - 0) == input && input.length > 0;

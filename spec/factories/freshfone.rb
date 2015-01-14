@@ -5,9 +5,7 @@ if Rails.env.test?
     f.recording_url
     f.call_status 1
     f.call_type 1
-    f.customer_data HashWithIndifferentAccess.new({ :number => "+16617480240",:country => 'US',:state => 'CA',:city => 'BAKERSFIELD' })
     f.dial_call_sid "CA2db76c748cb6f081853f80dace462a04"
-    f.customer_number "+16617480240"
   end
 
   Factory.define :freshfone_account, :class => Freshfone::Account do |f|

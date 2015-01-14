@@ -52,7 +52,8 @@ var chatReport = function(){
 		var total_chats = [], answered_chats = [], missed_chats = [];
 		$.map(data, function(value, key) {
 			var result = chartData(value);
-			var id = new Date(key).getTime();
+			var tempDate = new Date(key);
+			var id = Date.UTC(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
 
 			total_chats.push([id, result[0]]);
 			answered_chats.push([id, result[1]]);
