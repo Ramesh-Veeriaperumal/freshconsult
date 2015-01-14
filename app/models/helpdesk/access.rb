@@ -39,6 +39,10 @@ class Helpdesk::Access < ActiveRecord::Base
     []
   end
 
+  def access_type_str
+    Helpdesk::Access::ACCESS_TYPES_KEYS[self.access_type]
+  end
+
   
   class << self
   
