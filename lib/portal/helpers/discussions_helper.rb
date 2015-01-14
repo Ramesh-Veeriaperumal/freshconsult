@@ -110,9 +110,9 @@ module Portal::Helpers::DiscussionsHelper
 	end
 
 	def link_to_topic_edit topic, label = I18n.t("topic.edit")
-		if User.current == topic.user && !topic.merged?
-			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
-		end
+		# This method is just to maintain backward compatibility to the portals which have been customized,
+		# and still use this method.
+		""
 	end
 
 	def link_to_mark_as_solved topic, solve_label = I18n.t("forum_shared.post.mark_as_solved"), unsolve_label = I18n.t("forum_shared.post.mark_as_unsolved")
@@ -155,11 +155,6 @@ module Portal::Helpers::DiscussionsHelper
 		output = []
 		if User.current == post.user
 		output << %(<span class="pull-right post-actions" id="post-actions-#{post["id"]}">
-						<a href="#{ post["edit_url"] }" data-remote="true" data-type="GET" data-loadonce
-								 	data-update="#post-#{post["id"]}-edit" data-show-dom="#post-#{post["id"]}-edit"
-								    data-hide-dom="#post-#{post["id"]}-description">
-									<i class="icon-edit-post"></i>
-						</a>
 						<a href="#{ post["delete_url"] }" data-method="delete"
 				     			data-confirm="This post will be delete permanently. Are you sure?">
 				     			<i class="icon-delete-post"></i>
