@@ -54,7 +54,7 @@ class Helpdesk::Access < ActiveRecord::Base
       access_groups = group_accesses.collect(&:group_id)
       (agent_groups & access_groups).any?
     else
-      users_accesses.first.user_id == User.current.id
+      user_accesses.first.user_id == User.current.id
     end
   end
   
