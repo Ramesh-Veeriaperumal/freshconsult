@@ -5,6 +5,9 @@ class Helpdesk::Access < ActiveRecord::Base
   belongs_to_account
 
   belongs_to :accessible, :polymorphic => true  
+
+  has_many :group_accesses
+  has_many :user_accesses
             
   has_and_belongs_to_many :users,
     :join_table => 'user_accesses'
@@ -43,6 +46,17 @@ class Helpdesk::Access < ActiveRecord::Base
     Helpdesk::Access::ACCESS_TYPES_KEYS[self.access_type]
   end
 
+  def visible_to_me?
+    if global_access_type?
+      true
+    elsif group_access_type?
+      agent_groups   = account.agent_groups.find_all_by_user_id(User.current.id, :select => "group_id").collect(&:group_id)
+      access_groups = group_accesses.collect(&:group_id)
+      (agent_groups & access_groups).any?
+    else
+      users_accesses.first.user_id == User.current.id
+    end
+  end
   
   class << self
   

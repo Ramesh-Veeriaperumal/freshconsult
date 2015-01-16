@@ -28,7 +28,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   accepts_nested_attributes_for :helpdesk_accessible
 
-  delegate :groups, :users, :to => :helpdesk_accessible
+  delegate :groups, :users, :visible_to_me?, :to => :helpdesk_accessible
 
   attr_accessor :visibility
   attr_protected :account_id

@@ -218,7 +218,7 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 			$(element).removeClass("response-loading");
 			$(element).qtip('hide');
 			//$('[data-dismiss="modal"]').trigger('click');
-			loadRecent();
+			//loadRecent();
 		}
 	});
 	return true;
