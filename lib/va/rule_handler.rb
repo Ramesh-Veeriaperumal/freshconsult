@@ -18,6 +18,10 @@ class Va::RuleHandler
     rule_hash[:nested_rules]
   end
 
+  def sub_value
+    rule_hash[:business_hours_id]
+  end
+
   def event_matches? check_value, check_var
     return true if rule_hash[check_var]=="--"
     @value_key = check_var

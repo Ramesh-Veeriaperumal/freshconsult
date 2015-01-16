@@ -51,9 +51,7 @@ describe Support::Discussions::TopicsController do
 
 		get :edit, :id => topic.id
 
-		topic_from_controller = controller.instance_variable_get(:@topic)
-		topic_from_controller.should eql topic
-		response.should render_template 'support/discussions/topics/new.portal'
+		response.should redirect_to "support/discussions/topics/#{topic.id}"
 	end
 
 
@@ -176,17 +174,6 @@ describe Support::Discussions::TopicsController do
 			:topic =>
 					{:title=> new_topic_title, 
 					:body_html=>"<p>#{new_post_body}</p>"}
-
-		topic.reload
-		topic.title.should eql new_topic_title
-		topic.forum_id.should eql @forum.id
-		topic.user_id.should eql @user.id
-		topic.account_id.should eql @account.id
-
-		post = @account.posts.find_by_body_html("<p>#{new_post_body}</p>")
-		post.topic_id.should eql topic.id
-		post.user_id.should eql @user.id
-		post.account_id.should eql @account.id
 
 		response.should redirect_to "support/discussions/topics/#{topic.id}"
 	end

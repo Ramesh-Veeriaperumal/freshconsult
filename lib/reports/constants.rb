@@ -149,15 +149,15 @@ module Reports
     REPORT_TYPE_BY_KEY = Hash[*REPORT_TYPE.map { |i| [i[0], i[1]] }.flatten]
 
     REPORT_ARTICAL_LINKS ={
-      :agent_top_n_analysis         => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85344-how-to-read-agent-top-n-analysis',
-      :customer_top_n_analysis      => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85346-how-to-read-customer-top-n-analysis',
-      :group_top_n_analysis         => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85345-how-to-read-group-top-n-analysis',
-      :helpdesk_glance_report       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85335-how-to-read-helpdesk-at-a-glance-report',
-      :customer_glance_report       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85336-how-to-read-customer-at-a-glance-report',
-      :agent_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85337-how-to-read-agent-at-a-glance-report',
-      :group_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85338-how-to-read-group-at-a-glance-report',
-      :helpdesk_peformance_analysis => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85343-how-to-read-helpdesk-performance-analysis-report',
-      :helpdesk_load_analysis       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report',
+      :agent_top_n_analysis         => 'https://support.freshdesk.com/support/solutions/articles/85344-understanding-the-agent-top-n-analysis-report',
+      :customer_top_n_analysis      => 'https://support.freshdesk.com/support/solutions/articles/85346-understanding-the-customer-top-n-analysis-report',
+      :group_top_n_analysis         => 'https://support.freshdesk.com/support/solutions/articles/85345-understanding-the-group-top-n-analysis-report',
+      :helpdesk_glance_report       => 'https://support.freshdesk.com/support/solutions/articles/85335-understanding-the-helpdesk-at-a-glance-report',
+      :customer_glance_report       => 'https://support.freshdesk.com/support/solutions/articles/203140-understanding-the-customer-at-a-glance-report',
+      :agent_glance_report          => 'https://support.freshdesk.com/support/solutions/articles/203159-understanding-the-agent-at-a-glance-report',
+      :group_glance_report          => 'https://support.freshdesk.com/support/solutions/articles/203160-understanding-the-group-at-a-glance-report',
+      :helpdesk_peformance_analysis => 'https://support.freshdesk.com/support/solutions/articles/203162-understanding-the-helpdesk-performance-analysis-report',
+      :helpdesk_load_analysis       => 'https://support.freshdesk.com/support/solutions/articles/203161-understanding-the-helpdesk-load-analysis-report',
       :freshfone_summary            => 'https://support.freshdesk.com/solution/categories/157866/folders/267839/articles/197502-freshfone-call-summary',
       :freshchat_summary            => 'https://support.freshdesk.com/solution/categories/149846/folders/268837/articles/203631-freshchat-summary-report'
     }

@@ -13,7 +13,7 @@ class Support::Discussions::TopicsController < SupportController
   before_filter { |c| c.requires_feature :forums }
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission, :only => [:edit, :update, :destroy]
+  before_filter :check_user_permission, :only => :destroy
 
   before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
@@ -75,19 +75,7 @@ class Support::Discussions::TopicsController < SupportController
 
 
   def edit
-    if @topic.merged_topic_id?
-      flash[:notice] = I18n.t('discussions.topic_merge.merge_error_for_locked', 
-                      :title => h(@topic.merged_into.title), 
-                      :topic_link => discussions_topic_path(@topic.merged_topic_id)).html_safe
-      redirect_to discussions_topic_path(params[:id])
-    else
-      respond_to do |format|
-        format.html {
-          set_portal_page :new_topic
-          render :new
-        }
-      end
-    end
+    redirect_to support_discussions_topic_path(@topic.id)
   end
 
   def create
@@ -168,27 +156,9 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def update
-    topic_saved, post_saved = false, false
-    Topic.transaction do
-      @topic.attributes = topic_param
-      assign_protected
-      @post = @topic.posts.first
-      @post.attributes = post_param
-      @topic.body_html = @post.body_html
-      build_attachments
-      topic_saved = @topic.save
-      post_saved = @post.save
-    end
-    if topic_saved && post_saved
-      respond_to do |format|
-        format.html { redirect_to support_discussions_topic_path(@topic) }
-        format.xml  { head 200 }
-      end
-    else
-     respond_to do |format|
-       format.html { render :action => "edit" }
-     end
-
+    respond_to do |format|
+      format.html { redirect_to support_discussions_topic_path(@topic) }
+      format.xml  { head 200 }
     end
   end
 
