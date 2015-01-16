@@ -6,8 +6,8 @@ class Helpdesk::Access < ActiveRecord::Base
 
   belongs_to :accessible, :polymorphic => true  
 
-  has_many :group_accesses
-  has_many :user_accesses
+  has_many :group_accesses, :class_name => "Helpdesk::GroupAccess"
+  has_many :user_accesses, :class_name => "Helpdesk::UserAccess"
             
   has_and_belongs_to_many :users,
     :join_table => 'user_accesses'
