@@ -4480,6 +4480,7 @@ en:
         form:
           groups: Agents in group
           response_name: Response title
+          select_groups: Select Groups
           all_agents: All agents
           me_only: Myself
           available_for: Available for
@@ -5614,6 +5615,7 @@ en:
     delete_confirmation: "Delete folder with all its contents ??"
     move: "Move"
     del: "Delete"
+    select_groups: Select Groups
     folder: "Folder"
     recently: "Recently used..."
     pick: "Pick a canned response"

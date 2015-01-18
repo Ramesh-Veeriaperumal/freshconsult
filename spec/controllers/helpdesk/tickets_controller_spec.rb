@@ -61,7 +61,7 @@ describe Helpdesk::TicketsController do
     ticket = create_ticket({:status => 2, :source => 3, :requester_id => user.id})
     get :show, :id => ticket.display_id
     note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
-    note.body.should be_nil
+    note.should be_nil
   end
 
 

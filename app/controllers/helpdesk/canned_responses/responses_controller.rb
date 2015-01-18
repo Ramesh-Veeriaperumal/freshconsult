@@ -1,13 +1,13 @@
 # encoding: utf-8
 class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   include HelpdeskControllerMethods
-  include AccessibleControllerMethods
 
   before_filter :load_multiple_items, :only => [:delete_multiple, :update_folder]
   before_filter :load_folders,  :only => [:new, :edit, :create, :update]
   before_filter :load_response, :only => [:edit, :update]
   before_filter :reset_visibility,    :only => [:create, :update]
   before_filter :load_folder,   :only => [:new, :edit, :create, :update]
+  before_filter :construct_params, :only => [:create, :update]
   before_filter :set_selected_tab
 
   def show
@@ -16,9 +16,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def new
     @ca_response = scoper.new
-    @ca_response.accessible = current_account.user_accesses.new
-    @ca_response.accessible.visibility = @folder.personal? ?
-      Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] : Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+    build_ca_response_defaults
     respond_to do |format|
       format.html
       format.xml  { render :xml => @ca_response }
@@ -33,11 +31,10 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def create
-    @ca_response = scoper.build(params[:admin_canned_responses_response])
+    @ca_response = scoper.build(@data_params[:admin_canned_responses_response])
     build_attachments @ca_response, :admin_canned_responses_response
     respond_to do |format|
       if @ca_response.save
-        create_helpdesk_accessible(@ca_response, "admin_canned_responses_response")
         format.html {redirect_to(helpdesk_canned_responses_folder_path(@folder),
                                  :notice => t('canned_folders.created'))
                      }
@@ -46,8 +43,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
                       :location => @ca_response
                       }
       else
-        @ca_response.accessible = current_account.user_accesses.new
-        @ca_response.accessible.visibility = params[:admin_canned_responses_response][:visibility][:visibility]
+        build_ca_response_defaults
         format.html { render :action => "new" }
         format.xml  { render :xml => @ca_response.errors, :status => :unprocessable_entity }
       end
@@ -57,10 +53,10 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def update
     build_attachments @ca_response, :admin_canned_responses_response
+    @data_params[:admin_canned_responses_response][:helpdesk_accessible_attributes].merge!(:id => @ca_response.helpdesk_accessible.id)
     delete_shared_attachments params[:id]
     respond_to do |format|
-      if @ca_response.update_attributes(params[:admin_canned_responses_response])
-        update_helpdesk_accessible(@ca_response, "admin_canned_responses_response")
+      if @ca_response.update_attributes(@data_params[:admin_canned_responses_response])
         format.html {
           redirect_to(helpdesk_canned_responses_folder_path(@ca_response.folder_id), :notice => t('canned_folders.update'))
         }
@@ -95,26 +91,31 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
     error_responses = []
 
     if(!old_folder.nil? && !new_folder.nil?)
-      params[:admin_canned_response] = params[:admin_canned_response] || default_response_params
       update_hash = { :folder_id => params[:move_folder_id] }
-      if new_folder.personal? || old_folder.personal?
-        visibility = {
-          "user_id"    => current_user.id,
-          "group_id"   => params[:admin_canned_response][:visibility][:group_id],
-          "visibility" => params[:visibility] || Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
-        }
-        params[:admin_canned_response][:visibility] = visibility
-        update_hash[:visibility] = visibility
-      end
-
       @items.each do |item|
-        if !item.update_attributes(update_hash)
-          error_responses << item.title
+        group_ids = []
+        user_ids = []
+        if new_folder.personal?
+          access_type = Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+          user_ids = [current_user.id]
         else
-          if new_folder.personal? || old_folder.personal?
-            update_helpdesk_accessible(item, "admin_canned_response")
+          access_type = params[:visibility] || item.helpdesk_accessible.access_type
+          if access_type.to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
+            if params[:admin_canned_response]
+              group_ids = params[:admin_canned_response][:visibility][:group_id]
+            else
+              group_ids = item.helpdesk_accessible.group_ids
+            end
+          elsif access_type.to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+            user_ids = [current_user.id]
           end
         end
+        update_hash = update_hash.merge(:helpdesk_accessible_attributes => {:id => item.helpdesk_accessible.id, 
+          :group_ids => group_ids,
+          :user_ids => user_ids,
+          :access_type => access_type})
+          
+        error_responses << item.title if !item.update_attributes(update_hash)
       end
 
       if error_responses.empty?
@@ -149,12 +150,15 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def reset_visibility
+    if params[:admin_canned_responses_response][:visibility].nil?
+      params[:admin_canned_responses_response].merge!("visibility" => {"visibility" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], "user_id" => current_user.id})
+    end
     visibility = params[:admin_canned_responses_response][:visibility]
     unless privilege?(:manage_canned_responses)
-      visibility[:visibility] = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+      visibility[:visibility] = Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
       visibility[:user_id]    = current_user.id
     end
-    params[:new_folder_id] = @pfolder.id if visibility[:visibility].to_i == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+    params[:new_folder_id] = @pfolder.id if visibility[:visibility].to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
   end
 
   def load_folder
@@ -165,11 +169,41 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
     end
   end
 
+  #Constructing nested attributes for model to save all its associations.
+  def construct_params
+    @data_params      =  {}
+
+    admin_ca          = params[:admin_canned_responses_response]
+    title             = admin_ca[:title]
+    content_html      = admin_ca[:content_html]
+    folder_id         = admin_ca[:folder_id]
+    access_type       = admin_ca[:visibility][:visibility]
+    group_ids         = []
+    user_ids          = []
+
+    if access_type.to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
+      group_ids = admin_ca[:visibility][:group_id]
+    elsif access_type.to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+      user_ids = [admin_ca[:visibility][:user_id]]
+    end
+
+    @data_params = {
+      :admin_canned_responses_response => {
+                                           :title => title, :content_html => content_html,
+            :helpdesk_accessible_attributes => {
+                                                  :user_ids => user_ids, :group_ids => group_ids, :access_type => access_type
+                                                }, 
+                                                  :folder_id => folder_id
+                                          }
+                    }
+
+  end
+
   def default_response_params
     {
       "visibility" => {
         "user_id"     =>  current_user.id,
-        "visibility"  =>  Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me],
+        "visibility"  =>  Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
         "group_id"    =>  ""
       }
     }
@@ -182,4 +216,11 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   def set_selected_tab
     @selected_tab = :admin
   end
+
+  def build_ca_response_defaults
+    @ca_response.helpdesk_accessible = current_account.accesses.new
+    @ca_response.helpdesk_accessible.access_type = @folder.personal? ? 
+      Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] : Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+  end
+
 end

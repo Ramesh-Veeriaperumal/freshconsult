@@ -72,8 +72,8 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def load_canned_response
-    @ca_resp = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id = #{params[:ca_resp_id].to_i}"]))[0]
-    render :text => "" and return unless @ca_resp
+    @ca_resp = scoper.find_by_id(params[:ca_resp_id])
+    render :text => "" and return unless (@ca_resp and @ca_resp.visible_to_me?)
   end
 
   def ticket_present?

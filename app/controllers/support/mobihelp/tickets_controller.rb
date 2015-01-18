@@ -130,7 +130,7 @@ class Support::Mobihelp::TicketsController < SupportController
     def mobihelp_user_login
       unless current_user # override validated user check for mobihelp tickets
         user = User.find_by_single_access_token(params['k']) #ignore active / check
-        if user.deleted? or user.blocked?
+        if user.nil? or user.deleted? or user.blocked?
           render :json => {:success => false, :status_code => Mobihelp::MobihelpHelperMethods::MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED]}
         else
           @current_user = user

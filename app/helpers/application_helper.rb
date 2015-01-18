@@ -266,6 +266,47 @@ module ApplicationHelper
     output.html_safe
   end
 
+  def placeholder_list(fields)
+    ph_button_list = ""
+    fields.each do |field|
+    	ph_button_list << content_tag(:li, 
+													content_tag(:div, 
+														(content_tag(:button, 
+															field[1], 
+															:class => 'btn btn-flat tooltip',
+															:"data-placeholder" => field[0],
+															:title => field[2]) + nested_ph_menu(field[4])).html_safe, 
+													:class => 'btn-group').html_safe, 
+                        :class => 'ph-item', :id => "placeholder-btn-#{field[3]}")
+    end
+
+    add_show_more_less_buttons(ph_button_list)
+    content_tag(:ul, ph_button_list.html_safe, :class => 'ph-list').html_safe
+  end
+
+  def add_show_more_less_buttons ph_button_list
+  	[:more, :less].each do |toggle_val|
+  		ph_button_list << content_tag(:li, 
+													content_tag(:button, "",
+														:class => "btn btn-flat tooltip ficon-ellipsis ph-#{toggle_val}",
+														:title => "Show #{toggle_val.capitalize}").html_safe, 
+												:class => 'ph-more-less')
+	  end
+  end
+
+  def nested_ph_menu nested_data
+    return "" unless nested_data.try(:[], :nested).present?
+
+    nested_menu = ""
+    nested_data[:nested].each do |nested|
+	    nested_menu << content_tag(:li, 
+                        link_to(nested[1], '#', :class => 'ph-btn tooltip', :"data-placeholder" => nested[0]), 
+                        :id => "placeholder-btn-#{nested[3]}")
+    end
+    (link_to(content_tag(:span, "", :class => 'caret'), '#', :class => 'btn btn-flat dropdown-toggle', :"data-toggle" => 'dropdown') +
+    content_tag(:ul, nested_menu.html_safe, :class => 'dropdown-menu btn-block')).html_safe
+  end
+
   def forum_options
     _forum_options = []
     current_account.forum_categories.each do |c|
@@ -470,10 +511,17 @@ module ApplicationHelper
                       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
                     ]
     }
+    
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
+      nested_vals = []
+      custom_field.nested_ticket_fields.each { |nested_field|
+        name = nested_field.name[0..nested_field.name.rindex('_')-1]
+        nested_vals << ["{{ticket.#{name}}}", nested_field.label, "", "ticket_#{name}"]
+      }
+
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
-      place_holders[:ticket_fields] << ["{{ticket.#{name}}}", custom_field.label, "", "ticket_#{name}"] unless name == "type"
+      place_holders[:ticket_fields] << ["{{ticket.#{name}}}", custom_field.label, "", "ticket_#{name}", { :nested => nested_vals }]
     }
 
     # Survey Placeholders
