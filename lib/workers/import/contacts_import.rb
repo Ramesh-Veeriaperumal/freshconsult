@@ -5,6 +5,6 @@ class Workers::Import::ContactsImport
 	@queue = "contactImport"
 
 	def self.perform(contact_params)
-		Workers::Import::ContactsImportWorker.new(contact_params).perform
+		Workers::Import::CustomersImportWorker.new(contact_params).perform
 	end
 end

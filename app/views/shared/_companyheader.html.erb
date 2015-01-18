@@ -58,8 +58,10 @@
 			<%= link_to(t('export'), { :action => "configure_export", :controller => "contacts"  }, :class => "dialog2", :title => t('export_data.export_to_csv'), "data-width" => "650" ) %>
 			<% if privilege?(:manage_contacts) %>
 				&middot;  
-  		 	<%= link_to(t('import'), csv_contact_import_path, :title => t("contacts.import_csv"), :class => " margin-right", :id => "contacts_import") %>
-  			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
+
+  		 	<%= link_to(t('import'), "/customers_import/csv/#{type}", :title => t("contacts.import_csv"), :class => " margin-right", :id => "customers_import") %>
+
+  			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_customers_import_path, :class => "uiButton grey") %></div>
   			<%= link_to t('company.new'), new_company_path, :class => "btn" %>			
   			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn") %>
 			<% end %>      

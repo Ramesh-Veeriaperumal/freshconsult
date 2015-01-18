@@ -1,7 +1,6 @@
 <% content_for :sidebar do -%><%-end %>
 <%= content_tag(:h3, t('contacts.import_csv'), :class => "lead") %>
-
-	<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>
+	<% form_for :user,:url => { :controller => "customers_import", :action => "create" }, :html => {:multipart => true} do |f| %>
 	  <%= f.error_messages %>
 	  <div class="row-fluid">
 	  	<div class="control-group">
@@ -9,6 +8,7 @@
 	  		<div class="controls">
 		      	<%= file_field_tag 'file',:accept => 'csv', :class => "required", :size => "40" %>
 		    </div>
+		    <%= hidden_field_tag 'type', params[:type] %>
 	  	</div>
 	  	<div class="control-group">
 	  		<p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
@@ -16,7 +16,7 @@
 			<p class="muted"><%= content_tag(:b, t('note')) %> <%= t('contact_import.import_data_info', :solution_link => "https://support.freshdesk.com/support/solutions/articles/199329").html_safe %> </p>
 	  	</div>
 	  	<div class="button-container">
-		  	<%= link_to t('cancel'), contacts_path, :class => "btn"  %>
+		  	<%= link_to t('cancel'), "/#{params[:type].pluralize}", :class => "btn"  %>
 		  	<%= f.submit t('import'), { :class => "btn btn-primary" } %>
 		</div>
 		<div class="seperator"></div>

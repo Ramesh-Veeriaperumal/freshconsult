@@ -4,18 +4,19 @@
 	<div>
 		<%
 			extra_classes = "table_header select2 span4 "
-			extra_classes << "required " if key == t("contact_import.email")
+			extra_classes << "required " if (type.eql?("company") && key == "Company name") || key == t("contact_import.email")
 		%>
 
-		<%= select  nil, "fields[#{value}]" ,  options_for_select(to_hash(@rows.first)) , { :include_blank => "-" } , 
-		   {:class => extra_classes } %>
+		<%= select nil, "fields[#{value}]", options_for_select(to_hash(@rows.first)), {:include_blank => "-"}, 
+			{:class => extra_classes } %>
+		
 	</div>
 	<%= content_tag(:span, "", 
 		:title => t("contact_import.sample_data") ,
 		:class => "sample_value_#{value} italics muted tooltip sample_values ellipsis")%>
 </div>
 
-<% if key == t("contact_import.can_see_all_tickets_of_the_company") %>
+<% if key == t("contacts.role.info") %>
 	<br/>
 	<div class="controls">
 		<%= content_tag(:small, t("contact_import.can_see_all_tickets"), :class => "muted")%>

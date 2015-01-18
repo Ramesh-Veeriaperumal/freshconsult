@@ -1,16 +1,16 @@
 <% form_tag nil, :method => :post , :rel => "validate" do -%>
-	<% @parameters.each do |arr| -%>
-	<%= hidden_field_tag arr[0], arr[1] %>
-	<% end -%>
+
+    <%= hidden_field_tag 'type', params[:type] %>
 
 	<ul class="form-horizontal map_fields">
 		<li class="control-group">
 			<label for="file"><%= content_tag(:b, t('step2')) %>: <%= t('import_step2_info') %></label>
 		</li>
 
-      	<% @fields.each do |key,value| -%>
+      	<% @fields.each do |field| -%>
 			<li class="control-group  row-fluid">
-				<%= render :partial => 'table_fields' , :locals => {:key => key, :value => value} %>
+				<%= render :partial => 'table_fields' , :locals => {:key => field[:label], :value => field[:name], :type => params[:type]} 
+				%>
 			</li>
 		<% end -%>
 
@@ -22,7 +22,7 @@
 		</li>
 
 	 	<div class="button-container">
-		  	<%= link_to t('cancel'), contacts_path, :class => "btn"  %>
+		  	<%= link_to t('cancel'), "/#{params[:type].pluralize}", :class => "btn"  %>
 		  	<%= submit_tag t('import'), { :class => "btn btn-primary" } %>
 	 	</div>
 	</ul>
