@@ -5304,6 +5304,7 @@ en:
         select_group: "Select Group"
         select_call_type: "Select Call Type"
         select_number: "Select a Number"
+        all_numbers: "All Numbers"
         all_call_types: "All"
         number: "Number"
         avg_handle_time: "Avg Handle Time"
