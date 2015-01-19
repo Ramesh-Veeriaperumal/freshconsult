@@ -11,14 +11,21 @@ class CustomersImportController < ApplicationController
    #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def csv
+    limit_customer_imports
     redirect_to "/#{params[:type].pluralize}", :flash => { :notice => t(:'flash.import.already_running')} if current_account.send("#{params[:type]}_import")
   end 
+
+  def limit_customer_imports
+    customer_import = current_account.send("#{params[:type]}_import")
+    customer_import.destroy if customer_import && !customer_import.status
+    current_account.reload
+  end
   
   def create
     if fields_mapped?
       params[:type].eql?("company") ? Resque.enqueue(Workers::Import::CompaniesImport, customer_params) : 
                   Resque.enqueue(Workers::Import::ContactsImport, customer_params)
-      current_account.send(:"create_#{params[:type]}_import",{:status => 1})
+      current_account.send(:"create_#{params[:type]}_import",{:status => 1, :user_id => current_user.id})
       redirect_to "/#{params[:type].pluralize}", :flash =>{ :notice => t(:'flash.import.success')}
     else
       render

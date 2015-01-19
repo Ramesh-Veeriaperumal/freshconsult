@@ -224,6 +224,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :customers_import
+    resource :"admin/data_import"
     resource :contact_merge
     resource :user_email
     # is this the correct place to put this ?

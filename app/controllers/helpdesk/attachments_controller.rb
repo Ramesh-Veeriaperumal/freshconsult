@@ -117,6 +117,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
+      elsif ['Admin::DataImport'].include? @attachment.attachable_type
+        return privilege?(:manage_account) || @attachment.attachable.user_id == current_user.id
       end
 
     end

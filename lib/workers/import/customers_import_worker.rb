@@ -6,22 +6,28 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def perform
-    initialize_params
-    @csv_headers = @rows.shift
-    mapped_fields = @rows
-      mapped_fields.each do |row|
-        assign_field_values row
-        save_item row       
+    begin
+      initialize_params
+      @csv_headers = @rows.shift
+      mapped_fields = @rows
+        mapped_fields.each do |row|
+          assign_field_values row
+          save_item row       
+        end
+      if @item_import && !@failed.blank?
+        build_csv
+        set_status
+        Admin::DataImportMailer.deliver_customers_import_with_failure({:user => @current_user, 
+                                                  :domain => @current_account.host,
+                                                  :url => hash_url,
+                                                  :type => params[:type].pluralize})
+      else
+        UserNotifier.send_later(:deliver_notify_contacts_import, @current_user)
+        @item_import.destroy
       end
-    unless @failed.blank?
-      build_csv
-      Admin::DataImportMailer.deliver_customers_import_with_failure({:user => @current_user, 
-                                                :domain => @current_account.host,
-                                                :url => hash_url,
-                                                :type => params[:type].pluralize})
-    else
-      UserNotifier.send_later(:deliver_notify_contacts_import, @current_user)
-      @item_import.destroy
+    rescue => e
+      NewRelic::Agent.notice_error(e)
+      puts "Error in #{params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
     end
 	end
 
@@ -64,6 +70,7 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
         company_validation
     end
     set_validatable_custom_fields unless @item.nil?
+    custom_checkbox 
   end
 
   def contact_validation
@@ -86,6 +93,15 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   def set_validatable_custom_fields
     @item.validatable_custom_fields = { :fields => @current_form.custom_fields, 
                                           :error_label => :label }
+  end
+
+  def custom_checkbox
+    @cb_fields = []
+    unless (custom_field = @params_hash[:user][:custom_field]).blank?
+      @current_form.fields.map { |fd| @cb_fields << fd.name if fd.field_type == :custom_checkbox }
+      custom_field.keys.map { |key|
+        custom_field[:"#{key}"] = custom_field[:"#{key}"].to_s.strip.downcase == "yes" ? "true" : nil if @cb_fields.include?(key.to_s) }
+    end
   end
 
   def save_item row
@@ -114,8 +130,8 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
 
   def failed_item row
     @failed ||= []
-    error_msg = @item.errors.first
-    @failed << row.push(error_msg[0] + error_msg[1])
+    error_msg = @item.errors.map {|msg| (msg + @item.errors["#{msg}"])}.to_sentence
+    @failed << row.push(error_msg)
   end
 
   def build_csv
@@ -160,7 +176,6 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   
   def remove_import_file(file_path)
     FileUtils.rm_f(file_path)
-    @item_import.update_attributes(:status => 2)
   end
 
   def hash(import_id)
@@ -169,9 +184,13 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
 
   def hash_url
     url_for(
-            :controller => "download_file/#{@item_import.source}/#{hash(@item_import.id)}", 
+            :controller => "download_import_file/#{params[:type]}/#{hash(@item_import.id)}", 
             :host => @current_account.host, 
             :protocol => @current_account.url_protocol
             )
+  end
+
+  def set_status
+    @item_import.update_attributes(:status => false)
   end
 end
