@@ -24,64 +24,15 @@ module Freshfone::Queue
   end
 
   def bridge_priority_call
-    begin
-      member = queued_members.get(@priority_call)
-      member.update(:url => "#{host}/freshfone/queue/dequeue?client=#{@available_agent}")
-    rescue Twilio::REST::RequestError => e
-      Rails.logger.error "Error trying to dequeue Priority call: #{e.message}"
-      agent_hunted_call ? remove_call_sid_from_agent_queue : 
-        remove_call_sid_from_group_queue
-      bridge_queued_call
-    end
+    member = queued_members.get(@priority_call)
+    member.update(:url => "#{host}/freshfone/queue/dequeue?client=#{@available_agent}")
   end
 
   def bridge_normal_call
     if default_queue_call
       member = queued_members.get(default_queue_call)
-      begin
-        member.update(:url => "#{host}/freshfone/queue/dequeue")
-      rescue Twilio::REST::RequestError => e
-        Rails.logger.error "Error trying to dequeue call: #{e.message}"
-        remove_call_sid_from_default_queue
-        bridge_queued_call
-      end
+      member.update(:url => "#{host}/freshfone/queue/dequeue")
     end
-  end
-
-  def remove_call_sid_from_default_queue
-    queued_calls = get_key(default_queue_key)
-    if queued_calls
-      calls = JSON.parse(queued_calls)
-      calls.delete(calls.first)
-      set_key(default_queue_key, calls.to_json)
-    end
-  end
-
-  def remove_call_sid_from_agent_queue
-    agent_queue = get_key(agent_queue_key)
-    if agent_queue
-      calls = JSON.parse(agent_queue)
-      if calls.keys.include? @available_agent
-        hunted_agent_calls = calls[@available_agent]
-        hunted_agent_calls.delete(hunted_agent_calls.first)
-        calls[@available_agent] = hunted_agent_calls
-      end
-      set_key(agent_queue_key, calls.to_json)
-    end
-  end
-
-  def remove_call_sid_from_group_queue
-    group_queue = get_key(group_queue_key)
-    agent = current_account.users.technicians.find_by_id(@available_agent)
-    agent_groups = agent.agent_groups.collect{|ag| ag.group_id}
-    if group_queue
-      group_calls = JSON.parse(group_queue)
-      hunted_group = group_calls.keys.select{|group| agent_groups.include? group.to_i }.first
-      hunted_group_calls = group_calls[hunted_group]
-      hunted_group_calls.delete(hunted_group_calls.first)
-      group_calls[hunted_group] = hunted_group_calls
-    end
-    set_key(group_queue_key, group_calls.to_json)
   end
 
   def check_for_priority_calls
@@ -127,10 +78,8 @@ module Freshfone::Queue
   def normal_queue
     calls = get_key(default_queue_key)
     waiting_calls = (calls) ? JSON.parse(calls) : []
-    unless waiting_calls.include? params[:CallSid]
-      waiting_calls << params[:CallSid] 
-      set_key(default_queue_key, waiting_calls.to_json)
-    end
+    waiting_calls << params[:CallSid] 
+    set_key(default_queue_key, waiting_calls.to_json)
   end
 
   def priority_queue
@@ -138,10 +87,8 @@ module Freshfone::Queue
     calls = get_key(priority_queue_key)
     waiting_calls = (calls) ? JSON.parse(calls) : {}
     waiting_calls[params[:hunt_id]] ||= [] 
-    unless waiting_calls[params[:hunt_id]].include? params[:CallSid]
-      waiting_calls[params[:hunt_id]] << params[:CallSid] 
-      set_key(priority_queue_key, waiting_calls.to_json)
-    end
+    waiting_calls[params[:hunt_id]] << params[:CallSid] 
+    set_key(priority_queue_key, waiting_calls.to_json)
   end
 
   private

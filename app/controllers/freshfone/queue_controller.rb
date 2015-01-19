@@ -40,8 +40,8 @@ class Freshfone::QueueController < FreshfoneBaseController
 
   def hangup
     queued_calls = get_key redis_queue_key
-    members = queued_calls.nil? ? [] : JSON.parse(queued_calls)
-    remove_call_from_queue(members, params[:hunt_id]) unless members.empty?
+    members = JSON.parse(queued_calls)
+    remove_call_from_queue(members, params[:hunt_id])
     members.empty? ? remove_key(redis_queue_key) : 
                         set_key(redis_queue_key, members.to_json)
     render :nothing => true
