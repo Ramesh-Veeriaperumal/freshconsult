@@ -48,15 +48,7 @@ module SslRequirement
   private
   
     def ensure_proper_protocol
-      # binding.pry
-      # return true if !Rails.env.production? || ssl_allowed? 
-      if (!Rails.env.production? || ssl_allowed?) and request.host.include?("techfreeze.com") and request.url.include?("/subscription/billing")
-        redirect_to "http://techfreeze.freshdesk-dev.com:3010/subscription/billing"
-        return false
-      else
-        return true
-      end
- 
+      return true if !Rails.env.production? || ssl_allowed? 
 
       if request.ssl? 
         if ssl_required? && (cnamed_portal_with_ssl? || host_is_full_domain?) #like billing from ssl enabled portal/full_domain
