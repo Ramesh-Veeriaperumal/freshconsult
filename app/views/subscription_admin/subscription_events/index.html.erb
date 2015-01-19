@@ -111,7 +111,7 @@
       <% events.map { |details| %>
           <%= render :partial => "events_table",  
                       :locals => { :events => @events_month[details[0]], :details => details, 
-                                    :column => "CMRR" } %>
+                                    :column => "CMRR", :type => "events" } %>
       <% } %>
 
       <br/>
@@ -120,7 +120,7 @@
       <% upgrades.map { |details| %> 
           <%= render :partial => "events_table",  
                       :locals => { :events => @upgrades_month[details[0]], :details => details, 
-                                    :column => "CMRR" } %>
+                                    :column => "CMRR", :type =>"upgrades"  } %>
       <% } %>
 
       <br/>
@@ -129,7 +129,7 @@
       <% downgrades.map { |details| %>
           <%= render :partial => "events_table",  
                     :locals => { :events => @downgrades_month[details[0]], :details => details, 
-                                  :column => "Downgrade Amount" } %>
+                                  :column => "Downgrade Amount", :type => "downgrades" } %>
       <% } %>
 
       <br/>
@@ -138,7 +138,7 @@
       <% deleted_event.map { |details| %>
         <%= render :partial => "events_table", 
                     :locals => { :events => @events_month[:deleted], :details => details, 
-                                  :column => "Churn"} %>
+                                  :column => "Churn", :type => "deleted"} %>
       <% } %>
 
       <%= include_cloudfront_js :subscription%>

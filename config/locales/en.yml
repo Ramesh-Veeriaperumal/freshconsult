@@ -5594,6 +5594,7 @@ en:
   clear_draft_text: "Your saved draft will be discarded. Are you sure?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
+  no_ssl_redirection: "Since your portal does not have SSL, you are being redirected to Freshdesk's secure page. Please login to proceed."
   canned_folders:
     insert_placeholder: Insert Placeholder
     important: "Important: "
