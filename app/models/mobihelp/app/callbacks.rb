@@ -14,7 +14,7 @@ class Mobihelp::App < ActiveRecord::Base
       unique_digest_str = Digest::MD5.hexdigest("#{name}-#{PLATFORM_NAMES_BY_ID[platform]}-#{account_id}-#{Time.now}")
       digest_str = (rand(Digest::MD5.hexdigest(unique_digest_str).to_i(16)) ^ rand(Digest::MD5.hexdigest(unique_digest_str).to_i(16))).to_s
       digest_str= Digest::SHA1.hexdigest(digest_str).strip.gsub("=" ,"")
-      self.app_key = "#{name.downcase.squish.gsub(" ","")}-#{platform}-#{unique_digest_str}"
+      self.app_key = "#{name.downcase.gsub(/[^a-z0-9]/, "")}-#{platform}-#{unique_digest_str}"
       self.app_secret = digest_str
     end
 
