@@ -2325,27 +2325,27 @@ Redactor.prototype = {
 	},
 	selectionToggle : function()
 	{
-		try{ 
-			if($.browser.msie == true)
-			{
+		// try{ 
+		// 	if($.browser.msie == true)
+		// 	{
 				this.$editor.html(this.$el.val());
-			}
-			else
-			{
-				var keep_selection = this.getSelection();
-				var keep_range = document.createRange();
-				keep_selection.removeAllRanges();
-				keep_range.selectNodeContents(this.$editor.get(0));
-				keep_selection.addRange(keep_range);
+		// 	}
+		// 	else
+		// 	{
+		// 		var keep_selection = this.getSelection();
+		// 		var keep_range = document.createRange();
+		// 		keep_selection.removeAllRanges();
+		// 		keep_range.selectNodeContents(this.$editor.get(0));
+		// 		keep_selection.addRange(keep_range);
 
-				if ($.browser.mozilla)
-				{
-					this.$editor.focus();
-				}
+		// 		if ($.browser.mozilla)
+		// 		{
+		// 			this.$editor.focus();
+		// 		}
 
-				this.execCommand('inserthtml',this.$el.val());
-			}
-		} catch(e){ }
+		// 		this.execCommand('inserthtml',this.$el.val());
+		// 	}
+		// } catch(e){ } 
 
 	},
 	// TOGGLE
