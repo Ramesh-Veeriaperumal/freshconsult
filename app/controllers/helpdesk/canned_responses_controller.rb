@@ -7,14 +7,20 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def index
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder]))
+    @ca_resp_folders = @ca_responses.group_by(&:folder_id)
     folders = @ca_responses.map(&:folder)
     @ca_folders = folders.uniq.sort_by{|folder | [folder.folder_type,folder.name]}
     @ca_folders.each do |folder|
       folder.visible_responses_count = folders.count(folder)
     end
+    unless params[:recent_ids].blank?
+      recent_ids = params[:recent_ids].split(",")
+      @recents = @ca_responses.select {|ca_resp| recent_ids.include?(ca_resp.id.to_s)}
+    end
     respond_to do |format|
       format.html { 
-        render :partial => "helpdesk/tickets/components/canned_responses"
+        #render :partial => "helpdesk/tickets/components/canned_responses"
+        render :partial => "helpdesk/tickets/components/ticket_canned_responses"
       }
       format.nmobile {
         canned_responses = @ca_responses.map{ |canned_response| canned_response.to_mob_json }

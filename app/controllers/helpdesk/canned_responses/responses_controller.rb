@@ -9,6 +9,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   before_filter :load_folder,   :only => [:new, :edit, :create, :update]
   before_filter :construct_params, :only => [:create, :update]
   before_filter :set_selected_tab
+  before_filter :check_ca_privilege, :only => [:edit, :update]
 
   def show
     redirect_to edit_helpdesk_canned_responses_folder_response_path
@@ -72,7 +73,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def delete_multiple
     @items.each do |item|
-      item.destroy
+      item.destroy if item.visible_to_me?
     end
   end
 
@@ -221,6 +222,10 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
     @ca_response.helpdesk_accessible = current_account.accesses.new
     @ca_response.helpdesk_accessible.access_type = @folder.personal? ? 
       Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] : Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+  end
+
+  def check_ca_privilege
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @ca_response.visible_to_me?
   end
 
 end

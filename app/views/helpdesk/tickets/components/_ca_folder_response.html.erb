@@ -1,0 +1,9 @@
+<% ca_resp_folders.each do |folder_id, responses| %>
+	<div id="ca_responses-<%=folder_id%>" class="list2 hide">
+		<ul class="small-list-right">
+			<%= render :partial => "helpdesk/tickets/components/ca_response", :collection => responses %>
+		</ul>
+	</div>
+<% end %>
+
+
