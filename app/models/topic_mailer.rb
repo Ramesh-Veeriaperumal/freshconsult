@@ -3,6 +3,8 @@ class TopicMailer < ActionMailer::Base
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
 	
+  layout "email_font"
+
   def monitor_email(emailcoll, topic, user, portal, sender, host)
     configure_mailbox(user, portal)
     recipients    emailcoll
@@ -19,7 +21,7 @@ class TopicMailer < ActionMailer::Base
         html.body   Premailer.new(render_message("mailer/topic/monitor_email.text.html.erb",
                                     :topic => topic, 
                                     :body_html => generate_body_html( topic.posts.first.body_html, [], topic.account ), 
-                                    :user => user, :host => host
+                                    :user => user, :host => host, :account => topic.account,
                                   ), :with_html_string => true, :input_encoding => 'UTF-8').to_inline_css
       end
     end
@@ -41,7 +43,7 @@ class TopicMailer < ActionMailer::Base
         html.body   Premailer.new(render_message("mailer/topic/stamp_change_notification_email.text.html.erb",
                                     :topic => topic, 
                                     :body_html => generate_body_html( topic.posts.first.body_html, [], topic.account ), 
-                                    :user => user, :host => host, 
+                                    :user => user, :host => host, :account => topic.account,
                                     :current_stamp => current_stamp, :forum_type => forum_type
                                   ), with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
       end
@@ -70,6 +72,7 @@ class TopicMailer < ActionMailer::Base
                             :source_topic => source_topic, 
                             :target_topic => target_topic, 
                             :user => monitor.user, 
+                            :account => Account.current,
                             :host => host, 
                             :portal => monitor.get_portal), 
                             with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
