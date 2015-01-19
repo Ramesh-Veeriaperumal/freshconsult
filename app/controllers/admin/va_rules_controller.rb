@@ -127,8 +127,8 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => 'dropdown', 
           :choices => [['', t('none')]]+@products, :operatortype => "choicelist",
           :condition => multi_product_account? },
-        { :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "dropdown",
-          :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort,
+        { :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "business_hours_dropdown",
+          :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort, :business_hours_choices => business_hours_for_account,
           :condition => va_rules_controller? },
         { :name => "responder_id", :value => I18n.t('ticket.agent'), :domtype => "dropdown",
           :operatortype => "object_id", :choices => @agents },
@@ -294,5 +294,14 @@ class Admin::VaRulesController < Admin::AdminController
 
     def hide_password_in_webhook
       @va_rule.hide_password!
+    end
+
+    def business_hours_for_account
+      bhrs = []
+      if current_account.features_included?(:multiple_business_hours)
+        account_bhs = current_account.business_calendar.map{|bc| [bc.id,bc.name]}
+        bhrs = account_bhs if account_bhs.size > 1
+      end
+      bhrs
     end
 end

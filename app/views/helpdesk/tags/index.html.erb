@@ -2,8 +2,8 @@
     TAGS_INDEX = {
         no_results    :   "<%= t('no_tags') %>",
         name          :   "<%= params[:name] || "" %>",
-        sort          :   "<%= params[:sort] || 'activity_desc' %>"
-    };
+        sort          :   "<%= current_tag_sort_order %>"
+      };
 </script>
 <script type="text/javascript" src="/javascripts/app/tags.js"></script>
 <% content_for :helpcard do %>

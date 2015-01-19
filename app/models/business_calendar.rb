@@ -34,6 +34,8 @@ class BusinessCalendar < ActiveRecord::Base
 
   scope :default, :conditions => { :is_default => true }
 
+  xss_sanitize :only => [:name, :description]
+
   #needed for upgrading business_time_data - Abhinav
   BUSINESS_TIME_INFO = [:fullweek, :weekdays] 
   WORKING_HOURS_INFO = [:beginning_of_workday, :end_of_workday]

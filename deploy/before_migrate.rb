@@ -28,4 +28,5 @@ run "ln -nfs #{shared_path}/config/dalli.yml #{rel_path}/config/dalli.yml"
 run "ln -nfs #{shared_path}/config/statsd.yml #{rel_path}/config/statsd.yml"
 run "ln -nfs #{shared_path}/config/redis_display_id.yml #{rel_path}/config/redis_display_id.yml"
 run "ln -nfs #{shared_path}/config/chat.yml #{rel_path}/config/chat.yml"
+run "ln -nfs #{shared_path}/config/email.yml #{rel_path}/config/email.yml"
 run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{rel_path}/public" if ::File.directory?("/data/helpkit/current") && ::File.directory?("/data/helpkit/current/public/assets")

@@ -1,7 +1,7 @@
 module HelpdeskAccessMethods
-	def accessible_elements(items,query_hash)
+	def accessible_elements(items,filter_query_hash)
     Sharding.run_on_slave do
-			items.find(:all, query_hash)
+			items.find(:all, filter_query_hash).uniq
 		end
 	end
 

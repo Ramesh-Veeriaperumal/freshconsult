@@ -30,7 +30,6 @@ describe AgentsController do
     expected = (response.status == 200) && (compare(result["agents"].first.keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
           (compare(result["agents"].first["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
-    response.body.should =~ /#{user.email}/
   end
 
   it "should show all the agent details on the show page" do
@@ -72,6 +71,20 @@ describe AgentsController do
     @request.env['HTTPS'] = 'on'
     get :api_key, {:id => user.agent.id, :format => 'xml'}
     response.status.should eql(200)
+  end
+
+  it "should update an existing agent" do
+    user = add_agent(@account, {:name => "1#{Faker::Name.name}",
+                                 :email => Faker::Internet.email,
+                                 :active => 1,
+                                 :role => 1,
+                                 :agent => 1,
+                                 :ticket_permission => 3,
+                                 :role_ids => ["#{@agent_role.id}"],
+                                 :privileges => @agent_role.privileges })
+    put :update, {:id => user.agent.id, :agent => {:ticket_permission => 1,
+                                              :user => { :job_title => "Developer"}},:format => 'xml'}                                                                                               
+    response.status.should eql("200 OK")
   end
 
 end

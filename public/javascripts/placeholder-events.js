@@ -105,7 +105,8 @@ jQuery(document).ready(function(){
 		jQuery('#place-dialog').groupPlaceholders({'truncateItems': false});
     });
 	
-	jQuery(".placeholder-list button").click(function(ev){  
+	jQuery(".placeholder-list button, .placeholder-list a.ph-btn").click(function(ev){  
+		preventDefault(ev);
 		if(jQuery(this).parent().hasClass('ph-more-less')) {
 			return false;
 		}

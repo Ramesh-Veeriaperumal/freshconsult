@@ -18,11 +18,6 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   belongs_to :folder, :class_name => "Admin::CannedResponses::Folder"
 
-  has_one :accessible,
-    :class_name => 'Admin::UserAccess',
-    :as => 'accessible',
-    :dependent => :destroy
-
   has_many :agent_groups ,
     :through =>:accessible ,
     :foreign_key => "group_id" ,
@@ -33,10 +28,12 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     :as => 'accessible',
     :dependent => :destroy
 
-  delegate :groups, :users, :to => :helpdesk_accessible
+  accepts_nested_attributes_for :helpdesk_accessible
+
+  delegate :groups, :users, :visible_to_me?, :to => :helpdesk_accessible
 
   attr_accessor :visibility
-  attr_accessible :title, :content, :visibility, :content_html, :folder_id
+  attr_protected :account_id
 
   validates_length_of :title, :in => 3..240
   validates_presence_of :folder_id
@@ -44,10 +41,6 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   unhtml_it :content
   xss_sanitize :only =>[:content_html],  :html_sanitize => [:content_html]
-
-  after_create :create_accesible
-  after_update :save_accessible
-
 
   scope :accessible_for, lambda { |user|
     {
@@ -93,15 +86,6 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   private
 
-  def create_accesible
-    self.accessible = Admin::UserAccess.new({:account_id => account_id }.merge(self.visibility))
-    self.save
-  end
-
-  def save_accessible
-    self.accessible.update_attributes(self.visibility)
-  end
-
   def validate_title
     if (!visible_only_to_me? && (self.title_changed? || self.folder_id_changed?))
       response = Account.current.canned_responses.folder_responses_by_title(self)
@@ -115,8 +99,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   end
 
   def visible_only_to_me?
-    visibility = self.visibility.nil? ? self.accessible.visibility : self.visibility["visibility"].to_i
-    visibility == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+    self.helpdesk_accessible.access_type == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
   end
 
 end

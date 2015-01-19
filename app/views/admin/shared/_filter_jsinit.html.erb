@@ -50,6 +50,35 @@
           //Monkey patch
           if(initFeed[value]==''){ jQuery(c_dom).attr('placeholder', 'None'); }
         break;
+        case 'business_hours_dropdown':
+          var mapSelectHash = function(type){
+                          var c = [];
+                          filter[type].each(function(aI){ 
+                            c.push({ name: aI[0], value: unescapeHtml(aI[1]) });
+                          });
+                          return c;
+                        },
+
+              $ch = FactoryUI
+                     .dropdown(mapSelectHash('choices'), value, _class_name, _data_attr)
+                     .val(initFeed.value),
+
+              $bh_val = mapSelectHash('business_hours_choices'),
+
+              $bh = FactoryUI
+                        .dropdown($bh_val, "business_hours_id", _class_name, _data_attr)
+                        .val(initFeed.business_hours_id);
+
+
+              if($bh_val.length > 1){
+                c_dom = jQuery("<div/>")
+                          .append($ch)
+                          .append($bh);
+              }else {
+                c_dom = jQuery("<div/>").append($ch)
+              }
+
+            break;
         case 'optgroup':
           c_dom = FactoryUI.optgroup(filter.choices, "value", _class_name, _data_attr);
           jQuery(c_dom).val(initFeed["value"]);
@@ -280,7 +309,6 @@
     var active_email_body = null;
    <% end %>
 <% end %>
-
 <% content_for :onload_script do %>
   <% if (filter_type == "observer") %>  
     // i18n For javascript entities

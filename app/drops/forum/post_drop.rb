@@ -41,7 +41,9 @@ class Forum::PostDrop < BaseDrop
   end
 
   def edit_url
-    edit_support_discussions_topic_post_path(source.topic, source.id)
+    # Edits have been disallowed.
+    # This method only for backward compatibility
+    support_discussions_topic_path(source.topic, :anchor => "post-#{source.id}")
   end
 
   def delete_url

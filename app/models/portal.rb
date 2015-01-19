@@ -215,10 +215,7 @@ class Portal < ActiveRecord::Base
         if ["header_color", "tab_color", "bg_color"].include?(key)
           errors.add_to_base("Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
-          value.to_s.split(',').each do |ph|
-            phone = GlobalPhone.parse(ph.strip)
-            errors.add_to_base("Please enter a valid phone number.") and return unless phone && phone.valid?
-          end
+          preferences[key] = RailsFullSanitizer.sanitize(value)
         end
       end
     end

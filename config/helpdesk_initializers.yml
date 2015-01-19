@@ -2,6 +2,7 @@ helpdesk:
   initializers:
     - mri2.1_patches
     - rails3_patches
+    - helpdesk
     - action_mailer_callbacks
     - action_mailer_no_tmail
     - activerecord_log
@@ -20,7 +21,6 @@ helpdesk:
     - facebook_config
     - global_phone
     - gnip_config
-    - helpdesk
     - i18n
     - inflections
     - klout_config

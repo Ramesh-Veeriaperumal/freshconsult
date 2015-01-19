@@ -36,6 +36,11 @@ module Helpdesk::TagsHelper
     ).html_safe
   end
 
+
+  def current_tag_sort_order
+     params[:sort] || cookies[:tag_sort_key] ||  "activity_desc"
+  end
+ 
   def tag_search_text
     return @tags.first.name if params[:tag_id].present? and @tags.present?
     params[:name] || ""

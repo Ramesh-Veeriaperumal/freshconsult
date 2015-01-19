@@ -27,7 +27,7 @@ describe Admin::ProductsController do
                                     :enable_portal => "1",
                                     :forum_category_id => ""
                                     })
-    @test_product_4 = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
+    @test_product_4 = create_product({:email => "#{Faker::Internet.domain_word}2@#{@account.full_domain}",
                                     :portal_name=> "New test_product portal 3", 
                                     :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
                                     :enable_portal => "1",

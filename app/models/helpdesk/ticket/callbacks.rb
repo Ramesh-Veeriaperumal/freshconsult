@@ -111,19 +111,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def create_meta_note
       # Added for storing metadata from MobiHelp
-      self.notes.create(
-        :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
-        :private => true,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
-        :account_id => self.account.id,
-        :user_id => self.requester.id
-      ) if meta_data.present?
+      if meta_data.present?
+        meta_note = self.notes.build(
+          :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
+          :private => true,
+          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+          :account_id => self.account.id,
+          :user_id => self.requester.id
+        ) 
+        meta_note.save_note
+      end
   end
 
   def add_created_by_meta
     if User.current and User.current.id != requester.id and import_id.blank?
       meta_info = { "created_by" => User.current.id, "time" => Time.zone.now }
-      self.meta_data = self.meta_data.blank? ? meta_info : self.meta_data.merge(meta_info)
+      if self.meta_data.blank?
+        self.meta_data = meta_info
+      elsif self.meta_data.is_a?(Hash)
+        self.meta_data.merge!(meta_info)
+      end
     end
   end
 

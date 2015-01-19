@@ -117,7 +117,9 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def edit_url
-    edit_support_discussions_topic_path(source)
+    # Edits have been disallowed.
+    # This method only for backward compatibility
+    support_discussions_topic_path(source.id)
   end
 
   def toggle_follow_url

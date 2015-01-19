@@ -10,7 +10,7 @@ class Support::Discussions::PostsController < SupportController
   before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
- 	before_filter :verify_user, :only => [:update, :edit, :destroy]
+ 	before_filter :verify_user, :only => :destroy
  	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
@@ -110,20 +110,11 @@ class Support::Discussions::PostsController < SupportController
   end
 
 	def edit
-		render :partial => "/support/discussions/topics/edit_post"
+		head 200
 	end
 
 	def update
-		@post.attributes = params[:post]
-		@post.save!
-		rescue ActiveRecord::RecordInvalid
-			flash[:error] = 'An error occurred'
-		ensure
-		respond_to do |format|
-			format.html do
-				redirect_to support_discussions_topic_path(:id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
-			end
-		end
+		redirect_to support_discussions_topic_path(:id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
 	end
 
 	def destroy
