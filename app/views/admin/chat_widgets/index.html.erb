@@ -66,11 +66,11 @@
               url = ASSET_URL.cloudfront;
             }
             if(window.chatSetting){
-              chatSetting.widgets(JSON.parse('<%= @widgets.to_json.html_safe %>'));
+              chatSetting.widgets(<%= @widgets.to_json.html_safe %>);
             }else{
               $.getScript(url+ "/js/chat_settings.js", function(){
                 if(window.chatSetting){
-                  chatSetting.widgets(JSON.parse('<%= @widgets.to_json.html_safe %>'));
+                  chatSetting.widgets(<%= @widgets.to_json.html_safe %>);
                 }
               });
             }
