@@ -92,7 +92,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/wkhtmltopdf_binary_gem.git
-  revision: 77a62c35e4a9bb8d6583ffeadf0073ac92748a91
+  revision: f9aa831c91a687f29aaeebf8a08ac7b38af79422
   specs:
     wkhtmltopdf-binary (0.9.9.3)
 
