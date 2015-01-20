@@ -225,7 +225,15 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def check_ca_privilege
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @ca_response.visible_to_me?
+    if privilege?(:manage_canned_responses)
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  if @ca_response.folder.personal? and !@ca_response.visible_to_me?
+    else
+      if @ca_response.folder.personal?
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@ca_response.visible_to_me?
+      else
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+      end
+    end
   end
 
 end
