@@ -44,12 +44,12 @@ describe AgentsController do
   it "should not update an logged in agent's role" do
     put :update, {:id => @agent.agent.id, :agent => {:user => {:role_ids => ["#{@agent_role.id}","#{@admin_role.id}"]},
                                               },:format => 'xml'}                                                                                               
-    forbidden_status?(response.status).should be_true
+    forbidden_status?(response.status).should be true
   end
   
   it "should not update an logged in agent's ticket permission" do
     put :update, {:id => @agent.agent.id, :agent => {:ticket_permission => 2}, :format => 'xml'}                                                                                               
-    forbidden_status?(response.status).should be_true
+    forbidden_status?(response.status).should be true
   end
 
   def forbidden_status?(status)

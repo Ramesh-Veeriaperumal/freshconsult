@@ -163,7 +163,7 @@ describe Support::Discussions::PostsController do
 							},
 					:topic_id => topic.id
 
-		response.should redirect_to "support/discussions/topics/#{topic.id}?page=1#posts-#{post.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}?page=1#posts-#{post.id}"
 	end
 
 	it "should not update a post on put 'update' when post is invalid" do

@@ -30,7 +30,7 @@ describe Helpdesk::BulkTicketActionsController do
     ticket_reply_notes=Faker::Lorem.paragraph
     @request.env['HTTP_REFERER'] = 'sessions/new'
     Resque.inline = true
-    initial_count = global_ticket.notes.count
+    initial_count = global_agent_ticket.notes.count
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p> #{ticket_reply_notes} <p>" },
                                                 :private => "0",
                                                 :user_id => restricted_user.id,
@@ -48,8 +48,8 @@ describe Helpdesk::BulkTicketActionsController do
     global_ticket.ticket_type.should be_eql(global_agent_ticket.ticket_type)
     global_ticket.priority.should be_eql(global_agent_ticket.priority)
     global_ticket.group_id.should be_eql(global_agent_ticket.group_id)
-    updated_count = global_ticket.notes.count
-    updated_count.should_not be_eql(initial_count)
+    updated_count = global_agent_ticket.notes.count
+    updated_count.should be_eql(initial_count)
     restricted_ticket=@account.tickets.find(restricted_agent_ticket.id)
     restricted_ticket.status.should be_eql(4)
     restricted_ticket.ticket_type.should be_eql("Feature Request")

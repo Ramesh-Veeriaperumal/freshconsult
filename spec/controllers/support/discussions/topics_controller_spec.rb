@@ -50,7 +50,7 @@ describe Support::Discussions::TopicsController do
 
 		get :edit, :id => topic.id
 
-		response.should redirect_to "support/discussions/topics/#{topic.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
 
@@ -174,7 +174,7 @@ describe Support::Discussions::TopicsController do
 					{:title=> new_topic_title, 
 					:body_html=>"<p>#{new_post_body}</p>"}
 
-		response.should redirect_to "support/discussions/topics/#{topic.id}"
+		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
 	it "should deny access when someone tries to update a topic on put 'update'" do

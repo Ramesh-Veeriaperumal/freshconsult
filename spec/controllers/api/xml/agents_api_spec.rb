@@ -84,7 +84,7 @@ describe AgentsController do
                                  :privileges => @agent_role.privileges })
     put :update, {:id => user.agent.id, :agent => {:ticket_permission => 1,
                                               :user => { :job_title => "Developer"}},:format => 'xml'}                                                                                               
-    response.status.should eql("200 OK")
+    response.status.should eql(200)
   end
 
 end

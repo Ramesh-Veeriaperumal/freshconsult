@@ -151,17 +151,19 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
 
    def as_json(options = {}, deep=true)
+    hash = {}
     if deep
-      self[:ticket_id] = self.workable.display_id
-      self[:agent_name] = self.agent_name
-      self[:timespent] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
-      self[:agent_email] = user.email
-      self[:customer_name] = self.customer_name
-      self[:contact_email] = workable.requester.email
+      hash['ticket_id'] = self.workable.display_id
+      hash['agent_name'] = self.agent_name
+      hash['timespent'] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
+      hash['agent_email'] = user.email
+      hash['customer_name'] = self.customer_name
+      hash['contact_email'] = workable.requester.email
       options[:except] = [:account_id,:workable_id,:time_spent]
       options[:root] =:time_entry
     end
-    json_hash = super options
+    json_hash = super(options)
+    json_hash[:time_entry] = json_hash[:time_entry].merge(hash)
     json_hash
   end
 
