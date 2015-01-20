@@ -1,9 +1,11 @@
 <div id = "response_dialog" class="no_recently_used over">
   <div  class="recently_used" id="recently_used_container" style="border-left-width: 0px;">
 	  <div class="pick-response-header"><h3><%= t('canned_folders.recently') %></h3></div>
-	  <ul class="small-list-left">
-	  	<%= each_or_message("helpdesk/tickets/components/ca_response", @recents, t('canned_folders.no_response')) %>
-	  </ul>
+	  <div id="recently_used_list">
+		  <ul class="small-list-left">
+		  	<%= each_or_message("helpdesk/tickets/components/ca_response", @recents, t('canned_folders.no_response')) %>
+		  </ul>
+	  </div>
 	</div>
 	<div class="pick-response-outer back1">
 		<div class="pick-response-header">
