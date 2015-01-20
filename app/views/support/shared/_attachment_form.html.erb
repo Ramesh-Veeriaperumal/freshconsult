@@ -7,61 +7,44 @@
 <div class="attach-wrapper row-fluid">
   <div class="span7">    
     <% if widget_option(:attachFile) %>
-      <% unless dropbox_app_key.blank? %>
+      <% if cloud_files_installed? %>
         <div class="dropdown dropup">        
           <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
             <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
           </a>
           <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
             <li class="portal-attach">
-             <span class="attach-proxy">
-               <a href="#" class="attach-link-wrap" 
-                  id="<%=attach_id%>_file_proxy_link" 
-                  data-file-id="<%=attach_id%>_file" 
-                  onclick="Helpdesk.Multifile.clickProxy(this); return false;">
-                 <%= I18n.t('portal.attach_file').html_safe %>
-               </a>
-             </span>
-             <div class="attach-file attach-link-file hide" id="<%= attach_id %>-attach-container">
-               <input type="file" name="emptyfile" 
-                 id="<%=attach_id%>_file"
-                 data-attach-id="<%=attach_id%>_file"
-                 nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
-                 fileContainer="<%=attach_id%>-container" 
-                 fileList="<%=attach_id%>-attachments"
-                 sendFocusTo="<%=attach_id%>-body" />
-              </div>
-           </li>
-            <% unless dropbox_app_key.blank? %>
-              <li id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
-                  <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[cloud_file_attachments][]" 
-                    fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-                  <a href="#" class="dropbox_button" name="selected-file" id="db-chooser" 
-                    data-holder="<%=attach_id%>_url" onclick='initDropbox(this); event.preventDefault(); '><%=I18n.t('dropbox_attach_from').html_safe %></a>         
-              </li>
-            <% end %>
+              <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
+                <%= I18n.t('portal.attach_file').html_safe %>
+                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
+                  <input type="file" name="emptyfile" 
+                    id="<%=attach_id%>_file"
+                    data-attach-id="<%=attach_id%>"
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                    fileContainer="<%=attach_id%>-container" 
+                    fileList="<%=attach_id%>-attachments"
+                    sendFocusTo="<%=attach_id%>-body" />
+                </div>
+              </a>
+            </li>
+          <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} unless current_user.blank? %>
+          <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
           </ul>      
         </div>
       <% else %>      
         <div class="attach-link portal-attach">
-          <i class="wicon-paper-clip"></i>
-          <span class="attach-proxy">
-               <a href="#" class="attach-link-wrap" 
-                  id="<%=attach_id%>_file_proxy_link"
-                  data-file-id="<%=attach_id%>_file" 
-                  onclick="Helpdesk.Multifile.clickProxy(this); return false;">
-                 <%= I18n.t('portal.attach_file').html_safe %>
-               </a>
-             </span>
-             <div class="attach-file attach-link-file hide" id="<%= attach_id %>-attach-container">
-               <input type="file" name="emptyfile" 
-                 id="<%=attach_id%>_file"
-                 data-attach-id="<%=attach_id%>_file"
-                 nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
-                 fileContainer="<%=attach_id%>-container" 
-                 fileList="<%=attach_id%>-attachments"
-                 sendFocusTo="<%=attach_id%>-body" />
+          <a data-file-id="<%=attach_id%>" href="#" class="attach-link-wrap">
+              <%= I18n.t('portal.attach_file').html_safe %>
+              <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
+                <input type="file" name="emptyfile" 
+                  id="<%=attach_id%>_file"
+                  data-attach-id="<%=attach_id%>"
+                  nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                  fileContainer="<%=attach_id%>-container" 
+                  fileList="<%=attach_id%>-attachments"
+                  sendFocusTo="<%=attach_id%>-body" />
               </div>
+          </a>
         </div>
       <% end %>    
       <div class="attachments-list-form" id="<%= attach_id %>-container">
@@ -139,24 +122,5 @@
           p.css({left: newLeft, top: 0});
         })
     </script>
-  <% unless dropbox_app_key.blank? %>
-    <script type="text/javascript">
-      function initDropbox(inp){
-        Dropbox.choose({success:function(files){
-            var inputElement = jQuery(inp).data('holder');
-
-          jQuery('#'+inputElement)
-            .val(JSON.stringify({link: files[0].link,name: files[0].name, provider: 'dropbox'}))
-            .data('filename', files[0].name)
-            .data('provider', 'Dropbox');
-            Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
-            newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
-            jQuery(inp).data('holder',newInput.attr('id'));
-        }, extensions:""})
-      }
-    </script>
-    <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>
-  <% end %>
 <% end %>
-
 

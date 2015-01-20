@@ -1,0 +1,27 @@
+<% unless installed_apps[:box].blank? %>
+  <li id="boxjs">
+      <input type="hidden"  id="<%=attach_id%>_box_url" name="boxURL" nameWhenFilled="[cloud_file_attachments][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+      <a href="#" class="dropbox_button" name="selected-file" id="box-chooser" 
+        data-holder="<%=attach_id%>_box_url" onclick='initBox(this); event.preventDefault(); '><%=I18n.t('box_attach_from').html_safe %></a>         
+  </li>
+<% end %>
+<% unless installed_apps[:box].blank? %>
+  <script type="text/javascript" src="/javascripts/integrations/box.js"></script>
+  <script type="text/javascript">
+    function initBox(inp){
+      Box.choose({success: function(files, doc, file1_json){
+
+          var inputElement = jQuery(inp, doc).data('holder');
+
+          var $inputElement = jQuery('#'+inputElement, doc)
+                                .val(file1_json || JSON.stringify(files[0]))
+                                .data('filename', files[0].name)
+                                .data('provider', 'Box');
+
+          Helpdesk.Multifile.addFileToList($inputElement);
+          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement, doc));
+          jQuery(inp, doc).data('holder',newInput.attr('id'));
+      }})
+    }
+  </script>
+<% end %>

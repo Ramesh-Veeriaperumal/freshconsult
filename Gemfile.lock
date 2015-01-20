@@ -357,6 +357,8 @@ GEM
     omniauth (1.0.0)
       hashie (~> 1.2)
       rack
+    omniauth-box2 (0.0.1)
+      omniauth (~> 1.0)
     omniauth-constantcontact2 (1.0.4)
       multi_json (~> 1.0)
       multi_xml
@@ -624,6 +626,7 @@ DEPENDENCIES
   nori (= 1.1.4)
   oily_png (= 1.1.1)
   omniauth (= 1.0)
+  omniauth-box2 (~> 0.0.1)
   omniauth-constantcontact2 (~> 1.0.4)
   omniauth-facebook
   omniauth-google

@@ -737,4 +737,14 @@ if Integrations::Application.count == 0
 
   end
 
+  box_app = Integrations::Application.seed(:name) do |s|
+    s.name = "box"
+    s.display_name = "integrations.box.label"
+    s.description = "integrations.box.desc"
+    s.account_id = 0
+    s.listing_order = 27
+    s.options = {:direct_install => true, :oauth_url => "/auth/box?origin=id%3D{{account_id}}%26portal_id%3D{{portal_id}}%26user_id%3D{{user_id}}", :user_specific_auth => true}
+    s.application_type = "box" 
+  end 
+
 end

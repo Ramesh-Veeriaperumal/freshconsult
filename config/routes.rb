@@ -135,8 +135,9 @@ ActionController::Routing::Routes.draw do |map|
     integration.resources :pivotal_tracker, :collection => { :tickets => :get, :pivotal_updates => :post, :update_config => :post}
     integration.resources :user_credentials
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
+    integration.resources :box, :collection => {:choose => :get}
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
-    integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
+    integration.app_oauth_install '/applications/oauth_install/:id', :controller => 'applications', :action => 'oauth_install'
     integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
     integration.namespace :cti do |c|
       c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post}
@@ -692,13 +693,17 @@ ActionController::Routing::Routes.draw do |map|
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create',
       :conditions => { :method => :post }
-
     support.namespace :mobihelp do |mobihelp|
       mobihelp.resources :tickets
       mobihelp.connect "/tickets/:id/notes.:format", :controller => 'tickets' , :action => 'add_note'
       mobihelp.connect "/tickets/:id/close.:format", :controller => 'tickets' , :action => 'close'
     end
-
+    support.refresh_token '/user_credentials/refresh_access_token/:app_name', 
+      :controller => 'integrations/user_credentials', :action => 'refresh_access_token'
+    support.user_oauth_install '/integrations/user_credentials/oauth_install/:app_name', 
+      :controller => 'integrations/user_credentials', :action => 'oauth_install'
+    support.http_proxy '/http_request_proxy/fetch', 
+      :controller => 'integrations/http_request_proxy', :action => 'fetch'
   end
 
   map.namespace :anonymous do |anonymous|

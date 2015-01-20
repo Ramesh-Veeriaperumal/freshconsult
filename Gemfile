@@ -119,6 +119,7 @@ gem "useragent", "~> 0.4.16"
 
 gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
+gem "omniauth-box2", '~> 0.0.1'
 gem "static_model", "~> 1.0.4"
 
 gem 'clockwork', '0.4.1'

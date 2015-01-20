@@ -14,7 +14,11 @@ oauth_options:
   google_oauth2:
     site: https://accounts.google.com
     token_url: /o/oauth2/token
-
+  box:
+    site: https://www.box.com
+    token_url: /api/oauth2/token
+    authorize_url: /api/oauth2/authorize
+    
 development:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzddB6NCYAJVslYxFc.rabGWq9hI7uRXIKqFvCm4IoVzHOtMEkwrHs7dwcLZa
@@ -60,7 +64,9 @@ development:
   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
   options:
     scope: 'read_orders'
-
+ box:
+  consumer_token: zkc8ikgqnaxxp8d8hmof0de1777zmcou
+  consumer_secret: ygt0d5OC2EjOjBzTmnB3QUaVD0vZ9pem
 
 
 defaults: &defaults
@@ -147,7 +153,9 @@ staging:
    consumer_secret: dc44a9d893c1963eac73f3d843fc1f69
    options:
       scope: 'read_orders'
-
+ box:
+  consumer_token: zkc8ikgqnaxxp8d8hmof0de1777zmcou
+  consumer_secret: ygt0d5OC2EjOjBzTmnB3QUaVD0vZ9pem
 
 production:
  salesforce:

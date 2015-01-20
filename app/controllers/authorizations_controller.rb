@@ -18,11 +18,7 @@ class AuthorizationsController < ApplicationController
     Rails.logger.debug "@omniauth "+@omniauth.inspect
     failure if @omniauth.blank?
     @omniauth_origin = session["omniauth.origin"]
-    if @omniauth['provider'] == :open_id #possible dead code
-      current_account.make_current
-      @current_user = current_account.user_emails.user_for_email(@omniauth['info']['email'])  unless  current_account.blank?
-      create_for_sso(@omniauth)
-    elsif @omniauth['provider'] == "twitter"
+    if @omniauth['provider'] == "twitter"
       twitter_id = @omniauth['info']['nickname']
       @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  unless  current_account.blank?
       create_for_sso(@omniauth)
@@ -73,9 +69,8 @@ class AuthorizationsController < ApplicationController
   end
 
   def load_authorization
-    @auth = Authorization.find_from_hash(@omniauth,current_account.id) unless @provider == "facebook"
-    if (@provider == :open_id or @provider == :twitter or @provider == :facebook)
-      @provider = (@provider == :open_id ? :google : @provider)
+    if (@provider == :twitter or @provider == :facebook)
+      @auth = Authorization.find_from_hash(@omniauth, current_account.id) unless @provider == "facebook"
       requires_feature("#{@provider}_signin")
     end
   end
@@ -133,35 +128,40 @@ class AuthorizationsController < ApplicationController
       'oauth_token' => "#{access_token.token}"
     }
 
-    config_params['instance_url'] = "#{access_token.params['instance_url']}" if provider=='salesforce'
-    config_params['shop_name'] = params[:shop] if provider == "shopify"
-    config_params = config_params.to_json
+    case provider
+      when "salesforce"
+        config_params['instance_url'] = "#{access_token.params['instance_url']}"
+      when "shopify"
+        config_params['shop_name'] = params[:shop]
+      when "box"
+        config_params['email'] = @omniauth.extra.raw_info.login
+    end
 
+    config_params = config_params.to_json
+    app = get_integrated_app
     #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
     #user's account and install the application from inside the user's account.
     key_options = { :account_id => @account_id, :provider => @app_name}
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
-    port = (Rails.env.development? ? ":#{request.port}" : '')
-    controller = ( Integrations::Application.find_by_name(@app_name).user_specific_auth? ? 'integrations/user_credentials' : 'integrations/applications' )
-    redirect_url = portal_url + port + "/#{controller}/oauth_install/#{@app_name}"
+    redirect_url = get_redirect_url(app,@app_name)
     redirect_to redirect_url
   end
 
     def create_for_email_marketing_oauth(provider, params)
     config_params = {}
-    
     config_params["mailchimp"] = "{'app_name':'#{provider}', 'api_endpoint':'#{@omniauth.extra.metadata.api_endpoint}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "mailchimp"
     config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
     config_params = config_params[provider].gsub("'","\"")
 
+    
     #Redis::KeyValueStore is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the 
     #user's account and install the application from inside the user's account.
     key_options = { :account_id => @account_id, :provider => provider}
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
-    port = (Rails.env.development? ? ":#{request.port}" : '')
-    redirect_url = portal_url + port + "/integrations/applications/oauth_install/"+provider
+    app = get_integrated_app
+    redirect_url = get_redirect_url(app,provider)
      
     redirect_to redirect_url
   end
@@ -183,8 +183,8 @@ class AuthorizationsController < ApplicationController
         key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
         Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
         port = (Rails.env.development? ? ":#{request.port}" : '')
-        fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}" : portal_url(user_account))
-        redirect_to fb_url + "#{port}#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
+        fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}#{port}" : portal_url(user_account))
+        redirect_to fb_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}"
       end
     end
   end
@@ -264,18 +264,34 @@ class AuthorizationsController < ApplicationController
   end
 
   def portal_url account=nil
-      account ||= Account.find(@account_id || DomainMapping.find_by_domain(request.host).account_id)
-      portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
-      protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
-      return (protocol + portal.host)
+    account ||= Account.find(@account_id || DomainMapping.find_by_domain(request.host).account_id)
+    portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
+    protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
+    port = (Rails.env.development? ? ":#{request.port}" : '')
+    @portal_url = protocol + portal.host + port
   end
-  
+
+  def get_integrated_app
+    @application ||= Integrations::Application.find_by_name(@app_name)
+  end
+
   def destroy
     @authorization = current_user.authorizations.find(params[:id])
     @authorization.destroy
     redirect_to root_url
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify"]
+  def get_redirect_url(app,name)
+    path = portal_url
+    if app.user_specific_auth?
+      path += '/support' if current_user.customer?
+      path += "/integrations/user_credentials/oauth_install/#{name}"
+    else
+      path += "/integrations/applications/oauth_install/#{name}"
+    end
+    path
+  end
+
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
 end

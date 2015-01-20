@@ -184,10 +184,14 @@ en:
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
-  dropbox_attach_from: Attach from Dropbox
+  dropbox_attach_from_text: Attach from <b>Dropbox</b>
   dropbox_choose_file: Choose file
   dropbox_plaintext: Dropbox Attachments
   cloudfile_plaintext: Attachments on Cloud
+  box_attach_label: Attach from
+  box_attach_from: Attach from <b>Box</b>
+  box_choose_file: Choose file
+  box_plaintext: Box Attachments
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time
@@ -5235,6 +5239,12 @@ en:
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
+    box:
+      chooser_title: "Choose a file from Box..."
+      label: "Box"
+      desc: "Attach and Share your data/files from Box."
+      helptext: "<h4>Box integration help</h4><br/><p>The Box Integration lets agents and users browse for files from their Box folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p> Your Box Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
