@@ -24,6 +24,7 @@ module ApiWebhooks::Methods
 	end
 
 	def filter_subscribe_event filtered, change_key, change_value
+		change_key = change_key.to_sym
 		( MAP_SUBSCRIBE_EVENT[self.class.name].include?( change_key ) ||
 			Account.current.event_flexifields_with_ticket_fields_from_cache.
 																				map(&:flexifield_name).map(&:to_sym).include?(change_key)
