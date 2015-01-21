@@ -3,16 +3,22 @@ class Sanitize
     ARTICLE_WHITELIST = {
       :elements => HTML_RELAXED[:elements] + ['object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
+        :all => HTML_RELAXED[:attributes][:all] + ['name'],
         'iframe' => HTML_RELAXED[:attributes]['iframe'] + ['align'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
-        'a' => HTML_RELAXED[:attributes]['a'] + ['name'],
-        'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form'],
+        'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
         'param' => ['name', 'value'],
-        'embed' => ['src', 'type', 'width', 'height'],
+        'embed' => [
+                    'src', 'type', 'width', 'height',
+                    'flashvars', 'base', 'type',
+                    'seamlesstabbing', 'allowFullScreen', 'swLiveConnect', 'allowScriptAccess', 'pluginspage', 'allowScriptAccess',
+                    'autostart', 'loop', 'playcount', 'volume', 'controls', 'controller', 'pluginurl', 'mastersound',
+                    'hidden', 'target', 'startime', 'endtime', 'vspace', 'hspace', 'palette'
+                    ],
         'video' => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
         'track' => ['kind', 'src', 'srclang', 'label', 'default']
-      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track', 'a')),
+      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track', :all)),
 
       :protocols => {
         'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }
