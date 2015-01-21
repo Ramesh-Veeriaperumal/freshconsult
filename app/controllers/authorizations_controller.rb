@@ -57,6 +57,7 @@ class AuthorizationsController < ApplicationController
       origin = CGI.parse(origin)
       @app_name = origin['app_name'][0].to_s if origin.has_key?('app_name')
       @app_name ||= Integrations::Constants::APP_NAMES[@provider.to_sym] unless @provider.blank?
+      @origin_user_id = origin.has_key?('user_id') ? origin['user_id'][0].to_i : params[:user_id]
       if origin.has_key?('id') 
         @account_id = origin['id'][0].to_i
         @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id') 
@@ -284,12 +285,21 @@ class AuthorizationsController < ApplicationController
   def get_redirect_url(app,name)
     path = portal_url
     if app.user_specific_auth?
-      path += '/support' if current_user.customer?
+      path += '/support' if origin_user.customer?
       path += "/integrations/user_credentials/oauth_install/#{name}"
     else
       path += "/integrations/applications/oauth_install/#{name}"
     end
     path
+  end
+
+  def origin_account
+    @origin_account ||= @account_id ? Account.find_by_id(@account_id) : current_account
+  end
+
+  def origin_user
+    @origin_user ||= 
+      origin_account.all_users.find_by_id(@origin_user_id) if origin_account && @origin_user_id
   end
 
   OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box"]

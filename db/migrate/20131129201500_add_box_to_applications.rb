@@ -7,7 +7,7 @@ class AddBoxToApplications < ActiveRecord::Migration
         :description => "integrations.box.desc", 
         :listing_order => 27,
         :options => { :direct_install => true, 
-          :oauth_url => "/auth/box?origin=id%3D{{account_id}}%26portal_id%3D{{portal_id}}%26app_name%3Dbox", 
+          :oauth_url => "/auth/box?origin=id%3D{{account_id}}%26portal_id%3D{{portal_id}}%26app_name%3Dbox%26user_id%3D{{user_id}}", 
           :user_specific_auth => true,
           :return_uri => "/integrations/box/choose" },
         :application_type => "box",
