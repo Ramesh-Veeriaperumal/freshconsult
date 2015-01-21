@@ -73,7 +73,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def delete_multiple
     @items.each do |item|
-      item.destroy if item.visible_to_me?
+      item.destroy if vizible_to_me?(item)
     end
   end
 
@@ -225,15 +225,21 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def check_ca_privilege
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless vizible_to_me?(@ca_response)
+  end
+
+  def vizible_to_me?(ca_response)
+    vizible = true
     if privilege?(:manage_canned_responses)
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  if @ca_response.folder.personal? and !@ca_response.visible_to_me?
+      vizible = false  if ca_response.folder.personal? and !ca_response.visible_to_me?
     else
-      if @ca_response.folder.personal?
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@ca_response.visible_to_me?
+      if ca_response.folder.personal?
+        vizible = false if !ca_response.visible_to_me?
       else
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+        vizible = false
       end
     end
+    vizible
   end
 
 end
