@@ -9,25 +9,24 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
     begin
       initialize_params
       @csv_headers = @rows.shift
-      mapped_fields = @rows
-        mapped_fields.each do |row|
+        @rows.each do |row|
           assign_field_values row
           save_item row       
         end
-      if @item_import && !@failed.blank?
-        build_csv
-        set_status
-        Admin::DataImportMailer.deliver_customers_import_with_failure({:user => @current_user, 
-                                                  :domain => @current_account.host,
-                                                  :url => hash_url,
-                                                  :type => params[:type].pluralize})
+      unless @failed.blank?
+        build_csv_file
+        UserNotifier.deliver_notify_customers_import(mailer_params)
       else
-        UserNotifier.send_later(:deliver_notify_contacts_import, @current_user)
-        @item_import.destroy
+        UserNotifier.deliver_notify_customers_import({:user => @current_user, 
+                                                      :type => params[:type].pluralize.capitalize, 
+                                                      :success =>true})
       end
+      @item_import && @item_import.destroy
     rescue => e
       NewRelic::Agent.notice_error(e)
       puts "Error in #{params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
+    ensure
+      remove_import_file(file_path)
     end
 	end
 
@@ -70,7 +69,7 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
         company_validation
     end
     set_validatable_custom_fields unless @item.nil?
-    custom_checkbox 
+    refine_custom_checkbox 
   end
 
   def contact_validation
@@ -95,7 +94,7 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
                                           :error_label => :label }
   end
 
-  def custom_checkbox
+  def refine_custom_checkbox
     @cb_fields = []
     unless (custom_field = @params_hash[:user][:custom_field]).blank?
       @current_form.fields.map { |fd| @cb_fields << fd.name if fd.field_type == :custom_checkbox }
@@ -134,31 +133,18 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
     @failed << row.push(error_msg)
   end
 
-  def build_csv
+  def build_csv_file
     csv_string = CSVBridge.generate do |csv|
       csv << @csv_headers.push("errors")
       @failed.map {|item| csv << item}
     end
-    build_file csv_string
-  end
-
-  def build_file csv_string
     write_file(csv_string)
-    build_attachment(file_path)
-    remove_import_file(file_path)
   end
 
   def write_file file_string
     File.open(file_path , "wb") do |f|
       f.write(file_string)
     end
-  end
-
-  def build_attachment(file_path)
-    file = File.open(file_path,  'r')
-    attachment = @item_import.attachments.build(:content => file, :description => "failed_#{params[:type].pluralize}", 
-                    :account_id => @item_import.account_id)
-    attachment.save!
   end
 
   def file_path
@@ -173,24 +159,29 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   def file_name
     "failed_#{params[:type].pluralize}_#{@current_account.id}.csv"
   end
-  
+
+  def file_size
+    File.size(file_path)
+  end
+
+  def mailer_params
+    unless file_size > ONE_MEGABYTE
+      {
+        :user => @current_user, 
+        :type => params[:type].pluralize.capitalize, 
+        :unsaved_item => "please find the attachment", 
+        :file_path => file_path, :file_name => file_name
+      }
+    else
+      {
+        :user => @current_user, 
+        :type => params[:type].pluralize.capitalize, 
+        :unsaved_item => "you have more unsaved #{params[:type].pluralize}"
+      }
+    end
+  end
+
   def remove_import_file(file_path)
     FileUtils.rm_f(file_path)
-  end
-
-  def hash(import_id)
-    hash = Digest::SHA1.hexdigest("#{import_id}#{Time.now.to_f}")
-  end
-
-  def hash_url
-    url_for(
-            :controller => "download_import_file/#{params[:type]}/#{hash(@item_import.id)}", 
-            :host => @current_account.host, 
-            :protocol => @current_account.url_protocol
-            )
-  end
-
-  def set_status
-    @item_import.update_attributes(:status => false)
   end
 end

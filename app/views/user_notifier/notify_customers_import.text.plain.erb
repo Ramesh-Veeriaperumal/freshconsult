@@ -2,7 +2,11 @@ Hi <%= @user.name%>,
 
 <%= t(:'flash.import.thank_user')%> 
 
-<%= t(:'flash.import.details', :customer => "Customer", :users => "Contacts")%>
+<%= "#{t('flash.import.info', :customer => 'Customer', :type => @type)}"%>
+
+<% unless @import_success %>
+<%= @unsaved_item %>
+<% end %>
 
 <%= t(:'flash.import.help_desk')%>
 

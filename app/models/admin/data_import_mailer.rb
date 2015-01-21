@@ -41,16 +41,6 @@ class Admin::DataImportMailer < ActionMailer::Base
     body          :user => options[:user][:name], :account => Account.current
     content_type  "text/html"
   end 
-
-  def customers_import_with_failure(options={})
-    recipients    options[:user].email
-    from          "support@freshdesk.com"
-    subject       "#{options[:type]} Import for #{options[:domain]}"
-    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
-    sent_on       Time.now
-    body          :user => options[:user], :url => options[:url], :type => options[:type], :account => Account.current
-    content_type  "text/html"
-  end
   
   def google_contacts_import_email(options)
     @last_stats = options[:status]

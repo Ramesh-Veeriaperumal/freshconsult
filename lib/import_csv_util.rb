@@ -2,6 +2,8 @@
 require 'csv'
 module ImportCsvUtil
 
+  ONE_MEGABYTE = 1000000
+
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def map_fields
@@ -46,7 +48,6 @@ module ImportCsvUtil
         @rows << row
         break if header && @rows.size == 2
       end
-      @map_fields_error = OnlyHeaders if header && @rows.size < 2
     rescue CSVBridge::MalformedCSVError => e
       @map_fields_error = e
       Rails.logger.error "Error while reading csv data ::#{e.message}\n#{e.backtrace.join("\n")}"
@@ -93,8 +94,5 @@ module ImportCsvUtil
   end
 
   class MissingFileContentsError < StandardError
-  end
-
-  class OnlyHeaders < StandardError
   end
 end 

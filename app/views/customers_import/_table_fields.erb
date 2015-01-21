@@ -4,7 +4,7 @@
 	<div>
 		<%
 			extra_classes = "table_header select2 span4 "
-			extra_classes << "required " if (type.eql?("company") && key == "Company name") || key == t("contact_import.email")
+			extra_classes << "required " if (type.eql?("company") && key == "Company name")
 		%>
 
 		<%= select nil, "fields[#{value}]", options_for_select(to_hash(@rows.first)), {:include_blank => "-"}, 

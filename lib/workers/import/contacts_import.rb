@@ -2,7 +2,7 @@ class Workers::Import::ContactsImport
 
 	extend Resque::AroundPerform
 
-	@queue = "contactImport"
+	@queue = "ContactImport"
 
 	def self.perform(contact_params)
 		Workers::Import::CustomersImportWorker.new(contact_params).perform

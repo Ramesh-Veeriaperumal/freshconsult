@@ -3,12 +3,12 @@ Hi <%= @user.name%>,
 </div>
 <div>
 <p><%= t(:'flash.import.thank_user').html_safe%> </p>
-<p><%= "#{t('flash.import.details', :customer => 'Customer', :type => @type)}".html_safe%></p>
+<p><%= "#{t('flash.import.info', :customer => 'Customer', :type => @type)}".html_safe%></p>
 <p></p>
-<p><%= "#{t('flash.import.unsaved', :url => @url, :type => @type)}".html_safe%></p>
-<br/>
-<%=  @url %>
-<p></p>
+<% unless @import_success %>
+	<p><%= @unsaved_item %></p>
+	<p></p>
+<%end%>
 <p><%= t(:'flash.import.help_desk').html_safe%></p>
 <p></p>
 <div>

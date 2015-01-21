@@ -84,8 +84,6 @@ ActionController::Routing::Routes.draw do |map|
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
 
   map.download_file '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download'
-
-  map.download_import_file '/download_import_file/:type/:token', :controller => 'admin/data_import', :action => 'download'
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
 
