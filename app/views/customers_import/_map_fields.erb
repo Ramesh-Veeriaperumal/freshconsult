@@ -17,7 +17,7 @@
 
 		<li class="seperator control-group"></li>
 			<li class="control-group">
-				<p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
+				<p><%= content_tag(:b, t('warning')) %> <%= t('customer_import.import_warning_info', :type => params[:type], :field => params[:type].eql?("company") ? "name" : "email") %></p>
 			</li>	
 		</li>
 

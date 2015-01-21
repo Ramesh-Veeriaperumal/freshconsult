@@ -157,7 +157,7 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   end
 
   def file_name
-    "failed_#{params[:type].pluralize}_#{@current_account.id}.csv"
+    "failed_#{params[:customers][:file_name]}"
   end
 
   def file_size

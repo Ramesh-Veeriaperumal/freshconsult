@@ -2880,7 +2880,6 @@ en:
     convert_fulltime: Full-Time Agent
     convert_occasional: Occasional Agent
     send_activation: Send activation email
-    import_csv: Import Customers from CSV
     export_csv: Export to CSV
     import_google: Import from Google
     import_google_no: "No"
@@ -3250,25 +3249,12 @@ en:
   import_added_newly: Added Newly
   quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
-  import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
-  contact_import:
-  #   name: Name
-  #   job_title: Job Title
-  #   company: Company
-  #   work_phone: Work Phone
-  #   email: Email
-  #   twitter_id: Twitter Id
-  #   mobile_phone: Mobile Phone
-  #   address: Address
-  #   background_info: Background Information
-  #   tags: Tags
-  #   language: Language
-  #   timezone: Timezone
+  customer_import:
+    import_warning_info: If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated.
+    import_csv: "Import %{type} from CSV"
     sample_data: Sample data
-    import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
-  #   can_see_all_tickets_of_the_company: Can view all company tickets ?
-  #   can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
-  #   can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
+    contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
+    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..). Please refer <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered

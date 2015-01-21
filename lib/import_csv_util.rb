@@ -17,6 +17,7 @@ module ImportCsvUtil
         session[:map_fields] = nil
         @map_fields_error =  InconsistentStateError
       else
+        @file_name = session[:map_fields][:file_name]
         @file_location = session[:map_fields][:file]
       end
     end
@@ -29,15 +30,16 @@ module ImportCsvUtil
 
   def store_file
     file_field = params[:file]
-    file_name = "csv_#{Account.current.id}/#{Time.now.to_i}/#{file_field.original_filename}"
+    file_path = "csv_#{Account.current.id}/#{Time.now.to_i}/#{file_field.original_filename}"
       AwsWrapper::S3Object.store(
-            file_name,
+            file_path,
             file_field,
             S3_CONFIG[:bucket],
             :content_type => file_field.content_type
       )
     session[:map_fields] = {}
-    session[:map_fields][:file] = file_name
+    session[:map_fields][:file_name] = file_field.original_filename
+    session[:map_fields][:file] = file_path
   end
 
   def read_file file_location, header = false
@@ -71,6 +73,7 @@ module ImportCsvUtil
       :email => current_user.email,
       :type => params[:type],
       :customers =>{
+        :file_name => @file_name,
         :file_location => @file_location,
         :fields =>  @field_params,
       }

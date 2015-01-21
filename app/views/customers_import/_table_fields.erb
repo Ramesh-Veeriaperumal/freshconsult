@@ -12,16 +12,8 @@
 		
 	</div>
 	<%= content_tag(:span, "", 
-		:title => t("contact_import.sample_data") ,
+		:title => t("customer_import.sample_data") ,
 		:class => "sample_value_#{value} italics muted tooltip sample_values ellipsis")%>
 </div>
-
-<% if key == t("contacts.role.info") %>
-	<br/>
-	<div class="controls">
-		<%= content_tag(:small, t("contact_import.can_see_all_tickets"), :class => "muted")%>
-		<%= content_tag(:small, t("contact_import.can_see_all_tickets_information"), :class => "muted")%>
-	</div>
-<% end %>
 
 
