@@ -20,7 +20,7 @@ class BusinessCalendar < ActiveRecord::Base
   after_commit ->(obj) { 
       obj.clear_cache
       chatBusinessCalendarUpdate('update') 
-    }, on: :create
+    }, on: :update
 
   # ##### Added to mirror db changes in helpkit to freshchat db
   after_commit ->(obj) { 
