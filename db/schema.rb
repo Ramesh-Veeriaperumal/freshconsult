@@ -1262,6 +1262,24 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.datetime "updated_at"
   end
 
+  create_table "freshfone_number_addresses", :id => false, :force => true do |t|
+    t.integer  "id",                   :limit => 8, :null => false
+    t.integer  "account_id",           :limit => 8
+    t.integer  "freshfone_account_id", :limit => 8
+    t.string   "address_sid"
+    t.string   "friendly_name"
+    t.string   "business_name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.string   "postal_code"
+    t.string   "country",              :limit => 5
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_number_addresses", ["account_id", "country"], :name => "index_freshfone_number_address_on_account_id_and_country"
+  add_index "freshfone_number_addresses", ["id", "account_id"], :name => "index_freshfone_number_address_on_id_and_account_id", :unique => true
   create_table "freshfone_numbers", :force => true do |t|
     t.integer  "account_id",               :limit => 8
     t.string   "number",                   :limit => 50
