@@ -19,7 +19,7 @@ class Search::SearchController < ApplicationController
 			}
 
 	def index
-		search search_classes
+		(@search_key.blank? and params[:search_conditions].blank?) ? set_result_json : search(search_classes)
 		post_process
 	end
 
@@ -36,6 +36,8 @@ class Search::SearchController < ApplicationController
 							search_query f
 							f.filter :term, { :account_id => current_account.id }
 							search_filter_query(f, search_in)
+
+							f.filter :bool, :must => keyword_search_filters if @keyword_search
 						end
 					end
 					search_sort(search)
@@ -48,7 +50,7 @@ class Search::SearchController < ApplicationController
 			@search_recursion_counter += 1
 			process_results(search_in, options) unless is_native_mobile?
 		rescue Exception => e
-			@result_json = @result_json.to_json
+			set_result_json
 			Rails.logger.debug e.inspect
 			NewRelic::Agent.notice_error(e)
 		end
@@ -57,10 +59,21 @@ class Search::SearchController < ApplicationController
 	protected
 
 		def search_query f
+			f.query do |q|
+				q.boolean do |b|
+					exact_or_wildcard_query(b)
+					keyword_search_queries(b) if @keyword_search
+				end
+			end
+		end
+
+		def exact_or_wildcard_query b_query
 			if SearchUtil.es_exact_match?(@search_key)
-				f.query { |q| q.text :_all, SearchUtil.es_filter_exact(@search_key), :type => :phrase }
+				query = SearchUtil.es_filter_exact(@search_key) #Initializing into a variable as inaccessible inside block
+				b_query.must { text :_all, query, :type => :phrase }
 			else
-				f.query { |q| q.string SearchUtil.es_filter_key(@search_key), :analyzer => "include_stop" }
+				query = SearchUtil.es_filter_key(@search_key) #Initializing into a variable as inaccessible inside block
+				b_query.must { string query, :analyzer => "include_stop" }
 			end
 		end
 
@@ -127,7 +140,7 @@ class Search::SearchController < ApplicationController
 			end
 
 			rescue Exception => e
-				@result_json = @result_json.to_json
+				set_result_json
 				Rails.logger.debug e.inspect
 				NewRelic::Agent.notice_error(e)
 		end
@@ -142,7 +155,7 @@ class Search::SearchController < ApplicationController
 
 		def generate_result_json
 			@result_json[:current_page] = @current_page
-			@result_json = @result_json.to_json
+			set_result_json
 		end
 
 		def post_process
@@ -195,7 +208,7 @@ class Search::SearchController < ApplicationController
 		end
 
 		def initialize_search_parameters
-			@search_key = params[:term] || params[:search_key]
+			@search_key = params[:term] || params[:search_key] || ''
 			initialize_search_sort
 			@result_json = { :results => [], :current_page => 1 }
 			@search_recursion_limit = 4
@@ -203,6 +216,7 @@ class Search::SearchController < ApplicationController
 			@result_count_limit = 30
 			@results = {}
 			@searched_ticket_ids = []
+			@keyword_search = respond_to?(:keyword_search_filters) and respond_to?(:keyword_search_queries) # Can be removed if its implemented for all
 		end
 
 		def initialize_search_sort
@@ -212,5 +226,9 @@ class Search::SearchController < ApplicationController
 
 		def set_search_sort_cookie
 			cookies[:search_sort] = params[:search_sort] if params[:search_sort]
+		end
+
+		def set_result_json
+			@result_json = @result_json.to_json
 		end
 end

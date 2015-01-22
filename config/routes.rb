@@ -213,6 +213,7 @@ ActionController::Routing::Routes.draw do |map|
     search.ticket_related_solutions '/related_solutions/ticket/:ticket/', :controller => 'solutions', :action => 'related_solutions'
     search.ticket_search_solutions '/search_solutions/ticket/:ticket/', :controller => 'solutions', :action => 'search_solutions'
   end
+  map.connect '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :conditions => { :method => :post }
   map.connect '/search/tickets/filter/:search_field', :controller => 'search/tickets', :action => 'index'
   map.connect '/search/all', :controller => 'search/home', :action => 'index'
   map.connect '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
