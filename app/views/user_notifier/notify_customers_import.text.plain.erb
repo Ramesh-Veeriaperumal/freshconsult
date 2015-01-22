@@ -2,10 +2,20 @@ Hi <%= @user.name%>,
 
 <%= t(:'flash.import.thank_user')%> 
 
-<%= "#{t('flash.import.info', :customer => 'Customer', :type => @type)}"%>
+<% if @import_success %>
+	<%= "#{t('flash.import.info', :customer => 'Customer', :type => @type)}"%>
+<% else %>
+	<% if @attachment %>
+		<%= "#{t('flash.import.attachment_info1', :type => @type.downcase, :success => @success_count, :failure => @failed_count)}" %>
 
-<% unless @import_success %>
-<%= @unsaved_item %>
+		<%= "#{t('flash.import.attachment_info2', :type => @type)}" %>
+	<% else %>
+		<%= "#{t('flash.import.info2', :type => @type.downcase, :success => @success_count, :failure => @failed_count)}" %>
+
+		<%= "#{t('flash.import.info3', :type => @type, :dc_type => @type.downcase)}" %>
+	<% end %>
+
+	<%= "#{t('flash.import.info4', :type => @type, :dc_type => @type.downcase)}"%>
 <% end %>
 
 <%= t(:'flash.import.help_desk')%>

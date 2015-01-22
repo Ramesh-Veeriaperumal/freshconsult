@@ -24,7 +24,11 @@ module ImportCsvUtil
 
     unless @map_fields_error
       read_file session[:map_fields][:file],true
-      @fields = current_account.send("#{params[:type]}_form").fields.collect { |field| {:name => field.name, :label => field.label} }
+      @fields = current_account.send("#{params[:type]}_form").fields.collect do |field| 
+        hash = {:name => field.name, :label => field.label} 
+        hash.merge!(:default=>true) if field.default_field?
+        hash
+      end
     end
   end
 

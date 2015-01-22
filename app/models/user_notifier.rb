@@ -98,14 +98,20 @@ class UserNotifier < ActionMailer::Base
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
         plain.body  render_message("notify_customers_import.text.plain.erb", :user => options[:user], 
-                :type => options[:type], :unsaved_item => options[:unsaved_item],
-                :import_success => options[:success])
+                :type => options[:type], 
+                :success_count => options[:success_count], 
+                :failed_count => options[:failed_count],
+                :import_success => options[:import_success],
+                :attachment => options[:file_name])
       end
 
       alt.part "text/html" do |html|
         html.body   render_message("notify_customers_import.text.html.erb", :user => options[:user], 
-                :type => options[:type], :unsaved_item => options[:unsaved_item],
-                :import_success => options[:success])
+                :type => options[:type], 
+                :success_count => options[:success_count], 
+                :failed_count => options[:failed_count],
+                :import_success => options[:import_success],
+                :attachment => options[:file_name])
       end
     end
 

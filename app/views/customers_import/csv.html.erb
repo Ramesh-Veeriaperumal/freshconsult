@@ -1,12 +1,12 @@
 <% content_for :sidebar do -%><%-end %>
 <%= content_tag(:h3, t('customer_import.import_csv', :type => params[:type].pluralize.capitalize), :class => "lead") %>
-	<% form_for :user,:url => { :controller => "customers_import", :action => "create" }, :html => {:multipart => true} do |f| %>
+	<% form_for :customer,:url => { :controller => "customers_import", :action => "create" }, :html => {:multipart => true} do |f| %>
 	  <%= f.error_messages %>
 	  <div class="row-fluid">
 	  	<div class="control-group">
 	  		<label class="control-label" for="file"><%= content_tag(:b, t('step1')) %>: <%= t('import_step1_info') %></label>
 	  		<div class="controls">
-		      	<%= file_field_tag 'file',:accept => 'text/csv', :class => "required", :size => "40" %>
+		      	<%= file_field_tag 'file',:accept => '.csv', :class => "required", :size => "40" %>
 		    </div>
 		    <%= hidden_field_tag 'type', params[:type] %>
 	  	</div>

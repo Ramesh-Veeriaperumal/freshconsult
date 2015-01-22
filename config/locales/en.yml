@@ -1797,8 +1797,12 @@ en:
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
       thank_user: Thank you for submitting a import request.
-      info: "Your CSV file has now been processed and the import has been completed successfully. You can open your helpdesk and go to %{customer}-->%{type} to check out the new information. "
-      unsaved: "<b>You have few unsaved %{type}. Please find the attachment below</b>"
+      info1: "Your CSV file has now been processed and the import has been completed successfully. You can open your helpdesk and go to Customer-->%{type} to check out the new information. "
+      attachment_info1: "We have successfully imported %{success} %{type} to your helpdesk. However, %{failure} %{type} could not be imported due to error in data.<b> The rows corresponding to these %{failure} %{type} can be found in the attachment along with the reason for failure.</b>"
+      attachment_info2: "Kindly update the attached csv and resubmit it from your helpdesk at Customer-> %{type} -> Import"
+      info2: "We have successfully imported %{success} %{type} to your helpdesk. However, <b>%{failure} %{type} could not be imported due to error in data. Kindly check this link for information on formatting the csv file.</b>"
+      info3: "Kindly submit the edited file for failed %{dc_type} at Customer-> %{type} -> Import."
+      info4: "The successfully imported %{dc_type}, can be viewed under Customer-->%{type}."
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -3254,7 +3258,26 @@ en:
     import_csv: "Import %{type} from CSV"
     sample_data: Sample data
     contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
-    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..). Please refer <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
+    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..) Read more about it <a href = '%{solution_link}' target = '_blank' >here.</a>"
+  contact_import:
+    name: Name
+    job_title: Job Title
+    company_name: Company
+    phone: Work Phone
+    email: Email
+    twitter_id: Twitter Id
+    mobile: Mobile Phone
+    address: Address
+    description: Background Information
+    tag_names: Tags
+    language: Language
+    time_zone: Timezone
+    client_manager: Can see all tickets from his company
+  company_import:
+    name: Company Name
+    description: Description
+    note: Notes
+    domains: Domain Names for this company
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered

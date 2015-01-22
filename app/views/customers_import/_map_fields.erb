@@ -9,8 +9,8 @@
 
       	<% @fields.each do |field| -%>
 			<li class="control-group  row-fluid">
-				<%= render :partial => 'table_fields' , :locals => {:key => field[:label], :value => field[:name], :type => params[:type]} 
-				%>
+				<%= render :partial => 'table_fields', :locals => {:key => field[:label], :value => field[:name], 
+					:is_default => field[:default], :type => params[:type]} %>
 			</li>
 		<% end -%>
 

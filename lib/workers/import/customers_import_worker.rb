@@ -13,14 +13,8 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
           assign_field_values row
           save_item row       
         end
-      unless @failed.blank?
-        build_csv_file
+        build_csv_file unless @failed.blank?
         UserNotifier.deliver_notify_customers_import(mailer_params)
-      else
-        UserNotifier.deliver_notify_customers_import({:user => @current_user, 
-                                                      :type => params[:type].pluralize.capitalize, 
-                                                      :success =>true})
-      end
       @item_import && @item_import.destroy
     rescue => e
       NewRelic::Agent.notice_error(e)
@@ -31,6 +25,8 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
 	end
 
   def initialize_params
+    @created = @updated = 0
+    @failed = []
     params[:customers].symbolize_keys!
     set_current_account
     read_file params[:customers][:file_location]
@@ -104,14 +100,13 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   end
 
   def save_item row
-    created = updated = 0
     unless @item.nil?
       @params_hash[:user][:deleted] = false unless @type.eql?("company")#To make already deleted user active
-      @item.update_attributes(@params_hash[:"#{@type}"]) ? updated+=1 : failed_item(row)
+      @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
     else
       @item = @current_account.send("#{@type.pluralize}").new
       set_validatable_custom_fields
-      create_item ? created+=1 : failed_item(row)
+      create_item ? @created+=1 : failed_item(row)
     end 
     enable_user_activation(@current_account)     
   end
@@ -128,7 +123,6 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   end
 
   def failed_item row
-    @failed ||= []
     error_msg = @item.errors.map {|msg| (msg + @item.errors["#{msg}"])}.to_sentence
     @failed << row.push(error_msg)
   end
@@ -165,20 +159,14 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   end
 
   def mailer_params
-    unless file_size > ONE_MEGABYTE
-      {
-        :user => @current_user, 
-        :type => params[:type].pluralize.capitalize, 
-        :unsaved_item => "please find the attachment", 
-        :file_path => file_path, :file_name => file_name
-      }
-    else
-      {
-        :user => @current_user, 
-        :type => params[:type].pluralize.capitalize, 
-        :unsaved_item => "you have more unsaved #{params[:type].pluralize}"
-      }
-    end
+    hash = { :user => @current_user, 
+               :type => params[:type].pluralize.capitalize, 
+               :success_count => (@created + @updated),
+               :failed_count => @failed.count 
+              }
+    hash.merge!(:file_path => file_path, :file_name => file_name) unless @failed.blank? || file_size > ONE_MEGABYTE 
+    hash.merge!(:import_success => true) if @failed.blank?
+    hash
   end
 
   def remove_import_file(file_path)

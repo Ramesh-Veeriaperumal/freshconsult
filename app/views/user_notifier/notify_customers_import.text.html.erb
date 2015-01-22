@@ -3,11 +3,26 @@ Hi <%= @user.name%>,
 </div>
 <div>
 <p><%= t(:'flash.import.thank_user').html_safe%> </p>
-<p><%= "#{t('flash.import.info', :customer => 'Customer', :type => @type)}".html_safe%></p>
-<p></p>
-<% unless @import_success %>
-	<p><%= @unsaved_item %></p>
+<% if @import_success %>
+	<p><%= "#{t('flash.import.info1', :type => @type)}".html_safe%></p>
 	<p></p>
+<% else %>
+	<% if @attachment %>
+		<p>
+			<%= "#{t('flash.import.attachment_info1', :type => @type.downcase, :success => @success_count, :failure => @failed_count)}".html_safe %>
+		</p>
+	    </br>
+		<p><%= "#{t('flash.import.attachment_info2', :type => @type)}".html_safe %></p>
+		<p></p>
+	<% else %>
+		<p>
+			<%= "#{t('flash.import.info2', :type => @type.downcase, :success => @success_count, :failure => @failed_count)}".html_safe %>
+		</p>
+		</br>
+		<p><%= "#{t('flash.import.info3', :type => @type, :dc_type => @type.downcase)}".html_safe %></p>
+		<p></p>
+	<% end %>
+	<p><%= "#{t('flash.import.info4', :type => @type, :dc_type => @type.downcase)}".html_safe%></p>
 <%end%>
 <p><%= t(:'flash.import.help_desk').html_safe%></p>
 <p></p>

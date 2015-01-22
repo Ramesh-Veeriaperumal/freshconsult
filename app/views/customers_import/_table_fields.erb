@@ -1,4 +1,6 @@
-<label class="control-label"><%= key %></label>
+<label class="control-label">
+	<%= is_default ? I18n.t("#{type}_import.#{value}") : key %>
+</label>
 
 <div class="controls">
 	<div>
