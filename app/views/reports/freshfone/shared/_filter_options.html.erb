@@ -15,16 +15,7 @@
   </li>
   <li>
     <label class="control-label"><%=t('reports.freshfone.number')%></label>  
-    <%= select_tag :freshfone_number, 
-     grouped_options_for_select(
-              [
-                ["", [[t('reports.freshfone.all_numbers'), Reports::FreshfoneReport::ALL_NUMBERS.to_i]]],
-                [" ", freshfone_numbers.collect{ |c| [c.number_name,c.id] }.reverse]
-              ], @freshfone_number.to_i).html_safe,
-          { :multiple => false, :"data-minimum-results-for-search" => "3",
-              :class => "select2 filter_item", "data-dropdown-css-class" => "ff-select2-dropdown-pl",
-              "data-placeholder".to_sym() => t('reports.freshfone.select_number')
-            }  %>
+    <input type="hidden" id="freshfone_number"  name="freshfone_number" class="select2"/>
   </li>
   <li>
       <label class="control-label"><%=t('reports.freshfone.group')%></label>  

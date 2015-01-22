@@ -64,5 +64,6 @@
   jQuery('body').on('assetLoaded.fjax', function() {
     App.Freshfonereports.summaryReports('<%=generate_reports_freshfone_summary_reports_url%>');
     App.Freshfonereports.groupOptions('<%= filter_group_options.html_safe %>','<%=t("reports.freshfone.options.all_groups")%>');
+    App.Freshfonereports.numberOptions(JSON.parse('<%= filter_number_options.html_safe %>'),JSON.parse('<%=filter_default_number.html_safe%>'));
   });
 <%end%>

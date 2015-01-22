@@ -16,7 +16,7 @@ include Freshfone::CallHistoryHelper
 
   #Used in filter_options
   def freshfone_numbers
-    @freshfone_numbers ||= current_account.freshfone_numbers
+    @freshfone_numbers ||= current_account.all_freshfone_numbers
   end
 
   def agent_groups_hash
@@ -30,6 +30,20 @@ include Freshfone::CallHistoryHelper
     groups_list_options =  agent_groups_hash.map { |k,v| 
       { :id => k, :value => v}
     }.to_json
+  end
+
+
+  def filter_number_options
+    number_options = [{:id => Reports::FreshfoneReport::ALL_NUMBERS, :value => t('reports.freshfone.all_numbers'), 
+        :deleted => false, :name => t('reports.freshfone.all_numbers')},{:value => "", :deleted => false, :name => "" }]
+    numbers_options = freshfone_numbers.reverse.reduce(number_options){|obj, c|
+      obj.push({ :id => c.id, :value => c.number_name, :deleted => c.deleted, :name => c.name })
+     }.to_json
+  end
+
+  def filter_default_number
+    selected_number = freshfone_numbers.find(@freshfone_number)
+    {:id => selected_number.id, :value => selected_number.number_name }.to_json
   end
 
   # Count Methods (results from query: def report_query)
