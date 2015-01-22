@@ -26,7 +26,7 @@
 
 
 <h3 class="lead"><%= t("credit_card_info") %></h3>
-<%= form_for @creditcard, :url => { :action => 'billing' }, :html => {
+<%= form_for @creditcard, :as => :creditcard, :url => { :action => 'billing' }, :html => {
 		:id => "credit-card-form", :class => "form-horizontal" } do |f| %>
 
 	<%= render :partial => 'shared/credit_card_form' %>
