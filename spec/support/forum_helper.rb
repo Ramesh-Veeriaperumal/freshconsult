@@ -142,7 +142,8 @@ module ForumHelper
 									:voteable_id => topic.id,
 									:vote => 1,
 									:user_id => user.id,
-									:account_id => @account.id
+									:account_id => @account.id,
+                  :created_at => Time.now
 			)
 		vote.sneaky_save
 	end

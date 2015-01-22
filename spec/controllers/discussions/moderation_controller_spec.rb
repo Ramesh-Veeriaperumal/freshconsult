@@ -5,6 +5,7 @@ describe Discussions::ModerationController do
   	self.use_transactional_fixtures = false
 
 	before(:all) do
+    @account.features.spam_dynamo.destroy
 		@category = create_test_category
 		@forum = create_test_forum(@category)
 		@topic = create_test_topic(@forum)
@@ -70,7 +71,6 @@ describe Discussions::ModerationController do
 		delete :empty_folder
 
 		Resque.inline = false
-
 		unpublished_spam.each do |post|
 			@account.posts.find_by_id(post.id).should be_nil
 		end
@@ -119,7 +119,7 @@ describe Discussions::ModerationController do
 	it "should redirect to unpublished controller when account has dynamo feature" do
 		@account.features.spam_dynamo.create
 		@account.reload
-
+    @account.features.spam_dynamo.create
 		get 'index'
 		response.should redirect_to "/discussions/unpublished"
 
