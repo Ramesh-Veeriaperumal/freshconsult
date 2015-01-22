@@ -57,6 +57,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call_transfer", :only => [:initiate, :available_agents]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
+    resource :"freshfone/addres"
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"

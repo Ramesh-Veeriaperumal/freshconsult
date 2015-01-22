@@ -147,6 +147,16 @@ GIT
   specs:
     rails-dev-boost (0.1.1)
 
+GIT
+  remote: git://github.com/twilio/twilio-ruby.git
+  revision: 08e538f89ed70467cf7fd0059bf23bb97666447a
+  branch: master
+  specs:
+    twilio-ruby (3.14.2)
+      builder (>= 2.1.2)
+      jwt (~> 1.0.0)
+      multi_json (>= 1.3.0)
+
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:
@@ -253,8 +263,8 @@ GEM
     factory_girl (1.2.3)
     faker (1.0.1)
       i18n (~> 0.4)
-    faraday (0.8.7)
-      multipart-post (~> 1.1)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     fastercsv (1.5.4)
     ffi (1.9.0)
     ffi (1.9.0-x86-mingw32)
@@ -269,15 +279,16 @@ GEM
     gnip-rule (0.4.1)
       json (~> 1.8)
       rest-client (~> 1.6.7)
-    google-api-client (0.6.4)
+    google-api-client (0.7.1)
       addressable (>= 2.3.2)
       autoparse (>= 0.3.3)
       extlib (>= 0.9.15)
-      faraday (~> 0.8.4)
+      faraday (>= 0.9.0)
       jwt (>= 0.1.5)
       launchy (>= 2.1.1)
       multi_json (>= 1.0.0)
-      signet (~> 0.4.5)
+      retriable (>= 1.4)
+      signet (>= 0.5.0)
       uuidtools (>= 2.1.0)
     gyoku (1.0.0)
       builder (>= 2.1.2)
@@ -307,13 +318,12 @@ GEM
     json (1.8)
     json-compare (0.1.8)
     json_pure (1.8.1)
-    jwt (0.1.6)
-      multi_json (>= 1.0)
+    jwt (1.0.0)
     koala (1.6.0)
       addressable (~> 2.2)
       faraday (~> 0.8)
       multi_json (~> 1.3)
-    launchy (2.3.0)
+    launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (3.16.14.3)
     listen (1.3.1)
@@ -341,7 +351,7 @@ GEM
       gem_plugin (~> 0.2.3)
     multi_json (1.3.6)
     multi_xml (0.5.1)
-    multipart-post (1.2.0)
+    multipart-post (2.0.0)
     mysql2 (0.2.18)
     namae (0.8.4)
     newrelic_rpm (3.8.0.218)
@@ -438,6 +448,7 @@ GEM
       resque (~> 1.19)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    retriable (1.4.1)
     rforce (0.8.1)
       builder (~> 3.0)
       oauth (~> 0.4)
@@ -484,9 +495,9 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
-    signet (0.4.5)
+    signet (0.5.1)
       addressable (>= 2.2.3)
-      faraday (~> 0.8.1)
+      faraday (>= 0.9.0.rc5)
       jwt (>= 0.1.5)
       multi_json (>= 1.0.0)
     simple_oauth (0.2.0)
@@ -526,10 +537,6 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    twilio-ruby (3.9.0)
-      builder (>= 2.1.2)
-      jwt (>= 0.1.2)
-      multi_json (>= 1.3.0)
     twitter (5.5.1)
       addressable (~> 2.3)
       buftok (~> 0.2.0)
@@ -596,13 +603,13 @@ DEPENDENCIES
   ey_config
   factory_girl (= 1.2.3)
   faker (~> 1.0.1)
-  faraday (= 0.8.7)
+  faraday (= 0.9)
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
   freshdesk_authority!
   global_phone
   gnip-rule (= 0.4.1)
-  google-api-client (~> 0.6.3)
+  google-api-client (~> 0.7.0)
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
   i18n (= 0.4.2)
@@ -682,7 +689,7 @@ DEPENDENCIES
   test-unit (= 1.2.3)
   therubyracer
   tire!
-  twilio-ruby
+  twilio-ruby!
   twitter (~> 5.5.1)
   tzinfo
   uglifier (~> 2.1.2)

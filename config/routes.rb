@@ -102,6 +102,7 @@ ActionController::Routing::Routes.draw do |map|
     freshfone.resources :autocomplete, :collection => { :requester_search => :get, :customer_phone_number => :get }
     freshfone.resources :usage_triggers, :collection => { :notify => :post }
     freshfone.resources :ops_notification, :member => { :voice_notification => :post }
+    freshfone.resources :address, :member => {:create => :post}, :collection => {:inspect => :get}
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
