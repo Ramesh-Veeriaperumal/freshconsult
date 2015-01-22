@@ -548,7 +548,7 @@ if Integrations::Application.count == 0
     s.account_id = 0
     s.options = {
       :direct_install => true,
-      :oauth_url => "/auth/google_oauth2?origin=id%3D{{account_id}}%26app_name%3Dgoogle_calendar",
+      :oauth_url => "/auth/google_oauth2?origin=id%3D{{account_id}}%26app_name%3Dgoogle_calendar%26user_id%3D{{user_id}}",
       :user_specific_auth => true,
       :auth_config => {
         :clazz => 'Integrations::GoogleCalendarEmailFinder',

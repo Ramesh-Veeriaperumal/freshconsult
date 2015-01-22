@@ -1,4 +1,5 @@
 class UpdateGoogleCalendarOptions < ActiveRecord::Migration
+  shard :all
   def self.up
   	app = Integrations::Application.find_by_name("google_calendar")
   	app.options[:oauth_url] += "%26user_id%3D{{user_id}}"

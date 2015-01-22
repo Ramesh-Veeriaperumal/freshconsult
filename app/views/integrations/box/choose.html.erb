@@ -20,7 +20,7 @@
     <script type="text/javascript">
       var boxBundle = {
         oauth_token: '<%= @user_credential.auth_info['oauth_token'] unless @user_credential.blank? %>',
-        oauth_url: '<%= @installed_app.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id})%>',
+        oauth_url: '<%= @installed_app.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id, :user_id => current_user.id},@installed_app.application.name)%>',
         is_customer: <%= current_user.customer? %>,
         auth_status: '<%= @auth_status %>'
       }
