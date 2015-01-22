@@ -14,7 +14,7 @@ class TopicMailer < ActionMailer::Base
     inline_attachments = []
     @topic  = topic
     @user   = user
-    @body_html = generate_body_html(topic.posts.first.body_html, [], topic.account)
+    @body_html = generate_body_html(topic.posts.first.body_html)
     @host = host
 
     if attachments.present? && attachments.inline.present?
@@ -48,7 +48,7 @@ class TopicMailer < ActionMailer::Base
     @host = host 
     @current_stamp = current_stamp 
     @forum_type = forum_type
-    @body_html = generate_body_html(topic.posts.first.body_html, [], topic.account)
+    @body_html = generate_body_html(topic.posts.first.body_html)
 
     mail(headers) do |part|
       part.text { render "mailer/topic/stamp_change_notification_email.text.plain" }
