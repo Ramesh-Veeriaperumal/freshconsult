@@ -209,6 +209,28 @@ describe AgentsController do
       @user.avatar.should be_nil
     end
 
+  it "should convert a full time agent to occasional" do
+    user = @account.full_time_agents.last.user
+    agent = user.agent
+    get :edit, :id => agent.id
+    response.body.should =~ /Edit Agent/
+    put :update, :id => agent.id, :agent => { :occasional => 1,
+                                              :scoreboard_level_id => agent.scoreboard_level_id,
+                                              :user_id => user.id,
+                                              :ticket_permission => 1
+                                            },
+                                   :user => { :helpdesk_agent => true,
+                                              :name => user.name,
+                                              :email => user.email,
+                                              :time_zone => user.time_zone,
+                                              :language => user.language
+                                            }
+    edited_user = @account.users.find_by_email(user.email)
+    edited_user.should be_an_instance_of(User)
+    edited_user.agent.occasional.should be_eql(true)
+    # Delayed::Job.last.handler.should include("#{@account.name}: #{edited_user.name} was converted to an occasional agent")
+  end
+
   it "should check_agent_limit for update" do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     user = add_test_agent(@account)
@@ -232,29 +254,6 @@ describe AgentsController do
     user.agent.occasional.should be_truthy
     user.agent.ticket_permission.should be_eql(2)
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
-  end
-
-  it "should not update an agent when user_id is nil" do
-    user = add_test_agent(@account)
-    agent = user.agent
-    get :edit, :id => agent.id
-    response.body.should =~ /Edit Agent/
-    put :update, :id => agent.id, :agent => { :occasional => agent.occasional,
-                                              :scoreboard_level_id => "1",
-                                              :ticket_permission => 3,
-                                              :user_id => nil
-                                            },
-                                   :user => { :helpdesk_agent => true,
-                                              :name => "",
-                                              :email => "",
-                                              :time_zone => user.time_zone,
-                                              :language => user.language
-                                            }
-    user.reload
-    agent = user.agent.reload
-    agent.should be_an_instance_of(Agent)
-    agent.scoreboard_level_id.should_not be_eql(1)
-    agent.ticket_permission.should_not be_eql(3)
   end
 
   it "should not update an user without name" do
@@ -310,27 +309,6 @@ describe AgentsController do
     session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
-  it "should convert a full time agent to occasional" do
-    user = @account.users.find_by_email(@agent.email)
-    agent = user.agent
-    get :edit, :id => agent.id
-    response.body.should =~ /Edit Agent/
-    put :update, :id => agent.id, :agent => { :occasional => 1,
-                                              :scoreboard_level_id => agent.scoreboard_level_id,
-                                              :user_id => user.id,
-                                              :ticket_permission => 1
-                                            },
-                                   :user => { :helpdesk_agent => true,
-                                              :name => user.name,
-                                              :email => user.email,
-                                              :time_zone => user.time_zone,
-                                              :language => user.language
-                                            }
-    edited_user = @account.users.find_by_email(user.email)
-    edited_user.should be_an_instance_of(User)
-    edited_user.agent.occasional.should be_eql(true)
-    # Delayed::Job.last.handler.should include("#{@account.name}: #{edited_user.name} was converted to an occasional agent")
-  end
 
   it "should convert an occasional to full time agent" do
     user = @account.users.find_by_email(@agent.email)

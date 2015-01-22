@@ -39,11 +39,8 @@ describe Helpdesk::CannedResponses::ResponsesController do
                     :new_folder_id => @pfolder_id, :folder_id => @pfolder_id
                     }
     canned_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
-    user_access = @account.user_accesses.find_by_accessible_id(canned_response.id)
     canned_response.should_not be_nil
     canned_response.folder_id.should eql @pfolder_id
-    user_access.should_not be_nil
-    user_access.visibility.should eql 3
   end
 
   it "should create a Canned Responses with attachment" do
@@ -58,8 +55,6 @@ describe Helpdesk::CannedResponses::ResponsesController do
                    }
     cr_attachment = @account.canned_responses.find_by_title("Canned Response with attachment")
     cr_attachment.should_not be_nil
-    user_access = @account.user_accesses.find_by_accessible_id(cr_attachment.id)
-    user_access.should_not be_nil
     @account.attachments.last(:conditions=>["content_file_name = ? and attachable_type = ?", "image4kb.png", "Account"]).should_not be_nil
     cr_attachment.shared_attachments.first.should_not be_nil
   end
@@ -98,10 +93,8 @@ describe Helpdesk::CannedResponses::ResponsesController do
       :folder_id => "#{@test_response_1.folder_id}"
     }
     canned_response   = @account.canned_responses.find_by_id(@test_response_1.id)
-    access_visibility = @account.user_accesses.find_by_accessible_id(@test_response_1.id)
     canned_response.title.should eql("Updated Canned_Responses #{@now}")
     canned_response.content_html.should eql("Updated DESCRIPTION: New Canned_Responses Hepler")
-    access_visibility.visibility.should eql 3
   end
 
   it "should not update a Canned Responses with empty title" do
@@ -152,7 +145,6 @@ describe Helpdesk::CannedResponses::ResponsesController do
   it "should create a Canned Responses in personal folder " do
     get :new, :folder_id => @pfolder_id
     response.should render_template("helpdesk/canned_responses/responses/new")
-    (assigns(:ca_response).accessible.visibility).should eql 3
   end
 
   #if visibility other than My self, responses should created in personal folder
@@ -167,10 +159,8 @@ describe Helpdesk::CannedResponses::ResponsesController do
                     :new_folder_id => @pfolder_id, :folder_id => @pfolder_id
                     }
     canned_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
-    user_access = @account.user_accesses.find_by_accessible_id(canned_response.id)
     canned_response.should_not be_nil
     canned_response.folder_id.should eql @pfolder_id
-    user_access.visibility.should eql 3
   end
 
   # no title uniqueness check - while creating new response
@@ -187,10 +177,8 @@ describe Helpdesk::CannedResponses::ResponsesController do
                     :new_folder_id => @pfolder_id, :folder_id => @pfolder_id
                     }
     canned_response = @account.canned_responses.find_by_title(test_response.title)
-    user_access = @account.user_accesses.find_by_accessible_id(canned_response.id)
     canned_response.should_not be_nil
     canned_response.folder_id.should eql @pfolder_id
-    user_access.visibility.should eql 3
   end
 
   # no title uniqueness check - while updating response
