@@ -23,10 +23,10 @@ class CustomersImportController < ApplicationController
       render
     end
     rescue CSVBridge::MalformedCSVError => e
-      redirect_to "/customers_import/csv/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.wrong_format')}
+      redirect_to "/imports/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.wrong_format')}
     rescue ImportCsvUtil::InconsistentStateError
-      redirect_to "/customers_import/csv/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.failure')}
+      redirect_to "/imports/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.failure')}
     rescue ImportCsvUtil::MissingFileContentsError
-      redirect_to "/customers_import/csv/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.no_file')}
+      redirect_to "/imports/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.no_file')}
   end
 end

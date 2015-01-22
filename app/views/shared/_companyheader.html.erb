@@ -59,7 +59,7 @@
 			<% if privilege?(:manage_contacts) %>
 				&middot;  
 
-  		 	<%= link_to(t('import'), "/customers_import/csv/#{type}", :title => t('customer_import.import_csv', :type => type.pluralize.capitalize), :class => " margin-right", :id => "customers_import") %>
+  		 	<%= link_to(t('import'), "/imports/#{type}", :title => t('customer_import.import_csv', :type => type.pluralize.capitalize), :class => " margin-right", :id => "customers_import") %>
 
   			<%= link_to t('company.new'), new_company_path, :class => "btn" %>			
   			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn") %>

@@ -23,7 +23,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # contacts and companies import
   map.resources :customers_import
-  map.connect '/customers_import/csv/:type', :controller => 'customers_import', :action => 'csv'
+  map.connect '/imports/:type', :controller => 'customers_import', :action => 'csv'
 
   map.resources :health_check
 
