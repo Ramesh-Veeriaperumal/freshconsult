@@ -10,7 +10,7 @@ staging:
   facebook_realtime_queue: social_fb_feed_staging
   auto_refresh_realtime_queue: auto_refresh_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
-  forums_moderation_queue: forum_moderation_staging
+  forums_moderation_queue: forum_moderation_staging_rails3
   forum_spam_analysis_queue: spam_analysis_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
