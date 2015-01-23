@@ -1,7 +1,8 @@
 <% if @items.size == 1 and @items.first.respond_to?("name") and !@items.first.name.blank? %>
 	<%= "#{h(@items.first.name)} was deleted" %>
 <% else %>
-	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were")%> deleted
+	<% flash_name = (@cname == "cloud_file") ? "attachment" : @cname %>
+	<%= pluralize(@items.length, "#{ flash_name } was", "#{ flash_name.pluralize } were")%> deleted
 <% end %>
 <%= link_to('Undo', { :action => :restore, :ids => params[:ids] }, :method => :put, 
 	"data-keybinding" => shortcut('ticket_detail.undo') ) if @restorable %>

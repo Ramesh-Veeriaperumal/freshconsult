@@ -203,5 +203,5 @@ production:
    options:
          scope: 'read_orders'
  box:
-  consumer_token: j2s7a94hotbfownlfyuk2myeos0ocuwl
-  consumer_secret: UCHtjGmVtYvqQE9ShoNMxVSyG2ZPf5hW
+  consumer_token: itfsn1ixctz4uwru9d03bozxo92bwnh8
+  consumer_secret: 8BcKLFpMi26RxvQhQxTslPlkS1A0rJXV
