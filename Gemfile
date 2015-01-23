@@ -84,7 +84,7 @@ gem "twitter", "~> 5.5.1"
 gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.4"
 gem "sanitize", "2.0.3"
-gem "koala", "~> 1.6.0"
+gem "koala", "1.10.0"
 gem "spreadsheet", "0.6.8"
 
 gem "sax-machine", "~> 0.1.0"
