@@ -55,11 +55,7 @@ module Reports
       	utc_time = Time.now.utc
       	utc_date, utc_hour = utc_time.strftime('%Y_%m_%d'), utc_time.hour
 
-      	if account.features?(:reports_regenerate_data) && regenerate
-	      	s3_folder = regenerate_s3_folder(utc_date, utc_hour) 
-	      else
-      		s3_folder = regenerate ? temp_file : %(#{utc_date}_#{utc_hour})
-      	end
+      	s3_folder = regenerate ? regenerate_s3_folder(utc_date, utc_hour) : %(#{utc_date}_#{utc_hour})
 
       	AwsWrapper::S3Object.store("#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv", File.read(csv_file_path), S3_CONFIG[:reports_bucket])
       	

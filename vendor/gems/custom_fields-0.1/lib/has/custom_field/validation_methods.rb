@@ -46,7 +46,7 @@ module Has
         end
 
         def validate_format_of_custom_dropdown field, error_label
-          add_error_to_self(field, error_label) unless field.choices.map(&:first).include? send(field.name)
+          add_error_to_self(field, error_label) unless field.choices_value.include? send(field.name)
         end
 
         def validate_format_of_custom_url field, error_label

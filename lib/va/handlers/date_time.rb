@@ -18,14 +18,20 @@ class Va::Handlers::DateTime < Va::RuleHandler
       end
 
       def business_hours(evaluated_on_value)
-        Time.working_hours?(evaluated_on_value)
+        Time.working_hours?(evaluated_on_value, fetch_business_hours)
       end
 
       def non_business_hours(evaluated_on_value)
-        !Time.workday?(evaluated_on_value) || !Time.working_hours?(evaluated_on_value)
+        !Time.workday?(evaluated_on_value,fetch_business_hours) || !Time.working_hours?(evaluated_on_value,fetch_business_hours)
       end
 
       def holidays(evaluated_on_value)
-        !Time.workday?(evaluated_on_value)
+        !Time.workday?(evaluated_on_value,fetch_business_hours)
+      end
+
+      def fetch_business_hours
+        if Account.current.features_included?(:multiple_business_hours) and sub_value
+          Account.current.business_calendar.find_by_id(sub_value)
+        end
       end
 end

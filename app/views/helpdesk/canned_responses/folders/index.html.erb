@@ -12,13 +12,6 @@
         </b>
       </div>
     </div>
-    <% if privilege?(:manage_canned_responses) && @current_folder== @pfolder%>
-    <div class="alert notice cr-info-msg" id="notice">
-    	All canned responses with availability set to <b>"Myself"</b> will be under the <b>"Personal"</b> folder.
-    	<a href='https://support.freshdesk.com/support/solutions/articles/37577-creating-common-reply-templates-with-canned-responses' target='_blank'>Learn more</a>
-
-    </div>
-    <%end%>
     <div id="folder-list">
 		<div id="folders-panel" >
 			<div class='ca-resp-folder-header'>
@@ -159,14 +152,14 @@
 									<label class="control-label"><%=t('canned_responses.available_for').html_safe%> :</label>
 									<div class="controls">
 										<label class="radio" id="all_agent">
-										<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], {:onclick =>"toggleGroup(this.value)",:class => "radio required", :name => 'visibility'} %> 
+										<%= access.radio_button  :visibility, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio required", :name => 'visibility'} %> 
 										<%= t('canned_responses.all_agents') %>
 										<%= access.hidden_field :user_id, :value =>current_user.id %>
 										</label>
 									</div>
 									<div class="controls">
 										<label class="radio" id="group_agent">
-										<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],{:onclick =>"toggleGroup(this.value)" , :class => "radio required",  :name => 'visibility'} %> 
+										<%= access.radio_button  :visibility, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],{:onclick =>"toggleGroup(this.value)" , :class => "radio required",  :name => 'visibility'} %> 
 										<%= t('canned_responses.groups') %>
 					    				</label>
 					    			</div>
@@ -175,7 +168,7 @@
 					    			</div>
 					    			<div class='controls'>
 										<div class="hide tabbed" id="accessible_group">
-					        			<%= access.collection_select :group_id, current_account.groups.all(:order=>'name') , :id, :name, {:prompt=> t('canned_folders.select_group')}, :class =>"select2" %>
+					        			<%= access.select_tag("admin_canned_response[visibility][group_id]", options_from_collection_for_select(Group.find_all_by_account_id(current_account.id , :order=>'name'),"id", "name"), {:multiple => true, :class => "select2 input-medium", :size => 4, :placeholder => t('canned_folders.select_groups')}) %>
 					        			</div>
 									</div>
 								</div>
@@ -203,7 +196,7 @@
 	var folder_name = "<%= @current_folder.name %>";
 
 	var pfolder_id = <%= @pfolder.id %>;
-	var pfolder_visibility = <%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]%>;
+	var pfolder_visibility = <%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]%>;
 	var visibility_change_message = '<%= t('canned_folders.visibility_change').html_safe %>';
 	var new_ca_path = "<%= new_helpdesk_canned_responses_folder_path %>";
 	var ca_path = "<%= helpdesk_canned_responses_folders_path %>/";
@@ -240,8 +233,9 @@
   }
 
   function toggleGroup(access_id) { 
-    if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>') {
+    if (access_id == '<%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]%>') {
       jQuery('#accessible_group').show().find('select').addClass('required');
+      jQuery("#admin_canned_response_visibility_group_id").select2();
     } else {
       jQuery('#admin_canned_response_visibility_group_id').select2('val',"");
       jQuery('#accessible_group').hide().find('select').removeClass('required');         

@@ -1,8 +1,102 @@
+// -------------------------------------------------------------------------------------------- 
+//								 	Plans and Billing page
+// -------------------------------------------------------------------------------------------- 
 
-#ChangePlan{
-	margin-top: 25px;
+// 	Highlight for showing the number of trial days left
+// -------------------------------------------------------------------------------------------- 
+.well-trial, .well-active {
+	@include padding(15px 20px);
+	@include border-radius(3px);
+	border: 1px solid #efefef;
+	font-size: 15px;
+	line-height: 1.5;
+	margin-bottom: 20px;
 }
 
+.well-active {
+	@include pie-clearfix;
+	background: #fefef0;
+	border-radius: 5px;
+	@include padding(25px 20px);
+	.plan-title{
+		background: rgba(0, 0, 0, 0.5);
+		margin: 0 auto;
+		display: inline-block;
+		font-size: 22px;
+		font-weight: 200;
+		color: #fff;
+		padding: 8px 20px;
+		border-radius: 20px;
+	}
+
+	.current-plan, .current-plan-info, .subscription-info-divider, .billing-info-divider {
+		width: 59%;
+		text-align: center;
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.current-plan, .subscription-info-divider {
+		width: 40%;
+	}
+	.current-plan-info, .billing-info-divider {
+		width: 59%;
+	}
+	.subscription-info-divider, .billing-info-divider {
+		@include text-align(left);
+		vertical-align: top;
+		.price{
+			font-size:30px;
+			font-weight:300;
+			line-height: 26px;
+			padding-bottom: 5px;
+		}
+	}
+	.subscription-info-divider{
+		ul{
+			@include border-right(1px solid #ddd);
+			@include margin-right(20px);
+		}
+		li {
+		    padding: 4px; 
+		    list-style: disc; 
+		    @include margin-left(20px);
+		}
+	}
+	.edit-plan{
+		display: inline-block;
+		padding: 05px 25px;
+		border: 1px solid #ddd;
+		margin: 10px 0;
+		border-radius: 5px;
+		@include margin-left(-20px);
+	}
+}
+.well-trial {
+	text-align: center;
+}
+
+.accounted-created{
+	float: right;
+	margin-top: -30px;
+}
+
+.label.label-lead{
+	@include border-radius(2em);
+	@include padding(10px 20px);
+	margin-bottom:15px;
+	font-size: 19.5px;
+	font-weight: 300;
+	display: inline-block;
+	
+}
+
+.label-success.label-lead{
+	background-color:#6FA74F;
+}
+
+// Plans comparison summary
+// -------------------------------------------------------------------------------------------- 
 .payment-info{
 	.caption{
 		font-size: 16px;
@@ -31,85 +125,40 @@
 	display: block;
 }
 
-.free-plan{
-	h4{
-		display: inline-block;
-		@include padding-right(20px);
-	}
-	label{ display: inline-block; }
-	.free-plan-payment{
-		color: #777;
-		font-weight: bold;
-	}
-	.current-plan{
-		margin-bottom: 8px;
-	}
-	.free-plan-agents, .free-plan-since{
-		display: inline-block;
-		margin-top: 10px;
-	}
-	.free-plan-agents{
-		width: 50%;
-		padding-bottom: 15px;
-		vertical-align: top;
-	}
+.pricelist .btn{
+	display: block;
+	width: 100%;
+	padding-left: 0;
+	padding-right: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
-.plan-name{
-	display: inline-block;
-	vertical-align: middle;
+.free-plan-payment{
+	color: #777;
+	font-weight: bold;
 }
-.current-plan{
-	& > .caption{
-		font-size: 16px;
-		width: 100%;
-		b, .classic-account{
-			@include margin-left(20px);
-		}
-	}
-	.big-text{
-		@include margin-left(20px);
-	}
-	.subscribed-plan-details, .billing-details{
-		@include float(left);
-		width: 50%;
-		margin-top: 5px; 
-	}
-	.subscribed-plan-details{ 
-		input.text{ width: 30% }
-		td:first-child{
-			width: 20%;
-		}
-		td > label{
-			display: inline-block;
-			@include padding-right(7px);
-		}
-	}
-	.billing-details{
-		.sub-end{ color: red; }
-	}
-	#billing-template{ 
-		@include float(left);
-	}
-	.agents-split{
-		background: rgba(238, 238, 238, 0.44) !important;
-	}
+.plan-info{
+	width:35%;
+	float:left;
+}
+.subscribed-plan-details .billing-cost{
+	text-align: left;
 }
 
 .currency-note{
-	border: 1px solid #EACB54; 
-	margin: 10px; 
+	border: 1px solid #FFDE5E;
 	padding: 5px 10px;
 	border-radius: 4px;
 	background: #FFDE5E;
 	color: #333;
 	font-weight: 400;
-	text-align: center;
 	span{
 		margin: 5px auto;
 		display: block;
 		margin-top: -17px;
-		@include margin-left(34px);
-		border-bottom-color: #EACB54;
+		@include margin-left(55px);
+		border-bottom-color: #FFDE5E;
 		border-bottom-width: 7px;
 	}
 }
@@ -117,45 +166,58 @@
 #billing-template{
 	.billing-cost{
 		margin-top: 10px;
+		font-size: 13px;
 		h2{ font-size: 15px; }
 		dl{ margin-top: 7px; }
 		dd, dt{
 			display: inline-block;
 		}
-		dd{
-			input[type=text]{
-				width: 33px;
-			}
-		}
 		dt{
-			@include text-align(center);
+			@include text-align(left);
 			width: 28%;
 			font-weight: bold;
 		}
 		.agents-split{
-			border: 1px solid #EEE;
-			width: 75%;
-			margin: 0 auto;
-			margin-top: 14px;
-			padding-bottom: 8px;
-			@include text-align(center);
-			background: rgba(245, 245, 178, 0.44);
-			@include box-shadow(0 0 10px 0 #EEE);
+			border-top:1px dashed #afafaf;
+			margin-top: 10px;
+			padding-top: 15px;
+			margin-bottom: 10px;
 			#cost-per-agent{ 
 				font-weight: bold;
 				color: #666;
 	 		}
 		}
 		.tr-total{
-			border-top: 1px solid #EEE;
-			margin-top: 10px;
-			padding-top: 5px;
 			input[type=submit]{
 				margin: 10px;
 			}
-			dl{ @include text-align(center); }
 		}
 	}
+}
+
+.billing-divider{
+	border-top:1px dashed #afafaf;
+	border-bottom:0;
+}
+
+.subscribed-plan-details{
+	.billing-divider{
+		display: none;
+	}
+}
+
+.free-plan-options .currency-note .arrow-up{
+	margin-left: 110px;
+}
+
+.billing-total-cost{
+	margin-bottom: 10px;
+}
+
+input[type=text].input-agent-count{
+	margin-bottom: 0;
+	width:25px;
+	padding-left: 3px;
 }
 
 .agent-details td{
@@ -181,27 +243,6 @@
   border-color: #777 transparent transparent transparent;
 }
 
-.trial-info{
-	@include text-align(center);
-	.trial-message{
-		margin-top: 25px;
-		font-size: 20px;
-		color: #666;
-		padding-bottom: 5px;
-	}
-	.choose-plan{
-		line-height: 1.5;
-	}
-	.plan-name{
-		@include margin-left(15px);
-	}
-	.caption{
-		font-size: 16px;
-		width: 100%;
-		@include float(none !important);
-		@include text-align(left);
-	}
-}
 
 .choose-plan-title{
 	margin-top: 10px;
@@ -233,19 +274,7 @@
 .free-plan-options{
 	.activate-options{
 		display: block;
-		border-top: 1px solid #EFEFEF;
-		padding-top: 8px;
 		@include text-align(center);
-		margin-top: 8px;
-		div{ padding: 5px;}
-		h2{
-			padding-top: 5px;
-			font-size: 15px;
-			font-weight: bold;			
-		}
-		.add-more{
-			border-bottom: 1px solid #EFEFEF;
-		}
 	}	
 	#plan_form{
 		display: none;
@@ -262,41 +291,51 @@
 	}
 }
 
+.plan-section-title{
+	margin-bottom: 15px;
+	.lead{ margin-bottom: 0; }
+}
+.plan-cost{
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.plan-confirm-message {
+	font-size: 16px;
+	line-height: 1.5;
+	font-weight: 300;
+}
+.plan-confirm-message .label{
+	text-transform: uppercase;
+	padding: 2px 5px;
+}
+
 .plans{
-	@include border-radius(3px);
-	background:#F8F8F8;
-	border:1px solid #cccccc;
+	border:1px solid #efefef;
+	border-width: 1px 0;
 	table{ width:100%; }
 	td{ 
 		vertical-align:top;
-		@include border-right(1px solid #dadada);
-		padding:8px 13px;
+		@include border-right(1px solid #efefef);
+		padding: 10px 20px 20px;
 		overflow: hidden;
 		position: relative;
 		&:last-child{
 			@include border-right(0);
 		}
 	}
-		.pricelist:hover{
-			background: rgba(234, 234, 234, 0.33);
-		}
 	.plan-details{ 
-		h2, h4{ font-weight:bold; }
-		h2{
-			font-size:16px;
-			color:$default_txt_color;
-		}
-		h3{
-			font-size:18px;
-			font-weight:normal;
-		}
+		.lead{ margin-bottom: 0; }
+		h4{ font-weight:bold; }
 		p{
 			font-size:13px;
 		}
 		p.plan-details{
-			color:#666666;		
-			line-height:1.65em;
-			@include min-height(150px);
+			@include min-height(190px);
+			font-weight: 300;
+			font-size: 15px;
+			line-height: 1.8;
+			margin-bottom: 20px;
 		}
 		.plan-brief{
 			font-size: 11px;
@@ -315,29 +354,38 @@
 	}
 	.info-data{
 		color:$default_txt_color;
+		font-weight: 300;
 	}
 	.active{
-		border:0px;
 		background-color:#FFFFDD;
-		top:0; @include right(0);
-		@include box-shadow(0 0 14px 4px #DADADA);
+		border-width: 1px 1px 0 0; 
+		border-color:mix(#000, #FFFFDD, 20%);
+		top:0; 
 		overflow: visible;
-		&:hover{
-			background-color:#FFFFDD;
-		}
-
+		@include right(0);
+		@include box-shadow(0 0 15px -1px #DADADA);
 		&:before {
 			content:"";
-			display: block;
-			height: 6px;
 			position:absolute;
-			top: -7px;
-		 	@include left(0);
-			background: #4D3636;
-			width: 100%;
+			display: block;
+			height: 10px;
+			top: -11px;
+		 	@include left(-1px);
+			background-color: #4D3636;
+			width: 101%;
+			@include border-radius(2px 2px 0 0);
 		}
 		.plan-button{
 			display:none;
+		}
+		.downgrade-plan-button{
+			display:none;
+		}
+		.btn{
+			background-color: #4D3636;
+			color: #fff;
+			font-weight: bold;
+			text-shadow: none;
 		}
 	}
 	
@@ -345,9 +393,6 @@
 		margin-top:6px;
 	}
 	.billing{
-		border-top:1px dotted #afafaf;
-		margin:8px -10px;
-		padding:6px 0;
 		min-height: 150px;
 		td{ 
 			border:0; 
@@ -358,7 +403,7 @@
 			}
 		}
 		.tr-total td{
-			border-top:1px solid #efefef;
+			border-top:1px dashed #afafaf;
 			vertical-align: baseline;
 			font-weight: bold;
 			font-size: 13px;
@@ -371,4 +416,9 @@
 			}
 		}
 	}
+}
+
+
+.billing-actions{
+	margin-top: 10px;
 }

@@ -23,7 +23,6 @@
 		}
 	}
 	.select2-container {
-		min-width: 125px;
 		.select2-choice {
 			height: 24px;
 		}
@@ -95,7 +94,6 @@
 		}
 		.select2-container {
 			z-index: 1;
-			max-width: 100%;
 			&.select2-container-disabled .select2-choice, &.select2-container-disabled .select2-choice div {
 				background-color: #FFF;
 				cursor: move;
@@ -135,6 +133,7 @@
 			@include left(4px);
 			top: 4px;
 			font-size: 16px;
+			color: #999;
 		}
 	}
 }
@@ -175,8 +174,8 @@
 		color: #333;
 		line-height: 26px;
 		position: absolute;
-		left: 270px;
 		bottom: 10px;
+		@include left(270px);
 		z-index: 99999;
 		.#{$font-class-name}plus {
 			background-color: #76ad20;
@@ -365,10 +364,6 @@
 	}
 	label {
 		display: inline;
-	}
-	.select2-container {
-		min-width: 125px;
-		max-width: 100%;
 	}
 }
 

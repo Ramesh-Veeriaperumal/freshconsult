@@ -95,6 +95,7 @@ class User < ActiveRecord::Base
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
         paginate :per_page => per_page, :page => page,
+             :include => {:flexifield => {}},
              :conditions => filter_condition(state, letter) ,
              :order => order_by
       rescue Exception =>exp
@@ -133,6 +134,7 @@ class User < ActiveRecord::Base
       #return self.find(options[:id]) if options.key?(:id)
       return UserEmail.user_for_email(options[:email]) if options.key?(:email)
       return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
+      return self.find_by_fb_profile_id(options[:fb_profile_id]) if options.key?(:fb_profile_id)
       return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
       return self.find_by_phone(options[:phone]) if options.key?(:phone)
     end 
@@ -276,7 +278,7 @@ class User < ActiveRecord::Base
 
   named_scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.account_id, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
@@ -388,8 +390,8 @@ class User < ActiveRecord::Base
   end
 
   def search_data
-    if defined?(additional_email)
-      [additional_email.split(",").map{|x| {:id => id, :details => "#{name} <#{x}>", :value => name}}]
+    if has_contact_merge?
+      self.user_emails.map{|x| {:id => id, :details => "#{name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]
     end
@@ -496,8 +498,20 @@ class User < ActiveRecord::Base
               :only => [ :name, :email, :description, :job_title, :phone, :mobile,
                          :twitter_id, :fb_profile_id, :account_id, :deleted,
                          :helpdesk_agent, :created_at, :updated_at ], 
-              :include => { :customer => { :only => [:name] } } }, true
+              :include => { :customer => { :only => [:name] },
+                            :user_emails => { :only => [:email] }, 
+                            :flexifield => { :only => es_contact_field_data_columns } } }, true
            ).to_json
+  end
+
+  def es_contact_field_data_columns
+    @@es_contact_field_data_columns ||= ContactFieldData.column_names.select{ |column_name| 
+                                    column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
+  end
+  
+  def es_columns
+    @@es_columns ||= [:name, :email, :description, :job_title, :phone, :mobile, :twitter_id, 
+      :fb_profile_id, :customer_id, :deleted, :helpdesk_agent].concat(es_contact_field_data_columns)
   end
 
   def has_company?
@@ -601,9 +615,9 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.match ["name", "email"], SearchUtil.es_filter_exact(search_by) } 
+              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by) } 
             else
-              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email'], :analyzer => "include_stop" }
+              f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email', 'user_emails.email'], :analyzer => "include_stop" }
             end
             f.filter :term, { :account_id => account_id }
             f.filter :term, { :deleted => false }
@@ -634,9 +648,7 @@ class User < ActiveRecord::Base
   protected
   
     def search_fields_updated?
-      all_fields = [:name, :email, :description, :job_title, :phone, :mobile,
-                    :twitter_id, :fb_profile_id, :customer_id, :deleted, :helpdesk_agent]
-      (@all_changes.keys & all_fields).any?
+      (@all_changes.keys & es_columns).any?
     end
 
 
@@ -652,6 +664,7 @@ class User < ActiveRecord::Base
 
     def backup_user_changes
       @all_changes = self.changes.clone
+      @all_changes.merge!(flexifield.changes)
       @all_changes.symbolize_keys!
     end
 

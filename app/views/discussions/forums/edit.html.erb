@@ -6,39 +6,13 @@
 <% form_for @forum, :url => discussions_forum_path(@forum)   do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container align-left">
-		<%= link_to(t('delete'), discussions_forum_path(@forum), :method => 'delete', :class => "hide", :id => "delete_forum") %>
-			<button id="del"
-					class="btn"
-					data-target="#forum-delete-confirmation" 
-			 		rel="freshdialog" 
-			 		title="<%= t('delete')%>"
-			 		data-submit-label="<%= t('delete_permanently') %>"
-			 		data-width="500px"
-			 		data-close-label="<%= t('cancel') %>">
-			 		<%= t('delete')%></i>
-			</button>
+
+		<%= confirm_delete(@forum, discussions_forum_path(@forum)) %>
+		
 		<div class="pull-right align-right">
 			<%= pjax_link_to(t('cancel'), discussions_forum_path(@forum), :class => "btn" ) -%>
 			<%= submit_tag t('save'), { :class => "btn btn-primary",  :action => :update } -%>
 		</div>
 	</div>
 
-	<div class="hide" id="forum-delete-confirmation">
-		<p class="margin-bottom">
-		<% unless @forum.topics.size == 0 %>
-			<%= t('forum.delete').html_safe %>
-			<br /><br />
-			<%= t("forum.size", :count => @forum.topics_count) %>
-		<% else %>
-			<%= t('forum.confim_msg1') %>
-		<% end %>
-		</p>
-	</div>
 <% end -%>
-
-<% javascript_tag do -%>
-	jQuery('#forum-delete-confirmation-submit').live('click',function(){
-		jQuery('#forum-delete-confirmation').hide();
-		jQuery('#delete_forum').trigger('click');
-});
-<% end %>

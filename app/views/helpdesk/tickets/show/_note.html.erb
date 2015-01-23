@@ -58,10 +58,10 @@ minimizable ||= false
 								{ :action => :split_the_ticket, :controller => 'helpdesk/tickets', :id => notable_object.display_id, :note_id => note.id }, 
 								:method => :post, :confirm => t("helpdesk.tickets.note.split_ticket_confirm"),
 								:class => "tooltip conv-action-icon conv-actions-split tooltip",
-								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.incoming and notable_object and !notable_object.fb_post %> 
+								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.can_split? %> 
         <% end %>
         <% if privilege?(:reply_ticket) and note.fb_reply_allowed? %>
-						 <a href="#" class="conv-action-icon conv-actions-reply tooltip replyToComment" data-original-title="Reply" data-note-id = "<%= note.id %>"><span class="ficon-reply"></span>
+						 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>"><span class="ficon-reply"></span>
            </a>
         <% end %>  
         <% if privilege?(:forward_ticket) %>
@@ -122,16 +122,8 @@ minimizable ||= false
 		if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' ||	TICKET_DETAILS_DATA['last_note_id']  == null || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
 			TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;
 		if (typeof(TICKET_DETAILS_DATA['first_note_id']) == 'undefined' || TICKET_DETAILS_DATA['first_note_id']  == null || TICKET_DETAILS_DATA['first_note_id'] > <%= note.id %>)
-			TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;
+			TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;	
 		
-		
-	  jQuery(".replyToComment").live('click', function(event){
-	    jQuery("#TicketPseudoReply [data-note-type='reply']").click();
-	    note_id = jQuery(this).data('noteId')
-	    jQuery("#parent_post_id").val(note_id);
-	  });
-	  
-	  
 	</script>
 	
 </div>

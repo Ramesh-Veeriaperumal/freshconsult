@@ -1,6 +1,6 @@
 class Va::Condition
   
-  attr_accessor :handler, :key, :operator, :action_performed
+  attr_accessor :handler, :key, :operator, :action_performed, :evaluate_on_type
   
 
   DISPATCHER_COLUMNS = {
@@ -19,9 +19,12 @@ class Va::Condition
     'user_votes'              => 'topics.user_votes'
   }
   
+  DEFAULT_EVALUATE_ON = "ticket"
+
   def initialize(rule, account)
     @key, @operator, @action_performed = rule[:name], rule[:operator], rule[:action_performed] #by Shan hack must spelling mistake in criteria
-    handler_class = VAConfig.handler @key.to_sym, account
+    @evaluate_on_type = rule[:evaluate_on] || DEFAULT_EVALUATE_ON
+    handler_class = VAConfig.handler @key.to_sym, account, @evaluate_on_type
     @handler = handler_class.constantize.new(self, rule)
   end
   

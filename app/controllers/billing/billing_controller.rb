@@ -196,7 +196,9 @@ class Billing::BillingController < ApplicationController
     end
 
     def payment_succeeded(content)
-      @account.subscription.subscription_payments.create(payment_info(content))
+      payment = @account.subscription.subscription_payments.create(payment_info(content))
+      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
+          :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
     end
 
     def payment_refunded(content)

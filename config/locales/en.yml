@@ -87,6 +87,7 @@ en:
   tip_off: "Click to Disable"
   credit_card: "Card on file"
   country: "Country"
+  city: "City"
   referral: "Referral credit"
   status_deleted: "Status deleted"
   success: "Success"
@@ -159,6 +160,12 @@ en:
   add_note: Add Note
   set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
+  requester_email: Requester Email
+  requester_name: Requester Name
+  requester_title: Requester Title
+  requester_time_zone: Requester Timezone
+  requester_language: Requester Language
+  company_domain: Company Domain
   eight: 8 Hours
   security_code: Security code
   example: example
@@ -327,10 +334,11 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-    delete: "<b>Important:</b> Deleting a folder will delete all the articles in it."
-    size: 
-      one: "1 article will also be deleted."
-      other: "%{count} articles will also be deleted."
+    delete_confirm:
+      one: "Deleting this folder will delete one article in it."
+      other: "Deleting this folder will delete all %{count} articles in it."
+      zero: "Are you sure you want to delete this folder?"
+
   amount_per_month: $%{amount} %{period}
   amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
@@ -345,6 +353,9 @@ en:
   basic_details: "Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
   choose_plan: Choose Plan
   select_plan: Select Plan
+  change_plan_title: "Sure you want to change plan?"
+  downgrade_plan_title: "Sure you want to Downgrade?"
+  activate_free_plan: Activate Free Plan
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
@@ -1626,8 +1637,10 @@ en:
       ideas: Ideas
       announce: Announcement
       problem: Problems
-    confim_msg1: Are you sure you want to delete this forum?
-    delete: "<b>Important:</b> Deleting a forum will delete all the topics in it permanently."
+    delete_confirm:
+      zero: Are you sure you want to delete this forum?
+      one: "Deleting this forum will delete one topic in it."
+      other: "Deleting this forum will delete all %{count} topics in it."
     size: 
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
@@ -1658,6 +1671,7 @@ en:
   import_user_org: Users, Organizations & Groups
   to_do: To Do
   does_not_contain: Does not contain
+  non_ssl_request: This request needs a secure connection.You need to enable SSL encryption from /admin/security
   flash:
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
@@ -2269,11 +2283,10 @@ en:
       mark_this_problem_as: Mark this problem as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
-    delete: "Important: Deleting a topic will delete all the replies in it."
-    size: 
-      one: "1 reply will also be deleted."
-      other: "%{count} replies will also be deleted."
-    delete_empty: "Are you sure you want to delete this topic?"
+    delete_confirm:
+      one: "Deleting this topic will delete one reply in it."
+      other: "Deleting this topic will delete all %{count} replies in it."
+      zero: "Are you sure you want to delete this topic?"
   non_covered_feature_error: This feature is currently locked
   unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
   requester_replies: Requester Replies to Ticket
@@ -2303,6 +2316,7 @@ en:
   portal_customizer_option_tickets_i: Disable this feature if you want to force users to login before submitting a ticket
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
+  make_payment: Make Payment
   add_new_email: Add new email
   chatwidget_title: Chat Widgets
   feedbackwidget_title: Feedback widget
@@ -2333,7 +2347,19 @@ en:
     new_forum_category: New Forum Category
     edit: Edit Category
   delete: Delete
+  delete_confirm:
+    confirm: Please Confirm...
+    hard_delete: This action is irreversible
+    confirm_msg: To avoid accidental deletion, we request you to re-enter the %{item_type} name
+    confirm_title: <b> Re-enter the %{item_type} name </b>
   delete_permanently: Delete Permanently
+  deletion_titles:
+    solution_category: "solution category"
+    solution_folder: "solution folder"
+    solution_article: "solution article"
+    forumcategory: "forum category"
+    forum: "forum"
+    topic: "topic"
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
@@ -2347,14 +2373,12 @@ en:
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
-    delete: "<b>Important:</b> Deleting a category will delete all the folders and articles in it."
-    size: %{no_of_folders} folder(s) and %{no_of_articles} article(s) will also be deleted.
+    delete_confirm: "Deleting this category will delete all %{folders} folders and %{articles} articles in it."
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
-    delete: "<b>Important:</b> Deleting a category will delete all the forums and topics in it permanently."
-    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
+    delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
     activations:
@@ -3178,6 +3202,13 @@ en:
       article_useful: Glad we could be helpful. Thanks for the feedback.
       article_not_useful: "Thanks for the feedback. We will improve this article."
       error_message: "There is an error %{error_msg}"
+      reset_rating:
+        link: "Reset Article Rating"
+        dialog_title: "Reset likes and dislikes"
+        dialog_submit: "Reset"
+        resetting: "Resetting"
+        dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
+        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
@@ -3247,6 +3278,7 @@ en:
   current_plan_details: "%{plan_name}"
   free_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
   add_more_free: "Adding more than %{free_agents} agents?"
+  add_more_agents: "Add more agents at %{amount} per agent/month"
   zendesk_backup: Backup file
   twoday: 2 Days
   profile:
@@ -3264,11 +3296,36 @@ en:
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
-  sprout_details: "Single Support Email <br>Feedback Widget <br>Knowledge Base <br>All Automations <br>Phone Integration <br>Mobile Apps <br>Built-in Integrations"
-  blossom_details: "Everything in Sprout <br>Multiple Mailboxes <br>Custom Domain <br>Social Support <br>Satisfaction surveys <br>Community Forums <br>Advanced Reporting"
-  garden_details: "Everything in Blossom <br>Integrated Live Chat <br>Multiple Languages <br>Multi Product Support <br>Multiple SLA Policies <br>Multiple Timezones <br>CSS Customization"
-  estate_details: "Everything in Garden <br>Gamification <br>Agent Collision <br>Custom Roles <br>Custom SSL <br>Enterprise Reporting <br>Portal Customization"
-  forest_details: "Everything in Estate <br>Custom Mail Servers <br>Secure IP Restriction"
+  features:
+    email_ticketing: "Email Ticketing"
+    feedback_widget: "Feedback Widget"
+    knowledge_base: "Knowledge Base"
+    automations: "Automations"
+    phone_integration: "Phone Integration"
+    mobile_apps: "Mobile Apps"
+    integrations: "Built-in Integrations"
+    everything_in_sprout: "Everything in Sprout" 
+    multiple_mailboxes: "Multiple Mailboxes" 
+    custom_domain: "Custom Domain" 
+    social_support: "Social Support" 
+    satisfaction_survey: "Satisfaction surveys" 
+    forums: "Community Forums" 
+    gamification: "Gamification"
+    everything_in_blossom: "Everything in Blossom"
+    chat: "Integrated Live Chat"
+    multiple_languages: "Multiple Languages"
+    multiple_products: "Multi Product Support"
+    multiple_timezones: Multiple Timezones 
+    css_customization: "CSS Customization"
+    everything_in_garden: "Everything in Garden"
+    agent_collision: "Agent Collision"
+    custom_roles: "Custom Roles"
+    custom_ssl: "Custom SSL"
+    enterprise_reports: "Enterprise Reporting"
+    portal_customization: "Portal Customization"
+    everything_in_estate: "Everything in Estate"
+    custom_mailbox: "Custom Mail Servers"
+    ip_restriction: "Secure IP Restriction"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -3445,6 +3502,9 @@ en:
   password: "Password"
   enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  sprout_free_plan: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You have chosen to end trial and activate <b>%{new_plan}</b> Plan - 3 agents free forever. Please note that due to downgrade from <b>%{current_plan}</b> to <b>%{new_plan}</b> plan, all data and configurations associated with features in %{current_plan} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  downgrade_to_sprout: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You have chosen to end trial and activate <b>%{new_plan}</b> Plan. Please note that due to downgrade from <b>%{current_plan}</b> to <b>%{new_plan}</b> plan, all data and configurations associated with features in %{current_plan} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  trial_plan_name: "Downgrade Trial to %{name}"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     delete_confirm: Are you sure you want to delete this config?
@@ -3765,6 +3825,7 @@ en:
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via
+    created_by: "Created by:"
     reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
@@ -4419,6 +4480,7 @@ en:
         form:
           groups: Agents in group
           response_name: Response title
+          select_groups: Select Groups
           all_agents: All agents
           me_only: Myself
           available_for: Available for
@@ -5421,6 +5483,7 @@ en:
   always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
+  contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
@@ -5552,6 +5615,7 @@ en:
     delete_confirmation: "Delete folder with all its contents ??"
     move: "Move"
     del: "Delete"
+    select_groups: Select Groups
     folder: "Folder"
     recently: "Recently used..."
     pick: "Pick a canned response"
@@ -5722,7 +5786,6 @@ en:
   add_a_new_folder: add a new folder
   likes: Likes
   dislikes: Dislikes
-  for_this_article: For this article
   export: Export
   helpdesk_quests:
     see_all: See all
@@ -6410,7 +6473,15 @@ en:
     no_matching_agents: "No matching agents"
     chat_disabled_label: "Chat is disabled for helpdesk"
     chat_enabled_label: "Chat is enabled for helpdesk"
+    routing: "Chat routing"
+    routing_info: "Route all incoming chats to specific groups"
+    dropdown_based_routing: "Dropdown based routing"
+    default_routing: "Default routing"
+    choice_info: "<b>$</b> then notify group"
+    select_groups: "Select groups"
+    routing_note: "Note: If agents from the selected groups are not accepting chats, chat will be routed to all available agents."
     concurrent_pick_attempt_msg: "This chat has been already accepted by"
+    enable: "Enable"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
@@ -6701,6 +6772,7 @@ en:
         no_forum_spam: "There's no spam here. We swear!"
         moderation_solution: Learn more about Forum Moderation
         unpublished_posts: Unpublished replies
+        deletion_alert: "Topics/replies more than 30 days old will be automatically deleted from here"
       spam_actions:
         approve: Approve
         approve_tooltip: Approve and Publish
@@ -6775,4 +6847,15 @@ en:
     search_articles: "Search Article"
     contact_us: "Contact Us"
     whats_new: "What's New"
-
+  trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
+  discounted_sum: "After Discount"
+  selecting_plan: "Selecting..."
+  proceed_billing_info: "Yes, Proceed to Billing"
+  buy_plan: "Buy this Plan"
+  agent_seats: "%{no_of_agents} Agent seats"
+  subscribed_billing: "%{billing_cycle} billing"
+  next_renewal: "Next Renewal in %{renewal_period}"
+  suspended_since: "Suspended since %{days}"
+  plan: "Plan"
+  edit_plan: "Edit Plan"
+  account_created: "Account created %{total_time} ago on %{date}"

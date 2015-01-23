@@ -218,7 +218,7 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 			$(element).removeClass("response-loading");
 			$(element).qtip('hide');
 			//$('[data-dismiss="modal"]').trigger('click');
-			loadRecent();
+			//loadRecent();
 		}
 	});
 	return true;
@@ -1150,7 +1150,20 @@ var scrollToError = function(){
 		$(this).hide();
 		$('#ReplyButton').click();
 	});
-
+	
+	// Facebook event binding
+	
+	$('body').on('click.ticket_details', ".reply-facebook", function(event){
+	    $('#ReplyButton').trigger('click');
+	    note_id = $(this).data('noteId');
+	    $("#parent_post_id").val(note_id);
+	  });
+	
+	$('body').on('click.ticket_details', "#facebook-cancel-reply", function(event){
+	    $('#parent_post_id').val('')
+	  });
+	
+	
 	//For showing canned response and solutions
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){

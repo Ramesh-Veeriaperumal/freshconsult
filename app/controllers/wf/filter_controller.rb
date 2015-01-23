@@ -22,7 +22,8 @@
 #++
 
 class Wf::FilterController < ApplicationController
-  
+  include AccessibleControllerMethods
+
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :chk_usr_permission, :verify_authenticity_token, :only => [:delete_filter,:update_filter]
   
@@ -50,8 +51,11 @@ class Wf::FilterController < ApplicationController
     unless wf_filter.nil?
       wf_filter = wf_filter.accessible
       wf_filter.deserialize_from_params params
-      wf_filter.visibility = params[:visibility]
+      wf_filter.visibility = params[:custom_ticket_filter][:visibility]
       wf_filter.save
+
+      update_helpdesk_accessible(wf_filter,"custom_ticket_filter") unless (params[:custom_ticket_filter][:visibility].blank? || params[:custom_ticket_filter][:visibility][:visibility].blank?)
+
       flash[:notice] = t(:'flash.filter.save_success')
     else
       flash[:error] = t('admin.getting_started.index.problem_updating') #possible dead code- if wf_filter is nil, code below will error out
@@ -64,7 +68,7 @@ class Wf::FilterController < ApplicationController
     params.delete(:wf_id)
     
     wf_filter = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(params)
-    wf_filter.visibility = params[:visibility]
+    wf_filter.visibility = params[:custom_ticket_filter][:visibility]
     wf_filter.account_id = current_account.id
     wf_filter.validate!
     err_str = ""
@@ -74,6 +78,10 @@ class Wf::FilterController < ApplicationController
       end
     else  
       wf_filter.save
+      if !params[:custom_ticket_filter][:visibility].blank?
+        params[:custom_ticket_filter][:visibility][:visibility] ||= Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+      end
+      create_helpdesk_accessible(wf_filter,"custom_ticket_filter")
     end
     wf_filter.key = wf_filter.id.to_s 
     

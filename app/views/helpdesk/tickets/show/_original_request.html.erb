@@ -1,13 +1,16 @@
 <%= link_to user_avatar(@ticket.requester), @ticket.requester, :class => 'avatar-wrap' %>
 <% fb_message = @ticket.is_fb_message? %>
 <% twitter_dm = @ticket.is_twitter? && @ticket.tweet.is_dm? %>
+<% fb_comment = @ticket.is_fb_comment? %>
 <div class="commentbox private-note <%= 'commentbox-social' if (fb_message || twitter_dm) %>">
 	<% if fb_message %>
 		<%= content_tag(:span, "", :class => "ficon-facebook-lock commentbox-social-icon") %>
 	<% elsif twitter_dm %>
 		<%= content_tag(:span, "", :class => "ficon-twitter-lock commentbox-social-icon") %>
+	<% elsif fb_comment %>
+		<%= content_tag(:span, "", :class => "ficon-chat-bubble commentbox-social-icon") %>
 	<% end %>
-	<div class="<%= 'helpdesk_note' if (fb_message || twitter_dm) %>">
+	<div class="<%= 'helpdesk_note' if (fb_message || twitter_dm || fb_comment) %>">
 	<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
 		<% if @ticket.spam %>
 			<span class='label spam'>
@@ -64,13 +67,16 @@
 				</div>
 				<% elsif @ticket.is_facebook? && @ticket.is_fb_wall_post? %>
 				<div class="ticket-details-twitter">
-					<span class="ficon-facebook-setting fsize-16 mr6"></span><%= link_to(t('ticket.view_facebook'),
-					    "http://www.facebook.com/#{@ticket.fb_post.facebook_page.page_id}/posts/#{(@ticket.fb_post.post_id).split('_')[1]}", 
-					     :id => "ViewConvo", :target => "_blank") %>
+					<span class="ficon-facebook-setting fsize-16 mr6"></span>
+						<%= link_to(t('ticket.view_facebook'), facebook_link, :id => "ViewConvo", :target => "_blank") %>
 				</div>
 				<% end %>
 			<% end %>
 		</div>
+		<% created_by_agent_info = created_by_agent(@ticket) %>
+		<% unless created_by_agent_info.blank? %>
+      		<%= t('ticket.created_by') %> <%= created_by_agent_info %> 
+      	<% end %>
 		<div class="info"> 
 			<%= content_tag :div, multiple_emails_container(@to_emails, "To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
 			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>

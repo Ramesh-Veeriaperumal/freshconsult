@@ -37,7 +37,7 @@ module Inherits
       private
         def fields_as_json fields
           fields.map do |field|
-            field.as_json({:methods => [:dom_type, :choices, :action]}).values.first
+            field.as_json({:methods => [:dom_type, :admin_choices, :action]}).values.first
           end.to_json
         end
 

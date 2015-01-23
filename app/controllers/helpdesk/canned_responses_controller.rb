@@ -8,7 +8,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def index
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder]))
     folders = @ca_responses.map(&:folder)
-    @ca_folders = folders.uniq.sort_by &:name
+    @ca_folders = folders.uniq.sort_by{|folder | [folder.folder_type,folder.name]}
     @ca_folders.each do |folder|
       folder.visible_responses_count = folders.count(folder)
     end
@@ -72,8 +72,8 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def load_canned_response
-    @ca_resp = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id = #{params[:ca_resp_id].to_i}"]))[0]
-    render :text => "" and return unless @ca_resp
+    @ca_resp = scoper.find_by_id(params[:ca_resp_id])
+    render :text => "" and return unless (@ca_resp and @ca_resp.visible_to_me?)
   end
 
   def ticket_present?

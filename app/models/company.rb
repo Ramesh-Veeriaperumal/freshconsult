@@ -63,7 +63,7 @@ class Company < ActiveRecord::Base
   CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
-  
+
   def self.filter(letter, page, per_page = 50)
   paginate :per_page => per_page, :page => page,
            :conditions => ['name like ?', "#{letter}%"],
@@ -136,10 +136,20 @@ class Company < ActiveRecord::Base
     to_json( 
               :root => "customer",
               :tailored_json => true,
-              :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ] 
+              :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ],
+              :include => { :flexifield => { :only => es_company_field_data_columns } }
            )
   end
 
+  def es_company_field_data_columns
+    @@es_company_field_data_columns ||= CompanyFieldData.column_names.select{ |column_name| 
+                                      column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
+  end
+
+  def es_columns
+    @@es_columns ||= [:name, :description, :note].concat(es_company_field_data_columns)
+  end
+  
   # May not need this after ES re-indexing
   def self.document_type # Required to override the model name
     'customer'
@@ -166,8 +176,7 @@ class Company < ActiveRecord::Base
   protected
 
     def search_fields_updated?
-      all_fields = [:name, :description, :note]
-      (@model_changes.keys & all_fields).any?
+      (@model_changes.keys & es_columns).any?
     end
 
   private
@@ -190,6 +199,7 @@ class Company < ActiveRecord::Base
 
     def backup_company_changes
       @model_changes = self.changes.clone
+      @model_changes.merge!(flexifield.changes)
       @model_changes.symbolize_keys!
     end
   

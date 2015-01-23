@@ -43,6 +43,19 @@ describe SubscriptionsController do
 
     response.should render_template 'subscriptions/_select_plans.html.erb'
   end
+
+  it "should switch plan in trial" do
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    post "plan", :plan_id => 2, :agent_limit => "", :billing_cycle => 1, :currency => "USD", :plan_switch => 1
+
+    plan = SubscriptionPlan.find(2)
+    @account.subscription.reload
+    @account.subscription.state.should eql "trial"
+    @account.subscription.subscription_plan.should eql plan
+    @account.subscription.renewal_period.should eql 1
+    @account.subscription.agent_limit.should eql nil
+    @account.subscription.free_agents.should eql plan.free_agents
+  end
   
   it "should update plan" do
     @request.env["HTTP_ACCEPT"] = "application/json"

@@ -23,7 +23,9 @@ FacebookTests = [
   "spec/lib/facebook/status_spec.rb",
   "spec/controllers/social/facebook_pages_controller_spec.rb",
   "spec/lib/facebook/facebook_core_message_spec.rb",
-  "spec/lib/facebook/faceboook_fql_post_spec.rb"
+  "spec/lib/facebook/faceboook_fql_post_spec.rb",
+  "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb",
+  "spec/lib/facebook/reply_to_comment_spec.rb"
 ]
 
 GnipTests = [
@@ -135,7 +137,6 @@ HelpdeskTests = [
   "spec/controllers/contacts_controller_spec.rb",
   "spec/controllers/contact_merge_controller_spec.rb",
   "spec/controllers/users_controller_spec.rb",
-  "spec/controllers/user_emails_controller_spec.rb",
   "spec/controllers/multiple_user_email_controller_spec.rb",
   "spec/controllers/activations_controller_spec.rb",
   "spec/controllers/customers_controller_spec.rb",
@@ -145,6 +146,7 @@ HelpdeskTests = [
   "spec/controllers/admin/contact_fields_controller_spec.rb",
   "spec/controllers/password_resets_controller_spec.rb",
   "spec/controllers/helpdesk/*_spec.rb",
+  "spec/controllers/helpdesk/canned_responses/*_spec.rb",
   "spec/controllers/admin/**/*_spec.rb",
   "spec/controllers/support/**/*_spec.rb",
   "spec/controllers/negative/**/*_spec.rb",
@@ -356,6 +358,9 @@ unless ARGV.any? {|a| a =~ /^gems/}
         Rake::Task["db:create_reporting_tables".to_sym].invoke
         Rake::Task["db:create_trigger".to_sym].invoke
         Rake::Task["db:perform_table_partition".to_sym].invoke
+
+        auto_increment_query = "ALTER TABLE shard_mappings AUTO_INCREMENT = #{Time.now.to_i}"
+        ActiveRecord::Base.connection.execute(auto_increment_query)
       end
     end
 

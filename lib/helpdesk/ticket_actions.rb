@@ -6,6 +6,7 @@ module Helpdesk::TicketActions
   include ExportCsvUtil
   include Helpdesk::ToggleEmailNotification
   include CloudFilesHelper
+  include Facebook::Constants
   
   def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
@@ -24,18 +25,10 @@ module Helpdesk::TicketActions
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
+    @ticket.meta_data = params[:meta] if params[:meta]
+    
     return false unless @ticket.save_ticket
 
-    if params[:meta]
-      note = @ticket.notes.build(
-        :note_body_attributes => {:body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n")},
-        :private => true,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
-        :account_id => current_account.id,
-        :user_id => current_user && current_user.id
-      )
-      note.save_note
-    end
     notify_cc_people cc_emails unless cc_emails.blank? 
     @ticket
     
@@ -144,17 +137,54 @@ module Helpdesk::TicketActions
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
+    
+    unless @note.fb_post.nil?
+      @child_fb_note_ids = @note.fb_post.child_ids
+      fb_post_hash = {  :facebook_id => @note.user.fb_profile_id,
+                        :fb_post_attributes => {
+                          :post_id => @note.fb_post.post_id,
+                          :facebook_page_id => @note.fb_post.facebook_page_id,
+                          :account_id => @note.fb_post.account_id,
+                          :parent_id => nil,
+                          :post_attributes => {
+                            :can_comment => true,
+                            :post_type   => POST_TYPE_CODE[:comment]
+                          }
+                       }
+                    }
+      params[:helpdesk_ticket][:created_at] = @note.created_at
+      params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(fb_post_hash)
+      @note.fb_post.destroy
+    end    
+    
     build_item 
+    
     move_cloud_files
     if @item.save_ticket
       move_attachments
-      @note.destroy
+      destroy_note_and_activity 
+      Resque.enqueue(Workers::FbSplitTickets, { :account_id => current_account.id,
+                                                :child_fb_post_ids => @child_fb_note_ids,
+                                                :comment_ticket_id => @item.id,
+                                                :source_ticket_id  => @source_ticket.id}) if (@item.fb_post and !@child_fb_note_ids.blank?)
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
       puts @item.errors.to_json
     end
     
   end
+  
+  def destroy_note_and_activity
+    unless @item.fb_post.nil?
+      activities = @source_ticket.activities.find(:all, :conditions => 
+      {:description => "activities.tickets.conversation.note.long"})
+      activity = activities.detect{ |x| x.note_id == @note.id }
+      activity.destroy unless activity.blank?
+    end
+    @note.destroy
+  end
+  
+  
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
     @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
@@ -194,6 +224,7 @@ module Helpdesk::TicketActions
   
   def add_requester
     @user = current_account.users.new
+    @user.user_emails.build({:primary_role => true}) if current_account.features_included?(:contact_merge_ui)
     render :partial => "contacts/add_requester_form"
   end
 

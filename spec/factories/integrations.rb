@@ -7,13 +7,11 @@ if Rails.env.test?
                 :api_key => { :type => :text, :required => true, :label => "integrations_label", :info => "integrations_info"},
                 :updates => { :type => :checkbox, :label => "integrations_updates"}
               })
-    t.account_id 1
     t.application_type "application"
   end
 
   Factory.define :installed_application, :class => Integrations::InstalledApplication do |t|
     #t.application_id 23
-    t.account_id 1
     t.configs HashWithIndifferentAccess.new({ :inputs => { :api_key => "f7e85279afcce3b6f9db71bae15c8b69", :updates => 1} })
   end
 
@@ -21,7 +19,6 @@ if Rails.env.test?
     t.provider "facebook"
     t.uid "12345678"
     t.user_id 2
-    t.account_id 1
   end
 
   Factory.define :integrated_resource, :class => Integrations::IntegratedResource do |t|
@@ -29,7 +26,6 @@ if Rails.env.test?
     t.remote_integratable_id "FD-1"
     t.local_integratable_id 1
     t.local_integratable_type "issue-tracking"
-    t.account_id 1
   end
 
   Factory.define :widget, :class => Integrations::Widget do |t|
@@ -46,7 +42,6 @@ if Rails.env.test?
     t.auth_info HashWithIndifferentAccess.new({ :refresh_token => "1/tpO82YgF2AsCnQup7SCYN1hOlk6RBHL4iyaX-oaBkRw", 
                       :oauth_token => "ya29.LgA1EMj53KSvWhoAAABtT8Nt-ZdsGJXa7bfxXn7pVkzOsLnFW9eFQCIArfLfjg", 
                       :email => "sathish@freshdesk.com"})
-    t.account_id 1
   end
 
   Factory.define :create_webhooks, :class => ApiWebhooksController do |t|
@@ -55,7 +50,6 @@ if Rails.env.test?
     t.match_type "any"
     t.filter_data "Test data"
     t.action_data "Test action data"
-    t.account_id 1
     t.rule_type 13
     t.active 1
   end

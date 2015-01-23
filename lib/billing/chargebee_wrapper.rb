@@ -79,4 +79,8 @@ class Billing::ChargebeeWrapper
 		ChargeBee::Plan.retrieve(billing_plan_name)
 	end
 
+	def retrieve_coupon(coupon_code)
+		ChargeBee::Coupon.retrieve(URI.encode(coupon_code))
+	end
+
 end

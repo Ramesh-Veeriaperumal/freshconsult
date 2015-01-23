@@ -170,7 +170,10 @@ describe ContactsController do
 		it "should make user as agent" do
 			contact = add_new_user(@account,{})
 			put :make_agent, {:id => contact.id,:format => 'xml'}
-			response.status.should eql("200 OK")
+			result = parse_xml(response)
+			expected = (response.status == "200 OK") && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+                (compare(result["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
+            expected.should be(true)
 		end
 	end
 
@@ -195,11 +198,8 @@ describe ContactsController do
 		end
 
 		after(:all) do
-			Resque.inline = true
 			@user.destroy
-			custom_field_params.each { |params| 
-				@account.contact_form.fields.find_by_name("cf_#{params[:label].strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")).delete_field }
-			Resque.inline = false
+			destroy_custom_fields
 		end
 
 		it "should create a new contact with all custom fields" do
