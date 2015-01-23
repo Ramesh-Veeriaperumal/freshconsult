@@ -4832,10 +4832,24 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    cti:
+      convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
-      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>You can choose to convert the call recordings into a ticket or add as a note to an existing ticket. Click on the option 'convert all recordings into a ticket' to make it a default setup</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
+    five9:
+      label: "Five9"
+      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
+      helptext: "This is Five9 helptext"
+      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
+      recording_path: "Directory path for the call recording"
+    drishti:
+      label: "Ameyo"
+      desc: "Answer calls or trigger an outgoing call with this powerful Ameyo's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>Ameyo Integration Help</h4><p><br/>You can setup this integration by entering Ameyo's CTI bar address, which can be either IP address or domain name</p><p>You can choose to convert the call recordings into a ticket or add as a note to an existing ticket. Click on the option 'convert all recordings into a ticket' to make it a default setup</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
       host_name: "Host ip:Port"
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:

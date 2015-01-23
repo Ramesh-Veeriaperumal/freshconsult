@@ -1,8 +1,6 @@
 <%= include_cloudfront_css :cti %>
 <%= include_cloudfront_js :cti_ticket_search %>
 <%= include_cloudfront_js :cti_client %>
-<%= include_cloudfront_js :czentrix %>
-
 <div class="cti_widget">
 	<%= render 'layouts/shared/cti/cti_popup_tabs' %>
 </div>
@@ -14,9 +12,12 @@
 
 <% javascript_tag do %>
 	if (typeof cti_user === "undefined") { cti_user = {}; }
-	<% app_config = get_app_config('czentrix') %>
+	<% app_config = get_app_config('drishti') %>
+	cti_user.current_user = <%= current_user.id %>;
+	cti_user.current_account = <%= current_account.id%>;
+	cti_user.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	cti_user.host_ip = '<%= app_config[:host_ip] %>';
 	cti_user.hide_dont_convert = <%= app_config[:convert_to_ticket] || 0 %>;
 	cti_user.email = '<%= current_user.email %>';
-	cti_user.widget_name = 'czentrix_widget';
+	cti_user.widget_name = 'drishti_widget';
 <% end %>
