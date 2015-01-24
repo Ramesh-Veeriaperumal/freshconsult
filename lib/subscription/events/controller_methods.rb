@@ -2,9 +2,27 @@ module Subscription::Events::ControllerMethods
 
   #CSV
   def export_to_csv
+    events_id = []
+    monthly_summary(params[:date])
+    
+    case params[:event_type]
+    when "upgrades"
+      @upgrades_month[params[:category].to_sym].each do |i|
+        events_id << i['id']
+      end
+    when "downgrades"
+      @downgrades_month[params[:category].to_sym].each do |i|
+        events_id << i['id']
+      end
+    else
+      @events_month[params[:category].to_sym].each do |i|
+        events_id << i['id']
+      end
+    end
+
     csv_string = CSVBridge.generate do |csv|
       csv << csv_columns
-      params[:data].each do |event_id|
+      events_id.each do |event_id|
         Sharding.run_on_all_slaves do
           event = SubscriptionEvent.find_by_id(event_id)
           csv << account_details(event).concat(subscription_info(event)) unless event.blank?

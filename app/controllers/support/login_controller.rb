@@ -5,7 +5,8 @@ class Support::LoginController < SupportController
 	include SsoUtil
 	MAX_ATTEMPT = 5
 	SUB_DOMAIN = "freshdesk.com"
-	
+
+	before_filter :set_no_ssl_msg, :only => :new
 	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create
 	
@@ -43,6 +44,17 @@ class Support::LoginController < SupportController
 	end
 
 	private
+    def set_no_ssl_msg
+      if session[:return_to].present? and show_ssl_msg?(session[:return_to])
+        flash[:error] = t('no_ssl_redirection')
+      end
+    end
+
+    def show_ssl_msg?(return_url)
+      return_url.include?(billing_subscription_path) and current_portal.portal_url.present? and 
+        request.referrer.include?(current_portal.portal_url) and !current_portal.ssl_enabled?
+    end
+
 		def note_failed_login
 			user_info = params[:user_session][:email] if params[:user_session]
 			logger.warn "Failed login for '#{user_info.to_s}' from #{request.remote_ip} at #{Time.now.utc}"

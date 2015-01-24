@@ -28,6 +28,7 @@ class Admin::FreshfoneController < Admin::AdminController
 					:phone_number => num.phone_number, 
 					:region => Admin::FreshfoneHelper.city_name(num.iso_country, num.region), 
 					:iso_country => num.iso_country,
+					:address_required => address_required?(num.address_requirements),
 					:type => params[:type]
 				}
 	  	end
@@ -38,7 +39,6 @@ class Admin::FreshfoneController < Admin::AdminController
 		end
 		render :partial => "/admin/freshfone/numbers/freshfone_available_numbers", 
 					 :locals => { :available_numbers => @search_results,
-											 :address_required => address_required?,
 											 :rate => rate}	
 	end
 
@@ -58,7 +58,6 @@ class Admin::FreshfoneController < Admin::AdminController
 		def load_freshfone_account
 			@freshfone_account ||= current_account.freshfone_account
 		end
-
 		def validate_params
 			if(params[:search_options])
 				search_options = (params[:search_options].values.all?(&:empty?) ) ? {} : params[:search_options]
@@ -76,9 +75,8 @@ class Admin::FreshfoneController < Admin::AdminController
 			Freshfone::Cost::NUMBERS[code][type]
 		end
 
-		def address_required?
-			code = params[:country]
-			Freshfone::Cost::NUMBERS[code]["address_required"]
+		def address_required?(address_requirement)
+			(address_requirement != 'none')
 		end
 
 		def can_view_freshfone_number_settings?

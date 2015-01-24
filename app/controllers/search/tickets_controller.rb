@@ -1,6 +1,8 @@
 class Search::TicketsController < Search::SearchController
 
 	include Search::ESDisplayIdWildcardSearch
+	include Search::KeywordSearch::Lookup
+	include Search::KeywordSearch::Ticket
 
 	before_filter :set_native_mobile, :only => [:index]
 

@@ -58,7 +58,7 @@
 		<%= include_cloudfront_js :soundmanager %>
 	<% end %>
 	
-	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>
+	<% if chat_activated? && !current_account.features_included?(:collision) %>
 		<%= include_cloudfront_js :freshchat %>
 	<% end %>
 

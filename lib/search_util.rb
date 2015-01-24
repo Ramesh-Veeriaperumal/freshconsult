@@ -39,7 +39,7 @@ module SearchUtil
   end
 
   def self.es_exact_match?(query)
-    query.blank? || ( query.start_with?('<', '"') && query.end_with?('>', '"') )
+    !query.blank? and ( query.start_with?('<', '"') && query.end_with?('>', '"') )
   end
 
   def self.es_filter_exact(query)

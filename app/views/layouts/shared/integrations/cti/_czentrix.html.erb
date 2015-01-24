@@ -14,9 +14,9 @@
 
 <% javascript_tag do %>
 	if (typeof cti_user === "undefined") { cti_user = {}; }
-	cti_user.current_user = <%= current_user.id %>;
-	cti_user.current_account = <%= current_account.id%>;
-	cti_user.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
-	cti_user.host_ip = '<%= get_app_config('czentrix')[:host_ip] %>';
+	<% app_config = get_app_config('czentrix') %>
+	cti_user.host_ip = '<%= app_config[:host_ip] %>';
+	cti_user.hide_dont_convert = <%= app_config[:convert_to_ticket] || 0 %>;
 	cti_user.email = '<%= current_user.email %>';
+	cti_user.widget_name = 'czentrix_widget';
 <% end %>

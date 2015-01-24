@@ -3,6 +3,8 @@ class PostMailer < ActionMailer::Base
   include Helpdesk::NotifierFormattingMethods
 	include Mailbox::MailerHelperMethods
 
+  layout "email_font"
+
   def monitor_email(emailcoll, post, user, portal, sender, host)
     configure_mailbox(user, portal)
     recipients    emailcoll
@@ -17,7 +19,11 @@ class PostMailer < ActionMailer::Base
       end
       alt.part "text/html" do |html|
         html.body   Premailer.new(render_message("mailer/post/monitor_email.text.html.erb",:post => post, 
-                                    :body_html => generate_body_html( post.body_html, [], post.account ), :user => user, :host => host), with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
+                                          :body_html => generate_body_html( post.body_html, [], post.account ), 
+                                          :user => user,
+                                          :account => post.account, 
+                                          :host => host), 
+                                  with_html_string: true, :input_encoding => 'UTF-8').to_inline_css
       end
     end
   end

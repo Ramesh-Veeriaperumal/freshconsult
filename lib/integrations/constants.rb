@@ -21,7 +21,8 @@ module Integrations::Constants
     :surveymonkey => "surveymonkey",
     :dropbox => 'dropbox',
     :shopify => "shopify",
-    :seoshop => "seoshop"
+    :seoshop => "seoshop",
+    :box => 'box'
   }
 
   APP_CATEGORY_ID_TO_NAME = {

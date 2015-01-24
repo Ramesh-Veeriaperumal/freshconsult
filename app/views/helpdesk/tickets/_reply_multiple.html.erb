@@ -40,10 +40,15 @@
     });
 
     function show_canned_response(){
+    var localStore = localStorage["local_ca_response"]
+    if(localStore == undefined){
+        localStore = "";
+    }
+
       var user_id=jQuery('#helpdesk_note_user_id').val();
       jQuery("#bulk_canned_response_holder").append("<div class='sloading'></div>");
       jQuery("#bulk_canned_response_holder")
-        .load("/helpdesk/canned_responses")
+        .load("/helpdesk/canned_responses?recent_ids="+localStore)
         .show();
     }
 

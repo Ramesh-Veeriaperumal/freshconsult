@@ -38,11 +38,8 @@
 </div>
 
 <%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
-<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) && current_account.agents_from_cache.count > 1%>
-<% if current_account.features?(:collision_socket) %>
+<% if current_account.features?(:collision) %>
 	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_from_cache.count > 1%>
-<% elsif current_account.features?(:collision) %>
-	<%= render :partial => "helpdesk/tickets/freshdesk_node.html.erb", :locals => {:ticket => @ticket } if  current_account.agents_from_cache.count > 1%>
 <% end %>
 
 

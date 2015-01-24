@@ -1,7 +1,7 @@
 (function ($) {
     "use strict";
     
-    var search_freshfone,
+    var search_freshfone,$buy_numbers_form,
         current_toll_free_country = "US",
         current_toll_free_prefix = "",
         activeTab,
@@ -117,7 +117,6 @@
     $buyNumberContainer.on('change', '#toll_free_supported_countries', function () {
         current_toll_free_country = $(this).val();
         current_toll_free_prefix = "";
-    console.log("on change");
         $('.toll-free-prefixes').html($('.toll_free_' + current_toll_free_country).clone());
         $('.toll-free-prefixes .toll_free_prefix_' + current_toll_free_country).addClass('select2');
         search_toll_free_numbers();
@@ -164,15 +163,15 @@
         ev.preventDefault();
         var $this = $(this);
         var country = $('#supported_countries option:selected').text();
+        var country_code = $('.buy_available_number #country').val();
         $('#open-purchase-confirmation').trigger('click');
+        $('#purchase-confirmation .loading-box').toggle(false);
+        var address_required = ($this.data('addressRequired') && !isAddressAlreadyExisit(country_code));
 
         $('#purchase-confirmation .modal-title').text($this.attr('title'));
         $('#purchase-confirmation .number-rate').text($this.data('rate'));
-        if($this.data('addressRequired')){
-             $('#purchase-confirmation .certification-country').html(country);
-         }
 
-        $('#purchase-confirmation .address-required-alert').toggle($this.data('addressRequired'));
+        $('#purchase-confirmation .address-required-alert').toggle(address_required);
 
         // Unbind Purchase button (freshdialog)
         $('#purchase-confirmation').off('click.submit.modal');
@@ -184,10 +183,87 @@
         $('#purchase-confirmation').on('click.buy_numbers.freshfone', '[data-submit="modal"]', function(ev) {
             ev.preventDefault();
             $(this).button("loading");
-            $this.parents('form').submit();
+            $buy_numbers_form = $this.parents('form');
+            if($this.data('addressRequired')){
+              $('#freshfone_address_form').submit();
+            } else {
+              $this.parents('form').submit();  
+            }
         });
+        resetErrorMessages();
+        
+        if(address_required){
+             $('#purchase-confirmation .certification-country').html(country);
+             $(".freshfone-address-form #country").val(country_code);
+             $(".freshfone-address-form #country_name").val(country);
+             $("#freshfone_address_form input:text:visible:first").focus();
+         }
 
     });
 
+    $('#freshfone_address_form').submit( function() {
+        var valuesToSubmit = $(this).serialize();
+        $(".ajaxerrorExplanation").toggle(false);
+        $.ajax({
+            type: "POST",
+            url: $(this).attr('action'),
+            data: valuesToSubmit,
+            dataType: "JSON",
+            success: function(data){
+                if(data.success) {
+                    $('.purchaseErrorExplanation').toggle(false);
+                    $buy_numbers_form.submit();  
+                } else {
+                    resetErrorMessages();
+                    $('.purchaseErrorExplanation').toggle(true);
+                    populateErrorMessage(data.errors);
+                    resetPurchaseButton();
+                }
+            },
+            error: function(data){
+                resetErrorMessages();
+                $(".ajaxerrorExplanation").toggle(true);
+                resetPurchaseButton();
+            }
+        });
+        return false;
+    });
+    function populateErrorMessage(formErrors) {
+      $.map(formErrors, function(error){
+          return $("<label class='error'>"+error+"</label>")
+                  .appendTo($('.purchaseErrorExplanation'));
+      });
+    }
+    function resetPurchaseButton() {
+      $('#purchase-confirmation').on('click.submit.modal');
+      $('#purchase-confirmation [data-submit="modal"]').button('reset');
+      $('#purchase-confirmation').on('click.buy_numbers.freshfone');   
+    }
+    function resetErrorMessages(){
+        $('.purchaseErrorExplanation').empty();
+        $('.purchaseErrorExplanation').toggle(false);
+        $('.ajaxerrorExplanation').toggle(false);
+    }
+    function isAddressAlreadyExisit(country_code) {
+        var alreadyExist = false;
+        toggleLoder(true);
+        $.ajax({
+          url: '/freshfone/address/inspect',
+          dataType: "json",
+          data: {"country" : country_code},
+          success: function (data) {
+            alreadyExist =  data.isExist;
+            toggleLoder(false);
+          },
+          error: function (data) {
+            toggleLoder(false);
+          }
+        });
+        return alreadyExist;
+    }
+    function toggleLoder(toggle){
+      $('#purchase-confirmation .loading-box').toggle(toggle);
+      $('#purchase-confirmation .number-message').toggle(!toggle);
+    }
 
 }(jQuery));

@@ -34,7 +34,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
 
   def create_note
     rec = params[:recordingUrl]
-    note_desc = "#{params[:msg]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio>"
+    note_desc = "#{params[:msg]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:remoteId]}"
     @ticket = current_account.tickets.find_by_display_id(params[:ticketId])
     if @ticket.blank?
       flash[:notice] = t(:'flash.general.create.failure',
@@ -60,11 +60,16 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       flash[:notice] = t(:'flash.general.create.failure',
                         { :human_name => t(:'cti.note.human_name') })
     end
+    # respond_to do |format|
+    #   format.json do 
+    #     render :json => {:type => "note",:Id => note.id }
+    #   end
+    # end
   end
 
   def create_ticket
     rec = params[:ticket][:recordingUrl]
-    ticket_desc = "#{params[:ticket][:description]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio>"
+    ticket_desc = "#{params[:ticket][:description]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:ticket][:remoteId]}"
     user = User.find_by_email(params[:ticket][:email])
     if user.blank?
       user  = current_account.users.new
@@ -81,6 +86,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
                   :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone],
                   :requester_id => user.id,
                   :subject  => params[:ticket][:subject],
+                  :responder_id => current_user.id,
                   :ticket_body_attributes => { :description_html => ticket_desc }
               )
     if @ticket.save_ticket
@@ -92,5 +98,11 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       flash[:notice] = t(:'flash.general.create.failure',
                             { :human_name => t(:'cti.ticket.human_name') })
     end
+    # respond_to do |format|
+    #   format.js
+    #   format.json do 
+    #     render :json => {:type => "ticket",:Id => @ticket.id}
+    #   end
+    # end
   end
 end
