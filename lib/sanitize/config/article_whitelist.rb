@@ -8,13 +8,13 @@ class Sanitize
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
         'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
-        'param' => ['name', 'value'],
+        'param' => ['value'],
         'embed' => [
                     'src', 'type', 'width', 'height',
-                    'flashvars', 'base', 'type',
-                    'seamlesstabbing', 'allowFullScreen', 'swLiveConnect', 'allowScriptAccess', 'pluginspage', 'allowScriptAccess',
+                    'flashvars', 'base', 'hidden', 'target',
+                    'seamlesstabbing', 'allowFullScreen', 'swLiveConnect', 'pluginspage', 'allowScriptAccess',
                     'autostart', 'loop', 'playcount', 'volume', 'controls', 'controller', 'pluginurl', 'mastersound',
-                    'hidden', 'target', 'startime', 'endtime', 'vspace', 'hspace', 'palette'
+                    'startime', 'endtime', 'vspace', 'hspace', 'palette'
                     ],
         'video' => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
         'track' => ['kind', 'src', 'srclang', 'label', 'default']
