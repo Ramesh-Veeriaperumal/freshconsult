@@ -98,7 +98,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/wkhtmltopdf_binary_gem.git
-  revision: 77a62c35e4a9bb8d6583ffeadf0073ac92748a91
+  revision: f9aa831c91a687f29aaeebf8a08ac7b38af79422
   specs:
     wkhtmltopdf-binary (0.9.9.3)
 
@@ -172,6 +172,16 @@ GIT
   specs:
     rails-dev-boost (0.3.0)
       railties (>= 3.0)
+
+GIT
+  remote: git://github.com/twilio/twilio-ruby.git
+  revision: 08e538f89ed70467cf7fd0059bf23bb97666447a
+  branch: master
+  specs:
+    twilio-ruby (3.14.2)
+      builder (>= 2.1.2)
+      jwt (~> 1.0.0)
+      multi_json (>= 1.3.0)
 
 PATH
   remote: vendor/gems/acts_as_voteable
@@ -468,8 +478,8 @@ GEM
       railties (>= 3.0.0)
     faker (1.0.1)
       i18n (~> 0.4)
-    faraday (0.8.7)
-      multipart-post (~> 1.1)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.0)
     fog (1.19.0)
       builder
@@ -494,15 +504,16 @@ GEM
     gnip-rule (0.4.1)
       json (~> 1.8)
       rest-client (~> 1.6.7)
-    google-api-client (0.6.4)
+    google-api-client (0.7.1)
       addressable (>= 2.3.2)
       autoparse (>= 0.3.3)
       extlib (>= 0.9.15)
-      faraday (~> 0.8.4)
+      faraday (>= 0.9.0)
       jwt (>= 0.1.5)
       launchy (>= 2.1.1)
       multi_json (>= 1.0.0)
-      signet (~> 0.4.5)
+      retriable (>= 1.4)
+      signet (>= 0.5.0)
       uuidtools (>= 2.1.0)
     gyoku (1.0.0)
       builder (>= 2.1.2)
@@ -533,13 +544,12 @@ GEM
     json (1.8)
     json-compare (0.1.8)
     json_pure (1.8.1)
-    jwt (0.1.6)
-      multi_json (>= 1.0)
-    koala (1.6.0)
-      addressable (~> 2.2)
-      faraday (~> 0.8)
-      multi_json (~> 1.3)
-    launchy (2.3.0)
+    jwt (1.0.0)
+    koala (1.10.0)
+      addressable
+      faraday
+      multi_json
+    launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (3.16.14.3)
     listen (1.3.1)
@@ -564,7 +574,7 @@ GEM
     mono_logger (1.1.0)
     multi_json (1.10.1)
     multi_xml (0.5.1)
-    multipart-post (1.2.0)
+    multipart-post (2.0.0)
     mysql2 (0.3.16)
     namae (0.8.4)
     net-scp (1.2.1)
@@ -582,6 +592,8 @@ GEM
     omniauth (1.2.2)
       hashie (>= 1.2, < 4)
       rack (~> 1.0)
+    omniauth-box2 (0.0.1)
+      omniauth (~> 1.0)
     omniauth-constantcontact2 (1.0.4)
       multi_json (~> 1.0)
       multi_xml
@@ -682,6 +694,7 @@ GEM
     rest-client (1.6.8)
       mime-types (~> 1.16)
       rdoc (>= 2.4.2)
+    retriable (1.4.1)
     rforce (0.8.1)
       builder (~> 3.0)
       oauth (~> 0.4)
@@ -749,9 +762,9 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
-    signet (0.4.5)
+    signet (0.5.1)
       addressable (>= 2.2.3)
-      faraday (~> 0.8.1)
+      faraday (>= 0.9.0.rc5)
       jwt (>= 0.1.5)
       multi_json (>= 1.0.0)
     simple_oauth (0.2.0)
@@ -797,10 +810,6 @@ GEM
     turbo-sprockets-rails3 (0.3.14)
       railties (> 3.2.8, < 4.0.0)
       sprockets (>= 2.2.0)
-    twilio-ruby (3.9.0)
-      builder (>= 2.1.2)
-      jwt (>= 0.1.2)
-      multi_json (>= 1.3.0)
     twitter (5.5.1)
       addressable (~> 2.3)
       buftok (~> 0.2.0)
@@ -877,7 +886,7 @@ DEPENDENCIES
   facebook!
   factory_girl_rails (= 4.4.0)
   faker (~> 1.0.1)
-  faraday (= 0.8.7)
+  faraday (= 0.9)
   features!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
@@ -886,7 +895,7 @@ DEPENDENCIES
   global_phone
   gnip!
   gnip-rule (= 0.4.1)
-  google-api-client (~> 0.6.3)
+  google-api-client (~> 0.7.0)
   has_flexiblefields!
   has_no_table!
   helpdesk_attachable!
@@ -901,7 +910,7 @@ DEPENDENCIES
   jira4r (= 0.3.0)
   json (~> 1.8)
   json-compare (= 0.1.8)
-  koala (~> 1.6.0)
+  koala (= 1.10.0)
   lhm!
   liquid!
   lockfile (= 1.4.3)
@@ -916,6 +925,7 @@ DEPENDENCIES
   nori (= 1.1.4)
   oily_png (= 1.1.1)
   omniauth (= 1.2.2)
+  omniauth-box2 (~> 0.0.1)
   omniauth-constantcontact2 (~> 1.0.4)
   omniauth-facebook
   omniauth-google
@@ -987,7 +997,7 @@ DEPENDENCIES
   therubyracer
   tire!
   turbo-sprockets-rails3
-  twilio-ruby
+  twilio-ruby!
   twitter (~> 5.5.1)
   tzinfo (~> 0.3.29)
   uglifier (~> 2.1.2)

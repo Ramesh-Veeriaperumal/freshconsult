@@ -49,4 +49,14 @@ module Integrations::AppsUtil
     redirect_to redirect_uri
   end
 
+
+  def check_customer_app_access app_name
+    return true if current_user && current_user.customer? 
+    render :json => { :error => "Access Denied" }, :status => 403
+  end
+
+  def check_agent_app_access app_name
+    return true if current_user && current_user.agent?
+    render :json => { :error => "Access Denied" }, :status => 403
+  end
 end

@@ -16,6 +16,8 @@ Freshdesk.Widget.prototype={
 			this.title_element.innerHTML = this.options.title;
 		}
 		this.display();
+		this.access_token_renewal_url = widgetOptions.is_customer ? "/support/user_credentials/refresh_access_token/" : "/integrations/refresh_access_token/";
+		this.http_proxy_url = widgetOptions.is_customer ? "/support/http_request_proxy/fetch" : "/http_request_proxy/fetch";
 		this.call_init_requests();
 	},
 	getUsername: function() {
@@ -101,7 +103,7 @@ Freshdesk.Widget.prototype={
 		else{
 			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
-		url = reqData.source_url ? reqData.source_url : "/http_request_proxy/fetch"
+		url = reqData.source_url ? reqData.source_url : this.http_proxy_url 
 		var custom_callbacks = jQuery.extend(false, {}, reqData.custom_callbacks); // onXXX
 		reqData.custom_callbacks = null
 		var reqHeader_copy = jQuery.extend(false, {}, reqHeader)
@@ -235,7 +237,7 @@ Freshdesk.Widget.prototype={
 		this.callbacks_awaiting_access_token.push(callback);
 		if(this.awaiting_access_token)	return;
 		this.awaiting_access_token = true;
-		new Ajax.Request("/integrations/refresh_access_token/"+this.options.app_name.toLowerCase().replace(' ', '_'), {
+		new Ajax.Request(this.access_token_renewal_url+this.options.app_name.toLowerCase().replace(' ', '_'), {
 				asynchronous: true,
 				method: "get",
 				onSuccess: function(evt){

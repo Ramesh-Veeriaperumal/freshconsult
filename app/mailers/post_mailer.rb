@@ -2,7 +2,9 @@ class PostMailer < ActionMailer::Base
 
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
-	
+
+  layout "email_font"
+
   def monitor_email(emailcoll, post, user, portal, sender, host)
     configure_mailbox(user, portal)
     headers        = {
@@ -17,7 +19,8 @@ class PostMailer < ActionMailer::Base
     @user = user
     @body_html = generate_body_html(post.body_html)
     @host = host
-    
+    @account = post.account
+
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, post.body_html, post.account)
     end

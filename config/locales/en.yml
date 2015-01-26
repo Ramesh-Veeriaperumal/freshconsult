@@ -187,11 +187,15 @@ en:
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
-  dropbox_attach_from: Attach from Dropbox
+  dropbox_attach_from_text: Attach from <b>Dropbox</b>
   dropbox_choose_file: Choose file
   dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox Attachments
   cloudfile_plaintext: Attachments on Cloud
+  box_attach_label: Attach from
+  box_attach_from: Attach from <b>Box</b>
+  box_choose_file: Choose file
+  box_plaintext: Box Attachments
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time
@@ -4833,10 +4837,24 @@ en:
       domains: "Domains"
       invoices: "Invoices Due"
       contacts: "Contact details of "
+    cti:
+      convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
-      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>You can choose to convert the call recordings into a ticket or add as a note to an existing ticket. Click on the option 'convert all recordings into a ticket' to make it a default setup</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
+      host_name: "Host ip:Port"
+      host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
+    five9:
+      label: "Five9"
+      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
+      helptext: "This is Five9 helptext"
+      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
+      recording_path: "Directory path for the call recording"
+    drishti:
+      label: "Ameyo"
+      desc: "Answer calls or trigger an outgoing call with this powerful Ameyo's telephony capabilities embedded inside Freshdesk"
+      helptext: "<h4>Ameyo Integration Help</h4><p><br/>You can setup this integration by entering Ameyo's CTI bar address, which can be either IP address or domain name</p><p>You can choose to convert the call recordings into a ticket or add as a note to an existing ticket. Click on the option 'convert all recordings into a ticket' to make it a default setup</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
       host_name: "Host ip:Port"
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     capsule_crm:
@@ -5240,6 +5258,12 @@ en:
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
+    box:
+      chooser_title: "Choose a file from Box..."
+      label: "Box"
+      desc: "Attach and Share your data/files from Box."
+      helptext: "<h4>Box integration help</h4><br/><p>The Box Integration lets agents and users browse for files from their Box folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p> Your Box Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
@@ -5309,6 +5333,7 @@ en:
         select_group: "Select Group"
         select_call_type: "Select Call Type"
         select_number: "Select a Number"
+        all_numbers: "All Numbers"
         all_call_types: "All"
         number: "Number"
         avg_handle_time: "Avg Handle Time"
@@ -5598,6 +5623,7 @@ en:
   clear_draft_text: "Your saved draft will be discarded. Are you sure?"
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
+  no_ssl_redirection: "Since your portal does not have SSL, you are being redirected to Freshdesk's secure page. Please login to proceed."
   canned_folders:
     insert_placeholder: Insert Placeholder
     important: "Important: "
@@ -6187,17 +6213,27 @@ en:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
         purchase_number: "Purchase Number"
+        purchase_phone_number: "Buy Number (%{number})"
         buy: "Buy Number"
-        purchase: "Purchase"
+        buy_button_text: "Buy"
         purchase_loading_text: "Purchasing..."
-        purchase_alert: " will be deducted from your balance monthly."
+        buy_loading_text: "Buying..."
+        purchase_alert_text: "This phone number will be charged <strong><span class='number-rate'></span> monthly</strong>."
         not_available: "No results returned. Please try a different search term"
-        address_certification: "Due to local regulation, you must have a business or personal address within <span class='certification-country'></span>  to purchase this phone number."
+        address_certification_text: "To buy a phone number, You are required to provide your company or personal address within <span class='certification-country'></span>."
         purchase_confirm: "Are you sure?"
         delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
         manage: "Manage"
         cannot_purchase: "Unable to purchase number for your Freshfone account"
         insuffcient_credits: "Your Freshfone credit is too low to purchase a new number. Please recharge and try again"
+        address:
+          name: "Company / Name"
+          address: "Address"
+          city: "City"
+          state: "State/Province/Region"
+          postal_code: "Postal Code"
+          country: "Country"
+          required_field: "All fields are required"
         setup:
           title: "Setting up Freshfone"
           info: "In order to get started with Freshfone, you will first need to purchase a call-in number to offer your customers. You can purchase a Local number in any of 28* countries that Freshfone currently supports. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple Freshfone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk.<br/><br/> Once you have purchased a Freshfone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
@@ -6251,7 +6287,7 @@ en:
         pricing: "See all call rates and supported countries"
         email_subject: "Freshfone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
-        success_message: "Thanks for your interest in Freshfone. We wil get back to you shortly."
+        success_message_flash: "Thanks for your interest in Freshfone. We will get back to you shortly."
         error_message: "Sorry we can not make your request right now. Try again later."
         additional_note: "Freshfone request will take two business days"
         button_label: "Request for Freshfone"

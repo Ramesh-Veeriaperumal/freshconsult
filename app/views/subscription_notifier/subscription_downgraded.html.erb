@@ -5,14 +5,18 @@
 	Account ID : <%= @subscription.account_id %><br>
 	Domain : <%= @subscription.account.full_domain %><br>
 </div><br />
-
 <div>
+	<%currency_name = @subscription.currency.name%>
 	Previously,
 		<ul>
 			<li>Plan : <%= SubscriptionPlan.find(@old_subscription[:subscription_plan_id]).name %></li>
 			<li>Billing Period : <%= period[@old_subscription[:renewal_period]] %></li>
 			<li>Agents : <%= @old_subscription[:agent_limit]%> <%= "(#{pluralize(@old_subscription[:free_agents], 'free agent')})" if @old_subscription[:free_agents] > 0 %></li>
-			<li>Revenue : <b>$<%= @old_subscription[:amount] %></b></li>
+			<li>Monthly Revenue : <b><%=currency_name%> <%= @old_subscription[:amount] %>
+				<%unless currency_name == "USD"%>
+					($ <%=@old_subscription[:usd_equivalent]%>)
+				<%end%>
+			</b></li>
 		<ul>
 </div><br />
 
@@ -22,6 +26,10 @@
 			<li>Plan : <%= @subscription.subscription_plan.name %></li>
 			<li>Billing Period : <%= period[@subscription.renewal_period] %></li>
 			<li>Agents : <%= @subscription.agent_limit %> <%= "(#{pluralize(@subscription.free_agents, 'free agent')})" if @subscription.free_agents > 0 %></li>
-			<li>Revenue : <b>$<%= @subscription.amount %></li>
+			<li>Monthly Revenue : <b><%=currency_name%> <%= @subscription.amount %>
+				<% unless currency_name == "USD"%>
+					($ <%=@subscription.usd_equivalent%>)
+				<%end%></b>
+			</li>
 		</ul>
 </div>

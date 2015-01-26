@@ -435,6 +435,15 @@ Helpkit::Application.routes.draw do
         post :status
       end
     end
+
+    resources :address do 
+      member do 
+        post :create
+      end
+      collection do
+        get :inspect
+      end
+    end
   end
 
   resources :freshfone do
@@ -597,8 +606,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :box do
+      collection do 
+        get :choose
+      end
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
-    match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :custom_install
+    match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
     match 'install/:app' => 'oauth#authenticate', :as => :oauth
   end
@@ -914,6 +929,7 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
+  match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/all' => 'search/home#index'
   match '/search/topics.:format' => 'search/forums#index'
@@ -1796,6 +1812,13 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+
+    match '/user_credentials/refresh_access_token/:app_name', 
+      :controller => 'integrations/user_credentials', :action => 'refresh_access_token', :as => :refresh_token
+    match '/integrations/user_credentials/oauth_install/:app_name', 
+      :controller => 'integrations/user_credentials', :action => 'oauth_install', :as => :user_oauth_install
+    match '/http_request_proxy/fetch', 
+      :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
   end
 
   namespace :anonymous do

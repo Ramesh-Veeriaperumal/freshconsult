@@ -958,3 +958,12 @@ $animation_timing: .1s;
 		border: 1px solid #ccc;
 	}
 }
+.ff-select2-dropdown-pl{
+	.select2-results ul.select2-result-sub > li .select2-result-label{
+		@include padding-left(10px);
+	}
+	.select2-result-unselectable .select2-result-label{
+			border-bottom: 1px solid #ddd;
+			margin: 0px 10px 10px;
+		}
+}

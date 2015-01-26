@@ -29,9 +29,12 @@ class Integrations::Application < ActiveRecord::Base
     JSON.parse(self.to_json)["application"]
   end
 
-  def oauth_url(hash)
+  def oauth_url(hash, app_name = nil)
+    user_specific_apps = ["box", "google_calendar"]
+    app_config = (user_specific_apps.include? app_name) ? {  'account_id' => hash[:account_id], 'portal_id'  => hash[:portal_id],'user_id' => hash[:user_id] } :
+                                       {  'account_id' => hash[:account_id], 'portal_id'  => hash[:portal_id]}
     AppConfig['integrations_url'][Rails.env] + 
-      Liquid::Template.parse(options[:oauth_url]).render({  'account_id' => hash[:account_id], 'portal_id'  => hash[:portal_id]})
+      Liquid::Template.parse(options[:oauth_url]).render(app_config)
   end
 
   def widget

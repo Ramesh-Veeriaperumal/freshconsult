@@ -685,6 +685,10 @@ module ApplicationHelper
     @installed_apps ||= current_account.installed_apps_hash
   end
 
+  def cloud_files_installed?
+    dropbox_app_key || installed_apps[:box]
+  end
+
   def get_app_widget_script(app_name, widget_name, liquid_objs)
     installed_app = installed_apps[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?

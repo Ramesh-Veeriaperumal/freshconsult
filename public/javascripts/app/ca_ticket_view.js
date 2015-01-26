@@ -69,13 +69,13 @@
   	{
       jQuery('#recently_used_container').show();
       jQuery('#response_dialog').removeClass('no_recently_used');
-      jQuery('#recently_used_list').empty().addClass('sloading loading-small');
-  		new Ajax.Request(ca_responses_recent_url+localStorage["local_ca_response"]+']', 
-    		{
-    			asynchronous: true,
-					evalScripts: true,
-					method: 'get'
-    		});   
+      //jQuery('#recently_used_list').empty().addClass('sloading loading-small');
+  		// new Ajax.Request(ca_responses_recent_url+localStorage["local_ca_response"]+']', 
+    // 		{
+    // 			asynchronous: true,
+				// 	evalScripts: true,
+				// 	method: 'get'
+    // 		});   
   	}
   }
 
@@ -86,8 +86,8 @@
 	  jQuery(this).hide();
 	});
 
-  jQuery('[data-folder]').bind('click', function(){
-    jQuery('#responses').empty().addClass('sloading loading-small');
-  });
+ // jQuery('[data-folder]').bind('click', function(){
+    //jQuery('#responses').empty().addClass('sloading loading-small');
+  //});
 
   jQuery('#canned_response_list a').first().click();

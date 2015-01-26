@@ -33,12 +33,13 @@ RSpec.describe Freshfone::QueueController do
     xml[:Response][:Say].should_not be_blank
   end
 
-  it 'should raise error whe trying to dequeue calls not in-progress' do
+  it 'should remove call sid for a call not in-progress from the queue' do
     log_in(@agent)
     controller.send(:queued_members).stubs(:list).returns(["random"])
     controller.set_key( "FRESHFONE:CALLS:QUEUE:#{@account.id}", 
                         ["CAae09f7f2de39bd201ac9276c6f1cc66a"].to_json )
-    lambda { post :bridge }.should raise_error(Twilio::REST::RequestError, /Cannot dequeue call/)
+    post :bridge
+    controller.get_key( "FRESHFONE:CALLS:QUEUE:#{@account.id}").should be_eql([].to_json)
   end
 
   it 'should success json when queue list is empty' do
@@ -59,7 +60,7 @@ RSpec.describe Freshfone::QueueController do
     create_freshfone_call('CDEFAULTQUEUE')
     set_default_queue_redis_entry
     post :hangup, hangup_params
-    controller.get_key(default_queue).should be_nil
+    controller.get_key(DEFAULT_QUEUE % {account_id: @account.id}).should be_nil
   end
 
   it 'should remove all agent priority queue entries from redis on hangup' do # failing in master
@@ -69,7 +70,7 @@ RSpec.describe Freshfone::QueueController do
     set_agent_queue_redis_entry
     post :hangup, 
       hangup_params.merge({:hunt_type => "agent", :hunt_id => @agent.id, "CallSid" => "CAGENTQUEUE"})
-    controller.get_key(agent_queue).should be_nil
+    controller.get_key(AGENT_QUEUE % {account_id: @account.id}).should be_nil
   end
 
   it 'should render dequeue twiml on queue to voicemail' do

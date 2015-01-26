@@ -13,11 +13,11 @@ function parseData(e){
   var params = data.split("|");
   if(params[0]=="Disconnect"){
     czentrix_widget.getCallRecording(params[1]);
-    //freshdeskHandleEndCall("http://testurl.com");
   }
   else if(params[0]=="Accept"){
     var callerId = params[1];
     var sessionId = params[2];
+    remoteId = sessionId;
     freshdeskShowCrm(callerId);
   }
 }

@@ -1,5 +1,7 @@
 class Freshfone::NumberObserver < ActiveRecord::Observer
 	observe Freshfone::Number
+	
+	include Freshfone::FreshfoneHelper
 
 	def before_validation(freshfone_number)
     unless freshfone_number.new_record?
@@ -14,7 +16,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 
 	def before_create(freshfone_number)
 		account = freshfone_number.account
-		create_subaccount(freshfone_number, account) if new_freshfone_account?(account)
+		create_subaccount(account) if new_freshfone_account?(account)
 		build_ivr_for_number(freshfone_number, account)
 		add_number_to_twilio(freshfone_number, account) unless freshfone_number.skip_in_twilio
 		set_number_config(freshfone_number, account)
@@ -48,10 +50,6 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 			end
 		end
 
-		def create_subaccount(freshfone_number, account)
-			account.create_freshfone_account
-		end
-
 		def build_ivr_for_number(freshfone_number, account)
 			freshfone_number.build_ivr({ :account => account, :active => false })
 		end
@@ -82,10 +80,6 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		def address_certification_request(freshfone_number, account)
 			return unless freshfone_number.address_required
 			FreshfoneNotifier.send_later(:deliver_address_certification, account, freshfone_number)
-		end
-		
-		def new_freshfone_account?(account)
-			account.freshfone_account.blank?
 		end
 		
 		def active_freshfone_account?(account)

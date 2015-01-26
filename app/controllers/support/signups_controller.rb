@@ -44,7 +44,8 @@ class Support::SignupsController < SupportController
     end
 
     def set_required_fields # validation
-      required_signup_fields = customer_signup_fields.select{ |field| field.required_in_portal }
+      required_signup_fields = customer_signup_fields.select{ |field| 
+                    (field.field_type == :default_email) ? true : field.required_in_portal }
       @user.required_fields = { :fields => required_signup_fields, 
                                 :error_label => :label_in_portal }
     end

@@ -90,7 +90,7 @@ module Freshfone::Jobs
 				@data = RemoteFile.new(@file_url,'','',@file_name)
 				NewRelic::Agent.notice_error( 
 						StandardError.new("Freshfone Call Recording Attachment size => #{ @data.size} exceeds 40MB 
-								: account => #{@account.id} : call sid => #{call.call_sid} ")) if @data.size > 40.megabyte
+								: account => #{@account.id} : call sid => #{@call.call_sid} ")) if @data.size > 40.megabyte
 			end
 
 			def self.build_recording_audio

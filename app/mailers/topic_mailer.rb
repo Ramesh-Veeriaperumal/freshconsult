@@ -2,7 +2,8 @@ class TopicMailer < ActionMailer::Base
 
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
-	
+
+  layout "email_font"
   def monitor_email(emailcoll, topic, user, portal, sender, host)
     configure_mailbox(user, portal)
     headers = {
@@ -16,6 +17,7 @@ class TopicMailer < ActionMailer::Base
     @user   = user
     @body_html = generate_body_html(topic.posts.first.body_html)
     @host = host
+    @account = topic.account
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, topic.posts.first.body_html, topic.account)
@@ -49,6 +51,7 @@ class TopicMailer < ActionMailer::Base
     @current_stamp = current_stamp 
     @forum_type = forum_type
     @body_html = generate_body_html(topic.posts.first.body_html)
+    @account = topic.account
 
     mail(headers) do |part|
       part.text { render "mailer/topic/stamp_change_notification_email.text.plain" }
@@ -76,6 +79,7 @@ class TopicMailer < ActionMailer::Base
     @user = monitor.user
     @host = host
     @portal = monitor.get_portal
+    @account = Account.current
     mail(headers) do |part|
       part.text do
         render("mailer/topic/merge_topic_notification_email.text.plain")

@@ -242,7 +242,7 @@ class CRM::Salesforce < Resque::Job
     end
 
     def discard_owner?(owner) # for below condition the salesforce account manager details should not be shown
-      owner.nil? || owner.Reseller__c.to_bool || (owner.Marketo_Contacted__c == "Yes")
+      owner.nil? || owner.is_a?(Array) || owner.Reseller__c.to_bool || (owner.Marketo_Contacted__c == "Yes")
     end
 
     def fetch_opportunity(crm_account_id)

@@ -37,23 +37,15 @@ module FreshfoneQueueHelper
   end
 
   def set_default_queue_redis_entry
-    controller.set_key(DEFAULT_QUEUE, ["CDEFAULTQUEUE"].to_json)
+    controller.set_key(DEFAULT_QUEUE % {account_id: @account.id}, ["CDEFAULTQUEUE"].to_json)
   end
 
   def set_agent_queue_redis_entry
-    controller.set_key(AGENT_QUEUE, 
+    controller.set_key(AGENT_QUEUE % {account_id: @account.id}, 
         { @agent.id => ["CAGENTQUEUE"] }.to_json)
 
   end
 
-  def default_queue
-    DEFAULT_QUEUE
-  end
-
-  def agent_queue
-    AGENT_QUEUE
-  end
-
-  DEFAULT_QUEUE = "FRESHFONE:CALLS:QUEUE:1"
-  AGENT_QUEUE = "FRESHFONE:AGENT_QUEUE:1"
+  DEFAULT_QUEUE = "FRESHFONE:CALLS:QUEUE:%{account_id}"
+  AGENT_QUEUE = "FRESHFONE:AGENT_QUEUE:%{account_id}"
 end

@@ -57,6 +57,24 @@ describe Reports::Freshfone::SummaryReportsController do
     response.should render_template("reports/freshfone/summary_reports/generate")
   end
 
+   it "should generate the summary for the incoming calls for all numbers" do
+    start_date = (Date.today-7.day).strftime('%d %b, %Y')
+    end_date = Date.today.strftime('%d %b, %Y')
+    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Reports::FreshfoneReport::ALL_NUMBERS, 
+          :call_type => 1,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
+    assigns[:calls].should_not be_empty
+    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+  end
+
+   it "should generate the summary for the outgoing calls for all numbers" do
+    start_date = (Date.today-7.day).strftime('%d %b, %Y')
+    end_date = Date.today.strftime('%d %b, %Y')
+    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Reports::FreshfoneReport::ALL_NUMBERS, 
+          :call_type => 2,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
+    assigns[:calls].should be_empty
+    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+  end
+
   it "should export the data as a csv for the outgoing calls criteria" do
     number = @account.freshfone_numbers.first
     start_date = (Date.today-7.day).strftime('%d %b, %Y')

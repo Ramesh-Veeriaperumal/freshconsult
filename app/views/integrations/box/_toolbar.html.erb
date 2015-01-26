@@ -1,0 +1,16 @@
+<div class="box-header" id="sticky_header">
+  <span class="box-logo" onclick="jQuery('.box-loading-big').show(); boxChooser.get_folder_items(0)"></span>
+  <div id="box-navbar" class="box-navbar"></div>
+    <a rel="click-popover-below-left" class="box-settings" data-widget-container="box-settings-popover">
+      <img src="/images/box-chooser/box-changelogin.png">
+    </a>
+  
+</div>
+<div class="hide">
+  <div id="box-settings-popover" data-container-class="box-settings-popover">
+    <%= "<b>#{user_credential.auth_info['email'] if user_credential}</b>".html_safe %><br>
+    <span id='box-change-account-link' onclick='performOAuth()'>
+      <%= link_to "Change", '#' %>
+    </span>
+  </div>
+</div>

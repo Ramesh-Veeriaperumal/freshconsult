@@ -44,7 +44,7 @@
 </div>
 <%=javascript_tag do %> 
   if (typeof freshfone === "undefined") { freshfone = {}; }
-  freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success_message')%>" ;
+  freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success_message_flash')%>" ;
   freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
 <%- end %>
 <%= javascript_include_tag :'cdn/freshfone_welcome_page' %>

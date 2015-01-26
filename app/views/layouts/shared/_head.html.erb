@@ -65,7 +65,7 @@
 		<%= javascript_include_tag :'cdn/soundmanager' %>
 	<% end %>
 	
-	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>
+	<% if chat_activated? && !current_account.features_included?(:collision) %>
 		<%= javascript_include_tag :'cdn/freshchat' %>
 	<% end %>
 	

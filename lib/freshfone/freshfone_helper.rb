@@ -50,4 +50,12 @@ module Freshfone::FreshfoneHelper
     current_account.users.find_by_phone(phone_number) || current_account.users.find_by_mobile(phone_number)
   end
 
+  def new_freshfone_account?(account)
+    account.freshfone_account.blank?
+  end
+
+  def create_subaccount(account)
+    account.create_freshfone_account
+  end
+
 end

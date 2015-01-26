@@ -173,4 +173,16 @@ module FreshfoneSpecHelper
     twiml.deep_symbolize_keys if twiml.present?
   end
 
+  def create_ff_address
+    name = Faker::Name.name
+    address_params = { :friendly_name => name, :business_name => name, :address => Faker::Address.street_address,
+        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => Faker::Address.postcode,
+        :country => 'DE'
+    }
+    @account.freshfone_account.freshfone_addresses.new(address_params).save
+  end
+
+  def ff_address_inspect(country)
+    @account.freshfone_account.freshfone_addresses.find_by_country(country).present?
+  end
 end

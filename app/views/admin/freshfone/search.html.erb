@@ -21,18 +21,37 @@
 
 	<button class="hide" id="open-purchase-confirmation"
 		rel="freshdialog"
-		data-submit-label="<%=t('freshfone.admin.numbers.purchase')%>"
-		data-submit-loading="<%=t('freshfone.admin.numbers.purchase_loading_text')%>"
+		data-submit-label="<%=t('freshfone.admin.numbers.buy_button_text')%>"
+		data-submit-loading="<%=t('freshfone.admin.numbers.buy_loading_text')%>"
 		data-close-label="<%= t('cancel') %>"
 		data-width="543"
-		data-target="#purchase-confirmation" ></button>
+		data-target="#purchase-confirmation"
+		data-template-footer="<div class='purchase-footer modal-footer'><label class='muted pull-left address-required-alert control-label hide'>
+      <%= t('freshfone.admin.numbers.address.required_field') %>
+    </label> </div>"
+		 ></button>
 
 	<div id="purchase-confirmation" class="hide">
+		<div class='loading-box sloading loading-tiny hide'></div>
 		<div class="number-message">
 			<span class="label label-important"><%= t('freshfone.admin.important') %></span>
-			<strong class="number-rate"></strong> <%= t('freshfone.admin.numbers.purchase_alert') %>
+			<%= t('freshfone.admin.numbers.purchase_alert_text').html_safe %>
 			<div class="address-required-alert hide">
-			 <%= t('freshfone.admin.numbers.address_certification').html_safe %>
+			<span class="seperator"></span>
+			 <%= t('freshfone.admin.numbers.address_certification_text').html_safe %>
+			 <div class='freshfone-address-form'>
+			 	<%form_tag({:action => 'create', :controller => "freshfone/address"}, 
+			 		:id => 'freshfone_address_form', 
+			 		:html => {:remote => true, :'data-type' => 'script'}) do %>
+			 		<div class="ajaxerrorExplanation errorExplanation hide">
+			 			<label class='error'>
+			 				<%= t('freshfone.admin.numbers.cannot_purchase') %>
+			 			</label>
+			 		</div>
+			 		<div class="purchaseErrorExplanation errorExplanation hide">
+			 		</div>
+			 		<%= render :partial => "address_form"%>
+			 	<% end %>
 			</div>
 		</div>
 	</div>
