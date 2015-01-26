@@ -10,7 +10,7 @@ CZentrixWidget.prototype = {
     application_id: 29,
     use_server_password: false,
     auth_type: 'NoAuth',
-    domain : 'http://'+cti_user.host_ip+'/' ,
+    domain : location.protocol + "//" +cti_user.host_ip+'/' ,
     ssl_enabled: "false",
   });
   //this.freshdeskWidget.resource_failure=failureHandler.bind(this.freshdeskWidget);
@@ -71,6 +71,22 @@ CZentrixWidget.prototype = {
   logout : function(path,fileName,session_id){
     this.freshdeskWidget.request({
         rest_url: "apps/appsHandler.php?transaction_id=CTI_LOGOUT&agent_id="+agentId+"&ip="+cti_user.host_ip+"&resFormat=0",
+        method: "get",
+        contentType : "text/xml",
+        on_success: function(data) {
+          parser=new DOMParser();
+          xmlDoc=parser.parseFromString(data['responseJSON'],"text/xml");
+        },
+        on_failure: function(data) {
+          
+        },
+      });
+  },
+  
+  sendIntegratableId : function(type,id){
+    var params = "type:"+id;
+    this.freshdeskWidget.request({
+        rest_url: "apps/appsHandler.php?transaction_id=CTI_SET_DETAILS&session_id="+remoteId+"&agent_id="+agentId+"&remarks="+params+"&resFormat=0",
         method: "get",
         contentType : "text/xml",
         on_success: function(data) {

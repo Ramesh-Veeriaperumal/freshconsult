@@ -63,6 +63,15 @@
 			vertical-align: middle;
 			background: inline-image('cdn-ignored/inline-images/dropbox.png') no-repeat #ffffff;
 		}
+		.file-types-box{
+			margin: 0;
+			@include padding(3px 0px 3px 25px);
+			width: auto;
+			height: 20px;
+			display: inline-block;
+			vertical-align: middle;
+			background: inline-image('cdn-ignored/inline-images/box.png') no-repeat #ffffff;
+		}
 		img.image{
 				margin:0;
 				width:32px;

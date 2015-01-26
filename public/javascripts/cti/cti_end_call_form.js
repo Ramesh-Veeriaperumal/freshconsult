@@ -1,4 +1,5 @@
 var CtiEndCall;
+var remoteId=0;
 (function ($) {
 	"use strict";
 	CtiEndCall = function () {
@@ -36,7 +37,7 @@ var CtiEndCall;
 		};
 		this.init();
 		var self = this;
-		
+		if(cti_user.hide_dont_convert == 1) self.$endCall.find('.end_call_cancel').hide();
 		// Ticket Search
 		self.$endCallAddToExistingButton.bind('click', function (ev) {
 			ev.preventDefault();
@@ -171,13 +172,19 @@ var CtiEndCall;
 				"subject":this.ticketSubject(),
 				"requester_name": this.requesterName(),
 				"number" : this.number,
-				"recordingUrl" : this.recordingUrl
+				"recordingUrl" : this.recordingUrl,
+				"remoteId" : remoteId
 			}};
 			$.ajax({
 				type: 'POST',
 				url: '/integrations/cti/customer_details/create_ticket',
 				contentType: 'application/json',
-				data: JSON.stringify(json_data)
+				data: JSON.stringify(json_data),
+				success: function(data) {
+					// var widget = window[cti_user.widget_name];
+					// var arg = [data.type,data.id];
+					// if (typeof widget.sendIntegratableId === "function") widget.sendIntegratableId.apply(null,args);
+				}
 			});
 		},
 		createNote: function () {
@@ -185,13 +192,19 @@ var CtiEndCall;
 			var json_data={
 						  "ticketId" : this.ticketId,
 						  "msg" : this.ticket_notes,
-						  "recordingUrl" : this.recordingUrl
+						  "recordingUrl" : this.recordingUrl,
+						  "remoteId" : remoteId
 						};
 			$.ajax({
 				type: 'POST',
 				url: '/integrations/cti/customer_details/create_note',
 				contentType: 'application/json',
-				data: JSON.stringify(json_data)
+				data: JSON.stringify(json_data),
+				success: function(data) {
+					// var widget = window[cti_user.widget_name];
+					// var arg = [data.type,data.id];
+					//if (typeof widget.sendIntegratableId === "function") widget.sendIntegratableId.apply(null,args);
+				}
 			});
 		},
 		custom_requester_id: function () {

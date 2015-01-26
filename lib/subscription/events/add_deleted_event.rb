@@ -25,7 +25,7 @@ class Subscription::Events::AddDeletedEvent
 			{
 				:account_id => subscription.account_id,
 				:code => CODES[:deleted],
-				:cmrr => (subscription.amount/subscription.renewal_period)
+				:cmrr => subscription.cmrr
 			}
 		end
 

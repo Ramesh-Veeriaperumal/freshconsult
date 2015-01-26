@@ -67,14 +67,10 @@
 	</div>
 <% else %>
 	<div class="big-info">
-		<h4 class="lead muted">
-			<%= t('solution.info7').html_safe %>
-		</h4>  
-	    <% if privilege?(:publish_solution) %>
-			  <%= link_to t('solution.add').html_safe, 
-			  			  new_solution_category_folder_article_path(category, folder), 
-			  			  :class => "btn btn-primary btn-large" %>
-	    <% end %>
+		<div class="no-info-text"><%= t('solution.info7').html_safe %> </div>  
+    <% if privilege?(:publish_solution) %>
+		  <%= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+    <% end %>
 	</div>
 <% end %>
 

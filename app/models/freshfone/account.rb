@@ -4,7 +4,8 @@ class Freshfone::Account < ActiveRecord::Base
 	belongs_to_account
 	has_many :freshfone_usage_triggers, :class_name => "Freshfone::UsageTrigger", 
 						:dependent => :delete_all, :foreign_key => :freshfone_account_id
-
+  has_many :freshfone_addresses, :class_name => "Freshfone::Address",
+  					:dependent => :delete_all, :foreign_key => :freshfone_account_id
 	alias_attribute :token, :twilio_subaccount_token
 	alias_attribute :app_id, :twilio_application_id
 	attr_protected :account_id

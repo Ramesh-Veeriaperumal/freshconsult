@@ -79,6 +79,28 @@ window.App.Freshfone = window.App.Freshfone || {};
           }
         });
     },
+    numberOptions: function(filter_number_options,selection) {
+        jQuery('#freshfone_number').select2({
+          dropdownCssClass: 'ff-select2-dropdown-pl',
+          data: {
+                text: 'value',
+                results: filter_number_options },
+          formatResult: function (result) {
+            if(!result.id) {
+              // return `text` for optgroup
+             return result.value;
+            }
+            if (result.deleted){
+              return result.value+"<i class='muted'> (Deleted)</i>"
+            } 
+            return result.value;
+          },
+          formatSelection: function (result) {
+            return result.value;
+          },
+        });
+        jQuery("#freshfone_number").select2("data",selection);
+    },
     leave: function(){
       $('body').off('.freshfone_reports');
     }

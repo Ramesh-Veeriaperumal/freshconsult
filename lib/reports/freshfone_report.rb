@@ -4,11 +4,16 @@ module Reports::FreshfoneReport
   include Reports::ActivityReport
 
   UNASSIGNED_GROUP = "-1"
+  ALL_NUMBERS = "0"
+
+  MAX_ALLOWED_MONTHS = 6
 
   def build_criteria
     @report_date = params[:date_range]
     @start_date = start_date
     @end_date = end_date
+    @time_diff = (DateTime.parse(@end_date) - DateTime.parse(@start_date)).to_i
+    set_default_date_range if @time_diff > MAX_ALLOWED_MONTHS * 31 #usually its 184 (we keep it 186 for convenience)
     @call_type = params[:call_type] || Freshfone::Call::CALL_TYPE_HASH[:incoming]
     @group_id = params[:group_id]
     @freshfone_number = params[:freshfone_number] || current_account.freshfone_numbers.first.id
@@ -47,10 +52,15 @@ module Reports::FreshfoneReport
 
     def select_conditions
       group_condition
-      conditions = ["freshfone_calls.call_type = ? and freshfone_calls.freshfone_number_id = ? #{group_condition}", 
-       @call_type, @freshfone_number]
+      conditions = ["freshfone_calls.call_type = ? #{number_condition} #{group_condition}", 
+       @call_type]
+      conditions.push(@freshfone_number) if @freshfone_number != ALL_NUMBERS
       conditions.push(@group_id) unless all_or_unassigned?
       conditions
+    end
+
+    def number_condition
+      "and freshfone_calls.freshfone_number_id = ?" if @freshfone_number != ALL_NUMBERS
     end
 
     def group_condition
@@ -63,6 +73,12 @@ module Reports::FreshfoneReport
       @group_id.blank? || @group_id == UNASSIGNED_GROUP
     end
     
+    def set_default_date_range
+      params[:date_range] ="#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}"
+      Rails.logger.debug "FreshfoneSummaryReports Debug::: Resetting to default date range: #{params[:date_range]} :: for account :: #{current_account.id} " 
+      build_criteria
+    end
+
     def report_query
       %( #{select_columns}, count(freshfone_calls.id) as count,
           sum(if(freshfone_calls.ancestry is NULL, 1,0)) as total_count,

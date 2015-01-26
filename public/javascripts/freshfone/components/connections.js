@@ -43,6 +43,10 @@ var FreshfoneConnection;
 			ffLogger.log({'action': "Rejected by agent", 'params': this.connection.parameters});
 			this.connection.reject();
 			this.freshfoneNotification.popOngoingNotification(this.connection, this);
+			setTimeout(function() {
+				ffLogger.log("Bridging calls after a reject");
+				freshfoneuser.bridgeQueuedCalls();
+			}, 30000);
 		},
 		callSid: function() {
 			return this.connection.parameters.CallSid;

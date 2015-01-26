@@ -95,9 +95,9 @@
 #local_search_results, #toll_free_search_results{
   .result_available_number{
     display: inline-block;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 3px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 6px;
   }
   .buy_available_number{
     display: inline-block;
@@ -114,7 +114,9 @@
 
     &:hover {
       background: $fa-active-tab-background;
-
+      .buy_available_number{
+        margin-top: 5px;
+      }
       .purchase_number {
         display: inline;
       }
@@ -163,20 +165,24 @@
   @include border-radius(5px 5px 0px 0px);
   border: 1px solid $fa-phone-search-border;
   @include padding(10px 20px 10px 9px);
-	min-height: 40px;
+	min-height: 30px;
   #search_input{
-    height: 28px;
+    height: 20px;
   }
   .search-input-sec{
-    width: 250px;
+    width: 200px;
     @include float(right);
     position: relative;
+    margin-right: 18px;
     #search_input{
       margin-bottom: 0;
+      padding-left: 30px;
     }
     .searchicon{
-      top: 11px;
-      @include right(0);
+      top: 5px;
+      @include left(10px);
+      background: none;
+      color: #999;
     }
   }
   .search-primary{
@@ -186,18 +192,18 @@
     display: inline-block;
     @include margin-right(5px);
 		.select2-container {
-			width: 120px;
+			width: 130px;
 		}
   }
   .select2-choice{
     -webkit-border-radius:3px;
     -moz-border-radius:3px;
     border-radius:3px;
-    height: 31px;
-    padding-top: 5px;
+    height: 25px;
+    padding: 2px 2px 2px 5px;
     div b{
       position: relative;
-      top: 5px;
+      top: 2px;
     }
   }
 }
@@ -264,12 +270,15 @@
   
 }
 #purchase-confirmation{
-    margin: 8px;
     .number-message{
       display: inline-block;
-      @include margin-left(15px);
       .address-required-alert{
         margin-top: 9px;
+        .seperator {
+          margin-top: 15px;
+          margin-bottom: 12px;
+          border-bottom: 1px solid #e0e0e0;
+        }
       }
       .label-important{
         @include margin-right(8px);
@@ -280,6 +289,9 @@
       margin-top: 30px;
       @include text-align(right);
     }
+}
+#purchase-confirmation-content {
+  padding: 10px 20px 7px;
 }
 .content_footer {
   font-size: 14px;
@@ -313,4 +325,13 @@
 }
 .error_flash {
  color: #a90329;
+}
+.form-controls {
+  margin-top: 10px;
+}
+.row-fluid .control-group {
+    margin-bottom: 8px
+}
+.purchase-footer .address-required-alert {
+  color: #888;
 }

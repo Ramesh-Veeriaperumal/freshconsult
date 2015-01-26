@@ -53,6 +53,11 @@ CZ:
   beta: false
   address_required: true
   local: 1.0
+DE:
+  name: Germany
+  beta: false
+  address_required: true
+  local: 1.0
 DK:
   name: Denmark
   beta: false

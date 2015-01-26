@@ -4,6 +4,6 @@
 	ticket = @ticket.present? ? @ticket.display_id : "bulk" %>
 	<%= link_to_function((truncate(ca_res_folder.display_name, :length => 25, :omission => "...")+
 	" (#{ca_res_folder.visible_responses_count})"),
-	"fetchResponses('#{url}?ticket_id=#{ticket}', '#folder-#{ca_res_folder.id}')", 
+	"fetchCannedResponses('#{ca_res_folder.id}')",
 	:class => "item_info", :id => "folder-#{ca_res_folder.id}", "data-folder" => "#{ca_res_folder.id}") %>
 </li>

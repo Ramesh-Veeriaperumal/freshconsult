@@ -1,6 +1,8 @@
 class Integrations::UserCredentialsController < ApplicationController
   include Integrations::AppsUtil
-  
+
+  before_filter { |c| c.check_agent_app_access c.params[:app_name] }
+
   def oauth_install
     begin
       key_options = { :account_id => current_account.id, :provider => params['id']}

@@ -1,4 +1,4 @@
-<% if (!(ticket.nil?) && current_account.features?(:collision_socket) && current_account.agents_from_cache.count > 1 ) %>
+<% if (!(ticket.nil?) && current_account.features?(:collision) && current_account.agents_from_cache.count > 1 ) %>
     <!-- **** Agent Collision flip animation start **** -->
   <div class="ticket-notifications" id="agent_collision_show">
     <div class="view-flip" rel="notice-popover"  id="agents_viewing" data-object="viewing" data-placement="right" title="Currently viewing">
