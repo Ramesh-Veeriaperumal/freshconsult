@@ -8,3 +8,7 @@
 </div>
 
 <%= render :partial => 'sidebar' %>
+<% if chat_activated? %>
+	<%= include_cloudfront_js :livechat_mini_dashboard %>
+	<%= include_cloudfront_rtl_css :livechat_mini_dashboard %>
+<% end %>

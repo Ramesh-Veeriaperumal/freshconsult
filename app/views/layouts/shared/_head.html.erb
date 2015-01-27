@@ -54,13 +54,16 @@
 	<%= include_cloudfront_js :custom_widget %>
 
 	<% if current_account.features?(:freshfone) ||
-		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
+	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= include_cloudfront_js :soundmanager %>
 	<% end %>
-	
-	<% if chat_activated? && !current_account.features_included?(:collision) %>
+	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>
 		<%= include_cloudfront_js :freshchat %>
 	<% end %>
+	
+	<% if chat_activated? %>
+		<%= include_cloudfront_js :freshchat_templates %>
+	<% end %> 
 
 	<%= include_cloudfront_js_langs %>
 

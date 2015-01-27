@@ -66,7 +66,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :groups]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]

@@ -18,5 +18,8 @@
 		<% if current_user %>
 			window.FRESHCHAT_VISITORINFO = {name:"<%= current_user.name%>",email:"<%= current_user.email%>"};
 		<% end %>
+		<%if Rails.env == 'development' %>  
+			jQuery.getScript(asset.js+"/js/visitor-devtools.js");
+		<%end%>
 	});
 </script>
