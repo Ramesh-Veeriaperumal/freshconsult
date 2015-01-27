@@ -34,7 +34,13 @@
 	right: 0;
 	clear: both;
 	cursor: pointer;
-	font-size: 1.1em;
+	font-size: 12px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+.ui-daterangepicker button.btnDone:hover{
+	color: #fff;
 }
 .ui-daterangepicker ul {
 	width: 17.6em;
@@ -58,6 +64,9 @@
 }
 .ui-daterangepicker .ui-widget-content a {
 	text-decoration: none !important;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius:3px;
 }
 .ui-daterangepicker li a {
 	font-weight: normal;
@@ -104,4 +113,26 @@
 .ui-daterangepicker-arrows .ui-daterangepicker-prev:focus, 
 .ui-daterangepicker-arrows .ui-daterangepicker-next:focus {
 	padding: 0;
+}
+
+.ui-daterangepicker .ui-datepicker{
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+.ui-daterangepicker .ui-state-default{
+	background-image: none;
+	color: #888;
+}
+.ui-daterangepicker .ui-state-active{
+	color: #fff;
+}
+.ui-daterangepicker .ui-datepicker-unselectable span{
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius:3px;
+}
+.ui-daterangepicker td a,
+.ui-daterangepicker td span{
+	padding: 0.3em;
 }

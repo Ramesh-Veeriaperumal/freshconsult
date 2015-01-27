@@ -761,5 +761,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
 
   map.connect '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
+  map.connect '/freshchat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+
+  map.connect '/freshchat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
 end

@@ -1,0 +1,21 @@
+<h3 class="title">
+  <span class="tooltip" data-placement="above" data-original-title="Disconnected" twipsy-content-set="true">
+    <span class="chat_icon_connection"></span>
+  </span>
+  <%=CHAT_I18n.title%>
+  <span class="refresh_wrap tooltip" data-placement="above" data-original-title="Refresh Chat" twipsy-content-set="true">
+    <span class="ficon icon-refresh"></span>
+  </span>
+</h3>
+<div class="panel-list">
+  <ul class="chat-dashboard-link clearfix">
+    <li><span id="inconversation_visitors_count">0</span><span><%=CHAT_I18n.in_conversation%></span></li>
+    <li><span id="online_agent_count">0</span><span><%=CHAT_I18n.available_agents%></span></li>
+    <li><span id="new_visitors_count">0</span><span><%=CHAT_I18n.new_visitors%></span></li>
+    <li><span id="return_visitors_count">0</span><span><%=CHAT_I18n.returning_visitors%></span></li>
+  </ul>
+  <ul class="chat-dashboard-link clearfix">
+    <li class="chat-link-large"><a href="/freshchat/visitor/newVisitor" ><%=CHAT_I18n.website_visitors_msg%><b class="ficon icon-caret-right"></b></a></li>
+    <li class="chat-link-large"><a href="/freshchat/archive" ><%=CHAT_I18n.message_archives%><b class="ficon icon-caret-right"></b></a></li>
+  </ul>
+</div>

@@ -29,9 +29,11 @@
 									}
 
 			          	$('body').on('click',"#chat_initial_enable",function(){
-			          		jQuery(this).button('loading');
+			          		jQuery(this).button('Enabling');
 					          var data = {	
 											"id" 					      : <%= current_account.id %>, 
+                      "user_id"           : <%= current_user.id %>, 
+                      "token"             : LIVECHAT_PARTIAL_TOKEN,
 		            		  "siteId"				    : window.SITE_ID,
 											"domain"				    : '<%= current_account.full_domain %>', 
 											"url"					      : window.location.hostname , 

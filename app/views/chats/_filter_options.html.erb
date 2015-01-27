@@ -1,0 +1,33 @@
+<ul class="unstyled fc-archives">
+  <li>
+    <h3 class="lead">Filter
+      <span class="muted report-close pull-right" id="filter-close-icon">×</span>
+    </h3>
+  </li>
+  <li>
+    <form id ="archive_filter">
+      <label class="control-label"><%=t('freshchat.keyword')%></label>  
+      <input class="ff_item date_range" id="filter_keyword" type="text" value="" />
+      <label class="control-label"><%=t('freshchat.widget')%></label>  
+      <%= select_tag :widget_filter, options_for_select([[t('freshchat.all'),"0"]] + @widgetsSelectOption,"0"), :class => 'select2',:multiple => true %>
+      <label class="control-label"><%=t('filter_options.created_date_range')%></label>
+      <input class="ff_item date_range" id="date_range" type="text" value="<%=@dateRange%>" />
+      <label class="control-label"><%=t('filter_options.responder_id')%></label>  
+      <%= select_tag :agent_filter, options_for_select([[t('freshchat.all'),"0"]] + @agentsAvailable,"0"), :class => 'select2',:multiple =>true%>
+      <label class="control-label"><%=t('freshchat.chat_type')%></label>  
+      <select name="type" id="type_filter" class="select2">
+        <option value="0" selected><%=t('freshchat.all')%></option>
+        <option value="1"><%=t('freshchat.visitor_initiated')%></option>
+        <option value="2"><%=t('freshchat.agent_initiated')%></option>
+        <option value="3"><%=t('freshchat.proactive_title')%></option>
+        <option value="4"><%=t('freshchat.agent_to_agent')%></option>
+        <option value="5"><%=t('freshchat.missed_chat')%></option>
+      </select> 
+      <input type="hidden" id="visitor_id" type="text" value="" />
+    </form>
+  </li> 
+  <li class="filter-actions">
+    <a class="btn btn-primary" id="submit" href="javascript:void(0)"><%=t('freshchat.filter')%></a>
+    <a class="btn" id="cancel" href="javascript:void(0)"><%=t("freshchat.close")%></a>
+  </li>
+</ul>
