@@ -60,7 +60,7 @@ RSpec.describe Freshfone::QueueController do
     create_freshfone_call('CDEFAULTQUEUE')
     set_default_queue_redis_entry
     post :hangup, hangup_params
-    controller.get_key(DEFAULT_QUEUE % {account_id: @account.id}).should be_nil
+    controller.get_key(FreshfoneQueueHelper::DEFAULT_QUEUE % {account_id: @account.id}).should be_nil
   end
 
   it 'should remove all agent priority queue entries from redis on hangup' do # failing in master
@@ -70,7 +70,7 @@ RSpec.describe Freshfone::QueueController do
     set_agent_queue_redis_entry
     post :hangup, 
       hangup_params.merge({:hunt_type => "agent", :hunt_id => @agent.id, "CallSid" => "CAGENTQUEUE"})
-    controller.get_key(AGENT_QUEUE % {account_id: @account.id}).should be_nil
+    controller.get_key(FreshfoneQueueHelper::AGENT_QUEUE % {account_id: @account.id}).should be_nil
   end
 
   it 'should render dequeue twiml on queue to voicemail' do
