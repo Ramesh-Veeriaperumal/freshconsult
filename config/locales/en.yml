@@ -6442,7 +6442,7 @@ en:
     unknown: "Unknown"
     no_visitors: "No new visitors on your site"
     no_conversation: "No visitors in conversation"
-    no_return_visitors: "No return visitors"
+    no_return_visitors: "No returning visitors"
     tag_placeholder: "Enter the tags"
     no_visitors_msg: "No visitors on your site..."
     options: "Options"

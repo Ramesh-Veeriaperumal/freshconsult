@@ -349,9 +349,11 @@ var TimeFormat = function(milliseconds){
 			if(duration > 0 && count > 0){
 				handleTime = (duration/count);
 			}
-			list.push('<tr class="odd"><td><strong>'+freshchat_agents[k]+'</strong></td><td>'+answered+'</td>');
-			list.push('<td>'+TimeFormat(handleTime)+'</td><td>'+TimeFormat(duration)+'</td></tr>');
-			len++;
+			if(freshchat_agents[k]){
+				list.push('<tr class="odd"><td><strong>'+freshchat_agents[k]+'</strong></td><td>'+answered+'</td>');
+				list.push('<td>'+TimeFormat(handleTime)+'</td><td>'+TimeFormat(duration)+'</td></tr>');
+				len++;
+			}
 		}
 
 		if(len == 0){
