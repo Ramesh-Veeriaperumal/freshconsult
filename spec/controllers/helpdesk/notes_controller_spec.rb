@@ -23,7 +23,7 @@ describe Helpdesk::NotesController do
                   :ticket_id => test_ticket.display_id
 
     test_ticket.reload
-    test_ticket.notes.freshest(@account)[0].body.should =~ /#{body}/
+    test_ticket.notes.freshest(@account).last.body.should =~ /#{body}/
 
     get :index, :v => 2, :ticket_id => test_ticket.display_id, :format => "json"
     response.body.should =~ /New note shown on index/
@@ -37,7 +37,7 @@ describe Helpdesk::NotesController do
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>#{body}</p>"} },
                   :ticket_id => test_ticket.display_id, :showing => "activities", :since_id => "-1"
 
-    test_ticket.notes.freshest(@account)[0].body.should =~ /#{body}/
+    test_ticket.notes.freshest(@account).last.body.should =~ /#{body}/
     xhr :get, :index, :v => 2, :ticket_id => test_ticket.display_id
     response.body.should =~ /New note shown on index/
     response.should render_template "helpdesk/tickets/show/_conversations"
@@ -54,7 +54,7 @@ describe Helpdesk::NotesController do
     post :create, :helpdesk_note => { :note_body_attributes => {:body_html => "<p>#{now}</p>"} },
                   :ticket_id => test_ticket.display_id, :showing => "activities", :since_id => "-1"
 
-    test_ticket.notes.freshest(@account)[0].body.should =~ /#{now}/
+    test_ticket.notes.freshest(@account).last.body.should =~ /#{now}/
     
     RABBIT_MQ_ENABLED = false
     Account.any_instance.unstub(:rabbit_mq_exchange)
