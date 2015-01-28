@@ -35,7 +35,7 @@ class ChatsController < ApplicationController
 
   end
 
-  def groups
+  def get_groups
     groups = []
     groups.push([ t("freshchat.everyone"), 0 ])
     groups.concat(current_account.groups.collect{|c| [c.name, c.id]})
