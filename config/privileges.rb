@@ -47,7 +47,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
     #Freshfone
-    resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
+    resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
     resource :"freshfone/call", :only => [:caller_data, :inspect_call]

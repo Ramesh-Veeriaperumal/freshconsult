@@ -6016,6 +6016,7 @@ en:
       could_be_invalid_number: "Could be an invalid number."
       invalid_number_continue_call: "Press call button again" 
       not_enough_credit: "Not Enough Credit"
+      restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
     call_status:
       default: ""

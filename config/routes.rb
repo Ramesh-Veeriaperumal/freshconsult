@@ -106,9 +106,9 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
-                                             :dashboard_stats => :get, :get_available_agents => :get,
-                                             :credit_balance => :get, :ivr_flow => :get, :preview_ivr => :get
-                                             }
+                                  :dashboard_stats => :get, :get_available_agents => :get,
+                                  :dial_check => :get, :ivr_flow => :get, :preview_ivr => :get
+                                }
 
   map.resources :users, :member => { :delete_avatar => :delete,
                                      :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get, :me => :get}
@@ -326,8 +326,8 @@ ActionController::Routing::Routes.draw do |map|
 
       admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
       admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
-      admin.freshfone_actions '/freshfone_admin/actions', :controller => :freshfone_actions, :action => :index
-
+      admin.resources :freshfone_actions , :collection => { :index => :get, :get_country_list => :get, :country_restriction => :post}
+      
       # admin.resources :analytics
       admin.resources :spam_watch, :only => :index
       admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
