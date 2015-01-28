@@ -489,7 +489,7 @@ module SupportHelper
 			<div class="ticket-brief">
 				<div class="ellipsis">
 					<a href="#{ ticket['current_portal']['facebook_portal'] ? ticket['full_domain_url'] : ticket['portal_url'] }" class="c-link" title="#{ h(ticket.description_text) }">
-						#{ ticket['subject'] } ##{ ticket['id'] }
+						#{ h(ticket['subject']) } ##{ ticket['id'] }
 					</a>
 				</div>
 				<div class="help-text">
@@ -497,7 +497,7 @@ module SupportHelper
 					#{ unique_agent }
 				</div>
 			</div>
-		</div> )
+		</div> ).html_safe
 	end
 
 	# Portal placeholders to access dynamic data inside javascripts
