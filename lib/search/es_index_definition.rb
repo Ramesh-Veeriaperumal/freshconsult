@@ -8,12 +8,12 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses]
   end
 
   # Used for new model migrations
   def additional_models
-    []
+    [:admin_canned_responses]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
@@ -232,6 +232,21 @@ class Search::EsIndexDefinition
         :properties => {
             :number => { :type => :string, :boost => 10, :store => 'yes' },
             :account_id => { :type => :long, :include_in_all => false }
+        }
+      }
+    }
+  end
+  
+  def admin_canned_responses
+    {
+      :"admin/canned_responses/response" => {
+        :properties => {
+          :account_id => { :type => :long },
+          :folder_id => { :type => :long },
+          :es_group_accesses => { :type => :long },
+          :es_user_accesses => { :type => :long },
+          :es_access_type => { :type => :long },
+          :title => { :type => :string },
         }
       }
     }
