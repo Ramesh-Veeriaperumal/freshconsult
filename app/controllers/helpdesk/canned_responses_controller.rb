@@ -1,12 +1,14 @@
 class Helpdesk::CannedResponsesController < ApplicationController
 
   include HelpdeskAccessMethods
+  include Helpdesk::Accessible::ElasticSearchMethods
   before_filter :load_canned_response, :set_mobile, :only => :show
   before_filter :set_native_mobile,:only => [:show,:index]
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
-    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder]))
+    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity)
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder])) if @ca_responses.nil?
     @ca_resp_folders = @ca_responses.group_by(&:folder_id)
     folders = @ca_responses.map(&:folder)
     @ca_folders = folders.uniq.sort_by{|folder | [folder.folder_type,folder.name]}
@@ -52,7 +54,8 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def search
     @ticket = current_account.tickets.find(params[:ticket].to_i) unless params[:ticket].blank?
-    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"]))
+    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity)
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"])) if @ca_responses.nil?
     respond_to do |format|
       format.html
       format.js {
@@ -84,5 +87,9 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def ticket_present?
     !params[:id].blank?
+  end
+  
+  def default_visiblity
+    {:global_type => true, :user_type => true, :group_type => true}
   end
 end

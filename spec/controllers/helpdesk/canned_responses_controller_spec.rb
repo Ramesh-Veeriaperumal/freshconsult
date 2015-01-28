@@ -21,14 +21,7 @@ describe Helpdesk::CannedResponsesController do
 
 		it "should go to insert CR index page" do
 			get :index
-			response.should render_template("helpdesk/tickets/components/_canned_responses")
-		end
-
-		it "should display the recent canned_responses" do
-			get :recent, :ids => "[#{@test_response_1.id},#{@test_response_2.id},#{@test_response_3.id}]", :format => 'js'
-			response.body.should =~ /#{@test_response_1.title}/
-			response.body.should_not =~ /#{@test_response_2.title}/
-			response.body.should =~ /#{@test_response_3.title}/
+			response.should render_template("helpdesk/tickets/components/_ticket_canned_responses.html.erb")
 		end
 
 		it "should search the canned responses" do

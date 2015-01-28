@@ -231,6 +231,8 @@ class Account < ActiveRecord::Base
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
+  has_many :freshfone_whitelist_country, :class_name => "Freshfone::WhitelistCountry"
+  
   has_one :chat
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
 
