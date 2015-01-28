@@ -15,5 +15,5 @@ end
 
 # Replacing the new quoted text back into the reply quoted textarea
 page << "if(document.getElementById('cnt-reply-quoted')){"
-page.replace_html 'cnt-reply-quoted', quoted_text(@parent)
+page.replace_html 'cnt-reply-quoted', h(quoted_text(@parent))
 page << "}"
