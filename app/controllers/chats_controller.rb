@@ -56,7 +56,7 @@ class ChatsController < ApplicationController
   #######
   # This function is used to update the siteId in chat_settings table, widget_id in chat_widgets table in helpkit db, 
   # whenever chat is enabled first time for an account for.
-  # Post request url :/freshchat/activate  , body : {accId : #{accId} , siteId : #{siteId} , token :#{token}, widget_id : #{widget_id} }
+  # Post request url :/livechat/activate  , body : {accId : #{accId} , siteId : #{siteId} , token :#{token}, widget_id : #{widget_id} }
   #######
   def activate
     site = current_account.chat_setting
@@ -73,7 +73,7 @@ class ChatsController < ApplicationController
   #######
   # This function is for update the widget_id in chat_widgets table in helpkit db, 
   # whenever chat_widget for a product is created.
-  # Post request url :/freshchat/widget_activate  , body : {accId : #{accId} , product_id : #{product_id} , token :#{token}, status : #{status} }
+  # Post request url :/livechat/widget_activate  , body : {accId : #{accId} , product_id : #{product_id} , token :#{token}, status : #{status} }
   #######
 
   def widget_activate
@@ -107,7 +107,7 @@ class ChatsController < ApplicationController
   #######
   # This function is used to update the Global status in chat_settings table in helpkit db, 
   # whenever chat is enabled or disable for an account.
-  # Post request url :/freshchat/site_toggle  , body : {siteId : #{siteId} , status : #{status} , token :#{token}}
+  # Post request url :/livechat/site_toggle  , body : {siteId : #{siteId} , status : #{status} , token :#{token}}
   #######
 
   def site_toggle
@@ -127,7 +127,7 @@ class ChatsController < ApplicationController
   #######
   # This function is used to update the widget status in chat_widgets table in helpkit db, 
   # whenever widget(chat for product) is enabled or disable for an account.
-  # Post request url :/freshchat/widget_toggle  , body : {widget_id : #{widget_id} , status : #{status} , token :#{token}}
+  # Post request url :/livechat/widget_toggle  , body : {widget_id : #{widget_id} , status : #{status} , token :#{token}}
   #######
 
   def widget_toggle
@@ -145,7 +145,7 @@ class ChatsController < ApplicationController
 
   #######
   # This function is used to add note to ticket
-  # Post request url :/freshchat/chat_note  , body : {ticket_id : #{ticket_id} , msg : #{msg} , userId :#{userId}}
+  # Post request url :/livechat/chat_note  , body : {ticket_id : #{ticket_id} , msg : #{msg} , userId :#{userId}}
   #######
 
   def chat_note

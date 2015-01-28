@@ -511,8 +511,6 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
     helpdesk.sales_manager 'sales_manager', :controller => 'dashboard', :action => 'sales_manager'
     helpdesk.agent_status 'agent-status', :controller => 'dashboard', :action => 'agent_status'
-    helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
-    helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
     #   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
@@ -731,6 +729,14 @@ ActionController::Routing::Routes.draw do |map|
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
   end
 
+  map.resources :livechat, :controller => 'chats', :only =>:index,
+    :collection => { :create_ticket => :post, :add_note => :post, :chat_note => :post, 
+                     :get_groups => :get, :activate => :post, :site_toggle => :post, :agents => :get,
+                     :widget_toggle => :post, :widget_activate => :post 
+                   }
+  map.connect '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  map.connect '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
+
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
@@ -748,21 +754,5 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-
-  map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-  map.connect '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
-  map.connect '/freshchat/get_groups', :controller => 'chats', :action => 'groups', :method => :get
-
-  map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
-  map.connect '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
-
-  map.connect '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
-  map.connect '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
-
-  map.connect '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
-  map.connect '/freshchat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
-
-  map.connect '/freshchat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
 end

@@ -6,7 +6,7 @@ freshChat.archiveRouter = function(){
 			"archive" : "loadArchiveHomePage",
 			"archive/visitor/:params": "filterByVisitor",
 			"archive/:params" : "loadMessage",
-      		"visitor/:type"   : "loadVisitor"
+			"visitor/:type"   : "loadVisitor"
 		},
 		initialize:function(options){
 			window.archiveRouter = this;
