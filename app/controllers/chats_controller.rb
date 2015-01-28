@@ -20,19 +20,22 @@ class ChatsController < ApplicationController
 
   
   def create_ticket
+    ticket_params = {
+                      :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
+                      :email  => params[:ticket][:email],
+                      :subject  => params[:ticket][:subject],
+                      :requester_name => params[:ticket][:name],
+                      :ticket_body_attributes => { :description_html => params[:ticket][:content] }
+                    }
+    widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
+    group = current_account.groups.find_by_id(params[:ticket][:group_id]) if params[:ticket][:group_id]
+    ticket_params[:product_id] = widget.product.id if widget.product
+    ticket_params[:group_id] = group.id if group
 
-    @ticket = current_account.tickets.build(
-                  :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
-                  :email  => params[:ticket][:email],
-                  :subject  => params[:ticket][:subject],
-                  :requester_name => params[:ticket][:name],
-                  :ticket_body_attributes => { :description_html => params[:ticket][:content] }
-              ) 
-
+    @ticket = current_account.tickets.build(ticket_params) 
     status = @ticket.save_ticket
 
     render :json => { :ticket_id=> @ticket.display_id , :status => status }
-
   end
 
   def groups
