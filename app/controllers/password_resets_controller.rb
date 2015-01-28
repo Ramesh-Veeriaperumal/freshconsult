@@ -4,6 +4,7 @@ class PasswordResetsController < SupportController
   before_filter :require_no_user
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
   before_filter :set_native_mobile
+  ssl_required :edit
  
   def new
     redirect_to support_login_path(:anchor => "forgot_password")

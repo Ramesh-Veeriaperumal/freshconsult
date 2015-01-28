@@ -4,7 +4,8 @@ class ProfilesController < ApplicationController
    before_filter :load_user, :only => [:edit, :change_password]
    before_filter :clean_params, :only => [:update]
    skip_before_filter :check_privilege
-   include ModelControllerMethods  
+   ssl_required :edit
+   include ModelControllerMethods
 
   def edit       
     respond_to do |format|

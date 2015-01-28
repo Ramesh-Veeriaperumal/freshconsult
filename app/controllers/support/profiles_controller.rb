@@ -5,6 +5,7 @@ class Support::ProfilesController < SupportController
   before_filter :clean_params, :only => [:update]
   before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, 
                 :set_required_fields, :only => [:update]
+  ssl_required :edit
 
   def edit
     respond_to do |format|

@@ -9,6 +9,7 @@ class Support::LoginController < SupportController
 	before_filter :set_no_ssl_msg, :only => :new
 	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create
+	ssl_required :new
 	
 	def new
 		if current_account.sso_enabled? and check_request_referrer 
