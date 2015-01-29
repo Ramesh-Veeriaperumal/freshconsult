@@ -7,7 +7,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
-    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity)
+    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => current_account.canned_responses.count}, default_visiblity)
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder])) if @ca_responses.nil?
     @ca_resp_folders = @ca_responses.group_by(&:folder_id)
     folders = @ca_responses.map(&:folder)
