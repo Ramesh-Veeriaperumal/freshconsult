@@ -127,9 +127,9 @@ namespace :freshdesk_tire do
       es_account_ids = ENV['ACCOUNT_ID'].split(',')
       raise "Invalid parameters" if (klasses.blank? or es_account_ids.blank?)
       new_models = (ENV['ADD'].to_s == 'true')
-
-      begin
-        es_account_ids.each do |account_id|
+      
+      es_account_ids.each do |account_id|
+        begin
           Sharding.select_shard_of(account_id) do
             account = Account.find_by_id(account_id)
             next if account.nil?
@@ -139,11 +139,11 @@ namespace :freshdesk_tire do
             Search::EsIndexDefinition.create_aliases(account_id.to_i, new_models)
             Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
           end
+        rescue
+          next 
+        ensure
+          Account.reset_current_account
         end
-      rescue
-        next
-      ensure
-        Account.reset_current_account
       end
     rescue
       puts '='*100, ' '*45+'USAGE', '='*100, create_alias_and_import_comment, ""
