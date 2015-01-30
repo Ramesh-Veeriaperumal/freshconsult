@@ -55,7 +55,14 @@
 	<div class="row-fluid">
 		<div class="span6"><h3 class="lead"><%= @page_title = t('customers') %></h3></div>
 		 <div class="span6 pull-right pagination-right header_buttons align-right" >
-			<%= link_to(t('export'), { :action => "configure_export", :controller => "contacts"  }, :class => "dialog2", :title => t('export_data.export_to_csv'), "data-width" => "650" ) %>
+			<%= link_to t('export'), {:action => "configure_export"}, 
+				:rel => "freshdialog", 
+				"data-submit-label" => t('export'),
+				"data-width" => "550",
+				"data-title" => t('contacts.export_title', :type => type.capitalize.pluralize),
+				:title => t('contacts.export_title', :type => type.capitalize.pluralize),
+				"data-submit-loading" => t('please_wait'),
+				"data-target"=>"#company_export" %>
 			<% if privilege?(:manage_contacts) %>
 				&middot;  
   		 	<%= link_to(t('import'), csv_contact_import_path, :title => t("contacts.import_csv"), :class => " margin-right", :id => "contacts_import") %>

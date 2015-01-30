@@ -1,5 +1,4 @@
-<div class="contact_export">
-<p class="muted"><%= t('export_data.contact_note') %></p>
+<div class="company_export">
 <% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<ul class="ui-form">

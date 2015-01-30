@@ -67,4 +67,13 @@ describe CompaniesController do
     response.body.should =~ /#{sla_policy.name}/
     response.should be_success
   end
+
+  it "should export csv" do
+    Resque.inline = true
+    post :export_csv, "data_hash"=>"", "export_fields"=>{"Company Name"=>"name", "Description" => "description"}
+    data_export = @account.data_exports.last
+    data_export.source.should eql 4
+    data_export.status.should eql 4
+    Resque.inline = false
+  end
 end

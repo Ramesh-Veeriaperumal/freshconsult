@@ -2867,6 +2867,8 @@ en:
     merged_into: Contact merged to
     save_changes: Save changes
     save: Save
+    export_start: Your Contact data will be sent to your email shortly!
+    export_title: "Export %{type} to CSV"
     deleted_message: This is a deleted contact
     deleted_info_msg: This is a deleted contact - 
     contacts_in_companies: "%{contacts}"
@@ -3340,6 +3342,7 @@ en:
     add_contact: 'Add Contact'
     add_contact_company: 'Add Contact in %{company_name}'
     company_contacts: 'Company Contacts'
+    export_start: Your Company data will be sent to your email shortly!
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
@@ -4550,6 +4553,8 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select all fields"
+    contact_note: "Note: Only verified contacts will be exported"
+    select_all: "Select all"
     select_format: "Export as:"
     csv: "CSV"
     xls: "Excel"
@@ -4575,6 +4580,8 @@ en:
       body: Your data export is ready for download.
     no_tickets_mail:
       body: Seems like there are no tickets in the provided date range.
+    customer_export:
+      body: "The %{field} export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
@@ -6909,4 +6916,5 @@ en:
   suspended_since: "Suspended since %{days}"
   plan: "Plan"
   edit_plan: "Edit Plan"
+  please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
