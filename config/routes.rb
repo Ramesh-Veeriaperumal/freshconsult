@@ -21,7 +21,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :tickets_uploaded_images, :controller => 'tickets_uploaded_images', :only => :create
 
-  map.resources :contact_import , :collection => {:csv => :get, :google => :get}
+  # contacts and companies import
+  map.resources :customers_import
+  map.connect '/imports/:type', :controller => 'customers_import', :action => 'csv'
 
   map.resources :health_check
 

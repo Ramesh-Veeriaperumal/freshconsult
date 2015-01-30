@@ -32,7 +32,6 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 
-
 gem 'test-unit', '1.2.3'
 
 gem "omniauth-oauth2", "1.0"
@@ -61,7 +60,7 @@ gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem "ruby-saml", "0.8.1"
 
 gem "arel", "2.0.7"
-gem "map-fields", "1.0.0", :require => "map_fields"
+gem "fastercsv", "1.5.4"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"

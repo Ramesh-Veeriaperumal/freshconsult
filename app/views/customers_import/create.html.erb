@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%><%-end %>
 <div class="list-page">
 	<div class="list-page-subheader">
-		<%= content_tag(:h3, t('contacts.import_csv'), :class => "lead") %>
+		<%= content_tag(:h3, t('customer_import.import_csv', :type => params[:type].pluralize.capitalize), :class => "lead") %>
 	</div>
 	<%= render :partial => 'map_fields' %>
 </div>
