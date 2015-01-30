@@ -1,0 +1,34 @@
+<div id="archive-body" class="list-page-body">
+	<% if (models.length>0){ %>
+	<table id="archive-table" class='table table-striped'>
+			<% for(var i = 0 ,length = models.length;i<length;i++){ 
+				var modelJson = models[i];
+			%>
+			<tr id = "<%=modelJson.id%>">
+				<%=archiveRowTemplate({modelJson : modelJson})%>
+			</tr>	
+			
+			<% } %>
+	</table>
+
+	<% }else{ %>
+		<div class="list-page-body">	
+			<p class="no-data">No Chats found</p>
+		</div>
+	<% } %>
+	<%	if(paginationData !== undefined && paginationData.totalPages > 2){ 
+			var pageData = paginationData.pageArray;	
+	%>
+	<div class="toolbar">
+		<div class="toolbar_pagination_full">
+	  	<a id="prev-page" class='prev_page <%=(paginationData.currentPage === 1 ) ? "disabled" :""%>'>«</a>
+	   	<% for(var i =0,length =	pageData.length; i < length;i++ ){ %>
+	   		<a id="change-page" href="#" <%=(pageData[i] === paginationData.currentPage) ? "class='current disabled'" :""%> rel="next"><%=pageData[i]%></a>
+	   	<%}%>
+	   	<a id ="next-page" class="next_page <%=(paginationData.totalPages === 0 || paginationData.currentPage === paginationData.totalPages ) ? "disabled" :""%>" href="#" rel="next" title="Next">»</a>
+		</div>
+	</div>
+	<%}%>
+</div>
+	
+		

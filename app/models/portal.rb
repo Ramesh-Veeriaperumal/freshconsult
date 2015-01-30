@@ -241,7 +241,14 @@ class Portal < ActiveRecord::Base
           site_id = account.chat_setting.display_id
           chat_widget = product.chat_widget
           if chat_widget && chat_widget.widget_id
-            Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :widget_id => chat_widget.widget_id, :siteId => site_id, :attributes => { :site_url => portal_url}})
+            Resque.enqueue(Workers::Livechat, 
+              {
+                :worker_method => "update_widget", 
+                :widget_id => chat_widget.widget_id, 
+                :siteId => site_id, 
+                :attributes => { :site_url => portal_url}
+              }
+            )
           end
         end
       end

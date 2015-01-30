@@ -30,13 +30,13 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
 
-  map.resources :companies ,:member => {:quick => :post, :sla_policies => :get, :create_company => :post,
+  map.resources :companies ,:collection => {:configure_export => :get, :export_csv => :post}, :member => {:quick => :post, :sla_policies => :get, :create_company => :post,
   :update_company => :put, :update_notes => :put } do |customer|
     customer.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
   map.connect '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
 
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } ,
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get, :configure_export => :get, :export_csv => :post } ,
     :member => { :hover_card => :get, :hover_card_in_new_tab => :get, :quick_contact_with_company => :post,
                  :restore => :put, :make_agent =>:put, :make_occasional_agent => :put, :create_contact => :post,
   :update_contact => :put, :update_description_and_tags => :put} do |contacts|
@@ -106,9 +106,9 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :freshfone, :collection => { :voice => :get, :build_ticket => :post,
-                                             :dashboard_stats => :get, :get_available_agents => :get,
-                                             :credit_balance => :get, :ivr_flow => :get, :preview_ivr => :get
-                                             }
+                                  :dashboard_stats => :get, :get_available_agents => :get,
+                                  :dial_check => :get, :ivr_flow => :get, :preview_ivr => :get
+                                }
 
   map.resources :users, :member => { :delete_avatar => :delete,
                                      :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get, :me => :get}
@@ -326,8 +326,8 @@ ActionController::Routing::Routes.draw do |map|
 
       admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
       admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
-      admin.freshfone_actions '/freshfone_admin/actions', :controller => :freshfone_actions, :action => :index
-
+      admin.resources :freshfone_actions , :collection => { :index => :get, :get_country_list => :get, :country_restriction => :post}
+      
       # admin.resources :analytics
       admin.resources :spam_watch, :only => :index
       admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
@@ -511,8 +511,6 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
     helpdesk.sales_manager 'sales_manager', :controller => 'dashboard', :action => 'sales_manager'
     helpdesk.agent_status 'agent-status', :controller => 'dashboard', :action => 'agent_status'
-    helpdesk.visitor '/freshchat/visitor/:filter', :controller => 'visitor', :action => 'index'
-    helpdesk.chat_archive '/freshchat/chat/:filter', :controller => 'visitor', :action => 'index'
 
     #   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
@@ -731,6 +729,14 @@ ActionController::Routing::Routes.draw do |map|
     mobihelp.resources :solutions, { :collection => {:articles => :get }}
   end
 
+  map.resources :livechat, :controller => 'chats', :only =>:index,
+    :collection => { :create_ticket => :post, :add_note => :post, :chat_note => :post, 
+                     :get_groups => :get, :activate => :post, :site_toggle => :post, :agents => :get,
+                     :widget_toggle => :post, :widget_activate => :post 
+                   }
+  map.connect '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  map.connect '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
+
   map.resources :rabbit_mq, :only => [ :index ]
 
   map.route '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
@@ -748,18 +754,5 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-
-  map.connect '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  map.connect '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-  map.connect '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
-  map.connect '/freshchat/get_groups', :controller => 'chats', :action => 'groups', :method => :get
-
-  map.connect '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
-  map.connect '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
-
-  map.connect '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
-  map.connect '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
-
-  map.connect '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 end

@@ -2867,6 +2867,8 @@ en:
     merged_into: Contact merged to
     save_changes: Save changes
     save: Save
+    export_start: Your Contact data will be sent to your email shortly!
+    export_title: "Export %{type} to CSV"
     deleted_message: This is a deleted contact
     deleted_info_msg: This is a deleted contact - 
     contacts_in_companies: "%{contacts}"
@@ -3340,6 +3342,7 @@ en:
     add_contact: 'Add Contact'
     add_contact_company: 'Add Contact in %{company_name}'
     company_contacts: 'Company Contacts'
+    export_start: Your Company data will be sent to your email shortly!
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
@@ -4550,6 +4553,7 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select all fields"
+    select_all: "Select all"
     select_format: "Export as:"
     csv: "CSV"
     xls: "Excel"
@@ -4575,6 +4579,8 @@ en:
       body: Your data export is ready for download.
     no_tickets_mail:
       body: Seems like there are no tickets in the provided date range.
+    customer_export:
+      body: "The %{field} export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
@@ -6016,6 +6022,7 @@ en:
       could_be_invalid_number: "Could be an invalid number."
       invalid_number_continue_call: "Press call button again" 
       not_enough_credit: "Not Enough Credit"
+      restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
     call_status:
       default: ""
@@ -6369,8 +6376,9 @@ en:
     chatbox_bgcolor: "Window Color"
     in_conversation: "In-conversation"
     available_agents: "Available Agents"
-    visitors_online: "New Visitors"
+    new_visitors: "New Visitors"
     returning_visitors: "Returning Visitors"
+    visitors_list : "Fetching Visitors"
     website_visitors_msg: "Visitors"
     message_archives: "Message archives"
     see_all: "See all"
@@ -6439,9 +6447,9 @@ en:
     returning_visitor: "Returning Visitor"
     new_visitor: "New Visitor"
     unknown: "Unknown"
-    no_visitors: "No visitors on your site"
+    no_visitors: "No new visitors on your site"
     no_conversation: "No visitors in conversation"
-    no_return_visitors: "No return visitors"
+    no_return_visitors: "No returning visitors"
     tag_placeholder: "Enter the tags"
     no_visitors_msg: "No visitors on your site..."
     options: "Options"
@@ -6517,6 +6525,19 @@ en:
     select_groups: "Select groups"
     routing_note: "Note: If agents from the selected groups are not accepting chats, chat will be routed to all available agents."
     concurrent_pick_attempt_msg: "This chat has been already accepted by"
+    chat_type: "Chat Type"
+    asc: "Ascending"
+    desc: "Descending"
+    sort_order: "Sort Order"
+    all : "All"
+    visitor_initiated : "Visitor Initiated"
+    agent_initiated : "Agent Initiated"
+    agent_to_agent : "Agent to Agent"
+    missed_chat : "Missed"
+    filter: "Filter"
+    close: "Close"
+    visitorId: "Visitor ID"
+    createdAt: "Created at"
     enable: "Enable"
   facebook_tab:
     remove_tab: "Remove page Tab"
@@ -6894,4 +6915,5 @@ en:
   suspended_since: "Suspended since %{days}"
   plan: "Plan"
   edit_plan: "Edit Plan"
+  please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"

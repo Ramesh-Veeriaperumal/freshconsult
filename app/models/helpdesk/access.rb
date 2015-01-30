@@ -146,11 +146,11 @@ class Helpdesk::Access < ActiveRecord::Base
   def group_access_type?
      access_type == ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
   end
+
+  def user_access_type?
+    access_type == ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+  end
   
-  
-  # def user_access_type?
-  #   access_type == ACCESS_TYPES_KEYS_BY_TOKEN[:users]
-  # end
   def no_op(dummy)
   end
 

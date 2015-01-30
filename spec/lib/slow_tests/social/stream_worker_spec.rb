@@ -3,6 +3,7 @@ include GnipHelper
 include DynamoHelper
 include Social::Util
 
+#Test specifically for checking default stream insert into dynamo
 
 describe "Social::Stream::Workers::Twitter" do 
   self.use_transactional_fixtures = false

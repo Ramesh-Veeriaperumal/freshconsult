@@ -17,25 +17,25 @@ class Admin::ChatWidgetsController < Admin::AdminController
     @widget = current_account.chat_widgets.find(params[:id])
   end
 
-  def update
-    @widget = current_account.chat_widgets.find(params[:id])
-    if @widget
-      if @widget.update_attributes(params[:chat_setting])
-        #####
+  def update 
+    widget = current_account.chat_widgets.find(params[:id])
+    if widget
+      if widget.update_attributes({ :business_calendar_id => params[:business_calendar_id],
+                                    :show_on_portal => params[:show_on_portal],
+                                    :portal_login_required => params[:portal_login_required] })
         # Sending the Business Calendar Data to the FreshChat DB.
-        #####
-        Rails.logger.debug " Sending the Business Calendar Data to FreshChat through Resque"
-        proactive_chat = params[:proactive_chat]
-        proactive_time = params[:proactive_time]
-        businessCal_id = params[:chat_setting][:business_calendar_id] 
-        @CalendarData = businessCal_id.blank? ? nil : JSON.parse(BusinessCalendar.find(businessCal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
-        Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :siteId => params[:siteId],
-                                            :widget_id => @widget.widget_id,
-                                            :attributes => { :business_calendar => @CalendarData, 
-                                                             :proactive_chat => proactive_chat, 
-                                                             :proactive_time => proactive_time,
-                                                             :routing => params[:routing]
-                                                            }})
+        business_cal_id = params[:business_calendar_id] 
+        calendar_data  = business_cal_id.blank? ? nil : JSON.parse(BusinessCalendar.find(business_cal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
+        
+        Resque.enqueue(Workers::Livechat, 
+          {
+            :user_id => current_user.id,
+            :worker_method => "update_widget", 
+            :siteId => params[:siteId],
+            :widget_id => widget.widget_id,
+            :attributes => { :business_calendar => calendar_data, :proactive_chat => params[:proactive_chat], :proactive_time => params[:proactive_time], :routing => params[:routing]}
+          }
+        )
         render :json => {:status => "success"}
       else
         render :json => {:status => "error", :message => "Error while updating widget"}

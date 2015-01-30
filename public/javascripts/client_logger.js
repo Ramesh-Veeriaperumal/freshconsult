@@ -8,13 +8,11 @@ var ClientLogger
   ClientLogger.prototype = {
     init: function () {
       if (typeof(Bugsnag) == 'undefined') { return;}
-      if (typeof(CURRENT_USER) != 'undefined') {
-        Bugsnag.user = {
-          name: CURRENT_USER.username,
-          email: CURRENT_USER.email,
-          id: "account_"+ (CURRENT_USER.account_id || "")
-        };
-      }
+      Bugsnag.user = {
+        name: freshfone.current_user_details.username,
+        email: freshfone.current_user_details.email,
+        id: "account_"+ freshfone.current_user_details.account_id
+      };
       Bugsnag.notifyReleaseStages = ["development", "staging", "production"];
       Bugsnag.releaseStage = APP_ENV;
     },

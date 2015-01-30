@@ -245,11 +245,12 @@
         $('.ajaxerrorExplanation').toggle(false);
     }
     function isAddressAlreadyExisit(country_code) {
-        var alreadyExist = false;
+        var alreadyExist = false, self = this;
         toggleLoder(true);
         $.ajax({
           url: '/freshfone/address/inspect',
           dataType: "json",
+          async: false,
           data: {"country" : country_code},
           success: function (data) {
             alreadyExist =  data.isExist;

@@ -1,5 +1,6 @@
 class Freshfone::User < ActiveRecord::Base
 	set_table_name "freshfone_users"
+	include Freshfone::CallValidator
 	belongs_to_account
 
 	belongs_to :user, :inverse_of => :freshfone_user
@@ -131,7 +132,8 @@ class Freshfone::User < ActiveRecord::Base
 		def vaild_phone_number?(current_number)
 			@current_number = current_number.number
 			@agent_number = GlobalPhone.parse(number)
-			@agent_number && @agent_number.valid? && can_dial_agent_number?
+			@agent_number  && authorized_country?(@agent_number,account) && 
+				@agent_number.valid? && can_dial_agent_number?
 		end
 
 		def can_dial_agent_number?

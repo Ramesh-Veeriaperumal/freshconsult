@@ -25,6 +25,18 @@ class DataExportMailer < ActionMailer::Base
     content_type  "text/html"
   end
 
+  def customer_export(options={})
+    subject       "#{options[:type].capitalize} export for #{options[:domain]}"
+    recipients    options[:user].email
+    body          :user => options[:user], :url => options[:url], :field => options[:type], :account => Account.current
+    from          "support@freshdesk.com"
+    headers       "Reply-to" => "","Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.
+    bcc           "reports@freshdesk.com"
+    sent_on       Time.now
+    content_type  "text/html"
+  end
+
   def no_tickets(options={})
     subject       "No tickets in range - #{options[:domain]}"
     recipients    options[:user][:email]

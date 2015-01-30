@@ -47,7 +47,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
     #Freshfone
-    resource :"freshfone", :only => [:dashboard_stats, :credit_balance, :create_ticket, :create_note]
+    resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
     resource :"freshfone/call", :only => [:caller_data, :inspect_call]
@@ -66,7 +66,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :groups]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -222,7 +222,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
                :create_contact, :update_contact, :update_description_and_tags, :contact_email, :edit, :update, :verify_email]
     resource :customer, :only => [:new, :create, :edit, :update] #should deprecate
-    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
+    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies, 
+                :configure_export, :export_csv]
     resource :"search/autocomplete", :only => [:companies]
     resource :contact_import
     resource :contact_merge

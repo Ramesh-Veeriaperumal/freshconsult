@@ -57,6 +57,10 @@ class Social::FbPost < ActiveRecord::Base
   post_type == POST_TYPE_CODE[:post]
  end
  
+ def original_post_id
+  original_fb_post_id ? original_fb_post_id : self.post_id
+ end
+ 
  private
    def post_attributes_present?
     !self.post_attributes.blank?
@@ -64,6 +68,10 @@ class Social::FbPost < ActiveRecord::Base
    
    def post_type
     self.post_attributes[:post_type] if post_attributes_present?
+   end
+   
+   def original_fb_post_id
+    self.post_attributes[:original_post_id] if post_attributes_present?
    end
  
 end

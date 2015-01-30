@@ -1,6 +1,7 @@
 class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
   include ExportCsvUtil
+  include Export::Util
   include ActionController::UrlWriter
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
   
@@ -24,21 +25,21 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     begin
       initialize_params
       set_current_user
-      check_and_create_ticket_export
+      check_and_create_export "ticket"
       file_string =  Sharding.run_on_slave{ export_file }
       if @no_tickets 
         send_no_ticket_email
       else
-        build_file(file_string) 
+        build_file(file_string, "ticket", export_params[:format]) 
         DataExportMailer.deliver_ticket_export({:user => User.current, 
                                                 :domain => export_params[:portal_url],
-                                                :url => hash_url,
+                                                :url => hash_url(export_params[:portal_url]),
                                                 :export_params => export_params})
       end
     rescue => e
       NewRelic::Agent.notice_error(e)
       puts "Error  ::#{e.message}\n#{e.backtrace.join("\n")}"
-      @item.failure!(e.message + "\n" + e.backtrace.join("\n"))
+      @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
     end
   end
 
@@ -54,21 +55,6 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     user = Account.current.users.find(export_params[:current_user_id])
     user.make_current
     TimeZone.set_time_zone
-  end
-
-  def check_and_create_ticket_export
-    limit_data_exports
-    @item = Account.current.data_exports.new(
-                                      :source => DataExport::EXPORT_TYPE[:ticket], 
-                                      :user => User.current,
-                                      :status => DataExport::EXPORT_STATUS[:started]
-                                    )
-    @item.save
-  end
-
-  def limit_data_exports
-    acc_ticket_export = User.current.data_exports.ticket_export
-    acc_ticket_export.first.destroy if acc_ticket_export.count >= DataExport::TICKET_EXPORT_LIMIT
   end
 
   def export_file
@@ -192,60 +178,8 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     all_joins        
   end
 
-  def build_file file_string
-    write_file(file_string)
-    @item.file_created!
-    build_attachment(file_path)
-    remove_export_file(file_path)
-  end
-
-  def write_file file_string
-    File.open(file_path , "wb") do |f|
-      f.write(file_string)
-    end
-  end
-
-  def file_path
-    @file_path ||= begin
-      output_dir = "#{Rails.root}/tmp" 
-      FileUtils.mkdir_p output_dir
-      file_path = "#{output_dir}/#{file_name}"
-      file_path
-    end
-  end
-
-  def file_name
-    "ticket_export_#{Account.current.id}.#{export_params[:format]}"
-  end
-
   def escape_html(val)
     ((val.blank? || val.is_a?(Integer)) ? val : CGI::unescapeHTML(val.to_s).gsub(/\s+/, " "))
-  end
-  
-  def remove_export_file(file_path)
-    FileUtils.rm_f(file_path)
-    @item.completed!
-  end
-
-  def build_attachment(file_path)
-    file = File.open(file_path,  'r')
-    attachment = @item.build_attachment(:content => file,  :account_id => Account.current.id)
-    attachment.save!
-    @item.file_uploaded!
-  end
-
-  def hash(export_id)
-    hash = Digest::SHA1.hexdigest("#{export_id}#{Time.now.to_f}")
-    @item.save_hash!(hash)
-    hash
-  end
-
-  def hash_url
-    url_for(
-            :controller => "download_file/#{@item.source}/#{hash(@item.id)}", 
-            :host => export_params[:portal_url], 
-            :protocol => Account.current.url_protocol
-            )
   end
 
   def send_no_ticket_email
@@ -253,7 +187,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
                                           :user => User.current,
                                           :domain => export_params[:portal_url]
                                         })
-    @item.destroy
+    @data_export.destroy
   end
 
 end

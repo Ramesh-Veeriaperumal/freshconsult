@@ -295,6 +295,7 @@ class Freshfone::Call < ActiveRecord::Base
 				i18n_label = "freshfone.ticket.voicemail_ticket_desc"
 			elsif ivr_direct_dial?
 				i18n_label = "freshfone.ticket.dial_a_number"
+				i18n_params.merge!({:direct_dial_number => params[:direct_dial_number]})
 			else
 				i18n_label = "freshfone.ticket.ticket_desc"
 				i18n_params.merge!({:agent => params[:agent].name,:agent_number => freshfone_number.number})
@@ -338,7 +339,7 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def ivr_direct_dial?
-			params[:direct_dial_number]
+			params[:direct_dial_number].present?
 		end
 
 		def included_notable

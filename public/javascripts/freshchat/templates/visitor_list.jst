@@ -1,0 +1,16 @@
+<tr id="visitor_list_<%=visitor.visitor_id || visitor.id%>" class="even">
+ <td class="visitor_list_time">
+	 <%if(visitor.time){%> 
+	 	<span data-livestamp= <%=visitor.time%> ></span>
+	 <%}%>
+ </td>
+ <td class="<%=visitor.sclass%>"><i class="ficon-user" title="<%=visitor.tip%>"></i>
+ <%if(visitor.sclass=="chat-visitor"){%>
+    <span><%=visitor.name %><b><%=" "+CHAT_I18n.chatting_with + " "  %> </b> <%=userCollection.get(visitor.agent).get('name')%></span>
+ <%}else{%>
+    <a data-id="<%=visitor.id%>" data-widget-id="<%=visitor.widget_id%>" class="visitor_chatnow" title="<%=visitor.name%>"><span><%= visitor.msg || visitor.name %></span></a>
+ <%}%>
+ </td>
+ <td class="location"><i class="ficon-map-marker"></i><span style="word-break: break-word;"><%=visitor.location%></span></td>
+ <td class="lookpage"><i class="ficon-eye"></i><a href="<%=visitor.page%>" title="<%=visitor.page%>" alt="<%=visitor.page%>" target="_blank" class="ellipsis"><%=visitor.title%></a></td>
+</tr>

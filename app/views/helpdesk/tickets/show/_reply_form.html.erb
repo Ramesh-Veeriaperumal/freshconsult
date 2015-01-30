@@ -104,7 +104,7 @@
                               :value => bind_last_reply(conv_item, @signature),
                               :"data-quoted-textarea" => "##{cntid}-quoted", :"data-wrap-font-family" => true %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
-            <%= text_area_tag "quoted_text_html", quoted_text(conv_item), { :id => "#{cntid}-quoted", :class => "hide" } %>
+            <%= text_area_tag "quoted_text_html", h(quoted_text(conv_item)), { :id => "#{cntid}-quoted", :class => "hide" } %>
         <% end %>        
       </li>
       <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
