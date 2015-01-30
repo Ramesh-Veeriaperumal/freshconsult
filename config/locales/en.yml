@@ -4553,7 +4553,6 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select all fields"
-    contact_note: "Note: Only verified contacts will be exported"
     select_all: "Select all"
     select_format: "Export as:"
     csv: "CSV"
