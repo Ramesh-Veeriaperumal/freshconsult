@@ -18,6 +18,7 @@ window.freshChat.conversationView = function(){
 				"click #cancel-visitor-detail" : "resetVisitorDetail",
 				"click #navigateMessage"	: "loadMessage",
 				"click #convertTicket"		: "convertTicket", 
+				"click #add-note"		: "addNote",
 				"click #mark-spam"		: "markAsSpam"
 			},
 			navigateArchive:function(event){
@@ -110,9 +111,18 @@ window.freshChat.conversationView = function(){
 			},
 			convertTicket :function(event){
 				if(window.freshChat.ticketOptionsView && this.archiveModel){
-					var archiveAttr = this.archiveModel.toJSON();;
+					var archiveAttr = this.archiveModel.toJSON();
 					window.freshChat.ticketOptionsView.show(archiveAttr,true);			
 				}
+			},
+			addNote : function(event){
+				jQuery(event.target).addClass('disabled');
+				jQuery(event.target).html('<i class="ficon-file-edit"></i> Adding Note');
+				if(window.liveChat.ticketOptions && this.archiveModel){
+					var archiveAttr = this.archiveModel.toJSON();
+					liveChat.ticketOptions.initialize(archiveAttr,true);
+				}
+
 			},
 			listenToCollection :function(){
 				this.listenTo(this.collection,'change',this.renderMessage);
