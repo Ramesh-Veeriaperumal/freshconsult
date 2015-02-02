@@ -136,7 +136,8 @@ SugarWidget.prototype= {
 		var sugarResults="";
 		sugarWidget.renderSearchResultsWidget();
 		for(var i=0; i<sugarWidget.response.result_count; i++){
-			sugarResults += '<a href="javascript:sugarWidget.contactChanged(' + i + ')">'+resJ.entry_list[i].name_value_list.name.value+'</a><br/>';
+			var name = escapeHtml(resJ.entry_list[i].name_value_list.name.value);
+			sugarResults += '<a href="javascript:sugarWidget.contactChanged(' + i + ')">'+ name +'</a><br/>';
 		}
 		jQuery('#number-returned').text(sugarWidget.response.result_count + " results returned for " + sugarWidget.sugarBundle.reqEmail)
 		jQuery('#search-results').html(sugarResults);
@@ -263,18 +264,18 @@ SugarWidget.prototype= {
 			jQuery('#multiple-contacts').hide();
 			jQuery('#search-back').hide();
 			contactJson = this.entry_list.name_value_list;
-			title = contactJson.title.value;
-			account = (contactJson.account_name == undefined) ? "" : contactJson.account_name.value;
+			title = escapeHtml(contactJson.title.value);
+			account = (contactJson.account_name == undefined) ? "" : escapeHtml(contactJson.account_name.value);
 			if(account != ""){
 				account_link = sugarWidget.get_sugar_link("Accounts", sugar_version, contactJson.account_id.value);
 				account = "<a target='_blank' href='" + account_link +"'>" + account +"</a>"	
 			}
 			
 			desig = (title != "" && account != "" ) ? (title + ", " + account) : (title + account)
-			address = sugarWidget.get_formatted_address(contactJson);
-			phone = contactJson.phone_work.value;
-			mobile = contactJson.phone_mobile.value;
-			department = contactJson.department.value;
+			address = escapeHtml(sugarWidget.get_formatted_address(contactJson));
+			phone = escapeHtml(contactJson.phone_work.value);
+			mobile = escapeHtml(contactJson.phone_mobile.value);
+			department = escapeHtml(contactJson.department.value);
 			if(sugarWidget.lead == true){
 				contactLink = sugarWidget.get_sugar_link("Leads", sugar_version, this.entry_list.id);
 				jQuery('#crm-contact-type').text("Lead");
@@ -285,7 +286,7 @@ SugarWidget.prototype= {
 				jQuery('#crm-contact-type').text("Contact");
 				jQuery('#sugarcrm_widget .contact-type').text("Contact").show();
 			}
-			fullName = "<a target='_blank' href='" + contactLink  +"'>"+contactJson.name.value+"</a>";
+			fullName = "<a target='_blank' href='" + contactLink  +"'>"+ escapeHtml(contactJson.name.value)+"</a>";
 			address = (address != "") ? address : "N/A" ;
 			phone = (phone != "") ? phone : "N/A" ;
 			mobile = (mobile != "") ? mobile : "N/A" ;
