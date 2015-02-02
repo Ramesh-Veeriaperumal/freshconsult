@@ -4,7 +4,6 @@ var ASSET_URL       = <%= ChatConfig['asset_url'].to_json.html_safe %>;
 var CS_URL          = "<%= ChatConfig['communication_url']%>";
 var CHAT_ENV        = "<%= Rails.env -%>";
 var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
-var LIVECHAT_PARTIAL_TOKEN  = '<%= livechat_partial_token(current_user.id) %>';
 </script>
 
 <%if current_user && chat_activated? && !(is_assumed_user?) %>
