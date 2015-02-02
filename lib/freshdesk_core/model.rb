@@ -33,7 +33,8 @@ module FreshdeskCore::Model
 
                         "forums",
                           "customer_forums",
-                          "forum_categories",
+                          "forum_categories", 
+                          "portal_forum_categories",
                           "forum_moderators",
 
                         "groups", 
@@ -73,6 +74,9 @@ module FreshdeskCore::Model
 
                         "posts", 
                         "products",
+                        "portals",
+                          "portal_pages",
+                          "portal_templates",
 
                         "quests",
                           "achieved_quests",
@@ -99,6 +103,8 @@ module FreshdeskCore::Model
                         "solution_categories", 
                           "solution_customer_folders", 
                           "solution_folders",
+                          "portal_solution_categories",
+                          "solution_articles",
                          
                         "subscriptions",
 

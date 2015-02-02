@@ -31,5 +31,5 @@
 	</div>
 </div>
 <% if privilege?(:manage_forums) -%>
-	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_categories,  :action_url => reorder_categories_path, :title => :name, :container_id => "forum_categories_sort", :reorder_id => "forum_categories_reorder_button", :list_id => "forum_categories_list"} %>
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => current_portal.portal_forum_categories,  :action_url => reorder_categories_path, :title => :name, :container_id => "forum_categories_sort", :reorder_id => "forum_categories_reorder_button", :list_id => "forum_categories_list"} %>
 <% end %>

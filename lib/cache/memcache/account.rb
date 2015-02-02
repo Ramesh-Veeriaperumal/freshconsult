@@ -141,7 +141,8 @@ module Cache::Memcache::Account
 
   def forum_categories_from_cache
     key = FORUM_CATEGORIES % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ], :order => :position) }
+    # Has to be checked when we introduce the ability to remove the categories from the main portal
+    MemcacheKeys.fetch(key) { self.main_portal.forum_categories.find(:all, :include => [ :forums ]) }
   end
 
   def clear_forum_categories_from_cache

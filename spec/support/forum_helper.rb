@@ -11,6 +11,14 @@ module ForumHelper
 		forum_category
 	end
 
+	def create_test_category_with_portals(p1, p2)
+		forum_category = Factory.build(:forum_category, :account_id => @account.id,
+                                                    :name => Faker::Lorem.sentence(2),
+                                                    :portal_ids => [p1,p2])
+		forum_category.save(false)
+		forum_category
+	end
+
 	def create_test_forum(forum_category,type = 1)
 		forum = Factory.build(
 							:forum, 

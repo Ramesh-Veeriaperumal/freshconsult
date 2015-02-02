@@ -939,10 +939,8 @@ module ApplicationHelper
     end
 
     def forums_tab
-      if main_portal?
+      if !current_portal.forum_categories.empty?
         ['/discussions', :forums,  forums_visibility?]
-      elsif current_portal.forum_category
-        [discussion_path(current_portal.forum_category), :forums,  forums_visibility?]
       else
         ['#', :forums, false]
       end

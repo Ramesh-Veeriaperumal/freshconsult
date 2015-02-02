@@ -79,6 +79,14 @@ class Topic < ActiveRecord::Base
 
   named_scope :published_and_unmerged, :conditions => { :published => true, :merged_topic_id => nil }
 
+  named_scope :topics_for_portal, lambda { |portal|
+    {
+      :joins => %( INNER JOIN forums AS f ON f.id = topics.forum_id ),
+      :conditions => [' f.forum_category_id IN (?)',
+          portal.portal_forum_categories.map(&:forum_category_id)]
+    }
+  }
+
   # The below namescope might be used later. DO NOT DELETE. @Thanashyam
   # named_scope :followed_by, lambda { |user_id|
   #   {

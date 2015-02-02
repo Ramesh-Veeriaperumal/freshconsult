@@ -258,7 +258,7 @@ class Support::Discussions::TopicsController < SupportController
       @forum = @topic.forum
       @forum_category = @forum.forum_category
 
-      wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
+      wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
       raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
       
       unless @forum.visible?(current_user)

@@ -55,15 +55,10 @@ class Portal < ActiveRecord::Base
     :order => "position",
     :dependent => :delete_all
 
-  # has_many :forum_categories,
-  #   :class_name => 'ForumCategory',
-  #   :through => :portal_forum_categories,
-  #   :order => "portal_forum_categories.position",
-  #   :foreign_key => :forum_category_id
-
-  # has_many :forums,
-  #   :class_name => 'Forum',
-  #   :through => :forum_categories
+  has_many :forum_categories,
+    :class_name => 'ForumCategory',
+    :through => :portal_forum_categories,
+    :order => "portal_forum_categories.position"
 
   has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
 
@@ -71,7 +66,6 @@ class Portal < ActiveRecord::Base
 
   belongs_to_account
   belongs_to :product
-  belongs_to :forum_category
 
   APP_CACHE_VERSION = "FD70"
 
@@ -87,22 +81,20 @@ class Portal < ActiveRecord::Base
     fav_icon.nil? ? '/images/favicon.ico' : fav_icon.content.url
   end
 
-  def forum_categories
-    main_portal ? account.forum_categories : (forum_category ? [forum_category] : [])
-  end
-
   def portal_forums
-    main_portal ? account.forums :
-      forum_category ? forum_category.forums : []
+    account.forums.in_categories(forum_category_ids)
   end
 
   def has_solution_category? category_id
     return true unless portal_solution_categories.find_by_solution_category_id(category_id).nil?
   end
+  
+  def has_forum_category? category
+    portal_forum_categories.map(&:forum_category_id).include?(category.id)
+  end
 
   def recent_popular_topics( user, days_before = (DateTime.now - 30.days) )
-    main_portal ? account.portal_topics.visible(user).published.popular(days_before).limit(10) :
-        forum_category ? forum_category.portal_topics.visible(user).published.popular(days_before).limit(10) : []
+    account.topics.topics_for_portal(self).visible(user).published.popular(days_before).limit(10)
   end
 
   def recent_articles
@@ -111,18 +103,15 @@ class Portal < ActiveRecord::Base
   end
 
   def recent_portal_topics user
-    main_portal ? account.portal_topics.published.visible(user).newest.limit(6) :
-        (forum_category ? forum_category.portal_topics.published.visible(user).newest.limit(6) : [])
+    account.topics.topics_for_portal(self).published.visible(user).newest.limit(6)
   end
 
   def my_topics(user, per_page, page)
-    main_portal ? user.monitored_topics.published.filter(per_page, page) :
-       forum_category ?  user.monitored_topics.published.find_by_forum_category_id(forum_category.id).filter(per_page, page) : []
+    user.monitored_topics.published.topics_for_portal(self).filter(per_page, page)
   end
 
   def my_topics_count(user)
-    main_portal ? user.monitored_topics.published.count :
-       forum_category ?  user.monitored_topics.published.find_by_forum_category_id(forum_category.id).count : 0
+    user.monitored_topics.published.topics_for_portal(self).count
   end
 
   #Yeah.. It is ugly.
