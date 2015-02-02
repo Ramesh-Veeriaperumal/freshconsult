@@ -2322,7 +2322,7 @@ en:
   change_my_plan: Choose this plan...
   make_payment: Make Payment
   add_new_email: Add new email
-  chatwidget_title: Chat Widgets
+  chatwidget_title: Freshchat
   feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
@@ -6515,8 +6515,7 @@ en:
     url_error_msg: "Please enter a valid URL"
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
-    chat_disabled_label: "Chat is disabled for helpdesk"
-    chat_enabled_label: "Chat is enabled for helpdesk"
+    chat_enabled_label: "Enable Chat"
     routing: "Chat routing"
     routing_info: "Route all incoming chats to specific groups"
     dropdown_based_routing: "Dropdown based routing"
@@ -6539,6 +6538,11 @@ en:
     visitorId: "Visitor ID"
     createdAt: "Created at"
     enable: "Enable"
+    widgets_list_info: "Showing Chat Widgets for your products"
+    text_yes: "Yes"
+    text_no: "No"
+    enabled: "Enabled"
+    disabled: "Disabled"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

@@ -71,8 +71,8 @@ module ChatHelper
   def default_prechat_fields
     return {
       :name      => { :title => t("freshchat.name"), "show" => "2" },
-      :email     => { :title => t("freshchat.mail"), "show" => "1" },
-      :phone     => { :title => t("freshchat.phone"), "show" => "1" },
+      :email     => { :title => t("freshchat.mail"), "show" => "2" },
+      :phone     => { :title => t("freshchat.phone"), "show" => "0" },
       :textfield => { :title => t("freshchat.textfield"), "show" => "0" },
       :dropdown  => { :title => t("freshchat.dropdown"), "show"=> "0", "options"=> ["list1","list2","list3"]}
     }.to_json.html_safe
