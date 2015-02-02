@@ -22,9 +22,8 @@ class ForumCategory < ActiveRecord::Base
   has_many :portal_topics, :through => :portal_forums
   has_many :user_topics, :through => :user_forums
   has_many :topics , :through => :forums
-  has_many :portal_forum_categories, 
-    :class_name => 'PortalForumCategory', 
-    :foreign_key => :forum_category_id  , 
+
+  has_many :portal_forum_categories,
     :dependent => :delete_all
 
   has_many :portals, :through => :portal_forum_categories
@@ -33,8 +32,8 @@ class ForumCategory < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-# Why have we added position and portal_ids as attr_accessible???
-  attr_accessible :name,:description , :import_id, :position, :portal_ids
+  attr_accessible :name, :description , :import_id, :portal_ids
+
   belongs_to :account
 
   acts_as_list :scope => :account
@@ -109,6 +108,10 @@ class ForumCategory < ActiveRecord::Base
     portal_forum_category = self.portal_forum_categories.build
     portal_forum_category.portal_id = account.main_portal.id
     portal_forum_category.save
+  end
+
+  def main_portal
+    self.portal_forum_categories.main_portal_category.first
   end
 
 end
