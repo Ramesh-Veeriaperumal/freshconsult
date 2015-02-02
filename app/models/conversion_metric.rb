@@ -2,8 +2,12 @@
 class ConversionMetric < ActiveRecord::Base
   belongs_to :account
   has_one :subscription, :through => :account
+  
   serialize :session_json, Hash
-  before_create :update_referrer_type, :update_keywords
+  serialize :misc_signup_data, Hash
+
+  before_create :update_referrer_type, :if => :session_json_present?
+  before_create :update_keywords, :if => :session_json_present?
   
   REFERRER_CATEGORIES = [
       [:gmp,     "Google Market Place",    1],
@@ -21,6 +25,7 @@ class ConversionMetric < ActiveRecord::Base
   
   REFERRER_TYPE = Hash[*REFERRER_CATEGORIES.map { |i| [i[2], i[0]] }.flatten]
   
+
   def self.get_category_string(code)
     return CATEGORIES[code]
   end
@@ -246,5 +251,17 @@ class ConversionMetric < ActiveRecord::Base
    def get_params(url)
          split_url(url)[7]
    end
+
+    def company_type
+      misc_signup_data[:company][:type] if misc_signup_data and misc_signup_data[:company]
+    end
+
+    def company_size
+      misc_signup_data[:company][:size] if misc_signup_data and misc_signup_data[:company]
+    end
+
+    def session_json_present?
+      self[:session_json].present?
+    end
    
 end
