@@ -3018,6 +3018,7 @@ en:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
+      invalid_currency: The currency you have chosen is invalid.
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
