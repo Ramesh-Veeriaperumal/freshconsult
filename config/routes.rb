@@ -141,7 +141,7 @@ ActionController::Routing::Routes.draw do |map|
     integration.app_oauth_install '/applications/oauth_install/:id', :controller => 'applications', :action => 'oauth_install'
     integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
     integration.namespace :cti do |c|
-      c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post}
+      c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post, :verify_session => :post, :ameyo_session => :get}
     end
   end
 

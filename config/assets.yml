@@ -549,11 +549,6 @@ javascripts:
     - public/javascripts/cti/czentrix/click2Dial.js
     - public/javascripts/cti/czentrix/czentrix.js
 
-  five9:
-    - public/javascripts/cti/five9/Five9CTI-1.0.0.js
-    - public/javascripts/cti/five9/xml2json.js
-    - public/javascripts/cti/five9/five9_custom.js
-
   drishti:
     - public/javascripts/cti/ameyo/click2Dial.js
     - public/javascripts/cti/ameyo/ameyo_logout.js
