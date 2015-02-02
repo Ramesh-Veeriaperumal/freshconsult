@@ -141,6 +141,7 @@ var FreshfoneEndCall;
 			this.date = null;
 			this.inCall = true;
 			this.convertedToTicket = false;
+			this.directDialNumber = "";
 			this.resetForm();
 		},
 		loadDependencies: function (freshfonecalls, freshfoneuser, freshfonewidget) {
@@ -195,7 +196,8 @@ var FreshfoneEndCall;
 					'ticket_subject': this.ticketSubject(),
 					'requester_email': this.requesterEmail(),
 					'responder_id': this.agent || "", 
-					'call_history': !this.inCall
+					'call_history': !this.inCall,
+					'direct_dial_number': this.directDialNumber
 				}
 			});
 		},

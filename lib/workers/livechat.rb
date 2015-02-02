@@ -23,10 +23,11 @@ class Workers::Livechat
 
 			if params[:user_id] && params[:siteId]
 				token = livechat_token(params[:siteId], params[:user_id])
-			elsif (params[:siteId] || params[:user_id])
-				token = livechat_partial_token((params[:siteId] || params[:user_id]))
+			elsif params[:siteId]
+				token = livechat_partial_token(:siteId => params[:siteId])
+			elsif params[:user_id]
+				token = livechat_partial_token(:userId => params[:user_id])
 			end
-
 			return token
 		end
 		

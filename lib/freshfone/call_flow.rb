@@ -3,6 +3,7 @@ class Freshfone::CallFlow
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Freshfone::CallsRedisMethods
+  include Freshfone::CallValidator
 	BEYOND_THRESHOLD_PARALLEL_INCOMING = 3 # parallel incomings allowed beyond safe_threshold
 	BEYOND_THRESHOLD_PARALLEL_OUTGOING = 1 # parallel incomings allowed beyond safe_threshold
   
@@ -193,8 +194,10 @@ class Freshfone::CallFlow
     end
 
     def cannot_connect_call?
-      return false unless current_account.freshfone_credit.below_safe_threshold?
-      outgoing? ? outgoing_limit_reached? : incoming_limit_reached?
+      return true if current_account.freshfone_credit.below_safe_threshold?
+      return true if outgoing? && !authorized_country?(params[:PhoneNumber],current_account)
+      return outgoing? ? outgoing_limit_reached? : incoming_limit_reached?
+      false
     end
 
     def calls_count

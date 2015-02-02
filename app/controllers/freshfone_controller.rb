@@ -2,6 +2,8 @@ class FreshfoneController < FreshfoneBaseController
 	include Freshfone::FreshfoneHelper
 	include Freshfone::TicketActions
 	include Freshfone::NumberMethods
+	include Freshfone::CallValidator
+	include Freshfone::Response
 
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]
 	before_filter :set_native_mobile, :only => :create_ticket
@@ -32,9 +34,9 @@ class FreshfoneController < FreshfoneBaseController
 		render :json => {:available_agents => @available_agents, :active_calls => @active_calls}
 	end
 
-	def credit_balance
-		render :json => { :credit_balance => ( !current_account.freshfone_credit.below_calling_threshold? ) }
-	end
+  def dial_check
+	 	render :json => asserted_status(validate_outgoing)
+  end
 
 	private
 		

@@ -4,7 +4,7 @@ class Facebook::KoalaWrapper::Post
   include Facebook::Constants
 
   attr_accessor :post, :post_id, :feed_type, :requester, :description, :description_html, :subject,
-                 :created_at, :comments, :can_comment, :post_type
+                 :created_at, :comments, :can_comment, :post_type, :original_post_id
                  
   alias_attribute :feed_id, :post_id
   
@@ -24,7 +24,7 @@ class Facebook::KoalaWrapper::Post
 
   def parse
     @post             =   @post.symbolize_keys!
-    @post_id          =   @post[:id]
+    @post_id          =   photo? ? "#{@fan_page.page_id}_#{@post[:object_id]}" : @post[:id]
     @feed_type        =   @post[:type]
     @requester        =   @post[:from] 
     @description      =   @post[:message].to_s
@@ -33,6 +33,7 @@ class Facebook::KoalaWrapper::Post
     @created_at       =   Time.zone.parse(@post[:created_time])
     @comments         =   @post[:comments]["data"] if @post[:comments] && @post[:comments]["data"]
     @can_comment      =   true
+    @original_post_id =   @post[:id] if photo?
     @post_type        =   POST_TYPE_CODE[:post]
   end
 
@@ -46,6 +47,11 @@ class Facebook::KoalaWrapper::Post
   
   def requester_fb_id
     @post[:from].is_a?(Hash) ? @post[:from]["id"] : @post[:from]
+  end
+  
+  private
+  def photo?
+    @post[:type] == POST_TYPE[:photo]
   end
 
 end

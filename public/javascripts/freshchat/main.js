@@ -57,7 +57,7 @@
 	 *  with Back button, the current history state is changed to null.
 	 */
 	var pjaxCallback = function(event,xhr,options){
-		if(options && options.url && options.url.match(/\/freshchat\//gi)){
+		if(options && options.url && options.url.match(/\/livechat\//gi)){
 			jQuery.pjax.state = null
 			window.history.replaceState(null,"");			
 		}
@@ -209,7 +209,7 @@
 			Backbone.history.stop();
 		}
 
-		Backbone.history.start({root:'/freshchat',pushState: true});
+		Backbone.history.start({root:'/livechat',pushState: true});
 		Backbone.emulateJSON = true;
 
 		// Removing functions from global space 

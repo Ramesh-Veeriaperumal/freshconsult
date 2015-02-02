@@ -68,6 +68,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         freshfoneendcall.number = "+" + $(this).data("number");
         freshfoneendcall.date = $(this).data("date");
         freshfoneendcall.agent = $(this).data("responder-id");
+        freshfoneendcall.directDialNumber = $(this).data("direct-dial-number");
         freshfoneendcall.showEndCallForm();
       });
     },
