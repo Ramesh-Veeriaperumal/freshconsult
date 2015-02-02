@@ -1,4 +1,9 @@
 <% content_for :layoutType do %>community<% end %>
+
+<% content_for :sticky_right do %>
+	<%= preview_portal(support_discussion_path(@forum_category), @forum_category) %>
+<% end %>
+
 <% content_for :sticky_title do %>
 	<div class="list-panel-main">
 		<% if privilege?(:manage_forums) %>

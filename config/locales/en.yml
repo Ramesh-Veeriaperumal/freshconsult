@@ -2473,6 +2473,7 @@ en:
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket. This also applies to the search feature inside feedback widget.
   show_me_how: Show me how
+  view_on_portal: "View on Portal"
   agent_list:
     tab:
       active: "Full-Time"

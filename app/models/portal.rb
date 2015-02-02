@@ -168,6 +168,10 @@ class Portal < ActiveRecord::Base
       Thread.current[:portal] = nil
   end
 
+  def url_protocol
+    self.ssl_enabled? ? 'https' : 'http'
+  end
+
   private
 
     def update_users_language

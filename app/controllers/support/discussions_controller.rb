@@ -9,17 +9,19 @@ class Support::DiscussionsController < SupportController
 	def index
 		respond_to do |format|
 			format.html {
-        set_portal_page :discussions_home 
-      }
-	  end
+				load_agent_actions(categories_discussions_path, :view_forums)
+				set_portal_page :discussions_home 
+			}
+		end
 	end
 
 	def show  
 		respond_to do |format|
 			format.html { 
-        load_page_meta
-        set_portal_page :discussions_category 
-      }
+				load_agent_actions(discussion_path(@category), :view_forums)
+				load_page_meta
+				set_portal_page :discussions_category 
+			}
 		end
 	end	
 
