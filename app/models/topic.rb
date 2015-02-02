@@ -5,6 +5,7 @@ class Topic < ActiveRecord::Base
   include Mobile::Actions::Topic
   acts_as_voteable
   validates_presence_of :forum, :user, :title
+  validate :check_stamp_type
 
   concerned_with :merge
 
@@ -15,8 +16,8 @@ class Topic < ActiveRecord::Base
 
   before_create :set_locked
   before_save :set_sticky
-  before_create :set_unanswered_stamp, :if => :questions?
-  before_create :set_unsolved_stamp, :if => :problems?
+  before_validation_on_create :set_unanswered_stamp, :if => :questions?
+  before_validation_on_create :set_unsolved_stamp, :if => :problems?
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
@@ -226,6 +227,23 @@ class Topic < ActiveRecord::Base
   TOPIC_ATTR_TO_REMOVE = ["int_tc01", "int_tc02", "int_tc03", "int_tc04", "int_tc05", 
     "long_tc01", "long_tc02", "datetime_tc01", "datetime_tc02", "boolean_tc01", "boolean_tc02", "string_tc01", 
     "string_tc02", "text_tc01", "text_tc02"]
+    
+  FORUM_TO_STAMP_TYPE = {
+    Forum::TYPE_KEYS_BY_TOKEN[:announce] => [nil],
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil],
+    Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY.keys,
+    Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
+  }
+
+  def check_stamp_type
+    is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
+    is_valid &&= check_answers if questions?
+    errors.add(:stamp_type, "is not valid") unless is_valid
+  end
+
+  def check_answers
+    stamp_type == QUESTIONS_STAMPS_BY_TOKEN[:answered] ? posts.any?(&:answer) : !posts.any?(&:answer)
+  end
 
   def monitorship_emails
     user_emails = Array.new

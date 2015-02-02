@@ -24,7 +24,7 @@ module ForumHelper
 
 	def create_test_topic(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
-		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
 		topic = Factory.build(
 							:topic, 
 							:account_id => @account.id, 
