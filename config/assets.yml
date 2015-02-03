@@ -188,7 +188,8 @@ javascripts:
 
   freshchat:
     - public/javascripts/freshchat/freshchat.js
-  
+    - public/javascripts/freshchat/ticket_options/main.js
+
   freshchat_templates:
      # Templates
     - public/javascripts/freshchat/templates/freshchat_archive.jst
@@ -196,6 +197,9 @@ javascripts:
     - public/javascripts/freshchat/templates/freshchat_archive_row.jst
     - public/javascripts/freshchat/templates/freshchat_visitor_details.jst
     - public/javascripts/freshchat/dashboard/dashboard_template.jst
+    - public/javascripts/freshchat/templates/ticket_description.jst
+    - public/javascripts/freshchat/templates/ticket_search_list.jst
+    - public/javascripts/freshchat/templates/ticket_options.jst
 
   livechat_mini_dashboard:
     - public/javascripts/freshchat/dashboard/dashboard.js
