@@ -278,12 +278,13 @@
 		},
 
 		showFieldDialog: function(element){
-			self.settings.currentData = $(element).data("raw");
-			var fieldtype = self.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
-			if ($.inArray(fieldtype, self.settings.nonEditableFields) == -1) {
-				$(self.settings.dialogContainer).html(JST['app/admin/contact_fields/formfield_props'](self.settings.currentData));
-				self.dialogOnLoad(element);
-				$(self.settings.customPropsModal).modal('show');
+			this.settings.currentData = $(element).data("raw");
+			var fieldtype = this.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
+
+			if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
+				$(this.settings.dialogContainer).html(JST['app/admin/'+this.settings.customFieldType+'_fields/formfield_props'](this.settings.currentData));
+				this.dialogOnLoad(element);
+				$(this.settings.customPropsModal).modal('show');
 			}
 		},
 
