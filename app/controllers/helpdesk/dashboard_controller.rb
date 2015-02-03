@@ -55,7 +55,7 @@ class Helpdesk::DashboardController < ApplicationController
 
       unavailable_agents_list = @group.agents.all(:select => "users.id").map(&:id).map(&:to_s) - available_agents_list
       agent_ids = available_agents_list + unavailable_agents_list
-      all_agents = current_account.agents.find_all_by_user_id(agent_ids, :include => [{:user => :avatar}], :order => "field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
+      all_agents = current_account.agents.where(user_id: agent_ids).includes([{:user => :avatar}]).reorder("field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
     end
 
     @available_agents   = all_agents[true] || []
