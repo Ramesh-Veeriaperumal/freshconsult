@@ -44,7 +44,8 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :ringing,	'ringing',	7 ],
 		[ :'in-progress', 'in-progress', 8 ],
 		[ :blocked, 'blocked', 9 ],
-		[ :voicemail, 'voicemail', 10 ]
+		[ :voicemail, 'voicemail', 10 ],
+		[ :restricted, 'restricted', 11]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]

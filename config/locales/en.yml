@@ -6042,6 +6042,7 @@ en:
       failed: "Failed"
       in_progress: "In progress"
       voicemail: "Voicemail"
+      restricted: "Restricted"
       all_calls: "All Calls"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
@@ -6280,6 +6281,7 @@ en:
         back_to_menu: "Back to main menu"
         invalid_performer_type: "Invalid Performer Type"
         invalid_number: "Invalid number in menu %{menu}"
+        restricted_country: "Restricted country's number in menu %{menu}"
         invalid_jump_to: "Cannot have 'Jump To' for non-root menu %{menu}"
         seed_message: "Welcome to customer support"
         seed_menu_name: "Welcome/Start Menu"

@@ -61,6 +61,10 @@ class Freshfone::CallFlow
   end
   
   def call_user_with_number(number)
+    if !authorized_country?(number,current_account)
+      set_restricted_status
+      return reject_twiml  
+    end
     return initiate_voicemail if direct_dialled_number_busy?(number)
     register_direct_dial(number)
     self.numbers = [number]
@@ -159,6 +163,13 @@ class Freshfone::CallFlow
 
     def outgoing?
       params[:To].blank?
+    end
+
+    def set_restricted_status
+      return if params[:CallSid].blank?
+      call = current_account.freshfone_calls.find_by_call_sid(params[:CallSid]) 
+      call.update_status({:DialCallStatus => "restricted"})
+      call.save
     end
 
     def blacklisted?
