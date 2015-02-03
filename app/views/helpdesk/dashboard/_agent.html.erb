@@ -8,7 +8,7 @@
         "data-checked-label" => "On", 
         "data-unchecked-label" => "Off",
         "data-id" => agent.user.id,
-        "data-url" => "/agents/toggle_availability",
+        "data-url" => toggle_availability_agent_path(agent.user.id),
         "data-availability" => agent.available?,
         :id => "agent_available_#{agent.user.id}" %>
       <span class="active_since vertical-alignment"><%= agent.active_since.nil? ? t('helpdesk.dashboard.round_robin.na') : "Since " + timediff_in_words(Time.now - agent.active_since) %></span>
