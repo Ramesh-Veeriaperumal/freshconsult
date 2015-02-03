@@ -364,6 +364,29 @@ ActionController::Routing::Routes.draw do |map|
                                                                  :change_url => :put,
                                                                  :single_sign_on => :get
                                                                 }
+      admin.resources :custom_ssl, :only => :index, :collection => {
+                                                                    :enable_custom_ssl => :put
+                                                                    }
+      admin.resources :account_tools, :only => :index, :collection => {
+                                                                      :update_global_blacklist_ips => :put,
+                                                                      :remove_blacklisted_ip => :put
+                                                                      }
+      admin.resources :freshfone_actions, :collection =>  {
+                                                            :add_credits => :put,
+                                                            :refund_credits => :put,
+                                                            :port_ahead => :put,
+                                                            :post_twilio_port => :put,
+                                                            :suspend_freshfone => :put,
+                                                            :account_closure => :put,
+                                                            :get_country_list => :get,
+                                                            :country_restriction => :put
+                                                          }
+      admin.resources :freshfone_stats , :collection => {
+                                                            :statistics => :get
+                                                        }  
+      admin.resources :freshfone_subscriptions, :collection => {
+                                                                  :index => :get
+                                                                }                                                  
     end
   end
 

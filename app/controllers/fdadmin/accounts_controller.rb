@@ -42,6 +42,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       render :json => { :status => "notice" } and return if passes_count > 30 
       day_pass_config.update_attributes(:available_passes => (day_pass_config.available_passes +  passes_count))
     end
+    result[:account_id] = account.id 
+    result[:account_name] = account.name
     result[:status] = "success"
     respond_to do |format|
       format.json do
@@ -52,14 +54,16 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def add_feature
     result = {}
-      account = Account.find(params[:account_id]) 
-      begin
-        render :json => {:status => "notice"}.to_json and return if account.features?(params[:feature_name])
-        account.features.send(params[:feature_name]).save
-        result[:status] = "success"
-      rescue Exception => e
-        result[:status] = "error"
-      end
+    account = Account.find(params[:account_id]) 
+    result[:account_id] = account.id 
+    result[:account_name] = account.name
+    begin
+      render :json => {:status => "notice"}.to_json and return if account.features?(params[:feature_name])
+      account.features.send(params[:feature_name]).save
+      result[:status] = "success"
+    rescue Exception => e
+      result[:status] = "error"
+    end
     respond_to do |format|
       format.json do
         render :json => result
@@ -87,6 +91,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         email_config.save
       end
       current_account.full_domain = new_url
+      result[:account_id] = current_account.id 
+      result[:account_name] = current_account.name
       if current_account.save
         result[:status] = "success"
       else
@@ -110,7 +116,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     sso_link = "https://#{account.full_domain}/login/sso?name=#{manager.name}&email=#{manager.email}&hash=#{Digest::MD5.hexdigest(manager.name+manager.email+account.shared_secret)}"
       respond_to do |format|
         format.json do
-          render :json => {:url => sso_link , :status => "success"}
+          render :json => {:url => sso_link , :status => "success" , :account_id => account.id , :account_name => account.name}
         end
       end
     end
