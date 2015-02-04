@@ -70,7 +70,9 @@ class Search::SearchController < ApplicationController
 		def exact_or_wildcard_query b_query
 			if SearchUtil.es_exact_match?(@search_key)
 				query = SearchUtil.es_filter_exact(@search_key) #Initializing into a variable as inaccessible inside block
-				b_query.must { text :_all, query, :type => :phrase }
+				
+				#_Note_: Text query deprecated and renamed to match query.
+				b_query.must { match :_all, query, :type => :phrase }
 			else
 				query = SearchUtil.es_filter_key(@search_key) #Initializing into a variable as inaccessible inside block
 				b_query.must { string query, :analyzer => "include_stop" }
