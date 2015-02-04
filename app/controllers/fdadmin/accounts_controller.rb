@@ -3,7 +3,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Fdadmin::AccountsControllerMethods
 
   around_filter :select_slave_shard , :only => [:show]
-  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on]
+  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name]
 
   def show
     account_summary = {}
@@ -71,6 +71,24 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def remove_feature
+    account = Account.find(params[:account_id])
+    result = {:account_id => account.id , :account_name => account.name }
+    begin
+      render :json => {:status => "notice"}.to_json and return if !account.features?(params[:feature_name])
+      feature = account.features.send(params[:feature_name])
+      result[:status] = "success" if feature.destroy
+      rescue Exception => e
+        result[:error] = "error"
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end 
+  end
+
+
   def change_url
     result = {}
     old_url = params[:domain_name]
@@ -108,6 +126,82 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def change_account_name
+    account = Account.find(params[:account_id])
+    result = { :account_id => account.id , :account_name => account.name }
+    account.name = params[:account_name]
+    if account.save
+      result[:status] = "success"
+    else
+      result[:status] = "error"
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def ublock_account
+    result = {}
+    shard_mapping = ShardMapping.find(params[:account_id])
+    shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
+    shard_mapping.save
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      account = Account.find(params[:account_id])
+      result[:account_id] = account.id
+      result[:account_name] = account.name
+      account.make_current
+      sub = account.subscription
+      sub.state="trial"
+      result[:status] = "success" if sub.save
+      Account.reset_current_account
+    end
+    $spam_watcher.set("#{params[:account_id]}-","true")
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def block_account
+    result = {}
+    shard_mapping = ShardMapping.find(params[:account_id])
+    shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
+    shard_mapping.save
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      account = Account.find(params[:account_id])
+      result[:account_id] = account.id
+      result[:account_name] = account.name
+      account.make_current
+      sub = account.subscription
+      sub.state="suspended"
+      if sub.save
+        puts "Saved"
+        result[:status] = "success"
+      end
+      Account.reset_current_account
+    end
+    $spam_watcher.del("#{params[:account_id]}-")
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def whitelist
+    result = {:account_id => params[:account_id]}
+    $spam_watcher.set("#{params[:account_id]}-","true")
+    result[:status] = :success
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
   def single_sign_on
     sso_link = ""
     account_id = params[:account_id]
@@ -119,6 +213,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           render :json => {:url => sso_link , :status => "success" , :account_id => account.id , :account_name => account.name}
         end
       end
-    end
+  end
 
   end

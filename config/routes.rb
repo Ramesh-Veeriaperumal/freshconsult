@@ -362,7 +362,12 @@ ActionController::Routing::Routes.draw do |map|
       admin.resources :accounts, :only => :show, :collection => {:add_day_passes => :put ,
                                                                  :add_feature => :put ,
                                                                  :change_url => :put,
-                                                                 :single_sign_on => :get
+                                                                 :single_sign_on => :get,
+                                                                 :change_account_name => :put,
+                                                                 :ublock_account => :put,
+                                                                 :remove_feature => :put,
+                                                                 :whitelist => :put,
+                                                                 :block_account => :put
                                                                 }
       admin.resources :custom_ssl, :only => :index, :collection => {
                                                                     :enable_custom_ssl => :put
