@@ -744,23 +744,6 @@ Helpkit::Application.routes.draw do
 
     resources :portal, :only => [:index, :update]
 
-    namespace :canned_responses do
-      resources :folders do
-        collection do
-          get :edit
-        end
-        resources :responses do
-          collection do
-            put :update_folder
-            delete :delete_multiple
-          end
-          member do
-            delete :delete_shared_attachments
-          end
-        end
-      end
-    end
-
     resources :products do
       member do
         delete :delete_logo
@@ -1368,17 +1351,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-
-    resources :ca_folders
-
-    resources :canned_responses do
-      collection do
-        get :search
-        get :recent
-        get :folders
-      end
-    end
-    
     namespace :canned_responses do
       resources :folders do
         collection do
@@ -1394,6 +1366,16 @@ Helpkit::Application.routes.draw do
             post :delete_shared_attachments
           end
         end
+      end
+    end
+
+    resources :ca_folders
+
+    resources :canned_responses do
+      collection do
+        get :search
+        get :recent
+        get :folders
       end
     end
 
