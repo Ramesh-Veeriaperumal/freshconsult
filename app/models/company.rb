@@ -138,7 +138,7 @@ class Company < ActiveRecord::Base
               :tailored_json => true,
               :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ],
               :include => { :flexifield => { :only => es_company_field_data_columns } }
-           )
+           ).to_json
   end
 
   def es_company_field_data_columns
