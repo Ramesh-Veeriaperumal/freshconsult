@@ -12,7 +12,7 @@
     </span>
   <%}else{ var visitorName = visitor.name || visitor.msg; %> 
   	<td class="<%=visitor.sclass%> <%=(visitorName > 17) ? 'tooltip': ''%>" data-original-title="<%=visitorName%>"><i class="ficon-user" title="<%=visitor.tip%>"></i>
-  	<a data-id="<%=visitor.id%>" data-widget-id="<%=visitor.widget_id%>"><span><%=visitorName%></span></a>
+  	<a data-id="<%=visitor.id%>" data-widget-id="<%=visitor.widget_id%>" class = "visitor_chatnow"><span><%=visitorName%></span></a>
  	<%}%>
   </td>
   <td class="location <%=(visitor.location.length > 17) ? 'tooltip': ''%>" data-original-title="<%=visitor.location%>"><i class="ficon-map-marker"></i><span style="word-break: break-word;"><%=visitor.location%></span>
