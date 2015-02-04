@@ -74,6 +74,9 @@
   border: 1px solid #e8e8e8;
 }
 #visitor_results{
+  a{
+    cursor: pointer;
+  }
   tr{
     &.odd{
       background: #FFF;
