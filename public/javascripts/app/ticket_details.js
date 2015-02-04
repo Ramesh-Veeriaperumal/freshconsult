@@ -1156,10 +1156,14 @@ var scrollToError = function(){
 	$('body').on('click.ticket_details', ".reply-facebook", function(event){
 	    $('#ReplyButton').trigger('click');
 	    note_id = $(this).data('noteId');
+	    requester_name = $(this).data('note-requester-name');
+	    $("#fb_form_title").html(requester_name);
 	    $("#parent_post_id").val(note_id);
 	  });
 	
 	$('body').on('click.ticket_details', "#facebook-cancel-reply", function(event){
+			requester_name = $("#ticket_requester_name").val();
+	    $("#fb_form_title").html(requester_name);
 	    $('#parent_post_id').val('')
 	  });
 	
@@ -1378,5 +1382,26 @@ TICKET_DETAILS_CLEANUP = function() {
 
 
 };
+
+jQuery('.quoted_button').live('click', function(){
+  var _container = jQuery(this).parents('.details');
+  var _fd_quote = jQuery(this).parents('.freshdesk_quote')
+  if (_fd_quote.data('remoteQuote')){
+    var _note_id = _container.data('note-id');
+    var _messageDiv = _container.find('div:first');
+    jQuery.ajax({
+      url: '/helpdesk/tickets/'+TICKET_DETAILS_DATA["displayId"]+'/conversations/full_text',
+      data: { id: _note_id },
+      success: function(response){
+        if(response!=""){
+          _messageDiv.html(response);
+        }
+        else {
+          _container.find('div.freshdesk_quote').remove();
+        }
+      }
+    });
+  }
+});
 
 })(jQuery);

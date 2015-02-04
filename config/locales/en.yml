@@ -4352,6 +4352,7 @@ en:
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
+          reply_to: "Reply to"
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items

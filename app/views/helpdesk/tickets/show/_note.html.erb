@@ -61,7 +61,7 @@ minimizable ||= false
 								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.can_split? %> 
         <% end %>
         <% if privilege?(:reply_ticket) and note.fb_reply_allowed? %>
-						 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>"><span class="ficon-reply"></span>
+						 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>" data-note-requester-name="<%= note.user.blank? ? "" : note.user.name %>"><span class="ficon-reply"></span>
            </a>
         <% end %>  
         <% if privilege?(:forward_ticket) %>
@@ -106,6 +106,9 @@ minimizable ||= false
 				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
 					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>			
 					<%= note.body_html.html_safe %>
+					<% if note.fwd_email? %>
+						<div class="freshdesk_quote" data-remote-quote=true></div>
+					<% end %>
 				</div>
 			</div>
 			<%= freshfone_audio_dom(note) %>

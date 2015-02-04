@@ -1,6 +1,6 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
   <div class="form_title">
-    <%= t(".title", :user => @ticket.requester.name ) %>
+     <%= t(".reply_to") %> <span id ="fb_form_title" class = "fb-title"> <%= @ticket.requester.name %> </span>
   </div>
   <div class="list_agents_replying" class="hide"></div>
   <input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
@@ -13,6 +13,7 @@
                         "data-cnt-id" => cntid  } do |f| %>
     <%= f.error_messages %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+    <%= hidden_field_tag(:ticket_requester_name, @ticket.requester.name, :id => "ticket_requester_name")%>
     <%= hidden_field_tag(:parent_post, "", :id => "parent_post_id")%>
     <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
