@@ -1,6 +1,7 @@
 class ContactFieldData < ActiveRecord::Base
 
-  self.table_name= "contact_field_data"
+  self.table_name = "contact_field_data"
+  self.primary_key = :id
 
   belongs_to_account
 
