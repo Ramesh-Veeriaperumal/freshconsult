@@ -173,7 +173,7 @@
     
     setDivider();
 
-    jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>));
+    jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>).toJSON());
 
     getFilterData();
     <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());'.html_safe unless special_case_views.include?(@current_view) %>
