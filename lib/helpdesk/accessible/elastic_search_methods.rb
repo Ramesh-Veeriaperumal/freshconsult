@@ -1,4 +1,14 @@
 module Helpdesk::Accessible::ElasticSearchMethods
+    SHARED_VISIBILITY = {
+      :global_type => true, :user_type => false, :group_type => true
+    }
+    PERSONAL_VISIBILITY = {
+      :global_type => false, :user_type => true, :group_type => false
+    }
+    GLOBAL_VISIBILITY = {
+      :global_type => true, :user_type => true, :group_type => true
+    }
+
     def es_group_accesses
       self.helpdesk_accessible.group_access_type? ? self.helpdesk_accessible.group_ids : []
     end
@@ -25,7 +35,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
               :term => {:es_access_type =>  Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]}
             },
             {
-              :term => {:es_user_accesses => current_user.id}
+              :term => {:es_user_accesses => user.id}
             }
           ]
         }
@@ -58,7 +68,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
       permissions << es_group_conditions(user_groups) if visible_options[:group_type]
       permissions
     end
-    
+
     def accessible_from_es(model_name,options,visible_options={})
       begin
         es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
@@ -80,5 +90,5 @@ module Helpdesk::Accessible::ElasticSearchMethods
         nil
       end
     end
-    
+
 end

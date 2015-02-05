@@ -2346,6 +2346,15 @@ en:
     info6: Mark the Ticket as a Bug and assign to QA
     info7: Perform these actions
     info8: Add another action
+    edit: Edit Scenario
+    shared: Shared
+    personal: Personal
+    no_scenario: "No Personal Scenarios <a href={{link}}>Create New</a>"
+    visibility:
+      groups: Agents in group
+      all_agents: All agents
+      me_only: Myself
+      available_for: Available for
   category:
     new: New Category
     new_forum_category: New Forum Category
@@ -3819,6 +3828,7 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form:
       private_note: "Add as Private Note, and don't notify the requester"

@@ -8,12 +8,12 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses, :scenario_automations]
   end
 
   # Used for new model migrations
   def additional_models
-    [:admin_canned_responses]
+    [:scenario_automations]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
@@ -236,7 +236,23 @@ class Search::EsIndexDefinition
       }
     }
   end
-  
+
+  def scenario_automations
+    {
+      :"scenario_automation" => {
+        :properties => {
+          :account_id => { :type => :long },
+          :active => { :type => :boolean  },
+          :rule_type => { :type => :long },
+          :name => { :type => :string },
+          :es_group_accesses => { :type => :long },
+          :es_user_accesses => { :type => :long },
+          :es_access_type => { :type => :long }
+        }
+      }
+    }
+  end
+
   def admin_canned_responses
     {
       :"admin/canned_responses/response" => {
@@ -246,7 +262,7 @@ class Search::EsIndexDefinition
           :es_group_accesses => { :type => :long },
           :es_user_accesses => { :type => :long },
           :es_access_type => { :type => :long },
-          :title => { :type => :string },
+          :title => { :type => :string }
         }
       }
     }
@@ -288,11 +304,15 @@ class Search::EsIndexDefinition
   def searchable_aliases(search_in, account_id)
     res_aliases = []
     search_in.each do |klass|
-      res_aliases << "#{klass.table_name}_#{account_id}"
+      if klass == ScenarioAutomation
+        res_aliases << "scenario_automations_#{account_id}"
+      else
+        res_aliases << "#{klass.table_name}_#{account_id}"
+      end
     end
     res_aliases
   end
-  
+
   def create_aliases(account_id, is_additional_model=false)
     sandbox(0) {
       pre_fix = Search::EsIndexDefinition.es_cluster(account_id)

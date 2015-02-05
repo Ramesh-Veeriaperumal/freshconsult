@@ -117,8 +117,8 @@ class Account < ActiveRecord::Base
   has_many :api_webhook_rules, :class_name => 'VARule', :conditions => {
   :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
 
-  has_many :scn_automations, :class_name => 'ScenarioAutomations', :conditions =>{
-  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "position"
+  has_many :scn_automations, :class_name => 'ScenarioAutomation', :conditions =>{
+  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "name"
 
   has_many :all_scn_automations, :class_name => 'VARule',:conditions => {
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
@@ -145,7 +145,6 @@ class Account < ActiveRecord::Base
   has_many :public_folders, :through => :solution_categories
   has_many :published_articles, :through => :public_folders,
     :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
-
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"

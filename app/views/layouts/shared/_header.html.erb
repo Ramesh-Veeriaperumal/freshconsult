@@ -97,16 +97,23 @@
 			<div class="wrapper-shadow">
 				 <div class="top_nav">
 					<div class="nav_right">
-					<% unless privilege?(:manage_canned_responses) %>
+					<% if (current_user && current_user.agent?) && (!(privilege?(:manage_canned_responses)) || !(privilege?(:manage_scenario_automation_rules)))%>
 						<div class="dropdown nav_settings">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 								<span class='ficon-gear'></span>
 								<%= t('account.settings') %>
 							</a>
 							<ul class="dropdown-menu">
+								<% if !(privilege? (:manage_canned_responses))%>
 								<li>
-									<%= link_to t('canned_folders.responses'),helpdesk_canned_responses_folders_path %> 
+									<%= link_to t('canned_folders.responses'),helpdesk_canned_responses_folders_path %>
 								</li>
+								<%end%>
+								<% if !(privilege?(:manage_scenario_automation_rules))%>
+								<li>
+									<%= link_to "scenario automations",helpdesk_scenario_automations_path %>
+								</li>
+								<%end%>
 							</ul>
 			            </div>
 			        <%end%>

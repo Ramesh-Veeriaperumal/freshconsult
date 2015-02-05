@@ -225,27 +225,7 @@
 // ----------------------------------------------------
 
 .dropdown-menu.tick{
-  .#{$font-class-name}checkmark-thick {
-    display: none;
-    position: absolute;
-    @include left(5px);
-    top: 2px;
-  }
   li {
-    .item {
       position: relative;
-    }
-  }
-  .active {
-    font-weight: bold;
-    .#{$font-class-name}checkmark-thick {
-      display: block;
-      color: inherit;
-    }
-    &:hover {
-      .#{$font-class-name}checkmark-thick {
-        color: inherit;
-      }
-    }
   }
 }

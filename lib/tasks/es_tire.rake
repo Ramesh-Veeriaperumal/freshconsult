@@ -127,7 +127,7 @@ namespace :freshdesk_tire do
       es_account_ids = ENV['ACCOUNT_ID'].split(',')
       raise "Invalid parameters" if (klasses.blank? or es_account_ids.blank?)
       new_models = (ENV['ADD'].to_s == 'true')
-      
+
       es_account_ids.each do |account_id|
         begin
           Sharding.select_shard_of(account_id) do
@@ -140,7 +140,7 @@ namespace :freshdesk_tire do
             Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
           end
         rescue
-          next 
+          next
         ensure
           Account.reset_current_account
         end
@@ -199,7 +199,7 @@ def init_partial_reindex(es_account_ids)
 end
 
 def import_classes(id, klasses)
-  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Freshfone::Caller','Admin::CannedResponses::Response'] : klasses.split(',')
+  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Freshfone::Caller','Admin::CannedResponses::Response','ScenarioAutomation'] : klasses.split(',')
   import_classes.collect!{ |item| "#{item}#{import_condition(id, item)}" }.join(';')
 end
 
@@ -216,6 +216,8 @@ def import_condition(id, item)
       condition = ".scoped(:conditions => ['account_id=?', #{id}])"
     when "Freshfone::Caller" then
       condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+    when "ScenarioAutomation" then
+      condition = ".scoped(:conditions => ['account_id=? and rule_type=?', #{id},#{VAConfig::SCENARIO_AUTOMATION}])"
     when "Admin::CannedResponses::Response" then
       condition = ".scoped(:conditions => ['account_id=?', #{id}])"
   end
