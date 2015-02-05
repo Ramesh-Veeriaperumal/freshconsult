@@ -5467,6 +5467,7 @@ en:
         total_duration: "Total Duration"
         agent_chat_summary: Agent Chat Summary
         agent: "Agent"
+        deleted: "Deleted"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
