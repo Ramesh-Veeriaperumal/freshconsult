@@ -1,8 +1,7 @@
 # encoding: utf-8
 module ParserUtil
 
-VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
-      EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
+include AccountConstants
 
   def parse_email(email)
     if email =~ /(.+) <(.+?)>/
@@ -119,7 +118,7 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
     
   def valid_email?(email)
     email = extract_email(email)
-    (email =~ VALID_EMAIL_REGEX) ? true : false
+    (email =~ EMAIL_SCANNER) ? true : false
   end
 
   # removes trailing characters after + 

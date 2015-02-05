@@ -904,7 +904,7 @@ module ApplicationHelper
   end
 
   def email_regex
-    Helpdesk::Ticket::VALID_EMAIL_REGEX.source
+    AccountConstants::EMAIL_SCANNER.source
   end
 
   def nodejs_url namespace

@@ -34,7 +34,7 @@ module APIHelperMethods
   OPERATORS = {"is"=>"=","like"=>"like"}
 
   #add the appropriate regex here.
-  COLUMNS_REGEX ={"email"=>User::EMAIL_REGEX,"phone"=>/\d+/,"mobile"=>/\d+/,"customer_id"=>/\d+/}
+  COLUMNS_REGEX ={"email"=>AccountConstants::EMAIL_VALIDATOR,"phone"=>/\d+/,"mobile"=>/\d+/,"customer_id"=>/\d+/}
 
 
 end

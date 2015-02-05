@@ -3,8 +3,8 @@ class UserEmail < ActiveRecord::Base
 
   include Users::Activator
   include ActionController::UrlWriter
+  include AccountConstants
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
 
   API_OPTIONS = {
     :only => [:id, :email, :verified, :primary_role]
@@ -15,7 +15,7 @@ class UserEmail < ActiveRecord::Base
   delegate :update_es_index, :to => :user
 
   validates_presence_of :email
-  validates_format_of :email, :with => EMAIL_REGEX
+  validates_format_of :email, :with => EMAIL_VALIDATOR
   validates_uniqueness_of :email, :scope => [:account_id]
 
   before_validation :downcase_email
