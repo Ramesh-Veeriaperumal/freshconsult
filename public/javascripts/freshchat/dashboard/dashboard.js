@@ -13,6 +13,7 @@ window.freshChat.mini_dashboardView = function(){
             },
             listenToCollection : function(){
                 this.listenTo(visitorCollection, 'change_count', this.setVisitorsCount);
+                this.listenTo(userCollection, 'change_count', this.setAgentsCount);
             },
             listenToEvents : function(){
                 var that = this;
@@ -54,6 +55,9 @@ window.freshChat.mini_dashboardView = function(){
                 this.$el.find("#inconversation_visitors_count").html(visitorCollection.count.inConversation);
                 this.$el.find("#new_visitors_count").html(visitorCollection.count.newVisitor);
                 this.$el.find("#return_visitors_count").html(visitorCollection.count.returnVisitor);
+            },
+            setAgentsCount : function(){
+                this.$el.find("#online_agent_count").html(userCollection.availabilityAgentsCount);
             }
         });
 
