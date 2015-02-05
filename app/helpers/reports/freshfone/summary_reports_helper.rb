@@ -81,7 +81,7 @@ include Freshfone::CallHistoryHelper
   def answered_percentage(call_list)
     sum = call_list.sum(&:count)
     answered = sum - (unanswered_calls_count(call_list) + unanswered_transfers(call_list))
-    percentage = ((answered/sum)*100 || 0).to_i
+    percentage = ((answered/sum.to_f)*100 || 0).to_i
   end
 
   def avg_handle_time(call_list)
