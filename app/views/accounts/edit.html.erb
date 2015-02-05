@@ -41,7 +41,8 @@
 					:rel => "customize-portal", :class => "btn btn-bold btn-primary pull-right" %>
 	<h1 class="lead"><%=t('account.rebrand')%></h1>
 
-	<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
+	<%= error_messages_for :account %>
+	
 	<div class="row-fluid">
 		<%= f.fields_for :main_portal do |portal| %>
 			<h3 class="rebrand-head-text top-space-none"><%= t("account.settings") %></h3>

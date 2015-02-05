@@ -1,5 +1,7 @@
 class ContactField < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   serialize :field_options
 
   belongs_to_account

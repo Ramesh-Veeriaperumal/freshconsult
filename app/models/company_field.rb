@@ -1,5 +1,6 @@
 class CompanyField < ActiveRecord::Base
 
+  self.primary_key = :id
   self.table_name= "company_fields"
 
   serialize :field_options

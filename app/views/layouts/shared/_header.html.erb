@@ -200,7 +200,7 @@
 		var user_id = '<%= current_user.id %>'
 	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-agent-roundrobin-on" )
 
-	  	new Ajax.Request('/agents/toggle_availability',
+	  	new Ajax.Request("<%= toggle_availability_agent_path(current_user.id) %>",
 	                   { parameters: {value: !value, id: user_id},
 	                      onLoading: function() {
 	                        jQuery('#available_icon').addClass('header-spinner')

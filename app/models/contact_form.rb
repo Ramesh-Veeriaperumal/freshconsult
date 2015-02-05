@@ -1,5 +1,7 @@
 class ContactForm < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   include Cache::Memcache::ContactField
   
   serialize :form_options

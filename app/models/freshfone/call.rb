@@ -4,7 +4,7 @@ class Freshfone::Call < ActiveRecord::Base
 	self.table_name =  :freshfone_calls
     self.primary_key = :id
 
-  belongs_to :agent, :class_name => 'User', :foreign_key => 'user_id'
+  belongs_to :agent, :class_name => '::User', :foreign_key => 'user_id'
   belongs_to_account
   belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
   belongs_to :ticket, :foreign_key => 'notable_id', :class_name => 'Helpdesk::Ticket'

@@ -37,8 +37,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   validates_length_of :title, :in => 3..240
   validates_presence_of :folder_id
-  before_validation :validate_title, on: [:create,:update]
-
+  before_validation :validate_title
   unhtml_it :content
   xss_sanitize :only =>[:content_html],  :html_sanitize => [:content_html]
 
@@ -90,7 +89,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     if (!visible_only_to_me? && (self.title_changed? || self.folder_id_changed?))
       response = Account.current.canned_responses.folder_responses_by_title(self)
       if !response.nil? && response.any?
-        self.errors.add_to_base(I18n.t('canned_responses.errors.duplicate_title'))
+        self.errors.add(:base,I18n.t('canned_responses.errors.duplicate_title'))
         return false
       end
       true
