@@ -1,5 +1,5 @@
 Authority::Authorization::PrivilegeList.build do
- 
+
   # *************** TICKETS **********************
 
   manage_tickets do
@@ -11,30 +11,30 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-		resource :"helpdesk/ticket", :only => [:show, :new, :create, :show, :index, :user_tickets, :empty_trash, :empty_spam,
-                      :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
-                      :spam, :unspam, :execute_scenario, :pick_tickets,
-                      :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
-                      :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
-                      :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
-                      :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary]
+    resource :"helpdesk/ticket", :only => [:show, :new, :create, :show, :index, :user_tickets, :empty_trash, :empty_spam,
+                                           :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
+                                           :spam, :unspam, :execute_scenario, :pick_tickets,
+                                           :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
+                                           :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
+                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
+                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary]
     resource :"helpdesk/subscription"
- 		resource :"helpdesk/tag_use"
+    resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
     resource :"helpdesk/visitor"
     resource :"helpdesk/autocomplete"
     resource :"helpdesk/chat"
     resource :"mobile/ticket"
     resource :"mobile/automation"
-	resource :"mobile/notification"
-	resource :"mobile/freshfone"
-    resource :"mobile/setting"    
+    resource :"mobile/notification"
+    resource :"mobile/freshfone"
+    resource :"mobile/setting"
     resource :"helpdesk/mobihelp_ticket_extra"
     # Social - Twitter
     resource :"social/twitter_handle",
-       :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
+      :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
     resource :"social/stream",
-       :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
+      :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
     resource :"social/twitter",
         :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
     resource :"health_check"
@@ -42,10 +42,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
     resource :"integrations/oauth_util"
-    resource :"integrations/salesforce" 
+    resource :"integrations/salesforce"
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
@@ -62,6 +63,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
+    resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
@@ -87,7 +89,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
-        :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
+      :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
   end
 
   forward_ticket do
@@ -102,7 +104,7 @@ Authority::Authorization::PrivilegeList.build do
 
   edit_ticket_properties do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
-                                   :close_multiple, :update_multiple_tickets, :change_due_by]
+                                           :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action"
   end
 
@@ -119,8 +121,8 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   edit_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by => 
-                                            { :scoper => :time_sheets }
+    resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by =>
+      { :scoper => :time_sheets }
   end
 
   delete_ticket do
@@ -156,7 +158,8 @@ Authority::Authorization::PrivilegeList.build do
 
   # ************** FORUMS **************************
 
-	view_forums do
+
+  view_forums do
     resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
     resource :"discussions/forum", :only => [:show]
     resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
@@ -192,7 +195,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/topic", :only => [:edit, :update, :toggle_lock,
           :update_stamp, :remove_stamp, :merge_topic], :owned_by => { :scoper => :topics }
     resource :topic, :only => [:edit, :update, :update_lock,
-          :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
+                               :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
@@ -208,14 +211,14 @@ Authority::Authorization::PrivilegeList.build do
 
   # ************** CONTACTS **************************
 
-	view_contacts do
-	 resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :configure_export, :export_csv]
-	  resource :customer, :only => [:index, :show] #should deprecate
+  view_contacts do
+    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :configure_export, :export_csv]
+    resource :customer, :only => [:index, :show] #should deprecate
     resource :company,  :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
-	end
+  end
 
   # add_or_edit_contact
   manage_contacts do
@@ -250,7 +253,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/customer_glance_report"
       resource :"reports/customer_report"
       resource :"reports/customers_analysi"
-      resource :"reports/gamification_report"      
+      resource :"reports/gamification_report"
       resource :"reports/group_glance_report"
       resource :"reports/groups_analysi"
       resource :"reports/groups_comparison"
@@ -263,7 +266,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/freshchat/summary_report"
    	resource :"reports/timesheet_report"
     resource :"reports/report_filter"
-	end
+  end
 
   # ************** ADMIN **************************
 
@@ -276,7 +279,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
-                      :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
+                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -294,10 +297,6 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_supervisor_rules do
     resource :"admin/supervisor_rule"
-  end
-
-  manage_scenario_automation_rules do
-    resource :"helpdesk/scenario_automation"
   end
 
   manage_email_settings do

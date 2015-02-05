@@ -5,6 +5,7 @@ page << "try {
 	jQuery('#execute_scenario .modal-body .sloading').remove();
 } catch(e) {}"
 
+if (@va_rule_executed)
 page << "silenceTktFieldsUpdate();"
 f = ActionView::Helpers::FormBuilder.new(:helpdesk_ticket, @ticket, self, {}, proc {})
 page.replace_html 'TicketPropertiesFields',
@@ -15,3 +16,4 @@ page.replace_html 'TicketPropertiesFields',
 page.replace "due-by-element-parent", render(:partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket})
 page << "unsilenceTktFieldsUpdate();"
 page << "trigger_event('scenario_executed', #{to_event_data_scenario(@va_rule_executed)});"
+end

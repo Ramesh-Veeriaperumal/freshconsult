@@ -43,7 +43,7 @@ class Search::RemoveFromIndex
       query = Tire.search do |search|
         search.query { |q| q.term :account_id, args[:account_id] }
       end
-      klasses = [ User, Helpdesk::Ticket, Solution::Article, Topic, Customer, Helpdesk::Note, Helpdesk::Tag, Freshfone::Caller, Admin::CannedResponses::Response ]
+      klasses = [ User, Helpdesk::Ticket, Solution::Article, Topic, Customer, Helpdesk::Note, Helpdesk::Tag, Freshfone::Caller, Admin::CannedResponses::Response, ScenarioAutomation ]
       search_aliases = Search::EsIndexDefinition.searchable_aliases(klasses, args[:account_id])
       Search::EsIndexDefinition.es_cluster(args[:account_id])
       search_aliases.each do |index_alias|

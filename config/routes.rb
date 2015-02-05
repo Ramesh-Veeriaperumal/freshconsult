@@ -518,7 +518,7 @@ ActionController::Routing::Routes.draw do |map|
       end
     end
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
-    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get, :reorder => :put}
+    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}
 
@@ -562,6 +562,7 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :commons
 
   end
+  map.connect '/helpdesk/scenario_automations/tab/:current_tab', :controller => 'helpdesk/scenario_automations', :action => 'index'
 
   map.resources :api_webhooks, :as => 'webhooks/subscription'
 
