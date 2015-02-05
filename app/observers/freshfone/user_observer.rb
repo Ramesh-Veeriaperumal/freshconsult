@@ -5,6 +5,7 @@ class Freshfone::UserObserver < ActiveRecord::Observer
 
 	def after_save(freshfone_user)
 		publish_presence(freshfone_user) if freshfone_user.presence_changed?
+		publish_capability_token(freshfone_user, freshfone_user.get_capability_token)
 	end
 
 	def after_destroy(freshfone_user)

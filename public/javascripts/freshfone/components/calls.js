@@ -122,7 +122,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		recordMessage: function (messageSelector, numberId) {
 			this.recordingInstance = messageSelector;
-			if(!this.call_validation()) {
+			if(!this.call_validation(false)) {
 				return false;
 			}
 			var self = this;
@@ -145,12 +145,12 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.recordingInstance.fetchRecordedUrl();
 			}
 		},
-		call_validation: function() {
+		call_validation: function(isOutgoing) {
 			var balance_available = true,country_enabled = true;
 			$.ajax({
 	   				url: '/freshfone/dial_check',
 	   				dataType: "json",
-	   				data: { phone_number: this.number },
+	   				data: { phone_number: this.number, is_country: isOutgoing},
 	   				async:false,
 	   				success: function (outcome) {
 							if(outcome.code == 1001){
@@ -178,7 +178,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
 										number_id: this.outgoingNumberId(), agent: this.currentUser };
 
-			if(!this.call_validation()) {
+			if(!this.call_validation(true)) {
 				return false;
 			}
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
@@ -235,7 +235,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				preview: true,
 				id: id
 			};
-			if(!this.call_validation()) {
+			if(!this.call_validation(false)) {
 				return false;
 			}
 			this.disableCallButton();

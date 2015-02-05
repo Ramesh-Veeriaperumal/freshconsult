@@ -55,3 +55,27 @@ describe 'CallQueueWait' do
     queued_twiml.should be_blank
   end
 end
+
+describe 'BusyResolve' do
+
+  before(:each) do
+    create_test_freshfone_account
+    create_freshfone_user
+  end
+  
+  it 'should reset presence of the user if found to be not in a call' do
+    @freshfone_user.busy!
+    Freshfone::Jobs::BusyResolve.stubs(:no_active_calls).returns(true)
+    Freshfone::Jobs::BusyResolve.perform(:agent_id => @freshfone_user.user_id)
+    freshfone_user = @account.freshfone_users.find_by_user_id(@agent)
+    freshfone_user.should be_offline
+  end
+
+  it 'should not reset presence of the user if found to be in a call' do
+    @freshfone_user.busy!
+    Freshfone::Jobs::BusyResolve.stubs(:no_active_calls).returns(false)
+    Freshfone::Jobs::BusyResolve.perform(:agent_id => @freshfone_user.user_id)
+    freshfone_user = @account.freshfone_users.find_by_user_id(@agent)
+    freshfone_user.should be_busy
+  end
+end

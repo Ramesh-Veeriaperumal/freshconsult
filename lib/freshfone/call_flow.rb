@@ -104,9 +104,16 @@ class Freshfone::CallFlow
   private
 
     def outgoing
-      return reject_twiml unless register_outgoing_device
+      return reject_outgoing_call unless register_outgoing_device
       register_outgoing_call
       initiate_outgoing
+    end
+
+    def reject_outgoing_call
+      agent_user_id = split_client_id(params[:From])
+      current_account.freshfone_users.find_by_user_id(agent_user_id).busy!
+      Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => agent_user_id })
+      reject_twiml
     end
 
     def block_call
@@ -228,11 +235,6 @@ class Freshfone::CallFlow
 
     def register_outgoing_device
       agent_user_id = split_client_id(params[:From])
-      return true if set_outgoing_device([agent_user_id])
-      agent_progress_calls?(agent_user_id).blank?
-    end
-
-    def agent_progress_calls?(agent_user_id)
-      Freshfone::Call.agent_progress_calls(agent_user_id).first
+      set_outgoing_device([agent_user_id])
     end
 end

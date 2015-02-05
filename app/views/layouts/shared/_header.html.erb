@@ -23,7 +23,7 @@
 							<a href="#" id="freshfone-presence-toggle" class="tooltip"
 								data-placement="below"  
 							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
-							 	<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-ffone-<%= current_user.freshfone_user_online? ? "on" : "off" %>">
+							 	<img alt="" height="35px" src="/images/spacer.gif" class="<%="header-icons-agent-ffone-" + (case current_user.freshfone_user.presence when 0 then "off" when 1 then "on" when 2 then "busy" else current_user.freshfone_user.presence.to_s end)%>">
 			  			</a>
 			  		<% end %>
 			  		<% if feature?(:round_robin) && current_user.in_round_robin? %>

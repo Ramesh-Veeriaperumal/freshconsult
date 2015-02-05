@@ -3,6 +3,7 @@ module Freshfone::CallValidator
   def authorized_country?(phone_number, current_account)
     begin
     country_obj = GlobalPhone.parse(phone_number)
+    return true if country_obj.nil? && isPreviewOrRecord?
     country = country_obj.valid? ? country_obj.territory.name : nil
     rescue Exception => e 
     	Rails.logger.debug "Exception when validating country for whitelist :: account :: #{current_account.id}:: "
@@ -23,9 +24,18 @@ module Freshfone::CallValidator
     status = :ok
     if !enough_credit?
       status = :low_credit
-    elsif !authorized_country?(params[:phone_number],current_account)
+    elsif isOutgoing? && !isPreviewOrRecord? && !authorized_country?(params[:phone_number],current_account)
       status = :dial_restricted_country
     end
-    status
+  end
+
+  def isOutgoing?
+    params[:is_country].to_bool
+  end
+
+  def isPreviewOrRecord?
+    return params[:preview].to_bool if params[:preview].present?
+    return params[:record].to_bool if params[:record].present?
+    false
   end
 end

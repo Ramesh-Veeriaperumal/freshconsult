@@ -6068,6 +6068,7 @@ en:
       no_calls: "No recent calls found"
       available: "Accepting calls"
       unavailable: "Not accepting calls"
+      busy: "Ongoing Call"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Search Available Agents..."

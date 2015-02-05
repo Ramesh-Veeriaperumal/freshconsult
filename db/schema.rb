@@ -1364,6 +1364,7 @@ ActiveRecord::Schema.define(:version => 20150129110641) do
     t.datetime "updated_at"
     t.datetime "mobile_token_refreshed_at"
     t.datetime "last_call_at"
+    t.text     "capability_token_hash"
   end
 
   add_index "freshfone_users", ["account_id", "last_call_at"], :name => "index_ff_users_account_last_call"
