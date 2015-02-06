@@ -3,7 +3,7 @@ page << "jQuery('#post_#{@spam_post.timestamp.to_i}').html('#{escape_javascript(
 
 page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"
 
-if params[:popup]
+if params[:popup].to_bool
 	if @topic.has_unpublished_posts?
 		page.replace "spam-count", render(:partial => 'discussions/topics/widgets/spam', :locals => { :topic => @topic })
 	else

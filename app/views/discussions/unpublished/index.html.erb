@@ -30,7 +30,7 @@
 		<%= render :partial => 'post', :collection => @spam_posts %>
 	<% end %>
 </div>
-<%= pageless_dynamo(more_discussions_unpublished_path(:next => @spam_posts.last.timestamp, :filter => @spam_posts.first.type)) unless @spam_posts.blank? || @spam_posts.last_evaluated_key.nil? %>
+<%= pageless_dynamo(more_discussions_unpublished_index_path(:next => @spam_posts.last.timestamp, :filter => @spam_posts.first.type)) unless @spam_posts.blank? || @spam_posts.last_evaluated_key.nil? %>
 
 <script type="text/javascript">
 	jQuery('body').one('assetLoaded.fjax', function() {
