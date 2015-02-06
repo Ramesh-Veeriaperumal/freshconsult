@@ -30,7 +30,7 @@ class AccountsController < ApplicationController
   before_filter :build_plan, :only => [:new, :create]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   before_filter :validate_custom_domain_feature, :only => [:update]
-  before_filter :build_signup_param, :build_user_name, :only => [:new_signup_free, :create_account_google]
+  before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
 
@@ -338,12 +338,11 @@ class AccountsController < ApplicationController
     end
     
     def build_metrics
-      metrics_obj = {}      
-      metrics_obj[:misc_signup_data] = build_misc_signup_data(params[:misc]) if params[:misc]
-      return metrics_obj if params[:session_json].blank?
+      return if params[:session_json].blank?
       
       begin  
         metrics =  JSON.parse(params[:session_json])
+        metrics_obj = {}
 
         metrics_obj[:referrer] = metrics["current_session"]["referrer"]
         metrics_obj[:landing_url] = metrics["current_session"]["url"]
@@ -446,23 +445,6 @@ class AccountsController < ApplicationController
       params[:signup][:metrics] = build_metrics
     end
 
-    # Handing first_name and last_name params in freshdesk.com/signup form
-    def build_user_name
-      params[:signup][:admin_first_name] = params[:user][:first_name]
-      params[:signup][:admin_last_name] = params[:user][:last_name]
-      params[:signup][:user_name] = params[:signup][:user_name] || 
-        %(#{params[:user][:first_name]} #{params[:user][:last_name]})
-    end
-
-    def build_misc_signup_data(data)
-      { 
-        :company => { 
-          :type => data[:company_type], 
-          :size => data[:company_size] 
-        }
-      }
-    end
-    
     def add_to_crm
       Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, 
                             :cookie => ThirdCRM.fetch_cookie_info(request.cookies),

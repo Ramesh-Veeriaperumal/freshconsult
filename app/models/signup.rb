@@ -3,8 +3,6 @@ class Signup < ActivePresenter::Base
   include Redis::RedisKeys
 
   presents :account, :user
-
-  attr_accessor :admin_first_name, :admin_last_name
   
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone
@@ -22,7 +20,7 @@ class Signup < ActivePresenter::Base
   end
     
   def metrics=(metrics_obj)
-    account.conversion_metric_attributes = metrics_obj if metrics_obj.present?
+    account.conversion_metric_attributes = metrics_obj if metrics_obj
   end
 
   private                  
@@ -93,8 +91,8 @@ class Signup < ActivePresenter::Base
     def admin_contact_info
       {
         :contact_info => { 
-          :first_name => admin_first_name || user.first_name,
-          :last_name => admin_last_name || user.last_name,
+          :first_name => user.first_name,
+          :last_name => user.last_name,
           :email => user.email,
           :phone => user.phone 
         },

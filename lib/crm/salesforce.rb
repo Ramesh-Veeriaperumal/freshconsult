@@ -51,7 +51,7 @@ class CRM::Salesforce < Resque::Job
   def update_admin_info(config)
     crm_ids = search_crm_record(config.account.id)
     binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
-        :FirstName => config.account.admin_last_name, :LastName => config.account.admin_first_name, 
+        :FirstName => config.account.admin_first_name, :LastName => config.account.admin_last_name, 
         :Email => config.account.admin_email, :Phone => config.account.admin_phone })
   end
 
