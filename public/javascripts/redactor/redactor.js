@@ -4894,7 +4894,7 @@ $.fn.insertExternal = function(html)
 	            var clipboard_file  = clipboardData.files;
 
 	            for (_i = 0, _len = clipboard_file.length; _i < _len; _i++) {
-	                var file = clipboard_file[_j];
+	                var file = clipboard_file[_i];
 	                self.loadImageFileAsURL(file);
 	                self.currentevent.preventDefault();
 	            }
