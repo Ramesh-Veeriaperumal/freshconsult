@@ -202,6 +202,8 @@ var Redactor = function(element, options)
 		imageUpload: false, // url
 		imageUploadCallback: false, // function
 
+		clipboardImageUpload: false, // url
+
 		imageLoadingCallback: false, // function - hook to add function that can be executed while uploading image
 		imageLoadedCallback: false, // function - hook to add function that can be executed after uploading image
 		
@@ -757,7 +759,7 @@ Redactor.prototype = {
     //paste handling for all the browsers - [pastehandling]
 		if (this.isMobile(true) === false)
 		{	this.cleanStyleAttr();	
-			if($.browser.msie == true)
+			if($.browser.msie == true && $.browser.msie && parseInt($.browser.version, 10) <= 10 )
 			{
 				this.$editor.bind('beforepaste',$.proxy(function()
 				{
@@ -772,19 +774,53 @@ Redactor.prototype = {
 				{
 			        if(this.paste_supported_browser)
 			        {
-			          this.paste_selection_modification(clipboard_div);
+						var pastedFrag = e.clipboardData.getData("text/plain");
+
+						if( pastedFrag.length == 0  && this.opts.clipboardImageUpload !== false)
+						{
+							$(this).pasteImage(e);
+						} else 
+						{
+							this.paste_selection_modification(clipboard_div); 
+						}	
+
 			        }
 			        else
-			        {
-								var pastedFrag = '';
-								pastedFrag = e.clipboardData.getData("text/html");
-								if(pastedFrag.length == 0)
-								{
-									pastedFrag = e.clipboardData.getData("text/plain");
-									this.textPaste = true;
-								}
+			        {	
+			        	if(($.browser.msie && parseInt($.browser.version, 10) > 10) && window.clipboardData != undefined){
+			        		 var pastedFrag = window.clipboardData.getData('Text');
+
+					        if(pastedFrag != undefined && pastedFrag.length > 0)
+					        {
+					        	this.paste_selection_modification(clipboard_div);
+					        } else 
+					        {
+					        	if(this.opts.clipboardImageUpload !== false){
+					        		$(this).pasteImage(e);
+					        	}
+					        }
+			        	} else { 
+
+							var pastedFrag = '';
+							pastedFrag = e.clipboardData.getData("text/html");
+
+							if(pastedFrag.length == 0)
+							{
+								pastedFrag = e.clipboardData.getData("text/plain");
+								this.textPaste = true;
+							}
+
+							//To check File
+							if(pastedFrag.length == 0 && this.opts.clipboardImageUpload !== false)
+							{
+								this.textPaste = false;
+								$(this).pasteImage(e);
+							} else 
+							{
 								e.preventDefault();
-								this.pasteCleanUp(pastedFrag);        
+								this.pasteCleanUp(pastedFrag); 
+							}	
+						}	
 			        }
 		   		}
 		   		else
@@ -801,7 +837,18 @@ Redactor.prototype = {
 					this.saveScroll = this.$editor.scrollTop();
 				}   
                 
-			}, this));	
+			}, this));
+
+			// Drop Image in editor only for firefox
+			if(!$.browser.msie && !$.browser.mozilla)
+			{
+				this.$editor.bind('drop', $.proxy(function(e)
+				{ 
+					e.preventDefault();
+					this.focusOnCursor();
+					$(this).pasteImage(e);
+				}, this))
+			}
 		}
 
 		// key handlers
@@ -1330,6 +1377,7 @@ Redactor.prototype = {
 							
 			}
       		$('body').append('<div rel="tmpClipboard" />');		
+      		$('<div rel="getPasteImage" contenteditable="true" style="width:50px;height:0px; overflow: hidden;">').insertBefore(this.$editor)
 			// conver newlines to p
 			html = this.paragraphy(html);
 			
@@ -2036,7 +2084,7 @@ Redactor.prototype = {
 	                                              else if(subParts[0] == 'font-family')
 	                                              {
 	                                              	if(self.opts.setFontSettings){
-	                                              		$(this).css('font-family',self.opts.wrapFontSettings.font_family);
+	                                              		$(this).css('font-family',self.opts.wrapFontSettings["font-family"]);
 	                                              	} else {
 	                                              		$(this).css('font-family',subParts[1]);
 	                                              	}
@@ -4765,6 +4813,161 @@ $.fn.insertExternal = function(html)
 })(jQuery);
 
 
+/*
+	Plugin Paste image
+*/
+(function($){
+	
+	"use strict";
+
+	// Required for drag and drop file access
+	jQuery.event.props.push('dataTransfer');
+
+	// Initialization	
+	$.fn.pasteImage = function(ev){		
+		return this.each(function() {
+			var past_image = new PasteImage(ev,this);
+			past_image.init();
+		});
+	};
+
+	function PasteImage(ev,editor) {
+		this.$editor 		= editor;
+		this.upload_url		= this.$editor.opts.clipboardImageUpload;
+		this.currentevent 	= ev;
+	}
+
+	PasteImage.prototype = {
+		init: function()
+		{	
+			this.bindCustomEvent();
+			// check the event type is drop or paste event
+			if(this.currentevent.type == 'paste') {
+				this.pasteContent();
+			} else {
+				this.dropedContent();
+			}
+		},
+		pasteContent: function()
+		{
+			var clipboardData, _ref, _i, _len;
+	        var self = this;
+	        var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+
+	        // pasting image is not supportes in safari
+	        if(isSafari) {
+	        	this.currentevent.preventDefault();
+	        	return false;
+	        }
+	        // Check Chrome
+	        if (((_ref = this.currentevent.originalEvent) != null ? _ref.clipboardData : void 0) != null) {
+	            clipboardData = this.currentevent.originalEvent.clipboardData;
+
+	            if (clipboardData.items) {
+					var items = clipboardData.items;
+				    var blob = items[0].getAsFile();
+				    self.loadImageFileAsURL(blob);
+
+				} else {
+					// For Firefox
+					this.$editor.saveSelection();
+					this.$editor.insertLoadingAtCaret();
+
+					$('[rel="getPasteImage"]').focus();
+
+					setTimeout(function(){
+						var temp_div = $('<div />').html($('[rel="getPasteImage"]').html());
+			            var img = temp_div.find('img')[0]
+
+			            $('[rel="getPasteImage"]').html('');
+
+			            self.$editor.$el.trigger('pasteImage', {
+				            dataURI: img.src,
+				            uniqueKey: self.$editor.uniqueKey
+			            })
+
+					}, 500)
+	            }
+	        }
+	        // check IE (works only for IE11)
+	        if (clipboardData = window.clipboardData) {
+	            var clipboard_file  = clipboardData.files;
+
+	            for (_i = 0, _len = clipboard_file.length; _i < _len; _i++) {
+	                var file = clipboard_file[_j];
+	                self.loadImageFileAsURL(file);
+	                self.currentevent.preventDefault();
+	            }
+            }
+		},
+		//On drop the image in text editor. Only for Firefox
+		dropedContent: function() {
+			var file_list = this.currentevent.originalEvent.dataTransfer.files,
+				self = this;
+
+			if(file_list != undefined && file_list.length > 0 ) {
+				
+				self.currentevent.preventDefault();
+
+				$.each(file_list, function(index, file){
+					self.loadImageFileAsURL(file);
+				})
+			}
+		},
+		// Convert file object to dataURI
+		loadImageFileAsURL: function(file) {
+			var self = this,
+				fileReader = new FileReader();
+
+			fileReader.onload = function(fileEvent) {
+				self.handleImage(fileEvent.target.result);
+			};
+
+			fileReader.readAsDataURL(file);
+		},
+		handleImage: function(dataURI) {
+			this.$editor.saveSelection();
+			this.$editor.insertLoadingAtCaret();
+			
+			this.currentevent.preventDefault();
+
+			this.$editor.$el.trigger('pasteImage', {
+				              dataURI: dataURI,
+				              uniqueKey: this.$editor.uniqueKey
+				            })
+		},
+		bindCustomEvent: function() {
+			var self = this;
+			this.$editor.$el.off();
+			this.$editor.$el.on('pasteImage', function(ev, data){
+				self.saveImage(data);
+				ev.preventDefault();
+			})
+		},
+		saveImage: function(data) {
+			var $editor = this.$editor;
+			var formdata = { dataURI : data.dataURI, "_uniquekey" : data.uniqueKey}
+
+			$.ajax({
+				dataType: 'json',
+				url: this.upload_url,
+				data: formdata,
+				type: 'POST',
+				success: $.proxy(function(data)
+				{
+					data = JSON.stringify(data);
+					$editor.imageUploadCallback(data);
+				}, this),
+				error: $.proxy(function(data)
+				{	console.log(data);
+					data = JSON.stringify(data);
+					$editor.imageUploadCallback(data);
+				}, this)
+			});
+		}
+	}
+
+})(window.jQuery);
 
 
 /* jQuery plugin textselect

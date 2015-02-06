@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
 
-  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create ]
+  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create, :create_file ]
 
   map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
 

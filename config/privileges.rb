@@ -143,7 +143,7 @@ Authority::Authorization::PrivilegeList.build do
   publish_solution do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder]
     resource :"solution/tag_use"
-    resource :solutions_uploaded_image, :only => [:create]
+    resource :solutions_uploaded_image, :only => [:create, :create_file]
   end
 
   delete_solution do
