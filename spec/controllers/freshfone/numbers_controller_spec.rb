@@ -14,7 +14,7 @@ describe Admin::Freshfone::NumbersController do
     number = @account.freshfone_numbers.first
     get :index
     assigns[:account].app_id.should be_eql(@account.freshfone_account.app_id)
-    assigns[:numbers].first.number.should be_eql(number.number)
+    assigns[:numbers].map(&:number).should include number.number
     response.should render_template "admin/freshfone/numbers/index"
   end
 
