@@ -6,7 +6,7 @@ module CommunityHelper
       path = ["#{category.portals.last.url_protocol}://", category.portals.last.host, relative_path].join
     end
 
-    %(<span class="tooltip pull-right" title="#{t('solution.view_on_portal')}">
+    %(<span class="tooltip pull-right portal-preview-icon" title="#{t('solution.view_on_portal')}">
       #{link_to('<i class="ficon-open-in-new-window fsize-21"></i>'.html_safe, path, :target => "_blank")}
     </span>).html_safe
   end
