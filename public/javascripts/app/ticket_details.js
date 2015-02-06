@@ -1383,25 +1383,4 @@ TICKET_DETAILS_CLEANUP = function() {
 
 };
 
-jQuery('.quoted_button').live('click', function(){
-  var _container = jQuery(this).parents('.details');
-  var _fd_quote = jQuery(this).parents('.freshdesk_quote')
-  if (_fd_quote.data('remoteQuote')){
-    var _note_id = _container.data('note-id');
-    var _messageDiv = _container.find('div:first');
-    jQuery.ajax({
-      url: '/helpdesk/tickets/'+TICKET_DETAILS_DATA["displayId"]+'/conversations/full_text',
-      data: { id: _note_id },
-      success: function(response){
-        if(response!=""){
-          _messageDiv.html(response);
-        }
-        else {
-          _container.find('div.freshdesk_quote').remove();
-        }
-      }
-    });
-  }
-});
-
 })(jQuery);

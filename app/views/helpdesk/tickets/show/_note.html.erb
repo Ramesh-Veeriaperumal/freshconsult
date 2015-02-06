@@ -106,9 +106,6 @@ minimizable ||= false
 				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
 					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>			
 					<%= note.body_html.html_safe %>
-					<% if note.fwd_email? %>
-						<div class="freshdesk_quote" data-remote-quote=true></div>
-					<% end %>
 				</div>
 			</div>
 			<%= freshfone_audio_dom(note) %>
