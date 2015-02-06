@@ -250,6 +250,7 @@
         $.ajax({
           url: '/freshfone/address/inspect',
           dataType: "json",
+          async: false,
           data: {"country" : country_code},
           success: function (data) {
             alreadyExist =  data.isExist;
