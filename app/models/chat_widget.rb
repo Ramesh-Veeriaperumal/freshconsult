@@ -13,7 +13,7 @@ class ChatWidget < ActiveRecord::Base
         if chat_widget && chat_widget.widget_id
           Resque.enqueue(Workers::Livechat, 
             {
-              :worker_method => "destroy_widget", 
+              :worker_method => "delete_widget", 
               :widget_id => chat_widget.widget_id, 
               :siteId => site_id
             }

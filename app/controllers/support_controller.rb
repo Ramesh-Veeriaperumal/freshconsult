@@ -26,6 +26,14 @@ class SupportController < ApplicationController
     !(get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false")
   end
 
+  def load_agent_actions(path, priv)
+    @agent_actions = []
+    @agent_actions <<   { :url => "#{path}",
+                          :label => t('portal.preview.view_on_helpdesk'),
+                          :icon => "preview" } if privilege?(priv)
+    @agent_actions
+  end
+
   protected
 
     def allow_monitor?

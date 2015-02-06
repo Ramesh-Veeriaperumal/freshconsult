@@ -1,16 +1,18 @@
 <div class="execute_scenario">
-	<div class="scenario-search" rel="sticky">
-		<input type="text" id="search_scenarios" class="hide">
-		<i class="searchicon"></i>
+	<div class="scenario-search">
+		<input type="text" id="search_scenarios" class="hide" placeholder="<%= t('ticket.search_scenario') %>">
+		<i class="ficon-search muted"></i>
 	</div>
 	<div data-menu-hover-in='tr' data-menu-trigger="[type='submit']" class="dialog-well links menuselector">
 		<table class="table table-striped selected_to_yellow scenarios_table">
-		  <% current_account.scn_automations.each do |scenario| %>
-		  <tr><td>
+			<% scn_accessible_elements.each do |scenario| %>
+		  <tr><td class='sa-item'>
 				<div class="actions">
 				<%  form_remote_tag(
-					:url => execute_scenario_helpdesk_ticket_path(ticket), 
+					:url => execute_scenario_helpdesk_ticket_path(ticket),
 					:method => :post,
+					:loading => "jQuery('.scenario-search').hide();",
+					:loaded => "toggleSearchBox()",
 					:after => "
 						jQuery('#execute_scenario .dialog-well').hide();
 						jQuery('#execute_scenario .modal-body .sloading').remove();
@@ -19,11 +21,20 @@
 						") do %>
 
 					<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
-					<input type="submit" class="btn" value="Execute"  placement = "below" title="Execute"/>
+					<input type="submit" class="btn" value="Execute"  placement = "below"/>
 				<% end %>
 				</div>
-				<div><strong> <%= h scenario.name %> </strong> </div>
-				<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
+				<div class='info-wrapper'>
+					<div>
+						<% font_class = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 
+								font_class('user', nil, 'visibility-icon tooltip') : 
+								font_class('shared', nil, 'visibility-icon tooltip') %>
+						<% tooltip_text = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 'Personal' : 'Shared' %>
+						<span class='<%= font_class %>' title='<%= tooltip_text %>'></span>
+						<strong> <%= h scenario.name %> </strong> 
+					</div>
+					<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
+				</div>
 		  </td></tr>
 		  <% end %>
 		</table>
@@ -38,19 +49,31 @@
 	});
 
 	jQuery('.scenario-search').hide();
-	if(jQuery(".selected_to_yellow td").length > 10){
-		jQuery('.scenario-search').show();
-		jQuery('#search_scenarios').focus();
-		var search_elements = jQuery(".scenarios_table td");
-		var search_elements_text = [];
-		search_elements.each(function(){
-			search_elements_text.push(jQuery(this).text().toLowerCase());
-		})
-		jQuery("#search_scenarios").on("keyup",function(){
-			var input_value = jQuery(this).val();
-			search_elements.each(function(index){
-				jQuery(this).toggle(window.lookups.scenario_execution_search(input_value,search_elements_text[index]))
-			});
-		});
+
+
+	function toggleSearchBox() {
+		if(jQuery(".selected_to_yellow .sa-item").length > 10){
+			jQuery('.scenario-search').show();
+			jQuery('#search_scenarios').focus();
+		}
 	}
+
+	function bindSearchEvents() {
+		if(jQuery(".selected_to_yellow .sa-item").length > 10){
+			var search_elements = jQuery(".scenarios_table .sa-item");
+			var search_elements_text = [];
+			search_elements.each(function(){
+				search_elements_text.push(jQuery(this).text().toLowerCase());
+			})
+			jQuery("#search_scenarios").on("keyup",function(){
+				var input_value = jQuery(this).val();
+				search_elements.each(function(index){
+					jQuery(this).toggle(window.lookups.scenario_execution_search(input_value,search_elements_text[index]))
+				});
+			});
+		}
+	}
+
+	toggleSearchBox();
+	bindSearchEvents();
 <% end %>

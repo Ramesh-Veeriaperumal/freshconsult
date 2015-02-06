@@ -22,6 +22,7 @@ Redis.class_eval {add_method_tracer :del}
 Redis.class_eval {add_method_tracer :sadd}
 Redis.class_eval {add_method_tracer :srem}
 Redis.class_eval {add_method_tracer :smembers}
+Redis.class_eval {add_method_tracer :sismember}
 Redis.class_eval {add_method_tracer :rpush}
 Redis.class_eval {add_method_tracer :lpush}
 Redis.class_eval {add_method_tracer :lrange}

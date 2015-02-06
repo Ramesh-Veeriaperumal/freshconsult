@@ -1,19 +1,16 @@
   <%= render :partial => "helpnote" %>
   <% if @chat_active %>
     <div id="chat_header" class="chat-header">
-      <h3 class = "lead"> <%=t('chatwidget_title')%>
+      <h3 class = "lead margin-bottom-5"> <%=t('chatwidget_title')%>
         <div class="pull-right">
-            <% if current_account.chat_setting.active %>
-             <span class ="chat_enable_label"><%=t('freshchat.chat_enabled_label')%></span>
-            <%else%>
-             <span class ="chat_enable_label"><%=t('freshchat.chat_disabled_label')%></span>
-            <%end%>
+             <span class ="chat_enable_label"><strong><%=t('freshchat.chat_enabled_label')%></strong></span>
           <%= check_box_tag :chat_enable, 0, current_account.chat_setting.active, :class => 'filter_item', 
-            "data-checked-label" => "enabled", 
-            "data-unchecked-label" => "disabled",
+            "data-checked-label" => t('freshchat.text_yes'), 
+            "data-unchecked-label" => t('freshchat.text_no'),
             :id => 'chat_enable' %>
         </div>
       </h3>
+      <p class="small"><%=t('freshchat.widgets_list_info')%></p>
     </div>
     <div id="chat_widgets_list">
       <div class="list-page">
@@ -22,7 +19,7 @@
           <% @widgets.each do |widget| %>
             <tr id="<%= dom_id(widget)%>">
               <td rel="<%=widget.id%>">
-                <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => "on", "data-unchecked-label" => "off" %>
+                <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => t('freshchat.texton'), "data-unchecked-label" => t('freshchat.textoff') %>
               </td>
               <td>
                 <%= pjax_link_to(h(widget.product ? widget.product.name : widget.account.name), edit_admin_chat_widget_path(widget), :class => "item_info") %>

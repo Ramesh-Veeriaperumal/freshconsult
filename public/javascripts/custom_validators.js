@@ -111,7 +111,7 @@
         _requester = jQuery(element).data("initialRequester"),
         _requesterId = jQuery(element).data("initialRequesterid")
 ;
-    if (/(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/.test(value)){
+    if (/(\b[-a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/.test(value)){
         _returnCondition = true
         jQuery('#helpdesk_ticket_requester_id').val('') 
     }
@@ -194,6 +194,16 @@ $.validator.addMethod("hhmm_time_duration",function(value){
 $.validator.addClassRules("hhmm_time_duration", {
      hhmm_time_duration: true
   });
+
+//Email validation
+
+$.validator.addMethod( //override email to sync ruby's email validation
+    'email',
+    function(value, element){
+        return this.optional(element) || /^[a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
+    },
+    'Please enter a valid email address.'
+);
 
 $.validator.addMethod("time_12", function(value, element){
   if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  

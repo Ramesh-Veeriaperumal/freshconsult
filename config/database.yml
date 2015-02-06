@@ -15,8 +15,6 @@ development:
       database: helpkit1
       not_a_shard: false
 
-
-
 # development:
 #   adapter: mysql
 #   encoding: utf8

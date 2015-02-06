@@ -768,7 +768,7 @@ JiraWidget.prototype = {
 		}	
 		else{	
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
-		if(fieldData["name"] == "Summary")
+		if(fieldKey == "summary")
 			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+jiraBundle.ticketSubject.replace(/"/g, "&quot;")+'"/>';
 		else
 			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';

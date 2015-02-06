@@ -55,7 +55,8 @@ module SpamPostMethods
 			})
 	end
 
-	def portal_id(post)
-		post.topic.monitorships.by_user(post.topic.user).first.portal_id
+	def portal_id(post) 
+		user_monitor = post.topic.monitorships.by_user(post.topic.user).first
+		user_monitor.nil? ? Account.current.main_portal.id : user_monitor.portal_id
 	end
 end

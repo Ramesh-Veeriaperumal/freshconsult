@@ -3,8 +3,8 @@
 		<div class="pull-right">
 			<%if chat_activated? %>
 			<%= check_box_tag :chat_enable, 0, current_account.chat_setting ? current_account.chat_setting.active : false , :class => 'filter_item', 
-				"data-checked-label" => "enabled", 
-				"data-unchecked-label" => "disabled",
+				"data-checked-label" => t('freshchat.enabled'), 
+				"data-unchecked-label" => t('freshchat.disabled'),
 				:id => 'chat_enable' %>
 			<%end%>
 		</div>

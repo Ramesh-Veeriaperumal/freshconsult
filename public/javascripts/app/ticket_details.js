@@ -1156,10 +1156,14 @@ var scrollToError = function(){
 	$('body').on('click.ticket_details', ".reply-facebook", function(event){
 	    $('#ReplyButton').trigger('click');
 	    note_id = $(this).data('noteId');
+	    requester_name = $(this).data('note-requester-name');
+	    $("#fb_form_title").html(requester_name);
 	    $("#parent_post_id").val(note_id);
 	  });
 	
 	$('body').on('click.ticket_details', "#facebook-cancel-reply", function(event){
+			requester_name = $("#ticket_requester_name").val();
+	    $("#fb_form_title").html(requester_name);
 	    $('#parent_post_id').val('')
 	  });
 	

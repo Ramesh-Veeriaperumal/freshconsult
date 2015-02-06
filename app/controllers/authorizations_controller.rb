@@ -70,8 +70,8 @@ class AuthorizationsController < ApplicationController
   end
 
   def load_authorization
-    if (@provider == :twitter or @provider == :facebook)
-      @auth = Authorization.find_from_hash(@omniauth, current_account.id) unless @provider == "facebook"
+    @auth = Authorization.find_from_hash(@omniauth, current_account.id) unless @provider == "facebook"
+    if (@provider == "twitter" or @provider == "facebook")
       requires_feature("#{@provider}_signin")
     end
   end

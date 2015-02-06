@@ -51,6 +51,13 @@ class Forum < ActiveRecord::Base
                     :conditions => visiblity_condition(user) } }
 
 
+  named_scope :in_categories, lambda {|category_ids|
+    {
+      :conditions => {
+        :forum_category_id => category_ids
+      }
+    }
+  }
   def self.visiblity_condition(user)
     condition =  {:forum_visibility =>self.visibility_array(user) }
     condition =  Forum.merge_conditions(condition) + " OR

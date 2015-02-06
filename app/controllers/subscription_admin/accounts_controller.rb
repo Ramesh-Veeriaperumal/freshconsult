@@ -119,6 +119,12 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       current_account = Account.find_by_full_domain(params[:old_url])
       current_account.make_current
       email_configs = current_account.all_email_configs
+      I18n.locale = current_account.language
+      default_sol_category = current_account.solution_categories.find_by_name(I18n.t('default_category'))
+      if default_sol_category
+        default_sol_category.description = default_sol_category.description.sub(old_url,new_url)
+        default_sol_category.save
+      end
       email_configs.each do |email_config|
         old_to_email = email_config.to_email
         new_to_email = old_to_email.sub old_url, new_url

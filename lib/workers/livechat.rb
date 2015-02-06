@@ -39,20 +39,16 @@ class Workers::Livechat
 			response = HTTParty.post(@url+"/widgets/update",:body => args)
 		end
 
-		def destroy_widget(args)
-			response = HTTParty.post(@url+"/widgets/destroy",:body => args)
+		def delete_widget(args)
+			response = HTTParty.post(@url+"/widgets/delete",:body => args)
 		end
 
 		def update_site(args)
 			response = HTTParty.post(@url+"/sites/update",:body => args)
 		end
 
-		def delete_group(args)
-			response = HTTParty.post(@url+"/widgets/delete_group",:body => args)
-		end
-
 		def group_channel(args)
-			response = HTTParty.post(@url+"/agent/group_channel",:body => args)
+			response = HTTParty.post(@url+"/agent/groupChannel",:body => args)
 		end
 
 		def remove_group_from_routing(args)

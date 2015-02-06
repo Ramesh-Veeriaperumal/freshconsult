@@ -19,8 +19,10 @@ class Fdadmin::DevopsMainController < ApplicationController
       end
       sha_signature = Digest::SHA256.hexdigest("#{payload}#{AdminApiConfig['secret_key']}")
       if sha_signature != params[:digest]
+         Rails.logger.debug(": : : SIGNATURE VERIFICATION FAILED : : :")
         render :nothing => true, :status => 401
       end
+      Rails.logger.debug(": : : -> SHA SIGNATURE VERIFIED <- : : :")
     end
 
     def check_freshops_subdomain

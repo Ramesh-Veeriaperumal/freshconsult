@@ -1,4 +1,5 @@
 class Freshfone::Option
+  include Freshfone::CallValidator
   attr_accessor :performer, :performer_id, :respond_to_key, :menu, 
 								:attachment_id, :performer_number
   delegate :ivr, :find_attachment, :account, :is_root?, :perform_call,
@@ -53,6 +54,8 @@ class Freshfone::Option
 		end
 		ivr.errors.add_to_base(I18n.t('freshfone.admin.ivr.invalid_number',
 																				{ :menu => menu.menu_name })) if invalid_performer_number?
+		ivr.errors.add_to_base(I18n.t('freshfone.admin.ivr.restricted_country',
+																				{ :menu => menu.menu_name })) if restricted_performer_number?
 		ivr.errors.add_to_base(I18n.t('freshfone.admin.ivr.invalid_jump_to',
 															{ :menu => menu.menu_name })) if has_invalid_jump_to?
 	end
@@ -84,6 +87,10 @@ class Freshfone::Option
 		
 		def invalid_performer_number?
 			call_number? && !GlobalPhone.validate(performer_number)
+		end
+
+		def restricted_performer_number?
+			call_number? && !authorized_country?(performer_number,account)
 		end
 		
 		def active_performer

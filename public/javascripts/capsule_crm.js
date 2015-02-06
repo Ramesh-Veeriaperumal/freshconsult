@@ -62,7 +62,7 @@ CapsuleWidget = {
             if (contact.jobTitle || contact.organisationName){
                 summary += '<div class="jobtitle">'
                 if (contact.jobTitle) {
-                    summary += contact.jobTitle;
+                    summary += contact.jobTitle.escapeHTML();
                 }
                 if (contact.organisationName) {
                     summary += ' at <a target="_blank" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.organisationId.escapeHTML() +'">';

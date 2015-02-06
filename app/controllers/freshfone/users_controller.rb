@@ -51,11 +51,13 @@ class Freshfone::UsersController < ApplicationController
 	
 	def refresh_token
 		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user), is_native_mobile?)
+		resolve_busy if is_agent_busy?
 		respond_to do |format|
 			format.any(:json, :nmobile) {
 				if @freshfone_user.save
-					render :json => { :update_status => true, :token => generate_token,
-						:client => default_client, :expire => EXPIRES }
+					render(:json => { :update_status => true,
+						:token => @freshfone_user.get_capability_token(force_generate_token?),
+						:client => default_client, :expire => EXPIRES })
 				else
 					render :json => { :update_status => false }
 				end
@@ -86,18 +88,6 @@ class Freshfone::UsersController < ApplicationController
 
 		def build_freshfone_user
 			current_user.build_freshfone_user({ :account => current_account })
-		end
-
-		def generate_token
-			subaccount = current_account.freshfone_account
-			capability = Twilio::Util::Capability.new subaccount.twilio_subaccount_id, subaccount.twilio_subaccount_token
-			capability.allow_client_outgoing subaccount.twilio_application_id
-			if is_native_mobile? || params[:status].to_i == Freshfone::User::PRESENCE[:online]
-				capability.allow_client_incoming default_client
-			end
-			capability_token = capability.generate(expires=43200)
-			publish_capability_token(current_user, capability_token)
-			return capability_token
 		end
 
 		def reset_client_presence
@@ -147,4 +137,21 @@ class Freshfone::UsersController < ApplicationController
 			current_account.freshfone_calls.customer_in_progess_calls(customer.id).first
 		end
 
+		def resolve_busy
+			@freshfone_user.busy? ? publish_freshfone_presence(current_user) : @freshfone_user.busy!
+			Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => @freshfone_user.user_id })
+		end
+
+		def is_agent_busy?
+			@freshfone_user.busy? || is_value_in_set?(live_calls_key, @freshfone_user.user_id)
+		end
+
+		def live_calls_key
+	    NEW_CALL % { :account_id => @freshfone_user.account_id }
+	  end
+
+		def force_generate_token?
+			return true if is_native_mobile?
+			params[:force].present? ? params[:force].to_bool : false
+		end
 end
