@@ -30,7 +30,8 @@ module Freshfone::CallValidator
   end
 
   def isOutgoing?
-    params[:is_country].to_bool
+    return params[:is_country].to_bool if params[:is_country].present?
+    false
   end
 
   def isPreviewOrRecord?
