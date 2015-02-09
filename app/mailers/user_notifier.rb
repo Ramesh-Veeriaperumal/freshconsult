@@ -29,7 +29,7 @@ class UserNotifier < ActionMailer::Base
       :host => admin.account.host , 
       :protocol => admin.url_protocol 
     )
-    @account => admin.account
+    @account = admin.account
 
     mail(headers) do |part|
       part.text { render "admin_activation.text.plain" }
