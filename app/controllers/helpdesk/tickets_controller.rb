@@ -160,7 +160,7 @@ class Helpdesk::TicketsController < ApplicationController
            end
            hash.merge!({:ticket => tickets })
            hash.merge!(current_account.as_json(:only=>[:id],:methods=>[:portal_name]))
-           hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions]}, true))
+           hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions, :can_merge_or_split_tickets]}, true))
            hash.merge!({:summary => get_summary_count})
            hash.merge!({:top_view => top_view})
            render :json => hash
