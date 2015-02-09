@@ -38,16 +38,14 @@ RSpec.describe Social::Gnip::TwitterFeed do
     end
   end
 
-  it "should create a ticket when a DM arrives" do
-    account = @handle.account
-    account.make_current
-    
+  it "should create a ticket when a DM arrives" do  
     sample_dm = sample_twitter_dm("#{get_social_id}", Faker::Lorem.words(3), Time.zone.now.ago(3.days))
+    @account.make_current
     # stub the api call
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -59,11 +57,9 @@ RSpec.describe Social::Gnip::TwitterFeed do
 
   it "should create a note when a DM arrives and if dm threaded time is greater than zero" do
     @handle.update_attributes(:dm_thread_time => 86400)
-    
-    account = @handle.account
-    account.make_current    
-    
+
     # For creating ticket
+    @account.make_current    
     user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     
@@ -72,7 +68,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -87,7 +83,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
 
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -99,10 +95,8 @@ RSpec.describe Social::Gnip::TwitterFeed do
   end
   
   it "should create a tickets and notes in the order of creation time when a DMs arrive" do
-    account = @handle.account
-    account.make_current
-    
     user_id = "#{get_social_id}"
+    @account.make_current
     user_name = Faker::Lorem.words(3)
     
     sample_dm1 = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
@@ -113,7 +107,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm_array = [twitter_dm2, twitter_dm1]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm1[:id])
     tweet.should_not be_nil
@@ -294,10 +288,8 @@ RSpec.describe Social::Gnip::TwitterFeed do
   end
   
   it "should create new ticket when a DM arrives from same user and new handle and if it is within the dm threading interval" do
-    account = @handle.account
-    account.make_current    
-    
     # For creating ticket
+    @account.make_current    
     user_id = "#{get_social_id}"
     user_name = Faker::Lorem.words(3)
     sample_dm = sample_twitter_dm(user_id, user_name, Time.zone.now.ago(3.hour))
@@ -305,7 +297,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -337,7 +329,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => account.id})
+    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
 
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil

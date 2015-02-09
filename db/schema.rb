@@ -1262,7 +1262,7 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.datetime "updated_at"
   end
 
-  create_table "freshfone_number_addresses", :id => false, :force => true do |t|
+  create_table "freshfone_number_addresses", :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8
@@ -1363,6 +1363,7 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.datetime "updated_at"
     t.datetime "mobile_token_refreshed_at"
     t.datetime "last_call_at"
+    t.text     "capability_token_hash"
   end
 
   add_index "freshfone_users", ["account_id", "last_call_at"], :name => "index_ff_users_account_last_call"

@@ -93,10 +93,10 @@ module Portal::Helpers::DiscussionsHelper
 		if portal['facebook_portal']
 			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
 		else
-			output << I18n.t('portal.login_or_signup', 
-				:login => "<a href=\"#{portal['topic_reply_url']}\">#{I18n.t('portal.login')}</a>",
-				:signup => "<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if
-						portal['can_signup_feature']
+			output << "<a href=\"#{portal['topic_reply_url']}\">#{I18n.t('portal.login')}</a>"
+			if portal['can_signup_feature']
+				output << " #{I18n.t('or')} <a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>"
+			end
 		end
 		if post_topic
 			output << I18n.t("portal.to_post_topic")

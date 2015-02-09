@@ -349,9 +349,11 @@ var TimeFormat = function(milliseconds){
 			if(duration > 0 && count > 0){
 				handleTime = (duration/count);
 			}
-			list.push('<tr class="odd"><td><strong>'+freshchat_agents[k]+'</strong></td><td>'+answered+'</td>');
-			list.push('<td>'+TimeFormat(handleTime)+'</td><td>'+TimeFormat(duration)+'</td></tr>');
-			len++;
+			if(freshchat_agents[k]){
+				list.push('<tr class="odd"><td><strong>'+freshchat_agents[k]+'</strong></td><td>'+answered+'</td>');
+				list.push('<td>'+TimeFormat(handleTime)+'</td><td>'+TimeFormat(duration)+'</td></tr>');
+				len++;
+			}
 		}
 
 		if(len == 0){
@@ -373,9 +375,12 @@ var TimeFormat = function(milliseconds){
 
 		constructFilter(dateRange);
 
-		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType};
+		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType, 
+									auth_token: LIVECHAT_TOKEN, user_id: CURRENT_USER.id};
 
-		if(widget_id != "all"){
+		if(widget_id == "deleted") {
+			data.deleted_widgets = "1";
+		} else if(widget_id != "all") {
 			data.widget_id = widget_id;
 		}
 

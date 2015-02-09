@@ -1,5 +1,6 @@
 class SubscriptionsController < ApplicationController
   include RestrictControllerAction
+  include Subscription::Currencies::Constants
 
   skip_before_filter :check_account_state
   
@@ -8,6 +9,7 @@ class SubscriptionsController < ApplicationController
   before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
   before_filter :load_billing, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
+  before_filter :valid_currency?, :only => :plan
 
   before_filter :build_subscription, :only => [ :calculate_amount, :plan ]
   before_filter :build_free_subscription, :only => :convert_subscription_to_free
@@ -315,5 +317,12 @@ class SubscriptionsController < ApplicationController
 
     def coupon_applicable?      
       @coupon.blank? ? false : billing_subscription.coupon_applicable?(@subscription, @coupon)
+    end
+
+    def valid_currency?
+      unless BILLING_CURRENCIES.include?(params[:currency])
+        flash[:error] = t("subscription.error.invalid_currency")
+        redirect_to subscription_url
+      end
     end
 end

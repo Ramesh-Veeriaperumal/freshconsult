@@ -13,6 +13,7 @@ module ApplicationHelper
   include RtlHelper
   include MemcacheKeys
   include Integrations::Util
+  include CommunityHelper
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -258,8 +259,7 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          additional_element = options['ul_class'] == 'tick' ? "<span class='ficon-checkmark-thick'></span>".html_safe : ""; #TODO: Remove this span element and extend the font-icon in after pseudo element of active class
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to (additional_element + item[0]), item[1], li_opts, "tabindex" => "-1" }</li>)
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
@@ -345,7 +345,12 @@ module ApplicationHelper
     navigation = tabs.map do |s|
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab(s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ).html_safe
+      tab(
+        s[3] || t("header.tabs.#{s[1].to_s}") ,
+        (s[1] == :tickets) ? helpdesk_tickets_path : {:controller => s[0], :action => :index},
+        active && :active, 
+        s[1] 
+      ).html_safe
     end
     navigation.to_s.html_safe
   end
@@ -904,7 +909,7 @@ module ApplicationHelper
   end
 
   def email_regex
-    Helpdesk::Ticket::VALID_EMAIL_REGEX.source
+    AccountConstants::EMAIL_SCANNER.source
   end
 
   def nodejs_url namespace
@@ -940,10 +945,8 @@ module ApplicationHelper
     end
 
     def forums_tab
-      if main_portal?
+      if !current_portal.forum_categories.empty?
         ['/discussions', :forums,  forums_visibility?]
-      elsif current_portal.forum_category
-        [discussion_path(current_portal.forum_category), :forums,  forums_visibility?]
       else
         ['#', :forums, false]
       end

@@ -1,0 +1,700 @@
+---
+AF:
+  name: Afghanistan
+  enabled: false
+AL:
+  name: Albania
+  enabled: false
+DZ:
+  name: Algeria
+  enabled: true 
+AS:
+  name: American Samoa
+  enabled: false
+AD:
+  name: Andorra
+  enabled: true
+AO:
+  name: Angola
+  enabled: true
+AI:
+  name: Anguilla
+  enabled: true
+AG:
+  name: Antigua and Barbuda
+  enabled: true
+AR:
+  name: Argentina
+  enabled: true
+AM:
+  name: Armenia
+  enabled: false
+AW:
+  name: Aruba
+  enabled: true
+AU:
+  name: Australia/Cocos/Christmas Island
+  enabled: true
+AT:
+  name: Austria
+  enabled: true
+AZ:
+  name: Azerbaijan
+  enabled: false
+BS:
+  name: Bahamas
+  enabled: true
+BH:
+  name: Bahrain
+  enabled: false
+BD:
+  name: Bangladesh
+  enabled: false
+BB:
+  name: Barbados
+  enabled: true
+BY:
+  name: Belarus
+  enabled: false
+BE:
+  name: Belgium
+  enabled: true
+BZ:
+  name: Belize
+  enabled: true
+BJ:
+  name: Benin
+  enabled: false
+BM:
+  name: Bermuda
+  enabled: true
+BT:
+  name: Bhutan
+  enabled: false
+BO:
+  name: Bolivia  
+  enabled: true
+BA:
+  name: Bosnia and Herzegovina
+  enabled: false
+BW:
+  name: Botswana
+  enabled: false
+BR:
+  name: Brazil
+  enabled: true
+IO:
+  name: British Indian Ocean Territory
+  enabled: true
+BN:
+  name: Brunei
+  enabled: false
+BG:
+  name: Bulgaria
+  enabled: false
+BF:
+  name: Burkina Faso
+  enabled: false
+BI:
+  name: Burundi
+  enabled: false
+KH:
+  name: Cambodia
+  enabled: false
+CM:
+  name: Cameroon
+  enabled: false
+CA:
+  name: Canada
+  enabled: true
+CV:
+  name: Cape Verde
+  enabled: false
+KY:
+  name: Cayman Islands
+  enabled: true
+CF:
+  name: Central Africa
+  enabled: false
+TD:
+  name: Chad
+  enabled: false
+CL:
+  name: Chile
+  enabled: false
+CN:
+  name: China
+  enabled: true
+CO:
+  name: Colombia
+  enabled: true
+KM:
+  name: Comoros
+  enabled: false 
+CG:
+  name: Congo 
+  enabled: false
+CD:
+  name: Congo Dem Rep
+  enabled: true  
+CK:
+  name: Cook Islands
+  enabled: true
+CR:
+  name: Costa Rica
+  enabled: true
+HR:
+  name: Croatia
+  enabled: true
+CU:
+  name: Cuba
+  enabled: true
+CW:
+  name: Curaçao
+  enabled: true
+CY:
+  name: Cyprus
+  enabled: false
+CZ:
+  name: Czech Republic
+  enabled: true
+DK:
+  name: Denmark  
+  enabled: true
+DJ:
+  name: Djibouti
+  enabled: false
+DM:
+  name: Dominica
+  enabled: true
+DO:
+  name: Dominican Republic
+  enabled: true
+EC:
+  name: Ecuador  
+  enabled: true
+EG:
+  name: Egypt
+  enabled: true
+SV:
+  name: El Salvador
+  enabled: true
+GQ:
+  name: Equatorial Guinea
+  enabled: false
+ER:
+  name: Eritrea
+  enabled: false
+EE:
+  name: Estonia
+  enabled: false
+ET:
+  name: Ethiopia
+  enabled: false
+FK:
+  name: Falkland Islands
+  enabled: true
+FO:
+  name: Faroe Islands
+  enabled: true
+FJ:
+  name: Fiji
+  enabled: false
+FI:
+  name: Finland/Aland Islands
+  enabled: true
+FR:
+  name: France
+  enabled: true
+GF:
+  name: French Guiana
+  enabled: true
+PF:
+  name: French Polynesia
+  enabled: false
+GA:
+  name: Gabon
+  enabled: false
+GM:
+  name: Gambia
+  enabled: false
+GE:
+  name: Georgia
+  enabled: false
+DE:
+  name: Germany
+  enabled: true
+GH:
+  name: Ghana
+  enabled: false
+GI:
+  name: Gibraltar
+  enabled: true
+GR:
+  name: Greece
+  enabled: true
+GL:
+  name: Greenland
+  enabled: true
+GD:
+  name: Grenada
+  enabled: true
+GP:
+  name: Guadeloupe
+  enabled: true
+GU:
+  name: Guam
+  enabled: false
+GT:
+  name: Guatemala
+  enabled: true
+GN:
+  name: Guinea
+  enabled: false
+GW:
+  name: Guinea-Bissau
+  enabled: true
+GY:
+  name: Guyana
+  enabled: true
+HT: 
+  name: Haiti
+  enabled: true
+HN:
+  name: Honduras
+  enabled: true
+HK:
+  name: Hong Kong
+  enabled: true
+HU:
+  name: Hungary
+  enabled: true
+IS:
+  name: Iceland
+  enabled: true
+IN:
+  name: India
+  enabled: true  
+ID:
+  name: Indonesia
+  enabled: true
+IR:
+  name: Iran
+  enabled: false
+IQ:
+  name: Iraq
+  enabled: false
+IE:
+  name: Ireland
+  enabled: true
+IL:
+  name: Israel
+  enabled: true
+IT:
+  name: Italy
+  enabled: true
+CI:
+  name: Ivory Coast
+  enabled: true  
+JM:
+  name: Jamaica
+  enabled: true
+JP:
+  name: Japan
+  enabled: true
+JO:
+  name: Jordan
+  enabled: false
+KZ:
+  name: Kazakhstan
+  enabled: false
+KE:
+  name: Kenya
+  enabled: false
+KI:
+  name: Kiribati
+  enabled: true
+KP:
+  name: Korea Dem Peoples Rep
+  enabled: false  
+KR:
+  name: Korea Republic of
+  enabled: false  
+KW:
+  name: Kuwait 
+  enabled: false
+KG:
+  name: Kyrgyzstan
+  enabled: false
+LA:
+  name: Laos PDR
+  enabled: false
+LV:
+  name: Latvia
+  enabled: false
+LB:
+  name: Lebanon
+  enabled: false
+LS:
+  name: Lesotho
+  enabled: false
+LR:
+  name: Liberia
+  enabled: false
+LY:
+  name: Libya
+  enabled: false
+LI:
+  name: Liechtenstein
+  enabled: false
+LT:
+  name: Lithuania
+  enabled: false
+LU:
+  name: Luxembourg
+  enabled: true
+MO:
+  name: Macau  
+  enabled: false
+MK:
+  name: Macedonia
+  enabled: true
+MG:
+  name: Madagascar
+  enabled: false
+MW:
+  name: Malawi
+  enabled: false
+MY:
+  name: Malaysia
+  enabled: true
+MV:
+  name: Maldives
+  enabled: true
+ML:
+  name: Mali
+  enabled: false
+MT:
+  name: Malta
+  enabled: true
+MH:
+  name: Marshall Islands
+  enabled: false
+MQ:
+  name: Martinique
+  enabled: true
+MR:
+  name: Mauritania
+  enabled: false
+MU:
+  name: Mauritius
+  enabled: false
+MX:
+  name: Mexico 
+  enabled: true
+FM:
+  name: Micronesia 
+  enabled: false
+MD:
+  name: Moldova
+  enabled: false
+MC:
+  name: Monaco
+  enabled: false
+MN:
+  name: Mongolia
+  enabled: false
+ME:
+  name: Montenegro
+  enabled: false
+MS:
+  name: Montserrat
+  enabled: true
+MA:
+  name: Morocco/Western Sahara
+  enabled: false
+MZ:
+  name: Mozambique
+  enabled: true
+MM:
+  name: Myanmar
+  enabled: false
+NA:
+  name: Namibia
+  enabled: false
+NR:
+  name: Nauru
+  enabled: true
+NP:
+  name: Nepal
+  enabled: false
+NL:
+  name: Netherlands
+  enabled: true
+BQ:
+  name: Netherlands Antilles
+  enabled: true  
+NC:
+  name: New Caledonia
+  enabled: false
+NZ:
+  name: New Zealand
+  enabled: true
+NI:
+  name: Nicaragua
+  enabled: true
+NE:
+  name: Niger
+  enabled: false
+NG:
+  name: Nigeria
+  enabled: false
+NU:
+  name: Niue
+  enabled: true
+NF:
+  name: Norfolk Island
+  enabled: true
+MP:
+  name: Northern Mariana Islands
+  enabled: false
+"NO":
+  name: Norway
+  enabled: true
+OM:
+  name: Oman
+  enabled: true
+PK:
+  name: Pakistan
+  enabled: true
+PW:
+  name: Palau
+  enabled: false
+PS:
+  name: Palestinian Territory
+  enabled: false
+PA:
+  name: Panama
+  enabled: true
+PG:
+  name: Papua New Guinea
+  enabled: true
+PY:
+  name: Paraguay
+  enabled: true
+PE:
+  name: Peru
+  enabled: true
+PH:
+  name: Philippines
+  enabled: true
+PL:
+  name: Poland
+  enabled: true
+PT:
+  name: Portugal
+  enabled: true
+PR:
+  name: Puerto Rico
+  enabled: true
+QA:
+  name: Qatar
+  enabled: true
+RE:
+  name: Reunion/Mayotte
+  enabled: false
+RO:
+  name: Romania
+  enabled: true
+RU:
+  name: Russia
+  enabled: false
+RW:
+  name: Rwanda
+  enabled: false
+BL:
+  name: St Barthélemy
+  enabled: true
+SH:
+  name: St Helena
+  enabled: true
+WS:
+  name: Samoa
+  enabled: false
+SM:
+  name: San Marino
+  enabled: false
+ST:
+  name: São Tomé and Príncipe
+  enabled: true
+SA:
+  name: Saudi Arabia
+  enabled: true
+SN:
+  name: Senegal
+  enabled: false
+RS:
+  name: Serbia
+  enabled: true
+SC:
+  name: Seychelles
+  enabled: false
+SL:
+  name: Sierra Leone
+  enabled: false
+SG:
+  name: Singapore
+  enabled: true
+SX:
+  name: Sint Maarten
+  enabled: true
+SK:
+  name: Slovakia
+  enabled: true
+SI:
+  name: Slovenia
+  enabled: false
+SB:
+  name: Solomon Islands
+  enabled: true
+SO:
+  name: Somalia
+  enabled: false
+ZA:
+  name: South Africa
+  enabled: true
+SS:
+  name: South Sudan
+  enabled: true
+ES:
+  name: Spain
+  enabled: true
+LK:
+  name: Sri Lanka
+  enabled: true
+KN:
+  name: St Kitts and Nevis
+  enabled: true
+LC:
+  name: St Lucia
+  enabled: true
+MF:
+  name: St Martin
+  enabled: true
+PM:
+  name: St Pierre and Miquelon
+  enabled: true
+VC:
+  name: St Vincent Grenadines 
+  enabled: true  
+SD:
+  name: Sudan
+  enabled: false
+SR:
+  name: Suriname
+  enabled: true
+SZ:
+  name: Swaziland
+  enabled: false
+SE:
+  name: Sweden
+  enabled: true
+CH:
+  name: Switzerland
+  enabled: true
+SY:
+  name: Syria
+  enabled: false
+TW:
+  name: Taiwan
+  enabled: false
+TJ:
+  name: Tajikistan
+  enabled: false
+TZ:
+  name: Tanzania
+  enabled: false
+TH:
+  name: Thailand
+  enabled: true
+TL:
+  name: Timor-Leste
+  enabled: true
+TG:
+  name: Togo
+  enabled: false
+TK:
+  name: Tokelau
+  enabled: true
+TO:
+  name: Tonga
+  enabled: false
+TT:
+  name: Trinidad and Tobago
+  enabled: true
+TN:
+  name: Tunisia
+  enabled: false
+TR:
+  name: Turkey
+  enabled: false
+TM:
+  name: Turkmenistan
+  enabled: false
+TC:
+  name: Turks and Caicos Islands
+  enabled: true
+TV:
+  name: Tuvalu
+  enabled: true
+UG:
+  name: Uganda
+  enabled: false
+UA:
+  name: Ukraine
+  enabled: true
+AE:
+  name: United Arab Emirates
+  enabled: true
+GB:
+  name: United Kingdom
+  enabled: true
+US:
+  name: United States
+  enabled: true
+UY:
+  name: Uruguay
+  enabled: true
+UZ:
+  name: Uzbekistan
+  enabled: false
+VU:
+  name: Vanuatu
+  enabled: true
+VA:
+  name: Vatican City
+  enabled: true
+VE:
+  name: Venezuela
+  enabled: true
+VN:
+  name: Vietnam
+  enabled: false
+VG:
+  name: Virgin Islands British
+  enabled: true 
+VI:
+  name: Virgin Islands U.S.
+  enabled: true   
+WF:
+  name: Wallis and Futuna
+  enabled: true
+YE:
+  name: Yemen
+  enabled: false
+ZM:
+  name: Zambia
+  enabled: false
+ZW:
+  name: Zimbabwe
+  enabled: false

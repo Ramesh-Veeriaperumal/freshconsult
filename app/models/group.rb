@@ -226,7 +226,7 @@ class Group < ActiveRecord::Base
   def remove_group_from_chat_routing
     siteId = account.chat_setting.display_id
     if account.features?(:chat) && siteId
-      Resque.enqueue(Workers::Freshchat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
+      Resque.enqueue(Workers::Livechat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
     end
   end
 

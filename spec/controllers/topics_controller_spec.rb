@@ -36,7 +36,7 @@ describe TopicsController do
     topic = create_test_topic(@forum)
     controller.stubs(:main_portal?).returns(false)
     get :show, :category_id => @category.id+10000, :forum_id => @forum.id, :id => topic.id
-    response.should render_template("errors/wrong_portal")
+    response.should render_template("errors/_error_page")
     controller.class.any_instance.unstub(:main_portal?)
   end
 

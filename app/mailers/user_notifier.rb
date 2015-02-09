@@ -27,9 +27,9 @@ class UserNotifier < ActionMailer::Base
     @activation_url = register_url( 
       :activation_code => admin.perishable_token, 
       :host => admin.account.host , 
-      :protocol => admin.url_protocol,
-      :account => admin.account 
+      :protocol => admin.url_protocol 
     )
+    @account = admin.account
 
     mail(headers) do |part|
       part.text { render "admin_activation.text.plain" }

@@ -79,6 +79,14 @@ module Reports::FreshfoneReport
       build_criteria
     end
 
+    #over-riding it here from activity_report.rb for freshfone reports alone. Fix for default end date :8405
+    #When Default dates is fixed in all other reports remove this override.
+    def end_date(zone = true)
+      t = zone ? Time.zone : Time
+      parse_to_date.nil? ? (t.now - 1.day).end_of_day.to_s(:db) : 
+      t.parse(parse_to_date).end_of_day.to_s(:db)
+    end
+
     def report_query
       %( #{select_columns}, count(freshfone_calls.id) as count,
           sum(if(freshfone_calls.ancestry is NULL, 1,0)) as total_count,

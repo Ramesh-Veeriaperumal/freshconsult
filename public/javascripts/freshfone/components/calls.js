@@ -58,6 +58,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			return this.cached.$infoText = this.cached.$infoText ||
 																			this.$container.find('.info_message');
 		},
+		$restrictedCountryText: function () {
+			return this.cached.$restrictedCountryText = this.cached.$restrictedCountryText ||
+																			this.$container.find('.restricted_country');
+		},
 		$outgoingNumberSelector: function () {
 			return this.cached.$outgoingNumber = this.cached.$outgoingNumber ||
 																			this.$container.find('#outgoing_number_selector');
@@ -118,7 +122,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		recordMessage: function (messageSelector, numberId) {
 			this.recordingInstance = messageSelector;
-			if(!this.credit_balance()) {
+			if(!this.call_validation(false)) {
 				return false;
 			}
 			var self = this;
@@ -141,20 +145,24 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.recordingInstance.fetchRecordedUrl();
 			}
 		},
-		credit_balance: function() {
-			var balance_available = true;
+		call_validation: function(isOutgoing) {
+			var balance_available = true,country_enabled = true;
 			$.ajax({
-				url: '/freshfone/credit_balance',
-				dataType: "json",
-				async: false,
-				success: function (result) {
-					if (!result.credit_balance) { 
-						balance_available = false; 
+	   				url: '/freshfone/dial_check',
+	   				dataType: "json",
+	   				data: { phone_number: this.number, is_country: isOutgoing},
+	   				async:false,
+	   				success: function (outcome) {
+							if(outcome.code == 1001){
+								balance_available = false;  
+							}else if(outcome.code == 1002){
+								country_enabled = false;
+							}
 					}
-				}
 			});
 			if (!balance_available) { this.$infoText().show(); }
-			return balance_available;
+			if (!country_enabled) { this.$restrictedCountryText().show(); }  
+			return (balance_available && country_enabled);
 		},
 		makeCall: function () {
 			if (Twilio.Device.status() !== 'busy') {
@@ -170,13 +178,14 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
 										number_id: this.outgoingNumberId(), agent: this.currentUser };
 
-			if(!this.credit_balance()) {
+			if(!this.call_validation(true)) {
 				return false;
 			}
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 			
 
 			this.$infoText().hide();
+			this.$restrictedCountryText().hide();
 			this.toggleInvalidNumberText(false);
 			this.toggleAlreadyInCallText(false);
 			this.status = callStatus.OUTGOINGINIT;
@@ -219,13 +228,14 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		hideText: function() {
 			$('.invalid_phone_text').hide();
 		    $('.invalid_phone_num').hide();
+		  this.$restrictedCountryText().hide();
 		},
 		previewIvr: function (id) {
 			var params = {
 				preview: true,
 				id: id
 			};
-			if(!this.credit_balance()) {
+			if(!this.call_validation(false)) {
 				return false;
 			}
 			this.disableCallButton();

@@ -747,4 +747,41 @@ if Integrations::Application.count == 0
     s.application_type = "box" 
   end 
 
+  czentrix_app = Integrations::Application.seed(:name) do |s|
+    s.name = "czentrix"
+    s.display_name = "integrations.czentrix.label"
+    s.description = "integrations.czentrix.desc"
+    s.account_id = 0
+    s.listing_order = 26
+    s.options = {:direct_install => false,:keys_order => [:host_ip,:convert_to_ticket],
+        :host_ip => { :type => :text, :required => true, :label => "integrations.czentrix.host_name", 
+        :info => "integrations.czentrix.host_name_info"},
+        :convert_to_ticket => {:type => :checkbox, :label => "integrations.cti.convert_to_ticket", :default_value => '1'}}
+    s.application_type = "cti_integration" 
+  end 
+
+  drishti_app = Integrations::Application.seed(:name) do |s|
+    s.name = "drishti"
+    s.display_name = "integrations.drishti.label"
+    s.description = "integrations.drishti.desc"
+    s.account_id = 0
+    s.listing_order = 28
+    s.options = {
+      :direct_install => false,
+      :keys_order => [:host_ip,:convert_to_ticket],
+      :host_ip => { 
+        :type => :text,
+        :required => true, 
+        :label => "integrations.drishti.host_name", 
+        :info => "integrations.drishti.host_name_info"
+        },
+      :convert_to_ticket => {
+        :type => :checkbox, 
+        :label => "integrations.cti.convert_to_ticket", 
+        :default_value => '1'
+        }
+      }
+    s.application_type = "cti_integration"
+  end
+
 end

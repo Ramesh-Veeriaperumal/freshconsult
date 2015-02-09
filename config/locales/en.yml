@@ -1354,12 +1354,12 @@ en:
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
+        forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
-        top_level_forum_info: You can associate a forum category to this product. All other forums will be not be visible to the customers, when viewing the forums tab in this product portal.
-        top_level_forum: Top level forum category
         portal_url: Portal URL
         solution_categories: Solution Categories
+        forum_categories: Forum Categories
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
@@ -2329,7 +2329,7 @@ en:
   change_my_plan: Choose this plan...
   make_payment: Make Payment
   add_new_email: Add new email
-  chatwidget_title: Chat Widgets
+  chatwidget_title: Freshchat
   feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
@@ -2353,6 +2353,15 @@ en:
     info6: Mark the Ticket as a Bug and assign to QA
     info7: Perform these actions
     info8: Add another action
+    edit: Edit Scenario
+    shared: Shared
+    personal: Personal
+    no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    visibility:
+      groups: Agents in group
+      all_agents: All agents
+      me_only: Myself
+      available_for: Available for
   category:
     new: New Category
     new_forum_category: New Forum Category
@@ -2389,6 +2398,11 @@ en:
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
   forum_category:
+    product_portal_visibility: "Visible in"
+    select_product: Select a product portal...
+    forum_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
+    delete: "Important: Deleting a category will delete all the forums and topics in it."
+    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
     delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
@@ -2475,6 +2489,7 @@ en:
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket. This also applies to the search feature inside feedback widget.
   show_me_how: Show me how
+  view_on_portal: "View on Portal"
   agent_list:
     tab:
       active: "Full-Time"
@@ -2874,6 +2889,8 @@ en:
     merged_into: Contact merged to
     save_changes: Save changes
     save: Save
+    export_start: Your Contact data will be sent to your email shortly!
+    export_title: "Export %{type} to CSV"
     deleted_message: This is a deleted contact
     deleted_info_msg: This is a deleted contact - 
     contacts_in_companies: "%{contacts}"
@@ -3017,6 +3034,7 @@ en:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
+      invalid_currency: The currency you have chosen is invalid.
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
@@ -3212,7 +3230,7 @@ en:
       article_not_useful: "Thanks for the feedback. We will improve this article."
       error_message: "There is an error %{error_msg}"
       reset_rating:
-        link: "Reset Article Rating"
+        link: "Reset"
         dialog_title: "Reset likes and dislikes"
         dialog_submit: "Reset"
         resetting: "Resetting"
@@ -3345,6 +3363,7 @@ en:
     add_contact: 'Add Contact'
     add_contact_company: 'Add Contact in %{company_name}'
     company_contacts: 'Company Contacts'
+    export_start: Your Company data will be sent to your email shortly!
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
@@ -3814,6 +3833,7 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form:
       private_note: "Add as Private Note, and don't notify the requester"
@@ -4347,6 +4367,7 @@ en:
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
+          reply_to: "Reply to"
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items
@@ -4555,6 +4576,7 @@ en:
     info: Export ticket information available in the current view to a CSV file.
     contact_info: Export active contacts to a CSV file.
     select_header: "Select all fields"
+    select_all: "Select all"
     select_format: "Export as:"
     csv: "CSV"
     xls: "Excel"
@@ -4580,6 +4602,8 @@ en:
       body: Your data export is ready for download.
     no_tickets_mail:
       body: Seems like there are no tickets in the provided date range.
+    customer_export:
+      body: "The %{field} export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
@@ -5458,6 +5482,7 @@ en:
         total_duration: "Total Duration"
         agent_chat_summary: Agent Chat Summary
         agent: "Agent"
+        deleted: "Deleted"
 
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
@@ -6021,6 +6046,7 @@ en:
       could_be_invalid_number: "Could be an invalid number."
       invalid_number_continue_call: "Press call button again" 
       not_enough_credit: "Not Enough Credit"
+      restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
     call_status:
       default: ""
@@ -6033,6 +6059,7 @@ en:
       failed: "Failed"
       in_progress: "In progress"
       voicemail: "Voicemail"
+      restricted: "Restricted"
       all_calls: "All Calls"
     general:
       suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
@@ -6056,6 +6083,7 @@ en:
       no_calls: "No recent calls found"
       available: "Accepting calls"
       unavailable: "Not accepting calls"
+      busy: "Ongoing Call"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Search Available Agents..."
@@ -6271,6 +6299,7 @@ en:
         back_to_menu: "Back to main menu"
         invalid_performer_type: "Invalid Performer Type"
         invalid_number: "Invalid number in menu %{menu}"
+        restricted_country: "Restricted country's number in menu %{menu}"
         invalid_jump_to: "Cannot have 'Jump To' for non-root menu %{menu}"
         seed_message: "Welcome to customer support"
         seed_menu_name: "Welcome/Start Menu"
@@ -6374,8 +6403,9 @@ en:
     chatbox_bgcolor: "Window Color"
     in_conversation: "In-conversation"
     available_agents: "Available Agents"
-    visitors_online: "New Visitors"
+    new_visitors: "New Visitors"
     returning_visitors: "Returning Visitors"
+    visitors_list : "Fetching Visitors"
     website_visitors_msg: "Visitors"
     message_archives: "Message archives"
     see_all: "See all"
@@ -6444,9 +6474,9 @@ en:
     returning_visitor: "Returning Visitor"
     new_visitor: "New Visitor"
     unknown: "Unknown"
-    no_visitors: "No visitors on your site"
+    no_visitors: "No new visitors on your site"
     no_conversation: "No visitors in conversation"
-    no_return_visitors: "No return visitors"
+    no_return_visitors: "No returning visitors"
     tag_placeholder: "Enter the tags"
     no_visitors_msg: "No visitors on your site..."
     options: "Options"
@@ -6512,8 +6542,7 @@ en:
     url_error_msg: "Please enter a valid URL"
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
-    chat_disabled_label: "Chat is disabled for helpdesk"
-    chat_enabled_label: "Chat is enabled for helpdesk"
+    chat_enabled_label: "Enable Chat"
     routing: "Chat routing"
     routing_info: "Route all incoming chats to specific groups"
     dropdown_based_routing: "Dropdown based routing"
@@ -6522,7 +6551,25 @@ en:
     select_groups: "Select groups"
     routing_note: "Note: If agents from the selected groups are not accepting chats, chat will be routed to all available agents."
     concurrent_pick_attempt_msg: "This chat has been already accepted by"
+    chat_type: "Chat Type"
+    asc: "Ascending"
+    desc: "Descending"
+    sort_order: "Sort Order"
+    all : "All"
+    visitor_initiated : "Visitor Initiated"
+    agent_initiated : "Agent Initiated"
+    agent_to_agent : "Agent to Agent"
+    missed_chat : "Missed"
+    filter: "Filter"
+    close: "Close"
+    visitorId: "Visitor ID"
+    createdAt: "Created at"
     enable: "Enable"
+    widgets_list_info: "Showing Chat Widgets for your products"
+    text_yes: "Yes"
+    text_no: "No"
+    enabled: "Enabled"
+    disabled: "Disabled"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
@@ -6899,4 +6946,5 @@ en:
   suspended_since: "Suspended since %{days}"
   plan: "Plan"
   edit_plan: "Edit Plan"
+  please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"

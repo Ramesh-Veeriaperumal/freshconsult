@@ -70,8 +70,8 @@
 
   function showSave() {
     jQuery('.view_filters').addClass('disable-hover');
-    jQuery("#save_as_filter,#cancel_filter,#save_filter,.unsaved_star").switchClass('hide','vertical-alignment');
-    jQuery('#edit_filter,#delete_filter').switchClass('vertical-alignment','hide');
+    jQuery("#save_as_filter,#cancel_filter,#save_filter,.unsaved_star").removeClass("hide").addClass("vertical-alignment");
+    jQuery('#edit_filter,#delete_filter').removeClass("vertical-alignment").addClass("hide");
   }
 
   function showEditAndDelete() {
@@ -173,7 +173,7 @@
     
     setDivider();
 
-    jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>));
+    jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>).toJSON());
 
     getFilterData();
     <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());'.html_safe unless special_case_views.include?(@current_view) %>

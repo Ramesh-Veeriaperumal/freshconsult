@@ -1,27 +1,44 @@
 class ChatsController < ApplicationController
-  
+
   include ChatHelper
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
   before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
   before_filter  :load_ticket, :only => [:add_note, :chat_note]
+ 
+  def index
+    if chat_activated?
+      widget_values = current_account.chat_widgets.reject{|c| c.widget_id ==nil}.collect {|c| [c.widget_id,(c.product.blank? ? current_account.name : c.product.name)]}
+      @selected_tab = :dashboard
+      @widgets = widget_values.map{ |i| [i[0], i[1]] }.to_h.to_json.html_safe
+      @widgetsSelectOption = widget_values.map{ |i| [i[1], i[0]] }
+      @agentsAvailable = current_account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+      @dateRange = "#{30.days.ago.strftime("%d %b, %Y")} - #{0.days.ago.strftime("%d %b, %Y")}"
+    else
+      render_404
+    end
+  end
+
   
   def create_ticket
+    ticket_params = {
+                      :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
+                      :email  => params[:ticket][:email],
+                      :subject  => params[:ticket][:subject],
+                      :requester_name => params[:ticket][:name],
+                      :ticket_body_attributes => { :description_html => params[:ticket][:content] }
+                    }
+    widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
+    group = current_account.groups.find_by_id(params[:ticket][:group_id]) if params[:ticket][:group_id]
+    ticket_params[:product_id] = widget.product.id if widget && widget.product
+    ticket_params[:group_id] = group.id if group
 
-    @ticket = current_account.tickets.build(
-                  :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
-                  :email  => params[:ticket][:email],
-                  :subject  => params[:ticket][:subject],
-                  :requester_name => params[:ticket][:name],
-                  :ticket_body_attributes => { :description_html => params[:ticket][:content] }
-              ) 
-
+    @ticket = current_account.tickets.build(ticket_params) 
     status = @ticket.save_ticket
 
     render :json => { :ticket_id=> @ticket.display_id , :status => status }
-
   end
 
-  def groups
+  def get_groups
     groups = []
     groups.push([ t("freshchat.everyone"), 0 ])
     groups.concat(current_account.groups.collect{|c| [c.name, c.id]})
@@ -42,7 +59,7 @@ class ChatsController < ApplicationController
   #######
   # This function is used to update the siteId in chat_settings table, widget_id in chat_widgets table in helpkit db, 
   # whenever chat is enabled first time for an account for.
-  # Post request url :/freshchat/activate  , body : {accId : #{accId} , siteId : #{siteId} , token :#{token}, widget_id : #{widget_id} }
+  # Post request url :/livechat/activate  , body : {accId : #{accId} , siteId : #{siteId} , token :#{token}, widget_id : #{widget_id} }
   #######
   def activate
     site = current_account.chat_setting
@@ -59,7 +76,7 @@ class ChatsController < ApplicationController
   #######
   # This function is for update the widget_id in chat_widgets table in helpkit db, 
   # whenever chat_widget for a product is created.
-  # Post request url :/freshchat/widget_activate  , body : {accId : #{accId} , product_id : #{product_id} , token :#{token}, status : #{status} }
+  # Post request url :/livechat/widget_activate  , body : {accId : #{accId} , product_id : #{product_id} , token :#{token}, status : #{status} }
   #######
 
   def widget_activate
@@ -72,14 +89,14 @@ class ChatsController < ApplicationController
       if chat_widget.update_attributes({:active => params[:status], :widget_id => params[:widget_id]})
         if chat_widget.product && chat_widget.product.portal
           portal = chat_widget.product.portal
-          Resque.enqueue(Workers::Freshchat, {
-            :worker_method => "update_widget", 
-            :widget_id     => chat_widget.widget_id, 
-            :siteId        => current_account.chat_setting.display_id, 
-            :attributes    => { 
-                              :site_url => portal.portal_url
-                            }
-            })
+          Resque.enqueue(Workers::Livechat, 
+            {
+              :worker_method => "update_widget", 
+              :widget_id     => chat_widget.widget_id, 
+              :siteId        => current_account.chat_setting.display_id, 
+              :attributes    => { :site_url => portal.portal_url }
+            }
+          )
         end
         render :json => {:status => "success"}
       else
@@ -93,7 +110,7 @@ class ChatsController < ApplicationController
   #######
   # This function is used to update the Global status in chat_settings table in helpkit db, 
   # whenever chat is enabled or disable for an account.
-  # Post request url :/freshchat/site_toggle  , body : {siteId : #{siteId} , status : #{status} , token :#{token}}
+  # Post request url :/livechat/site_toggle  , body : {siteId : #{siteId} , status : #{status} , token :#{token}}
   #######
 
   def site_toggle
@@ -113,7 +130,7 @@ class ChatsController < ApplicationController
   #######
   # This function is used to update the widget status in chat_widgets table in helpkit db, 
   # whenever widget(chat for product) is enabled or disable for an account.
-  # Post request url :/freshchat/widget_toggle  , body : {widget_id : #{widget_id} , status : #{status} , token :#{token}}
+  # Post request url :/livechat/widget_toggle  , body : {widget_id : #{widget_id} , status : #{status} , token :#{token}}
   #######
 
   def widget_toggle
@@ -131,12 +148,16 @@ class ChatsController < ApplicationController
 
   #######
   # This function is used to add note to ticket
-  # Post request url :/freshchat/chat_note  , body : {ticket_id : #{ticket_id} , msg : #{msg} , userId :#{userId}}
+  # Post request url :/livechat/chat_note  , body : {ticket_id : #{ticket_id} , msg : #{msg} , userId :#{userId}}
   #######
 
   def chat_note
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
+  end
+
+  def visitor
+    @selected_tab = :dashboard
   end
 
   private

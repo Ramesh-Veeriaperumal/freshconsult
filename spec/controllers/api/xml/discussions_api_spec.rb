@@ -39,6 +39,13 @@ RSpec.describe DiscussionsController do
     response.status.should === 406
   end
 
+  it "should match discussion category paths to appropriate discussion actions" do
+    assert_recognizes({ controller: 'discussions', action: 'create', format: 'xml'}, {path: '/discussions/categories.xml', method: :post })
+    assert_recognizes({ controller: 'discussions', action: 'destroy', id: '1', format: 'xml'}, { path: 'discussions/categories/1.xml', method: :delete })
+    assert_recognizes({ controller: 'discussions', action: 'update', id: '1', format: 'xml'}, { path: 'discussions/categories/1.xml', method: :put })
+    assert_recognizes({ controller: 'discussions', action: 'show', id: '1', format: 'xml' }, { path: 'discussions/categories/1.xml', method: :get })
+  end
+
     def create_forum_category
       { :forum_category=> {:name => Faker::Lorem.words(10).join(" "),
           :description => Faker::Lorem.paragraph }

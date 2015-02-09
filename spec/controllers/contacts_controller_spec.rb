@@ -274,13 +274,16 @@ describe ContactsController do
 
   it "should configure for contact export" do
     post :configure_export
-    response.body.should =~ /Export active contacts to a CSV file./
+    response.body.should =~ /Note: Only verified contacts will be exported/
   end
 
   it "should export csv" do
+    Resque.inline = true
     post :export_csv, "data_hash"=>"", "export_fields"=>{"Name"=>"name", "Email"=>"email", "Job Title"=>"job_title", "Company"=>"company_name", "Phone"=>"phone"}
-    response.header["Content-Type"].should eql 'text/csv; charset=utf-8; header=present'
-    response.body.should include "Name,Email,Job Title,Company,Phone"
+    data_export = @account.data_exports.last
+    data_export.source.should eql 3
+    data_export.status.should eql 4
+    Resque.inline = false
   end
 
   it "should create a quick contact" do

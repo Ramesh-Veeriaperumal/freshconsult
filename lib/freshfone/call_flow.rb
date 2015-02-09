@@ -3,6 +3,7 @@ class Freshfone::CallFlow
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Freshfone::CallsRedisMethods
+  include Freshfone::CallValidator
 	BEYOND_THRESHOLD_PARALLEL_INCOMING = 3 # parallel incomings allowed beyond safe_threshold
 	BEYOND_THRESHOLD_PARALLEL_OUTGOING = 1 # parallel incomings allowed beyond safe_threshold
   
@@ -60,6 +61,10 @@ class Freshfone::CallFlow
   end
   
   def call_user_with_number(number)
+    if !authorized_country?(number,current_account)
+      set_restricted_status
+      return reject_twiml  
+    end
     return initiate_voicemail if direct_dialled_number_busy?(number)
     register_direct_dial(number)
     self.numbers = [number]
@@ -99,9 +104,16 @@ class Freshfone::CallFlow
   private
 
     def outgoing
-      return reject_twiml unless register_outgoing_device
+      return reject_outgoing_call unless register_outgoing_device
       register_outgoing_call
       initiate_outgoing
+    end
+
+    def reject_outgoing_call
+      agent_user_id = split_client_id(params[:From])
+      current_account.freshfone_users.find_by_user_id(agent_user_id).busy!
+      Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => agent_user_id })
+      reject_twiml
     end
 
     def block_call
@@ -160,6 +172,13 @@ class Freshfone::CallFlow
       params[:To].blank?
     end
 
+    def set_restricted_status
+      return if params[:CallSid].blank?
+      call = current_account.freshfone_calls.find_by_call_sid(params[:CallSid]) 
+      call.update_status({:DialCallStatus => "restricted"})
+      call.save
+    end
+
     def blacklisted?
       current_account.freshfone_blacklist_numbers.find_by_number(params[:From].gsub(/^\+/, ''))
     end
@@ -193,8 +212,10 @@ class Freshfone::CallFlow
     end
 
     def cannot_connect_call?
-      return false unless current_account.freshfone_credit.below_safe_threshold?
-      outgoing? ? outgoing_limit_reached? : incoming_limit_reached?
+      return true if current_account.freshfone_credit.below_safe_threshold?
+      return true if outgoing? && !authorized_country?(params[:PhoneNumber],current_account)
+      return outgoing? ? outgoing_limit_reached? : incoming_limit_reached?
+      false
     end
 
     def calls_count
@@ -214,11 +235,6 @@ class Freshfone::CallFlow
 
     def register_outgoing_device
       agent_user_id = split_client_id(params[:From])
-      return true if set_outgoing_device([agent_user_id])
-      agent_progress_calls?(agent_user_id).blank?
-    end
-
-    def agent_progress_calls?(agent_user_id)
-      Freshfone::Call.agent_progress_calls(agent_user_id).first
+      set_outgoing_device([agent_user_id])
     end
 end

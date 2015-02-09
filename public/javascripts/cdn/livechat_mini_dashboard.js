@@ -1,0 +1,1 @@
+//=require freshchat/dashboard/dashboard

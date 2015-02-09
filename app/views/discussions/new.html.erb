@@ -7,10 +7,26 @@
 	<h3 class="lead"><%=t 'category.new_forum_category'%> </h3>
 </div>
 <%= form_for @forum_category, :url => discussions_path do |f| -%>
-  <%= f.error_messages %>
-  <%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
-  <div class="button-container">
-    <%= link_to(t('cancel'), categories_discussions_path, :class => "btn" ) -%>
-    <%= submit_tag t('save'), { :class => "btn btn-primary" } -%>
-  </div>
+	<%= f.error_messages %>
+	<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
+  <% if current_account.portals.count > 1 %>
+    <div class="form-horizontal">
+      <div class="control-group">
+        <%= f.label :portal_ids, t('forum_category.product_portal_visibility'), :class => "control-label" %>
+        <div class="controls">
+          <input type="hidden" name="product_ids" value="" />
+          <%= f.collection_select :portal_ids, current_account.portals.reject(&:main_portal),
+                      :id, :portal_name, {:selected => current_portal.id},
+                      :class => "select2 input-xlarge", :multiple => true,
+                      :placeholder => t("forum_category.select_product").html_safe 
+                      %>
+          <%= content_tag(:div, t('forum_category.forum_categories_portal_info').html_safe, :class => "info-data") %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+	<div class="button-container">
+		<%= link_to(t('cancel'), categories_discussions_path, :class => "btn" ) -%>
+		<%= submit_tag t('save'), { :class => "btn btn-primary" } -%>
+	</div>
 <% end -%>

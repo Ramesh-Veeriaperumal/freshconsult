@@ -73,7 +73,7 @@
             }
         }
     }
-	.invalid_phone_text, .info_message, .already_in_call_text {
+	.invalid_phone_text, .info_message, .already_in_call_text, .restricted_country {
 		position: absolute;
 		top: 65px;
 		color: $info-text;

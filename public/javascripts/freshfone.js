@@ -184,7 +184,7 @@
             ev.preventDefault();
             $(this).button("loading");
             $buy_numbers_form = $this.parents('form');
-            if($this.data('addressRequired')){
+            if(address_required){
               $('#freshfone_address_form').submit();
             } else {
               $this.parents('form').submit();  
@@ -245,11 +245,12 @@
         $('.ajaxerrorExplanation').toggle(false);
     }
     function isAddressAlreadyExisit(country_code) {
-        var alreadyExist = false;
+        var alreadyExist = false, self = this;
         toggleLoder(true);
         $.ajax({
           url: '/freshfone/address/inspect',
           dataType: "json",
+          async: false,
           data: {"country" : country_code},
           success: function (data) {
             alreadyExist =  data.isExist;

@@ -6,21 +6,36 @@
     <div class="row-fluid">
       <div class="span6"><h3 class="lead"><%=t('automations.title')%></h3></div>
        <div class="span6 pull-right pagination-right header_buttons align-right" >
-        <%= link_to t('reorder'),'#', :id => "va_rules_reorder_button", :class => "btn" if(@va_rules.size > 1) %>
-        <%= (link_to t('dispatch.new_rule'), new_helpdesk_scenario_automation_path, :class => "btn btn-primary") %>
+        <%= (link_to t('dispatch.new_rule'), new_helpdesk_scenario_automation_path(), :class => "btn btn-primary") %>
       </div>
     </div>
   </div>
+  <% if privilege?(:manage_scenario_automation_rules) %>
+  <div class="dropdown">
+    <% list = [
+            [
+              t('automations.personal'), '/helpdesk/scenario_automations/tab/personal', false, {:id => 'personal', :'data-pjax' => '#body-container', :'data-name' => t('automations.personal'), :class => "item #{'selected-tab' if @current_tab == 'personal'}"}
+            ],
+            [
+              t('automations.shared'), '/helpdesk/scenario_automations/tab/shared', false, {:id => 'Shared', :'data-pjax' => '#body-container', :'data-name' => t('automations.shared'), :class => "item #{'selected-tab' if @current_tab == 'shared'}"}
+            ]
+          ]
+      options = {'class' => 'item', 'ul_class' => 'tick menu-pjax'}
+    %>
+    <a class='dropdown-toggle' data-toggle="dropdown" href='#'><%= "#{t('showing')}: " %><b><%=t("automations.#{@current_tab}")%>(<%=@va_rules.count%>)</b>
+    <span class='caret'></span></a>
+      <%= dropdown_menu(list, options) %>
+    </div>
+  <%else%>
+    <%= "#{t('showing')}: " %><b><%=t("automations.personal")%>(<%=@va_rules.count%>)</b>
+  <%end%>
 
-  <div>
-  <%= render :partial => "/shared/reorder_list", :locals => {
-      :items => @va_rules,
-      :action_url => reorder_helpdesk_scenario_automations_path,
-      :title => :name, :container_id => "va_rules_sort",
-      :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
-  </div>
-
-  <div class="list-page-body " id="va_rules_list">
+  <div class="response-list list-page-body " id="va_rules_list">
+    <%if @va_rules.empty?%>
+    <div class="list-noinfo">
+    <%=t('automations.no_scenario',{:link => new_helpdesk_scenario_automation_path()}).html_safe%>
+    </div>
+    <%else%>
     <table class="table table-striped">
       <% @va_rules.each do |va_rule| %>
         <tr id=<%= dom_id(va_rule) %>>
@@ -39,8 +54,7 @@
           </td>
         </tr>
       <% end %>
-
-
+      <%end%>
     </table>
   </div>
 

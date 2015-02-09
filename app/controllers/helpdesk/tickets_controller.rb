@@ -160,7 +160,7 @@ class Helpdesk::TicketsController < ApplicationController
            end
            hash.merge!({:ticket => tickets })
            hash.merge!(current_account.as_json(:only=>[:id],:methods=>[:portal_name]))
-           hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions]}, true))
+           hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, :can_view_solutions, :can_merge_or_split_tickets]}, true))
            hash.merge!({:summary => get_summary_count})
            hash.merge!({:top_view => top_view})
            render :json => hash
@@ -438,7 +438,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def execute_scenario 
     va_rule = current_account.scn_automations.find(params[:scenario_id])
-    unless va_rule.trigger_actions(@item, current_user)
+    unless (va_rule.visible_to_me? and va_rule.trigger_actions(@item, current_user))
       flash[:notice] = I18n.t("admin.automations.failure")
       respond_to do |format|
         format.html { 

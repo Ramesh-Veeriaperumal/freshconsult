@@ -73,8 +73,7 @@ class DiscussionsController < ApplicationController
 	end
 
 	def categories
-		@forum_categories = scoper
-		@portals = current_account.portals
+		@forum_categories = portal_scoper.all(:include => :portals)
 		@topics_count = current_account.topics.count
     respond_to do |format|
       format.html
@@ -99,12 +98,17 @@ class DiscussionsController < ApplicationController
 			@content_scope = ''
 		end
 
+		def portal_scoper
+			# Has to be checked when we introduce the ability to remove the categories from the main portal
+			current_account.main_portal.forum_categories
+		end
+
 		def scoper
 			current_account.forum_categories
 		end
 
 		def reorder_scoper
-			scoper
+			current_account.main_portal.portal_forum_categories
 		end
 
 		def reorder_redirect_url

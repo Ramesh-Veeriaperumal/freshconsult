@@ -41,9 +41,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
 
-    #before_validation_on_create :set_random_secret
     before_post_process :image?, :valid_image?
-    #before_post_process :set_content_dispositon
     before_create :set_content_type
     before_save :set_account_id
 
@@ -100,8 +98,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     [:account_id, :description, :content_updated_at, :attachable_id, :attachable_type]
   end
 
-  def attachment_url_for_api
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, :expires => 1.days)
+  def attachment_url_for_api(secure=true)
+    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, { :expires => 1.days, :secure => secure })
   end
 
   def as_json(options = {})

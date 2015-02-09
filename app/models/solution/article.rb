@@ -104,14 +104,15 @@ class Solution::Article < ActiveRecord::Base
 
   
   def related(current_portal, size = 10)
-    return [] if title.blank? || (title = self.title.gsub(/[\^\$]/, '')).blank?
+    search_key = "#{tags.map(&:name).join(' ')} #{title}"
+    return [] if search_key.blank? || (search_key = search_key.gsub(/[\^\$]/, '')).blank?
     begin
       Search::EsIndexDefinition.es_cluster(account_id)
       options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
       item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
         search.query do |query|
           query.filtered do |f|
-            f.query { |q| q.string SearchUtil.es_filter_key(title), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
+            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => "include_stop" }
             f.filter :term, { :account_id => account_id }
             f.filter :not, { :ids => { :values => [self.id] } }
             f.filter :or, { :not => { :exists => { :field => :status } } },

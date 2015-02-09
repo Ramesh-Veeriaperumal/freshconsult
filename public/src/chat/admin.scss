@@ -1,5 +1,10 @@
+@import 'compass';
+@import '../pattern/lib/rtl-mixins.scss';
+
+$font-class: "ficon-"; // Change this when font class changed in glyphs comman
+
 .freshchat_admin_content{
-	margin-left: 150px;
+	@include margin-left(150px);
 	.info-data{
 		font-size: 15px;
 		li{
@@ -22,9 +27,329 @@
 	  font-size: 13px;
 	  border: 1px solid #ccc;
 	  background: #fefcea;
-	  border-radius:4px;
+	  @include border-radius(4px);
 	}
 	.error_flash {
 		color: #a90329;
+	}
+}
+.fc-archives{
+	.btn-round{
+		[class*="#{$font-class}"]{
+			position: relative;
+			top: 8px;
+		}
+	}
+  .no-data{
+    padding: 10px;
+    font-size: 18px;
+    color: #999;
+    text-align: center;
+    margin-bottom: 0;
+  }
+	.select2{
+		.select2-choices{
+			border-color: #ccc;
+			.select2-search-field input{
+				min-height: 26px;
+			}
+		}
+	}
+	#date_range{
+		margin-bottom: 0;
+	}
+	.filter-actions{
+		text-align: center;
+		margin-top: 25px;
+	}
+	.user-profile {
+		.#{$font-class}crown{
+			color: #127D80;
+			@include margin-right(5px);
+		}
+		img{
+			vertical-align: inherit;
+			@include margin-right(5px);
+			max-width: 100%;
+			width: 32px;
+			@include border-radius(5px);
+		}
+		img,
+		.#{$font-class}crown{
+			@include float(left);
+		}
+		strong,
+		.#{$font-class}crown{
+			margin-top: 8px;
+		}
+	}
+	.connection{
+		.#{$font-class}arrow-right-2,
+		.#{$font-class}arrow-left-2,{
+			color: #679D59;
+		}
+		.#{$font-class}no-arrow-right,
+		.#{$font-class}no-arrow-left{
+			color:#BB4B4B;
+		}
+	}
+	.location,
+	.info .to{
+		color: #999;
+	}
+	tr td.options{
+		@include text-align(right);
+	}
+	.text-wrap{
+    display: inline-block;
+    width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include float(left);
+  }
+  .location{
+  	.#{$font-class}map-marker{
+  		@include margin-right(5px);
+    	@include float(left);
+  	}
+  	.text-wrap{
+  		width: 160px;
+  	}
+  }
+}
+.fc-conversation{
+    .label-missed{
+			vertical-align: middle;
+			font-size: 10px;
+			background: #da4f49;
+			position: relative;
+			top: -2px;
+		}
+      .no-data{
+        padding: 10px 0;
+        font-size: 12px;
+        color: #999;
+        text-align: left;
+      }
+	.fc-container{
+		background: #fcfcfc;
+    border-top: 1px solid #ddd;
+	}
+	.conversation{
+		background: #fff;
+		min-height: 600px;
+    @include padding(20px);
+    @include border-right(1px solid #eee);
+	}
+	.profile-options{
+		@include padding(20px 20px 0 0);
+    select{
+      width: 100%;
+    }
+    .info{
+    	margin-top: 20px;
+    	li{
+    		padding-bottom: 10px;
+    		i{
+    			display: inline-block;
+    			width: 15px;
+    			height: 15px;
+    			text-align: center;
+    			@include margin-right(5px);
+    			color:#9A9A9A;
+    		}
+    	}
+    }
+    .editing{
+    	display: none;
+    }
+    &.edit{
+    	.editing{
+	    	display: block;
+	    }
+	    .profile{
+	    	display: none;
+	    }	
+    }
+	}
+	.profile{
+		.image-lazy-load,
+		.data{
+			@include float(left);
+		}
+		.data{
+			line-height: 18px;
+			@include margin(0 0 10px 10px);
+			.name{
+				font-weight: 500;
+			}
+		}
+		.image-lazy-load img{
+			@include border-radius(5px);
+		}
+	}
+	.#{$font-class}comments{
+		@include margin-right(10px);
+	}
+	.options{
+		@include text-align(right);
+		.btn-group{
+			display: inline-block;
+			@include margin-left(5px);
+		}
+	}
+	.conversation_wrap{
+		padding: 0;
+		border: 1px solid #eee;
+		border-top: none;
+		&:before,
+		&:after{
+			display:none;
+		}
+		.rsltmsg{
+			@include padding(8px 8px 8px 10px);
+			.time{
+				display: none;
+			}
+			&:hover{
+				.time{
+					display: block;
+				}
+			}
+		}
+	}
+	.pad-l{
+		@include padding-left(20px);
+	}
+	.pad-r{
+		@include padding-right(20px);
+	}
+	.editing{
+		.error{
+			border-color:rgba(239, 80, 95, 0.3); 
+		}
+		input[type=text]{
+			line-height: 16px;
+			height: 20px;
+		}
+		input[type=text],
+		select,
+		textarea{
+			@include box-shadow(none);
+			@include border-radius(5px);
+		}
+		input[type=text],
+		textarea{
+			@include padding-left(2%);
+			width: 97%;
+		}
+		.title{
+			margin-bottom: 10px;
+			.name{
+				font-size: 16px;
+				font-weight: bold;
+				line-height: 30px;
+				display: inline-block;
+			}
+			.btn{
+				@include float(right);
+				margin-right : 5px;
+			}
+		}
+	}
+	.recent-chats{
+		h5{
+			font-weight: 400;
+		}
+		.title{
+			padding: 0 0 2px 0;
+		}
+		ul{
+			margin-top: 20px;
+			li{
+				@include margin-left(20px);
+				margin-bottom: 15px;
+				position: relative;
+				&:before{
+					position:absolute;
+					top: 0;
+					@include left(-20px);
+					color: #9a9a9a;
+				}
+			}
+		}
+	}
+}
+@media screen and (min-width:1366px){
+	.fc-archives{
+	  .location{
+	  	.text-wrap{
+	  		width: 180px;
+	  	}
+	  }
+	  .user-profile{
+	  	.text-wrap{
+	  		width: 140px;
+	  	}
+	  }
+	}
+}
+// removing padding from the lrb
+.single #inner .leftcontent{
+	&.fc-wrap{
+		padding-bottom: 0;
+		.pagearea{
+			@include padding(20px 0 0 0);
+		}
+	}
+}
+.report-header .report-filter{
+	.report_filters{
+		&.fc-filter{
+			float: right;
+			width: 180px;
+			padding: 0;
+			.saved-reports-menu{
+				right: 0;
+			}
+			a{
+				padding: 15px 20px;
+				margin-top: 0;
+				@include margin-left(0);
+				&.drop-right:after{
+					top:40%;
+				}
+			}
+		}
+	}
+}
+.fc-archive-title{
+	.#{$font-class}comments{
+		padding-right: 10px;
+		vertical-align: middle;
+	}
+}
+.btn-round{
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	text-align: center;
+	box-shadow: none;
+	background: #fff;
+	border: 1px solid #ddd;
+	&:hover{
+		background:#f9f9f9;
+		border-color:#aaa;
+	}
+}
+#livechat_archive_page {
+	.fd-menu{
+		min-width: 189px;
+		li.separator{
+			border-top:1px solid #ddd;
+			margin: 5px 0;
+		}
 	}
 }

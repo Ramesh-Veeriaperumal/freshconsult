@@ -7,6 +7,7 @@
 	 	<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 		<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
 		<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%>
+		<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) %>
  	</div>
 	<div class="floatr">
     <% if privilege?(:publish_solution) %>
@@ -15,9 +16,6 @@
 	</div>	
 	<h2 class="title">
 		<%= h(@article.title) %>
-		<span class="tooltip" title="<%= t('solution.view_on_portal') %>">
-			<%= link_to '<i class="agent-preview"></i>'.html_safe, support_solutions_article_path(@article.id), :target => "_blank" %>
-		</span> 
 	</h2>
 	<div class="help-text">
 		By <b> <%= @article.user.name %></b>, <%= formated_date(@article.modified_at) %>

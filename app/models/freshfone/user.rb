@@ -1,12 +1,15 @@
 class Freshfone::User < ActiveRecord::Base
   self.primary_key = :id
 	self.table_name =  "freshfone_users"
+	include Freshfone::CallValidator
 	belongs_to_account
 
 	belongs_to :user, :class_name => '::User', :inverse_of => :freshfone_user
 	has_many :agent_groups, :through => :user
 	delegate :available_number, :name, :avatar, :to => :user
 	attr_accessor :user_avatar
+
+	serialize :capability_token_hash, Hash
 
 	attr_protected :account_id
 
@@ -20,6 +23,9 @@ class Freshfone::User < ActiveRecord::Base
 		:not_allowed => 0,
 		:allowed => 1
 	}
+
+	CAPABILITY_TOKEN_TTL = 43200 # Time till which the capability token will be valid (12 hours)
+	CAPABILITY_TTL_BUFFER = 1800 # Buffer time to regenerate new token (30 minutes)
 
 	validates_presence_of :user, :account
 	validates_inclusion_of :presence, :in => PRESENCE.values,
@@ -57,23 +63,13 @@ class Freshfone::User < ActiveRecord::Base
 		self.presence = incoming_preference
 		self
 	end
-
-	def offline!
-		self.presence = PRESENCE[:offline]
-		save
-	end
-
-	def online!
-		self.presence = PRESENCE[:online]
-		save
-	end
 	
 	def change_presence_and_preference(status, user_avatar_content, nmobile = false)
 		self.user_avatar = user_avatar_content
 		if nmobile
 			self.mobile_token_refreshed_at = Time.now if self.incoming_preference == INCOMING[:allowed]
 		else
-			self.incoming_preference = status
+			self.incoming_preference = status unless status == PRESENCE[:busy].to_s
 			self.presence = status unless busy?
 			self.mobile_token_refreshed_at = 2.hours.ago if self.incoming_preference == INCOMING[:not_allowed] && self.mobile_token_refreshed_at.present?
 		end
@@ -86,6 +82,13 @@ class Freshfone::User < ActiveRecord::Base
 			else
 				presence == v
 			end
+		end
+	end
+
+	PRESENCE.each_pair do |k, v|
+		define_method("#{k}!") do
+			self.presence = v
+			save
 		end
 	end
 	
@@ -118,6 +121,31 @@ class Freshfone::User < ActiveRecord::Base
 		save
 	end
 
+	def get_capability_token(force_generate = false)
+		(self.capability_token_hash.nil? || Time.now.utc >= self.capability_token_hash[:expiry].utc ||
+			self.incoming_preference != capability_token_hash[:type]) || force_generate ?
+			generate_token : capability_token_hash[:token]
+	end
+
+	def generate_token
+		subaccount = self.user.account.freshfone_account
+		capability = Twilio::Util::Capability.new subaccount.twilio_subaccount_id, subaccount.twilio_subaccount_token
+		capability.allow_client_outgoing subaccount.twilio_application_id
+		if self.incoming_preference == INCOMING[:allowed]
+			capability.allow_client_incoming self.user.id
+		end
+		generated_capability_token = capability.generate(expires=CAPABILITY_TOKEN_TTL)
+		save_capability_token(generated_capability_token)
+		return generated_capability_token
+	end
+
+	def save_capability_token cap_token
+		self.capability_token_hash = HashWithIndifferentAccess.new({ 
+			:token => cap_token, :type => self.incoming_preference,
+			:expiry => (Time.now + CAPABILITY_TOKEN_TTL.seconds - CAPABILITY_TTL_BUFFER.seconds).utc })
+		save
+	end
+
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)
@@ -132,7 +160,8 @@ class Freshfone::User < ActiveRecord::Base
 		def vaild_phone_number?(current_number)
 			@current_number = current_number.number
 			@agent_number = GlobalPhone.parse(number)
-			@agent_number && @agent_number.valid? && can_dial_agent_number?
+			@agent_number  && authorized_country?(@agent_number,account) && 
+				@agent_number.valid? && can_dial_agent_number?
 		end
 
 		def can_dial_agent_number?

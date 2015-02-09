@@ -9,6 +9,7 @@
 <% end %>
 <% content_for :sticky_right do %>
 	<%= tour_button(t('discussions.tour'), '5384276bbc1fbe0d8e001638') unless @topics_count > 0 %>
+	<%= preview_portal(support_discussions_path) %>
 <% end %>
 <%= render :partial => '/discussions/shared/sticky', :locals => { :page => :home } %>
 

@@ -13,7 +13,7 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit :enqueue_round_robin_process, on: :update
-  after_commit :destroy_agent_canned_responses, on: :destroy
+  after_commit :destroy_agent_canned_responses,:destroy_agent_scenarios, on: :destroy
   
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
@@ -126,6 +126,10 @@ class Agent < ActiveRecord::Base
 
   def destroy_agent_canned_responses
     account.canned_responses.only_me(user).destroy_all
+  end
+
+  def destroy_agent_scenarios
+    account.scn_automations.only_me(user).destroy_all
   end
 
 end

@@ -1,19 +1,19 @@
 <!-- Chat related contents starts -->
 <script>
-var ASSET_URL    = <%= ChatConfig['asset_url'].to_json.html_safe %>;
-var CS_URL       = "<%=ChatConfig['communication_url']%>";
-var CHAT_ENV     = "<%= Rails.env -%>";
-var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
+var ASSET_URL       = <%= ChatConfig['asset_url'].to_json.html_safe %>;
+var CS_URL          = "<%= ChatConfig['communication_url']%>";
+var CHAT_ENV        = "<%= Rails.env -%>";
+var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
 </script>
 
 <%if current_user && chat_activated? && !(is_assumed_user?) %>
 <script>
-    <% current_chatwidget = current_chat_widget %>
     var WEB_ROOT        = "//<%=current_account.full_domain%>";
-    var CHAT_DEBUG      = "<%=ChatConfig['chat_debug']%>";
-    var SITE_ID         = '<%=current_account.chat_setting.display_id%>';
-    var CHAT_CONSTANTS  = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
+    var CHAT_DEBUG      = "<%= ChatConfig['chat_debug']%>";
+    var SITE_ID         = '<%= current_account.chat_setting.display_id%>';
+    var CHAT_CONSTANTS  = <%= ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe %>;
     var CHAT_I18n       = <%= i18n_text %>;
+    var LIVECHAT_TOKEN  = '<%= livechat_token(current_account.chat_setting.display_id, current_user.id) %>';
 
     var CURRENT_USER    = {
             'id'        : '<%=current_user.id%>',
@@ -28,10 +28,9 @@ var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
             'domain'     : '<%=current_account.full_domain%>',
             'product_id' : '<%=current_portal.product ? current_portal.product.id : ""%>',
             'chat_enabled': <%=current_account.chat_setting.active%>,
-            'widget_id'  : '<%=current_chatwidget.widget_id%>',
+            'widget_id'  : '<%=current_chat_widget.widget_id%>',
             'chat_routing': <%=feature?(:chat_routing)%>
     };
-    
 
     jQuery(document).ready(function(){
         var url = ASSET_URL.js;
@@ -46,6 +45,9 @@ var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
         document.getElementsByTagName('head')[0].appendChild(fc_CSS);
         <%if current_account.chat_setting.active %>
             jQuery.getScript(url+"/js/chat.js");
+            <%if Rails.env == 'development' %>  
+                jQuery.getScript(url+"/js/agent-devtools.js");
+            <%end%>
         <%end%>
     });
 </script>

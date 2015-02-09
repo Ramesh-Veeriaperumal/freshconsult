@@ -21,7 +21,7 @@
 			freshfonecalls.resetRecordingState();
 			freshfonewidget.resetPreviewButton();
 			if ($.inArray(error.code, [400, 401, 31205]) > -1) {
-				freshfoneuser.getCapabilityToken();
+				freshfoneuser.getCapabilityToken(undefined, true);
 			}
 			freshfonecalls.error = error;
 			freshfonecalls.errorcode = error.code;
@@ -61,9 +61,11 @@
 		Twilio.Device.disconnect(function (conn) {
 			var callSid, detail;
 			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
-			callSid = freshfonecalls.tConn.parameters.CallSid;
-			detail = callSid ? callSid : 'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
-			ffLogger.logIssue("Freshfone Call :: " + detail);
+			if (freshfonecalls.tConn) {
+				callSid = freshfonecalls.tConn.parameters.CallSid;
+				detail = callSid ? callSid : 'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
+				ffLogger.logIssue("Freshfone Call :: " + detail);
+			}
 			freshfoneNotification.resetJsonFix();
 			if (recordingMode()) {
 				return freshfonecalls.fetchRecordedUrl();
