@@ -1340,10 +1340,6 @@ Helpkit::Application.routes.draw do
         get :unachieved
       end
     end
-    resources :canned_responses, :collection => {:search => :get, :recent => :get}
-    resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get}
-    resources :reminders, :member => { :complete => :put, :restore => :put }
-    resources :time_sheets, :member => { :toggle_timer => :put}
 
     resources :notes
 
