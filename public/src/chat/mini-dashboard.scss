@@ -10,8 +10,6 @@
 		.chat_icon_connection{
 			position: relative;
 			top: -1px;
-			@extend .ficon;
-			@extend .icon-disconnected; 
 		}
 		.refresh_wrap.tooltip{
 			float: right;
