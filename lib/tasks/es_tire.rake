@@ -215,7 +215,7 @@ def import_condition(id, item)
     when "Helpdesk::Tag" then
       condition = ".where(['account_id=?', #{id}])"
     when "Freshfone::Caller" then
-      condition = ".where('account_id=?', #{id}])"
+      condition = ".where(['account_id=?', #{id}])"
     when "ScenarioAutomation" then
       condition = ".where(['account_id=? and rule_type=?', #{id},#{VAConfig::SCENARIO_AUTOMATION}])"
     when "Admin::CannedResponses::Response" then
