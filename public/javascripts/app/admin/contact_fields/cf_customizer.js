@@ -274,6 +274,7 @@
 					$(sourcefield).remove();
 				}
 				this.hideDialog();
+				this.settings.currentField = null;
 			}
 		},
 
