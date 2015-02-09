@@ -2356,7 +2356,7 @@ en:
     edit: Edit Scenario
     shared: Shared
     personal: Personal
-    no_scenario: "No Personal Scenarios <a href={{link}}>Create New</a>"
+    no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
     visibility:
       groups: Agents in group
       all_agents: All agents
