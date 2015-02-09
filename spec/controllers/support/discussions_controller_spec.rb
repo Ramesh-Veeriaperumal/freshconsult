@@ -25,7 +25,7 @@ describe Support::DiscussionsController do
 		response.should render_template "support/discussions/index.portal"
 	end
 
-	it "should render index page on get 'show'" do
+	it "should render show page on get 'show'" do
 		get :show, :id => @category.id
 
 		response.should render_template "support/discussions/show.portal"

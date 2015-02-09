@@ -31,8 +31,35 @@
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">
-	        	<p><%=t('automations.info8')%></p> <img alt="Add New action" class="add" src="/images/add.png" />
-	    	</fieldset>		
+	        	<p><%=t('dispatch.add_new_action')%></p> <img alt="Add New action" class="add" src="/images/add.png" />
+	    	</fieldset>
+
+	<li class="inline-field  form-horizontal">
+		<div class="control-group">
+		<% f.fields_for :accessible do |access| %>
+			<label class="control-label"><%=t('automations.visibility.available_for').html_safe%> :</label>
+			<div class="controls">
+				<label class="radio" id="only_me">
+					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]== @va_rule.accessible.access_type } %>
+					<%= t('automations.visibility.me_only') %>
+				</label>
+			</div>
+			<div class="controls">
+				<label class="radio" id="all_agents">
+					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]== @va_rule.accessible.access_type } %>
+					<%= t('automations.visibility.all_agents') %>
+				</label>
+			</div>
+			<div class="controls">
+				<label class="radio" id="group_agents">
+					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]== @va_rule.accessible.access_type} %>
+					<%= t('automations.visibility.groups') %>
+				</label>
+				<div style="display:none;" class="mt5" id="accessible_group">
+					<%= access.select_tag("va_rule[accessible_attributes][group_ids]", options_from_collection_for_select(current_account.groups_from_cache,"id", "name",{:selected=>@va_rule.accessible.groups.collect{|group| group.id} ,:include_blank => true}), {:multiple => true, :class => "select2 span5", :size => 4, :placeholder => "Select groups"}) %>
+		     </div>
+			</div>
+		<%end%>
 		</div>
 	</li>
 </ul>
@@ -40,12 +67,39 @@
 
 
 <div class="button-container">
-	<%= link_to(t('clone'), clone_rule_helpdesk_scenario_automation_path(@va_rule.id), :class => "pull-left btn btn-flat") if params[:action] == "edit"%> 
-	<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+	<%= link_to(t('clone'), clone_rule_helpdesk_scenario_automation_path(@va_rule.id), :class => "pull-left btn btn-flat") if params[:action] == "edit"%>
+	<%= link_to t('cancel'), "/helpdesk/scenario_automations/tab/#{@current_tab}", :class => "btn" %>
 	<input type="submit" class="btn btn-primary" value="<%=t('save')%>" />
 </div>
 
 <% content_for :pagefixed do %>
 	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders }  %>
+<% end %>
+
+<% javascript_tag do %>
+
+jQuery(document).ready(function(){
+	toggleGroup(<%=@va_rule.accessible.access_type%>);
+
+	if (!<%=privilege?(:manage_scenario_automation_rules)%>)
+	{
+	  jQuery('#all_agents,#group_agents,#only_me').children().attr('disabled','disabled');
+	  jQuery('#all_agents,#group_agents').addClass("muted");
+  }
+});
+
+function toggleGroup(access_id)
+{
+	if (access_id == '<%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]%>')
+	{
+		jQuery('#accessible_group').show();
+		jQuery('#accessible_group select').select2();
+	}
+	else
+	{
+		jQuery('#accessible_group').hide();
+		jQuery('#accessible_group select').select2('val', '')
+	}
+}
 <% end %>
 

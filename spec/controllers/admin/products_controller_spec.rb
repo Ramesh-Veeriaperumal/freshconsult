@@ -10,7 +10,10 @@ describe Admin::ProductsController do
 
     @test_category_1 = create_test_category
     @test_category_2 = create_test_category
+    @test_category_3 = create_test_category
+    @test_category_4 = create_test_category
 
+    @ids = [@test_category_1.id, @test_category_2.id]
     @test_product = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
                                     :portal_name=> "New test_product portal", 
                                     :portal_url => @portal_url})
@@ -20,19 +23,19 @@ describe Admin::ProductsController do
                                     :portal_name=> "New test_product portal 1", 
                                     :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
                                     :enable_portal => "1",
-                                    :forum_category_id => @test_category_1.id
+                                    :forum_category_ids => @ids
                                     })
     @test_product_3 = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
                                     :portal_name=> "New test_product portal 2", 
                                     :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
                                     :enable_portal => "1",
-                                    :forum_category_id => ""
+                                    :forum_category_ids => [""]
                                     })
     @test_product_4 = create_product({:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
                                     :portal_name=> "New test_product portal 3", 
                                     :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}",
                                     :enable_portal => "1",
-                                    :forum_category_id => @test_category_1.id
+                                    :forum_category_ids => @ids
                                     })
   end
 
@@ -180,7 +183,7 @@ describe Admin::ProductsController do
                         { :name=>@test_product.portal.name, 
                           :portal_url=> portal_url, 
                           :language=> @test_product.portal.language, 
-                          :forum_category_id=>"", 
+                          :forum_category_ids=>[""], 
                           :solution_category_ids=>[""], 
                           :logo_attributes => { :content => 
                             Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')},
@@ -233,57 +236,56 @@ describe Admin::ProductsController do
       result.length.should eql 0
     end
 
-    it "should create a record in portal forum categories table" do
-      result = @test_product_2.portal.portal_forum_categories
-      result.length.should eql 1
-      result.first.forum_category_id.should eql @test_product_2.portal.forum_category_id
+    it "should create n records for n forum_category_ids in portal forum categories table" do
+      result = @test_product_2.portal.portal_forum_categories.map(&:forum_category_id)
+      result.sort.should eql @ids.sort
     end
 
-    it "should create one record and delete another record in portal forum categories table when forum_category_id is updated from 1 value to another" do
-      @test_product_4.portal.forum_category_id = @test_category_2.id
+    it "should create records for newly added and delete records for the removed forum categories in portal forum categories table" do
+      @test_product_4.portal.forum_category_ids = @ids
       @test_product_4.save
+
+      new_ids = [@test_category_3.id, @test_category_4.id]
 
       put :update, 
           :id => @test_product_4.id,
           :product => { :portal_attributes =>
-                          { :forum_category_id => @test_category_1.id
+                          { :forum_category_ids => new_ids
                         }
                       }
 
       @test_product_4.reload
 
-      result = @test_product_4.portal.portal_forum_categories
-      result.length.should eql 1
-      result.first.forum_category_id.should eql @test_product_4.portal.forum_category_id
+      result = @test_product_4.portal.portal_forum_categories.map(&:forum_category_id)
+      result.sort.should eql new_ids.sort
     end
 
-    it "should create a record in portal forum categories when forum_category_id is updated to some value from nil" do
-      # Making this nil and then testing it.
-      @test_product_4.portal.forum_category_id = nil
+    it "should create records in portal forum categories when forum_category_ids are updated to some value from empty" do
+      # Making this empty and then testing it.
+      @test_product_4.portal.forum_category_ids = [""]
       @test_product_4.save
 
       put :update, 
           :id => @test_product_4.id,
           :product => { :portal_attributes =>
-                          { :forum_category_id => @test_category_2.id
+                          { :forum_category_ids => @ids
                         }
                       }
 
       @test_product_4.reload
 
-      result = @test_product_4.portal.portal_forum_categories
-      result.length.should eql 1
-      result.first.forum_category_id.should eql @test_product_4.portal.forum_category_id
+      result = @test_product_4.portal.portal_forum_categories.map(&:forum_category_id)
+      result.sort.should eql @ids.sort
     end
 
-    it "should delete a record from portal forum categories when forum_category_id is updated to nil" do
-      @test_product_4.portal.forum_category_id = @test_category_1.id
+    it "should delete records from portal forum categories when forum_category_id is updated to nil" do
+      @test_product_4.portal.forum_category_ids = @ids
       @test_product_4.save
 
       put :update, 
           :id => @test_product_4.id,
           :product => { :portal_attributes =>
-                          { :forum_category_id => ""
+                          { :forum_category_ids => [""]
                         }
                       }
 

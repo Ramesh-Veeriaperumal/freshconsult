@@ -5,13 +5,14 @@ class Support::Solutions::FoldersController < SupportController
 	def show
 		@page_title = @folder.name
 		respond_to do |format|
-	    	format.html { 
-          load_page_meta
-				  set_portal_page :article_list
-        }
-	    	format.xml  { render :xml => @folder.to_xml(:include => :published_articles)}
-	    	format.json { render :json => @folder.as_json(:include => :published_articles)}
-	    end
+			format.html {
+				load_agent_actions(solution_category_folder_path(@category, @folder), :view_solutions)
+				load_page_meta
+				set_portal_page :article_list
+			}
+			format.xml  { render :xml => @folder.to_xml(:include => :published_articles)}
+			format.json { render :json => @folder.as_json(:include => :published_articles)}
+		end
 	end
 
 	private

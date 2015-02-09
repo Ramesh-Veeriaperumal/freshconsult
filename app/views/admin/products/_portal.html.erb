@@ -45,11 +45,13 @@
         </div>
     	<% end %>
       <div class="control-group">
-       <label class="control-label"><%= t(".top_level_forum") %></label>
+       <label class="control-label"><%= t(".forum_categories") %></label>
         <div class="controls">
-          <%= portal.collection_select :forum_category_id, @forums_categories, :id, :name, 
-                        { :include_blank =>  t(".select_forum_category")}, :class => "select2" %>
-          <%= content_tag(:div, t('.top_level_forum_info'), :class => "info-data") %>
+          <input type="hidden" name="product[portal_attributes][forum_category_ids][]" value="" />
+          <%= portal.collection_select :forum_category_ids, @forums_categories, 
+                    :id, :name, {} , :class => "select2 input-xlarge", :multiple => true, 
+                    :placeholder => t(".select_forum_category").html_safe %>
+          <%= content_tag(:div, t('.forum_categories_info'), :class => "info-data") %>
         </div>
       </div>
       

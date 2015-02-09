@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "adbcc96b55acbe7dd656db5c3c5219ce119c24492bd7561a1b929ebbbbf16430",
-    "current": "adbcc96b55acbe7dd656db5c3c5219ce119c24492bd7561a1b929ebbbbf16430"
+    "previous": "ce421135c3ce4c8c50ff52fe2b23ebbb87670c70ce8976f418bcfc7ed629745e",
+    "current": "ce421135c3ce4c8c50ff52fe2b23ebbb87670c70ce8976f418bcfc7ed629745e"
   },
   "fonts": [
-    "public/fonts/glyphs_adbcc96b55acbe7dd656db5c3c5219ce.ttf",
-    "public/fonts/glyphs_adbcc96b55acbe7dd656db5c3c5219ce.svg",
-    "public/fonts/glyphs_adbcc96b55acbe7dd656db5c3c5219ce.woff",
-    "public/fonts/glyphs_adbcc96b55acbe7dd656db5c3c5219ce.eot"
+    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.ttf",
+    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.svg",
+    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.woff",
+    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.eot"
   ],
   "glyphs": {
     "account": {
@@ -550,6 +550,10 @@
       "codepoint": 61790,
       "source": "public/glyphs/vectors/security.svg"
     },
+    "shared": {
+      "codepoint": 61872,
+      "source": "public/glyphs/vectors/shared.svg"
+    },
     "sidebar-list": {
       "codepoint": 61752,
       "source": "public/glyphs/vectors/sidebar-list.svg"
@@ -666,6 +670,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

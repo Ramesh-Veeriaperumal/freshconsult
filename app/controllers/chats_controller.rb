@@ -30,7 +30,7 @@ class ChatsController < ApplicationController
                     }
     widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
     group = current_account.groups.find_by_id(params[:ticket][:group_id]) if params[:ticket][:group_id]
-    ticket_params[:product_id] = widget.product.id if widget.product
+    ticket_params[:product_id] = widget.product.id if widget && widget.product
     ticket_params[:group_id] = group.id if group
 
     @ticket = current_account.tickets.build(ticket_params) 

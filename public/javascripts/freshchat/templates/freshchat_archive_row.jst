@@ -23,7 +23,12 @@
 	<% } %>
 </td>
 <td class="info span3">
-	<div class="to">To: <%=(modelJson.widget_id)? window.freshChat.widgetList[modelJson.widget_id] : window.CURRENT_ACCOUNT.name%></div>
+	<% var widgetName = window.CURRENT_ACCOUNT.name %>
+	<% if(modelJson.widget_id){
+		var name = window.freshChat.widgetList[modelJson.widget_id];
+		widgetName = name ? name : "---";
+	} %>
+	<div class="to">To: <%= widgetName %></div>
 	<div class="status"><%=(modelJson.inConversation === true)? "In Conversation" : moment(modelJson.created_at).fromNow()%></div>
 </td>
 <td class="location span3" >

@@ -232,8 +232,9 @@ describe Discussions::TopicsController do
 	end
 
 	it "should update stamp of a topic on put 'update_stamp'" do
-		topic = create_test_topic(@forum)
-		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[@forum.forum_type]]
+		forum = create_test_forum(@category, Forum::TYPES[1][2])
+		topic = create_test_topic(forum)
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
 		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
 
 		put :update_stamp,

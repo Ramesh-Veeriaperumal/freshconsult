@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
 
-  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create ]
+  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create, :create_file ]
 
   map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
 
@@ -141,7 +141,7 @@ ActionController::Routing::Routes.draw do |map|
     integration.app_oauth_install '/applications/oauth_install/:id', :controller => 'applications', :action => 'oauth_install'
     integration.oauth 'install/:app', :controller => 'oauth', :action => 'authenticate'
     integration.namespace :cti do |c|
-      c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post}
+      c.resources :customer_details, :collection =>{:fetch => :get, :create_note => :post, :create_ticket => :post, :verify_session => :post, :ameyo_session => :get}
     end
   end
 
@@ -362,8 +362,36 @@ ActionController::Routing::Routes.draw do |map|
       admin.resources :accounts, :only => :show, :collection => {:add_day_passes => :put ,
                                                                  :add_feature => :put ,
                                                                  :change_url => :put,
-                                                                 :single_sign_on => :get
+                                                                 :single_sign_on => :get,
+                                                                 :change_account_name => :put,
+                                                                 :ublock_account => :put,
+                                                                 :remove_feature => :put,
+                                                                 :whitelist => :put,
+                                                                 :block_account => :put
                                                                 }
+      admin.resources :custom_ssl, :only => :index, :collection => {
+                                                                    :enable_custom_ssl => :put
+                                                                    }
+      admin.resources :account_tools, :only => :index, :collection => {
+                                                                      :update_global_blacklist_ips => :put,
+                                                                      :remove_blacklisted_ip => :put
+                                                                      }
+      admin.resources :freshfone_actions, :collection =>  {
+                                                            :add_credits => :put,
+                                                            :refund_credits => :put,
+                                                            :port_ahead => :put,
+                                                            :post_twilio_port => :put,
+                                                            :suspend_freshfone => :put,
+                                                            :account_closure => :put,
+                                                            :get_country_list => :get,
+                                                            :country_restriction => :put
+                                                          }
+      admin.resources :freshfone_stats , :collection => {
+                                                            :statistics => :get
+                                                        }  
+      admin.resources :freshfone_subscriptions, :collection => {
+                                                                  :index => :get
+                                                                }                                                  
     end
   end
 
@@ -490,7 +518,7 @@ ActionController::Routing::Routes.draw do |map|
       end
     end
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
-    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get, :reorder => :put}
+    helpdesk.resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
     helpdesk.resources :time_sheets, :member => { :toggle_timer => :put}
 
@@ -534,6 +562,7 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :commons
 
   end
+  map.connect '/helpdesk/scenario_automations/tab/:current_tab', :controller => 'helpdesk/scenario_automations', :action => 'index'
 
   map.resources :api_webhooks, :as => 'webhooks/subscription'
 

@@ -140,8 +140,8 @@ class Support::SearchController < SupportController
                                 { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
                 end
                 if search_in.include?(Topic)
-                  f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
-                                { :term => { 'forum.forum_category_id' => current_portal.forum_category_id || 0 } }
+                    f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
+                                { :terms => { 'forum.forum_category_id' => current_portal.portal_forum_categories.map(&:forum_category_id) } }
                 end
               end
             end

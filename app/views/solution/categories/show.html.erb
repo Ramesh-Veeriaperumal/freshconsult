@@ -13,6 +13,7 @@
 		<div class="crumbs">
 			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 			<%= content_tag(:span, h(@item.name) ) %>
+			<%= preview_portal(support_solution_path(@item), @item) %>	
 		</div>
 		<div class="search-grey-box search-page">
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.name)), :url => "/search/solutions?category_id=#{@item.id}&term=" } %>

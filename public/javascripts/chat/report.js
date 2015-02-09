@@ -378,7 +378,9 @@ var TimeFormat = function(milliseconds){
 		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType, 
 									auth_token: LIVECHAT_TOKEN, user_id: CURRENT_USER.id};
 
-		if(widget_id != "all"){
+		if(widget_id == "deleted") {
+			data.deleted_widgets = "1";
+		} else if(widget_id != "all") {
 			data.widget_id = widget_id;
 		}
 

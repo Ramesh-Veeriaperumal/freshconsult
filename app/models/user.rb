@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
+  include AccountConstants
   
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
@@ -49,7 +50,7 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
-    c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_REGEX
+    c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_VALIDATOR
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
   end
@@ -61,7 +62,7 @@ class User < ActiveRecord::Base
 
 
   def email_validity
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_REGEX
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
   end
 

@@ -42,13 +42,12 @@ class Freshfone::CallInitiator
 	def connect_caller_to_numbers
 		twiml_response do |r|
 			numbers.each do |number|
-				 if authorized_country?(number,current_account) 
-				    r.Dial :callerId => params[:From], :record => record?, :timeLimit => 1800,
-				    	   :timeout => current_number.ringing_time,
-				 		   :action => direct_dial_url(number) do |d|
+				    r.Dial :callerId => params[:From], :record => record?, 
+				    :timeLimit => 1800,
+				    :timeout => current_number.ringing_time,
+				 	:action => direct_dial_url(number) do |d|
 				  	d.Number number, :url => direct_dial_success(number)
 				  end
-				end
 			end
 		end
 	end

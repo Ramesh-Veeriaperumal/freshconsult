@@ -2,26 +2,28 @@ class Support::SolutionsController < SupportController
 	before_filter :load_category, :only => [:show]
 	before_filter { |c| c.check_portal_scope :open_solutions }
 
-	def index
-		respond_to do |format|
-	      format.html {
-	      	set_portal_page :solution_home 
-	      }
-        format.json {
-          load_customer_categories
-          render :json => @categories.to_json(:include=>:public_folders)
-        }
-	    end
-	end
+  def index
+    respond_to do |format|
+      format.html {
+        load_agent_actions(solution_categories_path, :view_solutions)
+        set_portal_page :solution_home 
+      }
+      format.json {
+        load_customer_categories
+        render :json => @categories.to_json(:include=>:public_folders)
+      }
+    end
+  end
 
-	def show
-		respond_to do |format|
-	      format.html { 
-          load_page_meta
-          set_portal_page :solution_category 
-        }
-	    end
-	end
+  def show
+    respond_to do |format|
+      format.html {
+        load_agent_actions(solution_category_path(@category), :view_solutions)
+        load_page_meta
+        set_portal_page :solution_category 
+      }
+    end
+  end
 
 	private
 		def load_category

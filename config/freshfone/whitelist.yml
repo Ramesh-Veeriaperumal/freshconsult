@@ -458,7 +458,7 @@ NF:
 MP:
   name: Northern Mariana Islands
   enabled: false
-NO:
+"NO":
   name: Norway
   enabled: true
 OM:

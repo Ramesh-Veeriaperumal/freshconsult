@@ -1,6 +1,6 @@
 account = Account.current
 
-VARule.seed_many(:account_id, :name, :rule_type, [
+ScenarioAutomation.seed_many(:account_id, :name, :rule_type, [
     [ 'Assign to QA', 'Customer reported bugs are assigned to QA in a single click',
         [
           { :name => "ticket_type", :value => "Problem" },
@@ -16,7 +16,7 @@ VARule.seed_many(:account_id, :name, :rule_type, [
           { :name => "send_email_to_requester",
             :email_body => "Hi {{ticket.requester.name}}
 
-Welcome to {{helpdesk_name}}! My name is {{ticket.agent.name}} and I will be your account manager. 
+Welcome to {{helpdesk_name}}! My name is {{ticket.agent.name}} and I will be your account manager.
 
 You can email me at {{ticket.agent.email}} if you need any help outside of our standard helpdesk services.
 
@@ -31,7 +31,10 @@ Regards
       :active => true,
       :name => f[0],
       :description => f[1],
-      :action_data => f[2]
+      :action_data => f[2],
+      :accessible_attributes => {
+        :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+      }
     }
   end
 )

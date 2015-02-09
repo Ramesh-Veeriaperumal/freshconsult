@@ -4,7 +4,7 @@
 	  <ul class="row-fluid" rel="sortlist">
 		  <% items.each do |forum_category| %>
 		  	<% disabled ||= nil %>
-		  	<% content_tag :li, :item_id => forum_category.id, :class => "comm-item" do %>
+		  	<% content_tag :li, :item_id => forum_category.main_portal.id, :class => "comm-item" do %>
 		  		<% if privilege?(:manage_forums) %>
 			  		<div class="reorder-icon vertical-alignment handle-reorder">
 							<!-- <i class="community-reorder-icon" id="sortable-icon"></i> -->
@@ -20,7 +20,7 @@
 							<%= truncate(forum_category.description, :length => 100)%>
 						</div>
 					</div>
-					<% portal_names = @portals.select{ |p| p.forum_category_id == forum_category.id }.map { |p| h(p.name) } %>
+					<% portal_names = forum_category.portals.reject(&:main_portal).map(&:portal_name) %>
 					<% if portal_names.present? %>
 						<div class="span1 pt2 muted">
 							<%= t('topic.visible_in')%>:

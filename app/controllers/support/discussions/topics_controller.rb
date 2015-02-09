@@ -9,7 +9,6 @@ class Support::Discussions::TopicsController < SupportController
                                       :users_voted, :destroy, :toggle_solution, :hit]
   before_filter :require_user, :except => [:index, :show, :hit]
 
-  before_filter :load_agent_actions, :only => :show
   before_filter { |c| c.requires_feature :forums }
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -41,6 +40,7 @@ class Support::Discussions::TopicsController < SupportController
   def show
     respond_to do |format|
       format.html do
+        load_agent_actions(discussions_topic_path(@topic), :view_forums)
         @post = Post.new
         load_page_meta
         set_portal_page :topic_view
@@ -258,7 +258,7 @@ class Support::Discussions::TopicsController < SupportController
       @forum = @topic.forum
       @forum_category = @forum.forum_category
 
-      wrong_portal unless(main_portal? || (@forum_category.id.to_i == current_portal.forum_category_id)) #Duplicate
+      wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
       raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
       
       unless @forum.visible?(current_user)
@@ -293,14 +293,6 @@ class Support::Discussions::TopicsController < SupportController
       param =  params[:topic].symbolize_keys
       param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       return param
-    end
-
-    def load_agent_actions
-      @agent_actions = []
-      @agent_actions <<   { :url => discussions_topic_path(@topic),
-                            :label => t('portal.preview.view_on_helpdesk'),
-                            :icon => "preview" } if privilege?(:view_forums)
-      @agent_actions
     end
 
     def post_request_params

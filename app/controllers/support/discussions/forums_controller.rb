@@ -10,9 +10,10 @@ class Support::Discussions::ForumsController < SupportController
 	def show
 		respond_to do |format|
 			format.html { 
-        load_page_meta
-        set_portal_page :topic_list 
-      }
+				load_agent_actions(discussions_forum_path(@forum), :view_forums)
+				load_page_meta
+				set_portal_page :topic_list 
+			}
 		end
 	end
 
