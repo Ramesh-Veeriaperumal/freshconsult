@@ -1628,6 +1628,11 @@ Helpkit::Application.routes.draw do
 
   resources :posts
 
+  match '/discussions/categories.:format' => 'discussions#create', :via => :post
+  match '/discussions/categories/:id.:format' => 'discussions#show', :via => :get
+  match '/discussions/categories/:id.:format' => 'discussions#destroy', :via => :delete
+  match '/discussions/categories/:id.:format' => 'discussions#update', :via => :put
+
   resources :categories, :controller => 'forum_categories' do
     collection do
       put :reorder
