@@ -25,8 +25,7 @@ class ChatsController < ApplicationController
                       :email  => params[:ticket][:email],
                       :subject  => params[:ticket][:subject],
                       :requester_name => params[:ticket][:name],
-                      :ticket_body_attributes => { :description_html => params[:ticket][:content] },
-                      :responder_id => params[:ticket][:agent_id]
+                      :ticket_body_attributes => { :description_html => params[:ticket][:content] }
                     }
     widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
     group = current_account.groups.find_by_id(params[:ticket][:group_id]) if params[:ticket][:group_id]
@@ -48,11 +47,6 @@ class ChatsController < ApplicationController
 
   def add_note 
     params[:userId] = current_user.id
-    ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-    if( ticket && (ticket.responder_id == nil || params[:updateAgent] == "true" ))
-      ticket.responder_id = current_user.id
-      ticket.save_ticket
-    end
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
   end
@@ -158,13 +152,6 @@ class ChatsController < ApplicationController
   #######
 
   def chat_note
-    if params[:updateAgent] == "true" 
-      ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-      if ticket
-        ticket.responder_id = params[:userId]
-        ticket.save_ticket
-      end
-    end
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
   end
