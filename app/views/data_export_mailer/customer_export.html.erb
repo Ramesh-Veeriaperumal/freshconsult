@@ -1,0 +1,12 @@
+Hi <%=@user%>,
+<br/>
+<br/>
+<%= "#{t('export_data.customer_export.body',:url => @url, :field => @field)}".html_safe %>
+<br/>
+<br/>
+<%=  @url %>
+<br/>
+<br/>
+Regards,
+<br/>
+<%= @user.account.helpdesk_name %> Support

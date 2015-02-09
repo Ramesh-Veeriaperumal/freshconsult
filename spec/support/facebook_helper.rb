@@ -2,6 +2,41 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 
 module FacebookHelper
   
+  def create_fb_tickets
+    @fb_page = create_test_facebook_page(@account)
+    @fb_page.update_attributes(:import_visitor_posts => true)
+    
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
+    facebook_fql_feed = sample_fql_feed(feed_id)
+    facebook_feed = sample_facebook_feed(true, feed_id, true, true)
+    
+    Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_fql_feed)
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
+    
+    fb_posts = Facebook::Fql::Posts.new(@fb_page)
+    fb_posts.fetch
+    
+    post = @account.facebook_posts.find_by_post_id(feed_id)
+    descendants = post.descendants
+    post.should_not be_nil
+    post.is_ticket?.should be_true
+    
+    ticket = post.postable
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
+    ticket.description.should eql facebook_feed[:message]
+    ticket.requester_id.should eql user_id
+
+    comment_feed = facebook_feed[:comments]["data"]
+    post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
+    post_comment.should_not be_nil
+    post_comment.is_note?.should be_true
+    
+    note = post_comment.postable
+    note.notable.should eql ticket
+    note.body.should eql comment_feed.first[:message]
+    [ticket, note]
+  end
+  
   def create_test_facebook_page(account = nil, populate_streams = false)
     account = create_test_account if account.nil?
     fb_page = FactoryGirl.build(:facebook_pages, :account_id => account.id)

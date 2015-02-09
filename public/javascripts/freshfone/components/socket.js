@@ -288,14 +288,11 @@ var FreshfoneSocket;
 		},
 		
 		toggleUserStatus: function  (status) {
-			if (status === userStatus.BUSY) {
-				this.freshfoneuser.setStatus(status); 
-			}
-			else {
-				freshfoneuser.setStatus(status); 
+			if (status !== userStatus.BUSY) {
 				freshfoneuser.online = freshfoneuser.isOnline();
-				freshfoneuser.userPresenceDomChanges();
 			}
+			freshfoneuser.setStatus(status);
+			freshfoneuser.userPresenceDomChanges();
 		},
 		updataTwilioDevice: function (token) {
 			if (freshfoneuser.newTokenGenerated) {

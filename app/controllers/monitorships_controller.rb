@@ -35,9 +35,9 @@ class MonitorshipsController < ApplicationController
 
     def monitorable_object_path
       if params[:object].include?("topic")
-        return category_forum_topic_path(monitorable_object.forum.forum_category, monitorable_object.forum, monitorable_object.id)
+        return discussions_topic_path(monitorable_object.id)
       else
-        return category_forum_path(monitorable_object.forum_category, monitorable_object.id)
+        return discussions_forum_path(monitorable_object.id)
       end
     end
 

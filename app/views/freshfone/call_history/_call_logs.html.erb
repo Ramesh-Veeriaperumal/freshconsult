@@ -77,6 +77,7 @@
 										"data-date" => call.created_at,
 										"data-customer-name" => call.customer_name, 
 										"data-responder-id" => call.agent ? call.agent.id : "",
+										"data-direct-dial-number" => call.direct_dial_number || "",
 										:title => t('freshfone.call_history.save_ticket')
 										%>
 			<% end %>

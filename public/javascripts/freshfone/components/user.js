@@ -47,7 +47,7 @@ var FreshfoneUser,
 			if (!this.updateUserPresence()) { this.online = !this.online; }
 		},
 		updateUserPresence: function () {
-			if (this.status === userStatus.BUSY) { return false; }
+			if (this.status === userStatus.BUSY) { this.setPresence(this.status, this.$userPresenceImage()); return false; }
 			
 			var status = (this.online ? userStatus.ONLINE : userStatus.OFFLINE);
 			
@@ -56,7 +56,16 @@ var FreshfoneUser,
 			return true;
 		},
 		userPresenceDomChanges: function () {
-			this.online ? this.onlineUserPresenceDomChanges() : this.offlineUserPresenceDomChanges();
+			switch (this.status) {
+				case 0 :
+					this.offlineUserPresenceDomChanges(); break;
+				case 1 :
+					this.onlineUserPresenceDomChanges(); break;
+				case 2 :
+					this.busyUserPresenceDomChanges(); break;
+				default :
+					ffLogger.logIssue("Unexpected error in setting user presence");
+			}
 		},
 		get_presence: function(callback) {
 			$.ajax({
@@ -79,15 +88,25 @@ var FreshfoneUser,
 		onlineUserPresenceDomChanges: function () {
 			this.$userPresenceImage()
 				.addClass('header-icons-agent-ffone-on')
-				.removeClass('header-icons-agent-ffone-off');
+				.removeClass('header-icons-agent-ffone-off')
+				.removeClass('header-icons-agent-ffone-busy');
 			this.$userPresence.attr('title', freshfone.freshfone_user_online_text);
 		},
 
 		offlineUserPresenceDomChanges: function () {
 			this.$userPresenceImage()
 				.addClass('header-icons-agent-ffone-off')
-				.removeClass('header-icons-agent-ffone-on');
+				.removeClass('header-icons-agent-ffone-on')
+				.removeClass('header-icons-agent-ffone-busy');
 			this.$userPresence.attr('title', freshfone.freshfone_user_offline_text);
+		},
+
+		busyUserPresenceDomChanges: function () {
+			this.$userPresenceImage()
+				.addClass('header-icons-agent-ffone-busy')
+				.removeClass('header-icons-agent-ffone-on')
+				.removeClass('header-icons-agent-ffone-off');
+			this.$userPresence.attr('title', freshfone.freshfone_user_busy_text);
 		},
 		
 		setPresence: function (status, $loading_element) {
@@ -150,16 +169,19 @@ var FreshfoneUser,
 			});
 		},
 
-		getCapabilityToken: function ($loading_element) {
+		getCapabilityToken: function ($loading_element, force_generate) {
 			/* Create the Client with a Capability Token */
 			var self = this;
+			if (this.busyRepress()) return;
 			this.newTokenGenerated = true;
 			if ($loading_element) { $loading_element.addClass('header-spinner'); }
+			var params = { "status": this.status }
+			if (force_generate) { params["force"] = true };
 			$.ajax({
 				type: 'POST',
 				dataType: "json",
 				url: '/freshfone/users/refresh_token',
-				data: { "status": this.status },
+				data: params,
 				success: function (data) {
 					if ($loading_element) { $loading_element.removeClass('header-spinner'); }
 					if (data.update_status) {
@@ -175,6 +197,16 @@ var FreshfoneUser,
 					ffLogger.logIssue("Unable get Capability Token for "+ CURRENT_USER.id, { "data" : data });
 				}
 			});
+		},
+
+		busyRepress: function() {
+			if (this.status != userStatus.BUSY) return false;
+			else if ((typeof this.lastRequested == 'undefined') || (new Date() - this.lastRequested >= 30000)) {
+				this.lastRequested = new Date();
+				return false;
+			};
+			ffLogger.logIssue("Repressing refresh_token for "+ CURRENT_USER.id + " because of repeated requests while busy");
+			return true;
 		},
 
 		updatePresence: function (async) {

@@ -245,7 +245,7 @@
         $('.ajaxerrorExplanation').toggle(false);
     }
     function isAddressAlreadyExisit(country_code) {
-        var alreadyExist = false;
+        var alreadyExist = false, self = this;
         toggleLoder(true);
         $.ajax({
           url: '/freshfone/address/inspect',

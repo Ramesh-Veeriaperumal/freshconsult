@@ -1,6 +1,7 @@
 require 'spec_helper'
 include Redis::TicketsRedis
 include Redis::RedisKeys
+include FacebookHelper
 
 RSpec.describe Helpdesk::TicketsController do
   setup :activate_authlogic
@@ -748,4 +749,24 @@ RSpec.describe Helpdesk::TicketsController do
       response.should render_template 'helpdesk/tickets/show/_ticket_fields'
       response.should be_success
     end
+  
+  it "should split the fb comment to a ticket, move all its child notes and update all the attributes of the old ticket" do
+    Resque.inline = true
+    
+    ticket, note = create_fb_tickets
+    
+    
+    post :split_the_ticket, { :id => ticket.display_id,
+          :note_id => note.id
+      }
+      
+    ticket.notes.find_by_id(note.id).should be_nil
+    new_ticket = @account.tickets.last
+    new_ticket.notes.count.should eql 1
+    new_ticket.activities.count.should eql 2
+    
+    Resque.inline = false
+  end
+
+  
 end

@@ -145,12 +145,14 @@ class Account < ActiveRecord::Base
     end
 
     def update_freshchat_url
-      Resque.enqueue(Workers::Freshchat, {
-        :account_id    => id,
-        :worker_method => "update_site", 
-        :siteId        => chat_setting.display_id, 
-        :attributes    => { :site_url => full_domain }
-      }) if full_domain_changed?
+      if full_domain_changed? && !chat_setting.display_id.blank?
+        Resque.enqueue(Workers::Livechat, {
+          :account_id    => id,
+          :worker_method => "update_site", 
+          :siteId        => chat_setting.display_id, 
+          :attributes    => { :site_url => full_domain }
+        })
+      end
     end
 
     def update_default_business_hours_time_zone

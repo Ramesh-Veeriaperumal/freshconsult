@@ -2,14 +2,6 @@
 require 'csv'
 module ExportCsvUtil
 DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
-EXPORT_CONTACT_FIELDS = [
-      {:label => "Name", :value => "name", :selected => true},
-      {:label => "Email",   :value => "email",    :selected => true},
-      {:label => "Job Title", :value => "job_title", :selected => false},
-      {:label => "Company", :value => "company_name", :selected => false},
-      {:label => "Phone", :value => "phone", :selected => false},
-      {:label => "Twitter ID", :value => "twitter_id", :selected => false}
-    ]
 
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
@@ -42,44 +34,14 @@ EXPORT_CONTACT_FIELDS = [
     csv_headers
   end
 
-  def export_contact_data(csv_hash)
-    csv_string = ""
-    items = current_account.contacts
-
-    unless csv_hash.blank?
-      csv_string = CSVBridge.generate do |csv|
-        headers = delete_invisible_contact_fields(csv_hash)
-        csv << headers
-        if headers.size == 1 and csv_hash[headers.first] == "company_name"
-          current_account.companies.each do |company|
-            csv << company.name
-          end
-        else
-          items.each do |record|
-            csv_data = []
-            headers.each do |val|
-              csv_data << record.send(csv_hash[val])
-            end
-            csv << csv_data if csv_data.any?
-          end
-        end
-      end
-    end
-    send_data csv_string, 
-            :type => 'text/csv; charset=utf-8; header=present', 
-            :disposition => "attachment; filename=contacts.csv"
-  end
-
-  def delete_invisible_contact_fields(csv_hash)
-    headers = csv_hash.keys
-      headers.delete_if{|header_key|
-        !visible_contact_fields.include?(csv_hash[header_key])
-      }
-    headers
-  end
-
-  def visible_contact_fields
-    @contact_fields ||= EXPORT_CONTACT_FIELDS.collect {|key| key[:value] }
+  def export_customer_fields type
+    return unless ["contact", "company"].include?(type)
+    custom_fields = Account.current.send("#{type}_form").fields
+    custom_fields.reject!{|x| ["client_manager","tag_names"].include?(x.name)} if type.eql?("contact")
+    custom_fields.collect { |cf| 
+            { :label => cf.label, 
+              :value => cf.name, 
+              :type => cf.field_type, :selected => false} }
   end
 
   def export_data(items, csv_hash, is_portal=false)

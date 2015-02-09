@@ -731,17 +731,20 @@ ol, ul, li{
 		vertical-align: top;
 	}
 
-    .form_title{
-    	font-weight: 300;
+  .form_title{
+    font-weight: 300;
 		font-size: 1.4em;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		width: 100%;
 		line-height: 1.4em;
-		span {
-			color: #888;
-			display: inline-block;
-		}
+			span {
+				color: #888;
+				display: inline-block;
+			}
+			.fb-title{
+				color:#333;
+			}
     }
 
     .ui-form {

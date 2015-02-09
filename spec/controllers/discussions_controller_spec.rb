@@ -129,4 +129,22 @@ describe DiscussionsController do
 			result.should_not be_nil
 		end
 	end
+
+	describe "assigning to all portals specified" do
+		it "should create one record for each specified portal in portal_forum_categories" do
+
+			p1 = create_product({
+								:portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
+                                })
+
+			p2 = create_product({
+                                :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
+                                })
+			
+			arr = [p1.portal.id, p2.portal.id, @account.main_portal.id]
+			@forum_category = create_test_category_with_portals(p1.portal.id, p2.portal.id)
+			result = @forum_category.portal_forum_categories.map(&:portal_id)
+			result.sort.should eql arr.sort
+		end
+	end
 end

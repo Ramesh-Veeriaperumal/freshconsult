@@ -22,7 +22,7 @@ module Helpdesk::DashboardHelper
 
 		sidebar_content.concat(render :partial => '/freshfone/freshfone_dashboard') if current_account.freshfone_active?
 
-		sidebar_content.concat(content_tag(:div, content_tag(:div, :class => "sloading loading-small loading-block").concat("<script>if(window.dashboardView){dashboardView.render(true);}</script>"),
+		sidebar_content.concat(content_tag(:div, content_tag(:div, :class => "sloading loading-small loading-block"),
 			:class => "sidepanel", :id => "chat-dashboard", :style => "display:none;"))
 
 		sidebar_content.html_safe
@@ -44,4 +44,8 @@ module Helpdesk::DashboardHelper
 	    }
 	     dropdown_menu filter_list, TOOLBAR_LINK_OPTIONS
 	end
+	
+	def chat_activated?
+    	!current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.display_id
+  	end
 end

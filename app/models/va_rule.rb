@@ -13,7 +13,7 @@ class VaRule < ActiveRecord::Base
   serialize :action_data
   
   validates_presence_of :name, :rule_type
-  validates_uniqueness_of :name, :scope => [:account_id, :rule_type]
+  validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
   validate :has_events?, :has_conditions?, :has_actions?
   
   before_save :set_encrypted_password

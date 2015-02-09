@@ -438,7 +438,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def execute_scenario 
     va_rule = current_account.scn_automations.find(params[:scenario_id])
-    unless va_rule.trigger_actions(@item, current_user)
+    unless (va_rule.visible_to_me? and va_rule.trigger_actions(@item, current_user))
       flash[:notice] = I18n.t("admin.automations.failure")
       respond_to do |format|
         format.html { 

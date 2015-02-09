@@ -11,6 +11,14 @@ module ForumHelper
 		forum_category
 	end
 
+	def create_test_category_with_portals(p1, p2)
+		forum_category = FactoryGirl.build(:forum_category, :account_id => @account.id,
+                                                    :name => Faker::Lorem.sentence(2),
+                                                    :portal_ids => [p1,p2])
+		forum_category.save(false)
+		forum_category
+	end
+
 	def create_test_forum(forum_category,type = 1)
 		forum = FactoryGirl.build(
 							:forum, 
@@ -24,7 +32,7 @@ module ForumHelper
 
 	def create_test_topic(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
-		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
 		topic = FactoryGirl.build(
 							:topic, 
 							:account_id => @account.id, 

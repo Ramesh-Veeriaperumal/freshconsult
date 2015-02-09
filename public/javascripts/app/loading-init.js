@@ -55,8 +55,8 @@
       hwaccel: false, // Whether to use hardware acceleration
     };
 
-    $(".sloading").livequery(function(){     
-      var opts = $spin_default;
+    $(".sloading").livequery(function(){  
+      var opts = $.extend({},$spin_default);
       if ($($(this).parent()).is(':hidden')) {
         $(this).addClass("loading-align");
       }

@@ -120,8 +120,8 @@ class Account < ActiveRecord::Base
   has_many :api_webhook_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
 
-  has_many :scn_automations, :class_name => 'ScenarioAutomations', :conditions =>{
-  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "position"
+  has_many :scn_automations, :class_name => 'ScenarioAutomation', :conditions =>{
+  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "name"
 
   has_many :all_scn_automations, :class_name => 'VaRule',:conditions => {
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
@@ -148,7 +148,6 @@ class Account < ActiveRecord::Base
   has_many :public_folders, :through => :solution_categories
   has_many :published_articles, :through => :public_folders,
     :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
-
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
@@ -234,6 +233,8 @@ class Account < ActiveRecord::Base
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
+  has_many :freshfone_whitelist_country, :class_name => "Freshfone::WhitelistCountry"
+  
   has_one :chat
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
 

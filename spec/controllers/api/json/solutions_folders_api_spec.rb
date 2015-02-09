@@ -8,6 +8,9 @@ RSpec.describe Solution::FoldersController do
   before(:all) do
     @user = create_dummy_customer
     @solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    @new_company = FactoryGirl.build(:company, :name => Faker::Name.name)
+    @new_company.save
+    @new_company.reload
   end
 
 
@@ -16,7 +19,7 @@ RSpec.describe Solution::FoldersController do
     http_login(@agent)
   end
 
- it "should be able to create a solution folder" do
+  it "should be able to create a solution folder" do
     params = solution_folder_api_params
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
@@ -45,6 +48,16 @@ RSpec.describe Solution::FoldersController do
     response.status.should === 200
   end
 
+  it "should be able to create a solution folder with visibility being selected companies" do
+    params = solution_folder_params_with_company_visibility
+    post :create, params.merge!(:category_id=>@solution_category.id,:format => 'json'), :content_type => 'application/json'
+    result = parse_json(response)
+    expected = (response.status === "201 Created") && (compare(result["folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
+    customer_id = @account.folders.find_by_name(params["solution_folder"]["name"] ).customer_folders.first.customer.id 
+    expected.should be(true)
+    customer_id.should be(@new_company.id)
+  end
+
   def solution_folder_api_params
     {
       "solution_folder"=>{
@@ -53,5 +66,13 @@ RSpec.describe Solution::FoldersController do
         "description"=>Faker::Lorem.sentence(3)
       }
     } 
+  end
+
+  def solution_folder_params_with_company_visibility
+    params = solution_folder_api_params
+    params["solution_folder"]["visibility"] = 4
+    customer_id = { "customer_folders_attributes" => { "customer_id" => "#{@new_company.id}" } }
+    params["solution_folder"].merge!(customer_id)
+    params
   end
 end

@@ -52,6 +52,25 @@ class DataExportMailer < ActionMailer::Base
       part.html { render "no_tickets", :formats => [:html] }
     end.deliver
   end
+
+  def customer_export(options={})
+    headers = {
+      :subject => "#{options[:type].capitalize} export for #{options[:domain]}",
+      :to      => options[:user].email,
+      :from    => "support@freshdesk.com",
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated", 
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply",
+      :sent_on   => Time.now
+    }
+    @user = options[:user]
+    @url = options[:url]
+    @field = options[:type]
+    @account = Account.current
+    mail(headers) do |part|
+      part.html { render "customer_export", :formats => [:html] }
+    end.deliver
+  end
  
   private
     def formatted_export_subject(options)

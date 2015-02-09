@@ -33,7 +33,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def validate_bcc_emails
     (bcc_email || "").split(",").each do |email|
-      errors.add(:base,"Invalid email: #{email}") unless email =~ ParserUtil::VALID_EMAIL_REGEX
+      errors.add(:base,"Invalid email: #{email}") unless email =~ AccountConstants::EMAIL_SCANNER
     end
   end
 

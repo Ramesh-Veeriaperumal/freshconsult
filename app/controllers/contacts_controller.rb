@@ -130,12 +130,16 @@ class ContactsController < ApplicationController
   end
 
   def configure_export
-    render :partial => "contacts/contact_export", :locals => {:csv_headers => EXPORT_CONTACT_FIELDS}
+    render :partial => "contacts/contact_export", :locals => {:csv_headers => export_customer_fields("contact")}
   end
 
   def export_csv
-    csv_hash = params[:export_fields]
-    export_contact_data csv_hash
+    portal_url = main_portal? ? current_account.host : current_portal.portal_url
+    Resque.enqueue(Workers::ExportContact, {:csv_hash => params[:export_fields], 
+                                            :user => current_user.id, 
+                                            :portal_url => portal_url})
+    flash[:notice] = t(:'contacts.export_start')
+    redirect_to :back
   end
   
   def show

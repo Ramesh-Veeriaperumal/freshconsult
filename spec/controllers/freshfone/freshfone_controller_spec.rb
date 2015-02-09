@@ -1,8 +1,9 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
-include Redis::IntegrationsRedis
 RSpec.configure do |c|
   c.include FreshfoneSpecHelper
+  c.include Redis::RedisKeys
+  c.include Redis::IntegrationsRedis
 end
 
 RSpec.describe FreshfoneController do
@@ -78,10 +79,47 @@ RSpec.describe FreshfoneController do
     response.body.should be_eql(expected)
   end
 
-  it 'should render valid json on credit_balance' do
-    log_in(@agent) 
-    get :credit_balance
-    json.should have_key :credit_balance
+  it "must be routable to the dial_check action" do
+     { :get => "freshfone/dial_check" }.should be_routable
+  end
+
+  it 'should render valid json on dial_check' do
+    log_in(@agent)
+    get :dial_check, { :phone_number => "+918754693849" } 
+    result = JSON.parse(response.body).symbolize_keys
+    result.has_key?(:status)
+    result.has_key?(:code)
+  end
+
+  it 'should respond with ok status' do
+    log_in(@agent)
+    get :dial_check, { :phone_number => "+918754693849" }
+    result = JSON.parse(response.body).symbolize_keys
+    result.should include(:status => "ok") 
+  end
+
+  it 'should respond with low credit status' do
+    log_in(@agent)
+    @account.freshfone_credit.update_attributes(:available_credit => 0.1)
+    get :dial_check, { :phone_number => "+918754693849" } 
+    result = JSON.parse(response.body).symbolize_keys
+    result.should include(:status => "low_credit") 
+  end
+
+  it 'should respond with dial restricted country status' do
+    log_in(@agent)
+    get :dial_check, { :phone_number => "+8558754693849" } 
+    result = JSON.parse(response.body).symbolize_keys
+    result.should include(:status => "dial_restricted_country") 
+  end
+
+  it "must throw exception if country is not present" do
+    log_in(@agent)
+    get :dial_check, { :phone_number => "+2478754693849" } 
+    begin
+      expect(response).to raise_error
+    rescue
+    end
   end
 
   it 'should apply indian number fix for incorrect caller id' do

@@ -391,20 +391,60 @@ span.fb_add
 .symbols-issue{ @extend .#{$font-class}warning; color:#d33d27; }
 .symbols-tag-edit{@extend .#{$font-class}pencil; }
 .symbols-tag-remove{@extend .#{$font-class}minus; }
+// Chat Archive
+.fc-conversation{
+	.recent-chats{		
+		li{
+			&:before{
+				@extend .#{$font-class-name}comments;
+			}
+		}
+	}
+}
 
 /* ====== Admin Font Settings ======== */
-.font-setting-wrapper{
-	.#{$font-class-name}save,.#{$font-class-name}cross{
+.font-setting-wrapper {
+	.#{$font-class-name}save,
+	.#{$font-class-name}cross {
 		color:#999;
 	}
-	.#{$font-class-name}save:hover,.#{$font-class-name}cross:hover{
+	.#{$font-class-name}save:hover,
+	.#{$font-class-name}cross:hover {
 		color:#000;
 	}
 }
 /* ==== Custom Contact Field Icons === */
 
-.#{$font-class-name}phone_number 	{ @extend .#{$font-class-name}freshfone; }
-.#{$font-class-name}url 			{ @extend .#{$font-class-name}link; }
+.#{$font-class-name}phone_number {
+	@extend .#{$font-class-name}freshfone;
+}
+.#{$font-class-name}url {
+	@extend .#{$font-class-name}link;
+}
+
+.dropdown-tick {
+	font-weight: bold;
+	color: #FFF;
+	position: absolute;
+	@include left(5px);
+	top: 5px;
+}
+.dropdown-menu.tick:not(.menu-pjax) .active:before { 
+	@extend .#{$font-class-name}checkmark-thick;
+	@extend .dropdown-tick;
+}
+.dropdown-menu.tick.menu-pjax .selected-tab {
+	&:before { 
+		@extend .#{$font-class-name}checkmark-thick;
+		@extend .dropdown-tick;
+		color: $dropdownLinkColor;
+	}
+	&:hover {
+		&:before {
+			color: $dropdownLinkColorHover;
+		}
+	}
+}
 
 // Chat conversation in ticket page
 .conversation_wrap{

@@ -49,7 +49,9 @@ stylesheets:
   :freshfone_admin  => [ "freshfone/admin"],
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
-  :freshchat_admin  => [ "chat/admin"],
+  :freshchat_admin  => [ "chat/admin","chat/visitor"],
+  :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
+  :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
   :cti => ["cti/cti"]
 } %>
@@ -185,6 +187,30 @@ javascripts:
 
   freshchat:
     - public/javascripts/freshchat/freshchat.js
+  
+  freshchat_templates:
+     # Templates
+    - public/javascripts/freshchat/templates/freshchat_archive.jst
+    - public/javascripts/freshchat/templates/freshchat_conversation.jst
+    - public/javascripts/freshchat/templates/freshchat_archive_row.jst
+    - public/javascripts/freshchat/templates/freshchat_visitor_details.jst
+    - public/javascripts/freshchat/dashboard/dashboard_template.jst
+
+  livechat_mini_dashboard:
+    - public/javascripts/freshchat/dashboard/dashboard.js
+
+  freshchat_archive:
+    #Library
+    - public/javascripts/report/daterangepicker.jQuery.js
+    - public/javascripts/freshchat/templates/visitor_list.jst
+    # Views
+    - public/javascripts/freshchat/views/archive_view.js
+    - public/javascripts/freshchat/views/conversation_view.js
+    - public/javascripts/freshchat/views/visitor/visitor_list.js
+    # Router
+    - public/javascripts/freshchat/router/router.js
+    # Main
+    - public/javascripts/freshchat/main.js
 
   freshchatreports:
     - public/javascripts/chat/report.js
@@ -521,11 +547,6 @@ javascripts:
     - public/javascripts/cti/czentrix/czentrix_custom.js
     - public/javascripts/cti/czentrix/click2Dial.js
     - public/javascripts/cti/czentrix/czentrix.js
-
-  five9:
-    - public/javascripts/cti/five9/Five9CTI-1.0.0.js
-    - public/javascripts/cti/five9/xml2json.js
-    - public/javascripts/cti/five9/five9_custom.js
 
   drishti:
     - public/javascripts/cti/ameyo/click2Dial.js

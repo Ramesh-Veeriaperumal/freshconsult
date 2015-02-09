@@ -1,0 +1,25 @@
+<tr id="visitor_list_<%=visitor.visitor_id || visitor.id%>" class="even">
+  <td class="visitor_list_time">
+    <%if(visitor.time){%> 
+    	<span data-livestamp=<%= visitor.time %> ></span>
+    <%}%>
+  </td>
+  <%if(visitor.sclass=="chat-visitor" ){ 
+    var userDetails=visitor.name+ " "+CHAT_I18n.chatting_with + " "+userCollection.get(visitor.agent).get( 'name');%> 
+    <td class="<%=visitor.sclass%> <%=(userDetails > 17) ? 'tooltip': ''%>" data-original-title="<%=userDetails%>"><i class="ficon-user" title="<%=visitor.tip%>"></i>
+    <span class="<%=(userDetails > 17) ? 'tooltip': ''%>">
+    	<%=visitor.name%><b><%=" "+CHAT_I18n.chatting_with + " "%> </b> <%=userCollection.get(visitor.agent).get('name')%>
+    </span>
+  <%}else{ var visitorName = visitor.name || visitor.msg; %> 
+  	<td class="<%=visitor.sclass%> <%=(visitorName > 17) ? 'tooltip': ''%>" data-original-title="<%=visitorName%>"><i class="ficon-user" title="<%=visitor.tip%>"></i>
+  	<a data-id="<%=visitor.id%>" data-widget-id="<%=visitor.widget_id%>" class = "visitor_chatnow"><span><%=visitorName%></span></a>
+ 	<%}%>
+  </td>
+  <td class="location <%=(visitor.location.length > 17) ? 'tooltip': ''%>" data-original-title="<%=visitor.location%>"><i class="ficon-map-marker"></i><span style="word-break: break-word;"><%=visitor.location%></span>
+  </td>
+  <td class="lookpage <%=(visitor.title.length > 	45) ? 'tooltip': ''%>"><i class="ficon-eye"></i>
+    <a href="<%=visitor.page%>" alt="<%=visitor.page%>" target="_blank">
+      <%=visitor.title%>
+    </a>
+  </td>
+</tr>

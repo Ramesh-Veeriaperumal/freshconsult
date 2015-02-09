@@ -6,6 +6,11 @@
 	<%= render :partial => 'title_bar' %>
 	<%= render :partial => 'sort_bar' if @forum.topics_count? %>
 <% end %>
+
+<% content_for :sticky_right do %>
+	<%= preview_portal(support_discussions_forum_path(@forum), @forum.forum_category) %>
+<% end %>
+
 <%= render :partial => '/discussions/shared/sticky', :locals => { :page => :forum } %>
 
 <% if @topics.blank? %>

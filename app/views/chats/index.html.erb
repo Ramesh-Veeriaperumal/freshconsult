@@ -1,0 +1,85 @@
+<% content_for :layoutType do -%><%- end %>
+<%= include_cloudfront_rtl_css :ui_daterangepicker %>
+<%= include_cloudfront_rtl_css :reports %>
+<%= include_cloudfront_rtl_css :freshchat_admin %>
+	<div id="loading-box">
+		<div class="sloading loading-left loading-small reports-loading"><%=t("freshchat.fetching")%></div>
+	</div>
+	<!-- report content -->
+	<div class="row-fluid" id="livechat_archive_page">
+		<div class="report-page normal-twipsy" id="report-page">
+			<div class="report-content-wrapper">
+			<!--report header-->
+				<div class="row-fluid report-header">
+					<div class="row-fluid">
+						<div class="span12 report-header-content">
+							<div class="vertical-alignment report-inner-heading">
+								<h1 class="lead fc-archive-title" id="report_header_title"><i class="ficon-comments fsize-28"></i><%=t("freshchat.message_archives")%></h1>
+							</div>
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div class="report-filter span12" id="report-filter-details">
+							<div class="vertical-alignment report-filter-slide-btn">
+								<a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding"><%=t("freshchat.edit")%></a>
+							</div>
+							<div class="filter-container">
+								<ul class="inline" id="filter_container">
+									<li><%=t('freshchat.filter_by')%>:</li> 
+									<li><%=t('filter_options.created_date_range')%>:<strong><%=@dateRange%></strong></li>
+									<li><%=t('freshchat.chat_type')%>: <strong>All</strong></li>
+									<li><%=t('freshchat.widget')%>: <strong>All</strong></li>
+									<li><%=t('filter_options.responder_id')%>:<strong>All</strong></li>
+								</ul>
+							</div>
+							<div class="report_filters fc-filter">
+								<a href="javascript:void(0);" class="drop-right nav-trigger" id="sorting-filter-head" menuid="#sorting-filter" data-sort-type = "desc" ><b><%=t('freshchat.sort_order')%></b> <%=t('freshchat.desc')%></a>
+								<ul class="fd-menu saved-reports-menu" id="sorting-filter" style="visibility: visible; display: none;">
+									<li disabled class="disabled"> <%=t('freshchat.createdAt')%></li>
+									<li class="seperator" ></li>
+									<li id="no-report-data" data-sort-type = "asc" class=""> <%=t('freshchat.asc')%></li>
+									<li id="no-report-data" data-sort-type = "desc" class=""> <%=t('freshchat.desc')%></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>   
+				<div id="archive-container" class="list-page fc-archives">
+				</div>
+			</div>
+		</div>
+		<!-- Filter Options -->
+		<div class="report-left-filter" id="report-filter-edit">
+			<div class="left-filter">    
+				<%= render :partial => "filter_options"%>
+			</div>
+		</div>
+		<!-- Conversation View -->
+		<div id ="conversation-wrap" >
+		</div>
+	</div>
+	<!--end report content-->
+<script type ="text/javascript" >
+	var freshChat =window.freshChat || {};
+	window.freshChat.widgetList = <%=@widgets%>
+	jQuery(document).on('ready pjax:end',function(){
+		var $dateElement = jQuery('#livechat_archive_page').find('#date_range');
+		if($dateElement.length >0){
+			$dateElement.off().daterangepicker({
+				latestDate: Date.parse('Today'),
+				presetRanges: [
+						{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
+						{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
+						{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+				],
+				presets: {
+						dateRange: '<%= t('reports.date_ranges.custom') %>'
+				},
+				dateFormat: window.getDateFormat('datepicker'),
+				closeOnSelect: true,
+				earliestDate: Date.parse('13/06/2013')
+			});
+		}
+	});
+</script>
+<%= include_cloudfront_js :freshchat_archive %>

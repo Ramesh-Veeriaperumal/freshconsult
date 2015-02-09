@@ -1,8 +1,6 @@
 # encoding: utf-8
 class User < ActiveRecord::Base
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
-
   USER_ROLES = [
      [ :admin,       "Admin",            1 ],
      [ :poweruser,   "Power User",       2 ],
