@@ -4,8 +4,6 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::AssetTagHelper
   
-  SECRET_KEY = "3f1fd135e84c2a13c212c11ff2f4b205725faf706345716f4b6996f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f"
-
   def fetch
     mobile_number = params[:user][:mobile]
     mobile_number = mobile_number[-10..-1] || mobile_number
@@ -62,6 +60,11 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       flash[:notice] = t(:'flash.general.create.failure',
                         { :human_name => t(:'cti.note.human_name') })
     end
+    # respond_to do |format|
+    #   format.json do 
+    #     render :json => {:type => "note",:Id => note.id }
+    #   end
+    # end
   end
 
   def create_ticket
@@ -95,27 +98,11 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       flash[:notice] = t(:'flash.general.create.failure',
                             { :human_name => t(:'cti.ticket.human_name') })
     end
-  end
-
-  def verify_session
-    req = Hash.from_xml(params[:requestXml])
-    pwd = req['request']['password']
-    email = req['request']['userId']
-     temp=Digest::SHA512.hexdigest("#{SECRET_KEY}::#{email}")
-     if temp.eql?(pwd)
-     render :xml => {:status => "success", :message => "Auth Successful",:crmSessionId => pwd}.to_xml(:root => "response")
-    else
-      render :xml => {:status => "failed", :message => "Incorrect Password",:crmSessionId => pwd}.to_xml(:root => "response")
-    end
-  end
-
-  def ameyo_session
-    email = params[:email]
-    session=Digest::SHA512.hexdigest("#{SECRET_KEY}::#{email}")
-    respond_to do |format|
-      format.json do 
-        render :json => {:text => "success",:sessionId => session}
-      end
-    end
+    # respond_to do |format|
+    #   format.js
+    #   format.json do 
+    #     render :json => {:type => "ticket",:Id => @ticket.id}
+    #   end
+    # end
   end
 end
