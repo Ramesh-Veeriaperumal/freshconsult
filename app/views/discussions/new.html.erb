@@ -6,7 +6,7 @@
 	<%= sidebar_toggle("mt4") %>
 	<h3 class="lead"><%=t 'category.new_forum_category'%> </h3>
 </div>
-<% form_for @forum_category, :url => discussions_path do |f| -%>
+<%= form_for @forum_category, :url => discussions_path do |f| -%>
 	<%= f.error_messages %>
 	<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
   <% if current_account.portals.count > 1 %>
