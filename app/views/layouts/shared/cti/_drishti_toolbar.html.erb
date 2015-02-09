@@ -2,7 +2,7 @@
 <%= render :partial => 'layouts/shared/cti/toolbar' %>
 <div id="ameyoIframeDiv"></div>
 
-<%= javascript_include_tag "http://" + (Integrations::InstalledApplication.with_name "drishti").first.configs[:inputs][:host_ip] + "/ameyowebaccess/en/js/ameyo-integration.js" %>
+<%= javascript_include_tag "//" + get_app_config('drishti')[:host_ip] + "/ameyowebaccess/en/js/ameyo-integration.js" %>
 
 	<script type="text/javascript" language="javascript"
 		src="/javascripts/cti/ameyo/ameyo_custom.js"></script>

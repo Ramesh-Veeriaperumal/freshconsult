@@ -602,6 +602,8 @@ Helpkit::Application.routes.draw do
           get :fetch 
           post :create_note
           post :create_ticket
+          get :ameyo_session
+          post :verify_session
         end
       end
     end
