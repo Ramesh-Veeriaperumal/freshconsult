@@ -19,13 +19,13 @@ class BusinessCalendar < ActiveRecord::Base
   before_create :set_default_version, :valid_working_hours?
   after_commit ->(obj) { 
       obj.clear_cache
-      chatBusinessCalendarUpdate('update') 
+      update_livechat_bc_data
     }, on: :update
 
   # ##### Added to mirror db changes in helpkit to freshchat db
   after_commit ->(obj) { 
       obj.clear_cache 
-      chatBusinessCalendarUpdate('destroy') 
+      remove_livechat_bc_data
     }, on: :destroy
   ####
   
@@ -224,13 +224,29 @@ class BusinessCalendar < ActiveRecord::Base
        @business_hour_caller.business_calendar
     end
 
-    def chatBusinessCalendarUpdate(type)
+    def remove_livechat_bc_data
+      calendar_data = nil
+      update_livechat calendar_data
+    end
+
+    def update_livechat_bc_data
+      calendar_data = JSON.parse(self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
+      update_livechat calendar_data
+    end
+
+    def update_livechat calendar_data
       if account.features?(:chat)
         widgets = account.chat_widgets.find(:all, :conditions => {:business_calendar_id => id})
         widgets.each do |widget|
           site_id = account.chat_setting.display_id
-          calendar_data = if (type.eql? "destroy") then nil else JSON.parse(self.to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar'] end
-          Resque.enqueue(Workers::Freshchat, {:worker_method => "update_widget", :widget_id => widget.widget_id, :siteId => site_id, :attributes => { :business_calendar => calendar_data}})
+          Resque.enqueue(Workers::Livechat, 
+            {
+              :worker_method => "update_widget", 
+              :widget_id => widget.widget_id, 
+              :siteId => site_id, 
+              :attributes => { :business_calendar => calendar_data}
+            }
+          )
         end
       end
     end

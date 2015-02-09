@@ -1,6 +1,9 @@
 class Helpdesk::KbaseArticles
   extend Helpdesk::Utils::Attachment
-  def self.create_article_from_email(article_params)  
+
+  class << self
+
+  def create_article_from_email(article_params)  
     account = Account.find(article_params[:account])
     user = account.users.find(article_params[:user])
 
@@ -9,23 +12,29 @@ class Helpdesk::KbaseArticles
       create_article_attachments(article_params, article, account)
     end
   end
-      
-  def self.from_support_email?(user, account)
+
+  def from_support_email?(user, account)
     account.email_configs.select{ |x| x.reply_email == user.email }.present?
   end
 
-  def self.create_article_attachments(article_params, article, account)
+  def create_article_attachments(article_params, article, account)
     
     temp_body_html = String.new(article.description)
     content_ids = article_params[:content_ids] 
    
     article_params[:attachments].each_pair do |key,value|
+
       content_id = content_ids[key]
-      description = "content_id" unless content_id.nil?
-      created_attachment = {:content => value, :account_id => account.id, :description => description}
-      created_attachment = create_attachment_from_params(article,created_attachment,nil,key)
-      created_attachment.save
-      temp_body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+
+      attachment = {
+        :content => value, 
+        :account_id => account.id, 
+        :description => content_id.present? ? 'content_id' : ''
+      }
+
+      attachment = create_attachment(content_id.present? ? account : article, attachment, key, content_id.present?)
+      attachment.save
+      temp_body_html.sub!("cid:#{content_id}", attachment.content.url) if content_id.present?
     end
 
     unless content_ids.blank?
@@ -33,7 +42,16 @@ class Helpdesk::KbaseArticles
     end
   end
 
-  def self.create_article_from_note(account, user, title, description, attachments)
+  def create_attachment(parent, created_attachment, name, inline)
+    if inline
+      created_attachment.merge!({:attachable_type => "Image Upload"})
+      parent.attachments.build(created_attachment)
+    else
+      create_attachment_from_params(parent, created_attachment, nil, name)
+    end
+  end
+
+  def create_article_from_note(account, user, title, description, attachments)
     article = add_knowledge_base_article(account, user, title, description)        
 
     (attachments || []).each do |attachment|
@@ -41,7 +59,7 @@ class Helpdesk::KbaseArticles
     end
   end
 
-  def self.add_knowledge_base_article(account, user, title, description) 
+  def add_knowledge_base_article(account, user, title, description) 
     
     default_category = account.solution_categories.find_by_is_default(true)
     default_folder = default_category.folders.find_by_is_default(true) if default_category
@@ -61,4 +79,5 @@ class Helpdesk::KbaseArticles
     end
   end
 
+  end
 end

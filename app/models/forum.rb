@@ -49,6 +49,13 @@ class Forum < ActiveRecord::Base
                     :conditions => visiblity_condition(user) } }
 
 
+  scope :in_categories, lambda {|category_ids|
+    {
+      :conditions => {
+        :forum_category_id => category_ids
+      }
+    }
+  }
   def self.visiblity_condition(user)
     condition = "forums.forum_visibility IN (#{self.visibility_array(user).join(",")})"
     condition +=  " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}

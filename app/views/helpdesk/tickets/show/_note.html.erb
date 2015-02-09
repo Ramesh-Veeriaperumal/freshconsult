@@ -62,7 +62,7 @@ minimizable ||= false
 								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.can_split? %> 
         <% end %>
         <% if privilege?(:reply_ticket) and note.fb_reply_allowed? %>
-						 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>"><span class="ficon-reply"></span>
+						 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>" data-note-requester-name="<%= note.user.blank? ? "" : note.user.name %>"><span class="ficon-reply"></span>
            </a>
         <% end %>  
         <% if privilege?(:forward_ticket) %>

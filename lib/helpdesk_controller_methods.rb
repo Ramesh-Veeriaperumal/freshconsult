@@ -259,7 +259,7 @@ protected
       if @cname == "note"
         page << "trigger_event('note_deleted', #{to_event_data(@items[0])});"
         page << "if(document.getElementById('cnt-reply-quoted')){"
-        page.replace_html 'cnt-reply-quoted', quoted_text(@parent) if @parent
+        page.replace_html 'cnt-reply-quoted', h(quoted_text(@parent)) if @parent
         page << "}"
       end
       show_ajax_flash(page)

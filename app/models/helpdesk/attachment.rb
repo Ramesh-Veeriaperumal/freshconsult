@@ -41,9 +41,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
 
-    #before_validation_on_create :set_random_secret
     before_post_process :image?, :valid_image?
-    #before_post_process :set_content_dispositon
     before_create :set_content_type
     before_save :set_account_id
 

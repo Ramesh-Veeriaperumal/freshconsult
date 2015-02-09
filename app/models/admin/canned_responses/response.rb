@@ -4,6 +4,8 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   self.primary_key = :id
   
   include Mobile::Actions::CannedResponse
+  include Search::ElasticSearchIndex
+  include Helpdesk::Accessible::ElasticSearchMethods
 
   belongs_to_account
 
@@ -83,6 +85,18 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     }
   }
 
+  INCLUDE_ASSOCIATIONS_BY_CLASS = {
+    Admin::CannedResponses::Response => { :include => [:folder, {:helpdesk_accessible => [:group_accesses, :user_accesses]}]}
+  }
+
+   def to_indexed_json
+    to_json({
+        :root =>"admin/canned_responses/response", 
+        :tailored_json => true, 
+        :only => [:account_id, :title, :folder_id],
+        :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+      })
+  end
 
   private
 

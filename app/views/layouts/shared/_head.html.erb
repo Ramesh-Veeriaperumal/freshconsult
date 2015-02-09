@@ -61,14 +61,17 @@
 
 
 	<% if current_account.features?(:freshfone) ||
-		 (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
+	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= javascript_include_tag :'cdn/soundmanager' %>
 	<% end %>
-	
-	<% if chat_activated? && !current_account.features_included?(:collision) %>
+	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>
 		<%= javascript_include_tag :'cdn/freshchat' %>
 	<% end %>
 	
+	<% if chat_activated? %>
+    <%= javascript_include_tag :'cdn/freshchat_templates' %>
+	<% end %> 
+
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
 	<script type="text/javascript">

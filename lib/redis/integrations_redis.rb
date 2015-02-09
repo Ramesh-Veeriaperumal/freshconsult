@@ -61,6 +61,10 @@ module Redis::IntegrationsRedis
 		newrelic_begin_rescue { $redis_integrations.smembers(key) }
 	end
 
+	def is_value_in_set? key, value
+		newrelic_begin_rescue { return $redis_integrations.sismember(key, value) }
+	end
+
 	def remove_value_from_set(key, value)
 		newrelic_begin_rescue { $redis_integrations.srem(key, value) }
 	end

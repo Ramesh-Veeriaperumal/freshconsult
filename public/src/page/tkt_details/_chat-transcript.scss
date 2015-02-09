@@ -7,6 +7,9 @@
   }
   position: relative;
 	@include padding(10px 20px 10px 40px);
+  b{
+    font-weight: 500;
+  }
 	.conversation-title{
 		@include padding(0 0 8px 16px);
 		font-size: 12px;

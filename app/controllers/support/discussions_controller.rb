@@ -9,17 +9,19 @@ class Support::DiscussionsController < SupportController
 	def index
 		respond_to do |format|
 			format.html {
-        set_portal_page :discussions_home 
-      }
-	  end
+				load_agent_actions(categories_discussions_path, :view_forums)
+				set_portal_page :discussions_home 
+			}
+		end
 	end
 
 	def show  
 		respond_to do |format|
 			format.html { 
-        load_page_meta
-        set_portal_page :discussions_category 
-      }
+				load_agent_actions(discussion_path(@category), :view_forums)
+				load_page_meta
+				set_portal_page :discussions_category 
+			}
 		end
 	end	
 
@@ -39,13 +41,8 @@ class Support::DiscussionsController < SupportController
 
   	private
 		def load_category
-			if current_portal.main_portal
-				@category = current_portal.forum_categories.find_by_id(params[:id])
+			@category = current_portal.forum_categories.find_by_id(params[:id])
 				(raise ActiveRecord::RecordNotFound and return) if @category.blank? || params[:id] !~ /^[0-9]*$/
-			else
-				@category = current_portal.forum_category
-				(raise ActiveRecord::RecordNotFound and return) if @category[:id].to_s != params[:id].to_s
-			end
 		end
     
     def load_page_meta

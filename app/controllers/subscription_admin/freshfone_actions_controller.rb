@@ -4,7 +4,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
   around_filter :select_shard, :except => [:index]
   before_filter :validate_credits, :only => [:add_credits]
   before_filter :validate_freshfone_action, :only => [:process_freshfone_account]
-  before_filter :notify_freshfone_ops, :except => [:index]
+  before_filter :notify_freshfone_ops, :except => [:index, :get_country_list]
 
   def add_credits
     @freshfone_credit = @account.freshfone_credit
@@ -24,6 +24,17 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
       redirect_to :back
     end
   end 
+
+  def country_restriction
+    if params[:status] == 'Whitelist'
+      enable_country
+    elsif params[:status] == 'Blacklist'
+      disable_country
+    end
+    if request.xhr?
+      render :partial => "credits" 
+    end
+  end
 
   def port_ahead
     display_number = params[:display_number] || params[:number]
@@ -76,7 +87,40 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
     redirect_to :back
   end
 
+  def get_country_list
+    overall_country_list = {}
+    overall_country_list[:to_blacklist] = get_country_name_list.reject(&:blank?) 
+    blacklist_country_hash = Freshfone::Config::WHITELIST_NUMBERS.find_all{ |key,value| value["enabled"] == false}
+    overall_country_list[:to_whitelist] = blacklist_country_hash.map{ |k,v| v["name"] } - overall_country_list[:to_blacklist]
+    respond_to do |format|
+     format.json do
+       render :json => overall_country_list
+     end
+    end
+  end
+
   private
+    def get_country_name_list
+      whitelist_country_list = []
+      whitelist_country_code_list = @account.freshfone_whitelist_country.all.collect {|w| w.country}
+      whitelist_country_code_list.each do |code|
+         whitelist_country_list << Freshfone::Config::WHITELIST_NUMBERS.find_all{ |key,value| key == code}.map{|k,v| v["name"]}.to_s
+      end
+      return whitelist_country_list
+    end
+
+    def get_country_code(country_name)
+      Freshfone::Config::WHITELIST_NUMBERS.find{ |key,value| value["name"] == country_name }.first
+    end
+
+    def enable_country
+      @account.freshfone_whitelist_country.create(:country => get_country_code(params[:country_list])) 
+    end
+
+    def disable_country
+      @account.freshfone_whitelist_country.find_by_country(get_country_code(params[:country_list])).destroy                                      
+    end
+
     def update_credits
       if @freshfone_credit.increment!(:available_credit, params[:credits].to_i)
         create_payment params[:credits]
@@ -117,7 +161,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
       type = params[:action].humanize
       subject = "admin.freshdesk : #{type} for Account #{@account.id}"
       message = "#{type} for account #{@account.id} by #{current_user.name}<#{current_user.email}>
-                 Parameters :: #{params.except(:action, :controller).map{|k,v| "#{k}=#{v}"}.join(' & ')}"
+                 Parameters :: #{params.except(:action, :controller, :authenticity_token).map{|k,v| "#{k}=#{v}"}.join(' & ')}"
       FreshfoneNotifier.deliver_freshfone_email_template(@account, {
         :subject => subject,
         :recipients => FreshfoneConfig['ops_alert']['mail']['to'],

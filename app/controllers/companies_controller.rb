@@ -2,6 +2,7 @@
 class CompaniesController < ApplicationController
   
   include HelpdeskControllerMethods
+  include ExportCsvUtil
   
   before_filter :set_selected_tab
   before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies]
@@ -98,6 +99,19 @@ class CompaniesController < ApplicationController
 
   def sla_policies
     render :layout => false
+  end
+
+  def configure_export
+    render :partial => "company_export", :locals => {:csv_headers => export_customer_fields("company")}
+  end
+
+  def export_csv
+    portal_url = main_portal? ? current_account.host : current_portal.portal_url
+    Resque.enqueue(Workers::ExportCompany, {:csv_hash => params[:export_fields], 
+                                            :user => current_user.id, 
+                                            :portal_url => portal_url})
+    flash[:notice] = t(:'companies.export_start')
+    redirect_to :back
   end
   
   protected

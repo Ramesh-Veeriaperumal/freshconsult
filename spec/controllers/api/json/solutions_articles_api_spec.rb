@@ -59,6 +59,22 @@ RSpec.describe Solution::ArticlesController do
       :tags => {:name => "new"},:format => 'json'), :content_type => 'application/json'
     response.status.should === 406
   end
+  
+  it "should reset thumbs_up and thumbs_down & destroy the votes for that article when reset ratings is done xml" do
+    @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @solution_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    @user_1 = create_dummy_customer
+    @test_article.thumbs_up = rand(5..10)
+    @test_article.thumbs_down = rand(5..10)
+    @test_article.votes.build(:vote => 1, :user_id => @user.id)
+    @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
+    @test_article.save
+    put :reset_ratings, :id => @test_article.id, :format => 'json'
+    @test_article.reload
+    expected = (response.status === "200 OK" && @test_article.thumbs_up === 0 && @test_article.thumbs_down === 0 && @test_article.votes === [])
+    expected.should be(true)
+  end
+  
 
   def article_api_params
     {

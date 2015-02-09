@@ -19,14 +19,14 @@ class AgentGroup < ActiveRecord::Base
         :conditions => ["agents.available = ?",true]
 
   def remove_from_chatgroup_channel
-    Resque.enqueue(Workers::Freshchat, {:worker_method =>"group_channel",
+    Resque.enqueue(Workers::Livechat, {:worker_method =>"group_channel",
                                         :siteId => account.chat_setting.display_id,
                                         :agent_id => user_id, :group_id => group_id,
                                         :type => 'remove'}) if account.freshchat_routing_enabled?
   end
 
   def add_to_chatgroup_channel
-    Resque.enqueue(Workers::Freshchat, {:worker_method =>"group_channel",
+    Resque.enqueue(Workers::Livechat, {:worker_method =>"group_channel",
                                         :siteId => account.chat_setting.display_id,
                                         :agent_id => user_id, :group_id => group_id,
                                         :type => 'add'}) if account.freshchat_routing_enabled?

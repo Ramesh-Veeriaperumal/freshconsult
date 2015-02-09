@@ -133,7 +133,7 @@ SalesforceWidget.prototype= {
 							sfcontact[contactfields[i]]=this.salesforceWidget.getAddress(contact.MailingStreet,contact.MailingState,contact.MailingCity,contact.MailingCountry);
 						}
 						else{
-							sfcontact[contactfields[i]] = contact[contactfields[i]];
+							sfcontact[contactfields[i]] = escapeHtml(contact[contactfields[i]]);
 						}
 					}
 				}
@@ -146,7 +146,7 @@ SalesforceWidget.prototype= {
 							sfcontact[leadfields[i]]=this.salesforceWidget.getAddress(contact.Street,contact.State,contact.City,contact.Country);
 						}
 						else{
-							sfcontact[leadfields[i]] = contact[leadfields[i]]
+							sfcontact[leadfields[i]] = escapeHtml(contact[leadfields[i]]);
 						}
 					}
 				}
@@ -159,7 +159,7 @@ SalesforceWidget.prototype= {
 							sfcontact[accountfields[i]]=this.salesforceWidget.getAddress(contact.Street,contact.State,contact.City,contact.Country);
 						}
 						else{
-							sfcontact[accountfields[i]] = contact[accountfields[i]]
+							sfcontact[accountfields[i]] = escapeHtml(contact[accountfields[i]]);
 						}
 					}
 				}
@@ -177,7 +177,7 @@ SalesforceWidget.prototype= {
 		country = (country) ? (city + ", " + country)  : city;
 		address = street + state + country;
 		address = (address == "") ? null : address
-		return address;
+		return escapeHtml(address);
 	},
 	getTemplate:function(eval_params,crmWidget){
 		var contactTemplate ="";

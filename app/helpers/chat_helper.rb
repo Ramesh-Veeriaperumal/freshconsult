@@ -1,5 +1,7 @@
 module ChatHelper
 
+  include Livechat::Token
+  
   def ticket_link_options
     return [  [  "...",  -1],
               [  I18n.t('freshchat.feedback_widget'),  0],
@@ -69,8 +71,8 @@ module ChatHelper
   def default_prechat_fields
     return {
       :name      => { :title => t("freshchat.name"), "show" => "2" },
-      :email     => { :title => t("freshchat.mail"), "show" => "1" },
-      :phone     => { :title => t("freshchat.phone"), "show" => "1" },
+      :email     => { :title => t("freshchat.mail"), "show" => "2" },
+      :phone     => { :title => t("freshchat.phone"), "show" => "0" },
       :textfield => { :title => t("freshchat.textfield"), "show" => "0" },
       :dropdown  => { :title => t("freshchat.dropdown"), "show"=> "0", "options"=> ["list1","list2","list3"]}
     }.to_json.html_safe
@@ -165,7 +167,7 @@ module ChatHelper
             :agent => t("freshchat.agent"),
             :back => t("freshchat.back"),
             :select_location => t("freshchat.select_location"),
-            :visitors_online => t("freshchat.visitors_online"),
+            :new_visitors => t("freshchat.new_visitors"),
             :visitor_disconnect_msg => t("freshchat.visitor_disconnect_msg"),
             :last_message => t("freshchat.last_message"),
             :typing_message => t("freshchat.typing_message"),

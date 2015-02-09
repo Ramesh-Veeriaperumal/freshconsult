@@ -12,7 +12,7 @@ function handleOnLoad() {
 	if(a) return;
 	a++;
 	jQuery.ajax({
-          url: '/integrations/cti/customer_details/get_session',
+          url: '/integrations/cti/customer_details/ameyo_session.json',
           type: 'GET',
           data: {"email" : cti_user.email},
           success: function (response) {

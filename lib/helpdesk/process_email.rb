@@ -3,6 +3,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
+  include AccountConstants
   include EmailHelper
   include Helpdesk::ProcessByMessageId
   include ActionView::Helpers::TagHelper
@@ -12,7 +13,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Utils::Attachment
   include Helpdesk::Utils::ManageCcEmails
 
-  EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
   attr_accessor :reply_to_email, :additional_emails

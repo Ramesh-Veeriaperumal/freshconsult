@@ -16,8 +16,8 @@ class EmailConfig < ActiveRecord::Base
   validates_presence_of :to_email, :reply_email
   validates_uniqueness_of :reply_email, :scope => :account_id
   validates_uniqueness_of :activator_token, :allow_nil => true
-  validates_format_of :reply_email, :with => ParserUtil::VALID_EMAIL_REGEX, :message => I18n.t('activerecord.errors.messages.invalid')
-  validates_format_of :to_email, :with => ParserUtil::VALID_EMAIL_REGEX, :message => I18n.t('activerecord.errors.messages.invalid')
+  validates_format_of :reply_email, :with => AccountConstants::EMAIL_SCANNER, :message => I18n.t('activerecord.errors.messages.invalid')
+  validates_format_of :to_email, :with => AccountConstants::EMAIL_SCANNER, :message => I18n.t('activerecord.errors.messages.invalid')
   
   xss_sanitize  :only => [:to_email,:reply_email], :plain_sanitizer => [:to_email,:reply_email]
   

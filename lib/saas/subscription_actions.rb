@@ -117,7 +117,7 @@ class SAAS::SubscriptionActions
 
     def disable_chat_routing(account)
       site_id = account.chat_setting.display_id
-      Resque.enqueue(Workers::Freshchat, {:worker_method => "disable_routing", :site_id => site_id}) unless site_id.blank?
+      Resque.enqueue(Workers::Livechat, {:worker_method => "disable_routing", :site_id => site_id}) unless site_id.blank?
     end
  
 end

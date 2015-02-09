@@ -19,21 +19,18 @@ module Facebook::Util
           :post_id          => koala_feed.feed_id,
           :facebook_page_id => fan_page.id,
           :parent_id        => nil,
-          :post_attributes  => {
-            :can_comment => can_comment,
-            :post_type   => koala_feed.post_type
-          }
+          :post_attributes  => post_attributes(koala_feed, can_comment)
         },
         :ticket_body_attributes => {
           :description      => koala_feed.description,
           :description_html => koala_feed.description_html
         }
       )
-
       if ticket.save_ticket
         if real_time_update && !koala_feed.created_at.blank?
           @fan_page.update_attribute(:fetch_since, koala_feed.created_at.to_i)
         end
+
       else
         puts "error while saving the ticket:: #{ticket.errors.to_json}"
         ticket = nil
@@ -90,6 +87,17 @@ module Facebook::Util
       end
     end
     return note
+  end
+  
+  
+  private
+  def post_attributes(koala_feed, can_comment)
+    post_attributes = {
+      :can_comment => can_comment,
+      :post_type   => koala_feed.post_type  
+    }
+    post_attributes.merge!({:original_post_id => koala_feed.original_post_id}) unless koala_feed.original_post_id.blank?
+    post_attributes
   end
   
 end

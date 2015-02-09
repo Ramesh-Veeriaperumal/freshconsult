@@ -2,6 +2,7 @@ module Helpdesk::Email::TicketMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
   include ParserUtil
+  include AccountConstants
 
   def get_original_user
     get_user(orig_email_from_text , email[:email_config], email[:text]) unless orig_email_from_text.blank?

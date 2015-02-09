@@ -111,8 +111,14 @@ class Solution::ArticlesController < ApplicationController
   def reset_ratings
     @article.update_attributes(:thumbs_up => 0, :thumbs_down => 0 )
     @article.votes.destroy_all
-  end
   
+    respond_to do |format|
+      format.js
+      format.xml  { head :ok }
+      format.json { head :ok }
+    end
+  end
+
   protected
 
     def load_article

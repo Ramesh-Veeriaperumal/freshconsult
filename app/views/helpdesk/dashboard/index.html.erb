@@ -8,3 +8,7 @@
 </div>
 
 <%= render :partial => 'sidebar' %>
+<% if chat_activated? %>
+	<%= javascript_include_tag :'cdn/livechat_mini_dashboard' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/livechat_mini_dashboard' %>
+<% end %>

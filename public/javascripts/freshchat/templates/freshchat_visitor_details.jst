@@ -1,0 +1,82 @@
+<div class="editing">
+	<div class="title">
+		<span class="name">Visitor Detail</span> 
+		<a  id = "cancel-visitor-detail" href="#" class="btn btn-primary hide">Close</a>
+		<a  id = "save-visitor-detail" href="#" class="btn btn-primary hide">Save</a>
+	</div>
+	<form action="#">
+		<input id ="visitorname" type="text" placeholder="Name" value = "<%=visitorData.name%>">
+		<input id ="visitoremail" type="text" placeholder="Email" value = "<%=(visitorData.email == null )? "" : visitorData.email %>">
+		<input id ="visitorphone" type="text" placeholder="Phone" value = "<%=(visitorData.phone == null )? "" : visitorData.phone %>">
+	</form>
+</div>
+<ul class="info">
+	<% if(visitorData.custom_field1 != null){ %> <li><%=visitorData.widget.textfield.title%> : <%=visitorData.custom_field1 %></li> <% } %>
+	<% if(visitorData.custom_field2 != -1 && visitorData.custom_field2 != null) { %> <li><%=visitorData.widget.dropdown.title%> : <%=visitorData.custom_field2 %></li> <% } %>
+	<li><i class="ficon-map-marker"></i><%=(visitorData.location == null )? "Unknown" : visitorData.location %></li>
+	<%if(userAgent){ %>
+	<li><i class="ficon-web-page"></i><a href="<%=userAgent.page%>" alt="<%=userAgent.page%>" title="<%=userAgent.page%>" target="_blank"><%=userAgent.title%></a></li>
+	
+	<% if(userAgent.family){
+			print('<li><i class="ficon-'+userAgent.family.toLowerCase()+'"></i>');
+			if(_.isEmpty(userAgent.major)){
+				print(userAgent.family);
+			}else{
+				if(_.isEmpty(userAgent.minor)){
+					print(userAgent.family+" " + userAgent.major);
+				}else{
+					if(_.isEmpty(userAgent.patch)){
+						print(userAgent.family+" " +userAgent.major +"."+userAgent.minor);
+					}else{
+						print(userAgent.family+" " +userAgent.major +"."+userAgent.minor + "." + userAgent.patch);
+					}
+				}
+			}
+			print("</li>");
+		} else{
+			print("<li><i class='ficon' ></i>Browser Unknown</li>");
+		}
+
+	 if(userAgent.os && userAgent.os.family){
+			print('<li><i class="ficon-'+userAgent.os.family.toLowerCase()+'"></i>');
+			if(_.isEmpty(userAgent.os.major)){
+				print(userAgent.os.family);
+			}else{
+				if(_.isEmpty(userAgent.os.minor)){
+					print(userAgent.os.family+" " + userAgent.os.major);
+				}else{
+					if(_.isEmpty(userAgent.os.patch)){
+						print(userAgent.os.family+" " +userAgent.os.major +"."+userAgent.os.minor);
+					}else{
+						print(userAgent.os.family+" " +userAgent.os.major +"."+userAgent.os.minor + "." + userAgent.os.patch);
+					}
+				}
+
+			}
+			print("</li>")
+		} else{
+			print("<li><i class='ficon' ></i>OS Unknown</li>");
+		}
+
+	} %>
+	
+</ul>
+<hr>
+<div class="recent-chats" id="recent-chats">
+	<% if(recentChats && recentChats.length > 0){%>
+	<h5>RECENT CHATS</h5>
+	<ul>
+		<% for(var i = 0; i < recentChats.length ;i++){ %>
+		<li>
+			<div class='title'>
+				<a id="navigateMessage" href="#" data-id="<%=recentChats[i].chat_id%>">
+					Chat With <%=window.userCollection.getTitle(parseInt(recentChats[i].agent_id))%></a>
+			</div>
+			<span><%=window.moment(recentChats[i].created_at).fromNow()%></span>
+		</li>	
+		<% } %>
+	</ul>
+	<%}else{ %>
+		<div class ="no-data"> No Recent Chats </div>
+	<% } %>
+</div>

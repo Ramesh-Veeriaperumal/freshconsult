@@ -184,7 +184,7 @@ Helpkit::Application.routes.draw do
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
-  resources :solutions_uploaded_images, :only => [:index, :create]
+  resources :solutions_uploaded_images, :only => [:index, :create, :create_file]
   resources :forums_uploaded_images, :only => :create
   resources :tickets_uploaded_images, :only => :create
 
@@ -221,6 +221,8 @@ Helpkit::Application.routes.draw do
       delete :destroy
       post :quick
       post :create_company
+      get :configure_export
+      post :export_csv
     end
     resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
@@ -241,6 +243,8 @@ Helpkit::Application.routes.draw do
       post :unblock
       post :restore
       post :create_contact
+      get :configure_export
+      post :export_csv
     end
 
     member do
@@ -452,11 +456,11 @@ Helpkit::Application.routes.draw do
       post :build_ticket
       get :dashboard_stats
       get :get_available_agents
-      get :credit_balance
       post :ivr_flow
       post :voice_fallback
       post :create_note
       post :create_ticket
+      get :dial_check
     end
   end
 
@@ -602,6 +606,8 @@ Helpkit::Application.routes.draw do
           get :fetch 
           post :create_note
           post :create_ticket
+          post :verify_session
+          get :ameyo_session
         end
       end
     end
@@ -1351,6 +1357,10 @@ Helpkit::Application.routes.draw do
         get :unachieved
       end
     end
+    resources :canned_responses, :collection => {:search => :get, :recent => :get}
+    resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get}
+    resources :reminders, :member => { :complete => :put, :restore => :put }
+    resources :time_sheets, :member => { :toggle_timer => :put}
 
     resources :notes
 
@@ -1437,10 +1447,6 @@ Helpkit::Application.routes.draw do
     match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
     # Mobile apps routes end.
 
-    #freshchat routes with helpdesk namespace - start
-    match '/freshchat/visitor/:filter' => 'visitor#index', :as => :visitor
-    match '/freshchat/chat/:filter' => 'visitor#index', :as => :chat_archive
-    #freshchat routes with helpdesk namespace - end
 
     match '/sales_manager' => 'dashboard#sales_manager'
     match '/agent-status' => 'dashboard#agent_status'
@@ -1491,12 +1497,10 @@ Helpkit::Application.routes.draw do
       collection do 
         get :search
         get :recent
-        put :reorder
       end
     end
   end
-
-  #match '/helpdesk/canned_responses/index/:id' => 'helpdesk/canned_responses#index'
+  match '/helpdesk/scenario_automations/tab/:current_tab', :controller => 'helpdesk/scenario_automations', :action => 'index'
 
   match '/helpdesk/tickets/quick_assign/:id' => "Helpdesk::tickets#quick_assign", :as => :quick_assign_helpdesk_tickets,
     :method => :put
@@ -1884,8 +1888,6 @@ Helpkit::Application.routes.draw do
   # match '/:controller(/:action(/:id))'
   match '/all_agents' => 'agents#list'
   match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', :method => :get
-  match '/freshchat/chatenable', :controller => 'chats', :action => 'chatEnable', :method => :post
-  match '/freshchat/chattoggle', :controller => 'chats', :action => 'chatToggle', :method => :post
   match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
   resources :chats do
@@ -1939,11 +1941,55 @@ Helpkit::Application.routes.draw do
           put :add_feature
           put :change_url
           get :single_sign_on
+          put :change_account_name
+          put :ublock_account
+          put :remove_feature
+          put :whitelist
+          put :block_account
+        end
+      end
+
+      resources :custom_ssl, :only => :index do 
+        collection do
+          put :enable_custom_ssl
+        end
+      end
+
+      resources :account_tools, :only => :index do 
+        collection do
+          put :update_global_blacklist_ips
+          put :remove_blacklisted_ip
+        end
+      end
+
+      resources :freshfone_actions do
+        collection do
+          put :add_credits
+          put :refund_credits
+          put :port_ahead
+          put :post_twilio_port
+          put :suspend_freshfone
+          put :account_closure
+          put :get_country_list
+          put :country_restriction
+          get :get_country_list
+          post :country_restriction
+        end
+      end
+
+      resources :freshfone_stats do
+        collection do
+          get :statistics
+        end
+      end
+
+      resources :freshfone_subscriptions do
+        collection do
+          get :index
         end
       end
     end
   end
-
 
   # match ':controller(/:action(/:id))', :via => :all
   # match ':controller/:action/(:id).:format', :via => :all
@@ -1998,19 +2044,20 @@ Helpkit::Application.routes.draw do
   #     billing.resources :billing, :collection => { :trigger => :post }
   #   end
   # end
-  match '/freshchat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
-  match '/freshchat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
-  match '/freshchat/chat_note', :controller => 'chats', :action => 'chat_note', :method => :post
 
-  match '/freshchat/activate', :controller => 'chats', :action => 'activate', :method => :post
-
-  match '/freshchat/get_groups', :controller => 'chats', :action => 'groups', :method => :get
-
-  match '/freshchat/site_toggle', :controller => 'chats', :action => 'site_toggle', :method => :post
-
-  match '/freshchat/widget_toggle', :controller => 'chats', :action => 'widget_toggle', :method => :post
-  match '/freshchat/widget_activate', :controller => 'chats', :action => 'widget_activate', :method => :post
-
-  match '/freshchat/agents', :controller => 'chats', :action => 'agents', :method => :get
-
+  resources :livechat, :controller => 'chats', :only =>:index do
+    collection do
+      post :create_ticket
+      post :add_note
+      post :chat_note
+      get :get_groups
+      post :activate
+      post :site_toggle
+      get :agents
+      post :widget_toggle
+      post :widget_activate
+    end
+  end
+  match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 end

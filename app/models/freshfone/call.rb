@@ -45,7 +45,8 @@ class Freshfone::Call < ActiveRecord::Base
 		[ :ringing,	'ringing',	7 ],
 		[ :'in-progress', 'in-progress', 8 ],
 		[ :blocked, 'blocked', 9 ],
-		[ :voicemail, 'voicemail', 10 ]
+		[ :voicemail, 'voicemail', 10 ],
+		[ :restricted, 'restricted', 11]
 	]
 
 	CALL_STATUS_HASH = Hash[*CALL_STATUS.map { |i| [i[0], i[2]] }.flatten]
@@ -100,13 +101,11 @@ class Freshfone::Call < ActiveRecord::Base
 			], :limit => 1, :order => "created_at DESC"
 		}
 	}
-  
+
 	scope :agent_progress_calls, lambda { |user_id|
-		{:conditions => ["user_id = ? and ((call_status = ? and created_at > ? and created_at < ?) or 
-			(call_status = ? and created_at > ? and created_at < ?))",
-					user_id, CALL_STATUS_HASH[:default], 1.minutes.ago.to_s(:db), Time.zone.now.to_s(:db),
-					CALL_STATUS_HASH[:'in-progress'], 15.minutes.ago.to_s(:db), Time.zone.now.to_s(:db)
-				]
+		{:conditions => ["user_id = ? and ((call_status = ? or call_status = ?) and created_at > ? and created_at < ?)",
+					user_id, CALL_STATUS_HASH[:default], CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db), Time.zone.now.to_s(:db)
+				], :order => "created_at DESC"
 		}
 	}
 
@@ -297,6 +296,7 @@ class Freshfone::Call < ActiveRecord::Base
 				i18n_label = "freshfone.ticket.voicemail_ticket_desc"
 			elsif ivr_direct_dial?
 				i18n_label = "freshfone.ticket.dial_a_number"
+				i18n_params.merge!({:direct_dial_number => params[:direct_dial_number]})
 			else
 				i18n_label = "freshfone.ticket.ticket_desc"
 				i18n_params.merge!({:agent => params[:agent].name,:agent_number => freshfone_number.number})
@@ -340,7 +340,7 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def ivr_direct_dial?
-			params[:direct_dial_number]
+			params[:direct_dial_number].present?
 		end
 
 		def included_notable

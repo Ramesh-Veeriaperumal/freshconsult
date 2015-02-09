@@ -33,6 +33,7 @@
 	freshfone.available_on_browser_text = "<%= t('freshfone.widget.on_browser') %>";
 	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
 	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
+	freshfone.freshfone_user_busy_text = "<%= t('freshfone.widget.busy') %>";
 	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
 	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number').html_safe%>";
 	freshfone.widget_inactive = "<%= t('freshfone.widget.inactive') %>";
@@ -43,13 +44,11 @@
 	freshfone.namesHash =  JSON.parse('<%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>');
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
-	if (typeof(CURRENT_USER) == 'undefined'){
-    var CURRENT_USER = {
-            'id'        : '<%=current_user.id%>',
-            'username'  : '<%=current_user.name%>',
-            'email'     : '<%=current_user.email%>',
-            'account_id': '<%= current_account.id%>'
-    };
-  }
+  freshfone.current_user_details = {
+          'id'        : '<%=current_user.id%>',
+          'username'  : '<%=current_user.name%>',
+          'email'     : '<%=current_user.email%>',
+          'account_id': '<%= current_account.id%>'
+  };
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>
