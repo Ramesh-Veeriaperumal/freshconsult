@@ -148,9 +148,10 @@ class Solution::Article < ActiveRecord::Base
   def to_xml(options = {})
      options[:root] ||= 'solution_article'# TODO-RAILS3:: In Rails3 Model.model_name.element returns only 'article' not 'solution_article'
      options[:indent] ||= 2
+     options.merge!(Solution::Constants::SOLUTION_ARTICLE_API_OPTIONS.merge(:include => {}))
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => options[:except], :root => options[:root]) 
   end
 
   def to_indexed_json
@@ -169,12 +170,7 @@ class Solution::Article < ActiveRecord::Base
  
   def as_json(options={})
     return super(options) unless options[:tailored_json].blank?
-    options[:except]=[:account_id,:import_id]
-    options[:include]={ :tags => { :only => [:name] },
-                        :folder => { :except => [:account_id,:import_id],
-                                     :include => { :customer_folders => { :only => [:customer_id] } }
-                                   }
-                        }
+    options.merge!(Solution::Constants::SOLUTION_ARTICLE_API_OPTIONS)
     super options
   end
 
