@@ -71,9 +71,7 @@ class AuthorizationsController < ApplicationController
 
   def load_authorization
     @auth = Authorization.find_from_hash(@omniauth, current_account.id) unless @provider == "facebook"
-    if (@provider == "twitter" or @provider == "facebook")
-      requires_feature("#{@provider}_signin")
-    end
+    check_feature_enabled?(@account_id) if (@provider == "twitter" or @provider == "facebook")
   end
 
   def origin_required?
@@ -300,6 +298,14 @@ class AuthorizationsController < ApplicationController
   def origin_user
     @origin_user ||= 
       origin_account.all_users.find_by_id(@origin_user_id) if origin_account && @origin_user_id
+  end
+
+  def check_feature_enabled?(acc_id)
+    acc = Account.find(acc_id)
+    enabled = acc.features? ("#{@provider}_signin")
+    unless enabled
+      return render :template => "/errors/non_covered_feature.html", :locals => {:feature => "#{@provider}_signin"}
+    end
   end
 
   OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box"]
