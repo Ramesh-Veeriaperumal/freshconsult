@@ -97,6 +97,16 @@ GIT
       POpen4 (>= 0.1.4)
 
 GIT
+  remote: git://github.com/freshdesk/twilio-ruby.git
+  revision: e0755761a1f363be1cf1fb813525e30d87414fdc
+  branch: master
+  specs:
+    twilio-ruby (3.14.5)
+      builder (>= 2.1.2)
+      jwt (~> 1.0)
+      multi_json (>= 1.3.0)
+
+GIT
   remote: git://github.com/freshdesk/wkhtmltopdf_binary_gem.git
   revision: f9aa831c91a687f29aaeebf8a08ac7b38af79422
   specs:
@@ -172,16 +182,6 @@ GIT
   specs:
     rails-dev-boost (0.3.0)
       railties (>= 3.0)
-
-GIT
-  remote: git://github.com/twilio/twilio-ruby.git
-  revision: 08e538f89ed70467cf7fd0059bf23bb97666447a
-  branch: master
-  specs:
-    twilio-ruby (3.14.2)
-      builder (>= 2.1.2)
-      jwt (~> 1.0.0)
-      multi_json (>= 1.3.0)
 
 PATH
   remote: vendor/gems/acts_as_voteable
