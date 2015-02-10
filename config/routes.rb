@@ -1412,7 +1412,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
-    match '/dashboard.:format' => 'dashboard#index', :as => :formatted_dashboard
+    match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
