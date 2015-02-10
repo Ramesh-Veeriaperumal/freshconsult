@@ -135,7 +135,7 @@ class Solution::FoldersController < ApplicationController
   end
   
   def articles_scope #possible dead code
-    {:articles => Solution::Constants::SOLUTION_ARTICLE_API_OPTIONS.merge(:include => {})}   
+    {:articles => Solution::Constants::API_OPTIONS.merge(:include => {})}   
   end
 
   private
