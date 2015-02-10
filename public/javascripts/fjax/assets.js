@@ -25,12 +25,25 @@
 		},
 		
 		cleanupPaths: function (type) {
-			var name, i, length;
+			var name, i, length, hasJST = false;
 			for (name in this[type]) {
 				if (this[type].hasOwnProperty(name)) {
 					length = this[type][name].length;
+					hasJST = false;
 					for (i = 0; i < length; i += 1) {
 						this[type][name][i] = this[type][name][i].replace('public/', '/');
+						
+						if (type === 'javascripts' && this[type][name][i].endsWith('.jst')) {
+							hasJST = true;
+							this[type][name][i] = null;
+						}
+					}
+					
+					// For Rails 3, dont Merge the below code 
+					// or any Fjax Asset related code from this commit 
+					if (hasJST) {
+						this[type][name].push('/packages/' + name + '.jst');
+						this[type][name] = this[type][name].compact();
 					}
 				}
 			}
