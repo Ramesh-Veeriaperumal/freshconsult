@@ -278,7 +278,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/contacts/filter/:state(/*letter)' => 'contacts#index'
+  match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
   resources :groups
 
   resources :user_emails do
