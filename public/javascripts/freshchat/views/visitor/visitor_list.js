@@ -13,7 +13,7 @@ freshChat.visitor_list_view = function(){
     },
     initialize : function(options) {
       this.type = options.type;
-      this.template = window.JST.visitor_list;
+      this.template = window.JST['freshchat/templates/visitor_list'];
       this.$el.attr({ id: 'visitor_results', class: 'visitor_results' });
       this.collection = options.collection;
       this.filteredCollection = options.filteredCollection;

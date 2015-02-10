@@ -8,8 +8,8 @@ window.freshChat.conversationView = function(){
 				this.router = options.router;
 				this.isVisible = false;
 				this.setElement('#conversation-wrap');
-				this.visitorTemplate = window.JST["templates/freshchat_visitor_details"] ;
-				this.conversationTemplate = window.JST["templates/freshchat_conversation"];
+				this.visitorTemplate = window.JST["freshchat/templates/freshchat_visitor_details"] ;
+				this.conversationTemplate = window.JST["freshchat/templates/freshchat_conversation"];
 			},
 			events :{
 				"click #archive-page-link"	: "navigateArchive",

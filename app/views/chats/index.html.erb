@@ -1,7 +1,7 @@
 <% content_for :layoutType do -%><%- end %>
-<%= include_cloudfront_rtl_css :ui_daterangepicker %>
-<%= include_cloudfront_rtl_css :reports %>
-<%= include_cloudfront_rtl_css :freshchat_admin %>
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/freshchat_admin' %>
 	<div id="loading-box">
 		<div class="sloading loading-left loading-small reports-loading"><%=t("freshchat.fetching")%></div>
 	</div>
@@ -82,4 +82,4 @@
 		}
 	});
 </script>
-<%= include_cloudfront_js :freshchat_archive %>
+<%= javascript_include_tag :'cdn/freshchat_archive' %>
