@@ -202,7 +202,7 @@ javascripts:
   freshchat_archive:
     #Library
     - public/javascripts/report/daterangepicker.jQuery.js
-    - public/javascripts/freshchat/templates/visitor_list.jst
+    - public/javascripts/freshchat/templates/visitor_list.jst.ejs
     # Views
     - public/javascripts/freshchat/views/archive_view.js
     - public/javascripts/freshchat/views/conversation_view.js

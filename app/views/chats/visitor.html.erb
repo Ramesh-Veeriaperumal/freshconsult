@@ -1,6 +1,6 @@
-<%= include_cloudfront_rtl_css :reports %>
-<%= include_cloudfront_rtl_css :freshchat_admin %>
-<%= include_cloudfront_js :freshchat_archive %>
+<%= stylesheet_link_tag_with_rtl :'cdn/freshchatreports' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/freshchat_admin' %>
+<%= javascript_include_tag :'cdn/freshchat_archive' %>
 
 <div id="loading-box">
 	<div class="sloading loading-left loading-small reports-loading"><%=t("freshchat.visitors_list")%></div>
