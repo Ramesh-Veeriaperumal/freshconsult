@@ -672,7 +672,7 @@ class User < ActiveRecord::Base
     end
 
     def backup_user_changes
-      @all_changes = self.changes.clone
+      @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
       @all_changes.symbolize_keys!
     end
