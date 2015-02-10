@@ -2,7 +2,7 @@
  <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<h3 class="lead"><%=t('admin.automations.edit.title')%></h3>
-<%= form_for :va_rule, @va_rule, :url => helpdesk_scenario_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
+<h3 class="lead"><%=t('automations.edit')%></h3>
+<%= form_for @va_rule,:as => :va_rule, :url => helpdesk_scenario_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>
 <% end %>

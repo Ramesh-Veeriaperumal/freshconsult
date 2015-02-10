@@ -35,8 +35,8 @@
 	    	</fieldset>
 
 	<li class="inline-field  form-horizontal">
-		<div class="control-group">
-		<% f.fields_for :accessible do |access| %>
+		<div class="control-group">			
+		<%= f.fields_for :accessible do |access| %>
 			<label class="control-label"><%=t('automations.visibility.available_for').html_safe%> :</label>
 			<div class="controls">
 				<label class="radio" id="only_me">
@@ -76,7 +76,7 @@
 	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders }  %>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
 jQuery(document).ready(function(){
 	toggleGroup(<%=@va_rule.accessible.access_type%>);
