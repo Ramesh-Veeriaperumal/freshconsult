@@ -15,9 +15,7 @@
             :after => "
               jQuery('#execute_scenario .dialog-well').hide();
               jQuery('#execute_scenario .modal-body .sloading').remove();
-              jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');
-
-              ") do %>
+              jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');" do %>
 					<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
 					<input type="submit" class="btn" value="Execute"  placement = "below"/>
 				<% end %>
