@@ -5693,7 +5693,7 @@ en:
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."
     pfolder_visibility_alert: "<span class=\"label label-important\">Important</span> - The selected canned responses will be available only for you when you move it to Personal Folder"
-    moved_responses_update: "{{responses}} response(s) could not be moved as the title already exists in folder {{folder_name}}"
+    moved_responses_update: "%{responses} response(s) could not be moved as the title already exists in folder %{folder_name}"
     folder_validation: "Folder does not exists."
     Personal: "Personal"
     General: "General"
