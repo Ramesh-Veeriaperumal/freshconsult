@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ce421135c3ce4c8c50ff52fe2b23ebbb87670c70ce8976f418bcfc7ed629745e",
-    "current": "ce421135c3ce4c8c50ff52fe2b23ebbb87670c70ce8976f418bcfc7ed629745e"
+    "previous": "7f50b97e33fb2fac57e5af74aea6aeb6b08a673ce33e3d070c817b7db458e824",
+    "current": "7f50b97e33fb2fac57e5af74aea6aeb6b08a673ce33e3d070c817b7db458e824"
   },
   "fonts": [
-    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.ttf",
-    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.svg",
-    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.woff",
-    "public/fonts/glyphs_ce421135c3ce4c8c50ff52fe2b23ebbb.eot"
+    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.ttf",
+    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.svg",
+    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.woff",
+    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.eot"
   ],
   "glyphs": {
     "account": {
@@ -193,6 +193,10 @@
     "day_pass": {
       "codepoint": 61772,
       "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "disconnected": {
+      "codepoint": 61873,
+      "source": "public/glyphs/vectors/disconnected.svg"
     },
     "dispatcher": {
       "codepoint": 61773,
@@ -670,7 +674,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"
