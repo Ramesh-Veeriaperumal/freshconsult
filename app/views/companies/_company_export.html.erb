@@ -26,7 +26,7 @@
 	</ul>
 <%end%>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   jQuery("#exportFilter").submit(function() {  
 
 	if (jQuery('#contact_fields :checked').length == 0) {

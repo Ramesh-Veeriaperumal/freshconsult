@@ -33,7 +33,7 @@
 		<div class="controls">
 			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, :class => "select" %>
 			<br/><br/>
-			<% form.fields_for :customer_forums_attributes do |cust| %>
+			<%= form.fields_for :customer_forums_attributes do |cust| %>
     	    	<span id="company_forums">
       			<%= cust.select(:customer_id , current_account.companies.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "select2 input-xxlarge" , "data-placeholder" => 'Select company'}) %>
       			</span>
