@@ -32,11 +32,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/mobihelp_ticket_extra"
     # Social - Twitter
     resource :"social/twitter_handle",
-      :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
+      :only => [:create_twicket, :feed, :tweet_exists, :send_tweet, :twitter_search]
     resource :"social/stream",
       :only => [ :index, :stream_feeds, :show_old, :fetch_new, :interactions]
     resource :"social/twitter",
-        :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new]
+        :only => [:user_info, :retweets, :twitter_search, :show_old, :fetch_new, :user_following]
     resource :"health_check"
 
     resource :"integrations/integrated_resource"

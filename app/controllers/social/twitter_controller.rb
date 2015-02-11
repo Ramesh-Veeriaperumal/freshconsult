@@ -104,6 +104,18 @@ class Social::TwitterController < Social::BaseController
       format.js
     end
   end
+  
+  #Following method will check requester is a follower of responding twitter Id
+  def user_following
+    user_follows = false
+    reply_handle = current_account.twitter_handles.find(params[:twitter_handle])
+    unless reply_handle.nil?
+      @social_error_msg , user_follows = Social::Twitter::Feed.following?(reply_handle, params[:req_twt_id])
+    end
+    
+    user_following = @social_error_msg.blank? ? (user_follows ? user_follows : t('ticket.tweet_form.user_not_following')): t('twitter.not_authorized')
+    render :json => {:user_follows => user_following }.to_json
+  end
 
   def reply
     @interactions = {

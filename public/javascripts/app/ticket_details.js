@@ -648,7 +648,7 @@ var scrollToError = function(){
 
 		$.ajax({   
 			type: 'GET',
-			url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
+			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
 			contentType: 'application/text',
 			success: function(data){ 
 				if (data.user_follows == true)
@@ -660,6 +660,7 @@ var scrollToError = function(){
 				{
 					$('#tweet_type_selector').hide();
 					$('#tweet_type').val(':mention');
+					$('#not_following_message').html(data.user_follows)
 					$('#not_following_message').show();
 				}
 			}

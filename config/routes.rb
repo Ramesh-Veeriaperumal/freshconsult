@@ -1090,7 +1090,6 @@ Helpkit::Application.routes.draw do
         post :send_tweet
         post :signin
         get :tweet_exists
-        get :user_following
         put :authdone
         get :twitter_search
       end
@@ -1139,6 +1138,7 @@ Helpkit::Application.routes.draw do
         get :followers
         post :follow
         post :unfollow
+        get :user_following
       end
     end
   end
