@@ -1,13 +1,13 @@
 <li class="close-dialog">
 	<% if @ticket
-			title = truncate(Liquid::Template.parse(ca_response.content_html).render('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name), :length => 200)
+			title = truncate(Liquid::Template.parse(ca_response.content).render('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name), :length => 200)
 			function = "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}', this)"
 	  else
-	  	title = truncate(ca_response.content_html, :length => 200)
+	  	title = truncate(ca_response.content, :length => 200)
 	  	function = "getCannedResponse('#{ca_response.id}', this)"
 	  end
       title = title.gsub('&lt;', '&amp;lt;')
       #Double escaping tags that are part of the text
     %>
-  <%= link_to_function ("<span id='resp-icon'></span><span id='resp-text' class='ellipsis'>"+ h(ca_response.title)+"</span>").html_safe, function, :class => "custom-tip-left", "data-tip-classes" => 'ui-tooltip-response',  :title => title.html_safe, "data-response" => ca_response.id %>
+  <%= link_to_function ("<span id='resp-icon'></span><span id='resp-text' class='ellipsis'>"+ h(ca_response.title)+"</span>").html_safe, function, :class => "custom-tip-left", "data-tip-classes" => 'ui-tooltip-response',  :title => title, "data-response" => ca_response.id %>
 </li>
