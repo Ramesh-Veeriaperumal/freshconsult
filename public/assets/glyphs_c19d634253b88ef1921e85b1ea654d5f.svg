@@ -5,9 +5,9 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20141212 at Mon Feb  9 11:57:54 2015
- By pratheepv
-Copyright (c) 2015, pratheepv
+Created by FontForge 20141023 at Mon Feb  9 18:17:10 2015
+ By Munawar Ahmed Muhammed
+Copyright (c) 2015, Munawar Ahmed Muhammed
 </metadata>
 <defs>
 <font id="glyphs" horiz-adv-x="512" >
@@ -22,7 +22,7 @@ Copyright (c) 2015, pratheepv
     bbox="-0.424634 -65 626.626 448.392"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F1B0"
+    unicode-range="U+F100-F1B1"
   />
     <missing-glyph />
     <glyph glyph-name="uniF181" unicode="&#xf181;" horiz-adv-x="499" 
@@ -426,6 +426,9 @@ d="M179 219l-93 93l-39 15l-38 70l31 31l69 -46l8 -39l93 -93zM257 117c0 0 61 59 93
 s-104 -14 -147 -39c0 0 -188 -197 -204 -210s-44 -10 -67 16s7 62 7 62s48 54 171 147c0 0 75 55 85 117s24 93 24 93s43 52 139 16l-54 -31s-25 -12 -16 -31s24 -39 24 -39z" />
     <glyph glyph-name="uniF190" unicode="&#xf190;" horiz-adv-x="347" 
 d="M338 316c12 -12 12 -31 0 -43l-71 -81l-41 -47l-68 -77c-6 -6 -14 -9 -22 -9s-17 3 -23 9l-104 100c-12 12 -11 32 1 44s31 11 43 -1l82 -77l161 184c12 11 30 9 42 -2z" />
+    <glyph glyph-name="uniF1B1" unicode="&#xf1b1;" horiz-adv-x="494" 
+d="M0 448zM263 414c129 -7 231 -95 231 -203c0 -101 -93 -197 -231 -203v55c26 9 44 34 44 63s-18 53 -44 62v40c26 9 44 33 44 62s-18 53 -44 62v62zM238 59v0v-51c-26 1 -53 5 -82 13l-141 -45l35 112c-31 31 -50 75 -50 123c0 110 106 199 238 203v-88c1 0 2 1 3 1
+c20 0 37 -17 37 -37s-17 -37 -37 -37h-3v-91h3c20 0 37 -16 37 -36s-17 -37 -37 -37h-3v-30v0z" />
     <glyph glyph-name="uniF11A" unicode="&#xf11a;" horiz-adv-x="461" 
 d="M104 370c0 -27 -20 -49 -53 -49c-31 0 -51 22 -51 49c0 28 21 49 53 49s50 -21 51 -49v0zM3 -35v317h98v-317h-98zM160 181c0 40 -2 72 -3 101h86l5 -44h2c13 21 44 51 97 51c65 0 114 -44 114 -137v-187h-99v175c0 41 -14 69 -50 69c-27 0 -43 -19 -50 -37
 c-3 -6 -3 -15 -3 -24v-183h-99v216z" />

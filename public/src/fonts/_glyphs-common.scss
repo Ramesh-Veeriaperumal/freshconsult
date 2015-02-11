@@ -481,3 +481,10 @@ span.fb_add
 		}
 	}
 }
+#chat-dashboard{
+	.fc_widget_refresh_on{
+		.chat_icon_connection{
+			@extend .ficon-disconnected; 
+		}
+	}
+}
