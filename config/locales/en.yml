@@ -3560,7 +3560,7 @@ en:
     info3: Freshdesk will fetch those emails and convert them as tickets
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
     info14: Any email sent to this address will be converted as a ticket
-    info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
+    info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='%{products_path}'>you can add them here</a>.
     spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="%{solution_url}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: Your support email
     unverified_info1:  Please activate this email by clicking on the verification link in your inbox.
@@ -4479,7 +4479,7 @@ en:
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
-        target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
+        target_merge_description:  "Ticket %{ticket.id} %{ticket.subject} is merged with this request"
         target_merge_description1: "Merged from ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1:
           one: "Ticket with id"
