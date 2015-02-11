@@ -121,7 +121,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
     def sanitize_values(inputs_hash)
       inputs_hash.each do |key,value| 
-        inputs_hash[key] = RailsFullSanitizer.sanitize(inputs_hash[key]) 
+        inputs_hash[key] = RailsFullSanitizer.sanitize(inputs_hash[key]) unless value.is_a?(Hash)
       end
     end
 end
