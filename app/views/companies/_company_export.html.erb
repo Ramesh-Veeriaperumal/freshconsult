@@ -1,5 +1,5 @@
 <div class="company_export">
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+<%= form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<ul class="ui-form">
 		<li class="inline-field c_export">

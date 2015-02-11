@@ -102,7 +102,7 @@ class CompaniesController < ApplicationController
   end
 
   def configure_export
-    render :partial => "company_export", :locals => {:csv_headers => export_customer_fields("company")}
+    render :partial => "companies/company_export", :locals => {:csv_headers => export_customer_fields("company")}
   end
 
   def export_csv

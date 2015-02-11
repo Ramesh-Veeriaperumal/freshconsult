@@ -1,5 +1,5 @@
 module Export::Util
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   def check_and_create_export type
     limit_data_exports type
@@ -50,10 +50,10 @@ module Export::Util
   end
 
   def hash_url portal_url
-    url_for(
-            :controller => "download_file/#{@data_export.source}/#{file_hash(@data_export.id)}", 
-            :host => portal_url, 
-            :protocol => Account.current.url_protocol
+    Rails.application.routes.url_helpers.download_file_url(@data_export.source,
+              file_hash(@data_export.id),
+              host: portal_url, 
+              protocol: Account.current.url_protocol
             )
   end
 
