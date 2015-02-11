@@ -30,7 +30,7 @@
 	</div>
 </div>
 
-<% javascript_tag do -%>
+<%= javascript_tag do %>
   var ca_responses_search_url = "<%= search_helpdesk_canned_responses_path %>?ticket=<%= @ticket.id unless @ticket.nil? %>";
 
 jQuery('.ui-icon-closethick').bind('click', function(){
