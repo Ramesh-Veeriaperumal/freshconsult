@@ -1840,6 +1840,11 @@ Helpkit::Application.routes.draw do
         get :deliver_activation_instructions
       end
     end
+    resources :freshfone do 
+      collection do
+        get :numbers
+      end
+    end
   end
 
   namespace :mobihelp do
