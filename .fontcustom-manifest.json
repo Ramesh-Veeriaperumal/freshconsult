@@ -1,357 +1,357 @@
 {
   "checksum": {
-    "previous": "c19d634253b88ef1921e85b1ea654d5feb54415e62fa44a71d501e54a795b1ff",
-    "current": "c19d634253b88ef1921e85b1ea654d5feb54415e62fa44a71d501e54a795b1ff"
+    "previous": "9e944546347d80b6a9878c8b54286185cc5db5d172513622601a876490286ef3",
+    "current": "9e944546347d80b6a9878c8b54286185cc5db5d172513622601a876490286ef3"
   },
   "fonts": [
-    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.ttf",
-    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.svg",
-    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.woff",
-    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.eot"
+    "public/assets/glyphs_9e944546347d80b6a9878c8b54286185.ttf",
+    "public/assets/glyphs_9e944546347d80b6a9878c8b54286185.svg",
+    "public/assets/glyphs_9e944546347d80b6a9878c8b54286185.woff",
+    "public/assets/glyphs_9e944546347d80b6a9878c8b54286185.eot"
   ],
   "glyphs": {
     "account": {
-      "codepoint": 61855,
+      "codepoint": 61696,
       "source": "public/glyphs/vectors/account.svg"
     },
     "agent": {
-      "codepoint": 61767,
+      "codepoint": 61697,
       "source": "public/glyphs/vectors/agent.svg"
     },
     "all-streams": {
-      "codepoint": 61696,
+      "codepoint": 61698,
       "source": "public/glyphs/vectors/all-streams.svg"
     },
     "android": {
-      "codepoint": 61857,
+      "codepoint": 61699,
       "source": "public/glyphs/vectors/android.svg"
     },
     "answer-checked": {
-      "codepoint": 61742,
+      "codepoint": 61700,
       "source": "public/glyphs/vectors/answer-checked.svg"
     },
     "answer-unchecked": {
-      "codepoint": 61760,
+      "codepoint": 61701,
       "source": "public/glyphs/vectors/answer-unchecked.svg"
     },
     "apple": {
-      "codepoint": 61858,
+      "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
     },
     "arrow-down": {
-      "codepoint": 61697,
+      "codepoint": 61703,
       "source": "public/glyphs/vectors/arrow-down.svg"
     },
     "arrow-down-2": {
-      "codepoint": 61798,
+      "codepoint": 61704,
       "source": "public/glyphs/vectors/arrow-down-2.svg"
     },
     "arrow-left": {
-      "codepoint": 61698,
+      "codepoint": 61705,
       "source": "public/glyphs/vectors/arrow-left.svg"
     },
     "arrow-left-2": {
-      "codepoint": 61799,
+      "codepoint": 61706,
       "source": "public/glyphs/vectors/arrow-left-2.svg"
     },
     "arrow-right": {
-      "codepoint": 61699,
+      "codepoint": 61707,
       "source": "public/glyphs/vectors/arrow-right.svg"
     },
     "arrow-right-2": {
-      "codepoint": 61800,
+      "codepoint": 61708,
       "source": "public/glyphs/vectors/arrow-right-2.svg"
     },
     "arrow-up": {
-      "codepoint": 61700,
+      "codepoint": 61709,
       "source": "public/glyphs/vectors/arrow-up.svg"
     },
     "arrow-up-2": {
-      "codepoint": 61801,
+      "codepoint": 61710,
       "source": "public/glyphs/vectors/arrow-up-2.svg"
     },
     "bell": {
-      "codepoint": 61822,
+      "codepoint": 61711,
       "source": "public/glyphs/vectors/bell.svg"
     },
     "billing": {
-      "codepoint": 61768,
+      "codepoint": 61712,
       "source": "public/glyphs/vectors/billing.svg"
     },
     "blank-file": {
-      "codepoint": 61802,
+      "codepoint": 61713,
       "source": "public/glyphs/vectors/blank-file.svg"
     },
     "book": {
-      "codepoint": 61701,
+      "codepoint": 61714,
       "source": "public/glyphs/vectors/book.svg"
     },
     "bulb": {
-      "codepoint": 61754,
+      "codepoint": 61715,
       "source": "public/glyphs/vectors/bulb.svg"
     },
     "bullhorn": {
-      "codepoint": 61755,
+      "codepoint": 61716,
       "source": "public/glyphs/vectors/bullhorn.svg"
     },
     "business-hours": {
-      "codepoint": 61769,
+      "codepoint": 61717,
       "source": "public/glyphs/vectors/business-hours.svg"
     },
     "calling": {
-      "codepoint": 61858,
+      "codepoint": 61718,
       "source": "public/glyphs/vectors/calling.svg"
     },
     "canned-response": {
-      "codepoint": 61770,
+      "codepoint": 61719,
       "source": "public/glyphs/vectors/canned-response.svg"
     },
     "caret-down": {
-      "codepoint": 61702,
+      "codepoint": 61720,
       "source": "public/glyphs/vectors/caret-down.svg"
     },
     "caret-left": {
-      "codepoint": 61703,
+      "codepoint": 61721,
       "source": "public/glyphs/vectors/caret-left.svg"
     },
     "caret-right": {
-      "codepoint": 61704,
+      "codepoint": 61722,
       "source": "public/glyphs/vectors/caret-right.svg"
     },
     "caret-up": {
-      "codepoint": 61705,
+      "codepoint": 61723,
       "source": "public/glyphs/vectors/caret-up.svg"
     },
     "chat-bubble": {
-      "codepoint": 61856,
+      "codepoint": 61724,
       "source": "public/glyphs/vectors/chat-bubble.svg"
     },
     "chat-disable": {
-      "codepoint": 61803,
+      "codepoint": 61725,
       "source": "public/glyphs/vectors/chat-disable.svg"
     },
     "chat-enable": {
-      "codepoint": 61804,
+      "codepoint": 61726,
       "source": "public/glyphs/vectors/chat-enable.svg"
     },
     "checkbox": {
-      "codepoint": 61825,
+      "codepoint": 61727,
       "source": "public/glyphs/vectors/checkbox.svg"
     },
     "checkmark": {
-      "codepoint": 61706,
+      "codepoint": 61728,
       "source": "public/glyphs/vectors/checkmark.svg"
     },
     "checkmark-round": {
-      "codepoint": 61743,
+      "codepoint": 61729,
       "source": "public/glyphs/vectors/checkmark-round.svg"
     },
     "checkmark-round-o": {
-      "codepoint": 61744,
+      "codepoint": 61730,
       "source": "public/glyphs/vectors/checkmark-round-o.svg"
     },
     "checkmark-thick": {
-      "codepoint": 61826,
+      "codepoint": 61731,
       "source": "public/glyphs/vectors/checkmark-thick.svg"
     },
     "chrome": {
-      "codepoint": 61859,
+      "codepoint": 61732,
       "source": "public/glyphs/vectors/chrome.svg"
     },
     "comment-multi": {
-      "codepoint": 61745,
+      "codepoint": 61733,
       "source": "public/glyphs/vectors/comment-multi.svg"
     },
     "comments": {
-      "codepoint": 61813,
+      "codepoint": 61734,
       "source": "public/glyphs/vectors/comments.svg"
     },
     "company": {
-      "codepoint": 61871,
+      "codepoint": 61735,
       "source": "public/glyphs/vectors/company.svg"
     },
     "conversation": {
-      "codepoint": 61707,
+      "codepoint": 61736,
       "source": "public/glyphs/vectors/conversation.svg"
     },
     "cross": {
-      "codepoint": 61708,
+      "codepoint": 61737,
       "source": "public/glyphs/vectors/cross.svg"
     },
     "crown": {
-      "codepoint": 61709,
+      "codepoint": 61738,
       "source": "public/glyphs/vectors/crown.svg"
     },
     "customer-fields": {
-      "codepoint": 61853,
+      "codepoint": 61739,
       "source": "public/glyphs/vectors/customer-fields.svg"
     },
     "customer-portal": {
-      "codepoint": 61771,
+      "codepoint": 61740,
       "source": "public/glyphs/vectors/customer-portal.svg"
     },
     "date": {
-      "codepoint": 61828,
+      "codepoint": 61741,
       "source": "public/glyphs/vectors/date.svg"
     },
     "day_pass": {
-      "codepoint": 61772,
+      "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
     },
     "disconnected": {
-      "codepoint": 61873,
+      "codepoint": 61864,
       "source": "public/glyphs/vectors/disconnected.svg"
     },
     "dislike": {
-      "codepoint": 61859,
+      "codepoint": 61743,
       "source": "public/glyphs/vectors/dislike.svg"
     },
     "dispatcher": {
-      "codepoint": 61773,
+      "codepoint": 61744,
       "source": "public/glyphs/vectors/dispatcher.svg"
     },
     "dots": {
-      "codepoint": 61710,
+      "codepoint": 61745,
       "source": "public/glyphs/vectors/dots.svg"
     },
     "dropbox": {
-      "codepoint": 61860,
+      "codepoint": 61746,
       "source": "public/glyphs/vectors/dropbox.svg"
     },
     "dropdown_blank": {
-      "codepoint": 61829,
+      "codepoint": 61747,
       "source": "public/glyphs/vectors/dropdown_blank.svg"
     },
     "earth": {
-      "codepoint": 61711,
+      "codepoint": 61748,
       "source": "public/glyphs/vectors/earth.svg"
     },
     "edit": {
-      "codepoint": 61712,
+      "codepoint": 61749,
       "source": "public/glyphs/vectors/edit.svg"
     },
     "edit-strike-thru": {
-      "codepoint": 61830,
+      "codepoint": 61750,
       "source": "public/glyphs/vectors/edit-strike-thru.svg"
     },
     "ellipsis": {
-      "codepoint": 61713,
+      "codepoint": 61751,
       "source": "public/glyphs/vectors/ellipsis.svg"
     },
     "email": {
-      "codepoint": 61774,
+      "codepoint": 61752,
       "source": "public/glyphs/vectors/email.svg"
     },
     "email-notifications": {
-      "codepoint": 61775,
+      "codepoint": 61753,
       "source": "public/glyphs/vectors/email-notifications.svg"
     },
     "email_commands_setting": {
-      "codepoint": 61776,
+      "codepoint": 61754,
       "source": "public/glyphs/vectors/email_commands_setting.svg"
     },
     "eye": {
-      "codepoint": 61714,
+      "codepoint": 61755,
       "source": "public/glyphs/vectors/eye.svg"
     },
     "facebook": {
-      "codepoint": 61715,
+      "codepoint": 61756,
       "source": "public/glyphs/vectors/facebook.svg"
     },
     "facebook-lock": {
-      "codepoint": 61811,
+      "codepoint": 61757,
       "source": "public/glyphs/vectors/facebook-lock.svg"
     },
     "facebook-setting": {
-      "codepoint": 61777,
+      "codepoint": 61758,
       "source": "public/glyphs/vectors/facebook-setting.svg"
     },
     "feedback": {
-      "codepoint": 61778,
+      "codepoint": 61759,
       "source": "public/glyphs/vectors/feedback.svg"
     },
     "ff-add-note": {
-      "codepoint": 61814,
+      "codepoint": 61760,
       "source": "public/glyphs/vectors/ff-add-note.svg"
     },
     "ff-clock": {
-      "codepoint": 61815,
+      "codepoint": 61761,
       "source": "public/glyphs/vectors/ff-clock.svg"
     },
     "ff-dialpad": {
-      "codepoint": 61816,
+      "codepoint": 61762,
       "source": "public/glyphs/vectors/ff-dialpad.svg"
     },
     "ff-mic": {
-      "codepoint": 61817,
+      "codepoint": 61763,
       "source": "public/glyphs/vectors/ff-mic.svg"
     },
     "ff-mute": {
-      "codepoint": 61818,
+      "codepoint": 61764,
       "source": "public/glyphs/vectors/ff-mute.svg"
     },
     "ff-on-browser": {
-      "codepoint": 61819,
+      "codepoint": 61765,
       "source": "public/glyphs/vectors/ff-on-browser.svg"
     },
     "ff-on-call": {
-      "codepoint": 61820,
+      "codepoint": 61766,
       "source": "public/glyphs/vectors/ff-on-call.svg"
     },
     "ff-phone": {
-      "codepoint": 61821,
+      "codepoint": 61767,
       "source": "public/glyphs/vectors/ff-phone.svg"
     },
     "file": {
-      "codepoint": 61762,
+      "codepoint": 61768,
       "source": "public/glyphs/vectors/file.svg"
     },
     "file-edit": {
-      "codepoint": 61746,
+      "codepoint": 61769,
       "source": "public/glyphs/vectors/file-edit.svg"
     },
     "file-visible": {
-      "codepoint": 61747,
+      "codepoint": 61770,
       "source": "public/glyphs/vectors/file-visible.svg"
     },
     "firefox": {
-      "codepoint": 61860,
+      "codepoint": 61771,
       "source": "public/glyphs/vectors/firefox.svg"
     },
     "folder-o": {
-      "codepoint": 61716,
+      "codepoint": 61772,
       "source": "public/glyphs/vectors/folder-o.svg"
     },
     "folder-open-o": {
-      "codepoint": 61717,
+      "codepoint": 61773,
       "source": "public/glyphs/vectors/folder-open-o.svg"
     },
     "forward": {
-      "codepoint": 61861,
+      "codepoint": 61774,
       "source": "public/glyphs/vectors/forward.svg"
     },
     "freshchat": {
-      "codepoint": 61796,
+      "codepoint": 61775,
       "source": "public/glyphs/vectors/freshchat.svg"
     },
     "freshdesk": {
-      "codepoint": 61718,
+      "codepoint": 61776,
       "source": "public/glyphs/vectors/freshdesk.svg"
     },
     "freshfone": {
-      "codepoint": 61779,
+      "codepoint": 61777,
       "source": "public/glyphs/vectors/freshfone.svg"
     },
     "gamification-settings": {
-      "codepoint": 61780,
+      "codepoint": 61778,
       "source": "public/glyphs/vectors/gamification-settings.svg"
     },
     "gear": {
-      "codepoint": 61719,
+      "codepoint": 61779,
       "source": "public/glyphs/vectors/gear.svg"
     },
     "googleplus": {
-      "codepoint": 61720,
+      "codepoint": 61780,
       "source": "public/glyphs/vectors/googleplus.svg"
     },
     "group": {
@@ -359,331 +359,331 @@
       "source": "public/glyphs/vectors/group.svg"
     },
     "grouping-disable": {
-      "codepoint": 61805,
+      "codepoint": 61782,
       "source": "public/glyphs/vectors/grouping-disable.svg"
     },
     "grouping-enable": {
-      "codepoint": 61806,
+      "codepoint": 61783,
       "source": "public/glyphs/vectors/grouping-enable.svg"
     },
     "help": {
-      "codepoint": 61756,
+      "codepoint": 61784,
       "source": "public/glyphs/vectors/help.svg"
     },
     "ie": {
-      "codepoint": 61861,
+      "codepoint": 61785,
       "source": "public/glyphs/vectors/ie.svg"
     },
     "import": {
-      "codepoint": 61782,
+      "codepoint": 61786,
       "source": "public/glyphs/vectors/import.svg"
     },
     "infinity-5": {
-      "codepoint": 61761,
+      "codepoint": 61787,
       "source": "public/glyphs/vectors/infinity-5.svg"
     },
     "integrations": {
-      "codepoint": 61783,
+      "codepoint": 61788,
       "source": "public/glyphs/vectors/integrations.svg"
     },
     "ios": {
-      "codepoint": 61862,
+      "codepoint": 61789,
       "source": "public/glyphs/vectors/ios.svg"
     },
     "like": {
-      "codepoint": 61757,
+      "codepoint": 61790,
       "source": "public/glyphs/vectors/like.svg"
     },
     "link": {
-      "codepoint": 61721,
+      "codepoint": 61791,
       "source": "public/glyphs/vectors/link.svg"
     },
     "linkedin": {
-      "codepoint": 61722,
+      "codepoint": 61792,
       "source": "public/glyphs/vectors/linkedin.svg"
     },
     "linux": {
-      "codepoint": 61863,
+      "codepoint": 61793,
       "source": "public/glyphs/vectors/linux.svg"
     },
     "lock": {
-      "codepoint": 61723,
+      "codepoint": 61794,
       "source": "public/glyphs/vectors/lock.svg"
     },
     "lock-2": {
-      "codepoint": 61831,
+      "codepoint": 61795,
       "source": "public/glyphs/vectors/lock-2.svg"
     },
     "lock-open": {
-      "codepoint": 61724,
+      "codepoint": 61796,
       "source": "public/glyphs/vectors/lock-open.svg"
     },
     "mac": {
-      "codepoint": 61864,
+      "codepoint": 61797,
       "source": "public/glyphs/vectors/mac.svg"
     },
     "mail": {
-      "codepoint": 61763,
+      "codepoint": 61798,
       "source": "public/glyphs/vectors/mail.svg"
     },
     "map-marker": {
-      "codepoint": 61725,
+      "codepoint": 61799,
       "source": "public/glyphs/vectors/map-marker.svg"
     },
     "merge": {
-      "codepoint": 61832,
+      "codepoint": 61800,
       "source": "public/glyphs/vectors/merge.svg"
     },
     "message": {
-      "codepoint": 61797,
+      "codepoint": 61801,
       "source": "public/glyphs/vectors/message.svg"
     },
     "minus": {
-      "codepoint": 61726,
+      "codepoint": 61802,
       "source": "public/glyphs/vectors/minus.svg"
     },
     "mobihelp": {
-      "codepoint": 61784,
+      "codepoint": 61803,
       "source": "public/glyphs/vectors/mobihelp.svg"
     },
     "mobile": {
-      "codepoint": 61862,
+      "codepoint": 61804,
       "source": "public/glyphs/vectors/mobile.svg"
     },
     "multi-product": {
-      "codepoint": 61785,
+      "codepoint": 61805,
       "source": "public/glyphs/vectors/multi-product.svg"
     },
     "no-arrow-left": {
-      "codepoint": 61865,
+      "codepoint": 61806,
       "source": "public/glyphs/vectors/no-arrow-left.svg"
     },
     "no-arrow-right": {
-      "codepoint": 61866,
+      "codepoint": 61807,
       "source": "public/glyphs/vectors/no-arrow-right.svg"
     },
     "notice": {
-      "codepoint": 61748,
+      "codepoint": 61808,
       "source": "public/glyphs/vectors/notice.svg"
     },
     "notice-o": {
-      "codepoint": 61749,
+      "codepoint": 61809,
       "source": "public/glyphs/vectors/notice-o.svg"
     },
     "number": {
-      "codepoint": 61833,
+      "codepoint": 61810,
       "source": "public/glyphs/vectors/number.svg"
     },
     "observer": {
-      "codepoint": 61786,
+      "codepoint": 61811,
       "source": "public/glyphs/vectors/observer.svg"
     },
     "open-in-new-window": {
-      "codepoint": 61758,
+      "codepoint": 61812,
       "source": "public/glyphs/vectors/open-in-new-window.svg"
     },
     "opera": {
-      "codepoint": 61867,
+      "codepoint": 61813,
       "source": "public/glyphs/vectors/opera.svg"
     },
     "paperplane": {
-      "codepoint": 61727,
+      "codepoint": 61814,
       "source": "public/glyphs/vectors/paperplane.svg"
     },
     "paragraph": {
-      "codepoint": 61834,
+      "codepoint": 61815,
       "source": "public/glyphs/vectors/paragraph.svg"
     },
     "pencil": {
-      "codepoint": 61863,
+      "codepoint": 61816,
       "source": "public/glyphs/vectors/pencil.svg"
     },
     "phone": {
-      "codepoint": 61764,
+      "codepoint": 61817,
       "source": "public/glyphs/vectors/phone.svg"
     },
     "phone-disable": {
-      "codepoint": 61807,
+      "codepoint": 61818,
       "source": "public/glyphs/vectors/phone-disable.svg"
     },
     "phone-enable": {
-      "codepoint": 61808,
+      "codepoint": 61819,
       "source": "public/glyphs/vectors/phone-enable.svg"
     },
     "plus": {
-      "codepoint": 61728,
+      "codepoint": 61820,
       "source": "public/glyphs/vectors/plus.svg"
     },
     "post-edit": {
-      "codepoint": 61750,
+      "codepoint": 61821,
       "source": "public/glyphs/vectors/post-edit.svg"
     },
     "pushpin": {
-      "codepoint": 61835,
+      "codepoint": 61822,
       "source": "public/glyphs/vectors/pushpin.svg"
     },
     "rearrange": {
-      "codepoint": 61765,
+      "codepoint": 61823,
       "source": "public/glyphs/vectors/rearrange.svg"
     },
     "rebranding": {
-      "codepoint": 61787,
+      "codepoint": 61824,
       "source": "public/glyphs/vectors/rebranding.svg"
     },
     "refresh": {
-      "codepoint": 61809,
+      "codepoint": 61825,
       "source": "public/glyphs/vectors/refresh.svg"
     },
     "reorder": {
-      "codepoint": 61751,
+      "codepoint": 61826,
       "source": "public/glyphs/vectors/reorder.svg"
     },
     "reorder-2": {
-      "codepoint": 61810,
+      "codepoint": 61827,
       "source": "public/glyphs/vectors/reorder-2.svg"
     },
     "reply": {
-      "codepoint": 61729,
+      "codepoint": 61828,
       "source": "public/glyphs/vectors/reply.svg"
     },
     "retweet": {
-      "codepoint": 61730,
+      "codepoint": 61829,
       "source": "public/glyphs/vectors/retweet.svg"
     },
     "role": {
-      "codepoint": 61788,
+      "codepoint": 61830,
       "source": "public/glyphs/vectors/role.svg"
     },
     "safari": {
-      "codepoint": 61868,
+      "codepoint": 61831,
       "source": "public/glyphs/vectors/safari.svg"
     },
     "save": {
-      "codepoint": 61840,
+      "codepoint": 61832,
       "source": "public/glyphs/vectors/save.svg"
     },
     "save-as": {
-      "codepoint": 61841,
+      "codepoint": 61833,
       "source": "public/glyphs/vectors/save-as.svg"
     },
     "scenario": {
-      "codepoint": 61789,
+      "codepoint": 61834,
       "source": "public/glyphs/vectors/scenario.svg"
     },
     "search": {
-      "codepoint": 61731,
+      "codepoint": 61835,
       "source": "public/glyphs/vectors/search.svg"
     },
     "security": {
-      "codepoint": 61790,
+      "codepoint": 61836,
       "source": "public/glyphs/vectors/security.svg"
     },
     "shared": {
-      "codepoint": 61872,
+      "codepoint": 61837,
       "source": "public/glyphs/vectors/shared.svg"
     },
     "sidebar-list": {
-      "codepoint": 61752,
+      "codepoint": 61838,
       "source": "public/glyphs/vectors/sidebar-list.svg"
     },
     "sla": {
-      "codepoint": 61791,
+      "codepoint": 61839,
       "source": "public/glyphs/vectors/sla.svg"
     },
     "split": {
-      "codepoint": 61864,
+      "codepoint": 61840,
       "source": "public/glyphs/vectors/split.svg"
     },
     "star": {
-      "codepoint": 61732,
+      "codepoint": 61841,
       "source": "public/glyphs/vectors/star.svg"
     },
     "star-o": {
-      "codepoint": 61753,
+      "codepoint": 61842,
       "source": "public/glyphs/vectors/star-o.svg"
     },
     "supervisor": {
-      "codepoint": 61792,
+      "codepoint": 61843,
       "source": "public/glyphs/vectors/supervisor.svg"
     },
     "survey-settings": {
-      "codepoint": 61793,
+      "codepoint": 61844,
       "source": "public/glyphs/vectors/survey-settings.svg"
     },
     "tags": {
-      "codepoint": 61794,
+      "codepoint": 61845,
       "source": "public/glyphs/vectors/tags.svg"
     },
     "text": {
-      "codepoint": 61836,
+      "codepoint": 61846,
       "source": "public/glyphs/vectors/text.svg"
     },
     "ticket": {
-      "codepoint": 61733,
+      "codepoint": 61847,
       "source": "public/glyphs/vectors/ticket.svg"
     },
     "ticket-fields": {
-      "codepoint": 61795,
+      "codepoint": 61848,
       "source": "public/glyphs/vectors/ticket-fields.svg"
     },
     "ticket2": {
-      "codepoint": 61734,
+      "codepoint": 61849,
       "source": "public/glyphs/vectors/ticket2.svg"
     },
     "timeline-forum": {
-      "codepoint": 61837,
+      "codepoint": 61850,
       "source": "public/glyphs/vectors/timeline-forum.svg"
     },
     "timeline-ticket": {
-      "codepoint": 61838,
+      "codepoint": 61851,
       "source": "public/glyphs/vectors/timeline-ticket.svg"
     },
     "trash": {
-      "codepoint": 61759,
+      "codepoint": 61852,
       "source": "public/glyphs/vectors/trash.svg"
     },
     "trash-o": {
-      "codepoint": 61735,
+      "codepoint": 61853,
       "source": "public/glyphs/vectors/trash-o.svg"
     },
     "trash-strike-thru": {
-      "codepoint": 61839,
+      "codepoint": 61854,
       "source": "public/glyphs/vectors/trash-strike-thru.svg"
     },
     "twitter": {
-      "codepoint": 61736,
+      "codepoint": 61855,
       "source": "public/glyphs/vectors/twitter.svg"
     },
     "twitter-lock": {
-      "codepoint": 61812,
+      "codepoint": 61856,
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
     "twitter-o": {
-      "codepoint": 61865,
+      "codepoint": 61857,
       "source": "public/glyphs/vectors/twitter-o.svg"
     },
     "unlock": {
-      "codepoint": 61737,
+      "codepoint": 61858,
       "source": "public/glyphs/vectors/unlock.svg"
     },
     "user": {
-      "codepoint": 61738,
+      "codepoint": 61859,
       "source": "public/glyphs/vectors/user.svg"
     },
     "view-retweets": {
-      "codepoint": 61739,
+      "codepoint": 61860,
       "source": "public/glyphs/vectors/view-retweets.svg"
     },
     "warning": {
-      "codepoint": 61740,
+      "codepoint": 61861,
       "source": "public/glyphs/vectors/warning.svg"
     },
     "web-page": {
-      "codepoint": 61869,
+      "codepoint": 61862,
       "source": "public/glyphs/vectors/web-page.svg"
     },
     "windows": {
-      "codepoint": 61870,
+      "codepoint": 61863,
       "source": "public/glyphs/vectors/windows.svg"
     }
   },
@@ -692,6 +692,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": false,
     "input": {

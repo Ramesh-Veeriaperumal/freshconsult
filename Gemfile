@@ -224,25 +224,27 @@ end
 # group :development, :assets do
 
   # TODO_RAILS3 Remove the default asset pipeline
-  gem "jammit", "0.6.5"
-  gem "uglifier", "~> 2.1.2"
-  gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
+  gem "jammit", 				"0.6.5"
+  gem "uglifier", 				"~> 2.1.2"
+  gem "yui-compressor", 		:git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
-  gem "sprockets",            "2.2.2"
-  gem "ejs",                  "1.1.1"
+  gem "sprockets",            	"2.2.2"
+  gem "asset_sync",           	"1.1.0"
+  gem "turbo-sprockets-rails3", "0.3.14"	
+  gem "ejs",                  	"1.1.1"
 
   # SASS and Compass gems
-  gem "sass-rails",           "3.2.6"
-  gem "compass-rails",        "2.0.0"
-  gem "compass-blueprint",    "1.0.0"
+  gem "sass-rails",           	"3.2.6"
+  gem "compass-rails",        	"2.0.0"
+  gem "compass-blueprint",    	"1.0.0"
 
   # Portal grid system is done using susy grids
-  gem "susy",                 "2.1.3"
+  gem "susy",                 	"2.1.3"
 
   # To optimize sprite generation
-  gem "oily_png",             "1.1.1"
-  gem 'asset_sync',           '1.1.0'
+  gem "oily_png",             	"1.1.1"
+  
   # Building custom font icons inside the application
-  gem "fontcustom",           "1.3.3"
-  gem 'turbo-sprockets-rails3'
+  gem "fontcustom",           	"1.3.8"  
+
 # end
