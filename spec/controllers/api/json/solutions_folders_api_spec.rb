@@ -53,7 +53,7 @@ RSpec.describe Solution::FoldersController do
     params = solution_folder_params_with_company_visibility
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
-    expected = (response.status === "201 Created") && (compare(result["folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
+    expected = (response.status === 201) && (compare(result["folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
     customer_id = @account.folders.find_by_name(params["solution_folder"]["name"] ).customer_folders.first.customer.id 
     expected.should be(true)
     customer_id.should be(@new_company.id)
