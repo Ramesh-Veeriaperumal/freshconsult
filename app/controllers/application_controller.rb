@@ -19,7 +19,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   before_filter :logging_details 
   before_filter :remove_pjax_param 
-  before_filter :persist_flash
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -92,10 +91,6 @@ class ApplicationController < ActionController::Base
   
   def set_default_locale
     I18n.locale = I18n.default_locale
-  end
-
-  def persist_flash
-    flash.keep
   end
   
   def unset_current_account
