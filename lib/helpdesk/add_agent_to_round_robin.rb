@@ -11,7 +11,7 @@ module Helpdesk
               agent = account.agents.find_by_user_id(user_id)
               group_id = args[:group_id]
               group = account.groups.round_robin_groups.find_by_id(group_id)
-              group.add_or_remove_agent(user_id) if agent.available?
+              group.add_or_remove_agent(user_id)
           rescue Exception => e
               puts e.inspect, args.inspect
               NewRelic::Agent.notice_error(e, {:args => args})
