@@ -435,6 +435,7 @@ en:
         sorry: But, really sorry for the inconvenience.
         happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
         neutral_info: Wish you were a little more happy.
+        neutral_information:  Wish you were a little more happy.
         unhappy_info: We will ensure that we will take extra care the next time around.
   gamification:
     levels:
