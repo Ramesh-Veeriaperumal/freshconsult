@@ -1,0 +1,27 @@
+<style>
+	<%= render :file => "mailer/css/mailer.css" %>
+</style>
+<div class="body">
+	<div class="mail_content">
+		<b>The draft version of the article
+		<%= link_to "\"#{@draft[:title]}\"", 
+					solution_article_url(@article.id, :host => @host)%>
+		 was discarded by <%= link_to(@user.name, contact_url(@user.id, :host => @host)) %> at <%= Time.now.utc %> .
+	</div>
+
+	<div class="forum_content">
+		<div class="draft-title">
+			<h3> <%= @draft[:title] %> <h5> by <%= @created_author.name %> <h5> </h3>
+		</div>
+		<br />
+		<div class="actual_content">
+			<%= @body_html.html_safe %>
+		</div>
+		<br>
+	</div>
+	<div class="footer">
+		<%= link_to("View article", solution_article_url(@article.id, :host => @host), :class => "reply") %>
+	</div>
+	<br>
+	<br>
+</div>

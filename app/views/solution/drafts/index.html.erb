@@ -1,0 +1,22 @@
+<div class="folder-2col">
+	<div class="folder_section" id="folder-section">
+		Empty	
+	</div>
+	<div class="artical_section" id="article-section"> 
+		<div class="crumbs">
+			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+			<%= content_tag(:span, t('draft') ) %>
+		</div>
+		<% unless (@drafts.size == 0) %>
+  		<%= render :partial => "drafts_list", :locals => { :drafts => @drafts} %>
+		<% else %>
+			<span class="info_data"><%= t("solutions.drafts.empty") %></span>
+		<% end %>	
+	</div> 
+</div>
+
+<% javascript_tag do -%>
+  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
+    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+<%- end %>
+<% content_for :layoutType do -%>antipattern<%- end %>

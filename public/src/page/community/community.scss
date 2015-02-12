@@ -311,13 +311,21 @@ body.community.moderation.cs-always-show {
 
 	.delete-confirm-form {
 		background-color: #EFEFEF;
-		padding: 15px;
+		padding: 13px;
 		padding-top: 20px;
 		border-radius: 0px 0px 4px 4px;
 		margin-bottom: -10px;
 	}
 }
 
+.artical_section {
+	.draft-info-box {
+		background-color: #F5F5F5;
+		padding: 15px;
+		margin: -10px -20px 20px -20px;
+		text-align: center;
+	}
+}
 .portal-preview-icon {
 	margin-left: 10px;
 }

@@ -2,6 +2,9 @@
 	<div class="folder_section" id="folder-section">
 		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
  </div>  	
+
+<% current_item = (@article.draft || @article) %>
+
  <div class="artical_section" id="article-section">
  	<div class="crumbs">
 	 	<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
@@ -9,16 +12,23 @@
 		<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%>
 		<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) %>
  	</div>
+ 	<% if @article.draft %>
+	 	<div class="draft-info-box">
+	 		<%= current_item.current_author.name %> edited <span data-livestamp="<%= current_item.updated_at.to_i %>"></span> (<%= formated_date(current_item.updated_at) %>) - 
+	 		<%= link_to(t('solutions.drafts.discard'), solution_draft_path(current_item), :method => 'delete', :class => 'discard-draft') %>
+	 	</div>
+	<% end %> 	
 	<div class="floatr">
     <% if privilege?(:publish_solution) %>
   		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
     <% end %>
-	</div>	
+	</div>
+
 	<h2 class="title">
-		<%= h(@article.title) %>
+		<%= h(current_item.title) %>
 	</h2>
 	<div class="help-text">
-		By <b> <%= @article.user.name %></b>, <%= formated_date(@article.modified_at) %>
+		By <b> <%= (@article.draft ? current_item.current_author.name : current_item.user.name) %></b>, <%= formated_date(current_item.modified_at) %>
 
 		<%= content_tag(:span, t('private'), :class => "label tooltip", 
 					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
@@ -28,10 +38,14 @@
 	
 	  <div class="solution_title">
 			<div class="tag_list"> 
-			<% @article.tags.map.each do |t| %> 
-				<div class="item">			
-          <% if privilege?(:publish_solution) %>					
-					  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+			<% current_item.tags.map.each do |t| %> 
+				<div class="item">
+          <% if privilege?(:publish_solution) %>	
+          	<% if @feature && @article.draft.present? %>
+          	<%= link_to('<i class="icon-close"></i>'.html_safe, solution_draft_tag_delete_path(current_item, t), :method => 'delete', :class => 'tag_delete') %>
+          	<% else %>
+						  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+					  <% end %>
           <% end %>
 					<%= h(t.name) %>
 				</div>
@@ -40,13 +54,13 @@
 	 </div>
 	 <span class="seperator"></span>
 	 <div class="solutions_text clearfix">
-		<%= @article.description.html_safe %>
+		<%= current_item.description.html_safe %>
 	 </div>
 		<ul class="attachment_list">
-		    <% @article.attachments.each do |attached| %> 
+		    <% current_item.attachments.each do |attached| %> 
 		    	<%= attachment_list(attached, privilege?(:publish_solution), "article",nil) %>
 		    <% end %>
-		    <% @article.cloud_files.each do |cloud_file| %> 
+		    <% current_item.cloud_files.each do |cloud_file| %> 
 				<%= attachment_list(cloud_file, privilege?(:publish_solution), "cloud_file",nil) %>
 			<% end %>
 		</ul>

@@ -11,8 +11,8 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings] 
-  
+  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings]
+  before_filter :feature_enabled?, :only => [:edit, :update, :show, :create]
   
 
   def index
@@ -21,7 +21,7 @@ class Solution::ArticlesController < ApplicationController
 
   def show
     @enable_pattern = true
-    @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
+    @article = current_account.solution_articles.find_by_id!(params[:id], :include => [:folder, :draft])
     respond_to do |format|
       format.html
       format.xml  { render :xml => @article }
@@ -40,7 +40,8 @@ class Solution::ArticlesController < ApplicationController
     end
   end
 
-  def edit 
+  def edit
+    @feature ? load_draft :
     respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @article }
@@ -55,9 +56,10 @@ class Solution::ArticlesController < ApplicationController
     redirect_to_url = @article
     redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
     build_attachments
-    set_solution_tags
+    set_solution_tags(@artcile)
     respond_to do |format|
       if @article.save
+        (forge_draft unless save_and_publish?) if @feature
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
@@ -73,18 +75,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    build_attachments
-    set_solution_tags    
-    respond_to do |format|    
-      if @article.update_attributes(params[nscname])  
-        format.html { redirect_to @article }
-        format.xml  { render :xml => @article, :status => :created, :location => @article }     
-        format.json  { render :json => @article, :status => :ok, :location => @article }    
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
-      end
-    end
+    @feature ? update_draft :  update_article
   end
 
   def destroy
@@ -163,7 +154,7 @@ class Solution::ArticlesController < ApplicationController
       @page_title = t("header.tabs.solutions")    
     end
 
-    def set_solution_tags      
+    def set_solution_tags(obj)
       return unless params[:tags] && (params[:tags].is_a?(Hash) && params[:tags][:name].present?)      
       @article.tags.clear    
       tags = params[:tags][:name]
@@ -174,7 +165,7 @@ class Solution::ArticlesController < ApplicationController
         new_tag = Helpdesk::Tag.find_by_name_and_account_id(tag, current_account) ||
            Helpdesk::Tag.new(:name => tag ,:account_id => current_account.id)
         begin
-          @article.tags << new_tag
+          obj.tags << new_tag
         rescue ActiveRecord::RecordInvalid => e
         end
 
@@ -189,4 +180,57 @@ class Solution::ArticlesController < ApplicationController
         access_denied
       end
     end
+
+    def feature_enabled?
+      @feature = true
+    end
+
+    def save_and_publish?
+      params[:save_and_publish].present?
+    end
+
+    def forge_draft
+      @draft = @article.build_draft
+    end
+
+    def load_draft
+      @draft = current_account.solution_drafts.find_by_article_id(params[:id])
+      ((@draft = @article.build_draft) and return) unless @draft.present?
+      unless @draft.lock_for_editing!
+        flash[:error] = "This artcile is edited upon by somebody else. You can't edit simultaneously."
+        redirect_to :action => "show" and return
+      end
+    end
+
+    def update_draft
+      @draft = current_account.solution_drafts.find_by_article_id(params[:id])
+      if (@draft.present? && (@draft.current_author == current_user) && update_draft_attributes)
+        flash[:success], action = "This article draft was saved succesfully.", "show"
+      end
+      flash ||= {:error => "This article draft could not be saved."}
+      redirect_to :action => (action || "edit") and return
+    end
+
+    def update_draft_attributes
+      attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
+      set_solution_tags(@draft)
+      @draft.unlock
+      @draft.update_attributes(params[:article])
+    end
+
+    def update_article
+      build_attachments
+      set_solution_tags(@article)    
+      respond_to do |format|    
+        if @article.update_attributes(params[nscname])  
+          format.html { redirect_to @article }
+          format.xml  { render :xml => @article, :status => :created, :location => @article }     
+          format.json  { render :json => @article, :status => :ok, :location => @article }    
+        else
+          format.html { render :action => "edit" }
+          format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
+        end
+      end
+    end
+
 end

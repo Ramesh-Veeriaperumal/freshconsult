@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150102142624) do
+ActiveRecord::Schema.define(:version => 20150119073618) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2491,6 +2491,27 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
 
   add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
   add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
+
+  create_table "solution_draft_bodies", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "draft_id",    :limit => 8
+    t.text     "description", :limit => 2147483647
+    t.text     "seo_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "solution_drafts", :force => true do |t|
+    t.integer "account_id",     :limit => 8,          :null => false
+    t.integer "article_id",     :limit => 8
+    t.integer "folder_id",      :limit => 8
+    t.string  "title"
+    t.integer "current_author_id", :limit => 8
+    t.integer "created_author_id", :limit => 8
+    t.integer "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "solution_folders", :force => true do |t|
     t.string   "name"

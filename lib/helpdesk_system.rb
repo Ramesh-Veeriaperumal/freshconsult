@@ -50,7 +50,7 @@ module HelpdeskSystem
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? cloud_file.droppable_type
         ticket = cloud_file.droppable.respond_to?(:notable) ? cloud_file.droppable.notable : cloud_file.droppable
         can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-      elsif ['Solution::Article'].include?  cloud_file.droppable_type
+      elsif ['Solution::Article', 'Solution::Draft'].include?  cloud_file.droppable_type
         can_destroy = true if privilege?(:publish_solution) or (current_user && cloud_file.droppable.user_id == current_user.id)
       elsif ['Account'].include?  cloud_file.droppable_type
         can_destroy = true if privilege?(:manage_account)

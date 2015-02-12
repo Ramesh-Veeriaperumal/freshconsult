@@ -146,6 +146,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
   end
 
+  def to_content
+    url = self.authenticated_s3_get_url
+    io = open(url)
+    if io
+      def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+    end
+    io
+  end
+
   private
 
   def set_random_secret

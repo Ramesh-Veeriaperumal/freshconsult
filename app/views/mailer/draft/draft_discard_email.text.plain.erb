@@ -1,0 +1,15 @@
+Your draft of the article "<%= @draft[:title] %>" was discarded by <%= @user.name %> at <%= Time.now.utc %> .
+
+<%= "_" * 100 %>
+
+<%= @draft[:title] %> by <%=  @created_author.name %>
+
+<%= "_" * 100 %>
+
+<%= @draft[:description] %>
+
+<%= "_" * 100 %>
+
+View Article
+<%= solution_article_url(@article.id, :host => @host) %>
+

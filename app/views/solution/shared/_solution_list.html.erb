@@ -35,16 +35,24 @@
 				<div class="article-title span7">
 					<%= link_to("<i class='icons-edit-forum'></i>".html_safe, edit_solution_category_folder_article_path(category, folder, article), :title => "Edit", :class=>'pull-left mr6 tooltip') if privilege?(:manage_solutions) %>
 					<div class='article-desc'>
-						<%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %>
-						<div class="muted">
-							<%= t('solution.user_details', :user => article.user.name, :time => formated_date(article.modified_at) ).html_safe %>
-						</div>
+						<!-- This is for normal thing with out draft feature enabled -->
+						<% if draft_feature_enabled = true %>
+							<%= link_to h( (article.draft || article).title ), solution_category_folder_article_path(category, folder, article) %>
+							<div class="muted">
+								<%= t('solution.user_details', :user => article.user.name, :time => formated_date( (article || artcile.draft).modified_at) ).html_safe %>
+							</div>
+						<% else %>
+							<%= link_to h(article.title), solution_category_folder_article_path(category, folder, article) %>
+							<div class="muted">
+								<%= t('solution.user_details', :user => article.user.name, :time => formated_date(article.modified_at) ).html_safe %>
+							</div>
+						<% end %>
 					</div>
 				</div>
 				<div class="span5 mt12 clear-left-margin">
 					<div class='span7 text-center article-info'>
-						<span class="label <%= 'draft' unless article.published? %>">
-						<% unless article.published? %>
+						<span class="label <%= 'draft' if article.draft.present? %>">
+						<% if article.draft.present? %>
 							<%= t('solutions.status.draft')%>
 						<% else %>
 							<%= t("#{article.type_name}")%>

@@ -2480,6 +2480,9 @@ en:
       placeholder: Search All Solutions
     search:
       placeholder: Search %{name}
+    drafts:
+      empty: There are no drafts here. Please come back after sometime.
+      discard: Discard draft
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
@@ -3215,6 +3218,7 @@ en:
         category: Category
         visible_to: Visible to
     articles:
+      save_and_publish: Save and Publish
       where: Where
       search_articles: Search Articles
       guides: Guides

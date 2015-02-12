@@ -144,6 +144,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder]
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
+    resource :"solution/draft", :only => [:delete_tag]
   end
 
   delete_solution do
@@ -154,6 +155,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :"solution/draft", :only => [:autosave, :index, :destroy]
   end
 
   # ************** FORUMS **************************

@@ -1,6 +1,16 @@
-<h3 class="lead itil-hide"><%=t('solution.edit')%></h3>
+<h3 class="lead itil-hide"><%=t('solution.edit')%>
+	<span class="autosave-container pull-right" style="font-size:12px;">
+		<span class="autosave-pre-text"></span>
+		<span  class="autosave-time-stamp"></span>
+	</span>
+</h3>
 <%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
-	<%= render :partial => 'article_form', :locals => { :f => f } %>
+	
+	<% if @feature %>
+		<%= render :partial => 'draft_form', :locals => { :f => f } %>
+	<% else %>
+		<%= render :partial => 'article_form', :locals => { :f => f } %>
+	<% end %>
 	<div class="button-container align-right">
 	    <% if privilege?(:delete_solution, @article) %>
 	  		<div class="pull-left itil-hide">

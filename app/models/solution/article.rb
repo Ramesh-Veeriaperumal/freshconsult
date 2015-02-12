@@ -37,6 +37,7 @@ class Solution::Article < ActiveRecord::Base
 
   has_many :article_ticket, :dependent => :destroy
   has_many :tickets, :through => :article_ticket
+  has_one :draft
   
   include Mobile::Actions::Article
   include Solution::Constants
@@ -213,6 +214,15 @@ class Solution::Article < ActiveRecord::Base
 
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def build_draft(opts={})
+    opts = opts.merge(:article => self)
+    draft_attrs = self.attributes.slice(*Solution::Draft::COMMON_ATTRIBUTES).merge(opts)
+    draft = self.account.solution_drafts.build(draft_attrs)
+    draft.clone_attachments_and_tags(self)
+    draft.save
+    draft
   end
 
   private

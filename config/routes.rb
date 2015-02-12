@@ -1511,6 +1511,12 @@ Helpkit::Application.routes.draw do
           resources :tag_uses
         end
       end
+      resources :drafts do
+        member do
+          post :autosave
+        end
+      end
+      match '/draft/:draft_id/tag/:id' => 'drafts#delete_tag', :as => :draft_tag_delete, :via => :delete
     end
 
     resources :articles, :only => [:show, :create, :destroy]
@@ -1771,6 +1777,7 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
 
     resources :tickets do
       collection do

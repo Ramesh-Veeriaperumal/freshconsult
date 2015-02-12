@@ -3,9 +3,11 @@ class Support::Solutions::ArticlesController < SupportController
   include Helpdesk::TicketActions
   include Solution::Feedback
 
-  before_filter :load_and_check_permission, :except => :index
+  before_filter :load_and_check_permission, :except => [:index]
 
   before_filter :render_404, :unless => :article_visible?, :only => :show
+
+  before_filter :render_404, :unless => :draft_preview_agent_filter?, :only => :show
 
   before_filter :load_agent_actions, :only => :show
 
@@ -35,7 +37,8 @@ class Support::Solutions::ArticlesController < SupportController
 
     respond_to do |format|
       format.html { 
-        load_page_meta
+        adapt_article if draft_preview?
+        load_page_meta unless draft_preview?
         set_portal_page :article_view 
       }
       format.json { render :json => @article.to_json  }
@@ -129,5 +132,27 @@ class Support::Solutions::ArticlesController < SupportController
     def load_vote
       @vote = @article.votes.find_or_initialize_by_user_id(current_user.id) if current_user
     end
+
+    def draft_preview?
+      params[:status] == "draft"
+    end
+
+    def draft_preview_agent_filter?
+      return (current_user && current_user.agent?) if draft_preview?
+      true
+    end
+
+    def adapt_article
+      draft = @article.draft
+      @article.attributes.each do |key, value|
+        @article[key] = draft.send(key) if draft.respond_to?(key)
+      end
+      [:attachments, :cloud_files, :tags].each do |assoc|
+        @article.send("#{assoc}=", draft.send(assoc))
+      end
+      @article.freeze
+      @page_meta = { :title => @article.title }
+    end
+
 end
 

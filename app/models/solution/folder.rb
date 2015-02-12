@@ -21,6 +21,7 @@ class Solution::Folder < ActiveRecord::Base
   after_commit :set_mobihelp_solution_updated_time
 
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
+  has_many :drafts, :class_name =>'Solution::Draft'
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
            :conditions => "solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
 
