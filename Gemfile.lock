@@ -491,9 +491,9 @@ GEM
       net-ssh (>= 2.1.3)
       nokogiri (~> 1.5)
       ruby-hmac
-    fontcustom (1.3.3)
+    fontcustom (1.3.8)
       json (~> 1.4)
-      listen (~> 1.0)
+      listen (>= 1.0, < 3.0)
       thor (~> 0.14)
     forgery (0.5.0)
     formatador (0.2.5)
@@ -552,10 +552,10 @@ GEM
     launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (3.16.14.3)
-    listen (1.3.1)
+    listen (2.8.5)
+      celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-      rb-kqueue (>= 0.2)
     lockfile (1.4.3)
     macaddr (1.6.7)
       systemu (~> 2.6.2)
@@ -669,8 +669,6 @@ GEM
     rake (10.4.0)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.4)
-      ffi (>= 0.5.0)
-    rb-kqueue (0.2.2)
       ffi (>= 0.5.0)
     rdoc (3.12.2)
       json (~> 1.4)
@@ -888,7 +886,7 @@ DEPENDENCIES
   faker (~> 1.0.1)
   faraday (= 0.9)
   features!
-  fontcustom (= 1.3.3)
+  fontcustom (= 1.3.8)
   forgery (= 0.5.0)
   freshdesk_authority!
   fuubar
@@ -997,7 +995,7 @@ DEPENDENCIES
   text_data_store!
   therubyracer
   tire!
-  turbo-sprockets-rails3
+  turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
   twitter (~> 5.5.1)
   tzinfo (~> 0.3.29)
