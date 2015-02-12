@@ -245,6 +245,6 @@ end
   gem "oily_png",             	"1.1.1"
   
   # Building custom font icons inside the application
-  gem "fontcustom",           	"1.3.8"  
+  gem "fontcustom",           	"1.3.3"  
 
 # end

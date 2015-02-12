@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "575af310498747e42a2a9733c16c2d3d60b4b60a4d37a6be463ff04088c2b2b6",
-    "current": "575af310498747e42a2a9733c16c2d3d60b4b60a4d37a6be463ff04088c2b2b6"
+    "previous": "c19d634253b88ef1921e85b1ea654d5feb54415e62fa44a71d501e54a795b1ff",
+    "current": "c19d634253b88ef1921e85b1ea654d5feb54415e62fa44a71d501e54a795b1ff"
   },
   "fonts": [
-    "public/assets/glyphs_575af310498747e42a2a9733c16c2d3d.ttf",
-    "public/assets/glyphs_575af310498747e42a2a9733c16c2d3d.svg",
-    "public/assets/glyphs_575af310498747e42a2a9733c16c2d3d.woff",
-    "public/assets/glyphs_575af310498747e42a2a9733c16c2d3d.eot"
+    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.ttf",
+    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.svg",
+    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.woff",
+    "public/assets/glyphs_c19d634253b88ef1921e85b1ea654d5f.eot"
   ],
   "glyphs": {
     "account": {
@@ -691,11 +691,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": true,
-    "font_ascent": 448,
-    "font_descent": 64,
-    "font_design_size": 16,
-    "font_em": 512,
+    "debug": false,
     "font_name": "glyphs",
     "force": false,
     "input": {
