@@ -5,4 +5,4 @@ S3_CONFIG = (config[Rails.env] || config).symbolize_keys
 AWS.config(
     :access_key_id => S3_CONFIG[:access_key_id],
     :secret_access_key => S3_CONFIG[:secret_access_key],
-    :region => S3_CONFIG[:region] ? S3_CONFIG[:region] : 'us-east-1')
+    :region => S3_CONFIG[:region])
