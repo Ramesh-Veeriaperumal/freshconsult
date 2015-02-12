@@ -15,8 +15,8 @@
         clazz.constantize.new(msg.body).send(method)
       rescue Exception => e
         Rails.logger.error "Error while processing =============> #{e.inspect}"
-        NewRelic::Agent.notice_error(e,{:description => "Error while processing request"})
-        render :text => "Request cannot be processed"
+        NewRelic::Agent.notice_error(e,{:description => "Error while processing sqs request"})
+        #render :text => "Request cannot be processed"
       end
     end
   end
