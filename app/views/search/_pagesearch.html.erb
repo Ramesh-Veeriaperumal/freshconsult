@@ -10,11 +10,13 @@
 
 <ul id="page_search_results" style="display:none;" class="community-search result-wrapper"></ul>
 
-<%= include_cloudfront_js :search  %>
-
 <script type="text/javascript">
-	var SEARCH_RESULT_LANG = { by : "<%= t('search.by') %>",
-							in : "<%= t('search.in') %>" }
+var afterSearchLoaded = function(){
+	window.SEARCH_RESULT_LANG = {
+		by : "<%= t('search.by') %>",
+		in : "<%= t('search.in') %>"
+	}
+	
 	callbackToPageSearch = function(string){
 								jQuery.ajax({ 
 									url: "<%=url%>"+encodeURIComponent(string),
@@ -49,8 +51,17 @@
 			jQuery(this).parent().removeClass("sloading loading-small loading-right");				
 		}
 	});
+	
 	jQuery('.page-search').bind("submit", function(ev){
 		ev.preventDefault()
 		return false
-	})
+	});
+	
+}
+
+if (!Fjax.Assets.alreadyLoaded('search')) {
+	Fjax.Assets.serve('search', afterSearchLoaded);
+} else {
+	afterSearchLoaded();
+}
 </script>

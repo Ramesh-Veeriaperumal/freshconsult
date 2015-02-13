@@ -32,7 +32,7 @@ module Facebook::Util
         end
 
       else
-        puts "error while saving the ticket:: #{ticket.errors.to_json}"
+        puts "error while saving the ticket:: #{ticket.errors.to_json} - #{@account.id} : #{fan_page.page_id} : #{koala_feed.feed_id}"
         ticket = nil
       end
     end
@@ -79,7 +79,7 @@ module Facebook::Util
             @fan_page.update_attribute(:fetch_since, koala_comment.created_at.to_i)
           end
         else
-          puts "error while saving the note #{note.errors.to_json}"
+          puts "error while saving the note #{note.errors.to_json} - #{@fan_page.account_id} : #{@fan_page.page_id} : #{koala_comment.comment_id}"
           note = nil
         end
       ensure

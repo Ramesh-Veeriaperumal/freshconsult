@@ -29,8 +29,9 @@
 		</div>
 	</div>
 <% end %>
-<%= include_cloudfront_js :search %>
+
 <script type="text/javascript">
+jQuery('body').one('assetLoaded.fjax', function() {
 	window.SEARCH_RESULTS_PAGE = {
 		data : <%= @result_json.html_safe %>,
 		initializeSearchPageDefaults : function(){
@@ -50,5 +51,5 @@
 	
 	SEARCH_RESULTS_PAGE.initializeSearchPageDefaults();
 
-	Fjax.afterNextPage = function(){ window['search_page'].destroy()}
+});
 </script>

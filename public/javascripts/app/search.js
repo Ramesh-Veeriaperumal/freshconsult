@@ -6,6 +6,14 @@
 		return true; 
 	}
 
+	window.App.Search = {
+		onFirstVisit: function() {},
+		onVisit: function() {},
+		onLeave: function() {
+			window['search_page'].destroy();
+		},
+	}
+
 	window.SearchResults = Class.create();
 
 	SearchResults.prototype = {
