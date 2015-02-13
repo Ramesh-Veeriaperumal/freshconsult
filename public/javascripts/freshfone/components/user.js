@@ -194,7 +194,7 @@ var FreshfoneUser,
 				error: function (data) {
 					self.status = self.previous_status;
 					if ($loading_element) { $loading_element.removeClass('header-spinner'); }
-					ffLogger.logIssue("Unable get Capability Token for "+ CURRENT_USER.id, { "data" : data });
+					ffLogger.logIssue("Unable get Capability Token for "+ freshfone.current_user_details.id, { "data" : data });
 				}
 			});
 		},
@@ -205,7 +205,7 @@ var FreshfoneUser,
 				this.lastRequested = new Date();
 				return false;
 			};
-			ffLogger.logIssue("Repressing refresh_token for "+ CURRENT_USER.id + " because of repeated requests while busy");
+			ffLogger.logIssue("Repressing refresh_token for "+ freshfone.current_user_details.id + " because of repeated requests while busy");
 			return true;
 		},
 

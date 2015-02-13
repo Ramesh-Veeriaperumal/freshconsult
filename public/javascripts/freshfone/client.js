@@ -51,7 +51,7 @@ var globalconn;
 			if(!$(this).hasClass('phone-icons')){
 			if ($(this).data('phoneNumber') !== undefined) {
 				freshfonecalls.recentCaller = 1;
-				freshfonecalls.number = "+" + $(this).data('phoneNumber');
+				freshfonecalls.number = $(this).data('phoneNumber');
 				$('#number').intlTelInput("setNumber", freshfonecalls.number);
 				freshfonecalls.selectFreshfoneNumber($(this).data('freshfoneNumberId'));
 				setTimeout(function () { freshfonewidget.showDialPad(); }, 1); 
