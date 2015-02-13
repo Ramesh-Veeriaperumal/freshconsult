@@ -138,7 +138,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def draft_preview_agent_filter?
-      return (current_user && current_user.agent?) if draft_preview?
+      return (current_user && current_user.agent? && @article.draft.present?) if draft_preview?
       true
     end
 
@@ -147,7 +147,7 @@ class Support::Solutions::ArticlesController < SupportController
       @article.attributes.each do |key, value|
         @article[key] = draft.send(key) if draft.respond_to?(key)
       end
-      [:attachments, :cloud_files, :tags].each do |assoc|
+      [:attachments, :cloud_files].each do |assoc|
         @article.send("#{assoc}=", draft.send(assoc))
       end
       @article.freeze

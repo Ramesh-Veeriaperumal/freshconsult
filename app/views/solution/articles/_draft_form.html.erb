@@ -33,7 +33,7 @@
 		<div class="control-group row-fluid">
 			<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 			<div class="controls">
-				<%= tag.text_field :name , :value => @draft.tags.collect{|tag| tag.name}.join(','), :class => "select2 span8"%>
+				<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 span8"%>
 			</div>
 		</div>
 	<%end%>
@@ -67,7 +67,7 @@
 					<div class="controls">
 						<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
 							'data-counter' => "TitleCounter", 'data-limit' => 72, 
-							:value => (@draft.seo_data || {})[:meta_title] %>
+							:value => (@article.seo_data || {})[:meta_title] %>
 
 						<div class="muted">
 							<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
@@ -80,7 +80,7 @@
 					<div class="controls">
 			    		<%= s.text_area  :meta_description, :rel => "charcounter", 
 							'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
-							:value => (@draft.seo_data || {})[:meta_description], 
+							:value => (@article.seo_data || {})[:meta_description], 
 							:class => "solution-seo-description" %>
 						<div class="muted">
 				    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
@@ -92,7 +92,7 @@
 					<%= s.label(:meta_keywords, t('solution.solution_meta_keywords'), :class => 'control-label') %>
 					<div class="controls">
 						<%= s.text_field :meta_keywords, :class => "text", 
-							:value => (@draft.seo_data || {})[:meta_keywords] %>
+							:value => (@article.seo_data || {})[:meta_keywords] %>
 						<div class="muted">
 							<%= t('solution.meta_keywords_message') %>
 						</div>

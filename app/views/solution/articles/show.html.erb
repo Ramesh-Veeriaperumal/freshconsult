@@ -38,7 +38,7 @@
 	
 	  <div class="solution_title">
 			<div class="tag_list"> 
-			<% current_item.tags.map.each do |t| %> 
+			<% @article.tags.map.each do |t| %> 
 				<div class="item">
           <% if privilege?(:publish_solution) %>	
           	<% if @feature && @article.draft.present? %>

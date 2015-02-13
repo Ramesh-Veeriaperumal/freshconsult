@@ -1511,13 +1511,14 @@ Helpkit::Application.routes.draw do
           resources :tag_uses
         end
       end
-      resources :drafts do
-        member do
-          post :autosave
-        end
-      end
-      match '/draft/:draft_id/tag/:id' => 'drafts#delete_tag', :as => :draft_tag_delete, :via => :delete
     end
+
+    resources :drafts do
+      member do
+        post :autosave
+      end
+    end
+    match '/draft/:draft_id/tag/:id' => 'drafts#delete_tag', :as => :draft_tag_delete, :via => :delete
 
     resources :articles, :only => [:show, :create, :destroy]
   end

@@ -6,30 +6,12 @@ class Solution::Draft < ActiveRecord::Base
 	belongs_to :created_author, :foreign_key => "created_author_id", :class_name => "User"
 	belongs_to :current_author, :foreign_key => "current_author_id", :class_name => "User"
 	belongs_to :article, :class_name => "Solution::Article"
-	belongs_to :folder, :class_name => "Solution::Folder"
 	
 	has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
 	has_many_attachments
 	has_many_cloud_files
-	has_many :tag_uses,
-		:as => :taggable,
-		:class_name => 'Helpdesk::TagUse',
-		:dependent => :destroy
-	has_many :tags, 
-		:class_name => 'Helpdesk::Tag',
-		:through => :tag_uses
 
-	delegate :description, :seo_data, :to => :draft_body, :allow_nil => true
-
-	#defining writer methods for delegated attributes
-	[:description, :seo_data].each do |meth|
-		define_method "#{meth}=" do |content|
-			unless self.draft_body.present?
-				self.build_draft_body({meth => content, :account_id => Account.current.id}) and return
-			end
-			self.draft_body.send("#{meth}=", content)
-		end
-	end
+	delegate :description, :to => :draft_body, :allow_nil => true
 
 	validates_uniqueness_of :article_id, :if => 'article_id.present?'
 
@@ -51,7 +33,15 @@ class Solution::Draft < ActiveRecord::Base
 	STATUS_NAMES_BY_KEY	= Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
 	STATUS_KEYS_BY_TOKEN	= Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
 
-	COMMON_ATTRIBUTES = ["title", "folder_id", "description", "seo_data"]
+	COMMON_ATTRIBUTES = ["title", "description"]
+
+	#defining writer methods for delegated attributes
+	def description= content
+		unless self.draft_body.present?
+			self.build_draft_body({:description => content, :account_id => Account.current.id}) and return
+		end
+		self.draft_body.description = content
+	end
 
 	def locked?
 		return false unless status == STATUS_KEYS_BY_TOKEN[:editing]
@@ -87,15 +77,12 @@ class Solution::Draft < ActiveRecord::Base
 		self.reload and self.destroy
 	end
 
-	def clone_attachments_and_tags(parent_article)
+	def clone_attachments(parent_article)
 		parent_article.attachments.each do |attachment|      
 			self.attachments.build(:content => attachment.to_content, :description => "", :account_id => self.account_id)
 		end
 		parent_article.cloud_files.each do |cloud_file|
   		self.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
-	  end
-	  parent_article.tags.each do |tag|
-	  	self.tags << tag
 	  end
 	end
 
@@ -109,7 +96,7 @@ class Solution::Draft < ActiveRecord::Base
 	private
 
 		def modify_associations
-			[:attachments, :cloud_files, :tags].each do |assoc|
+			[:attachments, :cloud_files].each do |assoc|
 				article.send(assoc).destroy_all
 				type = self.class.reflections[assoc].options[:as]
 				self.send(att).each do |item|

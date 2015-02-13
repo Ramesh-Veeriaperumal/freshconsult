@@ -220,7 +220,7 @@ class Solution::Article < ActiveRecord::Base
     opts = opts.merge(:article => self)
     draft_attrs = self.attributes.slice(*Solution::Draft::COMMON_ATTRIBUTES).merge(opts)
     draft = self.account.solution_drafts.build(draft_attrs)
-    draft.clone_attachments_and_tags(self)
+    draft.clone_attachments(self)
     draft.save
     draft
   end

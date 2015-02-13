@@ -213,7 +213,6 @@ class Solution::ArticlesController < ApplicationController
 
     def update_draft_attributes
       attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
-      set_solution_tags(@draft)
       @draft.unlock
       @draft.update_attributes(params[:article])
     end

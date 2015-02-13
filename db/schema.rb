@@ -172,7 +172,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer  "scoreboard_level_id", :limit => 8
     t.integer  "account_id",          :limit => 8
     t.boolean  "available",                        :default => true
-    t.datetime "active_since"
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
@@ -227,29 +226,32 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
 
   create_table "ca_folders", :force => true do |t|
     t.string   "name"
-    t.boolean  "is_default",              :default => false
-    t.integer  "account_id", :limit => 8
+    t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "folder_type"
-    t.boolean  "deleted",      :default => false
+    t.boolean  "deleted",                  :default => false
   end
 
-  add_index "ca_folders", ["account_id","folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
+  add_index "ca_folders", ["account_id", "folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
 
   create_table "chat_settings", :force => true do |t|
-    t.integer  "account_id",      :limit => 8
-    t.string   "display_id"
+    t.integer  "account_id",            :limit => 8
+    t.text     "display_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",                                :default => false
+    t.boolean  "active",                             :default => false
+    t.boolean  "show_on_portal",                     :default => true
+    t.boolean  "portal_login_required",              :default => false
+    t.integer  "business_calendar_id",  :limit => 8
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
 
   create_table "chat_widgets", :force => true do |t|
     t.string   "name"
-    t.integer  "account_id",            :limit => 8
+    t.integer  "account_id",            :limit => 8,                    :null => false
     t.integer  "product_id",            :limit => 8
     t.string   "widget_id"
     t.boolean  "show_on_portal"
@@ -260,7 +262,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.boolean  "main_widget"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name"
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
@@ -276,9 +277,9 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
 
   add_index "company_field_choices", ["account_id", "company_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_company_field_id_and_position"
 
-  create_table "company_field_data", :force => true do |t|
-    t.integer  "id",                  :limit => 8,                    :null => false
-    t.integer  "account_id",          :limit => 8, :default => 0,     :null => false
+  create_table "company_field_data", :id => false, :force => true do |t|
+    t.integer  "id",                  :limit => 8,                                                   :null => false
+    t.integer  "account_id",          :limit => 8,                                :default => 0,     :null => false
     t.integer  "company_form_id",     :limit => 8
     t.integer  "company_id",          :limit => 8
     t.integer  "health"
@@ -410,16 +411,16 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.boolean  "cf_boolean08"
     t.boolean  "cf_boolean09"
     t.boolean  "cf_boolean10"
-    t.decimal  "cf_decimal01",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal02",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal03",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal04",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal05",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal06",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal07",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal08",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal09",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal10",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal01",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal02",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal03",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal04",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal05",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal06",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal07",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal08",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal09",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal10",                     :precision => 15, :scale => 4
     t.integer  "long_cc01",           :limit => 8
     t.integer  "long_cc02",           :limit => 8
     t.integer  "long_cc03",           :limit => 8
@@ -438,11 +439,11 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.string   "string_cc06"
     t.datetime "datetime_cc01"
     t.datetime "datetime_cc02"
-    t.boolean  "boolean_cc01",        :default => false
-    t.boolean  "boolean_cc02",        :default => false
-    t.boolean  "boolean_cc03",        :default => false
-    t.boolean  "boolean_cc04",        :default => false
-    t.boolean  "boolean_cc05",        :default => false
+    t.boolean  "boolean_cc01",                                                    :default => false
+    t.boolean  "boolean_cc02",                                                    :default => false
+    t.boolean  "boolean_cc03",                                                    :default => false
+    t.boolean  "boolean_cc04",                                                    :default => false
+    t.boolean  "boolean_cc05",                                                    :default => false
     t.text     "text_cc01"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -470,7 +471,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-  
+
   add_index "company_fields", ["account_id", "company_form_id", "field_type"], :name => "idx_company_field_account_id_and_company_form_id_and_field_type"
   add_index "company_fields", ["account_id", "company_form_id", "name"], :name => "index_company_fields_on_account_id_and_company_form_id_and_name", :length => {"account_id"=>nil, "company_form_id"=>nil, "name"=>20}
   add_index "company_fields", ["account_id", "company_form_id", "position"], :name => "idx_company_field_account_id_and_company_form_id_and_position"
@@ -497,7 +498,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
 
   add_index "contact_field_choices", ["account_id", "contact_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_contact_field_id_and_position"
 
-  create_table "contact_field_data", :force => true do |t|
+  create_table "contact_field_data", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                                                   :null => false
     t.integer  "account_id",       :limit => 8,                                :default => 0,     :null => false
     t.integer  "contact_form_id",  :limit => 8
@@ -939,13 +940,13 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
 
   create_table "flexifield_defs", :force => true do |t|
-    t.string   "name",                                               :null => false
-    t.integer  "account_id",          :limit => 8
+    t.string   "name",                                      :null => false
+    t.integer  "account_id", :limit => 8
     t.string   "module"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "product_id",          :limit => 8
-    t.boolean  "active",                           :default => true
+    t.integer  "product_id", :limit => 8
+    t.boolean  "active",                  :default => true
   end
 
   add_index "flexifield_defs", ["name", "account_id"], :name => "idx_ffd_onceperdef", :unique => true
@@ -959,7 +960,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   end
 
   create_table "flexifields", :id => false, :force => true do |t|
-    t.integer  "id",                  :limit => 8, :null => false
+    t.integer  "id",                  :limit => 8,                                :null => false
     t.integer  "flexifield_def_id",   :limit => 8
     t.integer  "flexifield_set_id",   :limit => 8
     t.string   "flexifield_set_type"
@@ -1112,6 +1113,16 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["id"], :name => "flexifields_id"
 
+  create_table "form_ticket_field_values", :force => true do |t|
+    t.integer  "account_id",      :limit => 8
+    t.integer  "form_id",         :limit => 8
+    t.integer  "ticket_field_id", :limit => 8
+    t.string   "value"
+    t.integer  "position",        :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "forum_categories", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -1153,8 +1164,8 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.string   "twilio_subaccount_id"
     t.string   "twilio_subaccount_token"
     t.string   "twilio_application_id"
-    t.integer  "state",                   :limit => 1, :default => 1
-    t.boolean  "deleted",                              :default => false
+    t.integer  "state",                   :limit => 1,  :default => 1
+    t.boolean  "deleted",                               :default => false
     t.string   "queue"
     t.datetime "expires_on"
     t.datetime "created_at"
@@ -1187,9 +1198,9 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
 
   create_table "freshfone_calls", :id => false, :force => true do |t|
-    t.integer  "id",                  :limit => 8,                 :null => false
-    t.integer  "account_id",          :limit => 8,                 :null => false
-    t.integer  "freshfone_number_id", :limit => 8,                 :null => false
+    t.integer  "id",                  :limit => 8,                     :null => false
+    t.integer  "account_id",          :limit => 8,                     :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
     t.integer  "user_id",             :limit => 8
     t.integer  "customer_id",         :limit => 8
     t.string   "call_sid",            :limit => 50
@@ -1222,6 +1233,20 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
 
+  create_table "freshfone_calls_meta", :id => false, :force => true do |t|
+    t.integer  "id",          :limit => 8, :null => false
+    t.integer  "account_id",  :limit => 8
+    t.integer  "call_id",     :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "meta_info"
+    t.integer  "device_type"
+  end
+
+  add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_calls_meta_on_account_id_call_id"
+  add_index "freshfone_calls_meta", ["account_id", "device_type"], :name => "index_ff_calls_meta_on_account_id_device_type"
+  add_index "freshfone_calls_meta", ["id", "account_id"], :name => "index_freshfone_calls_meta_on_id_and_account_id", :unique => true
+
   create_table "freshfone_credits", :force => true do |t|
     t.integer  "account_id",              :limit => 8
     t.decimal  "available_credit",                     :precision => 10, :scale => 4, :default => 0.0
@@ -1249,22 +1274,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
 
   add_index "freshfone_ivrs", ["account_id", "freshfone_number_id"], :name => "index_freshfone_ivrs_on_account_id_and_freshfone_number_id"
 
-  create_table "freshfone_number_address", :force => true do |t|
-    t.integer  "account_id",           :limit => 8
-    t.integer  "freshfone_account_id", :limit => 8
-    t.string   "address_sid"
-    t.string   "friendly_name"
-    t.string   "business_name"
-    t.string   "address"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "country",              :limit => 5
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "freshfone_number_addresses", :force => true do |t|
+  create_table "freshfone_number_addresses", :id => false, :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8
@@ -1282,34 +1292,35 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
 
   add_index "freshfone_number_addresses", ["account_id", "country"], :name => "index_freshfone_number_address_on_account_id_and_country"
   add_index "freshfone_number_addresses", ["id", "account_id"], :name => "index_freshfone_number_address_on_id_and_account_id", :unique => true
+
   create_table "freshfone_numbers", :force => true do |t|
-    t.integer  "account_id",               :limit => 8
-    t.string   "number",                   :limit => 50
-    t.string   "display_number",           :limit => 50
-    t.string   "region",                   :limit => 100,                               :default => ""
-    t.string   "country",                  :limit => 20,                                :default => ""
-    t.decimal  "rate",                                    :precision => 6, :scale => 2
-    t.boolean  "record",                                                                :default => true
-    t.integer  "queue_wait_time",                                                       :default => 2
-    t.integer  "max_queue_length",                                                      :default => 3
-    t.integer  "state",                    :limit => 1,                                 :default => 1
+    t.integer  "account_id",                 :limit => 8
+    t.string   "number",                     :limit => 50
+    t.string   "display_number",             :limit => 50
+    t.string   "region",                     :limit => 100,                               :default => ""
+    t.string   "country",                    :limit => 20,                                :default => ""
+    t.decimal  "rate",                                      :precision => 6, :scale => 2
+    t.boolean  "record",                                                                  :default => true
+    t.integer  "queue_wait_time",                                                         :default => 2
+    t.integer  "max_queue_length",                                                        :default => 3
+    t.integer  "state",                      :limit => 1,                                 :default => 1
     t.string   "number_sid"
     t.integer  "number_type"
-    t.integer  "voice",                                                                 :default => 0
-    t.boolean  "deleted",                                                               :default => false
+    t.integer  "voice",                                                                   :default => 0
+    t.boolean  "deleted",                                                                 :default => false
     t.text     "on_hold_message"
     t.text     "non_availability_message"
     t.text     "voicemail_message"
-    t.integer  "business_calendar_id",     :limit => 8
+    t.integer  "business_calendar_id",       :limit => 8
     t.datetime "next_renewal_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "voicemail_active",                                                      :default => false
+    t.boolean  "voicemail_active",                                                        :default => false
     t.text     "non_business_hours_message"
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
-    t.integer  "rr_timeout",                                                            :default => 10
+    t.integer  "rr_timeout",                                                              :default => 10
     t.integer  "ringing_time",                                                            :default => 30
     t.boolean  "recording_visibility",                                                    :default => true
   end
@@ -1356,34 +1367,27 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "freshfone_usage_triggers", ["account_id", "sid"], :name => "index_freshfone_usage_triggers_on_account_id_and_sid"
 
   create_table "freshfone_users", :force => true do |t|
-    t.integer  "account_id",          :limit => 8,                    :null => false
-    t.integer  "user_id",             :limit => 8,                    :null => false
-    t.integer  "presence",                         :default => 0
-    t.integer  "incoming_preference",              :default => 0
-    t.boolean  "available_on_phone",               :default => false
+    t.integer  "account_id",                :limit => 8,                    :null => false
+    t.integer  "user_id",                   :limit => 8,                    :null => false
+    t.integer  "presence",                               :default => 0
+    t.integer  "incoming_preference",                    :default => 0
+    t.boolean  "available_on_phone",                     :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "mobile_token_refreshed_at"
     t.datetime "last_call_at"
-    t.text     "capability_token_hash"
   end
 
   add_index "freshfone_users", ["account_id", "last_call_at"], :name => "index_ff_users_account_last_call"
   add_index "freshfone_users", ["account_id", "presence"], :name => "index_freshfone_users_on_account_id_and_presence"
   add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
 
-  create_table "freshfone_calls_meta", :force => true do |t|
-    t.integer  "account_id", :limit => 8
-    t.integer  "call_id",    :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "meta_info"
-    t.integer  "device_type"
+  create_table "freshfone_whitelist_countries", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string  "country",    :limit => 50
   end
 
-  add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_calls_meta_on_account_id_call_id"
-  add_index "freshfone_calls_meta", ["account_id", "device_type"], :name => "index_ff_calls_meta_on_account_id_device_type"
-  add_index "freshfone_calls_meta", ["id", "account_id"], :name => "index_freshfone_calls_meta_on_id_and_account_id", :unique => true
+  add_index "freshfone_whitelist_countries", ["account_id", "country"], :name => "index_ff_whitelist_countries_on_account_id_and_country"
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
@@ -1416,14 +1420,13 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer "account_id",        :limit => 8
   end
 
-  add_index "google_contacts", ["account_id", "user_id"], :name => "index_google_contacts_on_accid_and_uid"
+  add_index "google_contacts", ["account_id", "user_id"], :name => "index_google_contacts_on_account_id_and_user_id"
 
   create_table "google_domains", :primary_key => "account_id", :force => true do |t|
     t.string "domain", :null => false
   end
 
   add_index "google_domains", ["domain"], :name => "index_google_domains_on_domain", :unique => true
-
 
   create_table "group_accesses", :id => false, :force => true do |t|
     t.integer "group_id",   :limit => 8, :null => false
@@ -1450,6 +1453,9 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
+
+  create_table "hello", :force => true do |t|
+  end
 
   create_table "helpdesk_accesses", :force => true do |t|
     t.string   "accessible_type"
@@ -1506,15 +1512,15 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "helpdesk_authorizations", ["user_id"], :name => "index_helpdesk_authorizations_on_user_id"
 
   create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
-    t.integer  "id",             :limit => 8, :null => false
+    t.integer  "id",             :limit => 8,   :null => false
     t.text     "url"
     t.integer  "account_id",     :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "droppable_id",   :limit => 8
     t.string   "droppable_type"
+    t.string   "filename",       :limit => 260
     t.integer  "application_id", :limit => 8
-    t.string   "filename"
   end
 
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
@@ -1559,18 +1565,18 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_note_bodies", :id => false, :force => true do |t|
-    t.integer  "id",             :limit => 8,        :null => false
+    t.integer  "id",             :limit => 8,          :null => false
     t.integer  "note_id",        :limit => 8
-    t.text     "body",           :limit => 16777215
-    t.text     "body_html",      :limit => 16777215
-    t.text     "full_text",      :limit => 16777215
-    t.text     "full_text_html", :limit => 16777215
+    t.text     "body",           :limit => 2147483647
+    t.text     "body_html",      :limit => 2147483647
+    t.text     "full_text",      :limit => 2147483647
+    t.text     "full_text_html", :limit => 2147483647
     t.integer  "account_id",     :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "raw_text",       :limit => 16777215
-    t.text     "raw_html",       :limit => 16777215
-    t.text     "meta_info",      :limit => 16777215
+    t.text     "raw_text",       :limit => 2147483647
+    t.text     "raw_html",       :limit => 2147483647
+    t.text     "meta_info",      :limit => 2147483647
     t.integer  "version"
   end
 
@@ -1794,16 +1800,16 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "helpdesk_tags", ["account_id", "name"], :name => "index_helpdesk_tags_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_ticket_bodies", :id => false, :force => true do |t|
-    t.integer  "id",               :limit => 8,        :null => false
+    t.integer  "id",               :limit => 8,          :null => false
     t.integer  "ticket_id",        :limit => 8
-    t.text     "description",      :limit => 16777215
-    t.text     "description_html", :limit => 16777215
+    t.text     "description",      :limit => 2147483647
+    t.text     "description_html", :limit => 2147483647
     t.integer  "account_id",       :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "raw_text",         :limit => 16777215
-    t.text     "raw_html",         :limit => 16777215
-    t.text     "meta_info",        :limit => 16777215
+    t.text     "raw_text",         :limit => 2147483647
+    t.text     "raw_html",         :limit => 2147483647
+    t.text     "meta_info",        :limit => 2147483647
     t.integer  "version"
   end
 
@@ -1932,7 +1938,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "helpdesk_tickets", ["id"], :name => "helpdesk_tickets_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
-  add_index "helpdesk_tickets", ["status", "account_id"], :name => "index_helpdesk_tickets_status_and_account_id"
+  add_index "helpdesk_tickets", ["status", "account_id"], :name => "index_helpdesk_tickets_on_status_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
     t.datetime "start_time"
@@ -1949,7 +1955,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.string   "workable_type",              :default => "Helpdesk::Ticket"
   end
 
-  add_index "helpdesk_time_sheets", ["account_id", "workable_id", "workable_type"], :name => "index_helpdesk_sheets_on_workable_acc"
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
   add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
@@ -2003,27 +2008,610 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer  "account_id",               :limit => 8
   end
 
-  create_table "mailbox_jobs", :force => true do |t|
-    t.integer  "priority",   :default => 0
-    t.integer  "attempts",   :default => 0
-    t.text     "handler"
-    t.text     "last_error"
-    t.datetime "run_at"
-    t.datetime "locked_at"
-    t.datetime "failed_at"
-    t.string   "locked_by"
+  create_table "lhma_2014_10_09_16_00_23_845_chat_settings", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.text     "display_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",                  :default => false
+  end
+
+  add_index "lhma_2014_10_09_16_00_23_845_chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
+
+  create_table "lhma_2014_10_09_16_10_22_271_admin_user_accesses", :force => true do |t|
+    t.string   "accessible_type"
+    t.integer  "accessible_id",   :limit => 8
+    t.integer  "user_id",         :limit => 8
+    t.integer  "visibility",      :limit => 8
+    t.integer  "group_id",        :limit => 8
+    t.integer  "account_id",      :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
- 
-  add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
+
+  add_index "lhma_2014_10_09_16_10_22_271_admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
+  add_index "lhma_2014_10_09_16_10_22_271_admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
+
+  create_table "lhma_2014_10_09_16_10_24_506_google_contacts", :force => true do |t|
+    t.integer "user_id",           :limit => 8
+    t.string  "google_id"
+    t.text    "google_xml"
+    t.integer "google_account_id", :limit => 8
+    t.integer "account_id",        :limit => 8
+  end
+
+  create_table "lhma_2014_10_09_16_10_31_100_users", :id => false, :force => true do |t|
+    t.integer  "id",                  :limit => 8,                    :null => false
+    t.string   "name",                             :default => "",    :null => false
+    t.string   "email"
+    t.string   "crypted_password"
+    t.string   "password_salt"
+    t.string   "persistence_token",                                   :null => false
+    t.datetime "last_login_at"
+    t.datetime "current_login_at"
+    t.string   "last_login_ip"
+    t.string   "current_login_ip"
+    t.integer  "login_count",                      :default => 0,     :null => false
+    t.integer  "failed_login_count",               :default => 0,     :null => false
+    t.string   "single_access_token"
+    t.string   "perishable_token"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id",          :limit => 8
+    t.boolean  "active",                           :default => false, :null => false
+    t.integer  "customer_id",         :limit => 8
+    t.string   "job_title"
+    t.string   "second_email"
+    t.string   "phone"
+    t.string   "mobile"
+    t.string   "twitter_id"
+    t.text     "description"
+    t.string   "time_zone"
+    t.integer  "posts_count",                      :default => 0
+    t.datetime "last_seen_at"
+    t.boolean  "deleted",                          :default => false
+    t.integer  "user_role"
+    t.boolean  "delta",                            :default => true,  :null => false
+    t.integer  "import_id",           :limit => 8
+    t.string   "fb_profile_id"
+    t.string   "language",                         :default => "en"
+    t.boolean  "blocked",                          :default => false
+    t.datetime "blocked_at"
+    t.string   "address"
+    t.datetime "deleted_at"
+    t.boolean  "whitelisted",                      :default => false
+    t.string   "external_id"
+    t.string   "string_uc01"
+    t.text     "text_uc01"
+    t.boolean  "helpdesk_agent",                   :default => false
+    t.string   "privileges",                       :default => "0"
+    t.string   "string_uc02"
+    t.string   "string_uc03"
+    t.string   "string_uc04"
+    t.string   "string_uc05"
+    t.string   "string_uc06"
+  end
+
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>20}
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "fb_profile_id"], :name => "index_users_on_account_id_fb_profile_id"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "mobile"], :name => "index_users_on_account_id_mobile"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["id"], :name => "users_id"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
+  add_index "lhma_2014_10_09_16_10_31_100_users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true
+
+  create_table "lhma_2014_10_09_16_10_33_947_helpdesk_shared_attachments", :force => true do |t|
+    t.string   "shared_attachable_type"
+    t.integer  "shared_attachable_id",   :limit => 8
+    t.integer  "attachment_id",          :limit => 8
+    t.integer  "account_id",             :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lhma_2014_10_09_16_10_33_947_helpdesk_shared_attachments", ["account_id", "shared_attachable_id", "shared_attachable_type"], :name => "index_helpdesk_shared_attachments_on_attachable_id", :length => {"account_id"=>nil, "shared_attachable_id"=>nil, "shared_attachable_type"=>15}
+
+  create_table "lhma_2014_10_09_16_13_03_715_chat_settings", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.text     "display_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",                             :default => false
+    t.boolean  "show_on_portal",                     :default => true
+    t.boolean  "portal_login_required",              :default => false
+  end
+
+  add_index "lhma_2014_10_09_16_13_03_715_chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
+
+  create_table "lhma_2014_10_16_14_35_08_591_solution_articles", :force => true do |t|
+    t.string   "title"
+    t.text     "description",  :limit => 2147483647
+    t.integer  "user_id",      :limit => 8
+    t.integer  "folder_id",    :limit => 8
+    t.integer  "status"
+    t.integer  "art_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "thumbs_up",                          :default => 0
+    t.integer  "thumbs_down",                        :default => 0
+    t.integer  "account_id",   :limit => 8
+    t.boolean  "delta",                              :default => true, :null => false
+    t.text     "desc_un_html", :limit => 2147483647
+    t.integer  "import_id",    :limit => 8
+    t.integer  "position"
+    t.text     "seo_data"
+    t.datetime "modified_at"
+    t.integer  "hits",                               :default => 0
+  end
+
+  add_index "lhma_2014_10_16_14_35_08_591_solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
+  add_index "lhma_2014_10_16_14_35_08_591_solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
+
+  create_table "lhma_2014_10_16_14_35_11_715_solution_categories", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "import_id",   :limit => 8
+    t.integer  "position"
+    t.boolean  "is_default",               :default => false
+  end
+
+  add_index "lhma_2014_10_16_14_35_11_715_solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
+
+  create_table "lhma_2014_10_16_14_35_15_651_solution_folders", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "category_id", :limit => 8
+    t.integer  "import_id",   :limit => 8
+    t.integer  "visibility",  :limit => 8
+    t.integer  "position"
+    t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
+  end
+
+  add_index "lhma_2014_10_16_14_35_15_651_solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
+
+  create_table "lhma_2014_10_28_12_00_44_603_chat_widgets", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.integer  "product_id",            :limit => 8
+    t.string   "widget_id"
+    t.boolean  "show_on_portal"
+    t.boolean  "portal_login_required"
+    t.integer  "business_calendar_id",  :limit => 8
+    t.integer  "chat_setting_id",       :limit => 8
+    t.boolean  "active",                             :default => false
+    t.boolean  "main_widget"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "lhma_2014_12_17_19_24_13_763_topics", :force => true do |t|
+    t.integer  "forum_id",     :limit => 8
+    t.integer  "user_id",      :limit => 8
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",                      :default => 0
+    t.integer  "sticky",                    :default => 0
+    t.integer  "posts_count",               :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",                    :default => false
+    t.integer  "replied_by",   :limit => 8
+    t.integer  "last_post_id", :limit => 8
+    t.integer  "account_id",   :limit => 8
+    t.integer  "stamp_type"
+    t.boolean  "delta",                     :default => true,  :null => false
+    t.integer  "import_id",    :limit => 8
+    t.integer  "user_votes",                :default => 0
+    t.boolean  "published",                 :default => false
+  end
+
+  add_index "lhma_2014_12_17_19_24_13_763_topics", ["account_id", "published", "replied_at"], :name => "account_id"
+  add_index "lhma_2014_12_17_19_24_13_763_topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_13_763_topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
+  add_index "lhma_2014_12_17_19_24_13_763_topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_13_763_topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_13_763_topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
+  create_table "lhma_2014_12_17_19_24_17_182_topics", :force => true do |t|
+    t.integer  "forum_id",        :limit => 8
+    t.integer  "user_id",         :limit => 8
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",                         :default => 0
+    t.integer  "sticky",                       :default => 0
+    t.integer  "posts_count",                  :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",                       :default => false
+    t.integer  "replied_by",      :limit => 8
+    t.integer  "last_post_id",    :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.integer  "stamp_type"
+    t.boolean  "delta",                        :default => true,  :null => false
+    t.integer  "import_id",       :limit => 8
+    t.integer  "user_votes",                   :default => 0
+    t.boolean  "published",                    :default => false
+    t.integer  "merged_topic_id", :limit => 8
+  end
+
+  add_index "lhma_2014_12_17_19_24_17_182_topics", ["account_id", "published", "replied_at"], :name => "account_id"
+  add_index "lhma_2014_12_17_19_24_17_182_topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_17_182_topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
+  add_index "lhma_2014_12_17_19_24_17_182_topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_17_182_topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_17_182_topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
+  create_table "lhma_2014_12_17_19_24_34_706_user_emails", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,                    :null => false
+    t.integer  "user_id",          :limit => 8,                    :null => false
+    t.string   "email"
+    t.integer  "account_id",       :limit => 8,                    :null => false
+    t.string   "perishable_token"
+    t.boolean  "verified",                      :default => false
+    t.boolean  "primary_role",                  :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lhma_2014_12_17_19_24_34_706_user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "lhma_2014_12_17_19_24_34_706_user_emails", ["email"], :name => "user_emails_email"
+  add_index "lhma_2014_12_17_19_24_34_706_user_emails", ["id"], :name => "user_emails_id"
+  add_index "lhma_2014_12_17_19_24_34_706_user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
+  add_index "lhma_2014_12_17_19_24_34_706_user_emails", ["user_id", "primary_role"], :name => "index_user_emails_on_user_id_and_primary_role"
+
+  create_table "lhma_2014_12_17_19_24_44_581_topics", :force => true do |t|
+    t.integer  "forum_id",        :limit => 8
+    t.integer  "user_id",         :limit => 8
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",                         :default => 0
+    t.integer  "sticky",                       :default => 0
+    t.integer  "posts_count",                  :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",                       :default => false
+    t.integer  "replied_by",      :limit => 8
+    t.integer  "last_post_id",    :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.integer  "stamp_type"
+    t.boolean  "delta",                        :default => true,  :null => false
+    t.integer  "import_id",       :limit => 8
+    t.integer  "user_votes",                   :default => 0
+    t.boolean  "published",                    :default => false
+    t.integer  "merged_topic_id", :limit => 8
+  end
+
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["account_id", "published", "replied_at"], :name => "account_id"
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "lhma_2014_12_17_19_24_44_581_topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
+  create_table "lhma_2014_12_17_19_24_51_856_social_fb_posts", :force => true do |t|
+    t.string   "post_id"
+    t.integer  "postable_id",      :limit => 8
+    t.string   "postable_type"
+    t.integer  "facebook_page_id", :limit => 8
+    t.integer  "account_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "msg_type",                      :default => "post"
+    t.string   "thread_id"
+  end
+
+  add_index "lhma_2014_12_17_19_24_51_856_social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
+
+  create_table "lhma_2014_12_17_19_24_56_788_survey_results", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "account_id",       :limit => 8
+    t.integer  "survey_id",        :limit => 8
+    t.integer  "surveyable_id",    :limit => 8
+    t.string   "surveyable_type"
+    t.integer  "customer_id",      :limit => 8
+    t.integer  "agent_id",         :limit => 8
+    t.integer  "response_note_id", :limit => 8
+    t.integer  "rating"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "group_id",         :limit => 8
+  end
+
+  add_index "lhma_2014_12_17_19_24_56_788_survey_results", ["id"], :name => "survey_results_id"
+  add_index "lhma_2014_12_17_19_24_56_788_survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
+
+  create_table "lhma_2014_12_17_19_25_02_614_freshfone_numbers", :force => true do |t|
+    t.integer  "account_id",                 :limit => 8
+    t.string   "number",                     :limit => 50
+    t.string   "display_number",             :limit => 50
+    t.string   "region",                     :limit => 100,                               :default => ""
+    t.string   "country",                    :limit => 20,                                :default => ""
+    t.decimal  "rate",                                      :precision => 6, :scale => 2
+    t.boolean  "record",                                                                  :default => true
+    t.integer  "queue_wait_time",                                                         :default => 2
+    t.integer  "max_queue_length",                                                        :default => 3
+    t.integer  "state",                      :limit => 1,                                 :default => 1
+    t.string   "number_sid"
+    t.integer  "number_type"
+    t.integer  "voice",                                                                   :default => 0
+    t.boolean  "deleted",                                                                 :default => false
+    t.text     "on_hold_message"
+    t.text     "non_availability_message"
+    t.text     "voicemail_message"
+    t.integer  "business_calendar_id",       :limit => 8
+    t.datetime "next_renewal_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "voicemail_active",                                                        :default => false
+    t.text     "non_business_hours_message"
+    t.string   "name"
+    t.integer  "direct_dial_limit",                                                       :default => 1
+    t.integer  "hunt_type",                                                               :default => 1
+    t.integer  "rr_timeout",                                                              :default => 10
+  end
+
+  add_index "lhma_2014_12_17_19_25_02_614_freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
+  add_index "lhma_2014_12_17_19_25_02_614_freshfone_numbers", ["state", "next_renewal_at"], :name => "index_freshfone_numbers_on_state_and_next_renewal_at"
+
+  create_table "lhma_2014_12_19_12_27_53_923_freshfone_calls", :id => false, :force => true do |t|
+    t.integer  "id",                  :limit => 8,                     :null => false
+    t.integer  "account_id",          :limit => 8,                     :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
+    t.integer  "user_id",             :limit => 8
+    t.integer  "customer_id",         :limit => 8
+    t.string   "call_sid",            :limit => 50
+    t.string   "dial_call_sid",       :limit => 50
+    t.integer  "call_status",                       :default => 0
+    t.integer  "call_type",                         :default => 0
+    t.integer  "call_duration"
+    t.string   "recording_url"
+    t.integer  "caller_number_id",    :limit => 8
+    t.string   "customer_number",     :limit => 50
+    t.text     "customer_data"
+    t.float    "call_cost"
+    t.string   "currency",            :limit => 20, :default => "USD"
+    t.string   "ancestry"
+    t.integer  "children_count",                    :default => 0
+    t.integer  "notable_id",          :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "direct_dial_number"
+  end
+
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "customer_number"], :name => "index_freshfone_calls_on_account_id_and_customer_number", :length => {"account_id"=>nil, "customer_number"=>16}
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
+  add_index "lhma_2014_12_19_12_27_53_923_freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+
+  create_table "lhma_2014_12_19_12_28_00_672_freshfone_calls", :id => false, :force => true do |t|
+    t.integer  "id",                  :limit => 8,                     :null => false
+    t.integer  "account_id",          :limit => 8,                     :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
+    t.integer  "user_id",             :limit => 8
+    t.integer  "customer_id",         :limit => 8
+    t.string   "call_sid",            :limit => 50
+    t.string   "dial_call_sid",       :limit => 50
+    t.integer  "call_status",                       :default => 0
+    t.integer  "call_type",                         :default => 0
+    t.integer  "call_duration"
+    t.string   "recording_url"
+    t.integer  "caller_number_id",    :limit => 8
+    t.string   "customer_number",     :limit => 50
+    t.text     "customer_data"
+    t.float    "call_cost"
+    t.string   "currency",            :limit => 20, :default => "USD"
+    t.string   "ancestry"
+    t.integer  "children_count",                    :default => 0
+    t.integer  "notable_id",          :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "direct_dial_number"
+  end
+
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "notable_type", "notable_id"], :name => "index_ff_calls_on_account_id_notable_type_id"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
+  add_index "lhma_2014_12_19_12_28_00_672_freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+
+  create_table "lhma_2014_12_19_12_28_04_779_survey_remarks", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8, :null => false
+    t.integer  "account_id",       :limit => 8
+    t.integer  "note_id",          :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "survey_result_id", :limit => 8
+  end
+
+  add_index "lhma_2014_12_19_12_28_04_779_survey_remarks", ["id"], :name => "survey_remarks_id"
+
+  create_table "lhma_2014_12_19_12_28_08_121_freshfone_numbers", :force => true do |t|
+    t.integer  "account_id",                 :limit => 8
+    t.string   "number",                     :limit => 50
+    t.string   "display_number",             :limit => 50
+    t.string   "region",                     :limit => 100,                               :default => ""
+    t.string   "country",                    :limit => 20,                                :default => ""
+    t.decimal  "rate",                                      :precision => 6, :scale => 2
+    t.boolean  "record",                                                                  :default => true
+    t.integer  "queue_wait_time",                                                         :default => 2
+    t.integer  "max_queue_length",                                                        :default => 3
+    t.integer  "state",                      :limit => 1,                                 :default => 1
+    t.string   "number_sid"
+    t.integer  "number_type"
+    t.integer  "voice",                                                                   :default => 0
+    t.boolean  "deleted",                                                                 :default => false
+    t.text     "on_hold_message"
+    t.text     "non_availability_message"
+    t.text     "voicemail_message"
+    t.integer  "business_calendar_id",       :limit => 8
+    t.datetime "next_renewal_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "voicemail_active",                                                        :default => false
+    t.text     "non_business_hours_message"
+    t.string   "name"
+    t.integer  "direct_dial_limit",                                                       :default => 1
+    t.integer  "hunt_type",                                                               :default => 1
+    t.integer  "rr_timeout",                                                              :default => 10
+    t.integer  "ringing_time",                                                            :default => 30
+  end
+
+  add_index "lhma_2014_12_19_12_28_08_121_freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
+  add_index "lhma_2014_12_19_12_28_08_121_freshfone_numbers", ["state", "next_renewal_at"], :name => "index_freshfone_numbers_on_state_and_next_renewal_at"
+
+  create_table "lhma_2014_12_19_12_28_11_394_ca_folders", :force => true do |t|
+    t.string   "name"
+    t.boolean  "is_default",              :default => false
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lhma_2014_12_19_12_28_11_394_ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
+
+  create_table "lhma_2015_01_19_19_05_59_233_solution_articles", :force => true do |t|
+    t.string   "title"
+    t.text     "description",  :limit => 2147483647
+    t.integer  "user_id",      :limit => 8
+    t.integer  "folder_id",    :limit => 8
+    t.integer  "status"
+    t.integer  "art_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "thumbs_up",                          :default => 0
+    t.integer  "thumbs_down",                        :default => 0
+    t.integer  "account_id",   :limit => 8
+    t.boolean  "delta",                              :default => true, :null => false
+    t.text     "desc_un_html", :limit => 2147483647
+    t.integer  "import_id",    :limit => 8
+    t.integer  "position"
+    t.text     "seo_data"
+    t.datetime "modified_at"
+    t.integer  "hits",                               :default => 0
+  end
+
+  add_index "lhma_2015_01_19_19_05_59_233_solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
+  add_index "lhma_2015_01_19_19_05_59_233_solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
+
+  create_table "lhma_2015_01_19_19_06_03_138_solution_folders", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "category_id", :limit => 8
+    t.integer  "import_id",   :limit => 8
+    t.integer  "visibility",  :limit => 8
+    t.integer  "position"
+    t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
+  end
+
+  add_index "lhma_2015_01_19_19_06_03_138_solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
+
+  create_table "lhma_2015_01_19_19_06_06_128_freshfone_calls_meta", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "call_id",    :limit => 8
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lhma_2015_01_19_19_06_06_128_freshfone_calls_meta", ["account_id", "call_id", "group_id"], :name => "index_ff_calls_on_account_id_call_id_group_id"
+
+  create_table "lhma_2015_01_19_19_06_17_703_freshfone_calls", :id => false, :force => true do |t|
+    t.integer  "id",                  :limit => 8,                     :null => false
+    t.integer  "account_id",          :limit => 8,                     :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
+    t.integer  "user_id",             :limit => 8
+    t.integer  "customer_id",         :limit => 8
+    t.string   "call_sid",            :limit => 50
+    t.string   "dial_call_sid",       :limit => 50
+    t.integer  "call_status",                       :default => 0
+    t.integer  "call_type",                         :default => 0
+    t.integer  "call_duration"
+    t.string   "recording_url"
+    t.integer  "caller_number_id",    :limit => 8
+    t.string   "customer_number",     :limit => 50
+    t.text     "customer_data"
+    t.float    "call_cost"
+    t.string   "currency",            :limit => 20, :default => "USD"
+    t.string   "ancestry"
+    t.integer  "children_count",                    :default => 0
+    t.integer  "notable_id",          :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "direct_dial_number"
+    t.integer  "group_id",            :limit => 8
+  end
+
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "freshfone_number_id", "created_at"], :name => "index_ff_calls_on_account_ff_number_and_created"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "notable_type", "notable_id"], :name => "index_ff_calls_on_account_id_notable_type_id"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
+  add_index "lhma_2015_01_19_19_06_17_703_freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+
+  create_table "lhmn_account_additional_settings", :force => true do |t|
+    t.string   "email_cmds_delimeter"
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "ticket_id_delimiter",               :default => "#"
+    t.boolean  "pass_through_enabled",              :default => true
+    t.string   "bcc_email"
+    t.text     "supported_languages"
+    t.integer  "api_limit",                         :default => 1000
+    t.integer  "date_format",                       :default => 1
+    t.text     "additional_settings"
+  end
+
+  add_index "lhmn_account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
+
+  create_table "mobihelp_app_solutions", :force => true do |t|
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "app_id",      :limit => 8, :null => false
+    t.integer  "category_id", :limit => 8, :null => false
+    t.integer  "position",                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
+  add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
 
   create_table "mobihelp_apps", :force => true do |t|
-    t.integer  "account_id", :limit => 8, :null => false
-    t.string   "name",                    :null => false
-    t.integer  "platform",                :null => false
-    t.string   "app_key",                 :null => false
-    t.string   "app_secret",              :null => false
+    t.integer  "account_id", :limit => 8,                    :null => false
+    t.string   "name",                                       :null => false
+    t.integer  "platform",                                   :null => false
+    t.string   "app_key",                                    :null => false
+    t.string   "app_secret",                                 :null => false
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -2065,18 +2653,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "mobihelp_ticket_infos", ["account_id", "device_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_device_id"
   add_index "mobihelp_ticket_infos", ["account_id", "ticket_id"], :name => "index_mobihelp_ticket_infos_on_account_id_and_ticket_id", :unique => true
 
-  create_table "mobihelp_app_solutions", :force => true do |t|
-    t.integer  "account_id",  :limit => 8, :null => false
-    t.integer  "app_id",      :limit => 8, :null => false
-    t.integer  "category_id", :limit => 8, :null => false
-    t.integer  "position",                 :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
-  add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
-
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -2115,10 +2691,10 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "portal_forum_categories", ["portal_id", "forum_category_id"], :name => "index_portal_forum_categories_on_portal_id_and_forum_category_id"
 
   create_table "portal_pages", :force => true do |t|
-    t.integer  "template_id", :limit => 8,        :null => false
-    t.integer  "account_id",  :limit => 8,        :null => false
-    t.integer  "page_type",                       :null => false
-    t.text     "content",     :limit => 16777215
+    t.integer  "template_id", :limit => 8,          :null => false
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "page_type",                         :null => false
+    t.text     "content",     :limit => 2147483647
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -2136,12 +2712,12 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
 
   create_table "portal_templates", :force => true do |t|
-    t.integer  "account_id",  :limit => 8,        :null => false
-    t.integer  "portal_id",   :limit => 8,        :null => false
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "portal_id",   :limit => 8,          :null => false
     t.text     "preferences"
     t.text     "header"
     t.text     "footer"
-    t.text     "custom_css",  :limit => 16777215
+    t.text     "custom_css",  :limit => 2147483647
     t.text     "layout"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -2359,9 +2935,9 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.string   "ancestry"
   end
 
+  add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id"=>nil, "ancestry"=>30}
+  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
-  add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id" => nil, "ancestry" => 30}
-  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id" => nil, "post_id" => 30}
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"
@@ -2444,7 +3020,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer  "thumbs_up",                          :default => 0
     t.integer  "thumbs_down",                        :default => 0
     t.integer  "account_id",   :limit => 8
-    t.boolean  "delta",                              :default => true, :null => false
+    t.boolean  "delta",                              :default => true,  :null => false
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
     t.integer  "position"
@@ -2530,6 +3106,76 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
 
+  create_table "solution_trash", :force => true do |t|
+    t.integer  "account_id",                                   :null => false
+    t.string   "trashed_type", :limit => 30,                   :null => false
+    t.integer  "original_id",                                  :null => false
+    t.boolean  "user_action",                :default => true, :null => false
+    t.integer  "trashed_by",                                   :null => false
+    t.integer  "parent_id"
+    t.string   "title",                                        :null => false
+    t.text     "description"
+    t.text     "extra_info"
+    t.text     "votes"
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  create_table "solution_trash_2014_11", :force => true do |t|
+    t.integer  "account_id",                                   :null => false
+    t.string   "trashed_type", :limit => 30,                   :null => false
+    t.integer  "original_id",                                  :null => false
+    t.boolean  "user_action",                :default => true, :null => false
+    t.integer  "trashed_by",                                   :null => false
+    t.integer  "parent_id"
+    t.string   "title",                                        :null => false
+    t.text     "description"
+    t.text     "extra_info"
+    t.text     "votes"
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  create_table "solution_trash_2014_12", :force => true do |t|
+    t.integer  "account_id",                                   :null => false
+    t.string   "trashed_type", :limit => 30,                   :null => false
+    t.integer  "original_id",                                  :null => false
+    t.boolean  "user_action",                :default => true, :null => false
+    t.integer  "trashed_by",                                   :null => false
+    t.integer  "parent_id"
+    t.string   "title",                                        :null => false
+    t.text     "description"
+    t.text     "extra_info"
+    t.text     "votes"
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  create_table "solution_trash_2015_01", :force => true do |t|
+    t.integer  "account_id",                                   :null => false
+    t.string   "trashed_type", :limit => 30,                   :null => false
+    t.integer  "original_id",                                  :null => false
+    t.boolean  "user_action",                :default => true, :null => false
+    t.integer  "trashed_by",                                   :null => false
+    t.integer  "parent_id"
+    t.string   "title",                                        :null => false
+    t.text     "description"
+    t.text     "extra_info"
+    t.text     "votes"
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  create_table "sub_section_fields", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.integer  "ticket_field_value_id", :limit => 8
+    t.integer  "ticket_field_id",       :limit => 8
+    t.integer  "position",              :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sub_section_fields", ["account_id", "ticket_field_value_id"], :name => "index_sub_section_fields_on_account_id_and_ticket_field_value_id"
 
   create_table "subscription_addon_mappings", :force => true do |t|
     t.integer "subscription_addon_id", :limit => 8
@@ -2545,18 +3191,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-
-  create_table "sub_section_fields", :force => true do |t|
-    t.integer  "account_id",            :limit => 8
-    t.integer  "ticket_field_value_id", :limit => 8
-    t.integer  "ticket_field_id",       :limit => 8
-    t.integer  "position",              :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "sub_section_fields", ["account_id", "ticket_field_value_id"], :name => "index_sub_section_fields_on_account_id_and_ticket_field_value_id"
 
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
@@ -2694,9 +3328,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.datetime "updated_at"
   end
 
-  add_index "support_scores", ["account_id", "group_id", "created_at"], :name => "index_support_scores_on_accid_and_gid_and_created_at"
-  add_index "support_scores", ["account_id", "scorable_id", "scorable_type"], :name => "index_support_scores_on_accid_scorable_id_scorable_type"
-  add_index "support_scores", ["account_id", "user_id", "created_at"], :name => "index_support_scores_on_accid_and_uid_and_created_at"
   add_index "support_scores", ["id"], :name => "support_scores_id"
 
   create_table "survey_handles", :id => false, :force => true do |t|
@@ -2726,6 +3357,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   end
 
   add_index "survey_remarks", ["id"], :name => "survey_remarks_id"
+  add_index "survey_remarks", ["survey_result_id", "account_id"], :name => "index_survey_result_id_account_id"
 
   create_table "survey_results", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8, :null => false
@@ -2742,6 +3374,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer  "group_id",         :limit => 8
   end
 
+  add_index "survey_results", ["account_id", "created_at"], :name => "index_account_id_created_at"
   add_index "survey_results", ["id"], :name => "survey_results_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
 
@@ -2757,16 +3390,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
-
-  create_table "form_ticket_field_values", :force => true do |t|
-    t.integer  "account_id",      :limit => 8
-    t.integer  "form_id",         :limit => 8
-    t.integer  "ticket_field_id", :limit => 8
-    t.string   "value"
-    t.integer  "position",        :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "ticket_form_fields", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -2999,6 +3622,222 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "ticket_stats_2013_9", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
   add_index "ticket_stats_2013_9", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
 
+  create_table "ticket_stats_2014_1", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_1", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_1", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_10", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_10", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_10", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_11", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_11", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_11", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_12", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_12", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_12", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_2", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_2", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_2", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_3", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_3", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_3", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_4", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_4", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_4", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_5", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_5", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_5", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_6", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_6", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_6", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_7", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_7", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_7", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_8", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_8", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_8", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2014_9", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2014_9", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2014_9", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8
     t.integer  "topic_id",   :limit => 8
@@ -3010,24 +3849,24 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "ticket_topics", ["account_id", "ticket_id"], :name => "index_account_id_and_ticket_id_on_ticket_topics"
 
   create_table "topics", :force => true do |t|
-    t.integer  "forum_id",     :limit => 8
-    t.integer  "user_id",      :limit => 8
+    t.integer  "forum_id",        :limit => 8
+    t.integer  "user_id",         :limit => 8
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "hits",                      :default => 0
-    t.integer  "sticky",                    :default => 0
-    t.integer  "posts_count",               :default => 0
+    t.integer  "hits",                         :default => 0
+    t.integer  "sticky",                       :default => 0
+    t.integer  "posts_count",                  :default => 0
     t.datetime "replied_at"
-    t.boolean  "locked",                    :default => false
-    t.integer  "replied_by",   :limit => 8
-    t.integer  "last_post_id", :limit => 8
-    t.integer  "account_id",   :limit => 8
+    t.boolean  "locked",                       :default => false
+    t.integer  "replied_by",      :limit => 8
+    t.integer  "last_post_id",    :limit => 8
+    t.integer  "account_id",      :limit => 8
     t.integer  "stamp_type"
-    t.boolean  "delta",                     :default => true,  :null => false
-    t.integer  "import_id",    :limit => 8
-    t.integer  "user_votes",                :default => 0
-    t.boolean  "published",                 :default => false
+    t.boolean  "delta",                        :default => true,  :null => false
+    t.integer  "import_id",       :limit => 8
+    t.integer  "user_votes",                   :default => 0
+    t.boolean  "published",                    :default => false
     t.integer  "merged_topic_id", :limit => 8
     t.integer  "int_tc01"
     t.integer  "int_tc02"
@@ -3046,9 +3885,9 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.text     "text_tc02"
   end
 
+  add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
-  add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
@@ -3063,7 +3902,6 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "user_accesses", ["access_id"], :name => "index_user_accesses_on_access_id"
   add_index "user_accesses", ["account_id"], :name => "index_user_accesses_on_account_id"
   add_index "user_accesses", ["user_id"], :name => "index_user_accesses_on_user_id"
-  
 
   create_table "user_emails", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false
@@ -3147,19 +3985,18 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>20}
   add_index "users", ["account_id", "fb_profile_id"], :name => "index_users_on_account_id_fb_profile_id"
+  add_index "users", ["account_id", "helpdesk_agent", "name"], :name => "index_users_acc_id_name"
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["account_id", "mobile"], :name => "index_users_on_account_id_mobile"
   add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
-  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true
-  add_index "users", ["account_id", "helpdesk_agent"], :name => "index_users_on_account_id_and_helpdesk_agent"
-  
+
   create_table "va_rules", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -3200,6 +4037,11 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
 
+  create_table "whitelist_users", :force => true do |t|
+    t.integer "user_id",    :limit => 8
+    t.integer "account_id", :limit => 8
+  end
+
   create_table "whitelisted_ips", :force => true do |t|
     t.integer  "account_id",             :limit => 8
     t.boolean  "enabled"
@@ -3216,9 +4058,5 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer "application_id", :limit => 8
     t.text    "options"
   end
-  
-  create_table "whitelist_users", :force => true do |t|
-    t.integer "user_id",    :limit => 8
-    t.integer "account_id", :limit => 8
-  end
+
 end

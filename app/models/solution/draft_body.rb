@@ -5,5 +5,4 @@ class Solution::DraftBody < ActiveRecord::Base
 	belongs_to :account
 	belongs_to :draft, :class_name => "Solution::Draft"
 
-	serialize :seo_data
 end
