@@ -6,13 +6,13 @@
 			<label class="checkbox prime"><%= check_box_tag "select_all_inputs" %><b><%= t('export_data.select_all') %></b></label><br /><br />
 			<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
 			<div class="threecol-form" id="contact_fields">
-	 			<%= csv_headers.each do |head| %>
+	 			<% csv_headers.each do |head| %>
 	 			  	<div class="item <%= head[:type] %>">
 		  				<label class="checkbox prime"> 
 		    				<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected], :class => "displayed_field" %> 
 							<%= head[:label] %>														
 		  				</label>
-		  				<% head[:levels].each do |level| %>
+		  				<%= head[:levels].each do |level| %>
 		  					<br />
 			  				<label class="checkbox level"> 
 			    				<%= check_box_tag "export_fields[#{level[:label]}]", level[:name], false  %> 
