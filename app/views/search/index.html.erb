@@ -1,6 +1,6 @@
 <% content_for :layoutType do %>search-page<% end %>
 <div id="sticky_header" class="search-sticky" rel="sticky" data-scroll-top="true" data-sticky-bottom="true">
-	<%= form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
+	<% form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
 		<span class="search-dark"></span>
 		<input class="search-input lead" value="<%= @search_key %>" 
 				placeholder="Search" autocomplete="off" name="term" />
@@ -29,8 +29,9 @@
 		</div>
 	</div>
 <% end %>
-<%= javascript_include_tag :'cdn/search' %>
+
 <script type="text/javascript">
+jQuery('body').one('assetLoaded.fjax', function() {
 	window.SEARCH_RESULTS_PAGE = {
 		data : <%= @result_json.html_safe %>,
 		initializeSearchPageDefaults : function(){
@@ -50,5 +51,5 @@
 	
 	SEARCH_RESULTS_PAGE.initializeSearchPageDefaults();
 
-	Fjax.afterNextPage = function(){ window['search_page'].destroy()}
+});
 </script>

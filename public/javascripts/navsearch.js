@@ -49,11 +49,21 @@ jQuery(document).ready(function(){
       var url = jQuery('.nav_search').attr('action')+'?term='+searchKey;
       window.pjaxify(url);
     }
+		
+		var hideSearchBar = function() {
+			$J("#SearchResultsBar").hide();
+			$J("#SearchBar").removeClass("active");
+		}
 
 			$J("#SearchResultsBar a").die('hover');
-			$J("#SearchResultsBar a").live("hover", function(){
-				$J(currentactive).removeClass("active");
-				currentactive = $J(this).addClass("active");
+			$J("#SearchResultsBar a").live({
+				hover: function(){
+					$J(currentactive).removeClass("active");
+					currentactive = $J(this).addClass("active");
+				},
+				click: function(){
+					hideSearchBar();
+				}
 			});
 			
 			$J("#SearchResultsBar").live({
@@ -71,8 +81,7 @@ jQuery(document).ready(function(){
 			
 			$J("#header_search").bind("focusout", function(ev){ 
 				if(!insideSearch){
-					$J("#SearchResultsBar").hide();
-				  $J("#SearchBar").removeClass("active");					
+					hideSearchBar();					
 				}
 			});
 			

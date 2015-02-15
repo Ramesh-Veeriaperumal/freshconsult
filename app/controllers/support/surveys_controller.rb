@@ -7,22 +7,19 @@ class Support::SurveysController < ApplicationController
 
   def new
   	send_error and return if @survey_handle.rated?
-  	
     @rating = Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], Survey::HAPPY)
-    @survey_handle.create_survey_result @rating
     @account = Account.find_by_id @survey_handle.survey[:account_id]
     render :partial => 'new'
   end
   
   def create
-    
-    if @survey_handle.survey_result
+    @rating = params[:rating]
+    survey_result = @survey_handle.create_survey_result @rating
+    if survey_result
       @survey_handle.survey_result.add_feedback(params[:survey][:feedback]) unless params[:survey][:feedback].blank?
       @survey_handle.destroy
     end
-
-    flash[:notice] = I18n.t('support.surveys.thanks_for_feedback')
-    redirect_to root_path
+    render :partial => 'index'
   end
   
   def create_for_portal
