@@ -426,13 +426,21 @@ en:
         thanks_info: Thanks for taking time to rate our support experience.
         feedback_info: Your feedback is very much appreciated.
         feedback_optional: Feedback is optional
-        send: Send
+        submit: Submit
+        happy: Awesome
+        neutral: Just Okay
+        unhappy: Not Good
+        additional_info: Share your experience working with us.
+        customer_satisfaction: Customer satisfaction rating
+        rating: Your Rating
+      index:
+        thanks_info: Thanks for taking time to rate our support experience.
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
         happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
-        neutral_info: We look forward to serve you better the next time around.
+        neutral_info: Wish you were a little more happy.
+        neutral_information:  Wish you were a little more happy.
         unhappy_info: We will ensure that we will take extra care the next time around.
-        additional_info: Additionally, you could also share your experience working with us.
   gamification:
     levels:
       beginner: Beginner

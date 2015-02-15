@@ -111,7 +111,7 @@
 								<%end%>
 								<% if !(privilege?(:manage_scenario_automation_rules))%>
 								<li>
-									<%= link_to "scenario automations",helpdesk_scenario_automations_path %>
+									<%= link_to t('automations.title'),helpdesk_scenario_automations_path %>
 								</li>
 								<%end%>
 							</ul>

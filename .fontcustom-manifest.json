@@ -1,7 +1,7 @@
 {
   "checksum": {
-    "previous": "d75a3a7107beccc6c403a248d6a50abd2102bd2cb6725ed5b266dd6a718d8940",
-    "current": "d75a3a7107beccc6c403a248d6a50abd2102bd2cb6725ed5b266dd6a718d8940"
+    "previous": "d4e2aa7171caf4ca11b0df7519c35bede4144ac7c61e1e0c09d8e069f96cc0eb",
+    "current": "d4e2aa7171caf4ca11b0df7519c35bede4144ac7c61e1e0c09d8e069f96cc0eb"
   },
   "fonts": [
     "public/assets/glyphs.ttf",
@@ -199,11 +199,11 @@
       "source": "public/glyphs/vectors/day_pass.svg"
     },
     "disconnected": {
-      "codepoint": 61743,
+      "codepoint": 61873,
       "source": "public/glyphs/vectors/disconnected.svg"
     },
     "dislike": {
-      "codepoint": 61744,
+      "codepoint": 61875,
       "source": "public/glyphs/vectors/dislike.svg"
     },
     "dispatcher": {
@@ -215,7 +215,7 @@
       "source": "public/glyphs/vectors/dots.svg"
     },
     "dropbox": {
-      "codepoint": 61747,
+      "codepoint": 61876,
       "source": "public/glyphs/vectors/dropbox.svg"
     },
     "dropdown_blank": {
@@ -327,7 +327,7 @@
       "source": "public/glyphs/vectors/folder-open-o.svg"
     },
     "forward": {
-      "codepoint": 61775,
+      "codepoint": 61877,
       "source": "public/glyphs/vectors/forward.svg"
     },
     "freshchat": {
@@ -495,7 +495,7 @@
       "source": "public/glyphs/vectors/paragraph.svg"
     },
     "pencil": {
-      "codepoint": 61817,
+      "codepoint": 61879,
       "source": "public/glyphs/vectors/pencil.svg"
     },
     "phone": {
@@ -591,7 +591,7 @@
       "source": "public/glyphs/vectors/sla.svg"
     },
     "split": {
-      "codepoint": 61841,
+      "codepoint": 61880,
       "source": "public/glyphs/vectors/split.svg"
     },
     "star": {
@@ -659,7 +659,7 @@
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
     "twitter-o": {
-      "codepoint": 61858,
+      "codepoint": 61881,
       "source": "public/glyphs/vectors/twitter-o.svg"
     },
     "unlock": {
@@ -693,7 +693,7 @@
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
     "font_name": "glyphs",
-    "force": true,
+    "force": false,
     "input": {
       "templates": "public/glyphs/templates",
       "vectors": "public/glyphs/vectors"

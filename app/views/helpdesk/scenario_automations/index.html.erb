@@ -22,12 +22,12 @@
           ]
       options = {'class' => 'item', 'ul_class' => 'tick menu-pjax'}
     %>
-    <a class='dropdown-toggle' data-toggle="dropdown" href='#'><%= "#{t('showing')}: " %><b><%=t("automations.#{@current_tab}")%>(<%=@va_rules.count%>)</b>
+    <a class='dropdown-toggle' data-toggle="dropdown" href='#'><%= "#{t('showing')}: " %><b><%=t("automations.#{@current_tab}")%> (<%=@va_rules.count%>)</b>
     <span class='caret'></span></a>
       <%= dropdown_menu(list, options) %>
     </div>
   <%else%>
-    <%= "#{t('showing')}: " %><b><%=t("automations.personal")%>(<%=@va_rules.count%>)</b>
+    <%= "#{t('showing')}: " %><b><%=t("automations.personal")%> (<%=@va_rules.count%>)</b>
   <%end%>
 
   <div class="response-list list-page-body " id="va_rules_list">

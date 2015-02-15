@@ -258,7 +258,12 @@ javascripts:
 
   search:
     - public/javascripts/app/search.js
-    - app/views/search/template/*.jst
+    - app/views/search/template/customer.jst
+    - app/views/search/template/helpdesk_note.jst
+    - app/views/search/template/helpdesk_ticket.jst
+    - app/views/search/template/solution_article.jst
+    - app/views/search/template/topic.jst
+    - app/views/search/template/user.jst
 
   timesheet:
     - public/javascripts/timesheet.js
