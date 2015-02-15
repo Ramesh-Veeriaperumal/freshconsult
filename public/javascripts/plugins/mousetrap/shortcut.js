@@ -419,6 +419,8 @@
                 window.shortcuts = null
             }
         })        
-        .ready(function(){ $(document).trigger("shortcuts:invoke") })
+        .ready(function(){ 
+        	$(document).trigger("shortcuts:invoke"); 
+        });
 
 }(jQuery));

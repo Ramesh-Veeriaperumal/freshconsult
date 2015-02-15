@@ -77,3 +77,13 @@ module ActionView
     end
   end
 end
+
+# TODO:RAILS-SESSION-SHARING remove below code only fully migrate to Rails3
+module ActionController
+  module Flash
+    class FlashHash < Hash
+      def method_missing(m, *a, &b)
+      end
+    end
+  end
+end

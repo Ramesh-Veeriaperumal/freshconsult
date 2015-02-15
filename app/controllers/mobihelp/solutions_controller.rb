@@ -26,9 +26,7 @@ class Mobihelp::SolutionsController < MobihelpController
 
   def load_mobihelp_solution_category
     category_ids = @mobihelp_app.app_solutions.all(:order => "position").map(&:category_id)
-    if category_ids.any?
-      @categories = Solution::Category.find(category_ids, :order => "field(id, #{category_ids.join(',')})")
-    end
+    @categories = current_account.solution_categories.where(id: category_ids).reorder("field(id, #{category_ids.join(',')})") if category_ids.any?
   end
 
   def render_json(data)

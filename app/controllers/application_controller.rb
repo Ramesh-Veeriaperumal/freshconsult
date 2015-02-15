@@ -82,7 +82,11 @@ class ApplicationController < ActionController::Base
   end
   
   def wrong_portal
-    render("/errors/wrong_portal")
+    render :partial => "errors/error_page", :locals => 
+      {
+        :title => t(:'wrong_portal.title'),
+        :description => t(:'wrong_portal.content_not_available')
+      }
   end
   
   def set_default_locale

@@ -278,7 +278,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/contacts/filter/:state(/*letter)' => 'contacts#index'
+  match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
   resources :groups
 
   resources :user_emails do
@@ -750,23 +750,6 @@ Helpkit::Application.routes.draw do
 
     resources :portal, :only => [:index, :update]
 
-    namespace :canned_responses do
-      resources :folders do
-        collection do
-          get :edit
-        end
-        resources :responses do
-          collection do
-            put :update_folder
-            delete :delete_multiple
-          end
-          member do
-            delete :delete_shared_attachments
-          end
-        end
-      end
-    end
-
     resources :products do
       member do
         delete :delete_logo
@@ -1107,7 +1090,6 @@ Helpkit::Application.routes.draw do
         post :send_tweet
         post :signin
         get :tweet_exists
-        get :user_following
         put :authdone
         get :twitter_search
       end
@@ -1156,6 +1138,7 @@ Helpkit::Application.routes.draw do
         get :followers
         post :follow
         post :unfollow
+        get :user_following
       end
     end
   end
@@ -1357,10 +1340,6 @@ Helpkit::Application.routes.draw do
         get :unachieved
       end
     end
-    resources :canned_responses, :collection => {:search => :get, :recent => :get}
-    resources :scenario_automations, :member => { :clone_rule => :get }, :collection => {:search => :get, :recent => :get}
-    resources :reminders, :member => { :complete => :put, :restore => :put }
-    resources :time_sheets, :member => { :toggle_timer => :put}
 
     resources :notes
 
@@ -1378,17 +1357,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-
-    resources :ca_folders
-
-    resources :canned_responses do
-      collection do
-        get :search
-        get :recent
-        get :folders
-      end
-    end
-    
     namespace :canned_responses do
       resources :folders do
         collection do
@@ -1404,6 +1372,16 @@ Helpkit::Application.routes.draw do
             post :delete_shared_attachments
           end
         end
+      end
+    end
+
+    resources :ca_folders
+
+    resources :canned_responses do
+      collection do
+        get :search
+        get :recent
+        get :folders
       end
     end
 
@@ -1434,7 +1412,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
-    match '/dashboard.:format' => 'dashboard#index', :as => :formatted_dashboard
+    match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
@@ -1646,6 +1624,11 @@ Helpkit::Application.routes.draw do
 
   resources :posts
 
+  match '/discussions/categories.:format' => 'discussions#create', :via => :post
+  match '/discussions/categories/:id.:format' => 'discussions#show', :via => :get
+  match '/discussions/categories/:id.:format' => 'discussions#destroy', :via => :delete
+  match '/discussions/categories/:id.:format' => 'discussions#update', :via => :put
+
   resources :categories, :controller => 'forum_categories' do
     collection do
       put :reorder
@@ -1855,6 +1838,11 @@ Helpkit::Application.routes.draw do
       collection do
         get :mobile_pre_loader
         get :deliver_activation_instructions
+      end
+    end
+    resources :freshfone do 
+      collection do
+        get :numbers
       end
     end
   end

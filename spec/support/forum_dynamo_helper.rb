@@ -56,7 +56,7 @@ module ForumDynamoHelper
 	def uploaded_attachments
 		[{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}].each_with_index.map do |att, i|
 			filename = "#{i}_#{att[:resource].original_filename}"
-			AwsWrapper::S3Object.store("#{attachment_folder_name}/#{filename}", att[:resource], S3_CONFIG[:bucket])
+			AwsWrapper::S3Object.store("#{attachment_folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
 			filename
 		end
 	end
@@ -160,7 +160,7 @@ module ForumDynamoHelper
   def store_attachments(folder_name)
   	@attachment_arr.each do |att|
 			filename = att[:resource].original_filename
-			AwsWrapper::S3Object.store("#{folder_name}/#{filename}", att[:resource], S3_CONFIG[:bucket])
+			AwsWrapper::S3Object.store("#{folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
 			filename
 		end
   end

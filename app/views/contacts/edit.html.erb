@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 
 <%= form_for @user, :url => { :controller => "contacts", :action => "update_contact" },:html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger'}  do |f| %>
 	  

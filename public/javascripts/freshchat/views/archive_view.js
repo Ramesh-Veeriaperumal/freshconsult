@@ -7,8 +7,8 @@ freshChat.archiveView = function(){
 				this.router = options.router;
 				this.setElement('#archive-container');
 				this.$pageWrap = jQuery('#report-page');
-				this.archiveTemplate = window.JST["templates/freshchat_archive"];
-				this.archiveRowTemplate  = window.JST["templates/freshchat_archive_row"];
+				this.archiveTemplate = window.JST["freshchat/templates/freshchat_archive"];
+				this.archiveRowTemplate  = window.JST["freshchat/templates/freshchat_archive_row"];
 			},
 			events:{
 				"click #change-page"	: "loadPage",

@@ -1,8 +1,8 @@
 require 'csv'
 class Export::Customer
   include ExportCsvUtil
+  include Rails.application.routes.url_helpers
   include Export::Util
-  include ActionController::UrlWriter
 
   def initialize(csv_hash, portal_url, type)
     @csv_hash = csv_hash

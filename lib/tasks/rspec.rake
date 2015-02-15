@@ -445,8 +445,8 @@ if Rails.env.test?
         desc "Running all forum tests"
         Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(ForumTests)
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(ForumTests)
         end
       end
 
@@ -479,8 +479,8 @@ if Rails.env.test?
         desc "Running all community tests"
         Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
-          t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.spec_files = FileList.new(ForumTests+SolutionTests).uniq
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(ForumTests+SolutionTests).uniq
         end
       end
       

@@ -119,7 +119,7 @@ class Support::Discussions::PostsController < SupportController
 
 	def destroy
 	    @post.destroy
-	    flash[:notice] = (I18n.t('flash.topic.deleted', :title => h(@post.topic.title))).html_safe
+	    flash[:notice] = (I18n.t('flash.post.deleted', :title => h(@post.topic.title))).html_safe
 	    respond_to do |format|
 	      format.html do
 	        redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')

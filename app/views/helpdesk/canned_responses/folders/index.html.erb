@@ -147,7 +147,7 @@
 		    			<%= t('canned_folders.visibility_change').html_safe %>
 		    		</div>
 		    		<% if @current_folder.id == @pfolder.id%>
-							<% f.fields_for :visibility do |access| %>	
+							<%= f.fields_for :visibility do |access| %>	
 								<div class='control-group mt20'>
 									<label class="control-label"><%=t('canned_responses.available_for').html_safe%> :</label>
 									<div class="controls">

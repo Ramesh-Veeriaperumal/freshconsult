@@ -31,12 +31,13 @@
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">
-	        	<p><%=t('dispatch.add_new_action')%></p> <img alt="Add New action" class="add" src="/images/add.png" />
+	        <i class="rounded-add-icon"></i>
+	        <p><%=t('dispatch.add_new_action')%></p>
 	    	</fieldset>
 
 	<li class="inline-field  form-horizontal">
 		<div class="control-group">
-		<% f.fields_for :accessible do |access| %>
+		<%= f.fields_for :accessible do |access| %>
 			<label class="control-label"><%=t('automations.visibility.available_for').html_safe%> :</label>
 			<div class="controls">
 				<label class="radio" id="only_me">
@@ -76,7 +77,7 @@
 	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders }  %>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
 jQuery(document).ready(function(){
 	toggleGroup(<%=@va_rule.accessible.access_type%>);

@@ -220,6 +220,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def build_ca_response_defaults
     @ca_response.helpdesk_accessible = current_account.accesses.new
+    @ca_response.folder_id = @folder.id
     @ca_response.helpdesk_accessible.access_type = @folder.personal? ? 
       Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] : Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
   end

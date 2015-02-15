@@ -1,5 +1,7 @@
 class CompanyForm < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   include Cache::Memcache::CompanyField
   
   serialize :form_options

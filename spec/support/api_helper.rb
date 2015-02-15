@@ -76,9 +76,9 @@ module APIHelper
   
   AGENT_ATTRIBS = ["active_since","available", "created_at", "id", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"]
 
-  CONTACT_FIELDS_ATTRIBS = ["created_at", "deleted", "editable_in_portal", "editable_in_signup", "field_options", "field_type", "id", "label", "label_in_portal", "name", "position", "required_for_agent", "required_in_portal", "updated_at", "visible_in_portal", "choices"]
+  CONTACT_FIELDS_ATTRIBS = ["created_at", "deleted", "editable_in_portal", "editable_in_signup", "field_options", "id", "label", "label_in_portal", "name", "position", "required_for_agent", "required_in_portal", "updated_at", "visible_in_portal", "field_type", "choices"]
 
-  COMPANY_FIELDS_ATTRIBS = ["created_at", "deleted", "field_options", "field_type", "id", "label", "name", "position", "required_for_agent", "updated_at", "choices"]
+  COMPANY_FIELDS_ATTRIBS = ["created_at", "deleted", "field_options", "id", "label", "name", "position", "required_for_agent", "updated_at", "field_type", "choices"]
 
   ROLE_ATTRIBS = ["created_at", "default_role", "description", "id", "name", "updated_at"]
 

@@ -345,7 +345,12 @@ module ApplicationHelper
     navigation = tabs.map do |s|
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab(s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ).html_safe
+      tab(
+        s[3] || t("header.tabs.#{s[1].to_s}") ,
+        (s[1] == :tickets) ? helpdesk_tickets_path : {:controller => s[0], :action => :index},
+        active && :active, 
+        s[1] 
+      ).html_safe
     end
     navigation.to_s.html_safe
   end

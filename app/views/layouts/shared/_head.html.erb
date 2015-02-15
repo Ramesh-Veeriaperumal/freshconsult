@@ -57,8 +57,6 @@
 	<%= javascript_include_tag :'cdn/pattern'  %>
 	<%= javascript_include_tag :'cdn/merge'  %>
 	<%= javascript_include_tag :'cdn/custom_widget' %>
-    <%= javascript_include_tag :'cdn/plugins/shortcut' if shortcuts_enabled? %>
-
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
@@ -88,9 +86,7 @@
 	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
 
 	<%= render :partial => 'layouts/shared/app_analytics' if current_user.present? and current_user.agent? and Rails.env.production? %>
-	<% unless Rails.env.production? %>
-	<script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js" data-apikey="968dfb16b075d386e9da6aeda6131661"></script>
-	<% end %>
+	
 </head>
 
 <%if @debuging %>

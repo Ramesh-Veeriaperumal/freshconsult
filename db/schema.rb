@@ -1262,7 +1262,7 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.datetime "updated_at"
   end
 
-  create_table "freshfone_number_addresses", :id => false, :force => true do |t|
+  create_table "freshfone_number_addresses", :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8

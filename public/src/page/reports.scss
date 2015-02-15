@@ -896,6 +896,9 @@ $animation_timing: .1s;
 	@include opacity(0);
 	visibility: hidden;
 	width:48.93%;
+	svg{ //FIX for CHROME
+		-webkit-transform: translateZ(0);
+	}
 }
 
 .highcharts-container text{

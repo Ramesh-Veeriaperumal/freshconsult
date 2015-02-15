@@ -44,4 +44,13 @@ module Solution::Constants
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
 
+  API_OPTIONS = {
+    :except  =>  [:account_id, :import_id],
+    :include =>  {:tags => { :only => [:name] },
+                  :folder => { :except => [:account_id,:import_id],
+                               :include => { :customer_folders => { :only => [:customer_id] } }
+                          }
+                  }
+  }
+
 end

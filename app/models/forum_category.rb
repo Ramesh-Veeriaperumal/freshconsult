@@ -41,11 +41,17 @@ class ForumCategory < ActiveRecord::Base
 
   after_create :assign_portal, :set_activity_new_and_clear_cache
 
+  before_destroy :set_destroy_activity_and_clear_cache
+
   def set_activity_new_and_clear_cache
     create_activity('new_forum_category')
     account.clear_forum_categories_from_cache
   end
-  
+
+  def set_destroy_activity_and_clear_cache
+    create_activity('delete_forum_category')
+    account.clear_forum_categories_from_cache
+  end
   
   def add_activity
     create_activity('delete_forum_category')

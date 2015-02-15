@@ -9,7 +9,7 @@ class ChatsController < ApplicationController
     if chat_activated?
       widget_values = current_account.chat_widgets.reject{|c| c.widget_id ==nil}.collect {|c| [c.widget_id,(c.product.blank? ? current_account.name : c.product.name)]}
       @selected_tab = :dashboard
-      @widgets = widget_values.map{ |i| [i[0], i[1]] }.to_h.to_json.html_safe
+      @widgets = Hash[widget_values.map{ |i| [i[0], i[1]] }].to_json.html_safe
       @widgetsSelectOption = widget_values.map{ |i| [i[1], i[0]] }
       @agentsAvailable = current_account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
       @dateRange = "#{30.days.ago.strftime("%d %b, %Y")} - #{0.days.ago.strftime("%d %b, %Y")}"

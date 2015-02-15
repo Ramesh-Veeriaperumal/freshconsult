@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
 
   #For user email UI feature  
   before_validation :assign_primary_email, on: :create, :if => :has_contact_merge?
-  before_validation :update_user_table_email, on: :update, :if => :has_contact_merge?
+  before_validation :update_user_table_email, on: :create, :if => :has_contact_merge?
 
   before_validation :set_primary_email, on: :update, :if => [:has_contact_merge?]
 

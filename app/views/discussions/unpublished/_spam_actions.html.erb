@@ -1,40 +1,48 @@
 <% popup = params[:action].eql?('topic_spam_posts') %>
 <div class="post-action-bar">
-		<div class="action-icon<%= '-popup' if popup %>">
-			<%= link_to_remote '', :url => approve_discussions_unpublished_path(post, :timestamp => post.timestamp, :scope => @moderation_scope, :popup => popup ),
-					:method => :put,
-					:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
-					:html => {
-							:class => font_class("checkmark-round", popup ? 24 : 28, "tooltip post-approve"),
-							:title => t('.approve_tooltip'),
-							:"data-track" => 'Action on Unpublished post',
-							:"data-event-data" => {:action => 'Publish', :spam => false }.to_json
-						} %>
+		<div class="action-icon" id="approve_<%= post.timestamp.to_i %>">
+			<%= link_to '', approve_discussions_unpublished_path(post.timestamp.to_i, :timestamp => post.timestamp, :scope => @moderation_scope.to_s, :popup => popup ),
+				:method => :put,
+				:class => font_class("checkmark-round", popup ? 24 : 28, "tooltip post-approve"),
+				:id => "approve-post_#{ post.timestamp.to_i }",
+				:title => t('.approve_tooltip'),
+				:"data-track" => 'Action on Unpublished post',
+				:"data-event-data" => {:action => 'Publish', :spam => post.spam? }.to_json,
+				:"data-hide-before" => 'this',
+				:"data-loading" => "approve_#{ post.timestamp.to_i }",
+				:"data-loading-classes" => 'sloading loading-small',
+				:remote => true
+		    %>
 		</div>
-		<div class="action-icon<%= '-popup' if popup %>">
-			<%= link_to_remote('', :url => delete_unpublished_discussions_unpublished_path(post, :timestamp => post.timestamp, :scope => @moderation_scope, :popup => popup, :topic_id => post.topic_id ),
-					:method => :delete,
-					:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
-					:html => {
-						:class => font_class("trash", popup ? 24 : 28, "tooltip post-delete delete_action"),
-						:title => t('delete'),
-						:"data-track" => 'Action on Unpublished post',
-						:"data-event-data" => {:action => 'Delete', :spam => false }.to_json
-					}) %>
+		<div class="action-icon" id="delete_<%= post.timestamp.to_i %>">
+			<%= link_to '', delete_unpublished_discussions_unpublished_path(post.timestamp.to_i, :timestamp => post.timestamp, :scope => @moderation_scope.to_s, :popup => popup, :topic_id => post.topic_id ),
+				:method => :delete,
+				:class => font_class("trash", popup ? 24 : 28, "tooltip post-delete delete_action"),
+				:id => "delete-post_#{ post.timestamp.to_i }",
+				:title => t('delete'),
+				:"data-track" => 'Action on Unpublished post',
+				:"data-event-data" => {:action => 'Delete', :spam => false }.to_json,
+				:"data-hide-before" => 'this',
+				:"data-loading" => "delete_#{ post.timestamp.to_i }",
+				:"data-loading-classes" => 'sloading loading-small',
+				:remote => true
+			%>
 		</div>
-		<% unless post.spam? %>
-		<div class="action-icon<%= '-popup' if popup %>">
-			<%= link_to_remote("", :url => ban_discussions_unpublished_path(post, :timestamp => post.timestamp, :scope => @moderation_scope, :popup => popup),
-					:method => :put,
-					:confirm => t('.ban_confirm'),
-					:before => "jQuery(this).hide(); jQuery(this).parent().addClass('sloading loading-small')",
-					:html => {
-						:class => font_class("notice", popup ? 24 : 28, "tooltip post-ban-user"),
-						:title => t('.ban_tooltip'),
-						:"data-placement" => "left",
-						:"data-track" => 'Action on Unpublished post',
-						:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json
-					}) if privilege?(:delete_contact) %>
+	<% unless post.spam? %>
+		<div class="action-icon" id="ban_<%= post.timestamp.to_i %>">
+			<%= link_to_if privilege?(:delete_contact), "", ban_discussions_unpublished_path(post.timestamp.to_i, :timestamp => post.timestamp, :scope => @moderation_scope.to_s),
+				:method => :put,
+				:class => font_class("notice", popup ? 24 : 28, "tooltip post-ban-user"),
+				:id => "delete-contact_#{ post.timestamp.to_i }",
+				:title => t('.ban_tooltip'),
+				:"data-placement" => "left",
+				:"data-track" => 'Action on Unpublished post',
+				:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json,
+				:"data-hide-before" => 'this',
+				:"data-loading" => "ban_#{ post.timestamp.to_i }",
+				:"data-loading-classes" => 'sloading loading-small',
+				:remote => true
+			%>
 		</div>
 	<% end %>
 </div>

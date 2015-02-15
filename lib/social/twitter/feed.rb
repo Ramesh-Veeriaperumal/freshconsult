@@ -124,6 +124,14 @@ class Social::Twitter::Feed
       twitter = TwitterWrapper.new(handle).get_twitter
       action_response = twitter.send(action, "#{param}")
     end
+  end   
+  
+  def self.following?(handle, req_twt_id)
+    return if req_twt_id.blank?
+    twt_sandbox(handle) do
+      twitter = TwitterWrapper.new(handle).get_twitter
+      user_follows = twitter.friendship?(req_twt_id, handle.screen_name)
+    end
   end  
 
   private

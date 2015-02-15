@@ -141,7 +141,20 @@
 			});
 			
 		},
-		
+		plugin: function (name) {
+			var $this = this;
+			if (!this.alreadyLoaded(name, 'plugins')) {
+				$LAB.script(this.javascripts.plugins[name]).wait(function () {
+					$this.loaded.plugins.push(name);
+					if (typeof (Fjax.Callbacks[name]) === 'function') {						
+						Fjax.Callbacks[name]();
+					}
+				});
+				
+				if (this.isCSSNeeded(name, 'plugins')) {
+					this.load_css(this.stylesheets.plugins[name]);
+				}
+			},
 		ajax_load_script: function (url, callback) {
 			callback = callback || function () {};
 			var script = document.createElement("script");
@@ -164,6 +177,7 @@
 			script.src = url;
 			document.getElementsByTagName("head")[0].appendChild(script);
 		}
+
 	};
 	
 }(window.jQuery));

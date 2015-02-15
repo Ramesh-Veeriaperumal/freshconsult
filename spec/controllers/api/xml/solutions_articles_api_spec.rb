@@ -70,9 +70,9 @@ it "should be able to view a solution article" do
     @test_article.votes.build(:vote => 1, :user_id => @user.id)
     @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
     @test_article.save
-    put :reset_ratings, :id => @test_article.id, :format => 'xml'
+    put :reset_ratings, :id => @test_article.id, :category_id => @solution_category.id, :folder_id => @solution_folder.id, :format => 'xml'
     @test_article.reload
-    expected = (response.status === "200 OK" && @test_article.thumbs_up === 0 && @test_article.thumbs_down === 0 && @test_article.votes === [])
+    expected = (response.status === 200 && @test_article.thumbs_up === 0 && @test_article.thumbs_down === 0 && @test_article.votes === [])
     expected.should be(true)
   end
 

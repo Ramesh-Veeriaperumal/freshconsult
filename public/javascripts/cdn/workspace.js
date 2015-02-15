@@ -15,6 +15,7 @@
 //= require security.js
 //= require fjax.js
 //= require fjax/config.js
+//= require fjax/callbacks.js
 //= require fjax/assets.js
 //= require fjax/manager.js
 //= require application.js

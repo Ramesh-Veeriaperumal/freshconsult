@@ -184,7 +184,7 @@
             ev.preventDefault();
             $(this).button("loading");
             $buy_numbers_form = $this.parents('form');
-            if($this.data('addressRequired')){
+            if(address_required){
               $('#freshfone_address_form').submit();
             } else {
               $this.parents('form').submit();  

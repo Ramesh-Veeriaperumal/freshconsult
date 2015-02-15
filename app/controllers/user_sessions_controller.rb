@@ -27,6 +27,7 @@ include GoogleLoginHelper
   skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
   
   def new
+    flash.keep
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
       @user_session = current_account.user_sessions.new

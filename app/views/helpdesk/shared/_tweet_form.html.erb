@@ -26,7 +26,7 @@
 	    </div>
 	  </li>
     <li class="button-container">
-       <span id="not_following_message" class="info-highlight center" style="padding:8px 10px;position:relative;left:-20px;top:2px;"><%=t('ticket.tweet_form.user_not_following')%></span>
+       <span id="not_following_message" class="info-highlight center" style="padding:8px 10px;position:relative;left:-20px;top:2px;"></span>
        <span class="tweet-counter" id="SendTweetCounter">140</span>
 	   <span id="tweet_type_selector" style="display:none;position:relative;">
 	   	<%= select_tag :tweet_type , options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) ,{}%>
@@ -57,27 +57,7 @@ istwitter = '<%=@ticket.is_twitter?%>';
 if (!istwitter || req_twt_id == "" || twitter_handle == "")
 {
 return ;
-}
-
-jQuery.ajax({	type: 'POST',
-				url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
-				contentType: 'application/text', 
-				async: false, 
-				success: function(data){ 
-				if (data.user_follows == true)
-				{
-					jQuery('#tweet_type_selector').show();
-					jQuery('#not_following_message').hide();
-				}
-				else
-				{
-					jQuery('#tweet_type_selector').hide();
-					jQuery('#tweet_type').val(':mention');
-					jQuery('#not_following_message').show();
-				}
-			 }
-			});
-	}); 
+} 
 jQuery('#twitter_handle').change(); 
 });
 <% end %>
