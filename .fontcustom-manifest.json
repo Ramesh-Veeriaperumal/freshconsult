@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "7f50b97e33fb2fac57e5af74aea6aeb6b08a673ce33e3d070c817b7db458e824",
-    "current": "7f50b97e33fb2fac57e5af74aea6aeb6b08a673ce33e3d070c817b7db458e824"
+    "previous": "540993bf1c4c6eef113c8158afc00e6588524185c075646f069587604e1e94d3",
+    "current": "540993bf1c4c6eef113c8158afc00e6588524185c075646f069587604e1e94d3"
   },
   "fonts": [
-    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.ttf",
-    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.svg",
-    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.woff",
-    "public/fonts/glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.eot"
+    "public/assets/glyphs_540993bf1c4c6eef113c8158afc00e65.ttf",
+    "public/assets/glyphs_540993bf1c4c6eef113c8158afc00e65.svg",
+    "public/assets/glyphs_540993bf1c4c6eef113c8158afc00e65.woff",
+    "public/assets/glyphs_540993bf1c4c6eef113c8158afc00e65.eot"
   ],
   "glyphs": {
     "account": {
@@ -97,6 +97,10 @@
     "business-hours": {
       "codepoint": 61769,
       "source": "public/glyphs/vectors/business-hours.svg"
+    },
+    "calling": {
+      "codepoint": 61874,
+      "source": "public/glyphs/vectors/calling.svg"
     },
     "canned-response": {
       "codepoint": 61770,
@@ -198,6 +202,10 @@
       "codepoint": 61873,
       "source": "public/glyphs/vectors/disconnected.svg"
     },
+    "dislike": {
+      "codepoint": 61875,
+      "source": "public/glyphs/vectors/dislike.svg"
+    },
     "dispatcher": {
       "codepoint": 61773,
       "source": "public/glyphs/vectors/dispatcher.svg"
@@ -205,6 +213,10 @@
     "dots": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/dots.svg"
+    },
+    "dropbox": {
+      "codepoint": 61876,
+      "source": "public/glyphs/vectors/dropbox.svg"
     },
     "dropdown_blank": {
       "codepoint": 61829,
@@ -313,6 +325,10 @@
     "folder-open-o": {
       "codepoint": 61717,
       "source": "public/glyphs/vectors/folder-open-o.svg"
+    },
+    "forward": {
+      "codepoint": 61877,
+      "source": "public/glyphs/vectors/forward.svg"
     },
     "freshchat": {
       "codepoint": 61796,
@@ -430,6 +446,10 @@
       "codepoint": 61784,
       "source": "public/glyphs/vectors/mobihelp.svg"
     },
+    "mobile": {
+      "codepoint": 61878,
+      "source": "public/glyphs/vectors/mobile.svg"
+    },
     "multi-product": {
       "codepoint": 61785,
       "source": "public/glyphs/vectors/multi-product.svg"
@@ -473,6 +493,10 @@
     "paragraph": {
       "codepoint": 61834,
       "source": "public/glyphs/vectors/paragraph.svg"
+    },
+    "pencil": {
+      "codepoint": 61879,
+      "source": "public/glyphs/vectors/pencil.svg"
     },
     "phone": {
       "codepoint": 61764,
@@ -566,6 +590,10 @@
       "codepoint": 61791,
       "source": "public/glyphs/vectors/sla.svg"
     },
+    "split": {
+      "codepoint": 61880,
+      "source": "public/glyphs/vectors/split.svg"
+    },
     "star": {
       "codepoint": 61732,
       "source": "public/glyphs/vectors/star.svg"
@@ -630,6 +658,10 @@
       "codepoint": 61812,
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
+    "twitter-o": {
+      "codepoint": 61881,
+      "source": "public/glyphs/vectors/twitter-o.svg"
+    },
     "unlock": {
       "codepoint": 61737,
       "source": "public/glyphs/vectors/unlock.svg"
@@ -661,7 +693,7 @@
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
     "font_name": "glyphs",
-    "force": false,
+    "force": true,
     "input": {
       "templates": "public/glyphs/templates",
       "vectors": "public/glyphs/vectors"
@@ -669,8 +701,8 @@
     "no_hash": false,
     "output": {
       "css": "public/src/fonts",
-      "fonts": "public/fonts",
-      "preview": "public/fonts"
+      "fonts": "public/assets",
+      "preview": "public/assets"
     },
     "preprocessor_path": "",
     "quiet": false,
@@ -681,6 +713,6 @@
   },
   "templates": [
     "public/src/fonts/_glyphs.scss",
-    "public/fonts/index.html"
+    "public/assets/index.html"
   ]
 }
