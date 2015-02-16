@@ -35,6 +35,7 @@
 				:class => font_class("notice", popup ? 24 : 28, "tooltip post-ban-user"),
 				:id => "delete-contact_#{ post.timestamp.to_i }",
 				:title => t('.ban_tooltip'),
+				:confirm => t('.ban_confirm'),
 				:"data-placement" => "left",
 				:"data-track" => 'Action on Unpublished post',
 				:"data-event-data" => {:action => 'Spam and Ban User', :spam => false }.to_json,
