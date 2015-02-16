@@ -305,3 +305,10 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+#chat-dashboard{
+	.fc_widget_refresh_on{
+		.chat_icon_connection{
+			@extend .ficon-disconnected; 
+		}
+	}
+}

@@ -38,7 +38,8 @@ window.Fjax = window.Fjax || {};
 			"/contacts": 'contacts',
 			"/users": 'contacts',
 			"/companies": 'companies',
-			"/helpdesk/tickets": 'tickets'
+			"/helpdesk/tickets": 'tickets',
+			"/search": 'search'
 		},
 		LOADING_WAIT: 60
 	};

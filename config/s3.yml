@@ -2,6 +2,7 @@ common: &common
   access_key_id: AKIAILZZJD6Q3WAFMCHA
   secret_access_key: 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
   AWS_CALLING_FORMAT: SUBDOMAIN
+  region: 'us-east-1'
 
 development:
   <<: *common
@@ -29,6 +30,7 @@ test:
 production:
   access_key_id: AKIAISZIJ5WPZKABHKSA
   secret_access_key: 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
+  region: 'us-east-1'
   AWS_CALLING_FORMAT: SUBDOMAIN
   bucket: cdn.freshdesk.com
   reports_bucket: reports_archive_data_production
