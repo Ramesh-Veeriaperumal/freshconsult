@@ -108,9 +108,11 @@ module Facebook
         eval((@app_type+"_block").upcase).call(pages, oauth_access_token)
       end
 
-      def profile_name(profile_id)
+      def profile_name(profile_id, fan_page)
         begin
-          Koala::Facebook::API.new.get_object(profile_id).symbolize_keys[:name]
+          rest = Koala::Facebook::API.new(fan_page.access_token)
+          user = rest.get_object(profile_id).symbolize_keys
+          user_name = user ? "#{user[:first_name]} #{user[:last_name]}" : ""
         rescue Exception => e
           return ""
         end

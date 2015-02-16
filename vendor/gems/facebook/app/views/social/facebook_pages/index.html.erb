@@ -20,7 +20,7 @@ if(jQuery('#got_pages').length){
     </div>
       <% @fb_pages.each do |profile_id, pages| %>
           <div>
-           fb: <%= @fb_client.profile_name(profile_id)%>
+           fb: <%= @fb_client.profile_name(profile_id, pages["facebook_pages"].first)%>
           </div>
           <!-- <div>
             <%=t('facebook.realtime',:realtime_url => @fb_client.authorize_url(session[:state])).html_safe%>
