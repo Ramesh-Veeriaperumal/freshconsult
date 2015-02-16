@@ -9,11 +9,16 @@ namespace :facebook do
     if queue_empty?(queue_name)
       puts "Facebook Worker initialized at #{Time.zone.now}"
       Sharding.run_on_all_slaves do
-        Account.active_accounts.each do |account|
-          next if check_if_premium?(account)
-          facebook_pages = account.facebook_pages.valid_pages
-          next if facebook_pages.empty?
-          Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => account.id} )
+        Social::FacebookPage.find_in_batches(:batch_size => 500,
+          :joins => %( INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id),
+          :conditions => "subscriptions.state != 'suspended'",
+          :include => [:account]
+        ) do |facebook_block|
+          facebook_block.each do |fb_page|
+            account = fb_page.account
+            next if (check_if_premium?(account) or !fb_page.valid_page)
+            Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => account.id, :fb_page_id => fb_page.id})
+          end 
         end
       end
     else
@@ -38,11 +43,15 @@ namespace :facebook do
     queue_name = "facebook_comments_worker"
     if queue_empty?(queue_name)
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
-      Sharding.run_on_all_slaves do
-        Account.active_accounts.each do |account|
-          facebook_pages = account.facebook_pages.valid_pages
-          next if facebook_pages.empty?
-          Resque.enqueue(Facebook::Worker::FacebookCommentsWorker ,{:account_id => account.id})
+      Social::FacebookPage.find_in_batches(:batch_size => 500,
+          :joins => %( INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id),
+          :conditions => "subscriptions.state != 'suspended'",
+          :include => [:account]
+        ) do |facebook_block|
+        facebook_block.each do |fb_page|
+          account = fb_page.account
+          next unless fb_page.valid_page
+          Resque.enqueue(Facebook::Worker::FacebookCommentsWorker ,{:account_id => account.id, :fb_page_id => fb_page.id})
         end
       end
     else

@@ -8,10 +8,14 @@ class Facebook::Worker::FacebookCommentsWorker
       Koala.config.api_version = nil #reset koala version so that we hit v1 api
       
       account = Account.current
-      facebook_pages = account.facebook_pages.valid_pages
-      return if facebook_pages.empty?
-      facebook_pages.each do |fan_page|
+      if args[:fb_page_id]
+        fan_page = account.facebook_pages.find(args[:fb_page_id])
         fetch_fb_comments fan_page
+      else
+        facebook_pages = account.facebook_pages.valid_pages
+        facebook_pages.each do |fan_page|
+          fetch_fb_comments fan_page
+        end
       end
     end
 
