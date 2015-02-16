@@ -5,6 +5,8 @@ class Facebook::Worker::FacebookCommentsWorker
 
 
     def self.perform(args)
+      Koala.config.api_version = nil #reset koala version so that we hit v1 api
+      
       account = Account.current
       facebook_pages = account.facebook_pages.valid_pages
       return if facebook_pages.empty?
