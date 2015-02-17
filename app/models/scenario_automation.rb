@@ -4,6 +4,7 @@ class ScenarioAutomation < VaRule
   include Helpdesk::Accessible::ElasticSearchMethods
   
   attr_protected :account_id
+  belongs_to_account
   
   default_scope where(:rule_type => VAConfig::SCENARIO_AUTOMATION)
 
