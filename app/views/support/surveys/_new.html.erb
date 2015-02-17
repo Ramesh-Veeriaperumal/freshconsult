@@ -2,7 +2,7 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_rtl_css :rating %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/rating' %>
 	<%= include_cloudfront_js :survey  %>
 </head>
 <body>	
