@@ -6,6 +6,7 @@ class Freshfone::CallInitiator
 
 	VOICEMAIL_TRIGGERS = ['no-answer', 'busy', 'failed']
 	BATCH_SIZE = 10
+	MAX_VOICEMAIL_LENGTH = 180
 
 	attr_accessor :params, :current_account, :current_number, :call_flow, :batch_call,
 								:below_safe_threshold, :queued, :missed_call
@@ -90,7 +91,7 @@ class Freshfone::CallInitiator
 		if current_number.voicemail_active
 			twiml_response do |r|
 				read_voicemail_message(r, type)
-				r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => 300
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => MAX_VOICEMAIL_LENGTH
 				r.Redirect "#{status_url}?force_termination=true", :method => "POST"
 			end
 	 	else
@@ -109,7 +110,7 @@ class Freshfone::CallInitiator
 			read_non_business_hours_message(r)
 			if current_number.voicemail_active
 				read_voicemail_message(r, "default")
-				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => MAX_VOICEMAIL_LENGTH
 			end
 			r.Redirect "#{status_url}?force_termination=true", :method => "POST"			
 		end
@@ -121,7 +122,7 @@ class Freshfone::CallInitiator
 			read_non_availability_message(r)
 			if current_number.voicemail_active
 				read_voicemail_message(r, "default")
-				r.Record :action => quit_voicemail_url, :finishOnKey => '#'
+				r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => MAX_VOICEMAIL_LENGTH
 			end
 			r.Redirect "#{status_url}?force_termination=true", :method => "POST"			
 		end
