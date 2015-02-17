@@ -52,12 +52,12 @@ class ScenarioAutomation < VaRule
   }
 
   def to_indexed_json
-    to_json({
-      :root =>"scenario_automation", 
-      :tailored_json => true, 
-      :only => [:account_id, :name, :rule_type, :active],
-      :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
-      })
+   as_json({
+     :root =>"scenario_automation", 
+     :tailored_json => true, 
+     :only => [:account_id, :name, :rule_type, :active],
+     :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+     }).to_json
   end
 
   private
