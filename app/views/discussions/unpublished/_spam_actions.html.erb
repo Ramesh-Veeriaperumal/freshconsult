@@ -30,7 +30,7 @@
 		</div>
 	<% unless post.spam? %>
 		<div class="action-icon" id="ban_<%= post.timestamp.to_i %>">
-			<%= link_to_if privilege?(:delete_contact), "", ban_discussions_unpublished_path(post.timestamp.to_i, :timestamp => post.timestamp, :scope => @moderation_scope.to_s),
+			<%= link_to_if privilege?(:delete_contact), "", ban_discussions_unpublished_path(post.timestamp.to_i, :timestamp => post.timestamp, :scope => @moderation_scope.to_s, :popup => popup),
 				:method => :put,
 				:class => font_class("notice", popup ? 24 : 28, "tooltip post-ban-user"),
 				:id => "delete-contact_#{ post.timestamp.to_i }",
