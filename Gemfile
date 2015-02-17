@@ -163,7 +163,7 @@ group :production,:test,:staging do
   gem "tire", :git => "git://github.com/PratheepV/retire.git"
 end
 
-
+gem "liquid", "2.6.1"
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 gem "delayed_job", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/delayed_job"
@@ -186,7 +186,7 @@ gem "paperclip_ext", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/pape
 gem "ssl_requirement", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ssl_requirement"
 gem "helpdesk_attachable", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/helpdesk_attachable"
 gem "has_flexiblefields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/has_flexiblefields"
-gem "liquid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/liquid"
+#gem "liquid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/liquid"
 gem "seed-fu", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/seed-fu"
 gem "highcharts-rails", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/highcharts-rails"
 gem "will_paginate-liquidized", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/will_paginate-liquidized"
