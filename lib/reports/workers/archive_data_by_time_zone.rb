@@ -14,7 +14,7 @@ module Reports
 					time_zones = TIMEZONES_BY_UTC_TIME[args[:hour]]
 						Sharding.execute_on_all_shards do
 						Sharding.run_on_slave do
-						Account.active_accounts.find_in_batches(:batch_size => 500 , 
+						Account.current_pod.active_accounts.find_in_batches(:batch_size => 500 , 
 																						:conditions => {:time_zone => time_zones}) do |accounts|
 							accounts.each do |account|
 								id, Time.zone = account.id, account.time_zone

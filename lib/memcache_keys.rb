@@ -96,6 +96,8 @@ module MemcacheKeys
 
   PRODUCT_NOTIFICATION = "v2/PRODUCT_NOTIFICATION"
 
+  POD_SHARD_ACCOUNT_MAPPING = "v1/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

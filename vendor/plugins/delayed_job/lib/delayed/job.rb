@@ -36,6 +36,9 @@ module Delayed
     self.min_priority = nil
     self.max_priority = nil
 
+    JobPodConfig = YAML.load_file(File.join(Rails.root, 'config', 'pod_info.yml'))
+    default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
+
     # When a worker is exiting, make sure we don't have any locked jobs.
     def self.clear_locks!
       update_all("locked_by = null, locked_at = null", ["locked_by = ?", worker_name])
@@ -125,7 +128,7 @@ module Delayed
     
       priority = args.first || 0
       run_at   = args[1]
-      self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at)
+      self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => "#{JobPodConfig['CURRENT_POD']}")
     end
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).

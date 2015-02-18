@@ -929,6 +929,10 @@ module ApplicationHelper
     return "/images/logo.png?721013"
   end
 
+  def get_base_domain
+    AppConfig['base_domain'][Rails.env]
+  end
+
   private
     def solutions_tab
       if !current_portal.solution_categories.empty?

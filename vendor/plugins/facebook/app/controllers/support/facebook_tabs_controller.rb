@@ -2,6 +2,7 @@ class Support::FacebookTabsController < SupportController
 
   skip_before_filter :portal_context, :page_message, :ensure_proper_protocol
   skip_filter :select_shard
+  skip_before_filter :determine_pod
   skip_before_filter :verify_authenticity_token, :check_account_state
   skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url
   skip_before_filter :set_time_zone, :check_day_pass_usage, :set_locale

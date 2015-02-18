@@ -149,6 +149,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
 gem "bunny", "1.2.1"
 
+gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/add_pod_support-0.0.1"
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0

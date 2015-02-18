@@ -56,7 +56,7 @@ def execute_sla(task_name)
     if sla_should_run?(queue_name)
       accounts_queued = 0
       Sharding.execute_on_all_shards do
-        Account.send(SLA_TASK[task_name][:account_method]).each do |account|        
+        Account.current_pod.send(SLA_TASK[task_name][:account_method]).each do |account|        
           Resque.enqueue(SLA_TASK[task_name][:class_name].constantize, { :account_id => account.id})
           accounts_queued += 1
         end
