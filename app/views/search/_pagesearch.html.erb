@@ -26,8 +26,9 @@ var afterSearchLoaded = function(){
 										var resultHtml = ''
 										if(data.results.length){
 								 			data.results.each(function(result){
-												var resultType = result.result_type
-												if(result) { resultHtml += (JST[resultType](result)); }
+												var resultType = result.result_type,
+												    templateName = ["app/search/templates/", resultType].join("");
+												if(result) { resultHtml += (JST[templateName](result)); }
 											})
 										} else {
 											resultHtml = '<li><%= t("search.no_results_msg") %></li>'
