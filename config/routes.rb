@@ -624,11 +624,8 @@ Helpkit::Application.routes.draw do
     match 'install/:app' => 'oauth#authenticate', :as => :oauth
   end
 
-  resources :http_request_proxy do
-    collection do
-      post :fetch
-    end
-  end
+  match '/http_request_proxy/fetch', 
+      :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
 
   namespace :admin do
     resources :home, :only => :index
