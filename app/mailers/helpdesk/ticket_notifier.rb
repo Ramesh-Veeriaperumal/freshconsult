@@ -1,8 +1,9 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
-
   include Helpdesk::NotifierFormattingMethods
   
+  layout "email_font"
+
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
@@ -100,6 +101,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                             params[:notification_type], params[:ticket]
                           )
     @body_html           = generate_body_html(params[:email_body_html])
+    @account             = params[:ticket].account
     
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
@@ -148,6 +150,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @include_quoted_text = options[:quoted_text],
     @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user),
     @ticket = ticket
+    @account = note.account
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, note.full_text_html, note.account)
@@ -187,6 +190,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = note.full_text
     @cloud_files= note.cloud_files
     @body_html = generate_body_html(note.full_text_html)
+    @account = note.account
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, note.full_text_html, note.account)
@@ -225,6 +229,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = ticket.description
     @cloud_files = ticket.cloud_files
     @body_html = generate_body_html(ticket.description_html)
+    @account = ticket.account
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, ticket.description_html, ticket.account)
@@ -265,6 +270,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body_html = generate_body_html(note.body_html)
     @note = note
     @ticket = ticket
+    @account = note.account
     
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, note.body_html, note.account)
@@ -299,6 +305,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
+    @account = ticket.account
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)
@@ -326,6 +333,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
+    @account = ticket.account
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)

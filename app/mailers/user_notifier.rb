@@ -1,6 +1,8 @@
 require 'mailer_deliver_alias'
 class UserNotifier < ActionMailer::Base
 
+  layout "email_font"
+
   def user_activation(user, params, reply_email_config)
     ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
     send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
@@ -50,6 +52,7 @@ class UserNotifier < ActionMailer::Base
     @admin_name   = "#{account.admin_first_name} #{account.admin_last_name}"
     @portal_url   = portal_url
     @elb_name     = elb_name
+    @account      = account
 
     mail(headers) do |part|
       part.text { render "custom_ssl_activation.text.plain" }
@@ -69,6 +72,7 @@ class UserNotifier < ActionMailer::Base
     }
 
     @user = user
+    @account = user.account
 
     mail(headers) do |part|
       part.text { render "notify_contacts_import.text.plain" }
@@ -86,6 +90,7 @@ class UserNotifier < ActionMailer::Base
     @facebook_url    = social_facebook_index_url(:host => account.host)
     @fb_page         = facebook_page
     @admin_name      = account.admin_first_name
+    @account         = account
     mail(headers) do |part|
       part.text { render "facebook.text.plain" }
       part.html { render "facebook.text.html" }
@@ -133,6 +138,7 @@ class UserNotifier < ActionMailer::Base
 
           part.html do
             @body = email_body
+            @account = user_or_email.account
             render("user_notification_mail.text.html")
           end
       end.deliver
