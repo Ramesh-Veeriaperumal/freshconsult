@@ -2340,7 +2340,9 @@ the specific language governing permissions and limitations under the Apache Lic
             if (opts.element.get(0).tagName.toLowerCase() === "select") {
                 // install the selection initializer
                 opts.initSelection = function (element, callback) {
-                    var selected = element.find("option").filter(function() { return this.selected && !this.disabled });
+                    // var selected = element.find("option").filter(function() { return this.selected && !this.disabled });
+                    //Removed above line to show disabled selected option in select tag
+                    var selected = element.find("option").filter(function() { return this.selected });
                     // a single select box always has a value, no need to null check 'selected'
                     callback(self.optionToData(selected));
                 };
