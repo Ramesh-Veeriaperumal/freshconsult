@@ -128,12 +128,12 @@
 						<% end %>
 						<% if current_user then %>
 							<%= form_tag('/search/all', :method => :get, :class => "nav_search") do %>
-								<div class="search_bar" id="SearchBar">
+								<div class="search_bar tooltip" id="SearchBar" title="<%= t("header.search").html_safe %>" data-placement="below">
 									<span class="search-icon-inactive"></span>
 									<span class="searchIcon nav-search-icon"></span>
 									<label class="overlabel" for="header_search"><%= t("header.search").html_safe %></label>
 									<input value="" type="text" id="header_search" autocomplete="off" name="term"
-										data-keybinding="<%= shortcut('global.search') %>"/>
+										data-keybinding="<%= shortcut('global.search') %>" placeholder/>
 								</div>
 							<% end %>
 						<% end %>

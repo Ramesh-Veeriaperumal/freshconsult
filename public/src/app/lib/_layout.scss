@@ -469,15 +469,16 @@ a.new_ticket{
 		padding:0;
 		position:absolute;
 		top:0;
+		cursor: pointer;
 	 	@include right(0);
-		@include transition(width ease-out 200ms, background ease-in 200ms);
+		@include transition(width ease-out 100ms, background ease-in 100ms);
 		.nav-search-icon, .search-icon-inactive{
 		   position:absolute;
 		   @include right(0);
 		   width:15px;
 		   height:15px;
 		   top:9px;
-		   @include left(3px);
+		   @include left(5px);
 		}
 		.searchIcon{display: none}
 		label.overlabel{
@@ -504,7 +505,7 @@ a.new_ticket{
 		input:focus{ @include box-shadow(#ffffff 0 0 0); }
 	}
 	div.search_bar{
-		&:hover,&.active{
+		&.active{
 			box-shadow: inset 0 0 1px 0px #000;
 			input{
 				color:#333;
@@ -516,7 +517,7 @@ a.new_ticket{
 			background:#fff;
 			font-weight:500;
 			.search-icon-inactive{ display: none }
-			.searchIcon{display: block; @include left(8px);}
+			.searchIcon{display: block;	}
 	   	}
 	}
 }
