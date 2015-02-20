@@ -9,6 +9,7 @@ describe Support::Discussions::TopicsController do
 		@forum = create_test_forum(@category)
 		@topic = create_test_topic(@forum)
 		@user = add_new_user(@account)
+		@account.features.spam_dynamo.destroy
 	end
 
 	before(:each) do
@@ -96,13 +97,13 @@ describe Support::Discussions::TopicsController do
 
 		it "should create a topic with attachments on post 'create' but the details must go to sqs if spam_dynamo feature is enabled" do
 			topic_title = Faker::Lorem.sentence(1)
-		
+			
 			post :create,
 				:topic =>
 						{:title=> topic_title, 
 						:body_html=>"<p>#{@post_body}</p>", 
 						:forum_id=> @forum.id},
-				:post => { :attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
+				:post => { :attachments => [{:resource => forum_attachment}]}
 
 			received_message = @moderation_queue.receive_message
 			sqs_message = JSON.parse(received_message.body)['sqs_post']
@@ -135,7 +136,7 @@ describe Support::Discussions::TopicsController do
 						{
 						:body_html=>"", 
 						:forum_id=> @forum.id},
-				:post => { :attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
+				:post => { :attachments => [{:resource => forum_attachment}]}
 
 			@moderation_queue.receive_message.should be nil
 			
