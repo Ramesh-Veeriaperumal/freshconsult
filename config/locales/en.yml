@@ -3403,6 +3403,7 @@ en:
     welcome: Welcome
     new_ticket: New
     new_ticket_tip: New ticket
+    search: Search ( / )
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
     guest: "Guest"

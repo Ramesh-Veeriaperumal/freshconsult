@@ -147,6 +147,7 @@
 						@include padding-left(15px);
 						@include border-left(1px dotted #ccc);
 						margin: 0 0 0px;
+						@include word-break(break-word);
 					}
 				}
 				.search-result-info{
