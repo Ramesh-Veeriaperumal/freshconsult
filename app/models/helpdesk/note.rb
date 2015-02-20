@@ -179,7 +179,7 @@ class Helpdesk::Note < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true, :include =>:attachments, :methods => [:support_email],
+      super(:builder => xml, :root => "helpdesk-note", :skip_instruct => true, :include =>:attachments, :methods => [:support_email],
                           :except => [:account_id,:notable_id,:notable_type]) do |xml|
         unless options[:human].blank?
           xml.tag!(:source_name,self.source_name)

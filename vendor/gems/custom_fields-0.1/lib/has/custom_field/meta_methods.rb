@@ -4,7 +4,7 @@ module Has
     module MetaMethods
 
       def respond_to? attribute, include_private_methods = false
-        return false if [:to_ary, :after_initialize_without_slave].include? attribute
+        return false if [:to_ary, :after_initialize_without_slave].include?(attribute) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
         super(attribute, include_private_methods) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
       end
 

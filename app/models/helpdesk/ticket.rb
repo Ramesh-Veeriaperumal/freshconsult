@@ -587,7 +587,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_attributes = [:notes,:attachments]
     ticket_attributes = {:notes => {},:attachments => {},:tags=> {:only => [:name]}}
     ticket_attributes = [] if options[:shallow]
-    super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
+    super(:builder => xml, :root => "helpdesk-ticket", :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name, :product_id]) do |xml|
       xml.to_emails do
         self.to_emails.each do |emails|
