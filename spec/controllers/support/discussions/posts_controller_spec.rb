@@ -237,14 +237,17 @@ describe Support::Discussions::PostsController do
 			@second_user = add_new_user(@account)
 			@new_topic = publish_topic(create_test_topic(@forum))
 			@new_post = create_test_post(@new_topic, @first_user)
-			log_in(@second_user)
 		end
+
+    before(:each) do
+      log_in(@second_user)
+    end
 
 		after(:all) do
 			log_in(@user)
 		end
 
-		it "should redirect to login page post on edit on get 'edit' if not author or agent" do
+		it "should return 200 status on edit if not author or agent" do
 			post_body = Faker::Lorem.paragraph
 
 			get :edit, :id => @new_post.id,
@@ -252,19 +255,17 @@ describe Support::Discussions::PostsController do
 								:body_html =>"<p>#{post_body}</p>"
 								},
 						:topic_id => @new_topic.id
-			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+			response.code.should eq("200")
 		end
 
-		it "should redirect to login page on put 'update' if not author or agent" do
+		it "should redirect to topic page on put 'update' if not author or agent" do
 			post_body = Faker::Lorem.paragraph
-
 			put :update, :id => @new_post.id,
 	      :post => {
 	      :body_html =>"<p>#{post_body}</p>"
 	    },
 	      :topic_id => @new_topic.id
-
-			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+			response.should redirect_to support_discussions_topic_path(:id => @new_topic.id, :anchor => @new_post.dom_id, :page => '1')
 		end
 
 		it "should redirect to login page on marking a post as answer on 'toggle_answer' by a non-agent or author" do

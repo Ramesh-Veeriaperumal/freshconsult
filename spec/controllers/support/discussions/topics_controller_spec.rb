@@ -192,7 +192,7 @@ describe Support::Discussions::TopicsController do
 		topic.reload
 		topic.title.should_not eql new_topic_title
 		topic.posts.first.body_html.should_not eql "<p>#{new_post_body}</p>"
-		response.should redirect_to "/support/login"
+		response.should redirect_to support_discussions_topic_path(topic)
 	end
 
 	# it "should not update a topic on put 'update' when post is invalid" do
