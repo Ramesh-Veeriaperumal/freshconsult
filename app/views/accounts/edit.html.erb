@@ -3,7 +3,7 @@
 <% end %>
 <%= javascript_tag do %>
 	jQuery(document).ready(function(){ 
-		if(<%=request.referrer.include?('email_notification')%>){
+		if(<%=request.referrer and request.referrer.include?('email_notification')%>){
 			jQuery("#supported_language_list").animateHighlight();
 		}
 		jQuery("#ResetColors").click(function(){
