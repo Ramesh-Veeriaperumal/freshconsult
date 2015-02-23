@@ -12,13 +12,14 @@ class Sanitize
         'embed' => [
                     'src', 'type', 'width', 'height',
                     'flashvars', 'base', 'hidden', 'target',
-                    'seamlesstabbing', 'allowFullScreen', 'swLiveConnect', 'pluginspage', 'allowScriptAccess',
+                    'seamlesstabbing', 'allowfullscreen', 'swliveconnect', 'pluginspage', 'allowscriptaccess',
                     'autostart', 'loop', 'playcount', 'volume', 'controls', 'controller', 'pluginurl', 'mastersound',
                     'startime', 'endtime', 'vspace', 'hspace', 'palette'
                     ],
         'video' => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
-        'track' => ['kind', 'src', 'srclang', 'label', 'default']
-      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track', :all)),
+        'track' => ['kind', 'src', 'srclang', 'label', 'default'],
+        'font' => HTML_RELAXED[:attributes]['font'] + ['size', 'face']
+      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track','font', :all)),
 
       :protocols => {
         'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }
