@@ -231,7 +231,9 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 				//Special Processing for Priority
 				if (assign_action == 'priority') {
 					priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
+					priority_colored_border_1 = jQuery('[data-ticket=' + ticket_id + '] .sc-item-cursor');
 					priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_value]);
+					priority_colored_border_1.removeAttr('class').addClass('sc-item-cursor priority-border priority-' + priority_ids[new_value] + ' shorcuts-info');
 				}
 
 				//Special Processing for Status
