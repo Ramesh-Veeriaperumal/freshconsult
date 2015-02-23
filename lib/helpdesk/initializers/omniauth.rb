@@ -3,12 +3,14 @@ require 'openid/store/filesystem'
 require 'omniauth'
 require 'omniauth/strategies/twitter'
 require 'omniauth/strategies/nimble'
+require 'omniauth/strategies/slack'
 
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
 
 
   oauth_keys = Integrations::OauthHelper::get_oauth_keys
   oauth_keys.map { |oauth_provider, key_hash|
+  
   if oauth_provider == "shopify"
     provider :shopify, key_hash["consumer_token"], key_hash["consumer_secret"],
              :scope => 'read_orders',

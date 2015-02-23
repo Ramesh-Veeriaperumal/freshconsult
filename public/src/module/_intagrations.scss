@@ -629,3 +629,73 @@
 		background: url(/images/integrations/mailchimp-logo.png) 96% no-repeat !important;
 		background-size: 85px, 25px;
 }
+// --------------------------------------------------------------------------------------------------
+//												Slack 
+// --------------------------------------------------------------------------------------------------
+
+.channel{
+	display:inline-block;
+}
+.channel.actions{
+	padding: 5px;
+  padding-left: 145px;
+}
+.channel.pad-channel{
+	padding: 6px;
+}
+.rules_wrapper{
+	.list{
+		padding: 8px 0 8px 4px;
+		border: 1px solid #D2D2D2;
+		position: relative;
+		border-bottom: 0;
+	}
+	.list:first-child {
+	border-radius: 5px 5px 0 0;
+	}
+	.delete{
+		position: absolute;
+		left: 10px;
+		top: 15px;
+		opacity: .5;
+		cursor: pointer;
+	}
+	.control, .add_list{
+		margin-left: 34px;
+		float: none;
+		display: inline-block;
+		width: 93%;
+	}
+	.add_menu_wrapper{
+		position: relative;
+		padding: 8px 0 8px 4px;
+		border: 1px solid #DDD;
+		border-radius: 0 0 5px 5px;
+		cursor: pointer;
+		&:hover{
+			background-color: #eee;
+		}
+	}
+	.select2-container, input {
+		margin-right: 15px;
+	}
+	.add_img{
+		position: absolute;
+		left: 10px;
+		top: 8px;
+		opacity: .5;
+		cursor: pointer;
+	}
+	.add_new_list{
+		display: inline-block;
+	}
+
+	.empty_list_alert, .prev_empty_notify{
+		display: none;
+		margin-left: 20px;
+		color: rgb(208, 0, 0);
+		&.inline{
+			display: inline-block;
+		}
+	}
+}

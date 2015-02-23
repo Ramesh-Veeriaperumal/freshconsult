@@ -54,6 +54,17 @@ describe Integrations::ApplicationsController do
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end
 
+  it "should install slack application and redirect to edit(configurable)" do
+    provider = "slack"
+    set_redis_key(provider, slack_params(provider))
+    post 'oauth_install', :id => provider
+    get_redis_key(provider).should be_nil
+
+    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app.should_not be_nil
+    response.should redirect_to edit_integrations_installed_application_path(installed_app)
+  end
+
   it "should update oauth token of installed app" do
     provider = "Test Application"
     access_token = OAuth2::AccessToken.new(OAuth2::Client.new("token_aaa","secret_aaa"), "token_aaa")
