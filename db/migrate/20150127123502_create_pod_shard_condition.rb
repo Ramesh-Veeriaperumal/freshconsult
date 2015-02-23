@@ -1,5 +1,5 @@
 class CreatePodShardCondition < ActiveRecord::Migration
-  shard :none
+  shard :all
 
   def self.up
     create_table :pod_shard_conditions do |t|
