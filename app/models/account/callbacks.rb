@@ -1,14 +1,14 @@
 class Account < ActiveRecord::Base
 
-	before_create :set_default_values, :set_shard_mapping
+	before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
-  after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain
+  after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_freshchat_url, :if => :freshchat_enabled?
-  after_destroy :remove_shard_mapping
+  after_destroy :remove_shard_mapping, :destroy_route_info
 
   after_commit_on_create :add_to_billing, :enable_elastic_search
   after_commit_on_update :clear_cache, :clear_api_limit_cache, :update_redis_display_id
@@ -71,7 +71,8 @@ class Account < ActiveRecord::Base
     end
 
     def create_shard_mapping
-      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
+      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found],
+                                               :pod_info => PodConfig['CURRENT_POD']})
       shard_mapping.domains.build({:domain => full_domain})  
       populate_google_domain(shard_mapping) if google_account?
       shard_mapping.save!                            
@@ -160,4 +161,21 @@ class Account < ActiveRecord::Base
       end
     end
 
+    def save_route_info
+      # add default route info to redis
+      Rails.logger.info "Adding domain #{full_domain} to Redis routes."
+      set_route_info(full_domain, id, full_domain)
+    end
+
+    def destroy_route_info
+      Rails.logger.info "Removing domain #{full_domain} from Redis routes."
+      delete_route_info(full_domain)
+    end
+
+    def update_route_info
+      if full_domain_changed?
+        delete_route_info(full_domain_was)
+        set_route_info(full_domain, id, full_domain)
+      end
+    end
 end

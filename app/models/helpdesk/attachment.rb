@@ -68,7 +68,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :secure => true
+    options.reverse_merge! :expires => 5.minutes,:s3_host_alias => S3_CONFIG[:bucket], :secure => true
     AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
   end
 

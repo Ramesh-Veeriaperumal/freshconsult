@@ -108,5 +108,17 @@ module AccountHelper
     portal    = @account.main_portal
     protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
   end
+
+  # Test cases use this to create a new acount.
+  def create_new_test_account(name, domain, admin_email, admin_name)
+    signup_params = { "callback"=>"", "account"=>{"name"=> name, "domain"=>domain}, 
+        "utc_offset"=>"5.5", "user"=>{"email"=>admin_email, "name"=>admin_name} }
+      
+    Resque.inline = true 
+    Billing::Subscription.any_instance.stubs(:create_subscription).returns(true)
+    post :new_signup_free, signup_params
+    Resque.inline = false
+    Billing::Subscription.any_instance.unstub(:create_subscription)
+  end
   
 end

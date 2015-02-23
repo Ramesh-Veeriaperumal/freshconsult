@@ -1,0 +1,102 @@
+--- !ruby/object:Gem::Specification
+name: add_pod_support
+version: !ruby/object:Gem::Version
+  version: 0.0.1
+  segments: 
+  hash: 
+platform: ruby
+authors:
+- Sudhir Cirra
+autorequire: 
+bindir: bin
+cert_chain: []
+date: 2015-01-21 00:00:00.000000000 Z
+dependencies:
+- !ruby/object:Gem::Dependency
+  name: bundler
+  requirement: !ruby/object:Gem::Requirement
+    none: false
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '1.6'
+        segments: 
+        hash: 
+  type: :development
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    none: false
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '1.6'
+        segments: 
+        hash: 
+- !ruby/object:Gem::Dependency
+  name: rake
+  requirement: !ruby/object:Gem::Requirement
+    none: false
+    requirements:
+    - - ! '>='
+      - !ruby/object:Gem::Version
+        version: '0'
+        segments: 
+        hash: 
+  type: :development
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    none: false
+    requirements:
+    - - ! '>='
+      - !ruby/object:Gem::Version
+        version: '0'
+        segments: 
+        hash: 
+description: This helper adds a named_scope 'current_pod' to all models. By default
+  considers 'account_id' column for the filter. Can be overridden using 'pod_filter'
+  method.
+email:
+- sudhir@freshdesk.com
+executables: []
+extensions: []
+extra_rdoc_files: []
+files:
+- .gitignore
+- Gemfile
+- LICENSE.txt
+- README.md
+- Rakefile
+- add_pod_support.gemspec
+- lib/add_pod_support.rb
+- lib/add_pod_support/version.rb
+homepage: ''
+licenses:
+- MIT
+post_install_message: 
+rdoc_options: []
+require_paths:
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement
+  none: false
+  requirements:
+  - - ! '>='
+    - !ruby/object:Gem::Version
+      version: '0'
+      segments: 
+      hash: 
+required_rubygems_version: !ruby/object:Gem::Requirement
+  none: false
+  requirements:
+  - - ! '>='
+    - !ruby/object:Gem::Version
+      version: '0'
+      segments: 
+      hash: 
+requirements: []
+rubyforge_project: 
+rubygems_version: 1.8.25
+signing_key: 
+specification_version: 3
+summary: Helper to retrieve details based on the current POD.
+test_files: []
+
