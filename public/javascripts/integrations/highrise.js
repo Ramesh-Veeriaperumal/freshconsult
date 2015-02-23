@@ -34,16 +34,16 @@ HighriseWidget.prototype= {
       if(cCompany && !desig)
         desig = "Works"; 
       var cAddress = address || "N/A";
-      contacts.push({ name: fullName,
-                      url: cLink,
-                      designation: desig,
-                      company: cCompany,
-                      company_url: cCompanyUrl,
-                      address: cAddress,
+      contacts.push({ name: fullName.escapeHTML(),
+                      url: cLink.escapeHTML(),
+                      designation: desig.escapeHTML(),
+                      company: cCompany.escapeHTML(),
+                      company_url: cCompanyUrl.escapeHTML(),
+                      address: cAddress.escapeHTML(),
                       address_type_span: "",
-                      phone: cPhone,
-                      mobile: cMobile,
-                      website: cWebsite, 
+                      phone: cPhone.escapeHTML(),
+                      mobile: cMobile.escapeHTML(),
+                      website: cWebsite.escapeHTML(), 
                   });
     });
     return contacts;
