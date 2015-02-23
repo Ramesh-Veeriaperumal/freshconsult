@@ -1,6 +1,8 @@
 class Freshfone::Cron::CallRecordingAttachmentDelete
   def self.delete_twilio_recordings(freshfone_account)
+    Account.reset_current_account
     account = freshfone_account.account
+    account.make_current
     subaccount = account.freshfone_subaccount
     date = (Time.now.utc.ago 7.days)
     account.freshfone_calls.find_each(:batch_size => 1000,
@@ -14,5 +16,7 @@ class Freshfone::Cron::CallRecordingAttachmentDelete
           failed  account => #{call.account.id} :: call_id => #{call.id} :: call_sid => #{call.call_sid} :: recording_sid => #{recording_sid}"})
       end
     end 
+    ensure
+      Account.reset_current_account
   end
 end
