@@ -1,7 +1,7 @@
 {
   "checksum": {
-    "previous": "d4e2aa7171caf4ca11b0df7519c35bede4144ac7c61e1e0c09d8e069f96cc0eb",
-    "current": "d4e2aa7171caf4ca11b0df7519c35bede4144ac7c61e1e0c09d8e069f96cc0eb"
+    "previous": "c570d17626b37df638c44fac3e2c8af028f9e0c25da7d507af94e642a26f7e88",
+    "current": "c570d17626b37df638c44fac3e2c8af028f9e0c25da7d507af94e642a26f7e88"
   },
   "fonts": [
     "public/assets/glyphs.ttf",
@@ -299,7 +299,7 @@
       "source": "public/glyphs/vectors/ff-on-call.svg"
     },
     "ff-phone": {
-      "codepoint": 61768,
+      "codepoint": 61883,
       "source": "public/glyphs/vectors/ff-phone.svg"
     },
     "file": {
@@ -337,10 +337,6 @@
     "freshdesk": {
       "codepoint": 61777,
       "source": "public/glyphs/vectors/freshdesk.svg"
-    },
-    "freshfone": {
-      "codepoint": 61778,
-      "source": "public/glyphs/vectors/freshfone.svg"
     },
     "gamification-settings": {
       "codepoint": 61779,
@@ -502,13 +498,13 @@
       "codepoint": 61818,
       "source": "public/glyphs/vectors/phone.svg"
     },
+    "phone-block": {
+      "codepoint": 61888,
+      "source": "public/glyphs/vectors/phone-block.svg"
+    },
     "phone-disable": {
       "codepoint": 61819,
       "source": "public/glyphs/vectors/phone-disable.svg"
-    },
-    "phone-enable": {
-      "codepoint": 61820,
-      "source": "public/glyphs/vectors/phone-enable.svg"
     },
     "plus": {
       "codepoint": 61821,
@@ -626,10 +622,6 @@
       "codepoint": 61849,
       "source": "public/glyphs/vectors/ticket-fields.svg"
     },
-    "ticket2": {
-      "codepoint": 61850,
-      "source": "public/glyphs/vectors/ticket2.svg"
-    },
     "timeline-forum": {
       "codepoint": 61851,
       "source": "public/glyphs/vectors/timeline-forum.svg"
@@ -706,6 +698,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

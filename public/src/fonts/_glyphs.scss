@@ -105,7 +105,6 @@
 .ficon-forward:before,
 .ficon-freshchat:before,
 .ficon-freshdesk:before,
-.ficon-freshfone:before,
 .ficon-gamification-settings:before,
 .ficon-gear:before,
 .ficon-googleplus:before,
@@ -146,8 +145,8 @@
 .ficon-paragraph:before,
 .ficon-pencil:before,
 .ficon-phone:before,
+.ficon-phone-block:before,
 .ficon-phone-disable:before,
-.ficon-phone-enable:before,
 .ficon-plus:before,
 .ficon-post-edit:before,
 .ficon-pushpin:before,
@@ -177,7 +176,6 @@
 .ficon-text:before,
 .ficon-ticket:before,
 .ficon-ticket-fields:before,
-.ficon-ticket2:before,
 .ficon-timeline-forum:before,
 .ficon-timeline-ticket:before,
 .ficon-trash:before,
@@ -278,7 +276,7 @@
 .ficon-ff-mute:before { content: "\f145"; }
 .ficon-ff-on-browser:before { content: "\f146"; }
 .ficon-ff-on-call:before { content: "\f147"; }
-.ficon-ff-phone:before { content: "\f148"; }
+.ficon-ff-phone:before { content: "\f1bb"; }
 .ficon-file:before { content: "\f149"; }
 .ficon-file-edit:before { content: "\f14a"; }
 .ficon-file-visible:before { content: "\f14b"; }
@@ -288,7 +286,6 @@
 .ficon-forward:before { content: "\f1b5"; }
 .ficon-freshchat:before { content: "\f150"; }
 .ficon-freshdesk:before { content: "\f151"; }
-.ficon-freshfone:before { content: "\f152"; }
 .ficon-gamification-settings:before { content: "\f153"; }
 .ficon-gear:before { content: "\f154"; }
 .ficon-googleplus:before { content: "\f155"; }
@@ -329,8 +326,8 @@
 .ficon-paragraph:before { content: "\f178"; }
 .ficon-pencil:before { content: "\f1b7"; }
 .ficon-phone:before { content: "\f17a"; }
+.ficon-phone-block:before { content: "\f1c0"; }
 .ficon-phone-disable:before { content: "\f17b"; }
-.ficon-phone-enable:before { content: "\f17c"; }
 .ficon-plus:before { content: "\f17d"; }
 .ficon-post-edit:before { content: "\f17e"; }
 .ficon-pushpin:before { content: "\f17f"; }
@@ -360,7 +357,6 @@
 .ficon-text:before { content: "\f197"; }
 .ficon-ticket:before { content: "\f198"; }
 .ficon-ticket-fields:before { content: "\f199"; }
-.ficon-ticket2:before { content: "\f19a"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
 .ficon-timeline-ticket:before { content: "\f19c"; }
 .ficon-trash:before { content: "\f19d"; }

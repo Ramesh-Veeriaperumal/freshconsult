@@ -13,6 +13,7 @@
 		.select2-search-choice-close{
 			background:none;
 			@include float(right);
+			width:auto;
 			&:after{
 				content: "-";
 				background:#d30000;
@@ -20,7 +21,6 @@
 				color: #fff;
 				position: absolute;
 				top: 3px;
-				@include right(7px);
 				padding: 2px 10px 4px 7px;
 				font-size: 16px;
 				font-weight: bold;
