@@ -95,7 +95,7 @@
 			        <% if privilege?(:view_contacts) %>
 			  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.active? and @user.has_email? and !@user.deleted and !@user.spam? and !@user.blocked? and @user.parent.nil?%>
 			        <% end %>
-		  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }".html_safe) if @user.blocked? || @user.spam? %>
+		  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :get ) }".html_safe) if @user.blocked? || @user.spam? %>
 		  		</div>
 			<% end %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>

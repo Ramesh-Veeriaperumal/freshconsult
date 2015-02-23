@@ -1278,6 +1278,7 @@ Helpkit::Application.routes.draw do
           post :twitter
           post :facebook
           post :mobihelp
+          get :full_text
         end
       end
 
