@@ -1,6 +1,6 @@
 class PopulateShardMappings < ActiveRecord::Migration
 
-  shard :none
+  shard :all
 
   def self.up
     execute "update shard_mappings set shard_mappings.pod_info='#{PodConfig['CURRENT_POD']}'"

@@ -1,6 +1,6 @@
 class AddPodInfoToMailboxJobs < ActiveRecord::Migration
 
-  shard :none
+  shard :all
 
   def self.up
     Lhm.change_table :mailbox_jobs, :atomic_switch => true do |m|
