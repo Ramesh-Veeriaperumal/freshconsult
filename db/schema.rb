@@ -2278,7 +2278,7 @@ ActiveRecord::Schema.define(:version => 20150213112501) do
     t.string  "shard_name",                  :null => false
     t.integer "status",     :default => 200, :null => false
     t.string  "pod_info"
-    t.string  "region"    :default => 'us-east-1', :null => false
+    t.string  "region",     :default => 'us-east-1', :null => false
   end
 
   create_table "sla_details", :force => true do |t|

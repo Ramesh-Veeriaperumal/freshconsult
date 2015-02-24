@@ -135,6 +135,7 @@ ActionController::Routing::Routes.draw do |map|
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
     integration.resources :pivotal_tracker, :collection => { :tickets => :get, :pivotal_updates => :post, :update_config => :post}
     integration.resources :user_credentials
+    integration.resources :slack, :collection => { :create_ticket => :post}
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
     integration.resources :box, :collection => {:choose => :get}
     integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'

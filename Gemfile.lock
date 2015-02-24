@@ -324,7 +324,7 @@ GEM
     json-compare (0.1.8)
     json_pure (1.8.1)
     jwt (1.0.0)
-    koala (1.10.0)
+    koala (1.10.1)
       addressable
       faraday
       multi_json
@@ -626,7 +626,7 @@ DEPENDENCIES
   json (~> 1.8)
   json-compare (= 0.1.8)
   jwt (= 1.0.0)
-  koala (= 1.10.0)
+  koala (= 1.10.1)
   lhm!
   lockfile (= 1.4.3)
   mail

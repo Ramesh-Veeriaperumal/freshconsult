@@ -1,6 +1,6 @@
 class AddPodInfoToDelayedJobs < ActiveRecord::Migration
   
-  shard :none
+  shard :all
 
   def self.up
     Lhm.change_table :delayed_jobs, :atomic_switch => true do |m|

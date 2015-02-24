@@ -39,10 +39,10 @@ BatchbookWidget.prototype= {
 		contact = contact.person || contact.company;
 		title = contact.title;
 		var cLink = "http://" + this.batchbookBundle.domain + "/contacts/show/" + contact.id;
-		var companyLink = contact.company_id ? ("http://" + this.batchbookBundle.domain + "/contacts/show/" + contact.company_id) : null;
+		var companyLink = contact.company_id ? ("http://" + this.batchbookBundle.domain + "/contacts/show/" + contact.company_id) : "";
 		fullName = (contact.first_name || "") + " " +(contact.last_name || "");
-		companyName = contact.company;
-		companyId = contact.company_id;
+		companyName = contact.company || "";
+		companyId = contact.company_id || "";
 		if(contact.locations)
 		{
 			var primaryIndex = -1, workIndex = -1, homeIndex = -1;
@@ -133,20 +133,19 @@ BatchbookWidget.prototype= {
 		var cMobile = mobile ? mobile : "N/A";
 		var cAddress = (address) ? address : "N/A";
 		var cType = type;
-		 
-		contacts.push({	name: fullName,
-						url: cLink,
-						designation: title,
-						company: companyName,
+		
+		contacts.push({	name: fullName.escapeHTML(),
+						url: cLink.escapeHTML(),
+						designation: title.escapeHTML(),
+						company: companyName.escapeHTML(),
 						company_id: companyId,
-						company_url: companyLink,
-						address: cAddress,
-						address_type_span: _address_type_span,
-						phone: cPhone,
-						mobile: cMobile
+						company_url: companyLink.escapeHTML(),
+						address: cAddress.escapeHTML(),
+						address_type_span: _address_type_span.escapeHTML(),
+						phone: cPhone.escapeHTML(),
+						mobile: cMobile.escapeHTML()
 					});
 		});
-	
 	return contacts;
 	},
 
@@ -159,7 +158,7 @@ BatchbookWidget.prototype= {
 			fullName = trim((fullName || "") + " " +(contact.last_name || ""));
 			cLink = "http://" + this.batchbookBundle.domain + "/contacts/" + contact.id;
 			companyLink = "http://" + this.batchbookBundle.domain + "/contacts/" ;
-			companyName = null; title = null; companyId=0;
+			companyName = ""; title = ""; companyId=0;
 			contact.company_affiliations.each(function(aff){
 				if(aff.current || aff.primary)
 				{	companyId = aff.company_id;
@@ -212,18 +211,17 @@ BatchbookWidget.prototype= {
             var cMobile = cMobile ? cMobile : "N/A";
             var cAddress = (cAddress) ? cAddress : "N/A";
              
-
 			contacts.push({
-				name: fullName,
-				url: cLink,
-				designation: title,
-				company: companyName,
+				name: fullName.escapeHTML(),
+				url: cLink.escapeHTML(),
+				designation: title.escapeHTML(),
+				company: companyName.escapeHTML(),
 				company_id: companyId,
-				company_url: companyLink,
-				address: cAddress,
-				address_type_span: _address_type_span,
-				phone: cPhone,
-				mobile: cMobile
+				company_url: companyLink.escapeHTML(),
+				address: cAddress.escapeHTML(),
+				address_type_span: _address_type_span.escapeHTML(),
+				phone: cPhone.escapeHTML(),
+				mobile: cMobile.escapeHTML()
 			});
 
 		});

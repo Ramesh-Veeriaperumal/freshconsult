@@ -13,6 +13,7 @@ module ApplicationHelper
   include RtlHelper
   include MemcacheKeys
   include Integrations::Util
+  include Integrations::IntegrationHelper
   include CommunityHelper
   require "twitter"
 

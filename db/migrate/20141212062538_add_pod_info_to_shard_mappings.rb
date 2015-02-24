@@ -1,6 +1,6 @@
 class AddPodInfoToShardMappings < ActiveRecord::Migration
 
-  shard :none
+  shard :all
 
   def self.up
     Lhm.change_table :shard_mappings, :atomic_switch => true do |m|

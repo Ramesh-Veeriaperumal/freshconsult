@@ -29,7 +29,7 @@ module Mobile::MobileHelperMethods
     def mobile_agent?
       user_agent = request.env["HTTP_USER_AGENT"]
       Rails.logger.debug "user_agent #{user_agent}"
-      @mobile_user_agent ||= (user_agent  && user_agent[/(Mobile\/.+Safari)|(Android)/])
+      @mobile_user_agent ||= (user_agent  && (user_agent[/(Mobile\/.+Safari)|(Android)/] && !user_agent[/(Windows|iPad)/]))
     end
 
     def classic_view?
