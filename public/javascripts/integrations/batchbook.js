@@ -158,7 +158,7 @@ BatchbookWidget.prototype= {
 			fullName = trim((fullName || "") + " " +(contact.last_name || ""));
 			cLink = "http://" + this.batchbookBundle.domain + "/contacts/" + contact.id;
 			companyLink = "http://" + this.batchbookBundle.domain + "/contacts/" ;
-			companyName = null; title = null; companyId=0;
+			companyName = ""; title = ""; companyId=0;
 			contact.company_affiliations.each(function(aff){
 				if(aff.current || aff.primary)
 				{	companyId = aff.company_id;
