@@ -44,7 +44,7 @@ module Integrations::Slack::SlackConfigurationsUtil
 
   def validate_configs
     slack_channel_id = @channels.collect { |channel| channel["id"] }
-    @installed_application.configs[:inputs]["channels"].reject!{ |channel| !slack_channel_id.include? channel["channel_id"] || !(channel["actions"].split(",") - FD_ACTIONS ).empty? }
+    @installed_application.configs[:inputs]["channels"].reject! { |channel| !slack_channel_id.include? channel["channel_id"] or !(channel["actions"].split(",") - FD_ACTIONS ).empty? }
     @installed_application.configs[:inputs]["channels"].uniq!
   end
 
