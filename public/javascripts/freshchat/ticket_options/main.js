@@ -58,18 +58,25 @@
 
 			},
 			addNote:function(data){
-	          	if(this.ticket.existingTicketId == null || (data.status ==="error")){
+				if(this.ticket.existingTicketId == null || (data.status ==="error")){
 	          		this.flashNotice('note',false);	
 					this.closeWindow(null,null,true);
 					return false;
 				}
 				var that = this;
 	          	var note = "<div class='conversation_wrap'><table style='width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse;'>"+this.parseMessages(data.messages)+"</table></div>";
+	          	var chatTransfered = false;
+	          	if(that.chat.transferedChats){
+			         chatTransfered = true;
+			      }else{
+			         chatTransfered = false;
+			      }  
+
 				$.ajax({
 					type: "POST",
 					url: "/livechat/add_note",
 					dataType: 'json',
-					data: {"ticket_id":this.chat.external_id,"note": note},
+					data: {"ticket_id":this.chat.external_id,"note": note,"updateAgent": chatTransfered},
 					success: function(response){
 						that.flashNotice('note',response.status,response.ticket_id);
 						if(response.status === true){
@@ -303,7 +310,8 @@
 					"name" : this.ticket.requesterName, 
 					"subject" : this.ticket.ticketSubject, 
 					"widget_id" : chat.widget_id,
-					"content":tkt_desc 
+					"content": tkt_desc,
+					"agent_id": chat.agent_id
 				};
 
 				if(this.chat.groups){
@@ -378,6 +386,5 @@
 
 	window.liveChat = window.liveChat || {};
 	liveChat.ticketOptions = new ticketOptions();
-	console.log("Ticket Options Loaded");
 
 })(jQuery);
