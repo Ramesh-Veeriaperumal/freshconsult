@@ -15,7 +15,6 @@ class PopulateSlackApplication < ActiveRecord::Migration
             },
         :account_id => Integrations::Constants::SYSTEM_ACCOUNT_ID,
         :application_type => "slack")
-       slack_app.save
   end
 
   def self.down
