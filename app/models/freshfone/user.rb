@@ -130,6 +130,7 @@ class Freshfone::User < ActiveRecord::Base
 		subaccount = self.user.account.freshfone_account
 		capability = Twilio::Util::Capability.new subaccount.twilio_subaccount_id, subaccount.twilio_subaccount_token
 		capability.allow_client_outgoing subaccount.twilio_application_id
+		capability.set_client_name(self.user.id)
 		if self.incoming_preference == INCOMING[:allowed]
 			capability.allow_client_incoming self.user.id
 		end

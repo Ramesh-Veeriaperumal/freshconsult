@@ -55,7 +55,7 @@ gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
 gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
-gem "twilio-ruby", :git => "git://github.com/twilio/twilio-ruby.git", :branch => "master"
+gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch => "master"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 
 gem "ruby-saml", "0.8.1"
