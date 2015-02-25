@@ -59,9 +59,9 @@ describe Helpdesk::ScenarioAutomationsController do
   it "should clone a selected scenario" do
     get :clone_rule, :id => @test_scn.id
     response.should render_template "helpdesk/scenario_automations/clone_rule"
-    (@test_scn.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_scn.filter_data == assigns(:va_rule).filter_data).should be_true
-    (@test_scn.accessible.access_type == assigns(:va_rule).accessible.access_type).should be_true
+    assigns(:va_rule).action_data.should be_eql(@test_scn.action_data)
+    assigns(:va_rule).filter_data.should be_eql(@test_scn.filter_data)
+    assigns(:va_rule).accessible.access_type.should be_eql(@test_scn.accessible.access_type)
   end
 
   it "should update a scenario" do
