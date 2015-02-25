@@ -152,7 +152,7 @@
 				var searchlistTemplate = window.JST['templates/ticket_search_list'];
 				this.$existingTicketElem.freshTicketSearch({ 
 					className: 'chat_tkt_search_container',
-					template:  searchlistTemplate()
+					template:  new Template(searchlistTemplate());
 				});
 	      		var requester = (this.visitor && this.visitor.name) ? this.visitor.name : this.participant_id;
 	      		this.$existingTicketElem.initializeRequester(requester);
