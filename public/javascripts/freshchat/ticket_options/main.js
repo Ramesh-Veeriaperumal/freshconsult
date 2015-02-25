@@ -190,7 +190,7 @@
 	        				request.data.ticketId = ticketId;
 	        			}
 	        			if(options.ongoingChat){
-	        				request.data.ongoingChat = ongoingChat;
+	        				request.data.ongoingChat = options.ongoingChat;
 	        			}
 	        			request.data = jQuery.param(request.data);
 						fc_helper.jsonpRequest(request);
