@@ -35,13 +35,15 @@ class Integrations::SlackController < ApplicationController
         user_details.each_with_index do |user, index| 
           user_index = index if user["id"] == user_no
         end
-
+    
         if user_index and user_no
           user_name = user_details[user_index]["name"]
         elsif key["username"]
           user_name = key["username"] 
-        elsif key["user"].upcase == SLACK_BOT
+        elsif key["user"] == SLACK_BOT
           user_name = "slackbot"
+        elsif key["user"].nil?
+          Rails.logger.debug "ERROR in finding user in slack #{key}"
         end
         key["text"] = message_formatting(key["text"])
         msg = msg + "#{user_name}" + ":"
