@@ -76,7 +76,7 @@
 					type: "POST",
 					url: "/livechat/add_note",
 					dataType: 'json',
-					data: {"ticket_id":this.chat.external_id,"note": note,"updateAgent": chatTransfered},
+					data: {"ticket_id":this.ticket.existingTicketId ,"note": note,"updateAgent": chatTransfered},
 					success: function(response){
 						that.flashNotice('note',response.status,response.ticket_id);
 						if(response.status === true){
@@ -152,7 +152,7 @@
 				var searchlistTemplate = window.JST['templates/ticket_search_list'];
 				this.$existingTicketElem.freshTicketSearch({ 
 					className: 'chat_tkt_search_container',
-					template:  new Template(searchlistTemplate)
+					template:  new Template(searchlistTemplate())
 				});
 	      		var requester = (this.visitor && this.visitor.name) ? this.visitor.name : this.participant_id;
 	      		this.$existingTicketElem.initializeRequester(requester);
@@ -190,7 +190,7 @@
 	        				request.data.ticketId = ticketId;
 	        			}
 	        			if(options.ongoingChat){
-	        				request.data.ongoingChat = ongoingChat;
+	        				request.data.ongoingChat = options.ongoingChat;
 	        			}
 	        			request.data = jQuery.param(request.data);
 						fc_helper.jsonpRequest(request);
