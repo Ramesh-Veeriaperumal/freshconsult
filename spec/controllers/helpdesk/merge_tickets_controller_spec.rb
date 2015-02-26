@@ -160,8 +160,8 @@ RSpec.describe Helpdesk::MergeTicketsController do
                           }
     Resque.inline = false
     target_ticket.reload
-    first_target_note_id = target_ticket.notes.first.id
-    note_attchment = @account.attachments.find_by_attachable_id(first_target_note_id)
+    first_target_note_attachment = target_ticket.notes.exclude_source('meta').first.attachments
+    note_attchment = first_target_note_attachment.first
     note_attchment.should_not be_nil
     note_attchment.attachable_type.should eql "Helpdesk::Note"
   end

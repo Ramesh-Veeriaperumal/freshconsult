@@ -96,12 +96,11 @@ describe Helpdesk::BulkTicketActionsController do
                             :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
     Resque.inline = false
     global_ticket=@account.tickets.find(global_agent_ticket.id)
-    last_note_id = global_ticket.notes.last.id
     global_ticket.status.should be_eql(2)
     global_ticket.ticket_type.should be_eql(global_agent_ticket.ticket_type)
     global_ticket.priority.should be_eql(global_agent_ticket.priority)
     global_ticket.group_id.should be_eql(global_agent_ticket.group_id)
-    Helpdesk::Note.find_by_id(last_note_id+1).should be_nil
+    global_ticket.notes.last.should be_nil
     restricted_ticket=@account.tickets.find(restricted_agent_ticket.id)
     restricted_ticket.status.should be_eql(4)
     restricted_ticket.ticket_type.should be_eql("Feature Request")
