@@ -312,11 +312,14 @@ function setPostParam(form, name, value){
 
 
    // Quoted Addition show hide
-   function quote_text(item){
-      if (!jQuery(item).attr("data-quoted")) {
-         var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""),
-            child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote").hide();
-
+   function quote_text(item, options){
+        options = options || {}
+        if (!jQuery(item).attr("data-quoted") || options["force_quote"]) {
+         var show_hide = jQuery("<a href='#' title='Show quoted text'/>").addClass("q-marker tooltip").text(""),
+            child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote")
+            if(!options["force_quote"]){
+              child_quote.hide();
+            }
             show_hide.bind("click", function(ev){
                ev.preventDefault();
                child_quote.toggle();
