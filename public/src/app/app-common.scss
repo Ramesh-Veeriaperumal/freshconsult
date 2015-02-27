@@ -3494,9 +3494,8 @@ body.popup-body{ min-width: 0px; }
 	span.email-tick.unverified{
 		color: #888888;
 		cursor: default;
-		position: absolute;
-		right: 7%;
 		padding-top: 5px;
+		@include margin-left(-18px);
 	}
 
 	span.email-tick.greyed{
