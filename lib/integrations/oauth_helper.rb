@@ -1,5 +1,36 @@
 module Integrations::OauthHelper
 
+    # Copied from Integrations::OauthUtilController
+    def refresh_access_token(app_name)
+      begin
+        app = Integrations::Application.find_by_name(app_name)
+        inst_app = Account.current.installed_applications.find_by_application_id(app.id)
+        
+        ## FETCH "REFRESH TOKEN"
+        if(app.user_specific_auth?)
+          user_credential = inst_app.user_credentials.find_by_user_id(current_user.id)
+          refresh_token = user_credential.auth_info['refresh_token']
+        else
+          refresh_token = inst_app[:configs][:inputs]['refresh_token']
+        end
+        
+        ## REFRESH THE "ACCESS TOKEN" USING THE "REFRESH TOKEN"
+        access_token =  get_oauth2_access_token(app.oauth_provider, refresh_token, app_name)
+        
+        ## STORE THE NEW "ACCESS TOKEN" IN DATABASE.
+        if(app.user_specific_auth?)
+          user_credential.auth_info.merge!({'oauth_token' => access_token.token})
+          user_credential.save
+        else
+          inst_app[:configs][:inputs]['oauth_token'] = access_token.token
+          inst_app.save
+        end
+      rescue Exception => e
+        Rails.logger.error "Error getting access token from #{app_name}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+      end
+      access_token.token
+    end
+
   	def get_oauth2_access_token(provider, refresh_token, app_name)
       oauth_s = Integrations::OauthHelper.get_oauth_keys(provider, app_name)
       oauth_options = Integrations::OauthHelper.get_oauth_options(provider) || {}

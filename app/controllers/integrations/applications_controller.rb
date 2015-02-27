@@ -35,17 +35,40 @@ class Integrations::ApplicationsController < Admin::AdminController
         if params['id'] == 'salesforce' 
           if params[:install].blank?
             @salesforce_config=Hash.new
-            @salesforce_config['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            @salesforce_config['lead_fields'] = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            @salesforce_config['account_fields'] = fetch_sf_account_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+            # Should refresh oauth tokens in various places
+            # Should check for cf_ in all the places
+            # Should check if company id is set properly in all places
+            @salesforce_config['sync_with_sf'] = config_hash['sync_with_sf']
+            @salesforce_config['contacts_sync_type'] = config_hash['contacts_sync_type']
+            @salesforce_config['sync_existing_data'] = config_hash['sync_existing_data']
+            @salesforce_config['sf_sync_type'] = config_hash['sf_sync_type']
+            contact_fields_map = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url'])
+            lead_fields_map = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+            account_fields_map = fetch_sf_account_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+            @salesforce_config['contact_fields'] = contact_fields_map
+            @salesforce_config['lead_fields'] = lead_fields_map
+            @salesforce_config['account_fields'] = account_fields_map
+            @salesforce_config['sf_contact'] = convert_map_to_hash(contact_fields_map)
+            @salesforce_config['sf_company'] = convert_map_to_hash(account_fields_map)
+            @salesforce_config['fd_company'] = convert_object_to_hash(current_account.company_form.fields)
+            @salesforce_config['fd_contact'] = convert_object_to_hash(current_account.contact_form.fields)
             render :partial => "integrations/applications/salesforce_fields",:layout=> ( request.headers['X-PJAX'] ? 'maincontent' : 'application' ) and return
           else
+            unless params[:sync_with_sf].nil?
+              save_salesforce_account(params, config_hash)
+            end
+            config_hash['sync_with_sf'] = params[:sync_with_sf]
+            config_hash['contacts_sync_type'] = params[:contacts_sync_type]
+            config_hash['sync_existing_data'] = params[:sync_existing_data]
+            config_hash['sf_sync_type'] = params[:sf_sync_type]
             config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
             config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
             config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
             config_hash['contact_labels'] = params['contact_labels']
             config_hash['lead_labels'] = params['lead_labels']
             config_hash['account_labels'] = params['account_labels']
+            config_hash['companies'] = params[:inputs][:companies]
+            config_hash['contacts'] = params[:inputs][:contacts]
           end
         end
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
@@ -62,6 +85,29 @@ class Integrations::ApplicationsController < Admin::AdminController
       flash[:error] = t(:'flash.application.install.error')
   	end
     redirect_to :controller=> 'applications', :action => 'index'
+  end
+
+  def save_salesforce_account(params, config_hash)
+    push = false
+    pull = false
+    if config_hash["sync_existing_data"] != params[:sync_existing_data]
+      if params[:sf_sync_type] != "pull"
+        push_existing = true
+      elsif params[:sf_sync_type] != "push"
+        pull_existing = true
+      end
+    end
+    sf_account = Integrations::SalesforceAccount.find_by_account_id(Account.current.id)
+    if sf_account.nil?
+      sf_account = Integrations::SalesforceAccount.new
+    end
+    sf_account.last_sync_time = DateTime.now
+    sf_account.account_id = Account.current.id
+    sf_account.pull_record_to_freshdesk = params[:sf_sync_type] != "push"
+    sf_account.push_record_to_salesforce = false
+    sf_account.pulled_existing_records = pull_existing
+    sf_account.pushed_existing_records = push_existing
+    sf_account.save!
   end
 
   def new

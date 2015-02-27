@@ -11,6 +11,31 @@ module Integrations::SalesforceUtil
       get_object_metadata(:Account, oauth_token, instance_url)
     end
 
+    def convert_map_to_hash(map)
+      arr = Array.new
+      map.each{|key, val|
+        has = Hash.new
+        if key == "Address"
+          next
+        end
+        has["id"] = key
+        has["name"] = val
+        arr.push(has)
+      }
+      arr
+    end
+
+    def convert_object_to_hash(object)
+      arr = Array.new
+      object.each{|field|
+        has = Hash.new
+        has["id"] = field[:name]
+        has["name"] = field["label"]
+        arr.push(has)
+      }
+      arr
+    end
+
   private  
     def get_object_metadata(sObject, oauth_token, instance_url)
       hrp = HttpRequestProxy.new

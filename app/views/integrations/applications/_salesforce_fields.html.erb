@@ -7,6 +7,15 @@
 	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
 
   <%form_tag("/integrations/applications/oauth_install/salesforce?install=true", :method=> "post")  do %>
+
+  <div class="all-post-heading tooltip">
+    <div style="float:left;" id="field_visiblity">
+      Field Visiblity
+    </div>
+    <div id="field_mapping">
+      Field Mapping
+    </div>
+  </div>
    <% default_fields = ["Name"]%>
     <ul class="ui-form">
     <li class="inline-field">
@@ -16,7 +25,7 @@
           <%=t('integrations.salesforce.desc')%>
         </div>
       </label>
-      <div class="salesforce-wrapper">
+      <div class="salesforce-wrapper" id="field_visiblity_div">
         <div class="contact-fields"> 
           <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
       		<div id='sfcontacts'>
@@ -108,8 +117,57 @@
       		</div>
         </div>
       </div>
+      <div class="all-post-heading tooltip" id="field_mapping_div" style="display: none;">
+        <%
+        existing_companies = [{"fd_field" => "name", "sf_field" => "Name"}]
+        existing_contacts = [{"fd_field" => "name", "sf_field" => "Name"}, {"fd_field" => "email", "sf_field" => "Email"}, {"fd_field" => "company_name", "sf_field" => "AccountId"}]
+        existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+        existing_contacts = @installed_app.configs_contacts unless @installed_app.nil?
+        %>
+        <input type="checkbox" id="sync_with_sf" name="sync_with_sf"/>Sync data with salesforce CRM</br>
+        <input type="radio" id="sf_sync_type" name="sf_sync_type" value="both" checked />Either-way sync</br>
+        <input type="radio" id="sf_sync_type" name="sf_sync_type" value="push" />Only push to Salesforce</br>
+        <input type="radio" id="sf_sync_type" name="sf_sync_type" value="pull" />Only pull to Freshdesk</br>
+        <div id="company" style="float:left;">
+          Company |
+        </div>
+        <div id="contact">
+          &nbsp;Contact
+        </div>
+        <div class="salesforce-wrapper">
+          <div id="company_div">
+            <div>
+              <div style="float:left;">Freshdesk Fields  </div>
+              <div>Salesforce Account Fields  </div>
+            </div>
+            <div>
+              <% @data = [
+                {:type => 'dropdown', :options => @salesforce_config['fd_company'], :name => 'inputs[companies][][fd_field]', :refer_key => 'fd_field'},
+                {:type => 'dropdown', :options => @salesforce_config['sf_company'], :name => 'inputs[companies][][sf_field]', :refer_key => 'sf_field'}
+                ] %>
+              <%= construct_rules(@data, existing_companies.to_json.html_safe) %>
+            </div>
+          </div>
+          <div id="contact_div" style="display: none;">
+            <input type="radio" id="contacts_sync_type" name="contacts_sync_type" value="all" checked />Sync all contacts</br>
+            <input type="radio" id="contacts_sync_type" name="contacts_sync_type" value="required"/>Sync only if the company is available in salesforce
+            <div>
+              <div style="float:left;">Freshdesk Fields  </div>
+              <div>Salesforce Account Fields  </div>
+            </div>
+            <div >
+              <% @data = [
+                {:type => 'dropdown', :options => @salesforce_config['fd_contact'], :name => 'inputs[contacts][][fd_field]', :refer_key => 'fd_field'},
+                {:type => 'dropdown', :options => @salesforce_config['sf_contact'], :name => 'inputs[contacts][][sf_field]', :refer_key => 'sf_field'}
+                ] %>
+              <%= construct_rules(@data, existing_contacts.to_json.html_safe) %>
+            </div>
+          </div>
+        </div>
+      </div>
     </li>
     </ul>
+    <input type="checkbox" id="sync_existing_data" name="sync_existing_data"/>Run field mapping changes on existing freshdesk customers</br>
     <div class="button-container">
       <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
       <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
@@ -167,5 +225,41 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
       jQuery(element).next("a").remove();
     }
   });
+
+  jQuery("#field_mapping").click(function(){
+    jQuery("#field_mapping_div").show();
+    jQuery("#field_visiblity_div").hide();
+    jQuery("#company_div").show();
+  });
+
+  jQuery("#field_visiblity").click(function(){
+    jQuery("#field_mapping_div").hide();
+    jQuery("#field_visiblity_div").show();
+    jQuery("#company_div").hide();
+    jQuery("#contact_div").hide();
+  });
+
+  jQuery("#contact").click(function(){
+    jQuery("#contact_div").show();
+    jQuery("#company_div").hide();
+  });
+
+  jQuery("#company").click(function(){
+    jQuery("#company_div").show();
+    jQuery("#contact_div").hide();
+  });
+
+  jQuery(document).ready(function(){
+    jQuery('#sync_with_sf').prop('checked', "<%= @salesforce_config['sync_with_sf'] %>");
+    jQuery('#sync_existing_data').prop('checked', "<%= @salesforce_config['sync_existing_data'] %>");
+    jQuery('input[name="contacts_sync_type"][value="' + "<%= @salesforce_config['contacts_sync_type'] %>" + '"]').attr('checked', true);
+    jQuery('input[name="sf_sync_type"][value="' + "<%= @salesforce_config['sf_sync_type'] %>" + '"]').attr('checked', true);
+  });
+
+  jQuery(function(){
+    
+    jQuery('.construct_rules').constructRules();
+});
+
 
 </script>

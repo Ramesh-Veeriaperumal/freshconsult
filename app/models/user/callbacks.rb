@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_create :subscribe_event_create, :if => :allow_api_webhook?
+  after_commit :sync_contacts
 
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?

@@ -6,6 +6,7 @@ class Company < ActiveRecord::Base
   include Cache::Memcache::Company
   include Search::ElasticSearchIndex
   include Mobile::Actions::Company
+  include Integrations::Crm::Util
   serialize :domains
 
   validates_presence_of :name,:account
@@ -48,6 +49,7 @@ class Company < ActiveRecord::Base
   after_commit_on_destroy :clear_cache
   after_commit_on_update :clear_cache
   after_update :map_contacts_on_update, :if => :domains_changed?
+  after_commit :sync_companies
   
   before_create :check_sla_policy
   before_update :check_sla_policy, :backup_company_changes

@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
+  include Integrations::Crm::Util
   
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams

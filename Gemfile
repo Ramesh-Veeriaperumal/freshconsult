@@ -32,6 +32,7 @@ gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
 
+gem 'debugger', "~> 1.6.8"
 gem 'test-unit', '1.2.3'
 
 gem "omniauth-oauth2", "1.0"
@@ -61,6 +62,7 @@ gem "ruby-saml", "0.8.1"
 
 gem "arel", "2.0.7"
 gem "fastercsv", "1.5.4"
+gem "map-fields", "1.0.0", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"
@@ -149,6 +151,15 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem "bunny", "1.2.1"
 
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
+
+
+gem 'salesforce_bulk_api', '0.0.10'
+
+gem 'salesforce_bulk_query', '~> 0.2.0'
+
+gem 'databasedotcom', '~> 1.3.2'
+
+gem 'smarter_csv', '~> 1.0.19'
 
 group :production,:test,:staging do
   gem 'tire', :git => "git://github.com/freshdesk/tire.git", :branch => "multi_match"
