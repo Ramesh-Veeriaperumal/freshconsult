@@ -131,7 +131,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
-    - public/javascripts/integrations/construct_rule.js
 
   # Code editor for portal cms
   codemirror:

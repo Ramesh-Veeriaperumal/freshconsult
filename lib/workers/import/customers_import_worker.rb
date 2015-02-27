@@ -7,7 +7,6 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
 
   def perform
     begin
-      Thread.current["disable_crm_sync_#{Account.current.id}"] = true
       initialize_params
       @csv_headers = @rows.shift
         @rows.each do |row|
@@ -22,14 +21,11 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
       puts "Error in #{params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
     ensure
       remove_import_file(file_path)
-      Thread.current["disable_crm_sync_#{Account.current.id}"] = nil
-      Resque.enqueue(Integrations::Crm::BulkExport, {:params => params, :fd_records => (@success_updated + @success_created), :app_name => "salesforce"})
     end
 	end
 
   def initialize_params
-    @success_created = []
-    @success_updated = []
+    @created = @updated = 0
     @failed = []
     params[:customers].symbolize_keys!
     set_current_account
@@ -69,7 +65,7 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
         company_validation
     end
     set_validatable_custom_fields unless @item.nil?
-    # refine_custom_checkbox 
+    refine_custom_checkbox 
   end
 
   def contact_validation
@@ -106,11 +102,11 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   def save_item row
     unless @item.nil?
       @params_hash[:user][:deleted] = false unless @type.eql?("company")#To make already deleted user active
-      @item.update_attributes(@params_hash[:"#{@type}"]) ? success_updated_item(row) : failed_item(row)
+      @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
     else
       @item = @current_account.send("#{@type.pluralize}").new
       set_validatable_custom_fields
-      create_item ? success_created_item(row) : failed_item(row)
+      create_item ? @created+=1 : failed_item(row)
     end 
     enable_user_activation(@current_account)     
   end
@@ -124,14 +120,6 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
         @item.attributes = @params_hash[:company]
         @item.save
     end
-  end
-
-  def success_updated_item row
-    @success_updated << row.push(@item.id)
-  end
-
-  def success_created_item row
-    @success_created << row.push(@item.id)
   end
 
   def failed_item row
@@ -173,7 +161,7 @@ class Workers::Import::CustomersImportWorker < Struct.new(:params)
   def mailer_params
     hash = { :user => @current_user, 
                :type => params[:type].pluralize.capitalize, 
-               :success_count => (@success_created.count + @success_updated.count),
+               :success_count => (@created + @updated),
                :failed_count => @failed.count 
               }
     hash.merge!(:file_path => file_path, :file_name => file_name) unless @failed.blank? || file_size > ONE_MEGABYTE 

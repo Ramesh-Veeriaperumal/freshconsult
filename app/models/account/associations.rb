@@ -85,8 +85,6 @@ class Account < ActiveRecord::Base
   has_many :solution_articles, :class_name =>'Solution::Article'
 
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
-  has_many :crm_companies, :class_name => 'Integrations::CrmCompany'
-  has_many :crm_contacts, :class_name => 'Integrations::CrmContact'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
