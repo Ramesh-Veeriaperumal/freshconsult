@@ -46,11 +46,17 @@ class ChatsController < ApplicationController
     render :json => {:groups => groups.to_json}
   end
 
-  def add_note 
+  def add_note
     params[:userId] = current_user.id
     ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
     if( ticket && (ticket.responder_id == nil || params[:updateAgent] == "true" ))
-      ticket.responder_id = current_user.id
+      if params[:chatOwnerId]
+        ticket.responder_id = params[:chatOwnerId]
+        params[:userId] = params[:chatOwnerId]
+      else        
+        ticket.responder_id = current_user.id
+        params[:userId] = current_user.id
+      end
       ticket.save_ticket
     end
     status = create_note

@@ -76,7 +76,7 @@
 					type: "POST",
 					url: "/livechat/add_note",
 					dataType: 'json',
-					data: {"ticket_id":this.ticket.existingTicketId ,"note": note,"updateAgent": chatTransfered},
+					data: {"ticket_id":this.ticket.existingTicketId ,"note": note,"updateAgent": chatTransfered,"chatOwnerId": data.chatOwnerId},
 					success: function(response){
 						that.flashNotice('note',response.status,response.ticket_id);
 						if(response.status === true){
