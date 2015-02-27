@@ -66,7 +66,7 @@
 				var that = this;
 	          	var note = "<div class='conversation_wrap'><table style='width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse;'>"+this.parseMessages(data.messages)+"</table></div>";
 	          	var chatTransfered = false;
-	          	if(that.chat.transferedChats){
+	          	if(that.chat.isTransferred || that.chat.transfer_id){
 			         chatTransfered = true;
 			      }else{
 			         chatTransfered = false;
@@ -76,7 +76,7 @@
 					type: "POST",
 					url: "/livechat/add_note",
 					dataType: 'json',
-					data: {"ticket_id":this.ticket.existingTicketId ,"note": note,"updateAgent": chatTransfered},
+					data: {"ticket_id":this.ticket.existingTicketId ,"note": note,"updateAgent": chatTransfered,"chatOwnerId": data.chatOwnerId},
 					success: function(response){
 						that.flashNotice('note',response.status,response.ticket_id);
 						if(response.status === true){
