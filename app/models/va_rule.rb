@@ -1,4 +1,4 @@
-class VARule < ActiveRecord::Base
+ class VARule < ActiveRecord::Base
 
   include Cache::Memcache::VARule
 
@@ -28,6 +28,7 @@ class VARule < ActiveRecord::Base
 
   named_scope :active, :conditions => { :active => true }
   named_scope :inactive, :conditions => { :active => false }
+  named_scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
 
   named_scope :observer_biz_rules, :conditions => { 
     "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 

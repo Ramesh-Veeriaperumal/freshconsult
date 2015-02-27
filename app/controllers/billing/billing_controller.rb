@@ -265,4 +265,28 @@ class Billing::BillingController < ApplicationController
       meta_info.merge({ :description => invoice[:line_items][0][:description] })
     end
 
+    # Only a short-term solution. For the long term, billing should be made as a separate APP.
+    def determine_pod
+      shard = ShardMapping.lookup_with_account_id(params[:content][:customer][:id])
+      if shard.nil?
+        return # fallback to the current pod.
+      elsif shard.pod_info.blank?
+        return # fallback to the current pod.
+      elsif shard.pod_info != PodConfig['CURRENT_POD']
+        Rails.logger.error "Determining billing end point. Current POD #{PodConfig['CURRENT_POD']}"
+        redirect_to_pod(shard)
+      end
+    end
+
+    def redirect_to_pod(shard)
+      return if shard.nil?
+
+      # redirect to the correct billing endpoint
+      domain = AppConfig["base_domain"][Rails.env]
+      redirect_url = "#{request.protocol}billing.#{shard.pod_info}.#{domain}#{request.request_uri}" #Should match with the location directive in Nginx Proxy
+      Rails.logger.error "Redirecting to the correct billing endpoint. Redirect URL is #{redirect_url}"
+
+      redirect_to redirect_url
+    end
+
 end

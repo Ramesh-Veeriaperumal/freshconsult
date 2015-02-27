@@ -784,4 +784,19 @@ if Integrations::Application.count == 0
     s.application_type = "cti_integration"
   end
 
+  slack = Integrations::Application.seed(:name) do |s|
+    s.name = "slack"
+    s.display_name = "integrations.slack.label"  
+    s.description = "integrations.slack.desc"
+    s.account_id = 0
+    s.listing_order = 30
+    s.options = { :keys_order => [:slack_settings],
+                  :direct_install => true,
+                  :slack_settings => { :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", :partial => "/integrations/applications/slack_setting" },
+                  :configurable => true,
+                  :oauth_url => "/auth/slack?origin=id%3D{{account_id}}"
+                }
+    s.application_type = "slack"
+  end
+
 end

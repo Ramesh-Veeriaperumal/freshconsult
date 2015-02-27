@@ -39,7 +39,7 @@ namespace :supervisor do
     if supervisor_should_run?(queue_name)
         #Monitoring::RecordMetrics.register({:task_name => "Supervisor Premium"})
         Sharding.execute_on_all_shards do
-          Account.active_accounts.premium_accounts.each do |account|
+          Account.current_pod.active_accounts.premium_accounts.each do |account|
             if account.supervisor_rules.count > 0 
               Resque.enqueue(Workers::Supervisor::PremiumSupervisor, {:account_id => account.id })
             end
@@ -62,7 +62,7 @@ def execute_supevisor(task_name)
     end    
     rake_logger.info "rake=#{task_name} Supervisor" unless rake_logger.nil?
     Sharding.execute_on_all_shards do
-      Account.send(SUPERVISOR_TAKS[task_name][:account_method]).non_premium_accounts.each do |account| 
+      Account.send(SUPERVISOR_TAKS[task_name][:account_method]).current_pod.non_premium_accounts.each do |account| 
         if account.supervisor_rules.count > 0 
           Resque.enqueue(SUPERVISOR_TAKS[task_name][:class_name].constantize, {:account_id => account.id })
           accounts_queued += 1

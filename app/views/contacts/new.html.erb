@@ -3,7 +3,7 @@
   <p> You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user. </p>	
 <% else %>
   
-  <% form_for @user,:url => { :controller => "contacts", :action => "create_contact" }, :html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger'}  do |f| -%>
+  <% form_for @user,:url => { :controller => "contacts", :action => "create_contact" }, :html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger form_for_contact'}  do |f| -%>
 
   	<div class='page-header-sticky' rel='sticky'>
 		<div class='sticky-header-wrapper'>

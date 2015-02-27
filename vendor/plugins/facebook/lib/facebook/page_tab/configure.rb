@@ -68,6 +68,16 @@ module Facebook
                                     :access_token => @page_token
         })
       end
+      
+      #Subscribe for realtime updates from the app
+      def subscribe_realtime
+        @graph.put_connections("me", "subscribed_apps")
+      end
+
+      #Remove realtime subscribe for realtime updates from the app
+      def unsubscribe_realtime
+        @graph.delete_connections("me", "subscribed_apps")
+      end
 
       #Update's a Custom name to a page tab
       def update(options)

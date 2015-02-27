@@ -49,7 +49,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/large-hadron-migrator.git
-  revision: dc9cca3cc2114f6e935447a1a45e69c16338c935
+  revision: 27972aca9fb5720d3150e8afd8f757123eb747f6
   specs:
     lhm (1.2.0)
 
@@ -89,6 +89,16 @@ GIT
       multi_json (~> 1.0)
       rake
       rest-client (~> 1.6)
+
+GIT
+  remote: git://github.com/freshdesk/twilio-ruby.git
+  revision: e0755761a1f363be1cf1fb813525e30d87414fdc
+  branch: master
+  specs:
+    twilio-ruby (3.14.5)
+      builder (>= 2.1.2)
+      jwt (~> 1.0)
+      multi_json (>= 1.3.0)
 
 GIT
   remote: git://github.com/freshdesk/wkhtmltopdf_binary_gem.git
@@ -147,15 +157,10 @@ GIT
   specs:
     rails-dev-boost (0.1.1)
 
-GIT
-  remote: git://github.com/twilio/twilio-ruby.git
-  revision: 08e538f89ed70467cf7fd0059bf23bb97666447a
-  branch: master
+PATH
+  remote: vendor/gems/add_pod_support-0.0.1
   specs:
-    twilio-ruby (3.14.2)
-      builder (>= 2.1.2)
-      jwt (~> 1.0.0)
-      multi_json (>= 1.3.0)
+    add_pod_support (0.0.1)
 
 PATH
   remote: vendor/gems/custom_fields-0.1
@@ -319,7 +324,7 @@ GEM
     json-compare (0.1.8)
     json_pure (1.8.1)
     jwt (1.0.0)
-    koala (1.10.0)
+    koala (1.10.1)
       addressable
       faraday
       multi_json
@@ -576,6 +581,7 @@ DEPENDENCIES
   active_record_shards (= 2.7.0)
   activemerchant!
   acts_as_list (= 0.1.4)
+  add_pod_support!
   after_commit (= 1.0.11)
   akismetor!
   ancestry (= 1.3)
@@ -620,7 +626,7 @@ DEPENDENCIES
   json (~> 1.8)
   json-compare (= 0.1.8)
   jwt (= 1.0.0)
-  koala (= 1.10.0)
+  koala (= 1.10.1)
   lhm!
   lockfile (= 1.4.3)
   mail

@@ -2624,6 +2624,7 @@ en:
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
         user_emails: Please enter at least one contact detail
+        max_user_emails: A contact cannot have more than 5 emails
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5195,6 +5196,29 @@ en:
       form:
         shop_name: "Shop Name"
         shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
+    slack:
+      label: "Slack"
+      desc: "Stay up to date about Freshdesk tickets in Slack"
+      helptext: "<h4>Slack Integration</h4><br><p>To enable the integration select the Slack channels from dropdown and choose notifications that you would like to see in Slack.<br>Get instant updates in Slack whenever a Freshdesk ticket is created or updated and proactively engage with your customers</p>"
+      form:
+         slack_setting: ""
+         slack_info: ""
+    slack_settings:     
+      channels: "Channels to post"
+      notify: "Notification for"
+      note_create: "Note creation"
+      ticket_create: "Ticket creation"
+      status_update: "Status update"
+    slack_msg:
+      wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
+      invalid_api_key: ERROR :Invalid Freshdesk Api key
+      notify_on_ticket_update: "Ticket is updated in "
+      notify_on_ticket_create: "New Ticket created by "
+      notify_on_note_create_by_agent: "Note added by "
+      notify_on_response_by_customer: "Response from "
+      status_msg: "Status has been changed to "
+      chat: "Chat Conversionation with"
+      default_chat: "Chat Conversionation of"
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
@@ -5752,6 +5776,7 @@ en:
     remove: "Remove"
     success: "Contacts have been successfully merged"
     verify_mail: "Verification email sent"
+    activate_email: "Activation email sent"
     show_primary: "  (Default)"
     unverified: "Email Unverified"
     make_primary: "Mark as Default"

@@ -13,6 +13,7 @@ module ApplicationHelper
   include RtlHelper
   include MemcacheKeys
   include Integrations::Util
+  include Integrations::IntegrationHelper
   include CommunityHelper
   require "twitter"
 
@@ -927,6 +928,10 @@ module ApplicationHelper
       return @account.main_portal.logo.content.url(:logo)
     end
     return "/images/logo.png?721013"
+  end
+
+  def get_base_domain
+    AppConfig['base_domain'][Rails.env]
   end
 
   private

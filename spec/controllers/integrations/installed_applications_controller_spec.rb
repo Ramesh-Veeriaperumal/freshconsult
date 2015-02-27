@@ -176,6 +176,21 @@ describe Integrations::InstalledApplicationsController do
     response.should redirect_to "/integrations/applications"
   end
 
+  it "should update and edit slack application " do 
+    slack_application_id = @installaling_applications.find_by_name("slack").id
+    slack_original_application = @account.installed_applications.find_by_application_id(slack_application_id)
+
+    put :update, { 
+      :configs => {"refresh_token"=>"", "oauth_token"=>"xoxp-2896389166-2896389170-3587718872-97ab1e", "channels"=>[{"channel_id"=>"C03BZ48T1", "actions"=>"note_create,status_update,ticket_create"}]},
+      :id => slack_original_application.id, 
+      :commit =>"Update",
+      :application_id => @installaling_applications.find_by_name("slack").id }
+    @account.installed_applications.find(slack_original_application.id).configs.should_not be_eql(slack_original_application.configs)
+    get :edit, :id => slack_original_application.id
+    response.should render_template "integrations/installed_applications/edit"
+  end
+
+
 end
 
 

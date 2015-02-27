@@ -116,13 +116,13 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_oauth2(provider, params)
-
-    if provider  == 'surveymonkey' || provider == "shopify"
+    
+    if OAUTH2_OMNIAUTH_CRENDENTIALS.include? provider
       access_token = @omniauth.credentials
     else
       access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, @app_name)
     end
-    
+  
     config_params = { 
       'app_name' => "#{@app_name}",
       'refresh_token' => "#{@omniauth.credentials.refresh_token}",
@@ -145,6 +145,7 @@ class AuthorizationsController < ApplicationController
     key_options = { :account_id => @account_id, :provider => @app_name}
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
+    
     redirect_url = get_redirect_url(app,@app_name)
     redirect_to redirect_url
   end
@@ -302,6 +303,7 @@ class AuthorizationsController < ApplicationController
       origin_account.all_users.find_by_id(@origin_user_id) if origin_account && @origin_user_id
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box"]
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
+  OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "shopify","slack"]
 end

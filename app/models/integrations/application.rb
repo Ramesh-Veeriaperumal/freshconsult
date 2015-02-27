@@ -122,6 +122,10 @@ class Integrations::Application < ActiveRecord::Base
     self.application_type == "cti_integration"
   end
 
+  def slack?
+    self.application_type == "slack"
+  end
+
   private
     def self.nameify(name)
       "#{name.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}" unless name.blank?

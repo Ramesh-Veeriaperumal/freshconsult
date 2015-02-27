@@ -5,6 +5,7 @@
 class EmailController < ApplicationController
 
   skip_filter :select_shard
+  skip_before_filter :determine_pod
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
   skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url

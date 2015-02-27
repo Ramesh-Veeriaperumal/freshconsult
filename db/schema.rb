@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file,
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150102142624) do
+ActiveRecord::Schema.define(:version => 20150213112501) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.boolean  "pass_through_enabled",              :default => true
     t.string   "bcc_email"
     t.text     "supported_languages"
-    t.integer  "api_limit",           :default => 1000
+    t.integer  "api_limit",                         :default => 1000
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
   end
@@ -814,9 +814,11 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.string   "locked_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "pod_info",   :default => "poduseast"
   end
 
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
+  add_index "delayed_jobs", ["pod_info"], :name => "index_delayed_jobs_on_pod_info"
 
   create_table "deleted_customers", :force => true do |t|
     t.string   "full_domain"
@@ -2012,9 +2014,11 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.string   "locked_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "pod_info",   :default => "poduseast"
   end
- 
+
   add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
+  add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
 
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8, :null => false
@@ -2101,6 +2105,15 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "pod_shard_conditions", :force => true do |t|
+    t.string "pod_info",   :null => false
+    t.string "shard_name", :null => false
+    t.string "query_type", :null => false
+    t.text "accounts",   :null => false
+  end
+
+  add_index "pod_shard_conditions", ["pod_info", "shard_name"], :name => "index_pod_shard_conditions_on_pod_info_and_shard_name", :unique => true
 
   create_table "portal_forum_categories", :force => true do |t|
     t.integer "portal_id",         :limit => 8
@@ -2264,6 +2277,8 @@ ActiveRecord::Schema.define(:version => 20150102142624) do
   create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
     t.string  "shard_name",                  :null => false
     t.integer "status",     :default => 200, :null => false
+    t.string  "pod_info"
+    t.string  "region",     :default => 'us-east-1', :null => false
   end
 
   create_table "sla_details", :force => true do |t|

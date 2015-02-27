@@ -5,6 +5,7 @@ class SubscriptionAdmin::CustomSslController < ApplicationController
 
   skip_filter :read_on_slave, :only => [:enable_custom_ssl]
   skip_filter :select_shard
+  skip_before_filter :determine_pod
 
 	def index
 		@portals = Sharding.run_on_all_slaves { Portal.find(:all, :conditions => ["elb_dns_name is not null"]) }

@@ -110,9 +110,11 @@ class Freshfone::CallFlow
     end
 
     def reject_outgoing_call
-      agent_user_id = split_client_id(params[:From])
-      current_account.freshfone_users.find_by_user_id(agent_user_id).busy!
-      Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => agent_user_id })
+      agent_user_id = outbound_call_agent_id
+      unless agent_user_id.blank?
+        agent = current_account.freshfone_users.find_by_user_id(agent_user_id).busy!
+        Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => agent_user_id })
+      end
       reject_twiml
     end
 
@@ -233,8 +235,12 @@ class Freshfone::CallFlow
       (calls_count >> 4) >= BEYOND_THRESHOLD_PARALLEL_INCOMING
     end
 
+    def outbound_call_agent_id
+      split_client_id(params[:From]) || params[:agent]
+    end
+
     def register_outgoing_device
-      agent_user_id = split_client_id(params[:From])
-      set_outgoing_device([agent_user_id])
+      agent_user_id = outbound_call_agent_id
+      set_outgoing_device([agent_user_id]) unless agent_user_id.blank?
     end
 end

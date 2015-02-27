@@ -1099,7 +1099,7 @@ var UIUtil = {
 
 			if (entityIdValue && dispName) {
 				newEntityOption.value = entityIdValue;
-				newEntityOption.innerHTML = dispName;
+				newEntityOption.innerHTML = dispName.escapeHTML();
 				dropDownBox.appendChild(newEntityOption);
 			}
 			if (foundEntity == "") {

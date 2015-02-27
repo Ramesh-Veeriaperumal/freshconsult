@@ -719,11 +719,11 @@ WorkflowMaxWidget.prototype = {
 				{
 					job_id = XmlUtil.getNodeValue(job_node, "ID");
 					job_name = XmlUtil.getNodeValue(job_node, "Name");
-					jobData.push({"ID":job_id,"Name":job_name});
+					jobData.push({"ID":job_id,"Name":job_name.escapeHTML()});
 				}
 			}
 		}
-	
+		
 		jobData.push({"ID":"..","Name":"..."});
 		jobData.push({"ID": "newJob", "Name":"Create a new Job"});
 		jobData = {"Job": jobData}
@@ -847,8 +847,8 @@ WorkflowMaxWidget.prototype = {
 			jQuery("#workflow-max-jobentry-submit").attr("disabled","disabled");
 			var body = this.CREATE_JOBENTRY_REQ.evaluate({
 				client_id: $("selectedClient").value,
-				job_name: $("jobName").value,
-				job_desc: $("jobDesc").value,
+				job_name: $("jobName").value.escapeHTML(),
+				job_desc: $("jobDesc").value.escapeHTML(),
 				start_date: this.executed_date.toString("yyyyMMdd"),
 				due_date: this.executed_date.toString("yyyyMMdd")
 			});
