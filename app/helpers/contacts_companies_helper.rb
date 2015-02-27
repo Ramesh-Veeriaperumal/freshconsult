@@ -6,7 +6,7 @@ module ContactsCompaniesHelper
         ['customers', t('company.title')]]
     ul tabs.map{ |t| 
                   link_to t[1], "/#{t[0]}", :id => "#{t[0]}Tab", :class => "#{t[2]}"
-                }, { :class => "tabs nav-tabs", :id => "contacts-tab" }, type.eql?('company') ? 1 : 0
+                }, { :class => "tabs nav-tabs", :id => "contacts-tab" }, type.eql?('user') ? 0 : 1
   end 
 
   def ticket_activity ticket, user_page = false

@@ -1,28 +1,28 @@
 <% form_tag nil, :method => :post , :rel => "validate" do -%>
-
-    <%= hidden_field_tag 'type', params[:type] %>
+	<% @parameters.each do |arr| -%>
+	<%= hidden_field_tag arr[0], arr[1] %>
+	<% end -%>
 
 	<ul class="form-horizontal map_fields">
 		<li class="control-group">
 			<label for="file"><%= content_tag(:b, t('step2')) %>: <%= t('import_step2_info') %></label>
 		</li>
 
-      	<% @fields.each do |field| -%>
+      	<% @fields.each do |key,value| -%>
 			<li class="control-group  row-fluid">
-				<%= render :partial => 'table_fields', :locals => {:key => field[:label], :value => field[:name], 
-					:is_default => field[:default], :type => params[:type]} %>
+				<%= render :partial => 'table_fields' , :locals => {:key => key, :value => value} %>
 			</li>
 		<% end -%>
 
 
 		<li class="seperator control-group"></li>
 			<li class="control-group">
-				<p><%= content_tag(:b, t('warning')) %> <%= t('customer_import.import_warning_info', :type => params[:type], :field => params[:type].eql?("company") ? "name" : "email") %></p>
+				<p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
 			</li>	
 		</li>
 
 	 	<div class="button-container">
-		  	<%= link_to t('cancel'), "/#{params[:type].pluralize}", :class => "btn"  %>
+		  	<%= link_to t('cancel'), contacts_path, :class => "btn"  %>
 		  	<%= submit_tag t('import'), { :class => "btn btn-primary" } %>
 	 	</div>
 	</ul>

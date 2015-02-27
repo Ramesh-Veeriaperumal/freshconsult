@@ -86,40 +86,25 @@ class UserNotifier < ActionMailer::Base
 
   end
 
-  def notify_customers_import(options={})
-    subject       "#{options[:type]} Import for #{options[:user].account.full_domain}"
-    recipients    options[:user].email
-    from          options[:user].account.default_friendly_email
+  def notify_contacts_import(user)
+    subject       "Contacts Import for #{user.account.full_domain}"
+    recipients    user.email
+    from          user.account.default_friendly_email
     # body          :user => user
     sent_on       Time.now
-    headers       "Reply-to" => "#{options[:user].account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{user.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "multipart/mixed"
 
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body  render_message("notify_customers_import.text.plain.erb", :user => options[:user], 
-                :type => options[:type], 
-                :success_count => options[:success_count], 
-                :failed_count => options[:failed_count],
-                :import_success => options[:import_success],
-                :attachment => options[:file_name])
+        plain.body  render_message("notify_contacts_import.text.plain.erb", :user => user)
       end
 
       alt.part "text/html" do |html|
-        html.body   render_message("notify_customers_import.text.html.erb", :user => options[:user], 
-                :type => options[:type], 
-                :success_count => options[:success_count], 
-                :failed_count => options[:failed_count],
-                :import_success => options[:import_success],
-                :attachment => options[:file_name])
+        html.body   render_message("notify_contacts_import.text.html.erb", :user => user, :account => user.account)
       end
     end
 
-    unless options[:file_path].nil?
-      attachment  :content_type => "text/csv",
-                    :body => File.read(options[:file_path], :mode => "rb"),
-                    :filename => options[:file_name]
-    end
   end
 
   def notify_facebook_reauth(account,facebook_page)
