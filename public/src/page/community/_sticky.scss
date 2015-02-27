@@ -29,7 +29,8 @@
 	}
 
 	.sticky_right {
-		@include float(right);
+		position: absolute;
+		@include right(0px);
 		.guided-tour-button{
 			display: inline;
 			padding: 8px 8px 8px 33px;

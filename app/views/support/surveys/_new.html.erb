@@ -2,8 +2,8 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_rtl_css :rating %>
-	<%= include_cloudfront_js :survey  %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/rating' %>
+	<%= javascript_include_tag :'cdn/survey'  %>
 </head>
 <body>	
 	<div class="top-strip">

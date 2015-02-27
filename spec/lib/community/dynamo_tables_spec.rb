@@ -54,7 +54,7 @@ describe Community::DynamoTables do
 	describe "it should delete attachments based on the given parameters" do
 
 		it "should delete attachments in s3 with prefix 'spam_attachments' for the given month" do
-			@attachment_arr = [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg','image/jpeg')}]
+			@attachment_arr = [{:resource => forum_attachment}]
 			time = (Time.now - 5.months)
 			folder_name = "spam_attachments/month_#{time.strftime('%Y_%m')}/dynamo_tables_spec/#{Time.now.utc.to_f * (10**7)}"
 			store_attachments(folder_name)
@@ -64,7 +64,7 @@ describe Community::DynamoTables do
 		end
 
 		it "should delete previous month's attachments in s3 with prefix 'spam_attachments' if no parameter is passed" do
-			@attachment_arr = [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]
+			@attachment_arr = [{:resource => forum_attachment}]
 			time = (Time.now - 1.months).utc.strftime('%Y_%m')
 			folder_name = "spam_attachments/month_#{time}/dynamo_tables_spec/#{Time.now.utc.to_f * (10**7)}"
 			store_attachments(folder_name)

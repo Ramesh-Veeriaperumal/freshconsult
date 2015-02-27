@@ -53,8 +53,16 @@ module ForumDynamoHelper
 		}
 	end
 
+	def forum_attachment
+		file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
+		class << file
+			attr_reader :tempfile
+		end
+		file
+	end
+
 	def uploaded_attachments
-		[{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}].each_with_index.map do |att, i|
+		[{:resource => forum_attachment }].each_with_index.map do |att, i|
 			filename = "#{i}_#{att[:resource].original_filename}"
 			AwsWrapper::S3Object.store("#{attachment_folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
 			filename

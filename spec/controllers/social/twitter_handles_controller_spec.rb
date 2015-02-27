@@ -72,15 +72,6 @@ describe Social::TwitterHandlesController do
     end
 
   end
-  
-  describe "POST #tweet" do
-    it "should tweet to twitter" do
-      Twitter::REST::Client.any_instance.stubs(:update).returns("")
-      post :tweet, {
-        :tweet => "Tweet to twitter"
-      }
-    end
-  end
 
 
   describe "GET #feed" do
@@ -303,15 +294,5 @@ describe Social::TwitterHandlesController do
       handle.dm_thread_time.should be_eql(86400)
     end
   end
-  
-  it "should check if the user who is responding follows the accout to which being replyed to" do
-    twt_handler = create_test_twitter_handle(@account)
-    
-    Twitter::REST::Client.any_instance.stubs(:friendship?).returns(true)
-    
-    post :user_following, {
-                            :twitter_handle => twt_handler.id, 
-                            :req_twt_id => "TestingTwitter", 
-                          }
-  end 
+
 end

@@ -15,6 +15,10 @@ class Social::FacebookPage < ActiveRecord::Base
 
   #account_id is removed from validation check.
 
+  def valid_page
+    !self.reauth_required and self.enable_page
+  end
+
   def fetch_delta?
     process_realtime_feed? && page_token_changed? && enable_page_changed?  && company_or_visitor?
   end

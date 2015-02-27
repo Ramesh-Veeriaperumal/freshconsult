@@ -15,7 +15,7 @@ module ForumHelper
 		forum_category = FactoryGirl.build(:forum_category, :account_id => @account.id,
                                                     :name => Faker::Lorem.sentence(2),
                                                     :portal_ids => [p1,p2])
-		forum_category.save(false)
+		forum_category.save(:validate => false)
 		forum_category
 	end
 

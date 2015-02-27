@@ -1473,6 +1473,17 @@ p.info-text{
 	.help_image{
 	  @include float(left);
 	}
+	.ff-admin-img{
+		background: #19a991;
+		padding: 25px;
+		display: inline-block;
+		margin: 45px 0;
+		border-radius: 50%;
+		width: 75px;
+		height: 75px;
+		color: #fff;
+		box-shadow: inset 2px 2px 8px #03987f;
+	}
 	p.info-data{
 	   font-size:15px;
 	   line-height:26px;

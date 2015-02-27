@@ -53,6 +53,7 @@ jQuery(document).ready(function(){
 		var hideSearchBar = function() {
 			$J("#SearchResultsBar").hide();
 			$J("#SearchBar").removeClass("active");
+			$J("#header_search").attr("placeholder", "");
 		}
 
 			$J("#SearchResultsBar a").die('hover');
@@ -88,6 +89,8 @@ jQuery(document).ready(function(){
 			$J("#header_search").bind("focusin", function(ev){
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
 				$J("#SearchBar").addClass("active");
+				$J("#header_search").attr("placeholder", "Search");
+				$J('#SearchBar').twipsy('hide')
 				if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
 					$J("#SearchResultsBar").css("display", "inline");
 				}

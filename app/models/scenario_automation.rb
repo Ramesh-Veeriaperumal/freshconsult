@@ -4,6 +4,9 @@ class ScenarioAutomation < VaRule
   include Helpdesk::Accessible::ElasticSearchMethods
   
   attr_protected :account_id
+  belongs_to_account
+  
+  default_scope where(:rule_type => VAConfig::SCENARIO_AUTOMATION)
 
   has_one :accessible,
     :class_name => 'Helpdesk::Access',
@@ -16,7 +19,7 @@ class ScenarioAutomation < VaRule
 
   delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
 
-  before_validation :validate_name, on: [:create, :update]
+  before_validation :validate_name
   before_save :set_active
 
   scope :all_managed_scenarios, lambda { |user|
@@ -49,12 +52,12 @@ class ScenarioAutomation < VaRule
   }
 
   def to_indexed_json
-    to_json({
-      :root =>"scenario_automation", 
-      :tailored_json => true, 
-      :only => [:account_id, :name, :rule_type, :active],
-      :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
-      })
+   as_json({
+     :root =>"scenario_automation", 
+     :tailored_json => true, 
+     :only => [:account_id, :name, :rule_type, :active],
+     :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+     }).to_json
   end
 
   private
@@ -63,9 +66,10 @@ class ScenarioAutomation < VaRule
    if (visibility_not_myself? && (self.name_changed? || access_type_changed?))
     scenario = Account.current.scn_automations.all_managed_scenarios(User.current).find_by_name(self.name)
     unless scenario.nil?
-      self.errors.add_to_base("Duplicate scenario. Name already exists")
+      self.errors.add(:base,"Duplicate scenario. Name already exists")
       return false
     end
+    true
    end
    true
   end

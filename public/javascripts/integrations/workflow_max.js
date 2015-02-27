@@ -208,7 +208,7 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	createTimeEntry:function(resultCallback) {
-		if(jQuery('.integration_container').css('display') != "none")
+		//if(jQuery('.integration_container').css('display') != "none")
 		{
 			if (workflowMaxWidget.validateInput()) 
 			{

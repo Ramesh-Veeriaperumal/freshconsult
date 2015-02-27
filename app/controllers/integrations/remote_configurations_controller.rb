@@ -97,11 +97,11 @@ private
 
   def redirect_url
     if(params[:app] == "seoshop")
-      "#{params[:domain]}/helpdesk/dashboard"
+      "#{params[:domain]}/helpdesk"
     end
   end
 
   def partial_link(app)
-    render :partial => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations'
+    render :template => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations'
   end
 end
