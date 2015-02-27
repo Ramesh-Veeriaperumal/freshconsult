@@ -13,6 +13,7 @@ class ContactsController < ApplicationController
 
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
+   before_filter :init_user_email, :only => :edit
    before_filter :check_parent, :only => :restore
    before_filter :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
@@ -212,13 +213,8 @@ class ContactsController < ApplicationController
 
   def verify_email
     @user_mail = current_account.user_emails.find(params[:email_id])
-    if !@user_mail.user.active?
-      @user_mail.user.reset_primary_email(params[:email_id]) 
-      @user_mail.user.save
-    else
-      @user_mail.reset_perishable_token
-      @user_mail.deliver_contact_activation_email
-    end
+    @user_mail.user.reset_primary_email(params[:email_id]) 
+    @user_mail.user.save
     flash[:notice] = t('merge_contacts.activation_sent')
     respond_to do |format|
       format.js
@@ -324,7 +320,7 @@ protected
           @existing_user = current_account.user_emails.user_for_email(ue.email)
         end
       end
-      @user.user_emails.build({:primary_role => true}) if @user.user_emails.blank?
+      init_user_email
     else
       if("Email has already been taken".eql?(@user.errors["base"]))        
         @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
@@ -413,5 +409,9 @@ protected
       @user ||= current_account.users.new
       @user.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
                                           :error_label => :label }
+    end
+
+    def init_user_email
+      @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if current_account.features_included?(:contact_merge_ui) and @item.user_emails.empty?
     end
 end

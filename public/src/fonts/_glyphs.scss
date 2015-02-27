@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.eot");
-  src: font-url("glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.woff") format("woff"),
-       font-url("glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.ttf") format("truetype"),
-       font-url("glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.svg#glyphs") format("svg");
+  src: font-url("glyphs_50ca52aac14d24e1f77329a293edc05f.eot");
+  src: font-url("glyphs_50ca52aac14d24e1f77329a293edc05f.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_50ca52aac14d24e1f77329a293edc05f.woff") format("woff"),
+       font-url("glyphs_50ca52aac14d24e1f77329a293edc05f.ttf") format("truetype"),
+       font-url("glyphs_50ca52aac14d24e1f77329a293edc05f.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_7f50b97e33fb2fac57e5af74aea6aeb6.svg#glyphs") format("svg");
+    src: font-url("glyphs_50ca52aac14d24e1f77329a293edc05f.svg#glyphs") format("svg");
   }
 }
 
@@ -123,6 +123,8 @@
 .ficon-lock-open:before,
 .ficon-mac:before,
 .ficon-mail:before,
+.ficon-mail-filled:before,
+.ficon-mail-thin:before,
 .ficon-map-marker:before,
 .ficon-merge:before,
 .ficon-message:before,
@@ -179,6 +181,7 @@
 .ficon-twitter:before,
 .ficon-twitter-lock:before,
 .ficon-unlock:before,
+.ficon-unverified:before,
 .ficon-user:before,
 .ficon-view-retweets:before,
 .ficon-warning:before,
@@ -298,6 +301,8 @@
 .ficon-lock-open:before { content: "\f11c"; }
 .ficon-mac:before { content: "\f1a8"; }
 .ficon-mail:before { content: "\f143"; }
+.ficon-mail-filled:before { content: "\f1b2"; }
+.ficon-mail-thin:before { content: "\f1b4"; }
 .ficon-map-marker:before { content: "\f11d"; }
 .ficon-merge:before { content: "\f188"; }
 .ficon-message:before { content: "\f165"; }
@@ -354,6 +359,7 @@
 .ficon-twitter:before { content: "\f128"; }
 .ficon-twitter-lock:before { content: "\f174"; }
 .ficon-unlock:before { content: "\f129"; }
+.ficon-unverified:before { content: "\f1b3"; }
 .ficon-user:before { content: "\f12a"; }
 .ficon-view-retweets:before { content: "\f12b"; }
 .ficon-warning:before { content: "\f12c"; }
