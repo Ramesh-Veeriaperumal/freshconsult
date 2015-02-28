@@ -22,7 +22,8 @@ module Integrations::Constants
     :dropbox => 'dropbox',
     :shopify => "shopify",
     :seoshop => "seoshop",
-    :box => 'box'
+    :box => 'box',
+    :slack => "slack"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

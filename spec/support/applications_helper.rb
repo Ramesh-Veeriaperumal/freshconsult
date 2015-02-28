@@ -31,4 +31,9 @@ module ApplicationsHelper
       \"instance_url\":\"https://ap1.salesforce.com\" }"
 	end
 
+  def slack_params(provider)
+    "{\"app_name\":\"slack\",\"refresh_token\":\"\",
+    \"oauth_token\":\"xoxp-2896389166-2896389170-3232451622-4f4ec4\"}"
+  end
+
 end

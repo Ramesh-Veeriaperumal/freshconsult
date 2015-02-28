@@ -8,12 +8,15 @@ class Account < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
+  include Redis::RoutesRedis
   include ErrorHandle
   include AccountConstants
 
   has_many_attachments
   
   serialize :sso_options, Hash
+
+  pod_filter "id"
   
   concerned_with :associations, :constants, :validations, :callbacks
   include CustomerDeprecationMethods
@@ -46,7 +49,6 @@ class Account < ActiveRecord::Base
   scope :premium_accounts, {:conditions => {:premium => true}}
               
   scope :non_premium_accounts, {:conditions => {:premium => false}}
-  
   
   Limits = {
     'agent_limit' => Proc.new {|a| a.full_time_agents.count }

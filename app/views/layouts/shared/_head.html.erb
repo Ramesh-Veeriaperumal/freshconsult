@@ -67,7 +67,7 @@
 	<% end %>
 	
 	<% if chat_activated? %>
-    <%= javascript_include_tag :'cdn/freshchat_templates' %>
+    <%= javascript_include_tag :'cdn/freshchat_intializer' %>
 	<% end %> 
 
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>

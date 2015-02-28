@@ -14,21 +14,18 @@ class Facebook::Worker::FacebookMessage
   end
 
   def self.perform(args)
-    run(args)
+    run
   end
 
-  def self.run(args)
+  def self.run
     Koala.config.api_version = nil #reset koala version so that we hit v1 api
     
     account = Account.current
-    if args[:fb_page_id]
-      fan_page = account.facebook_pages.find(args[:fb_page_id])
-      fetch_from_fb fan_page
-    else
-      fb_pages = account.facebook_pages.valid_pages
-      fb_pages.each do |fan_page|
-       fetch_from_fb fan_page
-      end
+    facebook_pages = account.facebook_pages.valid_pages
+    return if facebook_pages.empty?
+    facebook_pages.each do |fan_page|        
+      fetch_fb_posts(fan_page) unless fan_page.realtime_subscription #This will get removed
+      fetch_fb_messages(fan_page) if fan_page.import_dms
     end
   end
 

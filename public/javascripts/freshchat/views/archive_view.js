@@ -70,17 +70,17 @@ freshChat.archiveView = function(){
 				event.preventDefault();
 				event.stopPropagation();
 
-				var archiveModel = this.findArchiveModel(event);
-				if(window.freshChat.ticketOptionsView && archiveModel){
-						window.freshChat.ticketOptionsView.show(archiveModel,true)
+				var archiveModelAttr = this.findArchiveModel(event);
+				if(window.liveChat.ticketOptions && archiveModelAttr){
+						liveChat.ticketOptions.initialize(archiveModelAttr,null,true);
 				}
 			},
 			addNote : function(event){
 				event.preventDefault();
 				event.stopPropagation();
-				var archiveModel = this.findArchiveModel(event);
-				if(window.freshChat.ticketOptionsView && archiveModel){
-					window.freshChat.ticketOptionsView.updateTicketNote(archiveModel);
+				var archiveModelAttr = this.findArchiveModel(event);
+				if(window.liveChat.ticketOptions && archiveModelAttr){
+					liveChat.ticketOptions.initialize(archiveModelAttr,null,true);
 				}
 			},
 			findArchiveModel :function(event){

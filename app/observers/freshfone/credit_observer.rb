@@ -4,6 +4,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
   include Freshfone::NodeEvents
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
+  include Freshfone::CallsRedisMethods
 
   def after_credit_update(freshfone_credit)
     account = freshfone_credit.account
@@ -58,12 +59,14 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 
     def auto_recharge_threshold_reached?(freshfone_credit)
       freshfone_credit.auto_recharge? and
-        freshfone_credit.auto_recharge_threshold_reached?
+        freshfone_credit.auto_recharge_threshold_reached? and auto_recharge_throttle_limit_reached?(freshfone_credit.account_id)
     end
 
     def trigger_auto_recharge(freshfone_credit)
       # freshfone_credit.send_later(:perform_auto_recharge)
+      set_integ_redis_key(autorecharge_key(freshfone_credit.account_id), "true", 1800) #Key will be expire in 30 mins
       Resque::enqueue(Freshfone::Jobs::AutoRecharge, {:id => freshfone_credit.id})
+      Rails.logger.debug "Auto-Recharge triggered for account #{freshfone_credit.account_id}"
     end
     
     def restore_freshfone_account_state(freshfone_credit, account)

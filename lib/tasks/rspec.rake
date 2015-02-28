@@ -84,7 +84,8 @@ if Rails.env.test?
     "spec/controllers/google_login_controller_spec.rb",
     "spec/controllers/google_signup_controller_spec.rb",
     "spec/controllers/integrations/integrated_resources_controller_spec.rb",
-    "spec/controllers/api_webhooks_controller_spec.rb"
+    "spec/controllers/api_webhooks_controller_spec.rb",
+    "spec/controllers/integrations/slack_controller_spec.rb"
   ]
 
   FreshfoneTests = [

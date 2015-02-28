@@ -126,6 +126,7 @@ module Helpkit
     require 'omniauth'
     require 'omniauth/strategies/twitter'
     require 'omniauth/strategies/nimble'
+    require 'omniauth/strategies/slack'
 
     # you will be able to access the above providers by the following url
     # /auth/providername for example /auth/twitter /auth/facebook

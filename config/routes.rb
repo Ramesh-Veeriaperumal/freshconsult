@@ -584,6 +584,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :slack do
+      collection do
+        post :create_ticket
+      end
+    end
+
     resources :user_credentials do
       collection do
         post :oauth_install

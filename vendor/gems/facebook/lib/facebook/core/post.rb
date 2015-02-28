@@ -33,7 +33,7 @@ class Facebook::Core::Post
     convert_post, convert_args = convert_args(@koala_post, convert)
     if convert_post
       ticket = add_as_ticket(@fan_page, @koala_post, real_time_update, convert_args) 
-      process_comments
+      process_comments if ticket
     end
   end
 

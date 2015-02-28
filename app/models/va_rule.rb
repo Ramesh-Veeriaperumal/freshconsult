@@ -31,6 +31,7 @@ class VaRule < ActiveRecord::Base
 
   scope :active, :conditions => { :active => true }
   scope :inactive, :conditions => { :active => false }
+  scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
 
   scope :observer_biz_rules, :conditions => { 
     "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 

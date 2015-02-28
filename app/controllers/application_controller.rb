@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   around_filter :select_shard
   
+  prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :set_default_locale, :set_locale
   include SslRequirement
@@ -230,6 +231,31 @@ class ApplicationController < ActionController::Base
 
     def api_request?
       request.cookies["_helpkit_session"]
+    end
+
+    def determine_pod
+      shard = ShardMapping.lookup_with_domain(request.host)
+      if shard.nil?
+        return # fallback to the current pod.
+      elsif shard.pod_info.blank?
+        return # fallback to the current pod.
+      elsif shard.pod_info != PodConfig['CURRENT_POD']
+        Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
+        redirect_to_pod(shard)
+      end
+    end
+
+    def redirect_to_pod(shard)
+      return if shard.nil?
+
+      Rails.logger.error "Request URL: #{request.url}"
+      # redirect to the correct POD using Nginx specific redirect headers.
+      redirect_url = "/pod_redirect/#{shard.pod_info}" #Should match with the location directive in Nginx Proxy
+      Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{redirect_url}"
+      response.headers["X-Accel-Redirect"] = redirect_url
+      response.headers["X-Accel-Buffering"] = "off"
+
+      redirect_to redirect_url
     end
 end
 

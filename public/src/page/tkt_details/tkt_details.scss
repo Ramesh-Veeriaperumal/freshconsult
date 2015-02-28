@@ -3039,18 +3039,19 @@ $collision_delay: 1s;
 }
 
 .q-marker{ 
-	display: inline-block; 
-	height: 10px; 
-	width: 22px; 
-	background-color:#efefef; 
-	border:1px solid #dfdfdf;
+	display: inline-block;
+	background-color: #efefef;
+	border: 1px solid #dfdfdf;
 	cursor: pointer;
-	line-height: 3px;
+	line-height: 4px;
 	letter-spacing: -3px;
-	@include text-align(center);
+	text-align: center;
 	font-size: 14px;
 	font-family: monospace;
-	border-radius: 2px;	
+	border-radius: 4px;
+	padding: 2px 9px 8px 9px;
+	margin-top: 20px;
+	color: #333;
 	&:before{
 		content: "...";
 		@include text-align(center);

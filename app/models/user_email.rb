@@ -24,8 +24,9 @@ class UserEmail < ActiveRecord::Base
   before_update :set_token, :if => [:email_changed?, :contact_merge_ui_feature]
   before_update :save_model_changes
 
-  before_create :set_token 
-  after_commit :send_activation_on_create, on: :create, :if => :multiple_email_feature  
+  before_create :set_token, :set_verified
+  # after_commit :send_activation_on_create, on: :create, :if => :multiple_email_feature  
+
 
   after_update :drop_authorization, :if => [:email_changed?, :multiple_email_feature]
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?, :multiple_email_feature]
@@ -89,6 +90,11 @@ class UserEmail < ActiveRecord::Base
 
     def set_token(portal=nil)
       self.perishable_token = Authlogic::Random.friendly_token
+    end
+
+    def set_verified
+      self.verified = user.active
+      true
     end
 
     def send_activation

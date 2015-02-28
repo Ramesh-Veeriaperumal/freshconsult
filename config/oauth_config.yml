@@ -18,6 +18,8 @@ oauth_options:
     site: https://www.box.com
     token_url: /api/oauth2/token
     authorize_url: /api/oauth2/authorize
+  slack:
+    site: "https://slack.com"  
     
 development:
  salesforce:
@@ -67,7 +69,9 @@ development:
  box:
   consumer_token: vyexjzanqd64g8bj1w2cjy1drmv0gfgn
   consumer_secret: pvRFRQ0vMacLUqRmavgdzGCObBPNbEux
-
+ slack:
+   consumer_token: "3575209657.3577497590"
+   consumer_secret: 7193779dab625ec3e6764dd5df21309e
 
 defaults: &defaults
  salesforce:
@@ -94,7 +98,7 @@ defaults: &defaults
     prompt: none
     scope: https://www.googleapis.com/auth/calendar profile email
     name: google_gadget
-
+  
 test:
  <<: *defaults
 
@@ -153,10 +157,13 @@ staging:
    consumer_token: e160240bdc6507d0945c6ee6971cb263
    consumer_secret: dc44a9d893c1963eac73f3d843fc1f69
    options:
-      scope: 'read_orders'
+      scope: 'read_orders'   
  box:
   consumer_token: zkc8ikgqnaxxp8d8hmof0de1777zmcou
   consumer_secret: ygt0d5OC2EjOjBzTmnB3QUaVD0vZ9pem
+ slack:
+   consumer_token: "3575209657.3577656254"
+   consumer_secret: 40e3176389a2255436efedfdd5f9d76a
 
 production:
  salesforce:
@@ -206,3 +213,6 @@ production:
  box:
   consumer_token: itfsn1ixctz4uwru9d03bozxo92bwnh8
   consumer_secret: 8BcKLFpMi26RxvQhQxTslPlkS1A0rJXV
+ slack:
+   consumer_token: "3575209657.3866308321"
+   consumer_secret: 19210e220ec23853881fdbbaa9aa0a5b
