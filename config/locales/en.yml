@@ -2624,6 +2624,7 @@ en:
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
         user_emails: Please enter at least one contact detail
+        max_user_emails: A contact cannot have more than 5 emails
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5775,6 +5776,7 @@ en:
     remove: "Remove"
     success: "Contacts have been successfully merged"
     verify_mail: "Verification email sent"
+    activate_email: "Activation email sent"
     show_primary: "  (Default)"
     unverified: "Email Unverified"
     make_primary: "Mark as Default"
@@ -6465,13 +6467,7 @@ en:
     back: "Back"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
-    visitor_left_chat_msg: "Visitor has left the chat."
-    visitor_disconnect_msg: "Visitor has been disconnected."
-    agent_transfer_accept_msg: "{{agent_name}} has accepted. You can now close this chat."
-    agent_transfer_reject_msg: "{{agent_name}} has rejected your transfer request."
-    agent_transfer_missed_msg: "{{agent_name}} has not picked up the chat. Please try again."
-    chat_inactive_for_10_min: "This chat has been inactive for the past 10 minutes. If you have completed your conversation, please close the chat."
-    agent_transfer_waiting_msg: "Waiting for {{agent_name}} to accept"
+    visitor_disconnect_msg: "Visitor has left the chat"
     last_message: "Last Message..."
     chat_recent_empty_tip: "No recent messages"
     add_agent_to_chat: "No other agents logged in"

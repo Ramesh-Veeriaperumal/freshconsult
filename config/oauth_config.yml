@@ -212,3 +212,6 @@ production:
  box:
   consumer_token: itfsn1ixctz4uwru9d03bozxo92bwnh8
   consumer_secret: 8BcKLFpMi26RxvQhQxTslPlkS1A0rJXV
+ slack:
+   consumer_token: "3575209657.3866308321"
+   consumer_secret: 19210e220ec23853881fdbbaa9aa0a5b
