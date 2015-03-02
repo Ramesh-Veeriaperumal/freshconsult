@@ -20,8 +20,10 @@ end
   account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
   Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
-    account.make_current if account
-    $statsd.increment "resque.#{@queue}.#{account_id}" if !account_id.blank?
+    if account
+      account.make_current 
+      $statsd.increment "resque.#{@queue}.#{account.id}" 
+    end
     TimeZone.set_time_zone
     yield
   end
