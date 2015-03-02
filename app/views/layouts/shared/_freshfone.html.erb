@@ -18,7 +18,7 @@
 
 <% javascript_tag do %>
 	if (typeof freshfone === "undefined") { freshfone = {}; }
-	freshfone.country_preference = unescapeHtml("<%= recent_countries %>");
+	freshfone.country_preference = <%= recent_countries.html_safe %>;
 	freshfone.current_user = <%= current_user.id %>;
 	freshfone.current_account = <%= current_account.id%>;
 	freshfone.user_phone = "<%= current_user.available_number %>";

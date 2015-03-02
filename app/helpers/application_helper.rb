@@ -1054,11 +1054,7 @@ module ApplicationHelper
          :all, :conditions =>  { :call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing] }
          ).last(2).reverse
     favorites = (recent_calls || []).map{|call| call.caller_country.downcase if !call.caller_country.nil? }.compact.uniq
-    if favorites.length > 0
-      favorites.to_json
-    else
-     favorites
-    end
+    favorites.to_json
   end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
