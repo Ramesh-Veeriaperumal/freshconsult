@@ -46,4 +46,6 @@ helpdesk:
     - twitter_config
     - virtual_agent
     - will_paginate
+    - statsd_config
+    - big_brother
 

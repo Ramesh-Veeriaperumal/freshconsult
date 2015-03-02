@@ -17,11 +17,11 @@ end
 
  def around_perform_with_shard(*args)
   params_hash = args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
-  
   account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
   Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     account.make_current if account
+    $statsd.increment "resque.#{@queue}.#{account_id}" if !account_id.blank?
     TimeZone.set_time_zone
     yield
   end
