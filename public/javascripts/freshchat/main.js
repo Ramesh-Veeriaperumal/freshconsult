@@ -144,13 +144,6 @@
  			filterName.visitorId = visitorId;
  		}
 
- 		//Specific Agent to Agent Chats
- 		var agentIds = $filterForm.find('#agent_ids').val();
- 		if(agentIds){
- 			filterVal.agentIds = agentIds;
- 			filterVal.type = "4";
- 		}
-
  		//Sorting Filter 
  		filterVal.sort = jQuery('#sorting-filter-head').data('sortType');
 
