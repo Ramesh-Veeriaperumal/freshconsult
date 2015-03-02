@@ -274,7 +274,7 @@ describe ContactsController do
 
   it "should configure for contact export" do
     post :configure_export
-    response.body.should =~ /Note: Only verified contacts will be exported/
+    response.should render_template('contacts/_contact_export')
   end
 
   it "should export csv" do
