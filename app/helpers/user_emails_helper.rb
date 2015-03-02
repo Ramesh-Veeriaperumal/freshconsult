@@ -42,7 +42,7 @@ HTML
       @form_builder.fields_for :user_emails do |ue|
         output << %(<li class="#{ue.object.primary_role ? "disabled" : ""} #{ue.object.new_record? ? "new_email" : ""}">)
         if !ue.object.primary_role
-          output << content_tag(:span, "", :class => "remove_pad ue_remove_image ue_action_icons ficon-minus fsize-12", "data-email" => ue.object.id) unless @form_builder.object.new_record?
+          output << content_tag(:span, "", :class => "remove_pad ue_remove_image ue_action_icons ficon-minus fsize-12", "data-email" => ue.object.id)
           output << ue.text_field(:email, :id => "email_sec_#{ue.object.id}", :class => "email cont text ue_input", "autocomplete" => "off", "data-verified" => ue.object.verified)
           title = t('merge_contacts.make_primary')
         else
