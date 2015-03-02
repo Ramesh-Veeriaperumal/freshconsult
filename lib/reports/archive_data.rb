@@ -57,9 +57,29 @@ module Reports
 
       	s3_folder = regenerate ? regenerate_s3_folder(utc_date, utc_hour) : %(#{utc_date}_#{utc_hour})
 
-      	AwsWrapper::S3Object.store("#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv", File.read(csv_file_path), S3_CONFIG[:reports_bucket])
+      	file_name = "#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv"
+      	begin
+      		AwsWrapper::S3Object.store(file_name, File.read(csv_file_path), S3_CONFIG[:reports_bucket])
+      	rescue => e
+      		subject = "Error occured while loading daily archive data to s3 for account =#{account.id}"
+					message =  e.message << "\n" << e.backtrace.join("\n")
+					report_notification(subject,message)
+					raise e
+      	end
       	
 				File.delete(csv_file_path)
+
+				# adding notification for special accounts..
+				if(REPORT_NOTIFICATION_ACCOUNTS.include?(account.id))
+					#if file exists
+					bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
+					file = bucket.objects[file_name]
+					file_exists, file_size = file.exists?, 0 
+					file_size = file.content_length if file_exists
+					subject = "Done daily archive data upload to s3 for account #{account.id}"
+					message = "File Name : #{file_name} does file exists : #{file_exists} file size : #{file_size} in bytes"
+					report_notification(subject,message)
+				end
 			end
 
 			def mysql_escape(object)
