@@ -2,7 +2,7 @@
 <% content_for :layoutType do -%>reports_page<%- end %>
 <script src="/javascripts/report/date.js" type="text/javascript"></script>
 <script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
-<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker' %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
 <%= javascript_include_tag :'cdn/freshchatreports'  %>
