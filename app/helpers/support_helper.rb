@@ -522,9 +522,9 @@ module SupportHelper
 		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences,
-			:image_placeholders => { :spacer => spacer_image_url,
-			 												:profile_thumb => image_path("misc/profile_blank_thumb.gif"),
-															 :profile_medium => image_path("misc/profile_blank_medium.gif") }
+			:image_placeholders => { 	:spacer 		=> spacer_image_url,
+			 							:profile_thumb 	=> "#{asset_host_url}/assets/misc/profile_blank_thumb.gif",
+										:profile_medium => "#{asset_host_url}/assets/misc/profile_blank_medium.gif" }
 		}.to_json
 	end
 
