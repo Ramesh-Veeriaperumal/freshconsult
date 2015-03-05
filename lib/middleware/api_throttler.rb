@@ -6,7 +6,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   include Redis::OthersRedis
   include MemcacheKeys
   
-  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser"] 
+  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] 
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
