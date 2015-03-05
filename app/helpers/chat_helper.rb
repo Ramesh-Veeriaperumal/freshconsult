@@ -123,7 +123,8 @@ module ChatHelper
       :default_agent_left_msg => t("freshchat.agent_left_msg"),
       :default_thank_message => t("freshchat.thank_message"),
       :default_non_availability_message => t("freshchat.non_availability_message"),
-      :default_prechat_message => t("freshchat.prechat_message")
+      :default_prechat_message => t("freshchat.prechat_message"),
+      :agent_transfered_msg => t("freshchat.agent_transfered_msg")
     }
     return freshchat_setting.to_json.html_safe
   end
@@ -258,6 +259,7 @@ module ChatHelper
             :last_90_days => t('freshchat.last_90_days'),
             :date_range => t('freshchat.date_range'),
             :agent_joined_msg => t('freshchat.agent_joined_msg'),
+            :agent_transfered_msg => t('freshchat.agent_transfered_msg'),
             :agent_left_msg => t('freshchat.agent_left_msg'),
             :connecting_msg => t('freshchat.connecting_msg'),
             :non_availability_message => t('freshchat.non_availability_message'),
