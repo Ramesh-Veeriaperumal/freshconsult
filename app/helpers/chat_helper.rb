@@ -123,8 +123,7 @@ module ChatHelper
       :default_agent_left_msg => t("freshchat.agent_left_msg"),
       :default_thank_message => t("freshchat.thank_message"),
       :default_non_availability_message => t("freshchat.non_availability_message"),
-      :default_prechat_message => t("freshchat.prechat_message"),
-      :agent_transfered_msg => t("freshchat.agent_transfered_msg")
+      :default_prechat_message => t("freshchat.prechat_message")
     }
     return freshchat_setting.to_json.html_safe
   end
@@ -170,18 +169,6 @@ module ChatHelper
             :select_location => t("freshchat.select_location"),
             :new_visitors => t("freshchat.new_visitors"),
             :visitor_disconnect_msg => t("freshchat.visitor_disconnect_msg"),
-            :visitor_left_chat_msg => t("freshchat.visitor_left_chat_msg"),
-            :agent_transfer_accept_msg => t("freshchat.agent_transfer_accept_msg"),
-            :agent_transfer_reject_msg => t("freshchat.agent_transfer_reject_msg"),
-            :agent_transfer_missed_msg => t("freshchat.agent_transfer_missed_msg"),
-            :chat_inactive_for_10_min => t("freshchat.chat_inactive_for_10_min"),
-            :agent_transfer_waiting_msg => t("freshchat.agent_transfer_waiting_msg"),
-            :agent_chat_accept_msg => t("freshchat.agent_chat_accept_msg"),
-            :close_chat_tooltip => t("freshchat.close_chat_tooltip"),
-            :minimise_chat_tooltip => t("freshchat.minimise_chat_tooltip"),
-            :settings_chat_tooltip => t("freshchat.settings_chat_tooltip"),
-            :visitor_details_tooltip => t("freshchat.visitor_details_tooltip"),
-            :agent_chat_placeholder => t("freshchat.agent_chat_placeholder"),
             :last_message => t("freshchat.last_message"),
             :typing_message => t("freshchat.typing_message"),
             :is_typing_header => t("freshchat.is_typing_header"),
@@ -259,7 +246,6 @@ module ChatHelper
             :last_90_days => t('freshchat.last_90_days'),
             :date_range => t('freshchat.date_range'),
             :agent_joined_msg => t('freshchat.agent_joined_msg'),
-            :agent_transfered_msg => t('freshchat.agent_transfered_msg'),
             :agent_left_msg => t('freshchat.agent_left_msg'),
             :connecting_msg => t('freshchat.connecting_msg'),
             :non_availability_message => t('freshchat.non_availability_message'),
