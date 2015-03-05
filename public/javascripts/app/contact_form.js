@@ -10,11 +10,15 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
+      this.bindGroupValidation();
       this.bindAutocomplete();
       this.bindCompanySelect2();
       this.bindHandlers();
-      this.bindSubmitValidation();
       this.triggerFocus();
+    },
+
+    bindGroupValidation: function() {
+      $('#user_phone, #user_mobile, #user_twitter_id, #user_email').addClass('fillone');
     },
 
     bindAutocomplete: function () {
@@ -111,7 +115,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
             this.email=$('#emails_con input[type=text]').length;
             this.att_name="user[user_emails_attributes]["+this.email+"]";
             var field = ['<li class="new_email"><span class="remove_pad ue_cancel_email ue_action_icons ficon-minus fsize-12"></span>',
-                          '<input class="email cont text ue_input" placeholder = "Enter an email" autocomplete="off" id="email_sec_new'+this.email+'" name="'+this.att_name+'[email]" ',
+                          '<input class="email cont text ue_input fillone" placeholder = "Enter an email" autocomplete="off" id="email_sec_new'+this.email+'" name="'+this.att_name+'[email]" ',
                           'size="30" type="text">',
                           '<input name="'+this.att_name+'[primary_role]" class="ue_primary" type="hidden" value="0">',
                           '<label id="email_sec_new'+this.email+'" class="error" for="email_sec_new'+this.email+'"></label>',
@@ -207,25 +211,6 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       $('body').on('click.contact_form', '#wrong_email', function () {
         $(this).parent().next().remove();
         $(this).parent().remove();
-      });
-    },
-
-    bindSubmitValidation: function () {
-      $('.form_for_contact').on('submit', function (ev) {
-        ev.preventDefault();
-        var result = true
-        var email = $('#emails_con').find('input[type="text"]:visible').val(),
-        twitter = $("#user_twitter_id").val().length,
-        phone = $('#user_phone').val().length,
-        mobile = $('#user_mobile').val().length;
-
-        if(!email && !twitter && !phone && !mobile)
-        {
-          show_growl_flash("Please fill any one of the columns", 'error');
-          ev.stopImmediatePropagation();
-          result = false;
-        }
-        return result
       });
     },
 
