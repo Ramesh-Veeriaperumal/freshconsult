@@ -9,10 +9,5 @@ Gem::Specification.new name, OpenIdAuthentication::VERSION do |s|
   s.homepage = "https://github.com/grosser/#{name}"
   s.files = `git ls-files`.split("\n")
   s.license = "MIT"
-  key = File.expand_path("~/.ssh/gem-private_key.pem")
-  if File.exist?(key)
-    s.signing_key = key
-    s.cert_chain = ["gem-public_cert.pem"]
-  end
   s.add_runtime_dependency "rack-openid", ">= 0.2.1"
 end
