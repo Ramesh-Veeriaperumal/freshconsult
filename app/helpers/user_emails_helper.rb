@@ -48,9 +48,9 @@ HTML
         else
           output << %(<span class='remove_pad ue_remove_image ue_action_icons disabled ficon-minus fsize-12'></span>)
           if ue.object.new_record?
-            output << ue.text_field(:email, :id => "email_sec", :class => "email cont text ue_input", "autocomplete" => "off", "placeholder" => "Enter an email", "data-verified" => ue.object.verified)
+            output << ue.text_field(:email, :id => "email_sec", :class => "email cont text ue_input fillone", "autocomplete" => "off", "placeholder" => "Enter an email", "data-verified" => ue.object.verified)
           else
-            output << ue.text_field(:email, :id => "email_sec", :class => "email cont disabled text ue_input default_email", "autocomplete" => "off", "disabled" => true, "data-verified" => ue.object.verified)
+            output << ue.text_field(:email, :id => "email_sec", :class => "email cont disabled text ue_input default_email fillone", "autocomplete" => "off", "disabled" => true, "data-verified" => ue.object.verified)
           end
           title = t('merge_contacts.primary')
         end
