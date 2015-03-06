@@ -7,6 +7,17 @@ module ActionController
           load_for_read!
           super(key.to_s) || super(key)
         end
+
+        def has_key?(key)
+          load_for_read!
+          super(key.to_s) || super(key)
+        end
+
+        def delete(key)
+          load_for_write!
+          super(key.to_s) || super(key)
+        end
+        
       end
     end
   end
