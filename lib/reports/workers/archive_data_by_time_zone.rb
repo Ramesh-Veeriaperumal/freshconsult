@@ -8,6 +8,7 @@ module Reports
 				include Reports::Constants
 				include Redis::RedisKeys
 				include Redis::ReportsRedis
+				include Reports::ArchiveData
 
 				def perform(args)
 					args.symbolize_keys!
@@ -40,10 +41,9 @@ module Reports
 																												 :end_date => end_date})
 									add_to_reports_hash(export_hash, "job_id", job_id, 604800)
 	  						elsif (accounts_last_job and !accounts_last_job.completed? and Rails.env.production?)
-	  							FreshdeskErrorsMailer.deliver_error_email(nil,accounts_last_job,nil,
-	  							{:recipients => "srinivas@freshdesk.com",
-	  								:subject => %(Reports data archiving job of Account ID : #{id} is 
-	  																						#{accounts_last_job.status} for more than 24 hours)})
+	  							subject = %(Reports data archiving job of Account ID : #{id} is 
+  													#{accounts_last_job.status} for more than 24 hours)
+  								report_notification(subject,subject)
 	  						end
 							end
 						end
