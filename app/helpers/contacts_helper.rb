@@ -57,19 +57,19 @@ module ContactsHelper
   def render_user_email_field field
     output = []
     output << %(<ul class="user-email-bullet">)
-    @user.user_emails.sort_by(&:email).each do |mail|
+    @user.user_emails.each do |mail|
       output2 = <<HTML
       <p class="primary_email_text">#{h(mail.email)}</p>
 HTML
       output3 = <<HTML
-      <p class="verify">#{link_to_remote t('merge_contacts.verify'), 
+      <p class="verify">#{link_to_remote t('contacts.send_activation'), 
     :url => {:controller => "contacts", :id => params[:id], :action => "verify_email", :email_id => mail.id.to_s},
-    :method => :put, :loading => "jQuery('[data-verify-id=#{mail.id}]').text('#{t('merge_contacts.please_wait')}').addClass('disabled');", :complete => "jQuery('[data-verify-id=#{mail.id}]').text('#{t('merge_contacts.verify_mail')}');", :html => {:id => "verify_email", 'data-verify-id' => mail.id}}</p>
+    :method => :put, :loading => "jQuery('[data-verify-id=#{mail.id}]').text('#{t('merge_contacts.please_wait')}').addClass('disabled');", :complete => "jQuery('[data-verify-id=#{mail.id}]').text('#{t('merge_contacts.activate_email')}');", :html => {:id => "verify_email", 'data-verify-id' => mail.id}}</p>
 HTML
       output << %(<li>)
-      output << content_tag(:span, "", :class => "email-tick #{(!mail.primary_role && !mail.verified) ? "ficon-notice unverified" : "ficon-checkmark-round"} fsize-18 #{mail.primary_role ? "primary" : "secondary"}")
+      output << content_tag(:span, "", :class => "email-tick #{!mail.primary_role ? "" : "primary"}")
       output << output2 if mail.primary_role
-      output << content_tag(:p, "#{h(mail.email)}", :class => "helper ellipsis tooltip", :title => h(mail.email)) if !mail.primary_role
+      output << content_tag(:p, "#{h(mail.email)}", :class => (mail.verified ? "" : "helper")) if !mail.primary_role
       output << output3 if !mail.verified and !mail.primary_role
       output << %(</li>)
     end

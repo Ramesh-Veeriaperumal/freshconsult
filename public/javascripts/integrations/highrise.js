@@ -24,26 +24,26 @@ HighriseWidget.prototype= {
       var cLink = "https://"+this.highrise_options.domain+"/people/"+cntJson.id;
       fullName = (cntJson.first_name || "") + " " + (cntJson.last_name || "");
       contact_data = cntJson.contact_data;
-      cCompany = cntJson.company_name;
-      cCompanyUrl = (cntJson.company_id ? ("https://"+this.highrise_options.domain+"/companies/"+cntJson.company_id) : null);
+      cCompany = cntJson.company_name || "";
+      cCompanyUrl = (cntJson.company_id ? ("https://"+this.highrise_options.domain+"/companies/"+cntJson.company_id) : "");
       cPhone = contact_data.phone_numbers[0] ? contact_data.phone_numbers[0].number : "N/A";
       cMobile = contact_data.phone_numbers[1] ? contact_data.phone_numbers[1].number : "N/A";
       cWebsite = contact_data.web_addresses[0] ? contact_data.web_addresses[0].url : "N/A";
       address = contact_data.addresses[0] ? contact_data.addresses[0].street+", "+contact_data.addresses[0].city : "N/A";
-      desig = cntJson.title;
+      desig = cntJson.title || "";
       if(cCompany && !desig)
         desig = "Works"; 
       var cAddress = address || "N/A";
-      contacts.push({ name: fullName,
-                      url: cLink,
-                      designation: desig,
-                      company: cCompany,
-                      company_url: cCompanyUrl,
-                      address: cAddress,
+      contacts.push({ name: fullName.escapeHTML(),
+                      url: cLink.escapeHTML(),
+                      designation: desig.escapeHTML(),
+                      company: cCompany.escapeHTML(),
+                      company_url: cCompanyUrl.escapeHTML(),
+                      address: cAddress.escapeHTML(),
                       address_type_span: "",
-                      phone: cPhone,
-                      mobile: cMobile,
-                      website: cWebsite, 
+                      phone: cPhone.escapeHTML(),
+                      mobile: cMobile.escapeHTML(),
+                      website: cWebsite.escapeHTML(), 
                   });
     });
     return contacts;

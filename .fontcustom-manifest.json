@@ -1,7 +1,7 @@
 {
   "checksum": {
-    "previous": "c570d17626b37df638c44fac3e2c8af028f9e0c25da7d507af94e642a26f7e88",
-    "current": "c570d17626b37df638c44fac3e2c8af028f9e0c25da7d507af94e642a26f7e88"
+    "previous": "47edbf12f727cad729e9fa004640f728a371210bfa40c856a061459295a56108",
+    "current": "47edbf12f727cad729e9fa004640f728a371210bfa40c856a061459295a56108"
   },
   "fonts": [
     "public/assets/glyphs.ttf",
@@ -422,6 +422,14 @@
       "codepoint": 61799,
       "source": "public/glyphs/vectors/mail.svg"
     },
+    "mail-filled": {
+      "codepoint": 61874,
+      "source": "public/glyphs/vectors/mail-filled.svg"
+    },
+    "mail-thin": {
+      "codepoint": 61876,
+      "source": "public/glyphs/vectors/mail-thin.svg"
+    },
     "map-marker": {
       "codepoint": 61800,
       "source": "public/glyphs/vectors/map-marker.svg"
@@ -658,6 +666,10 @@
       "codepoint": 61859,
       "source": "public/glyphs/vectors/unlock.svg"
     },
+    "unverified": {
+      "codepoint": 61875,
+      "source": "public/glyphs/vectors/unverified.svg"
+    },
     "user": {
       "codepoint": 61860,
       "source": "public/glyphs/vectors/user.svg"
@@ -683,7 +695,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": false,
+    "debug": true,
     "font_name": "glyphs",
     "force": false,
     "input": {
@@ -698,7 +710,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

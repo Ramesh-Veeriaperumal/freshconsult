@@ -312,7 +312,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def statues_join
-    "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+    "INNER JOIN helpdesk_ticket_statuses ON 
           helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id"
   end

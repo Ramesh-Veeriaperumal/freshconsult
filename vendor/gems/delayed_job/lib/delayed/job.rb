@@ -37,6 +37,9 @@ module Delayed
     cattr_accessor :min_priority, :max_priority
     self.min_priority = nil
     self.max_priority = nil
+    
+    JobPodConfig = YAML.load_file(File.join('config', 'pod_info.yml'))
+    default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
 
     # When a worker is exiting, make sure we don't have any locked jobs.
     def self.clear_locks!
@@ -127,7 +130,19 @@ module Delayed
     
       priority = args.first || 0
       run_at   = args[1]
-      self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at)
+
+      pod_info = JobPodConfig['CURRENT_POD']
+
+      if Account.current
+        account_id = Account.current.id
+
+        shard = ShardMapping.lookup_with_account_id(account_id)
+        pod_info = shard.pod_info if (shard and !shard.pod_info.blank?)
+
+        Rails.logger.info "Adding job to POD: #{pod_info} for account: #{Account.current} with id #{account_id}."
+      end
+      
+      self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
     end
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).

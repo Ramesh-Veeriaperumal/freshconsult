@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   before_validation :set_primary_email, on: :update, :if => [:has_contact_merge?]
 
-  # before_save :remove_duplicate_emails, :if => :has_contact_merge?
+  before_validation :remove_duplicate_emails, :if => :has_contact_merge?
 
   #user email related callback changes for user
   before_update :make_inactive, :if => :email_changed?
@@ -114,7 +114,7 @@ class User < ActiveRecord::Base
   end
 
   def update_verified
-    self.primary_email.verified = self.active
+    UserEmail.update_all({:verified => self.active},{:user_id => self.id})
   end
 
   def update_user_table_email

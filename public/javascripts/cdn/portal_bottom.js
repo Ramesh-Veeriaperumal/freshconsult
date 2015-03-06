@@ -11,6 +11,7 @@
 //= require_tree ./../moment
 //= require security.js
 //= require portal/portal.js
+//= require portal/profile_avatar.js
 //= require portal/portal_custom_validators.js
 //= require portal/portal-app-actions.js
 //= require portal/portal-compatibility.js

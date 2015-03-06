@@ -24,7 +24,7 @@ function imgerror(source){
     } else {
       source.src = portal['image_placeholders']['profile_medium'];
     }
-    // source.onerror = "";
+    source.onerror = function(){ };
     return true;
 }
 

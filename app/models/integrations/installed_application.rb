@@ -24,7 +24,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
   def set_configs(inputs_hash)
     unless inputs_hash.blank?
-      inputs_hash = sanitize_values(inputs_hash)
+      inputs_hash = sanitize_hash_values(inputs_hash)
       self.configs = {} if self.configs.blank?
       self.configs[:inputs] = inputs_hash || {} if self.configs[:inputs].blank?
       password = inputs_hash.delete("password")
@@ -118,9 +118,20 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       end
     end
 
-    def sanitize_values(inputs_hash)
-      inputs_hash.each do |key,value| 
-        inputs_hash[key] = RailsFullSanitizer.sanitize(inputs_hash[key]) unless value.is_a?(Hash)
+    def sanitize_hash_values(inputs_hash)
+      inputs_hash.each do |key, value|
+        inputs_hash[key] = sanitize_value(value)
       end
+    end
+
+    def sanitize_array_values(inputs_array)
+      inputs_array.each_with_index do |value, index|
+        inputs_array[index] = sanitize_value(value)
+      end
+    end
+
+    def sanitize_value(value)
+      value.is_a?(Array) ? sanitize_array_values(value) : ( value.is_a?(Hash) ?
+          sanitize_hash_values(value) : RailsFullSanitizer.sanitize(value) )
     end
 end

@@ -45,7 +45,7 @@
 	 	
 		<div class="clear"></div>
 		<div>
-			<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
+			<%= form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
 				<div class="text_con">
 					<%= text_area(:survey, :feedback, :autocomplete => "off", 
 						:rel => "ghostwriter", :size => "24", :width => "100%", 
@@ -57,8 +57,7 @@
 				</div>
 			<%end%>		
 	</div>
-	</div>	
-	<script> $("#survey_form").validate(); </script>
+	</div>
 </body>
 <% cache ["v1","survey",@survey_handle.portal] do %>
 <% 

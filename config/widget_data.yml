@@ -72,7 +72,7 @@
             <div class="salesforce-name error hide"></div>
             </div>
           <script type="text/javascript">
-            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name}}" } ;
+            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | escape_html}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name}}" } ;
             CustomWidget.include_js("/javascripts/integrations/salesforce.js");
           </script>
   name: salesforce_widget
@@ -100,7 +100,7 @@
     display_in_pages: 
     - contacts_show_page_side_bar
 
-  script: "      \n      <div id=\"batchbook_widget\"  class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n      </div>\n      <script type=\"text/javascript\">\n        jQuery(document).ready(function(){\n          batchbookBundle={ domain:\"{{batchbook.domain}}\", k:\"{{batchbook.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name}}\", ver: \"{{batchbook.version}}\"};\n          CustomWidget.include_js(\"/javascripts/integrations/batchbook.js\");\n        });\n      </script>\n      "
+  script: "      \n      <div id=\"batchbook_widget\"  class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n      </div>\n      <script type=\"text/javascript\">\n        jQuery(document).ready(function(){\n          batchbookBundle={ domain:\"{{batchbook.domain}}\", k:\"{{batchbook.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name | escape_html}}\", ver: \"{{batchbook.version}}\"};\n          CustomWidget.include_js(\"/javascripts/integrations/batchbook.js\");\n        });\n      </script>\n      "
   name: batchbook_widget
   id: 9
   description: batchbook.widgets.batchbook_widget.description
@@ -111,7 +111,7 @@
     - contacts_show_page_side_bar
 
   script: "\n\n      <div id=\"highrise_widget\"  class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n      </div>\n      <script type=\"text/javascript\">\n\
-    \tjQuery(document).ready(function(){\n        highrise_options={ domain:\"{{highrise.domain}}\", k:\"{{highrise.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name}}\"};\n        CustomWidget.include_js(\"/javascripts/integrations/highrise.js\");\n\
+    \tjQuery(document).ready(function(){\n        highrise_options={ domain:\"{{highrise.domain}}\", k:\"{{highrise.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name | escape_html}}\"};\n        CustomWidget.include_js(\"/javascripts/integrations/highrise.js\");\n\
     \t});\n       </script>\n\
     \t"
   name: highrise_widget
@@ -132,7 +132,7 @@
             </div>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/mailchimp.js");
-            mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}" , fname: "{{requester.firstname}}" , lname: "{{requester.lastname}}"  } ;
+            mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}" , fname: "{{requester.firstname}}" , lname: "{{requester.lastname}}"  } ;
            </script>
   name: mailchimp_widget
   id: 11
@@ -152,7 +152,7 @@
             </div>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/constantcontact.js");
-            ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
+            ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
            </script>
   name: constantcontact_widget
   id: 12
@@ -172,7 +172,7 @@
             </div>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/icontact.js");
-            icontactBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  app_id:"{{icontact.app_id}}", username:"{{icontact.username}}", api_url:"{{icontact.api_url}}", app_id:"{{icontact.app_id}}", export: "{{export}}"  } ;
+            icontactBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}",  app_id:"{{icontact.app_id}}", username:"{{icontact.username}}", api_url:"{{icontact.api_url}}", app_id:"{{icontact.app_id}}", export: "{{export}}"  } ;
            </script>
   name: icontact_widget
   id: 13
@@ -192,7 +192,7 @@
             </div>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/campaignmonitor.js");
-            cmBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}", api_key:"{{campaignmonitor.api_key}}", client_id:"{{campaignmonitor.client_id}}", export: "{{export}}" } ;
+            cmBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", api_key:"{{campaignmonitor.api_key}}", client_id:"{{campaignmonitor.client_id}}", export: "{{export}}" } ;
            </script>
   name: campaignmonitor_widget
   id: 14

@@ -17,6 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
+
   after_update :start_recording_timestamps, :unless => :model_changes?
 
   before_save :update_dueby, :unless => :manual_sla?
@@ -572,5 +573,4 @@ private
     self.record_timestamps = true
     true
   end
-  
 end

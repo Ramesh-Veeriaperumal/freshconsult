@@ -23,6 +23,7 @@ include GoogleLoginHelper
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy]
   skip_filter :select_shard, :only => [:oauth_google_gadget,:opensocial_google]
+  skip_before_filter :determine_pod, :only => [:openid_google,:opensocial_google]
   skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
   

@@ -33,4 +33,6 @@ class User < ActiveRecord::Base
 
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
                                 "external_id", "job_title", "language"]
+
+  MAX_USER_EMAILS = 5
 end

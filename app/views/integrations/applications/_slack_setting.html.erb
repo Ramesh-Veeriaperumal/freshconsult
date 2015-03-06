@@ -1,0 +1,42 @@
+<% 
+if is_application_installed?("slack")
+  configs_hash = get_app_config("slack")
+  existing_channels = configs_hash['channels']? configs_hash['channels']:[{"channel_id" => "", "actions" => ""}]  
+else
+  configs_hash = [ {"channel_id" => "", "actions" => ""}]
+end
+%>
+<%
+  existing_channels.each do |channel|
+    channel["actions"] = channel["actions"].split(",").map { |action|   t("integrations.slack_settings.#{action}")}.join(",")
+  end
+%>
+
+<% actions = [t("integrations.slack_settings.ticket_create"),t("integrations.slack_settings.status_update"),t("integrations.slack_settings.note_create")] %>
+
+<label class = "channel pad-channel"><strong><%= t("integrations.slack_settings.channels").html_safe %></strong></label>
+<label class = "channel actions"><strong><%= t("integrations.slack_settings.notify").html_safe %></strong></label>
+
+ <% data = [
+    {:type => 'dropdown', :options => @channels, :name => 'configs[channels][][channel_id]', :refer_key => 'channel_id'},
+    {:type => 'multi_select', :options => actions, :name => 'configs[channels][][actions]', :refer_key => 'actions'}
+    ] %>
+
+<%= construct_rules(data, existing_channels.to_json.html_safe) %>
+
+<script type= "text/javascript">
+
+jQuery(function(){
+    jQuery('#construct_rules').constructRules();
+    jQuery('.edit_integrations_installed_application').submit(function(){
+      jQuery('input.multi_select_1').each(function(index,data){
+          data.value = data.value.replace('<%= t("integrations.slack_settings.note_create") %>', "note_create");
+          data.value = data.value.replace('<%= t("integrations.slack_settings.ticket_create") %>', "ticket_create");
+          data.value = data.value.replace('<%= t("integrations.slack_settings.status_update") %>', "status_update");
+      });
+    });
+    
+});
+
+</script> 
+

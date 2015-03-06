@@ -168,6 +168,8 @@ module Reports
       :agent     => [:agent_received, :agent_resolved],
       :customer  => [:customer_received, :customer_resolved]
     }
-
+    # Added the accounts for which archive data notifications needs to be sent. 
+    REPORT_NOTIFICATION_ACCOUNTS = [2,6626]
+    
 	end
 end

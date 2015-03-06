@@ -584,6 +584,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :slack do
+      collection do
+        post :create_ticket
+      end
+    end
+
     resources :user_credentials do
       collection do
         post :oauth_install
@@ -624,8 +630,8 @@ Helpkit::Application.routes.draw do
     match 'install/:app' => 'oauth#authenticate', :as => :oauth
   end
 
-  match '/http_request_proxy/fetch', 
-      :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
+  match '/http_request_proxy/fetch',
+      :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
 
   namespace :admin do
     resources :home, :only => :index

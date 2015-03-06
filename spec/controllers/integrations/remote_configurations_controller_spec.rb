@@ -41,7 +41,7 @@ describe Integrations::RemoteConfigurationsController do
 
   it "should install seoshop app for the domain" do
     post :create, params.merge(fd_cred).merge(:id => "install")
-    response.should redirect_to "https://integrations.freshdesk.com/helpdesk/dashboard"
+    response.should redirect_to "https://integrations.freshdesk.com/helpdesk"
     session[:flash][:notice].should =~ /Application is successfully installed in this domain/
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
   end
@@ -56,7 +56,7 @@ describe Integrations::RemoteConfigurationsController do
   it "should uninstall seoshop app for the domain" do
     post :create, params.merge(fd_cred).merge(:id => "install")
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
-    response.should redirect_to "https://integrations.freshdesk.com/helpdesk/dashboard"
+    response.should redirect_to "https://integrations.freshdesk.com/helpdesk"
     session[:flash][:notice].should =~ /Application is successfully uninstalled in this domain/
   end
 
