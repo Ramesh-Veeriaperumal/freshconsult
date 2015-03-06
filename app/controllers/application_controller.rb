@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
+  before_filter :remove_rails_3_flash_before
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :force_utf8_params
@@ -20,6 +21,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   before_filter :logging_details 
   before_filter :remove_pjax_param 
+
+  after_filter :remove_rails_3_flash_after
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -226,6 +229,20 @@ class ApplicationController < ActionController::Base
         }
       end
     end
+
+    #Clear rails 3 flash TODO :: Remove once migrated completely to rails 3
+    def remove_rails_3_flash_before
+      if self.flash && self.flash.class == ActionDispatch::Flash::FlashHash
+        self.flash.instance_variable_set(:@flashes, {} )
+      end
+    end
+
+    def remove_rails_3_flash_after
+      if session[:flash] && session[:flash].class == ActionDispatch::Flash::FlashHash
+        session.delete(:flash)
+      end
+    end
+    #End here
 
     def api_request?
       request.cookies["_helpkit_session"]
