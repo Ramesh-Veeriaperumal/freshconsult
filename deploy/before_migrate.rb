@@ -31,4 +31,4 @@ run "ln -nfs #{shared_path}/config/chat.yml #{rel_path}/config/chat.yml"
 run "ln -nfs #{shared_path}/config/email.yml #{rel_path}/config/email.yml"
 run "ln -nfs #{shared_path}/config/pod_info.yml #{rel_path}/config/pod_info.yml"
 run "ln -nfs #{shared_path}/config/redis_routes.yml #{rel_path}/config/redis_routes.yml"
-run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{rel_path}/public" if ::File.directory?("/data/helpkit/current") && ::File.directory?("/data/helpkit/current/public/assets")
+# run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{rel_path}/public" if ::File.directory?("/data/helpkit/current") && ::File.directory?("/data/helpkit/current/public/assets")
