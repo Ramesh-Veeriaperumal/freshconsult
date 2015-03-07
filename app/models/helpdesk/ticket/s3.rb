@@ -7,7 +7,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Resque.enqueue(::Workers::Helpkit::Ticket::TicketBodyJobs, {
                      :account_id => self.account_id,
                      :key_id => self.id,
-                     :create => true
+                     :create => true,
+                     :requester_id => self.requester_id
                      # :table_name => table_name
     }) if s3_create
   end
@@ -28,7 +29,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # Heldpesk::TicketBodyWeekly.create_or_update(table_name,value)
     Resque.enqueue(::Workers::Helpkit::Ticket::UpdateTicketBodyJobs, {
                      :account_id => self.account_id,
-                     :key_id => self.id
+                     :key_id => self.id,
                      # :table_name => table_name
     }) if s3_update
   end

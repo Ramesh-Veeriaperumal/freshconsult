@@ -11,6 +11,8 @@ class Workers::Helpkit::Note::NoteBodyJobs
         bucket = S3_CONFIG[:note_body]
         unless args[:delete]
           note_body = Helpdesk::NoteOldBody.find_by_note_id_and_account_id(args[:key_id],args[:account_id])
+          note_body_size = note_body.body.bytesize
+          $statsd.increment "note_body.#{args[:user_id]}" , note_body_size
           if args[:retry].to_i < (WorkerNoteBodyRetry-1)
             args[:data] = note_body.attributes
           else
