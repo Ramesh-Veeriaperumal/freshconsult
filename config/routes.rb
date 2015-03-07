@@ -1775,6 +1775,8 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    
+    match '/articles/:id/' => 'solutions/articles#show'
 
     resources :tickets do
       collection do
