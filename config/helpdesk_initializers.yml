@@ -35,6 +35,7 @@ helpdesk:
     - resque
     - riak
     - ruby193_monkey_patches
+    - rails2_3_session_share_patch
     - sidekiq
     - site_cloudfront_asset_host
     - site_keys
