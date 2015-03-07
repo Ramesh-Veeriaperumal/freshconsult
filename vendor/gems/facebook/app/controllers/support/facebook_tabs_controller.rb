@@ -11,7 +11,7 @@ class Support::FacebookTabsController < SupportController
   def redirect
     portal_url = portal_for_page if @page_info && facebook_page_tab?
     unless portal_url
-      render :file => "#{Rails.root}/public/facebook-404.html"
+      render :file => "#{Rails.root}/public/facebook-404.html", :layout => false
     else
       if @page_info[:oauth_token]
         redirect_to "#{portal_url}/facebook/sso/facebook"
