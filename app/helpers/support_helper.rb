@@ -67,10 +67,10 @@ module SupportHelper
   
   def default_responsive_settings portal
     if( portal['settings']['nonResponsive'] != "true" )
-      %(<link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
-    	  <link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
-    	  <link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+      %(<link rel="apple-touch-icon" href="/assets/touch/touch-icon-iphone.png" />
+    	  <link rel="apple-touch-icon" sizes="72x72" href="/assets/touch/touch-icon-ipad.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/assets/touch/touch-icon-iphone-retina.png" />
+    	  <link rel="apple-touch-icon" sizes="144x144" href="/assets/touch/touch-icon-ipad-retina.png" />
     	  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" /> )
     end
   end
@@ -202,7 +202,7 @@ module SupportHelper
 	def profile_image user, more_classes = "", width = "50px", height = "50px"
 		output = []
 		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}">
-							<img src="/images/misc/profile_blank_thumb.gif" onerror="imgerror(this)" )
+							<img src="/assets/misc/profile_blank_thumb.gif" onerror="imgerror(this)" )
 		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
 		output << %(			width="#{width}" height="#{height}" />
 						</div> )
@@ -249,8 +249,8 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon = MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal],30.days.to_i) do
-     			current_portal.fav_icon.nil? ? '/images/misc/favicon.ico?123457' :
+		fav_icon = MemcacheKeys.fetch(["v7","portal","fav_ico",current_portal],30.days.to_i) do
+     			current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123458' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
                         :expires => 30.days.to_i,
@@ -672,7 +672,7 @@ module SupportHelper
 		output << %(<div class="cs-g-3 attachment">)
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
-		output << %(<img src="/images/#{cloud_file.provider}_big.png"></span>)
+		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
