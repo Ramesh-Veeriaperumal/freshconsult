@@ -14,7 +14,7 @@
 						<% if field_value.present? %>
 							<%= ticket_label :helpdesk_ticket, field %>
 							<div class="lead-small">
-								<%= simple_format(field_value) %>
+								<%= simple_format(field_value.to_s) %>
 							</div>
 							<% if field.field_type == "nested_field" %>
 								<div class="tabbed">
