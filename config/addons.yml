@@ -1,5 +1,5 @@
 Agent Collision: 
-  - :agent_collision
+  - :collision
 Chat:
   - :chat
   - :chat_enable
