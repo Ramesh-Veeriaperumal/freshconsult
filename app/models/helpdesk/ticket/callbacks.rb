@@ -573,5 +573,4 @@ private
     self.record_timestamps = true
     true
   end
-
 end

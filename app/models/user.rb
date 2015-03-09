@@ -667,6 +667,10 @@ class User < ActiveRecord::Base
     (@all_changes.keys & es_columns).any?
   end
 
+  def company_id
+    self.customer_id
+  end
+
 
   private
     def name_part(part)

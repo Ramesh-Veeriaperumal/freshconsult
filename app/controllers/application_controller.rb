@@ -127,7 +127,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless @current_account
-          render("/errors/invalid_domain")
+          render("/errors/invalid_domain", :layout => false)
         else
           render_404
         end
