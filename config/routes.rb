@@ -1618,10 +1618,11 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  match 'accounts/create_account_google' => 'accounts#create_account_google', :via => :put
   resources :google_signup, :controller => 'google_signup' do
     collection do
-      get :associate_local_to_google
-      get :associate_google_account
+      put :associate_local_to_google
+      put :associate_google_account
     end
   end
 
