@@ -1142,6 +1142,7 @@ Helpkit::Application.routes.draw do
         post :follow
         post :unfollow
         get :user_following
+        post :user_following
       end
     end
   end
