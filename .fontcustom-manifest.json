@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "35940ac3c77c619d481b0dcc6b967cd91e75340a9fb1b9947e78515a816e2cf9",
-    "current": "35940ac3c77c619d481b0dcc6b967cd91e75340a9fb1b9947e78515a816e2cf9"
+    "previous": "efa5c1ad95f18f62e089f4a1633c9cef7d3fdd2f02fdac8b720a99e656d96bd5",
+    "current": "efa5c1ad95f18f62e089f4a1633c9cef7d3fdd2f02fdac8b720a99e656d96bd5"
   },
   "fonts": [
-    "public/assets/glyphs.ttf",
-    "public/assets/glyphs.svg",
-    "public/assets/glyphs.woff",
-    "public/assets/glyphs.eot"
+    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.ttf",
+    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.svg",
+    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.woff",
+    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.eot"
   ],
   "glyphs": {
     "account": {
@@ -702,7 +702,7 @@
       "templates": "public/glyphs/templates",
       "vectors": "public/glyphs/vectors"
     },
-    "no_hash": true,
+    "no_hash": false,
     "output": {
       "css": "public/src/fonts",
       "fonts": "public/assets",
