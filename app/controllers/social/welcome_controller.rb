@@ -108,7 +108,7 @@ class Social::WelcomeController < ApplicationController
   
   def additional_settings?
     settings = current_account.account_additional_settings.additional_settings
-    settings.nil? || settings[:enable_social]
+    settings.blank? || settings[:enable_social]
   end
 
   def handles_associated?
