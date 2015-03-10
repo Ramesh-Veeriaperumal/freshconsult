@@ -3,7 +3,7 @@ class Workers::Webhook
   extend Va::Webhook::ThrottlerUtil
 
   RETRY_DELAY = 30.minutes.to_i
-  RETRY_LIMIT = Rails.env.test? ? 0 : 48
+  RETRY_LIMIT = Rails.env.test? ? 0 : 4
   SUCCESS     = 200..299
   REDIRECTION = 300..399
 
