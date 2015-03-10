@@ -5,7 +5,7 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg">
 <metadata>
-Created by FontForge 20120731 at Tue Mar 10 16:09:26 2015
+Created by FontForge 20120731 at Tue Mar 10 17:55:41 2015
  By Parsuram
 Created by Parsuram with FontForge 2.0 (http://fontforge.sf.net)
 </metadata>
@@ -22,7 +22,7 @@ Created by Parsuram with FontForge 2.0 (http://fontforge.sf.net)
     bbox="-0.424634 -65 626.626 448.392"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F1A9"
+    unicode-range="U+F100-F1AA"
   />
     <missing-glyph />
     <glyph glyph-name="uniF11F" unicode="&#xf11f;" horiz-adv-x="499" 
@@ -104,7 +104,7 @@ d="M-64 448zM9 137c-12 12 -12 34 0 46c6 6 15 9 23 9s17 -3 23 -9l105 -106v307c0 1
     <glyph glyph-name="uniF145" unicode="&#xf145;" horiz-adv-x="449" 
 d="M425 444l24 -25l-425 -421l-24 24l103 103c-9 18 -15 38 -16 60h26c1 -14 5 -28 10 -41l38 38c-1 5 -1 10 -1 15v169c0 43 35 79 78 79s78 -36 78 -79v-30zM389 185c-4 -68 -53 -124 -118 -139v-61h104c6 0 10 -4 10 -10v-25c0 -6 -4 -11 -10 -11h-274c-6 0 -10 5 -10 11
 v25c0 6 4 10 10 10h103v61c-23 5 -44 16 -62 30l19 19c21 -16 48 -26 77 -26c66 0 120 51 124 116h27zM316 197c0 -43 -35 -78 -78 -78c-15 0 -29 4 -41 11l119 118v-51z" />
-    <glyph glyph-name="uniF167" unicode="&#xf167;" horiz-adv-x="497" 
+    <glyph glyph-name="uniF1AA" unicode="&#xf1aa;" horiz-adv-x="497" 
 d="M438 383c32 0 59 -26 59 -59v-264c0 -33 -26 -59 -59 -59h-379c-33 0 -59 26 -59 59v264c0 33 26 59 59 59h379zM479 46c6 6 5 16 -1 22l-157 144l135 126c6 6 7 17 1 23s-16 6 -22 0l-187 -174l-188 174c-6 6 -16 6 -22 0s-5 -17 1 -23l135 -126l-157 -144
 c-6 -6 -7 -16 -1 -22s16 -7 22 -1l159 146l40 -38c3 -3 6 -4 10 -4h1v0c4 0 7 1 10 4l40 38l158 -146c6 -6 17 -5 23 1z" />
     <glyph glyph-name="uniF174" unicode="&#xf174;" horiz-adv-x="499" 
