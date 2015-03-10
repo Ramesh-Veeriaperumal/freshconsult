@@ -102,7 +102,9 @@ module Mobile::Actions::Ticket
       :only => [ :id, :display_id, :subject, :created_at ],
       :methods => [ :requester_name ]
     }
-    as_json(options)
+    result = as_json(options)
+    result["ticket"] = result.delete "helpdesk_ticket"
+    result      
   end
 
   def formatted_created_at(format = "%B %e %Y @ %I:%M %p")
