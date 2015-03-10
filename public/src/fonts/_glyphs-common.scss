@@ -1,4 +1,4 @@
-	$font-class: "ficon-";
+$font-class: "ficon-";
 
 // Default font size will be taken from the parents font size
 [class*="#{$font-class}"] {
@@ -33,8 +33,6 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 .forum-type-ideas{               @extend .#{$font-class}bulb; }
 .forum-type-howto{               @extend .#{$font-class}help; }
 .agent-preview{                  @extend .#{$font-class}open-in-new-window; }
-.icons-like{ 					 @extend .#{$font-class}like; }
-.icons-dislike{ 			 	 @extend .#{$font-class}dislike; }
 
 // Hover card font icons
 .contact_hover .product-twitter { 			@extend .#{$font-class}twitter-o;}
