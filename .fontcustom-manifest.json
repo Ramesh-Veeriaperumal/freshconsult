@@ -1,7 +1,7 @@
 {
   "checksum": {
-    "previous": "5a7f638822a8b77a289ca6ad9b582327f9fad285f043bd389ff4a44cb7548c15",
-    "current": "5a7f638822a8b77a289ca6ad9b582327f9fad285f043bd389ff4a44cb7548c15"
+    "previous": "35940ac3c77c619d481b0dcc6b967cd91e75340a9fb1b9947e78515a816e2cf9",
+    "current": "35940ac3c77c619d481b0dcc6b967cd91e75340a9fb1b9947e78515a816e2cf9"
   },
   "fonts": [
     "public/assets/glyphs.ttf",
@@ -423,7 +423,7 @@
       "source": "public/glyphs/vectors/mail.svg"
     },
     "mail-filled": {
-      "codepoint": 61799,
+      "codepoint": 61866,
       "source": "public/glyphs/vectors/mail-filled.svg"
     },
     "mail-thin": {
@@ -697,7 +697,7 @@
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
     "font_name": "glyphs",
-    "force": false,
+    "force": true,
     "input": {
       "templates": "public/glyphs/templates",
       "vectors": "public/glyphs/vectors"
