@@ -924,6 +924,7 @@ Helpkit::Application.routes.draw do
   match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/all' => 'search/home#index'
+  match '/search/home' => 'search/home#index', :as => :search_home
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
