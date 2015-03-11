@@ -35,7 +35,7 @@ class ProfilesController < ApplicationController
       Rails.logger.error "Something went wrong while resetting the api key ( #{e.inspect})"
       flash[:error] = t("flash.profile.api_key.reset_failure")
     end
-    render :action => :edit
+    redirect_to edit_profile_url(current_user.id)
   end
 
 def destroy

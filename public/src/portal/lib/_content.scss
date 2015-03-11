@@ -123,6 +123,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include float(right);
 	font-weight: bold;
 	margin-top: -35px;
+	@if $rtl { margin-top: 0 }
 }
 
 .tabbed{

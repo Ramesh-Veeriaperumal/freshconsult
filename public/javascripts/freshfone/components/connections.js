@@ -82,7 +82,7 @@ var FreshfoneConnection;
 					}
 				},
 				error: function () {
-					ffLogger.logIssue("Unable accept the incoming call for "+ CURRENT_USER.id, { "params" : data });
+					ffLogger.logIssue("Unable accept the incoming call for "+ freshfone.current_user_details.id, { "params" : data });
 				 }
 			});
 		},

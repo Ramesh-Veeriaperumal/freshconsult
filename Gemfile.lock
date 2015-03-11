@@ -545,7 +545,7 @@ GEM
     json-compare (0.1.8)
     json_pure (1.8.1)
     jwt (1.0.0)
-    koala (1.10.0)
+    koala (1.10.1)
       addressable
       faraday
       multi_json
@@ -911,7 +911,7 @@ DEPENDENCIES
   json (~> 1.8)
   json-compare (= 0.1.8)
   jwt (= 1.0.0)
-  koala (= 1.10.0)
+  koala (= 1.10.1)
   lhm!
   liquid!
   lockfile (= 1.4.3)
@@ -997,7 +997,7 @@ DEPENDENCIES
   text_data_store!
   therubyracer
   tire!
-  turbo-sprockets-rails3
+  turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
   twitter (~> 5.5.1)
   tzinfo (~> 0.3.29)

@@ -4,6 +4,9 @@ class ScenarioAutomation < VaRule
   include Helpdesk::Accessible::ElasticSearchMethods
   
   attr_protected :account_id
+  belongs_to_account
+  
+  default_scope where(:rule_type => VAConfig::SCENARIO_AUTOMATION)
 
   has_one :accessible,
     :class_name => 'Helpdesk::Access',
@@ -49,12 +52,12 @@ class ScenarioAutomation < VaRule
   }
 
   def to_indexed_json
-    to_json({
-      :root =>"scenario_automation", 
-      :tailored_json => true, 
-      :only => [:account_id, :name, :rule_type, :active],
-      :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
-      })
+   as_json({
+     :root =>"scenario_automation", 
+     :tailored_json => true, 
+     :only => [:account_id, :name, :rule_type, :active],
+     :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+     }).to_json
   end
 
   private

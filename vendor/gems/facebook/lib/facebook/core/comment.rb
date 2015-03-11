@@ -43,7 +43,7 @@ class Facebook::Core::Comment
       post_id =  parent.fb_post.original_post_id
       comment = @rest.put_comment(post_id, note.body)
       comment_id = comment.is_a?(Hash) ? comment["id"] : comment
-      post_type = comment.is_a?(Hash) ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
+      post_type = parent.fb_post.comment? ? POST_TYPE_CODE[:reply_to_comment] : POST_TYPE_CODE[:comment]
 
       #create fb_post for this note
       unless comment.blank?

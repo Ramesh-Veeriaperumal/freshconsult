@@ -10,22 +10,24 @@
 
 <ul id="page_search_results" style="display:none;" class="community-search result-wrapper"></ul>
 
-<%= javascript_include_tag :'cdn/search'  %>
-
 <script type="text/javascript">
-	var SEARCH_RESULT_LANG = { by : "<%= t('search.by') %>",
-							in : "<%= t('search.in') %>" }
+var afterSearchLoaded = function(){
+	window.SEARCH_RESULT_LANG = {
+		by : "<%= t('search.by') %>",
+		in : "<%= t('search.in') %>"
+	}
+	
 	callbackToPageSearch = function(string){
 								jQuery.ajax({ 
 									url: "<%=url%>"+encodeURIComponent(string),
 									dataType: "json",
 									success: function(data){
-										var result_list = jQuery("#page_search_results"),
-										resultHtml = '';
+										var result_list = jQuery("#page_search_results");
+										var resultHtml = ''
 										if(data.results.length){
 								 			data.results.each(function(result){
 												var resultType = result.result_type,
-												templateName = ["app/search/templates/", resultType].join("");
+												    templateName = ["app/search/templates/", resultType].join("");
 												if(result) { resultHtml += (JST[templateName](result)); }
 											})
 										} else {
@@ -50,8 +52,17 @@
 			jQuery(this).parent().removeClass("sloading loading-small loading-right");				
 		}
 	});
+	
 	jQuery('.page-search').bind("submit", function(ev){
 		ev.preventDefault()
 		return false
-	})
+	});
+	
+}
+
+if (!Fjax.Assets.alreadyLoaded('search')) {
+	Fjax.Assets.serve('search', afterSearchLoaded);
+} else {
+	afterSearchLoaded();
+}
 </script>

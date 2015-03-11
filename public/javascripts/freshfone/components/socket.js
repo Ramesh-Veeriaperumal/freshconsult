@@ -99,7 +99,7 @@ var FreshfoneSocket;
 
 					if (data.user) { 
 						self.addToAvailableAgents(data.user);
-						ffLogger.logIssue("Freshfone Agent online :: ac_" + freshfone.current_account  + " :: user_" + CURRENT_USER.id , {
+						ffLogger.logIssue("Freshfone Agent online :: ac_" + freshfone.current_account  + " :: user_" + freshfone.current_user_details.id , {
 							user_id: data.user.id,
 							user_name: data.user.name
 						});
@@ -112,7 +112,7 @@ var FreshfoneSocket;
 		
 					if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
 					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.OFFLINE); }
-					ffLogger.logIssue("Freshfone Agent Offline :: ac_" + freshfone.current_account  + " :: user_" + CURRENT_USER.id, {
+					ffLogger.logIssue("Freshfone Agent Offline :: ac_" + freshfone.current_account  + " :: user_" + freshfone.current_user_details.id, {
 						user_id: data.user.id,
 						user_name: data.user.name
 					});

@@ -69,8 +69,8 @@
 			if (!this.alreadyLoaded(name, 'plugins')) {
 				$LAB.script(this.javascripts.plugins[name]).wait(function () {
 					$this.loaded.plugins.push(name);
-					if (typeof ($this.callbacks[name]) === 'function') {
-						$this.callbacks[name]();
+					if (typeof (Fjax.Callbacks[name]) === 'function') {						
+						Fjax.Callbacks[name]();
 					}
 				});
 				
@@ -78,19 +78,8 @@
 					this.load_css(this.stylesheets.plugins[name]);
 				}
 			}
-		},
-		
-		callbacks: {
-			codemirror: function () {
-				$('[rel=codemirror]').livequery(function () {
-          $(this).codemirror($(this).data('codemirrorOptions'));
-        });
-			},
-			
-			colorpicker: function () {
-				console.log('Init the color picker plugin');
-			}
 		}
+
 	};
 	
 }(window.jQuery));

@@ -69,7 +69,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
       permissions
     end
 
-    def accessible_from_es(model_name,options,visible_options={})
+    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil)
       begin
         es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
         return nil unless Tire.index(es_alias).exists?
@@ -83,6 +83,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
               f.filter :bool, :should => es_filter_query(user_groups,visible_options)
             end
           end
+          search.sort { |t| t.by(sort_option,'asc') } if sort_option
         end
         item.results.results
       rescue Exception => e

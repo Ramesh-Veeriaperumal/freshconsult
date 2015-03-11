@@ -12,7 +12,7 @@
 		    				<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected], :class => "displayed_field" %> 
 							<%= head[:label] %>														
 		  				</label>
-		  				<% head[:levels].each do |level| %>
+		  				<%= head[:levels].each do |level| %>
 		  					<br />
 			  				<label class="checkbox level"> 
 			    				<%= check_box_tag "export_fields[#{level[:label]}]", level[:name], false  %> 
