@@ -6,7 +6,7 @@ class ScenarioAutomation < VaRule
   attr_protected :account_id
   belongs_to_account
   
-  default_scope where(:rule_type => VAConfig::SCENARIO_AUTOMATION)
+  default_scope { where(:rule_type => VAConfig::SCENARIO_AUTOMATION) }
 
   has_one :accessible,
     :class_name => 'Helpdesk::Access',
