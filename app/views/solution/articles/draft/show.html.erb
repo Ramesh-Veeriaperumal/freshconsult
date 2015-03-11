@@ -1,0 +1,99 @@
+<div class="folder-2col"> 
+	<div class="folder_section" id="folder-section">
+		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
+	</div>  	
+
+	<% current_item = (@article.draft || @article) %>
+
+	<div class="artical_section" id="article-section">
+		<div class="crumbs">
+			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+			<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
+			<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%> 
+			<%= preview_portal(support_draft_preview_path(@article, "draft"), @article.folder.category) if @article.draft.present? %>
+			<%= (preview_portal(support_solutions_article_path(@article.id), @article.folder.category) unless @article.draft.present?) if @article.published? %>
+		</div>
+
+		<% if @article.draft or @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
+			<div class="draft-info-box">
+				<% if @article.draft %>
+					<%= t('solution.articles.draft.show_page_msg') %> 
+					<%= current_user == current_item.current_author ? t('solution.articles.draft.you') : current_item.current_author.name %> 
+					<span data-livestamp="<%= @article.draft.last_updated_timestamp %>"></span> (<%= formated_date(current_item.updated_at) %>)
+				<% else %>
+					You are viewing an unpublished version of the article.
+				<% end %>
+					
+					<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'discard-draft draft-info-btn') if @article.published? %>
+
+					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'publish-draft draft-info-btn') %>
+
+					<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link" ) if @article.published? %>
+			</div>
+		<% end %> 
+
+		<div class="floatr prop-edit">
+			<% if privilege?(:publish_solution) %>
+				<a href="<%= properties_partial_solution_category_folder_article_path %>" data-target="#article-properties" 
+					rel="freshdialog" data-width="700px" class="article-properties" title="<%= t('solution.articles.properties') %>" 
+					data-close-label="<%= t('cancel') %>" data-close-label="<%= t('save') %>">
+					<%= t('solution.articles.properties') %>
+				</a>
+				&nbsp; | &nbsp;
+				<%= link_to(t('solution.articles.edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
+			<% end %>
+		</div>
+
+		<h2 class="title">
+			<%= h(current_item.title) %>
+		</h2>
+		<div class="help-text">
+			By <b> <%= (@article.draft ? current_item.current_author.name : current_item.user.name) %></b>, <%= formated_date(current_item.modified_at) %>
+			<%= content_tag(:span, t('private'), :class => "label tooltip", :title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
+			<span class="label"><%= t(@article.type_name) %></span>
+		</div> 
+
+		<div class="solution_title">
+			<div class="tag_list"> 
+				<% @article.tags.map.each do |t| %> 
+					<div class="item">
+						<% if privilege?(:publish_solution) %>
+							<%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+						<% end %>
+						<%= h(t.name) %>
+					</div>
+				<% end %>
+			</div>
+		</div>
+
+		<span class="seperator"></span>
+		
+		<div class="solutions_text clearfix">
+			<%= current_item.description.html_safe %>
+		</div>
+
+		<ul class="attachment_list">
+			<% current_item.attachments.each do |attached| %> 
+				<%= attachment_list(attached, false, "article",nil) %>
+			<% end %>
+			<% current_item.cloud_files.each do |cloud_file| %> 
+				<%= attachment_list(cloud_file, false, "cloud_file",nil) %>
+			<% end %>
+		</ul>
+
+		<span class="seperator"></span> 
+		<div id="article_voting">
+			<%= render :partial => "solution/articles/voting", :object => @article %>
+		</div>
+	</div>
+</div>
+</div> 
+
+<div class="hide" id="article-properties">
+</div>
+
+<script type="text/javascript">
+  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
+    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+  highlight_code();
+</script>

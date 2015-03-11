@@ -1,0 +1,35 @@
+<h3 class="lead itil-hide"><%=t('solution.edit')%></h3>
+
+<div class="draft-info-box <%= "hide" unless @article.draft.present? %>">
+	<div class="autosave-notif span10">
+  	<% if @article.draft %>
+	  	<%= t('solution.articles.draft.show_page_msg') %> 
+			<%= current_user == @article.draft.current_author ? t('solution.articles.draft.you') : @article.draft.current_author.name %>
+			<span data-livestamp="<%= @article.draft.last_updated_timestamp %>"></span>
+			<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'discard-draft draft-info-btn') if @article.published? %>
+		<% end %>
+	</div>
+	<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link align-right span2" ) if @article.published? %>
+</div>
+
+<%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form", :class => "article-edit-form"} do |f| %>
+	
+	<%= render :partial => 'solution/articles/draft/article_form', :locals => { :f => f, :edit =>true } %>
+
+	<div class="button-container align-right">
+	    <% if privilege?(:delete_solution, @article) %>
+	  		<div class="pull-left itil-hide">
+	  			<%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
+	  		</div>
+	    <% end %>
+
+	  	<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn cancel-link hide" ) %>
+	  	<%= submit_tag t('cancel'), :name => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
+	    <%= submit_tag t('solution.articles.save_as_draft'), :name => "save_as_draft", :class => "btn btn-primary" %>
+			<%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary" %>
+
+	</div>
+<% end %>
+
+<div class="hide" id="article-properties">
+</div>

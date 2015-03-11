@@ -1,30 +1,40 @@
 
-<% unless (drafts.size == 0) %>
-	<div class="artical-list row-fluid" id="article_list">
-		<% drafts.each do |draft| %>
-			<div class="article-item span12 pull-right">
-				<div class="article-title span7">
-					<%= link_to("<i class='icons-edit-forum'></i>".html_safe, edit_solution_category_folder_article_path(draft.article.folder.category, draft.article.folder, draft.article), :title => "Edit", :class=>'pull-left mr6 tooltip') if privilege?(:manage_solutions) %>
-					<div class='article-desc'>
-							<%= link_to h(draft.title), solution_category_folder_article_path(draft.article.folder.category, draft.article.folder, draft.article) %>
-							<div class="muted">
-								<%= t('solution.user_details', :user => draft.current_author.name, :time => formated_date( draft.modified_at) ).html_safe %>
-							</div>
-					</div>
+<div class="artical-list row-fluid" id="draft_list">
+	<% articles.each do |article| %>
+
+		<% author = article.draft.present? ? article.draft.current_author : article.user %>
+		<% current_item = article.draft || article %>
+		<div class="article-item span12 pull-right">
+			<div class="article-title span10">
+				<div class="avatar-wrap">
+					<%= user_avatar(author) %>
 				</div>
-				<div class="span5 mt12 clear-left-margin">
-					<div class='span7 text-center article-info'>
-						<%= draft.article.folder.name %>
-					</div>
-					<div class='muted article-likes span5 text-right'>
-						<%= draft.article.folder.category.name %>
-					</div>
+				<div class='article-desc'>
+						<div class="muted">
+							<%= t('solution.draft_user_details', :user => author.name).html_safe %> 
+							<span data-livestamp="<%= current_item.modified_at.to_i %>"></span>
+						</div>
+						<%#= link_to h((current_item.title).truncate(75)), solution_category_folder_article_path(article.folder.category, article.folder, article) %>
+						
+						<%= pjax_link_to h(current_item.title), solution_category_folder_article_path(article.folder.category, article.folder, article), {} %>
+
+						<div class="muted">
+							<%= t('search.in') %> <%= article.folder.name %>
+						</div>
 				</div>
 			</div>
-		<% end %>
-	</div>
-<% else %>
-	<div class="big-info">
-		<div class="no-info-text"><%= t('solutions.drafts.empty').html_safe %> </div>
-	</div>
-<% end %>
+			<div class="span2">
+				<!-- <a href="<%= edit_solution_category_folder_article_path(article.folder.category_id, article.folder, article) %>" 
+					class="ficon-edit fsize-23 tooltip pull-right align-right draft-edit-icon" title="Edit"> </a> -->
+
+				<%= pjax_link_to "", 
+						edit_solution_category_folder_article_path(article.folder.category_id, article.folder, article), 
+						{
+							:class => "ficon-edit fsize-23 tooltip pull-right align-right draft-edit-icon",
+							:title => t('edit')
+						} 
+				%>	
+			</div>
+		</div>
+	<% end %>
+</div>

@@ -1,0 +1,84 @@
+<div class="pull-right">
+	<% if privilege?(:publish_solution) %>
+		<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "btn" unless(folder.articles.size <= 1)%>
+	<% end %>
+	<% if privilege?(:manage_solutions) %>
+		<%= link_to t('edit').html_safe, edit_solution_category_folder_path(category, folder), :class => "btn" unless category.is_default?%>
+	<% end %>
+	<% if privilege?(:publish_solution) %>
+		<%= link_to (t('solution.add') + "<span class='symbols-add'></span>").html_safe, new_solution_category_folder_article_path(category , folder), :class => "btn btn-primary" %>
+	<% end %>
+</div>
+
+<h3 class="lead"><%= h(folder.name) %></h3> 
+<p class="lead-desc">
+	<%= h(folder.description) %>	
+</p> 
+<div class="intro">
+	<%=t('solution.folders.folder_form.visible_to').html_safe%>:
+	<% if folder.has_company_visiblity?%>
+	  <% folder.customer_folders.each do |cust|%>
+		  <span class="label notice"><%=cust.customer.name%></span>
+	  <%end%>
+  <%else%>
+    <span class="label notice"><%=Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]%></span>
+  <%end%>
+</div>
+
+<!-- Need to check visiblity is shown to the people or not -->
+
+
+<% unless (folder.articles.size == 0) %>
+	<div class="artical-list row-fluid" id="article_list">
+		<% folder.articles.each do |article| %>
+			<div class="article-item span12 pull-right">
+				<div class="article-title span7">
+					<% if privilege?(:manage_solutions) %>
+						<% if  (article.draft.present? and article.draft.locked?) %>
+							<%= link_to("<i class='icons-edit-forum'></i>".html_safe, "#", :title => "Locked", :class=>'pull-left mr6 tooltip') %>
+						<% else %>
+							<%= link_to("<i class='icons-edit-forum'></i>".html_safe, edit_solution_category_folder_article_path(category, folder, article), :title => "Edit", :class=>'pull-left mr6 tooltip') %>
+						<% end %>
+					<% end %>
+					<div class='article-desc'>
+						<!-- This is for normal thing with out draft feature enabled -->
+							<%= link_to h( (article.draft || article).title ), solution_category_folder_article_path(category, folder, article), :class => (article.published? ? "" : "unpublished-title") %>
+							<div class="muted">
+								<%= t('solution.user_details', :user => article.user.name, :time => formated_date( (article || artcile.draft).modified_at) ).html_safe %>
+							</div>
+					</div>
+				</div>
+				<div class="span5 mt12 clear-left-margin">
+					<div class='span7 text-center article-info'>
+						<% if !article.published? or article.draft.present? %>
+							<span class="label">
+								<%= t('solutions.status.draft') %>
+							</span>
+						<% end %>
+					</div>
+					<div class='muted article-likes span5 text-right'>
+						<span class="text-left">
+							<i class="icons-like <%= 'null-value' if article.thumbs_up.eql?(0) %>" ></i>
+							<%= article.thumbs_up %>
+						</span>
+						<span>
+							<i class="icons-dislike <%= 'null-value' if article.thumbs_down.eql?(0) %>"></i>
+							<span class="<%= 'highlight' if (article.thumbs_down >= article.thumbs_up) && (article.thumbs_down != 0) %>"><%= article.thumbs_down %> </span>
+						</span>
+					</div>
+				</div>
+			</div>
+		<% end %>
+	</div>
+<% else %>
+	<div class="big-info">
+		<div class="no-info-text"><%= t('solution.info7').html_safe %> </div>  
+    <% if privilege?(:publish_solution) %>
+		  <%= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+    <% end %>
+	</div>
+<% end %>
+
+<% if privilege?(:publish_solution) %>
+  <%= render :partial => "/shared/reorder_list", :locals => { :items => folder.articles, :action_url => reorder_solution_category_folder_articles_path(category, folder), :title => :title, :container_id => "artical_sort", :reorder_id => "article_reorder_button", :list_id => "article_list"} %>
+<% end %>

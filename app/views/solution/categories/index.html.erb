@@ -8,7 +8,7 @@
 <% end %>
 <% if privilege?(:manage_solutions) -%>
 	<div class="pull-right align-right itil-hide">
-		<%= link_to t('solutions.status.draft'), solution_drafts_path %>
+		<%= pjax_link_to t('solutions.status.draft'), solution_drafts_path, { :class => "btn"} %>
 	   <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
 		<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "btn btn-primary" %>
 	</div>

@@ -6,7 +6,7 @@ class DraftMailer < ActionMailer::Base
   layout "email_font"
 
 	def self.draft_discard_notification(draft, article, created_author, current_user, portal)
-		deliver_draft_discard_email(draft, article, created_author, current_user, portal)
+		draft_discard_email(draft, article, created_author, current_user, portal)
 	end
 	
   def draft_discard_email(draft, article, created_author, current_user, portal)

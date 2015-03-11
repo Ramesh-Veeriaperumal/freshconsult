@@ -60,7 +60,7 @@ class Solution::Draft < ActiveRecord::Base
 	end
 
 	def populate_defaults
-		self.status ||= STATUS_KEYS_BY_TOKEN[:editing]
+		self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
 		self.current_author ||= User.current
 	end
 
@@ -73,16 +73,22 @@ class Solution::Draft < ActiveRecord::Base
 			article.send("#{attr}=", self.send(attr))
 		end
 		modify_associations
+		article.status = article.class::STATUS_KEYS_BY_TOKEN[:published]
 		article.save
-		self.reload and self.destroy
+		self.reload
+		self.destroy
 	end
 
-	def clone_attachments(parent_article)
-		parent_article.attachments.each do |attachment|      
-			self.attachments.build(:content => attachment.to_content, :description => "", :account_id => self.account_id)
+	def clone_attachments(parent_article, exclude = {})
+		parent_article.attachments.each do |attachment|
+			unless exclude.present? && exclude[:normal_attachment].include?(attachment.id)
+				self.attachments.build(:content => attachment.to_content, :description => "", :account_id => self.account_id)
+			end
 		end
 		parent_article.cloud_files.each do |cloud_file|
-  		self.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+			unless exclude.present? && exclude[:cloud_file].include?(cloud_file.id)
+	  		self.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+	  	end
 	  end
 	end
 
@@ -93,13 +99,17 @@ class Solution::Draft < ActiveRecord::Base
 		end
 	end
 
+	def last_updated_timestamp
+		[self.updated_at, self.draft_body.updated_at].max.to_i
+	end
+
 	private
 
 		def modify_associations
 			[:attachments, :cloud_files].each do |assoc|
 				article.send(assoc).destroy_all
 				type = self.class.reflections[assoc].options[:as]
-				self.send(att).each do |item|
+				self.send(assoc).each do |item|
 					item.update_attributes(type => article)
 				end
 			end

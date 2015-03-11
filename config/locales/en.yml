@@ -2490,7 +2490,8 @@ en:
       placeholder: Search %{name}
     drafts:
       empty: There are no drafts here. Please come back after sometime.
-      discard: Discard draft
+      discard: Discard
+      publish: Publish
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
@@ -3226,7 +3227,21 @@ en:
         category: Category
         visible_to: Visible to
     articles:
+      draft:
+        show_page_msg: Viewing draft edited by
+        you: you
+        unpublish:
+          msg: Unpublish the article from portal
+          with_draft: This will delete the published article permanently and retain the draft content under Drafts
+          without_draft: This will remove the published article from the portal and save the content under Draft
+      view_published: View Published
+      restrict_edit: "This article is currently edited upon by %{name}. You can't edit simultaneously."  
+      edit: Edit Article
+      properties: Properties
+      edit_properties: Edit Properties
       save_and_publish: Save and Publish
+      save_as_draft: Save as Draft
+      publish: Publish
       where: Where
       search_articles: Search Articles
       guides: Guides
@@ -3248,6 +3263,9 @@ en:
         resetting: "Resetting"
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
         count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
+    draft:
+      all_drafts: All Drafts
+      my_drafts: My Drafts
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
@@ -3276,11 +3294,14 @@ en:
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
-    user_details: "By <span class='article-user'>%{user}</span>, %{time}"
+    user_details: "By <span class='user'>%{user}</span>, %{time}"
+    draft_user_details: "<span class='article-user'>%{user}</span> edited article "
     feedback_message_1: "Need more information"
     feedback_message_2: "Difficult to understand"
     feedback_message_3: "Inaccurate/irrelevant content"
     feedback_message_4: "Missing/broken link"
+    properties: Properties
+    solution_title: Title
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.

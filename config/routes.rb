@@ -1505,20 +1505,26 @@ Helpkit::Application.routes.draw do
             post :delete_tag
             delete :destroy
             put :reset_ratings
+            get :properties_partial
           end
           resources :tag_uses
         end
       end
     end
 
-    resources :drafts do
+    resources :drafts, :only => [:index] do
       member do
         post :autosave
+        post :publish
       end
     end
-    match '/draft/:draft_id/tag/:id' => 'drafts#delete_tag', :as => :draft_tag_delete, :via => :delete
+    match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
 
-    resources :articles, :only => [:show, :create, :destroy]
+    resources :articles, :only => [:show, :create, :destroy] do
+      resources :drafts
+      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :post
+    end
+
   end
 
   resources :posts, :as => 'all' do

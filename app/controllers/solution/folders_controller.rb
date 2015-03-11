@@ -9,13 +9,14 @@ class Solution::FoldersController < ApplicationController
   before_filter :load_category, :only => [:show, :edit, :update, :destroy, :create]
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
+  before_filter :feature_enabled?, :only => [:show]
   
   def index
     redirect_to solution_category_path(params[:category_id])
   end
 
   def show    
-    @item = @category.folders.find(params[:id], :include => { :articles => :draft})
+    @item = @category.folders.find(params[:id], :include => :articles)
     
     respond_to do |format|
       format.html { @page_canonical = solution_category_folder_url(@category, @item) }
@@ -173,6 +174,10 @@ class Solution::FoldersController < ApplicationController
       customer_ids = params[nscname][:customer_folders_attributes][:customer_id] || []
       customer_ids = current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id) unless customer_ids.blank?
       params[nscname][:customer_folders_attributes][:customer_id] = customer_ids.blank? ? [] : customer_ids
+    end
+    
+    def feature_enabled?
+      @feature = true
     end
 
 end

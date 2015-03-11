@@ -81,7 +81,7 @@ class Helpdesk::KbaseArticles
     end
 
     def self.create_draft(article)
-      draft = article.build_draft(:status => Solution::Draft::STATUS_KEYS_BY_TOKEN[:work_in_progress])
+      draft = article.create_draft_from_article
       draft.save
     end
 

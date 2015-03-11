@@ -37,7 +37,7 @@ class Solution::Article < ActiveRecord::Base
 
   has_many :article_ticket, :dependent => :destroy
   has_many :tickets, :through => :article_ticket
-  has_one :draft
+  has_one :draft, :dependent => :destroy
   
   include Mobile::Actions::Article
   include Solution::Constants
@@ -71,6 +71,18 @@ class Solution::Article < ActiveRecord::Base
           portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
       :joins => :folder
     }
+  }
+  
+  scope :all_drafts, includes(:draft).where('solution_articles.status = 1 or solution_drafts.article_id = solution_articles.id').
+                                      order('solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC')
+
+  scope :drafts_by_user, lambda { |user| 
+    includes(:draft).where('
+      (solution_articles.status = 1 AND solution_articles.user_id = ?) OR 
+      (solution_drafts.article_id = solution_articles.id AND 
+        ( solution_drafts.created_author_id = ? OR solution_drafts.current_author_id = ?)
+      )', user.id, user.id, user.id).
+    order('solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC')
   }
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
@@ -216,13 +228,22 @@ class Solution::Article < ActiveRecord::Base
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
-  def build_draft(opts={})
-    opts = opts.merge(:article => self)
-    draft_attrs = self.attributes.slice(*Solution::Draft::COMMON_ATTRIBUTES).merge(opts)
-    draft = self.account.solution_drafts.build(draft_attrs)
+  def create_draft_from_article(opts={})
+    draft = build_draft_from_article(opts)
     draft.clone_attachments(self)
     draft.save
     draft
+  end
+
+  def build_draft_from_article(opts ={})
+    opts = opts.merge(:article => self)
+    draft_attrs = self.attributes.slice(*Solution::Draft::COMMON_ATTRIBUTES).merge(opts)
+    draft = self.account.solution_drafts.build(draft_attrs)
+    draft
+  end
+
+  def set_default_status(publish)
+    self.status = publish ? STATUS_KEYS_BY_TOKEN[:published] : STATUS_KEYS_BY_TOKEN[:draft]
   end
 
   private

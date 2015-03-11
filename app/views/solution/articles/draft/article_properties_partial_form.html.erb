@@ -1,0 +1,47 @@
+<%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"}, :remote => params[:edit].present? do |f| %>
+		<div id="solution-properties-container">
+			<div id="solution-properties">
+				<%= render :partial => "solution/articles/draft/article_properties", :locals => { :f => f} %>
+				
+				<% if @article.published? %>
+					<div class="solution-properties-title"></div>
+					<div class="unpublish-article">
+						<div class="row">
+							<%= f.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
+							<span> <%= t('solution.articles.draft.unpublish.msg') %></span>
+						</div>
+						<div class="msg">
+							<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
+						</div>
+					</div>
+				<% end %>
+
+				<input type="hidden" name="update_properties" value="1">
+			</div>
+		</div>
+<% end %>
+
+<%= javascript_tag do %> 
+(function($) {
+	$('#article-form').bind("submit", function() {
+		$('#solution_article_seo_data_meta_description').val(
+			$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim()
+		);
+	});
+	setTimeout(function(){ 
+		$("#tags_name").select2({  
+			  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
+			  tokenSeparators: [',']
+			}); 
+		$('#article-form').ajaxSuccess(function(){
+			<% if params[:edit].present? %>
+				$(".modal").hide();
+				$(".modal-backdrop").hide();
+			<% else %>
+				window.location.href = "";
+			<% end %>
+		});
+	}, 50);
+
+})(jQuery);
+<% end %>

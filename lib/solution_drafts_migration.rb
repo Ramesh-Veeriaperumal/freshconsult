@@ -33,10 +33,9 @@ module SolutionDraftsMigration
 		end
 
 		def create_draft(article)
-			draft = article.build_draft(
-								:status => Solution::Draft::STATUS_KEYS_BY_TOKEN[:work_in_progress], 
-								:current_author => article.user,
-								:created_author => article.user)
+			draft = article.create_draft_from_article( 
+									:current_author => article.user,
+									:created_author => article.user)
 			if draft.save
 				p "."
 			else

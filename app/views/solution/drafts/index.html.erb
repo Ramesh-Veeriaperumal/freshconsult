@@ -1,18 +1,35 @@
 <div class="folder-2col">
-	<div class="folder_section" id="folder-section">
-		Empty	
-	</div>
 	<div class="artical_section" id="article-section"> 
-		<div class="crumbs">
+		<!-- <div class="crumbs">
 			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 			<%= content_tag(:span, t('draft') ) %>
+		</div> -->
+
+		<div class="draft-titles">
+			
+			<%= pjax_link_to t('solution.draft.all_drafts'), solution_drafts_path, {
+					:class => "heading item #{'active' unless @my_drafts}",
+					:title => t('solution.draft.all_drafts')
+				} %>
+
+			<%= pjax_link_to t('solution.draft.my_drafts'), solution_my_drafts_path('my_drafts'), {
+					:class => "heading item #{'active' if @my_drafts}",
+					:title => t('solution.draft.my_drafts')
+				} %>
+
 		</div>
-		<% unless (@drafts.size == 0) %>
-  		<%= render :partial => "drafts_list", :locals => { :drafts => @drafts} %>
+
+
+		<% unless (@articles.size == 0) %>
+  		<%= render :partial => "drafts_list", :locals => { :articles => @articles} %>
 		<% else %>
 			<span class="info_data"><%= t("solutions.drafts.empty") %></span>
 		<% end %>	
 	</div> 
+	<%= will_paginate @articles, :renderer => BootstrapPaginationRenderer,
+															:previous_label => "<b class='arrow-left'></b>",
+															:next_label => "<b class='arrow-right'></b>",
+															:class => "pagination pagination-centered" %>
 </div>
 
 <% javascript_tag do -%>
