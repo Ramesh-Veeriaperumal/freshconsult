@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "efa5c1ad95f18f62e089f4a1633c9cef7d3fdd2f02fdac8b720a99e656d96bd5",
-    "current": "efa5c1ad95f18f62e089f4a1633c9cef7d3fdd2f02fdac8b720a99e656d96bd5"
+    "previous": "7d9942dd60250bee4b0e4caa08c801182d500ce6ae8e3d44cbb78fb26b2be50b",
+    "current": "7d9942dd60250bee4b0e4caa08c801182d500ce6ae8e3d44cbb78fb26b2be50b"
   },
   "fonts": [
-    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.ttf",
-    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.svg",
-    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.woff",
-    "public/assets/glyphs_efa5c1ad95f18f62e089f4a1633c9cef.eot"
+    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.ttf",
+    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.svg",
+    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.woff",
+    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.eot"
   ],
   "glyphs": {
     "account": {
@@ -710,6 +710,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

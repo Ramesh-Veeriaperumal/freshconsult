@@ -11,7 +11,7 @@
   <td class="portal-text">
     <h4 title='<%= product.name %>'><%= link_to h(product.name), edit_admin_product_path(product) %></h4>
     <% if(product.portal_enabled?) %>
-      <span class='product-globe-blue'></span>
+      <span class='ficon-earth'></span>
       <span class="tooltip" title="<%= product.portal.portal_url %>">
         <%= link_to(t(".view_portal"), "http://#{product.portal.portal_url}", { :target => "_blank" }) %>
       </span>
