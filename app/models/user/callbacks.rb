@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   def clear_agent_caches
     if (agent? or helpdesk_agent_updated?)
       clear_agent_list_cache 
-      clear_agent_name_cache if name_changed?
+      clear_agent_name_cache if @model_changes.key?(:name)
     end
   end
 
