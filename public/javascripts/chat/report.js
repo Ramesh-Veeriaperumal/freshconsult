@@ -237,7 +237,7 @@ var TimeFormat = function(milliseconds){
 				cur_transfer.push(chat.transfer_id);
 			}
 
-			chat.new_created_at = moment(chat.created_at).format('L');
+			chat.new_created_at = moment(chat.created_at).format('MM/DD/YYYY');
 			modifiedData.push(chat)
 		});
 
