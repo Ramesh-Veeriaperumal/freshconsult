@@ -31,6 +31,7 @@
 		});
 
 		Twilio.Device.connect(function (conn) {
+			window.pjaxDisabled = false; //TODO: To be removed after complete Rails 3 push
 			freshfonecalls.tConn = conn;
 			ffLogger.log({'action': "Call accepted", 'params': conn.parameters});
 			if(!freshfonecalls.isOutgoing()) { freshfoneNotification.initializeCall(conn); }
@@ -59,6 +60,7 @@
 
 		/* Log a message when a call disconnects. */
 		Twilio.Device.disconnect(function (conn) {
+			window.pjaxDisabled = true; //TODO: To be removed after complete Rails 3 push
 			var callSid, detail;
 			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
 			if (freshfonecalls.tConn) {
