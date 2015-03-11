@@ -4,6 +4,7 @@
 
 (function($){
 
+window.pjaxDisabled = true; //TODO: To be removed after complete Rails 3 push
 
 // When called on a container with a selector, fetches the href with
 // ajax into the container or with the data-pjax attribute on the link
@@ -60,6 +61,7 @@ function fnPjax(selector, container, options) {
 function handleClick(event, container, options) {
   options = optionsFor(container, options)
 
+  if (window.pjaxDisabled) return; //TODO: To be removed after complete Rails 3 push
   var link = event.currentTarget
 
   if (link.tagName.toUpperCase() !== 'A')
