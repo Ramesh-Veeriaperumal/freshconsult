@@ -13,7 +13,7 @@ View Topic
 
 <% unless @post.topic.merged_topic_id? %>
 	Reply
-	<%= reply_support_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post') %>
+	<%= reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post') %>
 <% end %>
 
 Turn off reply notifications for this topic
