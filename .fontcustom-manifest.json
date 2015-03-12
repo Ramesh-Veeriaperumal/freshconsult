@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "7d9942dd60250bee4b0e4caa08c801182d500ce6ae8e3d44cbb78fb26b2be50b",
-    "current": "7d9942dd60250bee4b0e4caa08c801182d500ce6ae8e3d44cbb78fb26b2be50b"
+    "previous": "ef085f6bdb899c34f5ce05eb9a3680736a779b988ca2a8734e34bfd04bdf9f2f",
+    "current": "ef085f6bdb899c34f5ce05eb9a3680736a779b988ca2a8734e34bfd04bdf9f2f"
   },
   "fonts": [
-    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.ttf",
-    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.svg",
-    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.woff",
-    "public/assets/glyphs_7d9942dd60250bee4b0e4caa08c80118.eot"
+    "public/assets/glyphs_ef085f6bdb899c34f5ce05eb9a368073.ttf",
+    "public/assets/glyphs_ef085f6bdb899c34f5ce05eb9a368073.svg",
+    "public/assets/glyphs_ef085f6bdb899c34f5ce05eb9a368073.woff",
+    "public/assets/glyphs_ef085f6bdb899c34f5ce05eb9a368073.eot"
   ],
   "glyphs": {
     "account": {
@@ -329,6 +329,10 @@
     "forward": {
       "codepoint": 61775,
       "source": "public/glyphs/vectors/forward.svg"
+    },
+    "forward-tkt": {
+      "codepoint": 61868,
+      "source": "public/glyphs/vectors/forward-tkt.svg"
     },
     "freshchat": {
       "codepoint": 61776,

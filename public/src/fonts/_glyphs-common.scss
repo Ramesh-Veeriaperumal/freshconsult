@@ -376,7 +376,7 @@ span.fb_add
 .ticket-actions{
 	.forward{ @extend .#{$font-class}arrow-right-2; }
 	.reply-inner{ @extend .#{$font-class}reply; }
-	.forward-inner{ @extend .#{$font-class}arrow-right-2; }
+	.forward-inner{ @extend .#{$font-class}forward-tkt; }
 	.note-inner{ @extend .#{$font-class}file-edit; }
 	.forward, .reply-inner, .forward-inner, .note-inner{
 		&:before{

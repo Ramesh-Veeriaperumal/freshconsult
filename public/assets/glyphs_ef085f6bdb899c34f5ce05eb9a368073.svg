@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2015-3-11: Created with FontForge (http://fontforge.org)
+2015-3-12: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20141028 at Wed Mar 11 15:17:20 2015
+Created by FontForge 20141028 at Thu Mar 12 15:11:13 2015
  By Vadivelmsc
 Copyright (c) 2015, Vadivelmsc
 </metadata>
@@ -22,7 +22,7 @@ Copyright (c) 2015, Vadivelmsc
     bbox="-0.424634 -65 626.626 448.392"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F1AA"
+    unicode-range="U+F100-F1AC"
   />
     <missing-glyph />
     <glyph glyph-name="uniF11F" unicode="&#xf11f;" horiz-adv-x="499" 
@@ -331,6 +331,8 @@ d="M228 330c81 -47 34 -201 119 -228v-36h-347v36c85 27 38 181 119 228c11 6 18 19 
     <glyph glyph-name="uniF104" unicode="&#xf104;" horiz-adv-x="453" 
 d="M10 -17c-5 0 -10 6 -10 11v322c0 5 5 10 10 10h323c5 0 10 -5 10 -10v-82l-31 -30v91v0h-281v0v-280v0h281v0v74l31 31v-127c0 -5 -5 -10 -10 -10h-323v0zM436 288c5 0 9 -1 12 -4s5 -8 5 -13s-2 -10 -5 -13l-217 -218c-3 -3 -8 -4 -13 -4s-10 1 -13 4l-109 109
 c-3 3 -4 7 -4 13c0 5 1 10 4 13s8 5 13 5s10 -2 13 -5l91 -93c2 -2 5 -2 7 0l203 200c3 5 7 6 13 6z" />
+    <glyph glyph-name="uniF1AC" unicode="&#xf1ac;" horiz-adv-x="507" 
+d="M507 192l-256 -212v136h-251v151h251v136z" />
     <glyph glyph-name="uniF19A" unicode="&#xf19a;" horiz-adv-x="420" 
 d="M310 84c4 0 7 -6 7 -13s-3 -13 -7 -13h-171c-4 0 -6 6 -6 13s2 13 6 13h171zM258 199c4 0 6 -6 6 -13s-2 -13 -6 -13h-74c-4 0 -6 6 -6 13s2 13 6 13h74zM310 313c4 0 7 -7 7 -16s-3 -17 -7 -17h-171c-4 0 -6 8 -6 17s2 16 6 16h171zM103 318c4 0 7 -3 7 -7v-29
 c0 -4 -3 -6 -7 -6h-29c-4 0 -6 2 -6 6v29c0 4 2 7 6 7h29zM148 207c4 0 7 -3 7 -7v-29c0 -4 -3 -6 -7 -6h-29c-4 0 -6 2 -6 6v29c0 4 2 7 6 7h29zM103 92c4 0 7 -2 7 -6v-29c0 -4 -3 -7 -7 -7h-29c-4 0 -6 3 -6 7v29c0 4 2 6 6 6h29zM334 186c0 7 3 13 7 13h16v-26h-16

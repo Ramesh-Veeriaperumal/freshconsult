@@ -75,7 +75,7 @@
     currentColor: false,
     changeColor: false,
     color: false,
-    imageFolder: '/images/plugins/colorpicker/',
+    imageFolder: '/assets/plugins/colorpicker/',
     swatches: [
       "#ffffff",
       "#ffff00",
