@@ -1,23 +1,6 @@
 // select2 Hack
 //-----------------
 
-// .select2_list_detail { color: #888; }
-// .select2-highlighted .select2_list_detail { color: #fff; }
-// .select2-container .select2-choice .select2-arrow{
-// 	background:#fff;
-// 	border:0;
-// 	@inlcude margin-right(0);
-// }
-// .select2-dropdown-open a.select2-choice, .select2-container .select2-choice { 
-// 	background: #fff; 
-// }
-// .select2-container-multi .select2-choices{
-// 	@include border-radius(3px);
-// }
-
-/*.select2-container-multi.select2-container-active .select2-choices{
-	@include border-radius(3px 3px 0 0);
-}*/
 .select2-container-multi .select2-choices .select2-search-choice {
 	@include padding(3px 18px 3px 5px);
 }
@@ -37,37 +20,9 @@
 .select2-drop{
 	margin-top: -3px;
 }
-
-// .select2-container-multi .select2-choices .select2-search-choice{
-// 	background: #efefef;
-// 	border: 1px solid #ccc;
-// 	line-height: 16px;
-// 	color: #000;
-// 	padding: 3px 20px 3px 5px;
-// 	margin: 2px 0 2px 2px;
-// 	.select2-search-choice-close{
-// 		right: 4px;
-// 		top: 5px;
-// 		left: auto;
-// 	}
-// }
-
-// .select2-container-multi .select2-choices .select2-search-choice.select2-search-choice-focus{
-// 	border-color: #5897fb;
-// }
-
-// .select2-container-active.select2-container .select2-choice { 
-// 	@include box-shadow(0 0 3px #cccccc);
-// }
 #TicketProperties .select2-container-active.select2-container .select2-choice { 
 	@include tab-focus(); 
 }
-// .select2-drop, .select2-container .select2-choice, .select2-drop.select2-drop-above { 
-// 	border-color: #c6c6c6; 
-// }
-// .select2-container.select2-drop-above .select2-choice { 
-// 	background: #FFF; border-top: 0; 
-// }
 .select2-fields { width: 95%; }
 .autocomplete_filter .select2-choices { border-radius: 5px; }
 .autocomplete_filter .select2-search-field { height: 27px; }
@@ -77,21 +32,17 @@
 .align_options .select2-results ul.select2-result-sub > li .select2-result-label { 
 	@include padding-left(7px); 
 }
-
-// .select2-drop{
-// 	z-index: 99999;
-// }
-
 .select2.chrome-border-fix{
 	.select2-choice{
 		overflow:visible;
 	}
 }
-// .select2-container.custom-select{
-// 	.select2-search-choice-close{
-// 		display: block;
-// 	}
-// }
+
+//For portal page's
+.custom-select{
+    @include min-width(300px);
+    max-width: 100%;
+}
 
 // Select3.5.2
 //-------------
