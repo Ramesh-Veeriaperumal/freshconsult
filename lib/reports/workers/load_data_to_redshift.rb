@@ -7,6 +7,7 @@ module Reports
 
 				include Reports::Constants
 				include Reports::Redshift
+				include Reports::ArchiveData
 
 				def perform(args)
 					args.symbolize_keys!
@@ -27,7 +28,15 @@ module Reports
 							from 's3://#{S3_CONFIG[:reports_bucket]}/#{@s3_folder}/redshift_' 
 							credentials 'aws_access_key_id=#{S3_CONFIG[:access_key_id]};aws_secret_access_key=#{S3_CONFIG[:secret_access_key]}' 
 							delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)
-					execute_redshift_query(query).clear
+					
+					begin
+						execute_redshift_query(query).clear
+					rescue => e
+						subject = "Error occured while loading archive data for folder =#{@s3_folder}"
+						message =  "query====#{query} " << "\n" << e.message << "\n" << e.backtrace.join("\n")
+						report_notification(subject,message)
+						raise e
+					end
 					# vacuum_query = %(VACUUM SORT ONLY #{REPORTS_TABLE}) # sort only vacuum query to sort the newly added rows
 					# execute_redshift_query(vacuum_query).clear
 					# delete the uploaded files
