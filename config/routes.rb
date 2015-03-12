@@ -1833,6 +1833,7 @@ Helpkit::Application.routes.draw do
         get :get_portal
         get :ticket_properties
         get :load_reply_emails
+        match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end
 
