@@ -33,7 +33,8 @@ class Admin::ChatWidgetsController < Admin::AdminController
             :worker_method => "update_widget", 
             :siteId => params[:siteId],
             :widget_id => widget.widget_id,
-            :attributes => { :business_calendar => calendar_data, :proactive_chat => params[:proactive_chat], :proactive_time => params[:proactive_time], :routing => params[:routing]}
+            :attributes => { :business_calendar => calendar_data, :proactive_chat => params[:proactive_chat], :proactive_time => params[:proactive_time], 
+                             :routing => params[:routing], :offline_chat => params[:offline_chat]}
           }
         )
         render :json => {:status => "success"}

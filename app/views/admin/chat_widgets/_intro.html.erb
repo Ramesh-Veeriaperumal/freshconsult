@@ -44,7 +44,8 @@
 											"prechat_fields"		: <%= default_prechat_fields %>,
 											"active"						: false,
                       "token"             : '<%= livechat_partial_token(current_user.id) %>',
-											"non_availability_message" : <%= default_non_avail_message %>
+											"non_availability_message" : <%= default_non_avail_message %>,
+											"offline_chat" : <%= default_offline_chat %>
 										};
 										
 										$.ajax({

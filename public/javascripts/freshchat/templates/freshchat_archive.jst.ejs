@@ -4,10 +4,11 @@
 			<% for(var i = 0 ,length = models.length;i<length;i++){ 
 				var modelJson = models[i];
 			%>
-			<tr id = "<%=modelJson.id%>">
-				<%=archiveRowTemplate({modelJson : modelJson})%>
-			</tr>	
-			
+				<% if(!modelJson.offline){ %> 
+					<tr id = "<%=modelJson.id%>">
+						<%=archiveRowTemplate({modelJson : modelJson})%>
+					</tr>	
+				<%}%>
 			<% } %>
 	</table>
 

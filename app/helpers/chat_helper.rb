@@ -86,6 +86,17 @@ module ChatHelper
     }.to_json.html_safe
   end
 
+  def default_offline_chat
+    return {
+      :show      => "0",
+      :form      => { :name => t("freshchat.name"), :email => t("freshchat.mail") },
+      :messages  => { :minimized    => t("freshchat.offline_minimized_msg"),
+                      :maximized    => t("freshchat.offline_maximized_msg"),
+                      :thank        => t("freshchat.offline_thank_msg"),
+                      :thank_header => t("freshchat.offline_thank_header_msg") }
+    }.to_json.html_safe
+  end
+
   def freshchat_setting widget
     freshchat_setting = {
       :widget_site_url => widget.main_widget ? current_account.full_domain : widget.product.portal ? widget.product.portal.portal_url : current_account.full_domain,
@@ -288,8 +299,32 @@ module ChatHelper
             :email => t("freshchat.mail"),
             :phone => t("freshchat.phone"),
             :textfield => t("freshchat.textfield"),
-            :dropdown => t("freshchat.dropdown")
+            :dropdown => t("freshchat.dropdown"),
+            :offline_title => t("freshchat.offline_title"),
+            :offline_thank_msg => t("freshchat.offline_thank_msg"),
+            :offline_thank_header_msg => t("freshchat.offline_thank_header_msg"),
+            :missed_chat_info => t("freshchat.missed_chat_info"),
         }
         return text.to_json.html_safe
   end
+
+  def add_style messages
+    conversation = ""
+    msgclass = "background:rgba(255,255,255,0.5);";
+    messages.each do |msg|
+      if msg['userId'] && !(msg['userId'].include?'visitor')
+        msgclass = "background:rgba(242,242,242,0.3)";
+      end
+      time = Time.at(msg['createdAt'] / 1000).strftime('%I:%M %p')
+      image = msg['photo'] ? msg['photo'] : '/images/fillers/profile_blank_thumb.gif';
+      message = '<tr style="vertical-align:top; border-top: 1px solid #eee; ' + msgclass + '">' +
+             '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' + 
+             '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg['name']+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg['msg']+'</p></td>' +
+             '<td style="padding:10px; font-size:10px; color:#aaa; text-align:right; min-width:50px; border:0">'+time+'</td></tr>'
+      conversation += message;
+    end
+    conversation = '<div class="conversation_wrap"><table style="width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse; border-right:0; border-bottom:0;">'+conversation+'</table></div>';
+    return conversation
+  end
+
 end
