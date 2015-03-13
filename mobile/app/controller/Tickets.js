@@ -84,7 +84,8 @@ Ext.define('Freshdesk.controller.Tickets', {
                 this.getConversationContainer().setData({loading:true});
                 Ext.Viewport.animateActiveItem(detailsContainer, anim);
                 var ajaxOpts = {
-                    url: '/helpdesk/tickets/show/'+id,
+                    url: '/helpdesk/tickets/'+id,
+                    method:'GET',
                     params:{
                         format:'mobile'
                     },

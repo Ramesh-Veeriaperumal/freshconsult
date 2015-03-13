@@ -70,6 +70,16 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 	@extend .#{$font-class}checkmark; 
 }
 // -----------------------------------------------------------------------------------------------
+// 									Font icons used in Search
+// -----------------------------------------------------------------------------------------------
+.helpdesk_ticket_icon{	@extend .#{$font-class}ticket }
+.customer_icon{			@extend .#{$font-class}company }
+.topic_icon{			@extend .#{$font-class}conversation }
+.solution_article_icon{	@extend .#{$font-class}book }
+.user_icon{				@extend .#{$font-class}user }
+	
+	
+// -----------------------------------------------------------------------------------------------
 // 									Font icons in ticket pages
 // -----------------------------------------------------------------------------------------------
 
@@ -366,7 +376,7 @@ span.fb_add
 .ticket-actions{
 	.forward{ @extend .#{$font-class}arrow-right-2; }
 	.reply-inner{ @extend .#{$font-class}reply; }
-	.forward-inner{ @extend .#{$font-class}arrow-right-2; }
+	.forward-inner{ @extend .#{$font-class}forward-tkt; }
 	.note-inner{ @extend .#{$font-class}file-edit; }
 	.forward, .reply-inner, .forward-inner, .note-inner{
 		&:before{

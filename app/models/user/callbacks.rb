@@ -14,23 +14,21 @@ class User < ActiveRecord::Base
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :if => :customer?
 
-  after_commit :clear_agent_name_cache
+  after_commit :clear_agent_caches
 
-  after_commit :clear_agent_list_cache_on_create, on: :create, :if => :agent?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
-  after_commit :clear_agent_list_cache_on_update, on: :update, :if => :agent?
-  after_commit :clear_agent_list_cache_on_update, on: :update, :if => :helpdesk_agent_updated?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
   after_commit :update_search_index, on: :update, :if => :company_info_updated?
   after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
 
-  after_commit :clear_agent_list_cache_on_destroy, on: :destroy, :if => :agent?
-
-  alias :clear_agent_list_cache_on_create :clear_agent_list_cache
-  alias :clear_agent_list_cache_on_update :clear_agent_list_cache
-  alias :clear_agent_list_cache_on_destroy :clear_agent_list_cache
+  def clear_agent_caches
+    if (agent? or helpdesk_agent_updated?)
+      clear_agent_list_cache 
+      clear_agent_name_cache if @model_changes.key?(:name)
+    end
+  end
 
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp

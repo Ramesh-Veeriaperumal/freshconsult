@@ -54,4 +54,7 @@ helpdesk:
     - white_list_formatted_content
     - will_paginate
     - wrap_parameters
+    - statsd_config
+    - big_brother
+
 

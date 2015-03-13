@@ -12,6 +12,8 @@ class Workers::Helpkit::Ticket::TicketBodyJobs
         bucket = S3_CONFIG[:ticket_body]
         unless args[:delete]
           ticket_body = Helpdesk::TicketOldBody.find_by_ticket_id_and_account_id(args[:key_id],args[:account_id])
+          tkt_body_size = ticket_body.description.bytesize
+          $statsd.increment "ticket_body.#{args[:account_id]}.#{args[:requester_id]}" , tkt_body_size
           if args[:retry].to_i < (WorkerTicketBodyRetry-1)
             args[:data] = ticket_body.attributes
           else
