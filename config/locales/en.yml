@@ -1509,7 +1509,7 @@ en:
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
-        freshchat: Freshchat
+        freshchat: Live Chat
         integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -2330,7 +2330,7 @@ en:
   change_my_plan: Choose this plan...
   make_payment: Make Payment
   add_new_email: Add new email
-  chatwidget_title: Freshchat
+  chatwidget_title: Live Chat
   feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
@@ -3275,7 +3275,7 @@ en:
     feedback_message_4: "Missing/broken link"
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
-  chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
+  chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
   save: Save
   import_added_newly: Added Newly
   quick_create: Quick Create
@@ -3389,10 +3389,10 @@ en:
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   chatwidget_help_content:
-    title: Freshchat
-    info1: Freshchat lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
+    title: Live Chat
+    info1: Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
     info2: Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript.
-    info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using Freshchat inside Freshdesk</a>
+    info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using live chat inside Freshdesk</a>
   low: Low
   agents: Agents
   header:
@@ -5482,7 +5482,7 @@ en:
           view_report_date: View reports during
           helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
       freshchat:
-        report_title: "Freshchat Summary"
+        report_title: "Live Chat Summary"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
         widget: "Widget"
@@ -6350,19 +6350,19 @@ en:
         button_label: "Request for Freshfone"
   freshchat:
     feature_request:
-      title: "Welcome to Freshchat"
-      heading: "Support your customers with Freshchat"
+      title: "Welcome to Live Chat"
+      heading: "Support your customers with Live Chat"
       info1: "Customize live chat widget for your brand and business"
       info2: "Enable live chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
-      email_subject: "Request for Freshchat Feature from %{account_name}"
-      email_message: "Need Freshchat Feature"
-      success_message: "Thanks for your interest in Freshchat. We will get back to you shortly."
+      email_subject: "Request for Live Chat Feature from %{account_name}"
+      email_message: "Need Live Chat Feature"
+      success_message: "Thanks for your interest in Live Chat. We will get back to you shortly."
       error_message: "Sorry we can not make your request right now. Try again later."
-      additional_note: "Freshchat request will take two business days"
-      button_label: "Request for Freshchat"
-    title: "Freshchat"
+      additional_note: "Live Chat request will take two business days"
+      button_label: "Request for Live Chat"
+    title: "Live Chat"
     widget: "Widget"
     messages: "Messages"
     set_default_msgs: "Default messages"
@@ -6425,7 +6425,7 @@ en:
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate Freshchat into your website and applications"
+    integrate_freshchat_title: "Integrate live chat into your website and applications"
     custom_chat_window: "Chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
@@ -6545,10 +6545,10 @@ en:
     non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
     date_invalid: Invalid date
     installation: "Widget Code"
-    intro_title: "Why Freshchat?"
-    intro: "Because exceptional customer service is about being there for the customer, even before he has a problem. With Freshchat, not only can your agents chat with each other without leaving Freshdesk, but they can also engage with your visitors real-time and provide instant answers. It's another arrow in your quiver, a channel designed especially to bring you closer to your users."
-    enable_chat: "Enable Freshchat"
-    learn_freshchat: "Learn more about Freshchat"
+    intro_title: "Why Live Chat?"
+    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    enable_chat: "Enable Live Chat"
+    learn_freshchat: "Learn more about Live Chat"
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: "Everyone"
@@ -6593,7 +6593,7 @@ en:
     visitorId: "Visitor ID"
     createdAt: "Created at"
     enable: "Enable"
-    widgets_list_info: "Showing Chat Widgets for your products"
+    widgets_list_info: "For every product you have set up in Freshdesk, you will have a corresponding chat widget available here"
     text_yes: "Yes"
     text_no: "No"
     enabled: "Enabled"
