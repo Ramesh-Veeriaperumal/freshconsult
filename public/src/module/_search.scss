@@ -258,6 +258,8 @@
 		.helpdesk_ticket_icon, .customer_icon, .topic_icon, .solution_article_icon, .user_icon{
 			@include margin-right(10px);
 			font-size:15px;
+			position: absolute;
+			left: 7px;
 		}
 		a{
 			display:block;
@@ -299,9 +301,6 @@
 		}
 		div, a{
 			@include padding(4px 8px 4px 30px);
-		}
-		a{
-			@include padding-left(10px);
 		}
 		div.title{
 			background:#efefef;
