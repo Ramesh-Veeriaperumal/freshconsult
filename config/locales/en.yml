@@ -6557,6 +6557,7 @@ en:
     date_invalid: Invalid date
     joining_chat: "Joining chat"
     agent_joined_msg: "{{agent_name}} has joined the chat"
+    agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
     agent_left_msg: "{{agent_name}} has left the chat"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     connecting_msg: "Waiting for an agent"
