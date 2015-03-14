@@ -9,5 +9,5 @@
       title = title.gsub('&lt;', '&amp;lt;')
       #Double escaping tags that are part of the text
     %>
-  <%= link_to_function ("<span id='resp-icon'></span><span id='resp-text' class='ellipsis'>"+ h(ca_response.title)+"</span>").html_safe, function, :class => "custom-tip-left", "data-tip-classes" => 'ui-tooltip-response',  :title => title, "data-response" => ca_response.id %>
+  <%= link_to_function ("<span id='resp-icon'></span><span id='resp-text'>"+ truncate(h(ca_response.title), :length => 50)+"</span>").html_safe, function, :class => "custom-tip-left", "data-tip-classes" => 'ui-tooltip-response',  :title => title, "data-response" => ca_response.id %>
 </li>
