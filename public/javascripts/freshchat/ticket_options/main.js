@@ -210,7 +210,7 @@
 				if(this.validateMail(requesterEmail) && ticketTitle !=="" && requesterName !== ""){
 					this.ticket.requesterEmail = requesterEmail;
 					this.ticket.requesterName = requesterName;
-					this.ticket.title = ticketTitle;
+					this.ticket.ticketSubject = ticketTitle;
 					$(event.target).val(CHAT_I18n.saving).attr('disabled','true');
 					this.getMessagesFromLivechat('ticket',this.createTicketHelpkit.bind(this));
 				}
