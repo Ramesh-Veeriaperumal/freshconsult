@@ -924,6 +924,7 @@ Helpkit::Application.routes.draw do
   match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/all' => 'search/home#index'
+  match '/search/home' => 'search/home#index', :as => :search_home
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
@@ -1142,6 +1143,7 @@ Helpkit::Application.routes.draw do
         post :follow
         post :unfollow
         get :user_following
+        post :user_following
       end
     end
   end
@@ -1618,10 +1620,11 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  match 'accounts/create_account_google' => 'accounts#create_account_google', :via => :put
   resources :google_signup, :controller => 'google_signup' do
     collection do
-      get :associate_local_to_google
-      get :associate_google_account
+      put :associate_local_to_google
+      put :associate_google_account
     end
   end
 
@@ -1831,6 +1834,7 @@ Helpkit::Application.routes.draw do
         get :get_portal
         get :ticket_properties
         get :load_reply_emails
+        match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end
 

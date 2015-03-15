@@ -39,6 +39,9 @@
 			&:first-child{
 				width:9%;
 			}
+			.ficon-earth{
+				color:$linkColor;
+			}
 			.portal-logo-wrap{
 				height:50px;
 				width:50px;
@@ -129,7 +132,7 @@
 			position: absolute;
 			width: 30px;
 			background: #f2f2f2;
-		 @include left(0);
+		 	@include left(0);
 			top: 0;
 			height: 98%;
 			margin-top: 1px;

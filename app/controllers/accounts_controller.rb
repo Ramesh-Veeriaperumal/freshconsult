@@ -108,7 +108,7 @@ class AccountsController < ApplicationController
       @account = @signup.account
       @user = @signup.user
       @call_back_url = params[:call_back]
-      render :action => :signup_google 
+      render "google_signup/signup_google"
     end    
   end
 

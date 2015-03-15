@@ -8,7 +8,8 @@ class Helpdesk::Note < ActiveRecord::Base
     Resque.enqueue(::Workers::Helpkit::Note::NoteBodyJobs, {
                      :account_id => self.account_id,
                      :key_id => self.id,
-                     :create => true
+                     :create => true,
+                     :user_id => self.user_id
                      # :table => table_name
     }) if s3_create
   end
