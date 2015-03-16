@@ -409,6 +409,7 @@ protected
     end
 
     def init_user_email
+      @item ||= @user
       @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if current_account.features_included?(:contact_merge_ui) and @item.user_emails.empty?
     end
 end

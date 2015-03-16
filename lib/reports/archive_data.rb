@@ -91,6 +91,18 @@ module Reports
 				end      	
       	
 				File.delete(csv_file_path)
+
+				# adding notification for special accounts..
+				if(REPORT_NOTIFICATION_ACCOUNTS.include?(account.id))
+					#if file exists
+					bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
+					file = bucket.objects[file_name]
+					file_exists, file_size = file.exists?, 0 
+					file_size = file.content_length if file_exists
+					subject = "Done daily archive data upload to s3 for account #{account.id}"
+					message = "File Name : #{file_name} does file exists : #{file_exists} file size : #{file_size} in bytes"
+					report_notification(subject,message)
+				end
 			end
 
 			def mysql_escape(object)
