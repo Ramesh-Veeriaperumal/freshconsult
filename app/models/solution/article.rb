@@ -230,7 +230,7 @@ class Solution::Article < ActiveRecord::Base
 
   def create_draft_from_article(opts={})
     draft = build_draft_from_article(opts)
-    draft.clone_attachments(self)
+    # draft.clone_attachments(self)
     draft.save
     draft
   end

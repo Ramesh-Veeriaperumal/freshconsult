@@ -1,7 +1,7 @@
 <%= f.error_messages %>
 <% current_item = @article.draft || @article %>
 <div class="form-horizontal">
-	<div class="control-group">
+	<div class="control-group article-title-input">
 		<%= f.text_field :title, :class => "text required", :autofocus => true, :placeholder => t('solution.solution_title'),
 		:value =>  current_item.title %>
 	</div>
@@ -11,8 +11,9 @@
 	<div class="control-group overflow-visible">
 		<%= render	:partial => "/solution/shared/attachment_form",
 				:locals => { :attach_id => 'article', :nsc_param => 'solution_article',
-					:original_attachments => { :cloud_files => current_item.cloud_files, 
-																		 :regular => current_item.attachments }
+					:original_attachments => { 
+						:cloud_files => active_attachments(:cloud_files, @article.draft, @article), 
+						:regular => active_attachments(:attachments, @article.draft, @article) }
 				} %>
 	</div>
 	<% if is_application_installed?("screenr") %>
@@ -85,18 +86,27 @@
 					var ts = Math.round((new Date()).getTime() / 1000);
 					return jQuery('<span />').attr('data-livestamp', ts);
 				},
+				timeStamp: function(){
+					return jQuery('<span />').html(" ("+moment().format('ddd, Do MMMM [at] h:mm A')+")");
+				},
 				reloadButton: function(){
 					return jQuery('<span />').attr('onclick', 'window.location.reload();').
-																		html("Reload").attr('class', 'draft-info-btn reload-btn');
+																		html("<%= t('reload') %>").attr('class', 'draft-info-btn reload-btn');
+				},
+				message: function(msg, success){
+					return jQuery('<span />').html(msg).attr('class', (success ? "" : "delete-confirm-warning-icon" ) );
 				},
 				themeChange: function(flag){
 					this.mainElement.removeClass( (flag ? 'success' : 'error')).addClass((flag ? 'error' : 'success'));
 				},
 				manipulate: function(msg, success){
 					if(msg){
-						this.msgElement.html(msg).append( (success ? this.liveTimeStamp() : "") )
-																.append( (!success ? this.reloadButton() : "") ).show();
+						this.msgElement.html(this.message(msg, success))
+													.append( (success ? this.liveTimeStamp() : "") )
+													.append( (success ? this.timeStamp() : "") )
+													.append( (!success ? this.reloadButton() : "") ).show();
 						this.themeChange(!success);
+						this.mainElement.show();
 					}
 				}
 			}

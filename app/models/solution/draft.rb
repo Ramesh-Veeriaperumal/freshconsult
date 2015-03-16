@@ -1,6 +1,7 @@
 class Solution::Draft < ActiveRecord::Base
 
 	set_table_name "solution_drafts"
+	serialize :meta, Hash
 
 	belongs_to :account
 	belongs_to :created_author, :foreign_key => "created_author_id", :class_name => "User"
@@ -79,18 +80,14 @@ class Solution::Draft < ActiveRecord::Base
 		self.destroy
 	end
 
-	def clone_attachments(parent_article, exclude = {})
-		parent_article.attachments.each do |attachment|
-			unless exclude.present? && exclude[:normal_attachment].include?(attachment.id)
-				self.attachments.build(:content => attachment.to_content, :description => "", :account_id => self.account_id)
-			end
-		end
-		parent_article.cloud_files.each do |cloud_file|
-			unless exclude.present? && exclude[:cloud_file].include?(cloud_file.id)
-	  		self.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
-	  	end
-	  end
-	end
+	# def clone_attachments(parent_article)
+	# 	parent_article.attachments.each do |attachment|
+	# 		self.attachments.build(:content => attachment.to_content, :description => "", :account_id => self.account_id)
+	# 	end
+	# 	parent_article.cloud_files.each do |cloud_file|
+	#   	self.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+	#   end
+	# end
 
 	def discard_notification(portal)
 		unless (User.current == self.created_author && self.created_author.email.present?)
@@ -107,7 +104,9 @@ class Solution::Draft < ActiveRecord::Base
 
 		def modify_associations
 			[:attachments, :cloud_files].each do |assoc|
-				article.send(assoc).destroy_all
+				if self.meta.present? && self.meta[:deleted_attachments].present? && self.meta[:deleted_attachments][assoc].present?
+					article.send(assoc).where(:id => self.meta[:deleted_attachments][assoc]).destroy_all
+				end
 				type = self.class.reflections[assoc].options[:as]
 				self.send(assoc).each do |item|
 					item.update_attributes(type => article)

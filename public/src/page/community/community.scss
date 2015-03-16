@@ -319,6 +319,9 @@ body.community.moderation.cs-always-show {
 }
 
 .artical_section, .pagearea {
+	.article-title-input {
+		margin-right: -10px;
+	}
 	.draft-info-box {
 		background-color: #fffee9;
 		padding: 12px 0px;

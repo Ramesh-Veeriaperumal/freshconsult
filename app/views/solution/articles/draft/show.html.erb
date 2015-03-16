@@ -10,7 +10,7 @@
 			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 			<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
 			<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%> 
-			<%= preview_portal(support_draft_preview_path(@article, "draft"), @article.folder.category) if @article.draft.present? %>
+			<%= preview_portal(support_draft_preview_path(@article, "preview"), @article.folder.category) if @article.draft.present? %>
 			<%= (preview_portal(support_solutions_article_path(@article.id), @article.folder.category) unless @article.draft.present?) if @article.published? %>
 		</div>
 
@@ -73,10 +73,10 @@
 		</div>
 
 		<ul class="attachment_list">
-			<% current_item.attachments.each do |attached| %> 
+			<% active_attachments(:attachments, @article.draft, @article).each do |attached| %> 
 				<%= attachment_list(attached, false, "article",nil) %>
 			<% end %>
-			<% current_item.cloud_files.each do |cloud_file| %> 
+			<% active_attachments(:cloud_files, @article.draft, @article).each do |cloud_file| %> 
 				<%= attachment_list(cloud_file, false, "cloud_file",nil) %>
 			<% end %>
 		</ul>

@@ -19,7 +19,7 @@
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.name)), :url => "/search/solutions?category_id=#{@item.id}&term=" } %>
 		</div>
 		<% unless (@item.folders.size == 0) %>	
-  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
+  		<%= render :partial => "/solution/shared/solution_list#{@feature ? "_with_feature" : ""}", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
 		<% else %>
 			<span class="info_data"><%= t("solution_category.info2") %></span> 
       <% if privilege?(:publish_solution) %> -  

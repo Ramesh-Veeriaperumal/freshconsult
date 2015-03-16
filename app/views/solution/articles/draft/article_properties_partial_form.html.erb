@@ -1,4 +1,7 @@
-<%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"}, :remote => params[:edit].present? do |f| %>
+<%= form_for @article, 
+			:url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , 
+			:html => {:id => "article-form"}, 
+			:remote => params[:edit].present? do |f| %>
 		<div id="solution-properties-container">
 			<div id="solution-properties">
 				<%= render :partial => "solution/articles/draft/article_properties", :locals => { :f => f} %>
@@ -32,16 +35,11 @@
 		$("#tags_name").select2({  
 			  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
 			  tokenSeparators: [',']
-			}); 
-		$('#article-form').ajaxSuccess(function(){
-			<% if params[:edit].present? %>
-				$(".modal").hide();
-				$(".modal-backdrop").hide();
-			<% else %>
-				window.location.href = "";
-			<% end %>
+			});
+		$("#article-properties-cancel").bind("click", function(){
+			$('#article-properties-content #article-form').resetForm();
+			$('#article-properties-content #article-form .select2').trigger('change');
 		});
 	}, 50);
-
 })(jQuery);
 <% end %>

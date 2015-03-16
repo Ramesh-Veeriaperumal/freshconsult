@@ -237,6 +237,7 @@ class Solution::ArticlesController < ApplicationController
         redirect_to :action => "show" and return
       end
       @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      flash[:success] = "This article was published succesfully."
       update_article
     end
 
@@ -245,6 +246,11 @@ class Solution::ArticlesController < ApplicationController
       # (redirect_to :action => "show" and return) if (!@draft.present? and cancel_draft_changes?)
       (flash[:not_empty], action = " ", "show") if (!@draft.present? and cancel_draft_changes?)
       if (@draft.present? && (@draft.current_author == current_user) && update_draft_attributes)
+        flash[:success], action = "This article draft was saved succesfully.", "show"
+      end
+      unless @draft.present?
+        @draft = @article.build_draft_from_article
+        update_draft_attributes
         flash[:success], action = "This article draft was saved succesfully.", "show"
       end
       flash ||= {:error => "This article could not be saved."}
@@ -265,7 +271,10 @@ class Solution::ArticlesController < ApplicationController
         if @article.update_attributes(update_params)
           format.html { redirect_to :action => "show" }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
-          format.json  { render :json => @article, :status => :ok, :location => @article }    
+          format.json  { render :json => @article, :status => :ok, :location => @article }
+          format.js {
+            flash[:notice] = t('solution.articles.prop_updated_msg')
+          }
         else
           format.html { render :action => "edit" }
           format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }

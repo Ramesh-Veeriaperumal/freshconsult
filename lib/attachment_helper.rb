@@ -17,7 +17,7 @@
     end
   end
 
-  def attachment_list(attached, show_delete, page, note_id)
+  def attachment_list(attached, show_delete, page, note_id, custom_delete_link = nil)
     unless attached.new_record?
       output = ""
       output << %(<li class="attachment list_element" id="#{ dom_id(attached) }">)
@@ -25,9 +25,9 @@
 
       if show_delete
         if (page == "article")
-          output << attachment_delete_link(helpdesk_attachment_path(attached))
+          output << attachment_delete_link(custom_delete_link || helpdesk_attachment_path(attached))
         elsif (page == "cloud_file")
-          output << attachment_delete_link(helpdesk_cloud_file_path(attached))
+          output << attachment_delete_link(custom_delete_link || helpdesk_cloud_file_path(attached))
         elsif (page == "ticket")
           output << attachment_delete_link(attachment_unlink_path(attached, note_id))
         else

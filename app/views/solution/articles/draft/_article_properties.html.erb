@@ -18,7 +18,7 @@
 	<%= f.label :name, t('solution.type'),:class =>"control-label" %>
 	<div class="controls">
 		<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
-			<%= f.radio_button :art_type, val, :checked => (val == @article.art_type) %>
+			<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
 			<%= f.label :art_type, t(type), :value => val %>
 		<% end %>
 	</div>

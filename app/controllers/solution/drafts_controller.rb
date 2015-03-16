@@ -8,7 +8,7 @@ class Solution::DraftsController < ApplicationController
 
 	def index
 		@my_drafts = (params[:type] == 'my_drafts')
-		scope = @my_drafts ? [:all_drafts] : [:drafts_by_user, current_user]
+		scope = @my_drafts ? [:drafts_by_user, current_user] : [:all_drafts]
 		@articles = current_account.solution_articles.send(*scope).paginate(:page => params[:page], :per_page => 10)
 	end
 
@@ -28,6 +28,7 @@ class Solution::DraftsController < ApplicationController
 			article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
 			article.save
 		end
+		flash[:success] = "The article was published successfully."
 		redirect_to :back
 	end
 
@@ -38,17 +39,12 @@ class Solution::DraftsController < ApplicationController
 	end
 
 	def attachments_delete
-		#route  solution/articles/:id/:attachment_type/:attachment_id/delete
-		@article = current_account.solution_articles.find_by_id(params[:id])
-		if @article.draft.present?
-			#delete the specified attachment
-			@draft = @article.draft
-			delete_attachment
-		else
-			draft = @article.build_draft_from_article
-			#create a draft skipping the specified attachment
-			draft.clone_attachments(@article, exclude = { params[:attachment_type] => [params[:attachment_id].to_i]})
-			draft.save
+		@article = current_account.solution_articles.find_by_id(params[:article_id])
+		@draft = (@article.draft.present? ? @article.draft : @article.create_draft_from_article)
+		delete_attachment
+		p "#"*100, "Reached inside the delete attachments. Enjoy"
+		respond_to do |format|
+			format.js { after_destory_js }
 		end
 	end
 
@@ -75,7 +71,7 @@ class Solution::DraftsController < ApplicationController
 			if (@draft.new_record? || (!@draft.new_record? && (@draft.last_updated_timestamp == params[:timestamp].to_i)))
 				if @draft.update_attributes(params.slice(*["description", "title"]))
 					@draft.lock_for_editing! unless @draft.locked?
-					return { :success => true, :timestamp => @draft.last_updated_timestamp , :msg => "Draft saved " }
+					return { :success => true, :timestamp => @draft.last_updated_timestamp, :msg => "Draft saved " }
 				end
 				return { :success => false, :msg => "Could not save due to some other reason. Please Reload." }
 			end
@@ -83,8 +79,26 @@ class Solution::DraftsController < ApplicationController
 		end
 
 		def delete_attachment
-			(params[:attachment_type] == 'normal_attachment') ? ( att_type = :attachments) : ( (params[:attachment_type] == 'cloud_file') ? ( att_type = :cloud_files) : return)
-			att = @draft.send(att_type).find(params[:attachment_id])
+			assoc = params[:attachment_type].pluralize.to_sym
+			@att = @article.send(assoc).find(params[:attachment_id])
+			if @draft.meta.present? && @draft.meta[:deleted_attachments].present? && @draft.meta[:deleted_attachments][assoc].present?
+				@draft.meta[:deleted_attachments][assoc] += [@att.id]
+			elsif @draft.meta.present? && @draft.meta[:deleted_attachments].present?
+				@draft.meta[:deleted_attachments][assoc] = [@att.id]
+			else
+				@draft.meta = {}
+				@draft.meta[:deleted_attachments] = {}
+				@draft.meta[:deleted_attachments][assoc] = [@att.id]
+			end
+			@draft.save
+		end
+
+		def after_destory_js
+			flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice').html_safe
+			render(:update) { |page| 
+				page.visual_effect('fade', dom_id(@att));
+				show_ajax_flash(page)
+			}
 		end
 	
 end

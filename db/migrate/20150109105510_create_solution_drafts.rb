@@ -8,6 +8,7 @@ class CreateSolutionDrafts < ActiveRecord::Migration
 			t.string   "title"
 			t.integer  "current_author_id", :limit => 8
 			t.integer  "created_author_id", :limit => 8
+			t.text		"meta"
 			t.integer  "status"
 			t.timestamps
 		end

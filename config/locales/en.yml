@@ -75,6 +75,7 @@ en:
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
+  reload: Reload
   any: Any
   or: or
   reorder_rules: Reorder Active Rules
@@ -3239,6 +3240,7 @@ en:
       edit: Edit Article
       properties: Properties
       edit_properties: Edit Properties
+      prop_updated_msg: The Article properties was updated succesfully.
       save_and_publish: Save and Publish
       save_as_draft: Save as Draft
       publish: Publish

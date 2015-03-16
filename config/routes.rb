@@ -1522,7 +1522,7 @@ Helpkit::Application.routes.draw do
 
     resources :articles, :only => [:show, :create, :destroy] do
       resources :drafts
-      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :post
+      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
     end
 
   end

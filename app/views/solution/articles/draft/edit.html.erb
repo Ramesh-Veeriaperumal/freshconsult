@@ -22,10 +22,10 @@
 	  			<%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
 	  		</div>
 	    <% end %>
-
-	  	<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn cancel-link hide" ) %>
+	    <%= link_to(t('preview'), support_draft_preview_path(@article, "preview"), :target => "_blank") %>
+	  	<%#= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn cancel-link hide" ) %>
 	  	<%= submit_tag t('cancel'), :name => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
-	    <%= submit_tag t('solution.articles.save_as_draft'), :name => "save_as_draft", :class => "btn btn-primary" %>
+	    <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn" %>
 			<%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary" %>
 
 	</div>

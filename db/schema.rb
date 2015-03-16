@@ -3084,6 +3084,7 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.string   "title"
     t.integer  "current_author_id", :limit => 8
     t.integer  "created_author_id", :limit => 8
+    t.text     "meta"
     t.integer  "status"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false

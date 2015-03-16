@@ -48,10 +48,10 @@
     <div class="attachment_wrapper">
       <ul class="attachment_list" id="<%=attach_id%>-attachments">
         <% original_attachments[:regular].each do |attached| %>
-          <%= attachment_list(attached, true, "article", nil) %>
+          <%= attachment_list(attached, true, "article", nil, article_attachment_link_helper(attached, :attachment)) %>
         <% end %>
         <% original_attachments[:cloud_files].each do |attached| %>
-          <%= attachment_list(attached, true, "cloud_file", nil) %>
+          <%= attachment_list(attached, true, "cloud_file", nil, article_attachment_link_helper(attached, :cloud_file)) %>
         <% end %>
         </ul>
     </div>

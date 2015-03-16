@@ -7,6 +7,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
+  before_filter :feature_enabled?, :only => [:show]
 
   def index
     @categories = current_portal.solution_categories
@@ -145,4 +146,9 @@ class Solution::CategoriesController < ApplicationController
     def load_category_with_folders
       @item = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
     end
+
+    def feature_enabled?
+      @feature = true
+    end
+    
 end
