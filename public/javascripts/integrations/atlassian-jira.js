@@ -243,12 +243,33 @@ JiraWidget.prototype = {
 	},
 	selectOnlyRequiredFields:function(resJson){
 		jiraWidget.customFieldData = {};
+		
+		var tempo_flag = false;
 		jQuery.each(resJson.projects[0].issuetypes[0].fields,function(field_key,field_value){
 			if(field_value["required"]&& (field_key != "issuetype" && field_key != "project")){
 				jiraWidget.customFieldData[field_key] = field_value; 
 			}
+			if(field_value["schema"]["type"] == "account" && field_value["required"]){
+				tempo_flag = true 
+			}
 		});
-		jiraWidget.processJiraFields();
+		tempo_flag ? jiraWidget.tempoAccountDetails() : jiraWidget.processJiraFields();
+		
+	},
+	tempoAccountDetails: function(){
+		jiraWidget.freshdeskWidget.request({
+				rest_url : "rest/tempo-accounts/1/account",
+				method : "get",
+				domain : jiraBundle.domain,
+				content_type : "application/json",
+				on_success :  function(evt){
+						resJ = evt.responseJSON;
+						jiraWidget.processJiraFields(resJ);
+				},
+				on_failure:function(evt){ 
+					alert("Problem in fetching Account details");
+				}
+		});
 	},
 
 	handleLoadIssueTypes: function(issueTypes) {
@@ -276,6 +297,7 @@ JiraWidget.prototype = {
 			return false;
 		}
 		this.showSpinner();
+
 		self = this;
 		integratable_type = "issue-tracking";
 		projectId = (jiraBundle.projectId) ? jiraBundle.projectId : jQuery('#jira-projects').val();
@@ -284,7 +306,6 @@ JiraWidget.prototype = {
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
-   
 		this.jsonFix();
 		issue = JSON.stringify(created_issue);
 	  this.resetJsonFix();
@@ -714,12 +735,16 @@ JiraWidget.prototype = {
 		}
 	},
 
-	processJiraFields:function(fieldKey,fieldData){
+	processJiraFields:function(resJ){
 		jiraWidget.fieldContainer = "";
 		jQuery.each(jiraWidget.customFieldData, function(fieldKey, fieldData){
 		functionName = "processJiraField"+(fieldData["schema"]["type"]).capitalize();
 		var args=[];
 		args.push(fieldKey,fieldData);
+		if(fieldData["schema"]["type"] == "account")
+		{
+			 args.push(resJ)
+		}
 		callerObject = window["jiraWidget"][functionName]
 		if(callerObject)  
 			callerObject.apply(null, args);
@@ -729,7 +754,18 @@ JiraWidget.prototype = {
 		jQuery("#fields").html(jiraWidget.fieldContainer);
 		jQuery('#jira-submit').removeAttr('disabled');
 	},
+	processJiraFieldAccount: function(fieldKey,fieldData,resJ)
+	{ 
 
+		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
+		jiraWidget.fieldContainer += '<select class ="tempo" name="fields['+ fieldKey+'][id]"> ';
+		selectOptions = "";
+		jQuery.each(resJ,function(key,data){
+				selectOptions += "<option value=" + data["id"]+ ">"+ data["name"]+" ("+ data["key"]+")"+"</option>";
+		});	
+	  jiraWidget.fieldContainer += selectOptions + '</select>';
+		
+	},
 	processJiraFieldPriority:function(fieldKey,fieldData)
 	{
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';

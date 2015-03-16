@@ -5218,11 +5218,12 @@ en:
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
       invalid_api_key: ERROR :Invalid Freshdesk Api key
-      notify_on_ticket_update: "Ticket is updated in "
-      notify_on_ticket_create: "New Ticket created by "
-      notify_on_note_create_by_agent: "Note added by "
+      notify_on_ticket_update: "Status updated for  "
+      notify_on_ticket_create: "Ticket created by "
+      notify_on_private_note_create_by_agent: "Private Note added by "
+      notify_on_public_note_create_by_agent: "Public Note added by "
       notify_on_response_by_customer: "Response from "
-      status_msg: "Status has been changed to "
+      status_msg: "Ticket status changed to "
       chat: "Chat Conversionation with"
       default_chat: "Chat Conversionation of"
     highrise:

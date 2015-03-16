@@ -65,7 +65,7 @@ BatchbookWidget.prototype= {
 				 
 				street = (isValidStreet(street_1) ? (street_1 + ", " ) : "") + (isValidStreet(street_2) ? street_2 : "") ;
 				if(typeof(street)!='string' || street.length==0)
-					street = null;
+					street = "";
 				city = contact.locations[primaryIndex].location.city || "";;
 				state = contact.locations[primaryIndex].location.state || "";;
 				country = contact.locations[primaryIndex].location.country || "";;
@@ -85,7 +85,7 @@ BatchbookWidget.prototype= {
 				if(!bAddressAvailableForDisplay && (isValidStreet(street_1) || isValidStreet(street_2))){
 					street = (isValidStreet(street_1)? (street_1 + ", " ) : "") + (isValidStreet(street_2)?street_2:"");
 					if(typeof(street)!='string' || street.length==0)
-						street = null;
+						street = "";
 					city = contact.locations[workIndex].location.city || "";
 					state = contact.locations[workIndex].location.state || "";
 					country = contact.locations[workIndex].location.country || "";
@@ -106,7 +106,7 @@ BatchbookWidget.prototype= {
 				if(!bAddressAvailableForDisplay && (isValidStreet(street_1) || isValidStreet(street_2))){
 					street = (isValidStreet(street_1)? (street_1 + ", " ) : "") + (isValidStreet(street_2)?street_2:"");
 					if(typeof(street)!='string' || street.length==0)
-						street = null;
+						street = "";
 					city = contact.locations[homeIndex].location.city || "";
 					state = contact.locations[homeIndex].location.state || "";
 					country = contact.locations[homeIndex].location.country || "";
@@ -119,7 +119,7 @@ BatchbookWidget.prototype= {
 
 		}
 		 
-		address = bAddressAvailableForDisplay ? batchbookWidget.getFormattedAddress(street.escapeHTML(), city.escapeHTML(), state.escapeHTML(), country.escapeHTML(), postal_code.escapeHTML()) : null;
+		address = bAddressAvailableForDisplay ? batchbookWidget.getFormattedAddress(street.escapeHTML(), city.escapeHTML(), state.escapeHTML(), country.escapeHTML(), postal_code.escapeHTML()) : "";
 		_address_type_span = "";
 		if(bAddressAvailableForDisplay){
 			if(addressType == WORK_ADDRESS)
@@ -177,11 +177,11 @@ BatchbookWidget.prototype= {
 				state = address.state || "";
 				country = address.country || "";
 				postal_code = address.postal_code || "";
-				street_1 = (street_1 && street_1.length) ? street_1 : null;
-				street_2 = (street_2 && street_2.length) ? street_2 : null;
+				street_1 = (street_1 && street_1.length) ? street_1 : "";
+				street_2 = (street_2 && street_2.length) ? street_2 : "";
 				street = (isValidStreet(street_1) ? (street_1 + ", " ) : "") + (isValidStreet(street_2) ? street_2 : "") ;
 				if(typeof(street)!='string' || street.length==0)
-					street = null;
+					street = "";
 				cAddress = crm_widget.getFormattedAddress(street.escapeHTML(), city.escapeHTML(), state.escapeHTML(), country.escapeHTML(), postal_code.escapeHTML());
 				_address_type_span = address.primary?"":label_mark(address.label);
 				addr_type = address.label;
@@ -262,7 +262,7 @@ BatchbookWidget.prototype= {
 		line4 = country;
 
 		var address = line1 + line2 + line3 + line4;
-		address = (address == "") ? null : address ;
+		address = address || "" ;
 		return address;
 	}
 };
