@@ -16,7 +16,7 @@
 	  	</div>
         <% if @show_recaptcha %>
           <div class="controls recaptcha-control">
-            <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+            <%= recaptcha_tags :display => { :theme => "white" }, :ssl => true %>
           </div>
        <% end %>
 		<div class="control-group">			
