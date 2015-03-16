@@ -212,7 +212,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	}
 }
 
-.freshdesk_quote{ display: none; }
+#ticket-comments .freshdesk_quote{ display: none; }
 
 .freshdesk_quote blockquote{ 
 	@include border-left-width(1px);
