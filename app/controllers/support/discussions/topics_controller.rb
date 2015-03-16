@@ -124,7 +124,7 @@ class Support::Discussions::TopicsController < SupportController
 	end
 
   def sqs_create 
-    @topic  = @forum.topics.build(topic_param)   
+    @topic  = @forum.topics.build(topic_param)
     if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
       sqs_post_param = post_param.clone.delete_if { |k,v| k == :forum_id }.merge(post_request_params)
       sqs_post_param[:topic] = { :title => topic_param[:title], :forum_id => @forum.id }
@@ -135,7 +135,7 @@ class Support::Discussions::TopicsController < SupportController
       sqs_post[:portal] = current_portal.id
       sqs_post_saved = sqs_post.save
     end
-
+    @topic.body_html = params[:topic][:body_html]
     if sqs_post_saved
       respond_to do |format|
         format.html {
