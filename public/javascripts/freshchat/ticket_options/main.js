@@ -310,9 +310,12 @@
 					"name" : this.ticket.requesterName, 
 					"subject" : this.ticket.ticketSubject, 
 					"widget_id" : chat.widget_id,
-					"content": tkt_desc,
-					"agent_id": chat.agent_id
+					"content": tkt_desc
 				};
+
+				if(chat.agent_id){
+					ticket.agent_id = chat.agent_id;
+				}
 
 				if(this.chat.groups){
 					ticket.group_id = eval(this.chat.groups)[0];
