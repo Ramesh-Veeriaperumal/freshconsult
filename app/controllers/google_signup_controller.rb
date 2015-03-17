@@ -7,6 +7,7 @@ class GoogleSignupController < AccountsController
   around_filter :select_shard
   skip_before_filter :check_privilege
   before_filter :initialize_user, :load_account, :only =>[:associate_google_account, :associate_local_to_google]
+  before_filter :ensure_proper_protocol
 
   def associate_google_account
     oauth_user = @account.users.find_by_email(@email)

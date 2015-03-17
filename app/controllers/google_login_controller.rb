@@ -5,6 +5,7 @@ class GoogleLoginController < AccountsController
   around_filter :select_shard
   skip_before_filter :check_privilege
   before_filter :login_account, :only =>[:create_account_from_google]
+  before_filter :ensure_proper_protocol
 
   def marketplace_login
     redirect_to construct_google_auth_url('', 'google_oauth2')
