@@ -26,6 +26,7 @@ include GoogleLoginHelper
   skip_before_filter :determine_pod, :only => [:openid_google,:opensocial_google]
   skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
+  skip_before_filter :ensure_proper_protocol, :only => [:oauth_google_gadget,:opensocial_google] 
   
   def new
     flash.keep
