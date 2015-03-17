@@ -48,7 +48,7 @@
 //-------------
 
 ul.multi_value_field li.choice{
-	padding: 2px 4px 2px 12px;
+	@include padding(2px 4px 2px 12px);
 	border-radius: 5px;
 }
 // Redactor Hack
