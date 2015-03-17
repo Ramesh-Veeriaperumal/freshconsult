@@ -53,3 +53,8 @@
 }
 
 #feedback-suggest .hc-search-input:before{ @extend .wicon-search; }
+
+//Facebook Icon
+.book-icon {
+    @extend .icon-book;
+}

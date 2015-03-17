@@ -25,7 +25,6 @@ h2 {
     p:first-child{
         margin-top: -5px;
         margin-bottom: 15px;
-        @extend .help-text;
     }
     .page-stamp{
         display:block;
@@ -129,7 +128,6 @@ h3.heading{
     }
 }
 .book-icon {
-    @extend .icon-book;
     position: relative;
     @include padding-left(30px);
     padding-bottom: 0px;
