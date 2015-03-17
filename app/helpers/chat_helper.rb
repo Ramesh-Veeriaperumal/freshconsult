@@ -135,7 +135,10 @@ module ChatHelper
       :default_thank_message => t("freshchat.thank_message"),
       :default_non_availability_message => t("freshchat.non_availability_message"),
       :default_prechat_message => t("freshchat.prechat_message"),
-      :agent_transfered_msg => t("freshchat.agent_transfered_msg")
+      :agent_transfered_msg => t("freshchat.agent_transfered_msg"),
+      :agent_reopen_chat_msg => t("freshchat.agent_reopen_chat_msg"),
+      :visitor_side_inactive_msg => t('freshchat.visitor_side_inactive_msg'),
+      :agent_disconnect_msg => t('freshchat.agent_disconnect_msg'),
     }
     return freshchat_setting.to_json.html_safe
   end
@@ -193,6 +196,9 @@ module ChatHelper
             :settings_chat_tooltip => t("freshchat.settings_chat_tooltip"),
             :visitor_details_tooltip => t("freshchat.visitor_details_tooltip"),
             :agent_chat_placeholder => t("freshchat.agent_chat_placeholder"),
+            :visitor_block_notifier_msg => t("freshchat.visitor_block_notifier_msg"),
+            :visitor_unblock_notifier_msg => t("freshchat.visitor_unblock_notifier_msg"),
+            :transfer_accepted_agent_msg => t("freshchat.transfer_accepted_agent_msg"),
             :last_message => t("freshchat.last_message"),
             :typing_message => t("freshchat.typing_message"),
             :is_typing_header => t("freshchat.is_typing_header"),
@@ -272,6 +278,9 @@ module ChatHelper
             :agent_joined_msg => t('freshchat.agent_joined_msg'),
             :agent_left_msg => t('freshchat.agent_left_msg'),
             :agent_transfered_msg => t('freshchat.agent_transfered_msg'),
+            :agent_reopen_chat_msg => t("freshchat.agent_reopen_chat_msg"),
+            :visitor_side_inactive_msg => t('freshchat.visitor_side_inactive_msg'),
+            :agent_disconnect_msg => t('freshchat.agent_disconnect_msg'),
             :connecting_msg => t('freshchat.connecting_msg'),
             :non_availability_message => t('freshchat.non_availability_message'),
             :me => t('freshchat.me'),
