@@ -13,6 +13,17 @@
 	.ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header { @include border-left-width(0); }
 	.ui-datepicker-multi .ui-datepicker-buttonpane { @include clear(left); }
 	.ui-datepicker-row-break { @include clear(both); width:100%; font-size:0em; }
+	//Layout
+	@include layout(4) {
+	  .cs-g{ @include span-columns(2); }
+	  .cs-g:nth-child(even){ @include span-columns(2 omega); @include clear(right); }
+	}
+
+	@include layout(3) {
+	  .cs-g-3{  @include span-columns(1); }
+	  .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
+	  .cs-g-3:nth-child(3n+1){ @include clear(left); }
+	}
 }
 
 @include at-breakpoint($media-mobile-tablet){
@@ -23,5 +34,20 @@
         }
     	.title{ @include padding(10px 0 5px 0); }
         .topic-title{ font-size: 14px; }
+    }
+    //Modals
+	.modal {    
+		top: 12%;
+		margin-top: 0;
+		&.fade.in { top: 10%; }
+	}    
+    //Layout
+    .main, .sidebar { @include reset-columns; display: block; }
+}
+@include at-breakpoint($break-desktop){
+    .min-height-on-desktop{ @include min-height(630px); }
+    .sidebar{
+      .cs-g{  @include reset-columns; }
+      .cs-g-3{  @include reset-columns; }
     }
 }

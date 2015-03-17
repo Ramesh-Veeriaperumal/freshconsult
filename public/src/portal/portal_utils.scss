@@ -1,15 +1,40 @@
 // Base settings for portal styles
 @import "lib/settings";
 @import "lib/mixins";
-
+// CSS Reset
+@import "lib/reset";
+// Patterns
+@import "lib/dropdowns";
+@import "lib/labels";
+@import "lib/popover";
+@import "lib/modals";
+@import "lib/pagination";
+@import "lib/component-animations";
+@import "lib/tooltip";
+@import "lib/profile"; // Profile image styles
+@import "lib/attachments"; // Module related styles
+@import "lib/jquery-ui"; // Date picker
+@import "lib/sprites";
+@import "lib/extend-sprites";
+// !PORTALCSS Existing styles from app
+// Need to be optimised
+@import "lib/ticket";
+@import "lib/survey";
+// Page related styles
+@import "lib/login";
+@import "lib/search";
+@import "lib/content";
+// Chat Transcript UI
+@import "../page/tkt_details/chat-transcript";
+@import "lib/utilities";
 // Plugins for portal 
 // Redactor rich text editor
 @import "../plugins/redactor";
 @import "../plugins/select2";
-
 // Syntax Highlighting for portal 
 @import "../plugins/shcore_default";
 @import "../plugins/zpluginhack";
-
 // IE based fixes
 @import "lib/ie";
+// RTL Styles
+@import "lib/rtl-styles";

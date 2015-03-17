@@ -1,23 +1,15 @@
 .c-wrapper, .cs-g-c{ @include pie-clearfix; }
 
 .content, .content-form, .content-light{
-	border: $content-border;
 	@include pie-clearfix;
-	padding: $content-padding; 
 	margin-top: 10px;
 	@include box-shadow(rgba(255, 255, 255, 0.7) 0 1px inset);
 	position: relative;
 }
 
-.content{ background-color: $page-background; }
-.content-light{	background-color: $page-light-background; }
-.content-form{ background-color: $page-form-background; }
-
 .cs-s{
-	border-top:1px solid $inputFocusRingColor;
 	margin:1.1em 0;
 	h3{
-		border-top:6px solid $inputFocusRingColor;
 		@include inline-block;
 		a{ color: $black; }
 	}
@@ -115,9 +107,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include padding-right(10px);
 }
 .article-list, .topic-list{ margin-bottom: 20px; }
-.article-list li, li.article-item{ &:before{ @extend .icon-article-list !optional; } }
-.topic-list li, li.topic-item{ &:before{ @extend .icon-topic-list !optional; } }
-.ticket-list li, li.ticket-item, li.note-item{ &:before{ @extend .icon-article-list !optional; } }
+
 
 .start-topic{
 	@include float(right);
@@ -131,20 +121,16 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 .see-more{
-	color: fade-out($linkColor, 0.5);
 	&:before{
 		content:"";
 		@include inline-block;
 		vertical-align: text-top;
-		@extend .icon-dual-arrow !optional;
 		@include margin-right(8px);
 	}
 }
 
 .help-text, .p-info, .info-text, .list-noinfo, .description-text{
-	color: $helpTextColor;	
 	font-weight: 200;
-	line-height: $baseLineHeight / 1.1;
 }
 
 .article-body, .help-text, .p-info, .info-text, .list-noinfo, .description-text{
@@ -153,7 +139,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .item-count{ 
 	display: inline-block; // Needed for RTL
-	color: lighten($helpTextColor, 10%);
 	&:before{ content: "("; }
 	&:after{ content: ")"; }
 }
@@ -177,7 +162,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	position: relative;
 	&:before{
 		content: " : ";
-		color: $textColor;
 		position: absolute;
 		@include margin-left(-8px);
 		top: -3px;
@@ -203,9 +187,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 .p-content{
-	background-color:$comments-background;
-	padding: $comments-padding;
-	border:1px solid $comments-border-color;	
 	@include border-radius(5px);
 	position: relative;
 	margin: 0 0 10px;
@@ -215,8 +196,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	hr{
 		margin-top: 10px;
 		margin-bottom: 10px;
-		@include margin-left(-$comments-padding-side);
-		@include margin-right(-$comments-padding-side);
 		border-top: 1px solid #efefef;
 	}
 }
@@ -241,13 +220,10 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 .comment-by-agent .p-content{
-	background-color:$comments-agent-background;
-	border-color:$comments-agent-border-color;
 	@include box-shadow(rgba(0, 0, 0, 0.05) 0 3px 3px);
 }
 
 .c-list{
-	border-bottom: 1px solid $row-border-color;	
 	margin-bottom: 12px;
 	margin-top: 5px;
 	margin-bottom: 1em;
@@ -256,8 +232,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .c-row{
 	@include pie-clearfix;
 	padding:10px;
-	border-top:1px solid $row-border-color;
-  	.help-text{ font-size: 0.96em; }
+	.help-text{ font-size: 0.96em; }
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
 }
 
@@ -307,7 +282,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 .uv-row{
 	@include pie-clearfix;
-	border-bottom: 1px solid $row-border-color;
 	padding-top: 7px;
 	padding-bottom: 7px;
 	&:last-child{
@@ -386,8 +360,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 hr.content-divider{
 	margin-top: 30px;
 	margin-bottom: 20px;
-	@include margin-left(-$content-padding-side);
-	@include margin-right(-$content-padding-side); 
 	border-bottom-color:#f6f6f6;
 }
 
@@ -462,37 +434,6 @@ hr.content-divider{
 .recaptcha_only_if_privacy{
 	position: relative !important;
 	top: -4px !important;
-}
-
-@if $nonResponsive == false {
-	@include at-breakpoint($media-mobile){
-		
-		.toolbar-actions{ margin-top: 3px; margin-bottom: 15px; }
-	
-		.toolbar-actions, .topic-list .topic-labels{ @include float(none); }
-
-		#topic-toolbar .btn{ 
-			@include padding-left(10px); 
-			@include padding-right(10px); 
-		}
-		.cs-s{
-			margin:0.5em 0;
-			h3{ border-top-width:4px; }
-		}
-		.content, .content-form, .content-light{ 
-			margin-top: 0; 
-			padding: $content-padding-mobile;
-		}
-		.user-comment .user-pic-thumb{
-			@include clear(right);
-		}
-		.c-user-thumb{ @include padding-left(55px); }
-		hr.content-divider{ 
-			@include margin-left(0);
-			@include margin-right(0);
-		}
-
-	}
 }
 
 // for rendering contact_fields in profile
@@ -720,3 +661,9 @@ hr.content-divider{
 //----------------------------------------------------------------------------------------------------------
 //											Fresh Suggestions styles end
 //----------------------------------------------------------------------------------------------------------
+// Facebook
+[id*="article-show"]{
+    p:first-child{
+        @extend .help-text;
+    }
+}

@@ -112,6 +112,11 @@
               line-height: $baseLineHeightForMobile;
             }
         }
+        // Utilities
+        // ---------
+        .rounded-6{ @include border-radius(0); }
+        .show-in-mobile, .hide-tablet{ display: block; }
+        .hide-in-mobile { display: none; }
 
         // Addresses
         address {
@@ -128,5 +133,116 @@
             @include left(25px !important);
             @include right(25px !important);
         }
+        // Ticket list & detail styles
+        // ---------------------------
+        .c-ticket-row .label{ @include float(none); }
+        .agent-details{
+            padding: $content-padding-mobile;
+            margin-top: -$content-padding-mobile;
+            @include margin-left(-$content-padding-mobile);
+            @include margin-right(-$content-padding-mobile);
+            @include border-top-radius(none);
+        }
+        .ticket-brief{ padding-top: 5px; }
+        // Login
+        // -----
+        .btn-signup, .btn-newticket, .btn-login{ width: 100%; }
+        .btn-login{ @include float(none); margin-top: 4px; margin-bottom: 4px; }
+        .login-form{ max-width: none; }
+        .alt-login-button{ 
+            @include border-left(0); 
+            @include padding-left(0); 
+            @include box-shadow(none); 
+        }
+        .login-form, .alt-login-button{ width:auto; @include float(none); }
+        // Sprite
+        // -----
+        .page-stamp{ display: none; }   
+        // Layout
+        // -----
+        .span1, .span2, .span3, .span4, 
+        .span5, .span6, .span7, .span8,
+        .span9, .span10, .span11, .span12 { 
+          @include reset-columns; display: block; 
+        }
+        .page{ padding: 0; }
+        // labels
+        // ------
+        .label{ @include border-radius(3px); }
+        // Modals
+        // ------
+        .modal { 
+          position: absolute; 
+          top:   10px;
+          @include left(10px);
+          @include right(10px);
+
+          /* Resetting width and margin so it will be calculated during the dialog wapper */    
+          width:auto !important; 
+          @include margin-left(0 !important);
+
+          &.fade.in { top: 10px; margin-top: 0; }
+        }
+
+        .modal-body{
+          padding-top: 0;
+          padding-bottom: 0;
+          height: auto;
+          max-height: none;
+        }
+        .modal-header h3 {
+          min-height: 45px;
+          line-height: 2.1em;
+        }
+        .modal-header .close {
+          &, &:focus, &:hover {        
+            @include right(20px);
+            top: 13px;
+            @include left(auto);
+            background: none;
+            @include box-shadow(none);
+            width: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: inherit;
+            padding: 0;
+          }
+          &:before{ content:none; background: none; width: 0; height: 0;}
+        }
+        // Pagination - Hiding other links from mobile
+        // -------------------------------------------
+        .pagination a { display: none; }
+        .pagination li:first-child a, .pagination li:last-child a, .pagination .active a 
+        .pagination li:first-child span, .pagination li:last-child span{
+            display: block;
+        }
+
+        // Page related styles - Contents
+        // ------------------------------
+        .toolbar-actions{ margin-top: 3px; margin-bottom: 15px; }
+
+        .toolbar-actions, .topic-list .topic-labels{ @include float(none); }
+
+        #topic-toolbar .btn{ 
+            @include padding-left(10px); 
+            @include padding-right(10px); 
+        }
+        .cs-s{
+            margin:0.5em 0;
+            h3{ border-top-width:4px; }
+        }
+        .content, .content-form, .content-light{ 
+            margin-top: 0; 
+            padding: $content-padding-mobile;
+        }
+        .user-comment .user-pic-thumb{
+            @include clear(right);
+        }
+        .c-user-thumb{ @include padding-left(55px); }
+        hr.content-divider{ 
+            @include margin-left(0);
+            @include margin-right(0);
+        }
+
     }
 }
