@@ -8,3 +8,5 @@
 //=require freshchat/templates/ticket_search_list.jst.ejs
 //=require freshchat/templates/ticket_options.jst.ejs
 //=require freshchat/ticket_options/main.js
+//=require freshchat/agent/settings.js
+//=require freshchat/templates/availability.jst.ejs

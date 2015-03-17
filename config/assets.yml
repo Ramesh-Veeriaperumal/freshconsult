@@ -201,6 +201,8 @@ javascripts:
     - public/javascripts/freshchat/templates/ticket_search_list.jst.ejs
     - public/javascripts/freshchat/templates/ticket_options.jst.ejs
     - public/javascripts/freshchat/ticket_options/main.js
+    - public/javascripts/freshchat/agent/settings.js
+    - public/javascripts/freshchat/templates/availability.jst
 
   livechat_mini_dashboard:
     - public/javascripts/freshchat/dashboard/dashboard.js

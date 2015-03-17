@@ -6643,6 +6643,7 @@ en:
     offline_chat_subject: "Offline message from %{visitor_name} on %{date}"
     offline_chat_content: "Created via Chat. Offline message from %{visitor_name}."
     missed_chat_info: "Chat has been missed.!"
+    change_livechat_tone: "LiveChat Notification Tone"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
