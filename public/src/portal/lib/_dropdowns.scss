@@ -101,7 +101,6 @@
     position: absolute;
     vertical-align: text-top;
     @include margin-left(-20px);
-    @extend .icon-dd-tick-dark !optional; 
   }
 }
 

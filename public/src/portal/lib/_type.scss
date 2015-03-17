@@ -4,6 +4,9 @@
 
 // BODY TEXT
 // ---------
+
+input, select, textarea{ font-family: $baseFontFamily; }
+
 p {
   margin: 0 0 $baseLineHeight / 2;
   small {
@@ -14,6 +17,8 @@ p {
     font-size: inherit;
   }
 }
+
+.ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: $sansFontFamily;}
 
 .lead, .lead-small, .list-lead {
   line-height: $baseLineHeight * 1.3;

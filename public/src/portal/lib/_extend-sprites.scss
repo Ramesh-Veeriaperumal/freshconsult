@@ -1,0 +1,55 @@
+//Content
+.article-list li, li.article-item{ &:before{ @extend .icon-article-list !optional; } }
+.topic-list li, li.topic-item{ &:before{ @extend .icon-topic-list !optional; } }
+.ticket-list li, li.ticket-item, li.note-item{ &:before{ @extend .icon-article-list !optional; } }
+.see-more:before{
+	@extend .icon-dual-arrow !optional;
+}
+//Login
+.btn-google:before{ @extend .icon-sign-in-google; }
+.btn-facebook:before{ @extend .icon-sign-in-facebook; }
+.btn-twitter:before{ @extend .icon-sign-in-twitter; }
+
+//Dropdown
+.dropdown-menu .active > a,
+.dropdown-menu .active > a:hover {
+  &:before{ 
+    @extend .icon-dd-tick-dark !optional; 
+  }
+}
+
+.badge-announcement:after{ @extend .icon-forum-a; } 
+.badge-ideas:after{ @extend .icon-forum-i; }
+.badge-problems:after{ @extend .icon-forum-p; }
+.badge-questions:after{ @extend .icon-forum-q; }
+
+//facebook
+[id*="article-show"].page-stamp{
+	@extend .icon-article-dark; 
+}
+.article-list li:before{
+	@extend .icon-article-small
+}
+
+.index-page .content-header{
+	.fb-ticket-icon{
+        @extend .icon-fb-tickets;
+    }
+    .fb-solutions-icon{
+         @extend .icon-fb-book;
+    }
+    .fb-forum-icon{
+         @extend .icon-fb-forum;
+    }
+}
+.index-page .solutions .cs-g-3:before{
+	@extend .icon-article-dark;
+}
+
+.form-placeholder{
+  .default_requester .controls:before{ @extend .wicon-email; }
+  .default_subject .controls:before{ @extend .wicon-question-sign; }
+  .default_name_field:before{ @extend .wicon-user; }
+}
+
+#feedback-suggest .hc-search-input:before{ @extend .wicon-search; }

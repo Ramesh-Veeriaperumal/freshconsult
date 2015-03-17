@@ -62,11 +62,3 @@
 .show-in-mobile{ display: none; }
 .hide-in-mobile{ display: block; }
 .hide-tablet{ display: none; }
-
-@if $nonResponsive == false {
-  @include at-breakpoint($media-mobile){
-    .rounded-6{ @include border-radius(0); }
-    .show-in-mobile, .hide-tablet{ display: block; }
-    .hide-in-mobile { display: none; }
-  }
-}
