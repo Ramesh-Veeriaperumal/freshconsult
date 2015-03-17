@@ -141,7 +141,7 @@ class Portal::Template < ActiveRecord::Base
     pref = default_preferences.keys - [:baseFont, :headingsFont, :nonResponsive]
     preferences.each do |key, value|
       next if pref.exclude?(key.to_sym)
-      errors.add_to_base("Please enter a valid hex color value.") and return false unless value =~ Portal::HEX_COLOR_REGEX
+      errors.add(:base, "Please enter a valid hex color value.") and return false unless value =~ Portal::HEX_COLOR_REGEX
     end
   end
 

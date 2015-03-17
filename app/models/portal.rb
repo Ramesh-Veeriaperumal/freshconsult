@@ -209,7 +209,7 @@ class Portal < ActiveRecord::Base
     def validate_preferences
       preferences.each do |key, value|
         if ["header_color", "tab_color", "bg_color"].include?(key)
-          errors.add_to_base("Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
+          errors.add(:base, "Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
         end
