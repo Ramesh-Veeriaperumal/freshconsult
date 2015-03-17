@@ -3,7 +3,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"
   validates_presence_of :value
-  validates_uniqueness_of :value, :scope => [:pickable_id, :pickable_type, :account_id]
+  validates_uniqueness_of :value, :scope => [:pickable_id, :pickable_type, :account_id], :if => 'pickable_id.present?'
   
   belongs_to :pickable, :polymorphic => true
 
