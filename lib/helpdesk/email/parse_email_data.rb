@@ -152,8 +152,10 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def detect_user_language signup_status, email_body
-		args = [user, text_for_detection(email_body)]  
-		Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
+		text = text_for_detection(email_body)
+		args = [user, text]
+		Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if user.language.nil? and signup_status
+		#Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
 	end
 
 	def text_for_detection email_body
