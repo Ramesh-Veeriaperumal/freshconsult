@@ -16,9 +16,6 @@ class ImapMailbox < ActiveRecord::Base
   end
 
   def imap_params(action)
-    shard = ShardMapping.lookup_with_account_id(account_id)
-    pod_info = shard.present? ? shard.pod_info : PodConfig['CURRENT_POD']
-
     { :mailbox_attributes => { :id => id,
         :user_name => user_name,
         :password => password,
@@ -31,9 +28,7 @@ class ImapMailbox < ActiveRecord::Base
         :to_email => email_config.to_email,
         :account_id => account_id,
         :time_zone => account.time_zone,
-        :timeout => timeout, 
-        :pod_info => pod_info,
-        :domain => account.full_domain
+        :timeout => timeout
       },
       :action => action
       }.to_json

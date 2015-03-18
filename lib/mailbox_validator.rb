@@ -29,7 +29,6 @@ module MailboxValidator
     
     def verify_imap_details?
       args = params[:email_config][:imap_mailbox_attributes]
-      filtered_params = args.except(:password)
       verified = false
       msg = ""
       begin
@@ -47,20 +46,19 @@ module MailboxValidator
         verified = true
       rescue IdleNotSupportedError => error
         msg = I18n.t('mailbox.idle_not_supported')
-        Rails.logger.debug "error while verifying the imap details : #{error} #{filtered_params.inspect}"
+        Rails.logger.debug "error while verifying the imap details : #{error} #{params.inspect}"
       rescue SocketError => error
         msg = I18n.t('mailbox.imap_connection_error')
-        Rails.logger.debug "error while verifying the imap details : #{error} #{filtered_params.inspect}"
+        Rails.logger.debug "error while verifying the imap details : #{error} #{params.inspect}"
       rescue Exception => error
         msg = I18n.t('mailbox.imap_error')
-        Rails.logger.debug "error while verifying the imap details : #{error} #{filtered_params.inspect}"      
+        Rails.logger.debug "error while verifying the imap details : #{error} #{params.inspect}"      
       end
       { :success => verified, :msg => msg }
     end
 
     def verify_smtp_details?
       args = params[:email_config][:smtp_mailbox_attributes]
-      filtered_params = args.except(:password)
       verified = false
       msg = ""
       begin
@@ -70,16 +68,16 @@ module MailboxValidator
         verified = true
       rescue Timeout::Error => error
         msg = I18n.t('mailbox.smtp_timed_out')
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{filtered_params.inspect}"
+        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       rescue SocketError => error
         msg = I18n.t('mailbox.smtp_socket_error')
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{filtered_params.inspect}"
+        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       rescue Net::SMTPAuthenticationError => error
         msg = I18n.t('mailbox.invalid_credentials')
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{filtered_params.inspect}"
+        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       rescue Exception => error
         msg = I18n.t('mailbox.smtp_error', :error => error.message)
-        Rails.logger.debug "error while verifying the smtp details : #{error} #{filtered_params.inspect}"
+        Rails.logger.debug "error while verifying the smtp details : #{error} #{params.inspect}"
       end
       { :success => verified, :msg => msg }
     end
