@@ -9,7 +9,7 @@ module Delayed
   # Contains the work object as a YAML field.
   class Job < ActiveRecord::Base
     
-    set_table_name :delayed_jobs
+    set_table_name :delayed_jobs3
     not_sharded
 
     MAX_ATTEMPTS = 25
