@@ -45,7 +45,7 @@ class Support::SolutionsController < SupportController
       @page_meta ||= {
         :title => @category.name,
         :description => @category.description,
-        :canonical => support_solution_url(@category)
+        :canonical => support_solution_url(@category, :host => current_portal.host)
       }
     end
 end
