@@ -196,7 +196,7 @@ BatchbookWidget.prototype= {
 				}	}
 				else{
 					if(!cPhone || (phone_type=='home' && phone.label=='work') || phone.primary){
-						phone_type=phone.label; cPhone = phone.number + ((!phone.primary) ? label_mark(phone.label) : "");
+						phone_type=phone.label; cPhone = phone.number + ((!phone.primary) ? label_mark(phone.label.escapeHTML()) : "");
 				}	}
 			});
 
@@ -220,7 +220,7 @@ BatchbookWidget.prototype= {
 				company_url: companyLink.escapeHTML(),
 				address: cAddress,
 				address_type_span: _address_type_span,
-				phone: cPhone.escapeHTML(),
+				phone: cPhone,
 				mobile: cMobile.escapeHTML()
 			});
 
