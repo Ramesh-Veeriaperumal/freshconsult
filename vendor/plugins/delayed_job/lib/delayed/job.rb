@@ -37,7 +37,7 @@ module Delayed
     self.max_priority = nil
 
     JobPodConfig = YAML.load_file(File.join(Rails.root, 'config', 'pod_info.yml'))
-    default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
+    # default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
 
     # When a worker is exiting, make sure we don't have any locked jobs.
     def self.clear_locks!
