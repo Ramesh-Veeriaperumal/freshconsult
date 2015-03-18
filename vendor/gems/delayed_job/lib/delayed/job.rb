@@ -9,7 +9,7 @@ module Delayed
   # Contains the work object as a YAML field.
   class Job < ActiveRecord::Base
     
-    self.table_name =  :delayed_jobs
+    self.table_name =  :delayed_jobs3
     self.primary_key = :id
     not_sharded
 
