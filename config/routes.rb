@@ -181,6 +181,7 @@ Helpkit::Application.routes.draw do
   resources :authorizations
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
+  match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
