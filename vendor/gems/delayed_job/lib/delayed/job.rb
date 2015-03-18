@@ -168,7 +168,7 @@ module Delayed
       conditions.unshift(sql)
 
       records = ActiveRecord::Base.silence do
-        find(:all, :conditions => conditions, :order => NextTaskOrder, :limit => limit)
+        find(:all, :conditions => conditions, :limit => limit)
       end
 
       records.sort_by { rand() }
