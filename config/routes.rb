@@ -499,6 +499,7 @@ Helpkit::Application.routes.draw do
   end
   resources :email, :only => [:new, :create]
   resources :mailgun, :only => :create
+  post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]
 
   resources :sso do
