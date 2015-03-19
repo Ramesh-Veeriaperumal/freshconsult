@@ -410,10 +410,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
           :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-        text = text_for_detection
-        args = [user, text]  #user_email changed
-        #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-        Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+        args = [user, text_for_detection]  #user_email changed
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
       end
       user.make_current
       user
