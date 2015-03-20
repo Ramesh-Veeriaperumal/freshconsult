@@ -7022,3 +7022,7 @@ en:
   edit_plan: "Edit Plan"
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
+  short_code:
+    alert:
+      code_mandatory: Code cannot be empty. It should be between 1 to 10 character and can have numbers, alphabets , _ and -.
+      code_duplicate: Trying to add or update with duplicate code.

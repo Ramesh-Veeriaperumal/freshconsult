@@ -10,3 +10,4 @@
 //=require freshchat/ticket_options/main.js
 //=require freshchat/agent/settings.js
 //=require freshchat/templates/availability.jst.ejs
+//=require livechat/templates/shortcodes/shortCodes.jst.ejs

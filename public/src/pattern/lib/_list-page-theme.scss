@@ -136,6 +136,37 @@
         }
     }
 }
+.canned-response-tabs{
+    @include margin(0 -20px 20px);
+    @include padding(0 20px);
+    li > a{
+        border: none;
+        background: none;
+        border-bottom: 4px solid transparent;
+        @include transition(none);
+        &:hover{
+            background:none;
+            border-color:transparent;
+        }
+    }
+    li.active{
+        > a{
+            border: none;
+            background: none;
+            border-bottom: 4px solid #ccc;
+            padding: 10px 0;
+            margin-left: 10px;
+            &:hover{
+                border: none;
+                background: none;
+                border-bottom: 4px solid #ccc;
+            }
+        }
+    }
+}
+// ------ Chat Shortcodes Page
+@import "chat/chat-shortcodes";
+// ------ END Chat Shortcodes Page
 
 .facebook-list{
     .list-page-body table{

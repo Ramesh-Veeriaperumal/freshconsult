@@ -203,6 +203,7 @@ javascripts:
     - public/javascripts/freshchat/ticket_options/main.js
     - public/javascripts/freshchat/agent/settings.js
     - public/javascripts/freshchat/templates/availability.jst
+    - public/javascripts/livechat/templates/shortcodes/shortCodes.jst.ejs
 
   livechat_mini_dashboard:
     - public/javascripts/freshchat/dashboard/dashboard.js
@@ -521,6 +522,9 @@ javascripts:
   companies:
     - public/javascripts/app/companies.js
     - public/javascripts/app/company_view.js
+
+  shortcodes:
+    - public/javascript/livechat/shortcodes/main.js
 
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js
