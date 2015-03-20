@@ -64,6 +64,7 @@ module ChatHelper
       :wait_message    => t('freshchat.wait_message'),
       :agent_joined_msg=> t('freshchat.agent_joined_msg'),
       :agent_left_msg  => t('freshchat.agent_left_msg'),
+      :agent_transfer_msg_to_visitor => t('freshchat.agent_transfer_msg_to_visitor'),
       :connecting_msg  => t('freshchat.connecting_msg')
     }.to_json.html_safe
   end
@@ -132,6 +133,7 @@ module ChatHelper
       :default_wait_message => t("freshchat.wait_message"),
       :default_agent_joined_msg => t("freshchat.agent_joined_msg"),
       :default_agent_left_msg => t("freshchat.agent_left_msg"),
+      :default_agent_transfer_msg_to_visitor => t('freshchat.agent_transfer_msg_to_visitor'),
       :default_thank_message => t("freshchat.thank_message"),
       :default_non_availability_message => t("freshchat.non_availability_message"),
       :default_prechat_message => t("freshchat.prechat_message"),
@@ -277,6 +279,7 @@ module ChatHelper
             :date_range => t('freshchat.date_range'),
             :agent_joined_msg => t('freshchat.agent_joined_msg'),
             :agent_left_msg => t('freshchat.agent_left_msg'),
+            :agent_transfer_msg_to_visitor => t('freshchat.agent_transfer_msg_to_visitor'),
             :agent_transfered_msg => t('freshchat.agent_transfered_msg'),
             :agent_reopen_chat_msg => t("freshchat.agent_reopen_chat_msg"),
             :visitor_side_inactive_msg => t('freshchat.visitor_side_inactive_msg'),
