@@ -6,7 +6,7 @@
       <!-- Write in single line for template_liner to work..-->
       <% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) 
         for ticket in @items %>
-        <%= render :partial => "/helpdesk/shared/expanded/ticket", :locals => { :ticket => ticket } , :inline => true %>
+        <%= render :partial => "/helpdesk/shared/expanded/ticket", :locals => { :ticket => ticket }, :formats => [:html], :inline => true %>
       <% end %>
     </tbody>
   </table>

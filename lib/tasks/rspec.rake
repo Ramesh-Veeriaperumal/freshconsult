@@ -107,11 +107,6 @@ if Rails.env.test?
   ]
 
   ForumTests = [
-    "spec/lib/community/*_spec.rb",
-    "spec/lib/community/moderation/*_spec.rb",
-    "spec/lib/forum_unpublished_spec.rb",
-    "spec/lib/forum_spam_spec.rb",
-    "spec/lib/dynamo_spec.rb",
     "spec/controllers/discussions_controller_spec.rb",
     "spec/controllers/discussions/*_spec.rb",
     "spec/controllers/forum_categories_controller_spec.rb",
@@ -120,6 +115,16 @@ if Rails.env.test?
     "spec/models/monitorship_spec.rb",
     "spec/controllers/support/discussions/*_spec.rb",
     "spec/controllers/support/discussions_controller_spec.rb"
+  ]
+
+  ForumDynamoTests = [
+    "spec/lib/community/*_spec.rb",
+    "spec/lib/community/moderation/*_spec.rb",
+    "spec/lib/forum_unpublished_spec.rb",
+    "spec/lib/forum_spam_spec.rb",
+    "spec/lib/dynamo_spec.rb",
+    "spec/controllers/discussions/moderation/*_spec.rb",
+    "spec/controllers/support/discussions/moderation/*_spec.rb"
   ]
 
   SolutionTests = [
@@ -454,6 +459,14 @@ if Rails.env.test?
         end
       end
 
+      namespace :forum_dynamo_tests do
+        desc "Running all forum tests"
+        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+        RSpec::Core::RakeTask.new(:all) do |t|
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(ForumDynamoTests)
+        end
+      end
 
       namespace :integrations do
         desc "Running all freshdesk integrations tests"

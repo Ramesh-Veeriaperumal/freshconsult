@@ -27,7 +27,7 @@ class Support::Solutions::FoldersController < SupportController
       @page_meta ||= {
         :title => @folder.name,
         :description => @folder.description,
-        :canonical => support_solutions_folder_url(@folder)
+        :canonical => support_solutions_folder_url(@folder, :host => current_portal.host)
       }
     end
 

@@ -107,7 +107,7 @@ include GoogleLoginHelper
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
       container = params['opensocial_container']
       consumer = OAuth::Consumer.new(container, public_key)
-      req = OAuth::RequestProxy::ActionControllerRequest.new(request)
+      req = OAuth::RequestProxy::RackRequest.new(request)
       sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
       verified = sign.verify
       if verified

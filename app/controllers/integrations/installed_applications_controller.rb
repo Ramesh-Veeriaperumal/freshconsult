@@ -11,8 +11,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
   before_filter :validate_configs, :only => [:update], :if => :application_is_slack?
-  after_filter  :destroy_all_slack_rule, :only => [:uninstall,:update], :if =>  :application_is_slack?
   after_filter  :create_or_update_slack_rule , :only => [:install, :update] , :if =>  :application_is_slack? 
+  after_filter  :destroy_all_slack_rule, :only => [:uninstall,:update], :if =>  :application_is_slack?
 
 
   def install 

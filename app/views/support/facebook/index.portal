@@ -10,14 +10,14 @@
 			{% if portal.has_user_signed_in %}
 			<a href="/facebook/support/tickets">
 				<span class="content-icon">
-					<img src="{{spacer_image_url}}" class="fb-ticket-icon" />
+					<div class="fb-ticket-icon"></div>
 				</span>
 				<h2 class="heading">{% translate facebook_tab.portal.customer_support %}</h2>
 			</a>
 			{% else %}
 			<a>
 				<span class="content-icon">
-					<img src="{{spacer_image_url}}" class="fb-ticket-icon" />
+					<div class="fb-ticket-icon"></div>
 				</span>
 				<h2 class="heading">{% translate facebook_tab.portal.customer_support %}</h2>
 			</a>
@@ -47,7 +47,7 @@
 		<div class="content-header">
 			<a href="/facebook/support/solutions">
 				<span class="content-icon">
-					<img src="{{spacer_image_url}}" class="fb-solutions-icon" />
+					<div class="fb-solutions-icon"></div>
 				</span>
 				<h2 class="heading">{% translate portal.knowledge_base %}</h2>
 			</a>
@@ -87,7 +87,7 @@
 		<div class="content-header">
 			<a href="/facebook/support/discussions">
 				<span class="content-icon">
-					<img src="{{spacer_image_url}}" class="fb-forum-icon" />
+					<div class="fb-forum-icon"></div>
 				</span>
 				<h2 class="heading">{% translate portal.community_forums %}</h2>
 			</a>

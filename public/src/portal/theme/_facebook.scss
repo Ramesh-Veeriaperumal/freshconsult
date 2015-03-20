@@ -25,13 +25,11 @@ h2 {
     p:first-child{
         margin-top: -5px;
         margin-bottom: 15px;
-        @extend .help-text;
     }
     .page-stamp{
         display:block;
         @include left(0);
         @include margin-left(15px);
-       @extend .icon-article-dark; 
        &:after{
         border:0;
        }
@@ -69,12 +67,6 @@ h3.heading{
     .list-lead{
         font-weight: bold;
         color:$linkColor;
-    }
-
-    li{
-        &:before{
-            @extend .icon-article-small
-        }
     }
 }
 .article-body{
@@ -136,7 +128,6 @@ h3.heading{
     }
 }
 .book-icon {
-    @extend .icon-book;
     position: relative;
     @include padding-left(30px);
     padding-bottom: 0px;
@@ -285,15 +276,6 @@ h3.heading{
             width: 60px;
             height: 60px;
         }
-        .fb-ticket-icon{
-            @extend .icon-fb-tickets;
-        }
-        .fb-solutions-icon{
-             @extend .icon-fb-book;
-        }
-        .fb-forum-icon{
-             @extend .icon-fb-forum;
-        }
     }
     .solutions, .forums, .ticket{
         .ellipsis{white-space: normal;}
@@ -302,9 +284,6 @@ h3.heading{
         .cs-g-3{
             @include padding-left(35px);
             @include margin-right(0);
-            &:before{
-                @extend .icon-article-dark;
-            }
         }    
     }
     .cs-g-3{

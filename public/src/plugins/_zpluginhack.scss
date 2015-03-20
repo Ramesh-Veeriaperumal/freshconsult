@@ -13,7 +13,7 @@
 	top: 5px;
 }
 
-.ui-form li.select2-search-choice{
+.ui-form li.select2-search-choice, .ui-form li.select2-search-field{
 	width:auto;
 }
 .tkt-sidebar #TicketProperties li.field .select2-container-multi .select2-choices .select2-search-choice
@@ -48,7 +48,7 @@
 //-------------
 
 ul.multi_value_field li.choice{
-	padding: 2px 4px 2px 12px;
+	@include padding(2px 4px 2px 12px);
 	border-radius: 5px;
 }
 // Redactor Hack

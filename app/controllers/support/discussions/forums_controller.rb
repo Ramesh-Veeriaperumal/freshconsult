@@ -32,7 +32,7 @@ private
     @page_meta ||= {
       :title => @forum.name,
       :description => @forum.description,
-      :canonical => support_discussions_forum_url(@forum)
+      :canonical => support_discussions_forum_url(@forum, :host => current_portal.host)
     }
   end
 end

@@ -391,9 +391,9 @@
     &:before{
       content:"";
       @if lightness($bg_color) > 50% {        
-        @include icon-sprite(#{$class}-dark);
+        @include dynamic-icon-sprite(#{$class}-dark);
       } @else {
-        @include icon-sprite(#{$class});
+        @include dynamic-icon-sprite(#{$class});
       }
       @include inline-block;
       vertical-align: text-top;

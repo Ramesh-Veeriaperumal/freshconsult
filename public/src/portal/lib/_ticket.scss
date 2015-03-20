@@ -54,18 +54,3 @@
 }
 
 .ticket-brief{ padding-top: 7px; }
-
-// Ticket list & detail styles
-@if $nonResponsive == false {
-	@include at-breakpoint($media-mobile){
-		.c-ticket-row .label{ @include float(none); }
-		.agent-details{
-			padding: $content-padding-mobile;
-			margin-top: -$content-padding-mobile;
-			@include margin-left(-$content-padding-mobile);
-			@include margin-right(-$content-padding-mobile);
-			@include border-top-radius(none);
-		}
-		.ticket-brief{ padding-top: 5px; }
-	}
-}

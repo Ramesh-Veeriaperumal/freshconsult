@@ -1,6 +1,6 @@
 <% if @survey_handle.portal.preferences.present? %>
- 	$background: 	<%= @survey_handle.portal.preferences[:bg_color] %>;
-	$header_color: 	<%= @survey_handle.portal.preferences[:header_color] %>;
+ 	$background: 	<%= @survey_handle.portal.template.preferences[:bg_color] %>;
+	$header_color: 	<%= @survey_handle.portal.template.preferences[:header_color] %>;
 	
 	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;

@@ -1,0 +1,5 @@
+@import "cdn-ignored/sprites/portal/dynamic-icon/*.png";
+$dynamic-icon-sprite-dimensions:true;
+$dynamic-icon-layout:horizontal;
+$dynamic-icon-clean-up:false;
+@include all-dynamic-icon-sprites;

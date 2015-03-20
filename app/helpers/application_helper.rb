@@ -769,7 +769,7 @@ module ApplicationHelper
     choices = field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html.erb", :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
