@@ -373,7 +373,7 @@ JiraWidget.prototype = {
 			return
 		}
 
-		jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
+		jQuery('#jira_issue_icon a.integrations-jira').removeClass('integrations-jira').addClass('integrations-jira_color');
 		if(resultCallback) resultCallback(evt);
 
 	},	
@@ -589,7 +589,7 @@ JiraWidget.prototype = {
 			jiraWidget.linkIssue = true;
 			jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
 
-			jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
+			jQuery('#jira_issue_icon a.integrations-jira').removeClass('integrations-jira').addClass('integrations-jira_color');
 			jiraWidget.renderDisplayIssueWidget();
 		} else {
 			jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -630,7 +630,7 @@ JiraWidget.prototype = {
 			jiraBundle.integrated_resource_id = "";
 			jiraBundle.remote_integratable_id = "";
 
-			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
+			jQuery('#jira_issue_icon a.integrations-jira_color').addClass('integrations-jira').removeClass('integrations-jira_color');
 		}
 
 		this.displayCreateWidget();
@@ -671,7 +671,7 @@ JiraWidget.prototype = {
 		resJ = evt.responseJSON
 		if(resJ['error'] == null || resJ['error'] == "") {
 			jQuery('.subtitle').html("Link an issue");
-			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
+			jQuery('#jira_issue_icon a.integrations-jira_color').addClass('integrations-jira').removeClass('integrations-jira_color');
 			jiraWidget.displayCreateWidget();
 		} 
 		else {
