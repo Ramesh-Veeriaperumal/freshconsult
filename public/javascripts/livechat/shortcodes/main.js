@@ -112,6 +112,7 @@ liveChat.admin_short_codes = (function(){
         var _parent_elm = jQuery("#"+short_code_id);
         _parent_elm.find(".code_view").html(_parent_elm.find('.short_code_key').val());
         _parent_elm.find(".message_view").html(_module.trimData(_parent_elm.find('.short_code_message').val()));
+        _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
       },
       //get records call back
