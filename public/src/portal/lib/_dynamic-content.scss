@@ -1,0 +1,42 @@
+.content, .content-form, .content-light{
+	border: $content-border;
+	padding: $content-padding; 
+}
+.content{ background-color: $page-background; }
+.content-light{	background-color: $page-light-background; }
+.content-form{ background-color: $page-form-background; }
+.cs-s{
+	border-top:1px solid $inputFocusRingColor;
+	h3{
+		border-top:6px solid $inputFocusRingColor;
+	}
+}
+.see-more{ color: fade-out($linkColor, 0.5); }
+.help-text, .p-info, .info-text, .list-noinfo, .description-text{
+	color: $helpTextColor;	
+	line-height: $baseLineHeight / 1.1;
+}
+.item-count{ color: lighten($helpTextColor, 10%); }
+/* A small colen is added in front of the 
+   up-vote button if its next to atleast one user voted label */
+#topic-vote-up-button:nth-child(3):before{ color: $textColor; }
+.p-content{
+	background-color:$comments-background;
+	padding: $comments-padding;
+	border:1px solid $comments-border-color;	
+	hr{
+		@include margin-left(-$comments-padding-side);
+		@include margin-right(-$comments-padding-side);
+	}
+}
+.comment-by-agent .p-content{
+	background-color:$comments-agent-background;
+	border-color:$comments-agent-border-color;
+}
+.c-list{	border-bottom: 1px solid $row-border-color;	}
+.c-row{	border-top:1px solid $row-border-color; }
+.uv-row{	border-bottom: 1px solid $row-border-color; }
+hr.content-divider{
+	@include margin-left(-$content-padding-side);
+	@include margin-right(-$content-padding-side); 
+}

@@ -57,9 +57,7 @@
 		</li>
 		<li>
 			<%= label(:user, :email, t('user.email')) %> 
-			<%= f.fields_for :user_emails do |ue| %>
-				<%= ue.text_field :email, :id => "email_primary", :class => "email" %>
-			<% end %>
+			<%= text_field(:user, :email, :id => "email_primary" ) %>
 		</li>
 
 		<li>

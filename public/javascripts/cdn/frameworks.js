@@ -46,4 +46,4 @@
 //= require frameworks/plugins/daterangepicker.js
 //= require frameworks/plugins/menuselector.js
 //= require frameworks/plugins/jquery.autosuggester.js
-//= require integrations/construct_rules.js
+//= require integrations/construct_rule.js

@@ -181,6 +181,7 @@ Helpkit::Application.routes.draw do
   resources :authorizations
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
+  match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
@@ -498,6 +499,7 @@ Helpkit::Application.routes.draw do
   end
   resources :email, :only => [:new, :create]
   resources :mailgun, :only => :create
+  post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]
 
   resources :sso do
@@ -924,6 +926,7 @@ Helpkit::Application.routes.draw do
   match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/all' => 'search/home#index'
+  match '/search/home' => 'search/home#index', :as => :search_home
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
@@ -1142,6 +1145,7 @@ Helpkit::Application.routes.draw do
         post :follow
         post :unfollow
         get :user_following
+        post :user_following
       end
     end
   end
@@ -1618,10 +1622,11 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  match 'accounts/create_account_google' => 'accounts#create_account_google', :via => :put
   resources :google_signup, :controller => 'google_signup' do
     collection do
-      get :associate_local_to_google
-      get :associate_google_account
+      put :associate_local_to_google
+      put :associate_google_account
     end
   end
 
@@ -1831,6 +1836,7 @@ Helpkit::Application.routes.draw do
         get :get_portal
         get :ticket_properties
         get :load_reply_emails
+        match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end
 

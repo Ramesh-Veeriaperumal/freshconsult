@@ -37,6 +37,7 @@ module Delayed
         load(account).send(:make_current) if account
         load(portal).send(:make_current) if portal
         load(object).send(method, *args.map{|a| load(a)})
+        $statsd.increment "email_counter.#{account_id}"
       end
       #rescue ActiveRecord::RecordNotFound
            # We cannot do anything about objects which were deleted in the meantime

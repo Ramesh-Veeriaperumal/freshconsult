@@ -11,13 +11,13 @@
   <% end %>
   <div class="tkt-wrapper ticket_show" data-showing='notes'>
     <div class="tkt-wrapper-inner clearfix">
-      <%= render :partial => "helpdesk/tickets/show/info_widget" %>
+      <%= render :partial => "helpdesk/tickets/show/info_widget", :formats => [:html] %>
       <div id="forFixed" class="conversation_thread"></div>
       <!--content Left-->
       <div class="leftcontent">
         <div class="conversation_thread" id="original_request">
           <div class="conversation">
-                  <%= render :partial => "helpdesk/tickets/show/original_request" %>
+                  <%= render :partial => "helpdesk/tickets/show/original_request", :formats => [:html] %>
           </div>
         </div>
         <% if @ticket_notes_total > @ticket_notes.size %>
@@ -33,7 +33,7 @@
           </div>
         </div>
         <% end %>
-        <%= render :partial => "helpdesk/tickets/show/conversations" %>
+        <%= render :partial => "helpdesk/tickets/show/conversations", :formats => [:html] %>
       </div><!-- left content end-->
     </div>
   </div>

@@ -1,6 +1,4 @@
 // CSS Reset
-@import "lib/reset";
-
 // Type and some util functions
 @import "lib/type";
 
@@ -12,56 +10,23 @@
 @import "lib/forms";
 @import "lib/buttons";
 @import "lib/button-groups";
-@import "lib/sprites";
-
-@import "lib/dropdowns";
+@import "lib/dynamic-sprites";
 @import "lib/navs";
 @import "lib/tables";
 
 // Components: Misc
 @import "lib/breadcrumbs";
-@import "lib/pagination";
-@import "lib/labels";
-@import "lib/popover";
-@import "lib/modals";
-@import "lib/component-animations";
 @import "lib/close";
 @import "lib/alerts";
-@import "lib/tooltip";
-@import "lib/widget-icons";
-// Profile image styles
-@import "lib/profile";
 
 // Page related styles
 @import "lib/header-footer";
 @import "lib/help-center";
-@import "lib/content";
-@import "lib/login";
-@import "lib/search";
-// @import "lib/autocomplete";
-
-// Module related styles
-@import "lib/attachments";
-
-// Date picker
-@import "lib/jquery-ui";
-
-// !PORTALCSS Existing styles from app
-// Need to be optimised
-@import "lib/ticket";
-@import "lib/survey";
-
-@import "lib/utilities";
-
-// Chat Transcript UI
-@import "../page/tkt_details/chat-transcript";
+@import "lib/dynamic-content";
 
 // Responsive styles for mobile and tablet
 @import "responsive/mobile";
 @import "responsive/tablet";
-
-// RTL Styles
-@import "lib/rtl-styles";
 
 // Debug styles
 /*@import "lib/debug";*/

@@ -32,7 +32,7 @@ module GoogleLoginHelper
     app_name = google_app_name(provider_key_name, oauth_keys)
     auth_url = "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" << consumer_token(provider_key_name, oauth_keys) << callback_url(app_name) << scopes(provider_key_name, oauth_keys) << options_name(app_name)
     if portal_url.present?
-      auth_url = auth_url << '&state=full_domain%3D' << current_account.full_domain << '%26portal_url%3D' << request.host_with_port
+      auth_url = auth_url << '&state=full_domain%3D' << current_account.full_domain << '%26portal_url%3D' << fetch_portal_url(provider_key_name)
     end
     auth_url
   end
@@ -94,6 +94,14 @@ module GoogleLoginHelper
 
     def options_name(app_name)
       options_name = "&name=#{app_name}"
+    end
+
+    def fetch_portal_url(provider_key_name)
+      if provider_key_name == "google_gadget_oauth2"
+        current_portal.portal_url.present? ? current_portal.portal_url : current_account.full_domain
+      else
+        request.host_with_port
+      end
     end
 
     def make_user_active user

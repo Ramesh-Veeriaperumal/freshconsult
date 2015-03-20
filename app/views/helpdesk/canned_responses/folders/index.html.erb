@@ -152,8 +152,9 @@
 									<label class="control-label"><%=t('canned_responses.available_for').html_safe%> :</label>
 									<div class="controls">
 										<label class="radio" id="all_agent">
-										<%= access.radio_button  :visibility, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio required", :name => 'visibility'} %> 
 										<%= t('canned_responses.all_agents') %>
+										<%= access.radio_button  :visibility, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio required", :name => 'visibility'} %> 
+										
 										<%= access.hidden_field :user_id, :value =>current_user.id %>
 										</label>
 									</div>

@@ -13,6 +13,7 @@ class EmailController < ApplicationController
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
   skip_before_filter :logging_details
+  skip_before_filter :ensure_proper_protocol
   
   def new
     render :layout => false

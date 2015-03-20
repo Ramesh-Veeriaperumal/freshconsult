@@ -1826,7 +1826,6 @@ ol, ul, li{
 			.select2-container{ width: 310px; }
 
 			.select2-container-multi .select2-choices .select2-search-choice {
-				@include float(none);
 				display: inline-block;
 				width: auto;
 			}

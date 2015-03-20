@@ -150,8 +150,7 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def fetch_fb_wall_posts fb_page 
-    fb_posts = Facebook::Fql::Posts.new(fb_page)
-    fb_posts.fetch    
+    Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => fb_page.account_id, :fb_page_id => fb_page.id})
   end
 
   def fb_call_back_url(action="index") 

@@ -366,8 +366,8 @@
 	.highlight{
 		color: #E00000;
 	}
-	.null-value{
-		opacity: 0.3;
+	.muted{
+		@include opacity(0.3);
 	}
 }
 

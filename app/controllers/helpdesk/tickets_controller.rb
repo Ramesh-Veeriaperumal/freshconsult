@@ -140,7 +140,7 @@ class Helpdesk::TicketsController < ApplicationController
               :except => [ :description_html, :description ],
               :methods => [ :status_name, :priority_name, :source_name, :requester_name,
                             :responder_name, :need_attention, :pretty_updated_date ]
-            }, false)
+            }, false)['helpdesk_ticket']
           }
           render :json => array
         end
@@ -1042,6 +1042,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def portal_check
       if !current_user.nil? and current_user.customer?
+        load_item
         return redirect_to support_ticket_url(@ticket)
       elsif !privilege?(:manage_tickets)
         access_denied
