@@ -18,6 +18,10 @@ module HelpdeskSystem
           page.redirect_to :url => send(Helpdesk::ACCESS_DENIED_ROUTE)
         end
       }
+      format.widget {
+        render :text =>  (current_user ? I18n.t(:'flash.general.access_denied') : 
+                                        I18n.t(:'flash.general.need_login'))
+      }
     end
  end 
 
