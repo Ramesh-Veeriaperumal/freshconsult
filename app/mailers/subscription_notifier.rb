@@ -5,7 +5,8 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def sub_error(options={})
     setup_email("kiran@freshdesk.com", "Error in Subscription module for #{options[:custom_message]}")
-    @message = options[:error_msg], @full_domain = options[:full_domain]
+    @message = options[:error_msg]
+    @full_domain = options[:full_domain]
     mail(@headers) do |part|
       part.html { render "sub_error", :formats => [:html] }
     end.deliver
@@ -13,7 +14,8 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def welcome(account)
     setup_email(account.admin_email, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
-    @account = account, @host = account.host
+    @account = account
+    @host = account.host
     mail(@headers) do |part|
       part.html { render "welcome", :formats => [:html] }
     end.deliver
@@ -22,7 +24,9 @@ class SubscriptionNotifier < ActionMailer::Base
   def trial_expiring(user, subscription, trial_days = nil)
     setup_email(user,"Your Freshdesk trial expires in #{trial_days}")
     setup_bcc("kiran@freshdesk.com")
-    @user = user, @subscription = subscription, @trial_days = trial_days
+    @user = user
+    @subscription = subscription
+    @trial_days = trial_days
 
     mail(@headers) do |part|
       part.html { render "trial_expiring", :formats => [:html] }
@@ -33,7 +37,8 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
     @subscription = subscription_payment.subscription
-    @amount = subscription_payment.amount, @subscription_payment = subscription_payment 
+    @amount = subscription_payment.amount
+    @subscription_payment = subscription_payment 
     mail(@headers) do |part|
       part.html { render "charge_receipt", :formats => [:html]}
     end.deliver
@@ -42,7 +47,8 @@ class SubscriptionNotifier < ActionMailer::Base
   def day_pass_receipt(quantity, subscription_payment)
     setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
-    @units = quantity, @subscription_payment = subscription_payment, 
+    @units = quantity
+    @subscription_payment = subscription_payment 
     @subscription = subscription_payment.subscription
     mail(@headers) do |part|
       part.html { render "day_pass_receipt", :formats => [:html]}
@@ -52,8 +58,9 @@ class SubscriptionNotifier < ActionMailer::Base
   def misc_receipt(subscription_payment,description)
     setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
-    @subscription = subscription_payment.subscription, 
-    @subscription_payment = subscription_payment, @description = description
+    @subscription = subscription_payment.subscription
+    @subscription_payment = subscription_payment
+    @description = description
     mail(@headers) do |part|
       part.html { render "misc_receipt", :formats => [:html]}
     end.deliver
