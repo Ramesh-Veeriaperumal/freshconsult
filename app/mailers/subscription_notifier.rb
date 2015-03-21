@@ -70,7 +70,8 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def account_deleted(account, feedback)
     setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
-    @account = account, @reason = feedback
+    @account = account 
+    @reason  = feedback
     mail(@headers) do |part|
       part.html { render "account_deleted", :formats => [:html]}
     end.deliver
@@ -119,7 +120,8 @@ class SubscriptionNotifier < ActionMailer::Base
 
   def subscription_downgraded(subscription, old_subscription)
     setup_email(AppConfig['from_email'], "#{subscription.account.full_domain} downgraded")
-    @subscription = subscription, @old_subscription = old_subscription
+    @subscription = subscription
+    @old_subscription = old_subscription
     mail(@headers) do |part|
       part.html { render "subscription_downgraded", :formats => [:html]}
     end.deliver
