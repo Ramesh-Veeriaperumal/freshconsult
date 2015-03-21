@@ -47,7 +47,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     if affilate.save
       render :json => { :success => true }
     else
-      render :json => { :success => false, :errors => affilate.errors }
+      render :json => { :success => false, :errors => affilate.errors.fd_json }
     end
   end
 

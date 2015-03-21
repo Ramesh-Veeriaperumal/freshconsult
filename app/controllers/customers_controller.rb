@@ -56,7 +56,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
         format.json  { render :json => @customer.to_json(:root => 'customer'), :status => :created }
       else
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @customer.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -70,7 +70,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
         format.json { head :ok }
       else
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @customer.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
