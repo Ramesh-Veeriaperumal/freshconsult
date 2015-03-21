@@ -144,11 +144,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     @body = note.full_text
     @body_html = generate_body_html(note.full_text_html)
-    @note = note, 
-    @cloud_files = note.cloud_files, 
-    @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey]),
-    @include_quoted_text = options[:quoted_text],
-    @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user),
+    @note = note 
+    @cloud_files = note.cloud_files
+    @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+    @include_quoted_text = options[:quoted_text]
+    @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
     @ticket = ticket
     @account = note.account
 
