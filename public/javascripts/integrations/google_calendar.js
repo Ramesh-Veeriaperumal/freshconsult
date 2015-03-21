@@ -1138,7 +1138,7 @@ jQuery(document).ready(function(){
 		showOn: "focus",
 		altField: "#gcal-start-date-alt-field", 
 		altFormat: "dd-mm-yy",
-		disabled: true,
+		disabled: false,
 		onSelect: function(){onStartDateTimeChanged(); jQuery('#gcal-start-time-field').focus().trigger(jQuery.Event('click'))}
 	};
 
