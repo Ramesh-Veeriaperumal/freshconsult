@@ -60,6 +60,7 @@ class ApplicationController < ActionController::Base
         format.json { render :json => account_suspended_hash.to_json }
         format.nmobile { render :json => account_suspended_hash.to_json }
         format.js { render :json => account_suspended_hash.to_json }
+        format.widget { render :json => account_suspended_hash.to_json }
         format.html { 
           if privilege?(:manage_account)
             flash[:notice] = t('suspended_plan_info')
@@ -139,6 +140,9 @@ class ApplicationController < ActionController::Base
       format.json do 
         render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
       end
+      format.widget do 
+        render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
+      end
     end
   end
  
@@ -149,6 +153,7 @@ class ApplicationController < ActionController::Base
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
       format.json { render :json => {:errors =>result}.to_json and return } 
+      format.widget { render :json => {:errors =>result}.to_json and return } 
     end
   end
  
@@ -228,6 +233,12 @@ class ApplicationController < ActionController::Base
         }
         format.nmobile{
           render :json => {:logout => 'success'}.to_json
+        }
+        format.json{
+          render :json => {:logout => 'success'}
+        }
+        format.widget{
+          render :json => {:logout => 'success'}
         }
       end
     end

@@ -21,6 +21,9 @@ class AccountsController < ApplicationController
   skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
                                          :marketplace_login, :portal_login, :create_account_from_google,
                                          :associate_google_account,:associate_local_to_google]
+  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
+                                         :marketplace_login, :portal_login, :create_account_from_google,
+                                         :associate_google_account,:associate_local_to_google]
   skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
                                         :marketplace_login, :portal_login, :create_account_from_google,
                                         :associate_google_account,:associate_local_to_google]
@@ -76,7 +79,7 @@ class AccountsController < ApplicationController
         }
       end
     else
-      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).to_json }, :callback => params[:callback] 
+      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback] 
     end    
   end
   

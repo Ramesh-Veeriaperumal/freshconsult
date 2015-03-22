@@ -5,8 +5,8 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>  
 
 <div class="sidepanel">
- 	<%= form_for survey_list_path, :remote => true, 
- 				:url => survey_list_url, :before => "if(!validate_request()){return false;}",
+ 	<%= form_for survey_list_path,
+ 				:url => survey_list_url,
  				:method => :post, :html => {
  					:id => 'report_filters', 
  					"data-update" => "report_list",
@@ -47,29 +47,28 @@
 
 
 	jQuery(document).ready(function() {
-	    jQuery("#report_filters").change(function(){
-    			jQuery("#report_list").html("<div class='sloading loading-small loading-block'></div>"); 
-		    	jQuery.ajax({
-		        			url: '<%=survey_list_url%>',
-		        			type: "POST",
-		        			beforeSend: validate_request,
-		        			data: jQuery(this).serializeArray(),
-		        			success: function(data){ 
-				   		jQuery("#report_list").hide().html(data).fadeIn(300);
-		        			}
-				});
-	    });
-
-			    
-		jQuery('#report_filters').on('ajax:beforeSend', function() {
-			var category =  jQuery("#category").val();
-			var date_range =  jQuery("#date_range").serialize();
+		jQuery("#report_filters").on('change submit', function(){
+			
+			var category =  jQuery("#category").val(),
+				date_range =  jQuery("#date_range").serialize();
 			if(category == "company"){
 				location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
-				return false;	
+			} else {
+				jQuery("#report_list").html("<div class='sloading loading-small loading-block'></div>");
+				jQuery.ajax({
+					url: '<%=survey_list_url%>',
+					type: "POST",
+					data: jQuery(this).serializeArray(),
+					success: function(data){ 
+						jQuery("#report_list").hide().html(data).fadeIn(300);
+					}
+				});
 			}
-			return true;
+			
+			return false;
 		});
+
+			    
 
 
 		jQuery("#date_range").daterangepicker({

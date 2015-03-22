@@ -87,9 +87,8 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { render :action => :new }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
-        format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
-        format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
-        format.nmobile { render :json => { :error => true , :message => @user.errors }.to_json }
+        format.nmobile { render :json => { :error => true , :message => @user.errors.fd_json }.to_json }
+        format.json { render :json =>@user.errors.fd_json, :status => :unprocessable_entity} #bad request
         format.widget { render :action => :show}
         format.js
       end
@@ -173,7 +172,7 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { render :action => :edit }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
-        format.json { render :json => @item.errors, :status => :unprocessable_entity}
+        format.json { render :json => @item.errors.fd_json, :status => :unprocessable_entity}
       end
     end
   end
@@ -196,7 +195,7 @@ class ContactsController < ApplicationController
             define_contact_properties
             render :show
           }
-          format.json { render :json => @item.errors, :status => :unprocessable_entity}
+          format.json { render :json => @item.errors.fd_json, :status => :unprocessable_entity}
         end
       end
     rescue Exception => e
@@ -246,7 +245,7 @@ class ContactsController < ApplicationController
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
-        format.json { render :json => @item.errors,:status => 500 }
+        format.json { render :json => @item.errors.fd_json,:status => 500 }
       end   
     end
   end
@@ -409,6 +408,7 @@ protected
     end
 
     def init_user_email
+      @item ||= @user
       @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if current_account.features_included?(:contact_merge_ui) and @item.user_emails.empty?
     end
 end

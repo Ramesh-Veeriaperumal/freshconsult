@@ -109,7 +109,7 @@ class Support::Solutions::ArticlesController < SupportController
         :title => @article.article_title,
         :description => @article.article_description,
         :keywords => @article.article_keywords,
-        :canonical => support_solutions_article_url(@article)
+        :canonical => support_solutions_article_url(@article, :host => current_portal.host)
       }
     end
 

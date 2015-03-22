@@ -87,6 +87,7 @@ class Search::AutocompleteController < ApplicationController
     def search_companies
       search_name_string = 'name:'+params[:q]+'*'
       options = { :load => true, :size => 1000 }
+      Search::EsIndexDefinition.es_cluster(current_account.id)
       s = Tire.search Search::EsIndexDefinition.searchable_aliases([Customer], current_account.id),options do |s|
         s.query do |q|
           q.boolean do |b|
@@ -99,6 +100,7 @@ class Search::AutocompleteController < ApplicationController
     
     def search_users(agent=false)
       options = { :load => USER_ASSOCIATIONS, :size => 100 }
+      Search::EsIndexDefinition.es_cluster(current_account.id)
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |tire_search|
          tire_search.query do |q|
            q.filtered do |f|
@@ -115,6 +117,7 @@ class Search::AutocompleteController < ApplicationController
     def search_tags
       search_name_string = 'name:'+params[:q]+'*'
       options = { :load => true, :size => 25 }
+      Search::EsIndexDefinition.es_cluster(current_account.id)
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Tag], current_account.id),options do |tire_search|
         tire_search.query do |q|
           q.boolean do |b|

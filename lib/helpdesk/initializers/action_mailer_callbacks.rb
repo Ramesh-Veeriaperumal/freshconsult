@@ -35,6 +35,7 @@ module ActionMailerCallbacks
       else
         reset_smtp_settings(mail)
       end
+      @mailbox = nil
     end
 
     def reset_smtp_settings(mail)

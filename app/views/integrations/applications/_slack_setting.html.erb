@@ -1,7 +1,7 @@
 <% 
 if is_application_installed?("slack")
   configs_hash = get_app_config("slack")
-  existing_channels = configs_hash['channels']? configs_hash['channels']:[{"channel_id" => "", "actions" => ""}]  
+  existing_channels = configs_hash['channels']? configs_hash['channels'] : []
 else
   configs_hash = [ {"channel_id" => "", "actions" => ""}]
 end
@@ -14,20 +14,21 @@ end
 
 <% actions = [t("integrations.slack_settings.ticket_create"),t("integrations.slack_settings.status_update"),t("integrations.slack_settings.note_create")] %>
 
-<label class = "channel pad-channel"><strong><%= t("integrations.slack_settings.channels").html_safe %></strong></label>
-<label class = "channel actions"><strong><%= t("integrations.slack_settings.notify").html_safe %></strong></label>
+<div rel="construct_rules" id="construct_rules" class="rules_wrapper" data-render-template=".construct_channel" data-disable-field=""></div>
 
- <% data = [
-    {:type => 'dropdown', :options => @channels, :name => 'configs[channels][][channel_id]', :refer_key => 'channel_id'},
-    {:type => 'multi_select', :options => actions, :name => 'configs[channels][][actions]', :refer_key => 'actions'}
-    ] %>
+<script class="construct_channel" type="text/html" data-default-value = '<%= existing_channels.to_json.html_safe %>'>
 
-<%= construct_rules(data, existing_channels.to_json.html_safe) %>
+   <%= select_tag('configs[channels][][channel_id]', options_for_select(@channels.collect{ |c| [c["name"],c["id"]]}), { :class => "" , :rel => "dropdown", "data-refer-key" => 'channel_id', 'data-header-label' => t("integrations.slack_settings.channels")}) %>
+
+   <%= select_tag('configs[channels][][actions]', options_for_select(actions), { :class => "" , :rel => "multi_select", "data-refer-key" => 'actions', 'data-header-label' => t("integrations.slack_settings.notify")}) %> 
+</script> 
 
 <script type= "text/javascript">
 
 jQuery(function(){
-    jQuery('#construct_rules').constructRules();
+
+  jQuery('#construct_rules').constructRules();
+
     jQuery('.edit_integrations_installed_application').submit(function(){
       jQuery('input.multi_select_1').each(function(index,data){
           data.value = data.value.replace('<%= t("integrations.slack_settings.note_create") %>', "note_create");

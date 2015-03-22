@@ -59,7 +59,7 @@ class Discussions::TopicsController < ApplicationController
 			respond_to do |format|
 				format.html { render :action => "new" }
 				format.xml  { render  :xml => @topic.errors }
-				format.json  { render  :json => @topic.errors }
+				format.json  { render  :json => @topic.errors.fd_json }
 			end
 		end
 	end
@@ -183,7 +183,7 @@ class Discussions::TopicsController < ApplicationController
 				format.js
 				format.html { redirect_to discussions_topic_path(@topic) }
 				format.xml  { render :xml => result.to_xml, :status => :bad_request }
-				format.json  { render :json => result.to_json, :status => :bad_request }
+				format.json  { render :json => result.fd_json, :status => :bad_request }
 			end
 		end
 	end

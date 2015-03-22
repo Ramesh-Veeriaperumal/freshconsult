@@ -11,30 +11,30 @@ module Integrations::Slack::SlackConfigurationsUtil
   end
 
   def note_create_rule
-    note_action  = VARule.new(:name => "slack_note", :description => "This rule posts data to slack when note is added", 
+    note_action  = current_account.api_webhook_rules.build(:name => "slack_note", :description => "This rule posts data to slack when note is added", 
       :match_type => "all", :filter_data => { :performer => {"type" => ApiWebhooksController::PERFORMER_ANYONE }, 
       :events => [{ :name => "note_action",:value => "create" }], :conditions => params[:condition_data] || [] }, 
       :action_data => [{:name => "Integrations::Slack::SlackUtil", :value => "post_to_slack_on_note_create", :action => "note_create"}],
-      :rule_type => VAConfig::API_WEBHOOK_RULE, :account_id => current_account.id, :active => 1)
+      :active => 1)
     note_action.save
   end
 
 
   def ticket_update_rule
-    slack_update = VARule.new(:name => "slack_update", :description => "This rule posts data to slack on ticket update", 
+    slack_update = current_account.account_va_rules.build(:name => "slack_update", :description => "This rule posts data to slack on ticket update", 
       :match_type => "all", :filter_data => [{ :name => "any", :operator => "is", :value => "any", :action_performed =>
         {:entity=>"Helpdesk::Ticket", :action => :update_status} } ],
         :action_data => [{:name => "Integrations::Slack::SlackUtil", :value => "post_to_slack_on_ticket_update", :action => "status_update"}], 
-        :rule_type => VAConfig::INSTALLED_APP_BUSINESS_RULE, :account_id => current_account.id, :active => 1)
+        :rule_type => VAConfig::INSTALLED_APP_BUSINESS_RULE, :active => 1)
     slack_update.save
   end
 
   def ticket_create_rule
-    slack_create = VARule.new(:name => "slack_create", :description => "This rule posts data to slack on ticket create", 
+    slack_create = current_account.api_webhook_rules.build(:name => "slack_create", :description => "This rule posts data to slack on ticket create", 
       :match_type => "all", :filter_data => { :performer => {"type" => ApiWebhooksController::PERFORMER_ANYONE }, 
       :events => [{ :name => "ticket_action",:value => "create" }], :conditions => params[:condition_data] || []  }, 
       :action_data => [{:name => "Integrations::Slack::SlackUtil", :value => "post_to_slack_on_ticket_create", :action => "ticket_create"}], 
-      :rule_type => VAConfig::API_WEBHOOK_RULE, :account_id => current_account.id, :active => 1)
+      :active => 1)
     slack_create.save
   end
 
@@ -59,13 +59,14 @@ module Integrations::Slack::SlackConfigurationsUtil
   def channel_name
     json_channel = JSON.parse(channel_json[:text])["channels"]
     channels = []
+
     json_channel.each do |channel|
       channels << {
-        "name" => channel["name"],
+        "name" => "##{channel["name"]}",
         "id"   => channel["id"]
       }
     end
-    channels
+    channels.reverse!
   end
 
   def make_api_call(url)

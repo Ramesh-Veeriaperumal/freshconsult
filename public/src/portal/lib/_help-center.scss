@@ -148,7 +148,7 @@
                 height: 35px;
             } 
             .hc-search-button .btn-primary {
-                background: sprite($icon-sprites, search-dark) no-repeat;
+                background: sprite($dynamic-icon-sprites, search-dark) no-repeat;
                 /*background-position-x: 50%;*/
                 height: 20px;
                 border: 0;

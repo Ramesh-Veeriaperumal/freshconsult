@@ -34,14 +34,19 @@ class Integrations::Slack::SlackUtil
       user = Account.current.users.find(obj.user_id)       
       ticket_obj = obj.notable
       if user.helpdesk_agent
-        attachment["pretext"] = "#{I18n.t('integrations.slack_msg.notify_on_note_create_by_agent')} #{user.name}: "
+        if obj.private?
+          attachment["pretext"] = "#{I18n.t("integrations.slack_msg.notify_on_private_note_create_by_agent")}#{user.name}: "
+        else
+          attachment["pretext"] = "#{I18n.t("integrations.slack_msg.notify_on_public_note_create_by_agent")}#{user.name}: "  
+        end  
       else
-        attachment["pretext"] = "#{I18n.t('integrations.slack_msg.notify_on_response_by_customer')} #{user.name}: " 
+        attachment["pretext"] = "#{I18n.t("integrations.slack_msg.notify_on_response_by_customer")}#{user.name}: " 
       end  
       attachment["text"] = "#{obj.body}"
     end
 
     ticket_details = ticket_details(ticket_obj)
+    attachment["fallback"] = "#{attachment['pretext']}Ticket: ##{ticket_details[:id]}"
     attachment["pretext"] = "#{attachment['pretext']}<#{ticket_details[:url]}|Ticket: ##{ticket_details[:id]}>."
     attachment["title"] = "#{ticket_details[:subject]}"
     attachment["title_link"] = "#{ticket_details[:url]}"
