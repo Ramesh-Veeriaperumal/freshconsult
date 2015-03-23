@@ -66,6 +66,7 @@ HTML
                         :title => title) if ue.object.primary_role
           end
         end
+        output << ue.hidden_field(:id, :class => "ue_id")
         output << ue.hidden_field(:primary_role, :class => "ue_primary") 
         output << ue.hidden_field(:_destroy, :value => false, :class => "ue_destroy")
         output << %(<label id="email_sec_#{ue.object.id}-error" class="error" for="email_sec_#{ue.object.id}"></label>)
