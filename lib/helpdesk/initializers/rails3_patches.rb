@@ -87,3 +87,15 @@ module ActionController
     end
   end
 end
+
+ActiveModel::Errors.class_eval do
+  def fd_json(options=nil)
+    a = []
+    to_hash.map do |key, values|
+      values.each do |val|
+        a << [key.to_s, val]
+      end
+    end
+    a.to_json
+  end
+end

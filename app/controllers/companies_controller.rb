@@ -55,7 +55,7 @@ class CompaniesController < ApplicationController
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -73,7 +73,7 @@ class CompaniesController < ApplicationController
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -92,7 +92,7 @@ class CompaniesController < ApplicationController
           define_company_properties
           render :action => :newshow 
         }
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
