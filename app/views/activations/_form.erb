@@ -1,5 +1,5 @@
 <%= form_for @user, :url => activate_path(@user.perishable_token), :html => { :rel => "validate", :class => "form-portal" } do |form| %>
-	<%= render partial: '/shared/error_messages', collection: @user.errors.full_messages %>
+	<%= error_messages_for :user %>
 	<fieldset>
 	  	<div class="control-group">
 			<%= form.label :name, t('user.full_name'), :class => "control-label required" %>
