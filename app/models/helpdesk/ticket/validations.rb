@@ -6,6 +6,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_inclusion_of :source, :in => 1..SOURCES.size
   validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   validates_uniqueness_of :display_id, :scope => :account_id
+  validate :due_by_validation, :if => :due_by
 
   validate on: :create do |ticket|
     req = ticket.requester
@@ -24,6 +25,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       Rails.logger.debug "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket" 
       ticket.errors.add(:base,"You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket")
     end
+  end
+
+  def due_by_validation
+    self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by < created_at
   end
 
 end

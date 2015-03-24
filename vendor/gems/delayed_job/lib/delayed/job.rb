@@ -9,7 +9,7 @@ module Delayed
   # Contains the work object as a YAML field.
   class Job < ActiveRecord::Base
     
-    self.table_name =  :delayed_jobs
+    self.table_name =  :delayed_jobs3
     self.primary_key = :id
     not_sharded
 
@@ -39,7 +39,7 @@ module Delayed
     self.max_priority = nil
     
     JobPodConfig = YAML.load_file(File.join('config', 'pod_info.yml'))
-    default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
+    # default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
 
     # When a worker is exiting, make sure we don't have any locked jobs.
     def self.clear_locks!
@@ -168,7 +168,7 @@ module Delayed
       conditions.unshift(sql)
 
       records = ActiveRecord::Base.silence do
-        find(:all, :conditions => conditions, :order => NextTaskOrder, :limit => limit)
+        find(:all, :conditions => conditions, :limit => limit)
       end
 
       records.sort_by { rand() }

@@ -257,6 +257,21 @@ RSpec.describe Helpdesk::TicketsController do
       @account.tickets.find(@test_ticket.id).due_by.to_date.should be_eql(due_date.to_date)
     end
 
+    it "should not update the due date of a ticket" do
+      ticket =  @account.tickets.find(@test_ticket.id)
+      old_due_date = ticket.due_by.to_date
+      new_due_date = (Time.now - 4000.years).to_date.strftime("%a %b %d %Y %H:%M:%S")
+      put :change_due_by, { :due_date_options => "specific",
+                            :due_by_hour => "3",
+                            :due_by_minute => "00",
+                            :due_by_am_pm => "PM",
+                            :due_by_date_time => new_due_date,
+                            :id => @test_ticket.display_id
+                          }
+      ticket.due_by.to_date.should_not be_eql(new_due_date.to_date)
+      ticket.due_by.to_date.should be_eql(old_due_date.to_date)
+    end
+
     it "should save draft for a ticket" do
       draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => @account.id, :user_id => @agent.id,
         :ticket_id => @test_ticket.id}

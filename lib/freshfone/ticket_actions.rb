@@ -50,7 +50,6 @@ module Freshfone::TicketActions
 	def voicmail_ticket(args)
 		build_ticket(args).save
 		@ticket = current_call.notable
-		build_note(args.merge({ :is_recording_note => 'true' })).save if private_recording?
 	end
 
 	private

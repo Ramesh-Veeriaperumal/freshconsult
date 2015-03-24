@@ -51,7 +51,7 @@ module HelpdeskControllerMethods
         render :action=>:create_ticket_status, :layout => "widgets/contacts"
       }
       format.mobile {
-        render :json => { :failure => true, :errors => @item.errors }
+        render :json => { :failure => true, :errors => @item.errors.fd_json }
       }
       format.all {# TODO-RAILS3 
         render :text => " ", :status => 406

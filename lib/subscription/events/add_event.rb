@@ -28,6 +28,7 @@ class Subscription::Events::AddEvent
       args.symbolize_keys!
       subscription = Subscription.find(args[:subscription_id])
       old_subscription = args[:subscription_hash].symbolize_keys!
+      old_subscription[:amount] = old_subscription[:amount].to_f if old_subscription
       
       event_attributes = assign_event_attributes(subscription, old_subscription)
       SubscriptionEvent.add_event(subscription.account, event_attributes) if event_attributes[:code]
