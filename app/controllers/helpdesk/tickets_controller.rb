@@ -565,7 +565,7 @@ class Helpdesk::TicketsController < ApplicationController
   def change_due_by
     due_date = get_due_by_time    
     unless @item.update_attributes({:due_by => due_date, :manual_dueby => true})
-      flash[:error] = @item.errors[:base]
+      flash[:error] = @item.errors.messages[:base]
       @item.reload
     end
     render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by

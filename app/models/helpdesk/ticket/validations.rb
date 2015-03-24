@@ -28,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def due_by_validation
-    self.errors.add_to_base(t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by < created_at
+    self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by < created_at
   end
 
 end
