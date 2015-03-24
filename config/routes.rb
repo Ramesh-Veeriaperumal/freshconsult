@@ -192,7 +192,11 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :forums_uploaded_images, :only => :create
+  resources :forums_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
   
   resources :tickets_uploaded_images, :only => :create do
     collection do
