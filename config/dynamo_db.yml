@@ -27,14 +27,14 @@ staging:
 production:
   feeds:
     suffix: production
-    start_read_capacity: 20
-    final_read_capacity: 200
-    write_capacity: 50
+    start_read_capacity: 10
+    final_read_capacity: 20
+    write_capacity: 25
   interactions:
     suffix: production
-    start_read_capacity: 20
-    final_read_capacity: 200
-    write_capacity: 50
+    start_read_capacity: 10
+    final_read_capacity: 20
+    write_capacity: 25
 
 
 test:
