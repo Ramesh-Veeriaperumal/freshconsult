@@ -3,6 +3,8 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   include CloudFilesHelper
+  include FeatureCheck
+  feature_check :solution_drafts
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -11,8 +13,7 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties_partial]
-  before_filter :feature_enabled?, :only => [:index, :show, :new, :edit, :create, :update]
+  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
   
 
   def index
@@ -24,7 +25,7 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.find_by_id!(params[:id], :include => [:folder, :draft])
     respond_to do |format|
       format.html {
-        render (@feature ? "solution/articles/draft/show" : "show"), :formats => [:html]
+        render (@solution_drafts_feature ? "solution/articles/draft/show" : "show")
       }
       format.xml  { render :xml => @article }
       format.json { render :json => @article }
@@ -38,7 +39,7 @@ class Solution::ArticlesController < ApplicationController
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html {
-        render @feature ? "solution/articles/draft/new" : "new"
+        render @solution_drafts_feature ? "solution/articles/draft/new" : "new"
       }
       format.xml  { render :xml => @article }
     end
@@ -47,7 +48,7 @@ class Solution::ArticlesController < ApplicationController
   def edit
     respond_to do |format|
       format.html { # edit.html.erb 
-        if @feature
+        if @solution_drafts_feature
           return unless load_draft
           render "solution/articles/draft/edit"
         end
@@ -61,21 +62,20 @@ class Solution::ArticlesController < ApplicationController
     @article = current_folder.articles.new(params[nscname]) 
     set_item_user 
 
-    redirect_to_url = @article
-    redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
-    build_attachments unless (@feature and save_as_draft?)
+    build_attachments
     set_solution_tags
-    @article.set_default_status(!save_as_draft?)
+    @article.set_status(!save_as_draft?)
     respond_to do |format|
       if @article.save
-        (forge_draft if save_as_draft? and @feature )
-        redirect_to_url = solution_category_folder_article_path(params[:category_id], params[:folder_id], @article) if @feature
-        format.html { redirect_to redirect_to_url }
+        format.html { 
+          flash[:error] = t('solution.articles.published_success') if publish?
+          redirect_to creation_redirect_url 
+        }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
       else
         format.html { 
-          render @feature ? "solution/articles/draft/new" : "new"
+          render @solution_drafts_feature ? "solution/articles/draft/new" : "new"
         }
         format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
       end
@@ -87,9 +87,8 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    if @feature and (save_as_draft? || publish? || cancel_draft_changes?) 
-      publish_article if publish?
-      update_draft if (save_as_draft? or cancel_draft_changes?)
+    if @solution_drafts_feature and (save_as_draft? || publish? || cancel_draft_changes?) 
+      publish? ? publish_article : (cancel_draft_changes? ? revert_draft_changes : update_draft)
       return
     end
     update_article
@@ -127,14 +126,13 @@ class Solution::ArticlesController < ApplicationController
     end
   end
 
-  def properties_partial
-    render "solution/articles/draft/article_properties_partial_form", :formats => [:html], :layout => false
+  def properties
+    render :layout => false
   end
 
   protected
 
     def load_article
-      p "#"*50, params
       @article = current_account.solution_articles.find(params[:id])
     end
 
@@ -203,10 +201,6 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def feature_enabled?
-      @feature = true
-    end
-
     [:save_as_draft, :publish, :cancel_draft_changes, :update_properties].each do |meth|
       define_method "#{meth}?" do
         params[meth].present?
@@ -220,41 +214,52 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def load_draft
-      @draft = current_account.solution_drafts.find_by_article_id(params[:id])
+      @draft = @article.draft
       if @draft.present? and @draft.locked?
-        flash[:error] = t('solution.articles.restrict_edit' , :name => @draft.current_author.name)
         redirect_to :action => "show" and return false
       end
       true
     end
 
     def publish_article
-      @draft = current_account.solution_drafts.find_by_article_id(params[:id])
+      @draft = @article.draft
       if @draft.present? 
-        update_draft_attributes
-        @draft.publish!
-        flash[:success] = "This article was published succesfully."
+        if update_draft_attributes and @draft.publish!
+          flash[:notice] = t('solution.articles.published_success')
+        else
+          flash[:error] = t('solution.articles.published_failure')
+        end
         redirect_to :action => "show" and return
       end
       @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
-      flash[:success] = "This article was published succesfully."
       update_article
     end
 
-    def update_draft
-      @draft = current_account.solution_drafts.find_by_article_id(params[:id])
-      # (redirect_to :action => "show" and return) if (!@draft.present? and cancel_draft_changes?)
-      (flash[:not_empty], action = " ", "show") if (!@draft.present? and cancel_draft_changes?)
-      if (@draft.present? && (@draft.current_author == current_user) && update_draft_attributes)
-        flash[:success], action = "This article draft was saved succesfully.", "show"
-      end
-      unless @draft.present?
-        @draft = @article.build_draft_from_article
+    def revert_draft_changes
+      (redirect_to :action => "show" and return) unless (@article.draft.present? && latest_content?)
+      @draft = @article.draft
+      if params[:previous_author].present?
+        @draft.current_author = (User.find(params[:previous_author].to_i) || current_user)
         update_draft_attributes
-        flash[:success], action = "This article draft was saved succesfully.", "show"
+      else
+        @draft.destroy
       end
-      flash ||= {:error => "This article could not be saved."}
-      redirect_to :action => (action || "edit") and return
+      redirect_to :action => (action || "show") and return
+    end
+
+    def update_draft
+      @draft = @article.draft
+      if (@draft.blank? || (@draft.current_author == current_user))
+        @draft = @article.build_draft_from_article if @draft.blank?
+        unless update_draft_attributes
+          flash[:error], action = t('solution.articles.draft.save_error'), "edit"
+        end    
+      end
+      redirect_to :action => (action || "show") and return
+    end
+
+    def latest_content?
+      params[:last_updated_at].to_i == @article.draft.updation_timestamp
     end
 
     def update_draft_attributes
@@ -269,7 +274,10 @@ class Solution::ArticlesController < ApplicationController
       update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
       respond_to do |format|    
         if @article.update_attributes(update_params)
-          format.html { redirect_to :action => "show" }
+          format.html { 
+            flash[:notice] = t('solution.articles.published_success') if publish?
+            redirect_to :action => "show" 
+          }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
           format.json  { render :json => @article, :status => :ok, :location => @article }
           format.js {
@@ -281,5 +289,11 @@ class Solution::ArticlesController < ApplicationController
         end
       end
     end
+
+    def creation_redirect_url    
+      return @article if params[:save_and_create].nil?
+      new_solution_category_folder_article_path(params[:category_id], params[:folder_id])
+    end
+
 
 end

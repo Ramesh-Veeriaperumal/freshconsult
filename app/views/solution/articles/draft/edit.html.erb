@@ -5,27 +5,30 @@
   	<% if @article.draft %>
 	  	<%= t('solution.articles.draft.show_page_msg') %> 
 			<%= current_user == @article.draft.current_author ? t('solution.articles.draft.you') : @article.draft.current_author.name %>
-			<span data-livestamp="<%= @article.draft.last_updated_timestamp %>"></span>
-			<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'discard-draft draft-info-btn') if @article.published? %>
+			<span data-livestamp="<%= @article.draft.updation_timestamp %>"></span>
+			<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn') if @article.published? %>
 		<% end %>
 	</div>
-	<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link align-right span2" ) if @article.published? %>
+	<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link align-right span2", :target => "_blank") if @article.published? %>
 </div>
 
 <%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form", :class => "article-edit-form"} do |f| %>
 	
 	<%= render :partial => 'solution/articles/draft/article_form', :locals => { :f => f, :edit =>true } %>
-
+	<% if @article.draft.present? %>
+		<input type="hidden" name="previous_author" value="<%= @article.draft.current_author.id %>">
+		<input type="hidden" name="last_updated_at" value="<%= @article.draft.updation_timestamp %>" id="last-updated-at">
+	<% end %>
 	<div class="button-container align-right">
 	    <% if privilege?(:delete_solution, @article) %>
 	  		<div class="pull-left itil-hide">
 	  			<%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
 	  		</div>
 	    <% end %>
-	    <%= link_to(t('preview'), support_draft_preview_path(@article, "preview"), :target => "_blank") %>
+	    <%= link_to(t('preview'), support_draft_preview_path(@article, "preview"), :class => "preview_link", :target => "_blank") %>
 	  	<%#= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn cancel-link hide" ) %>
 	  	<%= submit_tag t('cancel'), :name => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
-	    <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn" %>
+	    <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn" %>
 			<%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary" %>
 
 	</div>

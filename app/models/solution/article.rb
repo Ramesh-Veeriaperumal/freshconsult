@@ -242,8 +242,13 @@ class Solution::Article < ActiveRecord::Base
     draft
   end
 
-  def set_default_status(publish)
+  def set_status(publish)
     self.status = publish ? STATUS_KEYS_BY_TOKEN[:published] : STATUS_KEYS_BY_TOKEN[:draft]
+  end
+
+  def publish!
+    set_status(true)
+    save
   end
 
   private

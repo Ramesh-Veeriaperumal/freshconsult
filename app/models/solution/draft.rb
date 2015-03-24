@@ -18,21 +18,25 @@ class Solution::Draft < ActiveRecord::Base
 
 	before_save :populate_defaults
 	before_create :populate_created_author
+	before_destroy :discard_notification
 
 	attr_protected :account_id, :status, :current_author_id, :created_author_id
+	attr_accessor :discarding
 	alias_attribute :modified_at, :updated_at
 	alias_attribute :modified_by, :current_author_id
 
 	STATUSES = [
 		[ :editing,     "solutions.draft.status.editing",        0 ], 
-		[ :work_in_progress, "solutions.draft.status.work_in_progress",    1 ],
-		[ :rework, "solutions.draft.status.rework",    2 ],
-		[ :ready_to_publish, "solutions.draft.status.ready_to_publish",    3 ]
+		[ :work_in_progress, "solutions.draft.status.work_in_progress",    1 ]
+		# [ :rework, "solutions.draft.status.rework",    2 ],
+		# [ :ready_to_publish, "solutions.draft.status.ready_to_publish",    3 ]
 	]
 
-	STATUS_OPTIONS	= STATUSES.map { |i| [i[1], i[2]] }
-	STATUS_NAMES_BY_KEY	= Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
+	# STATUS_OPTIONS	= STATUSES.map { |i| [i[1], i[2]] }
+	# STATUS_NAMES_BY_KEY	= Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
 	STATUS_KEYS_BY_TOKEN	= Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
+
+	LOCKDOWN_PERIOD = 2.hours
 
 	COMMON_ATTRIBUTES = ["title", "description"]
 
@@ -47,7 +51,7 @@ class Solution::Draft < ActiveRecord::Base
 	def locked?
 		return false unless status == STATUS_KEYS_BY_TOKEN[:editing]
 		return false if User.current == current_author
-		self.updated_at > (Time.now.utc - 2.hours)
+		self.updated_at > (Time.now.utc - LOCKDOWN_PERIOD)
 	end
 
 	def lock_for_editing!
@@ -73,43 +77,41 @@ class Solution::Draft < ActiveRecord::Base
 		COMMON_ATTRIBUTES.each do |attr|
 			article.send("#{attr}=", self.send(attr))
 		end
-		modify_associations
+
+		move_attachments
 		article.status = article.class::STATUS_KEYS_BY_TOKEN[:published]
 		article.save
 		self.reload
 		self.destroy
 	end
 
-	# def clone_attachments(parent_article)
-	# 	parent_article.attachments.each do |attachment|
-	# 		self.attachments.build(:content => attachment.to_content, :description => "", :account_id => self.account_id)
-	# 	end
-	# 	parent_article.cloud_files.each do |cloud_file|
-	#   	self.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
-	#   end
-	# end
+	def discard_notification
+		return unless discarding && (User.current != self.created_author && self.created_author.email.present?)
 
-	def discard_notification(portal)
-		unless (User.current == self.created_author && self.created_author.email.present?)
-			DraftMailer.send_later(:draft_discard_notification, { :description => self.description, :title => self.title}, 
-					self.article, self.created_author, User.current, portal)
-		end
+		portal = Portal.current || Account.current.main_portal
+		DraftMailer.send_later(
+			:discard_notification, 
+			{ :description => self.description, :title => self.title}, 
+			self.article, self.created_author, User.current, portal
+		)
+
 	end
 
-	def last_updated_timestamp
-		[self.updated_at, self.draft_body.updated_at].max.to_i
+	def updation_timestamp
+		draft_body.present? ? [updated_at, draft_body.updated_at].max.to_i : 0
+	end
+
+	def deleted_attachments type
+		(meta[:deleted_attachments] || {})[type] || []
 	end
 
 	private
 
-		def modify_associations
+		def move_attachments
 			[:attachments, :cloud_files].each do |assoc|
-				if self.meta.present? && self.meta[:deleted_attachments].present? && self.meta[:deleted_attachments][assoc].present?
-					article.send(assoc).where(:id => self.meta[:deleted_attachments][assoc]).destroy_all
-				end
-				type = self.class.reflections[assoc].options[:as]
+				article.send(assoc).where( :id => self.deleted_attachments(assoc) ).destroy_all
 				self.send(assoc).each do |item|
-					item.update_attributes(type => article)
+					item.update_attributes(item.object_type => article)
 				end
 			end
 		end

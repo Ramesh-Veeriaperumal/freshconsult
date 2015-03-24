@@ -38,8 +38,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     respond_to do |format|
       format.html { 
-        adapt_article if draft_preview?
-        load_page_meta unless draft_preview?
+        draft_preview? ? adapt_article : load_page_meta
         set_portal_page :article_view 
       }
       format.json { render :json => @article.to_json  }
@@ -155,7 +154,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     def adapt_attachments
       return true unless draft_preview?
-      flash[:notice] = "You are viewing the draft version of the article."
+      flash[:notice] = t('solution.articles.draft.portal_preview_msg')
       @article[:current_attachments] = active_attachments(:attachments)
       @article[:current_cloud_files] = active_attachments(:cloud_files)
     end

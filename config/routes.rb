@@ -1505,7 +1505,7 @@ Helpkit::Application.routes.draw do
             post :delete_tag
             delete :destroy
             put :reset_ratings
-            get :properties_partial
+            get :properties
           end
           resources :tag_uses
         end

@@ -2490,7 +2490,7 @@ en:
     search:
       placeholder: Search %{name}
     drafts:
-      empty: There are no drafts here. Please come back after sometime.
+      empty: There are no drafts here.
       discard: Discard
       publish: Publish
   auto_suggest_solutions:
@@ -3235,8 +3235,17 @@ en:
           msg: Unpublish the article from portal
           with_draft: This will delete the published article permanently and retain the draft content under Drafts
           without_draft: This will remove the published article from the portal and save the content under Draft
+        save_error: This article could not be saved.
+        portal_preview_msg: You are previewing draft version of this article.
+        discard_msg: The draft has been discarded.
+        discard_confirm: Do you want to discard this draft?
+      draft_published_label: There is also a published version.
+      unpublished_version: You are viewing an unpublished version of the article.
+      att_deleted: One attachment was deleted.
+      published_success: This article was published succesfully.
+      published_failure: This article could not be published. Try again.
       view_published: View Published
-      restrict_edit: "This article is currently edited upon by %{name}. You can't edit simultaneously."  
+      restrict_edit: "%{name} is currently editing this article."
       edit: Edit Article
       properties: Properties
       edit_properties: Edit Properties
@@ -3268,6 +3277,11 @@ en:
     draft:
       all_drafts: All Drafts
       my_drafts: My Drafts
+      autosave:
+        save_success: "Draft saved "
+        somebody_editing: "%{name} is currently editing this article. "
+        content_changed: "The content has changed. "
+        other_problem: "The content could not be saved. "
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"

@@ -10,7 +10,7 @@ Options are
 		if the content of any of the elements specified in ;monitorChengesOf' changes.
 2. autosaveUrl
 		The data will submitted as POST to the url specified here.
-3. monitorChnagesOf
+3. monitorChangesOf
 		This expects a hash. The key of the hash will specify the name of the parameter while sending to server and
 		the value of the hash expects the DOM element ID or class[which has to be unique] to be monitored for changes.
 		eg: { description: "#my_article_description", title: ".my_article_title" }
@@ -31,119 +31,134 @@ Options are
 		recieved from the server.
 
 */
+/*jslint browser: true, devel: true */
 
-(function($) {
+(function ($) {
+	
+  "use strict";
 
-	//Script for autosaving content of a DOM element on change at a particular interval
-	var autoSaveContent = function (options) {
-		this.initialize(options);
-	}
+  //Script for autosaving content of a DOM element on change at a particular interval
+  var AutoSaveContent = function (options) {
+    this.initialize(options);
+  };
 
-	autoSaveContent.prototype = {
-		constructor: autoSaveContent,
+  AutoSaveContent.prototype = {
+    constructor: AutoSaveContent,
 
-		contentChanged: false,
-		savingContentFlag: false,
+    contentChanged: false,
+    savingContentFlag: false,
+    successCount: 0,
+    failureCount: 0,
 
-		//Default options
-		opts: {
-			autosaveInterval: 30000,
-			autosaveUrl: window.location.pathname,
-			monitorChangesOf: {
-				description: ".redactor_editor",
-				title: "#solution_article_title"
-			},
-			extraParams: {},
-			responseCallback: function(){}
-		},
+    //Default options
+    opts: {
+      autosaveInterval: 30000,
+      autosaveUrl: window.location.pathname,
+      monitorChangesOf: {
+        description: ".redactor_editor",
+        title: "#solution_article_title"
+      },
+      extraParams: {},
+      responseCallback: function () {}
+    },
 
-		initialize: function(options) {
-			var $this = this;
-			this.opts = $.extend(this.opts, options);
-			$(document).ready(function() {
-				$this.bindEvents();
-				$this.autoSaveTrigger();
-			});
-		},
-		
-		bindEvents: function() {
-			var $this = this;
-			$.each(this.opts.monitorChangesOf, function(key, value){
-				$(value).bind("keyup DOMNodeInserted DOMNodeRemoved",function(){
-		    	console.log("Content changed."+key);
-		    	$this.contentChanged = true;
-		    });
-			});
-		},
+    initialize: function (options) {
+      this.opts = $.extend(this.opts, options);
+      
+      this.bindEvents();
+      this.autoSaveTrigger();
+    },
 
-		getContent: function() {
-			var $this = this;
-			this.content = {};
-			$.each(this.opts.monitorChangesOf, function(key, value){
-				$this.content[key] = $(value).html() || $(value).val();
-			});
-			if(!$.isEmptyObject(this.opts.extraParams)){
-				$.each(this.opts.extraParams, function(key, value){
-					$this.content[key] = value;
-				});
-			}
-			this.contentChanged = false;
-			this.savingContentFlag = true;
-			this.saveContent();
-		},
+    bindEvents: function () {
+      var $this = this;
+      $.each(this.opts.monitorChangesOf, function (key, value) {
+        $(value).bind("keyup DOMNodeInserted DOMNodeRemoved", function () {
+          $this.contentChanged = true;
+        });
+      });
+    },
 
-		autoSaveTrigger: function() {
-			var $this = this;
-			window.setInterval(function(){
-					if($this.contentChanged) {
-						$this.getContent();
-					}
-				}, this.opts.autosaveInterval);
-		},
+    getContent: function () {
 
-		saveContent: function() {
-			var $this = this;
-			console.log($this.content);
-			$.ajax({
-				url: $this.opts.autosaveUrl,
-				type: 'POST',
-				data: $this.content,
-				success: function(response) {
-					console.log(response);
+      this.content = {};
 
-					if(response.success == true){
-						console.log('Saved the draft succesfully');
-						$this.contentChanged = false;
-					} else {
-						console.log('Saving Failed.');
-					}
+      this.getMainContent();
+      this.getExtraParams();
 
-					//updating the extra params if it exists from the response
-					if(!$.isEmptyObject($this.opts.extraParams)){
-						$.each($this.opts.extraParams, function(key, value){
-							if(response[key]){
-								$this.opts.extraParams[key] = response[key];
-							}
-						});
-					}
+      this.contentChanged = false;
+      this.savingContentFlag = true;
 
-					$this.savingContentFlag = false;
-					$this.opts.responseCallback(response);
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					$this.savingContentFlag = false;
-	        console.log(xhr.status);
-	        console.log(thrownError);
-	        $this.opts.responseCallback(xhr.status);
-      	}
-			})
-		}
-	}
+      this.saveContent();
+    },
+    
+    getMainContent: function () {
+      var $this = this;
 
-	/* Autosave PLUGIN Definiton */
+      $.each(this.opts.monitorChangesOf, function (key, value) {
+        $this.content[key] = $(value).html() || $(value).val();
+      });
+    },
+    
+    getExtraParams: function () {
+      var $this = this;
 
-	$.autoSaveContent = function (options) {
-		var savecontent = new autoSaveContent(options);
-	}
+      if (!$.isEmptyObject(this.opts.extraParams)) {
+        $.each(this.opts.extraParams, function (key, value) {
+          $this.content[key] = value;
+        });
+      }
+    },
 
-})(window.jQuery);
+    autoSaveTrigger: function () {
+      var $this = this;
+      window.setInterval(function () {
+        if ($this.contentChanged) {
+          $this.getContent();
+        }
+      }, this.opts.autosaveInterval);
+    },
+
+    saveContent: function () {
+      $.ajax({
+        url: this.opts.autosaveUrl,
+        type: 'POST',
+        data: this.content,
+        success: $.proxy(this.onSaveSuccess, this),
+        error: $.proxy(this.onSaveError, this)
+      });
+    },
+    
+    onSaveSuccess: function (response) {
+      this.contentChanged = !response.success;
+      this.updateExtraParams(response);
+      this.savingContentFlag = false;
+      ++this.successCount;
+      this.opts.responseCallback(response);
+    },
+    
+    onSaveError: function (xhr, ajaxOptions, thrownError) {
+      this.savingContentFlag = false;
+      ++this.failureCount;
+      this.opts.responseCallback(xhr.status);
+    },
+    
+    updateExtraParams: function (response) {
+      var $this = this;
+      //updating the extra params if it exists from the response
+      if (!$.isEmptyObject(this.opts.extraParams)) {
+        $.each(this.opts.extraParams, function (key, value) {
+          if (response[key]) {
+            $this.opts.extraParams[key] = response[key];
+          }
+        });
+      }
+    }
+  };
+
+  /* Autosave PLUGIN Definiton */
+  
+  $.autoSaveContent = function (options) {
+    return new AutoSaveContent(options);
+  };
+  
+}(window.jQuery));

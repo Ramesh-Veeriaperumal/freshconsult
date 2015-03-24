@@ -84,6 +84,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     audio? /^audio\/(mp3|mpeg)/
   end
 
+  def parent_type
+    attachable_type
+  end
+
+  def object_type
+    :attachable
+  end
+
   def attachment_sizes
    if self.description == "logo"
       return {:logo => "x50>"}

@@ -2,7 +2,8 @@
 	<div class="control-group row-fluid">
 		<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 		<div class="controls">
-			<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 span12"%>
+			<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 span12",
+			 "data-tags" => "#{escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe)}" %>
 		</div>
 	</div>
 <%end%>

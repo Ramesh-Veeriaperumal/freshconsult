@@ -15,26 +15,30 @@
 		</div>
 
 		<% if @article.draft or @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
-			<div class="draft-info-box">
+			<div class="draft-info-box <%= "error" if @article.draft && @article.draft.locked? %>">
 				<% if @article.draft %>
-					<%= t('solution.articles.draft.show_page_msg') %> 
-					<%= current_user == current_item.current_author ? t('solution.articles.draft.you') : current_item.current_author.name %> 
-					<span data-livestamp="<%= @article.draft.last_updated_timestamp %>"></span> (<%= formated_date(current_item.updated_at) %>)
+					<% if @article.draft.locked? %>
+						<%= t('solution.articles.restrict_edit', :name => @article.draft.current_author.name) %>
+					<% else %>
+						<%= t('solution.articles.draft.show_page_msg') %> 
+						<%= current_user == current_item.current_author ? t('solution.articles.draft.you') : current_item.current_author.name %>
+						<span data-livestamp="<%= @article.draft.updation_timestamp %>"></span> (<%= formated_date(current_item.updated_at) %>)
+					<% end %>
 				<% else %>
-					You are viewing an unpublished version of the article.
+					<%= t('solution.articles.unpublished_version') %>
 				<% end %>
 					
-					<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'discard-draft draft-info-btn') if @article.published? %>
+					<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn', :confirm => t('solution.articles.draft.discard_confirm')) if @article.published? %>
 
-					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'publish-draft draft-info-btn') %>
+					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'btn btn-small draft-btn') %>
 
-					<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link" ) if @article.published? %>
+					<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link", :target => "_blank") if @article.published? %>
 			</div>
 		<% end %> 
 
 		<div class="floatr prop-edit">
 			<% if privilege?(:publish_solution) %>
-				<a href="<%= properties_partial_solution_category_folder_article_path %>" data-target="#article-properties" 
+				<a href="<%= properties_solution_category_folder_article_path(@article.folder.category, @article.folder, @article) %>" data-target="#article-properties" 
 					rel="freshdialog" data-width="700px" class="article-properties" title="<%= t('solution.articles.properties') %>" 
 					data-close-label="<%= t('cancel') %>" data-close-label="<%= t('save') %>">
 					<%= t('solution.articles.properties') %>
@@ -91,9 +95,3 @@
 
 <div class="hide" id="article-properties">
 </div>
-
-<script type="text/javascript">
-  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
-    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
-  highlight_code();
-</script>

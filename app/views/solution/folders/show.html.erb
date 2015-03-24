@@ -19,7 +19,7 @@
   	<div class="search-grey-box search-page">
   	  <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.category.name)), :url => "/search/solutions?category_id=#{@item.category.id}&term=" } %>
   	</div>
-    <% partial_name = @feature ? "solution_list_with_feature" : "solution_list" %>
+    <% partial_name = @solution_drafts_feature ? "solution_list_with_feature" : "solution_list" %>
   	<%= render :partial => "/solution/shared/" + partial_name, :locals => { :category => @item.category, :folder => @item } %>
   </div>
 </div>

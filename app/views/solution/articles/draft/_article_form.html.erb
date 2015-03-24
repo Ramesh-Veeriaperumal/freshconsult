@@ -28,9 +28,8 @@
 	<div id="solution-properties-container">
 		<% if  @article.new_record? %>
 			<div id="solution-properties-show" class="solution-properties-title sub-lead">
-				<div class="arrow-right  solution-properties-show" id="show-hide-button">
-				</div>
-				<a href="javascript:void(null);"><%= t('solution.properties') %></a>
+				<div class="arrow-right  solution-properties-show" id="show-hide-button"></div>
+				<a><%= t('solution.properties') %></a>
 			</div>
 			<br/>
 			<div id="solution-properties">
@@ -39,111 +38,33 @@
 		<% else %>
 			<div id="solution-properties-show" class="solution-properties-title solution-seo sub-lead">
 				<span> 
-					<a href="<%= properties_partial_solution_category_folder_article_path %><%= "/?edit=true" if edit %>" data-target="#article-properties" rel="freshdialog" data-width="700px" class="article-properties" title="<%= t('solution.articles.properties') %>" data-close-label="<%= t('cancel') %>" data-close-label="<%= t('save') %>" data-submit-loading="<%= t('saving') %>">
-						<%= t('solution.articles.edit_properties') %>
-					</a> 
+					<%= link_to( t('solution.articles.edit_properties'), 
+							properties_solution_category_folder_article_path(@article.folder.category, @article.folder, @article, {:edit => true}),
+							:rel => "freshdialog",
+							:class => "article-properties",
+							:title => t('solution.articles.properties'),
+							"data-target" => "#article-properties",
+							"data-width" => "700px",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save'), 
+						  "data-submit-loading" => t('saving')
+					) %>
 				<span>
 			</div>
 		<% end %>
 	</div>
-
 </div>
-
-<script type="text/javascript">
-	(function($) {
-		$(document).ready(function() {
-			$('#solution-properties-show').bind("click", function(ev){
-				if($('#solution-properties').is(":visible")) {
-					$('#show-hide-button').addClass("arrow-right");
-					$('#show-hide-button').removeClass("arrow-down");
+<% unless @article.new_record? %>
+	<script type="text/javascript">
+		jQuery('body').one('assetLoaded.fjax', function () {
+			window.autoSaveArticleDraft = App.Solutions.Article.autosaveInitialize(
+				{
+					autosavePath: "<%= autosave_solution_draft_path(@article.id) %>",
+					timestamp: <%= @article.draft.present? ? @article.draft.updation_timestamp : false %>
 				}
-				else {
-					$('#show-hide-button').removeClass("arrow-right");
-					$('#show-hide-button').addClass("arrow-down");
-				}
-				
-			});
-			$('#article-form').bind("submit", function() {
-				$('#solution_article_seo_data_meta_description').val(
-				$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim());
-			});
-			$("#tags_name").select2({  
-			  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-			  tokenSeparators: [',']
-			}); 
+			);
 		});
-	})(jQuery);
+	</script>
+<% end %>
 
-	<% unless @article.new_record? %>
-		//Function for DOM Manipulation in case of autosave
-		var autosaveDomManipulate = function(response) {
-			console.log("Inside the autosave Callback and the response is:");
-			console.log(response);
-			var changeDom = {
-				mainElement: jQuery(".draft-info-box"),
-				msgElement: jQuery(".autosave-notif"),
-				liveTimeStamp: function(){
-					var ts = Math.round((new Date()).getTime() / 1000);
-					return jQuery('<span />').attr('data-livestamp', ts);
-				},
-				timeStamp: function(){
-					return jQuery('<span />').html(" ("+moment().format('ddd, Do MMMM [at] h:mm A')+")");
-				},
-				reloadButton: function(){
-					return jQuery('<span />').attr('onclick', 'window.location.reload();').
-																		html("<%= t('reload') %>").attr('class', 'draft-info-btn reload-btn');
-				},
-				message: function(msg, success){
-					return jQuery('<span />').html(msg).attr('class', (success ? "" : "delete-confirm-warning-icon" ) );
-				},
-				themeChange: function(flag){
-					this.mainElement.removeClass( (flag ? 'success' : 'error')).addClass((flag ? 'error' : 'success'));
-				},
-				manipulate: function(msg, success){
-					if(msg){
-						this.msgElement.html(this.message(msg, success))
-													.append( (success ? this.liveTimeStamp() : "") )
-													.append( (success ? this.timeStamp() : "") )
-													.append( (!success ? this.reloadButton() : "") ).show();
-						this.themeChange(!success);
-						this.mainElement.show();
-					}
-				}
-			}
-
-			if(typeof(response) == 'object'){
-				if(response.success){
-					changeDom.manipulate(response.msg, true) ;
-				} else {
-					changeDom.manipulate(response.msg, false) ;
-				}
-			} else {
-				changeDom.manipulate("Something is wrong.", false) ;
-			}
-		};
-		//Initilaizing the autosave.js
-		var draft_options = {
-			autosaveInterval: 5000,
-			autosaveUrl: "/solution/drafts/<%= @article.id %>/autosave",
-			monitorChangesOf: {
-				description: ".redactor_editor",
-				title: "#solution_article_title",
-			},
-			extraParams: {timestamp: <%= @article.draft.present? ? @article.draft.last_updated_timestamp : false %>},
-			responseCallback: autosaveDomManipulate
-		};
-		jQuery.autoSaveContent(draft_options);
-
-		//binding the action for cancel
-		jQuery(document).ready(function(){
-			jQuery("#edit-cancel-button").bind('click', function(){
-				jQuery(".article-edit-form")[0].reset();
-				jQuery(".redactor_editor").html(jQuery("#solution_article_description").val());
-				// return false;
-			});
-		});
-
-	<% end %>
-
-</script>
 

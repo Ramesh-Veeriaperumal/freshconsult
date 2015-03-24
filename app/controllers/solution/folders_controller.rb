@@ -3,13 +3,15 @@ class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
   helper AutocompleteHelper
 
+  include FeatureCheck
+  feature_check :solution_drafts
+
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:show, :edit, :update, :destroy, :create]
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
-  before_filter :feature_enabled?, :only => [:show]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -174,10 +176,6 @@ class Solution::FoldersController < ApplicationController
       customer_ids = params[nscname][:customer_folders_attributes][:customer_id] || []
       customer_ids = current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id) unless customer_ids.blank?
       params[nscname][:customer_folders_attributes][:customer_id] = customer_ids.blank? ? [] : customer_ids
-    end
-    
-    def feature_enabled?
-      @feature = true
     end
 
 end

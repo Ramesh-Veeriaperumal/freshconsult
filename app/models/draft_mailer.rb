@@ -5,11 +5,11 @@ class DraftMailer < ActionMailer::Base
 
   layout "email_font"
 
-	def self.draft_discard_notification(draft, article, created_author, current_user, portal)
-		draft_discard_email(draft, article, created_author, current_user, portal)
+	def self.discard_notification(draft, article, created_author, current_user, portal)
+		discard_email(draft, article, created_author, current_user, portal)
 	end
 	
-  def draft_discard_email(draft, article, created_author, current_user, portal)
+  def discard_email(draft, article, created_author, current_user, portal)
     mail_config = portal.primary_email_config || current_user.account.primary_email_config
     self.class.set_mailbox mail_config.smtp_mailbox
 

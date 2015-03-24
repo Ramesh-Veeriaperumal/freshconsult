@@ -8,12 +8,12 @@
 		<div class="draft-titles">
 			
 			<%= pjax_link_to t('solution.draft.all_drafts'), solution_drafts_path, {
-					:class => "heading item #{'active' unless @my_drafts}",
+					:class => "heading item #{'active' unless (params[:type] == 'my_drafts')}",
 					:title => t('solution.draft.all_drafts')
 				} %>
 
 			<%= pjax_link_to t('solution.draft.my_drafts'), solution_my_drafts_path('my_drafts'), {
-					:class => "heading item #{'active' if @my_drafts}",
+					:class => "heading item #{'active' if (params[:type] == 'my_drafts')}",
 					:title => t('solution.draft.my_drafts')
 				} %>
 

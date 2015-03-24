@@ -51,7 +51,8 @@
 				<div class="span5 mt12 clear-left-margin">
 					<div class='span7 text-center article-info'>
 						<% if !article.published? or article.draft.present? %>
-							<span class="label">
+							<span class="subject_style <%= 'draft_label tooltip' if article.published? %>" data-original-title="<%= t('solution.articles.draft_published_label') if article.published? %>">
+								<span class="<%= 'draft_label_hover' if article.published? %>"></span>
 								<%= t('solutions.status.draft') %>
 							</span>
 						<% end %>

@@ -24,22 +24,7 @@
 		</div>
 <% end %>
 
-<%= javascript_tag do %> 
-(function($) {
-	$('#article-form').bind("submit", function() {
-		$('#solution_article_seo_data_meta_description').val(
-			$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim()
-		);
-	});
-	setTimeout(function(){ 
-		$("#tags_name").select2({  
-			  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-			  tokenSeparators: [',']
-			});
-		$("#article-properties-cancel").bind("click", function(){
-			$('#article-properties-content #article-form').resetForm();
-			$('#article-properties-content #article-form .select2').trigger('change');
-		});
-	}, 50);
-})(jQuery);
-<% end %>
+<script type="text/javascript">
+	App.Solutions.Article.articleProperties();
+</script>
+

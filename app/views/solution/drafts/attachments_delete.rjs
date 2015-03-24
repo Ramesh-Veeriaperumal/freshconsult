@@ -1,0 +1,3 @@
+show_growl_flash(page)
+page << "jQuery('#helpdesk_#{params[:attachment_type]}_#{@attachment.id}').fadeOut('slow');"
+page << "window.autoSaveArticleDraft.opts.extraParams.timestamp = #{@draft.updation_timestamp}"

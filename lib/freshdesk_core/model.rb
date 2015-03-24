@@ -105,6 +105,8 @@ module FreshdeskCore::Model
                           "solution_folders",
                           "portal_solution_categories",
                           "solution_articles",
+                          "solution_draft",
+                          "solution_draft_bodies",
                          
                         "subscriptions",
 

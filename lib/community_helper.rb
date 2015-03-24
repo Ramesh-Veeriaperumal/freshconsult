@@ -11,22 +11,19 @@ module CommunityHelper
     </span>).html_safe
   end
 
-  def article_attachment_link_helper(att, type)
-  	type = @article.class.reflections[(type.to_s.pluralize).to_sym].options[:as]
-  	if @article.present? && att.send("#{type}_type") == @article.class.name
+  def article_attachment_link(att, type)
+  	if @article.present? && att.parent_type == @article.class.name
   		return %(#{solution_article_attachments_delete_path(@article, type, att)}).html_safe
   	end
-  	return nil
+
   end
 
   def active_attachments(att_type, draft, article)
   	return article.send(att_type) unless article.draft.present?
-  	att = article.send(att_type) + draft.send(att_type)
-  	deleted_att_ids = []
-  	if draft.meta.present? && draft.meta[:deleted_attachments].present? && draft.meta[:deleted_attachments][att_type].present?
-  		deleted_att_ids = draft.meta[:deleted_attachments][att_type]
-  	end
-  	return att.select {|a| !deleted_att_ids.include?(a.id)}
+
+    (article.send(att_type).reject do |a|
+      (draft.deleted_attachments(att_type) || []).include?(a.id)
+    end) + draft.send(att_type)
   end
 
 end

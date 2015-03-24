@@ -27,6 +27,14 @@ class Helpdesk::CloudFile < ActiveRecord::Base
     read_attribute(:filename) || URI.unescape(url.split('/')[-1])
   end
 
+  def parent_type
+    droppable_type
+  end
+
+  def object_type
+    :droppable
+  end
+
   private
 
   def set_account_id

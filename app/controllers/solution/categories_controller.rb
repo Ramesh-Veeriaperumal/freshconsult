@@ -1,13 +1,14 @@
 # encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
+  include FeatureCheck
+  feature_check :solution_drafts
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
-  before_filter :feature_enabled?, :only => [:show]
 
   def index
     @categories = current_portal.solution_categories
@@ -145,10 +146,6 @@ class Solution::CategoriesController < ApplicationController
 
     def load_category_with_folders
       @item = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
-    end
-
-    def feature_enabled?
-      @feature = true
     end
     
 end
