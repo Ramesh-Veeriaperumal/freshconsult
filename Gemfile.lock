@@ -171,7 +171,7 @@ GIT
 
 GIT
   remote: git://github.com/sumakumardey/statsd-ruby
-  revision: 50d77a17d822cdc73b5b229c3329ced7e9c6aa53
+  revision: 03fe38c5d07f122f6213944ec9a745ec808f17d7
   branch: custom_stats
   specs:
     statsd-ruby (1.0.0)
