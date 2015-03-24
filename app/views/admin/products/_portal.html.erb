@@ -103,7 +103,7 @@
         </div>
       </div>
 
-      <% portal.fields_for :preferences do |p| %>
+      <%= portal.fields_for :preferences do |p| %>
         <input type="hidden" name="product[portal_attributes][preferences][header_color]" 
           value="<%= portal_pref(current_account.main_portal, :header_color) %>" />
         <input type="hidden" name="product[portal_attributes][preferences][tab_color]"

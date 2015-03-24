@@ -12,16 +12,14 @@
       </h3>
       <p class="small"><%=t('freshchat.widgets_list_info')%></p>
     </div>
-    <div id="chat_widgets_list">
+    <div id="chat_widgets_list" <% unless @chat_enabled %>class="disable-widgets"<%end%>>
       <div class="list-page">
-  	   <div class="list-page-body chat-widget-index <% unless @chat_enabled %> disable-widgets <%end%>" >
+  	   <div class="list-page-body chat-widget-index" >
         <table class="table table-striped" >
           <% @widgets.each do |widget| %>
             <tr id="<%= dom_id(widget)%>">
               <td rel="<%=widget.id%>">
                 <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => t('freshchat.texton'), "data-unchecked-label" => t('freshchat.textoff') %>
-              </td>
-              <td>
                 <%= pjax_link_to(h(widget.product ? widget.product.name : widget.account.name), edit_admin_chat_widget_path(widget), :class => "item_info") %>
               </td>
               <td>

@@ -8,13 +8,14 @@ module Reports
 				include Reports::Constants
 				include Redis::RedisKeys
 				include Redis::ReportsRedis
+				include Reports::ArchiveData
 
 				def perform(args)
 					args.symbolize_keys!
 					time_zones = TIMEZONES_BY_UTC_TIME[args[:hour]]
 						Sharding.execute_on_all_shards do
 						Sharding.run_on_slave do
-						Account.active_accounts.find_in_batches(:batch_size => 500 , 
+						Account.current_pod.active_accounts.find_in_batches(:batch_size => 500 , 
 																						:conditions => {:time_zone => time_zones}) do |accounts|
 							accounts.each do |account|
 								id = account.id
@@ -40,10 +41,9 @@ module Reports
 																												 :end_date => end_date})
 									add_to_reports_hash(export_hash, "job_id", job_id, 604800)
 	  						elsif (accounts_last_job and !accounts_last_job.completed? and Rails.env.production?)
-	  							FreshdeskErrorsMailer.deliver_error_email(nil,accounts_last_job,nil,
-	  							{:recipients => "srinivas@freshdesk.com",
-	  								:subject => %(Reports data archiving job of Account ID : #{id} is 
-	  																						#{accounts_last_job.status} for more than 24 hours)})
+	  							subject = %(Reports data archiving job of Account ID : #{id} is 
+  													#{accounts_last_job.status} for more than 24 hours)
+  								report_notification(subject,subject)
 	  						end
 							end
 						end

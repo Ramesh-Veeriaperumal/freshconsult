@@ -131,6 +131,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
+    - public/javascripts/integrations/construct_rule.js
 
   # Code editor for portal cms
   codemirror:
@@ -188,14 +189,19 @@ javascripts:
 
   freshchat:
     - public/javascripts/freshchat/freshchat.js
-  
-  freshchat_templates:
+
+  freshchat_intializer:
      # Templates
+    - public/javascripts/freshchat/lib/ticket_search.js
     - public/javascripts/freshchat/templates/freshchat_archive.jst.ejs
     - public/javascripts/freshchat/templates/freshchat_conversation.jst.ejs
     - public/javascripts/freshchat/templates/freshchat_archive_row.jst.ejs
     - public/javascripts/freshchat/templates/freshchat_visitor_details.jst.ejs
     - public/javascripts/freshchat/dashboard/dashboard_template.jst.ejs
+    - public/javascripts/freshchat/templates/ticket_description.jst.ejs
+    - public/javascripts/freshchat/templates/ticket_search_list.jst.ejs
+    - public/javascripts/freshchat/templates/ticket_options.jst.ejs
+    - public/javascripts/freshchat/ticket_options/main.js
 
   livechat_mini_dashboard:
     - public/javascripts/freshchat/dashboard/dashboard.js

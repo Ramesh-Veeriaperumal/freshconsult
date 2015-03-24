@@ -35,7 +35,7 @@ class Portal::Tags::Snippet < Liquid::Tag
   end
 
   def render_erb(context, file_name, locals = {})
-    context.registers[:controller].send(:render_to_string, :partial => file_name, :locals => locals)
+    context.registers[:controller].send(:render_to_string, :partial => file_name, :locals => locals, :formats => :html)
   end
 
   def file_path file_name

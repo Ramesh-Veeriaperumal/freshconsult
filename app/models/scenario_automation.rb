@@ -6,7 +6,7 @@ class ScenarioAutomation < VaRule
   attr_protected :account_id
   belongs_to_account
   
-  default_scope where(:rule_type => VAConfig::SCENARIO_AUTOMATION)
+  default_scope { where(:rule_type => VAConfig::SCENARIO_AUTOMATION) }
 
   has_one :accessible,
     :class_name => 'Helpdesk::Access',
@@ -19,7 +19,7 @@ class ScenarioAutomation < VaRule
 
   delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
 
-  before_validation :validate_name, on: [:create, :update]
+  before_validation :validate_name
   before_save :set_active
 
   scope :all_managed_scenarios, lambda { |user|
@@ -66,9 +66,10 @@ class ScenarioAutomation < VaRule
    if (visibility_not_myself? && (self.name_changed? || access_type_changed?))
     scenario = Account.current.scn_automations.all_managed_scenarios(User.current).find_by_name(self.name)
     unless scenario.nil?
-      self.errors.add_to_base("Duplicate scenario. Name already exists")
+      self.errors.add(:base,"Duplicate scenario. Name already exists")
       return false
     end
+    true
    end
    true
   end

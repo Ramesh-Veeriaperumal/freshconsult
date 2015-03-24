@@ -21,6 +21,12 @@ class AccountsController < ApplicationController
   skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
                                          :marketplace_login, :portal_login, :create_account_from_google,
                                          :associate_google_account,:associate_local_to_google]
+  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
+                                         :marketplace_login, :portal_login, :create_account_from_google,
+                                         :associate_google_account,:associate_local_to_google]
+  skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
+                                        :marketplace_login, :portal_login, :create_account_from_google,
+                                        :associate_google_account,:associate_local_to_google]
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
 
@@ -105,7 +111,7 @@ class AccountsController < ApplicationController
       @account = @signup.account
       @user = @signup.user
       @call_back_url = params[:call_back]
-      render :action => :signup_google 
+      render "google_signup/signup_google"
     end    
   end
 

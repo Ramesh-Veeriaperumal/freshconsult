@@ -118,6 +118,10 @@ namespace :freshdesk_tire do
       exit(1)
     end
     es_account_ids = ENV['ACCOUNT_ID'].split(',')
+    
+    # Notify dev-ops about the account IDS that are going to be indexed
+    notify_devops(es_account_ids)
+    
     init_partial_reindex(es_account_ids)
   end
 
@@ -222,4 +226,12 @@ def import_condition(id, item)
       condition = ".where(['account_id=?', #{id}])"
   end
   condition
+end
+
+def notify_devops(account_ids)
+  return if Rails.env.development?
+
+  notification_topic = SNS["dev_ops_notification_topic"]
+  options = { :account_ids => account_ids, :environment => Rails.env, :"rails-version" => Rails.version }
+  DevNotification.publish(notification_topic, "Reindex Operation Commenced on #{Time.now}", options.to_json)
 end

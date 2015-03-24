@@ -13,6 +13,7 @@ module ApplicationHelper
   include RtlHelper
   include MemcacheKeys
   include Integrations::Util
+  include Integrations::IntegrationHelper
   include CommunityHelper
   require "twitter"
 
@@ -768,7 +769,7 @@ module ApplicationHelper
     choices = field.choices
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
@@ -933,6 +934,10 @@ module ApplicationHelper
       return @account.main_portal.logo.content.url(:logo)
     end
     return "/assets/logo.png?721013"
+  end
+
+  def get_base_domain
+    AppConfig['base_domain'][Rails.env]
   end
 
   private

@@ -91,6 +91,7 @@ module Helpkit
       r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
+      r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 30,:per_ip => true)
       store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
       r.set_cache(store) if store.present?
     end
@@ -126,6 +127,7 @@ module Helpkit
     require 'omniauth'
     require 'omniauth/strategies/twitter'
     require 'omniauth/strategies/nimble'
+    require 'omniauth/strategies/slack'
 
     # you will be able to access the above providers by the following url
     # /auth/providername for example /auth/twitter /auth/facebook

@@ -59,7 +59,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/large-hadron-migrator.git
-  revision: dc9cca3cc2114f6e935447a1a45e69c16338c935
+  revision: 27972aca9fb5720d3150e8afd8f757123eb747f6
   specs:
     lhm (1.2.0)
 
@@ -188,6 +188,11 @@ PATH
   specs:
     acts_as_voteable (0.0.1)
       rails (~> 3.2.18)
+
+PATH
+  remote: vendor/gems/add_pod_support-0.0.1
+  specs:
+    add_pod_support (0.0.1)
 
 PATH
   remote: vendor/gems/ar_shards
@@ -853,6 +858,7 @@ DEPENDENCIES
   activemerchant!
   acts_as_list (= 0.1.4)
   acts_as_voteable!
+  add_pod_support!
   akismetor!
   ancestry (= 1.3)
   ar_shards!

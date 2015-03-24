@@ -8,7 +8,7 @@
         <%= def_form.text_field :name %>
       </li>
       <li>
-        <% def_form.fields_for :flexifield_def_entries do |entry_form| %>
+        <%= def_form.fields_for :flexifield_def_entries do |entry_form| %>
           <fieldset class="child_tag rounded">
             <legend class="rounded"><%= entry_form.object.new_record? ? 'New Flexifield Definition Entry' : 'Flexifield Definition Entries' %></legend>
             <ul>

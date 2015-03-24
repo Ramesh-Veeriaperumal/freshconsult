@@ -1,3 +1,5 @@
+//For Fresh Widegt & portal 
+
 $wicon-layout:horizontal;
 @import "cdn-ignored/sprites/portal/wicon/*.png";
 $wicon-sprite-dimensions:true;
@@ -12,34 +14,34 @@ $wicon-sprite-dimensions:true;
 }
 
 .form-placeholder{
-	.default_requester .controls:before{ @extend .wicon-email; }
-	.default_subject .controls:before{ @extend .wicon-question-sign; }
-	.default_name_field:before{ @extend .wicon-user; }
+  .default_requester .controls:before{ @extend .wicon-email; }
+  .default_subject .controls:before{ @extend .wicon-question-sign; }
+  .default_name_field:before{ @extend .wicon-user; }
 }
 
 #feedback-suggest .hc-search-input:before{ @extend .wicon-search; }
 .default_requester .controls, .default_subject .controls, .default_name_field, .hc-search-input{
-	&:before{
-		content: " ";
-		position: absolute;
-		margin-top: 6px;
-		@include margin-left(7px);
-		color: #aaa;
-		@include text-align(center);
-		@if $rtl {
-			right:0;
-		}
-	}
+  &:before{
+    content: " ";
+    position: absolute;
+    margin-top: 6px;
+    @include margin-left(7px);
+    color: #aaa;
+    @include text-align(center);
+    @if $rtl {
+      right:0;
+    }
+  }
 }
 
 .hc-search-input:before{
-	margin-top: 11px;
-	@include margin-left(11px);
+  margin-top: 11px;
+  @include margin-left(11px);
 }
 
 .wicon-camera{
-	position: relative;
-	top: 1px;
- 	@include left(-2px);
-	font-size: 1em;
+  position: relative;
+  top: 1px;
+  @include left(-2px);
+  font-size: 1em;
 }

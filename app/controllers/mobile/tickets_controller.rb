@@ -15,8 +15,11 @@ class Mobile::TicketsController < ApplicationController
   def get_portal
     #do it in better way..
     # mob_json = current_account.to_mob_json(current_user.agent?)[0..-2]+","+current_user.to_mob_json[1..-1]
-    mob_json = "#{current_account.to_mob_json(current_user.agent?)[0..-2]},#{current_user.to_mob_json[1..-2]},#{current_portal.to_mob_json[1..-1]}"
-    cookies[:csrf_token] = Nokogiri::HTML(csrf_meta_tag).css("meta")[1]["content"] if mobile?
+    mob_json = {};
+    mob_json.merge!(current_account.to_mob_json(current_user.agent?));
+    mob_json.merge!(current_user.to_mob_json);
+    mob_json.merge!(current_portal.to_mob_json);
+    cookies[:csrf_token] = form_authenticity_token if mobile?
     render :json => mob_json
   end
 

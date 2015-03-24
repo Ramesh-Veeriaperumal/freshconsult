@@ -38,7 +38,8 @@ class ThemeController < ApplicationController
 			# Appending the theme load path as partial scss includes 
 			# will be from the root src dir when reading from a file
 			_opts[:load_paths] << theme_load_path
-			_opts[:load_paths] << "#{Rails.root}/public/images"	
+			_opts[:load_paths] << "#{Rails.root}/public/images"
+      _opts[:load_paths] << "#{Rails.root}/public/assets"	
 
 			Sass::Engine.new(scss, _opts).render
 		end

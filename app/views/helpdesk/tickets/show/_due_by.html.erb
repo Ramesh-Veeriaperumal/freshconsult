@@ -1,6 +1,6 @@
 <% due_by_content_text = t( due_by > Time.now() ? 'ticket_future_due_by_live' : 'ticket_past_due_by_live',
   {:time => distance_of_time_in_words(Time.now(), due_by), :timestamp => due_by.to_i}).html_safe
-due_by_content_text = due_by_content_text.gsub("\n" , " ") if params[:format] == 'widget'
+due_by_content_text = (due_by_content_text.gsub("\n" , " ")).html_safe if params[:format] == 'widget'
 %>
 <%= due_by_content_text %>
 <% if params[:format] != 'widget' %>
@@ -16,5 +16,5 @@ on <%= formated_date(due_by) %>
 </a>
 <% end %>
 <%= javascript_tag do %>
-jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status') %>");
-<% end %>
+jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status', :formats => [:html]) %>");
+<% end %> 

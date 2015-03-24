@@ -41,13 +41,13 @@ module TicketsFilter
   ]
 
   JOINS = {
-    :on_hold => "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+    :on_hold => "INNER JOIN helpdesk_ticket_statuses ON 
           helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
-    :overdue => "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+    :overdue => "INNER JOIN helpdesk_ticket_statuses ON 
           helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
-    :due_today => "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+    :due_today => "INNER JOIN helpdesk_ticket_statuses ON 
           helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
   }

@@ -2,6 +2,7 @@ helpdesk:
   initializers:
     - mri2.1_patches
     - rails3_patches
+    - authlogic_patch
     - helpdesk
     - action_mailer_callbacks
     - action_mailer_no_tmail
@@ -53,4 +54,7 @@ helpdesk:
     - white_list_formatted_content
     - will_paginate
     - wrap_parameters
+    - statsd_config
+    - big_brother
+
 

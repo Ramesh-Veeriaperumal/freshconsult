@@ -68,7 +68,7 @@ module Inherits
 
         private
           def update_error action
-            self.errors.add_to_base(
+            self.errors.add( :base,
                       "#{I18n.t("flash.cf.#{action}.failure")}") if self.errors.count.zero?
           end
 

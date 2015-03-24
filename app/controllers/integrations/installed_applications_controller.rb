@@ -3,14 +3,20 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   class VersionDetectionError < Exception; end
 
   include Integrations::AppsUtil
+  include Integrations::Slack::SlackConfigurationsUtil
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
   before_filter :check_application_installable, :only => [:install, :update]
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
+  before_filter :validate_configs, :only => [:update], :if => :application_is_slack?
+  after_filter  :create_or_update_slack_rule , :only => [:install, :update] , :if =>  :application_is_slack? 
+  after_filter  :destroy_all_slack_rule, :only => [:uninstall,:update], :if =>  :application_is_slack?
 
-  def install # also updates
+
+  def install 
+  # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
     if @installing_application.cti?
       cti_app = current_account.installed_applications.detect {|app| app.application.cti?}
@@ -57,7 +63,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       begin
         @installed_application.save!
         flash[:notice] = t(:'flash.application.update.success')
-
+      
         if @installed_application.application.name == "shopify"
           shop_name = (@installed_application.configs_shop_name.include? ".myshopify.com") ? @installed_application.configs_shop_name : @installed_application.configs_shop_name+".myshopify.com"
           redirect_to "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
@@ -142,6 +148,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     else
       @installed_application = current_account.installed_applications.find(params[:id])
       @installing_application = @installed_application.application
+      @channels = channel_name if @installing_application.slack? 
     end
     @installed_application.set_configs params[:configs]
   end
@@ -176,4 +183,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     params[:configs][:domain] = params[:configs][:domain][0..-2] if !params[:configs].blank? and !params[:configs][:domain].blank? and params[:configs][:domain].ends_with?('/')
   end
 
+  def application_is_slack?
+     @installing_application.slack?
+  end
 end

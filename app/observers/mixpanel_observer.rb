@@ -73,10 +73,8 @@ class MixpanelObserver < ActiveRecord::Observer
     end
 
     def send_plan_update_event(model)
-      changes = model.changes.clone
-      unless changes.blank?
-        ::MixpanelWrapper.send_to_mixpanel(model.class.name, changes)
-      end
+      data = {:subscription => model.attributes.to_json, :changes => model.changes.clone}
+      ::MixpanelWrapper.send_to_mixpanel(model.class.name, data)
     end
 
     add_method_tracer :send_account_created_event, 'Custom/Mixpanel/account_event'

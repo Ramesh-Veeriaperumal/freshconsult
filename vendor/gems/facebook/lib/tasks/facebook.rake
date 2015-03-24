@@ -43,15 +43,18 @@ namespace :facebook do
     queue_name = "facebook_comments_worker"
     if queue_empty?(queue_name)
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
-      Social::FacebookPage.find_in_batches(:batch_size => 500,
-          :joins => %( INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id),
-          :conditions => "subscriptions.state != 'suspended'",
-          :include => [:account]
-        ) do |facebook_block|
-        facebook_block.each do |fb_page|
-          account = fb_page.account
-          next unless fb_page.valid_page
-          Resque.enqueue(Facebook::Worker::FacebookCommentsWorker ,{:account_id => account.id, :fb_page_id => fb_page.id})
+      Sharding.run_on_all_slaves do
+        Social::FacebookPage.find_in_batches(:batch_size => 500,
+            :joins => %( INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id),
+            :conditions => "subscriptions.state != 'suspended'",
+            :include => [:account]
+          ) do |facebook_block|
+          facebook_block.each do |fb_page|
+            account = fb_page.account
+            next unless fb_page.valid_page
+            puts "#{account.id} :: #{fb_page.id}"
+            Resque.enqueue(Facebook::Worker::FacebookCommentsWorker ,{:account_id => account.id, :fb_page_id => fb_page.id})
+          end
         end
       end
     else

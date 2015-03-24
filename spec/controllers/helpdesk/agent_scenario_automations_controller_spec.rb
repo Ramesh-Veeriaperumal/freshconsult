@@ -23,19 +23,19 @@ describe Helpdesk::ScenarioAutomationsController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "helpdesk/scenario_automations/index.html.erb"
+    response.should render_template "helpdesk/scenario_automations/index"
     response.body.should =~ /Scenario Automations/
   end
 
   it "should go to new scenario" do
     get 'new'
-    response.should render_template "helpdesk/scenario_automations/new.html.erb"
+    response.should render_template "helpdesk/scenario_automations/new"
     response.body.should =~ /New Scenario/
   end
 
   it "should create a new personal scenario with other accesses" do
     scn_name = "created by #{Faker::Name.name}"
-    post :create, {:va_rule =>{"name"=>scn_name, "description"=>Faker::Lorem.sentence(3),:accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}},
+    post :create, {:va_rule =>{"name"=>scn_name, "description"=>Faker::Lorem.sentence(3),:accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]}},
                    :action_data => [{:name=> "ticket_type", :value=> "Question"}].to_json,
                    :name =>"ticket_type",
                    :value=>"Question"}
@@ -46,24 +46,25 @@ describe Helpdesk::ScenarioAutomationsController do
 
   it "should edit selected scenario" do
     get :edit, :id =>@test_scn.id
-    response.should render_template "helpdesk/scenario_automations/edit.html.erb"
-  end
-
-  it "should clone a selected scenario" do
-    get :clone_rule, :id => @test_scn.id
-    response.should render_template "helpdesk/scenario_automations/clone_rule.html.erb"
-    (@test_scn.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_scn.filter_data == assigns(:va_rule).filter_data).should be_true
-    (@test_scn.accessible.access_type == assigns(:va_rule).accessible.access_type).should be_true
+    response.should render_template "helpdesk/scenario_automations/edit"
   end
 
   it "should update a scenario" do
     put :update, {:va_rule=>{"name"=>"move to Support", "description"=>Faker::Lorem.sentence(3),
-                           :accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}},
+                           :accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]}},
                   :action_data=>[{:name=>"priority", :value=>"3"},{:name=>"status", :value=>"3"}].to_json,  :name=>"status", :value=>"3",:id=>@test_scn.id}
     scn=@account.scn_automations.find_by_id(@test_scn.id)
     scn.action_data.should_not be_eql(@test_scn.action_data)
     scn.accessible.access_type.should be_eql Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+  end
+
+  it "should clone a selected scenario" do
+    clone_scn=create_scn_automation_rule({:account_id=>@account.id,:accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],:user_ids=>[@new_agent.id]}})
+    get :clone_rule, :id => clone_scn.id
+    response.should render_template "helpdesk/scenario_automations/clone_rule"
+    assigns(:va_rule).action_data.should be_eql(clone_scn.action_data)
+    assigns(:va_rule).filter_data.should be_eql(clone_scn.filter_data)
+    assigns(:va_rule).accessible.access_type.should be_eql(clone_scn.accessible.access_type)
   end
 
   it "should delete a scenario" do

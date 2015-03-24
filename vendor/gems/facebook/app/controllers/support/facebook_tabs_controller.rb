@@ -2,6 +2,7 @@ class Support::FacebookTabsController < SupportController
 
   skip_before_filter :portal_context, :page_message, :ensure_proper_protocol
   skip_filter :select_shard
+  skip_before_filter :determine_pod
   skip_before_filter :verify_authenticity_token, :check_account_state
   skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url
   skip_before_filter :set_time_zone, :check_day_pass_usage, :set_locale
@@ -10,7 +11,7 @@ class Support::FacebookTabsController < SupportController
   def redirect
     portal_url = portal_for_page if @page_info && facebook_page_tab?
     unless portal_url
-      render :file => "#{Rails.root}/public/facebook-404.html"
+      render :file => "#{Rails.root}/public/facebook-404.html", :layout => false
     else
       if @page_info[:oauth_token]
         redirect_to "#{portal_url}/facebook/sso/facebook"

@@ -54,7 +54,7 @@ module SslRequirement
   private
   
     def ensure_proper_protocol
-      return true if !Rails.env.production? || ssl_allowed? 
+      return true if Rails.env.test? || Rails.env.development? || ssl_allowed?
 
       if request.ssl? 
         if ssl_required? && (cnamed_portal_with_ssl? || host_is_full_domain?) #like billing from ssl enabled portal/full_domain

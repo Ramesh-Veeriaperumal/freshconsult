@@ -367,6 +367,8 @@ p.imp{
     }
     #resp-text{
     	display: block;
+    	word-break: break-all;
+    	@include padding-left(25px);
     }
 }
 
@@ -515,6 +517,7 @@ p.imp{
     #resp-text{
     	display: block;
     	width: 150px;
+    	word-break: break-all;
     }
 }
 

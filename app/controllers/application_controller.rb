@@ -7,11 +7,13 @@ class ApplicationController < ActionController::Base
 
   around_filter :select_shard
   
+  prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :set_default_locale, :set_locale
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
+  before_filter :remove_rails_2_flash_before
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :force_utf8_params
@@ -19,6 +21,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   before_filter :logging_details 
   before_filter :remove_pjax_param 
+
+  after_filter :remove_rails_2_flash_after
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -123,7 +127,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless @current_account
-          render("/errors/invalid_domain")
+          render("/errors/invalid_domain", :layout => false)
         else
           render_404
         end
@@ -228,8 +232,47 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    #Clear rails 2 flash TO DO : Remove once migrated completely to rails 3
+    def remove_rails_2_flash_before
+      if self.flash and self.flash.class == ActionController::Flash::FlashHash
+        self.flash.clear
+      end
+    end
+
+    def remove_rails_2_flash_after
+      if session[:flash] and session[:flash].class == ActionController::Flash::FlashHash
+        session.delete(:flash)
+      end
+    end
+    #End here
+
     def api_request?
       request.cookies["_helpkit_session"]
+    end
+
+    def determine_pod
+      shard = ShardMapping.lookup_with_domain(request.host)
+      if shard.nil?
+        return # fallback to the current pod.
+      elsif shard.pod_info.blank?
+        return # fallback to the current pod.
+      elsif shard.pod_info != PodConfig['CURRENT_POD']
+        Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
+        redirect_to_pod(shard)
+      end
+    end
+
+    def redirect_to_pod(shard)
+      return if shard.nil?
+
+      Rails.logger.error "Request URL: #{request.url}"
+      # redirect to the correct POD using Nginx specific redirect headers.
+      redirect_url = "/pod_redirect/#{shard.pod_info}" #Should match with the location directive in Nginx Proxy
+      Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{redirect_url}"
+      response.headers["X-Accel-Redirect"] = redirect_url
+      response.headers["X-Accel-Buffering"] = "off"
+
+      redirect_to redirect_url
     end
 end
 

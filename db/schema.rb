@@ -1,7 +1,6 @@
-# encoding: UTF-8
-# This file is auto-generated from the current state of the database. Instead
-# of editing this file, please use the migrations feature of Active Record to
-# incrementally modify your database, and then regenerate this schema definition.
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# please use the migrations feature of Active Record to incrementally modify your database, and
+# then regenerate this schema definition.
 #
 # Note that this schema.rb definition is the authoritative source for your
 # database schema. If you need to create the application database on another
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150121135920) do
+ActiveRecord::Schema.define(:version => 20150313071755) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -817,9 +816,11 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.string   "locked_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "pod_info",   :default => "poduseast"
   end
 
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
+  add_index "delayed_jobs", ["pod_info"], :name => "index_delayed_jobs_on_pod_info"
 
   create_table "deleted_customers", :force => true do |t|
     t.string   "full_domain"
@@ -2013,8 +2014,11 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.text     "display_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",                  :default => false
+    t.string   "pod_info",   :default => "poduseast"
   end
+
+  add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
+  add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
 
   add_index "lhma_2014_10_09_16_00_23_845_chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
 
@@ -2179,7 +2183,24 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
     t.integer  "account_id",  :limit => 8
   end
 
-  add_index "lhma_2014_10_16_14_35_15_651_solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
+  create_table "pod_shard_conditions", :force => true do |t|
+    t.string "pod_info",   :null => false
+    t.string "shard_name", :null => false
+    t.string "query_type", :null => false
+    t.text "accounts",   :null => false
+  end
+
+  add_index "pod_shard_conditions", ["pod_info", "shard_name"], :name => "index_pod_shard_conditions_on_pod_info_and_shard_name", :unique => true
+
+  create_table "portal_forum_categories", :force => true do |t|
+    t.integer "portal_id",         :limit => 8
+    t.integer "forum_category_id", :limit => 8
+    t.integer "account_id",        :limit => 8
+    t.integer "position"
+  end
+
+  add_index "portal_forum_categories", ["account_id", "portal_id"], :name => "index_portal_forum_categories_on_account_id_and_portal_id"
+  add_index "portal_forum_categories", ["portal_id", "forum_category_id"], :name => "index_portal_forum_categories_on_portal_id_and_forum_category_id"
 
   create_table "lhma_2014_10_28_12_00_44_603_chat_widgets", :force => true do |t|
     t.integer  "account_id",            :limit => 8
@@ -2842,6 +2863,8 @@ ActiveRecord::Schema.define(:version => 20150121135920) do
   create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
     t.string  "shard_name",                  :null => false
     t.integer "status",     :default => 200, :null => false
+    t.string  "pod_info"
+    t.string  "region",     :default => 'us-east-1', :null => false
   end
 
   create_table "sla_details", :force => true do |t|

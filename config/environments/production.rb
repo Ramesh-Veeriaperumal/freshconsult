@@ -9,13 +9,13 @@ Helpkit::Application.configure do
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  config.serve_static_assets = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
-  config.assets.compile = false
+  config.assets.compile = true
 
   # Generate digests for assets URLs
   config.assets.digest = true
@@ -73,8 +73,8 @@ Helpkit::Application.configure do
 
   # Need to set records for assets1..10.freshdesk.com
   config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
-    asset_host_url = "http://assets%d.freshdesk.com" % (rand(9)+1)
-    asset_host_url = "https://d31jxxr9fvyo78.cloudfront.net" if request && request.ssl?
+    asset_host_url = "https://d1k77w8c6z6pel.cloudfront.net"
+    asset_host_url = "http://assets%d.freshdesk.com" % (rand(9)+1) if request && !request.ssl?
     asset_host_url
   }
 

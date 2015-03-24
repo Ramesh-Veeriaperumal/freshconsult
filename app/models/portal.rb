@@ -20,11 +20,14 @@ class Portal < ActiveRecord::Base
   before_save :downcase_portal_url
   after_save :update_chat_widget
   before_save :update_portal_forum_categories
+  before_save :save_route_info
+  after_destroy :destroy_route_info
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
   include Redis::RedisKeys
   include Redis::PortalRedis
+  include Redis::RoutesRedis
 
   has_one :logo,
     :as => :attachable,
@@ -69,7 +72,7 @@ class Portal < ActiveRecord::Base
   belongs_to_account
   belongs_to :product
 
-  APP_CACHE_VERSION = "FD70"
+  APP_CACHE_VERSION = "FD71"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -80,7 +83,7 @@ class Portal < ActiveRecord::Base
   end
 
   def fav_icon_url
-    fav_icon.nil? ? '/images/misc/favicon.ico' : fav_icon.content.url
+    fav_icon.nil? ? '/assets/misc/favicon.ico' : fav_icon.content.url
   end
 
   def portal_forums
@@ -206,7 +209,7 @@ class Portal < ActiveRecord::Base
     def validate_preferences
       preferences.each do |key, value|
         if ["header_color", "tab_color", "bg_color"].include?(key)
-          errors.add_to_base("Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
+          errors.add(:base, "Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
         end
@@ -253,5 +256,19 @@ class Portal < ActiveRecord::Base
         portal_forum_categories.first.delete if !portal_forum_categories.empty?
         portal_forum_categories.build(:forum_category_id => forum_category_id) if forum_category_id?
       end
+    end
+
+    def save_route_info
+      if portal_url_changed?
+        Rails.logger.info "portal_url changed #{portal_url}"
+        Rails.logger.info "Old URL #{portal_url_was},  #{portal_url}, #{account_id}, #{account.full_domain}"
+        destroy_route_info(portal_url_was) unless portal_url_was.blank? #delete old portal url
+        set_route_info(portal_url, account_id, account.full_domain) unless portal_url.blank? #add new portal url
+      end
+    end
+
+    def destroy_route_info(old_portal_url = portal_url)
+      Rails.logger.info "Deleting #{old_portal_url} route."
+      delete_route_info(old_portal_url) unless old_portal_url.blank?
     end
 end

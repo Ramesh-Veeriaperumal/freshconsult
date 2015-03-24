@@ -271,7 +271,7 @@ class Support::Discussions::TopicsController < SupportController
       @page_meta ||= {
         :title => @topic.title,
         :description => @topic.posts.published.first['body'],
-        :canonical => support_discussions_topic_url(@topic)
+        :canonical => support_discussions_topic_url(@topic, :host => current_portal.host)
       }
     end
 

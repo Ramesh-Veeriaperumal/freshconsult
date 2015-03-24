@@ -5,7 +5,7 @@ namespace :custom_stream do
     queue_name = "twitter_stream_worker"
     if queue_empty?(queue_name)
       Sharding.run_on_all_shards do
-        Account.active_accounts.each do |account|
+        Account.current_pod.active_accounts.each do |account|
           next if account.twitter_handles.empty?
           Resque.enqueue(Social::Workers::Stream::Twitter, {:account_id => account.id})
         end

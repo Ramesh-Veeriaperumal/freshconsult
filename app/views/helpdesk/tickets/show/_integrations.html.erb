@@ -5,7 +5,7 @@
 
 <div class="widget dialog-widget" id="jira_issue">
 	<span id="jira_issue_icon"> 
-		<%= link_to image_tag(spacer_image_url, :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'jira' : 'jira_active' %>
+		<%= link_to image_tag(spacer_image_url, :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'integrations-jira vertical-alignment' : 'integrations-jira_color vertical-alignment' %>
 	</span>  
 	<h3 class="title lazyload" rel="freshdialog" title="<%= h(installedApp.configs_title)%>"
 		data-width="390" data-target="#jira_widget_dialog" 

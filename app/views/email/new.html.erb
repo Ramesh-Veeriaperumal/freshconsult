@@ -1,9 +1,77 @@
-<%= render :partial => "layouts/shared/head" %>
-<style>
-body{
- margin: 20;
-}
-</style>
+<head>
+  <% if @debuging%>
+    <script type="text/javascript">
+        var t_pagestart = new Date().getTime();
+      </script>
+    <%end%>
+    <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title><%= h(page_title) %></title>
+  <meta name="description" content="<%= page_description %>">
+  <meta name="author" content="">
+  <meta name="keywords" content="<%= page_keywords %>">
+  <!-- Adding meta tag for CSRF token -->
+  <%= csrf_meta_tag %>
+  <!-- End meta tag for CSRF token -->
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% unless page_canonical.blank? %>
+    <link rel="canonical" href="<%= page_canonical %>" />
+  <% end %>
+  <link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
+
+  <!-- TODO-RAILS3 Clean up the below module oriented items -->
+   
+  <%= stylesheet_link_tag_with_rtl :'cdn/common' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/pattern', :media => "screen, print, projection"  %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/plugins'  %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/sprites'  %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/app' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/non_pattern' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/tour_my_app' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/ie_hacks' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/tkt_details', :media => "screen, print, projection"  %>
+
+  <%= stylesheet_link_tag_with_rtl :'cdn/community' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/freshfone_recording_playback' %>
+
+  <script type="text/javascript">
+    /* TODO-RAILS3 need to cross check this area */
+    PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.gif';
+    PROFILE_BLANK_MEDIUM_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_medium.gif';
+    SPACER_IMAGE_PATH = '<%= spacer_image_url %>';
+    FILLER_IMAGES = {
+      imageLoading : '<%= asset_host_url %>/assets/animated/image_upload_placeholder.gif'
+    };
+    cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
+    cloudfront_host_url = "<%= asset_host_url %>";
+  </script>
+    
+  <%= javascript_include_tag :'cdn/defaults'  %>
+  <%= javascript_include_tag :'cdn/frameworks' %>
+  <%= javascript_include_tag :'cdn/workspace' %>
+  <%= javascript_include_tag :'cdn/redactor' %>
+  <%= javascript_include_tag :'cdn/syntaxhighlighter' %>
+  <%= javascript_include_tag :'cdn/pattern'  %>
+  <%= javascript_include_tag :'cdn/merge'  %>
+  <%= javascript_include_tag :'cdn/custom_widget' %>
+
+  <%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
+
+  <script type="text/javascript">
+    Fjax.pjax_parallel_request = null;
+    $LAB.setGlobalDefaults({
+      BasePath: cloudfront_host_url + '/assets/'
+    });
+    Fjax.Assets.setup(<%= asset_manifest(:js).to_json.html_safe %>, {app:[], plugins:[]}, "", cloudfront_host_url);
+    Fjax.Manager.start();
+  </script>
+
+  <%= yield :head %>
+  
+</head>
 
 
 <%= form_tag '/email', :multipart => true, :id => "EmailTicketForm" do -%>

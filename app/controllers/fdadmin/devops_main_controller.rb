@@ -7,7 +7,7 @@ class Fdadmin::DevopsMainController < ApplicationController
   skip_before_filter :check_account_state
   skip_before_filter :ensure_proper_protocol
   skip_before_filter :check_day_pass_usage
-  skip_before_filter :select_shard
+  skip_around_filter :select_shard
   before_filter :verify_signature
   before_filter :check_freshops_subdomain
 

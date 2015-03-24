@@ -582,3 +582,147 @@
 		}
 	}
 }
+.constantcontact-modal-logo {
+		background: url(/images/application-logo/constantcontact.png) right 1px no-repeat;
+		background-size: 80px 30px;
+		height: 30px;
+}
+.campaignmonitor-modal-logo {
+		background: url(/images/application-logo/campaignmonitor.png) right 1px no-repeat;
+		height: 30px;
+}
+.icontact-modal-logo {
+		background: url(/images/application-logo/icontact.png) right 1px no-repeat;
+		background-size: 65px 24px;
+		height: 30px;
+}
+.mailchimp-modal-logo {
+		background: url(/images/application-logo/mailchimp.png) right 1px no-repeat;
+		background-size: 80px 25px;
+		height: 30px;
+}
+.constantcontact-logo {
+		background: url(/images/integrations/constantcontact-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.campaignmonitor-logo {
+		background: url(/images/integrations/campaignmonitor-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.icontact-logo {
+		background: url(/images/integrations/icontact-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+.mailchimp-logo {
+		background: url(/images/integrations/mailchimp-logo.png) 96% no-repeat !important;
+		background-size: 85px, 25px;
+}
+// --------------------------------------------------------------------------------------------------
+//												Rule Constructor
+// --------------------------------------------------------------------------------------------------
+
+.rules_wrapper{
+	width: 100%;
+	display: table;
+	background-color: white;
+	.rules_list_wrapper{
+		display: table-row-group;
+	}
+	.tabel-thead{
+		display: table-header-group;
+		background-color: #f3f3f3;
+		border-bottom: 1px solid #d2d2d2;
+		color: #333;
+		font-weight: 500;
+	}
+	.list{
+		display: table-row;
+	}
+	.overlay{
+		background-color: #F7F7F7;
+		.list-data{
+			border-bottom: 1px solid #ECECEC;
+		}
+		.remove_list{
+			cursor: auto;
+			background-color: rgb(174, 174, 174);
+		}
+		.select2-choice div{
+			opacity: 0.5;
+		}	
+	}
+	.list-data{
+		.error{
+			margin: 0;
+			margin-top: -8px;
+			margin-left: 10px;
+			color: #d00000;
+		}
+		.header-txt{
+			margin: 15px;
+		}
+		.select2-container{
+			display:block !important;
+		}
+	}
+	.add_menu_wrapper{
+		display: table-footer-group;
+	}
+
+	.delete-btn, .list-data{
+		display: table-cell;
+		border-bottom: 1px solid #F5F5F5;
+		vertical-align: top;
+	}
+
+	.list-data:first-child {
+		position: relative;
+		width: 50px;
+		text-align: center;
+	}
+
+	.select2-container, .add_list, input {
+		margin: 10px;
+	}
+	.remove_list{
+		background: #d30000;
+
+		&:before{
+			content: "--";
+		}
+	}
+	.add_img{
+		background: green;
+		&:before{
+			content: "+";
+		}
+	}
+	.list-icon {
+		border-radius: 100%;
+		color: #fff;
+		position: absolute;
+		top: 14px;
+		right: 10px;
+		padding: 2px 7px 4px 5px;
+		font-size: 16px;
+		font-weight: bold;
+		line-height: 14px;
+		-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+		-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+		letter-spacing: -3px;
+		opacity: 0.4;
+		cursor: pointer;
+	}
+	.add_new_list{
+		cursor: pointer;
+	}
+	.empty_list_alert, .prev_empty_notify{
+		display: none;
+		margin-left: 20px;
+		color: rgb(208, 0, 0);
+		&.inline{
+			display: table-cell;
+		}
+	}
+}

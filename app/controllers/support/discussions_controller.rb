@@ -49,7 +49,7 @@ class Support::DiscussionsController < SupportController
       @page_meta ||= {
         :title => @category.name,
         :description => @category.description,
-        :canonical => support_discussion_url(@category)
+        :canonical => support_discussion_url(@category, :host => current_portal.host)
       }
     end
 end 

@@ -313,11 +313,14 @@ function setPostParam(form, name, value){
 
 
    // Quoted Addition show hide
-   function quote_text(item){
-      if (!jQuery(item).attr("data-quoted")) {
-         var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""),
-            child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote").hide();
-
+   function quote_text(item, options){
+        options = options || {}
+        if (!jQuery(item).attr("data-quoted") || options["force_quote"]) {
+         var show_hide = jQuery("<a href='#' title='Show quoted text'/>").addClass("q-marker tooltip").text(""),
+            child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote")
+            if(!options["force_quote"]){
+              child_quote.hide();
+            }
             show_hide.bind("click", function(ev){
                ev.preventDefault();
                child_quote.toggle();
@@ -857,12 +860,19 @@ jQuery.fn.serializeObject = function(){
               epoch_sec = merge.getTime() + (1100*60000);
               merge = (new Date(epoch_sec)).toISOStringCustom().trim();
             }
+            else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("tempo"))
+            {
+              this.name = keys[0] + '[' + keys[1] + ']'
+              keys.pop();
+              merge = parseFloat(merge);
+              reverse_key = this.name
+            }
             else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("numeric"))
             {
               merge = parseFloat(merge);
             }
             while((k = keys.pop()) !== undefined){
-
+                
                 // adjust reverse_key
                 reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
 

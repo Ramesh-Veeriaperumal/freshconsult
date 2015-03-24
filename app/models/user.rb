@@ -61,6 +61,7 @@ class User < ActiveRecord::Base
   validate :email_validity, :if => :chk_email_validation?
   validate :user_email_presence, :if => :email_required?
   validate :only_primary_email, on: :update, :if => [:agent?, :has_contact_merge?]
+  validate :max_user_emails, :if => [:has_contact_merge?]
 
 
   def email_validity
@@ -74,6 +75,10 @@ class User < ActiveRecord::Base
 
   def user_email_presence
     self.errors.add(:base, I18n.t("activerecord.errors.messages.user_emails")) if has_no_emails_with_ui_feature?
+  end
+
+  def max_user_emails
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.length > MAX_USER_EMAILS)
   end
 
   def has_no_emails_with_ui_feature?
@@ -662,6 +667,10 @@ class User < ActiveRecord::Base
     (@all_changes.keys & es_columns).any?
   end
 
+  def company_id
+    self.customer_id
+  end
+
 
   private
     def name_part(part)
@@ -727,7 +736,7 @@ class User < ActiveRecord::Base
         user if user.present? and user.active? and !user.blocked?
       else
         user_email = UserEmail.find_by_email(login)
-        user_email.user if !user_email.nil? and user_email.verified? and !user_email.user.blocked?
+        user_email.user if !user_email.nil? and user_email.user and user_email.user.active? and !user_email.user.blocked?
       end
     end
 

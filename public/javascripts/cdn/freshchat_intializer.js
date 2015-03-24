@@ -1,0 +1,10 @@
+//=require freshchat/lib/ticket_search.js
+//=require freshchat/templates/freshchat_archive.jst.ejs
+//=require freshchat/templates/freshchat_conversation.jst.ejs
+//=require freshchat/templates/freshchat_archive_row.jst.ejs
+//=require freshchat/templates/freshchat_visitor_details.jst.ejs
+//=require freshchat/dashboard/dashboard_template.jst.ejs
+//=require freshchat/templates/ticket_description.jst.ejs
+//=require freshchat/templates/ticket_search_list.jst.ejs
+//=require freshchat/templates/ticket_options.jst.ejs
+//=require freshchat/ticket_options/main.js

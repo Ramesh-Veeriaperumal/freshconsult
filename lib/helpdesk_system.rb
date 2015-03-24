@@ -25,7 +25,7 @@ module HelpdeskSystem
     respond_to do |format|
       format.html {
         unless request.headers['X-PJAX']
-          render :file => "#{Rails.root}/public/422.html", :status => :unprocessable_entity
+          render :file => "#{Rails.root}/public/422.html", :status => :unprocessable_entity, :layout => false
         else
           render :text => "abort", :status => :unprocessable_entity
         end

@@ -110,17 +110,17 @@ window.freshChat.conversationView = function(){
 				window.showLoaderPage();
 			},
 			convertTicket :function(event){
-				if(window.freshChat.ticketOptionsView && this.archiveModel){
+				if(window.liveChat.ticketOptions && this.archiveModel){
 					var archiveAttr = this.archiveModel.toJSON();
-					window.freshChat.ticketOptionsView.show(archiveAttr,true);			
+					window.liveChat.ticketOptions.initialize(archiveAttr,null,true);
 				}
 			},
 			addNote : function(event){
 				jQuery(event.target).addClass('disabled');
 				jQuery(event.target).html('<i class="ficon-file-edit"></i> Adding Note');
-				if(window.freshChat.ticketOptionsView && this.archiveModel){
+				if(window.liveChat.ticketOptions && this.archiveModel){
 					var archiveAttr = this.archiveModel.toJSON();
-					window.freshChat.ticketOptionsView.updateTicketNote(archiveAttr,true);
+					liveChat.ticketOptions.initialize(archiveAttr,null,true);
 				}
 
 			},

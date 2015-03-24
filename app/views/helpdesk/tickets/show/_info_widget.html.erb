@@ -10,6 +10,6 @@
     </div>
   </div>
   <div class="" id="ticket_status_box">
-    <%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+    <%= render :partial => '/helpdesk/tickets/show/status', :formats => [:html], :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
   </div>
 </div>

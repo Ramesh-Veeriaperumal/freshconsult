@@ -45,6 +45,15 @@
 
 <%= javascript_tag do %>
 
+	function validate_request(){
+  	var category =  jQuery("#category").val();
+  	var date_range =  jQuery("#date_range").serialize();
+  	if(category == "company"){
+  		location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
+  		return false;	
+  	}
+  	return true;
+  }
 
 	jQuery(document).ready(function() {
 	    jQuery("#report_filters").change(function(){
@@ -61,15 +70,6 @@
 	    });
 
 			    
-		jQuery('#report_filters').on('ajax:beforeSend', function() {
-			var category =  jQuery("#category").val();
-			var date_range =  jQuery("#date_range").serialize();
-			if(category == "company"){
-				location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
-				return false;	
-			}
-			return true;
-		});
 
 
 		jQuery("#date_range").daterangepicker({

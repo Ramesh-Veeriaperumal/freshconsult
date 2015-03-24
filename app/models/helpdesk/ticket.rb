@@ -520,7 +520,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") && attribute.to_s.include?("__callbacks"))
+    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
@@ -587,7 +587,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_attributes = [:notes,:attachments]
     ticket_attributes = {:notes => {},:attachments => {},:tags=> {:only => [:name]}}
     ticket_attributes = [] if options[:shallow]
-    super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
+    super(:builder => xml, :root => "helpdesk-ticket", :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name, :product_id]) do |xml|
       xml.to_emails do
         self.to_emails.each do |emails|

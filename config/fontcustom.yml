@@ -8,8 +8,8 @@ font_name: glyphs
 css_selector: .ficon-{{glyph}}
 preprocessor_path: ""
 autowidth: true
-no_hash: true
-force: false
+no_hash: false
+force: true
 debug: false
 quiet: false
 

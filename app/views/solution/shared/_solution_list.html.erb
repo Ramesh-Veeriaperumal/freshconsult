@@ -61,12 +61,14 @@
 					</div>
 					<div class='muted article-likes span5 text-right'>
 						<span class="text-left">
-							<i class="icons-like <%= 'null-value' if article.thumbs_up.eql?(0) %>" ></i>
+							<%= font_icon :like, :class => article.thumbs_up ? "muted" : "" %>
 							<%= article.thumbs_up %>
 						</span>
 						<span>
-							<i class="icons-dislike <%= 'null-value' if article.thumbs_down.eql?(0) %>"></i>
-							<span class="<%= 'highlight' if (article.thumbs_down >= article.thumbs_up) && (article.thumbs_down != 0) %>"><%= article.thumbs_down %> </span>
+							<%= font_icon :dislike, :class => article.thumbs_up ? "muted" : "" %>
+							<span class="<%= 'highlight' if (article.thumbs_down >= article.thumbs_up) && (article.thumbs_down != 0) %>">
+								<%= article.thumbs_down %> 
+							</span>
 						</span>
 					</div>
 				</div>

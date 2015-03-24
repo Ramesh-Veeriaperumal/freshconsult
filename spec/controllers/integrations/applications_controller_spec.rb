@@ -55,6 +55,17 @@ RSpec.describe Integrations::ApplicationsController do
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end
 
+  it "should install slack application and redirect to edit(configurable)" do
+    provider = "slack"
+    set_redis_key(provider, slack_params(provider))
+    post 'oauth_install', :id => provider
+    get_redis_key(provider).should be_nil
+
+    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app.should_not be_nil
+    response.should redirect_to edit_integrations_installed_application_path(installed_app)
+  end
+
   it "should update oauth token of installed app" do
     provider = "Test Application"
     access_token = OAuth2::AccessToken.new(OAuth2::Client.new("token_aaa","secret_aaa"), "token_aaa")
@@ -68,14 +79,13 @@ RSpec.describe Integrations::ApplicationsController do
   it "should install salesforce application using oauth token from redis when install params is nil" do
     provider = "salesforce"
     set_redis_key(provider, salesforce_params(provider))
-    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(:text => {:fields => [{:name =>"name","label"=>"label"}]})
-    # Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_contact_fields).returns({"Id"=>"Contact ID"})
-    # Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_lead_fields).returns({"Id"=>"Lead ID"})
-    # Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_account_fields).returns({"Id"=>"Account ID"})
+    Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_contact_fields).returns({"Id"=>"Contact ID"})
+    Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_lead_fields).returns({"Id"=>"Lead ID"})
+    Integrations::ApplicationsController.any_instance.stubs(:fetch_sf_account_fields).returns({"Id"=>"Account ID"})
     post 'oauth_install', :id => provider
     get_redis_key(provider).should_not be_nil
     Integrations::InstalledApplication.with_name(provider).should_not be_nil
-    response.should render_template "integrations/applications/_salesforce_fields"
+    response.should render_template "integrations/applications/salesforce_fields"
   end
 
   it "should install salesforce application using oauth token from redis" do

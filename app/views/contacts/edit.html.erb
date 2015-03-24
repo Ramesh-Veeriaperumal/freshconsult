@@ -1,6 +1,7 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
 
-<%= form_for @user, :url => { :controller => "contacts", :action => "update_contact" },:html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger'}  do |f| %>
+
+<%= form_for @user, :url => { :controller => "contacts", :action => "update_contact" },:html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger form_for_contact'}  do |f| %>
 	  
 	<div class='page-header-sticky' rel='sticky'>
 		<div class='sticky-header-wrapper'>

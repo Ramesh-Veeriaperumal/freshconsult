@@ -255,12 +255,11 @@
 	li{
 		list-style:none;
 		position:relative;
-		span.icon{ 
-			position:absolute;
-			width:16px;
-			height:16px;
-			@include margin-left(4px);
-			margin-top:5px;
+		.helpdesk_ticket_icon, .customer_icon, .topic_icon, .solution_article_icon, .user_icon{
+			@include margin-right(10px);
+			font-size:15px;
+			position: absolute;
+			left: 7px;
 		}
 		a{
 			display:block;

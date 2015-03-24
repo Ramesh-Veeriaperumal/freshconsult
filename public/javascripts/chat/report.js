@@ -65,10 +65,10 @@ var chatReport = function(){
 
 	var showReport = function(){
 		$("#loading-box").hide();
+		$("#freshchat_summary_report").css('opacity', 1);
 		if($("#report-filter-edit").css('visibility') == 'visible'){
 			$('#sliding').click();
 		}
-		$("#freshchat_summary_report").css('opacity', 1);
 	}
 
 	var generateChart = function(resp){
@@ -237,7 +237,7 @@ var TimeFormat = function(milliseconds){
 				cur_transfer.push(chat.transfer_id);
 			}
 
-			chat.new_created_at = moment(chat.created_at).format('L');
+			chat.new_created_at = moment(chat.created_at).format('MM/DD/YYYY');
 			modifiedData.push(chat)
 		});
 

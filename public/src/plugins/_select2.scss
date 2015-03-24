@@ -32,7 +32,7 @@ $select-sprite-spinner-url: "plugins/select2/spinner.gif";
 .select2-container .select2-choice {
     display: block;
     height: 26px;
-    padding: 0 0 0 8px;
+    @include padding(0 0 0 8px);
     overflow: hidden;
     position: relative;
 
@@ -54,15 +54,10 @@ $select-sprite-spinner-url: "plugins/select2/spinner.gif";
 
     background-color: #fff;
 }
-
-html[dir="rtl"] .select2-container .select2-choice {
-    padding: 0 8px 0 0;
-}
-
 .select2-container.select2-drop-above .select2-choice {
     border-bottom-color: #aaa;
 
-    border-radius: 0 0 4px 4px;
+    @include border-radius(0 0 4px 4px);
 
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.9, #fff));
     background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 90%);
@@ -72,11 +67,11 @@ html[dir="rtl"] .select2-container .select2-choice {
 }
 
 .select2-container.select2-allowclear .select2-choice .select2-chosen {
-    margin-right: 42px;
+    @include margin-right(42px);
 }
 
 .select2-container .select2-choice > .select2-chosen {
-    margin-right: 26px;
+    @include margin-right(26px);
     display: block;
     overflow: hidden;
 
@@ -85,11 +80,6 @@ html[dir="rtl"] .select2-container .select2-choice {
     text-overflow: ellipsis;
     float: none;
     width: auto;
-}
-
-html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
-    margin-left: 26px;
-    margin-right: 0;
 }
 
 .select2-container .select2-choice abbr {
@@ -132,7 +122,7 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
     margin: 0;
     padding: 0;
     position: fixed;
-    left: 0;
+    @include left(0);
     top: 0;
     min-height: 100%;
     min-width: 100%;
@@ -157,7 +147,7 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
     border: 1px solid #aaa;
     border-top: 0;
 
-    border-radius: 0 0 4px 4px;
+    @include border-radius(0 0 4px 4px);
 
     -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
             box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
@@ -168,7 +158,7 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
     border-top: 1px solid #aaa;
     border-bottom: 0;
 
-    border-radius: 4px 4px 0 0;
+    @include border-radius(4px 4px 0 0);
 
     -webkit-box-shadow: 0 -4px 5px rgba(0, 0, 0, .15);
             box-shadow: 0 -4px 5px rgba(0, 0, 0, .15);
@@ -197,10 +187,10 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
     width: 18px;
     height: 100%;
     position: absolute;
-    right: 0;
+    @include right(0);
     top: 0;
 
-    border-radius: 0 4px 4px 0;
+    @include border-radius(0 4px 4px 0);
 
     background-clip: padding-box;
 
@@ -212,12 +202,6 @@ html[dir="rtl"] .select2-container .select2-choice > .select2-chosen {
     background-image: linear-gradient(to top, #ccc 0%, #eee 60%);*/
 }
 
-html[dir="rtl"] .select2-container .select2-choice .select2-arrow {
-    left: 0;
-    right: auto;
-    border-left: none;
-    border-radius: 4px 0 0 4px;
-}
 
 .select2-container .select2-choice .select2-arrow b {
     display: block;
@@ -233,19 +217,13 @@ html[dir="rtl"] .select2-container .select2-choice .select2-arrow {
     }
 }
 
-html[dir="rtl"] .select2-container .select2-choice .select2-arrow b {
-    &::after {
-        @include left(4px);
-    }
-}
-
 .select2-search {
     display: inline-block;
     width: 100%;
     min-height: 26px;
     margin: 0;
-    padding-left: 4px;
-    padding-right: 4px;
+    @include padding-left(4px);
+    @include padding-right(4px);
 
     position: relative;
     z-index: 10000;
@@ -257,7 +235,7 @@ html[dir="rtl"] .select2-container .select2-choice .select2-arrow b {
     width: 100%;
     height: auto !important;
     min-height: 26px;
-    padding: 4px 20px 4px 5px;
+    @include padding(4px 20px 4px 5px);
     margin: 0;
 
     outline: 0;
@@ -278,8 +256,6 @@ html[dir="rtl"] .select2-container .select2-choice .select2-arrow b {
 }
 
 html[dir="rtl"] .select2-search input {
-    padding: 4px 5px 4px 20px;
-
     background: #fff image-url($select-sprite-bg-url) no-repeat -37px -22px;
     background: image-url($select-sprite-bg-url) no-repeat -37px -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
     background: image-url($select-sprite-bg-url) no-repeat -37px -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
@@ -338,11 +314,8 @@ html[dir="rtl"] .select2-search input {
 
 .select2-dropdown-open .select2-choice .select2-arrow {
     background: transparent;
-    border-left: none;
+    @include border-left(none);
     filter: none;
-}
-html[dir="rtl"] .select2-dropdown-open .select2-choice .select2-arrow {
-    border-right: none;
 }
 
 .select2-dropdown-open .select2-choice .select2-arrow b {
@@ -367,22 +340,18 @@ html[dir="rtl"] .select2-dropdown-open .select2-choice .select2-arrow {
 /* results */
 .select2-results {
     max-height: 200px;
-    padding: 0 0 0 4px;
-    margin: 4px 4px 4px 0;
+    @include padding(0 0 0 4px);
+    @include margin(4px 4px 4px 0);
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-html[dir="rtl"] .select2-results {
-    padding: 0 4px 0 0;
-    margin: 4px 0 4px 4px;
-}
 
 .select2-results ul.select2-result-sub {
     margin: 0;
-    padding-left: 0;
+    @include padding-left(0);
 }
 
 .select2-results li {
@@ -442,7 +411,7 @@ html[dir="rtl"] .select2-results {
 .select2-results .select2-selection-limit {
     background: #f4f4f4;
     display: list-item;
-    padding-left: 5px;
+    @include padding-left(5px);
 }
 
 /*
@@ -489,7 +458,7 @@ disabled look for disabled choices in the results dropdown
 .select2-container.select2-container-disabled .select2-choice .select2-arrow {
     background-color: #f4f4f4;
     background-image: none;
-    border-left: 0;
+    @include border-left(0);
 }
 
 .select2-container.select2-container-disabled .select2-choice abbr {
@@ -503,7 +472,7 @@ disabled look for disabled choices in the results dropdown
     height: auto !important;
     height: 1%;
     margin: 0;
-    padding: 0 5px 0 0;
+    @include padding(0 5px 0 0);
     position: relative;
 
     border: 1px solid #aaa;
@@ -518,12 +487,9 @@ disabled look for disabled choices in the results dropdown
     border-radius:3px;
 }
 
-html[dir="rtl"] .select2-container-multi .select2-choices {
-    padding: 0 0 0 5px;
-}
 
 .select2-locked {
-  padding: 3px 5px 3px 5px !important;
+  @include padding(3px 5px 3px 5px !important);
 }
 
 .select2-container-multi .select2-choices {
@@ -538,12 +504,8 @@ html[dir="rtl"] .select2-container-multi .select2-choices {
             box-shadow: 0 0 5px rgba(0, 0, 0, .3);
 }
 .select2-container-multi .select2-choices li {
-    float: left;
+    @include float(left);
     list-style: none;
-}
-html[dir="rtl"] .select2-container-multi .select2-choices li
-{
-    float: right;
 }
 .select2-container-multi .select2-choices .select2-search-field {
     margin: 0;
@@ -573,8 +535,8 @@ html[dir="rtl"] .select2-container-multi .select2-choices li
 }
 
 .select2-container-multi .select2-choices .select2-search-choice {
-    padding: 3px 5px 3px 18px;
-    margin: 3px 0 3px 5px;
+    @include padding(3px 5px 3px 18px);
+    @include margin(3px 0 3px 5px);
     position: relative;
 
     line-height: 13px;
@@ -602,11 +564,6 @@ html[dir="rtl"] .select2-container-multi .select2-choices li
     background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
     background-image: linear-gradient(to top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
 }
-html[dir="rtl"] .select2-container-multi .select2-choices .select2-search-choice
-{
-    margin: 3px 5px 3px 0;
-    padding: 3px 18px 3px 5px;
-}
 .select2-container-multi .select2-choices .select2-search-choice .select2-chosen {
     cursor: default;
 }
@@ -619,7 +576,7 @@ html[dir="rtl"] .select2-container-multi .select2-choices .select2-search-choice
     width: 12px;
     height: 13px;
     position: absolute;
-    right: 3px;
+    @include right(3px);
     top: 4px;
 
     font-size: 1px;
@@ -634,19 +591,10 @@ html[dir="rtl"] .select2-container-multi .select2-choices .select2-search-choice
         font-weight: bold;
     }
 }
-html[dir="rtl"] .select2-search-choice-close {
-    right: auto;
-    left: 25px;
-}
-
 .select2-container-multi .select2-search-choice-close {
-    left: 3px;
+    @include left(3px);
 }
 
-html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
-    left: auto;
-    right: 25px;
-}
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover,
 .select2-container-multi .select2-choices .select2-search-choice-focus .select2-search-choice-close {
@@ -664,7 +612,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 }
 
 .select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice {
-    padding: 3px 5px 3px 5px;
+    @include padding(3px 5px 3px 5px);
     border: 1px solid #ddd;
     background-image: none;
     background-color: #f4f4f4;
@@ -691,7 +639,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
     overflow: hidden !important;
     position: absolute !important;
     outline: 0 !important;
-    left: 0px !important;
+    @include left(0px !important);
     top: 0px !important;
 }
 
@@ -702,7 +650,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .select2-measure-scrollbar {
     position: absolute;
     top: -10000px;
-    left: -10000px;
+    @include left(-10000px);
     width: 100px;
     height: 100px;
     overflow: scroll;
