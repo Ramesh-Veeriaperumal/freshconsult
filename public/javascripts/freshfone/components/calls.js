@@ -9,7 +9,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 	FreshfoneCalls = function () {
 		this.init();
 		this.currentUser = freshfone.current_user;
-		this.ALLOWED_DIGITS = 15;
+		this.ALLOWED_DIGITS = 50;
 		this.cached = {};
 		this.freshfoneCallTransfer = {};
 		this.exceptionalNumber=false;
