@@ -1083,11 +1083,11 @@ module ApplicationHelper
 	end
 
   def current_account_freshfone_names
-      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : n.name] }
+      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
   end
   
  def current_account_freshfone_details
-    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{n.name} #{n.number}", n.id] }
+    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
  
  def call_direction_class(call)
