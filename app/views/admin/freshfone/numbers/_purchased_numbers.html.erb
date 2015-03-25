@@ -11,7 +11,7 @@
 					<tr><td>
 							<p class="text-info">
 							<strong>
-								<%= link_to(incoming_number.number_name, edit_admin_freshfone_number_path(incoming_number), 
+								<%= link_to(CGI.escapeHTML(incoming_number.number_name), edit_admin_freshfone_number_path(incoming_number), 
 											:class => "item_info") %>
 							</strong><br/>
 							<% if incoming_number.country == "US" %>

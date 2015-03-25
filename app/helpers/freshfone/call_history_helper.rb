@@ -18,7 +18,7 @@ module Freshfone::CallHistoryHelper
 	def freshfone_numbers_options
 		numbers_options = []
 		numbers_options = @all_freshfone_numbers.map{|c|
-			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => c.name }
+			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name) }
 		 }.to_json
 	end
 
