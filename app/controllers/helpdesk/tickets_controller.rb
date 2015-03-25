@@ -55,6 +55,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
+  before_filter :handle_send_and_set, :only => [:update_ticket_properties]
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
@@ -1101,6 +1102,10 @@ class Helpdesk::TicketsController < ApplicationController
         params["helpdesk_ticket"]["status"] ||= @item.status
       }
     end
+  end
+
+  def handle_send_and_set
+    @item.send_and_set = params[:send_and_set].present?
   end
 
   def set_default_filter
