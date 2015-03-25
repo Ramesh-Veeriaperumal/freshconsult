@@ -3,6 +3,7 @@ class ContactsController < ApplicationController
    include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
+   include UserHelperMethods
 
    before_filter :redirect_to_mobile_url
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
@@ -352,13 +353,6 @@ protected
     contacts_url
   end
 
-  def clean_params
-    if params[:user]
-      params[:user].delete(:helpdesk_agent)
-      params[:user].delete(:role_ids)
-    end
-  end
-
   private
 
     def define_contact_properties 
@@ -366,11 +360,6 @@ protected
       @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here
       @total_user_tickets_size = current_account.tickets.permissible(current_user).requester_active(@user).visible.count
       @user_tickets = @total_user_tickets.newest(10).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
-    end
-
-    def initialize_and_signup!
-      @user ||= current_account.users.new #by Shan need to check later  
-      @user.signup!(params)
     end
 
     def get_formatted_message(exception)
@@ -393,18 +382,6 @@ protected
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
       end
-    end
-
-    def set_required_fields
-      @user ||= current_account.users.new
-      @user.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields, 
-                                :error_label => :label }
-    end
-
-    def set_validatable_custom_fields
-      @user ||= current_account.users.new
-      @user.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
-                                          :error_label => :label }
     end
 
     def init_user_email

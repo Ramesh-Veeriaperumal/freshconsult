@@ -231,6 +231,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :customers_import
     resource :contact_merge
     resource :user_email
+    resource :"segment/identify"
+    resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
   end

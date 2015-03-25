@@ -286,6 +286,19 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  namespace :segment do
+    resources :identify do
+      collection do
+        post :create
+      end
+    end 
+    resources :group do
+      collection do
+        post :create
+      end
+    end
+  end
+
   resources :contact_merge do
     collection do
       get :search
