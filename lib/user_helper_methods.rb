@@ -4,7 +4,9 @@ module UserHelperMethods
     if AppConfig['demo_site'][Rails.env] == current_account.full_domain
       respond_to do |format|
            format.json { render :json => {:error => t(:'flash.not_allowed_in_demo_site')}, :status => :forbidden}
-           format.any { head 404}
+           format.html {  flash[:notice] = t(:'flash.not_allowed_in_demo_site')
+                          redirect_to :back }
+           format.any {render 404}
       end
     end
    end

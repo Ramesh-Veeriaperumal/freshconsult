@@ -21,13 +21,6 @@ class ContactsController < ApplicationController
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
-   
-  def check_demo_site
-    if AppConfig['demo_site'][Rails.env] == current_account.full_domain
-      flash[:notice] = t(:'flash.not_allowed_in_demo_site')
-      redirect_to :back
-    end
-  end
   
   def index
     respond_to do |format|
