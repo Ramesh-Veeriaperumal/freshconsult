@@ -5,9 +5,11 @@
 		window.FC_HTTP_ONLY = http_only;
 		var isSecured = ((window.location && window.location.protocol == 'https:') && !window.FC_HTTP_ONLY);
 		var fc_CSS = document.createElement('link');
+		var rtlSuffix = ((document.getElementsByTagName('html')[0].getAttribute('lang')) === 'ar') ? "-rtl" : "";
+		};
 		fc_CSS.setAttribute('rel','stylesheet');
 		fc_CSS.setAttribute('type','text/css');
-		fc_CSS.setAttribute('href',((isSecured) ? asset.cloudfront : asset.css)+'/css/visitor.css');
+		fc_CSS.setAttribute('href',((isSecured) ? asset.cloudfront : asset.css)+'/css/visitor'+ rtlSuffix +'.css');
 		document.getElementsByTagName('head')[0].appendChild(fc_CSS);
 		var jsload = (typeof jQuery=='undefined') ? 'visitor-jquery':'visitor';
 		var fc_JS = document.createElement('script');
