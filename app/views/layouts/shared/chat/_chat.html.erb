@@ -6,7 +6,6 @@
 		var isSecured = ((window.location && window.location.protocol == 'https:') && !window.FC_HTTP_ONLY);
 		var fc_CSS = document.createElement('link');
 		var rtlSuffix = ((document.getElementsByTagName('html')[0].getAttribute('lang')) === 'ar') ? "-rtl" : "";
-		};
 		fc_CSS.setAttribute('rel','stylesheet');
 		fc_CSS.setAttribute('type','text/css');
 		fc_CSS.setAttribute('href',((isSecured) ? asset.cloudfront : asset.css)+'/css/visitor'+ rtlSuffix +'.css');
