@@ -40,6 +40,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @host = env["HTTP_HOST"]
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
+    @mobihelp_auth = env["HTTP_X_FD_MOBIHELP_APPID"]
     @sub_domain = @host.split(".")[0]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
       @status, @headers, @response = @app.call(env)
@@ -65,6 +66,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
+    return true unless @mobihelp_auth.blank?
     if @content_type.nil?
       return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
     else
