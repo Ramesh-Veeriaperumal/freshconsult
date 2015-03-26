@@ -1206,7 +1206,7 @@ en:
         help_title_2c: Ticket conditions
         help_info_2c: You can optionally filter the rule to apply to only certain tickets.
         help_title_2d: Actions
-        help_info_2d: This is speficies what you want the rule to do.
+        help_info_2d: This speficies what you want the rule to do.
         help_info_3: You can use the Observer to modify fields, change status, or even send out notification alerts as soon as certain conditions are met.
         help_info_4: Learn more about how to use the Observer
       new:
