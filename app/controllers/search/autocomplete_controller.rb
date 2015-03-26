@@ -21,17 +21,19 @@ class Search::AutocompleteController < ApplicationController
   end
 
 	def requesters
-    begin
-      search_results = search_users
-      requesters = { :results => [] }
-      search_results.results.each do |document|
-       requesters[:results].push(*document.search_data)
-      end
-    rescue
-      requesters = { :results => results.map{|x| x.search_data}.flatten} 
-    ensure
-      respond_with_kbase requesters
-    end
+    requesters = { :results => results.map{|x| x.search_data}.flatten} 
+    respond_with_kbase requesters
+    # begin
+    #   search_results = search_users
+    #   requesters = { :results => [] }
+    #   search_results.results.each do |document|
+    #    requesters[:results].push(*document.search_data)
+    #   end
+    # rescue
+    #   requesters = { :results => results.map{|x| x.search_data}.flatten} 
+    # ensure
+    #   respond_with_kbase requesters
+    # end
 	end
 
 	def companies
