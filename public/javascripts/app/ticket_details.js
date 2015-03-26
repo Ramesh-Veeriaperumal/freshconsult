@@ -936,16 +936,6 @@ var scrollToError = function(){
 			},
 			success: function(response, statusCode, xhr) {
 				if($.trim(response).length){
-					var statusChangeField = $('#send_and_set');
-					if(statusChangeField.length) {
-						if(statusChangeField.data('val') != '') {
-							refreshStatusBox();
-							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
-								$('[rel=link_ticket_list]').click();
-							}
-							statusChangeField.data('val', '');
-						}
-					}
 
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -1051,6 +1041,16 @@ var scrollToError = function(){
 				{
 					$('[rel=link_ticket_list]').click();
 				} else {
+					var statusChangeField = $('#send_and_set');
+					if(statusChangeField.length) {
+						if(statusChangeField.data('val') != '') {
+							refreshStatusBox();
+							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+								$('[rel=link_ticket_list]').click();
+							}
+							statusChangeField.data('val', '');
+						}
+					}
 					afterTktPropertiesUpdate();
 				}
 
