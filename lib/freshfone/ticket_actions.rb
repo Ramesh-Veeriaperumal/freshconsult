@@ -48,6 +48,7 @@ module Freshfone::TicketActions
 	end
 
 	def voicmail_ticket(args)
+		args.merge!({:agent => fetch_calling_agent(args[:agent])}) if args[:agent].present?
 		build_ticket(args).save
 		@ticket = current_call.notable
 	end
@@ -69,7 +70,7 @@ module Freshfone::TicketActions
 		end
 
 		def fetch_calling_agent(agent_id)
-			current_account.users.technicians.visible.find_by_id(agent_id) unless agent_id.blank?
+			Account.current.users.technicians.visible.find_by_id(agent_id) unless agent_id.blank?
 		end
 
 		def update_user_presence
