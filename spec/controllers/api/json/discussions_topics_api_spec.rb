@@ -55,7 +55,7 @@ describe Discussions::TopicsController do
 			:id => topic.id,
 			:stamp_type => stamp_type, :format => 'json'
 
-		@response.body.should eql "{\"stamp_type\":[\"is not valid\"]}"
+		@response.body.should eql "[[\"stamp_type\",\"is not valid\"]]"
 		topic.reload
 		topic.stamp_type.should eql initial_stamp_type
 		response.status.should eql 400
@@ -70,7 +70,7 @@ describe Discussions::TopicsController do
 			:id => topic.id,
 			:stamp_type => stamp_type, :format => 'json'
 
-		@response.body.should eql "{\"stamp_type\":[\"is not valid\"]}"
+		@response.body.should eql "[[\"stamp_type\",\"is not valid\"]]"
 		topic.reload
 		topic.stamp_type.should eql initial_stamp_type
 		response.status.should eql 400
