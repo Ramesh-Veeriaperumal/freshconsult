@@ -1,9 +1,15 @@
+<script>
+	var zeroClipBoardSWFPath = "<%= asset_path('/swf/ZeroClipBoard.swf')%>";
+</script>
+
+<%= javascript_include_tag :'cdn/livechat_admin_settings' %>
+
 <div id="chat_loading" class="sloading loading-small"></div>
 	<div id="chat_setting" class="tabbable" style="display:none">
 		<ul class="nav nav-tabs">
 			<li class = 'active'><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
-			<li><a href="#visitor-form" data-toggle="tab">Visitor Form</a></li>
-			<li><a href="#preferences" data-toggle="tab">Preferences</a></li>
+			<li><a href="#visitor-form" data-toggle="tab"><%=t('freshchat.visitor_form')%></a></li>
+			<li><a href="#preferences" data-toggle="tab"><%=t('freshchat.preferences')%></a></li>
 			<li><a href="#install" data-toggle="tab"><%=t('freshchat.installation')%></a></li>
 		</ul>
  

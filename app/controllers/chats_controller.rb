@@ -62,7 +62,7 @@ class ChatsController < ApplicationController
       ticket.save_ticket
     end
     status = create_note
-    render :json => { :ticket_id=> @note.notable.display_id , :status => status }
+    render :json => { :external_id=> @note.notable.display_id , :status => status }
   end
 
   def agents

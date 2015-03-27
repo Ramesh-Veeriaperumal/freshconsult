@@ -49,7 +49,7 @@ stylesheets:
   :freshfone_admin  => [ "freshfone/admin"],
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
-  :freshchat_admin  => [ "chat/admin","chat/visitor"],
+  :livechat_admin  => [ "chat/admin","chat/visitor"],
   :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
   :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
@@ -186,43 +186,54 @@ javascripts:
     - public/javascripts/app/admin_font_settings.js
     - public/javascripts/app/merge.js
 
-  freshchat:
-    - public/javascripts/freshchat/freshchat.js
+  livechat_collision:
+    - public/javascripts/livechat/collision/collisionChat.js
 
-  freshchat_intializer:
-     # Templates
-    - public/javascripts/freshchat/lib/ticket_search.js
-    - public/javascripts/freshchat/templates/freshchat_archive.jst.ejs
-    - public/javascripts/freshchat/templates/freshchat_conversation.jst.ejs
-    - public/javascripts/freshchat/templates/freshchat_archive_row.jst.ejs
-    - public/javascripts/freshchat/templates/freshchat_visitor_details.jst.ejs
-    - public/javascripts/freshchat/dashboard/dashboard_template.jst.ejs
-    - public/javascripts/freshchat/templates/ticket_description.jst.ejs
-    - public/javascripts/freshchat/templates/ticket_search_list.jst.ejs
-    - public/javascripts/freshchat/templates/ticket_options.jst.ejs
-    - public/javascripts/freshchat/ticket_options/main.js
-    - public/javascripts/freshchat/agent/settings.js
-    - public/javascripts/freshchat/templates/availability.jst
-    - public/javascripts/livechat/templates/shortcodes/shortCodes.jst.ejs
+  livechat_initializer:
+    - public/javascripts/livechat/templates/archive/main.jst.ejs
+    - public/javascripts/livechat/templates/archive/conversation.jst.ejs
+    - public/javascripts/livechat/templates/archive/archiveRow.jst.ejs
+    - public/javascripts/livechat/templates/archive/visitorDetails.jst.ejs
 
-  livechat_mini_dashboard:
-    - public/javascripts/freshchat/dashboard/dashboard.js
+    - public/javascripts/livechat/templates/tickets/ticketDescription.jst.ejs
+    - public/javascripts/livechat/templates/tickets/ticketSearchList.jst.ejs
+    - public/javascripts/livechat/templates/tickets/ticketOptions.jst.ejs
+    - public/javascripts/livechat/ticketOptions/main.js
 
-  freshchat_archive:
+    - public/javascripts/livechat/templates/availability.jst.ejs
+    - public/javascripts/livechat/availability.js
+
+    - public/javascripts/livechat/templates/dashboard/miniDashboard.jst.ejs
+    - public/javascripts/livechat/dashboard/miniDashboard.js
+
+  livechat_archive:
     #Library
     - public/javascripts/report/daterangepicker.jQuery.js
-    - public/javascripts/freshchat/templates/visitor_list.jst.ejs
+    - public/javascripts/livechat/templates/visitors/visitorList.jst.ejs
     # Views
-    - public/javascripts/freshchat/views/archive_view.js
-    - public/javascripts/freshchat/views/conversation_view.js
-    - public/javascripts/freshchat/views/visitor/visitor_list.js
+    - public/javascripts/livechat/views/archive/archiveView.js
+    - public/javascripts/livechat/views/archive/conversationView.js
+    - public/javascripts/livechat/views/visitors/visitorList.js
     # Router
-    - public/javascripts/freshchat/router/router.js
+    - public/javascripts/livechat/router/main.js
     # Main
-    - public/javascripts/freshchat/main.js
+    - public/javascripts/livechat/main.js
 
-  freshchatreports:
-    - public/javascripts/chat/report.js
+  livechat_reports:
+    - public/javascripts/livechat/chat/reports.js
+  livechat_admin_settings:
+    - public/javascript/livechat/admin/zeroClipboard.js
+    - public/javascript/livechat/admin/widgetSettings.js
+    - public/javascript/livechat/admin/widgetCode.js
+    - public/javascript/livechat/admin/offlineSettings.js
+    - public/javascript/livechat/admin/preferences.js
+    - public/javascript/livechat/admin/visitorForm.js
+    - public/javascript/livechat/admin/mainSettings.js
+    - public/javascript/livechat/admin/main.js
+  livechat_helper:
+    - public/javascript/livechat/liveChatHelper.js
+  livechat_mini_dashboard:
+    - public/javascript/livechat/dashboard/miniDashboard.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js

@@ -5493,6 +5493,8 @@ en:
         filter_by_title: "Filtered by"
         time_period: "Time Period"
         widget: "Widget"
+        visitor_form: "Visitor Form"
+        preferences: "Preferences"
         group: "Group"
         chat_type: "Chat Type"
         summary: "Summary"

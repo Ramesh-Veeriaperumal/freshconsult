@@ -1,3 +1,5 @@
+<%= javascript_include_tag :'cdn/livechat_admin_settings' %>
+
 <div id="chat_intro" class="chat-intro">
 	<div class="freshchat-content">
 		<h2><%=t('freshchat.intro_title')%></h2><br>
@@ -12,58 +14,40 @@
 
  <%= javascript_tag do %>
       (function($){
-          $(document).one('ready pjax:success' ,function(){
-          	var comm_url = "https://"+CS_URL+":443";  
-            var url = ASSET_URL.js;
-            if(window.location && window.location.protocol=='https:'){
-              url = ASSET_URL.cloudfront;
-            }
-            if(!window.chatSetting){
-              $.getScript(url+ "/js/chat_settings.js", function(){
-                if(window.chatSetting){
-                  if(typeof CHAT_ENV != 'undefined' && CHAT_ENV == 'development'){
-									    comm_url = "http://"+CS_URL+":4000";
-									}
-									if(window.location && window.location.protocol=="http:" && (fc_helper.ieVersionCompatability || FC_HTTP_ONLY)){
-									    comm_url = "http://"+CS_URL+":80";
-									}
-
-			          	$('body').on('click',"#chat_initial_enable",function(){
-			          		jQuery(this).button('Enabling');
-					          var data = {	
-											"id" 					      : <%= current_account.id %>, 
-                      "user_id"           : <%= current_user.id %>, 
-		            		  "siteId"				    : window.SITE_ID,
-											"domain"				    : '<%= current_account.full_domain %>', 
-											"url"					      : window.location.hostname , 
-											"protocol" 				  : window.location.protocol, 
-											"widget_site_url"		: '<%= current_account.full_domain %>',
-											"name"              : '<%= current_account.main_portal.name %>', 
-											"prechat_message"		: "<%=t('freshchat.prechat_message').html_safe%>",
-											"widget_preferences": <%= default_preferences %>,
-											"prechat_fields"		: <%= default_prechat_fields %>,
-											"active"						: false,
-                      "token"             : '<%= livechat_partial_token(current_user.id) %>',
-											"non_availability_message" : <%= default_non_avail_message %>,
-											"offline_chat" : <%= default_offline_chat %>
-										};
-										
-										$.ajax({
-											type: "POST",
-											url: comm_url + "/sites/create",
-											data: data,
-											dataType: "json",
-											success: function(resp){
-												if(resp.status == "success"){
-													window.location = "/admin/chat_widgets";
-												}
-											}
-					          });
-					        });
+        $(document).one('ready pjax:success' ,function(){
+          $('body').on('click',"#chat_initial_enable",function(){
+            jQuery(this).button('Enabling');
+            var data = {  
+              "id"                : <%= current_account.id %>, 
+              "user_id"           : <%= current_user.id %>, 
+              "siteId"            : window.SITE_ID,
+              "domain"            : '<%= current_account.full_domain %>', 
+              "url"               : window.location.hostname , 
+              "protocol"          : window.location.protocol, 
+              "widget_site_url"   : '<%= current_account.full_domain %>',
+              "name"              : '<%= current_account.main_portal.name %>', 
+              "prechat_message"   : "<%=t('freshchat.prechat_message').html_safe%>",
+              "widget_preferences": <%= default_preferences %>,
+              "prechat_fields"    : <%= default_prechat_fields %>,
+              "active"            : false,
+              "token"             : '<%= livechat_partial_token(current_user.id) %>',
+              "non_availability_message" : <%= default_non_avail_message %>,
+              "offline_chat" : <%= default_offline_chat %>
+            };
+            
+            $.ajax({
+              type: "POST",
+              url: comm_url + "/sites/create",
+              data: data,
+              dataType: "json",
+              success: function(resp){
+                if(resp.status == "success"){
+                  window.location = "/admin/chat_widgets";
                 }
-              });
-            }  
-		      });
+              }
+            });
+          });
+        });
       })(jQuery);
     <%end%>
 		
