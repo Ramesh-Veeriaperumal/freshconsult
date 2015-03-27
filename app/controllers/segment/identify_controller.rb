@@ -5,7 +5,7 @@ class Segment::IdentifyController < ApplicationController
    before_filter :check_demo_site, :strip_params, :clean_params, :contact_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
  
    def create
-      if @user_exists
+      if @user
         update_user
       else
         create_user
@@ -43,7 +43,7 @@ class Segment::IdentifyController < ApplicationController
    end
  
    def contact_exists
-      @user = @user_exists =  current_account.user_emails.user_for_email(params[:user][:email]) 
+      @user = current_account.user_emails.user_for_email(params[:user][:email]) 
    end
  
    def strip_params

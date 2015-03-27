@@ -5,7 +5,7 @@ class Segment::GroupController < ApplicationController
    before_filter :strip_params, :company_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
 
    def create
-      if @company_exist
+      if @company
          update_company
       else 
          create_company 
@@ -15,6 +15,7 @@ class Segment::GroupController < ApplicationController
    private
 
    def create_company
+    build_item
     respond_to do |format|
       if @company.save
         format.json { render :json => @company, :status => :created }
@@ -43,8 +44,7 @@ class Segment::GroupController < ApplicationController
    end
 
    def company_exists
-      @company = @company_exist = current_account.companies.find_by_name(params[:company][:name])
-      build_item unless @company 
+      @company = current_account.companies.find_by_name(params[:company][:name])
    end
  
 end
