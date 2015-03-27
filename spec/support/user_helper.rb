@@ -98,4 +98,14 @@ module UsersHelper
     new_user.save
     new_user.reload
   end
+
+  def get_default_user
+    User.first_or_create do |user|
+      user.name = Faker::Name.name
+      user.email = Faker::Internet.email
+      user.time_zone = "Chennai"
+      user.delta = 1,
+      user.language = "en"
+    end
+  end
 end
