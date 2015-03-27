@@ -39,7 +39,7 @@ class Segment::GroupController < ApplicationController
    end
 
    def strip_params
-      params[:company] = params.delete :traits || {}
+      params[:company] = params[:traits] ? params.delete(:traits) : params[:company] || {}
    end
 
    def company_exists

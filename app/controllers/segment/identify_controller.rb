@@ -47,7 +47,7 @@ class Segment::IdentifyController < ApplicationController
    end
  
    def strip_params
-      params[:user] = params.delete :traits || {}
+      params[:user] = params[:traits] ? params.delete(:traits) : params[:user] || {}
    end
  
 end
