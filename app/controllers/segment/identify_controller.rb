@@ -5,10 +5,10 @@ class Segment::IdentifyController < ApplicationController
    before_filter :check_demo_site, :strip_params, :clean_params, :contact_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
  
    def create
-      if @user
-        update_user
-      else
+      if @user.new_record?
         create_user
+      else
+        update_user
       end
    end
  
