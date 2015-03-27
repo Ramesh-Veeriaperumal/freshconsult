@@ -54,8 +54,9 @@ window.liveChat.widgetCode = function($){
 			var url1 		= asset_url.cloudfront;
 			var code 		= "var fc_CSS=document.createElement('link');fc_CSS.setAttribute('rel','stylesheet');"+
 					"var isSecured = (window.location && window.location.protocol == 'https:');"+
-					"fc_CSS.setAttribute('type','text/css');fc_CSS.setAttribute('href',((isSecured)? '"+url1+"':'"+asset_url.css+"')+'/css/visitor.css');"+
-					"document.getElementsByTagName('head')[0].appendChild(fc_CSS);"+
+					"var rtlSuffix = ((document.getElementsByTagName('html')[0].getAttribute('lang')) === 'ar') ? '-rtl' : '';"+
+					"fc_CSS.setAttribute('type','text/css');fc_CSS.setAttribute('href',((isSecured)? '"+url1+"':'"+asset_url.css+
+					"')+'/css/visitor.css');"+"document.getElementsByTagName('head')[0].appendChild(fc_CSS);"+
 					"var fc_JS=document.createElement('script'); fc_JS.type='text/javascript';"+
 					"fc_JS.src=((isSecured)?'"+url1+"':'"+asset_url.js+"')+'/js/visitor.js';"+ 
 					"(document.body?document.body:document.getElementsByTagName('head')[0]).appendChild(fc_JS);"+
