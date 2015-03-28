@@ -3486,7 +3486,7 @@ sv-SE:
         resolved_or_closed: Lösta eller stängda
         no_tickets: Du har inga ärenden i den aktuella vyn
       note:
-        posted_on: "%{user} på %{note_date}"
+        posted_on: "%{user_name} på %{note_date}"
         created_on:
           private_note: "%{user_name} la till en privat anteckning den %{note_date}"
           public_note: "%{user_name} la till en offentlig anteckning den %{note_date}"

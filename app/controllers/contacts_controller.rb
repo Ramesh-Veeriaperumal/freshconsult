@@ -312,7 +312,7 @@ protected
   def check_email_exist
     if current_account.features_included?(:contact_merge_ui)
       @user.user_emails.each do |ue|
-        if("has already been taken".eql?(ue.errors["email"]))
+        if(ue.new_record? and @user.errors[:"user_emails.email"].include? "has already been taken")
           @existing_user = current_account.user_emails.user_for_email(ue.email)
         end
       end

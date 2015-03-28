@@ -77,9 +77,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
         number.delete
       end
       @account.freshfone_numbers.each do |number|
-        number.deleted = true
-        # number.send(:update_without_callbacks)
-        number.sneaky_save
+        number.class.where(:id => number.id, :account_id => number.account_id).update_all(:deleted => true)
       end
     end
 

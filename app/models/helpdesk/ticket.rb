@@ -41,7 +41,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id, :send_and_set
 
 #  attr_protected :attachments #by Shan - need to check..
 

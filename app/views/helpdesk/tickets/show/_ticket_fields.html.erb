@@ -19,7 +19,7 @@
 		<!--form values ends here-->
 		<!-- Custom fields ends here-->
 	</ul>
-
+	<%= hidden_field_tag 'send_and_set', 'true', disabled: true %>
 	<% if privilege?(:edit_ticket_properties) %>
 		<div class="button-container">
 			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit",

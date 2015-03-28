@@ -377,8 +377,13 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				
 				current_filter = serialHash.get(name);
 
-				if( current_filter && current_filter.length != 0 )
+				if( current_filter && current_filter.length != 0 ){
+
+					if(current_filter[0]['email_body'] != undefined)
+					current_filter[0]['email_body'] = current_filter[0]['email_body'].replace(/(\r\n|\n|\r)/gm," ");
+
 					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
+				}
 
 				hidden_.val(save_data);
 

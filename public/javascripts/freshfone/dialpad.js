@@ -71,9 +71,12 @@
 		
 		if (key === "+") { key = "0"; }
 		
-		key_element = $('.freshfone_dialpad').find('.keypad-key:contains(' + key + ')');
-		key_element.addClass('keypad-key-down');
-		setTimeout(function () { key_element.removeClass('keypad-key-down'); }, 200);
+		if (key != ('('||')')){ 
+			key_element = $('.freshfone_dialpad').find('.keypad-key:contains(' + key + ')'); 
+			key_element.addClass('keypad-key-down');
+			setTimeout(function () { key_element.removeClass('keypad-key-down'); }, 200);
+		}
+
 		freshfonecalls.toggleInvalidNumberText(false);
 
 	}).bind('paste', function (ev) {

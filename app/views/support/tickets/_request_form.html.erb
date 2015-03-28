@@ -20,7 +20,7 @@
     <div class="control-group">
         <%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
         <div class="controls recaptcha-control">
-          <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+          <%= recaptcha_tags :display => { :theme => "white" }, :ssl => true %>
         </div>
     </div>
   <% end %>

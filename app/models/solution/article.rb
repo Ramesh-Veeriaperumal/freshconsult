@@ -128,7 +128,7 @@ class Solution::Article < ActiveRecord::Base
         search.from options[:size].to_i * (options[:page].to_i-1)
       end
 
-      item.results.results
+      item.results.results.compact
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       []

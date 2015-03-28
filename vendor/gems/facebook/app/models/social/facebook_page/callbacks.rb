@@ -109,11 +109,11 @@ class Social::FacebookPage < ActiveRecord::Base
   def fetch_fb_wall_posts
     #remove the code for checking
     if fetch_delta? && account.features?(:facebook_realtime)
-      Facebook::PageTab::Configure.new(self).execute("subscribe_realtime")
+      Facebook::PageTab::Configure.new(self).execute("subscribe_realtime") unless self.realtime_subscription
       Resque.enqueue(Facebook::Worker::FacebookDelta, {
                        :account_id => self.account_id,
                        :page_id => self.page_id
-      })
+      }) if self.company_or_visitor?
     end
   end
 
