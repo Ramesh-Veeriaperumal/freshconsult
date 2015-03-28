@@ -616,6 +616,7 @@ Helpkit::Application.routes.draw do
     resources :logmein do
       collection do
         post :rescue_session
+        get :rescue_session
         put :update_pincode
         get :refresh_session
         get :tech_console
