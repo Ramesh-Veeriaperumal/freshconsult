@@ -43,6 +43,7 @@ window.liveChat.widgetSettings = function($){
 			$("#agent_joined_msg").val(_widgetPreferences["agent_joined_msg"]);
 			$("#agent_left_msg").val(_widgetPreferences["agent_left_msg"]);
 			$("#thank_message").val(_widgetPreferences["thank_message"]);
+			$("#agent_transfer_msg_to_visitor").val(_widgetPreferences["agent_transfer_msg_to_visitor"]);
 			$("#offline_title").val(_offlineChatMessages["title"]);
 			$("#offline_thank_msg").val(_offlineChatMessages["thank"]);
 			$("#offline_thank_header_msg").val(_offlineChatMessages["thank_header"]);
@@ -157,7 +158,8 @@ window.liveChat.widgetSettings = function($){
 	      wait_message    : CHAT_I18n.wait_msg,
 	      agent_joined_msg: CHAT_I18n.agent_joined_msg,
 	      agent_left_msg  : CHAT_I18n.agent_left_msg,
-	      connecting_msg  : CHAT_I18n.connecting_msg
+	      connecting_msg  : CHAT_I18n.connecting_msg,
+	      agent_transfer_msg_to_visitor : CHAT_I18n.agent_transfer_msg_to_visitor
 	    }
 		},
 

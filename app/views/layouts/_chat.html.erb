@@ -4,6 +4,15 @@ var ASSET_URL       = <%= ChatConfig['asset_url'].to_json.html_safe %>;
 var CS_URL          = "<%= ChatConfig['communication_url']%>";
 var CHAT_ENV        = "<%= Rails.env -%>";
 var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
+var _url = "https://"+CS_URL+":443"; 
+
+if(window.location && window.location.protocol=="http:" && (window.liveChat.ieVersionCompatability || FC_HTTP_ONLY)){
+    _url = "http://"+CS_URL+":80";
+}
+if(CHAT_ENV == 'development'){
+    _url = "http://"+CS_URL+":4000";
+}
+window.liveChat.URL = _url;
 
 </script>
 
@@ -32,16 +41,6 @@ var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
             'widget_id'  : '<%=current_chat_widget.widget_id%>',
             'chat_routing': <%=feature?(:chat_routing)%>
     };
-
-    var _url = "https://"+CS_URL+":443"; 
-    if(window.location && window.location.protocol=="http:" && (window.liveChat.ieVersionCompatability || FC_HTTP_ONLY)){
-        _url = "http://"+CS_URL+":80";
-    }
-    if(CHAT_ENV == 'development'){
-      _url = "http://"+CS_URL+":4000";
-    }
-    window.liveChat.URL = _url;
-
 
     jQuery(document).ready(function(){
         var url = ASSET_URL.js;

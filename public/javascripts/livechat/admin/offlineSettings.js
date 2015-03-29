@@ -23,8 +23,7 @@ window.liveChat.offlineSettings = function(){
       return {
         show 	  : "0",
         form 	  : { "name"        : CHAT_I18n.name, "email" : CHAT_I18n.email },
-        messages: { "minimized" 	: CHAT_I18n.offline_minimized_msg,
-                    "maximized" 	: CHAT_I18n.offline_maximized_msg,
+        messages: { "title" 	    : CHAT_I18n.offline_title,
                     "thank"		    : CHAT_I18n.offline_thank_msg,
                     "thank_header": CHAT_I18n.offline_thank_header_msg  
                   }

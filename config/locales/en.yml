@@ -6565,7 +6565,7 @@ en:
     joining_chat: "Joining chat"
     agent_joined_msg: "{{agent_name}} has joined the chat"
     agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
-    agent_reopen_chat_msg: "{{agent_name}} reopened the chat1"
+    agent_reopen_chat_msg: "{{agent_name}} reopened the chat"
     visitor_side_inactive_msg: "This chat has been inactive for the past 20 minutes."
     agent_disconnect_msg: "{{agent_name}} has been disconnected"
     agent_left_msg: "{{agent_name}} has left the chat"

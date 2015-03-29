@@ -7,7 +7,6 @@
 	 		
 	 		//Load livechat availability template
 	 		var availabilityTemplate = window.JST['freshchat/templates/availability'];
-	 		console.log("availabilityTemplate:::",availabilityTemplate);
 			$("#wrap .wrapper .header-link-wrapper").prepend(availabilityTemplate({availableStatus: agentData.status}));
 
 			// chat-available icon click handler

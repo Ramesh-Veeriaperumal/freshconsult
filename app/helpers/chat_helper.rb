@@ -91,8 +91,7 @@ module ChatHelper
     return {
       :show      => "0",
       :form      => { :name => t("freshchat.name"), :email => t("freshchat.mail") },
-      :messages  => { :minimized    => t("freshchat.offline_minimized_msg"),
-                      :maximized    => t("freshchat.offline_maximized_msg"),
+      :messages  => { :title        => t("freshchat.offline_title"),
                       :thank        => t("freshchat.offline_thank_msg"),
                       :thank_header => t("freshchat.offline_thank_header_msg") }
     }.to_json.html_safe

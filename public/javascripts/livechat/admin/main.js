@@ -34,12 +34,12 @@ window.liveChat.adminSettings= function($){
 
 			$('body').on('change', '.toggle_widget', function() {
 	    	if($("#chat_enable").is(":checked")){
-					self.currentWidge = {};
+					self.currentWidget = {};
 				  var selectedWidgetId = ($(this).parent()).attr('rel');			  
 				  var status = $(this).is(":checked") ? true : false;
 
 				  for(i=0; i < self.widgetList.length; i++){
-				  	if(self.widgetList[i].widget_id == selectedWidgetId){
+				  	if(self.widgetList[i].id == selectedWidgetId){
 				  		self.currentWidget = self.widgetList[i];
 				  	}
 					}

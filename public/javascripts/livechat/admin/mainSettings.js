@@ -139,10 +139,8 @@ window.liveChat.mainSettings = function($){
         dataType: "json",
         success: function(response){
           if(response.status == "success"){
-            if((!widget.product_id && !CURRENT_ACCOUNT.product_id) || (widget.product_id == CURRENT_ACCOUNT.product_id)){
-              if(toggledState){
-                self.changeTabtoInstall = true;
-              }
+            if(toggledState){
+              self.changeTabtoInstall = true;
             }
           }
         }
@@ -173,7 +171,7 @@ window.liveChat.mainSettings = function($){
                  };
       $.ajax({
         type: "POST",
-        url: window.livechat.URL + "/widgets/create",
+        url: window.liveChat.URL + "/widgets/create",
         data: data,
         dataType: "json",
         success: function(response){
