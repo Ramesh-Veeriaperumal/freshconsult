@@ -2,8 +2,6 @@ window.liveChat = window.liveChat || {};
 
 window.liveChat.mainSettings = function($){
   return {  
-    changeTabtoInstall: false,
-    
     getSiteSettings: function(){
       var request = { action: "sites/get" };
       request.data = "&siteId=" + window.SITE_ID + "&userId=" + CURRENT_USER.id + "&token=" + LIVECHAT_TOKEN ;
@@ -119,16 +117,18 @@ window.liveChat.mainSettings = function($){
       });
     },
 
-    toggleWidget: function(toggledState){
+    toggleWidget: function(toggledState, widget_id){
       var self = this;
+      var _widgetList = window.liveChat.adminSettings.widgetList;
       var _widget = window.liveChat.adminSettings.currentWidget;
+      var widget_id = (widget_id || _widget.widget_id)
       var data = {	
         "siteId" 	  : window.SITE_ID, 
         "domain"	  : CURRENT_ACCOUNT.domain, 
         "url"		    : window.location.hostname , 
         "protocol" 	: window.location.protocol,
         "status" 	  : toggledState,
-        "widget_id"	: _widget.widget_id,
+        "widget_id"	: widget_id,
         "userId"	  : CURRENT_USER.id,
         "token"		  : LIVECHAT_TOKEN
       };
@@ -137,13 +137,7 @@ window.liveChat.mainSettings = function($){
         url: window.liveChat.URL + "/widgets/toggle",
         data: data,
         dataType: "json",
-        success: function(response){
-          if(response.status == "success"){
-            if(toggledState){
-              self.changeTabtoInstall = true;
-            }
-          }
-        }
+        success: function(response){}
       });
     },
 
@@ -188,7 +182,6 @@ window.liveChat.mainSettings = function($){
                   _widgetList[i].widget_id = response.result.widget_id;
                 }
               }
-              self.changeTabtoInstall = true;
               if($('#livechat_layout') && window.chatSocket){
                 $('#livechat_layout, #chat-availability').show();
                 window.chatSocket.connect();
@@ -204,10 +197,6 @@ window.liveChat.mainSettings = function($){
       window.liveChat.visitorFormSettings.render();
       window.liveChat.preferenceSettings.render();
       window.liveChat.widgetSettings.bindEvents();
-
-      if(this.changeTabtoInstall){
-        $('a[href^=#install]').trigger('click');
-      }
     },
 
     showMsg: function(response){
@@ -239,27 +228,27 @@ window.liveChat.mainSettings = function($){
     			$('.fc-mxc-count').removeClass('show');
     		}
     	});
-    	$('body').on('click','.fc-mxc-edit',function(){
+      $(".fc-mxc-edit").on('click', function(){
     		previousValue = $('.fc-mxc-count span').text();
     		$('.fc-mxchat').addClass('editing');
     	});
-    	$('body').on('click','.fc-mxc-count span',function(evt){
+      $(".fc-mxc-count span").on('click', function(evt){
     		evt.stopPropagation();
     		if($('.fc-mxchat').hasClass('editing')){
     			$('.fc-mxc-count').addClass('show');
     		}
     	});
-    	$('body').on('click','.fc-mxc-count ul li',function(){
+      $(".fc-mxc-count ul li").on('click', function(){
     		$('.fc-mxc-count span').html($(this).val());
     		$('.fc-mxc-count').removeClass('show');
     	});
-    	$('body').on('click','.fc-mxc-save .icon-tick',function(){
+      $(".fc-mxc-save .icon-tick").on('click', function(){
     		$('.fc-mxc-options').addClass('sloading');
     		var data = {};
     		data.max_chat = $('.fc-mxc-count span').text();
     		self.updateSite(data);
     	});
-    	$('body').on('click','.fc-mxc-cancel',function(){
+      $(".fc-mxc-cancel").on('click', function(){
     		$('.fc-mxc-count span').html(previousValue);
     		$('.fc-mxc-count').removeClass('show');
     		$('.fc-mxchat').removeClass('editing');

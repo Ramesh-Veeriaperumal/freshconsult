@@ -38,7 +38,7 @@ class ChatsController < ApplicationController
     @ticket = current_account.tickets.build(ticket_params) 
     status = @ticket.save_ticket
 
-    render :json => { :ticket_id=> @ticket.display_id , :status => status }
+    render :json => { :external_id => @ticket.display_id , :status => status }
   end
 
   def get_groups
@@ -205,7 +205,7 @@ class ChatsController < ApplicationController
 
     @ticket = current_account.tickets.build(ticket_params) 
     status = @ticket.save_ticket
-    render :json => { :ticket_id=> @ticket.display_id , :status => status }
+    render :json => { :external_id=> @ticket.display_id , :status => status }
   end
 
   def visitor

@@ -27,12 +27,12 @@ window.liveChat.adminSettings= function($){
 
 		bindEvents: function(){
 			var self = this;
-			$('body').on('change', '#chat_enable', function() {
+			$('#chat_enable').on('change', function (){
 				CURRENT_ACCOUNT.chat_enabled = $(this).is(":checked");
 				window.liveChat.mainSettings.toggleSite(CURRENT_ACCOUNT.chat_enabled);
 	    });
 
-			$('body').on('change', '.toggle_widget', function() {
+			$('.toggle_widget').on('change', function (){
 	    	if($("#chat_enable").is(":checked")){
 					self.currentWidget = {};
 				  var selectedWidgetId = ($(this).parent()).attr('rel');			  
