@@ -132,6 +132,7 @@ module Delayed
       run_at   = args[1]
 
       pod_info = JobPodConfig['CURRENT_POD']
+      smtp_mailboxes = []
 
       if Account.current
         account_id = Account.current.id
@@ -139,10 +140,16 @@ module Delayed
         shard = ShardMapping.lookup_with_account_id(account_id)
         pod_info = shard.pod_info if (shard and !shard.pod_info.blank?)
 
+        smtp_mailboxes = Account.current.smtp_mailboxes
+
         Rails.logger.info "Adding job to POD: #{pod_info} for account: #{Account.current} with id #{account_id}."
       end
-      
-      self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+
+      if smtp_mailboxes.any?
+        Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+      else
+        self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+      end      
     end
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).
