@@ -25,6 +25,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
   include RabbitMq::Ticket
+  include Ecommerce::HelperMethods
+  include Ecommerce::Ebay::Util
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -166,6 +168,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :limit => 1000
     } 
   }
+  
+  scope :ebay_tickets, lambda {|ids, subject| where("id in (?) and subject = ?", ids, subject)}
 
   class << self # Class Methods
 
@@ -736,6 +740,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @model_changes
   end
 
+  #Ecommerce methods
+  def ecommerce?
+    source == SOURCE_KEYS_BY_TOKEN[:ecommerce] and email_config_id.present?
+  end
+
+  def ebay?
+    ebay_user?(requester.email)
+  end
+
+  def ebay_item_id
+    parse_item_id_from_subject(self.subject) if ebay?
+  end
+
+  def allow_ecommerce_reply?
+    (self.ecommerce? && self.ebay_item && self.email_config.try(:ecommerce_account).try(:active))
+  end
+
+  #Ecommerce method code ends
+
   # To keep flexifield & @custom_field in sync
 
   def custom_field
@@ -766,6 +789,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.fb_profile_id
   end
 
+  def show_reply?
+    (self.is_twitter? or self.is_facebook? or (!self.ecommerce? && self.from_email.present?) or self.mobihelp? or self.allow_ecommerce_reply?)
+  end
 
   def search_fields_updated?
     attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",

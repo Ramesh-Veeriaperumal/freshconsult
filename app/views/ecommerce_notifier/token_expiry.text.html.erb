@@ -1,0 +1,15 @@
+<div>
+	Hi,<div><br></div>
+	<div>We want to let you know that your auth token for Ecommerce account <%=@ecom_name%> will expire in <%=@expiry_date%>.</div>
+	<div><br></div>
+	<div>Please revoke the token and update the account inorder to be active. </div>
+	<div><br></div>
+	<div><%= link_to "View account", "http://#{@account.full_domain}/admin/ecommerce/accounts" %></div>
+	<div><br></div>
+	<div>If you have queries of any kind, please do not hesitate to contact us: support@freshdesk.com</div>
+	<div><br></div>
+	<div>Regards</div>
+	<div><br></div>
+	<div>Freshdesk Support&nbsp;</div>
+	<div><br></div>
+</div>

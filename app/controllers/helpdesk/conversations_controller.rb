@@ -14,6 +14,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Redis::TicketsRedis
   include Social::Util
   helper Helpdesk::NotesHelper
+  include Ecommerce::Constants
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
   before_filter :validate_fwd_to_email, :only => [:forward]
@@ -22,6 +23,7 @@ class Helpdesk::ConversationsController < ApplicationController
     :fetch_item_attachments, :set_native_mobile, :except => [:full_text]
   before_filter :set_ticket_status, :except => :forward
   before_filter :load_item, :only => [:full_text]
+  before_filter :validate_ecommerce_reply, :only => :ecommerce
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -111,6 +113,10 @@ class Helpdesk::ConversationsController < ApplicationController
     else
       create_error
     end
+  end
+
+  def ecommerce
+    ebay_reply 
   end
 
   def full_text
@@ -250,4 +256,41 @@ class Helpdesk::ConversationsController < ApplicationController
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)
         end
       end
+
+      def validate_ecommerce_reply
+        if !@parent.ebay?
+          ebay_error('admin.ecommerce.ebay_error.invalid_source')
+        elsif @parent.ebay_item.blank?
+          ebay_error('admin.ecommerce.ebay_error.invalid_reply')
+        elsif @item.body.length > EBAY_REPLY_MSG_LENGTH
+          ebay_error('admin.ecommerce.ebay_error.reply_length_exceed')
+        end
+      end
+
+      def ebay_reply
+        build_attachments @item, :helpdesk_note
+        if @item.save_note
+          if ebay_call
+            flash[:notice] = t(:'flash.tickets.reply.success') 
+            process_and_redirect
+          else
+            ebay_error("admin.ecommerce.ebay_note_not_added") 
+          end
+        else
+          ebay_error('admin.ecommerce.ebay_error.note_not_added')
+        end
+      rescue Exception => e
+        ebay_error("admin.ecommerce.ebay_error.note_not_added") #Something went wrong
+      end
+
+      def ebay_call
+        obj  = Ecommerce::Ebay::Api.new(@parent.ebay_item.ebay_acc_id)
+        resp = obj.make_call(:reply_to_buyer, {:ticket => @parent, :note => @item})
+        resp[:ack] == EBAY_SUCCESS_MSG if resp
+      end
+
+      def ebay_error(msg)
+        flash[:notice] = t(msg)
+        create_error
+      end      
 end

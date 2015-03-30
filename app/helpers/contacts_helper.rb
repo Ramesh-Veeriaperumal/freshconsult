@@ -2,6 +2,7 @@ module ContactsHelper
 
 	include ContactsCompaniesHelper
   include UserEmailsHelper
+  include Ecommerce::HelperMethods
 
   def contact_fields
     @user.helpdesk_agent? ? current_account.contact_form.default_contact_fields : current_account.contact_form.contact_fields

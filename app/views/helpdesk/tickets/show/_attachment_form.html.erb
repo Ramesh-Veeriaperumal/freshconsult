@@ -2,6 +2,8 @@
   attach_id ||= "ticket" 
   nsc_param = nsc_param || "helpdesk_ticket"
   original_attachments ||= {:regular => [], :cloud_files => []}
+  max_attachment ||= nil
+  max_size ||= 15
 %>
 <div class="attach-wrapper row-fluid new-attach">
   <div class="span8">   
@@ -38,7 +40,7 @@
         </div>
       </div>
     </div>  
-    <% if cloud_files_installed?  %>
+    <% if cloud_files_installed? and !@ticket.ecommerce?  %>
       <div class="dropdown dropup">        
         <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
           <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
@@ -71,7 +73,9 @@
                     nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                     fileContainer="<%=attach_id%>-container" 
                     fileList="<%=attach_id%>-attachments"
-                    sendFocusTo="<%=attach_id%>-body" />
+                    sendFocusTo="<%=attach_id%>-body" 
+                    max_size="<%=max_size%>"
+                    max_attachment= "<%=max_attachment%>" />
       </div>
     <% end %>    
   </div>

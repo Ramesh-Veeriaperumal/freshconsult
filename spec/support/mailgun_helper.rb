@@ -198,4 +198,34 @@ module MailgunHelper
 		}
 	end
 
+	def new_mailgun_ebay_email options={}
+		set_essentials(options)
+		from = "bmkbab_eyw5248uaz@members.ebay.in"
+		ebay_subject = "Shipping: bmkbabsat sent a message about Baby dress #221707006208"
+		env = get_m_envelope(options[:email_config], options[:another_config])
+		email_body = Faker::Lorem.paragraphs(5).join(" ")
+		generate_mailgun_attachments(options[:attachments], options[:inline], options[:large]) if options[:attachments]
+		{
+			:from => from,
+			"To" => to,
+			"Cc" => cc,
+			"body-html" => Nokogiri::HTML(email_body).at_css('body').inner_html,
+			"stripped-html" => Nokogiri::HTML(email_body).at_css('body').inner_html,
+			"body-plain" => email_body,
+			"stripped-text" => email_body,
+			"message-headers" => get_m_header(options[:email_config], options[:m_id], options[:auto]),
+			"subject" => ebay_subject,
+			:sender_ip => random_ip,
+			:recipient => env[:to],
+			:sender => env[:from],
+			:dkim =>"{@gmail.com : fail (body has been altered)}",
+			"attachment-count" => options[:attachments] || 0,
+			"Message-Id" => message_id,
+			"References" => generate_references(options[:m_id]),
+			"In-Reply-To" => options[:m_id] || "",
+			"Reply-To" => options[:reply] || random_email,
+			:SPF => "pass"
+		}.merge(attachments || {})
+	end
+
 end

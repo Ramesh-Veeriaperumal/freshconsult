@@ -17,7 +17,7 @@
 										"respondWithSol('link', '#{article.id}', '#{article_url}', '#{escape_javascript(article.title)}')", 
 										:class => "btn btn-mini btn-flat" %>
 					<% end %>
-					<% unless @ticket.is_twitter? or @ticket.is_facebook? or @ticket.mobihelp? %>
+					<% unless @ticket.is_twitter? or @ticket.is_facebook? or @ticket.mobihelp? or @ticket.ecommerce? %>
 						<%= link_to_function t('ticket.suggested_solutions.content'), 
 										"respondWithSol('content', '#{article.id}', '#{article_url}')", 
 										:class => "btn btn-mini btn-flat" %>

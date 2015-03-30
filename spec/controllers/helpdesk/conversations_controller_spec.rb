@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe Helpdesk::ConversationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
+  include EbayHelper
+  include EmailHelper
 
   context "For Web requests" do
     before(:all) do
@@ -244,4 +246,60 @@ RSpec.describe Helpdesk::ConversationsController do
       assigns['note'].errors.messages[:source].should include("is not included in the list")
     end
   end
+  
+   describe "Reply to ecommerce Ticket" do
+      before(:each) do
+        Resque.inline = true 
+        create_ebay_account if @account.ebay_accounts.blank?
+        log_in(@agent)
+        email_id = "bmkbab_eyw5248uaz@members.ebay.in"
+        email = new_ebay_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+        Helpdesk::ProcessEmail.new(email).perform
+        Resque.inline = false
+        @ecommerce_ticket = @account.tickets.last
+        @agent.account.make_current
+        create_ebay_item(@ecommerce_ticket.id)
+      end
+
+      it "should reply to ecommerce ticket" do 
+
+        note_body = "<div>#{(Time.now.to_f*1000).to_i}</div>"
+         post :ecommerce, {
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => note_body},
+                                        :private => "true",
+                                        :source => "0"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "1",
+                     :quoted_text_html => "",
+                     :ticket_id => @ecommerce_ticket.display_id
+                    }
+          ecommerce_reply = @account.tickets.find(@ecommerce_ticket.id).notes.last
+          ecommerce_reply.body_html.should be_eql(note_body)
+      end
+
+
+      it "should reply to ecommerce ticket" do 
+        Ecommerce::Ebay::Api.any_instance.stubs(:make_call).returns({:ack => "Success"})
+        note_body = "<div>#{(Time.now.to_f*1000).to_i}</div>"
+         post :ecommerce, {
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => note_body},
+                                        :private => "true",
+                                        :source => "0"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "1",
+                     :quoted_text_html => "",
+                     :ticket_id => @ecommerce_ticket.display_id
+                    }
+          ecommerce_reply = @account.tickets.find(@ecommerce_ticket.id).notes.last
+          ecommerce_reply.body_html.should be_eql(note_body)
+      end
+
+    end
+
 end

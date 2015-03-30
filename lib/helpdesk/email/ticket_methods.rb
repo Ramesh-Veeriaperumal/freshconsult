@@ -3,7 +3,8 @@ module Helpdesk::Email::TicketMethods
   include Redis::OthersRedis
   include ParserUtil
   include AccountConstants
-
+  include Ecommerce::HelperMethods
+  
   def get_original_user
     get_user(orig_email_from_text , email[:email_config], email[:text]) unless orig_email_from_text.blank?
   end
@@ -67,6 +68,7 @@ module Helpdesk::Email::TicketMethods
 
   def check_valid_ticket
     check_for_chat_sources
+    check_for_ecommerce_ticket 
     check_for_spam
     check_for_auto_responders
     check_support_emails_from
@@ -82,6 +84,14 @@ module Helpdesk::Email::TicketMethods
 
   def set_chat_source
     ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(email[:from][:domain])
+  end
+
+  def check_for_ecommerce_ticket
+    if ecommerce?(user.email, email[:to][:email])
+      ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:ecommerce]
+      ticket.subject = ticket.subject.gsub(Ecommerce::Constants::EBAY_SUBJECT_REPLY, '')
+      ticket.skip_notification = true
+    end
   end
 
   def snap_engage?

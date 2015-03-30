@@ -1,0 +1,70 @@
+<% content_for :helpcard do -%>
+  <%= render :partial => "/admin/ecommerce/helpnote" %>
+<%-end %>
+<%= f.error_messages %>
+<div class="row-fluid">
+<div>
+
+    <div class="control-group">
+      <%= f.label :name, t('admin.ecommerce.form.name'), :class => "control-label required" %>
+      <div class = "controls">
+        <%= f.text_field :name, :class => "text span8 required" %>
+      </div>
+    </div>
+
+    <% ecommerce_email_configs = current_account.ecommerce_accounts.pluck(:email_config_id)  %>
+    <% ecommerce_email_configs.delete(account.email_config_id) if page == "edit" %>
+    <% ecommerce_email_configs = [""] if ecommerce_email_configs.blank? %>
+    <% ecommerce_emails = current_account.all_email_configs.ecommerce_emails(ecommerce_email_configs) %>
+
+    <div class="control-group">
+      <%= f.label :email_configs, t('admin.ecommerce.form.email'), :class => "control-label required" %>
+        <div class="controls">
+          <div class="vertical-alignment pt10" id="email-notifications-tabs">
+            <% if ecommerce_emails.present? %>
+             <label id="existing_email_lbl" class="radio vertical-alignment" data-target="#scheduleWeekly" data-hash-url='false'>
+              <input  id="use_existing_email" name="email_configuration" type="radio" value="1" <%= 'checked="checked"' if page == "edit"%>  >
+              <%= t('admin.ecommerce.new.existing_email')%>
+            <%end%>
+            </label>
+            <label id="new_email_lbl" class="radio vertical-alignment ml10" data-target="#scheduleMonthly" data-hash-url='false'>
+              <input id="create_new_email" name="email_configuration" type="radio" value="0">
+              <%= t('admin.ecommerce.new.new_email')%>
+            </label>
+          </div>
+          <div class="tab-content">
+              <div id="scheduleWeekly" class="tab-pane mt10">
+                <div class="control-group">
+                
+                <%= f.collection_select :email_config_id, ecommerce_emails , :id, :name, {:selected => account.email_config_id}, :class => "select2 input-large" %>
+                </div>
+              </div>
+              <div id="scheduleMonthly" class="tab-pane mt10">
+                <%= render :partial => "/admin/ecommerce/email_config", :locals => { :f => f } %>
+              </div>
+          </div>
+        </div>
+    </div>
+    
+    <%= content_tag :h3, t('admin.ecommerce.new.developer_credentials'), :class => "lead" %>
+
+    <%= render :partial => type, :locals => { :f => f, :con => account.configs } %>
+
+</div>
+<span class="seperator"></span>
+<div class="button-container">
+  <%= link_to t('cancel'), admin_ecommerce_accounts_path, :class => "btn" %>
+  <%= f.submit t('save'), :class => "btn btn-primary" %>
+</div>
+
+<%= javascript_tag do %>
+ jQuery(document).ready(function(){
+      jQuery('#email-notifications-tabs .radio').on('click', function (e) {
+        jQuery(this).tab('show');
+      })
+
+      jQuery('input[name="intervaltype"]').click(function () {
+          jQuery(this).tab('show');
+      });
+  }); 
+<% end %>

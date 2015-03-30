@@ -81,7 +81,7 @@ Authority::Authorization::PrivilegeList.build do
 
   reply_ticket do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
-    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp]
+    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties
     resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
@@ -348,6 +348,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"helpdesk/dashboard",:only => [:agent_status]
+    resource :"admin/ecommerce/account"
+    resource :"admin/ecommerce/ebay"
   end
 
   manage_account do

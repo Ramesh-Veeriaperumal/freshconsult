@@ -141,4 +141,12 @@ class Helpdesk::BulkReplyTickets
       send("send_tweet_as_#{twt_type}", ticket, note, note.body.strip)
     end
 
+    def ecommerce_reply ticket,note
+      ebay_item = ticket.ebay_item
+      if ebay_item
+        obj = Ecommerce::Ebay::Api.new(ebay_item.ebay_acc_id)
+        obj.make_call(:reply_to_buyer, {:ticket => ticket, :note => note})
+      end
+    end
+
 end

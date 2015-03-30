@@ -807,8 +807,11 @@ ol, ul, li{
     	@include border-radius(6px 6px 0 0);
     	@include float(none);
     	width: auto;
-		@include clear(both);
-
+			@include clear(both);
+			.ecom-from{
+				margin:8px;
+				font-weight:normal;
+			}
     	label {
     		@include float(none);
     		display: inline-block;
@@ -1317,7 +1320,7 @@ ol, ul, li{
 
 }
 .ticket_details {
-	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat {
+	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat, #HelpdeskEcommerceReply {
 		overflow: hidden;
 	}
 }
@@ -3167,3 +3170,12 @@ $collision_delay: 1s;
 		min-height: 0;
 	}
 }
+
+// Ebay Based Ticket
+// -----------------------------
+	.ebay_ticket{
+		#Header, #HeaderTextDilimiter1, #begin_delimiter_header, 
+		#Title, #HeaderTextDilimiter2, #MarketSaftyTip, #Footer,#RawHtmlText{
+			display:none;
+		}
+	}

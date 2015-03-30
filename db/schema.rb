@@ -853,6 +853,34 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.datetime "updated_at"
   end
 
+  create_table "ebay_items", :force => true do |t|
+    t.string   "user_id",     :limit => 8
+    t.integer  "message_id",  :limit => 8
+    t.integer  "item_id",     :limit => 8
+    t.integer  "ticket_id",   :limit => 8
+    t.integer  "ebay_acc_id", :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ebay_items", ["account_id", "ebay_acc_id"], :name => "index_ebay_items_on_account_id_and_ebay_account_id"
+  add_index "ebay_items", ["account_id", "user_id", "item_id"], :name => "index_ebay_items_on_account_id_and_user_id_and_item_id"
+
+  create_table "ecommerce_accounts", :force => true do |t|
+    t.string   "name"
+    t.text     "configs"
+    t.integer  "email_config_id",     :limit => 8
+    t.string   "type"
+    t.integer  "account_id",          :limit => 8
+    t.string   "external_account_id"
+    t.boolean  "active",                           :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ecommerce_accounts", ["account_id", "email_config_id"], :name => "index_ecommerce_accounts_on_account_id_and_email_config_id"
+
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"

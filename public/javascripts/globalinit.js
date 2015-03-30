@@ -713,6 +713,10 @@ window.xhrPool = [];
       $('.form-unsaved-changes-trigger').on('change', function() {
         $(this).data('formChanged', true);
       });
+
+      $('[rel="reflect_to_textarea"]').livequery(function(ev){
+        $(this).reflectInTextarea();
+      })
       
    });
 })(jQuery);

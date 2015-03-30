@@ -1,0 +1,12 @@
+<ul class="breadcrumb">
+  <li><%= link_to t('admin.ecommerce.index_title').html_safe, admin_ecommerce_accounts_path %> <span class="divider">/</span></li>
+  <li class="active"><%= "#{t('admin.ecommerce.new.title')}" %></li>
+</ul>
+
+
+<%= content_tag :h3, @page_title, :class => "lead" %>
+<div class="row-fluid">
+	<%= form_for( @ecommerce_account  , :html => { :class => "form-horizontal",:method => :post }, :url => { :action => "create" }  ) do |f| %>
+		<%= render :partial => "form", :locals => {:f => f, :page => "new"} %>
+	<% end %>
+</div>

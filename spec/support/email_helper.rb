@@ -176,4 +176,27 @@ module EmailHelper
 		cid
 	end
 
+	def new_ebay_email options={}
+		from = "bmkbab_eyw5248uaz@members.ebay.in"
+		ebay_subject = "Shipping: bmkbabsat sent a message about Baby dress #221707006208"
+		to = generate_emails(rand(5), options[:email_config], options[:include_to])
+		self.reply_to = options[:reply]
+		mail_main = Faker::Lorem.paragraphs(5).join(" ")
+		generate_attachments(options[:attachments], options[:inline], options[:large]) if options[:attachments]
+		{
+			:from => from,
+			:to => to,
+			:cc => cc,
+			:html => Nokogiri::HTML(mail_main).at_css('body').inner_html,
+			:text => mail_main,
+			:headers => get_header(options[:email_config], options[:m_id], options[:auto]),
+			:subject => ebay_subject,
+			:sender_ip => random_ip,
+			:envelope => get_envelope(options[:email_config], options[:another_config]),
+			:dkim =>"{@gmail.com : fail (body has been altered)}",
+			:attachments => options[:attachments] || 0,
+			:SPF => "pass"
+		}.merge(attachments || {})
+	end
+
 end

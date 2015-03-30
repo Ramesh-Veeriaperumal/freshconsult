@@ -1,0 +1,13 @@
+<ul class="breadcrumb">
+  <li><%= link_to t('admin.ecommerce.index_title').html_safe, admin_ecommerce_accounts_path %> <span class="divider">/</span></li>
+  <li class="active"><%= "#{t('admin.ecommerce.new.title')}" %></li>
+</ul>
+
+<% @page_title = t('admin.ecommerce.edit.title') %>
+
+<%= content_tag :h3, @page_title, :class => "lead" %>
+<div class="row-fluid">
+  <%= form_for(@ebay_account, :html => {:rel => "validate", :class => "form-horizontal" } , :url => admin_ecommerce_ebay_path, :action => "update" ) do |f| %>
+    <%= render :partial => "/admin/ecommerce/form", :locals => {:f => f,:account => @ebay_account,:type =>"ebay", :page => "edit"} %>
+  <% end %>
+</div>

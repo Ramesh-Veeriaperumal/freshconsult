@@ -7,7 +7,7 @@
 			<%
 			crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm]
 			crm_apps.each do |crm_app| 
-				if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
+				if !@ticket.ecommerce? and is_application_installed?(Integrations::Constants::APP_NAMES[crm_app]) %>   
 				<li><a href="#contact_info_<%=crm_app%>" class="requester-info-sprite requester-info-<%=crm_app%>"></a></li>
 				<% 
 				end 
@@ -31,7 +31,7 @@
 	</div>
 	<%
 	crm_apps.each do |crm_app| 
-		if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
+		if !@ticket.ecommerce? and is_application_installed?(Integrations::Constants::APP_NAMES[crm_app]) %>
 	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
 
 		<%

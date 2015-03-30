@@ -42,7 +42,7 @@
 					:"data-loading-text" => t('admin.getting_started.index.next_please_wait').html_safe, 
 					:remote => true,
 					:"data-type" => "json",
-					:"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
+					:"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? and !ebay_user?(contact.email) %>
       <% end %>
       <% if privilege?(:manage_contacts) %>
 			   <%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? and !contact.spam? and !contact.blocked? %>

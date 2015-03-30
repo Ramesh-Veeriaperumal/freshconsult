@@ -403,3 +403,13 @@ body .fc-layout #sidebar{
 .community .is_stuck{
   z-index: 8;
 }
+.btn-primary.dropdown-toggle{
+  color:#fff;
+}
+
+.dropdown.open, .dropdown {
+  .btn-primary.dropdown-toggle{
+    color:#fff;
+  }
+
+}

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c",
-    "current": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c"
+    "previous": "500b80d54b7506402a0c7406275858e26cd2752e2ba4d8739c0d66f7fc26ec05",
+    "current": "500b80d54b7506402a0c7406275858e26cd2752e2ba4d8739c0d66f7fc26ec05"
   },
   "fonts": [
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.ttf",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.svg",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.woff",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.eot"
+    "public/assets/glyphs_500b80d54b7506402a0c7406275858e2.ttf",
+    "public/assets/glyphs_500b80d54b7506402a0c7406275858e2.svg",
+    "public/assets/glyphs_500b80d54b7506402a0c7406275858e2.woff",
+    "public/assets/glyphs_500b80d54b7506402a0c7406275858e2.eot"
   ],
   "glyphs": {
     "account": {
@@ -225,6 +225,10 @@
     "earth": {
       "codepoint": 61749,
       "source": "public/glyphs/vectors/earth.svg"
+    },
+    "ecommerce": {
+      "codepoint": 61869,
+      "source": "public/glyphs/vectors/ecommerce.svg"
     },
     "edit": {
       "codepoint": 61750,
@@ -699,7 +703,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": true,
+    "debug": false,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -714,6 +718,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

@@ -63,6 +63,8 @@ class User < ActiveRecord::Base
   validate :only_primary_email, on: :update, :if => [:agent?, :has_contact_merge?]
   validate :max_user_emails, :if => [:has_contact_merge?]
 
+  delegate :user_external_id, :user_external_id=, :to => :flexifield
+
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR

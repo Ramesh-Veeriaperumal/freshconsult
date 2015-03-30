@@ -25,7 +25,7 @@
 				<%= link_to t('contacts.info2'), '#', {
 											:class => "drop-toggle btn",
 											"data-toggle" => "dropdown"
-										} if privilege?(:manage_users) and @user.has_email? and !@user.blocked? and !@user.helpdesk_agent? %>
+										} if privilege?(:manage_users) and @user.has_email? and !@user.blocked? and !@user.helpdesk_agent? and !ebay_user?(@user.email) %>
 
 				<%= link_to(t('edit'), edit_contact_path(@user),{
 											:class => "btn"
@@ -93,7 +93,7 @@
 			        <% end %>
 
 			        <% if privilege?(:view_contacts) %>
-			  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.active? and @user.has_email? and !@user.deleted and !@user.spam? and !@user.blocked? and @user.parent.nil?%>
+			  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.active? and @user.has_email? and !@user.deleted and !@user.spam? and !@user.blocked? and @user.parent.nil? and !ebay_user?(@user.email)%>
 			        <% end %>
 		  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :get ) }".html_safe) if @user.blocked? || @user.spam? %>
 		  		</div>
@@ -223,8 +223,8 @@
 		</div>
 		<div class='contact-sidebar'>
 			<div class='contact-sidebar-content'>
-				<%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
-				<%= render :partial => "helpdesk/integrations/email_marketing_container" , :locals => {:contact => @user} %>
+				<%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user} unless ebay_user?(@user.email)%>
+				<%= render :partial => "helpdesk/integrations/email_marketing_container" , :locals => {:contact => @user} unless ebay_user?(@user.email)%>
 			</div>
 		</div>
 	</div>

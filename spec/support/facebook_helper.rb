@@ -19,7 +19,7 @@ module FacebookHelper
     post = @account.facebook_posts.find_by_post_id(feed_id)
     descendants = post.descendants
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be true
     
     ticket = post.postable
     user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -29,7 +29,7 @@ module FacebookHelper
     comment_feed = facebook_feed[:comments]["data"]
     post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
     post_comment.should_not be_nil
-    post_comment.is_note?.should be_true
+    post_comment.is_note?.should be true
     
     note = post_comment.postable
     note.notable.should eql ticket

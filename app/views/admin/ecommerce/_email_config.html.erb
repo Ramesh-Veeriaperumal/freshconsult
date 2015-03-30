@@ -1,0 +1,26 @@
+<div class="unstyled form-horizontal row-fluid">
+	<div class="control-group">
+		<label class="control-label required" ><%= t('email_configs.name') %></label>
+		<div class="controls">
+			<input id="email_config_name" name="email_config[name]" class= "required text span10 ignore_on_hidden">
+			<div class="muted mt5"><%= t('email_configs.name_info_msg') %> </div>
+		</div>
+	</div>
+	<div class="control-group" rel="reflect_to_textarea" data-target-script="#ebay_form_control" data-full-domain="<%= current_account.full_domain %>">
+		<label class="control-label required" ><%= t('email_configs.reply_email') %></label>
+		<div class="controls">
+			<input  id="reply_to_id" name="email_config[reply_email]" class= "required email text span10 ignore_on_hidden">
+			<div class="muted mt5"><%= t('email_configs.info7') %> </div>
+		</div>
+	</div>
+</div>
+
+ <script id="ebay_form_control" type="text/template">
+	<div class="control-group">	
+		<label class="control-label" ><%= t('email_configs.info8') %></label>
+		<div class="controls">
+			<input type="hidden" id="hidden_reply_to" name="email_config[active]" value = "1">
+			<textarea name="email_config[to_email]" id="hidden_reply_to" class="codetextarea span10" rows="4" readonly></textarea>
+		</div>
+	</div>
+ </script>

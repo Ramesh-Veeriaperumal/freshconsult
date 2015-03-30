@@ -76,7 +76,7 @@ class Helpdesk::Email::Process
 
 	def handle_tickets 
 		ticket_data = parse_ticket_metadata.merge(common_email_data) #In parse_email_data
-		ticket_identifier = Helpdesk::Email::IdentifyTicket.new(ticket_data, user, account)
+		ticket_identifier = Helpdesk::Email::IdentifyTicket.new(ticket_data, user, account, self.common_email_data[:email_config])
     ticket = ticket_identifier.belongs_to_ticket
     email_handler = Helpdesk::Email::HandleTicket.new(ticket_data, user, account, ticket)
 		ticket ? email_handler.create_note : email_handler.create_ticket

@@ -160,6 +160,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
+gem "ebayr", "0.0.7"
 
 group :production,:test,:staging do
   gem "tire", :git => "git://github.com/PratheepV/retire.git"
