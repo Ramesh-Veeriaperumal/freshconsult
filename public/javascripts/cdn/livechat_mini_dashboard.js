@@ -1,1 +1,1 @@
-//=require freshchat/dashboard/dashboard
+//=require livechat/dashboard/miniDashboard

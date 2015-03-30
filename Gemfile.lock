@@ -432,6 +432,7 @@ GEM
     builder (3.0.4)
     bunny (1.2.1)
       amq-protocol (>= 1.9.2)
+    callsite (0.0.11)
     celluloid (0.15.2)
       timers (~> 1.1.0)
     chargebee (1.2.9)
@@ -569,6 +570,10 @@ GEM
       treetop (~> 1.4.8)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
+    meta_request (0.3.4)
+      callsite (~> 0.0, >= 0.0.11)
+      rack-contrib (~> 1.1)
+      railties (>= 3.0.0, < 5.0.0)
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (1.25.1)
@@ -649,6 +654,8 @@ GEM
     rack-cache (1.2)
       rack
       rack (>= 0.4)
+    rack-contrib (1.2.0)
+      rack (>= 0.9.1)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.2)
@@ -925,6 +932,7 @@ DEPENDENCIES
   mail
   map_fields!
   marketo!
+  meta_request
   mocha (~> 0.13.0)
   mysql2 (~> 0.3.0)
   namae (= 0.8.4)

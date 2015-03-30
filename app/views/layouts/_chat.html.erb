@@ -4,6 +4,16 @@ var ASSET_URL       = <%= ChatConfig['asset_url'].to_json.html_safe %>;
 var CS_URL          = "<%= ChatConfig['communication_url']%>";
 var CHAT_ENV        = "<%= Rails.env -%>";
 var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
+var _url = "https://"+CS_URL+":443"; 
+
+if(window.location && window.location.protocol=="http:" && (window.liveChat.ieVersionCompatability || FC_HTTP_ONLY)){
+    _url = "http://"+CS_URL+":80";
+}
+if(CHAT_ENV == 'development'){
+    _url = "http://"+CS_URL+":4000";
+}
+window.liveChat.URL = _url;
+
 </script>
 
 <%if current_user && chat_activated? && !(is_assumed_user?) %>
@@ -51,6 +61,6 @@ var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
         <%end%>
     });
 </script>
-<div id="freshchat_layout" class="fc-layout"></div>
+<div id="livechat_layout" class="fc-layout"></div>
 <%end%>
 <!-- Chat related contents ends -->

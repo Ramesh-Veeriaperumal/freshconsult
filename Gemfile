@@ -37,6 +37,7 @@ group :development, :test do
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
   gem 'binding_of_caller'
+  gem 'meta_request'
 end
 
 gem "mail"

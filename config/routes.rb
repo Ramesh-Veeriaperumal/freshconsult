@@ -2066,6 +2066,7 @@ Helpkit::Application.routes.draw do
       post :create_ticket
       post :add_note
       post :chat_note
+      post :missed_chat
       get :get_groups
       post :activate
       post :site_toggle

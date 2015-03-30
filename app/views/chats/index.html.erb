@@ -1,7 +1,7 @@
 <% content_for :layoutType do -%><%- end %>
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker' %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
-<%= stylesheet_link_tag_with_rtl :'cdn/freshchat_admin' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/livechat_admin' %>
 	<div id="loading-box">
 		<div class="sloading loading-left loading-small reports-loading"><%=t("freshchat.fetching")%></div>
 	</div>
@@ -60,8 +60,8 @@
 	</div>
 	<!--end report content-->
 <script type ="text/javascript" >
-	var freshChat =window.freshChat || {};
-	window.freshChat.widgetList = <%=@widgets%>
+	var liveChat =window.liveChat || {};
+	window.liveChat.widgetList = <%=@widgets%>
 	jQuery(document).on('ready pjax:end',function(){
 		var $dateElement = jQuery('#livechat_archive_page').find('#date_range');
 		if($dateElement.length >0){
@@ -82,4 +82,5 @@
 		}
 	});
 </script>
-<%= javascript_include_tag :'cdn/freshchat_archive' %>
+
+<%= javascript_include_tag :'cdn/livechat_archive' %>
