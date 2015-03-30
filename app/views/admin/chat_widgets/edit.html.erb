@@ -12,9 +12,16 @@
 </div>
 
 <%= javascript_tag do %>
-    (function($){
-      $(document).one('ready pjax:success' ,function(){
-        window.liveChat.adminSettings.editWidget(<%= freshchat_setting @widget%>);
-      });
-    })(jQuery);
-  <%end%>
+  var asset_url = <%= ChatConfig['asset_url'].to_json.html_safe %>;
+  var js_asset_url = asset_url.js;
+  var zeroClipBoardSWFPath = "<%= asset_path('/swf/ZeroClipBoard.swf')%>";
+  <% if Rails.env.development? %>
+  zeroClipBoardSWFPath = js_asset_url + zeroClipBoardSWFPath;
+  <% end %>
+
+  (function($){
+    $(document).one('ready pjax:success' ,function(){
+      window.liveChat.adminSettings.editWidget(<%= freshchat_setting @widget%>);
+    });
+  })(jQuery);
+<%end%>

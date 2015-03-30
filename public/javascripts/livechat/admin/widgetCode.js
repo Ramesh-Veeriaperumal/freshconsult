@@ -14,7 +14,7 @@ window.liveChat.widgetCode = function($){
 			ZeroClipboard.config({ debug: false });
 
 			var clip = new ZeroClipboard($('.chat_code_copy'), {
-				moviePath: (js_asset_url + zeroClipBoardSWFPath)
+				moviePath: zeroClipBoardSWFPath
 			});
 
 			clip.on( 'dataRequested', function ( client, args ) {
