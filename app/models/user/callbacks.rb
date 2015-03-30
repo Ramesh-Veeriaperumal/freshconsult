@@ -14,7 +14,8 @@ class User < ActiveRecord::Base
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :if => :customer?
 
-  after_commit :clear_agent_caches
+  after_commit :clear_agent_caches, on: :create, :if => :agent?
+  after_commit :update_agent_caches, on: :update
 
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
@@ -23,11 +24,8 @@ class User < ActiveRecord::Base
   after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
 
-  def clear_agent_caches
-    if (agent? or helpdesk_agent_updated?)
-      clear_agent_list_cache 
-      clear_agent_name_cache if @model_changes.key?(:name)
-    end
+  def update_agent_caches
+    clear_agent_caches if (agent? or helpdesk_agent_updated?)
   end
 
   def set_time_zone
@@ -96,5 +94,10 @@ class User < ActiveRecord::Base
 
   def delete_forum_moderator
     forum_moderator.destroy if forum_moderator
+  end
+
+  def clear_agent_caches
+    clear_agent_list_cache 
+    clear_agent_name_cache if @model_changes.key?(:name)
   end
 end
