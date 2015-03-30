@@ -140,13 +140,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
         else{
           current_primary.next().prop('title', window.App.Contacts.Contact_form.mark_text);
         }
-        current_primary.removeClass('disabled default_email').prop('disabled', false);
+        current_primary.removeClass('disabled default_email');
         $('.ue_remove_image').removeClass('disabled')
         $('.ue_primary').val(0);
         $(this).removeClass('make_primary').addClass('ficon-checkmark-round primary').prop('title', window.App.Contacts.Contact_form.primary_text);
-        $(this).prev().addClass('disabled default_email').prop('disabled', true);
+        $(this).prev().addClass('disabled default_email');
         $(this).prev().prev().addClass('disabled');
-        $(this).next('.ue_primary').val(1);
+        $(this).siblings('.ue_primary').val(1);
         $(this).parent().addClass('disabled');
       });
     },

@@ -650,7 +650,7 @@ module SupportHelper
 	def attachment_item attachment, can_delete = false
 		output = []
 
-		output << %(<div class="cs-g-3 attachment">)
+		output << %(<div class="attachment">)
 		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << default_attachment_type(attachment)
@@ -669,7 +669,7 @@ module SupportHelper
 	def cloud_file_item cloud_file, can_delete = false
 		output = []
 
-		output << %(<div class="cs-g-3 attachment">)
+		output << %(<div class="attachment">)
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)

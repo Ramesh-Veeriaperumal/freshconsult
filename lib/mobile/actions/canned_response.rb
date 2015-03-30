@@ -1,6 +1,6 @@
 module Mobile::Actions::CannedResponse
 
-	JSON_INCLUDE = {:include =>  :folder}
+	JSON_INCLUDE = {:include => [:folder , :attachments_sharable] }
 	
 	def to_mob_json
 		result = as_json(JSON_INCLUDE)

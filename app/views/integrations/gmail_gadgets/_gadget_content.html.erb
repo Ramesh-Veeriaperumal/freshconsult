@@ -5,6 +5,9 @@
     <% else %>
         <%= stylesheet_link_tag_with_rtl :'cdn/gadget' %>
         <%= javascript_include_tag :'cdn/gadget' %>
+        <script type="text/javascript">
+            window['SPACER_IMAGE_PATH'] = "<%= spacer_image_url %>";
+        </script>
     <%end%>
 
     <style type="text/css">

@@ -363,6 +363,7 @@ class Freshfone::Call < ActiveRecord::Base
 				:call_duration => call_duration
 			}
 			record_params.merge!({:voicemail => true}) if (call_status === CALL_STATUS_HASH[:'no-answer'] )
+			record_params.merge!({:agent => user_id}) if ( record_params[:voicemail] && !user_id.nil?)
 			Resque::enqueue_at(30.seconds.from_now, Freshfone::Jobs::CallRecordingAttachment, record_params) if recording_url
 		end
 

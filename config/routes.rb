@@ -185,9 +185,24 @@ Helpkit::Application.routes.draw do
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
-  resources :solutions_uploaded_images, :only => [:index, :create, :create_file]
-  resources :forums_uploaded_images, :only => :create
-  resources :tickets_uploaded_images, :only => :create
+  
+  resources :solutions_uploaded_images, :only => [:index, :create]  do
+    collection do
+      post :create_file
+    end
+  end
+
+  resources :forums_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+  
+  resources :tickets_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
 
   resources :contact_import do
     collection do
@@ -600,6 +615,7 @@ Helpkit::Application.routes.draw do
 
     resources :logmein do
       collection do
+        post :rescue_session
         get :rescue_session
         put :update_pincode
         get :refresh_session

@@ -3,7 +3,9 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   prepend_before_filter :check_admin_subdomain  
   skip_before_filter  :check_privilege, :set_time_zone, :set_current_account, :set_locale,
                       :check_account_state, :ensure_proper_protocol, :check_day_pass_usage,
-                      :redirect_to_mobile_url, :select_shard, :determine_pod
+                      :redirect_to_mobile_url, :determine_pod
+
+  skip_filter :select_shard # as select shard is around filter need to skip both                      
   
   around_filter :select_account_shard, :only => :add_affiliate_transaction
   before_filter :authenticate_using_basic_auth, :ensure_right_parameters, :fetch_account, 

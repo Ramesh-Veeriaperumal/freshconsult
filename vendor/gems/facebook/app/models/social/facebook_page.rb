@@ -20,7 +20,7 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
   def fetch_delta?
-    process_realtime_feed? && page_token_changed? && enable_page_changed?  && company_or_visitor?
+    process_realtime_feed? && page_token_changed? && enable_page_changed?
   end
 
   def company_or_visitor?

@@ -55,6 +55,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
+  before_filter :handle_send_and_set, :only => [:update_ticket_properties]
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
@@ -281,6 +282,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
+        hash.merge!({:reply_template => parsed_reply_template(@ticket,@signature)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.is_twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.is_twitter?
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
@@ -563,7 +565,10 @@ class Helpdesk::TicketsController < ApplicationController
   
   def change_due_by
     due_date = get_due_by_time    
-    @item.update_attributes({:due_by => due_date, :manual_dueby => true})
+    unless @item.update_attributes({:due_by => due_date, :manual_dueby => true})
+      flash[:error] = @item.errors.messages[:base]
+      @item.reload
+    end
     render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
   end  
   
@@ -1097,6 +1102,10 @@ class Helpdesk::TicketsController < ApplicationController
         params["helpdesk_ticket"]["status"] ||= @item.status
       }
     end
+  end
+
+  def handle_send_and_set
+    @item.send_and_set = params[:send_and_set].present?
   end
 
   def set_default_filter

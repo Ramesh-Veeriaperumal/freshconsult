@@ -2140,6 +2140,14 @@ Redactor.prototype = {
 	                                              {
 	                                              	$(this).css('padding',subParts[1]);
 	                                              }
+	                                              else if(subParts[0] == 'margin-left')
+	                                              {
+	                                              	$(this).css('margin-left',subParts[1]);
+	                                              }
+	                                              else if(subParts[0] == 'text-indent')
+	                                              {
+	                                              	$(this).css('text-indent',subParts[1]);
+	                                              }
 	                                            }
 	                                        }
 	                                    });

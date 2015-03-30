@@ -21,7 +21,7 @@
 			<%= t('message') %>
 		</label>
 		<div class="controls">
-			<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
+			<%= form.rich_editor :body_html,
 				:rows => 12, "editor-type" => :forum, :class => "required_redactor" %>
 		</div>
 	</div>	

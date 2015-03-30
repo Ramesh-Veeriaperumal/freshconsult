@@ -22,6 +22,8 @@ module RabbitMq::Utils
   private
 
   def publish_to_rabbitmq(model, action)
+    return #Disable RabbitMq for now.
+
     if RABBIT_MQ_ENABLED
       message = { "object" => model,
                   "action" => action,

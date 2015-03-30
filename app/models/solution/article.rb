@@ -128,7 +128,7 @@ class Solution::Article < ActiveRecord::Base
         search.from options[:size].to_i * (options[:page].to_i-1)
       end
 
-      item.results.results
+      item.results.results.compact
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       []
@@ -146,7 +146,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-     options[:root] ||= 'solution_article'# TODO-RAILS3:: In Rails3 Model.model_name.element returns only 'article' not 'solution_article'
+     options[:root] = 'solution_article'# TODO-RAILS3:: In Rails3 Model.model_name.element returns only 'article' not 'solution_article'
      options[:indent] ||= 2
      options.merge!(Solution::Constants::API_OPTIONS.merge(:include => {}))
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])

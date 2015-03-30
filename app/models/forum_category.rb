@@ -40,12 +40,17 @@ class ForumCategory < ActiveRecord::Base
   acts_as_list :scope => :account
 
   after_create :assign_portal, :set_activity_new_and_clear_cache
+  after_update :clear_sidebar_cache
 
   before_destroy :set_destroy_activity_and_clear_cache
 
   def set_activity_new_and_clear_cache
     create_activity('new_forum_category')
     account.clear_forum_categories_from_cache
+  end
+  
+  def clear_sidebar_cache
+    account.clear_forum_categories_from_cache if name_changed? || position_changed?
   end
 
   def set_destroy_activity_and_clear_cache

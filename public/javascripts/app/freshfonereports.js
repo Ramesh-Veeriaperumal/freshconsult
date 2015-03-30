@@ -61,7 +61,7 @@ window.App.Freshfone = window.App.Freshfone || {};
       });
     },
     groupOptions: function (filter_group_options, placeholder) {
-      group_list = JSON.parse(filter_group_options);
+      group_list = filter_group_options;
 
       jQuery('#group_id').select2({
           placeholder: placeholder,

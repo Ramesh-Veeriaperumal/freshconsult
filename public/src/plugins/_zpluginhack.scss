@@ -38,6 +38,10 @@
 	}
 }
 
+.select2-drop{
+	z-index: 99999;
+}
+
 //For portal page's
 .custom-select{
     @include min-width(300px);

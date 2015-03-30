@@ -23,19 +23,19 @@ class MixpanelObserver < ActiveRecord::Observer
   }
   
   
-  def after_commit_on_create(model)
-    send_account_created_event(model) if model.class.name.eql?(MODELS[:account])
-    send_model_event(model)
+  def after_commit(model)
+    if model.send(:transaction_include_action?, :create)
+      send_account_created_event(model) if model.class.name.eql?(MODELS[:account])
+      send_model_event(model)
+    elsif model.send(:transaction_include_action?, :destroy)
+      if model.class.name == MODELS[:integrations]
+        ::MixpanelWrapper.send_to_mixpanel(model.class.name, {:enabled => false})
+      end
+    end
   end
 
   def after_update(model)
     send_plan_update_event(model) if model.class.name.eql?(MODELS[:subscription])
-  end
-
-  def after_commit_on_destroy(model)
-    if model.class.name == MODELS[:integrations]
-      ::MixpanelWrapper.send_to_mixpanel(model.class.name, {:enabled => false})
-    end
   end
 
   private

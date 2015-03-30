@@ -4,3 +4,4 @@
 //= require prototype-1.6.js
 //= require lib/nestedtree.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
+//= require utils.js
