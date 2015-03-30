@@ -108,4 +108,12 @@ module UsersHelper
       user.language = "en"
     end
   end
+
+  def user_address_params
+    @address_param =  {:street => Faker::Address.street_address,
+        :city => Faker::Address.city,
+        :state => Faker::Address.state,
+        :postal_code => Faker::Address.postcode,
+        :country => 'DE'}
+  end
 end

@@ -1,8 +1,9 @@
 class Segment::IdentifyController < ApplicationController
  
    include UserHelperMethods
- 
-   before_filter :check_demo_site, :strip_params, :clean_params, :contact_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
+   include APIHelperMethods
+
+   before_filter :check_demo_site, :check_segment_api_type, :strip_params, :format_params, :clean_params, :contact_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
  
    def create
       if @user.new_record?
@@ -22,7 +23,7 @@ class Segment::IdentifyController < ApplicationController
          end
       else
          respond_to do |format|
-           format.json { render :json =>@user.errors, :status => :unprocessable_entity} 
+           format.json { render :json =>@user.errors, :status => :bad_request} 
            format.any { head 404 }
          end
       end
@@ -36,18 +37,31 @@ class Segment::IdentifyController < ApplicationController
          end
       else
          respond_to do |format|
-           format.json { render :json => @item.errors, :status => :unprocessable_entity}
+           format.json { render :json => @item.errors, :status => :bad_request}
            format.any  { head 404}
          end
       end
    end
  
    def contact_exists
+      api_error_responder({:message => t('contacts.segment_api.email_blank')}, 400) if params[:user][:email].blank?
       @user = current_account.user_emails.user_for_email(params[:user][:email]) 
    end
  
+   def check_segment_api_type
+      api_error_responder({:message => t('contacts.segment_api.invalid_type')}, 501) unless params[:type] == 'identify'
+   end
+
    def strip_params
       params[:user] = params[:traits] ? params.delete(:traits) : params[:user] || {}
+   end
+
+   def format_params
+    if params[:user][:address].is_a? Hash
+      str = ""
+      params[:user][:address].each{|k, v| str << "#{k}:#{v}\n"}
+      params[:user][:address] = str
+    end
    end
  
 end

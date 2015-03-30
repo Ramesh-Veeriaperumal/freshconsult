@@ -1,8 +1,9 @@
 class Segment::GroupController < ApplicationController
 
    include CompaniesHelperMethods
+   include APIHelperMethods
 
-   before_filter :strip_params, :company_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
+   before_filter :check_segment_api_type, :strip_params, :company_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
 
    def create
       if @company.new_record?
@@ -17,10 +18,10 @@ class Segment::GroupController < ApplicationController
    def create_company
     respond_to do |format|
       if @company.save
-        format.json { render :json => @company, :status => :created }
+        format.json { render :json => @company, :status => :ok }
         format.any { head 404 }
       else
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors, :status => :bad_request }
         format.any { head 404 }
       end
     end
@@ -32,19 +33,23 @@ class Segment::GroupController < ApplicationController
         format.json { head 200 }
         format.any { head 404 }
       else
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors, :status => :bad_request }
         format.any { head 404 }
       end
     end
    end
 
-   def strip_params
-      params[:company] = params[:traits] ? params.delete(:traits) : params[:company] || {}
-   end
+    def check_segment_api_type
+      api_error_responder({:message => t('contacts.segment_api.invalid_type')}, 501) unless params[:type] == 'group'
+    end
 
-   def company_exists
+    def strip_params
+      params[:company] = params[:traits] ? params.delete(:traits) : params[:company] || {}
+    end
+
+    def company_exists
       @company = current_account.companies.find_by_name(params[:company][:name])
       build_item unless @company
-   end
+    end
  
 end
