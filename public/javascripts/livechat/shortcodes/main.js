@@ -12,8 +12,9 @@ liveChat.admin_short_codes = (function(){
           destroy  : {type: "POST", url: "/shortcodes/destroy"}
       },
       _error_messages: {
-          EMPTY_CODE : "Code cannot be empty.",
-          ER_DUP_ENTRY : "Trying to add or update duplicate code."
+          CODE_EMPTY : "Code cannot be empty.",
+          ER_DUP_ENTRY : "Trying to add or update duplicate code.",
+          
         },
       _trim_size: 45,
       _valid_code: new RegExp(/^[-_+\w\s]*$/),
@@ -41,7 +42,7 @@ liveChat.admin_short_codes = (function(){
           var _params = {};
 
           if(!_module.validateCode(_key)){
-            _module.showAlertMsg(_parent,_module._error_messages.EMPTY_CODE);
+            _module.showAlertMsg(_parent,_module._error_messages.CODE_EMPTY);
             return false;
           }
 
@@ -132,6 +133,7 @@ liveChat.admin_short_codes = (function(){
       },
 
       showAlertMsg: function(elem, msg){
+        elem.find(".error-label").remove();
         elem.prepend("<span class='error-label'>"+msg+"</span>");
         elem.addClass("error");
       },
@@ -180,7 +182,7 @@ liveChat.admin_short_codes = (function(){
           window.csURL = "http://"+CS_URL+":4000"; 
         }else{
           window.csURL = "https://"+CS_URL+":443";
-          if(window.location && window.location.protocol=="http:" && (ieVersionCompatability() || FC_HTTP_ONLY)){
+          if(window.location && window.location.protocol=="http:" && (window.liveChat.ieVersionCompatability() || FC_HTTP_ONLY)){
             window.csURL = "http://"+CS_URL+":80";
           } 
         }
