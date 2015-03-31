@@ -1,3 +1,4 @@
+<%= javascript_include_tag :'cdn/plans_and_billing' %>
 <% if !@subscription.trial? and @subscription.card_number.present? %>
 	<%= content_for :sidebar do -%>
   		<div class="sidepanel">    
