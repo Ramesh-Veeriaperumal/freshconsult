@@ -1613,6 +1613,7 @@ Helpkit::Application.routes.draw do
         delete :empty_folder
         put :spam_multiple
         get :more
+        get :moderation_count
       end
       member do
         put :approve

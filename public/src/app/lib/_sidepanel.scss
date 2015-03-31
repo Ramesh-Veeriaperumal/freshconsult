@@ -352,3 +352,35 @@ div.addReminder{
 		font-weight: 700;
 	}
 }
+
+// -----------------------------------------------------------
+//				Moderation Widget
+// -----------------------------------------------------------
+
+.moderation-dashboard-link {
+	li {
+		 width: 110px;
+		 @include float(left);
+		 background-color: #f2f2f2;
+		 color: #666;
+		 margin-bottom: 1px;
+		 padding: 10px;
+		 display: block;
+		 -webkit-box-shadow: -1px 0 0 0 white;
+		 -moz-box-shadow: -1px 0 0 0 white;
+		 box-shadow: -1px 0 0 0 white;
+
+		 .moderation-count {
+		 	display: block;
+		 	font-size: 15px;
+		 	color: #666;
+		 }
+
+		 .moderation-msg {
+		 	display: block;
+		 	font-size: 12px;
+		 	margin-top: 1px;
+		 	color: #666;
+		 }
+	}
+}
