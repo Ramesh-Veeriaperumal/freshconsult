@@ -274,7 +274,7 @@ module Delayed
     rescue TypeError, LoadError, NameError => e
       update_run_at_for_syck_errors
       notification_topic = SNS["dev_ops_notification_topic"]
-      DevNotification.publish(notification_topic,"Delayed Job failed to load with job id #{self.id}", "Syck error unable to deserialize")
+      # DevNotification.publish(notification_topic,"Delayed Job failed to load with job id #{self.id}", "Syck error unable to deserialize")
       raise DeserializationError,
         "Job failed to load: #{e.message}. Try to manually require the required file."
     end
