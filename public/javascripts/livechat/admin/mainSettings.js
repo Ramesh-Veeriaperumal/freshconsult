@@ -199,7 +199,7 @@ window.liveChat.mainSettings = function($){
       window.liveChat.widgetSettings.bindEvents();
     },
 
-    showMsg: function(response){
+    showMsg: function(resp){
       $(".chat_setting_save").removeAttr('disabled');
       var msg = '';
       if(resp.status == "error"){

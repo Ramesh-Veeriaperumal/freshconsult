@@ -3,6 +3,8 @@
 //=require livechat/templates/archive/archiveRow.jst.ejs
 //=require livechat/templates/archive/visitorDetails.jst.ejs
 
+//=require livechat/templates/visitors/visitorList.jst.ejs
+
 //=require livechat/templates/dashboard/miniDashboard.jst.ejs
 
 //=require livechat/templates/tickets/ticketDescription.jst.ejs
