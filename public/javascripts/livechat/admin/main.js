@@ -15,7 +15,7 @@ window.liveChat.adminSettings= function($){
 			$('.toggle_widget').itoggle();
 		},
 
-		editWidget: function(widget){
+		initializeWidget: function(widget){
 			this.currentWidget = widget;
 
 			if(widget.widget_id){
