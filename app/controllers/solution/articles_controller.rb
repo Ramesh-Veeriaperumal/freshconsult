@@ -239,17 +239,18 @@ class Solution::ArticlesController < ApplicationController
       (redirect_to :action => "show" and return) unless (@article.draft.present? && latest_content?)
       @draft = @article.draft
       if params[:previous_author].present?
-        @draft.current_author = (User.find(params[:previous_author].to_i) || current_user)
+        @draft.user = (User.find(params[:previous_author].to_i) || current_user)
+        @draft.modified_at = Time.parse(params[:original_updated_at])
         update_draft_attributes
       else
         @draft.destroy
       end
-      redirect_to :action => (action || "show") and return
+      redirect_to :action => "show" and return
     end
 
     def update_draft
       @draft = @article.draft
-      if (@draft.blank? || (@draft.current_author == current_user))
+      if (@draft.blank? || (@draft.user == current_user))
         @draft = @article.build_draft_from_article if @draft.blank?
         unless update_draft_attributes
           flash[:error], action = t('solution.articles.draft.save_error'), "edit"

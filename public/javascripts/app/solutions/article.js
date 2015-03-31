@@ -67,7 +67,7 @@ window.App = window.App || {};
         autosaveInterval: 5000,
         autosaveUrl: data.autosavePath,
         monitorChangesOf: {
-          description: ".redactor_editor",
+          description: "#solution_article_description",
           title: "#solution_article_title"
         },
         extraParams: {timestamp: data.timestamp},
@@ -97,12 +97,12 @@ window.App = window.App || {};
       var changeDom = {
         mainElement: $(".draft-info-box"),
         msgElement: $(".autosave-notif"),
+        lastSuccess: false,
         liveTimeStamp: function () {
           var ts = Math.round((new Date()).getTime() / 1000);
-          return $('<span />').attr('data-livestamp', ts);
-        },
-        timeStamp: function () {
-          return $('<span />').html(" (" + moment().format('ddd, Do MMMM [at] h:mm A') + ")");
+          return $('<span />').attr('data-livestamp', ts)
+                    .attr("title", moment().format('ddd, Do MMMM [at] h:mm A'))
+                    .addClass('tooltip');
         },
         reloadButton: function () {
           return $('<span />').attr('onclick', 'window.location.reload();').
@@ -125,27 +125,37 @@ window.App = window.App || {};
             $("#last-updated-at").val(response.timestamp);
           }
         },
+        toggleButtons: function (flag) {
+          var $flag = flag;
+          $.each(['#edit-cancel-button', '#save-as-draft-btn', '.btn-primary'], function(index, el){
+            $(el).prop('disabled', !$flag);
+          });
+          $('.confirm-delete').attr('disabled', !$flag);
+        },
         manipulate: function (response, success) {
           var content = "";
           if (response.msg) {
-
             content = this.htmlToStr(this.message(response.msg, success));
-            content += success ? (this.htmlToStr(this.liveTimeStamp()) + this.htmlToStr(this.timeStamp())) : this.htmlToStr(this.reloadButton());
+            content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton()) ;
+
             this.msgElement.html(content).show();
             this.themeChange(!success);
             this.lastUpdatedAt(response);
+            this.toggleButtons(success);
           }
         }
-      };
 
+      };
 
       if (typeof (response) === 'object') {
         if (response.success) {
           changeDom.manipulate(response, true);
         } else {
+          autoSaveArticleDraft.lastSaveStatus = false;
           changeDom.manipulate(response, false);
         }
       } else {
+         autoSaveArticleDraft.lastSaveStatus = false;
         changeDom.manipulate({ msg: "Something is wrong."}, false);
       }
     },
@@ -170,7 +180,12 @@ window.App = window.App || {};
     },
 
     unsavedContent: function () {
-      return (this.articleDraftAutosave.contentChanged || ($(".hidden_upload input").length > 1));
+      // Check if there is an error, in that case return false.
+      if(!this.articleDraftAutosave.lastSaveStatus){
+        return false;
+      }
+      // return (this.articleDraftAutosave.contentChanged || ($(".hidden_upload input").length > 1));
+      return ($(".hidden_upload input").length > 1);
     },
 
     unsavedContentNotif: function () {

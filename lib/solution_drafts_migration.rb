@@ -33,9 +33,7 @@ module SolutionDraftsMigration
 		end
 
 		def create_draft(article)
-			draft = article.create_draft_from_article( 
-									:current_author => article.user,
-									:created_author => article.user)
+			draft = article.create_draft_from_article(:user => article.user)
 			if draft.save
 				p "."
 			else

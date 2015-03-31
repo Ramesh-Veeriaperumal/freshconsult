@@ -1,11 +1,11 @@
 class Solution::Draft < ActiveRecord::Base
 
-	set_table_name "solution_drafts"
+	self.table_name = "solution_drafts"
+	self.primary_key = :id
 	serialize :meta, Hash
 
-	belongs_to :account
-	belongs_to :created_author, :foreign_key => "created_author_id", :class_name => "User"
-	belongs_to :current_author, :foreign_key => "current_author_id", :class_name => "User"
+	belongs_to_account
+	belongs_to :user
 	belongs_to :article, :class_name => "Solution::Article"
 	
 	has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
@@ -17,13 +17,12 @@ class Solution::Draft < ActiveRecord::Base
 	validates_uniqueness_of :article_id, :if => 'article_id.present?'
 
 	before_save :populate_defaults
-	before_create :populate_created_author
 	before_destroy :discard_notification
 
-	attr_protected :account_id, :status, :current_author_id, :created_author_id
+	attr_protected :account_id, :status, :user_id
 	attr_accessor :discarding
-	alias_attribute :modified_at, :updated_at
-	alias_attribute :modified_by, :current_author_id
+
+	alias_attribute :modified_by, :user_id
 
 	STATUSES = [
 		[ :editing,     "solutions.draft.status.editing",        0 ], 
@@ -40,7 +39,7 @@ class Solution::Draft < ActiveRecord::Base
 
 	COMMON_ATTRIBUTES = ["title", "description"]
 
-	#defining writer methods for delegated attributes
+	#defining writer method for delegated attribute
 	def description= content
 		unless self.draft_body.present?
 			self.build_draft_body({:description => content, :account_id => Account.current.id}) and return
@@ -50,14 +49,14 @@ class Solution::Draft < ActiveRecord::Base
 
 	def locked?
 		return false unless status == STATUS_KEYS_BY_TOKEN[:editing]
-		return false if User.current == current_author
+		return false if User.current.id == self.user_id
 		self.updated_at > (Time.now.utc - LOCKDOWN_PERIOD)
 	end
 
 	def lock_for_editing!
 		return false if self.locked?
-		self.status, self.current_author = STATUS_KEYS_BY_TOKEN[:editing], User.current
-		self.save
+		self.status, self.user = STATUS_KEYS_BY_TOKEN[:editing], User.current
+		save
 	end
 
 	def unlock
@@ -66,11 +65,8 @@ class Solution::Draft < ActiveRecord::Base
 
 	def populate_defaults
 		self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
-		self.current_author ||= User.current
-	end
-
-	def populate_created_author
-		self.created_author ||= User.current
+		self.user ||= User.current
+		self.modified_at = Time.now.utc unless self.modified_at_changed?
 	end
 
 	def publish!
@@ -80,19 +76,20 @@ class Solution::Draft < ActiveRecord::Base
 
 		move_attachments
 		article.status = article.class::STATUS_KEYS_BY_TOKEN[:published]
+		# article.modified_by = User.current.id
 		article.save
 		self.reload
 		self.destroy
 	end
 
 	def discard_notification
-		return unless discarding && (User.current != self.created_author && self.created_author.email.present?)
+		return unless discarding && (User.current.id != self.user_id && self.user.email.present?)
 
 		portal = Portal.current || Account.current.main_portal
 		DraftMailer.send_later(
 			:discard_notification, 
 			{ :description => self.description, :title => self.title}, 
-			self.article, self.created_author, User.current, portal
+			self.article, self.user, User.current, portal
 		)
 
 	end

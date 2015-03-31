@@ -24,6 +24,7 @@ class Solution::DraftsController < ApplicationController
 	def publish
 		redirect_to :back and return if @article.draft.present? && @article.draft.locked?
 		@article.draft.present? ? @article.draft.publish! : @article.publish!
+		flash[:notice] = t('solution.articles.published_success')
 		redirect_to :back
 	end
 
@@ -43,7 +44,7 @@ class Solution::DraftsController < ApplicationController
 	private
 
 		def scope
-			(params[:type] == 'my_drafts') ? [:drafts_by_user, current_user] : [:all_drafts]
+			(params[:type] == 'all') ? [:all_drafts] : [:drafts_by_user, current_user]
 		end
 
 		def set_selected_tab
@@ -65,15 +66,19 @@ class Solution::DraftsController < ApplicationController
 
 		def autosave_validate
 			return autosave_content_validate if editable?
-			autosave_response(:somebody_editing).merge({:msg => t('solution.draft.autosave.somebody_editing', :name => @draft.current_author.name)})
+			autosave_response(:somebody_editing, {:name => @draft.user.name})
 		end
 
 		def editable?
-			@draft.current_author == current_user || @draft.current_author == nil || !@draft.locked?
+			@draft.user == current_user || @draft.user == nil || !@draft.locked?
 		end
 
 		def autosave_content_validate
-			content_changed? ? autosave_response(:content_changed) : autosave_save_draft
+			if content_changed?
+				msg = (@draft.user == current_user) ? [:content_changed_you] : [:content_changed_other, {:name => @draft.user.name}]
+				return autosave_response(*msg)
+			end
+			autosave_save_draft
 		end
 
 		def content_changed?
@@ -83,15 +88,15 @@ class Solution::DraftsController < ApplicationController
 		def autosave_save_draft
 			if @draft.update_attributes(params.slice(*["description", "title"]))
 				@draft.lock_for_editing! unless @draft.locked?
-				return autosave_response(:save_success, true).merge({:timestamp => @draft.updation_timestamp})
+				return autosave_response(:save_success, {}, true).merge({:timestamp => @draft.updation_timestamp})
 			end
 			autosave_response(:other_problem)
 		end
 
-		def autosave_response(key, success = false)
+		def autosave_response(key, lang_vars = {}, success = false)
 			{
 				:success => success,
-				:msg => t("solution.draft.autosave.#{key}")
+				:msg => t("solution.draft.autosave.#{key}", lang_vars)
 			}
 		end
 

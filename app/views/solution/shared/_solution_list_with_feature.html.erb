@@ -3,10 +3,14 @@
 		<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "btn" unless(folder.articles.size <= 1)%>
 	<% end %>
 	<% if privilege?(:manage_solutions) %>
-		<%= link_to t('edit').html_safe, edit_solution_category_folder_path(category, folder), :class => "btn" unless category.is_default?%>
+		<%= pjax_link_to(t('edit').html_safe, edit_solution_category_folder_path(category, folder),{:class => "btn"}) unless category.is_default? %>
+		<%#= link_to t('edit').html_safe, edit_solution_category_folder_path(category, folder), :class => "btn" unless category.is_default?%>
 	<% end %>
 	<% if privilege?(:publish_solution) %>
-		<%= link_to (t('solution.add') + "<span class='symbols-add'></span>").html_safe, new_solution_category_folder_article_path(category , folder), :class => "btn btn-primary" %>
+		<%= pjax_link_to (t('solution.add') + "<span class='symbols-add'></span>").html_safe,
+							new_solution_category_folder_article_path(category , folder),
+							{:class => "btn btn-primary"} %>
+		<%#= link_to (t('solution.add') + "<span class='symbols-add'></span>").html_safe, new_solution_category_folder_article_path(category , folder), :class => "btn btn-primary" %>
 	<% end %>
 </div>
 
@@ -35,17 +39,23 @@
 				<div class="article-title span7">
 					<% if privilege?(:manage_solutions) %>
 						<% if  (article.draft.present? and article.draft.locked?) %>
-							<%= link_to("<i class='icons-edit-forum'></i>".html_safe, "#", :title => "Locked", :class=>'pull-left mr6 tooltip') %>
+							<%= link_to("<i class='icons-edit-forum'></i>".html_safe, "#", :title => t('solution.articles.locked'), :class=>'pull-left mr6 tooltip') %>
 						<% else %>
-							<%= link_to("<i class='icons-edit-forum'></i>".html_safe, edit_solution_category_folder_article_path(category, folder, article), :title => "Edit", :class=>'pull-left mr6 tooltip') %>
+							<%= pjax_link_to "<i class='icons-edit-forum'></i>".html_safe, 
+										edit_solution_category_folder_article_path(category, folder, article),
+										{ :class => 'pull-left mr6 tooltip', :title => t('edit') } 
+							%>
 						<% end %>
 					<% end %>
 					<div class='article-desc'>
 						<!-- This is for normal thing with out draft feature enabled -->
-							<%= link_to h( (article.draft || article).title ), solution_category_folder_article_path(category, folder, article), :class => (article.published? ? "" : "unpublished-title") %>
-							<div class="muted">
-								<%= t('solution.user_details', :user => article.user.name, :time => formated_date( (article || artcile.draft).modified_at) ).html_safe %>
-							</div>
+						<%= pjax_link_to h( (article.draft || article).title ), 
+									solution_category_folder_article_path(category, folder, article),
+									{ :class => (article.published? ? "" : "unpublished-title") } 
+						%>
+						<div class="muted">
+							<%= t('solution.user_details', :user => article.user.name, :time => formated_date( (article || artcile.draft).modified_at) ).html_safe %>
+						</div>
 					</div>
 				</div>
 				<div class="span5 mt12 clear-left-margin">
@@ -75,7 +85,8 @@
 	<div class="big-info">
 		<div class="no-info-text"><%= t('solution.info7').html_safe %> </div>  
     <% if privilege?(:publish_solution) %>
-		  <%= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+		  <%= pjax_link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), {:class => "uiButton special large"} %>
+		  <%#= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
     <% end %>
 	</div>
 <% end %>

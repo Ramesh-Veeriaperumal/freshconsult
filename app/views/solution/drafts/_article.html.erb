@@ -1,0 +1,39 @@
+<% author = (article.draft || article).user %>
+<% current_item = article.draft || article %>
+<div class="article-item span12 pull-right">
+<div class="article-title span10">
+	<div class="avatar-wrap">
+		<%= user_avatar(author) %>
+	</div>
+	<div class='article-desc'>
+			<div class="muted">
+				<%= t('solution.draft_user_details', :user => author.name).html_safe %> 
+				<span data-livestamp="<%= current_item.modified_at.to_i %>" class="tooltip" title="<%= formated_date(current_item.modified_at) %>"></span>
+			</div>
+			<%#= link_to h((current_item.title).truncate(75)), solution_category_folder_article_path(article.folder.category, article.folder, article) %>
+			
+			<%= pjax_link_to h(current_item.title), solution_category_folder_article_path(article.folder.category, article.folder, article), {} %>
+
+			<div class="muted">
+				<%= t('search.in') %> <%#= article.folder.name %>
+				<% if article.folder.is_default %>
+					<%= t('solution.draft.kbase') %>
+				<% else %>
+					<%= pjax_link_to article.folder.name, 
+							solution_category_folder_path(article.folder.category_id, article.folder),
+							{ :class => "parent-link" } 
+					%>
+				<% end %>
+			</div>
+	</div>
+</div>
+<div class="span2">
+
+	<%= pjax_link_to "Resume Editing", 
+			edit_solution_category_folder_article_path(article.folder.category_id, article.folder, article), 
+			{
+				:class => "btn btn-small pull-right align-right draft-edit-icon"
+			} 
+	%>	
+</div>
+</div>

@@ -49,13 +49,14 @@ Options are
     savingContentFlag: false,
     successCount: 0,
     failureCount: 0,
+    lastSaveStatus: true,
 
     //Default options
     opts: {
       autosaveInterval: 30000,
       autosaveUrl: window.location.pathname,
       monitorChangesOf: {
-        description: ".redactor_editor",
+        description: "#solution_article_description",
         title: "#solution_article_title"
       },
       extraParams: {},
@@ -72,7 +73,7 @@ Options are
     bindEvents: function () {
       var $this = this;
       $.each(this.opts.monitorChangesOf, function (key, value) {
-        $(value).bind("keyup DOMNodeInserted DOMNodeRemoved", function () {
+        $(value).on("change redactor:sync", function () {
           $this.contentChanged = true;
         });
       });
@@ -95,7 +96,7 @@ Options are
       var $this = this;
 
       $.each(this.opts.monitorChangesOf, function (key, value) {
-        $this.content[key] = $(value).html() || $(value).val();
+        $this.content[key] = $(value).val();
       });
     },
     
@@ -132,12 +133,14 @@ Options are
       this.contentChanged = !response.success;
       this.updateExtraParams(response);
       this.savingContentFlag = false;
+      this.lastSaveStatus = true;
       ++this.successCount;
       this.opts.responseCallback(response);
     },
     
     onSaveError: function (xhr, ajaxOptions, thrownError) {
       this.savingContentFlag = false;
+      this.lastSaveStatus = false;
       ++this.failureCount;
       this.opts.responseCallback(xhr.status);
     },

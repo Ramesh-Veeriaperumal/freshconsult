@@ -5,16 +5,16 @@ class DraftMailer < ActionMailer::Base
 
   layout "email_font"
 
-	def self.discard_notification(draft, article, created_author, current_user, portal)
-		discard_email(draft, article, created_author, current_user, portal)
+	def self.discard_notification(draft, article, current_author, current_user, portal)
+		discard_email(draft, article, current_author, current_user, portal)
 	end
 	
-  def discard_email(draft, article, created_author, current_user, portal)
+  def discard_email(draft, article, current_author, current_user, portal)
     mail_config = portal.primary_email_config || current_user.account.primary_email_config
     self.class.set_mailbox mail_config.smtp_mailbox
 
     headers = {
-      :to        => created_author.email,
+      :to        => current_author.email,
       :from      => current_user.email,
       :subject   => "[Draft Discarded] #{draft[:title]}",
       :sent_on   => Time.now
@@ -22,7 +22,7 @@ class DraftMailer < ActionMailer::Base
 
     @draft = draft
     @article = article
-    @created_author = created_author
+    @current_author = current_author
     @user = current_user
     @host = portal.host
     @body_html = generate_body_html(draft[:description])

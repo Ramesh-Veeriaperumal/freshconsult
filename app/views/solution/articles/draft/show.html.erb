@@ -7,22 +7,21 @@
 
 	<div class="artical_section" id="article-section">
 		<div class="crumbs">
-			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
-			<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
-			<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%> 
-			<%= preview_portal(support_draft_preview_path(@article, "preview"), @article.folder.category) if @article.draft.present? %>
-			<%= (preview_portal(support_solutions_article_path(@article.id), @article.folder.category) unless @article.draft.present?) if @article.published? %>
+			<%= pjax_link_to t('solution.title'), solution_categories_path %> &rarr; 
+			<%= pjax_link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
+			<%= pjax_link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%> 
+			<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
 		</div>
 
 		<% if @article.draft or @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
 			<div class="draft-info-box <%= "error" if @article.draft && @article.draft.locked? %>">
 				<% if @article.draft %>
 					<% if @article.draft.locked? %>
-						<%= t('solution.articles.restrict_edit', :name => @article.draft.current_author.name) %>
+						<%= t('solution.articles.restrict_edit', :name => @article.draft.user.name) %>
 					<% else %>
 						<%= t('solution.articles.draft.show_page_msg') %> 
-						<%= current_user == current_item.current_author ? t('solution.articles.draft.you') : current_item.current_author.name %>
-						<span data-livestamp="<%= @article.draft.updation_timestamp %>"></span> (<%= formated_date(current_item.updated_at) %>)
+						<%= current_user == current_item.user ? t('solution.articles.draft.you') : current_item.user.name %>
+						<span data-livestamp="<%= @article.draft.modified_at.to_i %>" class="tooltip" title="<%= formated_date(@article.draft.modified_at) %>"></span>
 					<% end %>
 				<% else %>
 					<%= t('solution.articles.unpublished_version') %>
@@ -32,7 +31,7 @@
 
 					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'btn btn-small draft-btn') %>
 
-					<%= link_to( t('solution.articles.view_published'), support_solutions_article_path(@article.id), :class => "pull-right published-article-link", :target => "_blank") if @article.published? %>
+					<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") if @article.draft.present? %>
 			</div>
 		<% end %> 
 
@@ -44,7 +43,9 @@
 					<%= t('solution.articles.properties') %>
 				</a>
 				&nbsp; | &nbsp;
-				<%= link_to(t('solution.articles.edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
+				<%= pjax_link_to( t('solution.articles.edit'), 
+													((@article.draft && @article.draft.locked?) ? "#" : edit_solution_category_folder_article_path(@article.folder.category_id, @article.folder, @article)),
+					 	{:class => ("disabled" if @article.draft && @article.draft.locked?)} ) %>
 			<% end %>
 		</div>
 
@@ -52,7 +53,7 @@
 			<%= h(current_item.title) %>
 		</h2>
 		<div class="help-text">
-			By <b> <%= (@article.draft ? current_item.current_author.name : current_item.user.name) %></b>, <%= formated_date(current_item.modified_at) %>
+			By <b> <%= (@article.draft ? current_item.user.name : current_item.user.name) %></b>, <%= formated_date(current_item.modified_at) %>
 			<%= content_tag(:span, t('private'), :class => "label tooltip", :title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
 			<span class="label"><%= t(@article.type_name) %></span>
 		</div> 

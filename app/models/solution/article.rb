@@ -55,8 +55,9 @@ class Solution::Article < ActiveRecord::Base
   before_destroy  :set_mobihelp_solution_updated_time
 
   validates_presence_of :title, :description, :user_id , :account_id
-  validates_length_of :title, :in => 3..240
+  validates_length_of :title, :in => 3..240, :if => :title_present?
   validates_numericality_of :user_id
+  validate :status_in_default_folder
  
   scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
   scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}
@@ -73,15 +74,13 @@ class Solution::Article < ActiveRecord::Base
     }
   }
   
-  scope :all_drafts, includes(:draft).where('solution_articles.status = 1 or solution_drafts.article_id = solution_articles.id').
+  scope :all_drafts, includes(:draft).where('solution_articles.status = ? or solution_drafts.article_id = solution_articles.id', STATUS_KEYS_BY_TOKEN[:draft]).
                                       order('solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC')
 
   scope :drafts_by_user, lambda { |user| 
     includes(:draft).where('
       (solution_articles.status = 1 AND solution_articles.user_id = ?) OR 
-      (solution_drafts.article_id = solution_articles.id AND 
-        ( solution_drafts.created_author_id = ? OR solution_drafts.current_author_id = ?)
-      )', user.id, user.id, user.id).
+      (solution_drafts.article_id = solution_articles.id AND solution_drafts.user_id = ?)', user.id, user.id).
     order('solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC')
   }
 
@@ -248,6 +247,7 @@ class Solution::Article < ActiveRecord::Base
 
   def publish!
     set_status(true)
+    # self.modified_by = User.current.id
     save
   end
 
@@ -261,5 +261,15 @@ class Solution::Article < ActiveRecord::Base
       all_fields = [:title, :description, :status, :position]
       changed_fields = self.changes.symbolize_keys.keys
       (changed_fields & all_fields).any?
+    end
+
+    def status_in_default_folder
+      if status == STATUS_KEYS_BY_TOKEN[:published] and self.folder.is_default
+        errors.add(:status, I18n.t('solution.articles.cant_publish'))
+      end
+    end
+
+    def title_present?
+      self.title.present?
     end
 end

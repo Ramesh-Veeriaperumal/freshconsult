@@ -6,10 +6,10 @@ class CreateSolutionDrafts < ActiveRecord::Migration
 			t.integer  "account_id",   :limit => 8, :null => false
 			t.integer  "article_id",   :limit => 8
 			t.string   "title"
-			t.integer  "current_author_id", :limit => 8
-			t.integer  "created_author_id", :limit => 8
+			t.integer  "user_id", :limit => 8
 			t.text		"meta"
 			t.integer  "status"
+			t.timestamp "modified_at"
 			t.timestamps
 		end
 	end

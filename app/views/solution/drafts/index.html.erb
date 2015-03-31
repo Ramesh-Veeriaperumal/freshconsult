@@ -1,4 +1,4 @@
-<div class="folder-2col">
+<div class="folder-2col" id="drafts-section">
 	<div class="artical_section" id="article-section"> 
 		<!-- <div class="crumbs">
 			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
@@ -7,14 +7,14 @@
 
 		<div class="draft-titles">
 			
-			<%= pjax_link_to t('solution.draft.all_drafts'), solution_drafts_path, {
-					:class => "heading item #{'active' unless (params[:type] == 'my_drafts')}",
-					:title => t('solution.draft.all_drafts')
+			<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, {
+					:class => "heading item #{'active' unless (params[:type] == 'all')}",
+					:title => t('solution.draft.my_drafts')
 				} %>
 
-			<%= pjax_link_to t('solution.draft.my_drafts'), solution_my_drafts_path('my_drafts'), {
-					:class => "heading item #{'active' if (params[:type] == 'my_drafts')}",
-					:title => t('solution.draft.my_drafts')
+			<%= pjax_link_to t('solution.draft.all_drafts'), solution_my_drafts_path('all'), {
+					:class => "heading item #{'active' if (params[:type] == 'all')}",
+					:title => t('solution.draft.all_drafts')
 				} %>
 
 		</div>

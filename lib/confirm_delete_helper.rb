@@ -12,7 +12,7 @@ module ConfirmDeleteHelper
 
 	def confirm_delete_defaults(item, url)
 		{
-			:class => 'btn',
+			:class => 'btn confirm-delete',
 			:rel => 'confirmdelete',
 			
 			"data-warning-message" => "<b>#{t('delete_confirm.hard_delete')}</b>".html_safe,

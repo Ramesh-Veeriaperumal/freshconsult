@@ -6,12 +6,12 @@
 		<b>The draft version of the article
 		<%= link_to "\"#{@draft[:title]}\"", 
 					solution_article_url(@article.id, :host => @host)%>
-		 was discarded by <%= link_to(@user.name, contact_url(@user.id, :host => @host)) %> at <%= Time.now.utc %> .
+		 was discarded by <%= link_to(@user.name, contact_url(@user.id, :host => @host)) %> on <%= formated_date(Time.now.utc) %> .
 	</div>
 
 	<div class="forum_content">
 		<div class="draft-title">
-			<h3> <%= @draft[:title] %> <h5> by <%= @created_author.name %> <h5> </h3>
+			<h3> <%= @draft[:title] %> <h5> by <%= @current_author.name %> <h5> </h3>
 		</div>
 		<br />
 		<div class="actual_content">

@@ -1450,6 +1450,7 @@ Redactor.prototype = {
 	syncCode: function()
 	{
 		this.$el.val(this.$editor.html());
+		this.$el.trigger('redactor:sync');
 	},
 	
 	// API functions

@@ -1,40 +1,4 @@
 
 <div class="artical-list row-fluid" id="draft_list">
-	<% articles.each do |article| %>
-
-		<% author = article.draft.present? ? article.draft.current_author : article.user %>
-		<% current_item = article.draft || article %>
-		<div class="article-item span12 pull-right">
-			<div class="article-title span10">
-				<div class="avatar-wrap">
-					<%= user_avatar(author) %>
-				</div>
-				<div class='article-desc'>
-						<div class="muted">
-							<%= t('solution.draft_user_details', :user => author.name).html_safe %> 
-							<span data-livestamp="<%= current_item.modified_at.to_i %>"></span>
-						</div>
-						<%#= link_to h((current_item.title).truncate(75)), solution_category_folder_article_path(article.folder.category, article.folder, article) %>
-						
-						<%= pjax_link_to h(current_item.title), solution_category_folder_article_path(article.folder.category, article.folder, article), {} %>
-
-						<div class="muted">
-							<%= t('search.in') %> <%= article.folder.name %>
-						</div>
-				</div>
-			</div>
-			<div class="span2">
-				<!-- <a href="<%= edit_solution_category_folder_article_path(article.folder.category_id, article.folder, article) %>" 
-					class="ficon-edit fsize-23 tooltip pull-right align-right draft-edit-icon" title="Edit"> </a> -->
-
-				<%= pjax_link_to "", 
-						edit_solution_category_folder_article_path(article.folder.category_id, article.folder, article), 
-						{
-							:class => "ficon-edit fsize-23 tooltip pull-right align-right draft-edit-icon",
-							:title => t('edit')
-						} 
-				%>	
-			</div>
-		</div>
-	<% end %>
+<%= render :partial => 'article', :collection => articles %>
 </div>

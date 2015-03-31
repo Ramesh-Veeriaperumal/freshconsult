@@ -2,11 +2,11 @@
 <% current_item = @article.draft || @article %>
 <div class="form-horizontal">
 	<div class="control-group article-title-input">
-		<%= f.text_field :title, :class => "text required", :autofocus => true, :placeholder => t('solution.solution_title'),
+		<%= f.text_field :title, :class => "text required", :placeholder => t('solution.solution_title'),
 		:value =>  current_item.title %>
 	</div>
 	<div class="control-group">
-		<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required", :value => current_item.description %>
+		<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required", :value => current_item.description, :"data-remove-cursor" => false %>
 	</div>
 	<div class="control-group overflow-visible">
 		<%= render	:partial => "/solution/shared/attachment_form",
@@ -66,5 +66,3 @@
 		});
 	</script>
 <% end %>
-
-

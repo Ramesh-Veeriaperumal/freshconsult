@@ -3240,12 +3240,14 @@ en:
         portal_preview_msg: You are previewing draft version of this article.
         discard_msg: The draft has been discarded.
         discard_confirm: Do you want to discard this draft?
+      locked: Locked
+      cant_publish: can't change status to published of an article in default folder/category
       draft_published_label: There is also a published version.
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
       published_success: This article was published succesfully.
       published_failure: This article could not be published. Try again.
-      view_published: View Published
+      view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."
       edit: Edit Article
       properties: Properties
@@ -3276,13 +3278,18 @@ en:
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
         count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
     draft:
+      name: Drafts
       all_drafts: All Drafts
       my_drafts: My Drafts
+      kbase: KBase
       autosave:
         save_success: "Draft saved "
         somebody_editing: "%{name} is currently editing this article. "
+        content_changed_other: "%{name} has updated the content while you were away. "
+        content_changed_you: "You have updated the content elsewhere. "
         content_changed: "The content has changed. "
         other_problem: "The content could not be saved. "
+    you: You
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
