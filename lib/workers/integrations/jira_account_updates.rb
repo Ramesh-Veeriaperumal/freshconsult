@@ -15,15 +15,16 @@ class Workers::Integrations::JiraAccountUpdates
 		begin
 			if(operation == "update")
 				jiraIssue = Integrations::JiraIssue.new(installed_app)
+				tkt_obj = Account.current.tickets.find_by_display_id(options[:local_integratable_id])
 				Timeout.timeout(JIRA_TIMEOUT) {
-					jiraIssue.update(options,false)
+					jiraIssue.update(options,false) 
+					jiraIssue.construct_attachment_params(options[:integrated_resource]["remote_integratable_id"],tkt_obj )
 				}
 			else
 				jira_webhook = Integrations::JiraWebhook.new(installed_app,HttpRequestProxy.new,options)
 				Timeout.timeout(JIRA_TIMEOUT) {
 					jira_webhook.send(operation)
 				}
-				
 			end
 			rescue Timeout::Error => timeouterr
         	Rails.logger.debug "Timeout error on jira updates - #{timeouterr}"

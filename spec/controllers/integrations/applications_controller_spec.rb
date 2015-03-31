@@ -60,8 +60,7 @@ RSpec.describe Integrations::ApplicationsController do
     set_redis_key(provider, slack_params(provider))
     post 'oauth_install', :id => provider
     get_redis_key(provider).should be_nil
-
-    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app = Integrations::InstalledApplication.with_name(provider).first
     installed_app.should_not be_nil
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end

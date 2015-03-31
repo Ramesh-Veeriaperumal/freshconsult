@@ -3358,7 +3358,7 @@ en:
     can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
     can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
   import_example_title: Following is the example of a CSV file
-  change_my_password: Change My Password
+  change_password: Change Password
   answered: Answered
   errors_in_payment_info: "Errors encountered with your payment information:"
   attach_files: Attach files
@@ -3588,8 +3588,8 @@ en:
   step1: Step 1
   next_charge_date: "Next Renewal"
   last_renewed_on: "Last Renewed on"
-  update_and_login: "Update & login"
-  activate_and_login: "Activate & login"
+  update_and_log_in: "Update & Log in"
+  activate_and_log_in: "Activate & Log in"
   password: "Password"
   enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
@@ -4139,6 +4139,8 @@ en:
   reply_comment: Add Comment
   password: Password
   import_step2_info: Map fields from your CSV with contact fields.
+  create_password: Create a Password
+  retype_password: Retype Password
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
@@ -7085,6 +7087,7 @@ en:
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
   short_code:
+    title: Chat Shortcodes
     alert:
       code_mandatory: Code and Message cannot be empty. Code should be between 1 to 10 character and can have numbers, alphabets , _ and -.
       code_duplicate: Trying to add or update with duplicate code.
