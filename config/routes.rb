@@ -414,6 +414,7 @@ Helpkit::Application.routes.draw do
         get :custom_search
         get :children
         get :recent_calls
+        get :export
       end
     end
 

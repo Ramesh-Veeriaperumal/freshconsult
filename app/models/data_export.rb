@@ -8,7 +8,7 @@ class DataExport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4 }
+  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5 }
 
   TICKET_EXPORT_LIMIT = 3
 
@@ -22,6 +22,7 @@ class DataExport < ActiveRecord::Base
   scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
   scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }
   scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }
+  scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
 
   def owner?(downloader)
     user_id && downloader && (user_id == downloader.id)

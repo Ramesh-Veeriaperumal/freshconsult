@@ -4707,6 +4707,23 @@ en:
       tags: "Tags"
       survey_result: "Survey Result"
       product: "Product"
+    call_history:
+      info:
+        success: We have started exporting your call records. It will be mailed to you once completed. 
+        error: We were unable to start the export. Please try again or contact Freshdesk support.
+      subject: Call Records within (%{range})
+      body:
+        call_record_export_complete: <strong>Your call records have been successfully exported.</strong> It is now available for download
+        call_records_download_link: <a href=%{url}><strong>Download Call Records</strong></a>
+        conditions_header: ----- Contains calls matching the following conditions -----
+        alternate_link: "Alternatively, paste this link in your web browser to download the file:"
+        thanks: Thank You
+      no_records_mail:
+        subject: "No records in range %{range}"
+        body: Seems like there are no call records in the provided date range.
+      range_limit_message: We only allow exporting call records in a %{range} month range. Please change your filter accordingly. Apologies for the inconvenience.
+      repeated_request: Your call records are already being exported. Kindly check your mail for the download link.
+      export_limit_breached: We currently allow only %{limit} concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
   sla:
     minutes: Mins
     hours: Hrs
@@ -6217,6 +6234,7 @@ en:
       blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
+      filter_by_number: "Number"
       filter_by_time: "Time Period"
       filter_by_agent: "Agent"
       filter_by_group: "Incoming Calls to Group"
