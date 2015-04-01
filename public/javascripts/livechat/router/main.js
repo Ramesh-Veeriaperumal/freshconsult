@@ -6,7 +6,8 @@ window.liveChat.archiveRouter = function(){
 			"archive" : "loadArchiveHomePage",
 			"archive/visitor/:params": "filterByVisitor",
 			"archive/:params" : "loadMessage",
-			"visitor/:type"   : "loadVisitor"
+			"visitor/:type"   : "loadVisitor",
+			"archive/agent/:params": "filterByAgent"
 		},
 		initialize:function(options){
 			window.archiveRouter = this;
@@ -44,6 +45,13 @@ window.liveChat.archiveRouter = function(){
 			this.navigate("/archive");
 			this._showArchivePage(); 
 			jQuery("#visitor_id").val(params);
+			jQuery("#submit").click();
+		},
+		filterByAgent:function(params){
+			var agentIds = _.escape(params);
+			this.navigate("/archive");
+			this._showArchivePage();
+			jQuery("#agent_ids").val(params);
 			jQuery("#submit").click();
 		},
 		destroyAll : function(){
