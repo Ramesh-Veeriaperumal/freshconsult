@@ -83,7 +83,11 @@
       <% end %>
 
       if( !isMobile.any() ){
+        <% if logged_in? %>
+          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
+        <% else %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
+        <% end %>
       }
     }); 
 
