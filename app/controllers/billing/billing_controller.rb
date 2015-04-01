@@ -16,7 +16,7 @@ class Billing::BillingController < ApplicationController
               "card_updated", "payment_succeeded", "payment_refunded", "card_deleted" ]          
 
   LIVE_CHAT_EVENTS = [ "subscription_activated", "subscription_renewed", "subscription_cancelled", 
-                        "subscription_reactivated"]
+                        "subscription_reactivated", "subscription_changed"]
 
   # Events to be synced for all sources including API.
   SYNC_EVENTS_ALL_SOURCE = [ "payment_succeeded", "payment_refunded", "subscription_reactivated" ]
@@ -60,9 +60,9 @@ class Billing::BillingController < ApplicationController
       Resque.enqueue(Workers::Livechat, 
         {
           :worker_method => "update_site", 
-          :siteId        => current_account.chat_setting.display_id, 
-          :attributes    => { :expires_at => current_account.subscription.next_renewal_at.utc,
-                              :suspended => !current_account.active?
+          :siteId        => @account.chat_setting.display_id, 
+          :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
+                              :suspended => !@account.active?
                              }
         }
       )
