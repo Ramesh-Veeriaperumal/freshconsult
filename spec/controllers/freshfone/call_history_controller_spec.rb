@@ -62,4 +62,62 @@ RSpec.describe Freshfone::CallHistoryController do
     response.should render_template('freshfone/call_history/recent_calls')
   end
 
+  describe "Call History Export Worker" do
+    TEST_CALL_TYPE = 1
+    TEST_CALL_STATUS = 1
+    before :each do
+      require 'csv'
+      FileUtils.stubs(:rm_f)
+
+      @account.freshfone_calls.destroy_all
+      @freshfone_number = @account.all_freshfone_numbers.first(:order => "deleted ASC")
+      @account.reload
+
+      @export_params = { 
+        :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.today.inspect + '"}]',
+        :export_to => "csv", :account_id => @account.id, :user_id => @agent.id, :portal_url => @account.full_domain 
+      }
+
+      @out_dir   = "#{Rails.root}/tmp/export/#{@account.id}/call_history"
+    end
+
+    after :all do
+      out_dir = "#{Rails.root}/tmp/export/#{@account.id}/call_history" 
+      FileUtils.remove_dir(out_dir, true)
+    end
+
+    it 'should export call records successfully' do
+      call_sid = "CA9cdcef5973752a0895f598a3413a88d5"
+      @account.freshfone_calls.create(  :freshfone_number_id => @freshfone_number.id, 
+                                        :call_status => TEST_CALL_STATUS, :call_type => TEST_CALL_TYPE, :agent => @agent,
+                                        :params => { :CallSid => call_sid } )
+      Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker.new(@export_params).perform
+      files = Dir.glob(@out_dir + '/*.csv')
+      files.first.should_not be_blank
+      csv_text = File.read(files.first)
+      csv = CSV.parse(csv_text, :headers => true)
+      csv.count.should be_eql(1)
+      call = csv.first
+      call["Helpdesk Number"].should be_eql(@freshfone_number.number)
+      call["Call Status"].should be_eql("Answered")  # Change accordingly if TEST_CALL_STATUS is changed
+      call["Agent Name"].should be_eql(@agent.name)
+      call["Direction"].should be_eql(Freshfone::Call::CALL_TYPE_REVERSE_HASH[TEST_CALL_TYPE].to_s.capitalize)
+    end
+
+    it 'should export call records with their children' do
+      create_call_family
+      @account.freshfone_calls.each do |call| # Because call hist export skips ongoing calls
+        call.update_attributes( { :call_status => Freshfone::Call::CALL_STATUS_STR_HASH['completed'] })
+      end
+      Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker.new(@export_params).perform
+      files = Dir.glob(@out_dir + '/*.csv')
+      files.first.should_not be_blank
+      csv_text = File.read(files.first)
+      csv = CSV.parse(csv_text, :headers => true)
+      csv.count.should be_eql(2)
+      csv[0]["Transfer Count"].to_i.should be_eql(1)
+      csv[1]["Direction"].should be_eql("Transfer")
+    end
+  end
+
 end
