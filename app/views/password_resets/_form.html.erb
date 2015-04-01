@@ -2,18 +2,17 @@
 	<%= f.error_messages %>
 	<fieldset>
 		<div class="control-group">
-			<%= f.label :password, t('create_password'), :class => "control-label required" %>
+			<label class="control-label required"><%= t('create_password') %></label>
 			<div class="controls">
-				<%= f.password_field :password, :class => "required special password span6", :autocomplete => "off", :autofocus => true %>
+				<input class="special span6 password required" id="password" name="user[password]" type="password" autocomplete="off" autofocus="true">
 			</div>
 		</div>
 		<div class="control-group">
-			<%= f.label :password_confirmation, t('retype_password'), :class => "control-label required" %>
+			<label class="control-label required"><%= t('retype_password') %></label>
 			<div class="controls">
-				<%= f.password_field :password_confirmation, :class => "required special password_confirmation span6", 
-					:autocomplete => "off" %>
+				<input class="special span6 password_confirmation required" id="password_confirmation"name="user[password]" type="password" autocomplete="off">
 			</div>
-		</div>
+		</div>		  	
 		<div class="form-actions">
 			<button type="submit" class="btn btn-primary"> <%= t('update_and_log_in') %> </button>
 		</div>	
