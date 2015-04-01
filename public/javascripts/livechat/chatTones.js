@@ -16,6 +16,7 @@
        }).select2('val', agentData.ping_tone);
 
       $("#change_ping_tone").on('change', function(element){
+        freshChatSound.play('playTone', window.ASSET_URL.cloudfront+'/sound/'+agentData.availablePingTones[element.val]);
         window.liveChat.updatePingTone(element);
       });
 
