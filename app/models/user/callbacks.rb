@@ -2,8 +2,7 @@ class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
   
-  before_create :set_time_zone , :set_company_name
-  before_create :set_language, :unless => :created_from_email
+  before_create :set_company_name
   before_create :populate_privileges, :if => :helpdesk_agent?
 
   before_update :populate_privileges, :if => :roles_changed?
@@ -11,6 +10,8 @@ class User < ActiveRecord::Base
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
+  before_save :set_time_zone
+  before_save :set_language, :unless => :created_from_email
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :if => :customer?
 
@@ -29,7 +30,7 @@ class User < ActiveRecord::Base
   end
 
   def set_time_zone
-    self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+    self.time_zone = account.time_zone if time_zone.nil? || validate_time_zone(time_zone) #by Shan temp
   end
 
   def set_customer_privilege
@@ -52,7 +53,7 @@ class User < ActiveRecord::Base
   end
 
   def set_language
-    self.language = account.language if language.nil? 
+    self.language = account.language if language.nil? || validate_language(language)
   end
 
   def discard_contact_field_data
@@ -99,5 +100,15 @@ class User < ActiveRecord::Base
   def clear_agent_caches
     clear_agent_list_cache 
     clear_agent_name_cache if @model_changes.key?(:name)
+  end
+
+  private
+
+  def validate_time_zone time_zone
+    !(ActiveSupport::TimeZone.all.map(&:name).include? time_zone)
+  end
+
+  def validate_language language
+    !(I18n.available_locales.include?(language.to_sym))
   end
 end

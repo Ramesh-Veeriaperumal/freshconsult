@@ -1,0 +1,23 @@
+Hi <%= @user.name%>,
+
+<% if @import_success %>
+	<%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}"%>
+<% else %>
+	<%= "#{t('flash.import.info2', :type => @type)}"%>
+
+	<%= "#{t(:'flash.import.created', :count => @created)}" %>
+	<%= "#{t(:'flash.import.updated', :count => @updated)}" %>
+	<%= "#{t(:'flash.import.failed', :count => @failed)}" %>
+
+	<%= "#{t('flash.import.info3', :type => @type, :uc_type => @type.capitalize)}" %>
+
+	<%= "#{t('flash.import.info4', :type => @type.singularize)}" if @attachment%>
+	
+	<%= @corrupted ? t('flash.import.info6') : "#{t('flash.import.info5', :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}" %>
+<% end %>
+
+<%= t(:'flash.import.help_desk')%>
+
+<%= t(:'flash.import.regards')%>
+
+<%= t(:'flash.import.freshdesk')%>

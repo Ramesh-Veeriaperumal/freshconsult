@@ -64,13 +64,6 @@ GIT
     lhm (1.2.0)
 
 GIT
-  remote: git://github.com/freshdesk/map-fields
-  revision: ef85a05939093f7e69b857f2259411df459c886f
-  branch: csv_import
-  specs:
-    map_fields (1.0.5)
-
-GIT
   remote: git://github.com/freshdesk/rate-limiting.git
   revision: d5c5c60d09e3ff1d9881dbea5dc737dbebbd2a6c
   specs:
@@ -933,7 +926,6 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   log_filter!
   mail
-  map_fields!
   marketo!
   meta_request
   mocha (~> 0.13.0)

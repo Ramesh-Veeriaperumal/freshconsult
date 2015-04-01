@@ -204,12 +204,14 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :contact_import do
+  # contacts and companies import
+  resources :customers_import do
     collection do
-      get :csv
-      get :google
+      post :create
     end
   end
+  match '/imports/:type' => 'customers_import#csv'
+  match '/imports/:type/map_fields' => 'customers_import#map_fields'
 
   resources :health_check
 

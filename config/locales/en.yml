@@ -1858,7 +1858,7 @@ en:
       default_roles: You cannot modify default roles
       delete:
         not_allowed: You cannot delete this role. There are other users are associated with it.
-    contacts_import:
+    customers_import:
       failure: Please try again
       no_file: Please upload a file
       wrong_format: The CSV file format is not supported. Please check the CSV file format!
@@ -1868,8 +1868,15 @@ en:
       failure: Please try again
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
-      thank_user: Thank you for submitting a import request.
-      details: "Your CSV file has now been processed and the import has been completed successfully. You can open your helpdesk and go to %{customer}-->%{users} to check out the new information. "
+      info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. " 
+      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:" 
+      created: "Created: %{count}" 
+      updated: "Updated: %{count}" 
+      failed:  "Failed : %{count}" 
+      info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}." 
+      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment." 
+      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file" 
+      info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -2969,7 +2976,6 @@ en:
     convert_fulltime: Full-Time Agent
     convert_occasional: Occasional Agent
     send_activation: Send activation email
-    import_csv: Import Customers from CSV
     export_csv: Export to CSV
     import_google: Import from Google
     import_google_no: "No"
@@ -3338,25 +3344,13 @@ en:
   import_added_newly: Added Newly
   quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
-  import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
-  contact_import:
-    name: Name
-    job_title: Job Title
-    company: Company
-    work_phone: Work Phone
-    email: Email
-    twitter_id: Twitter Id
-    mobile_phone: Mobile Phone
-    address: Address
-    background_info: Background Information
-    tags: Tags
-    language: Language
-    timezone: Timezone
+  customer_import:
+    import_step2_info: Map fields from your CSV with %{type} fields.
+    import_warning_info: If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated. 
+    import_csv: "Import %{type} from CSV"
     sample_data: Sample data
-    import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
-    can_see_all_tickets_of_the_company: Can view all company tickets ?
-    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
-    can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
+    contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
+    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..) Read more about it <a href = '%{solution_link}' target = '_blank' >here.</a>"
   import_example_title: Following is the example of a CSV file
   change_password: Change Password
   answered: Answered
@@ -4138,7 +4132,6 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  import_step2_info: Map fields from your CSV with contact fields.
   create_password: Create a Password
   retype_password: Retype Password
   feedbackwidget_defaulttitle: Help &amp; Support

@@ -4,6 +4,10 @@ module ContactFieldsHelper
 		ContactField.create_field options
 	end
 
+  def create_company_field options
+    CompanyField.create_field options
+  end
+
 	def custom_field_params
 		[
 			{ :type=>"paragraph", :field_type=>"custom_paragraph", :label=>"Testimony", :required_in_portal => "true", :editable_in_signup=> "true"},
@@ -19,8 +23,9 @@ module ContactFieldsHelper
        { :type => "dropdown", :field_type => "custom_dropdown", :label => "Category", 
         :custom_field_choices_attributes => [ {"value"=>"First", "position"=>1, "_destroy"=>0, "name"=>"First"}, 
                                               {"value"=>"Second", "position"=>2, "_destroy"=>0, "name"=>"Second"}, 
-                                              {"value"=>"Third", "position"=>3, "_destroy"=>0, "name"=>"Third"}, 
-                                              {"value"=>"Tenth", "position"=>4, "_destroy"=>0, "name"=>"Tenth"}]}
+                                              {"value"=>"Third", "position"=>3, "_destroy"=>0, "name"=>"Third"},
+                                              {"value"=>"Freshman", "position"=>4, "_destroy"=>0, "name"=>"Freshman"},
+                                              {"value"=>"Tenth", "position"=>5, "_destroy"=>0, "name"=>"Tenth"}]}
       ]
     end
 
@@ -36,6 +41,17 @@ module ContactFieldsHelper
        :editable_in_portal=> options[:editable_in_portal] || true, 
        :required_in_portal=> options[:required_in_portal] || false, 
        :editable_in_signup=> options[:editable_in_signup] || false,
+       :id=>nil, :custom_field_choices_attributes => options[:custom_field_choices_attributes] || [], :position=>rand(15..1000)
+     }
+   end
+
+   def company_params options = {}
+      {
+       :field_options => options[:field_options] || nil,
+       :type=> options[:type], 
+       :field_type=> options[:field_type], 
+       :label=> options[:label], 
+       :required_for_agent=> options[:required_for_agent] || false, 
        :id=>nil, :custom_field_choices_attributes => options[:custom_field_choices_attributes] || [], :position=>rand(15..1000)
      }
    end
