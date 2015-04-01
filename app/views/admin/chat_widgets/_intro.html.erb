@@ -30,7 +30,9 @@
               "active"            : false,
               "token"             : '<%= livechat_partial_token(current_user.id) %>',
               "non_availability_message" : <%= default_non_avail_message %>,
-              "offline_chat" : <%= default_offline_chat %>
+              "offline_chat"      : <%= default_offline_chat %>,
+              "expires_at"        : <%= current_account.subscription.next_renewal_at %>,
+              "suspended"         : <%= !current_account.active? %>
             };
             
             $.ajax({

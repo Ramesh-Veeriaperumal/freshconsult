@@ -61,8 +61,8 @@ class Billing::BillingController < ApplicationController
         {
           :worker_method => "update_site", 
           :siteId        => current_account.chat_setting.display_id, 
-          :attributes    => { :next_renewal_at => current_account.subscription_next_renewal_at,
-                              :suspended => !current_account.active?
+          :attributes    => { :expires_at => current_account.subscription.next_renewal_at.utc,
+                              :suspended => !current_account.active?)
                              }
         }
       )
