@@ -56,8 +56,9 @@ class Integrations::JiraIssue
       params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
       newIntegratedResource = Integrations::IntegratedResource.createResource(params)
       newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
-      tkt_obj = Account.current.tickets.find_by_display_id(params[:local_integratable_id])
-      attachment_response = construct_attachment_params(params[:integrated_resource]["remote_integratable_id"], tkt_obj) 
+      params[:operation] = "link_issue"
+      params[:app_id] = @installed_app.id
+      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params) 
       return newIntegratedResource
     else
       res_data
