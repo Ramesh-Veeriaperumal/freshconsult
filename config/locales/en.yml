@@ -7107,5 +7107,5 @@ en:
   short_code:
     title: Chat Shortcodes
     alert:
-      code_mandatory: Code and Message cannot be empty. Code should be between 1 to 10 character and can have numbers, alphabets , _ and -.
+      code_mandatory: Code and Message cannot be empty. Code should be between 1 to 10 character and cannot have `~,.<>;':/[\] | \\ \" {} () ! @# $% ^& *? =+- .
       code_duplicate: Trying to add or update with duplicate code.

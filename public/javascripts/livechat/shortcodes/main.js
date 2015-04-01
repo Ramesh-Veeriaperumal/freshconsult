@@ -17,7 +17,7 @@ liveChat.admin_short_codes = (function(){
           
         },
       _trim_size: 45,
-      _valid_code: new RegExp(/^[-_+\w\s]*$/),
+      _valid_code: new RegExp((/[`~,.<>;':"/[\]|{}()!@#$%^&*?=\s+-]/)),
       bindEvents: function(){
         jQuery('#short_code_add').click(function(){
           var _random_id = "new_" + _module.getRandomInt(1,10);
@@ -41,7 +41,7 @@ liveChat.admin_short_codes = (function(){
           var _message = _parent.find('.short_code_message').val();
           var _params = {};
 
-          if(!_module.validateCode(_key)){
+          if(!_module.validateCode(_key.trim())){
             _module.showAlertMsg(_parent,_module._error_messages.CODE_EMPTY);
             return false;
           }
@@ -129,7 +129,7 @@ liveChat.admin_short_codes = (function(){
       },
 
       validateCode: function(code){
-        return (code.length > 0 && code.length < 10 && _module._valid_code.test(code));
+        return (code.length > 0 && code.length < 10 && !_module._valid_code.test(code));
       },
 
       showAlertMsg: function(elem, msg){
