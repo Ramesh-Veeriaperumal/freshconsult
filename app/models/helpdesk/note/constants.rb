@@ -1,6 +1,6 @@
 class Helpdesk::Note < ActiveRecord::Base
 
-	SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review ecommerce}
+	SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review}
 
   NOTE_TYPE = { true => :private, false => :public }
   
@@ -17,8 +17,7 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobihelp] => SOURCE_KEYS_BY_TOKEN["mobihelp"],
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget] => SOURCE_KEYS_BY_TOKEN["email"],
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:ecommerce] => SOURCE_KEYS_BY_TOKEN["ecommerce"]
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget] => SOURCE_KEYS_BY_TOKEN["email"]
   }
 
   CATEGORIES = {

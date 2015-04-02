@@ -9,7 +9,6 @@ class EmailConfig < ActiveRecord::Base
   
   has_one :imap_mailbox, :dependent => :destroy, :conditions => { :enabled => true }
   has_one :smtp_mailbox, :dependent => :destroy, :conditions => { :enabled => true }
-  has_one :ecommerce_account, :class_name => 'Ecommerce::Account'
 
   accepts_nested_attributes_for :imap_mailbox, :allow_destroy => true
   accepts_nested_attributes_for :smtp_mailbox, :allow_destroy => true
@@ -19,8 +18,6 @@ class EmailConfig < ActiveRecord::Base
   validates_uniqueness_of :activator_token, :allow_nil => true
   validates_format_of :reply_email, :with => AccountConstants::EMAIL_SCANNER, :message => I18n.t('activerecord.errors.messages.invalid')
   validates_format_of :to_email, :with => AccountConstants::EMAIL_SCANNER, :message => I18n.t('activerecord.errors.messages.invalid')
-
-  scope :ecommerce_emails, lambda { |ids| select('id, name').where('id not in (?)', ids) }
   
   xss_sanitize  :only => [:to_email,:reply_email], :plain_sanitizer => [:to_email,:reply_email]
   

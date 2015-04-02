@@ -74,8 +74,10 @@ module JiraHelper
     temp_array.push({ "name" => "sathappan@freshdesk.com" }) if arr_custom_field_type == "com.atlassian.jira.plugin.system.customfieldtypes:multiuserpicker" 
     temp_array.push({ "name" => "users" }) if arr_custom_field_type == "com.atlassian.jira.plugin.system.customfieldtypes:multigrouppicker"
     temp_array.push({ "name" => "1.0" }) if arr_custom_field_type == "com.atlassian.jira.plugin.system.customfieldtypes:multiversion"
-    if arr_custom_field_type == "com.atlassian.jira.plugin.system.customfieldtypes:multiselect" or arr_custom_field_type == "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes"
-        temp_array.push({ "id" => allowed_values[0]["id"] })
+    if arr_custom_field_type == "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
+      allowed_values.each do |allowed_value_hash|
+        temp_array.push({ "value" => allowed_value_hash["value"] })
+      end
     end
     temp_array
   end
@@ -83,25 +85,8 @@ module JiraHelper
   def get_custom_field_value(custom_field_type, schema_custom = nil, schema_allowed_values = nil)
     value = rand(10) if custom_field_type == "number"
     value = get_array_custom_field_value(schema_custom, schema_allowed_values) if custom_field_type == "array"
-    value = get_string_custom_field_value(schema_custom, schema_allowed_values) if custom_field_type == "string"
-    value = { "name" => "sathappan@freshdesk.com" } if custom_field_type == "user"
-    value = "2015-03-10" if custom_field_type == "date"
-    value = "2015-08-18T18:20:00.00+1100" if custom_field_type == "datetime"
+    value = "Some random string " if custom_field_type == "string"
     value
-  end
-
-  def get_string_custom_field_value(schema_custom, allowed_values)
-    temp_array = []
-    if schema_custom == "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons" or schema_custom == "com.atlassian.jira.plugin.system.customfieldtypes:select"
-        return { "id" => allowed_values[0]["id"] }
-    elsif schema_custom == "com.atlassian.jira.plugin.system.customfieldtypes:url" 
-      return "http://en.wikipedia.org/wiki/Net_Promoter"
-    elsif schema_custom ==  "com.atlassian.jira.plugin.system.customfieldtypes:labels"
-      return temp_array.push("label1")
-    else
-      return 'some random string'
-    end
-    temp_array
   end
 
   #returns an array of the form

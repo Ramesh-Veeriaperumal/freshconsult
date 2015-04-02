@@ -4,7 +4,6 @@ module Users
     include ActionView::Helpers
     include ActionDispatch::Routing
     include Rails.application.routes.url_helpers
-    include Ecommerce::HelperMethods
 
     def reset_agent_password(portal = nil)
       clear_password_field
@@ -20,7 +19,6 @@ module Users
 
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
       if customer?
-        return if ebay_user?(self.email)
         requester_template = e_notification.get_requester_template(self)
         template = requester_template.last
         subj_template = requester_template.first
@@ -52,7 +50,7 @@ module Users
 
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       if customer?
-        return unless (e_notification.requester_notification? or force_notification) and !ebay_user?(self.email)
+        return unless e_notification.requester_notification? or force_notification
         requester_template = e_notification.get_requester_template(self)
         template = requester_template.last
         subj_template = requester_template.first
@@ -78,7 +76,7 @@ module Users
       portal ||= account.main_portal
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
-      unless active? and ebay_user?(self.email)
+      unless active?
         reset_perishable_token!
     
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
@@ -98,7 +96,7 @@ module Users
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
       @user = self.user
-      unless verified? and ebay_user?(self.email)
+      unless verified?
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::ADDITIONAL_EMAIL_VERIFICATION)
         return unless e_notification.requester_notification? and @user.customer?
         UserNotifier.send_later(:deliver_email_activation, self,

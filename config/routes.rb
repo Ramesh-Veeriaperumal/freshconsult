@@ -903,15 +903,6 @@ Helpkit::Application.routes.draw do
       resources :apps
     end
 
-    namespace :ecommerce do
-      resources :accounts
-      resources :ebay do
-        collection do
-          get :instructions
-        end
-      end
-    end
-
     resources :dynamic_notification_templates do
       collection do
         put :update
@@ -1317,7 +1308,6 @@ Helpkit::Application.routes.draw do
           post :facebook
           post :mobihelp
           get :full_text
-          post :ecommerce
         end
       end
 

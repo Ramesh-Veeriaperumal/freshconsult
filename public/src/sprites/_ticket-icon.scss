@@ -4,7 +4,7 @@
 @import "cdn-ignored/sprites/portal/sources/*.png";
 
 /* Source sprites for tickets list view */
-$sources: portal, email, facebook, twitter, phone, chat, forum, mobihelp, feedback_widget, auto-refresh, ecommerce ;
+$sources: portal, email, facebook, twitter, phone, chat, forum, mobihelp, feedback_widget, auto-refresh;
 #tickets-expanded .status-source {	
 	@each $source in $sources{
 		&.source-detailed-#{$source}{

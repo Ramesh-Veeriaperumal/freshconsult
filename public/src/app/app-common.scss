@@ -4010,13 +4010,3 @@ $adm-bdr:#F0F0F0;
 }
 
 // End
-
-// Admin reflect to textarea styles (common)
-
-textarea[readonly].codetextarea{
-    border: 1px dotted #afafaf;
-    background: #fefef0;
-    font-size: 12px;
-    color: #333;
-    font-family: "courier";
-}

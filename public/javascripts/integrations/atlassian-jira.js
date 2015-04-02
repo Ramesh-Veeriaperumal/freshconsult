@@ -2,7 +2,7 @@ var JiraWidget = Class.create();
 JiraWidget.prototype = {
 	JIRA_FORM:new Template(
 		'<div id="jira_issue_forms"><div id="jira_issue_create"><div class="heading"><span class="current_form">Create a new issue</span>' +
-			'<span class="divir"> or </span>' + 
+			'<span class="divider"> or </span>' + 
 			' <span class="other_form show_linkform">Link to an existing issue</span></div>' + 
 	    '<form id="jira-add-form" method="post" class="ui-form"> ' +
 		    '<div class="field half_width left">' +
@@ -291,20 +291,6 @@ JiraWidget.prototype = {
 		return ticket_url;
 	},
 
-	addAttachments:function(created_issue)
-	{
-		var attachments = jiraBundle.attachments;
-		if(attachments.length > 0)
-		{
-    	attachment_list = ""
-			jQuery.each( attachments, function(index, url){
-        attachment_list = attachment_list + url + '\n';
-     	});
-    	created_issue.fields.description = created_issue.fields.description + '\n' + 'Box or Dropbox Attachments in Freshdesk :-\n' + attachment_list;
-    }
-    return created_issue;
-	},
-
 	createJiraIssue: function(resultCallback) {
 		if(jiraWidget.form_validation())
 		{
@@ -320,7 +306,6 @@ JiraWidget.prototype = {
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
-    created_issue = jiraWidget.addAttachments(created_issue);	
 		this.jsonFix();
 		issue = JSON.stringify(created_issue);
 	  this.resetJsonFix();

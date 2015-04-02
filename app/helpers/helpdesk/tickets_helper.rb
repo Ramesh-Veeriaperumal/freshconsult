@@ -221,10 +221,6 @@ module Helpdesk::TicketsHelper
     end
   end
 
-  def ecommerce_account(ticket)
-    @ecom_account = ticket.email_config.try(:ecommerce_account)
-  end
-
   
   def default_twitter_body_val (ticket)
     if (ticket.tweet && ticket.tweet.tweet_type == 'mention')

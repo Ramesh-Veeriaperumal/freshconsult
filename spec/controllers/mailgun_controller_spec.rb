@@ -28,13 +28,4 @@ RSpec.describe MailgunController do
     response.status.should eql 302
   end
 
-   it "should process new mailgun ebay email" do
-    Resque.inline = true 
-    email = new_mailgun_ebay_email({:email_config => @account.primary_email_config.to_email})
-    email.merge!(mailgun_essentials)
-    post :create, email
-    Resque.inline = false
-    response.status.should eql 200
-  end
-
 end

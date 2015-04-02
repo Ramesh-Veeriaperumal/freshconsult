@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe HomeController do
+describe HomeController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
