@@ -2,13 +2,6 @@ module ChatHelper
 
   include Livechat::Token
   
-  def ticket_link_options
-    return [  [  "...",  -1],
-              [  I18n.t('freshchat.feedback_widget'),  0],
-              [  I18n.t('freshchat.new_ticket_page'),  1],
-              [  I18n.t('freshchat.custom_link'),      2] ]
-  end
-
   def chat_activated?
     !current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.display_id
   end
@@ -90,7 +83,9 @@ module ChatHelper
   def default_offline_chat
     return {
       :show      => "0",
-      :form      => { :name => t("freshchat.name"), :email => t("freshchat.mail") },
+      :form      => { :name => t("freshchat.name"), 
+                      :email => t("freshchat.mail"), 
+                      :message => t("freshchat.message") },
       :messages  => { :title        => t("freshchat.offline_title"),
                       :thank        => t("freshchat.offline_thank_msg"),
                       :thank_header => t("freshchat.offline_thank_header_msg") }
@@ -114,6 +109,7 @@ module ChatHelper
       :helpdeskname => current_account.helpdesk_name,
       :name_label =>  t("freshchat.name"),
       :mail_label => t("freshchat.mail"),
+      :message_label => t("freshchat.message"),
       :phone_label => t("freshchat.phone"),
       :textfield_label => t("freshchat.textfield"),
       :dropdown_label => t("freshchat.dropdown"),
@@ -308,6 +304,7 @@ module ChatHelper
             :maximum_chat_error => t('freshchat.maximum_chat_error'),
             :name => t("freshchat.name"),
             :email => t("freshchat.mail"),
+            :message => t("freshchat.message"),
             :phone => t("freshchat.phone"),
             :textfield => t("freshchat.textfield"),
             :dropdown => t("freshchat.dropdown"),
@@ -324,9 +321,10 @@ module ChatHelper
     msgclass = "background:rgba(255,255,255,0.5);";
     messages.each do |msg|
       if msg['userId'] && !(msg['userId'].include?'visitor')
-        msgclass = "background:rgba(242,242,242,0.3)";
+        msgclass = "background:rgba(242,242,242,0.3)"
       end
-      time = Time.at(msg['createdAt'] / 1000).strftime('%I:%M %p')
+      time = (msg['createdAt'].is_a? Fixnum) ? Time.at(msg['createdAt'] / 1000) : Time.zone.parse(msg['createdAt'])
+      time = time.strftime('%I:%M %p')
       image = msg['photo'] ? msg['photo'] : '/images/fillers/profile_blank_thumb.gif';
       message = '<tr style="vertical-align:top; border-top: 1px solid #eee; ' + msgclass + '">' +
              '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' + 

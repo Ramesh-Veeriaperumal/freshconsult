@@ -74,6 +74,7 @@ window.liveChat.widgetSettings = function($){
 				if(_nonavailabilityMessage.customLink == "1" ){
 					$("#custom_link_url").val(_nonavailabilityMessage.customLinkUrl);
 					$("#custom_link_url_item").show();
+					$(".offline_messages").hide();
 				}else{
 					$("#custom_link_url_item").hide();
 					$("#custom_link").prop('checked', false);
@@ -86,8 +87,10 @@ window.liveChat.widgetSettings = function($){
 			$("#custom_link").on('change',function(){
 				if($(this).is(":checked")){
 					$("#custom_link_url_item").show();
+					$(".offline_messages").hide();
 				}else{
 					$("#custom_link_url_item").hide();
+					$(".offline_messages").show();
 				}
 			});
 

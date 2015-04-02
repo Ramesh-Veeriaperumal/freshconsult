@@ -6719,6 +6719,7 @@ en:
     offline_chat_content: "Created via Chat. Offline message from %{visitor_name}."
     missed_chat_info: "Chat has been missed.!"
     change_livechat_tone: "LiveChat Notification Tone"
+    message: "Message"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

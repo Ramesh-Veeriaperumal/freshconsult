@@ -138,6 +138,7 @@ window.liveChat.visitorFormSettings = function($){
 			var form = {};
 			form['name'] = $("#missed_chat_name").val() || CHAT_I18n.name;
 			form['email'] = $("#missed_chat_email").val() || CHAT_I18n.email;
+			form['message'] = $("#missed_chat_message").val() || CHAT_I18n.message;
 			data.offline_chat['form'] = form;
 
 			if(valid){

@@ -8,8 +8,9 @@ window.liveChat.offlineSettings = function(){
         // default offline setting
         window.liveChat.adminSettings.currentWidget.offline_chat = {
           "show": "1",
-          "form": { "name": CHAT_I18n.name,
-                    "email": CHAT_I18n.name
+          "form": { "name"    : CHAT_I18n.name,
+                    "email"   : CHAT_I18n.email,
+                    "message" : CHAT_I18n.message
                   },
           "messages": {"title": "Leave us a message!",
                        "thank": "Thank you for writing to us. We will get back to you shortly.",
