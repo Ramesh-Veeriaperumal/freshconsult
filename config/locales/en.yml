@@ -5293,8 +5293,8 @@ en:
       notify_on_public_note_create_by_agent: "Public Note added by "
       notify_on_response_by_customer: "Response from "
       status_msg: "Ticket status changed to "
-      chat: "Chat Conversionation with"
-      default_chat: "Chat Conversionation of"
+      chat: "Chat Conversation with"
+      default_chat: "Chat Conversation of"
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
