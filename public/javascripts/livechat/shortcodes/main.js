@@ -25,7 +25,7 @@ liveChat.admin_short_codes = (function(){
             return false;
           }
           var _random_id = "new_" + _module.getRandomInt(1,10);
-          var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: ""});
+          var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: "", i18n: _module.i18n});
           jQuery('#short_codes_container').html(_new_fragment+jQuery('#short_codes_container').html());
           jQuery("#"+_random_id).find(".short_code_key").focus();
         });
@@ -128,13 +128,13 @@ liveChat.admin_short_codes = (function(){
         var _container_elm = jQuery("#"+container_id);
         for (var i=0; i < _short_codes.length; i++){
           var _code_obj = _short_codes[i];
-          _dom_fragment += _module._new_code_dom_fragment({dom_class: "", dom_action: "update", short_code_id: _code_obj.id, code: _code_obj.code, message: _code_obj.message})
+          _dom_fragment += _module._new_code_dom_fragment({dom_class: "", dom_action: "update", short_code_id: _code_obj.id, code: _code_obj.code, message: _code_obj.message, i18n: _module.i18n})
         }
         _container_elm.html(_dom_fragment);
       },
 
       validateCode: function(code){
-        return (code.length > 0 && code.length < 10 && !_module._valid_code.test(code));
+        return (code.length > 0 && code.length <= 10 && !_module._valid_code.test(code));
       },
 
       showAlertMsg: function(elem, msg){
@@ -192,7 +192,8 @@ liveChat.admin_short_codes = (function(){
           } 
         }
         if(opts._i18n_msg){
-          _module._error_messages = opts._i18n_msg;           
+          _module._error_messages = opts._i18n_msg.error_msg;  
+          _module.i18n =  {code: opts._i18n_msg.title, message: opts._i18n_msg.message};
         }
         _module._auth_params = { user_id: opts._agent_id, token: opts._token};
         _module.bindEvents();
