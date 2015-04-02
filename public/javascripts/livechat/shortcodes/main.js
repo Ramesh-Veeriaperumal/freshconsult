@@ -20,6 +20,10 @@ liveChat.admin_short_codes = (function(){
       _valid_code: new RegExp((/[`~,.<>;':"/[\]|{}()!@#$%^&*?=\s+-]/)),
       bindEvents: function(){
         jQuery('#short_code_add').click(function(){
+          if(jQuery("ul.fc-shortcodes li[data-action='create']").length >0 ){
+            jQuery("ul.fc-shortcodes li[data-action='create'] input.short_code_key").focus();
+            return false;
+          }
           var _random_id = "new_" + _module.getRandomInt(1,10);
           var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: ""});
           jQuery('#short_codes_container').html(_new_fragment+jQuery('#short_codes_container').html());
@@ -103,7 +107,7 @@ liveChat.admin_short_codes = (function(){
       createShortCodeId: function(resp,short_code_id){
         var _parent_elm = jQuery("#"+short_code_id).attr("id",resp.result.id).attr("data-action","update");
         _parent_elm.find(".code_view").html(resp.result.code);
-        _parent_elm.find(".message_view").html(_module.trimData(resp.result.message));
+        _parent_elm.find(".message_view").html(escapeHtml(resp.result.message));
         _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
         _parent_elm.find('.short_code_key').val(resp.result.code);
@@ -113,7 +117,7 @@ liveChat.admin_short_codes = (function(){
       updateShortCodeId: function(resp,short_code_id){
         var _parent_elm = jQuery("#"+short_code_id);
         _parent_elm.find(".code_view").html(_parent_elm.find('.short_code_key').val());
-        _parent_elm.find(".message_view").html(_module.trimData(_parent_elm.find('.short_code_message').val()));
+        _parent_elm.find(".message_view").html(escapeHtml(_parent_elm.find('.short_code_message').val()));
         _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
       },
