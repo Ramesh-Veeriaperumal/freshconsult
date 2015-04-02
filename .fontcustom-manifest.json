@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c",
-    "current": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c"
+    "previous": "5d78998152bdc02420bd3373bca8621ed8bd32d85395d7586be62c40db74b00f",
+    "current": "5d78998152bdc02420bd3373bca8621ed8bd32d85395d7586be62c40db74b00f"
   },
   "fonts": [
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.ttf",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.svg",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.woff",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.eot"
+    "public/assets/glyphs_5d78998152bdc02420bd3373bca8621e.ttf",
+    "public/assets/glyphs_5d78998152bdc02420bd3373bca8621e.svg",
+    "public/assets/glyphs_5d78998152bdc02420bd3373bca8621e.woff",
+    "public/assets/glyphs_5d78998152bdc02420bd3373bca8621e.eot"
   ],
   "glyphs": {
     "account": {
@@ -69,6 +69,10 @@
     "arrow-up-2": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
+    "available-on-mobile": {
+      "codepoint": 61869,
+      "source": "public/glyphs/vectors/available-on-mobile.svg"
     },
     "bell": {
       "codepoint": 61711,
@@ -699,7 +703,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": true,
+    "debug": false,
     "font_name": "glyphs",
     "force": true,
     "input": {
