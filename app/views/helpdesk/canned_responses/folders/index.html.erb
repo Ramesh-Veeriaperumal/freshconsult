@@ -271,9 +271,13 @@
 	jQuery(document).ready(function(){
 		var _opts = {
 				_url: "<%= ChatConfig['communication_url']%>",
-				_i18n_msg: {
-			  	CODE_EMPTY : "<%= t('short_code.alert.code_mandatory').html_safe%>",
-			    ER_DUP_ENTRY : "<%= t('short_code.alert.code_duplicate').html_safe%>"
+				_i18n_msg: { 
+					error_msg: {
+						CODE_EMPTY : "<%= t('short_code.alert.code_mandatory').html_safe%>",
+			    	ER_DUP_ENTRY : "<%= t('short_code.alert.code_duplicate').html_safe%>"
+					},
+					title : "<%= t('short_code.shorthand').html_safe%>",
+					message: "<%= t('short_code.message').html_safe%>"		  	
 			  },
 			  _agent_id: <%=current_user.id%>,
 			  _token: LIVECHAT_TOKEN

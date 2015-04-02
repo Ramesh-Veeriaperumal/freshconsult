@@ -2,13 +2,13 @@
   <div class="fc-shortcode">
     <span class="code_view"><%=code%></span>
     <div class="fc-input">
-      <input type="text" class="short_code_key" value="<%=code%>" placeholder="Code">
+      <input type="text" class="short_code_key" value="<%=code%>" placeholder="<%=i18n.code%>">
     </div>
   </div>
   <div class="fc-sc-desc">
-    <span class="message_view"><%=message%></span>
+    <span class="message_view"><%=escapeHtml(message)%></span>
     <div class="fc-input">
-      <input type="text" class="short_code_message" value="<%=message%>" placeholder="Message">
+      <input type="text" class="short_code_message" value="<%=message%>" placeholder="<%=i18n.message%>">
     </div>
   </div>
   <div class="fc-sc-options">

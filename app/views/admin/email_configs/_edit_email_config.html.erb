@@ -9,11 +9,19 @@
 				<div class="muted"><%= t('email_configs.name_info_msg').html_safe %> </div>
 			</div>
 	</li>
-	<li class="control-group" rel="reflect_to_textarea" data-target-script="#config_form_control" data-full-domain="<%= current_account.full_domain %>">	
+	<li class="control-group">	
 			<label class="control-label" ><%= t('email_configs.reply_email').html_safe%><span class="required_star">*</span></label>
 			<div class="controls">
 				<%= f.text_field :reply_email, :class => "required email muted text input-xxlarge", :id => "reply_to_id" %>
 				<div class="muted"><%= t('email_configs.info7').html_safe %> </div>
+			</div>
+	</li>
+	<li class="control-group">	
+			<label class="control-label" ><%=t('email_configs.info8').html_safe%></label>
+			<div class="controls">
+				<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info input-xxlarge")  %>
+				<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
+				<a target="_blank" title="Learn how to configure your support email" href="https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets"><%= t(:'email_configs.solution_link').html_safe %></a>
 			</div>
 	</li>
 	<li class="control-group">
@@ -43,14 +51,17 @@
 <% end %>
 
 <% content_for :pagefixed do -%>
-<script id="config_form_control" type="text/template">
-<li class="control-group">	
-	<label class="control-label" ><%=t('email_configs.info8').html_safe%></label>
-	<div class="controls">
-		<textarea name="email_config[to_email]" id="hidden_reply_to" class="codetextarea input-xxlarge" rows="2" readonly></textarea>
-		<div><a target="_blank" title="Learn how to configure your support email" href="https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets"><%= t(:'email_configs.solution_link').html_safe %></a></div>
-	</div>
-</li>
-</script>
-
- <%- end %>
+  <%= javascript_tag do %>
+    jQuery(document).ready(function(){
+      jQuery("#reply_to_id")
+        .bind("change keyup", 
+          function(ev){
+            if(this.value != ''){
+              reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
+              jQuery("#div_reply_email").text(reply_email);
+              jQuery("#hidden_reply_to").val(reply_email);
+            }
+        });
+    });
+  <%- end %>
+<%- end %>

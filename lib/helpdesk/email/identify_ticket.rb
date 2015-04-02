@@ -1,9 +1,8 @@
-class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account, :email_config)
+class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
-  include Ecommerce::HelperMethods
   attr_accessor :ticket
 
-  IDENTIFICATION_METHODS = ['subject_id_based_ticket', 'assign_header_based_ticket', 'ticket_from_email_body' , 'ticket_from_id_span', 'ecommerce_ticket']
+  IDENTIFICATION_METHODS = ['subject_id_based_ticket', 'assign_header_based_ticket', 'ticket_from_email_body' , 'ticket_from_id_span']
 
   def belongs_to_ticket
     IDENTIFICATION_METHODS.each do |fn|
@@ -32,11 +31,6 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account, :ema
   def ticket_from_id_span
     display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
     self.ticket = ticket_from_span(display_span.last) unless display_span.blank?
-  end
-
-  def ecommerce_ticket
-    return if self.email_config
-    self.ticket = ebay_parent_ticket(user.email, email[:subject], self.email_config.id) if ecommerce?(user.email, email[:to][:email])
   end
 
   def parsed_html

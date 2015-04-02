@@ -35,8 +35,7 @@
    <td class="text-right">
     <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) , :class => 'btn btn-mini'%>
     <% unless email_config.primary_role %>
-      <% delete_text = email_config.ecommerce_account.present? ? "email_configs.unlink_ecommerce_account" : "email_configs.delete_confirm" %>
-      <%= link_to "<i class='icon-trash'></i>".html_safe, admin_email_config_path(email_config), :confirm => "#{t(delete_text)}", :method => :delete, :class => "btn btn-mini"%>
+      <%= link_to "<i class='icon-trash'></i>".html_safe, admin_email_config_path(email_config), :confirm => "#{t('email_configs.delete_confirm')}", :method => :delete, :class => "btn btn-mini"%>
     <% else %>
       <span title ="<%= t('email_configs.primary_email_delete_alert') %>" class="btn btn-mini tooltip disabled"%>
         <i class='icon-trash'></i>

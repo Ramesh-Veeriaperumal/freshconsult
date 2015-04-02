@@ -145,7 +145,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable and !self.notable.ecommerce?) and (self.fb_post ? self.fb_post.can_comment? : true)
+    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true)
   end
 
   def as_json(options = {})

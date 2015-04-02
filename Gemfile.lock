@@ -463,8 +463,6 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     dynamic_form (1.1.4)
-    ebayr (0.0.7)
-      activesupport
     ejs (1.1.1)
     encryptor (1.1.3)
     equalizer (0.0.9)
@@ -889,7 +887,6 @@ DEPENDENCIES
   delayed_job!
   dev_notification!
   dynamic_form
-  ebayr (= 0.0.7)
   ejs (= 1.1.1)
   encryptor (= 1.1.3)
   facebook!

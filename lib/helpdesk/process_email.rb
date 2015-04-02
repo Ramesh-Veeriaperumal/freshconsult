@@ -12,8 +12,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
   include Helpdesk::Utils::ManageCcEmails
-  include Ecommerce::HelperMethods
-  include Ecommerce::Ebay::Util
 
   MESSAGE_LIMIT = 10.megabytes
 
@@ -72,7 +70,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-    ticket = fetch_ticket(account, from_email, user, email_config)
+    ticket = fetch_ticket(account, from_email, user)
     if ticket
       return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
       ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user)
@@ -228,7 +226,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_to_emails
     end
 
-    def fetch_ticket(account, from_email, user, email_config)
+    def fetch_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
       return ticket if can_be_added_to_ticket?(ticket, user)
@@ -237,8 +235,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = ticket_from_email_body(account)
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_id_span(account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
-      ticket = ecommerce_ticket(account, from_email, email_config)
       return ticket if can_be_added_to_ticket?(ticket, user)
     end
     
@@ -264,7 +260,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket.sender_email = e_email[:email] || from_email[:email]
       ticket = check_for_chat_scources(ticket,from_email)
-      ticket = check_for_ecommerce_source(ticket) if @is_ecommerce_ticket
       ticket = check_for_spam(ticket)
       check_for_auto_responders(ticket)
       check_support_emails_from(account, ticket, user, from_email)
@@ -309,14 +304,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       ticket
     end
-
-    def check_for_ecommerce_source(ticket)
-      ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:ecommerce]
-      ticket.subject = ticket.subject.gsub(Ecommerce::Constants::EBAY_SUBJECT_REPLY, '')
-      ticket.skip_notification = true
-      ticket
-    end
-      
+    
     def check_for_auto_responders(ticket)
       headers = params[:headers]
       if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || (headers =~ /Precedence: (bulk|junk)/i)))
@@ -345,11 +333,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         params[:html] = parsed_html.inner_html
         return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
       end
-    end
-
-    def ecommerce_ticket(account, from_email, email_config)
-      return if email_config.blank?
-      ebay_parent_ticket(from_email[:email], params[:subject], email_config.id) if ecommerce?(from_email[:email], parse_to_email[:email])
     end
 
     def add_email_to_ticket(ticket, from_email, user)
@@ -595,7 +578,5 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
       white_list(textilized.to_html)
     end
-
-    
     
 end

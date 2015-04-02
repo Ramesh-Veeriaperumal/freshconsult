@@ -177,7 +177,6 @@ en:
   facebook_source: Facebook
   facebook_user: Facebook User
   mobihelp: MobiHelp
-  ecommerce: Ecommerce
   logmein_source: LogMeIn Rescue
   working: Working
   attach: Attach
@@ -886,57 +885,6 @@ en:
           storage_space_internal: Device Storage Free/Total in MB (Internal)
           storage_space_sd: Device Storage Free/Total in MB (External)
           mobihelp_sdk_version: Mobihelp SDK Version
-    ecommerce:
-      human_name: Ecommerce Account
-      index_title: Ecommerce
-      edit_account: Edit Account Details
-      limit_exceed: Maximum account limit reached.
-      ebay_note_not_added: "Note not added to eBay. Connection unstable."
-      inactive: inactive
-      active: active
-      no_email: No available support email.
-      important: IMPORTANT
-      ebay_error: 
-        invalid_source: Invalid ticket source.
-        invalid_reply: Reply not allowed for this ticket.
-        note_not_added: Note not added.
-        reply_length_exceed: Your reply exceeded the maximum length of 2000 characters.
-      helpnote:
-        no_account: Add new account
-        integrate_ecommerce: Bring your eCommerce messages into Freshdesk
-        account_desc: Link your eBay marketplace with <b> %{product_name} </b> to manage your customer requests within Freshdesk.
-        content1:
-            info1: Integrating eCommerce account
-            info2: "Freshdesk lets you manage customer complaints and feedback coming into your eBay account from within your helpdesk. Once setup, all your customer queries from eBay will get converted into tickets automatically. You can also respond to them directly from within Freshdesk.<br/><br/>To get started, add your eBay account details to your helpdesk and forward incoming emails from your seller account to your helpdesk’s forwarding address. You can then start using the integration from the eCommerce support channel. "
-            info3: Become an eBay Developer
-            info4: Get Auth Tokens and IDs
-      index:
-        title: Ecommerce Accounts
-        new_account: New Ecommerce Account
-      new:
-        title: New Account
-        ebay_details: Link with eBay
-        account_created: "Account has been created in inactive state, it will become active once validated"
-        account_name: Account Name
-        existing_email: Use existing email address
-        new_email: Create new email address
-        solution_link: How to link eBay account with freshdesk?
-        developer_credentials: eBay developer credentials
-        become_developer: Become an eBay developer
-        become_developer_desc: "To link a Freshdesk and an eBay account, you need to first create an eBay developer account." 
-        go_to_console: Goto eBay Developer Console
-        go_to_console_desc: "If you already have an eBay developer account, please refer to your developer console and keep details such as App ID, eBay ID handy."
-      edit:
-        title: Edit Account
-      form:
-        name: Account Name
-        email: Email
-        ebay:
-          dev_id: Developer ID
-          app_id: Application ID
-          auth_token: Auth Token
-          cert_id: Certificate ID
-          ru_name: RU Name
     portal_settings:
       flash:
         portal_published_success: "Portal changes published successfully."
@@ -1600,7 +1548,6 @@ en:
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Customer Portal
-        ecommerce: Ecommerce
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -3594,7 +3541,6 @@ en:
   email_configs:
     delete_confirm: Are you sure you want to delete this config?
     delete_primary_email : Cannot delete a primary email.
-    unlink_ecommerce_account: This email account is associated with an eCommerce channel. Deleting it would disable communication to the given eCommerce channel.
     title: Email Settings
     email: E-mail
     name: Name
@@ -3911,7 +3857,6 @@ en:
     requestor_info: Requestor Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
-    view_item: View item
     via: via
     created_by: "Created by:"
     reply_to: Reply
@@ -4429,8 +4374,6 @@ en:
         facebook_form:
           reply_to: "Reply to"
           title: "Reply to %{user}"
-        ecommerce_reply_form:
-          title: "Reply to"
         history:
           recent_item: Recent Items
         due_date:
@@ -7099,7 +7042,9 @@ en:
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
   short_code:
-    title: Chat Shortcodes
+    title: Chat Shorthands
+    shorthand: Shorthand
+    message: Expansion
     alert:
       code_mandatory: Code and Message cannot be empty. Code should be between 1 to 10 character and cannot have `~,.<>;':/[\] | \\ \" {} () ! @# $% ^& *? =+- .
       code_duplicate: Trying to add or update with duplicate code.

@@ -20,8 +20,12 @@ liveChat.admin_short_codes = (function(){
       _valid_code: new RegExp((/[`~,.<>;':"/[\]|{}()!@#$%^&*?=\s+-]/)),
       bindEvents: function(){
         jQuery('#short_code_add').click(function(){
+          if(jQuery("ul.fc-shortcodes li[data-action='create']").length >0 ){
+            jQuery("ul.fc-shortcodes li[data-action='create'] input.short_code_key").focus();
+            return false;
+          }
           var _random_id = "new_" + _module.getRandomInt(1,10);
-          var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: ""});
+          var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: "", i18n: _module.i18n});
           jQuery('#short_codes_container').html(_new_fragment+jQuery('#short_codes_container').html());
           jQuery("#"+_random_id).find(".short_code_key").focus();
         });
@@ -103,7 +107,7 @@ liveChat.admin_short_codes = (function(){
       createShortCodeId: function(resp,short_code_id){
         var _parent_elm = jQuery("#"+short_code_id).attr("id",resp.result.id).attr("data-action","update");
         _parent_elm.find(".code_view").html(resp.result.code);
-        _parent_elm.find(".message_view").html(_module.trimData(resp.result.message));
+        _parent_elm.find(".message_view").html(escapeHtml(resp.result.message));
         _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
         _parent_elm.find('.short_code_key').val(resp.result.code);
@@ -113,7 +117,7 @@ liveChat.admin_short_codes = (function(){
       updateShortCodeId: function(resp,short_code_id){
         var _parent_elm = jQuery("#"+short_code_id);
         _parent_elm.find(".code_view").html(_parent_elm.find('.short_code_key').val());
-        _parent_elm.find(".message_view").html(_module.trimData(_parent_elm.find('.short_code_message').val()));
+        _parent_elm.find(".message_view").html(escapeHtml(_parent_elm.find('.short_code_message').val()));
         _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
       },
@@ -124,13 +128,13 @@ liveChat.admin_short_codes = (function(){
         var _container_elm = jQuery("#"+container_id);
         for (var i=0; i < _short_codes.length; i++){
           var _code_obj = _short_codes[i];
-          _dom_fragment += _module._new_code_dom_fragment({dom_class: "", dom_action: "update", short_code_id: _code_obj.id, code: _code_obj.code, message: _code_obj.message})
+          _dom_fragment += _module._new_code_dom_fragment({dom_class: "", dom_action: "update", short_code_id: _code_obj.id, code: _code_obj.code, message: _code_obj.message, i18n: _module.i18n})
         }
         _container_elm.html(_dom_fragment);
       },
 
       validateCode: function(code){
-        return (code.length > 0 && code.length < 10 && !_module._valid_code.test(code));
+        return (code.length > 0 && code.length <= 10 && !_module._valid_code.test(code));
       },
 
       showAlertMsg: function(elem, msg){
@@ -188,7 +192,8 @@ liveChat.admin_short_codes = (function(){
           } 
         }
         if(opts._i18n_msg){
-          _module._error_messages = opts._i18n_msg;           
+          _module._error_messages = opts._i18n_msg.error_msg;  
+          _module.i18n =  {code: opts._i18n_msg.title, message: opts._i18n_msg.message};
         }
         _module._auth_params = { user_id: opts._agent_id, token: opts._token};
         _module.bindEvents();

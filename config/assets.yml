@@ -132,7 +132,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/menuselector.js
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
     - public/javascripts/integrations/construct_rule.js
-    - public/javascripts/frameworks/plugins/reflect_in_textarea.js
 
   # Code editor for portal cms
   codemirror:

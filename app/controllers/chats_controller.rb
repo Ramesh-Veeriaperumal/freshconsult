@@ -166,10 +166,7 @@ class ChatsController < ApplicationController
   #######
 
   def chat_note
-    if params[:updateAgent] == "true" && @ticket
-      @ticket.responder_id = params[:userId]
-      @ticket.save_ticket
-    end
+    params[:userId] = @ticket.requester_id
     params[:note] = add_style JSON.parse(params[:messages])
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
