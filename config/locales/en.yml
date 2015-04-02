@@ -7102,6 +7102,7 @@ en:
     title: Chat Shorthands
     shorthand: Shorthand
     message: Expansion
+    confirm: Are you sure you want to delete chat shorthand ?
     alert:
       code_mandatory: Code and Message cannot be empty. Code should be between 1 to 10 character and cannot have `~,.<>;':/[\] | \\ \" {} () ! @# $% ^& *? =+- .
       code_duplicate: Trying to add or update with duplicate code.

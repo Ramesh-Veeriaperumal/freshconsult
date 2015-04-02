@@ -11,7 +11,7 @@
 		<div class="canned-response-page list-page"  id="can-res-full">
 		  <div class="list-page-header">
 		    <div class="row-fluid">
-		      <div class="span6"><h3 class="lead"><%= t('canned_folders.responses') %></h3></div>
+		      <div class="span6"></div>
 		      <div class="span6 pull-right pagination-right ">
 		        <b>
 		          <%= link_to t('canned_folders.new_response'), 
@@ -277,7 +277,8 @@
 			    	ER_DUP_ENTRY : "<%= t('short_code.alert.code_duplicate').html_safe%>"
 					},
 					title : "<%= t('short_code.shorthand').html_safe%>",
-					message: "<%= t('short_code.message').html_safe%>"		  	
+					message: "<%= t('short_code.message').html_safe%>",
+					confirm: "<%= t('short_code.confirm').html_safe%>"	  	
 			  },
 			  _agent_id: <%=current_user.id%>,
 			  _token: LIVECHAT_TOKEN

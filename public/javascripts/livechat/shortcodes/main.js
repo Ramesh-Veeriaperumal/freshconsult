@@ -77,13 +77,15 @@ liveChat.admin_short_codes = (function(){
         });
 
         jQuery('.fc-sc-delete').live('click',function(){
-          var _parent = jQuery(this).parents('.fc-item');
-          var _params = {};
-          var _code_id =  _parent.attr("id");
-          _params.action = _module._action_urls.destroy;
-          _params.data = {site_id : window.SITE_ID, id: _code_id};
-          _params.selector_id = _parent.attr("id");
-          _module.ajaxCall(_params,_module.deleteShortCode,_parent);
+          if(window.confirm(_module.i18n.confirm)){
+            var _parent = jQuery(this).parents('.fc-item'),
+                _params = {},
+                _code_id =  _parent.attr("id");
+            _params.action = _module._action_urls.destroy;
+            _params.data = {site_id : window.SITE_ID, id: _code_id};
+            _params.selector_id = _parent.attr("id");
+            _module.ajaxCall(_params,_module.deleteShortCode,_parent);
+          }          
         });
 
 
@@ -193,7 +195,7 @@ liveChat.admin_short_codes = (function(){
         }
         if(opts._i18n_msg){
           _module._error_messages = opts._i18n_msg.error_msg;  
-          _module.i18n =  {code: opts._i18n_msg.title, message: opts._i18n_msg.message};
+          _module.i18n =  {code: opts._i18n_msg.title, message: opts._i18n_msg.message, confirm: opts._i18n_msg.confirm};
         }
         _module._auth_params = { user_id: opts._agent_id, token: opts._token};
         _module.bindEvents();
