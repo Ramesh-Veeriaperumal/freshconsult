@@ -122,7 +122,7 @@
 
   									</li>
                   <% end %>
-                  <% if privilege?(:merge_or_split_ticket) and !@ticket.ecommerce? %>
+                  <% if privilege?(:merge_or_split_ticket) %>
   									<li class="ticket-btns">
   										<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
   												:id => "Merge", :title => t('ticket.merge_title'), :class => 'btn',

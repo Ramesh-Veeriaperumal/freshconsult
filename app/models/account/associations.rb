@@ -244,9 +244,6 @@ class Account < ActiveRecord::Base
   has_many :chat_widgets
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
-  has_many :ecommerce_accounts, :class_name => 'Ecommerce::Account'
-  has_many :ebay_accounts, :class_name => 'Ecommerce::Ebay'
-  has_many :ebay_items, :class_name => "Ecommerce::EbayItem", :through => :ebay_accounts
 
   has_many :forum_moderators
 end

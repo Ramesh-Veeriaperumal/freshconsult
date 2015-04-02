@@ -73,5 +73,5 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :article_ticket, :dependent => :destroy
   has_one :article, :through => :article_ticket
-  has_one :ebay_item, :class_name => 'Ecommerce::EbayItem', :dependent => :destroy
+
 end

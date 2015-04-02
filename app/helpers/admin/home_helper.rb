@@ -181,10 +181,6 @@
       },
       :custom_mailbox                  =>   {
         :privilege                     =>    current_account.features?(:mailbox)
-      },
-      :ecommerce                        =>   {
-        :url                           =>   "/admin/ecommerce/accounts",
-        :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:ecommerce)
       }
     }
   end
@@ -192,7 +188,7 @@
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
+      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter", "facebook-setting", "feedback", "mobihelp"],
       :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-fields", "customer-portal", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",

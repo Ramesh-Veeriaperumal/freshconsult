@@ -614,28 +614,4 @@ RSpec.describe Helpdesk::ProcessEmail do
 		restore_default_feature("reply_to_based_tickets")
   end
 
-
-	it "should process ebay email" do
-		Resque.inline = true 
-		Ecommerce::Ebay::Api.any_instance.stubs(:parent_message_id).returns({:xmlns=>"urn:ebay:apis:eBLBaseComponents", 
-			:timestamp=>"2015-03-16T02:03:26.889Z", :ack=>"Success", :version=>"909", 
-			:build=>"E909_CORE_APIMSG_17388949_R1", :member_message=>{:member_message_exchange=>[{:item=>
-				{:item_id=>"221707006208", :listing_details=>{:start_time=>"2015-03-04T12:01:44.000Z", 
-					:end_time=>"2015-03-11T12:01:44.000Z", :view_item_url=>"http://www.ebay.com/itm/Baby-dress-/221707006208"}, 
-					:seller=>{:user_id=>"ajtsat.p03noee"}, :selling_status=>{:current_price=>"86.0"}, :title=>"Baby dress", 
-					:condition_id=>"1000", :condition_display_name=>"New"}, :question=>{:message_type=>"AskSellerQuestion", 
-						:question_type=>"None", :display_to_public=>"false", :sender_id=>"bmkbabsat", 
-						:sender_email=>"bmkbab_eyw5248uaz@members.ebay.in", :recipient_id=>"ajtsat.p03noee", 
-						:subject=>"Details about item: bmkbabsat sent a message about Baby dress #221707006208", 
-						:body=>"Test", :message_id=>"1020772579014"}, :message_status=>"Unanswered", 
-						:creation_date=>"2015-03-04T12:56:22.000Z", :last_modified_date=>"2015-03-04T12:56:22.000Z"}]}})
-
-		email_id = "bmkbab_eyw5248uaz@members.ebay.in"
-		email = new_ebay_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
-		Helpdesk::ProcessEmail.new(email).perform
-		ticket_incremented?(@ticket_size)
-		Resque.inline = false
-		@account.tickets.last.requester.email.downcase.should eql email_id.downcase
-	end
-
 end

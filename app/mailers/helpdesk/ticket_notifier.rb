@@ -290,7 +290,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_to_requester(ticket, content, sub=nil)
-    return if ticket.ecommerce?
     ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
     
     headers   = {

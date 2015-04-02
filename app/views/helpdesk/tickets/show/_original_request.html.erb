@@ -52,8 +52,6 @@
 				<span class="ficon-twitter fsize-12 pr5 pl5"></span> <%= @ticket.tweet.twitter_handle.screen_name %> 
 			<% elsif @ticket.is_facebook? %>
 				<span class="ficon-facebook-setting fsize-12 pr5 pl5"></span> <%= @ticket.fb_post.facebook_page.page_name %>
-			<% elsif @ticket.ecommerce? and ecommerce_account(@ticket).present? %>
-				<span class="ficon-ecommerce fsize-14 pr5 pl5"></span> <%= @ecom_account.name if @ecom_account.present? %>
 			<% else %>
 				<%= @ticket.source_name %>
 			<% end %>
@@ -84,11 +82,7 @@
 			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
       	</div> 
 	</div>
-	<% 
-		ebay_ticket_class = ""
-		ebay_ticket_class = "ebay_ticket" if @ticket.ecommerce? and @ecom_account.present? 
-	%>
-	<div id="ticket_original_request" class="request_mail <%= ebay_ticket_class %>">
+	<div id="ticket_original_request" class="request_mail">
     	<%= @ticket.description_html.html_safe %>
 	</div>
 

@@ -21,8 +21,8 @@ module TicketConstants
     [ :facebook,         'facebook_source',  6 ],
     [ :chat,             'chat',             7 ],
     [ :mobihelp,         'mobihelp',         8 ],
-    [ :feedback_widget,  'feedback_widget',  9 ],
-    [ :ecommerce,        'ecommerce',       10 ]
+    [ :feedback_widget,  'feedback_widget',  9 ]
+  
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }

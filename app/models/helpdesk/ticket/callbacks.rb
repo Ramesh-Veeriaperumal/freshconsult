@@ -38,7 +38,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
-  after_commit :populate_ebay_ticket, on: :create, :if => :ecommerce_ticket?
 
   def construct_ticket_old_body_hash
     {
@@ -574,13 +573,4 @@ private
     self.record_timestamps = true
     true
   end
-
-  def ecommerce_ticket?
-    self.ecommerce? and account.features?(:ecommerce)
-  end
-
-  def populate_ebay_ticket
-    Resque.enqueue(Workers::Ecommerce::Ebay::PopulateTicket, { :ticket_id => self.id })
-  end
-
 end
