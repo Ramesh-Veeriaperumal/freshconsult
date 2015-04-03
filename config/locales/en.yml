@@ -3299,7 +3299,7 @@ en:
     contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
     company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..) Read more about it <a href = '%{solution_link}' target = '_blank' >here.</a>"
   import_example_title: Following is the example of a CSV file
-  change_password: Change Password
+  change_my_password: Change My Password
   answered: Answered
   errors_in_payment_info: "Errors encountered with your payment information:"
   attach_files: Attach files
@@ -3529,8 +3529,8 @@ en:
   step1: Step 1
   next_charge_date: "Next Renewal"
   last_renewed_on: "Last Renewed on"
-  update_and_log_in: "Update & Log in"
-  activate_and_log_in: "Activate & Log in"
+  update_and_login: "Update & login"
+  activate_and_login: "Activate & login"
   password: "Password"
   enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
@@ -4077,8 +4077,6 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  create_password: Create a Password
-  retype_password: Retype Password
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as

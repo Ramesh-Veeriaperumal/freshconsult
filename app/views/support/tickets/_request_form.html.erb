@@ -40,7 +40,6 @@
 <%= javascript_tag do %>
   (function($){
     jQuery(document).ready(function(){      
-      jQuery("#new_helpdesk_ticket input:visible").first().focus(); 
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
@@ -84,7 +83,7 @@
 
       if( !isMobile.any() ){
         <% if logged_in? %>
-          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
+          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'cnt-reply');
         <% else %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
         <% end %>
