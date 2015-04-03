@@ -2995,7 +2995,7 @@ en:
       no_contacts: You don't have any unverified contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
     segment_api:
-      invalid_type: Invalid opertaion. Check your type
+      invalid_type: Invalid operation. Check your type.
       email_blank: Email can't be blank 
   between: Between
   profile_settings: Profile settings
