@@ -37,6 +37,7 @@ class AccountsController < ApplicationController
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
+  before_filter :build_signup_contact, :only => [:new_signup_free]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
 
@@ -448,6 +449,14 @@ class AccountsController < ApplicationController
       params[:signup][:locale] = http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:metrics] = build_metrics
+    end
+
+    def build_signup_contact
+      unless params[:user][:name]
+        params[:signup][:user_name] = %(#{params[:user][:first_name]} #{params[:user][:last_name]})
+        params[:signup][:contact_first_name] = params[:user][:first_name]
+        params[:signup][:contact_last_name] = params[:user][:last_name]
+      end
     end
 
     def add_to_crm
