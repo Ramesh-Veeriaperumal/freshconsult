@@ -173,12 +173,11 @@ class ChatsController < ApplicationController
   end
 
   def missed_chat
-    if params[:type] == "offline"
-      subject = t("freshchat.offline_chat_subject", :visitor_name => params[:name], 
+    subject = t("freshchat.offline_chat_subject", :visitor_name => params[:name], 
                   :date => formated_date(Time.now(), {:format => :short_day_with_week, :include_year => true}))
+    if params[:type] == "offline"
       desc = t("freshchat.offline_chat_content", :visitor_name => params[:name])
     else
-      subject = t("freshchat.missed_chat_subject", :date => formated_date(Time.now(), {:format => :short_day_with_week, :include_year => true}))
       desc = t("freshchat.missed_chat_content", :visitor_name => params[:name])
     end
     if params[:messages]

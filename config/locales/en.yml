@@ -5505,8 +5505,6 @@ en:
         filter_by_title: "Filtered by"
         time_period: "Time Period"
         widget: "Widget"
-        visitor_form: "Visitor Form"
-        preferences: "Preferences"
         group: "Group"
         chat_type: "Chat Type"
         summary: "Summary"
@@ -6588,6 +6586,8 @@ en:
     non_availability_message: "Our agents are unavailable right now. Sorry about that, but please leave us a message and we'll get right back."
     date_invalid: Invalid date
     installation: "Widget Code"
+    visitor_form: "Visitor Form"
+    preferences: "Preferences"
     intro_title: "Why Live Chat?"
     intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
