@@ -146,7 +146,7 @@ en:
   signup: <b>Sign up</b>
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
-  signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
+  signup_help_information: "Once you sign up, you will have complete access to our self service portal and you can use your account to raise support tickets and track their status."
   trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
