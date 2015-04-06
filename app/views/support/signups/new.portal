@@ -1,5 +1,5 @@
 <section id="signup-container" class="content rounded-6 main">
-	<h3 class="heading">Signup for your {{ portal.name }} account</h3>
+	<h3 class="heading">Sign up for your {{ portal.name }} account</h3>
 	{% snippet signup_form %}
 </section>
 <section class="sidebar hide">
