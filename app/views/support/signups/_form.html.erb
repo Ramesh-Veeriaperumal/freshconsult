@@ -21,3 +21,9 @@
     </div>
   <% end -%>
 <% end %>
+
+<%= javascript_tag do %>
+  jQuery(document).ready(function(){
+    Form.focusFirstElement(document.forms[0]);
+  })
+<% end %>
