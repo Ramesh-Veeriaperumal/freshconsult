@@ -10,112 +10,110 @@
   <div class="tab-pane active" id="cannedResponses">
 		<div class="canned-response-page list-page"  id="can-res-full">
 		  <div class="list-page-header">
-		    <div class="row-fluid">
-		      <div class="span6"></div>
-		      <div class="span6 pull-right pagination-right ">
-		        <b>
-		          <%= link_to t('canned_folders.new_response'), 
-		                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
-		                :id => "new_resp", :class => "btn btn-primary" %>
-		        </b>
-		      </div>
-		    </div>
 		    <div id="folder-list">
-				<div id="folders-panel" >
-					<div class='ca-resp-folder-header'>
-					<% if privilege?(:manage_canned_responses) %>
-						<div class="dropdown">
-							<%= t('canned_folders.viewing') %>
-							<a class="dropdown-toggle" data-toggle="dropdown" id="CaLabel" href="#"><b class='ca_text'>loading...</b>
-								<% if privilege?(:manage_canned_responses) %><b class="caret"></b><% end %>
-							</a>
-
-							<ul class="dropdown-menu folder-dropdown" role="menu" id="ca_new_menu" aria-labelledby="CaLabel">
-								<% @ca_res_folders.each do |folder| %>
-			  					<li>
-			  						<%
-			                if privilege?(:manage_canned_responses) and !(folder.personal?)
-			                  count = current_account.canned_responses.count(:conditions => {:folder_id => folder.id})
-			                else
-			                  count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => folder.id})
-			                end
-			              %>
-			  						<a id="folder<%= folder.id %>" href= "<%= helpdesk_canned_responses_folders_path %>/<%= folder.id %>" data-folder="<%= folder.id %>" data-pjax="#body-container"
-			  						data-name="<%= folder.display_name %>"
-			  						class="catch js-pjax <%= "default-folder" unless !(folder.is_default)%>"><%= folder.display_name %> (<%= count %>)
-			  						</a>
-			  					</li>
-								<%end%>
-							</ul>
-
-						</div>
-						<%else%>
-						<%= t('canned_folders.viewing') %>
-						<%count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => @pfolder.id})%>
-						<b ><%= @pfolder.display_name %> (<%= count %>)</b>
-						<%end%>
+					<div id="folders-panel" >
+						<div class='ca-resp-folder-header'>
 						<% if privilege?(:manage_canned_responses) %>
-							<div id="folder-controls">
+							<div class="dropdown">
+								<%= t('canned_folders.viewing') %>
+								<a class="dropdown-toggle" data-toggle="dropdown" id="CaLabel" href="#"><b class='ca_text'>loading...</b>
+									<% if privilege?(:manage_canned_responses) %><b class="caret"></b><% end %>
+								</a>
 
-								<%= link_to( content_tag(:i, "", 
-									            :class => "icon-edit tooltip ", 
-									            :title => t('canned_folders.edit'), 
-									            :"data-placement" => 'below'
-									    ), "#folder_edit_form", 
-									    :"data-width" => "400", 
-									    :"data-submit-label" => t('save'), 
-									    :"data-close-label" => t('cancel'), 
-									    :rel => 'freshdialog', 
-									    :id => "edit-ca-folder",
-									    :class => "spacing_left", 
-									    :"data-title" => t('canned_folders.rename_folder') )%>
-								<%= link_to( content_tag(:i, "", 
-									           :class => "icon-trash tooltip ", 
-									           :title => t('canned_folders.delete'), 
-									           :"data-placement" => 'below'
-									    ), helpdesk_canned_responses_folder_path(@current_folder), 
-									    :id => "del",
-									    :class => "spacing_right",
-									    :method => :delete,
-									    :confirm => @ca_responses.present? ? t('canned_folders.delete_folder').html_safe : t('canned_folders.delete_empty_folder')) %>
-						  	</div>
-					  	<%end%>
-					</div>
+								<ul class="dropdown-menu folder-dropdown" role="menu" id="ca_new_menu" aria-labelledby="CaLabel">
+									<% @ca_res_folders.each do |folder| %>
+				  					<li>
+				  						<%
+				                if privilege?(:manage_canned_responses) and !(folder.personal?)
+				                  count = current_account.canned_responses.count(:conditions => {:folder_id => folder.id})
+				                else
+				                  count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => folder.id})
+				                end
+				              %>
+				  						<a id="folder<%= folder.id %>" href= "<%= helpdesk_canned_responses_folders_path %>/<%= folder.id %>" data-folder="<%= folder.id %>" data-pjax="#body-container"
+				  						data-name="<%= folder.display_name %>"
+				  						class="catch js-pjax <%= "default-folder" unless !(folder.is_default)%>"><%= folder.display_name %> (<%= count %>)
+				  						</a>
+				  					</li>
+									<%end%>
+								</ul>
 
-					<% if privilege?(:manage_canned_responses) %>
-					  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe,
-											:class => "create_new_folder tooltip pull-right btn btn-flat",
-											:title => t('canned_folders.create'),
-											:"data-placement" => 'below'
-									), "#create_folder",
-		                	    	:"data-width" => "400",
-		                	    	:"data-submit-label" => t('save'), 
-		                	    	:"data-close-label" => t('cancel'),
-			                	    :id => "create-folder",
-			                	    :"data-title" => t('canned_folders.create'),
-			                        :rel => 'freshdialog' )%>
-			        <% end %>
-					<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
-		      <div class="hide canned_create_folder" id="create_folder">
-		        <%= form_for @new_ca_res_folder, :url => helpdesk_canned_responses_folders_path, :html => { :rel => "validate", 
-		            	:method => :post } do |f| %>
-					     <%= render :partial => "folder_form", :locals => { :f => f } %>
-			     <% end %>
-		      </div> 
-
-
-
-					<div id="editing" class="hide">
-						<div id="edit_form" class="center">
-							<%= form_for(@current_folder, :url => helpdesk_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
-		          <%= f.error_messages :object_name => 'canned_response_folder' %>
-							<div class="form-horizontal">
-								<%= f.error_messages :object_name => 'canned_response_folder' %>
-								<%= f.text_field :name, :class => "text required presence_in_list", :minlength => "3" %>
 							</div>
-							<% end %>
+							<%else%>
+							<%= t('canned_folders.viewing') %>
+							<%count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => @pfolder.id})%>
+							<b ><%= @pfolder.display_name %> (<%= count %>)</b>
+							<%end%>
+							<% if privilege?(:manage_canned_responses) %>
+								<div id="folder-controls">
+
+									<%= link_to( content_tag(:i, "", 
+										            :class => "icon-edit tooltip ", 
+										            :title => t('canned_folders.edit'), 
+										            :"data-placement" => 'below'
+										    ), "#folder_edit_form", 
+										    :"data-width" => "400", 
+										    :"data-submit-label" => t('save'), 
+										    :"data-close-label" => t('cancel'), 
+										    :rel => 'freshdialog', 
+										    :id => "edit-ca-folder",
+										    :class => "spacing_left", 
+										    :"data-title" => t('canned_folders.rename_folder') )%>
+									<%= link_to( content_tag(:i, "", 
+										           :class => "icon-trash tooltip ", 
+										           :title => t('canned_folders.delete'), 
+										           :"data-placement" => 'below'
+										    ), helpdesk_canned_responses_folder_path(@current_folder), 
+										    :id => "del",
+										    :class => "spacing_right",
+										    :method => :delete,
+										    :confirm => @ca_responses.present? ? t('canned_folders.delete_folder').html_safe : t('canned_folders.delete_empty_folder')) %>
+							  	</div>
+						  	<%end%>
 						</div>
-					</div>
+						<div class="pull-right pagination-right new_canned_response">
+			        <b>
+			          <%= link_to t('canned_folders.new_response'), 
+			                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
+			                :id => "new_resp", :class => "btn btn-primary" %>
+			        </b>
+			      </div>
+						<% if privilege?(:manage_canned_responses) %>
+							<div class="pull-right pagination-right ">
+						  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe,
+												:class => "create_new_folder tooltip pull-right btn btn-flat",
+												:title => t('canned_folders.create'),
+												:"data-placement" => 'below'
+										), "#create_folder",
+			                	    	:"data-width" => "400",
+			                	    	:"data-submit-label" => t('save'), 
+			                	    	:"data-close-label" => t('cancel'),
+				                	    :id => "create-folder",
+				                	    :"data-title" => t('canned_folders.create'),
+				                        :rel => 'freshdialog' )%>
+				      </div>
+				        <% end %>
+						<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
+			      <div class="hide canned_create_folder" id="create_folder">
+			        <%= form_for @new_ca_res_folder, :url => helpdesk_canned_responses_folders_path, :html => { :rel => "validate", 
+			            	:method => :post } do |f| %>
+						     <%= render :partial => "folder_form", :locals => { :f => f } %>
+				     <% end %>
+			      </div> 
+
+
+
+						<div id="editing" class="hide">
+							<div id="edit_form" class="center">
+								<%= form_for(@current_folder, :url => helpdesk_canned_responses_folder_path(@current_folder), :html => { :method => "put", :id => "folder_edit_form"}) do |f| %>
+			          <%= f.error_messages :object_name => 'canned_response_folder' %>
+								<div class="form-horizontal">
+									<%= f.error_messages :object_name => 'canned_response_folder' %>
+									<%= f.text_field :name, :class => "text required presence_in_list", :minlength => "3" %>
+								</div>
+								<% end %>
+							</div>
+						</div>
 				</div>
 
 				<div id="folder-drop-list">
@@ -203,7 +201,7 @@
 	</div>
 	<%if chat_activated? %>
   <div class="tab-pane" id="chatShortcodes">
-    <div class="fc-sc-new-field"><a href="#" id="short_code_add" class="btn-plus"><%= font_icon "plus", :size => 12 %> Add new</a></div>
+    <div class="fc-sc-new-field"><a href="#" id="short_code_add" class="btn-plus"><%= font_icon "plus", :size => 12 %> <%= t('short_code.addNew').html_safe%></a></div>
     <ul class="fc-shortcodes" id="short_codes_container">
     </ul>
   </div>
