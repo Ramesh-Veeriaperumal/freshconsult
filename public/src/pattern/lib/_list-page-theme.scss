@@ -164,6 +164,20 @@
         }
     }
 }
+.cr-tab-actions{  
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    right: 20px;
+    top: 25px;
+    .btn-primary,
+    .btn-primary:hover{
+        &.disabled,
+        &[disabled]{
+            color: #000;
+        }
+    }
+}
 // ------ Chat Shortcodes Page
 @import "chat/chat-shortcodes";
 // ------ END Chat Shortcodes Page

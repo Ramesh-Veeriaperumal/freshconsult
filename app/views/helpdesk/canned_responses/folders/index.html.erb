@@ -1,9 +1,19 @@
 <% content_for :helpcard do -%><%= render :partial => 'helpnote' %><%- end %>
 <ul class="nav nav-tabs canned-response-tabs">
-  <li class="active"><a href="#cannedResponses"><%= t('canned_folders.responses') %></a></li>
+  <li class="active"><a href="#cannedResponses" id="cannedResponses_btn"><%= t('canned_folders.responses') %></a></li>
   <%if chat_activated? %>
-  <li><a href="#chatShortcodes"><%= t('short_code.title').html_safe%></a></li>
+  <li><a href="#chatShortcodes" id="chatShortcodes_btn"><%= t('short_code.title').html_safe%></a></li>
   <%end%>
+</ul>
+<ul class="cr-tab-actions">
+	<%if chat_activated? %>
+	<li class="sc-new-btn pull-right hide"><a href="#" id="short_code_add" class="btn btn-primary"><%= t('short_code.addNew').html_safe%></a></li>
+  <%end%>
+  <li class="cr-new-btn pull-right">
+  	<%= link_to t('canned_folders.new_response'), 
+			                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
+			                :id => "new_resp", :class => "btn btn-primary" %>
+  </li>
 </ul>
 
 <div class="tab-content">
@@ -71,13 +81,6 @@
 							  	</div>
 						  	<%end%>
 						</div>
-						<div class="pull-right pagination-right new_canned_response">
-			        <b>
-			          <%= link_to t('canned_folders.new_response'), 
-			                new_helpdesk_canned_responses_folder_response_path(@current_folder), 
-			                :id => "new_resp", :class => "btn btn-primary" %>
-			        </b>
-			      </div>
 						<% if privilege?(:manage_canned_responses) %>
 							<div class="pull-right pagination-right ">
 						  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe,
@@ -201,7 +204,6 @@
 	</div>
 	<%if chat_activated? %>
   <div class="tab-pane" id="chatShortcodes">
-    <div class="fc-sc-new-field"><a href="#" id="short_code_add" class="btn-plus"><%= font_icon "plus", :size => 12 %> <%= t('short_code.addNew').html_safe%></a></div>
     <ul class="fc-shortcodes" id="short_codes_container">
     </ul>
   </div>

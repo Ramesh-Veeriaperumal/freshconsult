@@ -17,7 +17,7 @@ liveChat.admin_short_codes = (function(){
           
         },
       _trim_size: 45,
-      _valid_code: new RegExp((/[`~,.<>;':"/[\]|{}()!@#$%^&*?=\s+-]/)),
+      _valid_code: new RegExp((/[`~,.<_>;':"/[\]|{}()!@#$%^&*?=\s+]/)),
       bindEvents: function(){
         jQuery('#short_code_add').click(function(){
           if(jQuery("ul.fc-shortcodes li[data-action='create']").length >0 ){
@@ -28,12 +28,21 @@ liveChat.admin_short_codes = (function(){
           var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: "", i18n: _module.i18n});
           jQuery('#short_codes_container').html(_new_fragment+jQuery('#short_codes_container').html());
           jQuery("#"+_random_id).find(".short_code_key").focus();
+          jQuery(this).addClass('disabled');
         });
 
         jQuery('.canned-response-tabs a').click(function(e) {
           e.preventDefault();
           history.pushState( null, null, jQuery(this).attr('href') );
           jQuery(this).tab('show');
+          if(jQuery(this).attr('id') === 'cannedResponses_btn'){
+            jQuery('.sc-new-btn, #chatShortcodes_help').addClass('hide');
+            jQuery('.cr-new-btn, #cannedResponses_help').removeClass('hide');
+          }
+          else{
+            jQuery('.sc-new-btn, #chatShortcodes_help').removeClass('hide');
+            jQuery('.cr-new-btn, #cannedResponses_help').addClass('hide');
+          }
         });
 
         jQuery('.fc-sc-edit').live('click',function(){
@@ -67,6 +76,7 @@ liveChat.admin_short_codes = (function(){
         jQuery('.fc-sc-discard').live('click',function(){
           var _parent = jQuery(this).parents('.fc-item');
           if(!jQuery.isNumeric(_parent.attr("id"))){
+            jQuery('#short_code_add').removeClass('disabled');
             _parent.remove();
             return;
           }
@@ -114,6 +124,7 @@ liveChat.admin_short_codes = (function(){
         _parent_elm.removeClass('editing');
         _parent_elm.find('.short_code_key').val(resp.result.code);
         _parent_elm.find('.short_code_message').val(resp.result.message);
+        jQuery('#short_code_add').removeClass('disabled');
       },
       //update record callback
       updateShortCodeId: function(resp,short_code_id){
@@ -141,7 +152,7 @@ liveChat.admin_short_codes = (function(){
 
       showAlertMsg: function(elem, msg){
         elem.find(".error-label").remove();
-        elem.prepend("<span class='error-label'>"+msg+"</span>");
+        elem.append("<span class='error-label'>"+msg+"</span>");
         elem.addClass("error");
       },
 
