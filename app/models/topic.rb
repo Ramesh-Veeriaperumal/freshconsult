@@ -2,6 +2,12 @@ class Topic < ActiveRecord::Base
   self.primary_key = :id
   include Search::ElasticSearchIndex
   include Mobile::Actions::Topic
+  
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  
+  HITS_CACHE_THRESHOLD = 100
+  
   acts_as_voteable
   validates_presence_of :forum, :user, :title
   validate :check_stamp_type
@@ -271,9 +277,18 @@ class Topic < ActiveRecord::Base
   def stamp_key
     IDEAS_STAMPS_TOKEN_BY_KEY[stamp_type].to_s
   end
-
-	def hit!
-    self.class.increment_counter :hits, id
+  
+  def hit!
+    new_count = increment_others_redis(hit_key)
+    if new_count >= HITS_CACHE_THRESHOLD
+      self.update_column(:hits, read_attribute(:hits) + HITS_CACHE_THRESHOLD)
+      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
+    end
+    true
+  end
+  
+  def hits
+    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
   end
 
   def stamp?
@@ -425,5 +440,9 @@ class Topic < ActiveRecord::Base
   def has_unpublished_posts?
     spam_count > 0 || unpublished_count > 0
   end
-
+  
+  def hit_key
+    TOPIC_HIT_TRACKER % {:account_id => account_id, :topic_id => id }
+  end
+  
 end
