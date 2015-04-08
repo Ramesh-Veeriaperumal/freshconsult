@@ -46,7 +46,7 @@ liveChat.admin_short_codes = (function(){
         });
 
         jQuery('.fc-sc-edit').live('click',function(){
-          jQuery(this).parents('.fc-item').addClass('editing');
+          jQuery(this).parents('.fc-item').addClass('editing').removeClass("error");
         });
 
         jQuery('.fc-sc-save').live('click',function(){
@@ -83,6 +83,7 @@ liveChat.admin_short_codes = (function(){
           _parent.removeClass("error");
           _parent.find(".error-label").remove();
           _parent.find(".short_code_key").val(_parent.find(".code_view").text());
+          _parent.find(".short_code_message").val(_parent.find(".message_view").text());
           _parent.removeClass('editing');
         });
 
