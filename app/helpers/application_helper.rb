@@ -1184,4 +1184,12 @@ module ApplicationHelper
 
   # ITIL Related Methods ends here
 
+  #Helper method for rendering only base error messages
+  def base_error_messages obj
+    if obj.errors.present?
+      error_list = obj.errors[:base].collect{ |msg| content_tag('li', msg)}.join(" ").html_safe
+      content_tag('div', content_tag('ul', error_list), :id => "errorExplanation", :class => "errorExplanation")
+    end
+  end
+
 end

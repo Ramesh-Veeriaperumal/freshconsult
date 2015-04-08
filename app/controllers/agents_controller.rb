@@ -273,7 +273,7 @@ class AgentsController < ApplicationController
   end
   
   def check_email_exist
-    if("Email has already been taken".eql?(@user.errors.messages[:base]))
+    if(@user.errors.messages[:"primary_email.email"].include? "has already been taken")
       @existing_user = current_account.user_emails.user_for_email(params[:user][:email])
     end
   end
