@@ -93,7 +93,8 @@
     }
     input[type=text]{
         border-right-color: #E3E3E3;
-        @include padding(12px 22px 12px 10px);
+        @include padding(0 22px 0 10px);
+        height: 26px;
         @include box-sizing(border-box);
         @include border-radius(3px 0 0 3px);
     }
@@ -104,7 +105,8 @@
     }
     input[type=text]{
         border-left:0;
-        @include padding(12px 10px 12px 18px);
+        @include padding(0 10px 0 18px);
+        height: 26px;
         @include box-sizing(border-box);
         @include border-radius(0 3px 3px 0);
     }
