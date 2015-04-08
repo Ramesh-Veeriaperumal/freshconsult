@@ -1,14 +1,14 @@
 class DraftMailer < ActionMailer::Base
 
-	include Mailbox::MailerHelperMethods
-	include Helpdesk::NotifierFormattingMethods
+  include Mailbox::MailerHelperMethods
+  include Helpdesk::NotifierFormattingMethods
 
   layout "email_font"
 
-	def self.discard_notification(draft, article, current_author, current_user, portal)
-		discard_email(draft, article, current_author, current_user, portal)
-	end
-	
+  def self.discard_notification(draft, article, current_author, current_user, portal)
+    discard_email(draft, article, current_author, current_user, portal)
+  end
+
   def discard_email(draft, article, current_author, current_user, portal)
     mail_config = portal.primary_email_config || current_user.account.primary_email_config
     self.class.set_mailbox mail_config.smtp_mailbox
@@ -37,7 +37,7 @@ class DraftMailer < ActionMailer::Base
         ).to_inline_css 
       end
     end.deliver
-    
+
   end
 
 end

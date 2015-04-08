@@ -75,14 +75,8 @@ class Helpdesk::KbaseArticles
         article.user = user
         article.account = account
         article.save
-        create_draft(article)
         article
       end
-    end
-
-    def self.create_draft(article)
-      draft = article.create_draft_from_article
-      draft.save
     end
 
   end

@@ -207,12 +207,6 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def forge_draft
-      @draft = @article.build_draft_from_article
-      attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
-      @draft.save
-    end
-
     def load_draft
       @draft = @article.draft
       if @draft.present? and @draft.locked?

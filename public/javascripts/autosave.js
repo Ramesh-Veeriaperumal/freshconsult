@@ -30,6 +30,19 @@ Options are
 		This expects a function with a single parameter. This will be called after each autosave action with the response
 		recieved from the server.
 
+
+Along with the above options, few flags and counters are available which are listed as follows.
+1. contentChanged
+    This is flag, which is set to true if the content has changed in any of the fields which are monitored.
+2. savingContentFlag
+    This flag is set to true while the saving process is going on.
+3. successCount
+    This is counter. This keeps tracks of succesfull autosave attempts.
+4. failureCount
+    This is a counter. This kepps tracks of failed autosave attempts.
+5. lastSaveStatus
+    This is flag. This will be true if the last autosave attempt was succesfull or else false.
+    
 */
 /*jslint browser: true, devel: true */
 

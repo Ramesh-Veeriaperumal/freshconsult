@@ -36,7 +36,7 @@
 					<%= link_to("<i class='icons-edit-forum'></i>".html_safe, edit_solution_category_folder_article_path(category, folder, article), :title => "Edit", :class=>'pull-left mr6 tooltip') if privilege?(:manage_solutions) %>
 					<div class='article-desc'>
 						<!-- This is for normal thing with out draft feature enabled -->
-						<% if draft_feature_enabled = true %>
+						<% if @solution_drafts_feature %>
 							<%= link_to h( (article.draft || article).title ), solution_category_folder_article_path(category, folder, article) %>
 							<div class="muted">
 								<%= t('solution.user_details', :user => article.user.name, :time => formated_date( (article || artcile.draft).modified_at) ).html_safe %>

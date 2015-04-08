@@ -18,7 +18,7 @@ class Solution::DraftsController < ApplicationController
 			draft.discarding = true
 			draft.destroy
 		end
-    redirect_to :back
+		redirect_to :back
 	end
 
 	def publish
@@ -48,16 +48,16 @@ class Solution::DraftsController < ApplicationController
 		end
 
 		def set_selected_tab
-      @selected_tab = :solutions
-    end     
-    
-    def page_title
-      @page_title = t("header.tabs.solutions")    
-    end
+			@selected_tab = :solutions
+		end     
 
-    def load_article
-    	@article = current_account.solution_articles.find_by_id((params[:article_id] || params[:id]), :include => :draft)
-    end
+		def page_title
+			@page_title = t("header.tabs.solutions")    
+		end
+
+		def load_article
+			@article = current_account.solution_articles.find_by_id((params[:article_id] || params[:id]), :include => :draft)
+		end
 
 		def load_attachment
 			@assoc = params[:attachment_type].pluralize.to_sym
@@ -104,8 +104,8 @@ class Solution::DraftsController < ApplicationController
 			deleted = { @assoc => [@attachment.id]}
 			@draft.meta[:deleted_attachments] ||= {}
 			@draft.meta[:deleted_attachments].merge!(deleted) { |key,oldval,newval| oldval | newval }
-			
+
 			@draft.save
 		end
-	
+
 end

@@ -12,14 +12,13 @@ module CommunityHelper
   end
 
   def article_attachment_link(att, type)
-  	if @article.present? && att.parent_type == @article.class.name
-  		return %(#{solution_article_attachments_delete_path(@article, type, att)}).html_safe
-  	end
-
+    if @article.present? && att.parent_type == @article.class.name
+      return %(#{solution_article_attachments_delete_path(@article, type, att)}).html_safe
+    end
   end
 
   def active_attachments(att_type, draft, article)
-  	return article.send(att_type) unless article.draft.present?
+    return article.send(att_type) unless article.draft.present?
 
     (article.send(att_type).reject do |a|
       (draft.deleted_attachments(att_type) || []).include?(a.id)
