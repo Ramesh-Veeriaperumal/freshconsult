@@ -51,7 +51,8 @@ namespace :facebook do
           ) do |facebook_block|
           facebook_block.each do |fb_page|
             account = fb_page.account
-            next unless fb_page.valid_page
+            account.make_current
+            next if (account.features?(:facebook_realtime) or !fb_page.valid_page)
             puts "#{account.id} :: #{fb_page.id}"
             Resque.enqueue(Facebook::Worker::FacebookCommentsWorker ,{:account_id => account.id, :fb_page_id => fb_page.id})
           end
