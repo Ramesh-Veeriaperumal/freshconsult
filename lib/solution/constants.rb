@@ -4,7 +4,7 @@ module Solution::Constants
     [ :draft,     "solutions.status.draft",        1 ], 
     [ :published, "solutions.status.published",    2 ]
   ]
-
+  HITS_CACHE_THRESHOLD = 100
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
   STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
