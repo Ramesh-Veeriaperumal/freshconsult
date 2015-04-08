@@ -70,7 +70,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     if @content_type.nil?
       return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
     else
-      Rails.logger.debug "Content type on API:: #{@content_type}"
+      Rails.logger.debug "Account ID :: #{@account_id} ::: Content type on API:: #{@content_type}"
       return !THROTTLED_TYPES.include?(@content_type)
     end
   end
