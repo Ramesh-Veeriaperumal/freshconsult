@@ -26,7 +26,7 @@ liveChat.admin_short_codes = (function(){
           }
           var _random_id = "new_" + _module.getRandomInt(1,10);
           var _new_fragment = _module._new_code_dom_fragment({dom_class: "editing", dom_action: "create", short_code_id: _random_id, code: "", message: "", i18n: _module.i18n});
-          jQuery('#short_codes_container').html(_new_fragment+jQuery('#short_codes_container').html());
+          jQuery('#short_codes_container').prepend(_new_fragment);
           jQuery("#"+_random_id).find(".short_code_key").focus();
           jQuery(this).addClass('disabled');
         });
