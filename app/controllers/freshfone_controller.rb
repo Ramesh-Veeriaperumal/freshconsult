@@ -58,7 +58,7 @@ class FreshfoneController < FreshfoneBaseController
 		end
 
 		def reset_caller_params
-			params[:FromCountry] = "IN"
+			params[:FromCountry] = country_from_global(params[:From])
 			params[:FromState] = ""
 			params[:ToCity] = ""
 		end
