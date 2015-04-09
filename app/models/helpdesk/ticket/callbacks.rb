@@ -508,11 +508,15 @@ private
   end
 
   def changed_from_sla_timer_stopped_status_to_closed_or_resolved?
-    changed_to_closed_or_resolved? && previous_state_was_sla_stop_state?
+    changed_to_closed_or_resolved? && previous_state_was_sla_stop_state? && !previous_state_was_resolved_or_closed?
   end
 
   def changed_to_closed_or_resolved?
     [CLOSED, RESOLVED].include?(ticket_status.status_id)
+  end
+
+  def previous_state_was_resolved_or_closed?
+    [RESOLVED,CLOSED].include?(@model_changes[:status][0])
   end
 
   def previous_state_was_sla_stop_state?
