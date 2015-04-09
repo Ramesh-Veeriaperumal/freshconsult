@@ -39,7 +39,7 @@ module Freshfone::MessageMethods
 			(transcript? && !message.blank?)
 		end
 
-		def has_valid_size?
-			(transcript? && (message.length <= 4096) )
+		def has_invalid_size?
+			(transcript? && (message.length > 4096) )
 		end
 end

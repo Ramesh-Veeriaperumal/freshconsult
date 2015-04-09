@@ -37,7 +37,7 @@ class Freshfone::Number::Message
 		parent.errors.add(:base,I18n.t('flash.freshfone.number.blank_message', 
 															{:num_type => type.to_s.humanize})) unless has_message?
 		parent.errors.add(:base, I18n.t('flash.freshfone.number.invalid_message_length', 
-															{:num_type => type.to_s.humanize})) unless  has_valid_size?
+															{:num_type => type.to_s.humanize})) if has_invalid_size?
 	end
 	
 	def to_yaml_properties
