@@ -531,6 +531,12 @@ GoogleCalendar.prototype = {
 	},
 
 	populateEvents: function(){
+		// When there is problem in refreshing OAuth_token then hide the events container and the hyperlinks.
+		if(this.freshdeskWidget.options.refresh_count >=2 ) {
+			jQuery("#google_calendar_events_container").hide();
+			jQuery("#add_event_link").hide();
+			jQuery("#gcal-change-account-link").hide();
+		}
 
 		if(this.nLoadingEvents) return; // Wait for loading to complete.
 		
