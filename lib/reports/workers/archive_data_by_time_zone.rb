@@ -41,8 +41,7 @@ module Reports
 																												 :end_date => end_date})
 									add_to_reports_hash(export_hash, "job_id", job_id, 604800)
 	  						elsif (accounts_last_job and !accounts_last_job.completed? and Rails.env.production?)
-	  							subject = %(Reports data archiving job of Account ID : #{id} is 
-  													#{accounts_last_job.status} for more than 24 hours)
+	  							subject = %(Reports data archiving job of Account ID : #{id} is #{accounts_last_job.status} for more than 24 hours)
   								report_notification(subject,subject)
 	  						end
 							end
