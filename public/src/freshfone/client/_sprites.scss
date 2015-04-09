@@ -66,7 +66,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 }
 .transfer_agent_pointer { @include freshfone-sprite(callhistory-transferred); }
 .callhistory_helpdesk_avatar { @include freshfone-sprite(callhistory-helpdesk); }
-.callhistory-payment-loader { background-image:url('/images/animated/payment-loader.gif') }
+.callhistory-payment-loader { background-image: image-url('/assets/animated/payment-loader.gif') }
 
 
 // font icon styles

@@ -543,7 +543,7 @@ module ApplicationHelper
 
 
   def group_avatar
-    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
+    content_tag( :div, image_tag("/assets/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
   end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
