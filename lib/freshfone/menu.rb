@@ -46,7 +46,7 @@ class Freshfone::Menu < Tree::TreeNode
 	
 	def validate
 		ivr.errors.add(:base,"Cannot have blank message for menu '#{menu_name}'") unless has_message?
-		ivr.errors.add(:base,"Message shouldn't exceed 4096 characters for menu '#{menu_name}'") unless  has_valid_size?
+		ivr.errors.add(:base,"Message shouldn't exceed 4096 characters for menu '#{menu_name}'") if has_invalid_size?
 		ivr.errors.add(:base,"Atleast one keypress option need for '#{menu_name}'") if  ( !has_options? && ivr.ivr_message?)
 		validate_options
 	end
