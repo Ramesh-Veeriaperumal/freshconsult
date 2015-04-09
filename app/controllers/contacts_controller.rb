@@ -387,7 +387,7 @@ protected
        @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by)
+          scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by).preload(:avatar, :company)
         end
       cookies[:contacts_sort] = @sort_state
       rescue Exception => e
