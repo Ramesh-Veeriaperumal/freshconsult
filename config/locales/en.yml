@@ -7050,6 +7050,7 @@ en:
     message: Expansion
     addNew: Add New
     confirm: Are you sure you want to delete chat shorthand ?
+    no_code: No shorthands available.
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: This shorthand is already in use.
