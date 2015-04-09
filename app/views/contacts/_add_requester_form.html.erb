@@ -39,6 +39,7 @@
   function lookup(searchString, callback) { 
     new Ajax.Request('<%= autocomplete_contacts_path %>?v='+encodeURIComponent(searchString), 
                         { parameters: {name: searchString, rand: (new Date()).getTime()},
+                          method: 'GET',
                           onSuccess:  function(response) {
                                         var choices = $A();
                                         response.responseJSON.results
