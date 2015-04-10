@@ -67,7 +67,6 @@ class Integrations::JiraUtil
             Rails.logger.debug "mapped_data #{mapped_data}"
             invoke_action = notify_value.match("comment_in_jira") ? "add_comment" : "update_status"
             jira_obj.send(invoke_action, issue_id, mapped_data)
-            jira_obj.construct_attachment_params(issue_id, data) if invoke_action == "add_comment" && data.class == Helpdesk::Note 
             jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id}
             set_integ_redis_key(jira_key, "true", 240) # The key will expire within 4 mins.
           }

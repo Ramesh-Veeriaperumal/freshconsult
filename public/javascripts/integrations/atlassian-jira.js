@@ -2,7 +2,7 @@ var JiraWidget = Class.create();
 JiraWidget.prototype = {
 	JIRA_FORM:new Template(
 		'<div id="jira_issue_forms"><div id="jira_issue_create"><div class="heading"><span class="current_form">Create a new issue</span>' +
-			'<span class="divir"> or </span>' + 
+			'<span class="divider"> or </span>' + 
 			' <span class="other_form show_linkform">Link to an existing issue</span></div>' + 
 	    '<form id="jira-add-form" method="post" class="ui-form"> ' +
 		    '<div class="field half_width left">' +
@@ -291,27 +291,6 @@ JiraWidget.prototype = {
 		return ticket_url;
 	},
 
-	addAttachments:function(created_issue)
-	{
-		var attachments = jiraBundle.attachments;
-		if(attachments.length > 0)
-		{
-    	attachment_list = ""
-			jQuery.each( attachments, function(index, url){
-        attachment_list = attachment_list + url + '\n';
-     	});
-     	if(created_issue.fields.description)
-     	{
-    		created_issue.fields.description = created_issue.fields.description + '\n' + 'Attachments in Freshdesk :-\n' + attachment_list;
-    	}
-    	else
-    	{
-    		created_issue.fields.description = 'Box or Dropbox Attachments in Freshdesk :-\n' + attachment_list;
-    	}
-    }
-    return created_issue;
-	},
-
 	createJiraIssue: function(resultCallback) {
 		if(jiraWidget.form_validation())
 		{
@@ -327,7 +306,6 @@ JiraWidget.prototype = {
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
-    created_issue = jiraWidget.addAttachments(created_issue);	
 		this.jsonFix();
 		issue = JSON.stringify(created_issue);
 	  this.resetJsonFix();
@@ -559,8 +537,6 @@ JiraWidget.prototype = {
 		reqData = {
 			"update": {}
 		};
-		requestData = jiraWidget.addAttachments(resData.responseJSON);
-		requestData = requestData.fields.description;
 		if(freshdeskData != null) {
 			if(freshdeskData.indexOf(jiraWidget.getCurrentUrl()) != -1) ticketData = freshdeskData;
 			else {
@@ -580,8 +556,7 @@ JiraWidget.prototype = {
 				application_id: jiraBundle.application_id,
 				local_integratable_id: jiraBundle.ticket_rawId,
 				local_integratable_type: integratable_type,
-				source_url: "/integrations/jira_issue/update",
-				cloud_attachment: requestData
+				source_url: "/integrations/jira_issue/update"
 
 			}];
 		} else {
@@ -597,8 +572,7 @@ JiraWidget.prototype = {
 				local_integratable_type: integratable_type,
 				source_url: "/integrations/jira_issue/update",
 				on_success: jiraWidget.updateIssueJiraSuccess.bind(this),
-				on_failure: jiraWidget.updateIssueJiraFailure.bind(this),
-				cloud_attachment: requestData
+				on_failure: jiraWidget.updateIssueJiraFailure.bind(this)
 			}];
 		}
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;

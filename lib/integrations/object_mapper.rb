@@ -10,7 +10,7 @@ class Integrations::ObjectMapper
       data["account_id"] = account_id
     end
     data_hash = {:input => data}
-    stages.each {|s|
+    stages.each {|s| 
       config = mapper_config[s]
       self.send(s, data_hash, config, convertion_type) unless config.blank?
       Rails.logger.debug "=========== After #{s} for #{mapper_name}: data_hash #{data_hash.inspect} =========="
@@ -59,13 +59,10 @@ class Integrations::ObjectMapper
             end
           end
         else
-          if convertion_type == :ours_to_theirs  && data_hash[:input].class == Helpdesk::Note && data_hash[:input].cloud_files.length > 0
-             map_config = addAttachments(data_hash, map_config)
-          end
           handler = convertion_config[:handler] || :template_convert
           set_data = invoke_handler(handler, set_data, convertion_config)
         end
-        
+
         Rails.logger.debug  "ObjectMapper::map to_entity #{to_entity.inspect}, to_meth #{to_meth}, set_data #{set_data.inspect}"
         if to_entity.class == Hash
           to_entity[to_meth] = set_data
@@ -75,16 +72,6 @@ class Integrations::ObjectMapper
           data_hash[:to_entity] = set_data
         end
       }
-    end
-
-    def addAttachments(data_hash, map_config)
-      note = data_hash[:input]
-      attachments_list = ""
-      note.cloud_files.each do |file|
-        attachments_list = attachments_list + file.url + "\n"
-      end
-      map_config[:ours_to_theirs][:value] = map_config[:ours_to_theirs][:value] + attachments_list
-      map_config
     end
 
     def update(data_hash, update_config, convertion_type)
@@ -244,6 +231,7 @@ class Integrations::ObjectMapper
     }
   }
 end
+
 
 #             {:theirs=>"status", :ours=>"status", 
 #                     :theirs_to_ours_mapping=>{
