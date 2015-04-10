@@ -312,6 +312,8 @@ module ChatHelper
             :offline_thank_msg => t("freshchat.offline_thank_msg"),
             :offline_thank_header_msg => t("freshchat.offline_thank_header_msg"),
             :missed_chat_info => t("freshchat.missed_chat_info"),
+            :shorthands => t('short_code.title'),
+            :no_code => t('short_code.no_code')
         }
         return text.to_json.html_safe
   end

@@ -231,6 +231,7 @@
                 <div id="google_calendar_events_container"></div>
               </div>
             </div>
+            <div class="error hide"></div>
           </div>
           <script type="text/javascript">
             var google_calendar_options={

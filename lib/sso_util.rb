@@ -5,8 +5,10 @@ module SsoUtil
   SAML_NAME_ID_FORMAT="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   SSO_ALLOWED_IN_SECS = 1800
   SSO_CLOCK_DRIFT = 60 # No of secs the response time can be before the server time .. Keep this very low for security
-  FIRST_NAME_STRS = ["givenname" , "FirstName", "User.FirstName", "username"].map &:to_sym  # username will always return something
-  LAST_NAME_STRS = ["surname", "LastName", "User.LastName"].map &:to_sym
+  FIRST_NAME_STRS = ["givenname" , "FirstName", "User.FirstName", "username" ,
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"].map &:to_sym
+  LAST_NAME_STRS = ["surname", "LastName", "User.LastName",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"].map &:to_sym
   PHONE_NO_STRS = [:phone]
   COMPANY_NAME_STRS = [:organization, :company]
 

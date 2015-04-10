@@ -5,10 +5,10 @@
 		</span>
 		<div class="search-result-text row-fluid">
 			<div class="ticket_subject search-result-content">
-				<a href="<%= path %>" class="search-title"><%= title %></a>
+				<a href="<%= path %>" class="search-title" data-pjax="#body-container"><%= title %></a>
 				<div class="info-data hideForList">
 					<%= SEARCH_RESULT_LANG["in"] %> 
-					<a class="emphasize" href="<%= forum_path %>"><%= forum_name %></a>
+					<a class="emphasize" href="<%= forum_path %>" data-pjax="#body-container"><%= forum_name %></a>
 				</div>
 				<p class="muted"><%= description %></p>
 			</div>

@@ -1759,6 +1759,7 @@ en:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
         blank_message: "%{num_type} cannot be blank"
+        invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
         add_blacklist_success: "Number blocked successfully"
         add_blacklist_failure: "Number could not be blocked"
         remove_blacklist_success: "Number unblocked successfully"
@@ -6285,6 +6286,7 @@ en:
         recording_privacy: "Recording Visibility"
         recording_privacy_public: "Visible to customers and agents"
         recording_privacy_private: "Visible only to agents"
+        name_maxlength: "Name cannot have more than 255 Characters"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -7048,6 +7050,7 @@ en:
     message: Expansion
     addNew: Add New
     confirm: Are you sure you want to delete chat shorthand ?
+    no_code: No shorthands available.
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: This shorthand is already in use.
