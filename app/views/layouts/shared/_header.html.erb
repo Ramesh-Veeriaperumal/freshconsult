@@ -79,7 +79,14 @@
 							  }
 							<%end%>
 						</div>
-					<% end %>                    
+					<% end %>     
+					<div class="tone-customize hide" >
+						<span class="seperator"></span>
+						<div class="info">
+							<p class="muted"><%= t("freshchat.change_livechat_tone") %></p>
+							<input type="hidden" id="change_ping_tone" class="agent-tone-select"/>
+						</div>      
+					</div>                
 					<span class="seperator"></span>			
 					<%= link_to t('header.signout').html_safe, logout_path, :class => "link" %>
 				</div>    

@@ -1,0 +1,32 @@
+<div>
+Hi <%= @user.name%>,
+</div>
+<div>
+<% if @import_success %>
+	<p><%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}".html_safe%></p>
+	<p></p>
+<% else %>
+
+	<p><%= "#{t('flash.import.info2', :type => @type)}".html_safe %></p>
+	</br>
+		<%= "#{t(:'flash.import.created', :count => @created)}".html_safe%><br>
+		<%= "#{t(:'flash.import.updated', :count => @updated)}".html_safe%><br>
+		<%= "#{t(:'flash.import.failed', :count => @failed)}".html_safe%><br>
+	<p></p>
+
+	<p>
+		<%= "#{t('flash.import.info3', :type => @type, :uc_type => @type.capitalize)}".html_safe %>
+		<span>
+			<%= "#{t('flash.import.info4', :type => @type.singularize)}".html_safe if @attachment%>
+			<%= @corrupted ? t('flash.import.info6').html_safe :  "#{t('flash.import.info5', :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}".html_safe  %>
+		</span>
+	</p>
+<p></p>
+<%end%>
+<p><%= t(:'flash.import.help_desk').html_safe%></p>
+<p></p>
+<div>
+<p><%= t(:'flash.import.regards').html_safe%></p>
+<p> <%= t(:'flash.import.freshdesk').html_safe%>
+</p>
+</div>

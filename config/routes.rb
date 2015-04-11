@@ -204,12 +204,14 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :contact_import do
+  # contacts and companies import
+  resources :customers_import do
     collection do
-      get :csv
-      get :google
+      post :create
     end
   end
+  match '/imports/:type' => 'customers_import#csv'
+  match '/imports/:type/map_fields' => 'customers_import#map_fields'
 
   resources :health_check
 
@@ -414,6 +416,7 @@ Helpkit::Application.routes.draw do
         get :custom_search
         get :children
         get :recent_calls
+        get :export
       end
     end
 
@@ -1603,6 +1606,7 @@ Helpkit::Application.routes.draw do
         delete :empty_folder
         put :spam_multiple
         get :more
+        get :moderation_count
       end
       member do
         put :approve
@@ -2066,6 +2070,7 @@ Helpkit::Application.routes.draw do
       post :create_ticket
       post :add_note
       post :chat_note
+      post :missed_chat
       get :get_groups
       post :activate
       post :site_toggle

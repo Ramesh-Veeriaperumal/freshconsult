@@ -146,7 +146,7 @@ en:
   signup: <b>Sign up</b>
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
-  signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
+  signup_help_information: "Once you sign up, you will have complete access to our self service portal and you can use your account to raise support tickets and track their status."
   trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
@@ -1759,6 +1759,7 @@ en:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
         blank_message: "%{num_type} cannot be blank"
+        invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
         add_blacklist_success: "Number blocked successfully"
         add_blacklist_failure: "Number could not be blocked"
         remove_blacklist_success: "Number unblocked successfully"
@@ -1805,7 +1806,7 @@ en:
       default_roles: You cannot modify default roles
       delete:
         not_allowed: You cannot delete this role. There are other users are associated with it.
-    contacts_import:
+    customers_import:
       failure: Please try again
       no_file: Please upload a file
       wrong_format: The CSV file format is not supported. Please check the CSV file format!
@@ -1815,8 +1816,15 @@ en:
       failure: Please try again
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
-      thank_user: Thank you for submitting a import request.
-      details: "Your CSV file has now been processed and the import has been completed successfully. You can open your helpdesk and go to %{customer}-->%{users} to check out the new information. "
+      info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. " 
+      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:" 
+      created: "Created: %{count}" 
+      updated: "Updated: %{count}" 
+      failed:  "Failed : %{count}" 
+      info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}." 
+      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment." 
+      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file" 
+      info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -2916,7 +2924,6 @@ en:
     convert_fulltime: Full-Time Agent
     convert_occasional: Occasional Agent
     send_activation: Send activation email
-    import_csv: Import Customers from CSV
     export_csv: Export to CSV
     import_google: Import from Google
     import_google_no: "No"
@@ -3285,27 +3292,15 @@ en:
   import_added_newly: Added Newly
   quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
-  import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
-  contact_import:
-    name: Name
-    job_title: Job Title
-    company: Company
-    work_phone: Work Phone
-    email: Email
-    twitter_id: Twitter Id
-    mobile_phone: Mobile Phone
-    address: Address
-    background_info: Background Information
-    tags: Tags
-    language: Language
-    timezone: Timezone
+  customer_import:
+    import_step2_info: Map fields from your CSV with %{type} fields.
+    import_warning_info: If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated. 
+    import_csv: "Import %{type} from CSV"
     sample_data: Sample data
-    import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
-    can_see_all_tickets_of_the_company: Can view all company tickets ?
-    can_see_all_tickets_information: If 'no' a contact can only see their tickets. If 'yes' then that contact can see all tickets from their company.
-    can_see_all_tickets: Important - Above field accepts 'yes' or 'no'. Any other value encountered during the import will be considered as 'no'.
+    contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
+    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..) Read more about it <a href = '%{solution_link}' target = '_blank' >here.</a>"
   import_example_title: Following is the example of a CSV file
-  change_my_password: Change My Password
+  change_password: Change Password
   answered: Answered
   errors_in_payment_info: "Errors encountered with your payment information:"
   attach_files: Attach files
@@ -3535,8 +3530,8 @@ en:
   step1: Step 1
   next_charge_date: "Next Renewal"
   last_renewed_on: "Last Renewed on"
-  update_and_login: "Update & login"
-  activate_and_login: "Activate & login"
+  update_and_log_in: "Update & Log in"
+  activate_and_log_in: "Activate & Log in"
   password: "Password"
   enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
@@ -4083,7 +4078,8 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  import_step2_info: Map fields from your CSV with contact fields.
+  create_password: Create a Password
+  retype_password: Retype Password
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
@@ -4648,6 +4644,23 @@ en:
       tags: "Tags"
       survey_result: "Survey Result"
       product: "Product"
+    call_history:
+      info:
+        success: We have started exporting your call records. It will be mailed to you once completed. 
+        error: We were unable to start the export. Please try again or contact Freshdesk support.
+      subject: Call Records within (%{range})
+      body:
+        call_record_export_complete: <strong>Your call records have been successfully exported.</strong> It is now available for download
+        call_records_download_link: <a href=%{url}><strong>Download Call Records</strong></a>
+        conditions_header: ----- Contains calls matching the following conditions -----
+        alternate_link: "Alternatively, paste this link in your web browser to download the file:"
+        thanks: Thank You
+      no_records_mail:
+        subject: "No records in range %{range}"
+        body: Seems like there are no call records in the provided date range.
+      range_limit_message: We only allow exporting call records in a %{range} month range. Please change your filter accordingly. Apologies for the inconvenience.
+      repeated_request: Your call records are already being exported. Kindly check your mail for the download link.
+      export_limit_breached: We currently allow only %{limit} concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
   sla:
     minutes: Mins
     hours: Hrs
@@ -5224,8 +5237,8 @@ en:
       notify_on_public_note_create_by_agent: "Public Note added by "
       notify_on_response_by_customer: "Response from "
       status_msg: "Ticket status changed to "
-      chat: "Chat Conversionation with"
-      default_chat: "Chat Conversionation of"
+      chat: "Chat Conversation with"
+      default_chat: "Chat Conversation of"
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
@@ -6156,6 +6169,7 @@ en:
       blacklist_confirmation: "Are you sure to block"
       show_deleted: "Show deleted numbers"
       filtered_by: "Filtered by:"
+      filter_by_number: "Number"
       filter_by_time: "Time Period"
       filter_by_agent: "Agent"
       filter_by_group: "Incoming Calls to Group"
@@ -6272,6 +6286,7 @@ en:
         recording_privacy: "Recording Visibility"
         recording_privacy_public: "Visible to customers and agents"
         recording_privacy_private: "Visible only to agents"
+        name_maxlength: "Name cannot have more than 255 Characters"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -6394,8 +6409,9 @@ en:
     msg_waiting_agent_title: "Status Message while waiting for agent"
     msg_joining_agent_title: "Message when agent joins chat"
     msg_leaving_agent_title: "Message when agent leaves chat"
+    chat_transfer_msg_title: "Chat transfer message"
     help_text_wait_onhold_msg: "This message will appear when visitor is waiting for an agent for more than one minute"
-    prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
+    prechat_message: "We can't wait to talk to you. But first, please tell us a bit about yourself."
     showform: "Show Pre-chat form"
     proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
     proactive_time: "Greet when more than %{seconds} on the same page"
@@ -6474,7 +6490,22 @@ en:
     back: "Back"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
-    visitor_disconnect_msg: "Visitor has left the chat"
+    visitor_left_chat_msg: "Visitor has left the chat."
+    visitor_disconnect_msg: "Visitor has been disconnected."
+    agent_transfer_accept_msg: "{{agent_name}} has accepted. You can now close this chat."
+    agent_transfer_reject_msg: "{{agent_name}} has rejected your transfer request."
+    agent_transfer_missed_msg: "{{agent_name}} has not picked up the chat. Please try again."
+    chat_inactive_for_10_min: "This chat has been inactive for the past 10 minutes. If you have completed your conversation, please close the chat."
+    agent_transfer_waiting_msg: "Waiting for {{agent_name}} to accept"
+    agent_chat_accept_msg: "You have accepted the chat."
+    close_chat_tooltip: "End chat"
+    minimise_chat_tooltip: "Minimise"
+    settings_chat_tooltip: "Options"
+    visitor_details_tooltip: "Visitor details"
+    agent_chat_placeholder: "Type your message here"
+    visitor_block_notifier_msg: "This visitor has been blocked"
+    visitor_unblock_notifier_msg: "This visitor has been unblocked"
+    transfer_accepted_agent_msg: "Chat was transfered from {{agent_name}}"
     last_message: "Last Message..."
     chat_recent_empty_tip: "No recent messages"
     add_agent_to_chat: "No other agents logged in"
@@ -6546,12 +6577,19 @@ en:
     date_invalid: Invalid date
     joining_chat: "Joining chat"
     agent_joined_msg: "{{agent_name}} has joined the chat"
+    agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
+    agent_reopen_chat_msg: "{{agent_name}} reopened the chat"
+    visitor_side_inactive_msg: "This chat has been inactive for the past 20 minutes."
+    agent_disconnect_msg: "{{agent_name}} has been disconnected"
     agent_left_msg: "{{agent_name}} has left the chat"
+    agent_transfer_msg_to_visitor: "Your chat has been transferred to {{agent_name}}"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     connecting_msg: "Waiting for an agent"
-    non_availability_message: "We are sorry, all our agents are busy. Please # leave us a message # and we'll get back to you right away."
+    non_availability_message: "Our agents are unavailable right now. Sorry about that, but please leave us a message and we'll get right back."
     date_invalid: Invalid date
     installation: "Widget Code"
+    visitor_form: "Visitor Form"
+    preferences: "Preferences"
     intro_title: "Why Live Chat?"
     intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
@@ -6572,7 +6610,7 @@ en:
     feedback_widget: "Open feedback widget"
     new_ticket_page: "Goto new ticket page on your support portal"
     custom_link: "Open a custom link"
-    on_click_goto: "On click Action :"
+    use_custom_link: "Use Custom Link"
     enter_custom_link: "Enter URL"
     url_error_msg: "Please enter a valid URL"
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
@@ -6605,6 +6643,28 @@ en:
     text_no: "No"
     enabled: "Enabled"
     disabled: "Disabled"
+    offline_message: "Offline/Missed Chat Messages"
+    help_offline_title: "Title"
+    offline_title: "Leave us a message!"
+    offline_thank_msg: "Thank you for writing to us. We will get back to you shortly."
+    offline_thank_header_msg: "Thank you!"
+    help_offline_minimized_msg: "Title when chat is minimized"
+    help_offline_maximized_msg: "Title when chat is maximized"
+    help_offline_thank_msg: "Thank you message"
+    help_offline_thank_header_msg: "Thank you header"
+    missed_chat_title: "Missed Chat form"
+    missed_chat_desc: "This form is used to collect the visitor details when you are not available"
+    offline_chat_window: "Offline chat window"
+    offline_chat_window_desc: "Applicable during non-business hour or when agents offline."
+    hide_offline_chat_window: "Hide chat window"
+    show_offline_chat_window: "Show missed chat form for visitors to leave a message"
+    missed_chat_subject: "Sorry we missed your chat on %{date}"
+    missed_chat_content: "Created via Chat. Conversation with %{visitor_name} was missed."
+    offline_chat_subject: "Offline message from %{visitor_name} on %{date}"
+    offline_chat_content: "Created via Chat. Offline message from %{visitor_name}."
+    missed_chat_info: "Chat has been missed.!"
+    change_livechat_tone: "LiveChat Notification Tone"
+    message: "Message"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
@@ -6983,3 +7043,14 @@ en:
   edit_plan: "Edit Plan"
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
+  short_code:
+    title: Chat Shorthands
+    helpnote: "Chat Shorthands are customisable abbreviations which you can use in place of preset messages while you're chatting with someone. You can map different shorthand abbreviations to expand into corresponding messages and access them during your chat by using the '/' symbol."
+    shorthand: Shorthand
+    message: Expansion
+    addNew: Add New
+    confirm: Are you sure you want to delete chat shorthand ?
+    no_code: No shorthands available.
+    alert:
+      code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
+      code_duplicate: This shorthand is already in use.

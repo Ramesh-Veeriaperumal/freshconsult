@@ -1,4 +1,12 @@
-    <h3 class="title"><%=t('helpdesk.canned_responses.folders.helpnote.title')%></h3>
-    <p><%=t('helpdesk.canned_responses.folders.helpnote.info1')%></p> 
-    <p><%=t('helpdesk.canned_responses.folders.helpnote.info2')%></p> 
-    <%= tour_button(t('helpdesk.canned_responses.folders.helpnote.tour'), '50094cc1e13a461bb1000059') %>
+<div id="cannedResponses_help">    
+  <h3 class="title"><%=t('helpdesk.canned_responses.folders.helpnote.title')%></h3>
+  <p><%=t('helpdesk.canned_responses.folders.helpnote.info1')%></p> 
+  <p><%=t('helpdesk.canned_responses.folders.helpnote.info2')%></p> 
+  <%= tour_button(t('helpdesk.canned_responses.folders.helpnote.tour'), '50094cc1e13a461bb1000059') %>
+</div>
+<%if chat_activated? %>
+<div id="chatShortcodes_help" class="hide">
+  <h3 class="title"><%= t('short_code.title').html_safe%></h3>
+  <p><%= t('short_code.helpnote').html_safe%></p>
+</div>
+<%end%>

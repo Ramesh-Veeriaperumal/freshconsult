@@ -27,6 +27,9 @@
 	.normal {
 		font-weight: 400;
 	}
+	.call_history_sorting_div > #sorting_dropdown {
+		margin-left: 10px;
+	}
 	.filter-name {
 		color: #666;
 	}
@@ -228,6 +231,32 @@
 		position: relative;
 	}
 
+	.call_history_export_div > .dropdown-menu {
+		min-width: 75px;
+		width : auto;
+	}
+
+	.call_history_export_div {
+		padding: 0 10px;
+		color: #000;
+	}
+
+	.call_history_export_div * span {
+		color: #000;
+	}
+
+	.call_history_export_div * .caret {
+		border-top: 4px solid #000;
+	}	
+
+	.disabled > #export_dropdown > span  {
+		color: #888;
+	}
+
+	.disabled > #export_dropdown > .caret {
+		border-top: 4px solid #888;
+	}
+
 	.filter_title {
 		label{
 			font-weight: 500;
@@ -349,7 +378,7 @@
 	padding: 5px 0;
 }
 .filter-container {
-	width: 85%;
+	width: 84%;
 }
 
 .freshfone_filter_sorting {

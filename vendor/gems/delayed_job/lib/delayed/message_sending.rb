@@ -1,11 +1,7 @@
 module Delayed
   module MessageSending
     def send_later(method, *args)
-      if Account.current.smtp_mailboxes.any?
-        Mailbox::Job.enqueue Delayed::PerformableMethod.new(self, method.to_sym, args)
-      else
-        Delayed::Job.enqueue Delayed::PerformableMethod.new(self, method.to_sym, args)
-      end
+      Delayed::Job.enqueue Delayed::PerformableMethod.new(self, method.to_sym, args)
     end
     
     module ClassMethods

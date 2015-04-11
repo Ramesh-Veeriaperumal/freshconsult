@@ -55,19 +55,11 @@
   <%= javascript_tag do %>
       (function($){
           $(document).one('ready pjax:success' ,function(){
-            var url = ASSET_URL.js;
-            if(window.location && window.location.protocol=='https:'){
-              url = ASSET_URL.cloudfront;
-            }
-            if(window.chatSetting){
-              chatSetting.widgets(<%= @widgets.to_json.html_safe %>);
-            }else{
-              $.getScript(url+ "/js/chat_settings.js", function(){
-                if(window.chatSetting){
-                  chatSetting.widgets(<%= @widgets.to_json.html_safe %>);
-                }
-              });
-            }
+            var widgetList = [];
+            <% @widgets.each do |widget| %>
+              widgetList.push(<%= freshchat_setting widget%>);
+            <% end%>
+            window.liveChat.adminSettings.initializeWidgetList(widgetList);
           });
       })(jQuery);
     <%end%>

@@ -42,7 +42,7 @@ class Facebook::Core::ReplyToComment < Facebook::Core::Comment
       convert_comment, convert_args = convert_args(@koala_comment)
       if convert_comment
        type = parent_post.company_post? ? POST_TYPE[:status] : POST_TYPE[:post]
-       ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, parent_post).process(nil, realtime_subscription, true)
+       ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, parent_post).process(nil, realtime_subscription)
       end
     end 
     

@@ -1,10 +1,11 @@
 class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
-	around_filter :load_account
+	
 	before_filter :validate_credits, :only => [:add_credits]
 	before_filter :notify_freshfone_ops , :except => :get_country_list
 	around_filter :select_master_shard , :except => :get_country_list
-
+	before_filter :load_account
+	
 	def add_credits
 		@freshfone_credit = @account.freshfone_credit
 		@freshfone_credit.present? ? update_credits : create_credits
@@ -204,7 +205,6 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
 	def load_account
 		@account = Account.find(params[:account_id])
-		yield
 	end
 
 end

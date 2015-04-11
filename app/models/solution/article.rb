@@ -6,6 +6,9 @@ class Solution::Article < ActiveRecord::Base
   self.table_name =  "solution_articles"
   include Mobihelp::AppSolutionsUtils
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis	
+  
   serialize :seo_data, Hash
 
   acts_as_voteable
@@ -99,9 +102,17 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def hit!
-    self.class.increment_counter :hits, id
+    new_count = increment_others_redis(hit_key)
+    if new_count >= HITS_CACHE_THRESHOLD
+      self.update_column(:hits, read_attribute(:hits) + HITS_CACHE_THRESHOLD)
+      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
+    end
+    true
   end
 
+  def hits
+    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
+  end
   
   def related(current_portal, size = 10)
     search_key = "#{tags.map(&:name).join(' ')} #{title}"
@@ -226,4 +237,9 @@ class Solution::Article < ActiveRecord::Base
       changed_fields = self.changes.symbolize_keys.keys
       (changed_fields & all_fields).any?
     end
+    
+    def hit_key
+      SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
+    end
+    
 end

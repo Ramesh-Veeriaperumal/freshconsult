@@ -58,8 +58,8 @@ module Export::Util
   end
 
   def file_hash(export_id)
-    file_hash = Digest::SHA1.hexdigest("#{export_id}#{Time.now.to_f}")
-    @data_export.save_hash!(file_hash)
-    file_hash
+    hash = Digest::SHA1.hexdigest("#{export_id}#{Time.now.to_f}")
+    @data_export.save_hash!(hash)
+    hash
   end
 end

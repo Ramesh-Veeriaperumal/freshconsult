@@ -69,6 +69,8 @@ class Freshfone::Call < ActiveRecord::Base
 		:outgoing => "To"
 	}
 
+	EXPORT_RANGE_LIMIT_IN_MONTHS = 6
+
 	validates_presence_of :account_id, :freshfone_number_id
 	validates_inclusion_of :call_status, :in => CALL_STATUS_HASH.values,
 		:message => "%{value} is not a valid call status"
@@ -292,7 +294,7 @@ class Freshfone::Call < ActiveRecord::Base
 				:location => location,
 				:freshfone_number => freshfone_number.number
 			}
-			if voicemail?
+			if voicemail_ticket?
 				i18n_label = "freshfone.ticket.voicemail_ticket_desc"
 			elsif ivr_direct_dial?
 				i18n_label = "freshfone.ticket.dial_a_number"
@@ -317,11 +319,11 @@ class Freshfone::Call < ActiveRecord::Base
 
 		def ticket_subject
 			return I18n.t('freshfone.ticket.voicemail_subject', 
-							{:customer => customer_name || caller_number}) if voicemail?
+							{:customer => customer_name || caller_number}) if voicemail_ticket?
 			params_ticket_subject || default_ticket_subject
 		end
 		
-		def voicemail?
+		def voicemail_ticket?
 			params[:voicemail]
 		end
 		

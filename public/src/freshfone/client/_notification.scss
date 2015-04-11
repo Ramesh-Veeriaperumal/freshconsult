@@ -104,6 +104,9 @@
 			padding: 11px;
 			background: #4D4A4A;
 			min-height: 16px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		.country{
 			padding: 0px !important;

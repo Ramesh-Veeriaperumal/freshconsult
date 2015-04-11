@@ -196,8 +196,9 @@ class Company < ActiveRecord::Base
     end
 
     def backup_company_changes
-      @model_changes = self.changes.clone
+      @model_changes = self.changes.clone.to_hash
       @model_changes.merge!(flexifield.changes)
+      @model_changes.symbolize_keys!
     end
   
 end

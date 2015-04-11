@@ -5,7 +5,7 @@ class Workers::DevNotification
 
   def self.perform args
     name = args["name"]
-    subject = args["subject"]
+    subject = args["subject"] ? args["subject"].gsub(/(\n|\t|\r|\\)/, "") : "Exception occured"
     message = args["message"]
 
     unless Rails.env.test?

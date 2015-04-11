@@ -407,7 +407,7 @@ class User < ActiveRecord::Base
   end
 
   def search_data
-    if has_contact_merge?
+    if has_contact_merge? and self.user_emails.present?
       self.user_emails.map{|x| {:id => id, :details => "#{name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]

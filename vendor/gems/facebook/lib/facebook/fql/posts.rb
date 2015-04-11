@@ -9,6 +9,15 @@ class Facebook::Fql::Posts
     @rest = Koala::Facebook::API.new(fb_page.page_token)
     @fan_page = fb_page
   end
+  
+  def fetch_latest_posts
+    posts = @rest.get_connections('me', 'feed')
+    unless posts.blank?
+      process_graph_feeds(posts)
+      updated_time = Time.zone.parse(posts.first[:updated_time])       
+      @fan_page.update_attributes({:fetch_since => updated_time.to_i}) unless updated_time.blank?
+    end
+  end
 
   def fetch
     until_time = @fan_page.fetch_since  
@@ -32,6 +41,7 @@ class Facebook::Fql::Posts
     end
   end
   
+  
   def get_comment_updates(fetch_since)
     @fan_page.fb_posts.find_in_batches(:batch_size => 500,
                                       :conditions => [ "social_fb_posts.postable_type = ? and social_fb_posts.msg_type = ? and created_at > ?",
@@ -49,6 +59,18 @@ class Facebook::Fql::Posts
   
   
   private
+  
+  def process_graph_feeds(posts)
+    posts.each do |post|
+      post.symbolize_keys!
+      next if @account.facebook_posts.find_by_post_id(post[:id])
+      koala_feed = Facebook::KoalaWrapper::Post.new(@fan_page)
+      koala_feed.post = post
+      koala_feed.parse
+      clazz = post_type(koala_feed.requester_fb_id)
+      process_feed(clazz, koala_feed)
+    end
+  end
   
   def process_comments(comments)
     comments.each do |comment|

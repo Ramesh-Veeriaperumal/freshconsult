@@ -2,8 +2,8 @@
 	<div id="chat_setting" class="tabbable" style="display:none">
 		<ul class="nav nav-tabs">
 			<li class = 'active'><a href="#widget" data-toggle="tab"><%=t('freshchat.widget')%></a></li>
-			<li><a href="#visitor-form" data-toggle="tab">Visitor Form</a></li>
-			<li><a href="#preferences" data-toggle="tab">Preferences</a></li>
+			<li><a href="#visitor-form" data-toggle="tab"><%=t('freshchat.visitor_form')%></a></li>
+			<li><a href="#preferences" data-toggle="tab"><%=t('freshchat.preferences')%></a></li>
 			<li><a href="#install" data-toggle="tab"><%=t('freshchat.installation')%></a></li>
 		</ul>
  
@@ -130,6 +130,13 @@
 								<div class="info-data"><%=t('freshchat.help_text_agent_msg')%></div>
 							</div>
 						</li>
+
+						<li class="inline-field">
+							<label class="caption"><%=t('freshchat.chat_transfer_msg_title')%></label>
+							<div class="fields">
+								<input type="text" class="text" id="agent_transfer_msg_to_visitor" name="agent_transfer_msg_to_visitor" size="18" value="" placeholder="<%=t('freshchat.agent_transfer_msg_to_visitor')%>" >
+							</div>
+						</li>
  
 						<li class="inline-field">
 							<label class="caption"><%=t('freshchat.thank_title')%></label>
@@ -142,21 +149,30 @@
 							<label class="caption"><%=t('freshchat.non_availability_msg_header')%></label>
 							<div class="fields">
 								<input type="text" class="text" id="non_availability_message" name="non_availability_message" size="18" value="" placeholder="<%=t('freshchat.non_availability_message')%>">
-								<p class="info-data"><%=t('freshchat.non_availability_msg_help')%></p>
-								<div class="inline-field select_ticket_link_option hide" id="select_ticket_link_option">
-									<label class="item"> 
-										<%=t('freshchat.on_click_goto')%>
-										<%option = ticket_link_options[0] %>
-										<%= select_tag('ticket_link_options', options_for_select(ticket_link_options,option), {:class => "select2", :style => "width: 280px;"}) %>
-										<p class="info-data" id="widget_option_info" style="display:none"><%=t('freshchat.widget_option_info')%></p>
-										<span id="custom_link_url_item" style="display:none">
-											<input type="text" class="text" id="custom_link_url" name="custom_link_url" size="18" value="" placeholder="<%=t('freshchat.enter_custom_link')%>" >
-											<label id="url_error_msg" class="error" style="display:none;"><%=t('freshchat.url_error_msg')%></label>
-										</span>
-									</label>
+								<div>
+								<%= check_box_tag :custom_link, 1, :class => 'filter_item', :id => 'custom_link' %>
+								<span class="custom_link_label"><%=t('freshchat.use_custom_link')%></span>
+								<div id="custom_link_url_item" style="display:none">
+										<input type="text" class="text" id="custom_link_url" name="custom_link_url" value="" placeholder="<%=t('freshchat.enter_custom_link')%>" >
+										<p class="info-data"><%=t('freshchat.non_availability_msg_help')%></p>
+										<label id="url_error_msg" class="error" style="display:none;"><%=t('freshchat.url_error_msg')%></label>
 								</div>
+								<div>
 							</div>
 						</li>
+
+						<li class="inline-field fc-form-divider offline_messages">
+							<label class="caption "><%=t('freshchat.offline_message')%></label>
+							<div class="fields">
+								<div class="info-data"><%=t('freshchat.help_offline_title')%></div>
+								<input type="text" class="text" id="offline_title" name="offline_title" size="18" value="" placeholder="<%=t('freshchat.offline_title')%>" >
+								<div class="info-data"><%=t('freshchat.help_offline_thank_msg')%></div>
+								<input type="text" class="text" id="offline_thank_msg" name="offline_thank_msg" size="18" value="" placeholder="<%=t('freshchat.offline_thank_msg')%>" >
+								<div class="info-data"><%=t('freshchat.help_offline_thank_header_msg')%></div>
+								<input type="text" class="text" id="offline_thank_header_msg" name="offline_thank_header_msg" size="18" value="" placeholder="<%=t('freshchat.offline_thank_header_msg')%>" >
+							</div>
+						</li>
+
 					</ul>
 				</div>
 				<hr>
@@ -172,7 +188,7 @@
 					 	<div class="fields marginleftnone">
 					 		<div class="ff_item">
 								<label class="item-large"> 
-							    	<span><%=t('freshchat.prechat_desc')%></span>							     
+							    	<span><%=t('freshchat.prechat_desc')%></span>			     
 							  	</label>
 						 	</div>
 					 	</div>
@@ -190,6 +206,34 @@
 							<ul id="prechat_form_fields"></ul>
 						</div>
 					</li>
+
+					<li class="inline-field">
+				  	<h3 class="title space_top"><%=t('freshchat.missed_chat_title')%></h3> 
+					 	<div class="fields marginleftnone">
+					 		<div class="ff_item">
+								<label class="item-large"> 
+							    	<span><%=t('freshchat.missed_chat_desc')%></span>			     
+							  	</label>
+						 	</div>
+					 	</div>
+				  </li>
+
+				  <li class="inline-field missed_chat_form fc-form-divider">
+						<label class="caption"><%=t('freshchat.form_details')%></label>
+						<div class="fields clearfix">
+							<div>
+								<input type="text" class="text span3" id="missed_chat_name" name="missed_chat_name" value="" placeholder="<%=t('freshchat.name')%>">
+							</div>
+							<div>
+								<input type="text" class="text span3" id="missed_chat_email" name="missed_chat_email" value="" placeholder="<%=t('freshchat.mail')%>">
+							</div>
+							<div>
+								<input type="text" class="text span3" id="missed_chat_message" name="missed_chat_message" value="" placeholder="<%=t('freshchat.message')%>">
+							</div>
+						</div>
+					</li>
+					
+					
 				</ul>
 				<hr>
 				<div class="row-fluid text-right">
@@ -236,6 +280,28 @@
 											</span>
 											<% end %>
 										</span>
+									</label>
+								</li>
+							</ul>
+						</div>
+						
+					</li>
+
+				<li class="inline-field chat_business_options_wrap fc-form-divider">
+						<label class="caption">Offline chat window</label>
+					<div class="fields clearfix">
+							<span class="label-grey"><%=t('freshchat.offline_chat_window_desc')%> </span>
+							<ul>
+								<li class="inline-field">
+									<label class="item"> 
+										<input type="radio" id="hide_offline_chat_window" name="offline_chat_window" value="0">
+										<span><%=t('freshchat.hide_offline_chat_window')%></span>
+									</label>
+								</li>
+								<li class="inline-field">
+									<label class="item"> 
+										<input type="radio" id="show_offline_chat_window" name="offline_chat_window" value="1">
+										<span><%=t('freshchat.show_offline_chat_window')%></span>
 									</label>
 								</li>
 							</ul>

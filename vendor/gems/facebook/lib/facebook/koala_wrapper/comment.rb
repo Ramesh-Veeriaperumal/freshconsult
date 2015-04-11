@@ -40,7 +40,7 @@ class Facebook::KoalaWrapper::Comment
   end
 
   def visitor_post?
-    @requester != @fan_page.page_id
+    @requester["id"] != @fan_page.page_id.to_s
   end
 end
   

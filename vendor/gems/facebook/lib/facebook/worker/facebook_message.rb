@@ -18,7 +18,7 @@ class Facebook::Worker::FacebookMessage
   end
 
   def self.run(args)
-    Koala.config.api_version = nil #reset koala version so that we hit v1 api
+    Koala.config.api_version = "v2.2" 
     
     account = Account.current
     if args[:fb_page_id]
@@ -46,11 +46,14 @@ class Facebook::Worker::FacebookMessage
   end
 
   def self.fetch_fb_posts fan_page
-    sandbox(true) do
+    sandbox(true) do      
       @fan_page = fan_page
       @fan_page.update_attributes(:realtime_subscription => "true") if @fan_page.account.features?(:facebook_realtime)
-      fb_posts = Facebook::Fql::Posts.new(@fan_page)
-      fb_posts.fetch if @fan_page.company_or_visitor?
+            
+      if @fan_page.company_or_visitor?
+        fb_posts = Facebook::Fql::Posts.new(@fan_page)
+        Koala.config.api_version == "v2.2" ? fb_posts.fetch_latest_posts : fb_posts.fetch
+      end      
     end
   end
 end

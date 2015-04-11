@@ -10,26 +10,11 @@
 </div>
 
 <%= javascript_tag do %>
-    (function($){
-      $(document).one('ready pjax:success' ,function(){
-        var url = ASSET_URL.js;
-        if(window.location && window.location.protocol=='https:'){
-          url = ASSET_URL.cloudfront;
-        }
-        var tabSelected = window.location.hash;
-        var tab = $(tabSelected);
-        if(tabSelected && !tab.hasClass('active') ){
-          $('a[href^='+tabSelected+']').trigger('click')
-        }
-        if(window.chatSetting){
-          chatSetting.edit(<%= freshchat_setting @widget%>);
-        }else{
-          $.getScript(url+ "/js/chat_settings.js", function(){
-            if(window.chatSetting){
-              chatSetting.edit(<%= freshchat_setting @widget%>);
-            }
-          });
-        }
-      });
-    })(jQuery);
-  <%end%>
+  var zeroClipBoardSWFPath = "<%= asset_path('/swf/ZeroClipBoard.swf')%>";
+
+  (function($){
+    $(document).one('ready pjax:success' ,function(){
+      window.liveChat.adminSettings.initializeWidget(<%= freshchat_setting @widget%>);
+    });
+  })(jQuery);
+<%end%>
