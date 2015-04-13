@@ -30,7 +30,7 @@ describe Segment::IdentifyController do
         fake_a_contact
 		post :create, @params.merge!(:format => 'json'), :content_type => 'application/json'
 		result = parse_json(response)
-		expected = (response.status == 501) && result["message"] == 'Invalid opertaion. Check your type'
+		expected = (response.status == 501) && result["message"].should == I18n.t('contacts.segment_api.invalid_type')
 		expect(expected).to eq(true)
 	end
 
