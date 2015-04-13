@@ -3,7 +3,7 @@ class Segment::IdentifyController < ApplicationController
    include UserHelperMethods
    include APIHelperMethods
 
-   before_filter :check_demo_site, :check_segment_api_type, :strip_params, :format_params, :clean_params, :contact_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
+   before_filter :check_demo_site, :verify_segment_api_type, :strip_params, :format_params, :clean_params, :contact_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
  
    def create
       if @user.new_record?
@@ -48,7 +48,7 @@ class Segment::IdentifyController < ApplicationController
       @user = current_account.user_emails.user_for_email(params[:user][:email]) 
    end
  
-   def check_segment_api_type
+   def verify_segment_api_type
       api_error_responder({:message => t('contacts.segment_api.invalid_type')}, 501) unless params[:type] == 'identify'
    end
 

@@ -3,7 +3,7 @@ class Segment::GroupController < ApplicationController
    include CompaniesHelperMethods
    include APIHelperMethods
 
-   before_filter :check_segment_api_type, :strip_params, :company_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
+   before_filter :verify_segment_api_type, :strip_params, :company_exists, :set_required_fields, :set_validatable_custom_fields, :only => [:create]
 
    def create
       if @company.new_record?
@@ -39,7 +39,7 @@ class Segment::GroupController < ApplicationController
     end
    end
 
-    def check_segment_api_type
+    def verify_segment_api_type
       api_error_responder({:message => t('contacts.segment_api.invalid_type')}, 501) unless params[:type] == 'group'
     end
 
@@ -50,6 +50,15 @@ class Segment::GroupController < ApplicationController
     def company_exists
       @company = current_account.companies.find_by_name(params[:company][:name])
       build_item unless @company
+    end
+
+    def scoper
+      current_account.companies
+    end
+
+    def build_item
+      @company = scoper.new
+      @company.attributes = params[:company]
     end
  
 end

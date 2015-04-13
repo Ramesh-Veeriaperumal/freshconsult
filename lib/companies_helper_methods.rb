@@ -10,13 +10,4 @@ module CompaniesHelperMethods
                                 :error_label => :label }
    end
 
-   def scoper
-      current_account.companies
-   end
-
-   def build_item
-      @company = scoper.new
-      @company.attributes = params[:company]
-   end
-
 end
