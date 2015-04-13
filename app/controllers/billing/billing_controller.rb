@@ -57,6 +57,7 @@ class Billing::BillingController < ApplicationController
     end
 
     if LIVE_CHAT_EVENTS.include? params[:event_type]
+      retrieve_account unless @account
       Resque.enqueue(Workers::Livechat, 
         {
           :worker_method => "update_site", 
