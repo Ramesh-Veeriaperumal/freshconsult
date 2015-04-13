@@ -632,7 +632,7 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by) } 
+              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by), :type => :phrase } 
             else
               f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email', 'user_emails.email'], :analyzer => "include_stop" }
             end
