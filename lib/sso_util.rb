@@ -45,18 +45,24 @@ module SsoUtil
   def get_saml_settings(acc)
     settings = OneLogin::RubySaml::Settings.new
 
-    settings.issuer = request.host
+    if current_account.features_included?(:saml_old_issuer)#backward compatibility
+      settings.issuer = request.host
+    else
+      settings.issuer = "#{request.protocol}#{request.host}"
+    end
+
     port = Rails.env.development? ? ":3000" : ""
     settings.assertion_consumer_service_url = "#{request.protocol}#{request.host}#{port}/login/saml"
 
     settings.idp_cert_fingerprint = acc.sso_options[:saml_cert_fingerprint]
-    settings.idp_sso_target_url = acc.sso_options[:saml_login_url]
+    settings.idp_sso_target_url = acc.sso_login_url
+    settings.idp_slo_target_url = acc.sso_logout_url unless acc.sso_logout_url.blank?
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
     settings
   end
 
 
-  def handle_sso_response(sso_data)
+  def handle_sso_response(sso_data, relay_state_url)
     user_email_id = sso_data[:email]
     user_name = sso_data[:name]
     phone = sso_data[:phone]
@@ -87,7 +93,13 @@ module SsoUtil
     if @user_session.save
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
-      redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass
+      if grant_day_pass
+        unless relay_state_url.blank?
+          redirect_to relay_state_url
+        else
+          redirect_back_or_default(params[:redirect_to] || '/')
+        end
+      end
     else
       flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
@@ -130,6 +142,13 @@ module SsoUtil
       host_url = "host_url=#{request.host}"
       url += (url.include? "?") ? "&#{host_url}" : "?#{host_url}"
       return url
+  end
+
+  def generate_saml_logout_url
+      saml_settings = get_saml_settings(current_account)
+      saml_settings.name_identifier_value = current_user.email if current_user
+      logout_request = OneLogin::RubySaml::Logoutrequest.new()
+      logout_request.create(saml_settings, :RelayState => support_home_url )
   end
 
   private
