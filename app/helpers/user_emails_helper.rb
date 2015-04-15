@@ -50,7 +50,7 @@ HTML
           if ue.object.new_record?
             output << ue.text_field(:email, :id => "email_sec", :class => "email cont text ue_input fillone", "autocomplete" => "off", "placeholder" => "Enter an email", "data-verified" => ue.object.verified)
           else
-            output << ue.text_field(:email, :id => "email_sec", :class => "email cont disabled text ue_input default_email fillone", "autocomplete" => "off", "disabled" => true, "data-verified" => ue.object.verified)
+            output << ue.text_field(:email, :id => "email_sec", :class => "email cont disabled text ue_input default_email fillone", "autocomplete" => "off", "data-verified" => ue.object.verified)
           end
           title = t('merge_contacts.primary')
         end
@@ -66,6 +66,7 @@ HTML
                         :title => title) if ue.object.primary_role
           end
         end
+        output << ue.hidden_field(:id, :class => "ue_id")
         output << ue.hidden_field(:primary_role, :class => "ue_primary") 
         output << ue.hidden_field(:_destroy, :value => false, :class => "ue_destroy")
         output << %(<label id="email_sec_#{ue.object.id}-error" class="error" for="email_sec_#{ue.object.id}"></label>)

@@ -6,6 +6,9 @@ class Solution::Article < ActiveRecord::Base
   self.table_name =  "solution_articles"
   include Mobihelp::AppSolutionsUtils
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis	
+  
   serialize :seo_data, Hash
 
   acts_as_voteable
@@ -116,9 +119,17 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def hit!
-    self.class.increment_counter :hits, id
+    new_count = increment_others_redis(hit_key)
+    if new_count >= HITS_CACHE_THRESHOLD
+      self.update_column(:hits, read_attribute(:hits) + HITS_CACHE_THRESHOLD)
+      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
+    end
+    true
   end
 
+  def hits
+    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
+  end
   
   def related(current_portal, size = 10)
     search_key = "#{tags.map(&:name).join(' ')} #{title}"
@@ -145,7 +156,7 @@ class Solution::Article < ActiveRecord::Base
         search.from options[:size].to_i * (options[:page].to_i-1)
       end
 
-      item.results.results
+      item.results.results.compact
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       []
@@ -163,7 +174,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-     options[:root] ||= 'solution_article'# TODO-RAILS3:: In Rails3 Model.model_name.element returns only 'article' not 'solution_article'
+     options[:root] = 'solution_article'# TODO-RAILS3:: In Rails3 Model.model_name.element returns only 'article' not 'solution_article'
      options[:indent] ||= 2
      options.merge!(Solution::Constants::API_OPTIONS.merge(:include => {}))
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
@@ -276,4 +287,9 @@ class Solution::Article < ActiveRecord::Base
     def title_present?
       self.title.present?
     end
+    
+    def hit_key
+      SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
+    end
+    
 end

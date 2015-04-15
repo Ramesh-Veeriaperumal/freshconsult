@@ -58,4 +58,7 @@ module Freshfone::FreshfoneHelper
     account.create_freshfone_account
   end
 
+  def country_from_global(number)
+    GlobalPhone.parse(number).territory.name unless GlobalPhone.parse(number).blank?
+  end
 end

@@ -1,11 +1,12 @@
 class Freshfone::CallHistoryController < ApplicationController
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
-	before_filter :set_cookies_for_filter, :only => [:custom_search]
-	before_filter :get_cookies_for_filter, :only => [:index]
+	before_filter :set_cookies_for_filter, :only => [:custom_search, :export]
+	before_filter :get_cookies_for_filter, :only => [:index, :export]
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
+	before_filter :check_export_range, :only => [:export]
 	
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
@@ -36,6 +37,12 @@ class Freshfone::CallHistoryController < ApplicationController
 		respond_to do |format|
 			format.js {} 
 		end
+	end
+
+	def export
+    params.merge!({ :account_id => current_account.id, :user_id => current_user.id })
+    Resque.enqueue(Freshfone::Jobs::CallHistoryExport::CallHistoryExport, params)
+    render nothing: true
 	end
 
 	private
@@ -72,4 +79,16 @@ class Freshfone::CallHistoryController < ApplicationController
 			cookies["fone_number_id"] = params["number_id"]
 		end
 
+		def check_export_range
+			render nothing: true, status: 400 if !within_export_range?
+		end
+
+		def within_export_range?
+			date_hash = JSON.parse(params[:data_hash]).find { |entry| entry["condition"] == "created_at" }
+			return false if date_hash.blank?
+			dates = date_hash["value"].split('-')
+			return true if dates.count < 2
+			days = dates.map { |d| Date.parse(d) }.reduce { |diff, date| date.mjd - diff.mjd }
+			days < Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS * 31
+		end
 end

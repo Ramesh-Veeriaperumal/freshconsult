@@ -2,3 +2,6 @@
 <% asset_base_url = "#{AppConfig['integrations_url'][Rails.env]}" %>
 <link type="text/css" rel="stylesheet" media="screen, projection" href="<%=asset_base_url%>/assets/cdn/gadget.css">
 <script src="<%=asset_base_url%>/assets/cdn/gadget.js" type='text/javascript'></script>
+<script type="text/javascript">
+    window['SPACER_IMAGE_PATH'] = "<%= "#{ asset_base_url }/assets/misc/spacer.gif" %>";
+</script>

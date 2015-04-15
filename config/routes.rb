@@ -185,16 +185,33 @@ Helpkit::Application.routes.draw do
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
-  resources :solutions_uploaded_images, :only => [:index, :create, :create_file]
-  resources :forums_uploaded_images, :only => :create
-  resources :tickets_uploaded_images, :only => :create
-
-  resources :contact_import do
+  
+  resources :solutions_uploaded_images, :only => [:index, :create]  do
     collection do
-      get :csv
-      get :google
+      post :create_file
     end
   end
+
+  resources :forums_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+  
+  resources :tickets_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+
+  # contacts and companies import
+  resources :customers_import do
+    collection do
+      post :create
+    end
+  end
+  match '/imports/:type' => 'customers_import#csv'
+  match '/imports/:type/map_fields' => 'customers_import#map_fields'
 
   resources :health_check
 
@@ -399,6 +416,7 @@ Helpkit::Application.routes.draw do
         get :custom_search
         get :children
         get :recent_calls
+        get :export
       end
     end
 
@@ -600,6 +618,7 @@ Helpkit::Application.routes.draw do
 
     resources :logmein do
       collection do
+        post :rescue_session
         get :rescue_session
         put :update_pincode
         get :refresh_session
@@ -1600,6 +1619,7 @@ Helpkit::Application.routes.draw do
         delete :empty_folder
         put :spam_multiple
         get :more
+        get :moderation_count
       end
       member do
         put :approve
@@ -2064,6 +2084,7 @@ Helpkit::Application.routes.draw do
       post :create_ticket
       post :add_note
       post :chat_note
+      post :missed_chat
       get :get_groups
       post :activate
       post :site_toggle

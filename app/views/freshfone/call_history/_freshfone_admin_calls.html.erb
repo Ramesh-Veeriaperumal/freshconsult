@@ -36,6 +36,28 @@
 		              <span class="filter_freshfone_number"></span>
 								</div>
           		</div>
+          		<!-- Call History Export Start -->
+          		<span class="pull-right">    
+		          <span class="dropdown call_history_export_div"
+		            data-success-message="<%= export_messages[:success_message] %>"
+		            data-error-message="<%= export_messages[:error_message] %>"
+		            data-range-limit-message="<%= export_messages[:range_limit_message] %>">
+
+					<a role="button" class="dropdown-toggle" id="export_dropdown" data-toggle="dropdown" href="#">	<span><%= t('export_data.export') %></span>
+					  <b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="export_options">
+						<% export_options.each do |option| %>
+							<li>
+								<a href="#" class="export_option" data-format="<%=option.downcase%>">
+									<%=option%>
+								</a>
+							</li>
+						<% end %>
+					</ul>
+				  </span>
+		        </span>
+		        <!-- Call History Export End -->
 							<!-- report style end-->
 						</div>
 						<div class="filter-subheader">

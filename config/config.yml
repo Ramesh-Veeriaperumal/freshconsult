@@ -5,7 +5,7 @@ billing_email: billing@freshdesk.com
 free_plan_agts: 1
 app_website: http://www.freshdesk.com
 support_url: https://support.freshdesk.com
-latest_shard: "shard_6"
+latest_shard: "shard_7"
 
 # Used in account creation (account.rb)
 base_domain: 

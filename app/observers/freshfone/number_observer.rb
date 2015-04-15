@@ -24,8 +24,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 
 	def after_create(freshfone_number)
 		account = freshfone_number.account
-		update_freshfone_credit(freshfone_number, account) if active_freshfone_account?(account)
-		address_certification_request(freshfone_number, account) if active_freshfone_account?(account)
+		update_freshfone_credit(freshfone_number, account)
 	end
 
 	def before_update(freshfone_number)
@@ -75,16 +74,6 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 				:action_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_purchase],
 				:debit_payment => freshfone_number.rate,
 				:freshfone_number_id => freshfone_number.id)
-		end
-		
-		def address_certification_request(freshfone_number, account)
-			return unless freshfone_number.address_required
-			FreshfoneNotifier.send_later(:deliver_address_certification, account, freshfone_number)
-		end
-		
-		def active_freshfone_account?(account)
-			#Currently checks only active SUBSCRIPTION. should check for freshfone trial as well when implemented.
-			account.subscription.active?
 		end
 		
 		def build_message_hash(freshfone_number)

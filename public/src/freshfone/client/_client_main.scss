@@ -99,19 +99,23 @@
 	}
 	min-height: 120px;
 }
-.freshfone_dashboard_cells {
-	width: 128px;
-	height: 51px;
-	@include box-sizing(border-box);
-	@include float(left);
+.freshfone_realtime {
+	overflow: hidden;
+  	min-height: 51px;
+  	padding-bottom: 6px;
+	.freshfone_dashboard_cells {
+		width: 128px;
+		@include box-sizing(border-box);
+		@include float(left);
 
-	background-color: $dashboard-cells-background;
-	color: #666;
-	padding: 8px 9px 6px;
-	@include margin(0 1px 1px 0);
+		background-color: $dashboard-cells-background;
+		color: #666;
+		padding: 8px 9px 100%;
+		@include margin(0 1px -100% 0);
 
-	h4 { font-size: 15px; }
-	.dash-lbl{ font-size: 12px; }
+		h4 { font-size: 15px; }
+		.dash-lbl{ font-size: 12px; }
+	}
 }
 .dashboard_call_history_link {
 	display: inline-block;

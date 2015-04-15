@@ -20,7 +20,7 @@
     <div class="control-group">
         <%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
         <div class="controls recaptcha-control">
-          <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+          <%= recaptcha_tags :display => { :theme => "white" }, :ssl => true %>
         </div>
     </div>
   <% end %>
@@ -83,11 +83,17 @@
 
       if( !isMobile.any() ){
         <% if logged_in? %>
-          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'cnt-reply');
+          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
         <% else %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
         <% end %>
       }
+
+      <% if current_portal.customer_editable_ticket_fields.first.field_type  == "default_description" %>
+        jQuery("#helpdesk_ticket_ticket_body_attributes_description_html").data('redactor').$editor.focus();
+      <% else %>
+        Form.focusFirstElement(document.forms[0]); 
+      <% end %> 
     }); 
 
     jQuery('#new_helpdesk_ticket').bind("submit", function(){

@@ -317,7 +317,7 @@ HTML
 								</div>
 							<ul>)
 		parent_topic_id = topic.merged? ? topic.parent.id : 0
-		forum.topics.unmerged.take(topic_count).each do |o_topic|
+		forum.topics.published_and_unmerged.take(topic_count).each do |o_topic|
 			output << %(<li class="cs-g-3">
 										<div class="ellipsis">
 											#{link_to_topic(o_topic.to_liquid)}

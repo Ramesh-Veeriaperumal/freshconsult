@@ -17,4 +17,10 @@ on <%= formated_date(due_by) %>
 <% end %>
 <%= javascript_tag do %>
 jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status', :formats => [:html]) %>");
-<% end %> 
+<% if flash[:error] %>
+	jQuery('#noticeajax').html("<%= content_tag('div', flash[:error]) %>");
+	jQuery('#noticeajax').show();
+	closeableFlash('#noticeajax');
+	<% flash.discard %>
+<% end %>
+<% end %>

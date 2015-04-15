@@ -30,8 +30,7 @@ module Reports
 					re_job_id = Reports::Workers::RegenerateReportData.create({:account_id => id, :dates => set_of_dates})
 					add_to_reports_hash(export_hash, "re_job_id", re_job_id, 604800)
 				elsif Rails.env.production?
-					subject = %(Reports regeneration data archiving job of Account ID : #{id} is 
-										#{accounts_re_job.status} for more than 24 hours)
+					subject = %(Reports regeneration data archiving job of Account ID : #{id} is #{accounts_re_job.status} for more than 24 hours)
 					report_notification(subject,subject)
 				end
 			end

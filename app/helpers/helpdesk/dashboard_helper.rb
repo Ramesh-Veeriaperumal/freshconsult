@@ -25,6 +25,9 @@ module Helpdesk::DashboardHelper
 		sidebar_content.concat(content_tag(:div, content_tag(:div, :class => "sloading loading-small loading-block"),
 			:class => "sidepanel", :id => "chat-dashboard", :style => "display:none;"))
 
+		sidebar_content.concat(content_tag :div, "", :rel => "remote", :class => "sidepanel", :id=> "moderation-stats",
+		  "data-remote-url" => '/discussions/unpublished/moderation_count') if current_account.features?(:forums) and privilege?(:delete_topic)
+
 		sidebar_content.html_safe
 	end
 

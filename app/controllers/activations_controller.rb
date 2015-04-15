@@ -58,6 +58,7 @@ class ActivationsController < SupportController
       @current_user = @user
       redirect_to(root_url) if grant_day_pass
     else
+      set_portal_page :activation_form
       render :action => :new
     end
   end

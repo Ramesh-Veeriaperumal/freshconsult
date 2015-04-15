@@ -8,7 +8,7 @@ window.App = window.App || {};
 	App.Dashboard = {
 		init: function () {
 			setTimeout(function() {
-			  $('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container').trigger('afterShow');
+			  $('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container, #moderation-stats').trigger('afterShow');
 			},50);
 
 			$('#sales-manager-container').on('remoteLoaded', function(e){

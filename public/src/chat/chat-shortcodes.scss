@@ -1,0 +1,160 @@
+.fc-shortcodes{
+    background: #f0f0f0;
+    padding: 8px 0;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    .fc-item{
+        @extend .clearfix;
+        background:#fff;
+        border-top: 1px solid #eee;
+        &.editing{
+            background: #f6f6f6;
+            .fc-shortcode,
+            .fc-sc-desc{
+                span{
+                    display: none;
+                }
+                .fc-input{
+                    display: block;
+                }
+            }
+            .fc-sc-options{
+                display: block;
+            }
+            .fc-sc-edit,
+            .fc-sc-delete{
+                display: none;
+            }
+            .fc-sc-save,
+            .fc-sc-discard{
+                display: inline-block;
+            }
+            &.error{
+                border: 1px solid rgba(204,0,0,0.4);
+                .error-label{
+                    background: none;
+                    color: rgba(204,0,0,0.8);
+                    text-shadow: none;
+                    display: inline-block;
+                    font-weight: bold;
+                    font-size: 11px;
+                    margin: 0px 0px 6px 10px;
+                }
+            }
+        }
+        &.sloading{
+            .fc-shortcode,
+            .fc-sc-desc,
+            .fc-sc-options{
+                visibility:hidden;
+            }
+        }
+        &:hover{
+            .fc-sc-options{
+                display: block;
+            }
+        }
+    }
+}
+.fc-shortcode,
+.fc-sc-desc,
+.fc-sc-options{
+    float: left;
+    @include box-sizing(border-box);
+}
+.fc-shortcode{
+    width: 20%;
+}
+.fc-sc-desc{
+    width: 70%;
+    margin-left: -4px;
+    span{
+        width: 90%;
+        text-overflow: ellipsis;
+    }
+}
+.fc-shortcode span{
+    font-weight: 500;
+}
+.fc-shortcode,
+.fc-sc-desc{
+    .fc-input{
+        display: none;
+    }
+    span{
+        display: block;
+        @include padding(8px 10px 6px 20px);
+        line-height: 20px;
+    }
+}
+.fc-shortcode{
+    .fc-input{
+        @include padding(7px 0 6px 10px);
+    }
+    input[type=text]{
+        border-right-color: #E3E3E3;
+        @include padding(0 22px 0 10px);
+        height: 26px;
+        @include box-sizing(border-box);
+        @include border-radius(3px 0 0 3px);
+    }
+}
+.fc-sc-desc{
+    .fc-input{
+        @include padding(7px 0 6px 0);
+    }
+    input[type=text]{
+        border-left:0;
+        @include padding(0 10px 0 18px);
+        height: 26px;
+        @include box-sizing(border-box);
+        @include border-radius(0 3px 3px 0);
+    }
+}
+.fc-input{
+    line-height: 20px;
+    input[type=text]{
+        margin:0;
+        border: 1px solid #ccc;
+    }
+}
+.fc-sc-options{
+    display: none;
+    width: 10%;
+    text-align: center;
+    span{
+        display: inline-block;
+        @include margin(8px 5px 6px);
+        line-height: 18px;
+        cursor: pointer;
+        i{
+            @include padding(0 5px);
+        }
+    }
+    .fc-sc-edit,
+    .fc-sc-delete{
+        color: #828282;
+    }
+    .fc-sc-save,
+    .fc-sc-discard{
+        display: none;
+        color: #000;
+        margin-top: 12px;
+    }
+}
+// Plus Button
+.fc-sc-new-field{
+    padding-bottom: 15px;
+    .btn-plus i{
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        background: #99BF46;
+        border:1px solid #94BD3F;
+        @include border-radius(50%);
+        color: #fff;
+        text-align: center;
+        vertical-align: baseline;
+        @include margin-right(3px);
+    }   
+}

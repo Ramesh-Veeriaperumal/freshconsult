@@ -839,8 +839,8 @@ var scrollToError = function(){
 
 			_form.find('input[type=submit]').prop('disabled', true);
 
-			var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-			if(statusChangeField.val() != undefined && statusChangeField.val() != "") {
+			var statusChangeField = $('#send_and_set');
+			if(statusChangeField.data('val') != undefined && statusChangeField.data('val') != "") {
 
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
@@ -853,9 +853,7 @@ var scrollToError = function(){
 					ev.preventDefault();
 					blockConversationForm(_form);
 					if(propertiesForm.data('updated')) {
-		      			submitTicketProperties(function() {
-		      				submitNewConversation(_form, ev);
-		      			})
+		      			submitNewConversation(_form, ev, submitTicketProperties);
 		      		}	
 				} else {
 					ev.preventDefault();
@@ -938,16 +936,6 @@ var scrollToError = function(){
 			},
 			success: function(response, statusCode, xhr) {
 				if($.trim(response).length){
-					var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-					if(statusChangeField.length) {
-						if(statusChangeField.val() != '') {
-							refreshStatusBox();
-							if(statusChangeField.val() == TICKET_CONSTANTS.statuses.resolved || statusChangeField.val() == TICKET_CONSTANTS.statuses.closed) {
-								$('[rel=link_ticket_list]').click();
-							}
-							statusChangeField.val('')
-						}
-					}
 
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -1053,6 +1041,16 @@ var scrollToError = function(){
 				{
 					$('[rel=link_ticket_list]').click();
 				} else {
+					var statusChangeField = $('#send_and_set');
+					if(statusChangeField.length) {
+						if(statusChangeField.data('val') != '') {
+							refreshStatusBox();
+							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+								$('[rel=link_ticket_list]').click();
+							}
+							statusChangeField.data('val', '');
+						}
+					}
 					afterTktPropertiesUpdate();
 				}
 
@@ -1094,6 +1092,9 @@ var scrollToError = function(){
 			trigger_event("ticket_fields_updated",data_hash);
 		}
 		ticket_fields.data('updated', false);
+
+		$("#send_and_set").removeData("val");
+		$("#send_and_set").prop('disabled', true);
 
 		if(postProcess) {
 			$('.ticket_details .source-badge-wrap .source')
@@ -1211,15 +1212,21 @@ var scrollToError = function(){
     $('body').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      jQuery('#reply_ticket_status_' + jQuery(this).data('cntId')).val(jQuery(this).data('statusVal'));
+      
       jQuery('body').click();
 
-      var new_status = jQuery(this).data('statusVal'); 
+      var new_status	= $(this).data('statusVal'),
+      		noteForm	= $(this).parents('form'); 
       changeStatusTo(new_status);
-      $(this).parents('form').trigger('submit');
-
+      handleSendAndSet(new_status);
+      $('#send_and_set').data('val', ($(this).data('statusVal')));
+      noteForm.trigger('submit');
     });
 
+  function handleSendAndSet(statusVal){
+  	var resolved_or_closed = [TICKET_CONSTANTS.statuses.resolved, TICKET_CONSTANTS.statuses.closed].include(statusVal);
+  	$("#send_and_set").prop('disabled', !resolved_or_closed);
+  }
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {

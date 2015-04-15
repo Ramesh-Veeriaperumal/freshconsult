@@ -18,7 +18,7 @@ module Freshfone::CallHistoryHelper
 	def freshfone_numbers_options
 		numbers_options = []
 		numbers_options = @all_freshfone_numbers.map{|c|
-			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => c.name }
+			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name.to_s) }
 		 }.to_json
 	end
 
@@ -93,5 +93,17 @@ module Freshfone::CallHistoryHelper
 	def call_duration_formatted(duration)
 		format = (duration >= 3600) ? "%H:%M:%S" : "%M:%S"
 		Time.at(duration).gmtime.strftime(format)
+	end
+
+	def export_options
+		[t('export_data.csv'), t('export_data.xls')]
+	end
+
+	def export_messages
+		{
+			:success_message	=> t('export_data.call_history.info.success'),
+			:error_message		=> t('export_data.call_history.info.error'),
+			:range_limit_message => t('export_data.call_history.range_limit_message', range: Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS )
+		}
 	end
 end

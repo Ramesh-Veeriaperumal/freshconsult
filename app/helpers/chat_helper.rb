@@ -2,13 +2,6 @@ module ChatHelper
 
   include Livechat::Token
   
-  def ticket_link_options
-    return [  [  "...",  -1],
-              [  I18n.t('freshchat.feedback_widget'),  0],
-              [  I18n.t('freshchat.new_ticket_page'),  1],
-              [  I18n.t('freshchat.custom_link'),      2] ]
-  end
-
   def chat_activated?
     !current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.display_id
   end
@@ -64,6 +57,7 @@ module ChatHelper
       :wait_message    => t('freshchat.wait_message'),
       :agent_joined_msg=> t('freshchat.agent_joined_msg'),
       :agent_left_msg  => t('freshchat.agent_left_msg'),
+      :agent_transfer_msg_to_visitor => t('freshchat.agent_transfer_msg_to_visitor'),
       :connecting_msg  => t('freshchat.connecting_msg')
     }.to_json.html_safe
   end
@@ -86,6 +80,18 @@ module ChatHelper
     }.to_json.html_safe
   end
 
+  def default_offline_chat
+    return {
+      :show      => "0",
+      :form      => { :name => t("freshchat.name"), 
+                      :email => t("freshchat.mail"), 
+                      :message => t("freshchat.message") },
+      :messages  => { :title        => t("freshchat.offline_title"),
+                      :thank        => t("freshchat.offline_thank_msg"),
+                      :thank_header => t("freshchat.offline_thank_header_msg") }
+    }.to_json.html_safe
+  end
+
   def freshchat_setting widget
     freshchat_setting = {
       :widget_site_url => widget.main_widget ? current_account.full_domain : widget.product.portal ? widget.product.portal.portal_url : current_account.full_domain,
@@ -103,6 +109,7 @@ module ChatHelper
       :helpdeskname => current_account.helpdesk_name,
       :name_label =>  t("freshchat.name"),
       :mail_label => t("freshchat.mail"),
+      :message_label => t("freshchat.message"),
       :phone_label => t("freshchat.phone"),
       :textfield_label => t("freshchat.textfield"),
       :dropdown_label => t("freshchat.dropdown"),
@@ -121,9 +128,14 @@ module ChatHelper
       :default_wait_message => t("freshchat.wait_message"),
       :default_agent_joined_msg => t("freshchat.agent_joined_msg"),
       :default_agent_left_msg => t("freshchat.agent_left_msg"),
+      :default_agent_transfer_msg_to_visitor => t('freshchat.agent_transfer_msg_to_visitor'),
       :default_thank_message => t("freshchat.thank_message"),
       :default_non_availability_message => t("freshchat.non_availability_message"),
-      :default_prechat_message => t("freshchat.prechat_message")
+      :default_prechat_message => t("freshchat.prechat_message"),
+      :agent_transfered_msg => t("freshchat.agent_transfered_msg"),
+      :agent_reopen_chat_msg => t("freshchat.agent_reopen_chat_msg"),
+      :visitor_side_inactive_msg => t('freshchat.visitor_side_inactive_msg'),
+      :agent_disconnect_msg => t('freshchat.agent_disconnect_msg'),
     }
     return freshchat_setting.to_json.html_safe
   end
@@ -169,6 +181,21 @@ module ChatHelper
             :select_location => t("freshchat.select_location"),
             :new_visitors => t("freshchat.new_visitors"),
             :visitor_disconnect_msg => t("freshchat.visitor_disconnect_msg"),
+            :visitor_left_chat_msg => t("freshchat.visitor_left_chat_msg"),
+            :agent_transfer_accept_msg => t("freshchat.agent_transfer_accept_msg"),
+            :agent_transfer_reject_msg => t("freshchat.agent_transfer_reject_msg"),
+            :agent_transfer_missed_msg => t("freshchat.agent_transfer_missed_msg"),
+            :chat_inactive_for_10_min => t("freshchat.chat_inactive_for_10_min"),
+            :agent_transfer_waiting_msg => t("freshchat.agent_transfer_waiting_msg"),
+            :agent_chat_accept_msg => t("freshchat.agent_chat_accept_msg"),
+            :close_chat_tooltip => t("freshchat.close_chat_tooltip"),
+            :minimise_chat_tooltip => t("freshchat.minimise_chat_tooltip"),
+            :settings_chat_tooltip => t("freshchat.settings_chat_tooltip"),
+            :visitor_details_tooltip => t("freshchat.visitor_details_tooltip"),
+            :agent_chat_placeholder => t("freshchat.agent_chat_placeholder"),
+            :visitor_block_notifier_msg => t("freshchat.visitor_block_notifier_msg"),
+            :visitor_unblock_notifier_msg => t("freshchat.visitor_unblock_notifier_msg"),
+            :transfer_accepted_agent_msg => t("freshchat.transfer_accepted_agent_msg"),
             :last_message => t("freshchat.last_message"),
             :typing_message => t("freshchat.typing_message"),
             :is_typing_header => t("freshchat.is_typing_header"),
@@ -247,6 +274,11 @@ module ChatHelper
             :date_range => t('freshchat.date_range'),
             :agent_joined_msg => t('freshchat.agent_joined_msg'),
             :agent_left_msg => t('freshchat.agent_left_msg'),
+            :agent_transfer_msg_to_visitor => t('freshchat.agent_transfer_msg_to_visitor'),
+            :agent_transfered_msg => t('freshchat.agent_transfered_msg'),
+            :agent_reopen_chat_msg => t("freshchat.agent_reopen_chat_msg"),
+            :visitor_side_inactive_msg => t('freshchat.visitor_side_inactive_msg'),
+            :agent_disconnect_msg => t('freshchat.agent_disconnect_msg'),
             :connecting_msg => t('freshchat.connecting_msg'),
             :non_availability_message => t('freshchat.non_availability_message'),
             :me => t('freshchat.me'),
@@ -272,10 +304,38 @@ module ChatHelper
             :maximum_chat_error => t('freshchat.maximum_chat_error'),
             :name => t("freshchat.name"),
             :email => t("freshchat.mail"),
+            :message => t("freshchat.message"),
             :phone => t("freshchat.phone"),
             :textfield => t("freshchat.textfield"),
-            :dropdown => t("freshchat.dropdown")
+            :dropdown => t("freshchat.dropdown"),
+            :offline_title => t("freshchat.offline_title"),
+            :offline_thank_msg => t("freshchat.offline_thank_msg"),
+            :offline_thank_header_msg => t("freshchat.offline_thank_header_msg"),
+            :missed_chat_info => t("freshchat.missed_chat_info"),
+            :shorthands => t('short_code.title'),
+            :no_code => t('short_code.no_code')
         }
         return text.to_json.html_safe
   end
+
+  def add_style messages
+    conversation = ""
+    msgclass = "background:rgba(255,255,255,0.5);";
+    messages.each do |msg|
+      if msg['userId'] && !(msg['userId'].include?'visitor')
+        msgclass = "background:rgba(242,242,242,0.3)"
+      end
+      time = (msg['createdAt'].is_a? Fixnum) ? Time.at(msg['createdAt'] / 1000) : Time.zone.parse(msg['createdAt'])
+      time = time.strftime('%I:%M %p')
+      image = msg['photo'] ? msg['photo'] : '/images/fillers/profile_blank_thumb.gif';
+      message = '<tr style="vertical-align:top; border-top: 1px solid #eee; ' + msgclass + '">' +
+             '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' + 
+             '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg['name']+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg['msg']+'</p></td>' +
+             '<td style="padding:10px; font-size:10px; color:#aaa; text-align:right; min-width:50px; border:0">'+time+'</td></tr>'
+      conversation += message;
+    end
+    conversation = '<div class="conversation_wrap"><table style="width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse; border-right:0; border-bottom:0;">'+conversation+'</table></div>';
+    return conversation
+  end
+
 end

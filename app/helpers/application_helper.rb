@@ -543,7 +543,7 @@ module ApplicationHelper
 
 
   def group_avatar
-    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
+    content_tag( :div, image_tag("/assets/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
   end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
@@ -1057,11 +1057,7 @@ module ApplicationHelper
          :all, :conditions =>  { :call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing] }
          ).last(2).reverse
     favorites = (recent_calls || []).map{|call| call.caller_country.downcase if !call.caller_country.nil? }.compact.uniq
-    if favorites.length > 0
-      favorites.to_json
-    else
-     favorites
-    end
+    favorites.to_json
   end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
@@ -1087,11 +1083,11 @@ module ApplicationHelper
 	end
 
   def current_account_freshfone_names
-      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : n.name] }
+      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
   end
   
  def current_account_freshfone_details
-    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{n.name} #{n.number}", n.id] }
+    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
  
  def call_direction_class(call)

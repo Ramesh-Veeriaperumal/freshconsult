@@ -60,23 +60,36 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def notify_contacts_import(user)
+  def notify_customers_import(options={})
     headers = {
-      :subject                    => "Contacts Import for #{user.account.full_domain}",
-      :to                         => user.email,
-      :from                       => user.account.default_friendly_email,
+      :subject                    => "#{options[:type].capitalize} Import for #{options[:user].account.full_domain}",
+      :to                         => options[:user].email,
+      :from                       => options[:user].account.default_friendly_email,
       :sent_on                    => Time.now,
-      :"Reply-to"                 => "#{user.account.default_friendly_email}", 
+      :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
       :"Auto-Submitted"           => "auto-generated", 
       :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
-    @user = user
-    @account = user.account
+    @user = options[:user]
+    @type = options[:type]
+    @created = options[:created_count]
+    @updated = options[:updated_count]
+    @failed = options[:failed_count]
+    @attachment = options[:file_name]
+    @import_success = options[:import_success]
+    @corrupted = options[:corrupted]
+
+    unless options[:file_path].nil?
+      attachments[options[:file_name]] = {
+        :mime_type => "text/csv",
+        :content => File.read(options[:file_path], :mode => "rb")
+      }
+    end
 
     mail(headers) do |part|
-      part.text { render "notify_contacts_import.text.plain" }
-      part.html { render "notify_contacts_import.text.html" }
+      part.text { render "notify_customers_import.text.plain" }
+      part.html { render "notify_customers_import.text.html" }
     end.deliver
   end
 

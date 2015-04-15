@@ -82,4 +82,6 @@ module APIHelper
 
   ROLE_ATTRIBS = ["created_at", "default_role", "description", "id", "name", "updated_at"]
 
+  TICKET_FIELDS_ATTRIBS = ["active", "created_at", "default", "description", "editable_in_portal", "field_options", "field_type", "flexifield_def_entry_id","id", "import_id", "label", "label_in_portal", "level", "name", "parent_id", "position", "prefered_ff_col", "required", "required_for_closure", "required_in_portal", "updated_at", "visible_in_portal", "choices", "nested_ticket_fields"]
+
 end

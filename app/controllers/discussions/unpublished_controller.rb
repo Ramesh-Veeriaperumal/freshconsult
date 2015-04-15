@@ -14,7 +14,7 @@ class Discussions::UnpublishedController < ApplicationController
 	before_filter :set_selected_tab
 	before_filter :default_scope, :only => :index
 	before_filter :load_posts, :only => :index
-	before_filter :fetch_counts_dynamo, :only => :index
+	before_filter :fetch_counts_dynamo, :only => [:index, :moderation_count]
 	before_filter :load_spam_post, :only => [:approve, :ban, :restore_contact, :delete_unpublished]
 	before_filter :load_post, :only => :mark_as_spam
 	before_filter :load_topic_posts, :only => :topic_spam_posts
@@ -36,6 +36,10 @@ class Discussions::UnpublishedController < ApplicationController
 			format.html { render :layout => false }
 			format.js
 		end
+	end
+
+	def moderation_count
+		render :layout => false
 	end
 
 	private

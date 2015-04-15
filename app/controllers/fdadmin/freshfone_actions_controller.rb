@@ -1,10 +1,11 @@
 class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
-	around_filter :load_account
+	
 	before_filter :validate_credits, :only => [:add_credits]
 	before_filter :notify_freshfone_ops , :except => :get_country_list
 	around_filter :select_master_shard , :except => :get_country_list
-
+	before_filter :load_account
+	
 	def add_credits
 		@freshfone_credit = @account.freshfone_credit
 		@freshfone_credit.present? ? update_credits : create_credits
@@ -192,7 +193,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	def notify_freshfone_ops
 		type = params[:action].humanize
 		subject = "admin.freshdesk : #{type} for Account #{@account.id}"
-		message = "#{type} for account #{@account.id} by guru guruprasad@freshdesk.com
+		message = "#{type} for account #{@account.id} by #{params[:user_name]} <#{params[:email]}>
                  Parameters :: #{params.except(:action, :controller).map{|k,v| "#{k}=#{v}"}.join(' & ')}"
 		FreshfoneNotifier.deliver_freshfone_email_template(@account, {
 																												 :subject => subject,
@@ -204,7 +205,6 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
 	def load_account
 		@account = Account.find(params[:account_id])
-		yield
 	end
 
 end

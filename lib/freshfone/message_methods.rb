@@ -38,4 +38,8 @@ module Freshfone::MessageMethods
 			(uploaded_audio? && has_attachment?) ||
 			(transcript? && !message.blank?)
 		end
+
+		def has_invalid_size?
+			(transcript? && (message.length > 4096) )
+		end
 end

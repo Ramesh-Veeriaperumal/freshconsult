@@ -4,7 +4,7 @@
 	<fieldset>
 	  	<div class="control-group">
 	  		<div class="controls">
-	  			<input class="required special" id="user_session_email" name="user_session[email]" 
+	  			<input class="required special" id="user_session_email" name="user_session[email]" autofocus="true"
 	  				placeholder="<%= t('your_email_address') %>" size="30" type="email" value="<%= @user_session.email %>" />
 	  		</div>
 		</div>
@@ -16,7 +16,7 @@
 	  	</div>
         <% if @show_recaptcha %>
           <div class="controls recaptcha-control">
-            <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+            <%= recaptcha_tags :display => { :theme => "white" }, :ssl => true %>
           </div>
        <% end %>
 		<div class="control-group">			

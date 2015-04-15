@@ -1,38 +1,38 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
-	<div class="form_title">
-		Reply 
-	</div>
-	<div class="list_agents_replying" class="hide"></div>
-	<%= form_for note, :url => mobihelp_helpdesk_ticket_conversations_path(@ticket), :html => {
-						:multipart => true,  
-						:id => "HelpdeskMobihelpChat",
-						"data-panel" => cntid,
+  <div class="form_title">
+    Reply 
+  </div>
+  <div class="list_agents_replying" class="hide"></div>
+  <%= form_for note, :url => mobihelp_helpdesk_ticket_conversations_path(@ticket), :html => {
+            :multipart => true,  
+            :id => "HelpdeskMobihelpChat",
+            "data-panel" => cntid,
                         "data-show-pseudo-reply" => 'true',
                         "data-fetch-latest" => 'true',
                         "data-cnt-id" => cntid } do |f| %>
-		<%= f.error_messages %>
-		<%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
-		<%= f.hidden_field :private , :value => "false" %>
-		<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["mobihelp"]%>  
-		<%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
-		<ul class="ui-form dont-validate">
+    <%= f.error_messages %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
+    <%= f.hidden_field :private , :value => "false" %>
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["mobihelp"]%>  
+    <%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
+    <ul class="ui-form dont-validate">
       <li class="inline-field field clearField message">
         <ul class="redactor_toolbar">
           <%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid}) %> 
         </ul>
       </li>
-			<li class="inline-field field clearField continous message">
-				<%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-          <%= ff.text_area :body, { :class => 'required mobihelp_chat auto-height', :id => "#{id}-#{cntid}-body", :rows => "3" } %>
+      <li class="inline-field field clearField continous message">
+        <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+          <%= ff.text_area :body, { :class => 'required mobihelp_chat auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
           <%= text_area_tag "quoted_text_html", "", { :id => "#{cntid}-quoted", :class => "hide" } %>
-				<% end %>
-			</li>
-		</ul>
+        <% end %>
+      </li>
+    </ul>
 
-		<div class="btn-toolbar">
-			<span>
-	      <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body") %>
-	    </span>
+    <div class="btn-toolbar">
+      <span>
+        <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body") %>
+      </span>
 
       <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
         <a class="btn btn-primary submit_btn">
@@ -58,10 +58,10 @@
           </ul>
         <% end %>
       </span>
-		</div>
-	<% end %>
-</div> 	
+    </div>
+  <% end %>
+</div>  
 
 <% content_for :onload_script do %>
-  jQuery("#HelpdeskMobihelpChat").validate();	
+  jQuery("#HelpdeskMobihelpChat").validate(); 
 <% end %>

@@ -66,7 +66,7 @@ class Freshfone::Number < ActiveRecord::Base
 	validates_inclusion_of :number_type, :in => TYPE_HASH.values,
 		:message => "%{value} is not a valid number_type"
 	validate :validate_purchase, on: :create
-	validate :validate_settings, :validate_attachments, :unless => :deleted_changed?, on: :update
+	validate :validate_settings, :validate_attachments, :validate_name, :unless => :deleted_changed?, on: :update
 	validates_uniqueness_of :number, :scope => :account_id
 
 	scope :filter_by_number, lambda {|from, to| {
@@ -257,4 +257,7 @@ class Freshfone::Number < ActiveRecord::Base
 			FreshfoneNotifier.deliver_ops_alert(account, notification, message)
 		end
 
+		def validate_name
+			errors.add(:base, I18n.t('freshfone.admin.number_settings.name_maxlength')) if (name.present? && name.length > 255 )
+		end
 end

@@ -168,9 +168,9 @@ if Rails.env.test?
     "spec/lib/workers/throttler_spec.rb",
     "spec/lib/zen_import_redis_spec.rb",
     "spec/lib/detect_user_language_spec.rb",
-    "spec/lib/contacts_import_worker_spec.rb",
     "spec/controllers/solution_uploaded_images_controller_spec.rb",
-    "spec/controllers/contact_import_controller_spec.rb",
+    "spec/controllers/contacts_import_controller_spec.rb",
+    "spec/controllers/companies_import_controller_spec.rb",
     "spec/models/flexifield_spec.rb",
     "spec/lib/middleware/api_throttler_spec.rb"
   ]

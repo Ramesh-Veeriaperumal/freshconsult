@@ -1,0 +1,66 @@
+<div id="fc_end_chat_form" class="hide">
+	<div id="end_chat_form_container" class="end_chat_form_container">
+		<div id="chat_ticket_options" class="chat_ticket_options_container">  
+			<div class="ticket_search_details convert-ticket"> 
+			     <h4><%=CHAT_I18n.create_ticket_tip%></h4> 
+			     <button  class="option_button btn btn-secondary" id="new_ticket_button">
+			     	<%=CHAT_I18n.new_ticket_tip%> <span class="tkt_button_arrow">&#9658;</span>
+			     </button>
+			     <button class="option_button btn btn-secondary" id="existing_ticket_button">
+			     	<%=CHAT_I18n.existing_tkt_option_tip%> <span class="tkt_button_arrow">&#9658;</span>
+			     </button> 
+			     <button class="option_button no_tkt btn btn-secondary" id="do_nothing_button">
+			     	<%=CHAT_I18n.do_not_convert_tkt%><br>
+			     	<span class="button_info"><%=CHAT_I18n.do_not_convert_tkt_info%></span>
+			     </button>
+			</div>  
+		</div>  
+
+		<div id="chat_new_ticket_container" class="hide chat_new_ticket_container">
+				<h4><a href="#"  id="new_tkt_back" class="go_back"> &#9664; <%=CHAT_I18n.go_back%></a> - <b><%=CHAT_I18n.new_ticket_tip%></b></h4>
+				<div class = "new_tkt_input_container">
+					<h3><%=CHAT_I18n.ticket_title%></h3> <input type="text" value="" size="24"  name="" id="ticket_title"/>
+					<span></span>
+					<h3><%=CHAT_I18n.requester_name%></h3><input type="text" value="" size="24" name="" id="requester_name"/>
+					<span></span>
+					<h3><%=CHAT_I18n.requester_email%></h3><input type="text" value="" size="24" data-validation-type = "email" name="" id="requester_email"/>
+					<span></span>
+				</div>
+			    <input type="submit" class="btn btn-primary save_button" id="new_tkt_save" value="Save"></input>
+		</div>
+
+		<div id="ticket_search_view" class="hide chat_tkt_search_container">
+			<div class="ticket_search_details">
+		  		<h4><a href="#"  id="go_back" class="go_back"> &#9664; <%=CHAT_I18n.go_back%></a> - <b><%=CHAT_I18n.existing_tkt_option_tip%></b></h4>
+		      	<div class="search-content">
+		      		<div class="fc_modal_search_wrap">
+			  			 <select id="search-type" class="search-type select2"> 
+			  			        <option value='display_id'><%=CHAT_I18n.id%></option>
+			                  	<option value='subject'><%=CHAT_I18n.subject%></option>
+			           		    <option selected='selected' value='requester'><%=CHAT_I18n.requested_by%></option>
+			          	 </select>
+			             
+			             <div class="searchticket display_id hide">
+			                <input type="text"  name='select-id' class="search_input select-id"  
+			                                                  placeholder='<%=CHAT_I18n.find_by_id%>' />
+			              </div>
+
+			              <div class="searchticket requester">
+			                  <input type="text"  name='select-requester' class="search_input select-requester" 
+			                                                    placeholder='<%=CHAT_I18n.find_by_requester%>' />
+			              </div>
+
+			              <div class="searchticket subject hide">
+			                 <input type="text"  name='select-subject' class="search_input select-subject"  
+			                                                    placeholder='<%=CHAT_I18n.find_by_subject%>' />
+			              </div>
+		          	  </div>
+		              <div  class="display_id_results ticket_search_results hide"></div>
+		              <div  class="requester_results ticket_search_results"></div>
+		              <div class="subject_results ticket_search_results hide"></div>
+		         </div>
+		  	</div>
+		</div>
+	</div>
+	<a href="#fc_end_chat_form" id="end_chat_popup" class="hide" data-backdrop="static" data-template-footer="" title="<%=CHAT_I18n.convert_to_ticket%>" rel="freshdialog" data-height="480" data-width="480" ></a>
+</div>

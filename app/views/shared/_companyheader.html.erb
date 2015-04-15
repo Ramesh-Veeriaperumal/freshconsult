@@ -33,7 +33,7 @@
 		}, 10);
 	})
 <% end %>
-<div class="list-page-header"	>
+<div class="list-page-header">
 	<div class="row-fluid">
 		<div class="span6"><h3 class="lead"><%= @page_title = t('customers') %></h3></div>
 		 <div class="span6 pull-right pagination-right header_buttons align-right" >
@@ -47,10 +47,9 @@
 				"data-target"=>"#customer_export" %>
 			<% if privilege?(:manage_contacts) %>
 				&middot;  
-  		 	<%= link_to(t('import'), csv_contact_import_index_path, :title => t("contacts.import_csv"), :class => " margin-right", :id => "contacts_import") %>
-  			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_index_path, :class => "uiButton grey") %></div>
-  			<%= link_to t('company.new'), new_company_path, :class => "btn" %>			
-  			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn") %>
+	  		 	<%= link_to(t('import'), "/imports/#{type}", :title => t('customer_import.import_csv', :type => type.pluralize.capitalize), :class => " margin-right", :id => "customers_import") %>
+	  			<%= link_to t('company.new'), new_company_path, :class => "btn" %>			
+	  			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn") %>
 			<% end %>      
         </div>
 	</div>

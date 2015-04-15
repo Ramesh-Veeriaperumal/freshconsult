@@ -52,9 +52,7 @@ class Social::FacebookPagesController < Admin::AdminController
         else
           page = scoper.new(fb_page)
           #remove the check
-          if page.save && !current_account.features?(:facebook_realtime)
-            fetch_fb_wall_posts page
-          end
+          page.save 
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)

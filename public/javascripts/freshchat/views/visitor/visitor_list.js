@@ -237,7 +237,8 @@ freshChat.visitor_list_view = function(){
         id : clicked_row.attr("data-id"),
         widget_id : clicked_row.attr("data-widget-id"),
         visitor_info : this.filteredCollection.get(clicked_row.attr("data-id")).toJSON(),
-        fromlist : true
+        fromlist : true,
+        reopenChat: true
       };
       this.collection.acceptVisitor(visitor_data);
     }

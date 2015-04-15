@@ -15,6 +15,9 @@ class Billing::BillingController < ApplicationController
               "subscription_cancelled", "subscription_reactivated", "card_added", 
               "card_updated", "payment_succeeded", "payment_refunded", "card_deleted" ]          
 
+  LIVE_CHAT_EVENTS = [ "subscription_activated", "subscription_renewed", "subscription_cancelled", 
+                        "subscription_reactivated", "subscription_changed"]
+
   # Events to be synced for all sources including API.
   SYNC_EVENTS_ALL_SOURCE = [ "payment_succeeded", "payment_refunded", "subscription_reactivated" ]
 
@@ -51,6 +54,19 @@ class Billing::BillingController < ApplicationController
   def trigger
     if event_monitored? and not_api_source? or sync_for_all_sources?
       send(params[:event_type], params[:content])
+    end
+
+    if LIVE_CHAT_EVENTS.include? params[:event_type]
+      retrieve_account unless @account
+      Resque.enqueue(Workers::Livechat, 
+        {
+          :worker_method => "update_site", 
+          :siteId        => @account.chat_setting.display_id, 
+          :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
+                              :suspended => !@account.active?
+                             }
+        }
+      )
     end
 
     Account.reset_current_account

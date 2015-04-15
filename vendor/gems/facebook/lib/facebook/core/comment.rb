@@ -80,7 +80,7 @@ class Facebook::Core::Comment
       if convert_comment
         @koala_post.fetch(post_id)
         type = @koala_post.company_post? ? POST_TYPE[:status] : POST_TYPE[:post]
-        ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, @koala_post).process(@koala_post, realtime_subscription, true)
+        ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, @koala_post).process(@koala_post, realtime_subscription)
       end
     end
     

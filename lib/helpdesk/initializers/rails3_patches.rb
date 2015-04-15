@@ -99,3 +99,51 @@ ActiveModel::Errors.class_eval do
     a.to_json
   end
 end
+
+#https://github.com/rack/rack/issues/718. 
+#Issue got fixed in rack 1.5.2 but sctionpack is depended on that so we can't upgrade
+#So, monkey patching the same thing
+module Rack
+  module Multipart
+    class Parser
+      def get_filename(head)
+        filename = nil
+        case head
+        when Rack::Multipart::RFC2183
+          filename = Hash[head.scan(Rack::Multipart::DISPPARM)]['filename']
+          filename = $1 if filename and filename =~ /^"(.*)"$/
+        when Rack::Multipart::BROKEN_QUOTED, Rack::Multipart::BROKEN_UNQUOTED
+          filename = $1
+        end
+
+        return unless filename
+
+        if filename.scan(/%.?.?/).all? { |s| s =~ /%[0-9a-fA-F]{2}/ }
+          filename = Rack::Utils.unescape(filename)
+        end
+
+        scrub_filename filename
+
+        if filename !~ /\\[^\\"]/
+          filename = filename.gsub(/\\(.)/, '\1')
+        end
+        filename
+      end
+
+      if "<3".respond_to? :valid_encoding?
+        def scrub_filename(filename)
+          unless filename.valid_encoding?
+            # FIXME: this force_encoding is for Ruby 2.0 and 1.9 support.
+            # We can remove it after they are dropped
+            filename.force_encoding(Encoding::ASCII_8BIT)
+            filename.encode!(:invalid => :replace, :undef => :replace)
+          end
+        end
+      else
+        def scrub_filename(filename)
+        end
+      end
+
+    end
+  end
+end

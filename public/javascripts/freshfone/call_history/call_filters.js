@@ -11,6 +11,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.settingsForDatePicker();
       this.initSelect2Values();
       this.bindSubmitButton();
+      this.bindExport();
       this.bindFormSumbit();
       this.bindPagination();
       this.setFilterData();
@@ -38,6 +39,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$fNumberSelect2 = this.$callFilter.find("#ff_number");
       this.$fCallStatusSelect2 = this.$callFilter.find("#ff_call_status");
       this.$filterFreshfoneNumberLabel = this.$freshfoneCallHistory.find(".filter_freshfone_number");
+      this.$export_div = $('.call_history_export_div');
       this.filterString = '';
       this.filteredAgents = [];
       this.filteredAgents_Name = [];
@@ -176,6 +178,11 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       $(obj)
         .parents('.dropdown:first').find('.filter-name')
         .text($(obj).text());
+      if ($(obj).attr('wf_order') != 'created_at' ) {
+        this.$export_div.addClass('disabled');
+      } else {
+        this.$export_div.removeClass('disabled');
+      }
     },
     bindSubmitButton: function () {
       var self= this;
@@ -186,6 +193,57 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         $("#sliding").trigger("click");
       });
     },
+
+    /* Call History Export methods start */
+    bindExport: function () {
+      var self = this;
+      this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter",".export_option",
+        function(ev) {
+          ev.preventDefault();
+          self.setFilterData();
+          self.showProgress();
+          $.ajax({
+            url : '/freshfone/call_history/export',
+            data : $(self.$filterSortForm).serialize() + '&export_to=' + $(ev.target).attr('data-format'),
+            success : function() {
+              self.cleanupLoader();
+              self.showExportAlerts(self.$export_div.attr("data-success-message") +
+                " (" + freshfone.current_user_details.email + ")");
+            },
+            statusCode: {
+              400: function() {
+                self.cleanupLoader();
+                self.showExportAlerts(self.$export_div.attr("data-range-limit-message"));
+              },
+              500: function() {
+                self.cleanupLoader();
+                $("#noticeajax").html("<div>" + self.$export_div.attr("data-error-message") + 
+                  " <a href='mailto:support@freshdesk.com' target='_blank'>Click here</a>" + "</div>").show();
+                setTimeout(function() {closeableFlash('#noticeajax')}, 5000);
+              }
+            }
+          });
+      });
+    },
+
+    showExportAlerts: function(message) {
+      $("#noticeajax").html("<div>" + message + "</div>").show();
+      setTimeout(function() {closeableFlash('#noticeajax');}, 3000);
+    },
+
+    showProgress: function(progress) {
+      if (progress === undefined) { progress = 0 };
+      if (progress >= 1.0) { return; }
+      NProgress.set(progress);
+      this.showProgress(progress + 0.2);
+    },
+
+    cleanupLoader: function() {
+      NProgress.done();
+      setTimeout(NProgress.remove, 500);
+    },
+
+    /* Call History Export methods end */
 
     bindPagination: function () {
       var self= this;

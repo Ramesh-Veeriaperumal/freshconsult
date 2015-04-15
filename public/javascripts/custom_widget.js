@@ -4,6 +4,7 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
+		(this.options.auth_type == 'OAuth') ? this.options.refresh_count = 0 : null;
 		this.app_name = this.options.app_name || this.app_name || "Integrated Application";
 		if(!this.options.widget_name) this.options.widget_name = this.app_name.toLowerCase().replace(' ', '_')+"_widget"
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.widget_name+"_username");
@@ -133,6 +134,11 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
+    oauth_retry_error:function() {
+        this.options.oauth_token = null;
+        //console.log("OAuth refresh token refresh error for " + this.options.app_name + ". No  retries after 2 refresh attempts.");
+    },
+
 	resource_failure:function(evt, reqData, reqHeader){
 		resJ = evt.responseJSON;
 		
@@ -149,6 +155,7 @@ Freshdesk.Widget.prototype={
 				cw = this;
 				req_sent_again = true;						
 				this.refresh_access_token(function(){
+                    (this.options.refresh_count > 2) ? this.oauth_retry_error() : this.options.refresh_count++;
 					if(this.options.oauth_token) {
 						this.request(reqData);
 					} else {

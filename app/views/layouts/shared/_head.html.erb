@@ -57,19 +57,22 @@
 	<%= javascript_include_tag :'cdn/pattern'  %>
 	<%= javascript_include_tag :'cdn/merge'  %>
 	<%= javascript_include_tag :'cdn/custom_widget' %>
+  <%= javascript_include_tag :'cdn/livechat_helper' %>
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= javascript_include_tag :'cdn/soundmanager' %>
 	<% end %>
 	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>
-		<%= javascript_include_tag :'cdn/freshchat' %>
+		<%= javascript_include_tag :'cdn/livechat_collision' %>
 	<% end %>
 	
 	<% if chat_activated? %>
-    <%= javascript_include_tag :'cdn/freshchat_intializer' %>
+    <%= javascript_include_tag :'cdn/livechat_initializer' %>
 	<% end %> 
 
+	<%= javascript_include_tag :'cdn/livechat_admin_settings' %>
+	
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
 	<script type="text/javascript">

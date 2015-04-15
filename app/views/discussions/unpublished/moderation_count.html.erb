@@ -1,0 +1,23 @@
+<% unless (@counts[:spam] == 0 and @counts[:unpublished]== 0) %>
+    <h3 class="title"><%= t('discussions.unpublished.page_title') %></h3> 
+    <div>
+      <ul class="moderation-dashboard-link clearfix">
+        <li <%= 'class="disabled"'.html_safe if @counts[:unpublished].zero? %> >
+          <a data-pjax="#body-container" href="<%= discussions_unpublished_filter_path(:filter => "unpublished") %>">
+            <span class="moderation-count"><%= @counts[:unpublished] %></span>
+            <span class="moderation-msg"><%= t('discussions.unpublished.index.unpublished') %></span>
+          </a>
+        </li>
+        <li <%= 'class="disabled"'.html_safe if @counts[:spam].zero? %> >
+          <a  data-pjax="#body-container" href=" <%= discussions_unpublished_filter_path(:filter => "spam") %>">
+          <span class="moderation-count"><%= @counts[:spam] %></span>
+          <span class="moderation-msg"><%= t('discussions.unpublished.index.title') %></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+<% else %>
+   <script>
+    jQuery('#moderation-stats').remove();
+   </script>
+<% end %>
