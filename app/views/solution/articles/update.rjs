@@ -1,2 +1,2 @@
 show_growl_flash(page)
-page << "jQuery('#article-properties').modal('hide'); jQuery('#article-properties .btn-primary').button('reset');"
+page << "jQuery('#article-properties').modal('hide');jQuery('#article-properties').modal('destroy');"

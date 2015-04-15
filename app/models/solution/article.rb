@@ -73,15 +73,20 @@ class Solution::Article < ActiveRecord::Base
       :joins => :folder
     }
   }
-  
-  scope :all_drafts, includes(:draft).where('solution_articles.status = ? or solution_drafts.article_id = solution_articles.id', STATUS_KEYS_BY_TOKEN[:draft]).
-                                      order('solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC')
 
+  scope :all_drafts, {
+      :include => [{:draft => :user}, :folder, :user],
+      :conditions => ['solution_articles.status = ? or solution_drafts.article_id = solution_articles.id', STATUS_KEYS_BY_TOKEN[:draft]],
+      :order => ['solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC']
+    } 
+    
   scope :drafts_by_user, lambda { |user| 
-    includes(:draft).where('
-      (solution_articles.status = 1 AND solution_articles.user_id = ?) OR 
-      (solution_drafts.article_id = solution_articles.id AND solution_drafts.user_id = ?)', user.id, user.id).
-    order('solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC')
+    {
+      :include => [{:draft => :user}, :folder, :user],
+      :conditions => ['(solution_articles.status = 1 AND solution_articles.user_id = ?) OR 
+      (solution_drafts.article_id = solution_articles.id AND solution_drafts.user_id = ?)', user.id, user.id],
+     :order => ['solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC']
+    } 
   }
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]

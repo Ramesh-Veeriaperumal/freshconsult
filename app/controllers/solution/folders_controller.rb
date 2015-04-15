@@ -18,7 +18,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = @category.folders.find(params[:id], :include => {:articles => :draft})
+    @item = @category.folders.find(params[:id], :include => {:articles => [:draft, :user]})
     
     respond_to do |format|
       format.html { @page_canonical = solution_category_folder_url(@category, @item) }

@@ -139,16 +139,18 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def draft_preview_agent_filter?
-      return (current_user && current_user.agent? && @article.draft.present?) if draft_preview?
+      return (current_user && current_user.agent? && (@article.draft.present? || !@article.published?)) if draft_preview?
       true
     end
 
     def adapt_article
       draft = @article.draft
-      @article.attributes.each do |key, value|
-        @article[key] = draft.send(key) if draft.respond_to?(key)
+      if @article.draft.present?
+        @article.attributes.each do |key, value|
+          @article[key] = draft.send(key) if draft.respond_to?(key)
+        end
+        @article.freeze
       end
-      @article.freeze
       @page_meta = { :title => @article.title }
     end
 

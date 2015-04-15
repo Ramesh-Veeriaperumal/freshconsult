@@ -3,14 +3,13 @@
 	</div>
 </h3>
 
-<div class="draft-info-box <%= "hide" unless @article.draft.present? %>">
+<div class="draft-info-box <%= "hide" unless @article.draft.present? || !@article.published? %>">
+	<% current_item = @article.draft || @article %>
 	<div class="autosave-notif span8">
-  	<% if @article.draft %>
-	  	<%= t('solution.articles.draft.show_page_msg') %> 
-			<%= current_user == @article.draft.user ? t('solution.articles.draft.you') : @article.draft.user.name %>
-			<span data-livestamp="<%= @article.draft.updation_timestamp %>" class="tooltip" title="<%= formated_date(@article.draft.modified_at) %>"></span>
-			<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn', :confirm => t('solution.articles.draft.discard_confirm')) if @article.published? %>
-		<% end %>
+  	<%= t('solution.articles.draft.show_page_msg') %> 
+		<%= current_user == current_item.user ? t('solution.articles.draft.you') : current_item.user.name %>
+		<span data-livestamp="<%= current_item.modified_at.to_i %>" class="tooltip" title="<%= formated_date(current_item.modified_at) %>"></span>
+		<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn', :confirm => t('solution.articles.draft.discard_confirm')) if @article.published? and @article.draft.present? %>
 	</div>
 	<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") %>
 </div>

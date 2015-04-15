@@ -12,7 +12,7 @@
 			</div>
 			<%#= link_to h((current_item.title).truncate(75)), solution_category_folder_article_path(article.folder.category, article.folder, article) %>
 			
-			<%= pjax_link_to h(current_item.title), solution_category_folder_article_path(article.folder.category, article.folder, article), {} %>
+			<%= pjax_link_to h(current_item.title), solution_category_folder_article_path(article.folder.category_id, article.folder, article), {} %>
 
 			<div class="muted">
 				<%= t('search.in') %> <%#= article.folder.name %>

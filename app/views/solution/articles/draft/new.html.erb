@@ -5,7 +5,7 @@
 		<div class="button-container align-right itil-hide">
 			<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn" ) %>
 	    <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn" %>
-			<%= submit_tag t('solution.articles.publish'), :class => "btn btn-primary" %>
+			<%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary" %>
 		</div>
 	<% end %>
 </div>

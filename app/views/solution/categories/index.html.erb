@@ -19,7 +19,7 @@
 </div>
 <div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>
-		<% if !category.is_default and @solution_drafts_feature %>
+		<% if !@solution_drafts_feature  || !category.is_default %>
 			<div class="<%= cycle('odd', 'even') %>">
 				<% if (!category.is_default? && privilege?(:manage_solutions)) -%>
 						<div class="action_buttons">

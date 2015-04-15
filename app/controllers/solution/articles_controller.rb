@@ -68,7 +68,7 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       if @article.save
         format.html { 
-          flash[:error] = t('solution.articles.published_success') if publish?
+          flash[:notice] = t('solution.articles.published_success') if publish?
           redirect_to creation_redirect_url 
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
@@ -133,7 +133,7 @@ class Solution::ArticlesController < ApplicationController
   protected
 
     def load_article
-      @article = current_account.solution_articles.find(params[:id])
+      @article = current_account.solution_articles.find(params[:id], :include =>[:draft])
     end
 
     def scoper #possible dead code
@@ -254,7 +254,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def latest_content?
-      params[:last_updated_at].to_i == @article.draft.updation_timestamp
+      params[:last_updated_at].to_i == @article.draft.updation_timestamp || params[:previous_author].blank?
     end
 
     def update_draft_attributes

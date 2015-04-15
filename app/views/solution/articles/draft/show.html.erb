@@ -13,25 +13,22 @@
 			<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
 		</div>
 
-		<% if @article.draft or @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
+		<% if @article.draft or !@article.published? %>
 			<div class="draft-info-box <%= "error" if @article.draft && @article.draft.locked? %>">
-				<% if @article.draft %>
-					<% if @article.draft.locked? %>
-						<%= t('solution.articles.restrict_edit', :name => @article.draft.user.name) %>
-					<% else %>
-						<%= t('solution.articles.draft.show_page_msg') %> 
-						<%= current_user == current_item.user ? t('solution.articles.draft.you') : current_item.user.name %>
-						<span data-livestamp="<%= @article.draft.modified_at.to_i %>" class="tooltip" title="<%= formated_date(@article.draft.modified_at) %>"></span>
-					<% end %>
+
+				<% if @article.draft and @article.draft.locked? %>
+					<%= t('solution.articles.restrict_edit', :name => current_item.user.name) %>
 				<% else %>
-					<%= t('solution.articles.unpublished_version') %>
+					<%= t('solution.articles.draft.show_page_msg') %> 
+					<%= current_user == current_item.user ? t('solution.articles.draft.you') : current_item.user.name %>
+					<span data-livestamp="<%= current_item.modified_at.to_i %>" class="tooltip" title="<%= formated_date(current_item.modified_at) %>"></span>
 				<% end %>
 					
-					<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn', :confirm => t('solution.articles.draft.discard_confirm')) if @article.published? %>
+					<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn', :confirm => t('solution.articles.draft.discard_confirm')) if @article.published? and @article.draft.present? %>
 
 					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'btn btn-small draft-btn') %>
 
-					<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") if @article.draft.present? %>
+					<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") if @article.draft.present? || !@article.published? %>
 			</div>
 		<% end %> 
 
