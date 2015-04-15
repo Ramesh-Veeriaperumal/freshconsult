@@ -2445,6 +2445,17 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
 
+  create_table "solution_article_bodies", :force => true do |t|
+    t.integer  "account_id",   :limit => 8,          :null => false
+    t.integer  "article_id",   :limit => 8,          :null => false
+    t.text     "description",  :limit => 2147483647
+    t.text     "desc_un_html", :limit => 2147483647
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "solution_article_bodies", ["account_id", "article_id"], :name => 'index_solution_article_bodies_on_account_id_and_article_id', :unique => true
+
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
     t.text     "description",  :limit => 2147483647
