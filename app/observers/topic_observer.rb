@@ -9,7 +9,6 @@ class TopicObserver < ActiveRecord::Observer
 
   def before_update(topic)
     check_for_changing_forums(topic)
-    assign_default_stamps(topic) if topic.changes.key?("forum_id")
   end
 
 	def before_save(topic)
@@ -80,10 +79,6 @@ private
       old = Topic.find(topic.id)
       @old_forum_id = old.forum_id if old.forum_id != topic.forum_id
       true
-  end
-
-  def assign_default_stamps(topic)
-    topic.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[topic.forum.reload.forum_type]
   end
 
   def update_forum_counter_cache(topic)

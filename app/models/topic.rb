@@ -23,6 +23,7 @@ class Topic < ActiveRecord::Base
   before_save :set_sticky
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
+  before_validation :assign_default_stamps, :if => :forum_id_changed?, :on => :update
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
@@ -444,5 +445,8 @@ class Topic < ActiveRecord::Base
   def hit_key
     TOPIC_HIT_TRACKER % {:account_id => account_id, :topic_id => id }
   end
-  
+
+  def assign_default_stamps
+    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
+  end
 end
