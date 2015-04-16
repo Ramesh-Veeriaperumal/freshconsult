@@ -142,8 +142,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     deleted_rules = Array.new
     params[:social_ticket_rule].each do |rule|
       group_id = rule[:group_id].to_i unless (rule[:group_id].to_i == 0)
-      product_id = @twitter_stream.custom_stream? ? params[:social_twitter_stream][:product_id] : params[:social_twitter_handle][:product_id]
-      product_id = product_id.blank? ? nil : product_id.to_i 
+      product_id = rule_product_id
       if rule[:includes].blank? and rule[:ticket_rule_id].blank?
         @ticket_error_flash = t('admin.social.flash.ticket_rule_error') if (group_id)
         next 
@@ -237,4 +236,16 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
       end
     end
   end
+  
+  private
+  def rule_product_id
+    if @twitter_stream.custom_stream? 
+      product_id = params[:social_twitter_stream][:product_id] unless params[:social_twitter_stream].blank? 
+    else
+      params[:social_twitter_handle][:product_id] unless params[:social_twitter_handle].blank? 
+    end
+    product_id = product_id.blank? ? nil : product_id.to_i 
+  end
+  
 end
+
