@@ -95,7 +95,8 @@ module Facebook::Core::Util
     if fb_page
       if @parent.is_fb_message?
         unless Facebook::Core::Message.new(fb_page).send_reply(@parent, @item)
-          return flash[:notice] = t(:'facebook.error_on_reply_fb')
+          flash[:notice] = fb_page.reauth_required ? t(:'facebook.error_on_reply_fb') : t(:'facebook.user_blocked')
+          return 
         end
       else
         unless Facebook::Core::Comment.new(fb_page, nil).send_reply(parent_post, @item)
