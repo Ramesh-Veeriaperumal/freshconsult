@@ -5,6 +5,7 @@ require 'simplecov'
 require 'simplecov-csv'
 require 'pry'
 require 'rspec/collection_matchers'
+require 'simplecov-rcov'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
 
@@ -34,6 +35,7 @@ SimpleCov.coverage_dir 'tmp/coverage'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   SimpleCov::Formatter::CSVFormatter,
+  SimpleCov::Formatter::RcovFormatter,
 ]
 
 Spork.prefork do

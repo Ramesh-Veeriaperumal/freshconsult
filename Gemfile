@@ -220,6 +220,9 @@ group :test do
   gem "database_cleaner"
   gem "fuubar"
   gem "json-compare", "0.1.8"
+  gem "rspec_junit_formatter"
+  gem "simplecov-rcov"
+  gem "rubocop-checkstyle_formatter"
 end
 
 # group :development, :assets do
