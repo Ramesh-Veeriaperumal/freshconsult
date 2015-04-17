@@ -242,7 +242,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     if @twitter_stream.custom_stream? 
       product_id = params[:social_twitter_stream][:product_id] unless params[:social_twitter_stream].blank? 
     else
-      params[:social_twitter_handle][:product_id] unless params[:social_twitter_handle].blank? 
+      product_id = params[:social_twitter_handle][:product_id] unless params[:social_twitter_handle].blank? 
     end
     product_id = product_id.blank? ? nil : product_id.to_i 
   end
