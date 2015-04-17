@@ -1893,6 +1893,13 @@ Helpkit::Application.routes.draw do
         get :articles
       end
     end
+
+    resources :articles do 
+      member do
+        put :thumbs_up
+        put :thumbs_down
+      end
+    end
   end
 
   namespace :notification do

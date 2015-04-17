@@ -45,7 +45,7 @@ class Solution::Article < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
 
-  attr_accessor :highlight_title, :highlight_desc_un_html
+  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
     :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position
@@ -235,7 +235,7 @@ class Solution::Article < ActiveRecord::Base
     def content_changed?
       all_fields = [:title, :description, :status, :position]
       changed_fields = self.changes.symbolize_keys.keys
-      (changed_fields & all_fields).any?
+      (changed_fields & all_fields).any? or tags_changed
     end
     
     def hit_key

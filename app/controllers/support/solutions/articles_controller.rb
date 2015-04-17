@@ -2,6 +2,7 @@ class Support::Solutions::ArticlesController < SupportController
   
   include Helpdesk::TicketActions
   include Solution::Feedback
+  include Solution::ArticlesVotingMethods
 
   before_filter :load_and_check_permission, :except => :index
 
@@ -40,28 +41,6 @@ class Support::Solutions::ArticlesController < SupportController
       }
       format.json { render :json => @article.to_json  }
     end
-  end
-
-  def thumbs_up
-    update_votes(:thumbs_up, 1)
-    render :text => I18n.t('solution.articles.article_useful')
-  end
-
-  def thumbs_down
-    # Voting down the article
-    update_votes(:thumbs_down, 0)
-    
-    # Getting a new object for submitting the feeback for the article
-    @ticket = Helpdesk::Ticket.new
-    respond_to do |format|
-      format.xml{ head :ok }
-      format.json { head :ok }
-      format.html {
-        render :partial => "feedback_form", :locals => { :ticket => @ticket, :article => @article }
-      }
-      
-    end
-
   end
 
   def hit
@@ -111,23 +90,6 @@ class Support::Solutions::ArticlesController < SupportController
         :keywords => @article.article_keywords,
         :canonical => support_solutions_article_url(@article, :host => current_portal.host)
       }
-    end
-
-    def update_votes(incr, vote)
-      return if agent?
-      @article.increment!(incr) and return unless current_user
-
-      @vote.vote = vote
-      if @vote.new_record?
-        @article.increment!(incr)
-      elsif @vote.vote_changed?
-        @article.send("toggle_#{incr}!")
-      end
-      @vote.save
-    end
-
-    def load_vote
-      @vote = @article.votes.find_or_initialize_by_user_id(current_user.id) if current_user
     end
 end
 
