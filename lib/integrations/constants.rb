@@ -36,4 +36,6 @@ module Integrations::Constants
 
   SYSTEM_ACCOUNT_ID = 0
 
+  GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
+
 end
