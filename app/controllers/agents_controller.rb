@@ -133,20 +133,20 @@ class AgentsController < ApplicationController
     if current_account.can_add_agents?(@agent_emails.length)
       @existing_users = [];
       @new_users = [];
-      @agent_emails.each do |agent_email|        
+      @agent_emails.each do |agent_email|
+        next if agent_email.blank?        
         @user  = current_account.users.new
         if @user.signup!(:user => { 
             :email => agent_email,
             :helpdesk_agent => true,
             :role_ids => [current_account.roles.find_by_name("Agent").id]
-        })
+            })
           @user.create_agent
           @new_users << @user
         else
           check_email_exist
           @existing_users << @existing_user
-        end
-        
+        end        
       end      
             
       @responseObj[:reached_limit] = false
