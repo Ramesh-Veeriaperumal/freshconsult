@@ -90,9 +90,9 @@ module MemcacheKeys
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 
-  MOBIHELP_SOLUTIONS = "MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
+  MOBIHELP_SOLUTIONS = "v1/MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
   
-  MOBIHELP_SOLUTION_UPDATED_TIME = "v2/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
+  MOBIHELP_SOLUTION_UPDATED_TIME = "v3/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
 
   PRODUCT_NOTIFICATION = "v2/PRODUCT_NOTIFICATION"
 
