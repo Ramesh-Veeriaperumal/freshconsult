@@ -143,9 +143,10 @@ class AgentsController < ApplicationController
             })
           @user.create_agent
           @new_users << @user
-        else
-          check_email_exist
-          @existing_users << @existing_user
+        # Has no use in getting started
+        # else
+        #   check_email_exist
+        #   @existing_users << @existing_user 
         end        
       end      
             
