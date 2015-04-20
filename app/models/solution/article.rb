@@ -11,13 +11,14 @@ class Solution::Article < ActiveRecord::Base
   
   serialize :seo_data, Hash
 
+  concerned_with :body_methods
+
   acts_as_voteable
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
   belongs_to_account
   
-  xss_sanitize :only => [:description],  :article_sanitizer => [:description]
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   
   has_many_attachments
@@ -40,7 +41,6 @@ class Solution::Article < ActiveRecord::Base
 
   has_many :article_ticket, :dependent => :destroy
   has_many :tickets, :through => :article_ticket
-  has_one :article_body, :autosave => true
   
   include Mobile::Actions::Article
   include Solution::Constants
@@ -77,8 +77,6 @@ class Solution::Article < ActiveRecord::Base
   }
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
-
-  BODY_ATTRIBUTES = [ "description", "desc_un_html" ]
 
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
@@ -227,23 +225,6 @@ class Solution::Article < ActiveRecord::Base
 
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
-  end
-
-  alias :original_article_body :article_body
-
-  def article_body
-    original_article_body || build_article_body(:account_id => Account.current.id)
-  end
-
-  BODY_ATTRIBUTES.each do |attrib|
-    define_method "#{attrib}=" do |value|
-      article_body.send("#{attrib}=", value)
-      write_attribute(attrib, value)
-    end
-
-    define_method attrib do
-      article_body.send(attrib) || read_attribute(attrib)
-    end
   end
 
   private
