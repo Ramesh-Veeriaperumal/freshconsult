@@ -12,6 +12,7 @@ helpdesk:
     - asset_sync
     - aws_s3
     - aws_social
+    - aws_forums
     - belongs_to_account
     - chat_config
     - compass
