@@ -9,6 +9,8 @@ gem "rails","3.2.18"
 gem "syck", :platform => [:mri_20, :mri_21]
 
 gem "json", "~> 1.8"
+gem 'jbuilder', "2.2.13"
+gem 'strong_parameters', "0.2.3"
 
 gem "mysql2", "~> 0.3.0"
 
@@ -223,6 +225,7 @@ group :test do
   gem "rspec_junit_formatter"
   gem "simplecov-rcov"
   gem "rubocop-checkstyle_formatter"
+  gem "minitest-rails", "~> 1.0"
 end
 
 # group :development, :assets do

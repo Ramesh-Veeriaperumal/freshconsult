@@ -173,6 +173,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/forum", :only => [:index]
     resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
+
+    # Used for API
+    resource :"api_discussions/category", :only => [:index, :show]
   end
 
   # create_edit_forum_category
@@ -181,6 +184,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :discussion, :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"discussions/forum", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :forum, :only => [:new, :create, :edit, :update, :destroy, :reorder]
+
+    # Used for API
+    resource :"api_discussions/category", :only => [:create, :update, :destroy]
   end
 
   # create_forum_topic
