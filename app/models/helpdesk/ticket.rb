@@ -333,6 +333,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def conversation_count(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').size
   end
+  
+  def latest_twitter_comment_user
+    latest_tweet = notes.latest_twitter_comment.first
+    reply_to_user = latest_tweet.nil? ? requester.twitter_id : latest_tweet.user.twitter_id
+    "@#{reply_to_user}"
+  end
 
   def time_tracked
     time_spent = 0
