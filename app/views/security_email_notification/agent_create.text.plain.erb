@@ -1,6 +1,6 @@
 Hi,
 
-A new <%= @model.agent.occasional ? "Occasional" : "Full-time" %> agent, <%= @model.name %> was added in your helpdesk at <%= @time %> and has the <%= @changes.size > 1 ? "roles" : "role" %> <%= @changes.to_sentence %>.
+A new <%= @model.agent.occasional ? "Occasional" : "Full-time" %> agent, <%= @model.name %> was added by <%= @doer %> in your helpdesk at <%= @time %> and has the <%= @changes.size > 1 ? "roles" : "role" %> <%= @changes.to_sentence %>.
 
 You currently have <%= @model.account.all_agents.full_time_agents.size %> full time agents and <%= @model.account.all_agents.occasional_agents.size %> occasional agents in your Freshdesk account.
 
