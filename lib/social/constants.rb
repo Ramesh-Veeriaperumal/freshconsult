@@ -27,6 +27,13 @@ module Social::Constants
   NUM_RECORDS_TO_DISPLAY = 15
 
   RECENT_SEARCHES_COUNT = 5
+  
+  TWITTER_TIMEOUT = {
+    "development" => 5,
+    "staging"     => 2,
+    "production"  => 2,
+    "test"        => 5
+  }
 
   SEARCH_TYPE = {
     :live   => "live_search",
