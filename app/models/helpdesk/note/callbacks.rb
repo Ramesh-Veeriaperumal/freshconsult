@@ -7,6 +7,8 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification,
                          :publish_new_note_properties_to_rabbitmq, on: :create
 
+  after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
+
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
   after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
@@ -72,7 +74,14 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
-      
+      # syntax to move code from delayed jobs to resque.
+      #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
+      notable.updated_at = created_at
+      notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
+      notable.save
+    end
+
+    def send_notifications
       if user.customer?
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
@@ -93,15 +102,7 @@ class Helpdesk::Note < ActiveRecord::Base
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
-
-        # notable.responder ||= self.user unless private_note? # Added as a default observer rule
-        
       end
-      # syntax to move code from delayed jobs to resque.
-      #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
-      notable.updated_at = created_at
-      notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
-      notable.save
     end
     
     def add_activity
