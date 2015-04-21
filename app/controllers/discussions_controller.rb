@@ -3,6 +3,7 @@ class DiscussionsController < ApplicationController
 	include ModelControllerMethods
 	include Helpdesk::ReorderUtility
 	include Community::ModerationCount
+    include ApiDiscussions::Category
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]
@@ -75,11 +76,11 @@ class DiscussionsController < ApplicationController
 	def categories
 		@forum_categories = portal_scoper.all(:include => :portals)
 		@topics_count = current_account.topics.count
-    respond_to do |format|
-      format.html
-      format.xml  { render :xml => @forum_categories }
-      format.json  { render :json => @forum_categories }
-    end
+        respond_to do |format|
+      		format.html
+      		format.xml  { render :xml => @forum_categories }
+      		format.json  { render :json => @forum_categories }
+    	end
 	end
 
 	def sidebar
@@ -96,11 +97,6 @@ class DiscussionsController < ApplicationController
 
 		def content_scope
 			@content_scope = ''
-		end
-
-		def portal_scoper
-			# Has to be checked when we introduce the ability to remove the categories from the main portal
-			current_account.main_portal.forum_categories
 		end
 
 		def scoper

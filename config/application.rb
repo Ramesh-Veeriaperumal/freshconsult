@@ -78,6 +78,8 @@ module Helpkit
     config.assets.version = '1.0'
 
     config.action_controller.include_all_helpers = false
+    #Raising an Exception if unpermitter parameters are used
+    config.action_controller.action_on_unpermitted_parameters = :raise
 
     # Configuring middlewares -- Game begins from here ;)
     statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
@@ -126,6 +128,8 @@ module Helpkit
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
     config.autoload_paths += Dir["#{config.root}/api/**"]
+    config.autoload_paths += Dir["#{config.root}/api/app/controllers/concerns"]
+    config.autoload_paths += Dir["#{config.root}/api/app/controllers/validations"]
     # config.eager_load_paths += Dir["#{config.root}/lib/"]
 
 
