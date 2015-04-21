@@ -2043,7 +2043,7 @@ en:
         timer_stopped: "Timer Stopped"
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
-      ticket_split: "Ticket Splitted"
+      ticket_split: "Ticket Split"
       status_change: "%{value}"
       deleted: "Ticket Deleted"
       restored: "Ticket Restored"
