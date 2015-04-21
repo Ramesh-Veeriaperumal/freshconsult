@@ -790,11 +790,9 @@ en:
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
-        simple_none: "None"
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
         captcha: "Enable CAPTCHA to help avoid spam"
-        forum_captcha: "Enable CAPTCHA while creating new topic"
         view_solutions: "Who can view solutions"
         view_forums: "Who can view forums"
         notify_agents: "Send Moderation and Spam Notification to:"
@@ -1740,7 +1738,6 @@ en:
             post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic after a standard moderation process."
-          not_allowed: "Please select different forum. You are not allowed to post in this forum."
         posts:
           spam_check: "Thank you for posting in our forums. Your post will appear once it has been approved."
       tickets:

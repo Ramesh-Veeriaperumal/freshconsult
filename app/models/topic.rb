@@ -36,7 +36,7 @@ class Topic < ActiveRecord::Base
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id DESC", :class_name => 'Post'
-  has_one  :first_post, :order => "#{Post.table_name}.id ASC", :class_name => 'Post', :autosave => true
+  has_one  :first_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id ASC", :class_name => 'Post'
 
   has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
@@ -431,11 +431,11 @@ class Topic < ActiveRecord::Base
   end
 
   def spam_count
-    SpamCounter.count(id, :spam)
+    SpamCounter.count(id, :spam, account_id)
   end
 
   def unpublished_count
-    SpamCounter.count(id, :unpublished)
+    SpamCounter.count(id, :unpublished, account_id)
   end
 
   def has_unpublished_posts?

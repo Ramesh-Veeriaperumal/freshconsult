@@ -9,7 +9,7 @@ namespace :spam_digest_mailer do
 					:batch_size => 500, :conditions => {:time_zone => time_zones}) do |accounts|
 					accounts.each do |account|
 						forum_spam_digest_recipients = account.forum_moderators.map(&:email).compact
-						if account.features_included?(:forums) && forum_spam_digest_recipients.present?
+						if account.features_included?(:spam_dynamo) && forum_spam_digest_recipients.present?
 							Resque.enqueue(Workers::Community::DispatchSpamDigest, {:account_id => account.id }) 
 							puts "** Queued ** #{account} ** for spam digest email **"
 						end

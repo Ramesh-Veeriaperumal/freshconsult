@@ -16,6 +16,7 @@ class Workers::Community::BulkSpam
                                   ).each do |topic|
   			if create_dynamo_post(topic.posts.first)
 	  			topic.destroy 
+	  			report_post(@spam)
 	  		end
   		end	
   	end

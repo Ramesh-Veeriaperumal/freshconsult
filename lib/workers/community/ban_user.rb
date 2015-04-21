@@ -21,11 +21,11 @@ class Workers::Community::BanUser
 		end
 
 		def ban_posts_dynamo(account_id, spam_user)
-			results = ForumUnpublished.by_user(spam_user.id, next_user_timestamp(spam_user))
+			results = ForumUnpublished.by_user(account_id, spam_user.id, next_user_timestamp(spam_user))
 			while(results.present?)
 				convert_to_spam(results)
 				last = results.last.user_timestamp
-				results = ForumUnpublished.by_user(spam_user.id, last)
+				results = ForumUnpublished.by_user(account_id, spam_user.id, last)
 			end	
 		end
 
@@ -38,7 +38,7 @@ class Workers::Community::BanUser
 		def convert_to_spam(posts)
 			posts.each do |p|
 				p.destroy if build_spam_post(p.attributes)
-				report_post(@post, Post::REPORT[:spam])
+				report_post(@post)
 			end
 		end
 
@@ -54,6 +54,7 @@ class Workers::Community::BanUser
 		def ban_post(post)
 			if create_dynamo_post(post, {:spam => true})
   			post.original_post? ? post.topic.destroy : post.destroy 
+  			report_post(@spam)
   		end
 		end
 

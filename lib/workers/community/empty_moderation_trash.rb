@@ -6,7 +6,11 @@ class Workers::Community::EmptyModerationTrash
   class << self
 
 	  def perform(params)
-			ForumSpam.delete_account_spam
+	  	if Account.current.features_included?(:spam_dynamo)
+				ForumSpam.delete_account_spam(params[:account_id])
+			else
+				empty_db_spam
+			end
 		end
 
 		def empty_db_spam

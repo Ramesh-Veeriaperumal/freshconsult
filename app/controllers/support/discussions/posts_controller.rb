@@ -29,8 +29,26 @@ class Support::Discussions::PostsController < SupportController
 
 		params[:post].merge!(post_request_params)
 
-		current_user.customer? ? sqs_create : create_in_db
-		
+		if current_user.customer? and current_account.features_included?(:spam_dynamo)
+			sqs_create
+		else
+			@forum = @topic.forum
+			@post  = @topic.posts.build(params[:post])
+			@post.user = current_user
+			@post.account_id = current_account.id
+			@post.portal = current_portal.id
+			@post.save!
+			create_attachments
+			respond_to do |format|
+				format.html do
+					flash[:notice] = flash_msg_on_post_create
+					redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
+				end
+				format.xml {
+					return render :xml => @post
+				}
+			end
+		end
 		rescue ActiveRecord::RecordInvalid
 		respond_to do |format|
 			format.html do
@@ -73,25 +91,6 @@ class Support::Discussions::PostsController < SupportController
 					return render :xml => sqs_post.errors.to_xml, :status => 400
 				}
 			end
-		end
-	end
-
-	def create_in_db
-		@forum = @topic.forum
-		@post  = @topic.posts.build(params[:post])
-		@post.user = current_user
-		@post.account_id = current_account.id
-		@post.portal = current_portal.id
-		@post.save!
-		create_attachments
-		respond_to do |format|
-			format.html do
-				flash[:notice] = flash_msg_on_post_create
-				redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
-			end
-			format.xml {
-				return render :xml => @post
-			}
 		end
 	end
 

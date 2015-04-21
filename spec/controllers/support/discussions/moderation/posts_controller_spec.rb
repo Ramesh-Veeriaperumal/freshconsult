@@ -22,7 +22,11 @@ describe Support::Discussions::PostsController do
 	end
 
 
-	describe "it should create a post in sqs" do
+	describe "it should create a post in sqs when spam_dynamo feature is enabled" do
+
+		before(:all) do
+			@account.features.spam_dynamo.create
+		end
 
 		before(:each) do
 			sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
@@ -31,9 +35,9 @@ describe Support::Discussions::PostsController do
 			@sample_topic = publish_topic(create_test_topic(@forum))
 		end
 
-		it "should create a post with attachments on post 'create' but the details must go to sqs" do
+		it "should create a post with attachments on post 'create' but the details must go to sqs if spam_dynamo feature is enabled" do
 			post_body = Faker::Lorem.paragraph
-
+		
 			post :create,
 				:topic_id => @sample_topic.id,
 				:post => { :body_html =>"<p>#{post_body}</p>",
@@ -77,6 +81,9 @@ describe Support::Discussions::PostsController do
 			response.should redirect_to "/support/discussions/topics/#{@sample_topic.id}?page=1"
 		end
 
+		after(:all) do
+			@account.features.spam_dynamo.destroy
+		end
 	end
 
 end

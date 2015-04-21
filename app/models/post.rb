@@ -57,11 +57,6 @@ class Post < ActiveRecord::Base
     :unpublished => ForumUnpublished
   }
 
-  REPORT = {
-    :ham => true,
-    :spam => false
-  }
-
   attr_accessor :request_params, :portal
 
   

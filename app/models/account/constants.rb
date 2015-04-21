@@ -84,13 +84,12 @@ class Account < ActiveRecord::Base
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, 
     :round_robin_revamp =>  false, :contact_merge_ui => false, :client_debugging => false, :collision_socket => false,
-    :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false}
+    :spam_dynamo => true , :saml_old_issuer => false}
 
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  [:anonymous_tickets, :open_solutions, :auto_suggest_solutions, 
                             :open_forums, :google_signin, :twitter_signin, :facebook_signin,
                             :signup_link, :captcha,
-                            :moderate_all_posts, :moderate_posts_with_links, :hide_portal_forums,
-                            :forum_captcha_disable ]
+                            :moderate_all_posts, :moderate_posts_with_links, :hide_portal_forums ]
 end

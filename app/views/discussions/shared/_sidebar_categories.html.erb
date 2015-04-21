@@ -9,14 +9,14 @@
 	<% if moderation_enabled? %>
 	<li>
 		<%= pjax_link_to( 
-					(t('discussions.moderation.index.waiting') + " <span rel='count-waiting' class='muted'>#{display_count(@counts[:unpublished])}</span> ").html_safe,
-						discussions_unpublished_filter_path(:unpublished), {:"data-page-name" => :waiting}) %>
+					(t('discussions.moderation.index.waiting') + " <span rel='count-waiting' class='muted'>#{display_count(@counts[:waiting] || @counts[:unpublished])}</span> ").html_safe,
+						moderation_index_path(:waiting), {:"data-page-name" => :waiting}) %>
 	</li>
 	<% end %>
 	<li>
 		<%= pjax_link_to( 
 					(t('discussions.moderation.index.title') + " <span rel='count-spam' class='muted'>#{display_count(@counts[:spam])}</span> ").html_safe, 
-						discussions_unpublished_filter_path(:spam), {:"data-page-name" => :spam}) %>
+						moderation_index_path(:spam), {:"data-page-name" => :spam}) %>
 	</li>
 <% end %>
 <li>

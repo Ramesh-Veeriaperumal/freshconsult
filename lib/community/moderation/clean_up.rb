@@ -3,11 +3,7 @@ module Community::Moderation::CleanUp
 
 	def empty_folder
 		
-		Resque.enqueue(Workers::Community::EmptyModerationTrash, 
-						{
-							:account_id => current_account.id, 
-							:user_id => current_user.id
-						})
+		Resque.enqueue(Workers::Community::EmptyModerationTrash, {:account_id => current_account.id, :user_id => current_user.id })
 
 		flash[:notice] = t('discussions.unpublished.flash.empty_folder')
 		redirect_to discussions_path

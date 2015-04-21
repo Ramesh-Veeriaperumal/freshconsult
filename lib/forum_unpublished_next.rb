@@ -18,6 +18,6 @@ class ForumUnpublishedNext < Dynamo
 
 	def counter
 		date = time.strftime('%Y_%m_%d')
-		SpamCounterNext.for(self.type, date)
+		SpamCounterNext.for(self.account_id, self.type, date)
 	end
 end

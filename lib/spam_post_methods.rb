@@ -1,9 +1,6 @@
 module SpamPostMethods
 
 	def create_dynamo_post(post, params = {})
-		# We show only last one month data in the moderation queue. 
-		# The below condition will skip creating entry in dynamo if its an older post.
-		return true if post.created_at.utc < (Time.now - ForumSpam::UPTO).utc
 		klass = post.spam? || params[:spam] ? ForumSpam : ForumUnpublished
 		@spam = klass.build(spam_params(post))
 		backup_and_save(post)
@@ -17,7 +14,7 @@ module SpamPostMethods
 		@spam.cloud_file_attachments = (post.cloud_files.map do |cloud_file|
 			{:link => cloud_file.url, :name => cloud_file.filename, :provider => cloud_file.application.name}.to_json
 		end).to_json if post.cloud_files
-		@spam.save ? report_post(@spam, Post::REPORT[:spam]) : false
+		@spam.save
 	end
 
 	def spam_params(post)
@@ -48,13 +45,14 @@ module SpamPostMethods
 		post.send(att) * 10.power!(17) + post.created_at.to_f * 10.power!(7)
 	end
 
-	def report_post(post, type)
-		Resque.enqueue(Workers::Community::ReportPost, {
-				:id => post.class.eql?(Post) ? post.id : post.timestamp,
-				:account_id => post.account_id,
-				:report_type => type,
-				:klass_name => post.class.name
-		})
+	def report_post(post)
+		Resque.enqueue(Workers::Community::ReportPost, 
+			{
+			:id => post.timestamp,
+			:account_id => Account.current.id,
+			:report_type => false,
+			:klass_name => post.class.name
+			})
 	end
 
 	def portal_id(post) 
