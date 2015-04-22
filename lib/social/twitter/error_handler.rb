@@ -22,7 +22,7 @@ module Social::Twitter::ErrorHandler
           @social_error_msg = "#{I18n.t('social.streams.twitter.handle_auth_error')}"
         end
 
-        Timeout.timeout(TWITTER_TIMEOUT[Rails.env]) do
+        Timeout.timeout(TwitterConfig::TWITTER_TIMEOUT) do
           return_value = yield unless @social_error_msg
         end
 
@@ -63,7 +63,8 @@ module Social::Twitter::ErrorHandler
       
       rescue Timeout::Error => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
-        notify_error(exception, "Twitter Timeout Exception")      
+        error = caller[0..11]
+        notify_error(error, "Twitter Timeout Exception")      
       end
 
       return [@social_error_msg, return_value]
