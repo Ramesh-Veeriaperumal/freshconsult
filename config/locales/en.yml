@@ -4895,10 +4895,8 @@ en:
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     five9:
       label: "Five9"
-      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
-      helptext: "This is Five9 helptext"
-      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
-      recording_path: "Directory path for the call recording"
+      desc: "Make inbound & outbound calls, record the call details and log them into a Freshdesk ticket"
+      helptext: "<h4>Five9 Integration Help</h4><p><br/>Install Five9 Agent Desktop Toolkit and you can then type in your Five9 Username and Password to login.<br/>Now when you receive a inbound call, there will be a automatic screen pop-up that provides contextual data about customers</p>"
     drishti:
       label: "Ameyo"
       desc: "Answer calls or trigger an outgoing call with this powerful Ameyo's telephony capabilities embedded inside Freshdesk"
