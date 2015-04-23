@@ -39,8 +39,7 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 					:tr 		 => 25,
 					:vi 		 => 26,
 					:ar 		 => 27,
-					:et      => 28,
-					:uk      => 29
+					:et      => 28
 				  }
 
 	LANGUAGE_MAP_KEY = LANGUAGE_MAP.inject({}) do |value, hash|
