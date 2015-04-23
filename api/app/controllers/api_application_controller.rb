@@ -14,7 +14,7 @@ class ApiApplicationController < ApplicationController
 
   def invalid_field_handler(exception)
     invalid_fields = Hash[exception.params.collect { |v| [v, "invalid_field"] }]
-    render_400 missing_fields
+    render_400 invalid_fields
   end
 
   def missing_field_handler(exception)

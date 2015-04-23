@@ -6,9 +6,8 @@ module ApiDiscussions::Category
 
   protected
 
-    def portal_scoper
-		# Has to be checked when we introduce the ability to remove the categories from the main portal
-		current_account.main_portal.forum_categories
+    def scoper
+		current_account.forum_categories
 	end
 
   private

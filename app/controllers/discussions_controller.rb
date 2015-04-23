@@ -99,9 +99,10 @@ class DiscussionsController < ApplicationController
 			@content_scope = ''
 		end
 
-		def scoper
-			current_account.forum_categories
-		end
+		def portal_scoper
+		    # Has to be checked when we introduce the ability to remove the categories from the main portal
+		    current_account.main_portal.forum_categories
+	    end
 
 		def reorder_scoper
 			current_account.main_portal.portal_forum_categories

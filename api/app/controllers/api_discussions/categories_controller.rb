@@ -8,14 +8,12 @@ module ApiDiscussions
 
 
     def index
-       @categories = portal_scoper.all
+       @categories = scoper.all
     end
 
     def create
-      @forum_category = current_account.forum_categories.build(params[:forum_category])
-      if @forum_category.save
-       	render :template => '/api_discussions/categories/create.json.jbuilder', :status => 200
-      else 
+      @forum_category = scoper.build(params[:forum_category])
+      unless @forum_category.save
         format_error(@forum_category.errors)
         render :template => '/bad_request_error.json.jbuilder', :status => find_http_error_code(@errors)
       end

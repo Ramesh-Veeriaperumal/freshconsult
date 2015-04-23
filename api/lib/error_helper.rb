@@ -7,8 +7,8 @@ module ErrorHelper
         end
     end
 
-    def find_http_error_code(errors)
-    	errors.max_by(&:http_code).http_code.to_i
+    def find_http_error_code(errors) # returns most frequent error in an array
+    	errors.collect(&:http_code).group_by{|i| i}.max{|x,y| x[1].length <=> y[1].length}[0]
     end
   
 end
