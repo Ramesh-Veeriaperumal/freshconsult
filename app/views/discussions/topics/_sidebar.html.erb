@@ -1,5 +1,5 @@
 <div class="rightcontent">
-	<%= render :partial => 'discussions/topics/widgets/spam', :locals => { :topic => @topic } if privilege?(:delete_topic) && current_account.features_included?(:spam_dynamo) && @topic.has_unpublished_posts? %>
+	<%= render :partial => 'discussions/topics/widgets/spam', :locals => { :topic => @topic } if privilege?(:delete_topic) && @topic.has_unpublished_posts? %>
 
 	<%= render :partial => "discussions/topics/widgets/note" if @topic.merged_topic_id? || @topic.locked? || @topic.sticky? %>
 

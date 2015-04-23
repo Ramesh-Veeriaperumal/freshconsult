@@ -47,9 +47,9 @@ module SpamCounterMethods
 
 	module ClassMethods
 
-		def for(account_id, type, date = Time.now.utc.strftime('%Y_%m_%d'))
+		def for(type, date = Time.now.utc.strftime('%Y_%m_%d'))
 			type = TYPES.include?(type) ? type : TYPES.first
-			find_or_initialize(:account_id => account_id, :type_and_date => "#{type}_#{date}")
+			find_or_initialize(:account_id => Account.current.id, :type_and_date => "#{type}_#{date}")
 		end
 	end
 end
