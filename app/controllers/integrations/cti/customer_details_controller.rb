@@ -36,6 +36,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
 
   def create_note
     rec = params[:recordingUrl]
+    params[:remoteId]="" if params[:remoteId]==0
     note_desc = "#{params[:msg]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:remoteId]}"
     @ticket = current_account.tickets.find_by_display_id(params[:ticketId])
     if @ticket.blank?
@@ -70,6 +71,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   end
 
   def create_ticket
+    params[:ticket][:remoteId]="" if params[:ticket][:remoteId]==0
     rec = params[:ticket][:recordingUrl]
     ticket_desc = "#{params[:ticket][:description]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:ticket][:remoteId]}"
     user = current_account.users.find_by_email(params[:ticket][:email])
