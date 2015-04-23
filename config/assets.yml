@@ -114,6 +114,7 @@ javascripts:
     - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js
+    - public/javascripts/helpdesk/socket_agent_autorefresh.js
     - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js

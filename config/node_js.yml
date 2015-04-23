@@ -7,9 +7,14 @@ defaults: &defaults
   auto_refresh_secret: "f2f6ec92b789b2e0a81eea86106e8fc6b789af6c821188a37ae54ea9eeaf8fe9"
   auto_refresh_channel: "refresh"
   agent_collision_channel: "collision"
-  key: "Chromehelpkit"
-  iv: "1324659871023654"
+  agentcollision: 
+    key: "Chromehelpkit"
+    iv: "1324659871023654"
+  autorefresh:
+    key: "AutoRefreshHelpkit"
+    iv: "1324659871023654"
   socket_host: "socket.freshpo.com"
+  socket_autorefresh_host: "localhost:8001"
 
 development:
   <<: *defaults

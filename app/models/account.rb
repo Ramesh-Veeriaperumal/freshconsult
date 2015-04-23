@@ -336,6 +336,10 @@ class Account < ActiveRecord::Base
     $rabbitmq_shards[id%($rabbitmq_shards).count]
   end
 
+  def rabbit_mq_ticket_exchange
+    $rabbitmq_ticket_shards[id%($rabbitmq_ticket_shards).count]
+  end
+
   protected
   
     def external_url_is_valid?(url) 
