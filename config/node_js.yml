@@ -14,7 +14,7 @@ defaults: &defaults
     key: "AutoRefreshHelpkit"
     iv: "1324659871023654"
   socket_host: "socket.freshpo.com"
-  socket_autorefresh_host: "localhost:8001"
+  socket_autorefresh_host: "autorefresh-useast1.freshpo.com"
 
 development:
   <<: *defaults
