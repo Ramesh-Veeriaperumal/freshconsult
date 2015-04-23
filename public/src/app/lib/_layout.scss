@@ -178,6 +178,36 @@ label.overlabel{
 			}
 		}
 	}
+	#freshfone-presence-toggle {
+		border-right: 1px solid rgba(255,255,255,0.2);
+	}
+	i.header-icon-freshfone,i.header-icon-chat {
+		display: block;
+		height: 35px;
+		width: 40px;
+		font-size: 30px;
+		text-align: center;
+		padding-top: 3px;
+		background-color: rgba(4,108,17,1);
+		color: #fff;
+		&.ficon-phone-disable {
+			font-size: 20px;
+			padding-top: 8px;
+			background-color: #838383;
+			color: #575757;
+		}
+		&.ff-busy {
+			background-color: #FFAB39;
+		}
+	}
+	i.header-icon-chat {
+	  font-size: 20px;
+	  line-height: 30px;
+	  &.ficon-agent-fchat-off{
+	  	background-color: #838383;
+			color: #575757;
+	  }
+	}
 	div.preview_pic{
 		@include float(right);
 		margin: 0;
@@ -340,6 +370,41 @@ label.overlabel{
 	 width:235px;
 	}
 }
+.ff_hover_card{
+	min-width: 140px !important;
+}
+.ff_presence_options {
+	padding: 10px 0 10px 0 !important;
+	.availabilityOnPhone {
+		color: #000;
+		font-weight: 500; 	
+		display: block;
+		padding: 5px 20px;
+		width: 100%;
+		box-sizing: border-box;
+		cursor: pointer;
+		.ff-dropdown-text{
+			position: relative;
+			font-size: 14px;
+			top: -2px;
+		}
+
+		&:hover {
+			color: #fff;
+			background-color: #999;
+			.ff-dropdown-text {
+				color: #fff;
+			}
+		}
+	}
+	.ficon-ff-on-call {
+		padding-left: 10px;
+	}
+	.ticksymbol{
+		left: 10px;
+	}
+}
+
 .header-select2-dropdown{
 	&.select2-drop{
 		padding-top: 5px;
@@ -391,7 +456,6 @@ ul.header-tabs{
 a.new_ticket, .nav_search, .nav_settings{
 	@include float(left);
 }
-
 .nav_settings {
 	@include padding(7px 20px);
 	font-size: $default-font-size;
@@ -548,32 +612,23 @@ a.new_ticket{
 // --------------------------------------------------------------------------------------------
 // 										Header icons loading
 // --------------------------------------------------------------------------------------------
-.header-link-wrapper a img{
-	&.header-spinner{
+.header-link-wrapper a{
+	.header-spinner{
 	    position: relative;
 	    border-radius: 50%;
-	    width: 21px;
-		height: 21px;
-		@include margin(7px 7px 8px 7px);
-	    background: #FF4F72;
+	    width: 22px;
+			height: 22px;
+			@include margin(7px 7px 8px 7px);
+	    background: rgba(#000, 0.3);
 	    background-repeat: no-repeat;
-	    @include box-shadow(inset 0 0 0 .12em rgba(0,0,0,0.2),0 0 0 .12em rgba(255,255,255,0.1));
+	    // @include box-shadow(inset 0 0 0 .12em rgba(0,0,0,0.2),0 0 0 .12em rgba(255,255,255,0.1));
 	    @include opacity(0.6);
+	    padding:0;
 	    animation: rota 3s infinite alternate;
 	    -webkit-animation: rota 3s infinite alternate;
 	    -o-animation: rota 3s infinite alternate;
 	    -ms-animation: rota 3s infinite alternate;
 	    -moz-animation: rota 3s infinite alternate;
-	    &:after {
-		    content: "";
-		    width: 50%;
-		    height: 50%;
-		    position: absolute;
-		    top: 25%;
-		    @include left(25%);
-		    border: .12em solid rgba(255,255,255,0.3);
-		    border-radius: inherit;
-		}
 	}
 }
 @keyframes rota {

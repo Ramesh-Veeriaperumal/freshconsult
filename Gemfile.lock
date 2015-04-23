@@ -59,7 +59,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/large-hadron-migrator.git
-  revision: 27972aca9fb5720d3150e8afd8f757123eb747f6
+  revision: 0672d428cdd985520bffbcbd97ca47ad55333a52
   specs:
     lhm (1.2.0)
 

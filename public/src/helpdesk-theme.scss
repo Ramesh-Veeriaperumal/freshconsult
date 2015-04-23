@@ -68,10 +68,10 @@ body { background: $background; }
 	border-color: $header_ctxt_color;
 		border-color: rgba($header_ctxt_color, .2);
 }
-.header-link-wrapper a img.header-spinner{
+.header-link-wrapper a .header-spinner{
 	background: linear-gradient(rgba($header_ctxt_color,0.3) 50%, rgba($header_ctxt_color,0.5) 50%), linear-gradient(rgba($header_ctxt_color,0.5) 50%, rgba($header_ctxt_color,0.3) 50%);
 	background-position: 0 0,100% 0;
-    background-size: 53% 101%;
+    background-size: 50% 100%;
     background-repeat: no-repeat;
 }
 //.fd-branding .logo_text { border-color:rgba($header_ctxt_color, 0.3); }

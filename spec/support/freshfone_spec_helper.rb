@@ -52,6 +52,11 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid })
   end
 
+  def create_freshfone_call_meta(call,external_number)
+    @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+              :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+  end
+
   def create_freshfone_customer_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
     user = create_customer
     @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
@@ -184,5 +189,16 @@ module FreshfoneSpecHelper
 
   def ff_address_inspect(country)
     @account.freshfone_account.freshfone_addresses.find_by_country(country).present?
+  end
+  
+  def accessible_groups(number)
+    groups = []
+    selected_number_group = number.freshfone_number_groups
+    if selected_number_group
+      selected_number_group.each do |number_group|
+        groups << number_group.group_id
+      end
+    end
+    groups
   end
 end

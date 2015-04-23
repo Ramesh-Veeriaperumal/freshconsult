@@ -384,6 +384,7 @@ Helpkit::Application.routes.draw do
         post :direct_dial_success
         get :inspect_call
         get :caller_data
+        post :external_transfer_success
         post :call_transfer_success
       end
     end
@@ -413,7 +414,10 @@ Helpkit::Application.routes.draw do
         post :transfer_outgoing_call
         post :transfer_incoming_to_group
         post :transfer_outgoing_to_group
+        post :transfer_incoming_to_external
+        post :transfer_outgoing_to_external
         get :available_agents
+        get :available_external_numbers
       end
     end
 
