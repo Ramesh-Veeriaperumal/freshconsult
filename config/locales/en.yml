@@ -1,6 +1,7 @@
 en:
   meta:
-   language_name: 'English'
+    language_id: 6
+    language_name: 'English'
   date:
     ago: ago
     from: from now
@@ -134,8 +135,6 @@ en:
   forward: "Forward"
   apply: "Apply"
   myself: "Myself"
-  meta:
-   language_name: 'English'
   one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"

@@ -1,5 +1,6 @@
 da: 
   meta:
+    language_id: 4
     language_name: Danish
   helpdesk:
     tickets:

@@ -1,5 +1,6 @@
 ko: 
-    meta: 
+    meta:
+        language_id: 16 
         language_name: "Korean"
     confirm_delete_message: "%{human_name}을(를) 정말로 삭제하시겠습니까?"
     any: "모든(어떠한)"
@@ -57,8 +58,6 @@ ko:
     forward: "앞으로"
     apply: "적용"
     myself: "직접(내 자신)"
-    meta: 
-        language_name: "Korean"
     signup_complete_activate_info: "환영합니다. 사용자 계정 활성화 및 비밀번호 설정을 위한 링크가 담긴 메일을 입력하신 메일 주소로 발송하였습니다."
     attachment_help_info: "첨부 파일 크기는 15MB 이하로 제한됩니다."
     feedbackwidget_offset_info: "설정된 옵셋(픽셀Pixel 단위) 값은 사용자 위젯 버튼과 화면 좌/상단과의 거리를 말합니다."

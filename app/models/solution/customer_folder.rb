@@ -8,6 +8,7 @@ class Solution::CustomerFolder < ActiveRecord::Base
 
 	belongs_to_account
 	belongs_to :folder, :class_name => 'Solution::Folder'
+	belongs_to :folder_meta, :class_name => 'Solution::FolderMeta'
 	belongs_to :customer, :class_name => 'Company', :foreign_key => 'customer_id'
 	belongs_to :account
 

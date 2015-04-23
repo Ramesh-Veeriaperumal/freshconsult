@@ -1,5 +1,6 @@
 sv-SE: 
   meta:
+    language_id: 25
     language_name: 'Swedish'
   confirm_delete_message: Är du säker på att du vill ta bort %{human_name}?
   any: Någon

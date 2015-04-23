@@ -1,5 +1,6 @@
 pl:
   meta:
+   language_id: 19
    language_name: Polish
   confirm_delete_message: Czy na pewno chcesz usunąć %{human_name}?
   any: Dowolne

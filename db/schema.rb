@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150313071755) do
+ActiveRecord::Schema.define(:version => 20150316144216) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2074,10 +2074,12 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.integer  "position",                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "solution_category_meta_id", :limit => 8
   end
 
   add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
   add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
+  add_index "mobihelp_app_solutions", ["account_id", "solution_category_meta_id"], :name => "index_app_solutions_on_account_id_solution_category_meta_id"
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -2141,10 +2143,12 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.integer "solution_category_id", :limit => 8
     t.integer "account_id",           :limit => 8
     t.integer "position"
+    t.integer "solution_category_meta_id", :limit => 8
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
+  add_index "portal_solution_categories", ["portal_id", "solution_category_meta_id"], :name => "index_portal_solution_categories_on_portal_id_category_meta_id"
 
   create_table "portal_templates", :force => true do |t|
     t.integer  "account_id",  :limit => 8,        :null => false
@@ -2456,6 +2460,21 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
 
   add_index "solution_article_bodies", ["account_id", "article_id"], :name => 'index_solution_article_bodies_on_account_id_and_article_id', :unique => true
 
+  create_table "solution_article_meta", :force => true do |t|
+    t.integer  "position"
+    t.integer  "art_type"
+    t.integer  "thumbs_up",                            :default => 0
+    t.integer  "thumbs_down",                          :default => 0
+    t.integer  "hits",                                 :default => 0
+    t.integer  "solution_folder_meta_id", :limit => 8
+    t.integer  "account_id",              :limit => 8,                :null => false
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
+  end
+
+  add_index "solution_article_meta", ["account_id", "solution_folder_meta_id", "created_at"], :name => "index_article_meta_on_account_id_folder_meta_and_created_at"
+  add_index "solution_article_meta", ["account_id", "solution_folder_meta_id", "position"], :name => "index_article_meta_on_account_id_folder_meta_and_position"
+
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
     t.text     "description",  :limit => 2147483647
@@ -2475,7 +2494,7 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.text     "seo_data"
     t.datetime "modified_at"
     t.integer  "hits",                               :default => 0
-    t.integer  "language"
+    t.integer  "language_id"
     t.integer  "parent_id",    :limit => 8
     t.boolean  "outdated",                           :default => false
     t.integer  "modified_by",  :limit => 8
@@ -2491,8 +2510,9 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
   add_index "solution_articles", ["account_id", "folder_id", "created_at"], :name => "index_solution_articles_on_acc_folder_created_at"
   add_index "solution_articles", ["account_id", "folder_id", "position"], :name => "index_solution_articles_on_account_id_and_folder_id_and_position"
   add_index "solution_articles", ["account_id", "folder_id", "title"], :name => "index_solution_articles_on_account_id_and_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>10}
-  add_index "solution_articles", ["account_id", "parent_id", "language"], :name => "index_solution_articles_on_account_id_and_parent_id_and_language"
+  add_index "solution_articles", ["account_id", "parent_id", "language_id"], :name => "index_articles_on_account_id_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
+
 
   create_table "solution_categories", :force => true do |t|
     t.string   "name"
@@ -2503,9 +2523,22 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.integer  "import_id",   :limit => 8
     t.integer  "position"
     t.boolean  "is_default",               :default => false
+    t.integer  "parent_id",   :limit => 8
+    t.integer  "language_id"
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
+  add_index "solution_categories", ["account_id", "parent_id", "language_id"], :name => "index_solution_categories_on_account_id_parent_id_and_language"
+
+  create_table "solution_category_meta", :force => true do |t|
+    t.integer  "position"
+    t.boolean  "is_default",              :default => false
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+  end
+
+  add_index "solution_category_meta", ["account_id"], :name => "index_solution_category_meta_on_account_id"
 
   create_table "solution_customer_folders", :force => true do |t|
     t.integer  "customer_id", :limit => 8
@@ -2513,10 +2546,24 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.integer  "account_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "folder_meta_id", :limit => 8
   end
 
   add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
   add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
+  add_index "solution_customer_folders", ["account_id", "folder_meta_id"], :name => "index_solution_customer_folders_on_account_id_folder_meta_id"
+
+  create_table "solution_folder_meta", :force => true do |t|
+    t.integer  "visibility",                :limit => 8
+    t.integer  "position"
+    t.boolean  "is_default",                             :default => false
+    t.integer  "solution_category_meta_id", :limit => 8
+    t.integer  "account_id",                :limit => 8,                    :null => false
+    t.datetime "created_at",                                                :null => false
+    t.datetime "updated_at",                                                :null => false
+  end
+
+  add_index "solution_folder_meta", ["account_id", "solution_category_meta_id", "position"], :name => "index_folder_meta_on_account_id_category_meta_and_position"
 
   create_table "solution_folders", :force => true do |t|
     t.string   "name"
@@ -2529,12 +2576,14 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
     t.integer  "position"
     t.boolean  "is_default",               :default => false
     t.integer  "account_id",  :limit => 8
+    t.integer  "parent_id",   :limit => 8
+    t.integer  "language_id"
   end
 
   add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
+  add_index "solution_folders", ["account_id", "parent_id", "language_id"], :name => "index_solution_folders_on_account_id_parent_id_and_language"
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
-
 
   create_table "subscription_addon_mappings", :force => true do |t|
     t.integer "subscription_addon_id", :limit => 8

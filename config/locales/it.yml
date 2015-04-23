@@ -1,5 +1,6 @@
 it:
   meta:
+   language_id: 14
    language_name: Italian
   confirm_delete_message: Eliminare %{human_name}?
   any: Qualsiasi

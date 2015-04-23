@@ -1,5 +1,6 @@
 sl: 
   meta: 
+    language_id: 24
     language_name: 'Slovenian'
   helpdesk:
     tickets:

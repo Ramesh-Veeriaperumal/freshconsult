@@ -1,11 +1,13 @@
 # encoding: utf-8
 class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
+  self.table_name =  "solution_articles"
+
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  self.table_name =  "solution_articles"
   include Mobihelp::AppSolutionsUtils
 
+  include Solution::MetaMethods
   include Redis::RedisKeys
   include Redis::OthersRedis	
   
@@ -17,6 +19,7 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
+  belongs_to :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => "parent_id"
   belongs_to_account
   
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"

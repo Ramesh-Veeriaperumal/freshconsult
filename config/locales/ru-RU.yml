@@ -1,5 +1,6 @@
 ru-RU:
   meta:
+   language_id: 22
    language_name: Russian
   confirm_delete_message: Действительно удалить %{human_name}?
   any: Любой
