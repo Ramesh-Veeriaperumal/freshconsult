@@ -94,6 +94,7 @@ var FreshfoneUser,
 			this.cleanUpUserPresenceDomClass();
 			this.$userPresenceImage().addClass(presenceClass);
 			this.$userPresence.attr('title', freshfone.freshfone_user_online_text);
+			this.updateAvailabilityOptionTemplate(available_on_phone);
 		},
 
 		offlineUserPresenceDomChanges: function () {
@@ -311,6 +312,7 @@ var FreshfoneUser,
 				  delayOut: 300,
 				  trigger: 'manual',
 				  offset: 0,
+				  reloadContent: true,
 				  html: true,
 				  placement: 'below',
 				  template: '<div class="dbl_left arrow"></div><div class="ff_hover_card inner"><div class="content ff_presence_options"><div></div></div></div>',
@@ -319,18 +321,24 @@ var FreshfoneUser,
 				  }
 				}); 
 			});
-			this.updateAvailabilityOptionTemplate(this.$availabilityOptions.find('.active').parent().attr('id'));
+			this.updateAvailabilityOptionTemplate(this.availableOnPhone);
 		},
-		updateAvailabilityOptionTemplate: function(elementId){
+		updateAvailabilityOptionTemplate: function(availableOnPhone){
+			var elementId= availableOnPhone ? "availableOnPhone" :  "availableOnBrowser";
 			this.$availabilityOptions.find(".ticksymbol").remove();
 			$(this.$availabilityOptions.find("#"+elementId)).prepend($('<span class="icon ticksymbol"></span>'));
 		},
 		updateAvailability: function(to_phone, element){
-			this.availabilityOnPhone = (to_phone === true);
+			if(this.availableOnPhone == to_phone) {return;}
 			this.toggleAvailabilityOnPhone(false);
-			$(element).parent().find('.ticksymbol').remove();
-      $(element).prepend($('<span class="icon ticksymbol"></span>'));$(element).prepend($('<span class="icon ticksymbol"></span>'));
-      this.updateAvailabilityOptionTemplate($(element).attr('id'));
+			this.updateAvailabilityDomChange(element);
+		},
+		updateAvailabilityDomChange: function (element) {
+			if($(element).data('to_phone') === this.availableOnPhone) {
+				$(element).parent().find('.ticksymbol').remove();
+	      $(element).prepend($('<span class="icon ticksymbol"></span>'));
+	      this.updateAvailabilityOptionTemplate($(element).attr('id'));
+	    }
 		}
 	};
 	
