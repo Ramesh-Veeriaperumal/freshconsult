@@ -794,7 +794,7 @@ en:
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
         captcha: "Enable CAPTCHA to help avoid spam"
-        forum_captcha: "Enable CAPTCHA while creating new topic"
+        forum_captcha: "Logged in users should enter CAPTCHA to create topic"
         view_solutions: "Who can view solutions"
         view_forums: "Who can view forums"
         notify_agents: "Send Moderation and Spam Notification to:"
