@@ -1,5 +1,5 @@
 class Admin::Freshfone::NumbersController < Admin::AdminController
-	include Freshfone::AccountUtil
+	include ::Freshfone::AccountUtil
 	before_filter(:only => [:purchase]) { |c| c.requires_feature :freshfone }
 	before_filter :create_freshfone_account, :only => [:purchase]
 	before_filter :check_active_account, :only => :edit
