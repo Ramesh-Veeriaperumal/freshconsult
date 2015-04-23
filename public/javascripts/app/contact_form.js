@@ -1,3 +1,5 @@
+/*jslint browser: true, devel: true */
+/*global  App */
 
 window.App = window.App || {};
 window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
@@ -6,6 +8,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
   "use strict";
 
   window.App.Contacts.Contact_form = {
+
     onFirstVisit: function (data) {
       this.onVisit(data);
     },
@@ -14,7 +17,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindAutocomplete();
       this.bindCompanySelect2();
       this.bindHandlers();
-      this.triggerFocus();
+      this.manageNewEmail();
     },
 
     bindGroupValidation: function() {
@@ -70,15 +73,12 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindRemoveImageClick();
       this.bindCancelEmailClick();
       this.toggleAddNewEmail();
-      this.bindErrorFieldChanges();
-      this.bindWrongEmailClick();
       this.enableClientManager();
     },
 
     bindContactSubmitClick: function () {
       $('body').on('click.contact_form', '#contact_submit', function(ev){
-        if($.trim($('#user_company_name').val()) == '')
-        {
+        if($.trim($('#user_company_name').val()) == '') {
           $('#user_client_manager').removeAttr('checked');
         }
       });
@@ -87,8 +87,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     bindCustomerKeyup: function () {
       $("body").on('keyup.contact_form', '#user_company_name', function(ev) {
         var company = this.value.trim();
-        if (company != "")
-        {
+        if (company != "") {
             $('#user_client_manager').removeAttr("disabled");
         }
         else
@@ -106,120 +105,105 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindAddNewMailClick: function () {
+      var self = this;
       $('body').on('click.contact_form', '#add_new_mail', function(ev){
-        ev.preventDefault();
-        if(!$(this).hasClass('disabled'))
-        {
-          if((!$('#emails_con .error').is(':visible') && $('#emails_con').find('input[type="text"]').last().val()) || $('#emails_con input').length == 0)
-          {
-            this.email=$('#emails_con input[type=text]').length;
-            this.att_name="user[user_emails_attributes]["+this.email+"]";
-            var field = ['<li class="new_email"><span class="remove_pad ue_cancel_email ue_action_icons ficon-minus fsize-12"></span>',
-                          '<input class="email cont text ue_input fillone" placeholder = "Enter an email" autocomplete="off" id="email_sec_new'+this.email+'" name="'+this.att_name+'[email]" ',
-                          'size="30" type="text">',
-                          '<input name="'+this.att_name+'[primary_role]" class="ue_primary" type="hidden" value="0">',
-                          '<label id="email_sec_new'+this.email+'" class="error" for="email_sec_new'+this.email+'"></label>',
-                         '</li>'].join('');
-            $('ul.user_emails').append(field);
-            $('#emails_con').find('input[type="text"]').last().focus();
-          }
-          $(this).addClass('disabled');
-        }
+        self.addEmailClick(this);
       });
+    },
+
+    addEmailClick: function (obj) {
+      if(!$(obj).hasClass('disabled')) {
+        if(this.emailWithNoErrors()) {
+          this.renderNewEmail();
+          $('#emails_con').find('input[type="text"]').last().focus();
+        }
+        this.manageNewEmail();
+      }
+    },
+
+    renderNewEmail: function() {
+      var email=$('#emails_con input.useremail').length;
+      var att_name="user[user_emails_attributes]["+email+"]";
+      $(JST["app/contacts/add_email"]({"email" : email, "att_name" : att_name})).appendTo('ul.user_emails');
     },
 
     bindPrimaryMakerClick: function () {
+      var self = this;
       $('body').on('click.contact_form', '.email-tick.make_primary', function(){
-        $('.email-tick').removeClass('ficon-checkmark-round primary').addClass('make_primary');
-        $('ul.user_emails li').removeClass('disabled');
-        var current_primary = $('input[type=text].ue_input.disabled')
-        if(current_primary.data('verified') == 0)
-        {
-          current_primary.next().removeClass('make_primary').addClass('ficon-unverified unverified').prop('title', window.App.Contacts.Contact_form.unverified_text);
-        }
-        else{
-          current_primary.next().prop('title', window.App.Contacts.Contact_form.mark_text);
-        }
-        current_primary.removeClass('disabled default_email');
-        $('.ue_remove_image').removeClass('disabled')
-        $('.ue_primary').val(0);
-        $(this).removeClass('make_primary').addClass('ficon-checkmark-round primary').prop('title', window.App.Contacts.Contact_form.primary_text);
-        $(this).prev().addClass('disabled default_email');
-        $(this).prev().prev().addClass('disabled');
-        $(this).siblings('.ue_primary').val(1);
-        $(this).parent().addClass('disabled');
+        $(this).twipsy('hide');
+        self.buildUEObject($('ul.user_emails li.disabled').first(), 0);
+        self.buildUEObject($(this).parent(), 1);
       });
     },
 
+    primaryDisabled: function(primary) {
+      if(primary)
+        return "disabled"
+      else
+        return ""
+    },
+
+    buildUEObject: function (obj, primary) {
+      var number = obj.data("count");
+      var email_id = obj.data("id");
+      var value = obj.data("email");
+      $(JST["app/contacts/email_template"]({"number" : number, "value" : value, "email_id" : email_id, "primary" : primary, "disabledclass" : this.primaryDisabled(primary)})).insertAfter(".user_emails li:eq("+number+")");
+      obj.remove();
+    },
+
     bindRemoveImageClick: function () {
+      var self = this;
       $('body').on('click.contact_form', '.ue_remove_image', function(){
         if(confirm(window.App.Contacts.Contact_form.confirm_text))
         {
-          $(this).parent().children("input[type=hidden].ue_destroy").val(1);
-          $(this).parent().hide();
-          if($('#emails_con').find('input[type=text]:visible').length==0)
+          $(this).siblings("input[type=hidden].ue_destroy").val(1);
+          $(this).parent().addClass('destroyed').hide();
+          if($('#emails_con').find('input.useremail').length==0)
           {
-            $('#add_new_mail').trigger('click');
+            self.addEmailClick(this);
           }
         }
-        $('.email').trigger('keyup');
+        self.manageNewEmail();
       });
     },
 
     bindCancelEmailClick: function () {
+      var self = this;
       $("body").on('click.contact_form', '.ue_cancel_email', function(ev){
-        ev.preventDefault();
         $(this).parent().remove();
         if(!$('ue_cancel_email').length)
           $('#add_new_mail').removeClass('disabled')
-
-        if($('#emails_con').find('input.email:visible').length==0)
-        {
-          $('#add_new_mail').trigger('click');
-        }
-        $('.email').trigger('keyup');
+        self.manageNewEmail();
       });
     },
 
     toggleAddNewEmail: function () {
-      $('body').on('keyup.contact_form focusout.contact_form', '.email', function(){
-        if($('#emails_con').find('input[type="text"]').last().val() && !$('#emails_con .error').is(':visible') && ($('#emails_con').find('input[type=text]:visible').length<5)){
+      var self = this;
+      $('body').on('keyup.contact_form focusout.contact_form', '.useremail', function(){
+        self.manageNewEmail();
+      });
+    },
+
+    manageNewEmail: function () {
+      if( this.emailWithNoErrors() && $('#emails_con li').not('.destroyed').length<5){
           $('#add_new_mail').removeClass('disabled')
         }else{
           $('#add_new_mail').addClass('disabled')
         }
 
-        if($('#emails_con').find('input[type=text]:visible').length >= 5){
-          $('div.ue_add_email').hide();
+        if($('#emails_con li').not('.destroyed').length >= 5){
+          $('.ue_add_email').hide();
         }else{
-          $('div.ue_add_email').show();
-        }
-      }); 
+          $('.ue_add_email').show();
+        } 
     },
 
-    bindErrorFieldChanges: function () {
-      $('.remove_pad').each(function(rm, rv){
-        if($(rv).parent().next().hasClass('fieldWithErrors'))
-        {
-          $(rv).attr({id:'wrong_email', title:'Click to remove this email'});
-          $(rv).parent().attr('onclick', '');
-        }
-      });
-    },
-
-    bindWrongEmailClick: function () {
-      $('body').on('click.contact_form', '#wrong_email', function () {
-        $(this).parent().next().remove();
-        $(this).parent().remove();
-      });
+    emailWithNoErrors: function () {
+      return (!$('.useremail.email-error').length && $('input.useremail').last().val())
     },
 
     enableClientManager: function () {
       $('#user_company_name').trigger('keyup');
-    },
-
-    triggerFocus: function () {
-      $('.email').last().focusout();
     },
 
     onLeave: function (data) {
