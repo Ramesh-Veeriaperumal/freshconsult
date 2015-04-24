@@ -11,7 +11,7 @@ class ErrorHelperTest < ActionView::TestCase
     @errors.each do |error|
        assert_equal error.field, error_array.keys[i]
        assert_equal error.http_code, ApiError::BaseError::API_HTTP_ERROR_STATUS_BY_VALUE[error_array.keys[i]]
-       assert_equal error.message, ApiError::BaseError::API_ERROR_MESSAGES_BY_VALUE[error_array.keys[i]]
+       assert_equal error.message, I18n.t('api.error_messages.#{error_array.keys[i]}')
        assert_equal error.code, ApiError::BaseError::API_ERROR_CODES_BY_VALUE[error_array.keys[i]]
        i+=1
     end
