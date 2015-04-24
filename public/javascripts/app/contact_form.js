@@ -154,13 +154,15 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     bindRemoveImageClick: function () {
       var self = this;
       $('body').on('click.contact_form', '.ue_remove_image', function(){
-        if(confirm(window.App.Contacts.Contact_form.confirm_text))
-        {
-          $(this).siblings("input[type=hidden].ue_destroy").val(1);
-          $(this).parent().addClass('destroyed').hide();
-          if($('#emails_con').find('input.useremail').length==0)
+        if(!$(this).hasClass('disabled')){
+          if(confirm(window.App.Contacts.Contact_form.confirm_text))
           {
-            self.addEmailClick(this);
+            $(this).siblings("input[type=hidden].ue_destroy").val(1);
+            $(this).parent().addClass('destroyed').hide();
+            if($('#emails_con').find('input.useremail').length==0)
+            {
+              self.addEmailClick(this);
+            }
           }
         }
         self.manageNewEmail();
