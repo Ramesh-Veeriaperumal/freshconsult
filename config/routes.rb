@@ -2032,6 +2032,25 @@ Helpkit::Application.routes.draw do
           get :index
         end
       end
+
+      resources :spam_watch, :only => :none do 
+        collection do 
+          get :spam_details   
+          put :block_user   
+          put :hard_block   
+          put :spam_user   
+          put :internal_whitelist
+        end
+      end
+
+      resources :subscription_events, :only => :none do 
+        collection do 
+          get :current_month_summary
+          get :custom_month
+          get :export_to_csv
+        end
+      end
+      
     end
   end
 
