@@ -76,6 +76,7 @@ class Helpdesk::Note < ActiveRecord::Base
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
+      add_cc_email
       notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.save
     end
