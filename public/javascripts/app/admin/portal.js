@@ -14,6 +14,7 @@ window.App.Admin = window.App.Admin || {};
 		bindHandlers: function () {
 			this.bindMultiRadio();
 			this.bindShowCaptcha();
+			this.bindForumCaptcha();
 		},
 
 		bindMultiRadio: function () {
@@ -36,6 +37,16 @@ window.App.Admin = window.App.Admin || {};
 					$('.captcha').slideDown();
 				} else {
 					$('.captcha').slideUp();
+				}
+			}).trigger('change');
+		},
+
+		bindForumCaptcha: function () {
+			$('.forums_visibility input[data-name]').on('change.portal', function () {
+				if ($('[data-name="account[features][hide_portal_forums]"]').is(':checked')) {
+					$('#forum_captcha_section').slideUp();
+				} else {
+					$('#forum_captcha_section').slideDown();
 				}
 			}).trigger('change');
 		},

@@ -90,14 +90,18 @@ module Reports::FreshfoneReport
     def report_query
       %( #{select_columns}, count(freshfone_calls.id) as count,
           sum(if(freshfone_calls.ancestry is NULL, 1,0)) as total_count,
-          sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, 
+          sum(if(freshfone_calls.ancestry is NULL and freshfone_calls.direct_dial_number is NOT NULL, 1,0)) as direct_dial_count,
+          sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.direct_dial_number is NULL and 
+            freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, 
             #{Freshfone::Call::CALL_STATUS_HASH[:'in-progress']})), 1,0)) as unanswered_transfers,
           ifnull(sum(if(freshfone_calls.call_status in (1,8,10),freshfone_calls.call_duration,0)),0) as total_duration,
           ifnull(sum(if(freshfone_calls.call_status = #{Freshfone::Call::CALL_STATUS_HASH[:voicemail]}, 1, 0)), 0) as voicemail,
           ifnull(sum(if(freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, #{Freshfone::Call::CALL_STATUS_HASH[:'in-progress']}) 
-            and freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:incoming]} and freshfone_calls.ancestry is NULL, 1, 0)), 0) as unanswered_call,
+            and freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:incoming]} and freshfone_calls.ancestry is NULL 
+            and freshfone_calls.direct_dial_number is NULL, 1, 0)), 0) as unanswered_call,
           ifnull(sum(if(freshfone_calls.call_status in (2,3,4,5) and freshfone_calls.ancestry is NULL and 
-            freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:outgoing]}, 1, 0)), 0) as outbound_failed_call
+            freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:outgoing]}, 1, 0)), 0) as outbound_failed_call,
+          sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.direct_dial_number is NOT NULL),1,0)) as external_transfers
       )
     end
 end

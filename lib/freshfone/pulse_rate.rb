@@ -34,7 +34,7 @@ class Freshfone::PulseRate
 	end
 
 	def missed_call_cost
-		FRESHFONE_CHARGES['MISSED_OR_BUSY'].to_f
+		incoming? ? FRESHFONE_CHARGES['MISSED_OR_BUSY'][:incoming].to_f : FRESHFONE_CHARGES['MISSED_OR_BUSY'][:outgoing].to_f
 	end
 
 	private

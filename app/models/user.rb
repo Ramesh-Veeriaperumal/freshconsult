@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
   end
 
   def max_user_emails
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.length > MAX_USER_EMAILS)
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.reject(&:marked_for_destruction?).length > MAX_USER_EMAILS)
   end
 
   def has_no_emails_with_ui_feature?

@@ -1,1 +1,19 @@
 secret_key: d41d8cd98f00b204e9800998ecf8427e
+
+common: &common
+  resource_import_api: "resources/import"
+  authorization_username: "freshdesk"
+  authorization_password: "$FD$DEVOPS$ADMIN$15"
+
+development:
+  <<: *common
+  url: "http://localhost:3001/"
+
+staging:
+  <<: *common
+  url: "https://freshopsadmin.freshpo.com/"
+
+production:
+  <<: *common
+  url: "https://freshopsadmin.freshdesk.com/"
+  

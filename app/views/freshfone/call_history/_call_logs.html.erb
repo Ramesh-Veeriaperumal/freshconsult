@@ -40,7 +40,11 @@
 			<% if call.agent.blank? %>
 				<div class="callhistory_helpdesk_avatar vertical-alignment"></div>
 				<div class="vertical-alignment">
-					<b class="ellipsis"><%= t('freshfone.call_history.helpdesk') %></b><br/>
+					<% if call.parent.blank? %>
+						<b class="ellipsis"><%= t('freshfone.call_history.helpdesk') %></b><br/>
+					<%else%>
+						<b class="ellipsis"><%= t('freshfone.call_history.external') %></b><br/>
+					<%end%>
 					<div class="helpdesk_number ff-user-location muted">
 						<%= call.direct_dial_number || @current_number.number %>
 					</div>
@@ -108,12 +112,13 @@
 			<% end %>
 		</div>
 	</td>
-	<td>
-		<div class="call_user" align="left">
-				<%= can_make_calls(call.caller_number, "", call.freshfone_number_id) %>
-		</div>
-
-	</td>
+	 <% if current_account_freshfone_numbers.any? %>
+		<td>
+			<div class="call_user" align="left">
+					<%= can_make_calls(call.caller_number, "", call.freshfone_number_id) %>
+			</div>
+		</td>
+	<% end %>
 </tr>
 <% end %>
 

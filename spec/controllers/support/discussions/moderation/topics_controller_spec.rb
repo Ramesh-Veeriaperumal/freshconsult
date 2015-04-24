@@ -22,11 +22,7 @@ describe Support::Discussions::TopicsController do
 		@category.destroy
 	end
 
-	describe "it should create a topic and the details must go to sqs if spam_dynamo feature is enabled" do
-
-		before(:all) do
-			@account.features.spam_dynamo.create
-		end
+	describe "it should create a topic and the details must go to sqs when current user is a customer" do
 
 		before(:each) do
 			sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
@@ -35,7 +31,7 @@ describe Support::Discussions::TopicsController do
 			@post_body = Faker::Lorem.paragraph
 		end
 
-		it "should create a topic with attachments on post 'create' but the details must go to sqs if spam_dynamo feature is enabled" do
+		it "should create a topic with attachments on post 'create' but the details must go to sqs" do
 			topic_title = Faker::Lorem.sentence(1)
 			
 			post :create,
@@ -70,7 +66,7 @@ describe Support::Discussions::TopicsController do
 			end
 		end
 
-		it "should not create a topic on post 'create' when post is invalid and the details must not go to sqs if spam_dynamo feature is enabled" do
+		it "should not create a topic on post 'create' when post is invalid and the details must not go to sqs" do
 			post :create,
 				:topic =>
 						{
@@ -83,9 +79,6 @@ describe Support::Discussions::TopicsController do
 			response.should render_template 'support/discussions/topics/new'
 		end
 
-		after(:all) do
-			@account.features.spam_dynamo.destroy
-		end
 	end
 
 end

@@ -18,14 +18,14 @@ class ForumSpam < Dynamo
 		ForumSpamNext
 	end
 
-	def self.delete_account_spam(acc)
-		results = ForumSpam.query(:account_id => acc)
+	def self.delete_account_spam
+		results = self.last_month
 		while(results.present?)
 			last_time = results.last.timestamp
 			results.each do |result|
 				result.destroy
 			end
-			results = ForumSpam.query(:account_id => acc, :timestamp => [:lt, last_time])
+			results = self.next(last_time)
 		end
 	end
 

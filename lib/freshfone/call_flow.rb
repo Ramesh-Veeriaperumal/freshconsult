@@ -18,7 +18,7 @@ class Freshfone::CallFlow
           :return_non_availability, :return_non_business_hour_call, :make_transfer_to_agent, 
           :dial_to_agent_group, :to => :call_initiator
   delegate :register_call_transfer, :register_incoming_call, :register_outgoing_call, :register_blocked_call,
-           :register_direct_dial, :save_call_meta, :register_group_call_transfer, :to => :call_actions
+           :register_direct_dial, :save_call_meta, :register_group_call_transfer, :register_external_transfer, :to => :call_actions
 
   def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)
     self.params = params
@@ -90,6 +90,16 @@ class Freshfone::CallFlow
     register_group_call_transfer(outgoing)
     return dial_to_agent_group(agents, false)
   end
+
+  def transfer_to_external(number, outgoing)
+    if !authorized_country?(number,current_account)
+      set_restricted_status
+      return reject_twiml  
+    end
+    register_external_transfer(outgoing)
+    self.numbers = [number]
+    connect_caller_to_numbers
+  end
   
   def dequeue(agent)
     if agent 
@@ -104,7 +114,7 @@ class Freshfone::CallFlow
   private
 
     def outgoing
-      return reject_outgoing_call unless register_outgoing_device
+      return reject_outgoing_call unless (register_outgoing_device && has_valid_caller_id?)
       register_outgoing_call
       initiate_outgoing
     end
@@ -242,5 +252,12 @@ class Freshfone::CallFlow
     def register_outgoing_device
       agent_user_id = outbound_call_agent_id
       set_outgoing_device([agent_user_id]) unless agent_user_id.blank?
+    end
+
+    def has_valid_caller_id?
+      current_user = current_account.users.find_by_id(outbound_call_agent_id)
+      can_access = current_number.can_access_by_agent?(current_user) 
+      Rails.logger.debug "AC :: #{current_account.id}::This user (#{current_user.id}) does not have access to this number so the call (#{params[:CallSid]}) was rejected" unless can_access
+      can_access
     end
 end

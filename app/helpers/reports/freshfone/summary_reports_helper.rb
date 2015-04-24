@@ -62,6 +62,14 @@ include Freshfone::CallHistoryHelper
     calls.sum(&:voicemail)
   end
 
+  def external_transfers_count(calls)
+    calls.sum(&:external_transfers) || 0
+  end
+
+  def direct_dial_count(calls)
+    calls.sum(&:direct_dial_count) || 0
+  end
+
   def unanswered_transfers(calls)
     calls.sum(&:unanswered_transfers)
   end

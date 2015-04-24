@@ -14,7 +14,7 @@ class Discussions::UnpublishedController < ApplicationController
 	before_filter :set_selected_tab
 	before_filter :default_scope, :only => :index
 	before_filter :load_posts, :only => :index
-	before_filter :fetch_counts_dynamo, :only => [:index, :moderation_count]
+	before_filter :fetch_spam_counts, :only => [:index, :moderation_count]
 	before_filter :load_spam_post, :only => [:approve, :ban, :restore_contact, :delete_unpublished]
 	before_filter :load_post, :only => :mark_as_spam
 	before_filter :load_topic_posts, :only => :topic_spam_posts
@@ -25,7 +25,7 @@ class Discussions::UnpublishedController < ApplicationController
 	end
 
 	def more
-		@spam_posts = filter_scope.next(current_account.id, params[:next])
+		@spam_posts = filter_scope.next(params[:next])
 		fetch_associations
 
 		respond_back
@@ -60,7 +60,7 @@ class Discussions::UnpublishedController < ApplicationController
 		end
 
 		def load_posts
-			@spam_posts = filter_scope.last_month(current_account.id)
+			@spam_posts = filter_scope.last_month
 			fetch_associations
 		end
 
@@ -69,7 +69,7 @@ class Discussions::UnpublishedController < ApplicationController
 		end
 
 		def load_spam_post
-			@spam_post = spam_scope.find(:account_id => current_account.id, :timestamp => params[:timestamp])
+			@spam_post = spam_scope.find_post(params[:timestamp])
 		end
 
 		def spam_scope
@@ -82,26 +82,17 @@ class Discussions::UnpublishedController < ApplicationController
 		end
 
 		def load_topic_posts
-			@spam_posts = filter_scope.topic_spam(current_account.id, params[:id], last)
+			@spam_posts = filter_scope.topic_spam(params[:id], last)
 			fetch_users(collect(:user_id))
 		end
 
 		def respond_back(html_redirect = :back)
-			fetch_counts_dynamo
+			fetch_spam_counts
 
 			respond_to do |format|
 				format.html { redirect_to html_redirect}
 				format.js
 			end
-		end
-
-		def report_post(post, type)
-			Resque.enqueue(Workers::Community::ReportPost, {
-					:id => post.class.eql?(Post) ? post.id : post.timestamp,
-					:account_id => post.account_id,
-					:report_type => type,
-					:klass_name => post.class.name
-			})
 		end
 
 		def last
