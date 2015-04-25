@@ -1,5 +1,6 @@
 module RabbitMq::Utils
 
+  include RabbitMq::Constants
 
 =begin
   {
@@ -56,11 +57,13 @@ module RabbitMq::Utils
   #made this as a function, incase later we want to compress the data before sending
   def send_message(message, key)
     self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
-     publish_message_to_xchg(message, key)
+      Timeout::timeout(CONNECTION_TIMEOUT) {
+        publish_message_to_xchg(message, key)
+      }
     end    
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    RabbitMq::Init.start
+    # RabbitMq::Init.start
   end
 end

@@ -2,6 +2,8 @@ module RabbitMq::Constants
   
   CRUD = ["create", "update", "destroy"]
   
+  CONNECTION_TIMEOUT = 0.5
+  
   CRUD_COMBINATIONS = [
     [:create,                  [CRUD[0]],                  1],
     [:update,                  [CRUD[1]],                  2],
