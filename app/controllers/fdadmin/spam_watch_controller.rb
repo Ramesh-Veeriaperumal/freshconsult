@@ -19,9 +19,7 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
                :blocked => @user.blocked?,
                :internal_whitelisted => @internal_whitelisted
              }
-    result[:user] = @user.as_json.symbolize_keys[:user]
-    result[:user].symbolize_keys!
-    result[:user] = result[:user].slice(:name,:email,:helpdesk_agent)
+    result[:user] = {:name => @user.name , :email => @user.email , :helpdesk_agent => @user.helpdesk_agent}
     result[:ticket] = @spam_tickets
     result[:note] = @spam_notes
     respond_to do |format|
