@@ -151,6 +151,10 @@
 			width:40px;
 			font-size: 20px;
 		}
+
+	}
+	ul.available_agents_list, ul.available_numbers_list{
+		max-height: 82%;
 	}
 	.available_agents_list{
 		li.transfer-active{
