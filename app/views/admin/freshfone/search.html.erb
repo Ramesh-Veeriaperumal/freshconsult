@@ -40,7 +40,7 @@
 			<span class="seperator"></span>
 			 <%= t('freshfone.admin.numbers.address_certification_text').html_safe %>
 			 <div class='freshfone-address-form'>
-			 	<%form_tag({:action => 'purchase', :controller => "admin/freshfone/numbers"}, 
+			 	<%= form_tag({:action => 'purchase', :controller => "admin/freshfone/numbers"}, 
 			 		:id => 'freshfone_address_form') do %>
 			 		<div class="ajaxerrorExplanation errorExplanation hide">
 			 			<label class='error'>
