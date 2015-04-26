@@ -151,6 +151,10 @@
 			width:40px;
 			font-size: 20px;
 		}
+
+	}
+	ul.available_agents_list, ul.available_numbers_list{
+		max-height: 82%;
 	}
 	.available_agents_list{
 		li.transfer-active{
@@ -213,6 +217,13 @@
   		padding: 20px 10px 10px;
   		text-align: center;
 		}
+	}
+	.no_available_numbers {
+		font-size: 14px;
+		@include padding(45px 0 10px);
+		font-weight: 400;
+  	padding: 20px 10px 10px;
+  	text-align: center;
 	}
 //	transfer call ends
 
