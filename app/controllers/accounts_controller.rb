@@ -73,6 +73,8 @@ class AccountsController < ApplicationController
                             :callback => params[:callback]
         }
         format.nmobile {
+
+          @signup.account.agents.first.user.deliver_admin_activation
           render :json => { :success => true, :host => @signup.account.full_domain,
                             :t => @signup.account.agents.first.user.single_access_token,
                             :support_email => @signup.account.agents.first.user.email
