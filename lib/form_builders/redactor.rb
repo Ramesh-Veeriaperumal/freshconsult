@@ -38,7 +38,7 @@ module FormBuilders::Redactor
       }
 
       REDACTOR_DEFAULT_EDITOR = {
-        :focus => true,
+        :focus => false,
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
