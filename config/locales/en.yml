@@ -2376,6 +2376,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
       all_agents: All agents
