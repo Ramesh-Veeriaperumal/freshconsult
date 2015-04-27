@@ -190,7 +190,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include border-radius(5px);
 	position: relative;
 	margin: 0 0 10px;
-	
+	overflow: scroll;
 	/* To handle the paragraph tags coming in from redactor */
 	p{ margin: 0; }
 	hr{
