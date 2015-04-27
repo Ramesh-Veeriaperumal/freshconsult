@@ -2783,6 +2783,7 @@ en:
     type: Agent Type
     delete_agent: Delete Agent
     delete_agent_confirmation: The deleted agent will be available as a contact. This will remove all agent information from the helpdesk. Are you sure you want to proceed?
+    convert_agent_confirmation: Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?
     agent_restored: The agent has been restored
     status:
       active: Active
