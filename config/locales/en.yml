@@ -6315,7 +6315,7 @@ en:
         purchase_confirm: "Are you sure?"
         delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
         manage: "Manage"
-        cannot_purchase: "Unable to purchase number for your Freshfone account"
+        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in <span class='certification-country'></span>."
         insuffcient_credits: "Your Freshfone credit is too low to purchase a new number. Please recharge and try again"
         address:
           name: "Company / Name"
