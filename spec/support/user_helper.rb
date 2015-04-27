@@ -98,4 +98,22 @@ module UsersHelper
     new_user.save
     new_user.reload
   end
+
+  def get_default_user
+    User.first_or_create do |user|
+      user.name = Faker::Name.name
+      user.email = Faker::Internet.email
+      user.time_zone = "Chennai"
+      user.delta = 1,
+      user.language = "en"
+    end
+  end
+
+  def user_address_params
+    @address_param =  {:street => Faker::Address.street_address,
+        :city => Faker::Address.city,
+        :state => Faker::Address.state,
+        :postal_code => Faker::Address.postcode,
+        :country => 'DE'}
+  end
 end

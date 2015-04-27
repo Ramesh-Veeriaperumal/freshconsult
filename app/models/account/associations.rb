@@ -24,6 +24,7 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   has_one  :whitelisted_ip
   has_many :dynamic_notification_templates
+  has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal

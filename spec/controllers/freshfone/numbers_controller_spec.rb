@@ -85,9 +85,29 @@ describe Admin::Freshfone::NumbersController do
       "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
       "message"=>"not working"}, "voicemail_active"=>"true", 
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
-      "non_business_hour_calls"=>"true", "business_calendar"=>"1", "id"=>@number.id}
+      "non_business_hour_calls"=>"true", "business_calendar"=>"1",  "access_groups_added_list"=>"2,3",
+       "access_groups_removed_list"=>"1", "id"=>@number.id}
     put :update, params
     @account.freshfone_numbers.find(@number).name.should be_eql(name)
+  end
+
+  it 'should update groups for the number' do
+    name = Faker::Name.name
+    # controller.stubs(:unused_attachments).returns(true)
+    Freshfone::Number.any_instance.stubs(:unused_attachments).returns(@account.freshfone_numbers)
+    params = {"admin_freshfone_number"=>{"name"=>name, "record"=>"true", "voice"=>"0", 
+      "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"unavailable"}, "max_queue_length"=>"3", "queue_wait_time"=>"2", 
+      "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
+      "message"=>"not working"}, "voicemail_active"=>"true", 
+      "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
+      "non_business_hour_calls"=>"true", "business_calendar"=>"1", "access_groups_added_list"=>"1",
+       "access_groups_removed_list"=>"2,3", "id"=>@number.id}
+    put :update, params
+    accessible_numbers = accessible_groups(@account.freshfone_numbers.find(@number))
+    p "accessible_numbers => #{accessible_numbers}"
+    accessible_numbers.should be_eql([1])
   end
 
   it 'should not update number for invalid queue length' do#TODO-RAILS3 possible dead code

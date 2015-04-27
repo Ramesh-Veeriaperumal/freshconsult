@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150313071755) do
+ActiveRecord::Schema.define(:version => 20150316093248) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1175,7 +1175,7 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
-  add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id"
+  add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id", :unique => true
 
   create_table "freshfone_blacklist_numbers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1275,6 +1275,21 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
 
   add_index "freshfone_ivrs", ["account_id", "freshfone_number_id"], :name => "index_freshfone_ivrs_on_account_id_and_freshfone_number_id"
 
+  create_table "freshfone_number_address", :force => true do |t|
+    t.integer  "account_id",           :limit => 8
+    t.integer  "freshfone_account_id", :limit => 8
+    t.string   "address_sid"
+    t.string   "friendly_name"
+    t.string   "business_name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.string   "postal_code"
+    t.string   "country",              :limit => 5
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "freshfone_number_addresses", :id => false, :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
@@ -1293,6 +1308,16 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
 
   add_index "freshfone_number_addresses", ["account_id", "country"], :name => "index_freshfone_number_address_on_account_id_and_country"
   add_index "freshfone_number_addresses", ["id", "account_id"], :name => "index_freshfone_number_address_on_id_and_account_id", :unique => true
+
+  create_table "freshfone_number_groups", :force => true do |t|
+    t.integer  "account_id",          :limit => 8
+    t.integer  "freshfone_number_id"
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_number_groups", ["id", "account_id"], :name => "index_freshfone_number_groups_on_id_and_account_id", :unique => true
 
   create_table "freshfone_numbers", :force => true do |t|
     t.integer  "account_id",                 :limit => 8
@@ -1386,9 +1411,27 @@ ActiveRecord::Schema.define(:version => 20150313071755) do
   create_table "freshfone_whitelist_countries", :force => true do |t|
     t.integer "account_id", :limit => 8
     t.string  "country",    :limit => 50
+  end 
+
+  create_table "freshfone_calls_meta", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "call_id",    :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "meta_info"
+    t.integer  "device_type"
+    t.integer  "transfer_by_agent", :limit => 8
   end
 
   add_index "freshfone_whitelist_countries", ["account_id", "country"], :name => "index_ff_whitelist_countries_on_account_id_and_country"
+
+ create_table "freshfone_whitelist_countries", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string  "country",    :limit => 50
+ end
+
+ add_index "freshfone_whitelist_countries", ["account_id", "country"], :name => "index_ff_whitelist_countries_on_account_id_and_country"
+ 
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"

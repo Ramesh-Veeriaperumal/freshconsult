@@ -18,7 +18,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
     Rails.logger.debug "Integrations::GoogleAccountController.update #{params.inspect}"
     begin
       params[:enable_integration] = "true"
-      goog_acc = handle_contacts_import params
+      goog_acc = handle_contacts_import(params, nil, use_oauth2=true)
       unless goog_acc.blank?
         flash[:notice] = "#{t('integrations.google_contacts.update_action.success')} #{flash[:notice].blank? ? "" : t('integrations.google_contacts.update_action.also') + flash[:notice]}"
       end
@@ -36,6 +36,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   def delete
     Rails.logger.debug "Integrations::GoogleAccountsController.delete #{params.inspect}"
     begin
+      remove_installed_app_config(params[:id].to_i)
       Integrations::GoogleAccount.destroy_all ["id=? and account_id=?", params[:id].to_i, current_account.id]
       flash[:notice] = t('integrations.google_contacts.delete_action.success')
     rescue => err
@@ -45,13 +46,8 @@ class Integrations::GoogleAccountsController < Admin::AdminController
     redirect_to edit_integrations_installed_application_path(params[:iapp_id])
   end
 
-  def import_contacts
-    handle_contacts_import params
-    redirect_to :controller=> '/contacts'
-  end
-
   private
-    def handle_contacts_import(params, goog_acc=nil)
+    def handle_contacts_import(params, goog_acc=nil, use_oauth2=nil)
       goog_acc = Integrations::GoogleAccount.find_or_create(params, current_account) if goog_acc.blank?
       Rails.logger.debug "handle_contacts_import #{goog_acc.inspect}"
       if goog_acc.blank?
@@ -59,7 +55,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
         flash[:error] = t("integrations.google_contacts.internal_error")
       else
         begin
-          add_group params, goog_acc # In case the group name passed does not have an id, add it first.
+          add_group(params, goog_acc, use_oauth2) # In case the group name passed does not have an id, add it first.
           # Save the google account before starting the importer.  So that importer will assume the google account as primary/synced google account.
           if !params[:enable_integration].blank? and (params[:enable_integration] == "true" || params[:enable_integration] == "1")
             enable_integration(goog_acc)
@@ -74,11 +70,11 @@ class Integrations::GoogleAccountsController < Admin::AdminController
       return nil
     end
 
-    def add_group(params, goog_acc)
+    def add_group(params, goog_acc, use_oauth2=nil)
       g_id = params[:integrations_google_account][:sync_group_id]
       g_name = params[:integrations_google_account][:sync_group_name]
       if g_id.blank?
-        g_id = goog_acc.create_google_group(g_name)
+        g_id = goog_acc.create_google_group(g_name, use_oauth2) 
         goog_acc.sync_group_id = g_id
       end
     end

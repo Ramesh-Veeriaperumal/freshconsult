@@ -4,8 +4,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification,
-                         :publish_new_note_properties_to_rabbitmq, on: :create
+  after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
 
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
@@ -72,7 +71,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
-      
       if user.customer?
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)

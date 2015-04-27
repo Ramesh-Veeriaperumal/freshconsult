@@ -26,8 +26,12 @@
 <% end %>
 
 <% content_for :pagefixed do %>
-   <%= render :partial => "freshdesk_node", :locals => 
-  {:ticket => nil}  if current_account.features?(:collision)  || @is_auto_refresh_feature %>
+  <% if current_account.features?(:autorefresh_node) %>
+    <%= render :partial => "freshdesk_socket_autorefresh" %>
+  <% else %>
+    <%= render :partial => "freshdesk_node", :locals => 
+    {:ticket => nil}  if current_account.features?(:collision)  || @is_auto_refresh_feature %>
+  <% end %>
 <% end %>  
 
 <% content_for :layoutType do -%>ticket_list<%- end %>

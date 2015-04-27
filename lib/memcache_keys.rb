@@ -90,9 +90,9 @@ module MemcacheKeys
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 
-  MOBIHELP_SOLUTIONS = "MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
+  MOBIHELP_SOLUTIONS = "v1/MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
   
-  MOBIHELP_SOLUTION_UPDATED_TIME = "v2/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
+  MOBIHELP_SOLUTION_UPDATED_TIME = "v3/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
 
   PRODUCT_NOTIFICATION = "v2/PRODUCT_NOTIFICATION"
 
@@ -123,7 +123,6 @@ module MemcacheKeys
 
     def memcache_delete(key, account=Account.current, user=User.current)
       newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) } 
-      newrelic_begin_rescue { $dalli.delete(memcache_view_key(key, account, user)) } 
     end
 
     def get_from_cache(key, raw=false)
@@ -136,7 +135,6 @@ module MemcacheKeys
 
     def delete_from_cache(key)
       newrelic_begin_rescue { $memcache.delete(key) }
-      newrelic_begin_rescue { $dalli.delete(key) }
     end
 
     def fetch(key, expiry=0,&block)

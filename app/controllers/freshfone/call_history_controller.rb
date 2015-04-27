@@ -17,7 +17,10 @@ class Freshfone::CallHistoryController < ApplicationController
 			format.js {}
             format.nmobile {
 				response = {:calls => @calls.map(&:as_calls_mjson)}
-				response.merge!(:freshfone_numbers => current_account.freshfone_numbers.map(&:as_numbers_mjson)) if params[:page] == "1"
+				if params[:page] == "1"
+					response.merge!(:freshfone_numbers => current_account.freshfone_numbers.map(&:as_numbers_mjson) ,
+					 :group_numbers => current_account.freshfone_numbers.accessible_freshfone_numbers(current_user).map(&:as_numbers_mjson)) 
+				end
 				render :json => response
             }
 		end

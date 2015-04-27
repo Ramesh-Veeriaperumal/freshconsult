@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_d3ed7bdf4663f685a293bdca495956e7.eot");
-  src: font-url("glyphs_d3ed7bdf4663f685a293bdca495956e7.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_d3ed7bdf4663f685a293bdca495956e7.woff") format("woff"),
-       font-url("glyphs_d3ed7bdf4663f685a293bdca495956e7.ttf") format("truetype"),
-       font-url("glyphs_d3ed7bdf4663f685a293bdca495956e7.svg#glyphs") format("svg");
+  src: font-url("glyphs_70837c36a12cdc8d5ae58b36f593b740.eot");
+  src: font-url("glyphs_70837c36a12cdc8d5ae58b36f593b740.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_70837c36a12cdc8d5ae58b36f593b740.woff") format("woff"),
+       font-url("glyphs_70837c36a12cdc8d5ae58b36f593b740.ttf") format("truetype"),
+       font-url("glyphs_70837c36a12cdc8d5ae58b36f593b740.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_d3ed7bdf4663f685a293bdca495956e7.svg#glyphs") format("svg");
+    src: font-url("glyphs_70837c36a12cdc8d5ae58b36f593b740.svg#glyphs") format("svg");
   }
 }
 
@@ -25,6 +25,8 @@
 [data-icon]:before,
 .ficon-account:before,
 .ficon-agent:before,
+.ficon-agent-fchat-off:before,
+.ficon-agent-fchat-on:before,
 .ficon-all-streams:before,
 .ficon-android:before,
 .ficon-answer-checked:before,
@@ -91,11 +93,15 @@
 .ficon-ff-add-note:before,
 .ficon-ff-clock:before,
 .ficon-ff-dialpad:before,
+.ficon-ff-group:before,
 .ficon-ff-mic:before,
 .ficon-ff-mute:before,
 .ficon-ff-on-browser:before,
 .ficon-ff-on-call:before,
+.ficon-ff-on-mobile:before,
 .ficon-ff-phone:before,
+.ficon-ff-via-browser:before,
+.ficon-ff-via-phone:before,
 .ficon-file:before,
 .ficon-file-edit:before,
 .ficon-file-visible:before,
@@ -210,6 +216,8 @@
 
 .ficon-account:before { content: "\f100"; }
 .ficon-agent:before { content: "\f101"; }
+.ficon-agent-fchat-off:before { content: "\f1b0"; }
+.ficon-agent-fchat-on:before { content: "\f1b1"; }
 .ficon-all-streams:before { content: "\f102"; }
 .ficon-android:before { content: "\f103"; }
 .ficon-answer-checked:before { content: "\f104"; }
@@ -276,11 +284,15 @@
 .ficon-ff-add-note:before { content: "\f141"; }
 .ficon-ff-clock:before { content: "\f142"; }
 .ficon-ff-dialpad:before { content: "\f143"; }
+.ficon-ff-group:before { content: "\f1b2"; }
 .ficon-ff-mic:before { content: "\f144"; }
 .ficon-ff-mute:before { content: "\f145"; }
 .ficon-ff-on-browser:before { content: "\f146"; }
 .ficon-ff-on-call:before { content: "\f147"; }
+.ficon-ff-on-mobile:before { content: "\f1af"; }
 .ficon-ff-phone:before { content: "\f148"; }
+.ficon-ff-via-browser:before { content: "\f1ad"; }
+.ficon-ff-via-phone:before { content: "\f1ae"; }
 .ficon-file:before { content: "\f149"; }
 .ficon-file-edit:before { content: "\f14a"; }
 .ficon-file-visible:before { content: "\f14b"; }

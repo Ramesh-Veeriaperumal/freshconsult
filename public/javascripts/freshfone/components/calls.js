@@ -255,9 +255,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.isMute ^= 1;
 			}
 		},
-		transferCall: function (id, group_id) {
+		transferCall: function (id, group_id, external_number) {
 			this.transfered = true;
-			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id);
+			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
 		},
 
 		dontShowEndCallForm: function () {

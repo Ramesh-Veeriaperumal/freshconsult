@@ -219,6 +219,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		assign_action = selected_item.data('assign-action');
 		new_value = selected_item.data('value');
 		new_text = selected_item.data('text') || selected_item.text();
+		jQuery("#all-views").data("quickAction", ticket_id);
 
 		jQuery.ajax( {
 			type: "POST",

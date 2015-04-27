@@ -55,7 +55,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call_history"
     resource :"freshfone/blacklist_number"
     resource :"freshfone/autocomplete"
-    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents]
+    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
@@ -233,6 +233,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :customers_import
     resource :contact_merge
     resource :user_email
+    resource :"segment/identify"
+    resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
   end

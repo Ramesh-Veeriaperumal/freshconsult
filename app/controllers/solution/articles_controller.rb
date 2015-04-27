@@ -63,8 +63,8 @@ class Solution::ArticlesController < ApplicationController
     set_item_user 
 
     build_attachments
-    set_solution_tags
     @article.set_status(!save_as_draft?)
+    @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
         format.html { 
@@ -175,11 +175,18 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def set_solution_tags
-      return unless params[:tags] && (params[:tags].is_a?(Hash) && params[:tags][:name].present?)      
-      @article.tags.clear    
+      tags_changed = false
+      return tags_changed unless params[:tags] && (params[:tags].is_a?(Hash) && !params[:tags][:name].nil?)  
+         
       tags = params[:tags][:name]
       ar_tags = tags.split(',').map(&:strip).uniq    
+      existing_tags = @article.tags.map(&:name)
+      
+      return tags_changed if ar_tags.sort == existing_tags.sort
+
       new_tag = nil
+
+      @article.tags.clear    
 
       ar_tags.each do |tag|      
         new_tag = Helpdesk::Tag.find_by_name_and_account_id(tag, current_account) ||
@@ -188,8 +195,10 @@ class Solution::ArticlesController < ApplicationController
           @article.tags << new_tag
         rescue ActiveRecord::RecordInvalid => e
         end
+      end
 
-      end   
+      @article.updated_at = Time.now
+      tags_changed = true
     end
     
     def portal_check
@@ -265,7 +274,7 @@ class Solution::ArticlesController < ApplicationController
 
     def update_article
       build_attachments unless update_properties?
-      set_solution_tags
+      @article.tags_changed = set_solution_tags
       update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
       respond_to do |format|    
         if @article.update_attributes(update_params)

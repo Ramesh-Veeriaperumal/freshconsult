@@ -266,6 +266,8 @@ var StreamManager = Class.create({
             j("#no_query").show();
             return false;
         }
+        j('#streams li a').removeClass('active');
+        j('#customSearches li a').removeClass('active');
         j(".scl-search-here").hide();
         j(".no-stream").hide();
         /* remove the highlight if its not clicked - i.e - newer feeds */

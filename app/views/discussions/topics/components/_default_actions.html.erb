@@ -27,7 +27,7 @@
 <%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic), 
 					:class => 'btn hide_on_collapse' if privilege?(:edit_topic, @topic) %>
 
-<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_path(@first_post), :method => :put,
+<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_discussions_unpublished_path(@first_post), :method => :put,
 					:class => 'btn hide_on_collapse',
 					:"data-track" => 'Marked as Spam',
 					:confirm => t('discussions.topics.confirm_spam') if privilege?(:delete_topic) %>
@@ -57,7 +57,7 @@
 	  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
 		<%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic) if privilege?(:edit_topic, @topic) %>
 
-		<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_path(@first_post), 
+		<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_discussions_unpublished_path(@first_post), 
 					:method => :put, 
 					:"data-track" => 'Marked as Spam',
 					:confirm => t('discussions.topics.confirm_spam') if privilege?(:delete_topic) %>

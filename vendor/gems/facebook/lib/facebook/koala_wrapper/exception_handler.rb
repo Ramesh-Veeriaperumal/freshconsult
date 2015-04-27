@@ -14,6 +14,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
     APP_RATE_LIMIT           = 4
     USER_RATE_LIMIT          = 17
     PERMISSION_ERROR         = [200, 299]
+    IGNORED_ERRORS           = [230]
     ERROR_MESSAGES           = {:permission_error => "manage_pages",  :auth_error => "impersonate" }
     
     def sandbox(return_value = nil)
@@ -38,7 +39,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
             update_error_and_notify(error_params)
             $sqs_facebook.requeue(@feed.feed) if @intial_feed
           elsif exception.fb_error_code.between?(PERMISSION_ERROR.first,  PERMISSION_ERROR.last)
-            update_error_and_notify(error_params)
+            IGNORED_ERRORS.include?(exception.fb_error_code) ? raise_sns_notification(error_params[:error_msg][0..50], error_params) : update_error_and_notify(error_params) 
           end
         
         #Exception due to change of permission for the user who authorised the app

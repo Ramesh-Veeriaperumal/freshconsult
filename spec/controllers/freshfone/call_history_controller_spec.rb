@@ -19,7 +19,7 @@ RSpec.describe Freshfone::CallHistoryController do
     @account.freshfone_calls.create(  :freshfone_number_id => freshfone_number.id, 
                                       :call_status => 0, :call_type => 1, :agent => @agent,
                                       :params => { :CallSid => call_sid } )
-
+    create_online_freshfone_user
     get :index
     assigns[:all_freshfone_numbers].first.number.should be_eql(freshfone_number.number)
     assigns[:calls].first.call_sid.should eql call_sid

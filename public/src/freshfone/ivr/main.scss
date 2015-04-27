@@ -139,6 +139,9 @@
 		padding-top: 0;
 		@include margin-left(5px);
 	}
+	.message_value_container > textarea {
+		width: 100%;
+	}
 	.record_voice {
 		@include margin-left(15px);
 	}

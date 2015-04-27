@@ -68,7 +68,8 @@ class Social::Gnip::TwitterFeed
       user = set_user if convert_args[:convert]
       
       if reply?
-        tweet = account.tweets.find_by_tweet_id(@in_reply_to)
+        db_stream = args[:stream_id].gsub(TAG_PREFIX, "")
+        tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
         unless tweet.blank?
           ticket  = tweet.get_ticket
           user = set_user unless user

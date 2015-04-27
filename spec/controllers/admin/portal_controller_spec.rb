@@ -37,14 +37,15 @@ describe Admin::PortalController do
           :captcha=>"1",
           :hide_portal_forums=>"0",
           :moderate_all_posts=>"1",
-          :moderate_posts_with_links=>"0"
+          :moderate_posts_with_links=>"0",
+          :forum_captcha_disable =>"1"
         }
       },
       :forum_moderators => agent_ids
     }
     @account.reload
     available_feature = ["OpenSolutionsFeature","OpenForumsFeature","GoogleSigninFeature","SignupLinkFeature","CaptchaFeature",
-                        "ModerateAllPostsFeature"]
+                        "ModerateAllPostsFeature","ForumCaptchaDisableFeature"]
     available_feature.each do |feature|
       @account.features.find_by_type("#{feature}").should_not be_nil
     end

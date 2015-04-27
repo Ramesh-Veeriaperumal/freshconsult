@@ -1,8 +1,6 @@
 # Copyright 2014 © Freshdesk Inc. All Rights Reserved.
 module Community::Moderation::MoveToDynamo
 
-	REPORT_HAM = false
-
 	def ban
 		@spam_post.user.update_attribute(:deleted, true)
 
@@ -24,8 +22,6 @@ module Community::Moderation::MoveToDynamo
 		topic_deleted = @post.topic.destroy if @post.original_post?
 
 		@post.destroy if !topic_deleted && spam_saved
-
-		report_post(@spam, REPORT_HAM)
 
 		respond_back(discussions_unpublished_filter_path(:filter => :spam))
 

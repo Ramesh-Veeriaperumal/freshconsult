@@ -42,7 +42,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     #HACK for a period of 1 week when we transition from old UI to new UI
     tweet = account.tweets.find_by_tweet_id(self.feed_id)
     if tweet
-      notable = tweet.get_ticket
+      notable = tweet.tweetable
       user  = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
       update_fd_link(self.stream_id, self.feed_id, notable, user)
       return notable

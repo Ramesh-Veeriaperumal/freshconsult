@@ -21,7 +21,6 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     save_success          = @twitter_stream.save unless params[:twitter_stream][:includes].empty?
 
     if save_success
-      create_stream_accessible
       ticket_rule_params = update_ticket_rules
       flash[:notice] = @ticket_error_flash.nil? ? I18n.t(:'flash.stream.created'): @ticket_error_flash
     else
@@ -56,7 +55,6 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   def update
     update_twitter_handle if params[:social_twitter_handle]
     update_twitter_stream if params[:twitter_stream] and @ticket_error_flash.nil?
-    update_stream_accessible if @ticket_error_flash.nil?
     update_dm_rule if params[:dm_rule] and @ticket_error_flash.nil?
     update_ticket_rules if params[:social_ticket_rule] and @ticket_error_flash.nil?    
 
@@ -87,9 +85,11 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   
   def update_twitter_handle
     twitter_handle_params = construct_handle_params
-    unless @twitter_handle.update_attributes(twitter_handle_params)
+    if @twitter_handle.update_attributes(twitter_handle_params)
+      @twitter_handle.default_stream.update_attributes({:accessible_attributes => stream_accessible_params})
+    else
       @ticket_error_flash = t('admin.social.flash.stream_save_error')
-    end
+     end
   end
   
   def update_twitter_stream
@@ -128,6 +128,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     twitter_stream.merge!(construct_filter_data)
     twitter_stream.merge!(gnip_data) if @twitter_stream.nil?
     twitter_stream.merge!({:social_id => params[:twitter_stream][:social_id]}) unless params[:twitter_stream][:social_id].nil?
+    twitter_stream.merge!({:accessible_attributes => stream_accessible_params})
     twitter_stream
   end
   
@@ -142,8 +143,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     deleted_rules = Array.new
     params[:social_ticket_rule].each do |rule|
       group_id = rule[:group_id].to_i unless (rule[:group_id].to_i == 0)
-      product_id = @twitter_stream.custom_stream? ? params[:social_twitter_stream][:product_id] : params[:social_twitter_handle][:product_id]
-      product_id = product_id.blank? ? nil : product_id.to_i 
+      product_id = rule_product_id
       if rule[:includes].blank? and rule[:ticket_rule_id].blank?
         @ticket_error_flash = t('admin.social.flash.ticket_rule_error') if (group_id)
         next 
@@ -209,32 +209,30 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     {:filter => excluded_handles}
   end
 
-  def create_stream_accessible
-    return if @twitter_stream.accessible
+  def stream_accessible_params
+    accessible_attributes = {}
     visible_group_ids = params[:visible_to]
     if visible_group_ids.include?(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all].to_s)
-      @twitter_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
+      accessible_attributes[:access_type] = Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+      accessible_attributes[:group_ids] = []
     else
-      accessible = @twitter_stream.create_accessible(:access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups])
-      accessible.create_group_accesses(visible_group_ids)
+      accessible_attributes[:access_type] = Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
+      accessible_attributes[:group_ids] = visible_group_ids
     end
+    accessible_attributes[:id] = @twitter_stream.accessible.id if @twitter_stream
+    accessible_attributes
   end
   
-  def update_stream_accessible
-    updated_group_ids = params[:visible_to]
-    outdated_group_ids = @twitter_stream.groups.map { |group| group.id.to_s }
-    return if params[:visible_to].blank? || outdated_group_ids.uniq.sort == updated_group_ids.uniq.sort
-    if @twitter_stream.accessible.global_access_type? && !updated_group_ids.include?(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all].to_s)
-      @twitter_stream.accessible.update_attributes(:access_type =>  Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups])
-      @twitter_stream.accessible.create_group_accesses(updated_group_ids)
-    elsif @twitter_stream.accessible.group_access_type?  
-      if updated_group_ids.include?(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all].to_s)
-        @twitter_stream.accessible.update_attributes(:access_type =>  Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
-        @twitter_stream.accessible.remove_group_accesses(outdated_group_ids)
-      else
-        @twitter_stream.accessible.remove_group_accesses(outdated_group_ids)
-        @twitter_stream.accessible.create_group_accesses(updated_group_ids)
-      end
+  
+  private
+  def rule_product_id
+    if @twitter_stream.custom_stream? 
+      product_id = params[:social_twitter_stream][:product_id] unless params[:social_twitter_stream].blank? 
+    else
+      product_id = params[:social_twitter_handle][:product_id] unless params[:social_twitter_handle].blank? 
     end
+    product_id = product_id.blank? ? nil : product_id.to_i 
   end
+  
 end
+

@@ -9,7 +9,7 @@ module ActionView
         model_name = @object_name
         account = @template.instance_variable_get("@#{model_name}")
         throw "feature_check_box only work on models with features" unless account.respond_to?(:features)
-        options[:checked] = account.features.send("#{method}?")
+        options[:checked] = account.features.send("#{method}?") if options[:checked].nil?
         options[:id] ||= "#{model_name}_features_#{method}"
         options[:name] = "#{model_name}[features][#{method}]"
         @template.feature_check_box(@object_name, method, objectify_options(options), checked_value, unchecked_value)
