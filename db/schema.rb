@@ -1285,8 +1285,8 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
 
   create_table "freshfone_number_groups", :force => true do |t|
     t.integer  "account_id",          :limit => 8
-    t.integer  "freshfone_number_id"
-    t.integer  "group_id"
+    t.integer  "freshfone_number_id", :limit => 8
+    t.integer  "group_id",            :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
