@@ -13,16 +13,11 @@
 			</h3>
 		<div class="pull-right">
 				<%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "btn" %>
-				<%= f.submit t('contacts.save'), :class => "btn btn-primary" , :id => "contact_submit"%> 
+				<%= f.submit t('contacts.save_changes'), :class => "btn btn-primary" , :id => "contact_submit"%> 
 			</div>
 		</div>
 	</div>
 
 		<br/>
 	  <%= render :partial => "form", :locals => { :f => f, :type => "edit" } %>
-	  
-	  <div class="button-container">
-	  	<%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "btn" %>
-	    <%= f.submit t('contacts.save_changes'), :class => "btn btn-primary" , :id => "contact_submit" %> 
-	</div>
 <% end -%>
