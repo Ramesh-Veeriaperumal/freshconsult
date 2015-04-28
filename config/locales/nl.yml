@@ -1165,8 +1165,8 @@ nl:
         feedbackwidget_text_button: Tekstknop
         feedbackwidget_image_button: Afbeeldingsknop
         feedbackwidget_button_text_placeholder: Ondersteuning
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Knop aanpassen"
         feedbackwidget_form_customization: "Formulier aanpassen"
         feedbackwidget_embedded_code: "Ingesloten widgetcode"
@@ -3572,7 +3572,7 @@ nl:
     inactive_info1: "Uw e-mailadressen voor ondersteuning zijn nog niet bevestigd. U moet ten minste één e-mailadres bevestigen."
     info14: "Alle e-mails die naar dit adres worden verstuurd, worden omgezet in tickets."
     info4: "<strong>Opmerking:</strong> als u meerdere e-mailadressen gebruikt om verschillende producten te kunnen ondersteunen, <a href='{{products_path}}'>kunt ze hier toevoegen</a>."
-    spf_info: "Voor antwoord-e-mails van Freshdesk worden uw e-mail-id's voor ondersteuning automatisch als verzendadres gebruikt. Als u een <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF-record</a> in het DNS-zonebestand maakt, worden uw e-mails correct bezorgd."
+    spf_info: "Voor antwoord-e-mails van Freshdesk worden uw e-mail-id's voor ondersteuning automatisch als verzendadres gebruikt. Als u een <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF-record</a> in het DNS-zonebestand maakt, worden uw e-mails correct bezorgd."
     reply_email: "Uw e-mailadres voor ondersteuning"
     unverified_info1: "Activeer dit e-mailadres door op de bevestigingslink in uw postvak IN te klikken."
     inactive_info2: "Tot die tijd wordt het standaard-e-mailadres %{default_email} als het antwoord-e-mailadres gebruikt."
@@ -3580,8 +3580,8 @@ nl:
     helpcard:
       tour1: "Helpen bij het instellen van mijn e-mailadres voor ondersteuning"
       tour2: "Helpen bij het configureren van meerdere postvakken"
-      info5: "Uw standaard-e-mailadres voor ondersteuning is <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Alle e-mails die naar dit adres worden verstuurd, worden automatisch omgezet in tickets waarmee u aan de slag kunt."
-      info19: "U kunt uw Freshdesk-account configureren voor het gebruik van een e-mailadres voor ondersteuning in uw eigen domein, zoals ondersteuning@mijnbedrijf.com door e-mails van dit adres door te sturen naar <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Uw standaard-e-mailadres voor ondersteuning is <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Alle e-mails die naar dit adres worden verstuurd, worden automatisch omgezet in tickets waarmee u aan de slag kunt."
+      info19: "U kunt uw Freshdesk-account configureren voor het gebruik van een e-mailadres voor ondersteuning in uw eigen domein, zoals ondersteuning@mijnbedrijf.com door e-mails van dit adres door te sturen naar <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Als u een nieuw vak voor een e-mailadres voor ondersteuning wilt maken, klikt u onder de algemene e-mailinstellingen op Bewerken."
       info20: "Meerdere postvakken gebruiken"
       info21: "U kunt binnen uw helpdesk een onbeperkt aantal postvakken voor inkomende en uitgaande e-mail toevoegen (zoals info@uwbedrijf.com, verkoop@uwbedrijf.com, enzovoort). U kunt in Freshdesk zelfs instellen dat de e-mails in de verschillende postvakken automatisch aan specifieke groepen moeten worden toegewezen."

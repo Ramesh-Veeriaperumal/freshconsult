@@ -1165,8 +1165,8 @@ sv-SE:
         feedbackwidget_text_button: Textknapp
         feedbackwidget_image_button: Bildknapp
         feedbackwidget_button_text_placeholder: Support
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Anpassa knapp"
         feedbackwidget_form_customization: "Anpassa formulär"
         feedbackwidget_embedded_code: "Bädda in kod för widget"
@@ -3572,7 +3572,7 @@ sv-SE:
     inactive_info1: "Inga av dina e-postadresser för support har ännu verifierats. Du måste verifiera minst en e-postadress för support"
     info14: "Alla e-postmeddelanden som skickas till denna adress kommer att konverteras till ärenden"
     info4: "<strong>Obs!</strong> Om du har flera e-postadresser för support av flera produkter <a href='{{products_path}}'>kan du lägga till dem här</a>."
-    spf_info: "Medan de flesta av dina e-poster kommer att levereras ska du, för att vara på den säkra sidan, skapa en <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF-post</a> i din DNS-zonfil om du använder e-poster på din egen domän. Detta hjälper till att säkerställa korrekt leverans av e-poster."
+    spf_info: "Medan de flesta av dina e-poster kommer att levereras ska du, för att vara på den säkra sidan, skapa en <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF-post</a> i din DNS-zonfil om du använder e-poster på din egen domän. Detta hjälper till att säkerställa korrekt leverans av e-poster."
     reply_email: "Din e-postadress för support"
     unverified_info1: "Aktivera detta e-postmeddelande genom att klicka på verifieringslänken i din inkorg."
     inactive_info2: "Tills dess kommer standardadressen ”%{default_email}” att användas som svarsadress."
@@ -3580,8 +3580,8 @@ sv-SE:
     helpcard:
       tour1: "Hjälp mig ställa in min e-postadress för support"
       tour2: "Hjälp mig konfigurera flera postlådor"
-      info5: "Din standardadress för support är <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a> Alla meddelanden som skickas till den här adressen konverteras automatiskt till ett ärende som du kan börja arbeta med."
-      info19: "Du kan konfigurera ditt Freshdesk-konto för att använda en supportadress från din egen domän, som t.ex. support@ditt företag.com, genom att vidarebefordra e-postmeddelanden från den här adressen till <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>."
+      info5: "Din standardadress för support är <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a> Alla meddelanden som skickas till den här adressen konverteras automatiskt till ett ärende som du kan börja arbeta med."
+      info19: "Du kan konfigurera ditt Freshdesk-konto för att använda en supportadress från din egen domän, som t.ex. support@ditt företag.com, genom att vidarebefordra e-postmeddelanden från den här adressen till <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>."
       edit_info: "För att skapa en ny postlåda för supportmeddelanden, klicka på ”Redigera” under de globala e-postinställningarna."
       info20: "Använda flera postlådor"
       info21: "Du kan lägga till ett obegränsat antal postlådor för både utgående och inkommande e-post i ditt hjälpcenter, t.ex. info@dittföretag.se, försäljning@dittföretag.se osv. Du kan till och med ställa in Freshdesk att automatiskt tilldela e-postadresser från varje postlåda till en specifik grupp."

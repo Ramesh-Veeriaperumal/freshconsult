@@ -1189,8 +1189,8 @@ pl:
         feedbackwidget_text_button: "Przycisk tekstu"
         feedbackwidget_image_button: "Przycisk obrazu"
         feedbackwidget_button_text_placeholder: "Pomoc techniczna"
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Dostosuj przycisk"
         feedbackwidget_form_customization: "Dostosuj formularz"
         feedbackwidget_embedded_code: "Kod zagnieżdżonego widżetu"
@@ -3624,7 +3624,7 @@ pl:
     inactive_info1: "Wszystkie twoje adresy e-mail pomocy technicznej pozostają niezweryfikowane. Musisz zweryfikować przynajmniej jeden adres e-mail pomocy."
     info14: "Każda wiadomość e-mail wysłana na ten adres zostanie przekształcona w zgłoszenie"
     info4: "<strong>UWAGA:</strong> Jeśli masz oddzielny adres e-mail do obsługi każdego produktu, <a href='{{products_path}}'>możesz dodać go tutaj</a>."
-    spf_info: "Większość twoich wiadomości email będzie dostarczanych, jednak bezpieczniej jest stworzyć <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">rekord SPF</a> w twojej strefie DNS jeśli używasz konta email we własnej domenie. To zwiększa szansę na poprawne dostarczenie wiadomości."
+    spf_info: "Większość twoich wiadomości email będzie dostarczanych, jednak bezpieczniej jest stworzyć <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">rekord SPF</a> w twojej strefie DNS jeśli używasz konta email we własnej domenie. To zwiększa szansę na poprawne dostarczenie wiadomości."
     reply_email: "Twój adres e-mail pomocy technicznej"
     unverified_info1: "Aktywuj ten adres e-mail, klikając łącze zawarte we wiadomości weryfikacyjnej w swojej skrzynce."
     inactive_info2: "Do tego czasu domyślny adres e-mail „%{default_email}” będzie używany jako zwrotny adres e-mail."
@@ -3632,8 +3632,8 @@ pl:
     helpcard:
       tour1: "Pomóż mi skonfigurować pocztę e-mail pomocy technicznej"
       tour2: "Pomóż mi skonfigurować wiele skrzynek pocztowych"
-      info5: "Domyślny adres e-mail twojej pomocy technicznej to <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Każda wiadomość wysłana pod ten adres zostanie automatycznie przekształcona w zgłoszenie, nad którym możesz rozpocząć pracę."
-      info19: "Możesz skonfigurować swoje konto Freshdesk do użytku z adresem e-mail pomocy technicznej w swojej własnej domenie, np. support@mycompany.com, poprzez przesyłanie wiadomości e-mail z tego adresu na <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Domyślny adres e-mail twojej pomocy technicznej to <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Każda wiadomość wysłana pod ten adres zostanie automatycznie przekształcona w zgłoszenie, nad którym możesz rozpocząć pracę."
+      info19: "Możesz skonfigurować swoje konto Freshdesk do użytku z adresem e-mail pomocy technicznej w swojej własnej domenie, np. support@mycompany.com, poprzez przesyłanie wiadomości e-mail z tego adresu na <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Aby utworzyć nową skrzynkę pocztową, kliknij przycisk Edytuj w ustawieniach globalnych poczty e-mail."
       info20: "Korzystanie z wielu skrzynek pocztowych"
       info21: "W swoim centrum pomocy możesz dodać nieograniczoną liczbę skrzynek pocztowych przychodzących i wychodzących (na przykład info@mycompany.com, sales@mycompany.com itp.). Możesz nawet skonfigurować automatyczne przypisywanie wiadomości z konkretnej skrzynki pocztowej do określonej grupy."

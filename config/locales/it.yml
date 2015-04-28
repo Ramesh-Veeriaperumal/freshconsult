@@ -1165,8 +1165,8 @@ it:
         feedbackwidget_text_button: "Pulsante di testo"
         feedbackwidget_image_button: "Pulsante immagine"
         feedbackwidget_button_text_placeholder: Supporto
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Personalizza pulsante"
         feedbackwidget_form_customization: "Personalizza modulo"
         feedbackwidget_embedded_code: "Codice widget incorporato"
@@ -3572,7 +3572,7 @@ it:
     inactive_info1: "Tutte le e-mail di assistenza non sono ancora state verificate, devi verificare almeno un'e-mail di assistenza"
     info14: "Ogni e-mail inviata a questo indirizzo sarà convertita in un ticket"
     info4: "<strong>NOTA:</strong> se disponi di più indirizzi e-mail per il supporto di molteplici prodotti, <a href='{{products_path}}'>puoi aggiungerli qui</a>."
-    spf_info: "Anche se la maggioranza delle tue e-mail saranno consegnate, per sentirti più al sicuro dovresti creare un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">record SPF</a> nel tuo file di zona DNS se stai inviando le e-mail utilizzando il tuo dominio. Ciò contribuirà ad assicurare il corretto invio delle e-mail."
+    spf_info: "Anche se la maggioranza delle tue e-mail saranno consegnate, per sentirti più al sicuro dovresti creare un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">record SPF</a> nel tuo file di zona DNS se stai inviando le e-mail utilizzando il tuo dominio. Ciò contribuirà ad assicurare il corretto invio delle e-mail."
     reply_email: "La tua e-mail di supporto"
     unverified_info1: "Attiva questa e-mail facendo clic sul collegamento di verifica nella tua posta in arrivo."
     inactive_info2: "Fino ad allora, l'e-mail predefinita \"%{default_email}\" sarà utilizzata come destinatario della risposta."
@@ -3580,8 +3580,8 @@ it:
     helpcard:
       tour1: "Supporto nella configurazione dell'e-mail di supporto"
       tour2: "Supporto nella configurazione di cassette postali multiple"
-      info5: "Il tuo indirizzo e-mail di supporto predefinito è <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Qualsiasi e-mail inviata a questo indirizzo viene automaticamente convertita in un ticket sul quale puoi lavorare."
-      info19: "Puoi configurare il tuo account Freshdesk in modo da utilizzare un indirizzo e-mail di supporto nel tuo dominio, ad esempio supporto@miazienda.com,  inoltrando le email da questo indirizzo a <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Il tuo indirizzo e-mail di supporto predefinito è <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Qualsiasi e-mail inviata a questo indirizzo viene automaticamente convertita in un ticket sul quale puoi lavorare."
+      info19: "Puoi configurare il tuo account Freshdesk in modo da utilizzare un indirizzo e-mail di supporto nel tuo dominio, ad esempio supporto@miazienda.com,  inoltrando le email da questo indirizzo a <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Per creare una nuova casella postale di supporto, da impostazioni globali e-mail fai clic su \"Modifica\"."
       info20: "Utilizzo di cassette postali multiple"
       info21: "È possibile aggiungere un numero illimitato di cassette postali in entrata e in uscita (ad esempio info@nomeazienda.it o commerciale@nomeazienda.it) nell'helpdesk. È persino possibile impostare Freshdesk in modo che assegni automaticamente le e-mail di ciascuna cassetta postale a un gruppo specifico."

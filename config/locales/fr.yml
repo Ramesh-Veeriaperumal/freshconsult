@@ -1165,8 +1165,8 @@ fr:
         feedbackwidget_text_button: "Bouton texte"
         feedbackwidget_image_button: "Bouton image"
         feedbackwidget_button_text_placeholder: Assistance
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Personnalisation du bouton"
         feedbackwidget_form_customization: "Personnalisation du formulaire"
         feedbackwidget_embedded_code: "Code du widget intégré"
@@ -3572,7 +3572,7 @@ fr:
     inactive_info1: "Aucun e-mail d'assistance n'a été vérifié. Vous devez en vérifier au moins un."
     info14: "Tout courrier électronique envoyé à cette adresse sera converti en ticket."
     info4: "<strong>REMARQUE :</strong> Si vous disposez de plusieurs adresses e-mail pour plusieurs produits, <a href='{{products_path}}'>ajoutez-les ici</a>."
-    spf_info: "Les e-mails de réponse de Freshdesk définiront automatiquement l'adresse e-mail d'assistance comme adresse d'expéditeur. La création d'un<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">enregistrement SPF</a> dans votre fichier de zone DNS permettra de garantir que vos e-mails sont correctement acheminés."
+    spf_info: "Les e-mails de réponse de Freshdesk définiront automatiquement l'adresse e-mail d'assistance comme adresse d'expéditeur. La création d'un<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">enregistrement SPF</a> dans votre fichier de zone DNS permettra de garantir que vos e-mails sont correctement acheminés."
     reply_email: "Votre adresse e-mail d'assistance"
     unverified_info1: "Veuillez activer cette adresse e-mail en cliquant sur le lien de vérification qui a été envoyé dans par e-mail."
     inactive_info2: "En attendant, l'e-mail par défaut %{default_email} sera utilisé comme adresse e-mail de réponse."
@@ -3580,8 +3580,8 @@ fr:
     helpcard:
       tour1: "Aidez-moi à configurer mon e-mail d'assistance"
       tour2: "Aidez-moi à configurer plusieurs boîtes aux lettres"
-      info5: "Votre adresse e-mail d'assistance par défaut est <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Tous les e-mails envoyés à cette adresse seront automatiquement convertis en tickets sur lesquels vous pourrez travailler."
-      info19: "Vous pouvez configurer votre compte Freshdesk pour qu'il prenne en charge une adresse e-mail d'assistance sur votre propre domaine, par exemple assistance@masociété.com, en redirigeant les e-mails vers <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Votre adresse e-mail d'assistance par défaut est <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Tous les e-mails envoyés à cette adresse seront automatiquement convertis en tickets sur lesquels vous pourrez travailler."
+      info19: "Vous pouvez configurer votre compte Freshdesk pour qu'il prenne en charge une adresse e-mail d'assistance sur votre propre domaine, par exemple assistance@masociété.com, en redirigeant les e-mails vers <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Pour créer une nouvelle boîte aux lettres d'assistance, cliquez sur « Modifier » dans les paramètres généraux des e-mails."
       info20: "Utiliser plusieurs boîtes aux lettres"
       info21: "Vous pouvez ajouter un nombre illimité de boîtes aux lettres entrantes et sortantes (par exemple info@votresociété.com, ventes@votresociété.com, etc.) à votre service d'assistance. Vous pouvez également configurer Freshdesk pour qu'il attribue automatiquement les e-mails de chaque boîte aux lettres à un groupe spécifique."

@@ -1168,8 +1168,8 @@ et:
         feedbackwidget_text_button: Tekstinupp
         feedbackwidget_image_button: Pildinupp
         feedbackwidget_button_text_placeholder: Tugi
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Kohanda nuppu"
         feedbackwidget_form_customization: "Kohanda vormi"
         feedbackwidget_embedded_code: "Manusvidina kood"
@@ -3575,7 +3575,7 @@ et:
     inactive_info1: "Kõik sinu klienditoe e-posti aadressid on veel kinnitamata. Sa pead kinnitama vähemalt ühe aadressi."
     info14: "Kõik sellele aadressile saadetavad e-kirjad konverditakse taotlusteks."
     info4: "<strong>MÄRKUS:</strong> kui sul on mitut toodet hõlmava klienditoe pakkumiseks mitu e-posti aadressi, <a href='{{products_path}}'>saad need lisada siin</a>."
-    spf_info: "Freshdeskist saadetavates vastuskirjades kasutatakse saatja aadressina automaatselt sinu vastava klienditoe e-posti aadressi ID-d. Kui sa lood oma DNS-tsooni failis <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF-kirje</a>, tagad e-kirjade tõrgeteta kohalejõudmise."
+    spf_info: "Freshdeskist saadetavates vastuskirjades kasutatakse saatja aadressina automaatselt sinu vastava klienditoe e-posti aadressi ID-d. Kui sa lood oma DNS-tsooni failis <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF-kirje</a>, tagad e-kirjade tõrgeteta kohalejõudmise."
     reply_email: "Sinu klienditoe e-posti aadress"
     unverified_info1: "Palun aktiveeri see e-posti aadress. Selleks pead sulle saadetud kirjas verifitseerimislingil klõpsama."
     inactive_info2: "Seni kasutatakse vastuseaadressina vaikimisi aadressi %{default_email}."
@@ -3583,8 +3583,8 @@ et:
     helpcard:
       tour1: "Aita mul mu tugiaadress seadistada"
       tour2: "Aita mul mitu postkasti seadistada"
-      info5: "Sinu vaikimisi valitud tugiaadress on <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Kõik sellele aadressile saadetud e-kirjad konverditakse automaatselt taotlusteks, millega sa siis tööle saad asuda."
-      info19: "Sa saad seadistada oma Freshdeski konto kasutama tugiaadressi sinu oma domeenis, nagu nt support@minuettevõte.com, suunates e-kirjad sellelt aadressilt siia: <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Sinu vaikimisi valitud tugiaadress on <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Kõik sellele aadressile saadetud e-kirjad konverditakse automaatselt taotlusteks, millega sa siis tööle saad asuda."
+      info19: "Sa saad seadistada oma Freshdeski konto kasutama tugiaadressi sinu oma domeenis, nagu nt support@minuettevõte.com, suunates e-kirjad sellelt aadressilt siia: <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Uue tugipostkasti loomiseks klõpsa e-posti üldsätete all valikul \"Redigeeri\"."
       info20: "Mitme postkasti kasutamine"
       info21: "Sa saad oma kasutajatoele lisada piiramatu arvu sissetulevate ja väljaminevate kirjade postkaste (nagu nt info@sinuettevõte.com, müük@sinuettevõte.com jne). Sa saad isegi Freshdeskis seadistada e-kirjade automaatse suunamise igast postkastist kindlale grupile."

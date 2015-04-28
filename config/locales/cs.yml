@@ -1189,8 +1189,8 @@ cs:
         feedbackwidget_text_button: "Textové tlačítko"
         feedbackwidget_image_button: "Obrazové tlačítko"
         feedbackwidget_button_text_placeholder: Podpora
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Přizpůsobené tlačítko"
         feedbackwidget_form_customization: "Přizpůsobený formulář"
         feedbackwidget_embedded_code: "Kód vestavěného panelu"
@@ -2283,7 +2283,6 @@ cs:
     cancel:
       cancel_account: "Zrušit Freshdesk účet"
       info_text: "Prosím, věnujte ještě nám nějaký čas a vysvětlete nám, proč chcete zrušit váš účet. Třeba vám ještě můžeme pomoci..."
-      goback: "&#x2190; Zpět do nastavení účtu"
       delete_my_account: "Smazat můj účet"
       deleting_account: "Rušení účtu"
       confirm_and_cancel_my_account: "Potvrzuji, že chci zrušit svůj účet a smazat všechna data na něm..."
@@ -3624,7 +3623,7 @@ cs:
     inactive_info1: "Všechny vaše e-maily pro podporu jsou ještě nepotvrzené; musíte potvrdit alespoň jeden e-mail pro podporu"
     info14: "Každý e-mail odeslaný na tuto adresu bude převeden na požadavek"
     info4: "<strong>POZNÁMKA:</strong> Máte-li více e-mailových adres pro podporu různých produktů, <a href='{{products_path}}'>můžete je přidat sem</a>."
-    spf_info: "Odpovědní e-maily z FreshDesku budou automaticky používat vaši e-mailovou adresu podpory jako adresu odesílatele. Pro zajištění řádného doručení e-mailů bude třeba vytvořit <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPC záznam</a> v DNS vaší zóny."
+    spf_info: "Odpovědní e-maily z FreshDesku budou automaticky používat vaši e-mailovou adresu podpory jako adresu odesílatele. Pro zajištění řádného doručení e-mailů bude třeba vytvořit <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPC záznam</a> v DNS vaší zóny."
     reply_email: "Váš e-mail podpory"
     unverified_info1: "Prosím aktivujte tento e-mail kliknutím na verifikační odkaz ve zprávě, kterou najdete v příchozí poště."
     inactive_info2: "Od teď bude standardní e-mail \"%{default_email}\" použit jako odpovědní e-mail."
@@ -3632,8 +3631,8 @@ cs:
     helpcard:
       tour1: "Pomozte mi nastavit můj e-mail podpory"
       tour2: "Pomozte mi nakonfigurovat vícenásobné e-mailové schránky"
-      info5: "Vaše implicitní e-mailová adresa je <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Jakýkoli e-mail odeslaný na tuto adresu bude automaticky převeden na požadavek se kterým můžete dále pracovat."
-      info19: "Váš účet na FreshDesku můžete nakonfigurovat tak, aby používal e-mail podpory z vaší vlastní domény, např. support@mycompany.com pomocí přesposlání e-mailu z této adresy na <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Pro vytvoření nového e-mailové schránky podpory klikněte ne tlačítko \"Upravit\" pod globálním nastavením e-mailu."
+      info5: "Vaše implicitní e-mailová adresa je <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Jakýkoli e-mail odeslaný na tuto adresu bude automaticky převeden na požadavek se kterým můžete dále pracovat."
+      info19: "Váš účet na FreshDesku můžete nakonfigurovat tak, aby používal e-mail podpory z vaší vlastní domény, např. support@mycompany.com pomocí přesposlání e-mailu z této adresy na <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Pro vytvoření nového e-mailové schránky podpory klikněte ne tlačítko \"Upravit\" pod globálním nastavením e-mailu."
       edit_info: "Pro založení nové e-mailové schránky podpory klikněte na \"Upravit\" v sekci  Nastavení emailů"
       info20: "Použití vícenásobných e-mailových schránek"
       info21: "Na helpdesk je možné přidávat neomezené množství příchozích i odchozích e-mailových schránek (např. info@yourcompany.com, sales@yourcompany.com, atd.). Každá tato schránky může být automaticky přiřazena k nějaké skupině podpory."
@@ -5813,9 +5812,9 @@ cs:
     reset_all_confirm_message: "Tato akce vyresetuje všechna vaše uživatelská nastavení na implicitní hodnoty. Jste si jisti, že chcete pokračovat?"
     publish_changes: "Uložit a publikovat"
     title: "Přizpůsobení portálu \"%{portal}\""
-    color_and_font_header: "Barva &amp;amp; písmo"
+    color_and_font_header: "Barva &amp; písmo"
     css_header: Stylesheet
-    layout_and_pages_header: "Rozvržení &amp;amp; stránky"
+    layout_and_pages_header: "Rozvržení &amp; stránky"
     editing: Úpravy
     reset_to_last_published: "Resetovat stránku do poslední publikované podoby"
     preview: "Náhled portálu"

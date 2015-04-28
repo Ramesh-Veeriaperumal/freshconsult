@@ -1164,8 +1164,8 @@ es:
         feedbackwidget_text_button: "Botón texto"
         feedbackwidget_image_button: "Botón imagen"
         feedbackwidget_button_text_placeholder: Soporte
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Diseño de Botón"
         feedbackwidget_form_customization: "Diseño de Formulario"
         feedbackwidget_embedded_code: "Codigo de Widget Integrado"
@@ -3571,7 +3571,7 @@ es:
     inactive_info1: "Todos sus correos de soporte están sin verificar, debe verificar por lo menos un correo de soporte."
     info14: "Un correo electrónico enviado a esta dirección se convertirá como un ticket"
     info4: "<strong>NOTA:</strong> si tiene múltiples direcciones de correo electrónico para prestar asistencia a múltiples productos, <a href='{{products_path}}'>puede añadirlos aquí</a>."
-    spf_info: "Aunque la mayoria de tus emails serán entregados, para estar mas seguros debes crear un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">registro SPF</a>en tu zona de DNS si estas usando emails con tu propio dominio. Esto te ayudará a asegurar una entrega apropiada de emails."
+    spf_info: "Aunque la mayoria de tus emails serán entregados, para estar mas seguros debes crear un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">registro SPF</a>en tu zona de DNS si estas usando emails con tu propio dominio. Esto te ayudará a asegurar una entrega apropiada de emails."
     reply_email: "Su correo de soporte"
     unverified_info1: "Por favor, active su cuenta de correo, pulsando sobre el link enviado a su buzón."
     inactive_info2: "Hasta tanto, se usará el correo por defecto \"%{default_email}\" como dirección de respuesta."
@@ -5756,9 +5756,9 @@ es:
     reset_all_confirm_message: "Esta acción restablecerá todas las personalizaciones por Freshdesk por defecto. ¿Estás seguro de querer continuar?"
     publish_changes: "Guardar y publicar"
     title: "Personalización del portal \"%{portal}\""
-    color_and_font_header: "Color &amp;amp;amp; fuente"
+    color_and_font_header: "Color &amp; fuente"
     css_header: "Hoja de estilo"
-    layout_and_pages_header: "Disposición &amp;amp;amp; páginas"
+    layout_and_pages_header: "Disposición &amp; páginas"
     editing: Editar
     reset_to_last_published: "Restablecer la página a la última publicada"
     preview: "Portal de vista previa"

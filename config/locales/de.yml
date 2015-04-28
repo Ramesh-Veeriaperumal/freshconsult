@@ -1165,8 +1165,8 @@ de:
         feedbackwidget_text_button: Textschaltfläche
         feedbackwidget_image_button: Bildschaltfläche
         feedbackwidget_button_text_placeholder: Support
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Schaltfläche anpassen"
         feedbackwidget_form_customization: "Formular anpassen"
         feedbackwidget_embedded_code: "Code des eingebetteten Widgets"
@@ -3573,7 +3573,7 @@ de:
     inactive_info1: "Bislang wurde keine Support-E-Mail-Adresse verifiziert. Bitte bestätigen Sie zumindest eine Adresse"
     info14: "Jede an diese Adresse geschickte E-Mail wird in ein Ticket umgewandelt"
     info4: "<strong>HINWEIS:</strong> Falls Sie für mehrere Produkte verschiedene E-Mail-Adressen nutzen möchten, können Sie diese <a href='{{products_path}}'>hier</a> hinzufügen."
-    spf_info: "Antwort-E-Mails von Freshdesk verwenden automatisch Ihre entsprechende Support-E-Mail-ID als Absender-E-Mail-Adresse. Die Erstellung eines<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF-Datensatzes</a> in Ihrer DNZ-Zonendatei sichert eine ordnungsgemäße Zustellung von E-Mails."
+    spf_info: "Antwort-E-Mails von Freshdesk verwenden automatisch Ihre entsprechende Support-E-Mail-ID als Absender-E-Mail-Adresse. Die Erstellung eines<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF-Datensatzes</a> in Ihrer DNZ-Zonendatei sichert eine ordnungsgemäße Zustellung von E-Mails."
     reply_email: "Ihre Support-E-Mail-Adresse"
     unverified_info1: "Bitte aktivieren Sie diese E-Mail-Adresse, indem Sie auch den Verifizierungslink in Ihrem Posteingang klicken."
     inactive_info2: "Bis dahin wird die standardmäßige E-Mail-Adresse „%{default_email}“ als Antwortadresse verwendet."
@@ -3581,8 +3581,8 @@ de:
     helpcard:
       tour1: "Hilfe bei der Einrichtung meiner Support-E-Mail"
       tour2: "Hilfe bei der Konfiguration mehrerer Postfächer"
-      info5: "Ihre standardmäßige Support-E-Mail-Adresse lautet <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Eine an diese Adresse geschickte E-Mail wird automatisch in ein Ticket umgewandelt, mit dem Sie arbeiten können."
-      info19: "Sie können Ihr Freshdesk-Konto konfigurieren, um eine Support-E-Mail in Ihrer eigenen Domäne zu verwenden (z. B. support@meinefirma.com), indem Sie E-Mails von dieser Adresse an <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a> weiterleiten."
+      info5: "Ihre standardmäßige Support-E-Mail-Adresse lautet <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Eine an diese Adresse geschickte E-Mail wird automatisch in ein Ticket umgewandelt, mit dem Sie arbeiten können."
+      info19: "Sie können Ihr Freshdesk-Konto konfigurieren, um eine Support-E-Mail in Ihrer eigenen Domäne zu verwenden (z. B. support@meinefirma.com), indem Sie E-Mails von dieser Adresse an <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a> weiterleiten."
       edit_info: "Um ein neues Support-E-Mail-Postfach einzurichten, klicken Sie in den globalen E-Mail-Einstellungen auf „Bearbeiten“."
       info20: "Mehrere Postfächer verwenden"
       info21: "Sie können unbegrenzt viele eingehende und ausgehende Postfächer (wie info@ihrefirma.com, sales@ihrefirma.com usw.) in Ihrem Helpdesk einrichten. Außerdem können Sie Freshdesk so einrichten, dass E-Mails eines bestimmten Postfachs einer bestimmten Gruppe zugewiesen werden."

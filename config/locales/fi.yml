@@ -1164,8 +1164,8 @@ fi:
         feedbackwidget_text_button: "Text button"
         feedbackwidget_image_button: Kuvanappi
         feedbackwidget_button_text_placeholder: Tuki
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Kustomoi nappi"
         feedbackwidget_form_customization: "Kustomoi lomake"
         feedbackwidget_embedded_code: "Sulautettu Widget koodi"
@@ -2254,7 +2254,6 @@ fi:
     cancel:
       cancel_account: "Poista Freshdesk-tili"
       info_text: "Please take a moment to tell us why you want to cancel your account. Perhaps we could still help..."
-      goback: "&#x2190; Takaisin tiliasetuksiin"
       delete_my_account: "Poista tilini."
       deleting_account: Peruutetaan
       confirm_and_cancel_my_account: "Vahvistan, että tahdon poistaa tilini ja siihen liitetyt tiedot"
@@ -3571,7 +3570,7 @@ fi:
     inactive_info1: "Kaikki sähköpostiosoitteesi ovat vielä vahvistamatta. Ainakin yksi osoite on vahvistettava."
     info14: "Kaikki tähän osoitteeseen lähetetyt sähköpostiviestit muunnetaan tiketeiksi"
     info4: "<strong>Huom!</strong> Jos eri tuotteita varten on oma sähköpostiosoite, voit <a href='{{products_path}}'>lisätä ne täällä</a>."
-    spf_info: "Suurin osa sähköposteistasi toimitetaan kyllä perille, mutta turvataksesi toimituksen sinun tulee luoda <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\"> SPF-tietue </a> sinun DNS-vyöhykkeen tiedostoon (sähköposti omalla domainilla). Tämä auttaa varmistamaan sähköpostien kunnollisen toimituksen."
+    spf_info: "Suurin osa sähköposteistasi toimitetaan kyllä perille, mutta turvataksesi toimituksen sinun tulee luoda <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\"> SPF-tietue </a> sinun DNS-vyöhykkeen tiedostoon (sähköposti omalla domainilla). Tämä auttaa varmistamaan sähköpostien kunnollisen toimituksen."
     reply_email: "Asiakaspalvelun sähköposti"
     unverified_info1: "Vahvistuslinkki on lähetetty tähän sähköpostiosoitteeseen. Sähköpostiosoite tulee käyttöön vasta, kun vahvistusviestiä on klikattu."
     inactive_info2: "Siihen saakka oletusosoitetta \"%{default_email}\" käytetään vastausten lähettämiseen."
@@ -3579,8 +3578,8 @@ fi:
     helpcard:
       tour1: "Auta minua asettamaan tukisähköpostini"
       tour2: "Auta minua konfiguroimaan useita sähköpostilaatikkoja"
-      info5: "Oletustukisähköpostiosoitteesi on <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Kaikki tähän lähetettävät sähköpostit muutetaan automaattisesti tiketeiksi, joiden parissa voit alkaa tekemään töitä."
-      info19: "Voit konfiguroida Freshdesk-tilisi käyttämään tukisähköpostiasi omalla verkkotunnuksellasi, kuten support@mycompany.com, lähettämällä sähköpostiviestit eteenpäin tästä sähköpostiosoitteesta tähän<a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Luodaksesi uuden tukisähköpostilaatikon, klikkaa \"Muokkaa\" painiketta, joka sijaitsee yleisten sähköpostiasetuksien alla."
+      info5: "Oletustukisähköpostiosoitteesi on <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Kaikki tähän lähetettävät sähköpostit muutetaan automaattisesti tiketeiksi, joiden parissa voit alkaa tekemään töitä."
+      info19: "Voit konfiguroida Freshdesk-tilisi käyttämään tukisähköpostiasi omalla verkkotunnuksellasi, kuten support@mycompany.com, lähettämällä sähköpostiviestit eteenpäin tästä sähköpostiosoitteesta tähän<a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Luodaksesi uuden tukisähköpostilaatikon, klikkaa \"Muokkaa\" painiketta, joka sijaitsee yleisten sähköpostiasetuksien alla."
       edit_info: "Luodaksesi uuden tukisähköpostilaatikon, klikkaa \"Muokkaa\" yleiset sähköpostiasetukset osiossa."
       info20: "Käytetään useita sähköpostilaatikkoja"
       info21: "Voit lisätä käyttötuessasi rajattoman määrän sähköpostilaatikkoja tuleville ja lähteville viesteille (esim. info@yourcompany.com, sales@yourcompany.com, jne.). Voit jopa asettaa Freshdeskin automaattisesti osoittamaan sähköpostit jokaisesta sähköpostilaatikosta tietylle ryhmälle."
@@ -5754,9 +5753,9 @@ fi:
     reset_all_confirm_message: "Tämä toiminto resetoi kaikki mukautuksesi Fresdeskin oletustilaan. Oletko varma, että haluat jatkaa?"
     publish_changes: "Tallenna ja julkaise"
     title: "Portaalin mukautus \"%{portal}\""
-    color_and_font_header: "Väri &amp;amp;amp; fontti"
+    color_and_font_header: "Väri &amp; fontti"
     css_header: Tyylisivu
-    layout_and_pages_header: "Asettelu &amp;amp;amp; sivut"
+    layout_and_pages_header: "Asettelu &amp; sivut"
     editing: Muokataan
     reset_to_last_published: "Resetoi sivu viimeisimpään julkaisumuotoon"
     preview: "Esikatsele portaalia"

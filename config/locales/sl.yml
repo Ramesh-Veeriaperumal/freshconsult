@@ -1187,8 +1187,8 @@ sl:
         feedbackwidget_text_button: "Text button"
         feedbackwidget_image_button: "Image button"
         feedbackwidget_button_text_placeholder: Podpora
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Prilagoditev Gumba"
         feedbackwidget_form_customization: "Prilagoditev forme"
         feedbackwidget_embedded_code: "Vstavljena koda modula"
@@ -3624,7 +3624,7 @@ sl:
     inactive_info1: "Vsi e-poštni naslovi podpore so še nepotrjeni, potrditi morate vsaj enega"
     info14: "Vsa e-pošta na tem naslovu bo spremenjena v zahtevke"
     info4: "<strong> OPOZORILO: </strong> Če imate več e-poštnih naslovov za podporo več produktov <a href='{{products_path}}'> jih lahko dodalte tu </a>."
-    spf_info: "Večino e-poštnih sporočil bo dostavljeno brez težav, da boste sigurni kreirajte <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\"> SPF zapis </a> v vaši DNS datoteki - če uporabljate e-pošto s svojo domeno. To zagotovi pravilno dostavo e-poštnih sporočil."
+    spf_info: "Večino e-poštnih sporočil bo dostavljeno brez težav, da boste sigurni kreirajte <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\"> SPF zapis </a> v vaši DNS datoteki - če uporabljate e-pošto s svojo domeno. To zagotovi pravilno dostavo e-poštnih sporočil."
     reply_email: "E-pošta vaše podpore"
     unverified_info1: "poslali smo vam e-pošto z verifikacijsko povezavo.  Po verifikaciji te e-pošte bo e-pošta vaše podpore postala aktivna "
     inactive_info2: "Do takrat bo za odgovore v uporabi privzeta e-pošta %{default_email}"
@@ -3632,8 +3632,8 @@ sl:
     helpcard:
       tour1: "Pomoč pri nastavitvi e-pošte podpore"
       tour2: "Pomoč pri nastavitvi več epoštnih predalov"
-      info5: "Privzeta epošta vaše podpore je <a target=\"_blank\" href=\"{{solution_url}}\"> support@demo.freshdesk.com</a>. Vsako sporočilo poslano na ta naslov bo avtomatično spremenilo v zahtevek, ki ga agenti ustrezno obravnavajo."
-      info19: "Freshdesk račun lahko nastavite tako, da uporabite epoštni naslov podpore z vašo domeno. npr, support@mycompany.com tako da preusmerite epoštna sporočila na <a target=\"_blank\" href=\"{{solution_url}}\">demo.freshdesk.com</a>. Za izdelavo novega epoštnega naslova podpore kliknite ne \"Uredi\" v globalnih nastavitvah epošte."
+      info5: "Privzeta epošta vaše podpore je <a target=\"_blank\" href=\"%{solution_url}\"> support@demo.freshdesk.com</a>. Vsako sporočilo poslano na ta naslov bo avtomatično spremenilo v zahtevek, ki ga agenti ustrezno obravnavajo."
+      info19: "Freshdesk račun lahko nastavite tako, da uporabite epoštni naslov podpore z vašo domeno. npr, support@mycompany.com tako da preusmerite epoštna sporočila na <a target=\"_blank\" href=\"%{solution_url}\">demo.freshdesk.com</a>. Za izdelavo novega epoštnega naslova podpore kliknite ne \"Uredi\" v globalnih nastavitvah epošte."
       edit_info: "To create a new support email box, click “Edit” under global email settings."
       info20: "Uporaba več epošnih predalov"
       info21: "V vašo podporo lahko dodate neomejeno število epoštnih naslovov - vhodnih in izhodnih (npr. info@yourcompany.com, prodaja@yourcompany.com, itd.). Nastavite lahko tudi, da Freshdesk avtomatično dodeli epošna sporočila vsakega predala specifični skupini."
@@ -5817,9 +5817,9 @@ sl:
     reset_all_confirm_message: "To bo resetiralo vse kar ste nastavili na privzeto nastavitev Freshdeska. Res želite nadaljevati?"
     publish_changes: "Shrani in objavi"
     title: "Prilagoditev portala \"%{portal}\""
-    color_and_font_header: "Barva &amp;amp; font"
+    color_and_font_header: "Barva &amp; font"
     css_header: Stylesheet
-    layout_and_pages_header: "Razporeditev &amp;amp; strani"
+    layout_and_pages_header: "Razporeditev &amp; strani"
     editing: Urejanje
     reset_to_last_published: "Resetiraj stran na zadnje objavljeno"
     preview: "Predogled portal"

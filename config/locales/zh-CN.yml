@@ -1165,8 +1165,8 @@ zh-CN:
         feedbackwidget_text_button: 文本按钮
         feedbackwidget_image_button: 图像按钮
         feedbackwidget_button_text_placeholder: 服务支持
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: 自定义按钮
         feedbackwidget_form_customization: 自定义表单
         feedbackwidget_embedded_code: 嵌入式控件代码
@@ -3572,7 +3572,7 @@ zh-CN:
     inactive_info1: 您尚未验证任何服务支持邮箱，必须至少验证其中一个。
     info14: 发送至此邮箱的所有邮件将转为工单
     info4: "<strong>提示：</strong>若使用不同的邮箱地址为不同的产品提供服务支持，<a href='{{products_path}}'>请在此处添加</a>。"
-    spf_info: "从Freshdesk回复邮件将自动使用各自的邮箱ID作为发件人邮箱。在DNS Zone文件中创建一条<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF记录</a>以确保邮件能够正常发送。"
+    spf_info: "从Freshdesk回复邮件将自动使用各自的邮箱ID作为发件人邮箱。在DNS Zone文件中创建一条<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF记录</a>以确保邮件能够正常发送。"
     reply_email: 您的服务支持邮箱
     unverified_info1: 请点击收件箱中的验证链接以激活此邮箱地址。
     inactive_info2: "到时，默认邮箱“%{default_email}”将作为回复到邮箱使用。"
@@ -3580,8 +3580,8 @@ zh-CN:
     helpcard:
       tour1: 帮助我配置服务支持邮箱
       tour2: 帮助我配置多个邮箱
-      info5: "您的缺省服务支持邮箱地址是<a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>。发送至此邮箱的所有邮件将自动转为工单。"
-      info19: "您可以配置Freshdesk账号，采用使用公司域名的服务支持邮箱，例如support@mycompany.com，将来自此邮箱的邮件转发至<a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>。"
+      info5: "您的缺省服务支持邮箱地址是<a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>。发送至此邮箱的所有邮件将自动转为工单。"
+      info19: "您可以配置Freshdesk账号，采用使用公司域名的服务支持邮箱，例如support@mycompany.com，将来自此邮箱的邮件转发至<a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>。"
       edit_info: 点击全局邮箱设置下的“编辑”，创建新的服务支持邮箱。
       info20: 采用多个邮箱
       info21: "您可以在帮助台中添加多个收信和发信邮箱(如info@yourcompany.com，sales@yourcompany.com, 等等)。并配置Freshdesk自动把不同邮箱收到的邮件指派给不同的组。"
@@ -5760,9 +5760,9 @@ zh-CN:
     reset_all_confirm_message: 此项操作将重置Freshdesk，所有设置将被恢复到初始设置。确定继续吗？
     publish_changes: 保存并发布
     title: "门户定制\"%{portal}\""
-    color_and_font_header: "颜色 &amp;amp; 字体"
+    color_and_font_header: "颜色 &amp; 字体"
     css_header: 样式表
-    layout_and_pages_header: "布局 &amp;amp; 页面"
+    layout_and_pages_header: "布局 &amp; 页面"
     editing: 正在编辑
     reset_to_last_published: 重置到上一次发布的版本
     preview: 预览门户

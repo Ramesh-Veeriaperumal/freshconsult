@@ -1165,8 +1165,8 @@ ja-JP:
         feedbackwidget_text_button: テキストボタン
         feedbackwidget_image_button: 画像ボタン
         feedbackwidget_button_text_placeholder: サポート
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: ボタンをカスタマイズ
         feedbackwidget_form_customization: フォームをカスタマイズ
         feedbackwidget_embedded_code: 埋め込みウィジェットコード
@@ -3572,7 +3572,7 @@ ja-JP:
     inactive_info1: 全てのサポートメールはまだ認証されていません、少なくとも１つのサポートメールを認証しなければなりません
     info14: このアドレスに送信された全てのメールはチケットに変換されます
     info4: "<strong>注意:</strong> 複数のプロダクトに対して複数のメールアドレスを設定している場合は、 <a href='{{products_path}}'>ここで追加できます</a>。"
-    spf_info: "ほとんどのメールは to be on the safer side you must create an <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email."
+    spf_info: "ほとんどのメールは to be on the safer side you must create an <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email."
     reply_email: サポートメール
     unverified_info1: 受信箱にある認証リンクをクリックし、このメールをアクティベートしてください。
     inactive_info2: "それまでは、デフォルトメール \"%{default_email}\" が送信先メールアドレスとして使用されます。"
@@ -3580,8 +3580,8 @@ ja-JP:
     helpcard:
       tour1: サポートメールを設定するためのヘルプが必要です
       tour2: 複数メールボックスをコンフィギュアするためのヘルプが必要です
-      info5: "あなたのデフォルトサポートメールアドレスは<a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}です</a>。ここに送信されるメールはどれもあなたが取り組み始めることができるチケットに自動的に変換されます。"
-      info19: "Freshdeskアカウントをコンフィギュアして、このアドレスからのメールを<a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}に転送することにより、support@mycompany.comなど独自のドメインでサポートメールアドレスを使用することができます</a>。"
+      info5: "あなたのデフォルトサポートメールアドレスは<a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}です</a>。ここに送信されるメールはどれもあなたが取り組み始めることができるチケットに自動的に変換されます。"
+      info19: "Freshdeskアカウントをコンフィギュアして、このアドレスからのメールを<a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}に転送することにより、support@mycompany.comなど独自のドメインでサポートメールアドレスを使用することができます</a>。"
       edit_info: 新規サポートメールボックスを作成するには、グローバルメール設定で「編集」をクリックします。
       info20: 複数メールボックスの使用
       info21: ヘルプデスクの送信用および受信用メールボックス（info@yourcompany.com、sales@yourcompany.comなど）は無制限に追加可能です。各メールボックスのメールを自動的に特定のグループに割り当てるようにFreshdeskを設定することもできます。

@@ -1166,8 +1166,8 @@ ca:
         feedbackwidget_text_button: "Text del botó"
         feedbackwidget_image_button: "Imatge del botó"
         feedbackwidget_button_text_placeholder: Suport
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Personalitza botó"
         feedbackwidget_form_customization: "Personalitza formulari"
         feedbackwidget_embedded_code: "Codi incrustat giny"
@@ -3578,7 +3578,7 @@ ca:
     info4: "<strong>NOTA:</strong> Si tens més d'una adreça per donar suport a més d'un producte, <a href='{{products_path}}'>els pots afegir aquí</a>."
     spf_info: |
         Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an
-        <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">
+        <a target="_blank" title="Learn more about creating SPF records" href="%{solution_url}">
         SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: "El teu correu de suport"
     unverified_info1: "Si us plau, activa aquest correu electrònic fent clic a l'enllaç de verificació a la teva safata d'entrada."

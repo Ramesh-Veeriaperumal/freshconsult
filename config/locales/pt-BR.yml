@@ -1165,8 +1165,8 @@ pt-BR:
         feedbackwidget_text_button: "Botão de texto"
         feedbackwidget_image_button: "Botão de imagem"
         feedbackwidget_button_text_placeholder: Suporte
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Botão personalizado"
         feedbackwidget_form_customization: "Formulário personalizado"
         feedbackwidget_embedded_code: "Código do widget incorporado"
@@ -3578,7 +3578,7 @@ pt-BR:
     inactive_info1: "Nenhum de seus e-mails de suporte foi verificado. Você deve verificar pelo menos um endereço de e-mail de suporte."
     info14: "Qualquer e-mail enviado para este endereço será convertido em um ticket"
     info4: "<strong>OBS.:</strong> Se você tiver vários endereços de e-mail para oferecer suporte a diversos produtos, <a href='{{products_path}}'>poderá adicioná-los aqui</a>."
-    spf_info: "Responder a e-mails usando o Freshdesk usará automaticamente suas IDs de e-mail de suporte como o endereço De. Criar um <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">registro SPF</a> em seu arquivo da zona do DNS garantirá a entrega correta dos e-mails."
+    spf_info: "Responder a e-mails usando o Freshdesk usará automaticamente suas IDs de e-mail de suporte como o endereço De. Criar um <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">registro SPF</a> em seu arquivo da zona do DNS garantirá a entrega correta dos e-mails."
     reply_email: "Seu e-mail de suporte"
     unverified_info1: "Ative este e-mail, clicando no link de verificação em sua caixa de entrada."
     inactive_info2: "Até lá, o e-mail padrão \"%{default_email}\" será usado como o e-mail para respostas."
@@ -3586,8 +3586,8 @@ pt-BR:
     helpcard:
       tour1: "Ajude-me a configurar meu e-mail de suporte"
       tour2: "Ajude-me a configurar múltiplas caixas de e-mail"
-      info5: "Seu endereço de e-mail de suporte padrão é <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Qualquer e-mail enviado para esse endereço será automaticamente convertido em um ticket no qual você pode trabalhar."
-      info19: "Você pode configurar sua conta do Freshdesk para usar um e-mail de suporte com seu próprio domínio, como suporte@minhaempresa.com encaminhando e-mails desse endereço para <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Seu endereço de e-mail de suporte padrão é <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Qualquer e-mail enviado para esse endereço será automaticamente convertido em um ticket no qual você pode trabalhar."
+      info19: "Você pode configurar sua conta do Freshdesk para usar um e-mail de suporte com seu próprio domínio, como suporte@minhaempresa.com encaminhando e-mails desse endereço para <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: " Para criar uma nova caixa de e-mails de suporte, clique em “Editar” nas configurações globais de e-mail."
       info20: "Utilizando múltiplas caixas de e-mail"
       info21: "Você pode adicionar um número ilimitado caixas de e-mail de entrada e saída (como vendas@suaempresa.com, info@suaempresa.com, etc.) no seu helpdesk. também é possível configurar o Freshdesk para atribuir automaticamente os e-mails de cada caixa de e-mail de um grupo específico."

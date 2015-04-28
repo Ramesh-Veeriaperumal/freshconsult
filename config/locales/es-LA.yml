@@ -1162,8 +1162,8 @@ es-LA:
         feedbackwidget_text_button: "Botón de texto"
         feedbackwidget_image_button: "Botón de imagen"
         feedbackwidget_button_text_placeholder: Soporte
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Personalizar botón"
         feedbackwidget_form_customization: "Personalizar formulario"
         feedbackwidget_embedded_code: "Código de widget insertado"
@@ -3570,7 +3570,7 @@ es-LA:
     inactive_info1: "Todos tus correos electrónicos de soporte todavía están sin verificar. Debes verificar al menos un correo electrónico de soporte."
     info14: "Cualquier correo electrónico enviado a esta dirección se convertirá en ticket."
     info4: "<strong>NOTA:</strong> Si tienes varias direcciones de correo electrónico para brindar soporte a varios productos, <a href='{{products_path}}'>puedes agregarlas aquí</a>."
-    spf_info: "Los correos electrónicos de respuesta de Freshdesk usarán automáticamente tus respectivos ID de correo electrónico de soporte como la dirección De. Para garantizar la entrega adecuada de los correos electrónicos, crea un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">registro SPF</a> en el archivo de zona DNS."
+    spf_info: "Los correos electrónicos de respuesta de Freshdesk usarán automáticamente tus respectivos ID de correo electrónico de soporte como la dirección De. Para garantizar la entrega adecuada de los correos electrónicos, crea un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">registro SPF</a> en el archivo de zona DNS."
     reply_email: "Tu correo electrónico de soporte"
     unverified_info1: "Haz clic en el vínculo de verificación de tu buzón de entrada para activar este correo electrónico."
     inactive_info2: "Hasta entonces, se usará el correo electrónico predeterminado \"%{default_email}\" como correo electrónico de respuesta."
@@ -3578,8 +3578,8 @@ es-LA:
     helpcard:
       tour1: "Ayúdame a configurar mi correo electrónico de soporte"
       tour2: "Ayúdame a configurar varios buzones"
-      info5: "Tu dirección de correo electrónico de soporte predeterminada es <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. Todos los correos electrónicos enviados aquí se convierten automáticamente en un ticket en el que puedes comenzar a trabajar."
-      info19: "Puedes configurar tu cuenta de Freshdesk para usar un correo electrónico de soporte en tu propio dominio, como soporte@miempresa.com mediante el reenvío de mensajes de correo electrónico desde esta dirección a <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>."
+      info5: "Tu dirección de correo electrónico de soporte predeterminada es <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Todos los correos electrónicos enviados aquí se convierten automáticamente en un ticket en el que puedes comenzar a trabajar."
+      info19: "Puedes configurar tu cuenta de Freshdesk para usar un correo electrónico de soporte en tu propio dominio, como soporte@miempresa.com mediante el reenvío de mensajes de correo electrónico desde esta dirección a <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
       edit_info: "Para crear un nuevo buzón de correo electrónico de soporte, haz clic en “Editar” en la configuración global de correo electrónico."
       info20: "Uso de varios buzones"
       info21: "Puedes agregar una cantidad ilimitada de buzones de correo entrante y saliente (como info@tuempresa.com, ventas@tuempresa.com, etc.) en tu helpdesk. Incluso puedes configurar Freshdesk para que asigne automáticamente mensajes de correo electrónico de cada buzón a un grupo específico."

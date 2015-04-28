@@ -1190,8 +1190,8 @@ uk:
         feedbackwidget_text_button: "Кнопка з текстом"
         feedbackwidget_image_button: "Кнопка із зображенням"
         feedbackwidget_button_text_placeholder: Підтримка
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Налаштувати кнопку"
         feedbackwidget_form_customization: "Налаштувати форму"
         feedbackwidget_embedded_code: "Код вбудованого віджета"
@@ -3627,7 +3627,7 @@ uk:
     inactive_info1: "Всі ваші електронні листи в службу підтримки досі не підтверджені. Підтвердіть хоча б одне з них."
     info14: "Всі електронні листи, відправлені на цю адресу електронної пошти, будуть перетворюватися в заявки"
     info4: "<strong>ПРИМІТКА.</strong> Якщо у вас є кілька адрес електронної пошти для підтримки декількох продуктів, <a href='{{products_path}}'> ви можете додати їх тут </a>."
-    spf_info: "Усі ваши листи дійдуть до адресата, але для більшої безпеки створіть <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">запис в інфраструктурі політики відправників (SPF) </a> у файлі зони DNS, якщо використовуєте пошту в рамках власного домену. Це покращить якість доставки листів."
+    spf_info: "Усі ваши листи дійдуть до адресата, але для більшої безпеки створіть <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">запис в інфраструктурі політики відправників (SPF) </a> у файлі зони DNS, якщо використовуєте пошту в рамках власного домену. Це покращить якість доставки листів."
     reply_email: "Ваш електронний лист в службу підтримки"
     unverified_info1: "Активуйте цю адресу електронної пошти, перейшовши за посиланням підтверждення у теці \"Вхідні\" вашої пошти."
     inactive_info2: "До тих пір в якості адреси електронної пошти для відповідей буде використовуватися за замовчуванням \"%{default_email}\"."
@@ -3636,7 +3636,7 @@ uk:
       tour1: "Допомога в налаштуванні електронної пошти служби підтримки"
       tour2: "Допомога в налаштуванні декількох поштових скриньок"
       info5: "Your default support email address is <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Any email sent here gets automatically converted into a ticket that you can get working on."
-      info19: "Можна налаштувати обліковий запис Freshdesk таким чином, щоб використовувалася адреса електронної пошти на власному домені, наприклад підтримка@моякомпанія.com. Для цього встановіть переадресацію на <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>"
+      info19: "Можна налаштувати обліковий запис Freshdesk таким чином, щоб використовувалася адреса електронної пошти на власному домені, наприклад підтримка@моякомпанія.com. Для цього встановіть переадресацію на <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>"
       edit_info: "Щоб створити нову скриньку електронної пошти служби підтримки, в загальних налаштуваннях електронної пошти натисніть «Редагувати»."
       info20: "Використання декількох поштових скриньок"
       info21: "Можна створювати необмежену кількість поштових скриньок служби підтримки (наприклад, інфо@вашакомпанія.com, продажі@вашакомпанія.com і т. д.). Крім того, в Freshdesk можна налаштувати автоматичне призначення електронних листів з кожного ящика певній групі."
@@ -5816,9 +5816,9 @@ uk:
     reset_all_confirm_message: "Все зміни будуть скинуті, після чого будуть відновлені налаштування Freshdesk за замовчуванням. Дійсно продовжити?"
     publish_changes: "Save and Publish"
     title: "Portal customization \"%{portal}\""
-    color_and_font_header: "Color &amp;amp; font"
+    color_and_font_header: "Color &amp; font"
     css_header: Stylesheet
-    layout_and_pages_header: "Layout &amp;amp; pages"
+    layout_and_pages_header: "Layout &amp; pages"
     editing: Editing
     reset_to_last_published: "Reset page to last published"
     preview: "Preview portal"

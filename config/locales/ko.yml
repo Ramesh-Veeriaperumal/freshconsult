@@ -1162,8 +1162,8 @@ ko:
         feedbackwidget_text_button: "텍스트 버튼"
         feedbackwidget_image_button: "이미지 버튼"
         feedbackwidget_button_text_placeholder: 지원
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "버튼 사용자정의"
         feedbackwidget_form_customization: "양식 사용자정의"
         feedbackwidget_embedded_code: "임베디드 위젯 코드"
@@ -3569,7 +3569,7 @@ ko:
     inactive_info1: "귀하의 지원 이메일 모두가 아직 검증되지 않았습니다. 적어도 하나의 지원 이메일을 검증해야 합니다."
     info14: "이 주소로 전송된 모든 이메일은 티켓으로 변환됩니다."
     info4: "<strong>참고:</strong> 다수의 제품을 지원하기 위해 여러 개의 이메일 주소를 가지고 있는 경우 <a href='{{products_path}}'>여기에 추가할 수 있습니다</a>."
-    spf_info: "Freshdesk의 응답 이메일은 자동으로 여러분의 해당 지원 이메일 ID를 보낸 사람 이메일 주소로 사용합니다. DNS 영역 파일에 <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF 레코드</a> 를 생성하여 올바른 이메일 전송을 보장할 수 있습니다."
+    spf_info: "Freshdesk의 응답 이메일은 자동으로 여러분의 해당 지원 이메일 ID를 보낸 사람 이메일 주소로 사용합니다. DNS 영역 파일에 <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF 레코드</a> 를 생성하여 올바른 이메일 전송을 보장할 수 있습니다."
     reply_email: "지원 이메일"
     unverified_info1: "받은 편지함의 검증 링크를 클릭하여 이 이메일을 활성화하십시오."
     inactive_info2: "그때까지는 기본 이메일인 \"%{default_email}\"이(가) 회신 이메일로 사용됩니다."
@@ -3577,8 +3577,8 @@ ko:
     helpcard:
       tour1: "지원 이메일을 설정하는 방법"
       tour2: "다수의 편지함을 설정하는 방법"
-      info5: "기본 지원 이메일 주소는 <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>입니다. 이곳으로 전송되는 이메일은 모두 업무에 사용할 수 있는 티켓으로 자동 변환됩니다."
-      info19: "고유의 도메인(예: support@mycompany.com)에서 지원 이메일을 사용하도록 Freshdesk 계정을 구성할 수 있습니다. 이 주소로 오는 이메일을 <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>(으)로 전달하면 됩니다."
+      info5: "기본 지원 이메일 주소는 <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>입니다. 이곳으로 전송되는 이메일은 모두 업무에 사용할 수 있는 티켓으로 자동 변환됩니다."
+      info19: "고유의 도메인(예: support@mycompany.com)에서 지원 이메일을 사용하도록 Freshdesk 계정을 구성할 수 있습니다. 이 주소로 오는 이메일을 <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>(으)로 전달하면 됩니다."
       edit_info: "새로운 지원 이메일 상자를 생성하려면 전역 이메일 설정 아래에서 \"편집\"을 클릭하십시오."
       info20: "다수의 편지함 사용하기"
       info21: "헬프데스크에 수신 및 발신 편지함을 제한 없이 추가할 수 있습니다(예: info@yourcompany.com, sales@yourcompany.com 등). 각 편지함의 이메일을 자동으로 특정 그룹에 할당하도록 Freshdesk를 설정할 수도 있습니다."

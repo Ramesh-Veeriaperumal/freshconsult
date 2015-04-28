@@ -1167,8 +1167,8 @@ tr:
         feedbackwidget_text_button: "Metin butonu"
         feedbackwidget_image_button: "Resim Butonu"
         feedbackwidget_button_text_placeholder: Destek
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Butonu özelleştir."
         feedbackwidget_form_customization: "Formu özelleştir."
         feedbackwidget_embedded_code: "Bastırılmış Buton Kodu"
@@ -5762,9 +5762,9 @@ tr:
     reset_all_confirm_message: "Bu eylem bütün özelleştirmelerinizi sıfırlayacak ve freshdesk varsayılan ayarlarına çevirecektir. Devam etmek istediğinize emin misiniz?"
     publish_changes: "Kaydet ve Yayınla"
     title: "Portal Özelleştirme \"%{portal}\""
-    color_and_font_header: "Renk &amp;amp; Yazı Tipi"
+    color_and_font_header: "Renk &amp; Yazı Tipi"
     css_header: "Stil sayfası"
-    layout_and_pages_header: "Anahat &amp;amp; Sayfalar"
+    layout_and_pages_header: "Anahat &amp; Sayfalar"
     editing: Düzenleniyor
     reset_to_last_published: "Yayınlanan son sayfayı sıfırla"
     preview: "Ön izleme portalı"
