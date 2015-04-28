@@ -13,8 +13,8 @@ module ApiError
 
     attr_accessor :message
 
-    def initialize(value)
-      @message = I18n.t('api.error_messages.#{value}')
+    def initialize(value, params_hash = {})
+      @message = I18n.t("api.error_messages.#{value.to_s}", params_hash)
     end
 	end
 
@@ -28,5 +28,14 @@ module ApiError
       super(value)
     end
 	end
+
+  class RequestError < BaseError
+
+    attr_accessor :code
+    def initialize(type, params_hash = {})
+      super(type, params_hash)
+      @code = type.to_s
+    end
+  end
 
 end

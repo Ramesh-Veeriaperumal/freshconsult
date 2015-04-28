@@ -3,7 +3,7 @@ Helpkit::Application.routes.draw do
   api_routes = Proc.new do
     scope :format => true, :constraints => { :format => 'json' } do
       namespace :api_discussions, :path => "discussions" do
-        resources :categories, :except => [:new, :edit]
+        resources :categories, :except => [:new, :edit, :show]
       end
     end
   end

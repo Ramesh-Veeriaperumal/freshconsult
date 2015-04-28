@@ -128,9 +128,7 @@ module Helpkit
     # TODO-RAILS3 need to rewritten all lib files and adding requires if need to make it thread safe
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
-    config.autoload_paths += Dir["#{config.root}/api/**"]
-    config.autoload_paths += Dir["#{config.root}/api/app/controllers/concerns"]
-    config.autoload_paths += Dir["#{config.root}/api/app/controllers/validations"]
+    config.autoload_paths += Dir["#{config.root}/api/**/*"]
     # config.eager_load_paths += Dir["#{config.root}/lib/"]
 
 
