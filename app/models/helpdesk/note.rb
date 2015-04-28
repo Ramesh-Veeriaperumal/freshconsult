@@ -280,7 +280,6 @@ class Helpdesk::Note < ActiveRecord::Base
   protected
 
     def send_reply_email  
-      add_cc_email     
       if fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
