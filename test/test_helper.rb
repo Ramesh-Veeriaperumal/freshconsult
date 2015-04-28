@@ -4,8 +4,9 @@ require "rails/test_help"
 require "minitest/rails"
 require 'authlogic/test_case'
 require "minitest/pride"
+require "minitest/reporters"
 
-Dir["/Users/user/git/helpkit/spec/support/*.rb"].each {|file| require file}
+Dir["#{Rails.root}/spec/support/*.rb"].each {|file| require file}
 include AccountHelper
 include UsersHelper
 include ControllerHelper
@@ -18,6 +19,8 @@ RIAK_ENABLED = false
 
 DatabaseCleaner.clean_with(:truncation,
                                  {:pre_count => true, :reset_ids => false})
+
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new]
 $redis_others.flushall
 
 class ActiveSupport::TestCase

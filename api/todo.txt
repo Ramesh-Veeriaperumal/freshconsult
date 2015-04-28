@@ -1,5 +1,4 @@
 1. Have to take a call whether to include custom_code in base error class based on forthcoming error classess
-2. Multijson parse error handling
 3. Rescue 500
 4. APiApplication controller refactoring
 5. caching in view
@@ -15,3 +14,6 @@
 Breaking changes in existing APIs
 1. Account suspended
 2. 
+
+completed:
+1.Multijson parse error handling

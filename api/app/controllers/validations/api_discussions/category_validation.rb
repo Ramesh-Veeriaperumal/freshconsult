@@ -6,8 +6,8 @@ module ApiDiscussions
     validates_presence_of :name  
 
     def initialize(params={})
-      @name  = params["forum_category"]["name"]
-      @description = params["forum_category"]["description"]
+      @name  = params["name"]
+      @description = params["description"]
     end
  	end
 end

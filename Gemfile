@@ -226,6 +226,7 @@ group :test do
   gem "simplecov-rcov"
   gem "rubocop-checkstyle_formatter"
   gem "minitest-rails", "~> 1.0"
+  gem "minitest-reporters"
 end
 
 # group :development, :assets do

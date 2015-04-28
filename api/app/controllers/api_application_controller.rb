@@ -7,6 +7,10 @@ class ApiApplicationController < ApplicationController
   rescue_from ActionController::UnpermittedParameters, :with => :invalid_field_handler
   rescue_from ActionController::ParameterMissing, :with => :missing_field_handler
 
+  DEFAULT_PAGINATE_OPTIONS = {
+      :per_page => 30,
+      :page => 1
+  }
 
   def latest_version
     response.headers["Latest-Version"] = "2"
@@ -23,7 +27,18 @@ class ApiApplicationController < ApplicationController
   end
 
   def render_400 errors
-    format_error(errors)
-    render :template => '/bad_request_error.json.jbuilder', :status => 400
+    @errors = format_error(errors)
+    render :template => '/bad_request_error', :status => 400
+  end
+
+  def paginate_options
+    options = {}
+    options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > DEFAULT_PAGINATE_OPTIONS[:per_page] ?  DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
+    options[:page] = params[:page] || DEFAULT_PAGINATE_OPTIONS[:page] 
+    options
+  end
+
+  def cname
+    controller_name.singularize
   end
 end

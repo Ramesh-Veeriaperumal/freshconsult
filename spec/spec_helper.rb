@@ -9,6 +9,7 @@ require 'simplecov-rcov'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
 
+
 SimpleCov.start do
   add_filter 'spec/'
   add_filter 'config/'
@@ -26,6 +27,7 @@ SimpleCov.start do
   add_group 'controllers', 'app/controllers'
   add_group 'models', 'app/models'
   add_group 'libs', 'lib/'
+  add_group 'api', 'api/'
   # add_group 'reports', 'reports'
   # add_group 'search', 'search'
 end
@@ -37,6 +39,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::CSVFormatter,
   SimpleCov::Formatter::RcovFormatter,
 ]
+
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,

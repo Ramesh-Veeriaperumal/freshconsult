@@ -8,25 +8,25 @@ module ApiDiscussions
 
 
     def index
-       @categories = scoper.all
+       @categories = scoper.all.paginate(paginate_options)
     end
 
     def create
-      @forum_category = scoper.build(params[:forum_category])
+      @forum_category = scoper.build(params)
       unless @forum_category.save
-        format_error(@forum_category.errors)
-        render :template => '/bad_request_error.json.jbuilder', :status => find_http_error_code(@errors)
+        @errors = format_error(@forum_category.errors)
+        render :template => '/bad_request_error', :status => find_http_error_code(@errors)
       end
     end
 
     private 
 
       def validate_params
-        params.require("forum_category").permit("name", "description")#created_at and updated_at needed for forum categories?
-       	category = ::ApiDiscussions::CategoryValidation.new(params)
+        params[cname].permit("name", "description")#created_at and updated_at needed for forum categories?
+       	category = ::ApiDiscussions::CategoryValidation.new(params[cname])
        	unless category.valid?
-          format_error(category.errors)
-          render :template => '/bad_request_error.json.jbuilder', :status => 400
+          @errors = format_error(category.errors)
+          render :template => '/bad_request_error', :status => 400
         end
       end 
   end
