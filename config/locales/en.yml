@@ -4386,6 +4386,7 @@ en:
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items
+        max_tag_length_msg: "Tag cannot be greater than 32 characters"
         due_date:
           when_is_it_due: When's it Due?
           today: Today
