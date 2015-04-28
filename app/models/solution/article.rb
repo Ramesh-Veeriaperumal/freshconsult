@@ -11,13 +11,14 @@ class Solution::Article < ActiveRecord::Base
   
   serialize :seo_data, Hash
 
+  concerned_with :body_methods
+
   acts_as_voteable
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
   belongs_to_account
   
-  xss_sanitize :only => [:description],  :article_sanitizer => [:description]
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   
   has_many_attachments

@@ -2465,6 +2465,17 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
 
+  create_table "solution_article_bodies", :force => true do |t|
+    t.integer  "account_id",   :limit => 8,          :null => false
+    t.integer  "article_id",   :limit => 8,          :null => false
+    t.text     "description",  :limit => 2147483647
+    t.text     "desc_un_html", :limit => 2147483647
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "solution_article_bodies", ["account_id", "article_id"], :name => 'index_solution_article_bodies_on_account_id_and_article_id', :unique => true
+
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
     t.text     "description",  :limit => 2147483647
@@ -3060,7 +3071,6 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.text     "text_tc02"
   end
 
-  add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
   add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
