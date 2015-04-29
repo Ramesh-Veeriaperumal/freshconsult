@@ -77,6 +77,8 @@ class Helpdesk::BulkReplyTickets
 
     def add_reply ticket
       note = ticket.notes.build note_params(ticket)
+      # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
+      note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note
       send("#{note.source_name}_reply", ticket, note) if note.save_note
     end

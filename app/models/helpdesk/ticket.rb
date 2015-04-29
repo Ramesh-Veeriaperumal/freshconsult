@@ -770,6 +770,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def requester_fb_profile_id
     requester.fb_profile_id
   end
+  
+  # Instance level spam watcher condition
+  # def rl_enabled?
+  #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?
+  # end
 
 
   def search_fields_updated?
@@ -789,4 +794,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       doer_id = Thread.current[:observer_doer_id]
       @model_changes[:responder_id] && responder && responder_id != doer_id && responder != User.current
     end
+
+    # def rl_exceeded_operation
+    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
+    #                                                          :user_id => self.requester_id }
+    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
+    # end
+
 end

@@ -277,6 +277,11 @@ class Helpdesk::Note < ActiveRecord::Base
     self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
   end
   
+  # Instance level spam watcher condition
+  # def rl_enabled?
+  #   self.account.features?(:resource_rate_limit) && !self.instance_variable_get(:@skip_resource_rate_limit)
+  # end
+
   protected
 
     def send_reply_email  
@@ -315,6 +320,13 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
   private
+  
+    # def rl_exceeded_operation
+    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
+    #           :user_id => self.user_id }
+    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
+    # end
+
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end

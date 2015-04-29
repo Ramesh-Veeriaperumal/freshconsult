@@ -22,7 +22,8 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.text     "supported_languages"
     t.integer  "api_limit",                         :default => 1000
     t.integer  "date_format",                       :default => 1
-    t.text     "additional_settings"
+    t.text     "additional_settings",
+    t.text     "resource_rlimit_conf"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"

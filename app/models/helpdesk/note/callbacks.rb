@@ -1,5 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
 
+  # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
+
 	before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
