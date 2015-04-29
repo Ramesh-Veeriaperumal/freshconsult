@@ -1,5 +1,7 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
+  # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
+
 	before_validation :populate_requester, :set_default_values
 
 	before_validation :set_token, on: :create

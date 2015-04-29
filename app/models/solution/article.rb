@@ -25,6 +25,8 @@ class Solution::Article < ActiveRecord::Base
   has_many_cloud_files
   spam_watcher_callbacks 
   
+  rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
+  
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable',
@@ -226,6 +228,11 @@ class Solution::Article < ActiveRecord::Base
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
+  
+  # Instance level spam watcher condition
+  def rl_enabled?
+    self.account.features?(:resource_rate_limit)
+  end
 
   private
   
@@ -241,6 +248,12 @@ class Solution::Article < ActiveRecord::Base
     
     def hit_key
       SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
+    end
+
+    def rl_exceeded_operation
+      key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
+            :user_id => self.user_id }
+      $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
     end
     
 end
