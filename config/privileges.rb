@@ -161,7 +161,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_forums do
     resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
-    resource :"discussions/forum", :only => [:show]
+    resource :"discussions/forum", :only => [:show, :followers]
     resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
@@ -173,6 +173,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/forum", :only => [:index]
     resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
+    resource :monitorship, :only => [:followers]
   end
 
   # create_edit_forum_category

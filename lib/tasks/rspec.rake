@@ -115,7 +115,10 @@ if Rails.env.test?
     "spec/controllers/topics_controller_spec.rb",
     "spec/models/monitorship_spec.rb",
     "spec/controllers/support/discussions/*_spec.rb",
-    "spec/controllers/support/discussions_controller_spec.rb"
+    "spec/controllers/support/discussions_controller_spec.rb",
+    "spec/controllers/monitorships_controller_spec.rb",
+    "spec/mailers/forum_mailer_spec.rb",
+    "spec/mailers/topic_mailer_spec.rb"
   ]
 
   ForumDynamoTests = [

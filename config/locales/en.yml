@@ -1686,6 +1686,9 @@ en:
       agents: Agents
       all: All
       select_company: Select Companies
+    follower:
+      title: "Forum Followers"
+      description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   additional_email_verification: Additional Email Verification
@@ -2605,6 +2608,9 @@ en:
     spam_action: Approve and Publish
     replied_time: " replied, %{time_in_words} ago"
     visible_in: Visible in
+    follower:
+      title: "Topic Followers"
+      description: "Agents added as followers receives email alerts when a new reply is posted"
   activerecord:
     errors:
       models:
@@ -2659,6 +2665,12 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    followers:
+      one: "%{count} Follower"
+      other: "%{count} Followers"
+    followers_title:
+      one: "1 person follows this Forum"
+      other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
       unlike: Unlike
@@ -3934,6 +3946,8 @@ en:
     non_monitor_flash: You have stopped following this %{type}
     follow_title: Follow
     unfollow_title: Unfollow
+    me: Me
+    pick_agents: Add agents
   forums:
     search_all:
       placeholder: Search All Topics

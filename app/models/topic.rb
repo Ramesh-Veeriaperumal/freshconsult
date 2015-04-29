@@ -29,7 +29,9 @@ class Topic < ActiveRecord::Base
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
-  has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
+  has_many :monitors, :through => :monitorships, :source => :user, 
+                      :conditions => ["#{Monitorship.table_name}.active = ?", true],
+                      :order => "#{Monitorship.table_name}.id DESC"
 
   has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
   # previously posts had :dependant => :destroy
@@ -446,6 +448,11 @@ class Topic < ActiveRecord::Base
     TOPIC_HIT_TRACKER % {:account_id => account_id, :topic_id => id }
   end
 
+  def unsubscribed_agents
+    user_ids = monitors.map(&:id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+  
   def assign_default_stamps
     self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
   end

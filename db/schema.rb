@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150316093248) do
+ActiveRecord::Schema.define(:version => 20150408144242) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2115,6 +2115,7 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.integer "portal_id",        :limit => 8
   end
 
+  add_index "monitorships", ["account_id", "monitorable_id", "monitorable_type"], :name => "index_on_monitorships_acc_mon_id_and_type", :length => {"account_id"=>nil, "monitorable_id"=>nil, "monitorable_type"=>5}
   add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
   add_index "monitorships", ["user_id", "account_id"], :name => "index_for_monitorships_on_user_id_account_id"
 

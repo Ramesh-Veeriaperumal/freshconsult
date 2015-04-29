@@ -1573,9 +1573,15 @@ Helpkit::Application.routes.draw do
 
   namespace :discussions do
     resources :forums, :except => :index do
+
       collection do
         put :reorder
       end
+
+      member do
+        get :followers
+      end
+      
     end
 
     match '/topics/:id/page/:page' => 'topics#show'
@@ -1723,6 +1729,10 @@ Helpkit::Application.routes.draw do
 
   get 'discussions/:object/:id/subscriptions/is_following(.:format)', 
     :controller => 'monitorships', :action => 'is_following', 
+    :as => :get_monitorship
+
+  get 'discussions/:object/:id/subscriptions', 
+    :controller => 'monitorships', :action => 'followers', 
     :as => :view_monitorship
 
   match 'discussions/:object/:id/subscriptions/:type(.:format)',
