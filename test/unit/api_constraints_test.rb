@@ -3,24 +3,32 @@ require_relative '../test_helper'
 class ApiConstraintsTest < ActionView::TestCase
 
 
-  test "should return the api constraint object" do
-    assert_not_nil ApiConstraints.new({:version => 1})
+  def test_api_constraint_instance
+    constraint = ApiConstraints.new({:version => "2"})
+    assert_equal constraint.instance_variable_get(:@version), "2"
   end
 
-  test "should return true if accept header version matches with the default version" do
+  def test_accept_header_with_version
     request = ActionDispatch::TestRequest.new
-    request.accept = ["application/vnd.freshdesk.v1"]
-    constraint = ApiConstraints.new({:version => 1})
+    request.accept = ["application/vnd.freshdesk.v2"]
+    constraint = ApiConstraints.new({:version => "2"})
     match = constraint.matches?(request)
     assert_equal match, true
   end
 
-  test "should return false if accept header version doesn't match with the default version" do
+  def test_accept_header_wrong_version
     request = ActionDispatch::TestRequest.new
-    request.accept = ["application/vnd.freshdesk.v2"]
-    constraint = ApiConstraints.new({:version => 1})
+    request.accept = ["application/vnd.freshdesk.v3"]
+    constraint = ApiConstraints.new({:version => "2"})
     match = constraint.matches?(request)
     assert_equal match, false
+  end
+
+  def test_no_accept_header
+    request = ActionDispatch::TestRequest.new
+    constraint = ApiConstraints.new({:version => "2"})
+    match = constraint.matches?(request)
+    assert_nil match
   end
 
 end

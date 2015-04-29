@@ -1,14 +1,15 @@
 module ApiDiscussions::Category
   extend ActiveSupport::Concern
 
-  included do
-  end
+    included do
+      before_filter { |c| c.requires_feature :forums }    
+    end
 
-  protected
+    protected
 
     def scoper
-		current_account.forum_categories
-	end
+  		current_account.forum_categories
+  	end
 
-  private
+    private
 end

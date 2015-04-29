@@ -7062,7 +7062,7 @@ en:
       missing_field: "Mandatory attribute missing"
       access_denied: You are not authorized to perform this action.
       require_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
-      unauthorized_request: You have to be logged in to perform this action.
+      invalid_credentials: You have to be logged in to perform this action.
       unverified_request: You have initiated a unverifiable request.
       account_suspended: Your account has been suspended.
-      day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
+      method_not_allowed: Allowed methods are %{methods}

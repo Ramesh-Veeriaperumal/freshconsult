@@ -5,6 +5,7 @@ source 'http://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rack", "~> 1.4.5"
 gem "rails","3.2.18"
+gem "byebug"
 
 gem "syck", :platform => [:mri_20, :mri_21]
 
@@ -227,6 +228,7 @@ group :test do
   gem "rubocop-checkstyle_formatter"
   gem "minitest-rails", "~> 1.0"
   gem "minitest-reporters"
+  # gem "timecop", "~> 0.7"
 end
 
 # group :development, :assets do

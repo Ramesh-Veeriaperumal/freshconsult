@@ -1,1 +1,1 @@
-json.array! @categories, :name, :description, :position, :created_at, :updated_at
+json.array! @categories, partial: 'api_discussions/categories/forum_category', as: :fc

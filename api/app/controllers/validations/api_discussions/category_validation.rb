@@ -2,12 +2,11 @@ module ApiDiscussions
 	class CategoryValidation
     include ActiveModel::Validations 
 
-    attr_accessor :name, :description
+    attr_accessor :name
     validates_presence_of :name  
 
-    def initialize(params={})
-      @name  = params["name"]
-      @description = params["description"]
+    def initialize(params, cname, item)
+      @name = params[cname]["name"] || item.name
     end
  	end
 end

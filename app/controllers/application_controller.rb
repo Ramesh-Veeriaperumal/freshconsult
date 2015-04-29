@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
         account_suspended_hash = {:account_suspended => true}
 
         format.xml { render :xml => account_suspended_hash.to_xml }
-        format.json { render :json => account_suspended_hash.to_json }
+        format.json { account_suspended_json }
         format.nmobile { render :json => account_suspended_hash.to_json }
         format.js { render :json => account_suspended_hash.to_json }
         format.widget { render :json => account_suspended_hash.to_json }
@@ -190,6 +190,16 @@ class ApplicationController < ActionController::Base
       params.delete('_pjax')
     end
 
+    def day_pass_expired_json
+      @error = ::ApiError::RequestError.new(:access_denied)
+      render :template => '/request_error', :status => 403
+    end
+
+    def account_suspended_json
+      @error = ::ApiError::RequestError.new(:account_suspended)
+      render :template => '/request_error', :status => 403
+    end
+
   private
     def freshdesk_form_builder
       ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
@@ -235,7 +245,8 @@ class ApplicationController < ActionController::Base
           render :json => {:logout => 'success'}.to_json
         }
         format.json{
-          render :json => {:logout => 'success'}
+          @error = ::ApiError::RequestError.new(:unverified_request)
+          render :template => '/request_error', :status => 401
         }
         format.widget{
           render :json => {:logout => 'success'}

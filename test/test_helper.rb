@@ -49,7 +49,7 @@ DatabaseCleaner.clean_with(:truncation,
 Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new]
 $redis_others.flushall
 
-class ActiveSupport::TestCase
+class ActionController::TestCase
 
   def setup
     activate_authlogic
@@ -57,6 +57,8 @@ class ActiveSupport::TestCase
     @account = Account.first
     @account.make_current
     @agent = get_admin
+    session = UserSession.create!(@agent)
+    session.save
     @request.host = @account.full_domain
     @request.env['HTTP_REFERER'] = '/sessions/new'
     @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36\
@@ -65,6 +67,19 @@ class ActiveSupport::TestCase
 
   self.use_transactional_fixtures = false
   fixtures :all
+
+  def parse_json(response)
+    JSON.parse(response)
+    rescue
+  end
+
+  def with_forgery_protection
+    _old_value = @controller.allow_forgery_protection
+    @controller.allow_forgery_protection = true
+    yield
+  ensure
+    @controller.allow_forgery_protection = _old_value
+  end
 end
 
 class ActionDispatch::IntegrationTest
@@ -72,11 +87,19 @@ class ActionDispatch::IntegrationTest
   def setup
     create_test_account
     @account = Account.first
-    @agent = get_admin
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, "X")
+    agent = get_admin
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(agent.single_access_token, "X")
     @headers = {"HTTP_AUTHORIZATION"=>auth, "HTTP_HOST" => "localhost.freshpo.com"}
   end
 
   self.use_transactional_fixtures = false
   fixtures :all
+
+  def with_forgery_protection
+    _old_value = ActionController::Base.allow_forgery_protection
+    ActionController::Base.allow_forgery_protection = true
+    yield
+  ensure
+    ActionController::Base.allow_forgery_protection = _old_value
+  end
 end

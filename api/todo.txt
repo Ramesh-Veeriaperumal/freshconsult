@@ -1,6 +1,6 @@
 1. Have to take a call whether to include custom_code in base error class based on forthcoming error classess
 3. Rescue 500
-4. APiApplication controller refactoring
+4. APiApplication controller, test_helper refactoring
 5. caching in view
 6. pagination in index actions
 7. side loading associations(include as a param in GET requests)
@@ -8,12 +8,16 @@
 9. need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added)
 10. need to add test to keep an eye on controllers filters(test should be written in such a way that it should break if new filters are added)
 11. Do we need to have dependency test for lib/helper methods overriden in our helpers/libs
-
-
+12. 204 for delete?
+13. Enforce ssl
+14. open_forums, have to investigate
+15. api limit in response header
+16. inherit instead of concern?
 
 Breaking changes in existing APIs
 1. Account suspended
-2. 
+2. day pass required
+3. handle unverified request
 
 completed:
 1.Multijson parse error handling
