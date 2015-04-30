@@ -89,11 +89,13 @@
 	</td>
 	<td class="width4">
 		<div align="left">
+		<% unless children %>
 			<% if call.call_cost.blank? %>
 				<b id="ticket_list_count" class="callhistory-payment-loader"></b>
 			<%else%>
 				$<%= call.call_cost %>
 			<%end%>
+		<% end %>
 		</div>
 	</td>
 	<td class="width3">
