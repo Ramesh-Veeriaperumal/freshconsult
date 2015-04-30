@@ -1,12 +1,12 @@
 <% content_for :helpcard do -%><%= render :partial => 'helpnote' %><%- end %>
 <ul class="nav nav-tabs canned-response-tabs">
   <li class="active"><a href="#cannedResponses" id="cannedResponses_btn"><%= t('canned_folders.responses') %></a></li>
-  <%if chat_activated? && current_user.privilege?(:manage_account)%>
+  <%if chat_activated? && current_user.privilege?(:manage_canned_responses)%>
   <li><a href="#chatShortcodes" id="chatShortcodes_btn"><%= t('short_code.title').html_safe%></a></li>
   <%end%>
 </ul>
 <ul class="cr-tab-actions">
-	<%if chat_activated? && current_user.privilege?(:manage_account)%>
+	<%if chat_activated? && current_user.privilege?(:manage_canned_responses)%>
 	<li class="sc-new-btn pull-right hide"><a href="#" id="short_code_add" class="btn btn-primary"><%= t('short_code.addNew').html_safe%></a></li>
   <%end%>
   <li class="cr-new-btn pull-right">
@@ -202,7 +202,7 @@
 			</div>
 		</div>
 	</div>
-	<%if chat_activated? && current_user.privilege?(:manage_account)%>
+	<%if chat_activated? && current_user.privilege?(:manage_canned_responses)%>
   <div class="tab-pane" id="chatShortcodes">
     <ul class="fc-shortcodes" id="short_codes_container">
     </ul>
@@ -265,7 +265,7 @@
 <% end %>
 
 <script src="/javascripts/app/ca_admin_view.js" type="text/javascript"></script>
-<% if chat_activated? && current_user.privilege?(:manage_account)%>
+<% if chat_activated? && current_user.privilege?(:manage_canned_responses)%>
 <%= javascript_include_tag :'cdn/livechat_shortcodes' %>
 	<%= javascript_tag do %>
 	jQuery(document).ready(function(){
