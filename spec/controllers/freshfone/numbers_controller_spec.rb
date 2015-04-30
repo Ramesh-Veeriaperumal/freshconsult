@@ -40,24 +40,12 @@ describe Admin::Freshfone::NumbersController do
     flash[:notice].should be_eql("Number successfully added to your Freshfone account")
   end
 
-  it 'should not create a new address required number on purchase if the provided address has incorrect postal code' do
-    @num = Faker::PhoneNumber.phone_number
-    create_ff_address
-    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
-    params = { :phone_number => @num, :formatted_number => @num, 
-               :region => "Texas", :country => "AU", :type => 'local', :number_sid => "PNUMBER", :address_required => true }
-    ff_address_inspect(params[:country])
-    post :purchase, params
-    json.should be_eql({:success => false, :errors => ["Invalid Postal code"]})
-  end
-
   it 'should not create a new address required number on purchase if freshfone_address not exist' do
     @num = Faker::PhoneNumber.phone_number
     Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio).raises(StandardError.new("Number requied address"))
     params = { :phone_number => @num, :formatted_number => @num, 
                :region => "Texas", :country => "AU", :type => 'local', :number_sid => "PNUMBER", :address_required => true }
     ff_address_inspect(params[:country])
-    Admin::Freshfone::NumbersController.any_instance.stubs(:verify_address)
     post :purchase, params
     assigns[:purchased_number].should be_new_record
     flash[:notice].should be_eql("Error purchasing number for your Freshfone account.")

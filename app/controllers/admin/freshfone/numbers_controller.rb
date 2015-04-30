@@ -1,6 +1,5 @@
 class Admin::Freshfone::NumbersController < Admin::AdminController
 	include ::Freshfone::AccountUtil
-	include PostOffice
 	before_filter(:only => [:purchase]) { |c| c.requires_feature :freshfone }
 	before_filter :create_freshfone_account, :only => [:purchase]
 	before_filter :check_active_account, :only => :edit
@@ -8,7 +7,6 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	before_filter :load_ivr, :only => :edit
 	before_filter :build_attachments, :set_business_calendar,
 							  :only => :update
-	before_filter :verify_address, :only => [:purchase], :if => :address_required?
 	before_filter :add_freshfone_address, :only => [:purchase], :if => :address_required?
 
 	def index
@@ -190,13 +188,5 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 				render :json => { :success => false, 
 					:errors => @freshfone_address.errors.full_messages } and return
 			end
-    end
-
-    def verify_address
-      if PostOffice.validate_postcode(params[:postal_code], params[:country].downcase.to_sym).blank?
-        render :json => {
-            :success => false, :errors => ["Invalid Postal code"]
-          }, status: 400
-      end
     end
 end
