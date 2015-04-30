@@ -6,7 +6,7 @@ class DependencyTest < ActionDispatch::IntegrationTest
     subscription = @account.subscription
     subscription.update_column(:state, "suspended")
     post "/agents.json", nil, @headers
-    response = parse_json(@response.body)
+    response = parse_response(@response.body)
     assert_equal({"code"=>"account_suspended", "message" => "Your account has been suspended."}, response)
     assert_response :forbidden
     subscription.update_column(:state, "trial")
@@ -17,7 +17,7 @@ class DependencyTest < ActionDispatch::IntegrationTest
     subscription = @account.subscription
     subscription.update_column(:state, "active")
     get "/agents.json", nil, @headers
-    response = parse_json(@response.body)
+    response = parse_response(@response.body)
     assert_equal({"code"=>"access_denied", "message" => "You are not authorized to perform this action."}, response)
     assert_response :forbidden
   end
@@ -26,7 +26,7 @@ class DependencyTest < ActionDispatch::IntegrationTest
     with_forgery_protection do
       post "/contacts.json", {:version => "v2", :format => :json, :authenticity_token => 'foo'}, @headers.merge("HTTP_COOKIE" => "_helpkit_session=true")
     end
-    response = parse_json(@response.body)
+    response = parse_response(@response.body)
     assert_response :unauthorized
     assert_equal({"code"=>"unverified_request", "message"=>"You have initiated a unverifiable request."}, response)
   end

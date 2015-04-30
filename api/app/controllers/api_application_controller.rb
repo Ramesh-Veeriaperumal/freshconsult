@@ -21,7 +21,7 @@ class ApiApplicationController < ApplicationController
 
   def create
     unless @item.save
-      render_error
+      render_error @item.errors
     end
   end
 
@@ -30,7 +30,7 @@ class ApiApplicationController < ApplicationController
 
   def update
     unless @item.update_attributes(params[cname])
-      render_error
+      render_error @item.errors
     end   
   end
 
@@ -42,12 +42,8 @@ class ApiApplicationController < ApplicationController
   def route_not_found
     method, path = env['REQUEST_METHOD'].downcase.to_sym, env['PATH_INFO']
     allows = ActionDispatch::Routing::HTTP_METHODS.select { |verb|
-      begin
-        match = Rails.application.routes.recognize_path(path, :method => verb)
-        match[:action] != 'route_not_found'
-      rescue ActionController::RoutingError
-        nil
-      end
+      match = Rails.application.routes.recognize_path(path, :method => verb)
+      match[:action] != 'route_not_found'
     }.map(&:upcase)
     if allows.present?
       @error = ::ApiError::BaseError.new(:method_not_allowed, :methods => allows.join(", "))

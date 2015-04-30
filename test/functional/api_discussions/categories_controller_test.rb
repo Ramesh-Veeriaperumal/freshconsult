@@ -2,7 +2,8 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class CategoriesControllerTest < ActionController::TestCase
-
+    include ForumHelper
+    
     actions = Rails.application.routes.routes.select{|x| x.defaults[:controller] == "api_discussions/categories"}.collect{|x| x.defaults[:action]}.uniq
     methods = {"index" => :get, "create" => :post, "update" => :put, "destroy" => :delete}
     
@@ -14,7 +15,7 @@ module ApiDiscussions
       define_method("test_#{action}_without_privilege") do 
         controller.class.any_instance.stubs(:allowed_to_access?).returns(false).once
         send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_json(@response.body)
+        response = parse_response(@response.body)
         assert_response :forbidden
         assert_equal({"code"=>"access_denied", "message"=>"You are not authorized to perform this action."}, response)
       end
@@ -22,7 +23,7 @@ module ApiDiscussions
       define_method("test_#{action}_without_login") do 
         controller.class.any_instance.stubs(:current_user).returns(nil)
         send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_json(@response.body)
+        response = parse_response(@response.body)
         assert_response :unauthorized
         assert_equal({"code"=>"invalid_credentials", "message"=>"You have to be logged in to perform this action."}, response)
         controller.class.any_instance.unstub(:current_user)
@@ -33,7 +34,7 @@ module ApiDiscussions
         subscription = @account.subscription
         subscription.update_column(:state, "active")
         send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_json(@response.body)
+        response = parse_response(@response.body)
         assert_equal({"code"=>"access_denied", "message" => "You are not authorized to perform this action."}, response)
         assert_response :forbidden
       end
@@ -41,7 +42,7 @@ module ApiDiscussions
       define_method("test_#{action}_requires_feature_disabled") do
         controller.class.any_instance.stubs(:feature?).returns(false).once
         send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_json(@response.body)
+        response = parse_response(@response.body)
         assert_equal({"code"=>"require_feature", "message" => "The Forums feature is not supported in your plan. Please upgrade your account to use it."}, response) 
         assert_response :forbidden
       end
@@ -53,7 +54,7 @@ module ApiDiscussions
           @request.cookies["_helpkit_session"] = true
           send(methods[action], action, :version => "v2", :format => :json, :id => fc_id, :authenticity_token => 'foo')
         end
-        response = parse_json(@response.body)
+        response = parse_response(@response.body)
         assert_response :unauthorized
         assert_equal({"code"=>"unverified_request", "message"=>"You have initiated a unverifiable request."}, response)
       end
@@ -62,7 +63,7 @@ module ApiDiscussions
         subscription = @account.subscription
         subscription.update_column(:state, "suspended")
         send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_json(@response.body)
+        response = parse_response(@response.body)
         assert_equal({"code"=>"account_suspended", "message" => "Your account has been suspended."}, response)
         assert_response :forbidden
         assert_equal "current=v2; requested=v2", @response.headers["X-Freshdesk-API-Version"] 
@@ -101,30 +102,38 @@ module ApiDiscussions
 
     def test_update_with_extra_params
       put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:test => "new"}
-      response = parse_json(@response.body)
+      response = parse_response(@response.body)
       assert_equal([{"field"=>"test", "message"=>"Unexpected/invalid field in request", "code"=>"invalid_field"}], response)
       assert_response :bad_request
     end
 
     def test_update_with_missing_params
       put :update, :version => "v2", :format => :json, :id => fc_id, :category => {}
-      response = parse_json(@response.body)
+      response = parse_response(@response.body)
       assert_equal([{"field"=>"category", "message"=>"Mandatory attribute missing", "code"=>"missing_field"}], response)
       assert_response :bad_request
     end
 
-    def test_update_with_invalid_data
+    def test_update_with_blank_name
       put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:name => ""}
-      response = parse_json(@response.body)
+      response = parse_response(@response.body)
       assert_equal([{"field"=>"name", "message"=>"Should not be blank", "code"=>"invalid_value"}], response)
       assert_response :bad_request
+    end
+
+    def test_update_with_invalid_model
+      new_fc = create_test_category
+      put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:name => new_fc.name}
+      response = parse_response(@response.body)
+      assert_equal([{"field"=>"name", "message"=>"Should be a unique value", "code"=>"already_exists"}], response)
+      assert_response :conflict
     end
 
     def test_update
       fc = ForumCategory.find_by_id(fc_id)
       put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:description => "foo"}
-      response = parse_json(@response.body)
-      assert_equal({"id"=>1, "name"=>"Test Account Forums", "description"=>"foo", "position"=>1, "created_at"=>fc.created_at.strftime("%FT%T%:z"), "updated_at"=>fc.updated_at.strftime("%FT%T%:z")}, response)
+      response = parse_response(@response.body)
+      assert_equal({"id"=>1, "name"=>"Test Account Forums", "description"=>"foo", "position"=>1, "created_at"=>fc.created_at.utc.strftime("%FT%TZ"), "updated_at"=>fc.reload.updated_at.utc.strftime("%FT%TZ")}, response)
       assert_response :success
       assert_equal "foo", ForumCategory.find_by_id(fc_id).description
     end

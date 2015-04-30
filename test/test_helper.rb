@@ -68,7 +68,7 @@ class ActionController::TestCase
   self.use_transactional_fixtures = false
   fixtures :all
 
-  def parse_json(response)
+  def parse_response(response)
     JSON.parse(response)
     rescue
   end
@@ -101,5 +101,10 @@ class ActionDispatch::IntegrationTest
     yield
   ensure
     ActionController::Base.allow_forgery_protection = _old_value
+  end
+
+  def parse_response(response)
+    JSON.parse(response)
+    rescue
   end
 end
