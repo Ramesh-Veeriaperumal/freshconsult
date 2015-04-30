@@ -1963,6 +1963,8 @@ Helpkit::Application.routes.draw do
         get :fetch_reseller_account_info
         get :fetch_account_activity
         post :remove_reseller_subscription
+        post :fetch_affiliates
+        post :edit_affiliate
       end
     end
   end
