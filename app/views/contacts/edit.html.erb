@@ -12,7 +12,7 @@
 				</span>
 			</h3>
 		<div class="pull-right">
-				<%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "btn" %>
+				<%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "btn", :'data-pjax' => "#body-container" %>
 				<%= f.submit t('contacts.save_changes'), :class => "btn btn-primary" , :id => "contact_submit"%> 
 			</div>
 		</div>

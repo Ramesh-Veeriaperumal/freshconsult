@@ -7,7 +7,7 @@
 				<%= t('company.new') %> 
 			</h3>
 		<div class="pull-right">
-				<%= link_to t('cancel'), companies_path(), :class => "btn" %>
+				<%= link_to t('cancel'), companies_path(), :class => "btn", :'data-pjax' => "#body-container" %>
 				<%= f.submit t('save'), :class => "btn btn-primary" %> 
 			</div>
 		</div>

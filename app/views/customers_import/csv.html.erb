@@ -22,7 +22,7 @@
 				</p>
 			</div>
 			<div class="button-container">
-				<%= link_to t('cancel'), "/#{params[:type].pluralize}", :class => "btn"  %>
+				<%= link_to t('cancel'), "/#{params[:type].pluralize}", :class => "btn", :'data-pjax' => '#body-container'  %>
 				<%= f.submit t('import'), { :class => "btn btn-primary" } %>
 			</div>
 			<div class="seperator"></div>

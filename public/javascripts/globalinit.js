@@ -713,7 +713,7 @@ window.xhrPool = [];
         $.scrollTo('body');
       })
 
-      $('#Activity .activity > a.notelink').livequery(function() {
+      $('#Activity .activity > a').livequery(function() {
         $(this).attr('data-pjax', '#body-container')
       });
 			

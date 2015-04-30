@@ -64,7 +64,7 @@
 										<% if params[:letter].blank? %>
 											<%= t('contacts.verified.no_contacts') %><br />
                       <% if privilege?(:manage_contacts) %>
-											  <span class="small">Create a <a href= "/contacts/new" >new contact</a></span>
+											  <span class="small">Create a <a href= "/contacts/new" data-pjax="#body-container" >new contact</a></span>
                       <% end %>
 										<% end %>
 									<% elsif params[:state].eql?('deleted') %>

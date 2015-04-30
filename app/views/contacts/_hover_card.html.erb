@@ -4,7 +4,7 @@
 <div class="contact_hover">
     <%= user_avatar(user) %>
   <div class="infoblock muted">
-    <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target), :class => "user_name"%>
+    <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target, :'data-pjax' => '#body-container'), :class => "user_name"%>
     <% if user.parent.present? %>
       <div class="contact-append">
         <%= t('contacts.merged_into') %> <%= link_to h(user.parent.name), contact_path(user.parent_id), :class => "hover-contact-box" , :target => link_target if local_assigns.has_key? :new_tab %>
