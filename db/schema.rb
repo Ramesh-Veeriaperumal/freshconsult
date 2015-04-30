@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
     t.text     "supported_languages"
     t.integer  "api_limit",                         :default => 1000
     t.integer  "date_format",                       :default => 1
-    t.text     "additional_settings",
+    t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
   end
 
