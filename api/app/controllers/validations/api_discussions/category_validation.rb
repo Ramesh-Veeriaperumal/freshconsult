@@ -5,8 +5,8 @@ module ApiDiscussions
     attr_accessor :name
     validates_presence_of :name  
 
-    def initialize(params, cname, item)
-      @name = params[cname]["name"] || item.name
+    def initialize(controller_params, item)
+      @name = controller_params["name"] || item.name
     end
  	end
 end

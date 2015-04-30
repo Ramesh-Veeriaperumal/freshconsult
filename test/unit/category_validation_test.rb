@@ -2,18 +2,28 @@ require_relative '../test_helper'
 
 class CategoryValidationsTest < ActionView::TestCase
  
-  test "should return the validated category object" do
-    category = ApiDiscussions::CategoryValidation.new({"name" => "test", "description" => "test desc"})
-    assert_equal category.name, "test"
-    assert_equal category.description, "test desc"
-    assert_equal category.valid?, true
+  def test_category_validation_params 
+    controller_params = {"name" => "test", "description" => "test desc"}
+    item = ForumCategory.new
+    category = ApiDiscussions::CategoryValidation.new(controller_params, item)
+    assert_equal "test", category.name
+    assert_equal true, category.valid?
   end
 
-  test "should not be a valid category object if name is blank" do
-    category = ApiDiscussions::CategoryValidation.new({})
-    assert_equal category.valid?, false
-    assert_equal category.errors.count, 1
-    assert_equal category.errors.first.first, "name".to_sym
-    assert_equal category.errors.first.last, "can't be blank"
+  def test_category_validation_item
+    item = ForumCategory.new({:name => "test"})
+    category = ApiDiscussions::CategoryValidation.new({}, item)
+    assert_equal "test", category.name
+    assert_equal true, category.valid?
+  end
+
+
+  def test_category_validation_invalid
+    item = ForumCategory.new
+    category = ApiDiscussions::CategoryValidation.new({}, item)
+    assert_equal false, category.valid?
+    assert_equal 1, category.errors.count
+    assert_equal "name".to_sym, category.errors.first.first
+    assert_equal "can't be blank", category.errors.first.last
   end
 end

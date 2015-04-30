@@ -8,10 +8,11 @@ module ApiDiscussions
     private
 
     def validate_params
+      params.require(cname).require("name")
       params.require(cname).permit("name", "description")
-     	category = ApiDiscussions::CategoryValidation.new(params, cname, @item)
+     	category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
      	unless category.valid?
-        format_error(category.errors)
+        @errors = format_error(category.errors)
         render :template => '/bad_request_error', :status => 400
       end
     end

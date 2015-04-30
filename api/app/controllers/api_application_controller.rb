@@ -7,12 +7,6 @@ class ApiApplicationController < ApplicationController
   rescue_from ActionController::UnpermittedParameters, :with => :invalid_field_handler
   rescue_from ActionController::ParameterMissing, :with => :missing_field_handler
 
-  DEFAULT_PAGINATE_OPTIONS = {
-      :per_page => 30,
-      :page => 1
-  } # move to constants 
-
-
   skip_before_filter :set_default_locale, :set_locale, :freshdesk_form_builder, :remove_rails_2_flash_before,
     :remove_pjax_param, :remove_rails_2_flash_after
 
@@ -27,8 +21,7 @@ class ApiApplicationController < ApplicationController
 
   def create
     unless @item.save
-      format_error(@item.errors)
-      render :template => '/bad_request_error', :status => find_http_error_code(@errors)
+      render_error
     end
   end
 
@@ -37,8 +30,7 @@ class ApiApplicationController < ApplicationController
 
   def update
     unless @item.update_attributes(params[cname])
-      format_error(@item.errors)
-      render :template => '/bad_request_error', :status => find_http_error_code(@errors)
+      render_error
     end   
   end
 
@@ -74,23 +66,23 @@ class ApiApplicationController < ApplicationController
 
   def invalid_field_handler(exception)
     invalid_fields = Hash[exception.params.collect { |v| [v, "invalid_field"] }]
-    render_400 invalid_fields
+    render_error invalid_fields
   end
 
   def missing_field_handler(exception)
     missing_fields = { exception.param => "missing_field" }
-    render_400 missing_fields
+    render_error missing_fields
   end
 
-  def render_400 errors
+  def render_error errors
     @errors = format_error(errors)
-    render :template => '/bad_request_error', :status => 400
+    render :template => '/bad_request_error', :status => find_http_error_code(@errors)
   end
 
   def paginate_options
     options = {}
-    options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > DEFAULT_PAGINATE_OPTIONS[:per_page] ?  DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
-    options[:page] = params[:page] || DEFAULT_PAGINATE_OPTIONS[:page] 
+    options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] ?  ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
+    options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page] 
     options
   end
 

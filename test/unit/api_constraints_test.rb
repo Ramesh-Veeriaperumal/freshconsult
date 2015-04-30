@@ -5,7 +5,7 @@ class ApiConstraintsTest < ActionView::TestCase
 
   def test_api_constraint_instance
     constraint = ApiConstraints.new({:version => "2"})
-    assert_equal constraint.instance_variable_get(:@version), "2"
+    assert_equal "2", constraint.instance_variable_get(:@version)
   end
 
   def test_accept_header_with_version
@@ -13,7 +13,7 @@ class ApiConstraintsTest < ActionView::TestCase
     request.accept = ["application/vnd.freshdesk.v2"]
     constraint = ApiConstraints.new({:version => "2"})
     match = constraint.matches?(request)
-    assert_equal match, true
+    assert_equal true, match
   end
 
   def test_accept_header_wrong_version
@@ -21,7 +21,7 @@ class ApiConstraintsTest < ActionView::TestCase
     request.accept = ["application/vnd.freshdesk.v3"]
     constraint = ApiConstraints.new({:version => "2"})
     match = constraint.matches?(request)
-    assert_equal match, false
+    assert_equal false, match
   end
 
   def test_no_accept_header
