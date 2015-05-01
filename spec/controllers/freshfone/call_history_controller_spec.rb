@@ -42,6 +42,23 @@ RSpec.describe Freshfone::CallHistoryController do
     assigns[:calls].should_not be_empty
   end
 
+  it 'should return valid results in search for all numbers' do
+    get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
+                          "page"=>"1", 
+                          :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.today.inspect + '"}]',
+                          "number_id"=>"0" }
+    assigns[:calls].should_not be_empty
+  end
+
+  it 'should show all numbers in response' do
+    freshfone_number = @account.all_freshfone_numbers.first
+    get :index, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
+                          "page"=>"1", 
+                          :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.today.inspect + '"}]',
+                          "number_id"=>"0"}
+    response.body.should =~ /All Numbers/
+  end
+
   it 'should not return any children for a non transferred call' do
     get :children, {"id" => @freshfone_call.id, "number_id" => @number.id}
     assigns[:calls].should be_empty

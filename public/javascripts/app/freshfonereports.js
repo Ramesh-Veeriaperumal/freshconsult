@@ -17,6 +17,7 @@ window.App.Freshfone = window.App.Freshfone || {};
     },
     start: function () {
       this.bindHandlers();
+      this.allNumberId=0;
     },
     summaryReports: function (url) {
       jQuery('#loading-box').hide();
@@ -80,23 +81,37 @@ window.App.Freshfone = window.App.Freshfone || {};
         });
     },
     numberOptions: function(filter_number_options,selection) {
+       var self=this;
         jQuery('#freshfone_number').select2({
-          dropdownCssClass: 'ff-select2-dropdown-pl',
           data: {
                 text: 'value',
                 results: filter_number_options },
           formatResult: function (result) {
-            if(!result.id) {
-              // return `text` for optgroup
-             return result.value;
-            }
-            if (result.deleted){
-              return result.value+"<i class='muted'> (Deleted)</i>"
-            } 
-            return result.value;
+
+          var formatedResult = "", ff_number = result.value;
+          if(result.id==self.allNumberId){
+          return formatedResult +="<b>" +result.value+ "</b></br>";
+          } 
+          
+          if (result.name) {
+            formatedResult += "<b>" + result.name + "</b><br>" + ff_number;
+          } else {
+            formatedResult += "<b>" + result.value + "</b>";
+          }
+
+          if (result.deleted) {
+            formatedResult += "<i class='muted'> (Deleted)</i>"
+          } 
+          return formatedResult;
           },
           formatSelection: function (result) {
-            return result.value;
+          
+           if(result.id==self.allNumberId){
+              return result.value;
+            }
+            else{
+              return result.name==undefined ? result.value : result.name+" ("+result.value+")";
+            } 
           },
         });
         jQuery("#freshfone_number").select2("data",selection);

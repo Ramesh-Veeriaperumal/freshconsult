@@ -1,5 +1,6 @@
 class Freshfone::CallHistoryController < ApplicationController
 	include Freshfone::CallHistory
+    include Freshfone::FreshfoneHelper
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
 	before_filter :set_cookies_for_filter, :only => [:custom_search, :export]
 	before_filter :get_cookies_for_filter, :only => [:index, :export]
@@ -64,13 +65,22 @@ class Freshfone::CallHistoryController < ApplicationController
 	end
 
 	private
-		def load_calls
+		
+        def load_calls
 			params[:wf_per_page] = 30
-			@calls = current_number.freshfone_calls.roots.filter(:params => params,
-																		:filter => "Freshfone::Filters::CallFilter")
+			@calls = all_numbers? ? 
+                  current_account.freshfone_calls.roots.filter(:params => params,
+						        :filter => "Freshfone::Filters::CallFilter") : 
+                  current_number.freshfone_calls.roots.filter(:params => params,
+						        :filter => "Freshfone::Filters::CallFilter")
+      freshfone_stats_debug("all_number_option",params[:controller]) if all_numbers?
 		end
-
-		def current_number
+        
+        def all_numbers?
+            params[:number_id] == Freshfone::Number::ALL_NUMBERS
+        end    
+        
+        def current_number
 			@current_number ||= params[:number_id].present? ? current_account.all_freshfone_numbers.find_by_id(params[:number_id])
                            : current_account.freshfone_numbers.first || current_account.all_freshfone_numbers.first 
 		end

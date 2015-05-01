@@ -1,4 +1,7 @@
 <% if call.caller_number %>
+
+<% current_number = (numbers_hash[call.freshfone_number_id] if @current_number.blank?) %> <!-- Used for All Numbers filter -->
+
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
 	<td class="user_details width1">
 		<div class="freshfone_customer relative tooltip">
@@ -46,14 +49,18 @@
 						<b class="ellipsis"><%= t('freshfone.call_history.external') %></b><br/>
 					<%end%>
 					<div class="helpdesk_number ff-user-location muted">
-						<%= call.direct_dial_number || @current_number.number %>
+						<%= call.direct_dial_number || 	current_number %>
 					</div>
 				</div>
 			<% else %>
 				<div class="vertical-alignment">
 					<%= user_avatar(call.agent) unless call.agent.blank? %>
 				</div>
-				<div class="vertical-alignment"><b class="ellipsis"><%= link_to_user(call.agent) %></b></div>
+				<div class="vertical-alignment"><b class="ellipsis"><%= link_to_user(call.agent) %></b><br/>
+					<div class="helpdesk_number ff-user-location muted">
+						<%= current_number %>
+					</div>
+				</div>
 			<% end %>
 		</div>
 	</td>

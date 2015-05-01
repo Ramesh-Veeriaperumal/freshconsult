@@ -56,6 +56,7 @@ class Freshfone::Number < ActiveRecord::Base
 	
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
 	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
+	ALL_NUMBERS = "0" #Used in Call History and Reports for filtering
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true

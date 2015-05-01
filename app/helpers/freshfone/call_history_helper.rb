@@ -15,11 +15,18 @@ module Freshfone::CallHistoryHelper
 		]
 	end
 
+	def numbers_hash
+		@numbers ||=current_account.all_freshfone_numbers.reduce({}){|obj,c| obj.merge!({c.id=>c.number})}
+	
+	end
+
 	def freshfone_numbers_options
 		numbers_options = []
 		numbers_options = @all_freshfone_numbers.map{|c|
 			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name.to_s) }
-		 }.to_json
+		 }
+		numbers_options.unshift({:value => t('reports.freshfone.all_numbers'),:deleted=> false, :id=> 0 ,:name=> t('reports.freshfone.all_call_types')})
+		numbers_options.to_json
 	end
 
 	def agents_list
@@ -84,7 +91,7 @@ module Freshfone::CallHistoryHelper
 	def blocked_number?(number)
 		@blacklist_numbers.include? number.gsub(/^\+/, '')
 	end
-
+	
 	def country_name(country_code)
 		country = Country.coded(country_code)
 		country ? country.name : nil
