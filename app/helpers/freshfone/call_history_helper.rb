@@ -106,4 +106,10 @@ module Freshfone::CallHistoryHelper
 			:range_limit_message => t('export_data.call_history.range_limit_message', range: Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS )
 		}
 	end
+  def recording_deleted_title(call)
+  	if call.present? && call.recording_deleted_info.present?
+  		"#{t("freshfone.call_history.recording_delete.done_by")} #{call.recording_deleted_by}, on #{formated_date(Time.zone.parse(call.recording_deleted_at.to_s))}"
+  	end
+  end
+
 end

@@ -429,6 +429,9 @@ Helpkit::Application.routes.draw do
     end
 
     resources :call_history do
+      member do 
+        delete :destroy_recording
+      end
       collection do
         get :custom_search
         get :children

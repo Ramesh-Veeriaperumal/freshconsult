@@ -1,4 +1,5 @@
 class Freshfone::CallHistoryController < ApplicationController
+	include Freshfone::CallHistory
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
 	before_filter :set_cookies_for_filter, :only => [:custom_search, :export]
 	before_filter :get_cookies_for_filter, :only => [:index, :export]
@@ -8,6 +9,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
 	before_filter :check_export_range, :only => [:export]
 	
+	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:view_admin)'
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
 	end
@@ -39,6 +41,19 @@ class Freshfone::CallHistoryController < ApplicationController
 	def recent_calls
 		respond_to do |format|
 			format.js {} 
+		end
+	end
+
+	def destroy_recording
+		if @call.present?
+			begin
+				flash[:notice] = @call.delete_recording(current_user.id) ? 
+					t('freshfone.call_history.recording_delete.successful') : t('freshfone.call_history.recording_delete.unsuccessful')
+			rescue Exception => e
+				flash[:notice] = t('freshfone.call_history.recording_delete.error')
+				Rails.logger.debug "Error deleting the recording for call #{@call.id} account #{current_account.id}
+				.\n #{e.message} \n#{e.backtrace.join("\n\t")}"
+			end
 		end
 	end
 
@@ -93,5 +108,8 @@ class Freshfone::CallHistoryController < ApplicationController
 			return true if dates.count < 2
 			days = dates.map { |d| Date.parse(d) }.reduce { |diff, date| date.mjd - diff.mjd }
 			days < Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS * 31
+		end
+		def fetch_current_call
+			@call = current_call if params[:id].present?
 		end
 end

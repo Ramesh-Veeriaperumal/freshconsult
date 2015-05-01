@@ -1210,6 +1210,8 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
     t.datetime "updated_at"
     t.string   "direct_dial_number"
     t.integer  "group_id",            :limit => 8
+    t.boolean  "recording_deleted",                     :default => false
+    t.text     "recording_deleted_info
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
@@ -1222,6 +1224,7 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+  add_index "freshfone_calls", ["id"], :name => "index_ff_calls_on_id"
 
   create_table "freshfone_credits", :force => true do |t|
     t.integer  "account_id",              :limit => 8

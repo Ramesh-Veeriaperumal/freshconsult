@@ -6231,7 +6231,16 @@ en:
       filter_option_missed_calls: "Missed"
       filter_option_voicemail: "Voicemail"
       filter_option_blocked_calls: "Blocked"
-
+      recording_delete:
+        done_by: "Deleted By"
+        tooltip: "Delete Recording"
+        confirmation_btn: "Delete"
+        confirmation_heading: "Please Confirm.."
+        confirmation_warning: "This will delete the recorded message permanentely."
+        confirmation_notification: "Are you sure you want to delete?"
+        successful: "Call Recording deleted successfully!"
+        unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
+        error: "Error while deleting a Call Record!!! Please try again after some time"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
