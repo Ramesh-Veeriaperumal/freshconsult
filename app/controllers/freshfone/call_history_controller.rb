@@ -87,7 +87,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	
 		def load_children
 			#  remove include of number and use current_number instead
-			@parent_call = current_number.freshfone_calls.find(params[:id])
+			@parent_call = all_numbers? ? current_account.freshfone_calls.find(params[:id]) : current_number.freshfone_calls.find(params[:id])
 			@calls = @parent_call.descendants unless @parent_call.blank?
 		end
 
