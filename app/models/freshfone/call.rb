@@ -4,6 +4,7 @@ class Freshfone::Call < ActiveRecord::Base
 	self.table_name =  :freshfone_calls
     self.primary_key = :id
 
+	serialize :recording_deleted_info, Hash  
   belongs_to :agent, :class_name => '::User', :foreign_key => 'user_id'
   belongs_to_account
   belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
@@ -153,6 +154,15 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 	end
 
+	def recording_deleted_by
+		user_id = recording_deleted_info[:deleted_by]
+		account.users.where({:id => user_id}).pluck(:name).first if user_id.present?
+	end
+
+	def recording_deleted_at
+		recording_deleted_info[:deleted_at]
+	end
+
 	def update_call(params)
 		update_call_details(params).save
 	end
@@ -175,6 +185,22 @@ class Freshfone::Call < ActiveRecord::Base
 			self.call_status = CALL_STATUS_HASH[:'no-answer']
 		end
 		self
+	end
+
+	def delete_recording(user_id)
+		return false if self.recording_url.blank?
+		begin
+			recording_sid = File.basename(self.recording_url)
+			recording = account.freshfone_subaccount.recordings.get(recording_sid)
+			recording.delete if recording.present?
+			self.recording_audio.destroy if self.recording_audio.present?
+			self.update_attributes!(build_recording_delete_params(user_id))
+		rescue Exception => e
+			Rails.logger.debug "Error Deleting the Call Recording for call id:#{self.id}, account id: #{account.id}, recording_sid: #{recording_sid}, User Id: #{user_id}
+			.\n #{e.message}\n #{e.backtrace.join("\n\t")}"
+			raise e
+		end
+		self.recording_deleted
 	end
 	
 	def location
@@ -376,4 +402,15 @@ class Freshfone::Call < ActiveRecord::Base
 		def private_recording_note?
 			freshfone_number.private_recording? && freshfone_number.record?
 		end
+
+		def build_recording_delete_params(user_id)
+			{
+				:recording_deleted => true,
+				:recording_url => nil,
+				:recording_deleted_info =>{
+					:deleted_by => user_id,
+					:deleted_at => Time.now.utc
+				}
+			}
+		end	
 end

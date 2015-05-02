@@ -43,7 +43,7 @@
       formTitle:     '<%= t("admin.contact_fields.formfield_props.form_title") %>',
       deleteField:     '<%= t("admin.contact_fields.formfield_props.delete_field") %>',
       regExp:     '<%= t("admin.contact_fields.formfield_props.regexp") %>',
-      regExpExample:     '<%= t("admin.contact_fields.formfield_props.regexp_example_html", regex: "/^fresh\w/") %>',
+      regExpExample:     '<%= escape_javascript t("admin.contact_fields.formfield_props.regexp_example_html", regex: "/^fresh\w/")%>',
       dropdownChoice:     '<%= t("admin.contact_fields.formfield_props.dropdown_choices") %>',
       addNewChoice:     '<%= t("admin.contact_fields.formfield_props.add_new_choice") %>',
       label:     '<%= t("admin.contact_fields.formfield_props.label") %>',

@@ -2,8 +2,10 @@ class TopicMailer < ActionMailer::Base
 
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
+  include Community::MailerHelper
 
   layout "email_font"
+
   def monitor_email(emailcoll, topic, user, portal, sender, host)
     configure_mailbox(user, portal)
     headers = {
@@ -90,7 +92,6 @@ class TopicMailer < ActionMailer::Base
       end
     end.deliver
   end
-
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end

@@ -1,5 +1,7 @@
 module DiscussionsHelper
 	include Helpdesk::TicketsHelperMethods
+	include Community::MonitorshipHelper
+
 
 	def discussions_breadcrumb(page = :home)
 		_output = []
@@ -282,4 +284,5 @@ module DiscussionsHelper
   def display_count(count)
   	"(#{count})" if count > 0
   end
+
 end

@@ -1686,6 +1686,9 @@ en:
       agents: Agents
       all: All
       select_company: Select Companies
+    follower:
+      title: "Forum Followers"
+      description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   additional_email_verification: Additional Email Verification
@@ -2376,6 +2379,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
       all_agents: All agents
@@ -2604,6 +2608,9 @@ en:
     spam_action: Approve and Publish
     replied_time: " replied, %{time_in_words} ago"
     visible_in: Visible in
+    follower:
+      title: "Topic Followers"
+      description: "Agents added as followers receives email alerts when a new reply is posted"
   activerecord:
     errors:
       models:
@@ -2658,6 +2665,12 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    followers:
+      one: "%{count} Follower"
+      other: "%{count} Followers"
+    followers_title:
+      one: "1 person follows this Forum"
+      other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
       unlike: Unlike
@@ -2783,6 +2796,7 @@ en:
     type: Agent Type
     delete_agent: Delete Agent
     delete_agent_confirmation: The deleted agent will be available as a contact. This will remove all agent information from the helpdesk. Are you sure you want to proceed?
+    convert_agent_confirmation: Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?
     agent_restored: The agent has been restored
     status:
       active: Active
@@ -2952,10 +2966,10 @@ en:
       enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
-      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact_all: 'Recent ticket and forum activities'
@@ -3932,6 +3946,8 @@ en:
     non_monitor_flash: You have stopped following this %{type}
     follow_title: Follow
     unfollow_title: Unfollow
+    me: Me
+    pick_agents: Add agents
   forums:
     search_all:
       placeholder: Search All Topics
@@ -3945,7 +3961,7 @@ en:
   company:
     created: Company was successfully created.
     updated: Company was successfully updated.
-    created_view: Company was successfully created. <a href="%{company_url}"> View company. </a>
+    created_view: Company was successfully created. <a href="%{company_url}" data-pjax="#body-container"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA Policy
     name: Company name
@@ -4384,6 +4400,7 @@ en:
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items
+        max_tag_length_msg: "Tag cannot be greater than 32 characters"
         due_date:
           when_is_it_due: When's it Due?
           today: Today
@@ -6214,7 +6231,16 @@ en:
       filter_option_missed_calls: "Missed"
       filter_option_voicemail: "Voicemail"
       filter_option_blocked_calls: "Blocked"
-
+      recording_delete:
+        done_by: "Deleted By"
+        tooltip: "Delete Recording"
+        confirmation_btn: "Delete"
+        confirmation_heading: "Please Confirm.."
+        confirmation_warning: "This will delete the recorded message permanentely."
+        confirmation_notification: "Are you sure you want to delete?"
+        successful: "Call Recording deleted successfully!"
+        unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
+        error: "Error while deleting a Call Record!!! Please try again after some time"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"

@@ -13,7 +13,7 @@
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
 	<div class='sticky-header-wrapper'>
 		<h3 class='lead pull-left'> 
-			<%= link_to t('contacts.title'), '/contacts' %> 
+			<%= link_to t('contacts.title'), '/contacts', :'data-pjax' => "#body-container" %> 
 			<span class='contact-name ellipsis'> / <%= h(@user.display_name) %></span>
 		</h3>
 		<% unless @user.deleted? %>
@@ -28,7 +28,8 @@
 										} if privilege?(:manage_users) and @user.has_email? and !@user.blocked? and !@user.helpdesk_agent? %>
 
 				<%= link_to(t('edit'), edit_contact_path(@user),{
-											:class => "btn"
+											:class => "btn", 
+											:'data-pjax' => "#body-container"
 										}) if privilege?(:manage_contacts) and !@user.deleted? and !@user.spam? and !@user.blocked? %>
 
 
@@ -173,7 +174,7 @@
 						<% if (no_tickets_shown < @total_user_tickets_size || @total_user_tickets_size > 10) and !@user.deleted %>
 							<div class='contact_tickets'>
 								<div class="more_results">
-									<%= link_to t('contacts.view_all',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
+									<%= link_to t('contacts.view_all',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more", :'data-parallel-placeholder'=>"#ticket-leftFilter", :'data-parallel-url'=>"/helpdesk/tickets/filter_options", :'data-pjax'=>"#body-container" %>
 								</div>
 							</div>
 						<% end %>

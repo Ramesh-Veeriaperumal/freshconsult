@@ -6,7 +6,7 @@
 				<%= content_tag :span, t('solutions.status.draft'), :class => 'draft-label' unless article.published? %>
 				<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
 				<%= article.title %>
-				<%= link_to "", article_url, :target => "blank", 
+				<%= link_to font_icon('open-in-new-window', :size => 13), article_url, :target => "blank", 
 												:title => truncate( article.desc_un_html, :length => 100), :class => "open_in_new" %> 
 			</div>
 			<div class='actions-menu-wrapper'>

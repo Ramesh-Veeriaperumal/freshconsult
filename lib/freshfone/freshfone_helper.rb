@@ -29,6 +29,11 @@ module Freshfone::FreshfoneHelper
     NewRelic::Agent.notice_error(StandardError.new(error_message))
   end
 
+  def freshfone_stats_debug(message, controller)
+    Rails.logger.info "FRESHFONE STATS :: #{message}"
+    Rails.logger.info "#{controller} :: #{current_account.full_domain} :: #{current_account.id}_#{current_user.id}"
+  end
+
   def update_call_meta(call)
     user_agent = request.env["HTTP_USER_AGENT"]
     unless call.meta.blank?

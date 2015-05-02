@@ -59,13 +59,14 @@ var FreshfoneUser,
 			return true;
 		},
 		userPresenceDomChanges: function (available_on_phone) {
+			var availableOnPhone = available_on_phone || this.availableOnPhone;
 			switch (this.status) {
 				case 0 :
 					this.offlineUserPresenceDomChanges(); break;
 				case 1 :
-					this.onlineUserPresenceDomChanges(available_on_phone); break;
+					this.onlineUserPresenceDomChanges(availableOnPhone); break;
 				case 2 :
-					this.busyUserPresenceDomChanges(available_on_phone); break;
+					this.busyUserPresenceDomChanges(availableOnPhone); break;
 				default :
 					ffLogger.logIssue("Unexpected error in setting user presence");
 			}
@@ -143,7 +144,7 @@ var FreshfoneUser,
 				}
 			} else {
 				this.availableOnPhone = false;
-				this.toggleAvailabilityOnPhoneClass();
+				this.publishAvailabilityOnPhone();
 				if (!skip_alert) { alert(freshfone.forward_number_alert); }
 			}
 		},

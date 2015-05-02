@@ -42,6 +42,23 @@ RSpec.describe Freshfone::CallHistoryController do
     assigns[:calls].should_not be_empty
   end
 
+  it 'should return valid results in search for all numbers' do
+    get :custom_search, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
+                          "page"=>"1", 
+                          :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.today.inspect + '"}]',
+                          "number_id"=>"0" }
+    assigns[:calls].should_not be_empty
+  end
+
+  it 'should show all numbers in response' do
+    freshfone_number = @account.all_freshfone_numbers.first
+    get :index, { "wf_order"=>"created_at", "wf_order_type"=>"desc", 
+                          "page"=>"1", 
+                          :data_hash => '[{"condition": "created_at","operator": "is_in_the_range","value": "' + Date.today.inspect + '"}]',
+                          "number_id"=>"0"}
+    response.body.should =~ /All Numbers/
+  end
+
   it 'should not return any children for a non transferred call' do
     get :children, {"id" => @freshfone_call.id, "number_id" => @number.id}
     assigns[:calls].should be_empty
@@ -60,6 +77,38 @@ RSpec.describe Freshfone::CallHistoryController do
     get :recent_calls
     assigns[:calls].should_not be_empty
     response.should render_template('freshfone/call_history/recent_calls')
+  end
+
+  it 'should not delete voice recording if the user is not an admin' do
+    @freshfone_call.update_attributes!(:recording_url => 
+      "http://api.twilio.com/2010-04-01/Accounts/AC9fa514fa8c52a3863a76e2d76efa2b8e/Recordings/REbd383eb591106df8d80bb556d3b6f59e")
+    @freshfone_call.create_recording_audio(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+                                            :description => Faker::Lorem.characters(10), 
+                                            :account_id => @account.id)
+    controller.class.any_instance.stubs(:privilege?).returns(false)
+    delete :destroy_recording,{:id => @freshfone_call.id}
+    expect(response.body).to be_empty
+    controller.class.any_instance.unstub(:privilege?)
+  end
+
+  it 'should delete voice recording if the user is admin' do
+    @freshfone_call.update_attributes!(:recording_url => 
+      "http://api.twilio.com/2010-04-01/Accounts/AC9fa514fa8c52a3863a76e2d76efa2b8e/Recordings/REbd383eb591106df8d80bb556d3b6f59e")
+    @freshfone_call.create_recording_audio(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+                                            :description => Faker::Lorem.characters(10), 
+                                            :account_id => @account.id)
+    recording = mock()
+    Twilio::REST::Recordings.any_instance.stubs(:get).returns(recording)
+    recording.stubs(:delete).returns(true)
+    delete :destroy_recording,{:id =>@freshfone_call.id}
+    @freshfone_call.reload
+    expect(@freshfone_call.recording_audio).to be_nil
+    expect(@freshfone_call.recording_url).to be_nil
+    expect(@freshfone_call.recording_deleted).to be true
+    expect(@freshfone_call.recording_deleted_by).to be_eql(@agent.name)
+    expect(response.body).to match(/call-id-#{@freshfone_call.id}/)
+    expect(response.body).to match( /Call Recording deleted successfully!/)
+    Twilio::REST::Recordings.any_instance.unstub(:get)
   end
 
   describe "Call History Export Worker" do

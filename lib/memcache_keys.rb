@@ -98,6 +98,8 @@ module MemcacheKeys
 
   POD_SHARD_ACCOUNT_MAPPING = "v1/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
+  ACCOUNT_ADDITIONAL_SETTINGS = "v1/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

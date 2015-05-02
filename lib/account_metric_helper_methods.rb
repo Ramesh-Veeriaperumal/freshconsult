@@ -35,7 +35,7 @@ module AccountMetricHelperMethods
 
   # forums
   def orphan_topics(account)
-    account.topics.select{ |t| t.posts_count > 1}
+    account.topics.select{ |t| t.posts_count > 1}.count
   end
   
   # facebook

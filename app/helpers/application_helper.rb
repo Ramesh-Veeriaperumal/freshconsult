@@ -610,7 +610,7 @@ module ApplicationHelper
                        "data-contact-id" => user.id,
                        "data-contact-url" => hover_card_contact_path(user)  }
 
-      link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
+      pjax_link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
       # link_to(h(user.display_name), user, options)
     else
       content_tag(:strong, h(user.display_name), options)
@@ -1024,7 +1024,7 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else

@@ -3,3 +3,7 @@
 	<input type="text" rel="tagger" id="helpdesk_ticket_tags_input"
 			name="helpdesk[tags]" value= "<%= @ticket.tags.collect{|tag| tag.name}.join(',') %>" />
 </li>
+
+<script type="text/javascript">
+	var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
+</script>

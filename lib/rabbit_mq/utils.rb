@@ -60,10 +60,13 @@ module RabbitMq::Utils
       Timeout::timeout(CONNECTION_TIMEOUT) {
         publish_message_to_xchg(message, key)
       }
-    end    
+    end
+  rescue Timeout::Error => e 
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Timeout Error"}})
+    Rails.logger.error("RabbitMq Timeout Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    # RabbitMq::Init.start
+    RabbitMq::Init.start
   end
 end

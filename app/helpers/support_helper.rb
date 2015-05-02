@@ -130,7 +130,7 @@ module SupportHelper
 								<span>#{ I18n.t('header.check_ticket_status') }</span>
 							</a>
 						</div> )
-		output << %( <div> <a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
+		output << %( <div> <a href="tel:#{ h(portal['contact_info']) }" class="mobile-icon-nav-contact contact-info ellipsis">
 						<span>#{ h(portal['contact_info']) }</span>
 					 </a> </div> ) if portal['contact_info']
 

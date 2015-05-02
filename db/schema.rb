@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150316093248) do
+ActiveRecord::Schema.define(:version => 20150408144242) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.integer  "api_limit",                         :default => 1000
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
+    t.text     "resource_rlimit_conf"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -1209,10 +1210,13 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.datetime "updated_at"
     t.string   "direct_dial_number"
     t.integer  "group_id",            :limit => 8
+    t.boolean  "recording_deleted",                     :default => false
+    t.text     "recording_deleted_info"
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "freshfone_calls", ["account_id", "created_at"], :name => "index_freshfone_calls_on_account_id_and_created_at"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
   add_index "freshfone_calls", ["account_id", "customer_id", "created_at"], :name => "index_ff_calls_on_account_id_customer_id_created_at"
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
@@ -1221,6 +1225,7 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+  add_index "freshfone_calls", ["id"], :name => "index_ff_calls_on_id"
 
   create_table "freshfone_credits", :force => true do |t|
     t.integer  "account_id",              :limit => 8
@@ -1285,8 +1290,8 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
 
   create_table "freshfone_number_groups", :force => true do |t|
     t.integer  "account_id",          :limit => 8
-    t.integer  "freshfone_number_id"
-    t.integer  "group_id"
+    t.integer  "freshfone_number_id", :limit => 8
+    t.integer  "group_id",            :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -2115,6 +2120,7 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.integer "portal_id",        :limit => 8
   end
 
+  add_index "monitorships", ["account_id", "monitorable_id", "monitorable_type"], :name => "index_on_monitorships_acc_mon_id_and_type", :length => {"account_id"=>nil, "monitorable_id"=>nil, "monitorable_type"=>5}
   add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
   add_index "monitorships", ["user_id", "account_id"], :name => "index_for_monitorships_on_user_id_account_id"
 
@@ -2464,6 +2470,17 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
+
+  create_table "solution_article_bodies", :force => true do |t|
+    t.integer  "account_id",   :limit => 8,          :null => false
+    t.integer  "article_id",   :limit => 8,          :null => false
+    t.text     "description",  :limit => 2147483647
+    t.text     "desc_un_html", :limit => 2147483647
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "solution_article_bodies", ["account_id", "article_id"], :name => 'index_solution_article_bodies_on_account_id_and_article_id', :unique => true
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
@@ -3060,7 +3077,6 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.text     "text_tc02"
   end
 
-  add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
   add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"

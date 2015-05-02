@@ -113,6 +113,20 @@ module Helpdesk::Email::TicketMethods
     begin
       header_info_update(ticket_message_id)
       ticket.save_ticket!
+      
+      # Insert header to schema_less_ticket_dynamo
+      begin
+        Timeout::timeout(0.5) do
+          dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
+          dynamo_obj['account_id'] = Account.current.id
+          dynamo_obj['ticket_id'] = ticket.id
+          dynamo_obj['headers'] = JSON.parse(self.email[:headers]).map{|x| "#{x[0]}: #{x[1]}" }.join("\n")
+          dynamo_obj.save
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+      
     rescue ActiveRecord::RecordInvalid => e
       FreshdeskErrorsMailer.error_email(ticket,email,e)
     end

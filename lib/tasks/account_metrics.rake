@@ -13,7 +13,7 @@ namespace :account_metrics do
       build_model_resource_csv
       trigger_devops_admin_import
       @end_time = Time.now.utc
-      deliver_confirmation_mailer
+      send_confirmation_mailer
     rescue Exception => e
       deliver_error_mailer(e)
     end
@@ -148,7 +148,7 @@ namespace :account_metrics do
     'Basic ' + Base64.encode64("#{username}:#{password}")
   end
 
-  def deliver_confirmation_mailer
+  def send_confirmation_mailer
     FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
       {
         :subject => "move_metrics_data_to_s3 completed!",
