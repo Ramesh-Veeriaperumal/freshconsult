@@ -1,6 +1,6 @@
 class Solution::Article < ActiveRecord::Base
 
-	has_one :article_body, :autosave => true
+	has_one :article_body, :autosave => true, :dependent => :destroy
 
 	BODY_ATTRIBUTES = [ "description", "desc_un_html" ]
 
