@@ -64,3 +64,14 @@
 	b.user_name{
 		color:#333;
 	}
+
+  .forum-title{
+    font-size: 15px;
+    font-weight: bold;
+    color: #0066cc;
+  }
+
+  .unsubscribe{
+    margin-top: 8px;
+    font-size: 12px;  
+  }	

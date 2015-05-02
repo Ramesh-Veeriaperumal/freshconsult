@@ -41,9 +41,11 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$filterFreshfoneNumberLabel = this.$freshfoneCallHistory.find(".filter_freshfone_number");
       this.$export_div = $('.call_history_export_div');
       this.filterString = '';
+      this.allNumbersId = 0 ;
       this.filteredAgents = [];
       this.filteredAgents_Name = [];
       this.data_hash = [];
+      this.isShowingAllNumbers=false;
     },
     bindAllSelect2: function () {
       this.bindFreshfoneNumberSelect2();
@@ -61,6 +63,11 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           results: freshfone.freshfone_number_list},
         formatResult: function (result) {
           var formatedResult = "", ff_number = result.value;
+          
+          if(result.id==self.allNumbersId){
+          return formatedResult +="<b>" + result.value+ "</b></br>";
+          } 
+          
           if (result.name) {
             formatedResult += "<b>" + result.name + "</b><br>" + ff_number;
           } else {
@@ -76,7 +83,14 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.$fNumberSelect2.attr('fnumber',result.value);
           self.$fNumberSelect2.data('ff_name',result.name || "");
           self.$currentNumber.val(result.id);
-          return result.value;
+         if(result.id==self.allNumbersId){
+          self.isShowingAllNumbers=true;
+           return result.value;
+          }
+         else{
+          self.isShowingAllNumbers=false;
+           return result.name+" ("+result.value+")";
+          } 
         }
       });
     },
@@ -391,6 +405,9 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
     },
     getDisplayNumber: function () {
       var ff_display_number = "<span class='ff_display_name'>";
+      if(this.isShowingAllNumbers){
+       return ff_display_number +=freshfone.allNumberText+"</span>"
+      }
       ff_display_number += this.$fNumberSelect2.data('ff_name').blank() ? 
         this.$fNumberSelect2.attr('fnumber') + "</span>" : 
         this.$fNumberSelect2.data('ff_name') + "</span><span class='ff_display_number'> (" +

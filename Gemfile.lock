@@ -59,7 +59,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/large-hadron-migrator.git
-  revision: 27972aca9fb5720d3150e8afd8f757123eb747f6
+  revision: 0672d428cdd985520bffbcbd97ca47ad55333a52
   specs:
     lhm (1.2.0)
 
@@ -175,6 +175,13 @@ GIT
   specs:
     rails-dev-boost (0.3.0)
       railties (>= 3.0)
+
+GIT
+  remote: git@github.com:freshdesk/fd_rate_limiter.git
+  revision: 30a7b6deb34c992e84498facdec397527c551b47
+  branch: dynamic_rules
+  specs:
+    fd_rate_limiter (0.0.1)
 
 PATH
   remote: vendor/gems/acts_as_voteable
@@ -893,6 +900,7 @@ DEPENDENCIES
   factory_girl_rails (= 4.4.0)
   faker (~> 1.0.1)
   faraday (= 0.9)
+  fd_rate_limiter!
   features!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)

@@ -84,17 +84,8 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
 
     def build_stream(name, type, subscription, search_keys)
-      stream = twitter_streams.build(
-        :name     => name,
-        :includes => search_keys.to_a,
-        :excludes => [],
-        :filter   => {
-          :exclude_twitter_handles => []
-        },
-        :data => {
-          :kind => type,
-          :gnip => subscription
-        })
+      stream_params = construct_stream_params(name, type, subscription, search_keys)
+      stream = twitter_streams.build(stream_params)
       if stream.save && type == STREAM_TYPE[:default]
         args_hash = {
           :account_id => account.id, 
@@ -108,6 +99,25 @@ class Social::TwitterHandle < ActiveRecord::Base
 
     def persist_previous_changes
       @custom_previous_changes = changes
+    end
+    
+     def construct_stream_params(name, type, subscription, search_keys)
+      stream_params = {
+        :name     => name,
+        :includes => search_keys.to_a,
+        :excludes => [],
+        :filter   => {
+          :exclude_twitter_handles => []
+        },
+        :data => {
+          :kind => type,
+          :gnip => subscription
+        }
+      }
+      stream_params.merge!({:accessible_attributes => {
+          :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+        }}) if type == STREAM_TYPE[:default]    
+      stream_params
     end
 
 end

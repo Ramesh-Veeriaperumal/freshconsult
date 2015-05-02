@@ -10,8 +10,8 @@
 					<%= h(@company.name) %>"
 				</span>
 			</h3>
-		<div class="pull-right company-btns">
-				<%= link_to t('cancel'), company_path(@company), :class => "btn" %>
+		<div class="pull-right">
+				<%= link_to t('cancel'), company_path(@company), :class => "btn", :'data-pjax' => "#body-container" %>
 				<%= f.submit t('save'), {:class => "btn btn-primary"} %> 
 			</div>
 		</div>
@@ -24,8 +24,4 @@
 				<%= link_to(t('delete'), @company, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "btn" ) %>
 	    <% end %>
     </div>
-	<div class="pull-right mt20">
-	   <%= link_to t('cancel'), company_path(@company), :class => "btn" %>
-	   <%= f.submit t('save'), {:class => "btn btn-primary"} %> 
-	</div>
 <% end %>

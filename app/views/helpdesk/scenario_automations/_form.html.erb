@@ -68,7 +68,6 @@
 
 
 <div class="button-container">
-	<%= link_to(t('clone'), clone_rule_helpdesk_scenario_automation_path(@va_rule.id), :class => "pull-left btn btn-flat") if params[:action] == "edit"%>
 	<%= link_to t('cancel'), "/helpdesk/scenario_automations/tab/#{@current_tab}", :class => "btn" %>
 	<input type="submit" class="btn btn-primary" value="<%=t('save')%>" />
 </div>

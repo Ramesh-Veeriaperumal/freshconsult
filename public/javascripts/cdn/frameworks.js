@@ -32,6 +32,7 @@
 //= require frameworks/faye.js
 //= require frameworks/socket.io-agent.js
 //= require helpdesk/socket_agent.js
+//= require helpdesk/socket_agent_autorefresh.js
 //= require helpdesk/freshdesk_node.js
 //= require ticket_list.js
 //= require lib/detectmobilebrowsers.js

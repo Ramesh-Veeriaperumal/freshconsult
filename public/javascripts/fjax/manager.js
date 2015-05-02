@@ -40,7 +40,7 @@ window.Fjax = window.Fjax || {};
 			var path;
 			for (path in Fjax.Config.paths) {
 				if (Fjax.Config.paths.hasOwnProperty(path) && given_path.startsWith(path)) {
-					console.log("About to load", Fjax.Config.paths[path]);
+					//console.log("About to load", Fjax.Config.paths[path]);
 					return Fjax.Config.paths[path];
 				}
 			}

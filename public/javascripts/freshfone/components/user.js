@@ -13,6 +13,7 @@ var FreshfoneUser,
 		this.newTokenGenerated = false;
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
+		this.bindUserPresenceHover();
 	};
 
 
@@ -21,11 +22,13 @@ var FreshfoneUser,
 		init: function () {
 			// this.status = null;
 		},
-		$availableOnPhone: $('.freshfone_widget .availabilityOnPhone'),
 		$userPresence: $("#freshfone-presence-toggle"),
+		$availableOnPhone: $('.ff_presence_options #availableOnPhone'),
+		$availableOnBrowser: $('.ff_presence_options #availableOnBrowser'),
+		$availabilityOptions: $("#FreshfonePresenceOptions"),
 		$userPresenceImage: function () {
 			return this.cached.$userPresenceImage = this.cached.$userPresenceImage ||
-																							this.$userPresence.find("img");
+																							this.$userPresence.find("i");
 		},
 		loadDependencies: function (freshfonecalls,freshfonesocket,freshfoneNotification) {
 			this.freshfonesocket = freshfonesocket;
@@ -55,14 +58,15 @@ var FreshfoneUser,
 
 			return true;
 		},
-		userPresenceDomChanges: function () {
+		userPresenceDomChanges: function (available_on_phone) {
+			var availableOnPhone = available_on_phone || this.availableOnPhone;
 			switch (this.status) {
 				case 0 :
 					this.offlineUserPresenceDomChanges(); break;
 				case 1 :
-					this.onlineUserPresenceDomChanges(); break;
+					this.onlineUserPresenceDomChanges(availableOnPhone); break;
 				case 2 :
-					this.busyUserPresenceDomChanges(); break;
+					this.busyUserPresenceDomChanges(availableOnPhone); break;
 				default :
 					ffLogger.logIssue("Unexpected error in setting user presence");
 			}
@@ -85,30 +89,31 @@ var FreshfoneUser,
 				url: "/freshfone/users/reset_presence_on_reconnect"
 			});
 		},
-		onlineUserPresenceDomChanges: function () {
-			this.$userPresenceImage()
-				.addClass('header-icons-agent-ffone-on')
-				.removeClass('header-icons-agent-ffone-off')
-				.removeClass('header-icons-agent-ffone-busy');
+
+		onlineUserPresenceDomChanges: function (available_on_phone) {
+			var presenceClass = available_on_phone ? "ficon-ff-via-phone" : "ficon-ff-via-browser";
+			this.cleanUpUserPresenceDomClass();
+			this.$userPresenceImage().addClass(presenceClass);
 			this.$userPresence.attr('title', freshfone.freshfone_user_online_text);
+			this.updateAvailabilityOptionTemplate(available_on_phone);
 		},
 
 		offlineUserPresenceDomChanges: function () {
-			this.$userPresenceImage()
-				.addClass('header-icons-agent-ffone-off')
-				.removeClass('header-icons-agent-ffone-on')
-				.removeClass('header-icons-agent-ffone-busy');
+			this.cleanUpUserPresenceDomClass();
+			this.$userPresenceImage().addClass('ficon-phone-disable');
 			this.$userPresence.attr('title', freshfone.freshfone_user_offline_text);
 		},
 
-		busyUserPresenceDomChanges: function () {
-			this.$userPresenceImage()
-				.addClass('header-icons-agent-ffone-busy')
-				.removeClass('header-icons-agent-ffone-on')
-				.removeClass('header-icons-agent-ffone-off');
+		busyUserPresenceDomChanges: function (available_on_phone) {
+			var presenceClass = available_on_phone ? "ficon-ff-via-phone" : "ficon-ff-via-browser";
+			this.$userPresenceImage().addClass(presenceClass);
+			this.$userPresenceImage().addClass('ff-busy');
 			this.$userPresence.attr('title', freshfone.freshfone_user_busy_text);
 		},
-		
+		cleanUpUserPresenceDomClass: function () {
+			this.$userPresenceImage()
+			.removeClass('ficon-phone-disable ficon-ff-via-phone ficon-ff-via-browser ff-busy header-spinner');
+		 },
 		setPresence: function (status, $loading_element) {
 			this.setStatus(status);
 			$("#log").text("Registering Freshfone Client...");
@@ -139,7 +144,7 @@ var FreshfoneUser,
 				}
 			} else {
 				this.availableOnPhone = false;
-				this.toggleAvailabilityOnPhoneClass();
+				this.publishAvailabilityOnPhone();
 				if (!skip_alert) { alert(freshfone.forward_number_alert); }
 			}
 		},
@@ -148,10 +153,13 @@ var FreshfoneUser,
 			var msg = this.availableOnPhone ? freshfone.available_on_phone_text :
 																				freshfone.available_on_browser_text;
 			this.$availableOnPhone.toggleClass('active', this.availableOnPhone);
-			this.$availableOnPhone.attr('title', msg);
+			this.$availableOnBrowser.toggleClass('active', !this.availableOnPhone);
+			this.userPresenceDomChanges(this.availableOnPhone);
 		},
 
 		publishAvailabilityOnPhone: function () {
+			this.cleanUpUserPresenceDomClass()
+			this.$userPresenceImage().addClass('header-spinner'); 
 			var self = this;
 			$.ajax({
 				type: 'POST',
@@ -159,13 +167,16 @@ var FreshfoneUser,
 				url: '/freshfone/users/availability_on_phone',
 				data: { "available_on_phone": (this.availableOnPhone || false) },
 				success: function (data) {
-					if (data.update_status) {
-						self.toggleAvailabilityOnPhoneClass();
-					} else {
+					if (!data.update_status) {
 						self.availableOnPhone = !self.availableOnPhone;
 					}
+					self.$userPresenceImage().removeClass('header-spinner'); 
+					self.toggleAvailabilityOnPhoneClass();
 				},
-				error: function (data) { self.availableOnPhone = !self.availableOnPhone; }
+				error: function (data) { self.availableOnPhone = !self.availableOnPhone; 
+					self.$userPresenceImage().removeClass('header-spinner'); 
+					self.toggleAvailabilityOnPhoneClass();
+				}
 			});
 		},
 
@@ -174,7 +185,10 @@ var FreshfoneUser,
 			var self = this;
 			if (this.busyRepress()) return;
 			this.newTokenGenerated = true;
-			if ($loading_element) { $loading_element.addClass('header-spinner'); }
+			if ($loading_element) { 
+				this.cleanUpUserPresenceDomClass();
+				$loading_element.addClass('header-spinner'); 
+			}
 			var params = { "status": this.status }
 			if (force_generate) { params["force"] = true };
 			$.ajax({
@@ -186,7 +200,7 @@ var FreshfoneUser,
 					if ($loading_element) { $loading_element.removeClass('header-spinner'); }
 					if (data.update_status) {
 						self.storeNewToken(data);
-						self.userPresenceDomChanges();
+						self.userPresenceDomChanges(data.availability_on_phone);
 					} else {
 						self.status = self.previous_status;
 					}
@@ -287,6 +301,45 @@ var FreshfoneUser,
 					ffLogger.logIssue("Call Publish Failure", { "data" : data });
 				}
 			});
+		},
+		bindUserPresenceHover: function () {
+			var self = this;
+			$('.ff_presence_options .availabilityOnPhone').live('click', function(){
+				var	to_phone = $(this).data('to_phone');
+				self.updateAvailability(to_phone, this);
+			});
+			$("a[rel=ff-hover-popover]").livequery(function(){
+				$(this).popover({ 
+				  delayOut: 300,
+				  trigger: 'manual',
+				  offset: 0,
+				  reloadContent: true,
+				  html: true,
+				  placement: 'below',
+				  template: '<div class="dbl_left arrow"></div><div class="ff_hover_card inner"><div class="content ff_presence_options"><div></div></div></div>',
+				  content: function(){
+				    return self.$availabilityOptions.html();
+				  }
+				}); 
+			});
+			this.updateAvailabilityOptionTemplate(this.availableOnPhone);
+		},
+		updateAvailabilityOptionTemplate: function(availableOnPhone){
+			var elementId= availableOnPhone ? "availableOnPhone" :  "availableOnBrowser";
+			this.$availabilityOptions.find(".ticksymbol").remove();
+			$(this.$availabilityOptions.find("#"+elementId)).prepend($('<span class="icon ticksymbol"></span>'));
+		},
+		updateAvailability: function(to_phone, element){
+			if(this.availableOnPhone == to_phone) {return;}
+			this.toggleAvailabilityOnPhone(false);
+			this.updateAvailabilityDomChange(element);
+		},
+		updateAvailabilityDomChange: function (element) {
+			if($(element).data('to_phone') === this.availableOnPhone) {
+				$(element).parent().find('.ticksymbol').remove();
+	      $(element).prepend($('<span class="icon ticksymbol"></span>'));
+	      this.updateAvailabilityOptionTemplate($(element).attr('id'));
+	    }
 		}
 	};
 	

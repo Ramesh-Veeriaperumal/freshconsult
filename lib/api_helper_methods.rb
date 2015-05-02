@@ -23,6 +23,13 @@ module APIHelperMethods
     value.match(COLUMNS_REGEX[column])[0]
   end
 
+  def api_error_responder response,status_code
+    respond_to do |format|
+      format.json { render :json => response , :status => status_code }
+      format.any { head status_code }
+    end
+  end
+
   # def fix_for_multiple_emails(conditions)
   #   conditions[0] = (current_account.features_included?(:multiple_user_emails) ? "user_emails.email" : "users.email")
   # end

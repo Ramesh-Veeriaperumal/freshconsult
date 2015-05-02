@@ -6,7 +6,7 @@
 <%= error_messages_for :topic %>
 <%= form_for @topic,
      :url  => discussions_topic_path(@topic),
-    :html => {:multipart => true, :method => :put } do |f| -%>
+    :html => {:multipart => true, :method => :put, :rel => "validate"} do |f| -%>
 
   <%= render :partial => "form", :object => f %>
 

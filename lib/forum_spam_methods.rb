@@ -54,7 +54,7 @@ module ForumSpamMethods
 
 	def counter
 		date = time.strftime('%Y_%m_%d')
-		SpamCounter.for(self.account_id, self.type, date)
+		SpamCounter.for(self.type, date)
 	end
 
 	def destroy_next
@@ -108,25 +108,29 @@ module ForumSpamMethods
 
 	module ClassMethods
 
-		def last_month(acc)
+		def find_post(timestamp)
+			find(:account_id => Account.current.id, :timestamp => timestamp)
+		end
+
+		def last_month
 			query(
-				:account_id => acc, 
+				:account_id => Account.current.id, 
 				:timestamp => [:gt, (Time.now - ForumSpam::UPTO).utc.to_f],
 				:limit => 30
 				)
 		end
 
-		def next(acc, timestamp)
+		def next(timestamp)
 			query(
-				:account_id => acc, 
+				:account_id => Account.current.id, 
 				:timestamp => [:lt, timestamp],
 				:limit => 30
 				)
 		end
 
-		def topic_spam(acc, topic_id, last = nil)
+		def topic_spam(topic_id, last = nil)
 			query(
-				:account_id => acc, 
+				:account_id => Account.current.id, 
 				:topic_timestamp => 
 					[:between, topic_id.to_i * 10.power!(17) + (Time.now - ForumSpam::UPTO).utc.to_f * 10.power!(7), (topic_id.to_i + 1) * 10.power!(17)],
 				:limit => 30,
@@ -134,14 +138,14 @@ module ForumSpamMethods
 				)
 		end
 
-		def delete_topic_spam(acc, topic_id)
-			results = topic_spam(acc, topic_id)
+		def delete_topic_spam(topic_id)
+			results = topic_spam(topic_id)
 			while(results.present?)
 				last = results.last_evaluated_key
 				results.each do |result|
 					result.destroy
 				end
-				results = topic_spam(acc, topic_id, last)
+				results = topic_spam(topic_id, last)
 			end
 		end
 	end

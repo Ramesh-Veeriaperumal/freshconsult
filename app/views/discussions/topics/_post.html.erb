@@ -59,7 +59,7 @@ unpublished =  !original && !post.published
 					<% end %>
 					<% if privilege?(:delete_topic) && post.user.customer? && post.published %>
 						<%= link_to_remote("",
-										:url => mark_as_spam_path(post),
+										:url => mark_as_spam_discussions_unpublished_path(post),
 										:method => :put,
 										:html => {
 											:class => font_class("notice-o", 21, "tooltip"),

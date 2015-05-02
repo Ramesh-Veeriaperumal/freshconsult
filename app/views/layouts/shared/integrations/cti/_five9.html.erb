@@ -1,0 +1,22 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/cti' %>
+<%= javascript_include_tag :'cdn/cti_ticket_search' %>
+<%= javascript_include_tag :'cdn/cti_client' %>
+<%= javascript_include_tag :'cdn/five9' %>
+
+<div class="cti_widget">
+	<%= render 'layouts/shared/cti/cti_popup_tabs' %>
+</div>
+
+<div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
+<div class="popupbox-content hide cti_content_container" rel="cti_widget">
+	<%= render 'layouts/shared/cti/cti_popupbox_content' %>
+</div>
+
+<%= javascript_tag do %>
+	if (typeof cti_user === "undefined") { cti_user = {}; }
+	cti_user.current_user = <%= current_user.id %>;
+	cti_user.current_account = <%= current_account.id%>;
+	cti_user.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
+	cti_user.email = '<%= current_user.email %>';
+	var integrations_url="<%= AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') %>";
+<% end %>

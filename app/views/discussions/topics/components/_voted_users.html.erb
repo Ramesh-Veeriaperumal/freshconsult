@@ -1,6 +1,6 @@
 <div id="voted-users" class="topics_list">
 	<ul class="base_set">
-		<% @topic.votes.all(:include => [:user]).each do |vote| %>
+		<% @topic.votes.all(:include => [:user], :order => "created_at DESC").each do |vote| %>
 			<li>
 				<%= user_avatar(vote.user) %><%= link_to_user vote.user, :class => "avatar-wrap" , :qid => "#{vote.user.id}" %>
 				<div class="muted">

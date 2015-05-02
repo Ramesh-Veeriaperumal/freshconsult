@@ -22,7 +22,7 @@
 <% end %>
 
 <script type="text/javascript">
-  var data = <%= socket_auth_params %>;
+  var data = <%= socket_auth_params("agentcollision") %>;
   var server = "<%= agentcollision_socket_host %>"
   var hashed_params = data;
   var draft = false; 

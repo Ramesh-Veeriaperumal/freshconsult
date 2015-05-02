@@ -1,0 +1,11 @@
+<div class="topics_list"
+     data-followers-link="<%= t('forum_shared.followers', :count => @forum.monitors.count) %>"
+     data-modal-title="<%= t('forum_shared.followers_title', :count => @forum.monitors.count) %>">
+  <ul class="base_set">
+    <% @forum.monitors.each do |user| %>
+      <li>
+        <%= user_avatar(user) %><%= link_to_user user, :class => "avatar-wrap" , :qid => "#{user.id}" %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -16,7 +16,8 @@
 		tag_cloud.each do |tag|
 			unless tag.uses_count == 0 
 			 	concat content_tag :div, 
-		 			link_to(tag.name, { :controller=>"contacts", :tag => tag.id.to_s }), 
+		 			link_to(tag.name, { :controller=>"contacts", :tag => tag.id.to_s }, 
+		 				:'data-pjax' => "#body-container"), 
 		 			{:class => 'item contact-tag', :style => "font-size:#{tag.tag_size(max)}%;"}
 			end
 		end

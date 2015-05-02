@@ -63,9 +63,9 @@ class TopicObserver < ActiveRecord::Observer
   end
 
 	def after_destroy(topic)
-    topic.account.clear_forum_categories_from_cache
+		topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-    delete_spam_posts(topic) if topic.account.features_included?(:spam_dynamo)
+		delete_spam_posts(topic)
 	end
 
 private
@@ -82,27 +82,27 @@ private
   end
 
   def update_forum_counter_cache(topic)
-      # Forum Sidebar Cache is cleared from here
-      # As forum callbacks will not be fired from here.
-      topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
-      forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
-      # if the topic moved forums
-      if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
-        Post.update_all ['forum_id = ?', topic.forum_id], ['topic_id = ?', topic.id]
-        Forum.update_all ['topics_count = ?, posts_count = ?',
-          Topic.count(:id, :conditions => {:forum_id => @old_forum_id, :published => true }),
-          Post.count(:id,  :conditions => {:forum_id => @old_forum_id, :published => true })], ['id = ?', @old_forum_id]
-      end
-      # if the topic moved forums or was deleted
-      if topic.frozen? || (@old_forum_id && @old_forum_id != topic.forum_id)
-        forum_conditions.first << ", posts_count = ?"
-        forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})
-      end
-      # User doesn't have update_posts_count method in SB2, as reported by Ryan
-      # @voices.each &:update_posts_count if @voices
-      Forum.update_all forum_conditions, ['id = ?', topic.forum_id]
-      @old_forum_id = @voices = nil
+    # Forum Sidebar Cache is cleared from here
+    # As forum callbacks will not be fired from here.
+    topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
+    forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
+    # if the topic moved forums
+    if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
+      Post.update_all ['forum_id = ?', topic.forum_id], ['topic_id = ?', topic.id]
+      Forum.update_all ['topics_count = ?, posts_count = ?',
+        Topic.count(:id, :conditions => {:forum_id => @old_forum_id, :published => true }),
+        Post.count(:id,  :conditions => {:forum_id => @old_forum_id, :published => true })], ['id = ?', @old_forum_id]
     end
+    # if the topic moved forums or was deleted
+    if topic.frozen? || (@old_forum_id && @old_forum_id != topic.forum_id)
+      forum_conditions.first << ", posts_count = ?"
+      forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})
+    end
+    # User doesn't have update_posts_count method in SB2, as reported by Ryan
+    # @voices.each &:update_posts_count if @voices
+    Forum.update_all forum_conditions, ['id = ?', topic.forum_id]
+    @old_forum_id = @voices = nil
+  end
 
   def update_post_user_counts(topic)
       @voices = topic.voices.to_a
@@ -129,12 +129,13 @@ private
 
   def delete_spam_posts(topic)
     Post::SPAM_SCOPES_DYNAMO.each do |k, klass|
+      next if SpamCounter.count(topic.id, k).zero?
       Resque.enqueue(Workers::Community::DeleteTopicSpam, 
-                            {
-                              :account_id => topic.account.id,
-                              :topic_id => topic.id,
-                              :klass => klass.to_s  
-                            })
+                      {
+                        :account_id => topic.account.id,
+                        :topic_id => topic.id,
+                        :klass => klass.to_s  
+                      })
     end
   end
 

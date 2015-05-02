@@ -7,7 +7,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   validates_uniqueness_of :display_id, :scope => :account_id
   validate :due_by_validation, :if => :due_by
-  validate :frDueBy_validation, :if => :frDueBy
+  #validate :frDueBy_validation, :if => :frDueBy
 
   validate on: :create do |ticket|
     req = ticket.requester

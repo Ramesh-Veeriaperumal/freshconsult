@@ -23,7 +23,7 @@ module Solution::ArticlesVotingMethods
       format.json { render :json => {:success => success} }
       format.any(:html, :js, :atom, :nmobile, :widget) {
         # Rendering the feedback form for the user... to get his comments
-        render :partial => "/support/solutions/articles/feedback_form", :locals => { :ticket => @ticket, :article => @article }
+        render :partial => "/support/solutions/articles/feedback_form"
       }
     end
   end

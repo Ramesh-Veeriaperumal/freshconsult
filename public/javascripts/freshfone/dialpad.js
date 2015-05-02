@@ -123,29 +123,33 @@
 
         $(document).ready(function(){
             var $outgoing_numbers_list = $('.outgoing_numbers_list');
-            
-            $outgoing_numbers_list.select2({
-            	dropdownCssClass: "outgoing_numbers_list_dropdown",
-            	minimumResultsForSearch: 5,
-            	attachtoContainerClass: ".popupbox-content",
+            if (! $.isEmptyObject(freshfone.numbersHash)) {
+            	freshfonewidget.outgoingCallWidget.toggle(true);
+	            $outgoing_numbers_list.select2({
+	            	dropdownCssClass: "outgoing_numbers_list_dropdown",
+	            	minimumResultsForSearch: 5,
+	            	attachtoContainerClass: ".popupbox-content",
 
-	            formatResult: function(result, container,query){
-                    var name = freshfone.namesHash[result.id],
-	            	    number = freshfone.numbersHash[result.id];
-	                if(name == ""|| name.trim == "" ){
-	            	    return  "<span>" +number + "</span>" ;
-                    }else{
-	            		return "<span><b>" + name + "</b></span><br/><span>" + number + " </span>" ;    
-	            	}
-	            },
-	            
-	            formatSelection: function(data, container) {
-	            	var result = data.text;
-	            	var lastindex = result.lastIndexOf(" ");
-	            	result = (lastindex > -1) ?  result.substring(0, lastindex) : data.text;
-                    return result;
-                }
-            });
+		            formatResult: function(result, container,query){
+	                    var name = freshfone.namesHash[result.id],
+		            	    number = freshfone.numbersHash[result.id];
+		                if(name == ""|| name.trim == "" ){
+		            	    return  "<span>" +number + "</span>" ;
+	                    }else{
+		            		return "<span><b>" + name + "</b></span><br/><span>" + number + " </span>" ;    
+		            	}
+		            },
+		            
+		            formatSelection: function(data, container) {
+		            	var result = data.text;
+		            	var lastindex = result.lastIndexOf(" ");
+		            	result = (lastindex > -1) ?  result.substring(0, lastindex) : data.text;
+	                    return result;
+	                }
+	            });
+	           } else { 
+	           	freshfonewidget.outgoingCallWidget.toggle(false);
+	           }
             
        });
 }(jQuery));

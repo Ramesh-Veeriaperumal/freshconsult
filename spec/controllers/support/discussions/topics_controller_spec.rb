@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe Support::Discussions::TopicsController do
-  	setup :activate_authlogic
-  	self.use_transactional_fixtures = false
+
+	setup :activate_authlogic
+	self.use_transactional_fixtures = false
 
 	before(:all) do
 		@category = create_test_category
@@ -13,8 +14,8 @@ describe Support::Discussions::TopicsController do
 	end
 
 	before(:each) do
-        @request.env['HTTP_REFERER'] = 'support/discussions'
-        log_in(@user)
+    @request.env['HTTP_REFERER'] = 'support/discussions'
+    log_in(@user)
 	end
 
 	after(:all) do
@@ -54,33 +55,57 @@ describe Support::Discussions::TopicsController do
 		response.should redirect_to "/support/discussions/topics/#{topic.id}"
 	end
 
+	describe "it should create a topic when current user is a agent" do
 
-	it "should create a topic on post 'create'" do
-		topic_title = Faker::Lorem.sentence(1)
-		post_body = Faker::Lorem.paragraph
-		old_follower_count = Monitorship.count
+		before(:each) do
+			login_admin
+			@post_body = Faker::Lorem.paragraph
+		end
 
-		post :create,
-			:topic =>
-					{:title=> topic_title, 
-					:body_html=>"<p>#{post_body}</p>", 
-					:forum_id=> @forum.id,
-					:sticky => true }
+		it "should create a topic with attachments on post 'create'" do
+			old_follower_count = Monitorship.count
+			topic_title = Faker::Lorem.sentence(1)
+			post :create,
+				:topic =>
+						{:title=> topic_title, 
+						:body_html=>"<p>#{@post_body}</p>", 
+						:forum_id=> @forum.id},
+				:post => { :attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
 
-		new_topic = @account.topics.find_by_title(topic_title)
-		new_topic.forum_id.should eql @forum.id
-		new_topic.user_id.should eql @user.id
-		new_topic.account_id.should eql @account.id
+			new_topic = @account.topics.find_by_title(topic_title)
+			new_topic.forum_id.should eql @forum.id
+			new_topic.user_id.should eql @agent.id
+			new_topic.account_id.should eql @account.id
 
-		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
-		new_post.topic_id.should eql new_topic.id
-		new_post.user_id.should eql @user.id
-		new_post.account_id.should eql @account.id
+			new_post = @account.posts.find_by_body_html("<p>#{@post_body}</p>")
+			new_post.topic_id.should eql new_topic.id
+			new_post.user_id.should eql @agent.id
+			new_post.account_id.should eql @account.id
+			Monitorship.count.should eql old_follower_count + 1
+			Monitorship.last.portal_id.should_not be_nil
 
-		Monitorship.count.should eql old_follower_count + 1
-		Monitorship.last.portal_id.should_not be_nil
-		response.should redirect_to '/support/discussions'
+			response.should redirect_to support_discussions_path
+		end
+
+		it "should not create a topic on post 'create' when post is invalid" do
+			topic_title = Faker::Lorem.sentence(1)
+			post :create,
+				:topic =>
+						{
+						:title=> topic_title,
+						:body_html=>"", 
+						:forum_id=> @forum.id},
+				:post => { :attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
+
+			@account.topics.find_by_title(topic_title).should be_nil
+			@account.posts.find_by_body_html("").should be_nil
+
+			response.should render_template 'support/discussions/topics/new'
+		end
+
 	end
+
+
 
 	it "should not create a topic on post 'create' when post is invalid" do
 		topic_title = Faker::Lorem.sentence(1)

@@ -55,7 +55,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call_history"
     resource :"freshfone/blacklist_number"
     resource :"freshfone/autocomplete"
-    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents]
+    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
@@ -161,7 +161,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_forums do
     resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
-    resource :"discussions/forum", :only => [:show]
+    resource :"discussions/forum", :only => [:show, :followers]
     resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
@@ -173,6 +173,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/forum", :only => [:index]
     resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
+    resource :monitorship, :only => [:followers]
   end
 
   # create_edit_forum_category
@@ -231,6 +232,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :customers_import
     resource :contact_merge
     resource :user_email
+    resource :"segment/identify"
+    resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
   end
