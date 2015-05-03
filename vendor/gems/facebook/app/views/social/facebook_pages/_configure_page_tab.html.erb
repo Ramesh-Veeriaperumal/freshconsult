@@ -35,7 +35,7 @@
   <!-- This condition is for new Users -->
   <% if @fb_tab.nil? && @item.page_token_tab.nil? %>
     <%unless @edit_tab%>
-    <span class="fb_add"></span><b><%= t('facebook_tab.configure_tab_auth',:page_tab_url => @fb_client_tab.authorize_url(session[:state])).html_safe %></b>
+    <span class="fb_add"></span><b><%= t('facebook_tab.configure_tab_auth',:page_tab_url => @fb_client_tab.authorize_url(session[:state], true)).html_safe %></b>
     <div class="fb_tab_pic"></div>
     <%end%>
 
@@ -43,7 +43,7 @@
        * This applies for migrated users also 
    -->
   <% elsif @fb_tab.nil? %>
-    <div class="fb_info_text"><%= t('facebook_tab.reauth',:page_tab_url => @fb_client_tab.authorize_url(session[:state])).html_safe %></div>
+    <div class="fb_info_text"><%= t('facebook_tab.reauth',:page_tab_url => @fb_client_tab.authorize_url(session[:state], true)).html_safe %></div>
   
   <% else %>
   
