@@ -55,7 +55,7 @@
           <div class="fb_field span9">
             <%= text_field_tag "custom_name", @fb_tab["name"], :class => "required auto fb_changed", :disabled => !current_account.ssl_enabled?, :size => "40" %>
           </div>
-          <%= link_to t('facebook_tab.remove_tab').html_safe, remove_social_facebook_tabs_path(@item), :class=>"remove_fb" %>
+          <%= link_to t('facebook_tab.remove_tab').html_safe, remove_social_facebook_tabs_path(@item), :class=>"remove_fb", :method => 'delete' %>
         </div>
   
     <% else %>
