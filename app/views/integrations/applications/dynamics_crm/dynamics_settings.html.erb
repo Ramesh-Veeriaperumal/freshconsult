@@ -1,0 +1,147 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.dynamicscrm.helptext").html_safe%>
+  </div>
+<%- end %>
+
+	<h3 class="lead"><%=t("integrations.dynamicscrm.form.dynamicscrm_settings")%></h3>
+
+  <%= form_tag("/integrations/dynamics_crm/settings_update", :method=> "post")  do %>
+   <% default_fields = ["Name", "Position", "Company"]%>
+   <% crm_instance_types = Integrations::Constants::CRM_INSTANCE_TYPES %>
+    <ul class="ui-form">
+
+      <li class="inline-field">
+        <label class="caption">
+          <div class="logo application-logo-dynamicscrm"></div>
+          <div class="logo info-data">
+            <%=t('integrations.dynamicscrm.desc')%>
+          </div>
+        </label>
+
+        <div class="fields hide">
+          <label for="configs_instance_type"> <%=t('integrations.dynamicscrm.form.instance_type')%> <span class="required_star">*</span></label>
+          <input aria-required="true" class=" required radio" id="configs_instance_type" name="configs[instance_type]" type="radio" value="<%= crm_instance_types["on_demand"]%>" checked = "checked"> On-Demand <br>
+<!--           <div class=""><input aria-required="true" class=" required radio" id="configs_instance_type" name="configs[instance_type]" type="radio" value="<%= crm_instance_types["on_premise"]%>"> On-Premise </div>
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.instance_info')%> </div> -->
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_domain"> <%=t('integrations.dynamicscrm.form.domain')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_domain" name="configs[domain]" size="30" 
+          <%if defined?(configs["domain"]) %>
+            value = "<%= configs["domain"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.domain_info')%> </div>
+            <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_password"> <%=t('integrations.dynamicscrm.form.password')%> <span class="required_star">*</span></label><input aria-required="true" class=" required  text" id="configs_password" name="configs[password]" size="30" 
+          <%if defined?(configs["password"]) %>
+            value = "<%= configs["password"] %>"
+          <%end%>
+          type="password">
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_organization_name"> <%=t('integrations.dynamicscrm.form.organization_name')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_organization_name" name="configs[organization_name]" size="30"
+          <%if defined?(configs["organization_name"]) %>
+            value = "<%= configs["organization_name"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.organization_name_info')%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_api_end_point"> <%=t('integrations.dynamicscrm.form.endpoint')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_endpoint" name="configs[endpoint]" size="30"
+          <%if defined?(configs["endpoint"]) %>
+            value = "<%= configs["endpoint"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.end_point_info')%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields hide">
+          <label for="configs_api_login_url"> <%=t('integrations.dynamicscrm.form.loginurl')%> <span class="required_star">*</span></label><input aria-required="true" id="configs_login_url" name="configs[login_url]" size="30"
+          <%if defined?(configs["login_url"]) %>
+            value = "<%= configs["login_url"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.login_url')%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields hide">
+          <label for="configs_api_region"> <%=t('integrations.dynamicscrm.form.region')%> <span class="required_star">*</span></label><input aria-required="true" id="configs_region" name="configs[region]" size="30"
+          <%if defined?(configs["region"]) %>
+            value = "<%= configs["region"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.region_info')%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_contact_email"> <%=t('integrations.dynamicscrm.form.contact_email')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_contactemail" name="configs[contact_email]" size="30"
+          <%if defined?(configs["contact_email"]) %>
+            value = "<%= configs["contact_email"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.contact_email_info')%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_account_email"> <%=t('integrations.dynamicscrm.form.account_email')%> </label><input aria-required="true" id="configs_accountemail" name="configs[account_email]" size="30"
+          <%if defined?(configs["account_email"]) %>
+            value = "<%= configs["account_email"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.account_email_info')%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_lead_email"> <%=t('integrations.dynamicscrm.form.lead_email')%> </label><input aria-required="true" id="configs_leademail" name="configs[lead_email]" size="30"
+          <%if defined?(configs["lead_email"]) %>
+            value = "<%= configs["lead_email"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.dynamicscrm.form.lead_email_info')%> </div>
+          <span class="seperator"></span>
+        </div>
+      </li>
+    </ul>
+    <div class="button-container">
+      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary" %>
+    </div>
+
+<script type="text/javascript">
+jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_premise"]%>]").change(function(e){
+   jQuery("#configs_login_url").addClass("required").closest('.fields').show();
+   jQuery("#configs_region").addClass("required").closest('.fields').show();
+   jQuery("#configs_login_url").closest('.required_star').html('*');
+   jQuery("#configs_region").closest('.required_star').html('*');
+});
+
+jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_demand"]%>]").change(function(e){
+    jQuery("#configs_login_url").removeClass("required").val("").closest('.fields').hide();
+    jQuery("#configs_region").removeClass("required").val("").closest('.fields').hide();
+    jQuery("#configs_login_url").closest('.required_star').html('');
+    jQuery("#configs_region").closest('.required_star').html('');
+});
+
+jQuery(document).ready(function() {
+    <%if defined?(configs["instance_type"]) %>
+      var value = "<%= configs['instance_type'] %>";
+      jQuery("input[name='configs[instance_type]'][value=" + value + "]").attr('checked', 'checked').change();
+    <%end%>
+});
+</script>
+  <%end%>

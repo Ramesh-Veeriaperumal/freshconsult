@@ -665,6 +665,16 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :dynamics_crm do
+      collection do
+        post :settings_update
+        get :edit
+        post :fields_update
+        post :widget_data
+        get :settings
+      end
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user

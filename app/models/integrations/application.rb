@@ -66,7 +66,7 @@ class Integrations::Application < ActiveRecord::Base
       installed_application.application = app
       installed_application.account_id = account_id
     end
-    installed_application.configs = {:inputs => params}
+    installed_application.set_configs(params)
     installed_application.save!
     installed_application
   end
@@ -125,6 +125,10 @@ class Integrations::Application < ActiveRecord::Base
 
   def slack?
     self.application_type == "slack"
+  end
+
+  def dynamics_crm?
+    self.name == "dynamicscrm"
   end
 
   private

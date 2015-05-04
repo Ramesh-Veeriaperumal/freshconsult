@@ -46,6 +46,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+    resource :"integrations/dynamics_crm", :only => [:widget_data]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -334,6 +335,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/installed_application"
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
+    resource :"integrations/dynamics_crm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"

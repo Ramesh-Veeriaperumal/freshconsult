@@ -60,8 +60,7 @@ RSpec.describe Integrations::ApplicationsController do
     set_redis_key(provider, slack_params(provider))
     post 'oauth_install', :id => provider
     get_redis_key(provider).should be_nil
-
-    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app = Integrations::InstalledApplication.with_name(provider).first
     installed_app.should_not be_nil
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end
@@ -163,5 +162,20 @@ RSpec.describe Integrations::ApplicationsController do
     get_redis_key(provider).should_not be_nil
     Integrations::InstalledApplication.with_name(provider).should_not be_nil
     response.should render_template("integrations/applications/salesforce_fields")
+  end
+
+  it "should redirect to dynamics crm " do
+    application = FactoryGirl.build(:application, :name => "dynamicscrm",
+                                    :display_name => "integrations.dynamicscrm.label",
+                                    :listing_order => 29,
+                                    :options => {
+                                      :direct_install => false
+                                    },
+                                    :account_id => 0,
+                                    :application_type => "dynamicscrm")
+    application.save(:validate => false)
+    dynamics_id = Integrations::Application.find_by_name("dynamicscrm").id
+    get "show",  {:controller => "integrations/applications", :action => "show", :id => dynamics_id }
+    response.should redirect_to "/integrations/dynamics_crm/settings"
   end
 end
