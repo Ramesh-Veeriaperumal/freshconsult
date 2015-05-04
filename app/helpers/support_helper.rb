@@ -649,7 +649,7 @@ module SupportHelper
 
 	def attachment_item attachment, can_delete = false
 		output = []
-
+		tooltip = "data-toggle='tooltip' title='#{attachment.filename}'" if attachment.filename.size > 15
 		output << %(<div class="attachment">)
 		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
@@ -657,7 +657,8 @@ module SupportHelper
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
+		output << %(<a href="#{attachment.url}" class="filename" target="_blank" #{tooltip} 
+		            >#{ attachment.filename.truncate(15) } </a>)
 		output << %(</div>)
 		output << %(<div>(#{  attachment.size  }) </div>)
 		output << %(</div>)
@@ -670,13 +671,15 @@ module SupportHelper
 		output = []
 
 		output << %(<div class="attachment">)
+		tooltip = "data-toggle='tooltip' title='#{cloud_file.filename}'" if cloud_file.filename.size > 15
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank">#{ cloud_file.filename } </a>)
+		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank"
+			        #{tooltip}>#{ cloud_file.filename.truncate(15) } </a>)
 		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
 		output << %(</div>)
