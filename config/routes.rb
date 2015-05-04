@@ -1908,6 +1908,7 @@ Helpkit::Application.routes.draw do
     end
     resources :settings,  :only => [:index] do
       collection do
+        get :mobile_login
         get :mobile_pre_loader
         get :deliver_activation_instructions
       end
