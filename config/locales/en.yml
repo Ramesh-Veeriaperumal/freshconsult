@@ -5917,6 +5917,8 @@ en:
   yesterday: Yesterday
   seven_days: This Week
   thirty_days: This Month
+  last_week: Last week
+  last_month: Last month
   two_months: Last 2 months
   six_months: Last 6 months
   set_date: Select Time Period
