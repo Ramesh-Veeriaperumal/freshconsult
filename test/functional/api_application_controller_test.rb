@@ -7,7 +7,7 @@ require_relative '../test_helper'
       controller.response = response
       params = ActionController::Parameters.new({:version => 2})
       controller.params = params
-      @controller.send(:latest_version)
+      @controller.send(:response_headers)
       version_header = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
       assert_equal true, response.headers.include?("X-Freshdesk-API-Version")
       assert_equal version_header, response.headers["X-Freshdesk-API-Version"]

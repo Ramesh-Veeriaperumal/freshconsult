@@ -59,14 +59,16 @@ module ApiDiscussions
         assert_equal({"code"=>"unverified_request", "message"=>"You have initiated a unverifiable request."}, response)
       end
 
-      define_method("test_#{action}_check_account_state") do 
+      define_method("test_#{action}_check_account_state_and_response_headers") do 
         subscription = @account.subscription
         subscription.update_column(:state, "suspended")
         send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_response(@response.body)
+        response = parse_response(@response.body)   
         assert_equal({"code"=>"account_suspended", "message" => "Your account has been suspended."}, response)
         assert_response :forbidden
         assert_equal "current=v2; requested=v2", @response.headers["X-Freshdesk-API-Version"] 
+        assert_not_nil @response.headers["X-RateLimit-Limit"] 
+        assert_not_nil @response.headers["X-RateLimit-Remaining"] 
         subscription.update_column(:state, "trial")
       end
     end
@@ -136,7 +138,7 @@ module ApiDiscussions
       fc = @account.forum_categories.create!(:name => "temp")
       delete :destroy, :version => "v2", :format => :json, :id => fc.id
       assert_equal " ", @response.body
-      assert_response :success
+      assert_response :no_content
       assert_nil ForumCategory.find_by_id(fc.id)
     end
 
@@ -191,6 +193,24 @@ module ApiDiscussions
       end
       assert_response :success
       response.body.must_match_json_expression(pattern)
+    end
+
+    def test_render_500
+      controller.class.any_instance.stubs(:index).raises(StandardError)
+      get :index, :version => "v2", :format => :json
+      assert_response :internal_server_error
+      response = parse_response(@response.body)
+      assert_equal({"message" => "We're sorry, but something went wrong."}, response)
+    end
+
+    def test_ensure_proper_protocol
+      Rails.env.stubs(:test?).returns(false).once
+      get :index, :version => "v2", :format => :json
+      Rails.env.unstub(:test?)
+      assert_response :forbidden
+      response = parse_response(@response.body)
+      assert_equal({"code" => "ssl_required", "message" => "SSL certificate verification failed."}, response)
+
     end
   end
 end

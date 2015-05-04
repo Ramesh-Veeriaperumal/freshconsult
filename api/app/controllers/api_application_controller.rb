@@ -1,9 +1,14 @@
 class ApiApplicationController < ApplicationController
 
   include ErrorHelper 
+  include APIThrottlerMethods
   respond_to :json
-  prepend_before_filter :latest_version
+  prepend_before_filter :response_headers
 
+  # do not change the exception order # standard error has to have least priority hence placing at the top.
+  rescue_from StandardError do |exception| 
+    render_500(exception)  
+  end
   rescue_from ActionController::UnpermittedParameters, :with => :invalid_field_handler
   rescue_from ActionController::ParameterMissing, :with => :missing_field_handler
 
@@ -38,7 +43,7 @@ class ApiApplicationController < ApplicationController
 
   def destroy
     @item.destroy
-    head :ok # Change the status to no content
+    head :no_content
   end
 
   def route_not_found
@@ -50,6 +55,7 @@ class ApiApplicationController < ApplicationController
     if allows.present?
       @error = ::ApiError::BaseError.new(:method_not_allowed, :methods => allows.join(", "))
       render :template => '/base_error', :status => 405
+      response.headers["X-Allowed-Methods"] = allows.join(", ")
     else
       head :not_found
     end
@@ -57,9 +63,17 @@ class ApiApplicationController < ApplicationController
 
   protected
 
-  def latest_version
+  def render_500(e)
+    Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")
+    @error = ::ApiError::BaseError.new(:internal_error)
+    render :template => '/base_error', :status => 500
+  end
+
+  def response_headers
     response.headers["X-Freshdesk-API-Version"] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
-    # add api limit info  
+    api_limit = allowed_api_limit
+    response.headers["X-RateLimit-Limit"] = api_limit.to_s
+    response.headers["X-RateLimit-Remaining"] = (api_limit - spent_api_limit).to_s
   end
 
   def invalid_field_handler(exception)
@@ -126,4 +140,13 @@ class ApiApplicationController < ApplicationController
     controller_path.gsub('/', '_').singularize
   end
 
+private
+
+  def ensure_proper_protocol
+    return true if Rails.env.test? || Rails.env.development?
+    unless request.ssl?
+      @error = ::ApiError::RequestError.new(:ssl_required)
+      render :template => '/request_error', :status => 403
+    end
+  end
 end
