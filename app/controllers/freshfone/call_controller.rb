@@ -44,7 +44,7 @@ class Freshfone::CallController < FreshfoneBaseController
 			notify_error({:ErrorUrl => e.message})
 			return empty_twiml
 		ensure
-			add_cost_job unless call_transferred?
+			add_cost_job
 		end
 	end
 

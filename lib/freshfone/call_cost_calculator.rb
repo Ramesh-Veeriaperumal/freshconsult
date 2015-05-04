@@ -27,7 +27,6 @@ class Freshfone::CallCostCalculator
 	
 	def calculate_cost
 		return missed_call_cost if missed_or_busy?
-		self.first_leg_call = get_twilio_call
 		get_first_leg_cost
 		dial_call_cost unless one_leg_calls?
 
@@ -37,23 +36,25 @@ class Freshfone::CallCostCalculator
 	private
 
 		def one_leg_calls?
-			!transferred? && (dial_call_sid.blank? || no_call_duration?)
+			(dial_call_sid.blank? || no_call_duration?)
 		end
 
 		def get_first_leg_cost
+			first_leg_call = get_twilio_call
 			puts "Call cost for the first leg of #{args[:call_sid]} : #{first_leg_call.price}"
-			self.total_charge = current_call.present? ? pulse_rate.one_legged_call_cost	: first_leg_call.price.to_f.abs
+			self.total_charge = current_call.present? ? pulse_rate.voicemail_cost : first_leg_call.price.to_f.abs
 		end
 	
 		def missed_call_cost
 			self.total_charge = pulse_rate.missed_call_cost
 		end
 
-		def transferred?
-			args[:transfer]
+		def voicemail_cost
+			self.total_charge = pulse_rate.voicemail_cost * no_of_pulse(duration_for_call)
 		end
-		
+
 		def no_of_pulse(duration)
+			return 1 if duration.blank? #return 1 to calculate default cost.
 			duration = duration.to_f/60
 			(duration > duration.round) ? (duration.round + 1) : duration.round
 		end
@@ -61,14 +62,14 @@ class Freshfone::CallCostCalculator
 		#have separate dial call cost for transfer-to-voicemail scenario
 		def dial_call_cost
 			pulse_cost = pulse_rate.pulse_charge
-			self.total_charge = pulse_cost.to_f * no_of_pulse(first_leg_call_duration)
+			self.total_charge = pulse_cost.to_f * no_of_pulse(duration_for_call)
 		end
 		
 		def update_call_cost
 			# update call cost /special ignore update case if it is for record message,
 			# we don't store call data for record twiml but twilio charge needs to be deducted
 			if total_charge > 0
-				current_call.root.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
+				current_call.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
 				current_account.freshfone_credit.deduce(total_charge)
 				#Otherbilling for preview & Message_records
 				current_account.freshfone_other_charges.create(
@@ -111,7 +112,7 @@ class Freshfone::CallCostCalculator
 		end
 		
 		def dial_call_sid
-			args[:dial_call_sid]
+			args[:dial_call_sid] #voicemail will not pass this arg
 		end
 		
 		def get_twilio_call
@@ -132,14 +133,18 @@ class Freshfone::CallCostCalculator
 		def current_call_duration
 			current_call.call_duration unless current_call.blank?
 		end
-		
+
+		def duration_for_call
+			return current_call_duration if current_call.is_childless? #currently only one level of child is present.
+			parent_call_duration
+		end
+
+		def parent_call_duration
+			(current_call.children.first.created_at - current_call.created_at) if current_call.has_children?
+		end
+
 		def no_call_duration?
 			(current_call.blank? || current_call_duration.blank? or current_call_duration == 0 )
-		end
-		
-		def first_leg_call_duration
-			#first leg duration is the call full duration.
-			first_leg_call.duration.to_i
 		end
 		
 		def can_update_call_record?(args)
@@ -152,4 +157,7 @@ class Freshfone::CallCostCalculator
 				 Freshfone::Call::CALL_STATUS_HASH[:'no-answer']].include?(current_call.call_status)
 		end
 
+    def voicemail?
+      (Freshfone::Call::CALL_STATUS_HASH[:voicemail] == current_call.call_status)
+    end
 end
