@@ -30,5 +30,15 @@ module Admin::Freshfone::NumbersHelper
 			["15 mins", 15]
 		]
 	end
-
+	
+	def accessible_groups(number)
+		groups = []
+		selected_number_group = number.freshfone_number_groups
+		if selected_number_group
+			selected_number_group.each do |number_group|
+				groups << number_group.group_id
+			end
+		end
+		groups
+	end
 end

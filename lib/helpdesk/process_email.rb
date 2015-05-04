@@ -73,7 +73,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     ticket = fetch_ticket(account, from_email, user)
     if ticket
       return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-      ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user)
+      ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user, from_email)
       add_email_to_ticket(ticket, from_email, user)
     else
       create_ticket(account, from_email, to_email, user, email_config)
@@ -229,13 +229,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def fetch_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_headers(from_email, account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_email_body(account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_id_span(account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)            
@@ -281,6 +281,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
           ticket.save_ticket!
         end
+
+        # Insert header to schema_less_ticket_dynamo
+        begin
+          Timeout::timeout(0.5) do
+            dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
+            dynamo_obj['account_id'] = Account.current.id
+            dynamo_obj['ticket_id'] = ticket.id
+            dynamo_obj['headers'] = params[:headers]
+            dynamo_obj.save
+          end
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e) 
+        end
+
       rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         raise e
@@ -390,11 +404,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def can_be_added_to_ticket?(ticket,user)
+    def can_be_added_to_ticket?(ticket, user, from_email={})
       ticket and
       ((user.agent? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
+      (from_email[:email] == ticket.sender_email) or
       belong_to_same_company?(ticket,user))
     end
     

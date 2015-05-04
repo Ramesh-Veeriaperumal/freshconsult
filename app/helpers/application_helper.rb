@@ -610,7 +610,7 @@ module ApplicationHelper
                        "data-contact-id" => user.id,
                        "data-contact-url" => hover_card_contact_path(user)  }
 
-      link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
+      pjax_link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
       # link_to(h(user.display_name), user, options)
     else
       content_tag(:strong, h(user.display_name), options)
@@ -1024,7 +1024,7 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else
@@ -1079,15 +1079,27 @@ module ApplicationHelper
 	end
 
 	def current_account_freshfone_numbers
-		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.map{|n| [n.number, n.id]}
+		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.accessible_freshfone_numbers(current_user)
 	end
 
+  def current_account_freshfone_number_hash
+     @current_account_freshfone_number_hash ||= current_account_freshfone_numbers.map{|n| [n.number, n.id]}
+  end
+
   def current_account_freshfone_names
-      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
+      @current_account_freshfone_names ||= current_account_freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
   end
   
  def current_account_freshfone_details
-    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
+    @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
+ end
+
+ def freshfone_presence_status_class
+  return "ficon-phone-disable" if current_user.freshfone_user_offline?
+  presence_class = (current_user.freshfone_user && current_user.freshfone_user.available_on_phone?) ?
+                       "ficon-ff-via-phone" : "ficon-ff-via-browser"
+  presence_class + " ff-busy" unless current_user.freshfone_user_online?
+  return presence_class
  end
  
  def call_direction_class(call)
@@ -1183,5 +1195,13 @@ module ApplicationHelper
   end
 
   # ITIL Related Methods ends here
+
+  #Helper method for rendering only base error messages
+  def base_error_messages obj
+    if obj.errors.present?
+      error_list = obj.errors[:base].collect{ |msg| content_tag('li', msg)}.join(" ").html_safe
+      content_tag('div', content_tag('ul', error_list), :id => "errorExplanation", :class => "errorExplanation")
+    end
+  end
 
 end

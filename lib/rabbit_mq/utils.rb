@@ -1,5 +1,6 @@
 module RabbitMq::Utils
-  include RabbitMq::Keys
+
+  include RabbitMq::Constants
 
 =begin
   {
@@ -22,14 +23,14 @@ module RabbitMq::Utils
   private
 
   def publish_to_rabbitmq(model, action)
-    return #Disable RabbitMq for now.
-
     if RABBIT_MQ_ENABLED
-      message = { "object" => model,
-                  "action" => action,
-                  "#{model}_properties" => {}, 
-                  "subscriber_properties" => {} 
-                }
+      message = { 
+        "object"                =>  model,
+        "action"                =>  action,
+        "action_epoch"          =>  Time.zone.now.to_i,
+        "#{model}_properties"   =>  {}, 
+        "subscriber_properties" =>  {}        
+      }
       key = ""
       RabbitMq::Keys.const_get("#{model.upcase}_SUBSCRIBERS").each { |f|
         valid = construct_message_for_subscriber(f, message, model, action)
@@ -45,10 +46,10 @@ module RabbitMq::Utils
   end
 
   def construct_message_for_subscriber(s, message, model, action)
-    valid = send("mq_#{s}_valid")
-    if valid
-      message["#{model}_properties"].merge!(send("mq_#{s}_#{model}_properties",action))
-      message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties") })
+    valid = send("mq_#{s}_valid", action)
+    if valid  
+      message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
+      message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
     end
     valid
   end
@@ -56,8 +57,13 @@ module RabbitMq::Utils
   #made this as a function, incase later we want to compress the data before sending
   def send_message(message, key)
     self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
-      account.rabbit_mq_exchange.publish(message.to_json, :routing_key => key, :persistant => true) if key.include?("1")  
-    end    
+      Timeout::timeout(CONNECTION_TIMEOUT) {
+        publish_message_to_xchg(message, key)
+      }
+    end
+  rescue Timeout::Error => e 
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Timeout Error"}})
+    Rails.logger.error("RabbitMq Timeout Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")

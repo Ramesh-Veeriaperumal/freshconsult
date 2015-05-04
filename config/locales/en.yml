@@ -790,9 +790,11 @@ en:
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
+        simple_none: "None"
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
         captcha: "Enable CAPTCHA to help avoid spam"
+        forum_captcha: "Logged in users should enter CAPTCHA to create topic"
         view_solutions: "Who can view solutions"
         view_forums: "Who can view forums"
         notify_agents: "Send Moderation and Spam Notification to:"
@@ -1684,6 +1686,9 @@ en:
       agents: Agents
       all: All
       select_company: Select Companies
+    follower:
+      title: "Forum Followers"
+      description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   additional_email_verification: Additional Email Verification
@@ -1738,6 +1743,7 @@ en:
             post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic after a standard moderation process."
+          not_allowed: "Please select different forum. You are not allowed to post in this forum."
         posts:
           spam_check: "Thank you for posting in our forums. Your post will appear once it has been approved."
       tickets:
@@ -2043,7 +2049,7 @@ en:
         timer_stopped: "Timer Stopped"
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
-      ticket_split: "Ticket Splitted"
+      ticket_split: "Ticket Split"
       status_change: "%{value}"
       deleted: "Ticket Deleted"
       restored: "Ticket Restored"
@@ -2373,6 +2379,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
       all_agents: All agents
@@ -2601,6 +2608,9 @@ en:
     spam_action: Approve and Publish
     replied_time: " replied, %{time_in_words} ago"
     visible_in: Visible in
+    follower:
+      title: "Topic Followers"
+      description: "Agents added as followers receives email alerts when a new reply is posted"
   activerecord:
     errors:
       models:
@@ -2655,6 +2665,12 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    followers:
+      one: "%{count} Follower"
+      other: "%{count} Followers"
+    followers_title:
+      one: "1 person follows this Forum"
+      other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
       unlike: Unlike
@@ -2780,6 +2796,7 @@ en:
     type: Agent Type
     delete_agent: Delete Agent
     delete_agent_confirmation: The deleted agent will be available as a contact. This will remove all agent information from the helpdesk. Are you sure you want to proceed?
+    convert_agent_confirmation: Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?
     agent_restored: The agent has been restored
     status:
       active: Active
@@ -2949,10 +2966,10 @@ en:
       enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
-      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact_all: 'Recent ticket and forum activities'
@@ -2991,6 +3008,9 @@ en:
     unverified:
       no_contacts: You don't have any unverified contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
+    segment_api:
+      invalid_type: Invalid operation. Check your type.
+      email_blank: Email can't be blank 
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
@@ -3646,6 +3666,7 @@ en:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
+    user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
   logo: Logo
@@ -3925,6 +3946,8 @@ en:
     non_monitor_flash: You have stopped following this %{type}
     follow_title: Follow
     unfollow_title: Unfollow
+    me: Me
+    pick_agents: Add agents
   forums:
     search_all:
       placeholder: Search All Topics
@@ -3938,7 +3961,7 @@ en:
   company:
     created: Company was successfully created.
     updated: Company was successfully updated.
-    created_view: Company was successfully created. <a href="%{company_url}"> View company. </a>
+    created_view: Company was successfully created. <a href="%{company_url}" data-pjax="#body-container"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA Policy
     name: Company name
@@ -4377,6 +4400,7 @@ en:
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items
+        max_tag_length_msg: "Tag cannot be greater than 32 characters"
         due_date:
           when_is_it_due: When's it Due?
           today: Today
@@ -4894,10 +4918,8 @@ en:
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     five9:
       label: "Five9"
-      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
-      helptext: "This is Five9 helptext"
-      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
-      recording_path: "Directory path for the call recording"
+      desc: "Make inbound & outbound calls, record the call details and log them into a Freshdesk ticket"
+      helptext: "<h4>Five9 Integration Help</h4><p><br/>Install Five9 Agent Desktop Toolkit and you can then type in your Five9 Username and Password to login.<br/>Now when you receive a inbound call, there will be a automatic screen pop-up that provides contextual data about customers</p>"
     drishti:
       label: "Ameyo"
       desc: "Answer calls or trigger an outgoing call with this powerful Ameyo's telephony capabilities embedded inside Freshdesk"
@@ -5415,13 +5437,17 @@ en:
         agent_calls_count: "Calls"
         total_unanswered_calls: "Unanswered Calls"
         num_of_transfered: "No of Transfers"
+        num_of_external_transfers: "External Transfers"
         unanswered_transfers: "Unanswered Transfers"
         answered_percentage: "Answer %"
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
+        others: "Others"
+        external: "External Numbers"
         includes_transfer: "Includes transferred calls"
         no_agent: "- No Agent -"
+        no_external: "Transfers made to external numbers are not included"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
@@ -6134,9 +6160,11 @@ en:
       busy: "Ongoing Call"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
-      transfer_agents: "Search Available Agents..."
+      transfer_agents: "Type an agent or group name..."
+      transfer_numbers: "Type an external number..."
       unavailable_agents: "Agents are not available to transfer call"
-      agents_count_in_group: "%{count} agents available"
+      no_transfers: "No recent transfers"
+      agents_count_in_group: "%{count} Agents"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -6192,6 +6220,7 @@ en:
       save_ticket: "Convert to ticket"
       convert: "Convert"
       helpdesk: Helpdesk
+      external: "External"
       block_number: "Block"
       unblock_number: "Unblock"
       block_number_title: "Block number"
@@ -6202,7 +6231,16 @@ en:
       filter_option_missed_calls: "Missed"
       filter_option_voicemail: "Voicemail"
       filter_option_blocked_calls: "Blocked"
-
+      recording_delete:
+        done_by: "Deleted By"
+        tooltip: "Delete Recording"
+        confirmation_btn: "Delete"
+        confirmation_heading: "Please Confirm.."
+        confirmation_warning: "This will delete the recorded message permanentely."
+        confirmation_notification: "Are you sure you want to delete?"
+        successful: "Call Recording deleted successfully!"
+        unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
+        error: "Error while deleting a Call Record!!! Please try again after some time"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6287,6 +6325,7 @@ en:
         recording_privacy_public: "Visible to customers and agents"
         recording_privacy_private: "Visible only to agents"
         name_maxlength: "Name cannot have more than 255 Characters"
+        number_accessible: "Accessible by"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."

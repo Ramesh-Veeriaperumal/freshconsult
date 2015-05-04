@@ -35,7 +35,6 @@ pt-PT:
       changeplan_instead_of_cancel: "Em vez de cancelar a sua conta, talvez lhe seja mais benéfico mudar o seu plano."
       confirm_and_cancel_my_account: "Confirmo que quero cancelar a minha conta e apagar todos os meus dados..."
       delete_my_account: "Apagar a minha Conta"
-      goback: "&#x2190; Voltar às definições de conta"
       intro: "Está prestes a cancelar a sua conta. Isto irá <strong>apagar os seus dados de forma permanente</strong>."
       warning_message: "Ao prosseguir, não irá ter mais acesso à sua informação. Tenha a certeza que isto é aquilo que realmente deseja. "
       you_must_confirm: "Precisa de confirmar o cancelamento"

@@ -263,6 +263,16 @@
             var value = (key == "save_cuctomization") ? 'save_button' : 'preview_button'
             $('input[name="'+ value +'"]:visible')[0].click();
         },
+
+        // --------------- Forum pages -------------------//
+        toggleForumFollower = function (ev, key) {
+            App.Discussions.Monitorship.toggleForCurrentUser();
+        },
+
+        addForumFollower = function (ev, key) {
+            App.Discussions.Monitorship.showAddFollower();
+        },
+
         KB = {
             global        : {
                 help                : shortcutHelp,
@@ -298,6 +308,10 @@
             },
             portal_customizations : {
                 preview             : saveAndPreview
+            },
+            discussions     : {
+                toggle_following    : toggleForumFollower,
+                add_follower        : addForumFollower
             }
         },
         // Take care of binding all namespaced callback functions of KB object

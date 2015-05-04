@@ -74,7 +74,7 @@ class Company < ActiveRecord::Base
   def self.es_filter(account_id, letter,page, field_name, sort_order, per_page)
     Search::EsIndexDefinition.es_cluster(account_id)
     index_name = Search::EsIndexDefinition.searchable_aliases([Customer], account_id)
-    options = {:load => true, :page => page, :size => per_page, :preference => :_primary_first }
+    options = {:load => { Company => { :include => [:flexifield] }} , :page => page, :size => per_page, :preference => :_primary_first }
     items = Tire.search(index_name, options) do |search|
       search.query do |query|
         query.filtered do |f|

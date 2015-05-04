@@ -22,7 +22,7 @@
   <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user) if time_entry.user %></div>
   <div class="details">
     <h4>
-      <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"") %>
+      <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"", :'data-pjax' => '#body-container') %>
       <span class="tracked_time">
         <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
                             :class => "time",

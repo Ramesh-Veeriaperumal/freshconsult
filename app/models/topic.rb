@@ -23,19 +23,22 @@ class Topic < ActiveRecord::Base
   before_save :set_sticky
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
+  before_validation :assign_default_stamps, :if => :forum_id_changed?, :on => :update
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
-  has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
+  has_many :monitors, :through => :monitorships, :source => :user, 
+                      :conditions => ["#{Monitorship.table_name}.active = ?", true],
+                      :order => "#{Monitorship.table_name}.id DESC"
 
   has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id DESC", :class_name => 'Post'
-  has_one  :first_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id ASC", :class_name => 'Post'
+  has_one  :first_post, :order => "#{Post.table_name}.id ASC", :class_name => 'Post', :autosave => true
 
   has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
@@ -430,11 +433,11 @@ class Topic < ActiveRecord::Base
   end
 
   def spam_count
-    SpamCounter.count(id, :spam, account_id)
+    SpamCounter.count(id, :spam)
   end
 
   def unpublished_count
-    SpamCounter.count(id, :unpublished, account_id)
+    SpamCounter.count(id, :unpublished)
   end
 
   def has_unpublished_posts?
@@ -444,5 +447,13 @@ class Topic < ActiveRecord::Base
   def hit_key
     TOPIC_HIT_TRACKER % {:account_id => account_id, :topic_id => id }
   end
+
+  def unsubscribed_agents
+    user_ids = monitors.map(&:id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
   
+  def assign_default_stamps
+    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
+  end
 end

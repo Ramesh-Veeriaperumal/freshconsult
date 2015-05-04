@@ -47,6 +47,8 @@ namespace :db do
     ActiveRecord::Base.connection.execute(TriggerSql.sql_for_populating_ticket_display_id)
     puts 'Creating database trigger for ticket_statuses status id...'
     ActiveRecord::Base.connection.execute(TriggerSql.sql_for_populating_custom_status_id)
+    puts 'Loading Lua Script to Redis...'
+    FdRateLimiter::RedisLuaScript.load_rr_lua_to_redis
   end
   
   task :perform_table_partition => :environment do

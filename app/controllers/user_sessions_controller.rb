@@ -44,6 +44,7 @@ include GoogleLoginHelper
   # Handles response from SAML provider
   def saml_login
     saml_response = validate_saml_response(current_account, params[:SAMLResponse])
+    relay_state_url = params[:RelayState]
 
     sso_data = {
       :name => saml_response.user_name,
@@ -53,7 +54,7 @@ include GoogleLoginHelper
     }
 
     if saml_response.valid?
-      handle_sso_response(sso_data)
+      handle_sso_response(sso_data, relay_state_url)
     else
       flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
       redirect_to login_normal_url
@@ -223,7 +224,11 @@ include GoogleLoginHelper
 
     current_user_session.destroy unless current_user_session.nil? 
     if current_account.sso_enabled? and current_account.sso_logout_url.present?
-      sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
+      if current_account.sso_options[:sso_type] == SAML
+        sso_redirect_url = generate_saml_logout_url
+      else
+        sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
+      end
       redirect_to sso_redirect_url and return
     end
     

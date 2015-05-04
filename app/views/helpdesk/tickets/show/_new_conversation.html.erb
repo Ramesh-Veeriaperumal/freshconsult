@@ -74,7 +74,7 @@ jQuery(document).ready(function(){
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply">
 				<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp?) %>
-				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-replyto-handle="<%= @ticket.is_twitter? ? default_twitter_body_val(@ticket) : "" %>" ><%= t('ticket.reply_to')  %></a> / 
+				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-replyto-handle="<%= @ticket.is_twitter? ? @ticket.latest_twitter_comment_user : "" %>" ><%= t('ticket.reply_to')  %></a> / 
 				<% end %>
         <% if privilege?(:forward_ticket) %>
 				  <a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /

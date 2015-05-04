@@ -1,22 +1,16 @@
 <% unless @topic.locked? %>
-<div class="btn" id="monitorship_link">
-<%=
-		link_to_if @topic.published?, "",
-		toggle_monitorship_path("topic", @topic, (@monitorship.zero? ? "follow" : "unfollow")),
-			:method => :post,
-	    :class => "tooltip forum_follow_icon #{@monitorship.zero? ? '': ' active'}",
-			:"data-placement" => 'below',
-			:id => "toggle_monitorship_status",
-			:title => t((@monitoring ? 'monitorships.unfollow_title' : 'monitorships.follow_title')),
-			:"data-keybinding" => "#{shortcut("community_actions.monitor_topic")}",
-			:"data-hide-before" => 'this',
-			:"data-loading" => 'monitorship_link',
-			:"data-loading-classes" => 'sloading loading-tiny',
-			:remote => true
-%>
+
+<div id="follower-container">
+	<div class="btn" id="monitorship_link" class="add-follower" >
+	<% if @topic.published? %>
+		<% status = @monitorship.zero? ? "" : "active" %>
+		<%= follower_button(@topic,status) %>
+	<% end %>
+	</div>
+	<%= monitor_container(@topic) %>
 </div>
 
-<a class="btn tooltip" rel="topic-reply" data-keybinding="<%=shortcut("community_actions.reply_topic")%>" title="<%= t('discussions.topics.reply') %>">
+<a class="btn tooltip" rel="topic-reply" data-keybinding="<%=shortcut("discussions.reply_topic")%>" title="<%= t('discussions.topics.reply') %>">
 	<!-- <span class="community-reply inline-icon"></span> -->
 	<%= font_icon "reply" %>
 	<%= t('discussions.topics.reply') %>
@@ -27,7 +21,7 @@
 <%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic), 
 					:class => 'btn hide_on_collapse' if privilege?(:edit_topic, @topic) %>
 
-<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_path(@first_post), :method => :put,
+<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_discussions_unpublished_path(@first_post), :method => :put,
 					:class => 'btn hide_on_collapse',
 					:"data-track" => 'Marked as Spam',
 					:confirm => t('discussions.topics.confirm_spam') if privilege?(:delete_topic) %>
@@ -57,7 +51,7 @@
 	  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
 		<%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic) if privilege?(:edit_topic, @topic) %>
 
-		<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_path(@first_post), 
+		<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_discussions_unpublished_path(@first_post), 
 					:method => :put, 
 					:"data-track" => 'Marked as Spam',
 					:confirm => t('discussions.topics.confirm_spam') if privilege?(:delete_topic) %>

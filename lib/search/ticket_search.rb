@@ -153,7 +153,7 @@ module Search::TicketSearch
       elsif @current_options && @current_options.has_key?("requester_id")
         requester_id = @current_options["requester_id"].split(',')
       end
-      @selected_requesters = Account.current.users.find(requester_id) if requester_id
+      @selected_requesters = Account.current.users.find_all_by_id(requester_id) if requester_id
       return @selected_requesters || [[1,""]]
     end
 

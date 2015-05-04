@@ -5,7 +5,10 @@ class Forum < ActiveRecord::Base
     :as => 'notable'
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
-
+  has_many :monitors, :through => :monitorships, :source => :user,
+           :conditions => ["#{Monitorship.table_name}.active = ?", true], 
+           :order => "#{Monitorship.table_name}.id DESC"
+           
   belongs_to_account
 
   TYPES = [
@@ -41,7 +44,6 @@ class Forum < ActiveRecord::Base
       vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone]]
     end
   end
-
 
   scope :visible, lambda {|user| {
                     # :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
@@ -273,6 +275,11 @@ class Forum < ActiveRecord::Base
 
   def backup_forum_topic_ids
     @deleted_topic_ids = self.topics.map(&:id)
+  end
+
+  def unsubscribed_agents
+    user_ids = monitors.map(&:id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
   end
 
   private

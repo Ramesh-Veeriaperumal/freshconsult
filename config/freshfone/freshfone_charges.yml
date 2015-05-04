@@ -3285,4 +3285,6 @@ VOICEMAIL:
   :standard: 0.0125
   :usca_tollfree: 0.037
   :uk_tollfree: 0.075
-MISSED_OR_BUSY: 0.0025
+MISSED_OR_BUSY: 
+  :incoming: 0.0075
+  :outgoing: 0.0025

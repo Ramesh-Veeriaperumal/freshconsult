@@ -7,7 +7,6 @@ describe Discussions::UnpublishedController do
 	before(:all) do
 		$dynamo = AWS::DynamoDB::ClientV2.new
 		Dynamo::CLIENT = $dynamo
-		@account.features.spam_dynamo.create
 		@category = create_test_category
 		@forum = create_test_forum(@category)
 		@topic = create_test_topic(@forum)
@@ -25,7 +24,6 @@ describe Discussions::UnpublishedController do
 
 	after(:all) do
 		@account.reload
-		@account.features.spam_dynamo.destroy
 		@category.destroy
 	end
 
@@ -56,7 +54,7 @@ describe Discussions::UnpublishedController do
 		new_topic.forum_id.should eql unpublished_topic.forum_id
 		new_topic.account_id.should eql unpublished_topic.account_id
 		new_topic.user_id.should eql @customer.id
-		ForumSpam.find(:account_id => @account.id, :timestamp => unpublished_topic.timestamp).should be_nil
+		ForumSpam.find_post(unpublished_topic.timestamp).should be_nil
 	end
 
 	it "should publish a post on 'approve'" do
@@ -75,7 +73,7 @@ describe Discussions::UnpublishedController do
 		new_post.account_id.should eql unpublished_post.account_id
 		new_post.user_id.should eql @customer.id
 		new_post.topic_id.should eql @topic.id
-		ForumSpam.find(:account_id => @account.id, :timestamp => unpublished_post.timestamp).should be_nil
+		ForumSpam.find_post(unpublished_post.timestamp).should be_nil
 	end
 
 	it "should publish a post on 'approve' and create attachments accordingly" do
@@ -101,7 +99,7 @@ describe Discussions::UnpublishedController do
 			file_name = unpublished_topic.attachments["file_names"][i].split('/').last.split('?').first.split('_')[1..-1].join.gsub("%20"," ")
 			attachment.content_file_name.should eql file_name
 		end
-		ForumSpam.find(:account_id => @account.id, :timestamp => unpublished_topic.timestamp).should be_nil
+		ForumSpam.find_post(unpublished_topic.timestamp).should be_nil
 	end
 
 	it "delete all published, spam, approval posts of a given user on 'ban'" do
@@ -121,8 +119,8 @@ describe Discussions::UnpublishedController do
 
 		Resque.inline = false
 
-		ForumUnpublished.find(:account_id => @account.id, :timestamp => unpublished_topic.timestamp).should be_nil
-		ForumUnpublished.find(:account_id => @account.id, :timestamp => unpublished_post.timestamp).should be_nil
+		ForumUnpublished.find_post(unpublished_topic.timestamp).should be_nil
+		ForumUnpublished.find_post(unpublished_post.timestamp).should be_nil
 		@account.topics.find_by_id(published_topic.id).should be_nil
 		@account.topics.find_by_id(published_post.id).should be_nil
 	end
@@ -150,7 +148,7 @@ describe Discussions::UnpublishedController do
 		(1..5).each do
 			create_dynamo_post("ForumSpam", @topic)
 		end
-		ForumSpam.topic_spam(@account.id, @topic.id).records.should_not eql []
+		ForumSpam.topic_spam(@topic.id).records.should_not eql []
 
 		Resque.inline = true
 
@@ -158,7 +156,7 @@ describe Discussions::UnpublishedController do
 
 		Resque.inline = false
 
-		ForumSpam.topic_spam(@account.id, @topic.id).records.should eql []
+		ForumSpam.topic_spam(@topic.id).records.should eql []
 	end
 
 	it "should create a spam dynamo post when 'put 'mark_as_spam''" do
@@ -171,7 +169,7 @@ describe Discussions::UnpublishedController do
 
 		Resque.inline = false
 
-		dynamo_post = ForumSpam.find(:account_id => @account.id, :timestamp => post.created_at.to_f)
+		dynamo_post = ForumSpam.find_post(post.created_at.to_f)
 		dynamo_post.should_not be_nil
 		dynamo_post.title.should eql published_topic.title
 		dynamo_post.forum_id.should eql published_topic.forum_id
@@ -188,7 +186,7 @@ describe Discussions::UnpublishedController do
 
 		Resque.inline = false
 
-		dynamo_post = ForumSpam.find(:account_id => @account.id, :timestamp => original_post.created_at.to_f)
+		dynamo_post = ForumSpam.find_post(original_post.created_at.to_f)
 		dynamo_post.should_not be_nil
 		dynamo_post.title.should eql published_topic.title
 		dynamo_post.forum_id.should eql published_topic.forum_id
@@ -210,7 +208,7 @@ describe Discussions::UnpublishedController do
 																:scope => "ForumSpam",
 																:topic_id => unpublished_topic.topic_id
 
-		ForumSpam.find(:account_id => @account.id, :timestamp => unpublished_topic.timestamp).should be_nil
+		ForumSpam.find_post(unpublished_topic.timestamp).should be_nil
 	end
 
 
@@ -229,7 +227,7 @@ describe Discussions::UnpublishedController do
 
 		published_topics.each do |topic|
 			@account.topics.find_by_id(topic.id).should be_nil
-			dynamo_post = ForumSpam.find(:account_id => @account.id, :timestamp => topic.created_at.to_f)
+			dynamo_post = ForumSpam.find_post(topic.created_at.to_f)
 			dynamo_post.should_not be_nil
 			dynamo_post.title.should eql topic.title
 			dynamo_post.forum_id.should eql topic.forum_id

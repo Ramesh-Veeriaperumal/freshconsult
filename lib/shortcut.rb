@@ -73,9 +73,9 @@ class Shortcut
 		:portal_customizations  => {
 			:preview			=> "mod+shift+p"
 		},
-		:community_actions => {
-			:monitor_topic => "w",
-			:monitor_forum => "w",
+		:discussions => {
+			:toggle_following => "w",
+			:add_follower => "shift+w",
 			:reply_topic => "r"
 		}
 	}

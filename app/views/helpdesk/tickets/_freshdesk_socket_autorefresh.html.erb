@@ -1,0 +1,40 @@
+<script type="text/javascript">
+  var autoRefreshData    = <%= socket_auth_params("autorefresh") %>;
+  var autorefresh_server = "<%= autorefresh_socket_host %>";
+
+  jQuery(document).ready(function() {
+      autoRefreshData["user_permission"] = "<%= current_user.agent.ticket_permission %>";
+      autoRefreshData["groups"] = <%= escape_javascript(current_user.agent_groups.pluck(:group_id).to_json) %>;
+      window.autoRefresh(autorefresh_server, autoRefreshData, "<%= escape_javascript(current_user.name) %>","<%=current_user.id%>");
+  });
+
+  jQuery("#index_refresh_alert").bind("click", function(ev){
+    slide_up();
+    jQuery("#FilterOptions").trigger("change");
+    getFilterData();
+  });
+
+  jQuery(".filter_item").bind("change", function(){
+    slide_up();
+  });
+
+  jQuery("#SortMenu, .prev_page, .next_page, .toolbar_pagination_full").live("click", function(){
+    slide_up();
+  });
+
+  var auto_refresh_ticketFilterDateoptions = {};
+  auto_refresh_ticketFilterDateoptions  = {
+      'today' : Date.parse("<%= Time.now.midnight %>"),
+      'week' : Date.parse("<%= Time.now.monday %>"),
+      'month' : Date.parse("<%= Time.now.beginning_of_month %>"),
+      'two_months' : Date.parse("<%= Time.now.beginning_of_month - 2.months %>"),
+      'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>") 
+  }
+
+  function slide_up(){
+    jQuery("#index_refresh_alert").slideUp(100);
+    jQuery("#index_refresh_alert").data("updated", {});
+    jQuery("#index_refresh_alert").data("created", {});
+  }
+
+</script>
