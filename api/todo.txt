@@ -2,14 +2,14 @@
 3. Rescue 500
 4. APiApplication controller, test_helper refactoring
 5. caching in view
-9. need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added)
+9. need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added) - Rashmi
 12. 204 for delete?
 13. Enforce ssl
 15. api limit in response header, allowed methods
 16. inherit instead of concern?
 17. rubocop
 18. attr_accessible wrap params
-19. 429 for api limit
+19. 429 for api limit - Rashmi
 
 Breaking changes in existing APIs
 1. Account suspended
@@ -24,3 +24,4 @@ completed:
 10. need to add test to keep an eye on controllers filters(test should be written in such a way that it should break if new filters are added)
 11. Do we need to have dependency test for lib/helper methods overriden in our helpers/libs
 14. open_forums, have to investigate
+20. location header in create response - Rashmi

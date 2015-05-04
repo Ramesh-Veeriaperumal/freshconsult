@@ -86,13 +86,6 @@ module ApiDiscussions
         assert_equal " ", @response.body
       end
     end
-
-    def test_create_build_object
-      post :create, :version => "v2", :format => :json, :category => {:name => "test"}
-      assert_equal ForumCategory.last, assigns(:category)
-      assert_equal ForumCategory.last, assigns(:item)
-    end
-
     
     def test_index_load_objects
       get :index, :version => "v2", :format => :json
@@ -147,5 +140,57 @@ module ApiDiscussions
       assert_nil ForumCategory.find_by_id(fc.id)
     end
 
+    def test_create
+      post :create, :version => "v2", :format => :json, :category => {:name => "test", :description => "test desc"}
+      assert_response :success
+      response.body.must_match_json_expression(forum_category_pattern("test", "test desc"))
+    end
+
+    def test_create_missing_params
+      post :create, :version => "v2", :format => :json, :category => {}
+      pattern = [
+        bad_request_error_pattern("category", "missing_field")
+      ]
+      assert_response :bad_request
+      response.body.must_match_json_expression(pattern)
+    end
+
+    def test_create_unexpected_params
+      post :create, :version => "v2", :format => :json, :category => {"junk" => "new"}
+      pattern = [
+        bad_request_error_pattern("junk", "invalid_field")
+      ]
+      assert_response :bad_request
+      response.body.must_match_json_expression(pattern)
+    end
+
+    def test_create_blank_name
+      post :create, :version => "v2", :format => :json, :category => {"name" => ""}
+      pattern = [
+        bad_request_error_pattern("name", "can't be blank")
+      ]
+      assert_response :bad_request
+      response.body.must_match_json_expression(pattern)
+    end
+
+    def test_create_with_duplicate_name
+      fc = create_test_category
+      post :create, :version => "v2", :format => :json, :category => {"name" => fc.name}
+      pattern = [
+        bad_request_error_pattern("name", "has already been taken")
+      ]
+      assert_response :conflict
+      response.body.must_match_json_expression(pattern)
+    end
+
+    def test_index
+      get :index, :version => "v2", :format => :json
+      pattern = []
+      Account.current.forum_categories.all.each do |fc|
+        pattern << forum_category_pattern(fc.name, fc.description)
+      end
+      assert_response :success
+      response.body.must_match_json_expression(pattern)
+    end
   end
 end

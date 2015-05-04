@@ -53,3 +53,6 @@ public/assets/*.png
 public/assets/cdn*
 public/assets/*.yml
 public/generated
+
+#Ignore test reports
+test/reports

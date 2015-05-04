@@ -551,6 +551,7 @@ GEM
     journey (1.0.4)
     json (1.8)
     json-compare (0.1.8)
+    json_expressions (0.8.3)
     json_pure (1.8.1)
     jwt (1.0.0)
     koala (1.10.1)
@@ -965,6 +966,7 @@ DEPENDENCIES
   jira4r (= 0.3.0)
   json (~> 1.8)
   json-compare (= 0.1.8)
+  json_expressions
   jwt (= 1.0.0)
   koala (= 1.10.1)
   lhm!

@@ -229,6 +229,7 @@ group :test do
   gem "minitest-rails", "~> 1.0"
   gem "minitest-reporters"
   # gem "timecop", "~> 0.7"
+  gem 'json_expressions'
 end
 
 # group :development, :assets do

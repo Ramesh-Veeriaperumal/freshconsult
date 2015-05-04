@@ -20,8 +20,10 @@ class ApiApplicationController < ApplicationController
   end
 
   def create
-    unless @item.save
-      render_error @item.errors
+    if @item.save
+      render :template => "#{controller_path}/create", :location => send("#{nscname}_url", @item.id), :status => :created
+    else
+      render_error @item.errors      
     end
   end
 
@@ -36,7 +38,7 @@ class ApiApplicationController < ApplicationController
 
   def destroy
     @item.destroy
-    head :ok
+    head :ok # Change the status to no content
   end
 
   def route_not_found
@@ -119,4 +121,9 @@ class ApiApplicationController < ApplicationController
     @items = scoper.all.paginate(paginate_options)
     self.instance_variable_set('@' + cname.pluralize, @items) 
   end
+
+  def nscname
+    controller_path.gsub('/', '_').singularize
+  end
+
 end

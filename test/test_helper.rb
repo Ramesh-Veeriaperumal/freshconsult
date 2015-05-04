@@ -31,6 +31,7 @@ require "minitest/rails"
 require 'authlogic/test_case'
 require "minitest/pride"
 require "minitest/reporters"
+require 'json_expressions/minitest'
 
 Dir["#{Rails.root}/spec/support/*.rb"].each {|file| require file}
 include AccountHelper
@@ -38,6 +39,9 @@ include UsersHelper
 include ControllerHelper
 include Authlogic::TestCase
 include APIAuthHelper
+
+Dir["#{Rails.root}/test/helpers/*.rb"].each {|file| require file}
+include JsonPattern
 
 ES_ENABLED = false
 GNIP_ENABLED = false
