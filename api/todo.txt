@@ -3,7 +3,9 @@
 5. caching in view
 17. rubocop
 18. attr_accessible wrap params
-19. 429 for api limit - Rashmi
+20. need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF-8")
+21. Should we need to introduce credits/merits for each usage of endpoint?
+23. Allow header for 405
 
 Breaking changes in existing APIs
 1. Account suspended
@@ -11,7 +13,7 @@ Breaking changes in existing APIs
 3. handle unverified request
 
 completed:
-1.Multijson parse error handling
+1. Multijson parse error handling
 6. pagination in index actions
 7. side loading associations(include as a param in GET requests)
 8. 405 handling
@@ -25,5 +27,6 @@ completed:
 16. inherit instead of concern?
 15. api limit in response header, allowed methods
 9. need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added)
-
+19. 429 for api limit
+22. tests for middleware
 
