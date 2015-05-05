@@ -43,7 +43,7 @@
       </div>
     </div>
     <div class="note">
-      <%= RedCloth.new(h(time_entry.note) || "").to_html.html_safe %>
+      <%= time_entry_note(h(time_entry.note) || "") %>
     </div> 
   </div>
 </div>

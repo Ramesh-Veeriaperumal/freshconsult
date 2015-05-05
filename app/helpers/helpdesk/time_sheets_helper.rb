@@ -106,6 +106,10 @@ module Helpdesk::TimeSheetsHelper
       </dd>
       ).html_safe  
   end
+
+  def time_entry_note note
+    note.gsub(/(\r\n|\n|\r)/, '<br />').html_safe
+  end
   
   private 
     def integrated_apps 
