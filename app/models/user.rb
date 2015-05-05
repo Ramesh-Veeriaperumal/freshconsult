@@ -98,6 +98,23 @@ class User < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
+
+  def avatar_url(profile_size = :thumb)
+    (avatar ? avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(profile_size)) if present?
+  end
+
+  def is_user_social(profile_size)
+    if fb_profile_id
+      profile_size = (profile_size == :medium) ? "large" : "square"
+      facebook_avatar(fb_profile_id, profile_size)
+    else
+      "/assets/misc/profile_blank_#{profile_size}.gif"
+    end
+  end
+
+  def facebook_avatar( facebook_id, profile_size = "square")
+    "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
+  end
   
   class << self # Class Methods
     #Search display

@@ -17,12 +17,17 @@ class Fdadmin::DevopsMainController < ApplicationController
       request.query_parameters.each do |key , value |
         payload << "#{key}#{value.to_s}" unless key.to_s == "digest"
       end
-      sha_signature = Digest::SHA256.hexdigest("#{payload}#{AdminApiConfig['secret_key']}")
+      sha_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'), determine_api_key, payload)
       if sha_signature != params[:digest]
          Rails.logger.debug(": : : SIGNATURE VERIFICATION FAILED : : :")
-        render :nothing => true, :status => 401
+        render :nothing => true, :status => 401 and return
       end
       Rails.logger.debug(": : : -> SHA SIGNATURE VERIFIED <- : : :")
+    end
+
+    def determine_api_key
+      app_name = params[:app_name] || "freshopsadmin"
+      return ServiceApiKey.find_by_service_name(app_name).api_key 
     end
 
     def check_freshops_subdomain
