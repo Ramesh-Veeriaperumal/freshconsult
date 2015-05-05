@@ -18,4 +18,17 @@ module JsonPattern
     }
   end
 
+  def too_many_request_error_pattern
+    {
+      message: String
+    } 
+  end
+
+  def invalid_json_error_pattern
+    {
+      message: String, 
+      code: "invalid_json"
+    } 
+  end
+
 end

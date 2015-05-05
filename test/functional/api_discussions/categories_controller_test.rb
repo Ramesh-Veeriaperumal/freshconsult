@@ -212,5 +212,15 @@ module ApiDiscussions
       assert_equal({"code" => "ssl_required", "message" => "SSL certificate verification failed."}, response)
 
     end
+
+    def test_create_returns_location_header
+      name = Faker::Name.name
+      post :create, :version => "v2", :format => :json, :category => {"name" => name, "description" => "test desc"}
+      result = parse_response(@response.body)
+      assert_response :success
+      @response.body.must_match_json_expression(forum_category_pattern(name))
+      assert_equal true, response.headers.include?("Location")
+      assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result["id"]}", response.headers["Location"]
+    end
   end
 end

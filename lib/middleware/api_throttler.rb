@@ -40,6 +40,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @host = env["HTTP_HOST"]
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
+    @api_resource = env["PATH_INFO"]
     @mobihelp_auth = env["HTTP_X_FD_MOBIHELP_APPID"]
     @sub_domain = @host.split(".")[0]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
@@ -56,6 +57,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         value = get_others_redis_key(key).to_i
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
+    elsif  @content_type =~ /application\/json/ || @api_resource.starts_with?('/api/')
+      error_output = "You have exceeded the limit of requests per hour"
+      @status, @headers,@response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'application/json'}, 
+                                      {:message => error_output}.to_json]
     else
       @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]
