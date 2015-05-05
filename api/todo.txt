@@ -10,6 +10,7 @@ Breaking changes in existing APIs
 1. Account suspended
 2. day pass required
 3. handle unverified request
+4. Api limit exceeded
 
 completed:
 1. Multijson parse error handling
