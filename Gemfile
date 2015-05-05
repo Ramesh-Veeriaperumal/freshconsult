@@ -75,6 +75,7 @@ gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :requir
 gem "ruby-openid-apps-discovery", "1.2.0"
 gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch => "master"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
+gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
 gem "ruby-saml", "0.8.1"
 
@@ -216,7 +217,7 @@ group :test do
   gem "autotest-fsevent", "0.1.1"
   gem "autotest-growl", "0.2.0"
   gem "autotest-rails", "4.1.0"
-  gem "faker", "~> 1.0.1"
+  gem "faker", "~> 1.4.3"
   gem "simplecov", "~> 0.7.1"
   gem "simplecov-csv"
   gem "database_cleaner"
