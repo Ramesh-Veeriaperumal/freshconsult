@@ -98,7 +98,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
-        if @items.empty? && !params[:page].nil? && params[:page] != '1'
+        if !@items.exists? && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'  
           @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         end
