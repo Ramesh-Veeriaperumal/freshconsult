@@ -19,7 +19,7 @@ class Mobile::SettingsController < ApplicationController
   # Return full_domain @params cname; @authetication SHA2
   def mobile_login
       # header json string  
-      # {'key':'...','salt':'...','app_version':'1.2.3','api_version':1,'mobile_type':1,'os_version':'1.1.1','domain_name':'something','device_desc':'moto-g'}
+      # {'id':'...','times':'...','app_version':'1.2.3','api_version':1,'mobile_type':1,'os_version':'1.1.1','domain_name':'something','device_desc':'moto-g'}
       result_code = MOBILE_API_RESULT_PARAM_FAILED
       unless request.headers['Request-Id'].nil?
         request_data = JSON.parse(request.headers['Request-Id'])
@@ -27,9 +27,9 @@ class Mobile::SettingsController < ApplicationController
         mobile_app_detail = MobileAppVersion.mobile_app(request_data['app_version'],request_data['mobile_type']).first
 
         unless mobile_app_detail.nil?
-          sha_generated = OpenSSL::HMAC.hexdigest('sha512',MobileConfig['secret_key'],request_data['salt'])
+          sha_generated = OpenSSL::HMAC.hexdigest('sha512',MobileConfig['secret_key'],request_data['times'])
 
-          if sha_generated == request_data['key']  && mobile_app_detail.supported
+          if sha_generated == request_data['id']  && mobile_app_detail.supported
             full_domain = DomainMapping.full_domain(params[:cname]).first
             full_domain = full_domain.domain unless full_domain.nil?
             result_code = MOBILE_API_RESULT_SUCCESS  #Success
