@@ -122,7 +122,7 @@ class ApiApplicationController < ApplicationController
   def load_object
     @item = self.instance_variable_set('@' + cname,  scoper.find_by_id(params[:id]))
     unless @item
-      head :not_found
+      head :not_found # Do we need to put message inside response body for 404?
     end
   end
   

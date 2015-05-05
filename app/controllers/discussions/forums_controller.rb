@@ -10,15 +10,16 @@ class Discussions::ForumsController < ApplicationController
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
-	before_filter { |c| c.requires_feature :forums }
+    before_filter { |c| c.requires_feature :forums }  
 	before_filter { |c| c.check_portal_scope :open_forums }
 
 	before_filter :set_selected_tab
-	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]
-	before_filter :fetch_monitorship, :load_topics, :only => :show
-	before_filter :set_customer_forum_params, :only => [:create, :update]
-	before_filter :fetch_selected_customers, :only => :edit
 
+	 #do not change the order of concern as it has direct effect on ordering of before hooks 
+	include ApiDiscussions::DiscussionsForum 
+	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]   
+	before_filter :fetch_monitorship, :load_topics, :only => :show
+	before_filter :fetch_selected_customers, :only => :edit
 
 	def new
 		@forum = scoper.new
@@ -82,7 +83,6 @@ class Discussions::ForumsController < ApplicationController
 	end
 
 	def destroy
-		@forum.backup_forum_topic_ids
 		@forum.destroy
 		respond_to do |format|
 			format.html { redirect_to(discussions_path, :notice => I18n.t('forum.forum_deleted')) }
@@ -96,10 +96,6 @@ class Discussions::ForumsController < ApplicationController
 	end
 
 	protected
-
-		def scoper
-			current_account.forums
-		end
 
 		def set_selected_tab
 			@selected_tab = :forums
@@ -148,6 +144,10 @@ class Discussions::ForumsController < ApplicationController
 
 	private
 
+        def cname
+           "forum"	
+        end
+
 		def portal_check
 			if current_user.nil? || current_user.customer?
 				@forum = params[:id] ? current_account.portal_forums.find(params[:id]) : nil
@@ -155,11 +155,6 @@ class Discussions::ForumsController < ApplicationController
 			elsif !privilege?(:view_forums)
 				access_denied
 			end
-		end
-
-		def set_customer_forum_params
-			params[:forum][:customer_forums_attributes] = {}
-			params[:forum][:customer_forums_attributes][:customer_id] = (params[:customers] ? params[:customers].split(',') : [])
 		end
 
 		def fetch_selected_customers
