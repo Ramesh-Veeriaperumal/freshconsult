@@ -177,6 +177,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API
     resource :"api_discussions/category", :only => [:index, :show]
+    resource :"api_discussions/forum", :only => [:show]
   end
 
   # create_edit_forum_category
@@ -188,6 +189,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API
     resource :"api_discussions/category", :only => [:create, :update, :destroy]
+    resource :"api_discussions/forum", :only => [:create, :update, :destroy]
   end
 
   # create_forum_topic
