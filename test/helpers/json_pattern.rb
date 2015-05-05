@@ -31,4 +31,18 @@ module JsonPattern
     } 
   end
 
+  def request_error_pattern code, params_hash={}
+    {
+      code: code, 
+      message: I18n.t("api.error_messages.#{code}", params_hash)
+    }
+  end
+
+  def base_error_pattern code, params_hash={}
+    {
+      message: I18n.t("api.error_messages.#{code}", params_hash)
+    }
+  end
 end
+
+include JsonPattern

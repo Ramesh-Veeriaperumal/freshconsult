@@ -5,27 +5,25 @@ module ApiDiscussions
     include ForumHelper
     
     actions = Rails.application.routes.routes.select{|x| x.defaults[:controller] == "api_discussions/categories"}.collect{|x| x.defaults[:action]}.uniq
-    methods = {"index" => :get, "create" => :post, "update" => :put, "destroy" => :delete}
+    methods = {"index" => :get, "create" => :post, "update" => :put, "destroy" => :delete, "show" => :get}
     
-    def fc_id
-      ForumCategory.first.id
+    def fc
+      ForumCategory.first
     end
 
-    actions.each do |action|
+    actions.select{|x| x != "show"}.each do |action|
       define_method("test_#{action}_without_privilege") do 
         controller.class.any_instance.stubs(:allowed_to_access?).returns(false).once
-        send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_response(@response.body)
+        send(methods[action], action, :version => "v2", :format => :json, :id => fc.id)
         assert_response :forbidden
-        assert_equal({"code"=>"access_denied", "message"=>"You are not authorized to perform this action."}, response)
+        response.body.must_match_json_expression(request_error_pattern("access_denied"))
       end
 
       define_method("test_#{action}_without_login") do 
         controller.class.any_instance.stubs(:current_user).returns(nil)
-        send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_response(@response.body)
+        send(methods[action], action, :version => "v2", :format => :json, :id => fc.id)
         assert_response :unauthorized
-        assert_equal({"code"=>"invalid_credentials", "message"=>"You have to be logged in to perform this action."}, response)
+        response.body.must_match_json_expression(request_error_pattern("invalid_credentials"))
         controller.class.any_instance.unstub(:current_user)
       end
 
@@ -33,38 +31,34 @@ module ApiDiscussions
         Agent.any_instance.stubs(:occasional).returns(true).once
         subscription = @account.subscription
         subscription.update_column(:state, "active")
-        send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_response(@response.body)
-        assert_equal({"code"=>"access_denied", "message" => "You are not authorized to perform this action."}, response)
+        send(methods[action], action, :version => "v2", :format => :json, :id => fc.id)
+        response.body.must_match_json_expression(request_error_pattern("access_denied"))
         assert_response :forbidden
       end
 
       define_method("test_#{action}_requires_feature_disabled") do
         controller.class.any_instance.stubs(:feature?).returns(false).once
-        send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_response(@response.body)
-        assert_equal({"code"=>"require_feature", "message" => "The Forums feature is not supported in your plan. Please upgrade your account to use it."}, response) 
+        send(methods[action], action, :version => "v2", :format => :json, :id => fc.id)
+        response.body.must_match_json_expression(request_error_pattern("require_feature", {:feature => "Forums"}))
         assert_response :forbidden
       end
     end
 
-    actions.select{|a| a != "index"}.each do |action|
+    actions.select{|a| ["index", "show"].exclude?(a)}.each do |action|
       define_method("test_#{action}_without_token") do 
         with_forgery_protection do
           @request.cookies["_helpkit_session"] = true
-          send(methods[action], action, :version => "v2", :format => :json, :id => fc_id, :authenticity_token => 'foo')
+          send(methods[action], action, :version => "v2", :format => :json, :id => fc.id, :authenticity_token => 'foo')
         end
-        response = parse_response(@response.body)
         assert_response :unauthorized
-        assert_equal({"code"=>"unverified_request", "message"=>"You have initiated a unverifiable request."}, response)
+        response.body.must_match_json_expression(request_error_pattern("unverified_request"))
       end
 
       define_method("test_#{action}_check_account_state_and_response_headers") do 
         subscription = @account.subscription
         subscription.update_column(:state, "suspended")
-        send(methods[action], action, :version => "v2", :format => :json, :id => fc_id)
-        response = parse_response(@response.body)   
-        assert_equal({"code"=>"account_suspended", "message" => "Your account has been suspended."}, response)
+        send(methods[action], action, :version => "v2", :format => :json, :id => fc.id)
+        response.body.must_match_json_expression(request_error_pattern("account_suspended"))
         assert_response :forbidden
         assert_equal "current=v2; requested=v2", @response.headers["X-Freshdesk-API-Version"] 
         assert_not_nil @response.headers["X-RateLimit-Limit"] 
@@ -73,11 +67,10 @@ module ApiDiscussions
       end
     end
 
-    actions.select{|a| ["update", "destroy"].include?(a)}.each do |action|
+    actions.select{|a| ["index", "create"].exclude?(a)}.each do |action|
       define_method("test_#{action}_load_object_present") do
-        fc = ForumCategory.find_by_id(fc_id)
         ForumCategory.any_instance.stubs(:destroy).returns(true)
-        send(methods[action], action, :version => "v2", :format => :json, :id => fc_id, :category => {:name => "new"})
+        send(methods[action], action, :version => "v2", :format => :json, :id => fc.id, :category => {:name => "new"})
         assert_equal fc, assigns(:category)
         assert_equal fc, assigns(:item)
       end
@@ -96,41 +89,35 @@ module ApiDiscussions
     end
 
     def test_update_with_extra_params
-      put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:test => "new"}
-      response = parse_response(@response.body)
-      assert_equal([{"field"=>"test", "message"=>"Unexpected/invalid field in request", "code"=>"invalid_field"}], response)
+      put :update, :version => "v2", :format => :json, :id => fc.id, :category => {:test => "new"}
+      response.body.must_match_json_expression([bad_request_error_pattern("test", "invalid_field")])
       assert_response :bad_request
     end
 
     def test_update_with_missing_params
-      put :update, :version => "v2", :format => :json, :id => fc_id, :category => {}
-      response = parse_response(@response.body)
-      assert_equal([{"field"=>"category", "message"=>"Mandatory attribute missing", "code"=>"missing_field"}], response)
+      put :update, :version => "v2", :format => :json, :id => fc.id, :category => {}
+      response.body.must_match_json_expression([bad_request_error_pattern("category", "missing_field")])
       assert_response :bad_request
     end
 
     def test_update_with_blank_name
-      put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:name => ""}
-      response = parse_response(@response.body)
-      assert_equal([{"field"=>"name", "message"=>"Should not be blank", "code"=>"invalid_value"}], response)
+      put :update, :version => "v2", :format => :json, :id => fc.id, :category => {:name => ""}
+      response.body.must_match_json_expression([bad_request_error_pattern("name", "can't be blank")])
       assert_response :bad_request
     end
 
     def test_update_with_invalid_model
       new_fc = create_test_category
-      put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:name => new_fc.name}
-      response = parse_response(@response.body)
-      assert_equal([{"field"=>"name", "message"=>"Should be a unique value", "code"=>"already_exists"}], response)
+      put :update, :version => "v2", :format => :json, :id => fc.id, :category => {:name => new_fc.name}
+      response.body.must_match_json_expression([bad_request_error_pattern("name", "has already been taken")])
       assert_response :conflict
     end
 
     def test_update
-      fc = ForumCategory.find_by_id(fc_id)
-      put :update, :version => "v2", :format => :json, :id => fc_id, :category => {:description => "foo"}
-      response = parse_response(@response.body)
-      assert_equal({"id"=>1, "name"=>"Test Account Forums", "description"=>"foo", "position"=>1, "created_at"=>fc.created_at.utc.strftime("%FT%TZ"), "updated_at"=>fc.reload.updated_at.utc.strftime("%FT%TZ")}, response)
+      put :update, :version => "v2", :format => :json, :id => fc.id, :category => {:description => "foo"}
+      response.body.must_match_json_expression(forum_category_pattern(fc.name, "foo"))
       assert_response :success
-      assert_equal "foo", ForumCategory.find_by_id(fc_id).description
+      assert_equal "foo", ForumCategory.find_by_id(fc.id).description
     end
 
     def test_destroy
@@ -140,6 +127,19 @@ module ApiDiscussions
       assert_equal " ", @response.body
       assert_response :no_content
       assert_nil ForumCategory.find_by_id(fc.id)
+    end
+
+    def test_show
+      get :show, :version => "v2", :format => :json, :id => fc.id
+      assert_response :success
+      response.body.must_match_json_expression(forum_category_pattern(fc.name, fc.description))
+    end
+
+    def test_show_portal_check
+      controller.class.any_instance.stubs(:privilege?).with(:view_forums).returns(false).once
+      get :show, :version => "v2", :format => :json, :id => fc.id
+      assert_response :forbidden
+      response.body.must_match_json_expression(request_error_pattern("access_denied"))
     end
 
     def test_create
@@ -199,8 +199,7 @@ module ApiDiscussions
       controller.class.any_instance.stubs(:index).raises(StandardError)
       get :index, :version => "v2", :format => :json
       assert_response :internal_server_error
-      response = parse_response(@response.body)
-      assert_equal({"message" => "We're sorry, but something went wrong."}, response)
+      response.body.must_match_json_expression(base_error_pattern("internal_error"))
     end
 
     def test_ensure_proper_protocol
@@ -208,9 +207,7 @@ module ApiDiscussions
       get :index, :version => "v2", :format => :json
       Rails.env.unstub(:test?)
       assert_response :forbidden
-      response = parse_response(@response.body)
-      assert_equal({"code" => "ssl_required", "message" => "SSL certificate verification failed."}, response)
-
+      response.body.must_match_json_expression(request_error_pattern("ssl_required"))
     end
 
     def test_create_returns_location_header

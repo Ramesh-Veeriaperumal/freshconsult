@@ -4,6 +4,8 @@ module ApiDiscussions
     
     # before_filters related to show method is absent as show endpoint has been removed.
     before_filter :validate_params, :only => [:create, :update]
+    skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show]
+    before_filter :portal_check, :only => [:show]
 
     private
 
@@ -14,6 +16,10 @@ module ApiDiscussions
         @errors = format_error(category.errors)
         render :template => '/bad_request_error', :status => 400
       end
+    end
+
+    def portal_check
+      access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
     end
   end
 end

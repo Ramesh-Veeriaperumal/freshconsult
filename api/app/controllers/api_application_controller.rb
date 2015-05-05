@@ -55,7 +55,7 @@ class ApiApplicationController < ApplicationController
     if allows.present?
       @error = ::ApiError::BaseError.new(:method_not_allowed, :methods => allows.join(", "))
       render :template => '/base_error', :status => 405
-      response.headers["X-Allowed-Methods"] = allows.join(", ")
+      response.headers["Allow"] = allows.join(", ")
     else
       head :not_found
     end

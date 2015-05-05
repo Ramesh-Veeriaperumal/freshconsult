@@ -26,9 +26,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_method_not_allowed
-    get "/api/discussions/categories/1", nil, @headers
+    post "/api/discussions/categories/1", nil, @headers
     assert_response :method_not_allowed
-    response = parse_response(@response.body)
-    assert_equal({"message"=> "Allowed methods are PUT, DELETE"}, response)
+    response.body.must_match_json_expression(base_error_pattern("method_not_allowed", :methods => "GET, PUT, DELETE"))
+    assert_equal "GET, PUT, DELETE", response.headers["Allow"]
   end
 end
