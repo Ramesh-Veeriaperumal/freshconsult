@@ -50,6 +50,9 @@ DynamicsWidget.prototype= {
 				integratable_type:"crm",
 				init_requests: init_reqs
 			});
+		} else {
+			this.freshdeskWidget = new Freshdesk.Widget({app_name: "Dynamics CRM", widget_name:"dynamicscrm_widget"});
+			this.freshdeskWidget.alert_failure("Email not available for this requester. A valid Email is required to fetch the contact from DynamicsCRM.");
 		}
 	},
 
