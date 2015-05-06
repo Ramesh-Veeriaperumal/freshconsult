@@ -154,6 +154,10 @@ en:
   trail_expiry_one_more_day: "Select a paid or free plan immediately to enjoy uninterrupted access to Freshdesk"
   trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
+  facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
+  reauthorize_facebook: "Reauthorize your facebook account."
+  twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
+  reauthorize_twitter: Reauthorize your twitter handle.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
   upgrade_trial: Upgrade your trial!
