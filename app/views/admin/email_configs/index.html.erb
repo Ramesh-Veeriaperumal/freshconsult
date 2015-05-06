@@ -74,6 +74,20 @@
   </div>
 </div>
 
+
+<div class="row-fluid">
+  <div class="span10">
+    <h5 class="lead"><%= t('email_configs.disable_agent_forward') %></h5>   
+    <p class="muted lead-desc"> 
+      <%= t('email_configs.disable_agent_forward_info')%>
+    </p> 
+  </div>
+  <div class="span2 align-right">
+    <input rel="toggle" type="checkbox" id="disable_agent_forward_tickets" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%unless current_account.features_included?(:disable_agent_forward)%>checked="true"<%end%> />
+  </div>
+</div>
+
+
 <%= javascript_tag do %>
     function update_status(status_url){
       jQuery.ajax({
@@ -98,6 +112,10 @@
       else{
         update_status("<%= reply_to_email_disable_admin_email_configs_path %>");
       }
+    });
+
+    jQuery("#disable_agent_forward_tickets").on('change.email_config_feature', function(){
+        update_status("<%= toggle_agent_forward_feature_admin_email_configs_path %>");
     });
 
 <%end%>
