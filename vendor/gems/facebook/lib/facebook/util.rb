@@ -7,7 +7,8 @@ module Facebook::Util
     ticket = nil
     can_comment = koala_feed.can_comment
     
-    if koala_feed.description.present? || (koala_feed.feed_type == "photo" || koala_feed.feed_type == "video")
+    
+    if koala_feed.description.present? || (koala_feed.photo? || koala_feed.video? || koala_feed.link?)
       ticket = @account.tickets.build(
         :subject    => koala_feed.subject,
         :requester  => facebook_user(koala_feed.requester),
@@ -26,6 +27,8 @@ module Facebook::Util
           :description_html => koala_feed.description_html
         }
       )
+      
+      
       if ticket.save_ticket
         if real_time_update && !koala_feed.created_at.blank?
           @fan_page.update_attribute(:fetch_since, koala_feed.created_at.to_i)

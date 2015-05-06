@@ -49,9 +49,16 @@ class Facebook::KoalaWrapper::Post
     @post[:from].is_a?(Hash) ? @post[:from]["id"] : @post[:from]
   end
   
-  private
   def photo?
     @post[:type] == POST_TYPE[:photo]
+  end
+  
+  def video?
+    @post[:type] == POST_TYPE[:video]
+  end
+  
+  def link?
+    @post[:type] == POST_TYPE[:link]
   end
 
 end

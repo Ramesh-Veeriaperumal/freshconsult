@@ -5,7 +5,7 @@ class Facebook::Core::Feed
   attr_accessor :feed, :entry, :entry_change, :entry_changes, :method, :clazz
 
   VERB_LIST = ["add"]
-  ITEM_LIST = ["status","post","comment", "photo", "video"]
+  ITEM_LIST = ["status","post","comment", "photo", "video", "share"]
 
   def initialize(feed)
     parse(feed)
@@ -73,6 +73,7 @@ class Facebook::Core::Feed
       case item_data
         when POST_TYPE[:photo] then feed_class
         when POST_TYPE[:video] then feed_class
+        when POST_TYPE[:share] then feed_class
         else item_data
       end
     end
