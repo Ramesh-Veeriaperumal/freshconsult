@@ -19,7 +19,7 @@ module ApiDiscussions
 
 			def set_account_and_category_id # why assign account_id?
 				@forum.account_id ||= current_account.id
-				@forum.forum_category_id = params[cname]["forum_category_id"]
+				@forum.forum_category_id = params[cname]["forum_category_id"] # shall we use this assign_forum_category_id method
 			end
 
 			def validate_params

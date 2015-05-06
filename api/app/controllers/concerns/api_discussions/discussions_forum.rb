@@ -2,7 +2,7 @@ module ApiDiscussions::DiscussionsForum
   extend ActiveSupport::Concern
 
     included do
-       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraint to enqueue jobs for rach topic
+       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
        before_filter :back_up_topic_ids, :only => [:destroy]
        before_filter :set_customer_forum_params, :only => [:create, :update]
        before_filter :assign_forum_category_id, :only => [:update]
