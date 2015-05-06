@@ -9,9 +9,9 @@ module ApiDiscussions
   
     def initialize(controller_params, item)
       @name = controller_params["name"] || item.name
-      @forum_category_id = controller_params["forum_category_id"].to_i || item.forum_category_id
-      @forum_type = controller_params["forum_type"].to_i || item.forum_type
-      @forum_visibility = controller_params["forum_visibility"].to_i || item.forum_visibility
+      @forum_category_id = controller_params["forum_category_id"] ? controller_params["forum_category_id"].to_i : item.forum_category_id
+      @forum_type = item.forum_type || controller_params["forum_type"].to_i
+      @forum_visibility = item.forum_visibility || controller_params["forum_visibility"].to_i
     end
     
  	end

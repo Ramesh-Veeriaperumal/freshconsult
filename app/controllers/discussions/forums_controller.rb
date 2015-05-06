@@ -14,10 +14,9 @@ class Discussions::ForumsController < ApplicationController
 	before_filter { |c| c.check_portal_scope :open_forums }
 
 	before_filter :set_selected_tab
-
+	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]   
 	 #do not change the order of concern as it has direct effect on ordering of before hooks 
 	include ApiDiscussions::DiscussionsForum 
-	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]   
 	before_filter :fetch_monitorship, :load_topics, :only => :show
 	before_filter :fetch_selected_customers, :only => :edit
 
@@ -49,7 +48,7 @@ class Discussions::ForumsController < ApplicationController
 
 
 	def update
-		@forum.forum_category_id = params[:forum][:forum_category_id] if new_forum_category?
+		assign_forum_category_id if new_forum_category?
 		if @forum.update_attributes(params[:forum])
 			respond_to do |format|
 				format.html { redirect_to discussions_forum_path(@forum) }

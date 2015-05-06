@@ -5,7 +5,7 @@ module ApiError
     API_ERROR_CODES = [
       ["has already been taken", "already_exists", 409],
       ["can't be blank", "invalid_value", 400 ],
-      ["already exists in the selected category", "already_exists", 400],
+      ["already exists in the selected category", "already_exists", 409],
       ["is not included in the list", "invalid_value", 400],
       ["invalid_field", "invalid_field",  400 ],
       ["missing_field", "missing_field", 400 ]]

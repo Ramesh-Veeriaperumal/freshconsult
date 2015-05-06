@@ -14,7 +14,7 @@ class CatchJsonParseErrorsTest < ActionView::TestCase
       { 'HTTP_HOST' => "localhost.freshpo.com", "CONTENT-TYPE" => "application/json"})
     assert_equal 400, status
     assert_equal true, ["Content-Type"].all? {|key| headers.key? key }
-    response.must_match_json_expression(invalid_json_error_pattern)
+    response.first.must_match_json_expression(invalid_json_error_pattern)
   end
 
   def test_catch_json_parse_errors_for_others

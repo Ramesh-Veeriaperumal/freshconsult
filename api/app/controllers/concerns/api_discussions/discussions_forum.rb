@@ -5,6 +5,7 @@ module ApiDiscussions::DiscussionsForum
        # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraint to enqueue jobs for rach topic
        before_filter :back_up_topic_ids, :only => [:destroy]
        before_filter :set_customer_forum_params, :only => [:create, :update]
+       before_filter :assign_forum_category_id, :only => [:update]
     end
 
     protected
@@ -20,6 +21,10 @@ module ApiDiscussions::DiscussionsForum
     def set_customer_forum_params 
       params[cname][:customer_forums_attributes] = {}
       params[cname][:customer_forums_attributes][:customer_id] = (params[:customers] ? params[:customers].split(',') : [])
+    end
+
+    def assign_forum_category_id
+      @forum.forum_category_id = params[cname][:forum_category_id] if params[cname][:forum_category_id]
     end
 
     private

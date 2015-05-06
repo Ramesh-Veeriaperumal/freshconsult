@@ -10,10 +10,10 @@ module JsonPattern
     }
   end
 
-  def bad_request_error_pattern field, value
+  def bad_request_error_pattern field, value, params_hash={}
     {
       field: "#{field}", 
-      message: I18n.t("api.error_messages.#{value}"), 
+      message: I18n.t("api.error_messages.#{value}", params_hash), 
       code: ApiError::BaseError::API_ERROR_CODES_BY_VALUE[value]
     }
   end
@@ -26,8 +26,8 @@ module JsonPattern
 
   def invalid_json_error_pattern
     {
-      message: String, 
-      code: "invalid_json"
+      code: "invalid_json",
+      message: String
     } 
   end
 
@@ -41,6 +41,19 @@ module JsonPattern
   def base_error_pattern code, params_hash={}
     {
       message: I18n.t("api.error_messages.#{code}", params_hash)
+    }
+  end
+
+   def forum_pattern forum
+    {
+      id: Fixnum, 
+      name: forum.name, 
+      description: forum.description,  
+      position: forum.position, 
+      description_html: forum.description_html, 
+      forum_category_id: forum.forum_category_id, 
+      forum_type: forum.forum_type, 
+      forum_visibility: forum.forum_visibility,
     }
   end
 end
