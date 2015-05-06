@@ -168,15 +168,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def orig_email_from_text #To process mails fwd'ed from agents
-      content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html])
-      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
-                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-        name = $1
-        email = $2
-        if email =~ EMAIL_REGEX
-          { :name => name, :email => $1 }
+      @orig_email_user ||= begin
+        content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html])
+        if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
+                              content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
+                              content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
+          name = $1
+          email = $2
+          if email =~ EMAIL_REGEX
+            return { :name => name, :email => $1 }
+          end
         end
+        {}
       end
     end
     
@@ -241,7 +244,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def create_ticket(account, from_email, to_email, user, email_config)            
       e_email = {}
       if (user.agent? && !user.deleted?)
-        e_email = orig_email_from_text || {}
+        e_email = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.blank?
       end
      
