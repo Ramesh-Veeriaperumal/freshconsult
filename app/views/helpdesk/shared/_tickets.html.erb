@@ -1,6 +1,6 @@
 <!--input type="hidden" id="latest_updated_at" value="<%= @latest_updated_at %>"></input-->
 
-<% unless @items.empty? %>
+<% if(@items.length > 0) %>
   <table class="tickets" width="100%">	
     <tbody>
       <!-- Write in single line for template_liner to work..-->
