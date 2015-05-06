@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 
-class DependencyTest < ActionDispatch::IntegrationTest
+class CategoriesDependencyTest < ActionDispatch::IntegrationTest
   
   def test_account_suspended_json
     subscription = @account.subscription

@@ -5,6 +5,8 @@ module ApiError
     API_ERROR_CODES = [
       ["has already been taken", "already_exists", 409],
       ["can't be blank", "invalid_value", 400 ],
+      ["already exists in the selected category", "already_exists", 400],
+      ["is not included in the list", "invalid_value", 400],
       ["invalid_field", "invalid_field",  400 ],
       ["missing_field", "missing_field", 400 ]]
 
@@ -21,11 +23,11 @@ module ApiError
 	class BadRequestError < BaseError
 
 	  attr_accessor :code, :field, :http_code
-    def initialize(attribute, value)
+    def initialize(attribute, value, params_hash={})
       @code = API_ERROR_CODES_BY_VALUE[value]
       @field = attribute
       @http_code = API_HTTP_ERROR_STATUS_BY_VALUE[value]
-      super(value)
+      super(value, params_hash)
     end
 	end
 

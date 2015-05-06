@@ -64,6 +64,7 @@ class ApiApplicationController < ApplicationController
   protected
 
   def render_500(e)
+    raise e if Rails.env.development?
     Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")
     @error = ::ApiError::BaseError.new(:internal_error)
     render :template => '/base_error', :status => 500

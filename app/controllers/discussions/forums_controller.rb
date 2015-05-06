@@ -144,7 +144,7 @@ class Discussions::ForumsController < ApplicationController
 
 	private
 
-        def cname
+        def cname # why?
            "forum"	
         end
 
