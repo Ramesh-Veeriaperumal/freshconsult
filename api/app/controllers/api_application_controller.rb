@@ -16,9 +16,10 @@ class ApiApplicationController < ApplicationController
     :remove_pjax_param, :remove_rails_2_flash_after
 
   skip_before_filter :check_privilege, :only => [:route_not_found]
-
-  before_filter :build_object, :only => [ :create ]
   before_filter :load_object, :only => [ :show, :update, :destroy ]
+  before_filter :validate_params, :only => [:create, :update]
+  before_filter :manipulate_params, :only => [:create, :update]
+  before_filter :build_object, :only => [ :create ]
   before_filter :load_objects, :only => [ :index ]
 
   def index
@@ -149,5 +150,8 @@ private
       @error = ::ApiError::RequestError.new(:ssl_required)
       render :template => '/request_error', :status => 403
     end
+  end
+
+  def manipulate_params
   end
 end

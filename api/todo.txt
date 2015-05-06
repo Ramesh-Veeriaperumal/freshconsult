@@ -5,6 +5,7 @@
 20. need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF-8")
 21. Should we need to introduce credits/merits for each usage of endpoint?
 23. forums method 
+24. forums customers parameter validation
 
 Breaking changes in existing APIs
 1. Account suspended

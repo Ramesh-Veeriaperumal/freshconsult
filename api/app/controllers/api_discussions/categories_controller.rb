@@ -2,8 +2,6 @@ module ApiDiscussions
   class CategoriesController < ApiApplicationController
     include ApiDiscussions::Category
     
-    # before_filters related to show method is absent as show endpoint has been removed.
-    before_filter :validate_params, :only => [:create, :update]
     skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show, :index]
     before_filter :portal_check, :only => [:show, :index]
 

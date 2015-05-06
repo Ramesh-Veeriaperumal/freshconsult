@@ -1,7 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
     wrap_parameters :forum, :exclude => [] # wp wraps only attr_accessible if this is not specified.
-    before_filter :validate_params, :only => [:create, :update]
     include ApiDiscussions::DiscussionsForum
      
     before_filter { |c| c.requires_feature :forums }        
@@ -12,6 +11,10 @@ module ApiDiscussions
 		protected
 
 		private
+
+      def manipulate_params
+        set_customer_forum_params
+      end
 
 			def portal_check
 				access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)

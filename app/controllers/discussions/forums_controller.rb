@@ -17,6 +17,8 @@ class Discussions::ForumsController < ApplicationController
 	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]   
 	 #do not change the order of concern as it has direct effect on ordering of before hooks 
 	include ApiDiscussions::DiscussionsForum 
+
+	before_filter :set_customer_forum_params, :only => [:create, :update]
 	before_filter :fetch_monitorship, :load_topics, :only => :show
 	before_filter :fetch_selected_customers, :only => :edit
 

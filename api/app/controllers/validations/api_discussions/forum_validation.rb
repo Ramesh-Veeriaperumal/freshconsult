@@ -8,10 +8,10 @@ module ApiDiscussions
     validates_inclusion_of :forum_type, :in => Forum::TYPE_KEYS_BY_TOKEN.values
   
     def initialize(controller_params, item)
-      @name = controller_params["name"] || item.name
-      @forum_category_id = controller_params["forum_category_id"] ? controller_params["forum_category_id"].to_i : item.forum_category_id
-      @forum_type = item.forum_type || controller_params["forum_type"].to_i
-      @forum_visibility = item.forum_visibility || controller_params["forum_visibility"].to_i
+      @name = controller_params["name"] || item.try(:name)
+      @forum_category_id = controller_params["forum_category_id"].try(:to_i) || item.try(:forum_category_id)
+      @forum_type = controller_params["forum_type"].try(:to_i) || item.try(:forum_type)
+      @forum_visibility = controller_params["forum_visibility"].try(:to_i) || item.try(:forum_visibility)
     end
     
  	end

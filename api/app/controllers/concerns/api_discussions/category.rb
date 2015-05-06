@@ -2,7 +2,7 @@ module ApiDiscussions::Category
   extend ActiveSupport::Concern
 
     included do
-      before_filter { |c| c.requires_feature :forums }    
+      before_filter { |c| c.requires_feature :forums } # this has to be revisited 
     end
 
     protected
