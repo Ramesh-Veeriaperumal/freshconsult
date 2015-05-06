@@ -942,7 +942,7 @@ module ApplicationHelper
 
   private
     def solutions_tab
-      if !current_portal.solution_categories.empty?
+      if current_portal.solution_categories.exists?
         ['/solution/categories', :solutions, solutions_visibility?]
       else
         ['#', :solutions, false]
@@ -950,7 +950,7 @@ module ApplicationHelper
     end
 
     def forums_tab
-      if !current_portal.forum_categories.empty?
+      if current_portal.forum_categories.exists?
         ['/discussions', :forums,  forums_visibility?]
       else
         ['#', :forums, false]
