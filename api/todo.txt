@@ -12,6 +12,7 @@
 10. Revisit params.require[cname] to handle empty params 
 11. update (override or incremental)
 25. revisit all before filters, the order is a problem.
+combine all discussion methods into one ,example requires feature before filter.
 
 Breaking changes in existing APIs
 1. Account suspended

@@ -2,7 +2,7 @@ module ApiDiscussions
 	class TopicValidation
     include ActiveModel::Validations 
 
-    attr_accessor :title, :forum_id, 
+    attr_accessor :title, :forum_id
     validates_presence_of :forum_id, :title
   
     def initialize(controller_params, item)
