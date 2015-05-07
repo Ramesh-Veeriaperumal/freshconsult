@@ -261,7 +261,7 @@ private
     per_page = params[:per_page].blank? || params[:per_page].to_i > default_per_page ? default_per_page : params[:per_page].to_i
 
     #company_id and agent_id if passed null will return all data.  
-    filter_params = {:contact_email => contact_email, :company_ids => company_id, :agent_id => agent_id, :start_date => start_date.to_s, :end_date => end_date.to_s, :billable => billable}
+    filter_params = {:contact_email => contact_email, :company_ids => company_id, :agent_id => agent_id, :start_date => start_date, :end_date => end_date, :billable => billable}
     paginate_params = {:per_page => per_page, :page => page.to_i}
     @time_sheets = current_account.time_sheets.filter(paginate_params , filter_params)
   end
