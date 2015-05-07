@@ -148,6 +148,7 @@ gem "routing-filter", "~> 0.3.1"
 gem "paperclip", "~> 2.8.0"
 
 gem "aws-sdk", "~> 1.11.3"
+gem "aws-sdk-resources", '~> 2'
 gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 
 
