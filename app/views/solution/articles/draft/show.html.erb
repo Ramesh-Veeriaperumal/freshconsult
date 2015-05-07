@@ -12,10 +12,6 @@
 </div>
 
 <div class="solution-header" rel="sticky">
-		<div class="tab">
-			<%= language_tabs %>
-			<a href="javascript:void(0)" class="masterversion-link">Master version</a>
-		</div>
 		<% if @article.draft or !@article.published? %>
 		<div class="sub-content">
 			<p class="pull-left"><%= draft_info_text %> - <%= discard_link %> </p>

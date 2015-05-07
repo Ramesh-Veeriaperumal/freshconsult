@@ -3235,6 +3235,12 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
+    general:
+      created_by: Created by
+      last_edited: Last Edited by
+      article_prop: Article Properties
+      feedback: Feedback
+      analytics: Analytics
     folders:
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for publishing the article

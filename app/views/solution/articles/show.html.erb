@@ -1,128 +1,70 @@
-<% content_for :sidebar do %>
-<div class="solution-sidebar">
-	<%= render partial: "sidebar" %>
-</div>
-<% end %>
+<div class="folder-2col"> 
+	<div class="folder_section" id="folder-section">
+		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
+ </div>  	
 
-<div class="solution">
-<!-- Solution header --> 
+ <div class="artical_section" id="article-section">
+ 	<div class="crumbs">
+	 	<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+		<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
+		<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%>
+		<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) %>
+ 	</div>
 
-<div class="bread-crumb">
-	<%= breadcrumb %>
-</div>
-
-<div class="solution-header" rel="sticky">
-		<div class="tab">
-			<a href="/" class="active"><span>English</span></a>
-			<a href="/" class="red"><span>Latin</span></a>
-			<a href="/" class="grey"><span>Spanish</span></a>
-			<a href="/">French</a>
-			<a href="javascript:void(0)" class="masterversion-link">Master version</a>
-		</div>
-		<div class="sub-content">
-			<p class="pull-left">Viewing draft edited by Ramesh Ganapathy 10 days ago (Fri, 26 Sep at 3:41pm)</p> - <a href="#">Discard Draft</a>
-			<p class="pull-right"><a href="#">View published</a></p>
-		</div>
-</div>
-<!-- Solution page content -->
-<div class="solution-content">
-	<div class="article-view">
-		<div class="row-fluid">
-		<div class="span6">
-			<h3 class="lead">Customizing your ticket form</h3>
-		</div>
-		<div class="span6 pull-right pagination-right header_buttons align-right">
-			<a href="javascript:void(0)" class="btn article-edit-btn">Edit</a>
-		</div>
-		</div>
-		<div class="article-content">
-			<p>The ticket form in Freshdesk helps you take support queries and collect feedback from your customers. It is shown by default in your support portal and can be added as a widget to your website, your support portal and even your web application. </p>
-
-			<p>In order to give your customers the best support experience possible, you need to be able to get working on their tickets right away and resolve issues quickly. The ticket form helps you collect all the facts you need right at the very first step, eliminating the need for you to go back and forth to the customer with more questions. With this in mind, you can customize your ticket form to fit your business type or your internal support process. </p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>The ticket form in Freshdesk helps you take support queries and collect feedback from your customers. It is shown by default in your support portal and can be added as a widget to your website, your support portal and even your web application. </p>
-
-			<p>In order to give your customers the best support experience possible, you need to be able to get working on their tickets right away and resolve issues quickly. The ticket form helps you collect all the facts you need right at the very first step, eliminating the need for you to go back and forth to the customer with more questions. With this in mind, you can customize your ticket form to fit your business type or your internal support process. </p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-		</div>
+	<div class="floatr">
+    <% if privilege?(:publish_solution) %>
+  		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
+    <% end %>
 	</div>
 
-<div class="article-edit hide">
-	<div class="row-fluid">
-		<div class="span6">
-			<input type="text" id="article-title" class="article-title" value="Customizing your ticket form"/>
-		</div>
-		<div class="span6 pull-right pagination-right header_buttons align-right">
-			<a href="javascript:void(0)" class="btn edit-cancel">Cancel</a>
-			<a href="#" class="btn btn-primary">Publish</a>
-		</div>
-	</div>
-	<div class="row-fluid">
-	<div class="editor-body">
-	<textarea id="solution-article-edit">
-			<p>The ticket form in Freshdesk helps you take support queries and collect feedback from your customers. It is shown by default in your support portal and can be added as a widget to your website, your support portal and even your web application. </p>
+	<h2 class="title">
+		<%= h(@article.title) %>
+	</h2>
+	<div class="help-text">
+		By <b> <%= @article.user.name %></b>, <%= formated_date(@article.modified_at) %>
 
-			<p>In order to give your customers the best support experience possible, you need to be able to get working on their tickets right away and resolve issues quickly. The ticket form helps you collect all the facts you need right at the very first step, eliminating the need for you to go back and forth to the customer with more questions. With this in mind, you can customize your ticket form to fit your business type or your internal support process. </p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>The ticket form in Freshdesk helps you take support queries and collect feedback from your customers. It is shown by default in your support portal and can be added as a widget to your website, your support portal and even your web application. </p>
-
-			<p>In order to give your customers the best support experience possible, you need to be able to get working on their tickets right away and resolve issues quickly. The ticket form helps you collect all the facts you need right at the very first step, eliminating the need for you to go back and forth to the customer with more questions. With this in mind, you can customize your ticket form to fit your business type or your internal support process. </p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-
-			<p>For example, you might need the customer’s order ID to speed things up a bit, or need special fields to better categorize the ticket. You can include the right ticket fields in your form, and let your customers and agents fill in the information you need in the format you want.</p>
-	</textarea>
-	</div>
-	<div id="editortool"></div>
-	</div>
-</div>
-</div>
-</div>
-<!-- Article properties overlay -->
-<% content_for :dialogs do %>
-<div id="article-prop" class="hide">
-	<form class="form-horizontal">
-		<div id="tab-wrapper" class="tab-wrapper">
-			<%= tabs_for do |tab| %>
-				<% tab.create('tags', 'Tags & folders') do %>
-					<%= render partial: "tags_form" %>
-				<% end %>	
-				<% tab.create('meta', 'Meta') do %>
-					<%= render partial: "meta_form" %>
-				<% end %>	
+		<%= content_tag(:span, t('private'), :class => "label tooltip", 
+					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
+		<span class="label"><%= t(@article.type_name) %></span>
+	</div> 
+	 
+	
+	  <div class="solution_title">
+			<div class="tag_list"> 
+			<% @article.tags.map.each do |t| %> 
+				<div class="item">
+          <% if privilege?(:publish_solution) %>	
+					  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+          <% end %>
+					<%= h(t.name) %>
+				</div>
 			<% end %>
-		</div>
-		<div class="publish-settings">
-			<label class="checkbox">
-			<input type="checkbox" class="unpublish"> 
-			<p class="unpublish-label">Unpublish the article from portal</p>
-			<p class="muted">This will delete the published article permanently and retain the draft content under Drafts</p>
-			</label>
-		</div>
-	</form>
+			</div>
+	 </div>
+	 <span class="seperator"></span>
+	 <div class="solutions_text clearfix">
+		<%= @article.description.html_safe %>
+	 </div>
+		<ul class="attachment_list">
+		    <% @article.attachments.each do |attached| %> 
+		    	<%= attachment_list(attached, privilege?(:publish_solution), "article",nil) %>
+		    <% end %>
+		    <% @article.cloud_files.each do |cloud_file| %> 
+				<%= attachment_list(cloud_file, privilege?(:publish_solution), "cloud_file",nil) %>
+			<% end %>
+		</ul>
+		
+	 <span class="seperator"></span> 
+	 <div id="article_voting">
+		<%= render :partial => "voting", :object => @article %>
+	 </div>
 </div>
-<% end %>
-<!-- Master version section -->
-<% content_for :pagefixed do %>
-	<% render partial: "master_version" %>
-<% end %>
-<%= javascript_include_tag :'cdn/solutions'  %>
+</div>
+</div> 
+
+<script type="text/javascript">
+  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
+    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+
+  highlight_code();
+</script>

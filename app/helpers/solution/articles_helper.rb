@@ -13,23 +13,25 @@ module Solution::ArticlesHelper
   end
   
   def language_tabs
-    %{
-      <a href="/" class="active"><span>English</span></a>
-      <a href="/" class="red"><span>Latin</span></a>
-      <a href="/" class="grey"><span>Spanish</span></a>
-      <a href="/">French</a>
+    %{<div class="tab">
+        <a href="/" class="active"><span>English</span></a>
+        <a href="/" class="red"><span>Latin</span></a>
+        <a href="/" class="grey"><span>Spanish</span></a>
+        <a href="/">French</a>
+        <a href="javascript:void(0)" class="masterversion-link">Master version</a>
+      </div>
     }.html_safe
   end
   
   def draft_info_text
     if @article.draft and @article.draft.locked?
-      t('solution.articles.restrict_edit', :name => h(current_item.user.name)).html_safe
+      t('solution.articles.restrict_edit', :name => h(@current_item.user.name)).html_safe
     else
       [
         t('solution.articles.draft.show_page_msg'),
-        (current_user == current_item.user) ? t('solution.articles.draft.you') : current_item.user.name,
-        "<span data-livestamp='#{current_item.modified_at.to_i}' class='tooltip' title='#{formated_date(current_item.modified_at)}'></span>"
-      ].join('').html_safe
+        (current_user == @current_item.user) ? t('solution.articles.draft.you') : @current_item.user.name,
+        "<span data-livestamp='#{@current_item.modified_at.to_i}' class='tooltip' title='#{formated_date(@current_item.modified_at)}'></span>"
+      ].join(' ').html_safe
     end
   end
   

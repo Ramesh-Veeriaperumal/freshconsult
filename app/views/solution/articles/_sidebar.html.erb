@@ -1,77 +1,93 @@
 <div class="solution-details">
 	<div class="draft-history sidebar-section">
 		<div class="created-history">		
-			<p>Created by</p>
-			<p>Shankar Ganesh </p>
-			<p>Thu, 26 Sep at 1:32pm</p>
+			<p><%= t('solution.general.created_by') %></p>
+			<p><%= @article.user.name %></p>
+			<p><%= formated_date(@article.created_at) %></p>
 		</div>
 		<div class="edited-history">		
-			<p>Last edited by</p>
-			<p>Ramesh Ganapathy </p>
-			<p>Fri, 26 Sep at 3:41pm</p>
+			<p><%= t('solution.general.last_edited') %></p>
+			<p><%= @current_item.user.name %></p>
+			<p><%= formated_date(@article.updated_at) %></p>
 		</div>
 	</div>
 
 	<div class="sidebar-section">
 		<div class="title-wrapper">
-			<p class="leads span2">Article Properties</p>
-			<p class="edit span1 pull-right"><a class="" href="javascript:void(0)" data-target="#article-prop" data-width="750" rel="freshdialog" title="Properties">Edit</a></p>
+			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
+			<p class="edit span1 pull-right"><a class="" href="javascript:void(0)" data-target="#article-prop" data-width="750" rel="freshdialog" title="Properties"><%= t('edit') %></a></p>
 		</div>
 
 		<div class="tags section">
-			<span>Permanent</span>
-			<span>Published</span>
+			<span><%= t(@article.type_name) %></span>
+			<span><%= t(@article.status_name) %></span>
 		</div>
 		<div class="folder-name section">
-			<h5 class="leads">Folder</h5>
-			<p>Setting up folder channels</p>
+			<h5 class="leads"><%= t('solution.folder') %></h5>
+			<p>
+				<%= pjax_link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), {:title => "#{t('solution.folder')}-#{@article.folder.name}" } %>
+			</p>
 		</div>
 		<div class="tags-wrapper section">
-			<h5 class="leads">Tags</h5>
+			<h5 class="leads"><%= t('filter_options.tags') %></h5>
 			<div class="tags">
-			<span>Sprout</span>
-			<span>Blossom</span>
-			<span>Forest</span>
-			<span>Garden</span>
+				<%= t('no_tags') if @article.tags.count < 1 %>
+				<% @article.tags.each do |t| %>
+					<span>
+						<%= t.name %>
+						<% if privilege?(:publish_solution) %>	
+						  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+	          <% end %>
+					</span>
+				<% end %>
 			</div>
 		</div>
 
-		<div class="section content-status red">
+		<!-- <div class="section content-status red">
 			Out dated content
-		</div>
+		</div> -->
 
 	</div>
 
-	<div class="sidebar-section feedback">
-		<div class="title-wrapper">
-			<p class="leads span2">Feedback</p>
+	<% if @article.tickets.count > 0 %>
+		<div class="sidebar-section feedback">
+			<div class="title-wrapper">
+				<p class="leads span2"><%= t('solution.general.feedback') %></p>
+			</div>
+			<div class="section feedback-list">
+				<ul>
+					<li>
+						<p class="feed-title">Need more information</p>
+						<p class="shortnote">I've just installed the freshdesk extension for magento, and i need help on...</p>
+						<p class="feed-time">Steph reported a month ago</p>
+					</li>
+					<li>
+						<p class="feed-title">Need more information</p>
+						<p class="shortnote">I've just installed the freshdesk extension for magento, and i need help on...</p>
+						<p class="feed-time">Steph reported a month ago</p>
+					</li>
+				</ul>
+			</div>
+			<div class="section view-all-feed">
+				<a href="#">View all feedback</a>
+			</div>
 		</div>
-		<div class="section feedback-list">
-			<ul>
-				<li>
-					<p class="feed-title">Need more information</p>
-					<p class="shortnote">I've just installed the freshdesk extension for magento, and i need help on...</p>
-					<p class="feed-time">Steph reported a month ago</p>
-				</li>
-				<li>
-					<p class="feed-title">Need more information</p>
-					<p class="shortnote">I've just installed the freshdesk extension for magento, and i need help on...</p>
-					<p class="feed-time">Steph reported a month ago</p>
-				</li>
-			</ul>
-		</div>
-		<div class="section view-all-feed">
-			<a href="#">View all feedback</a>
-		</div>
-	</div>
+	<% end %>
 
 	<div class="sidebar-section analytics">
 		<div class="title-wrapper">
-			<p class="leads span2">Analytics</p>
+			<p class="leads span2"><%= t('solution.general.analytics') %></p>
 		</div>
 		<div class="section">
-			<p>25 views</p>
-			<p>12</p>
+			<p>
+				<!-- <i class="ficon-file-visible"></i> -->
+				<%= font_icon :"file-visible" %> 
+				<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
+			</p>
+			<br/>
+			<p> <%= font_icon :like %> <%= @article.thumbs_up %>  <a href="#"> <%= t('likes') %> </a> </p>
+			<br/>
+			<p> <%= font_icon :dislike %> <%= @article.thumbs_down %> <a href="#"> <%= t('dislikes') %> </a> </p>
 		</div>
 	</div>
 </div>
