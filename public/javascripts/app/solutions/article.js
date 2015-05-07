@@ -12,12 +12,75 @@ window.App = window.App || {};
         this.eventsForNewPage();
       } else if (App.namespace === "solution/articles/show") {
         this.showPage();
+        this.showPage2();
       } else if (App.namespace === "solution/articles/edit") {
         this.defaultFolderValidate();
       }
     },
 
     bindHandlers: function () {
+    },
+    
+    showPage2: function() {
+      var $this = this;
+      $('.masterversion').height(parseInt(jQuery(document).height()));
+
+      $('.masterversion-link').on('click', function(){
+        $this.animateMasterver(35);
+        $(this).addClass('disable');
+      });
+
+      $('.close-link').live('click', function(){
+        $this.animateMasterver(470);
+        $('.masterversion-link').removeClass('disable');
+      });
+      $(document).keyup(function(e){
+        if(( e.keyCode == 27 ) && $('.masterversion-link').hasClass('disable') ){
+          $('.close-link').trigger('click');
+        }
+      });
+
+      var eTop = $('#editortool').offset().top;
+      $(window).scroll(function(){
+        if($(window).scrollTop() > 190 && $('#editortool').is(':visible')){
+          $('#editortool').addClass('fixtoolbar');
+        }else {
+          $('#editortool').removeClass('fixtoolbar');
+        }
+      });
+
+      $('.article-edit-btn').on('click', function(){
+        $this.switchArticle('article-edit', 'article-view');
+      });
+
+      $('.edit-cancel').on('click', function(){
+        $this.switchArticle('article-view', 'article-edit');
+      });
+
+      $('.article-view').dblclick(function() {
+       $('.article-edit-btn').trigger('click');
+      });
+      
+      $('#solution-article-edit').redactor({
+        toolbarExternal: "#editortool",
+        buttons:['formatting','bold','italic','underline','deleted','unorderedlist', 'orderedlist','fontcolor', 'backcolor','insert_table']
+      });
+    },
+    animateMasterver: function(distance){
+      if(jQuery('html').attr('dir') === 'rtl'){
+        jQuery('.master-content').animate({
+          right: distance
+        });
+      }else{
+        jQuery('.master-content').animate({
+          left: distance
+        });
+      }
+    },
+    
+    switchArticle: function(show, hide){
+      $('.'+hide).addClass('hide');
+      $('.'+show).removeClass('hide');
     },
 
     onLeave: function (data) {

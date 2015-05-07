@@ -15,6 +15,7 @@ module ApplicationHelper
   include Integrations::Util
   include Integrations::IntegrationHelper
   include CommunityHelper
+  include TabHelper
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -1204,4 +1205,8 @@ module ApplicationHelper
     end
   end
 
+  def tabs_for( *options, &block )
+    raise ArgumentError, "Missing block" unless block_given?
+    raw TabHelper::TabsRenderer.new( *options, &block ).render
+  end
 end

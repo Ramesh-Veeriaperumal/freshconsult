@@ -1,0 +1,39 @@
+
+<%= fields_for :tags  do |tag| %>
+	<div class="control-group">
+		<%= tag.label(:name, 'Tags',:class =>"control-label") %>
+		<div class="controls">
+			<%= tag.text_field :name , :value => '', :class => "select2 span6"%>
+		</div>
+	</div>
+<% end %>
+
+<div class="control-group">
+	<label class="control-label" for="folder">Folder</label>
+	<div class="controls">
+		<select class="select2 span4" id="folder" placeholder="Tags">
+			<option>Test content 1</option>
+			<option>Test content 2</option>
+			<option>Test content 3</option>
+		</select>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="">Solution type</label>
+	<div class="controls">
+		<label class="radio inline">
+			<input type="radio" id="" value="Permenent" name="solutiontype">Permenent
+		</label>
+		<label class="radio inline">
+			<input type="radio" id="" value="Workaround" name="solutiontype">Workaround
+		</label>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="">Article status</label>
+		<div class="controls">
+		<label class="checkbox inline">
+			<input type="checkbox" id="" value="UpToDate"> UpToDate
+		</label>
+	</div>
+</div>
