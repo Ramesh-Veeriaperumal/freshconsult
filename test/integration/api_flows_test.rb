@@ -31,4 +31,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     response.body.must_match_json_expression(base_error_pattern("method_not_allowed", :methods => "GET, PUT, DELETE"))
     assert_equal "GET, PUT, DELETE", response.headers["Allow"]
   end
+
+  def test_invalid_json
+    @headers["CONTENT_TYPE"] = 'application/json'
+    post "/api/discussions/categories", '{"category": {"name": "true"', @headers
+    assert_response :bad_request
+    response.body.must_match_json_expression(invalid_json_error_pattern)
+  end
 end

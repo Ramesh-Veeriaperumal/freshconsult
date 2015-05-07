@@ -6,7 +6,6 @@ module ApiDiscussions
     def test_destroy
       fc = ForumCategory.first || create_test_category
       forum = create_test_forum(fc)
-      controller.class.any_instance.stubs(:back_up_topic_ids).once
       delete :destroy, :version => "v2", :format => :json, :id => forum.id
       assert_equal " ", @response.body
       assert_response :no_content

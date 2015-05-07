@@ -2,8 +2,8 @@ module ApiDiscussions
   class CategoriesController < ApiApplicationController
     include ApiDiscussions::Category
     
-    skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show, :index]
-    before_filter :portal_check, :only => [:show, :index]
+    skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show]
+    before_filter :portal_check, :only => [:show]
 
     private
 
