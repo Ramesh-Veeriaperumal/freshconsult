@@ -1,7 +1,7 @@
 <% author = (article.draft || article).user %>
 <% current_item = article.draft || article %>
 <div class="article-item span12 pull-right">
-<div class="article-title span10">
+<div class="article-title span8">
 	<div class="avatar-wrap">
 		<%= user_avatar(author) %>
 	</div>
@@ -27,13 +27,14 @@
 			</div>
 	</div>
 </div>
-<div class="span2">
+<div class="span4">
 
-	<%= pjax_link_to "Resume Editing", 
+	<%= pjax_link_to(t('edit'), 
 			edit_solution_category_folder_article_path(article.folder.category_id, article.folder, article), 
 			{
 				:class => "btn btn-small pull-right align-right draft-edit-icon"
-			} 
+			}) 
 	%>	
+	<%= '<span class="ficon-mail-thin fsize-20 mail-icon pull-right"></span>'.html_safe if article.folder.is_default %>
 </div>
 </div>

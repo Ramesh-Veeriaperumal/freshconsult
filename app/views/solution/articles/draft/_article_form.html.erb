@@ -6,7 +6,7 @@
 		:value =>  current_item.title %>
 	</div>
 	<div class="control-group">
-		<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required", :value => current_item.description, :"data-remove-cursor" => false %>
+		<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required", :value => current_item.description, :"data-remove-cursor" => true %>
 	</div>
 	<div class="control-group overflow-visible">
 		<%= render	:partial => "/solution/shared/attachment_form",
@@ -36,6 +36,23 @@
 				<%= render :partial => "solution/articles/draft/article_properties", :locals => { :f => f} %>
 			</div>
 		<% else %>
+			<% if @article.folder.is_default? %>
+				<div class="control-group select-folder hide">
+					<p class="folder-warning-msg">*<%= t('solution.folders.choose_folder_warning') %></p>
+					<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
+					<div class="controls">
+						<%= f.select :folder_id , 
+									option_groups_from_collection_for_select( 
+											current_account.solution_categories.reject(&:is_default), 
+											:folders, :name, :id, :name, 
+											(@article.folder.is_default? ? nil : @article.folder_id )
+									), 
+									{:include_blank => t('solution.folders.choose_folder')}, 
+									:class => "select2 span4 required"
+						%>
+					</div>
+				</div>
+			<% end %>	
 			<div id="solution-properties-show" class="solution-properties-title solution-seo sub-lead">
 				<span> 
 					<%= link_to( t('solution.articles.edit_properties'), 

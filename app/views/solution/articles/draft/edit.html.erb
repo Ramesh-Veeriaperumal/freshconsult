@@ -14,7 +14,7 @@
 	<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") %>
 </div>
 
-<%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form", :class => "article-edit-form"} do |f| %>
+<%= form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form", :class => "article-edit-form", :"data-default-folder" => @article.folder.is_default } do |f| %>
 	
 	<%= render :partial => 'solution/articles/draft/article_form', :locals => { :f => f, :edit =>true } %>
 	<% if @article.draft.present? %>
@@ -31,7 +31,7 @@
 	    <%#= link_to(t('preview'), support_draft_preview_path(@article, "preview"), :class => "preview_link", :target => "_blank") %>
 	  	<%= submit_tag t('cancel'), :name => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
 	    <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn" %>
-			<%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary" %>
+			<%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn" %>
 
 	</div>
 <% end %>
@@ -40,5 +40,11 @@
 </div>
 
 <% content_for :helpcard do %>
-  <%= "Something here" %>
+	<h3 class="lead"> <%= t('solution.title').html_safe %> </h3>
+  <p><%= t('solution.info15').html_safe %></p>
+  <p><%= t('solution.info16').html_safe %></p>
+  <p><%= t('solution.info17').html_safe %></p>
+  <p><i><%= t('solution.info18').html_safe %></i></p>
+  <p><%= t('solution.info19').html_safe %></p>
+  <p><%= t('solution.info20').html_safe %></p>
 <% end %>

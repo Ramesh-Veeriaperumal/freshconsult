@@ -18,7 +18,6 @@ module FormBuilders::Redactor
       REDACTOR_SOLUTION_EDITOR = {
         :autoresize => false,
         :tabindex => 2,
-        :focus => true,
         :convertDivs => false,
         :allowTagsInCodeSnippet => true,
         :imageUpload => "/solutions_uploaded_images",

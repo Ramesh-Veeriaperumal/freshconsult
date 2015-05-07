@@ -11,7 +11,15 @@
 <div class="control-group">
 	<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
 	<div class="controls">
-		<%= f.select :folder_id , option_groups_from_collection_for_select(current_account.solution_categories.reject(&:is_default), :folders, :name, :id, :name, @article.folder_id), {}, :class => "select2 span4" %>
+		<%= f.select :folder_id , 
+					option_groups_from_collection_for_select(
+							current_account.solution_categories.reject(&:is_default), 
+							:folders, :name, :id, :name, 
+							(@article.folder.is_default? ? nil : @article.folder_id )
+					), 
+					{:include_blank => t('solution.folders.choose_folder')},
+					:class => "select2 span4 required"
+		%>
 	</div>
 </div>
 

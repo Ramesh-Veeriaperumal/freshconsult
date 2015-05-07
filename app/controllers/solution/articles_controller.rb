@@ -47,11 +47,8 @@ class Solution::ArticlesController < ApplicationController
 
   def edit
     respond_to do |format|
-      format.html { # edit.html.erb 
-        if @solution_drafts_feature
-          return unless load_draft
-          render "solution/articles/draft/edit"
-        end
+      format.html {
+        render_edit
       }
       format.xml  { render :xml => @article }
     end
@@ -275,7 +272,7 @@ class Solution::ArticlesController < ApplicationController
     def update_article
       build_attachments unless update_properties?
       @article.tags_changed = set_solution_tags
-      update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
+      update_params = update_properties? ? params[nscname].except(:title, :description, :folder_id) : params[nscname]
       respond_to do |format|    
         if @article.update_attributes(update_params)
           format.html { 
@@ -288,7 +285,7 @@ class Solution::ArticlesController < ApplicationController
             flash[:notice] = t('solution.articles.prop_updated_msg')
           }
         else
-          format.html { render :action => "edit" }
+          format.html { render_edit }
           format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
         end
       end
@@ -297,6 +294,15 @@ class Solution::ArticlesController < ApplicationController
     def creation_redirect_url    
       return @article if params[:save_and_create].nil?
       new_solution_category_folder_article_path(params[:category_id], params[:folder_id])
+    end
+
+    def render_edit
+      if @solution_drafts_feature
+        return unless load_draft
+        render "solution/articles/draft/edit"
+      else
+        render "solution/articles/edit"
+      end
     end
 
 

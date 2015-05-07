@@ -109,7 +109,7 @@ class Support::Solutions::ArticlesController < SupportController
       draft = @article.draft
       if @article.draft.present?
         @article.attributes.each do |key, value|
-          @article[key] = draft.send(key) if draft.respond_to?(key)
+          @article.send("#{key}=", draft.send(key)) if draft.respond_to?(key) and key != 'id'
         end
         @article.freeze
       end

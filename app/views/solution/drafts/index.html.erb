@@ -7,23 +7,55 @@
 
 		<div class="draft-titles">
 			
-			<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, {
-					:class => "heading item #{'active' unless (params[:type] == 'all')}",
-					:title => t('solution.draft.my_drafts')
-				} %>
+			<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, 
+						{
+							:class => "heading item #{'active' unless (params[:type] == 'all')}",
+							:title => t('solution.draft.my_drafts') 
+						} 
+			%>
 
-			<%= pjax_link_to t('solution.draft.all_drafts'), solution_my_drafts_path('all'), {
-					:class => "heading item #{'active' if (params[:type] == 'all')}",
-					:title => t('solution.draft.all_drafts')
-				} %>
+			<%= pjax_link_to t('solution.draft.all_drafts'), solution_my_drafts_path('all'), 
+						{
+							:class => "heading item #{'active' if (params[:type] == 'all')}",
+							:title => t('solution.draft.all_drafts') 
+						} 
+			%>
 
+			<% if (params[:type] == 'all') && Account.current.portals.count > 1 %>
+				<div class="pull-right portal-menu">
+					<% current_portal_name = (@drafts_context == 0 ? t('discussions.all_categories') : @drafts_context_portal.name) %>
+					<a class="drop-right nav-trigger" href="#" menuid="#context_menu">
+					  <b class="tooltip all_categories" data-placement="right" title="<%= current_portal_name %>">
+					  	<%= truncate(current_portal_name, :length => 30) %>
+					  </b>
+					</a>
+					<div class="spinner pl20"></div>
+					<div class="fd-menu" id="context_menu">
+						<ul>
+						   <% context_menu = Account.current.portals.map { |p| 
+						   			[
+						   				truncate(p.portal_name, :length => 30), 
+						   				"#{solution_my_drafts_path('all')}?portal=#{p.id}", 
+						   				(@drafts_context == p.id)
+						   			]
+						   		} %>
+						   <% context_menu.unshift([t('discussions.all_categories'), "#{solution_my_drafts_path('all')}?portal=0", @drafts_context == 0]) %>
+						   <% context_menu.map do |context| %>
+						      <li>
+						      	<%= pjax_link_to "#{"<span class='icon ticksymbol'></span>" if context[2]} #{context[0]}".html_safe, context[1] %>
+						      </li>
+						   <% end %>
+						</ul>
+					</div>
+				</div>
+			<% end %>
 		</div>
 
 
 		<% unless (@articles.size == 0) %>
   		<%= render :partial => "drafts_list", :locals => { :articles => @articles} %>
 		<% else %>
-			<span class="info_data"><%= t("solutions.drafts.empty") %></span>
+			<div class="draft_info_data"><%= t("solutions.drafts.empty") %></div>
 		<% end %>	
 	</div> 
 	<%= will_paginate @articles, :renderer => BootstrapPaginationRenderer,
@@ -32,8 +64,18 @@
 															:class => "pagination pagination-centered" %>
 </div>
 
-<% javascript_tag do -%>
+<% content_for :helpcard do %>
+	<h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
+  <p><%=t('solution.info15').html_safe%></p>
+  <p><%=t('solution.info16').html_safe%></p>
+  <p><%=t('solution.info17').html_safe%></p>
+  <p><i><%=t('solution.info18').html_safe%></i></p>
+  <p><%=t('solution.info19').html_safe%></p>
+  <p><%=t('solution.info20').html_safe%></p>
+<% end %>
+
+<%= javascript_tag do %>
   if(jQuery("#folder-section").height() > jQuery("#article-section").height())
     jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
-<%- end %>
+<% end %>
 <% content_for :layoutType do -%>antipattern<%- end %>

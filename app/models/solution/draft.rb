@@ -24,6 +24,8 @@ class Solution::Draft < ActiveRecord::Base
 
 	alias_attribute :modified_by, :user_id
 
+	xss_sanitize :only => [:description],  :article_sanitizer => [:description]
+
 	STATUSES = [
 		[ :editing,     "solutions.draft.status.editing",        0 ], 
 		[ :work_in_progress, "solutions.draft.status.work_in_progress",    1 ]
@@ -31,9 +33,9 @@ class Solution::Draft < ActiveRecord::Base
 		# [ :ready_to_publish, "solutions.draft.status.ready_to_publish",    3 ]
 	]
 
-	# STATUS_OPTIONS	= STATUSES.map { |i| [i[1], i[2]] }
-	# STATUS_NAMES_BY_KEY	= Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
-	STATUS_KEYS_BY_TOKEN	= Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
+	# STATUS_OPTIONS  = STATUSES.map { |i| [i[1], i[2]] }
+	# STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
+	STATUS_KEYS_BY_TOKEN  = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
 
 	LOCKDOWN_PERIOD = 2.hours
 
@@ -75,9 +77,8 @@ class Solution::Draft < ActiveRecord::Base
 		end
 
 		move_attachments
-		article.status = article.class::STATUS_KEYS_BY_TOKEN[:published]
 		# article.modified_by = User.current.id
-		article.save
+		self.article.publish!
 		self.reload
 		self.destroy
 	end

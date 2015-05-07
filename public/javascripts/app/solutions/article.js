@@ -12,6 +12,8 @@ window.App = window.App || {};
         this.eventsForNewPage();
       } else if (App.namespace === "solution/articles/show") {
         this.showPage();
+      } else if (App.namespace === "solution/articles/edit") {
+        this.defaultFolderValidate();
       }
     },
 
@@ -213,6 +215,18 @@ window.App = window.App || {};
             return false;
           }
         }
+      });
+    },
+
+    defaultFolderValidate: function () {
+      $('body').on('click.articles', '#article-publish-btn', function() {
+        if ( $("#article-form").data().defaultFolder ) {
+          if ( $('#solution_article_folder_id').val() == "" ) {
+            $('.select-folder').show();
+            return false;
+          }
+        }
+        return true;
       });
     }
 

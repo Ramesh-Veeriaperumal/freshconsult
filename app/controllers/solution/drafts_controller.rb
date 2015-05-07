@@ -1,5 +1,11 @@
 class Solution::DraftsController < ApplicationController
 
+	include Solution::DraftContext
+	include FeatureCheck
+	feature_check :solution_drafts
+
+	before_filter :drafts_feature_enabled?
+
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
 	before_filter :set_selected_tab, :only => [:index]
 	before_filter :page_title, :only => [:index]
@@ -13,7 +19,7 @@ class Solution::DraftsController < ApplicationController
 
 	def destroy
 		draft = current_account.solution_drafts.find_by_id(params[:id])
-		unless draft.locked?
+		if draft.present? and !draft.locked?
 			flash[:notice] = t('solution.articles.draft.discard_msg')
 			draft.discarding = true
 			draft.destroy
@@ -43,8 +49,17 @@ class Solution::DraftsController < ApplicationController
 
 	private
 
+		def drafts_feature_enabled?
+			access_denied unless @solution_drafts_feature
+		end
+
 		def scope
-			(params[:type] == 'all') ? [:all_drafts] : [:drafts_by_user, current_user]
+			(params[:type] == 'all') ? (get_portal_id == 0 ? [:all_drafts] : [:portal_drafts, get_portal_id]) : [:drafts_by_user, current_user]
+		end
+
+		def get_portal_id
+			save_context
+			@drafts_context
 		end
 
 		def set_selected_tab

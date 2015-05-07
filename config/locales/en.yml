@@ -3236,6 +3236,8 @@ en:
   import_groups: Groups
   solution:
     folders:
+      choose_folder: Choose folder
+      choose_folder_warning: Please select a folder for publishing the article
       new:
         new_folder: Add Folder
       folder_form:
@@ -3254,7 +3256,7 @@ en:
         discard_msg: The draft has been discarded.
         discard_confirm: Do you want to discard this draft?
       locked: Locked
-      cant_publish: can't change status to published of an article in default folder/category
+      cant_publish: can't be changed to published of an article in default folder/category
       draft_published_label: There is also a published version.
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
@@ -3322,6 +3324,18 @@ en:
     info7: No solutions in this folder
     status: Solution Status
     info8: Are you sure you want to delete this solution?
+    info9: "If you use multiple products, <b>Categories</b> can be made visible in their respective product portals."
+    info10: Folder visibility is of four types.
+    info11: "<b>All</b> - This makes it publicly visible to anyone who accesses your self-service portal."
+    info12: "<b>Logged In Users</b> - This makes it visible only to those who have signed up and logged in with their credentials."
+    info13: "<b>Agents</b> - This makes it private, so only agents on your helpdesk can view them. This is useful for internal knowledge sharing."
+    info14: "<b>Select Companies</b> - This makes it viewable only to certain companies that you select from your contacts"
+    info15: "Articles can either be saved as a <b>draft</b> or directly <b>published</b>."
+    info16: "<b>Published</b> articles will be visible in the Self-Service Portal and also appear in search results. "
+    info17: "<b>Draft</b> articles are visible only to agents, and will appear only in search results for agents."
+    info18: "A published article can be edited and saved as draft which retains the published version on the portal while having an additional draft version for agents to edit. This is useful when you need to update articles, without taking them down from your portal."
+    info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
+    info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag

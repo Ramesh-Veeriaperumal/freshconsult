@@ -86,8 +86,14 @@ Along with the above options, few flags and counters are available which are lis
     bindEvents: function () {
       var $this = this;
       $.each(this.opts.monitorChangesOf, function (key, value) {
+        var $el = $(value);
+        $el.data('previousSavedData', $el.val());
+
         $(value).on("change redactor:sync", function () {
-          $this.contentChanged = true;
+          if ($el.data('previousSavedData') !== $el.val()) {
+            $this.contentChanged = true;
+          }
+
         });
       });
     },
@@ -109,7 +115,9 @@ Along with the above options, few flags and counters are available which are lis
       var $this = this;
 
       $.each(this.opts.monitorChangesOf, function (key, value) {
-        $this.content[key] = $(value).val();
+        var $el = $(value);
+        $this.content[key] = $el.val();
+        $el.data('previousSavedData', $el.val());
       });
     },
     
@@ -147,14 +155,14 @@ Along with the above options, few flags and counters are available which are lis
       this.updateExtraParams(response);
       this.savingContentFlag = false;
       this.lastSaveStatus = true;
-      ++this.successCount;
+      this.successCount += 1;
       this.opts.responseCallback(response);
     },
     
     onSaveError: function (xhr, ajaxOptions, thrownError) {
       this.savingContentFlag = false;
       this.lastSaveStatus = false;
-      ++this.failureCount;
+      this.failureCount += 1;
       this.opts.responseCallback(xhr.status);
     },
     

@@ -74,6 +74,8 @@ module Redis::RedisKeys
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
 
+	SOLUTION_DRAFTS_SCOPE = "SOLUTION:DRAFTS:%{account_id}:%{user_id}"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield
