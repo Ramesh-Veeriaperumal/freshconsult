@@ -25,6 +25,7 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.find_by_id!(params[:id], :include => [:folder, :draft])
     respond_to do |format|
       format.html {
+        @current_item = (@article.draft || @article)
         render (@solution_drafts_feature ? "solution/articles/draft/show" : "show")
       }
       format.xml  { render :xml => @article }

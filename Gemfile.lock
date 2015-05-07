@@ -710,6 +710,7 @@ GEM
       innertube (~> 1.0.2)
       multi_json (~> 1.0)
     riddle (1.2.2)
+    rollout (2.1.0)
     routing-filter (0.3.1)
       actionpack
     rr (1.1.2)
@@ -971,6 +972,7 @@ DEPENDENCIES
   riak-client (= 1.4.2)
   riddle (= 1.2.2)
   rinku!
+  rollout
   routing-filter (~> 0.3.1)
   rr (~> 1.1.0)
   rspec (~> 3.0.0)

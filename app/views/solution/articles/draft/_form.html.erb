@@ -1,0 +1,17 @@
+<div class="article-edit hide">
+  <div class="row-fluid">
+    <div class="span6">
+      <input type="text" id="article-title" class="article-title" value="<%= @current_item.title %>"/>
+    </div>
+    <div class="span6 pull-right pagination-right header_buttons align-right">
+      <a href="javascript:void(0)" class="btn edit-cancel">Cancel</a>
+      <a href="#" class="btn btn-primary">Publish</a>
+    </div>
+  </div>
+  <div class="row-fluid">
+  <div class="editor-body">
+    <textarea id="solution-article-edit"><%= @current_item.description.html_safe %></textarea>
+  </div>
+  <div id="editortool"></div>
+  </div>
+</div>

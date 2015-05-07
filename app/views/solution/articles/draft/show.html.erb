@@ -1,95 +1,73 @@
-<div class="folder-2col"> 
-	<div class="folder_section" id="folder-section">
-		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
-	</div>  	
+<% content_for :sidebar do %>
+<div class="solution-sidebar">
+	<%= render partial: "sidebar" %>
+</div>
+<% end %>
 
-	<% current_item = (@article.draft || @article) %>
+<div class="solution">
+<!-- Solution header --> 
 
-	<div class="artical_section" id="article-section">
-		<div class="crumbs">
-			<%= pjax_link_to t('solution.title'), solution_categories_path %> &rarr; 
-			<%= pjax_link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
-			<%= pjax_link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%> 
-			<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
+<div class="bread-crumb">
+	<%= breadcrumb %>
+</div>
+
+<div class="solution-header" rel="sticky">
+		<div class="tab">
+			<%= language_tabs %>
+			<a href="javascript:void(0)" class="masterversion-link">Master version</a>
 		</div>
-
 		<% if @article.draft or !@article.published? %>
-			<div class="draft-info-box <%= "error" if @article.draft && @article.draft.locked? %>">
-
-				<% if @article.draft and @article.draft.locked? %>
-					<%= t('solution.articles.restrict_edit', :name => current_item.user.name) %>
-				<% else %>
-					<%= t('solution.articles.draft.show_page_msg') %> 
-					<%= current_user == current_item.user ? t('solution.articles.draft.you') : current_item.user.name %>
-					<span data-livestamp="<%= current_item.modified_at.to_i %>" class="tooltip" title="<%= formated_date(current_item.modified_at) %>"></span>
-				<% end %>
-					
-					<%= link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), :method => 'delete', :class => 'btn btn-small draft-btn', :confirm => t('solution.articles.draft.discard_confirm')) if @article.published? and @article.draft.present? %>
-
-					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'btn btn-small draft-btn') %>
-
-					<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") if @article.draft.present? || !@article.published? %>
-			</div>
-		<% end %> 
-
-		<div class="floatr prop-edit">
-			<% if privilege?(:publish_solution) %>
-				<a href="<%= properties_solution_category_folder_article_path(@article.folder.category, @article.folder, @article) %>" data-target="#article-properties" 
-					rel="freshdialog" data-width="700px" class="article-properties" title="<%= t('solution.articles.properties') %>" 
-					data-close-label="<%= t('cancel') %>" data-close-label="<%= t('save') %>">
-					<%= t('solution.articles.properties') %>
-				</a>
-				&nbsp; | &nbsp;
-				<%= pjax_link_to( t('solution.articles.edit'), 
-													((@article.draft && @article.draft.locked?) ? "#" : edit_solution_category_folder_article_path(@article.folder.category_id, @article.folder, @article)),
-					 	{:class => ("disabled" if @article.draft && @article.draft.locked?)} ) %>
-			<% end %>
+		<div class="sub-content">
+			<p class="pull-left"><%= draft_info_text %> - <%= discard_link %> </p>
+			<p class="pull-right">
+				<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post') %>
+			</p>
 		</div>
-
-		<h2 class="title">
-			<%= h(current_item.title) %>
-		</h2>
-		<div class="help-text">
-			By <b> <%= (@article.draft ? current_item.user.name : current_item.user.name) %></b>, <%= formated_date(current_item.modified_at) %>
-			<%= content_tag(:span, t('private'), :class => "label tooltip", :title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
-			<span class="label"><%= t(@article.type_name) %></span>
-		</div> 
-
-		<div class="solution_title">
-			<div class="tag_list"> 
-				<% @article.tags.map.each do |t| %> 
-					<div class="item">
-						<% if privilege?(:publish_solution) %>
-							<%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
-						<% end %>
-						<%= h(t.name) %>
-					</div>
-				<% end %>
-			</div>
+		<% end %>
+</div>
+<!-- Solution page content -->
+<div class="solution-content">
+	<div class="article-view">
+		<div class="row-fluid">
+		<div class="span6">
+			<h3 class="lead"><%= @current_item.title %></h3>
 		</div>
-
-		<span class="seperator"></span>
-		
-		<div class="solutions_text clearfix">
-			<%= current_item.description.html_safe %>
+		<div class="span6 pull-right pagination-right header_buttons align-right">
+			<a href="javascript:void(0)" class="btn article-edit-btn"><%= t('solution.articles.edit') %></a>
 		</div>
-
-		<ul class="attachment_list">
-			<% active_attachments(:attachments, @article.draft, @article).each do |attached| %> 
-				<%= attachment_list(attached, false, "article",nil) %>
-			<% end %>
-			<% active_attachments(:cloud_files, @article.draft, @article).each do |cloud_file| %> 
-				<%= attachment_list(cloud_file, false, "cloud_file",nil) %>
-			<% end %>
-		</ul>
-
-		<span class="seperator"></span> 
-		<div id="article_voting">
-			<%= render :partial => "solution/articles/voting", :object => @article %>
 		</div>
+		<div class="article-content"><%= @current_item.description.html_safe %></div>
 	</div>
-</div>
-</div> 
+	<% #TODO DraftsUI - Clicking on Edit button from "List view" should automatically open up Edit Form %>
+	<%= render :partial => "solution/articles/draft/form" %>
 
-<div class="hide" id="article-properties">
 </div>
+</div>
+<!-- Article properties overlay -->
+<% content_for :dialogs do %>
+<div id="article-prop" class="hide">
+	<form class="form-horizontal">
+		<div id="tab-wrapper" class="tab-wrapper">
+			<%= tabs_for do |tab| %>
+				<% tab.create('tags', 'Tags & folders') do %>
+					<%= render partial: "tags_form" %>
+				<% end %>	
+				<% tab.create('meta', 'Meta') do %>
+					<%= render partial: "meta_form" %>
+				<% end %>	
+			<% end %>
+		</div>
+		<div class="publish-settings">
+			<label class="checkbox">
+			<input type="checkbox" class="unpublish"> 
+			<p class="unpublish-label">Unpublish the article from portal</p>
+			<p class="muted">This will delete the published article permanently and retain the draft content under Drafts</p>
+			</label>
+		</div>
+	</form>
+</div>
+<% end %>
+<!-- Master version section -->
+<% content_for :pagefixed do %>
+	<% render partial: "solution/articles/draft/master_version" %>
+<% end %>
