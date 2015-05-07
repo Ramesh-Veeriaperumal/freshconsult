@@ -1,7 +1,7 @@
 1. Have to take a call whether to include custom_code in base error class based on forthcoming error classess
 5. caching in view
 17. rubocop
-18. attr_accessible wrap params
+18. attr_accessible wrap params - Should we prefix all names with 'Api'
 20. need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF-8")
 21. Should we need to introduce credits/merits for each usage of endpoint?
 23. forums method 
@@ -11,6 +11,7 @@
 9. Nomenclature for concerns
 10. Revisit params.require[cname] to handle empty params 
 11. update (override or incremental)
+25. revisit all before filters, the order is a problem.
 
 Breaking changes in existing APIs
 1. Account suspended

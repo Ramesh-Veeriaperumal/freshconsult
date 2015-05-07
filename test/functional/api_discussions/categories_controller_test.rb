@@ -39,7 +39,7 @@ module ApiDiscussions
       define_method("test_#{action}_requires_feature_disabled") do
         controller.class.any_instance.stubs(:feature?).returns(false).once
         send(methods[action], action, :version => "v2", :format => :json, :id => fc.id)
-        response.body.must_match_json_expression([request_error_pattern("require_feature", {:feature => "Forums"})])
+        response.body.must_match_json_expression(request_error_pattern("require_feature", {:feature => "Forums"}))
         assert_response :forbidden
       end
     end
