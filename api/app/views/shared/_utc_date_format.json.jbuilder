@@ -1,2 +1,6 @@
-json.created_at  item.created_at.try(:utc) if item.created_at
-json.updated_at  item.updated_at.try(:utc) if item.updated_at
+fields = [:created_at, :updated_at]
+fields += add if defined?(add)
+
+fields.each do |date_sym|
+  json.set! date_sym.to_s, item.send(date_sym).try(:utc) if item.send(date_sym)
+end

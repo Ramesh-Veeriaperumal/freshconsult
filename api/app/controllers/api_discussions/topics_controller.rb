@@ -9,29 +9,29 @@ module ApiDiscussions
     # before_filter :set_account_and_category_id, :only => [:create]
 
 
-    # def update
-    #   msg_param = params[cname].extract!(:message_html)
-    #   assign_other_params
-    #   @topic.attributes = params[cname]
+    def update
+      msg = params[cname].delete(:message_html)
+      assign_other_params
+      @topic.attributes = params[cname]
 
-    #   @post = @topic.first_post
-    #   @post.attributes = @topic.attributes.extract!(:forum_id, :created_at, :updated_at).merge(msg_param)
-    #   @topic.body_html = @post.body_html  
-    #   super
-    # end
+      @post = @topic.first_post
+      @post.attributes = @topic.attributes.extract!(:created_at, :updated_at)
+      @post.body_html = msg if params[cname].has_key?(:message_html)
+      super
+    end
 
-    # def assign_other_params
-    #   if params[:email].present?
-    #     @topic.user = current_account.all_users.find_by_email(params[cname][:email])
-    #   else
-    #     @topic.user_id ||= (params[cname][:user_id] || current_user.id)
-    #   end
-    #   @topic.account_id = current_account.id
-    #   @topic.forum_id = params[cname][:forum_id] if params[cname][:forum_id]
-    #   params[cname].extract!(:email, :user_id, :forum_id)
-    # end
+    protected
 
-		protected
+    def assign_other_params
+      if params[:email].present?
+        @topic.user = current_account.all_users.find_by_email(params[cname][:email])
+      else
+        @topic.user_id ||= (params[cname][:user_id] || current_user.id)
+      end
+      @topic.forum_id = params[cname][:forum_id] if params[cname][:forum_id]
+      params[cname].extract!(:email, :user_id, :forum_id)
+    end
+
 
 		private
 
@@ -44,7 +44,7 @@ module ApiDiscussions
 			end
 
 			def validate_params
-               fields = get_fields(action_name)
+       			fields = get_fields(action_name)
 				params[cname].permit(*(fields.map(&:to_s)))
 				topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
 				unless topic.valid?
@@ -54,8 +54,8 @@ module ApiDiscussions
 			end
 
 		    def get_fields(action_name)
-		      constant = "ApiConstants::#{action_name}_TOPIC_FIELDS".constantize
-		      fields = constant.extract!(:all) 
+		      constant = "ApiConstants::#{action_name.upcase}_TOPIC_FIELDS".constantize.dup
+		      fields = constant.delete(:all) 
 		      constant.keys.each{|key| fields += constant[key] if privilege?(key)}
 		      fields
 		    end

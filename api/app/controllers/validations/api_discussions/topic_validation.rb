@@ -1,10 +1,11 @@
 module ApiDiscussions
 	class TopicValidation
     include ActiveModel::Validations 
+    include ApiMethods
 
     attr_accessor :title, :forum_id, :user_id, :created_at, :updated_at, :sticky, :locked, 
-                  :stamp_type
-    validates :forum_id, :title, :user_id, :presence => true
+                  :stamp_type, :message_html
+    validates :forum_id, :title, :message_html, :presence => true
     validate :check_date 
     validates :sticky, :locked, inclusion: {in: %w(0 1)}, :allow_blank => true
     validates :stamp_type, :forum_id, :user_id, :numericality => {:allow_nil => true}
@@ -18,6 +19,7 @@ module ApiDiscussions
       @stamp_type = controller_params["stamp_type"] || item.try(:stamp_type)
       @created_at = controller_params["created_at"]
       @updated_at = controller_params["updated_at"]
+      @message_html = controller_params["message_html"] || item.try(:first_post).try(:body_html)
     end
 
     def check_date
