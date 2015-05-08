@@ -1,7 +1,6 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
     wrap_parameters :post, :exclude => [] # wp wraps only attr_accessible if this is not specified.
-    include ApiDiscussions::DiscussionsPost
      
     before_filter { |c| c.requires_feature :forums }        
     before_filter :set_user_and_topic_id, :only => [:create]

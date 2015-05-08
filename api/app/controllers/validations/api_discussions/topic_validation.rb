@@ -1,7 +1,7 @@
 module ApiDiscussions
 	class TopicValidation
     include ActiveModel::Validations 
-    include ApiMethods
+    include ApiValidators
 
     attr_accessor :title, :forum_id, :user_id, :created_at, :updated_at, :sticky, :locked, 
                   :stamp_type, :message_html

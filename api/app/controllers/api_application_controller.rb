@@ -144,7 +144,7 @@ class ApiApplicationController < ApplicationController
 
   def get_fields(constant_name)
     constant = constant_name.constantize
-    fields = constant.extract!(:all).values 
+    fields = constant[:all] 
     constant.keys.each{|key| fields += constant[key] if privilege?(key)}
     fields
   end
