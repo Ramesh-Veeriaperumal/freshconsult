@@ -115,7 +115,8 @@ module ApiDiscussions
 
     def test_update
       put :update, :version => "v2", :format => :json, :id => fc.id, :category => {:description => "foo"}
-      response.body.must_match_json_expression(forum_category_pattern(fc.name, "foo"))
+      response.body.must_match_json_expression(forum_category_response_pattern(fc.name, "foo"))
+      response.body.must_match_json_expression(forum_category_pattern(fc))
       assert_response :success
       assert_equal "foo", ForumCategory.find_by_id(fc.id).description
     end
@@ -132,7 +133,7 @@ module ApiDiscussions
     def test_show
       get :show, :version => "v2", :format => :json, :id => fc.id
       assert_response :success
-      response.body.must_match_json_expression(forum_category_pattern(fc.name, fc.description))
+      response.body.must_match_json_expression(forum_category_response_pattern(fc.name, fc.description))
     end
 
     def test_show_portal_check
@@ -145,7 +146,8 @@ module ApiDiscussions
     def test_create
       post :create, :version => "v2", :format => :json, :category => {:name => "test", :description => "test desc"}
       assert_response :success
-      response.body.must_match_json_expression(forum_category_pattern("test", "test desc"))
+      response.body.must_match_json_expression(forum_category_response_pattern("test", "test desc"))
+      response.body.must_match_json_expression(forum_category_pattern(ForumCategory.last))
     end
 
     def test_create_missing_params
@@ -189,7 +191,7 @@ module ApiDiscussions
       get :index, :version => "v2", :format => :json
       pattern = []
       Account.current.forum_categories.all.each do |fc|
-        pattern << forum_category_pattern(fc.name, fc.description)
+        pattern << forum_category_response_pattern(fc.name, fc.description)
       end
       assert_response :success
       response.body.must_match_json_expression(pattern)
@@ -215,7 +217,8 @@ module ApiDiscussions
       post :create, :version => "v2", :format => :json, :category => {"name" => name, "description" => "test desc"}
       result = parse_response(@response.body)
       assert_response :success
-      @response.body.must_match_json_expression(forum_category_pattern(name))
+      @response.body.must_match_json_expression(forum_category_response_pattern(name))
+      @response.body.must_match_json_expression(forum_category_pattern(ForumCategory.last))
       assert_equal true, response.headers.include?("Location")
       assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result["id"]}", response.headers["Location"]
     end

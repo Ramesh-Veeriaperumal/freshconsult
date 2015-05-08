@@ -7,7 +7,7 @@ module ApiDiscussions
     private
 
       def validate_params
-        params.require(cname).permit(*(ApiConstants::CATEGORY_FIELDS.map(&:to_s)))
+        params[cname].permit(*(ApiConstants::CATEGORY_FIELDS.map(&:to_s)))
        	category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
        	unless category.valid?
           @errors = format_error(category.errors)

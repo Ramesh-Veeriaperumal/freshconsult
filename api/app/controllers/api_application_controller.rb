@@ -64,6 +64,12 @@ class ApiApplicationController < ApplicationController
 
   protected
 
+  def parse_date(date, date_sym)
+    Date.parse(date) if date
+  rescue
+    self.errors.add(date_sym, "datatype_mismatch")
+  end
+
   def render_500(e)
     raise e if Rails.env.development?
     Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")

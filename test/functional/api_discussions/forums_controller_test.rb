@@ -24,6 +24,7 @@ module ApiDiscussions
       put :update, :version => "v2", :format => :json, :id => forum.id, :forum => {:forum_type => 2}
       assert_response :success
       response.body.must_match_json_expression(forum_pattern(forum.reload))
+      response.body.must_match_json_expression(forum_response_pattern(forum, {:forum_type => 2}))
     end
 
     def test_update_blank_name
@@ -100,6 +101,7 @@ module ApiDiscussions
       put :update, :version => "v2", :format => :json, :id => forum.id, :forum => {:forum_visibility => 4, :customers => "#{customer.id}" }
       assert_response :success
       response.body.must_match_json_expression(forum_pattern(forum.reload))
+      response.body.must_match_json_expression(forum_response_pattern(forum, {:forum_visibility => 4, :customers => "#{customer.id}"}))
     end
 
     def test_create_validate_presence
@@ -119,6 +121,7 @@ module ApiDiscussions
     def test_create
       post :create, :version => "v2", :format => :json, :forum => {:forum_visibility=> "1", :forum_type => 1, :name => "test", :forum_category_id => ForumCategory.first.id} 
       response.body.must_match_json_expression(forum_pattern Forum.last)
+      response.body.must_match_json_expression(forum_response_pattern Forum.last, {:forum_visibility=> 1, :forum_type => 1, :name => "test", :forum_category_id => ForumCategory.first.id})
       assert_response :created
     end
 

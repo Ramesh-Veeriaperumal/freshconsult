@@ -5,8 +5,9 @@ class ApiConstants
       :page => 1
   }
   CATEGORY_FIELDS = [:name, :description]
-  FORUM_FIELDS = [:name, :description, :description_html, :forum_category_id, :forum_type, :forum_visibility, :customers]
-  TOPIC_FIELDS = [:title, :forum_id, :body_html, :sticky, :locked, :user_id, :created_at, :updated_at]
+  FORUM_FIELDS = [:name, :description, :forum_category_id, :forum_type, :forum_visibility, :customers]
+  UPDATE_TOPIC_FIELDS = {:all => [:title, :message_html, :stamp_type], :edit_topic => [:sticky, :locked], :view_admin => [:created_at, :updated_at], :manage_forums => [:forum_id]}
+  CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(:admin => [:created_at, :updated_at, :email, :user_id])
   LIST_FIELDS = {
       :forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN.values.join(","),
       :forum_type => Forum::TYPE_KEYS_BY_TOKEN.values.join(",")

@@ -9,10 +9,10 @@
 7. side loading associations(include as a param in GET requests)
 8. Clean up old discussions controller *****
 9. Nomenclature for concerns
-10. Revisit params.require[cname] to handle empty params 
 11. update (override or incremental)
 25. revisit all before filters, the order is a problem.
 combine all discussion methods into one ,example requires feature before filter.
+remove desc html from forum, write complete fields test.
 
 Breaking changes in existing APIs
 1. Account suspended

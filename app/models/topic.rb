@@ -9,7 +9,7 @@ class Topic < ActiveRecord::Base
   HITS_CACHE_THRESHOLD = 100
   
   acts_as_voteable
-  validates_presence_of :forum, :user, :title
+  validates :forum, :user, :title, :presence => true
   validate :check_stamp_type
 
   concerned_with :merge
@@ -51,8 +51,8 @@ class Topic < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  delegate :problems?, :questions?, :to => :forum
-  delegate :type_name, :to => :forum
+  delegate :problems?, :questions?, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
+  delegate :type_name, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
 
   scope :newest, :order => 'replied_at DESC'
 
@@ -252,9 +252,12 @@ class Topic < ActiveRecord::Base
   }
 
   def check_stamp_type
-    is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
-    is_valid &&= check_answers if questions?
-    errors.add(:stamp_type, "is not valid") unless is_valid
+    if forum
+      allowed_types = FORUM_TO_STAMP_TYPE[forum.forum_type]
+      is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
+      is_valid &&= check_answers if questions?
+      errors.add(:stamp_type, "allowed values are #{allowed_types}") unless is_valid
+    end
   end
 
   def check_answers
@@ -323,11 +326,11 @@ class Topic < ActiveRecord::Base
   end
 
   def set_unanswered_stamp
-    self.stamp_type = Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
+    self.stamp_type ||= Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
   end
 
   def set_unsolved_stamp
-    self.stamp_type = Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
+    self.stamp_type ||= Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
   end
 
   def last_page

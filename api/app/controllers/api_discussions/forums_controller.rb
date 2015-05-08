@@ -26,7 +26,7 @@ module ApiDiscussions
 			end
 
 			def validate_params
-				params.require(cname).permit(*(ApiConstants::FORUM_FIELDS.map(&:to_s)))
+				params[cname].permit(*(ApiConstants::FORUM_FIELDS.map(&:to_s)))
 				forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
 				unless forum.valid?
 					@errors = format_error(forum.errors)

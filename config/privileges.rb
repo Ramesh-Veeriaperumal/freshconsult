@@ -178,6 +178,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API
     resource :"api_discussions/category", :only => [:index, :show]
     resource :"api_discussions/forum", :only => [:show]
+    resource :"api_discussions/topic", :only => [:show]
   end
 
   # create_edit_forum_category
@@ -197,6 +198,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/topic", :only => [:new, :create ]
     resource :topic, :only => [:new, :create ]
     resource :forums_uploaded_image, :only => [:create]
+    resource :"api_discussions/topic", :only => [:create]
   end
 
   # edit_forum_topic
@@ -208,6 +210,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
+    resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
   end
 
   # delete_forum_topic
@@ -216,6 +219,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
     resource :"discussions/unpublished"
+    resource :"api_discussions/topic", :only => [:destroy], :owned_by => { :scoper => :topics }
   end
 
   # ************** CONTACTS **************************

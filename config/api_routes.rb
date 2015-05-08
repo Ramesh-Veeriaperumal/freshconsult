@@ -4,6 +4,7 @@ Helpkit::Application.routes.draw do
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit]
       resources :forums, :except => [:new, :edit, :index]
+      resources :topics, :except => [:new, :edit, :index]
     end
   end
     
