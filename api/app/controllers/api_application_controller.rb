@@ -142,6 +142,13 @@ class ApiApplicationController < ApplicationController
     controller_path.gsub('/', '_').singularize
   end
 
+  def get_fields(constant_name)
+    constant = constant_name.constantize
+    fields = constant.extract!(:all).values 
+    constant.keys.each{|key| fields += constant[key] if privilege?(key)}
+    fields
+  end
+
 private
 
   def ensure_proper_protocol

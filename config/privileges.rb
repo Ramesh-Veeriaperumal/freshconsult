@@ -179,6 +179,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_discussions/category", :only => [:index, :show]
     resource :"api_discussions/forum", :only => [:show]
     resource :"api_discussions/topic", :only => [:show]
+    resource :"api_discussions/post", :only => [:create]
   end
 
   # create_edit_forum_category
@@ -211,6 +212,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
     resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
+    resource :"api_discussions/post", :only => [:update, :destroy]
   end
 
   # delete_forum_topic

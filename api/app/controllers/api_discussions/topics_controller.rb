@@ -35,29 +35,26 @@ module ApiDiscussions
 
 		private
 
-			def portal_check
-				access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
-			end
+		def portal_check
+			access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
+		end
 
-			def set_forum_id
-				@topic.forum_id = params[cname]["forum_id"] 
-			end
+		def set_forum_id
+			@topic.forum_id = params[cname]["forum_id"] 
+		end
 
-			def validate_params
-       			fields = get_fields(action_name)
-				params[cname].permit(*(fields.map(&:to_s)))
-				topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
-				unless topic.valid?
-					@errors = format_error(topic.errors)
-					render :template => '/bad_request_error', :status => 400
-				end
+		def validate_params
+      fields = get_fields("ApiConstants::#{action_name.upcase}_TOPIC_FIELDS")
+			(params[cname] || {}).permit(*(fields.map(&:to_s)))
+			topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
+			unless topic.valid?
+				@errors = format_error(topic.errors)
+				render :template => '/bad_request_error', :status => 400
 			end
+		end
 
-		    def get_fields(action_name)
-		      constant = "ApiConstants::#{action_name.upcase}_TOPIC_FIELDS".constantize.dup
-		      fields = constant.delete(:all) 
-		      constant.keys.each{|key| fields += constant[key] if privilege?(key)}
-		      fields
-		    end
+    def scoper
+      current_account.topics
+    end
   end
 end

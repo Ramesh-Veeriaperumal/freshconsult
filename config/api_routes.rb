@@ -5,6 +5,7 @@ Helpkit::Application.routes.draw do
       resources :categories, :except => [:new, :edit]
       resources :forums, :except => [:new, :edit, :index]
       resources :topics, :except => [:new, :edit, :index]
+      resources :posts, :except => [:new, :edit, :index, :show]
     end
   end
     

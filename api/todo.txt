@@ -13,6 +13,7 @@
 25. revisit all before filters, the order is a problem.
 combine all discussion methods into one ,example requires feature before filter.
 remove desc html from forum, write complete fields test.
+26. Should we need to use existing gem for date validations in model?
 
 Breaking changes in existing APIs
 1. Account suspended

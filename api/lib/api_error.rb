@@ -8,7 +8,9 @@ module ApiError
       ["already exists in the selected category", "already_exists", 409],
       ["is not included in the list", "invalid_value", 400],
       ["invalid_field", "invalid_field",  400 ],
-      ["missing_field", "missing_field", 400 ]]
+      ["missing_field", "missing_field", 400 ],
+      ["is not a date", "datatype_mismatch", 400 ],
+      ["is not a number", "datatype_mismatch", 400 ]]
 
 	  API_ERROR_CODES_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |i| [i[0], i[1]] }]
     API_HTTP_ERROR_STATUS_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |i| [i[0], i[2]] }]
