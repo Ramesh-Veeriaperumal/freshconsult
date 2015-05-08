@@ -6,87 +6,105 @@ window.App = window.App || {};
   "use strict";
 
   App.Solutions.Article = {
+    
+    data: {},
 
     onVisit: function (data) {
+      // Check if this is New Version.
       if (App.namespace === "solution/articles/new") {
         this.eventsForNewPage();
       } else if (App.namespace === "solution/articles/show") {
-        this.showPage();
-        this.showPage2();
+        // this.showPage();
+        // this.showPage2();
       } else if (App.namespace === "solution/articles/edit") {
         this.defaultFolderValidate();
       }
+      
+      this.resetData();
+      this.setDataFromPage();
+      this.bindHandlers();
+      highlight_code();
+    },
+    
+    onLeave: function (data) {
+      $('body').off('.articles');
+    },
+    
+    resetData: function () {
+      this.data = {};
+    },
+    
+    setDataFromPage: function () {
+      this.data = $('#article-form').data() || {};
+      this.data.title = $('#current-article-title').text();
+      this.data.description = $('#current-article-description').html();
     },
 
     bindHandlers: function () {
+      var $this = this;
+      this.bindForMasterVersion();
+      $('body').on('click.articles', '.article-edit-btn', function () {
+        $this.startEditing();
+      });
     },
     
-    showPage2: function() {
+    startEditing: function () {
+      $('.article-edit, .article-view').toggleClass('hide');
+      
+      $('.sub-content.article-edit').html($('.sub-content.article-view').html());
+      
+      this.setFormValues();
+      this.autosaveInitialize();
+      var eTop = $('#editortool').offset().top;
+      $(window).on('scroll.articles', function () {
+        if ($(window).scrollTop() > 190 && $('#editortool').is(':visible')) {
+          $('#editortool').addClass('fixtoolbar');
+        } else {
+          $('#editortool').removeClass('fixtoolbar');
+        }
+      });
+      
+    },
+    
+    setFormValues: function () {
+      $('#solution_article_title').val(this.data.title);
+      $('#solution_article_description').setCode(this.data.description);
+    },
+    
+    bindForMasterVersion: function () {
       var $this = this;
-      $('.masterversion').height(parseInt(jQuery(document).height()));
+      $(window).on('resize.articles', function () {
+        $('.masterversion').height(parseInt($(document).height()));
+      }).trigger('resize.article');
 
-      $('.masterversion-link').on('click', function(){
+      $('body').on('click.articles', '.masterversion-link', function () {
         $this.animateMasterver(35);
         $(this).addClass('disable');
       });
 
-      $('.close-link').live('click', function(){
+      $('body').on('click.articles', '.close-link', function () {
         $this.animateMasterver(470);
         $('.masterversion-link').removeClass('disable');
       });
-      $(document).keyup(function(e){
-        if(( e.keyCode == 27 ) && $('.masterversion-link').hasClass('disable') ){
-          $('.close-link').trigger('click');
-        }
-      });
+      // $(document).on('keyup.article',function(e){
+      //   if(( e.keyCode == 27 ) && $('.masterversion-link').hasClass('disable') ){
+      //     $('.close-link').trigger('click');
+      //   }
+      // });
 
-      var eTop = $('#editortool').offset().top;
-      $(window).scroll(function(){
-        if($(window).scrollTop() > 190 && $('#editortool').is(':visible')){
-          $('#editortool').addClass('fixtoolbar');
-        }else {
-          $('#editortool').removeClass('fixtoolbar');
-        }
-      });
-
-      $('.article-edit-btn').on('click', function(){
-        $this.switchArticle('article-edit', 'article-view');
-      });
-
-      $('.edit-cancel').on('click', function(){
-        $this.switchArticle('article-view', 'article-edit');
-      });
-
-      $('.article-view').dblclick(function() {
-       $('.article-edit-btn').trigger('click');
-      });
-      
-      $('#solution-article-edit').redactor({
-        toolbarExternal: "#editortool",
-        buttons:['formatting','bold','italic','underline','deleted','unorderedlist', 'orderedlist','fontcolor', 'backcolor','insert_table']
-      });
     },
-    animateMasterver: function(distance){
-      if(jQuery('html').attr('dir') === 'rtl'){
-        jQuery('.master-content').animate({
+    animateMasterver: function (distance) {
+      if ($('html').attr('dir') === 'rtl') {
+        $('.master-content').animate({
           right: distance
         });
-      }else{
-        jQuery('.master-content').animate({
+      } else {
+        $('.master-content').animate({
           left: distance
         });
       }
     },
     
-    switchArticle: function(show, hide){
-      $('.'+hide).addClass('hide');
-      $('.'+show).removeClass('hide');
-    },
-
-    onLeave: function (data) {
-      $('body').off('.articles');
-    },
-
     eventsForNewPage: function () {
       this.bindPropertiesToggle();
       this.formatSeoMeta();
@@ -126,8 +144,24 @@ window.App = window.App || {};
         $this.articleDraftAutosave.contentChanged = false;
       });
     },
+    
+    resetDraftRequest: function () {
+			//TODO-DraftUI If there was NO draft already, delete the autosaved record
+      $.ajax({
+        type: 'POST',
+        data: {
+					solution: {
+						article: {
+							title: this.data.title,
+							description: this.data.description
+						}
+					}
+				}
+      });
+    },
 
     autosaveInitialize: function (data) {
+      data = data || $('#article-form').data();
       var draft_options = {
         autosaveInterval: 5000,
         autosaveUrl: data.autosavePath,
@@ -136,7 +170,7 @@ window.App = window.App || {};
           title: "#solution_article_title"
         },
         extraParams: {timestamp: data.timestamp},
-        responseCallback: this.autosaveDomManipulate
+        responseCallback: $.proxy(this.autosaveDomManipulate, this)
       };
 
       this.articleDraftAutosave  = $.autoSaveContent(draft_options);
@@ -186,22 +220,23 @@ window.App = window.App || {};
             .show();
         },
         lastUpdatedAt: function (response) {
-          if(response.timestamp){
+          if (response.timestamp) {
             $("#last-updated-at").val(response.timestamp);
           }
         },
         toggleButtons: function (flag) {
           var $flag = flag;
-          $.each(['#edit-cancel-button', '#save-as-draft-btn', '.btn-primary'], function(index, el){
+          $.each(['#edit-cancel-button', '#save-as-draft-btn', '.btn-primary'], function (index, el) {
             $(el).prop('disabled', !$flag);
           });
           $('.confirm-delete').attr('disabled', !$flag);
         },
         manipulate: function (response, success) {
           var content = "";
+          response = response || { msg: "Something went wrong!"};
           if (response.msg) {
             content = this.htmlToStr(this.message(response.msg, success));
-            content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton()) ;
+            content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton());
 
             this.msgElement.html(content).show();
             this.themeChange(!success);
@@ -212,16 +247,11 @@ window.App = window.App || {};
 
       };
 
-      if (typeof (response) === 'object') {
-        if (response.success) {
-          changeDom.manipulate(response, true);
-        } else {
-          autoSaveArticleDraft.lastSaveStatus = false;
-          changeDom.manipulate(response, false);
-        }
+      if (typeof (response) === 'object' && response.sucess) {
+        changeDom.manipulate(response, true);
       } else {
-         autoSaveArticleDraft.lastSaveStatus = false;
-        changeDom.manipulate({ msg: "Something is wrong."}, false);
+        this.articleDraftAutosave.lastSaveStatus = false;
+        changeDom.manipulate(response, false);
       }
     },
 
@@ -246,7 +276,7 @@ window.App = window.App || {};
 
     unsavedContent: function () {
       // Check if there is an error, in that case return false.
-      if(!this.articleDraftAutosave.lastSaveStatus){
+      if (!this.articleDraftAutosave.lastSaveStatus) {
         return false;
       }
       // return (this.articleDraftAutosave.contentChanged || ($(".hidden_upload input").length > 1));
@@ -282,9 +312,9 @@ window.App = window.App || {};
     },
 
     defaultFolderValidate: function () {
-      $('body').on('click.articles', '#article-publish-btn', function() {
-        if ( $("#article-form").data().defaultFolder ) {
-          if ( $('#solution_article_folder_id').val() == "" ) {
+      $('body').on('click.articles', '#article-publish-btn', function () {
+        if ($("#article-form").data().defaultFolder) {
+          if ($('#solution_article_folder_id').val() === "") {
             $('.select-folder').show();
             return false;
           }

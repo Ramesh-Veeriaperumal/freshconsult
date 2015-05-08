@@ -13,27 +13,18 @@
 
 <div class="solution-header" rel="sticky">
 		<% if @article.draft or !@article.published? %>
-		<div class="sub-content">
+		<div class="sub-content article-view">
 			<p class="pull-left"><%= draft_info_text %> - <%= discard_link %> </p>
 			<p class="pull-right">
 				<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post') %>
 			</p>
 		</div>
 		<% end %>
+		<div class="sub-content autosave-notif hide article-edit"></div>
 </div>
 <!-- Solution page content -->
 <div class="solution-content">
-	<div class="article-view">
-		<div class="row-fluid">
-		<div class="span6">
-			<h3 class="lead"><%= @current_item.title %></h3>
-		</div>
-		<div class="span6 pull-right pagination-right header_buttons align-right">
-			<a href="javascript:void(0)" class="btn article-edit-btn"><%= t('solution.articles.edit') %></a>
-		</div>
-		</div>
-		<div class="article-content"><%= @current_item.description.html_safe %></div>
-	</div>
+	<%= render :partial => "solution/articles/draft/view" %>
 	<% #TODO DraftsUI - Clicking on Edit button from "List view" should automatically open up Edit Form %>
 	<%= render :partial => "solution/articles/draft/form" %>
 

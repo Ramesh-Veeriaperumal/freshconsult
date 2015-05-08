@@ -42,4 +42,14 @@ module Solution::ArticlesHelper
             ) if @article.published? and @article.draft.present?
   end
   
+  def form_data_attrs
+    return {} if @article.new_record?
+    
+    {
+      :"autosave-path" => autosave_solution_draft_path(@article.id),
+      :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
+      :"default-folder" => @article.folder.is_default
+    }
+  end
+  
 end

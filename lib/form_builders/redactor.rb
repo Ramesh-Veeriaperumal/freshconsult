@@ -16,13 +16,15 @@ module FormBuilders::Redactor
       }
 
       REDACTOR_SOLUTION_EDITOR = {
-        :autoresize => false,
+        :autoresize => true,
         :tabindex => 2,
         :convertDivs => false,
         :allowTagsInCodeSnippet => true,
         :imageUpload => "/solutions_uploaded_images",
         :clipboardImageUpload => "/solutions_uploaded_images/create_file",
-        :imageGetJson => "/solutions_uploaded_images"
+        :imageGetJson => "/solutions_uploaded_images",
+        :buttons => ['formatting','bold','italic','underline','deleted',
+                        'unorderedlist', 'orderedlist','fontcolor', 'backcolor','insert_table']
       }
 
       REDACTOR_TICKET_EDITOR = {
@@ -54,7 +56,7 @@ module FormBuilders::Redactor
 
       def rich_editor_tag(name, content = nil, options = {})
         id = options[:id] = options[:id] || field_id( name )
-        content = options[:value] if options[:value].present?
+        content = options[:value] unless options[:value].nil?
 
         redactor_opts = redactor_type options['editor-type']
 

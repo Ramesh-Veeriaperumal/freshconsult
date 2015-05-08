@@ -3251,6 +3251,8 @@ en:
         visible_to: Visible to
     articles:
       draft:
+        show:
+          edit: "Edit"
         show_page_msg: Viewing draft edited by
         you: you
         unpublish:

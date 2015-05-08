@@ -89,7 +89,7 @@ Along with the above options, few flags and counters are available which are lis
         var $el = $(value);
         $el.data('previousSavedData', $el.val());
 
-        $(value).on("change redactor:sync", function () {
+        $(value).on("change.autosave redactor:sync.autosave", function () {
           if ($el.data('previousSavedData') !== $el.val()) {
             $this.contentChanged = true;
           }
@@ -176,6 +176,12 @@ Along with the above options, few flags and counters are available which are lis
           }
         });
       }
+    },
+    
+    stopSaving: function () {
+      $.each(this.opts.monitorChangesOf, function (key, value) {
+        $(value).off(".autosave");
+      });
     }
   };
 
