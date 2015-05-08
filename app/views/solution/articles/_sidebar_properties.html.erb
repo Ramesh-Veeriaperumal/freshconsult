@@ -1,0 +1,46 @@
+		<div class="title-wrapper">
+			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
+			<p class="edit span1 pull-right">
+				<%= link_to( t('edit'), 
+						properties_solution_category_folder_article_path(@article.folder.category, @article.folder, @article, {:edit => true}),
+						:rel => "freshdialog",
+						:class => "article-properties",
+						:title => t('solution.articles.properties'),
+						"data-target" => "#article-prop",
+						"data-width" => "700px",
+						"data-close-label" => t('cancel'),
+						"data-submit-label" => t('save'), 
+					  "data-submit-loading" => t('saving') ) 
+				%>
+			</p>
+		</div>
+
+		<div class="tags section">
+			<span><%= t(@article.type_name) %></span>
+			<span><%= t(@article.status_name) %></span>
+		</div>
+		<div class="folder-name section">
+			<h5 class="leads"><%= t('solution.folder') %></h5>
+			<p>
+				<%= pjax_link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), {:title => "#{t('solution.folder')}-#{@article.folder.name}" } %>
+			</p>
+		</div>
+		<div class="tags-wrapper section">
+			<h5 class="leads"><%= t('filter_options.tags') %></h5>
+			<div class="tags">
+				<%= t('no_tags') if @article.tags.count < 1 %>
+				<% @article.tags.each do |t| %>
+					<span>
+						<%= t.name %>
+						<% if privilege?(:publish_solution) %>	
+						  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+	          <% end %>
+					</span>
+				<% end %>
+			</div>
+		</div>
+
+		<!-- <div class="section content-status red">
+			Out dated content
+		</div> -->
+	

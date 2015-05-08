@@ -8,45 +8,13 @@
 		<div class="edited-history">		
 			<p><%= t('solution.general.last_edited') %></p>
 			<p><%= @current_item.user.name %></p>
-			<p><%= formated_date(@article.updated_at) %></p>
+			<p><%= formated_date(@article.modified_at) %></p>
 		</div>
+
 	</div>
 
-	<div class="sidebar-section">
-		<div class="title-wrapper">
-			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
-			<p class="edit span1 pull-right"><a class="" href="javascript:void(0)" data-target="#article-prop" data-width="750" rel="freshdialog" title="Properties"><%= t('edit') %></a></p>
-		</div>
-
-		<div class="tags section">
-			<span><%= t(@article.type_name) %></span>
-			<span><%= t(@article.status_name) %></span>
-		</div>
-		<div class="folder-name section">
-			<h5 class="leads"><%= t('solution.folder') %></h5>
-			<p>
-				<%= pjax_link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), {:title => "#{t('solution.folder')}-#{@article.folder.name}" } %>
-			</p>
-		</div>
-		<div class="tags-wrapper section">
-			<h5 class="leads"><%= t('filter_options.tags') %></h5>
-			<div class="tags">
-				<%= t('no_tags') if @article.tags.count < 1 %>
-				<% @article.tags.each do |t| %>
-					<span>
-						<%= t.name %>
-						<% if privilege?(:publish_solution) %>	
-						  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
-	          <% end %>
-					</span>
-				<% end %>
-			</div>
-		</div>
-
-		<!-- <div class="section content-status red">
-			Out dated content
-		</div> -->
-
+	<div class="sidebar-section" id="sidebar-prop">
+		<%= render :partial => 'sidebar_properties' %>
 	</div>
 
 	<% if @article.tickets.count > 0 %>
