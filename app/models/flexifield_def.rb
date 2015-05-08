@@ -17,6 +17,9 @@ class FlexifieldDef < ActiveRecord::Base
   
   # after_update :save_entries
 
+  TEXT_COL_TYPES  = ["text",    "paragraph"]
+  NUM_COL_TYPES   = ["number",  "decimal"]
+
   def to_ff_field ff_alias
     idx = nil
     ffa = "#{ff_alias}"

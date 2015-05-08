@@ -8,16 +8,14 @@ module RabbitMq::Publisher
     
     # include the subscribers for the model
     RabbitMq::Keys.const_get("#{model_name.upcase}_SUBSCRIBERS").each { |subscriber|
-      base.class_eval {
-       eval("include RabbitMq::Subscribers::#{model_name.pluralize.camelize}::#{subscriber.camelize}")
-      }
+      base.send(:include,
+                "RabbitMq::Subscribers::#{model_name.pluralize.camelize}::#{subscriber.camelize}".constantize)
     }
         
     # include the corresponding exchange of the model
     exchange_type = MODEL_TO_EXCHANGE_MAPPING[model_name]
-    base.class_eval {
-      eval("include RabbitMq::Exchanges::#{exchange_type.camelize}")
-    }
+    base.send(:include,
+              "RabbitMq::Exchanges::#{exchange_type.camelize}".constantize)
     
     CRUD.each_with_index do |action, index|
       base.class_eval do
