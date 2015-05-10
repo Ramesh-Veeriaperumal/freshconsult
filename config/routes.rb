@@ -1567,7 +1567,11 @@ Helpkit::Application.routes.draw do
     match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
 
     resources :articles, :only => [:show, :create, :destroy] do
-      resources :drafts
+      resources :drafts do
+        collection do
+          delete :discard
+        end
+      end
       match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
     end
 

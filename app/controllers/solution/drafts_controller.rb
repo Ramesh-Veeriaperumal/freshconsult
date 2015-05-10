@@ -10,7 +10,7 @@ class Solution::DraftsController < ApplicationController
 	before_filter :set_selected_tab, :only => [:index]
 	before_filter :page_title, :only => [:index]
 
-	before_filter :load_article, :only => [:publish, :attachments_delete]
+	before_filter :load_article, :only => [:publish, :attachments_delete, :discard]
 	before_filter :load_attachment, :only => [:attachments_delete]
 
 	def index
@@ -19,12 +19,23 @@ class Solution::DraftsController < ApplicationController
 
 	def destroy
 		draft = current_account.solution_drafts.find_by_id(params[:id])
-		if draft.present? and !draft.locked?
+		if draft.present? && !draft.locked?
 			flash[:notice] = t('solution.articles.draft.discard_msg')
 			draft.discarding = true
 			draft.destroy
 		end
 		redirect_to :back
+	end
+	
+	def discard
+		# See if this can be combined with destroy
+		# If necessary, replace the places where "destroy" is being used,
+		# And use this instead. Why do we need Draft's id to discard it.?
+		if @article.draft.present? && !@article.draft.locked?
+			@article.draft.discarding = true
+			@article.draft.destroy
+		end
+		head :ok
 	end
 
 	def publish
@@ -67,7 +78,7 @@ class Solution::DraftsController < ApplicationController
 		end     
 
 		def page_title
-			@page_title = t("header.tabs.solutions")    
+			@page_title = t("header.tabs.solutions")
 		end
 
 		def load_article

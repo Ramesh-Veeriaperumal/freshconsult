@@ -48,7 +48,8 @@ module Solution::ArticlesHelper
     {
       :"autosave-path" => autosave_solution_draft_path(@article.id),
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
-      :"default-folder" => @article.folder.is_default
+      :"default-folder" => @article.folder.is_default,
+      :"discard-draft-path" => discard_solution_article_drafts_path(@article)
     }
   end
   

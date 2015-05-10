@@ -11,15 +11,15 @@ window.App = window.App || {};
 
     onVisit: function (data) {
       // Check if this is New Version.
-      if (App.namespace === "solution/articles/new") {
-        this.eventsForNewPage();
-      } else if (App.namespace === "solution/articles/show") {
-        // this.showPage();
-        // this.showPage2();
-      } else if (App.namespace === "solution/articles/edit") {
-        this.defaultFolderValidate();
-      }
-      
+//      if (App.namespace === "solution/articles/new") {
+//        this.eventsForNewPage();
+//      } else if (App.namespace === "solution/articles/show") {
+//        // this.showPage();
+//        // this.showPage2();
+//      } else if (App.namespace === "solution/articles/edit") {
+//        this.defaultFolderValidate();
+//      }
+			
       this.resetData();
       this.setDataFromPage();
       this.bindHandlers();
@@ -31,7 +31,8 @@ window.App = window.App || {};
     },
     
     resetData: function () {
-      this.data = {};
+      this.data.title = null;
+      this.data.description = null;
     },
     
     setDataFromPage: function () {
@@ -47,23 +48,28 @@ window.App = window.App || {};
         $this.startEditing();
       });
     },
-    
-    startEditing: function () {
-      $('.article-edit, .article-view').toggleClass('hide');
-      
-      $('.sub-content.article-edit').html($('.sub-content.article-view').html());
-      
-      this.setFormValues();
-      this.autosaveInitialize();
-      var eTop = $('#editortool').offset().top;
-      $(window).on('scroll.articles', function () {
+		
+		scrollHandler: function () {
+			$(window).on('scroll.articles', function () {
         if ($(window).scrollTop() > 190 && $('#editortool').is(':visible')) {
           $('#editortool').addClass('fixtoolbar');
         } else {
           $('#editortool').removeClass('fixtoolbar');
         }
       });
-      
+		},
+		
+		toggleViews: function () {
+			$('.article-edit, .article-view').toggleClass('hide');
+		},
+    
+    startEditing: function () {
+      $('.sub-content.article-edit').html($('.sub-content.article-view').html());
+      this.setFormValues();
+      this.autosaveInitialize();
+      var eTop = $('#editortool').offset().top;
+			this.toggleViews();
+      this.scrollHandler();
     },
     
     setFormValues: function () {
@@ -74,7 +80,7 @@ window.App = window.App || {};
     bindForMasterVersion: function () {
       var $this = this;
       $(window).on('resize.articles', function () {
-        $('.masterversion').height(parseInt($(document).height()));
+        $('.masterversion').height(parseInt($(document).height(), 10));
       }).trigger('resize.article');
 
       $('body').on('click.articles', '.masterversion-link', function () {
@@ -136,27 +142,46 @@ window.App = window.App || {};
       });
     },
 
-    cancelDraft: function () {
+    bindForCancel: function () {
       var $this = this;
-      $("#edit-cancel-button").bind('click', function () {
+      $("body").on('click.article', "#edit-cancel-button", function (ev) {
+        ev.preventDefault();
+				$this.articleDraftAutosave.stopSaving();
         $(".article-edit-form")[0].reset();
-        $(".redactor_editor").html($("#solution_article_description").val());
+        $this.setFormValues();
+				if ($this.hadDraft()) {
+					$this.resetDraftRequest();
+				} else {
+					$this.discardDraftRequest();
+				}
         $this.articleDraftAutosave.contentChanged = false;
+				$(window).off('scroll.articles');
+				$this.toggleViews();
       });
     },
     
+    discardDraftRequest: function () {
+      $.ajax({
+        type: 'DELETE',
+				url: this.data.discardDraftPath
+      });
+    },
+		
+		hadDraft: function () {
+			return (this.data.timestamp && this.data.timestamp > 0);
+		},
+    
     resetDraftRequest: function () {
+      
+      // setFormValues
+      // clearAttachments
+      
+      // No Previous Author => No Draft already
+      
 			//TODO-DraftUI If there was NO draft already, delete the autosaved record
       $.ajax({
         type: 'POST',
-        data: {
-					solution: {
-						article: {
-							title: this.data.title,
-							description: this.data.description
-						}
-					}
-				}
+        data: $('#article-form').serialize()
       });
     },
 
@@ -174,7 +199,8 @@ window.App = window.App || {};
       };
 
       this.articleDraftAutosave  = $.autoSaveContent(draft_options);
-      this.cancelDraft();
+      this.bindForCancel();
+      // Move these somewhere else
       this.unsavedContentNotif();
       this.attachmentAutosaveTrigger();
       return this.articleDraftAutosave;
@@ -247,7 +273,7 @@ window.App = window.App || {};
 
       };
 
-      if (typeof (response) === 'object' && response.sucess) {
+      if (typeof (response) === 'object' && response.success) {
         changeDom.manipulate(response, true);
       } else {
         this.articleDraftAutosave.lastSaveStatus = false;

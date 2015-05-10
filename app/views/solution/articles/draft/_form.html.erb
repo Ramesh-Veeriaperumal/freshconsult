@@ -16,7 +16,7 @@
     
       </div>
       <div class="span6 pull-right pagination-right header_buttons align-right">
-        <%= submit_tag t('cancel'), :name => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
+        <%= link_to t('cancel'), '', :id => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
         <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn" %>
         <%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn" %>
       </div>
