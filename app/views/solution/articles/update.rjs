@@ -1,2 +1,3 @@
 show_growl_flash(page)
-page << "jQuery('#article-properties').modal('hide');jQuery('#article-properties').modal('destroy');"
+page << "jQuery('#article-prop').modal('hide');jQuery('#article-prop').modal('destroy');"
+page.replace_html :"sidebar-prop", render(:partial => "sidebar_properties", :locals => {:@article => @article}).html_safe

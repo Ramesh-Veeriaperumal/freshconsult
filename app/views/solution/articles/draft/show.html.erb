@@ -1,60 +1,43 @@
 <% content_for :sidebar do %>
-<div class="solution-sidebar">
-	<%= render partial: "sidebar" %>
-</div>
+	<div class="solution-sidebar">
+		<%= render partial: "sidebar" %>
+	</div>
 <% end %>
 
 <div class="solution">
-<!-- Solution header --> 
 
-<div class="bread-crumb">
-	<%= breadcrumb %>
+	<!-- Solution header --> 
+	<div class="bread-crumb">
+		<%= breadcrumb %>
+	</div>
+
+	<div class="solution-header" rel="sticky">
+			<% if @article.draft or !@article.published? %>
+			<div class="sub-content article-view">
+				<p class="pull-left"><%= draft_info_text %> - <%= discard_link %> </p>
+				<p class="pull-right">
+					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post') %>
+				</p>
+			</div>
+			<% end %>
+			<div class="sub-content autosave-notif hide article-edit"></div>
+	</div>
+
+	<!-- Solution page content -->
+	<div class="solution-content">
+		<%= render :partial => "solution/articles/draft/view" %>
+		<%# #TODO DraftsUI - Clicking on Edit button from "List view" should automatically open up Edit Form %>
+		<%= render :partial => "solution/articles/draft/form" %>
+	</div>
+
 </div>
 
-<div class="solution-header" rel="sticky">
-		<% if @article.draft or !@article.published? %>
-		<div class="sub-content article-view">
-			<p class="pull-left"><%= draft_info_text %> - <%= discard_link %> </p>
-			<p class="pull-right">
-				<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post') %>
-			</p>
-		</div>
-		<% end %>
-		<div class="sub-content autosave-notif hide article-edit"></div>
-</div>
-<!-- Solution page content -->
-<div class="solution-content">
-	<%= render :partial => "solution/articles/draft/view" %>
-	<% #TODO DraftsUI - Clicking on Edit button from "List view" should automatically open up Edit Form %>
-	<%= render :partial => "solution/articles/draft/form" %>
-
-</div>
-</div>
 <!-- Article properties overlay -->
 <% content_for :dialogs do %>
-<div id="article-prop" class="hide">
-	<form class="form-horizontal">
-		<div id="tab-wrapper" class="tab-wrapper">
-			<%= tabs_for do |tab| %>
-				<% tab.create('tags', 'Tags & folders') do %>
-					<%= render partial: "tags_form" %>
-				<% end %>	
-				<% tab.create('meta', 'Meta') do %>
-					<%= render partial: "meta_form" %>
-				<% end %>	
-			<% end %>
-		</div>
-		<div class="publish-settings">
-			<label class="checkbox">
-			<input type="checkbox" class="unpublish"> 
-			<p class="unpublish-label">Unpublish the article from portal</p>
-			<p class="muted">This will delete the published article permanently and retain the draft content under Drafts</p>
-			</label>
-		</div>
-	</form>
-</div>
+	<div id="article-prop" class="hide"></div>
 <% end %>
+
 <!-- Master version section -->
-<% content_for :pagefixed do %>
-	<% render partial: "solution/articles/draft/master_version" %>
-<% end %>
+<%# content_for :pagefixed do %>
+	<%# render partial: "solution/articles/draft/master_version" %>
+<%# end %>

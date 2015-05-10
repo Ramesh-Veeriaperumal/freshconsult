@@ -1,21 +1,20 @@
 <%= form_for @article, 
 			:url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , 
-			:html => {:id => "article-form"}, 
-			:remote => params[:edit].present? do |f| %>
+			:html => {:id => "article-form", :class => "form-horizontal"}, 
+			:remote => true do |f| %>
 		<div id="solution-properties-container">
 			<div id="solution-properties">
-				<%= render :partial => "solution/articles/draft/article_properties", :locals => { :f => f} %>
+				<%= render :partial => "solution/articles/draft/article_properties_form", :locals => { :f => f} %>
 				
 				<% if @article.published? %>
-					<div class="solution-properties-title"></div>
-					<div class="unpublish-article">
-						<div class="row">
+					<div class="publish-settings">
+						<label class="checkbox">
 							<%= f.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
-							<span> <%= t('solution.articles.draft.unpublish.msg') %></span>
-						</div>
-						<div class="msg">
-							<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
-						</div>
+							<p class="unpublish-label"> <%= t('solution.articles.draft.unpublish.msg') %></p>
+							<p class="muted">
+								<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
+							</p>
+						</label>	
 					</div>
 				<% end %>
 
