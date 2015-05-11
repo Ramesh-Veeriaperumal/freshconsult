@@ -222,6 +222,7 @@ en:
   after_onemonth: After 1 Month
   add_more_lang: Add supported languages to your helpdesk.
   support_multi_languge: Supporting customers across more than one language?
+  many: many
   user:
     company: Company
     photo: Photo

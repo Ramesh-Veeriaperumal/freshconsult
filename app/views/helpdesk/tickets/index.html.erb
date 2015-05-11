@@ -13,7 +13,8 @@
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });
-  var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>' : '';
+  var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>&tickets_in_current_page=<%= @items.size %>' : '?tickets_in_current_page=<%= @items.size %>';
+
   var paginate_url = '/helpdesk/tickets/full_paginate';
   paginate_url = paginate_url + rep_type_param
   jQuery.getScript(paginate_url);
