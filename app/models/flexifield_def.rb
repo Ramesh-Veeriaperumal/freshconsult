@@ -41,9 +41,17 @@ class FlexifieldDef < ActiveRecord::Base
   def ff_aliases
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_alias)
   end
+  
+  def non_text_ff_aliases
+    flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   
+  end
 
   def ff_fields
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_name)
+  end
+  
+  def non_text_ff_fields
+    flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_name)
   end
   
   def unassigned_flexifield_names # Dead code, returns wrong result
@@ -56,5 +64,9 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_def_entries.each do |entry|
       entry.save false
     end
+  end
+  
+  def non_text_fields
+    flexifield_def_entries.select {|field| !TEXT_COL_TYPES.include?(field.flexifield_coltype)}
   end
 end
