@@ -42,9 +42,12 @@ class ApiApplicationController < ApplicationController
   end
 
   def update
-    unless @item.update_attributes(params[cname])
-      render_error @item.errors
-    end   
+    if @item.update_attributes(params[cname])
+      render :template => "#{controller_path}/update",  :status => :ok
+    else
+      set_custom_errors
+      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)      
+    end 
   end
 
   def destroy

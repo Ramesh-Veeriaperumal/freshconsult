@@ -84,6 +84,49 @@ module JsonPattern
       posts_count: hash[:posts_count] || f.posts_count
     }
   end
+
+  def topic_pattern expected_output={}, topic
+   expected_output[:ignore_created_at] ||= true
+   expected_output[:ignore_updated_at] ||= true
+    {
+       id: Fixnum,
+       title: expected_output[:title] || topic.title, 
+       forum_id: expected_output[:forum_id] || topic.forum_id, 
+       user_id: expected_output[:user_id] || topic.user_id, 
+       locked: expected_output[:locked] || topic.locked, 
+       sticky: expected_output[:sticky] || topic.sticky, 
+       published: expected_output[:published] || topic.published, 
+       stamp_type: expected_output[:stamp_type] || topic.stamp_type, 
+       replied_at: /^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$/, 
+       replied_by: expected_output[:replied_by] || topic.replied_by,
+       posts_count: expected_output[:posts_count] || topic.posts_count, 
+       hits: expected_output[:hits] || topic.hits, 
+       user_votes: expected_output[:user_votes] || topic.user_votes, 
+       merged_topic_id: expected_output[:merged_topic_id] || topic.merged_topic_id,
+       created_at: expected_output[:ignore_created_at] ? /^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$/ : expected_output[:created_at],
+       updated_at: expected_output[:ignore_updated_at] ? /^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$/ : expected_output[:updated_at]
+    }
+  end
+
+  def post_pattern expected_output={}, post
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    {
+      id: Fixnum, 
+      body: expected_output[:body] || post.body, 
+      body_html: expected_output[:body_html] || post.body_html, 
+      topic_id: expected_output[:topic_id] || post.topic_id, 
+      forum_id: expected_output[:forum_id] || post.forum_id, 
+      user_id: expected_output[:user_id] || post.user_id, 
+      answer: expected_output[:output] || post.answer, 
+      published:post.published, 
+      spam: post.spam, 
+      trash: post.trash,
+      created_at: expected_output[:ignore_created_at] ? /^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$/ : expected_output[:created_at],
+      updated_at: expected_output[:ignore_updated_at] ? /^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$/ : expected_output[:updated_at]
+    }
+  end
+
 end
 
 include JsonPattern

@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class TopicsDependencyTest < ActionDispatch::IntegrationTest
-  def test_before_filters_application_controller
+  def test_before_filters_web_topics_controller
     expected_filters =  [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, 
       :unset_current_account, :unset_current_portal, :set_current_account, :set_default_locale, :set_locale, 
       :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder, :remove_rails_2_flash_before, 
@@ -13,7 +13,7 @@ class TopicsDependencyTest < ActionDispatch::IntegrationTest
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end
 
-  def test_validations_forum_category
+  def test_validations_topic
     actual = Topic.validators.collect{|x| [x.class, x.attributes, x.options]}
     expected =[[ActiveModel::Validations::PresenceValidator, [:forum, :user, :title], {}]]
     assert_equal expected, actual

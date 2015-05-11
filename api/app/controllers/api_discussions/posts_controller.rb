@@ -24,5 +24,9 @@ module ApiDiscussions
 					render :template => '/bad_request_error', :status => 400
 				end
 			end
+
+			def scoper
+			  current_account.posts
+			end
   end
 end

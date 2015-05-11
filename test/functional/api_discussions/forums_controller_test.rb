@@ -85,13 +85,14 @@ module ApiDiscussions
       response.body.must_match_json_expression([bad_request_error_pattern("forum_category", "can't be blank")])
     end
 
-    # def test_update_invalid_customer_id
-    #   fc = ForumCategory.first || create_test_category
-    #   forum = Forum.first || create_test_forum(fc)
-    #   put :update, :version => "v2", :format => :json, :id => forum.id, :forum => {:forum_visibility => 4, :customers => "1,67" }
-    #   assert_response :bad_request
-    #   response.body.must_match_json_expression([bad_request_error_pattern("forum_category_id", "can't be blank")])
-    # end
+    def test_update_invalid_customer_id
+      fc = ForumCategory.first || create_test_category
+      forum = Forum.first || create_test_forum(fc)
+      customer = Company.first || create_company
+      put :update, :version => "v2", :format => :json, :id => forum.id, :forum => {:forum_visibility => 4, :customers => "#{customer.id},67,78" }
+      assert_response :bad_request
+      response.body.must_match_json_expression([bad_request_error_pattern("customers", "list is invalid", {:meta => "67, 78"})])
+    end
 
     def test_update_with_customer_id
       fc = ForumCategory.first || create_test_category

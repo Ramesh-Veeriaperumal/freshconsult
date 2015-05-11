@@ -17,4 +17,5 @@ Dir["#{Rails.root}/test/helpers/*.rb"].each {|file| require file}
   include APIAuthHelper
   include ForumHelper
   include CompanyHelper
+  include UsersHelper
 
