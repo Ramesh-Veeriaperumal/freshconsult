@@ -174,7 +174,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     headers = {
       :subject                                => fwd_formatted_subject(ticket),
-      :to                                     => note.to_emails,
+      :to                                     => note.to_emails - [note.account.kbase_email],
       :cc                                     => note.cc_emails,
       :bcc                                    => note.bcc_emails,
       :from                                   => note.from_email,
