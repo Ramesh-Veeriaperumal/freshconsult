@@ -212,7 +212,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
     resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
-    resource :"api_discussions/post", :only => [:update, :destroy]
+    resource :"api_discussions/post", :only => [:update, :destroy], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic

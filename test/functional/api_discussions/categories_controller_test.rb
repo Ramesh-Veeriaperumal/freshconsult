@@ -96,8 +96,7 @@ module ApiDiscussions
 
     def test_update_with_missing_params
       put :update, :version => "v2", :format => :json, :id => fc.id, :category => {}
-      response.body.must_match_json_expression([bad_request_error_pattern("category", "missing_field")])
-      assert_response :bad_request
+      assert_response :success
     end
 
     def test_update_with_blank_name
@@ -153,7 +152,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, :version => "v2", :format => :json, :category => {}
       pattern = [
-        bad_request_error_pattern("category", "missing_field")
+        bad_request_error_pattern("name", "can't be blank")
       ]
       assert_response :bad_request
       response.body.must_match_json_expression(pattern)

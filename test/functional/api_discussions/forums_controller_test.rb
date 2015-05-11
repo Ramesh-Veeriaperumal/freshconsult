@@ -74,8 +74,7 @@ module ApiDiscussions
       fc = ForumCategory.first || create_test_category
       forum = Forum.first || create_test_forum(fc)
       put :update, :version => "v2", :format => :json, :id => forum.id, :forum => { }
-      assert_response :bad_request
-      response.body.must_match_json_expression([bad_request_error_pattern("forum", "missing_field")])
+      assert_response :success
     end
 
     def test_update_invalid_forum_category_id
@@ -107,7 +106,7 @@ module ApiDiscussions
     def test_create_validate_presence
       post :create, :version => "v2", :format => :json, :forum => {:forum_visibility=> "1", :forum_type => 1}
       response.body.must_match_json_expression([bad_request_error_pattern("name", "can't be blank"),
-      bad_request_error_pattern("forum_category_id", "can't be blank")])
+      bad_request_error_pattern("forum_category_id", "is not a number")])
       assert_response :bad_request
     end
 
@@ -119,15 +118,19 @@ module ApiDiscussions
     end
 
     def test_create
-      post :create, :version => "v2", :format => :json, :forum => {:forum_visibility=> "1", :forum_type => 1, :name => "test", :forum_category_id => ForumCategory.first.id} 
+      post :create, :version => "v2", :format => :json, :forum => {:description => "desc", :forum_visibility=> "1", :forum_type => 1, :name => "test", :forum_category_id => ForumCategory.first.id} 
       response.body.must_match_json_expression(forum_pattern Forum.last)
-      response.body.must_match_json_expression(forum_response_pattern Forum.last, {:forum_visibility=> 1, :forum_type => 1, :name => "test", :forum_category_id => ForumCategory.first.id})
+      response.body.must_match_json_expression(forum_response_pattern Forum.last, {:description => "desc", :forum_visibility=> 1, :forum_type => 1, :name => "test", :forum_category_id => ForumCategory.first.id})
       assert_response :created
     end
 
     def test_create_no_params
-      post :create, :version => "v2", :format => :json, :forum => {} 
-      response.body.must_match_json_expression([bad_request_error_pattern("forum", "missing_field")])
+      post :create, :version => "v2", :format => :json, :forum => {}
+      pattern = [bad_request_error_pattern("name", "can't be blank"), 
+      bad_request_error_pattern("forum_category_id", "is not a number"),
+      bad_request_error_pattern("forum_visibility", "is not included in the list", :list => "1,2,3,4"),
+      bad_request_error_pattern("forum_type", "is not included in the list", :list => "1,2,3,4")]
+      response.body.must_match_json_expression(pattern)
       assert_response :bad_request
     end
 

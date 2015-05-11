@@ -3,7 +3,7 @@ class DiscussionsController < ApplicationController
 	include ModelControllerMethods
 	include Helpdesk::ReorderUtility
 	include Community::ModerationCount
-  include ApiDiscussions::Category # methods and filters that are also used by api are moved to this concern
+  include Discussions::CategoryConcern # methods and filters that are also used by api are moved to this concern
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]

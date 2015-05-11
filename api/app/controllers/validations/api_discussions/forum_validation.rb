@@ -2,8 +2,8 @@ module ApiDiscussions
 	class ForumValidation
     include ActiveModel::Validations 
 
-    attr_accessor :name, :forum_category_id, :forum_type, :forum_visibility
-    validates :name, :forum_category_id, :presence => true
+    attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility
+    validates :name, :presence => true
     validates :forum_category_id, :numericality => true
     validates :forum_visibility, inclusion: { in: Forum::VISIBILITY_KEYS_BY_TOKEN.values }
     validates :forum_type, inclusion: { in: Forum::TYPE_KEYS_BY_TOKEN.values }

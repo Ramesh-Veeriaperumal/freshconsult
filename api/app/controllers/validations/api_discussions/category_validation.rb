@@ -6,7 +6,7 @@ module ApiDiscussions
     validates_presence_of :name  
 
     def initialize(controller_params, item)
-      @name = controller_params["name"] || item.name
+      @name = controller_params["name"] || item.try(:name)
     end
  	end
 end

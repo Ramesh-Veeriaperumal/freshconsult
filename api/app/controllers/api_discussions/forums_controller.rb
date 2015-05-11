@@ -1,7 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    wrap_parameters :forum, :exclude => [] # wp wraps only attr_accessible if this is not specified.
-    include ApiDiscussions::DiscussionsForum
+    include Discussions::ForumConcern
      
     before_filter { |c| c.requires_feature :forums }        
     skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show]
@@ -11,6 +10,12 @@ module ApiDiscussions
 		protected
 
 		private
+
+      def set_custom_errors
+        bad_customer_ids = @item.customer_forums.select{|x| x.errors.present?}.collect(&:customer_id).map(&:to_s)
+        @item.errors.add("customers", "list is invalid") if bad_customer_ids.present?
+        @error_options = {:remove => :customer_forums, :meta => "#{bad_customer_ids.join(', ')}"}
+      end
 
       def manipulate_params
         set_customer_forum_params

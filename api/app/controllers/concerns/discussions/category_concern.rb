@@ -1,4 +1,4 @@
-module ApiDiscussions::Category
+module Discussions::CategoryConcern
   extend ActiveSupport::Concern
 
     included do

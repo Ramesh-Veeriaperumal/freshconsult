@@ -22,6 +22,10 @@ class ApiApplicationController < ApplicationController
   before_filter :build_object, :only => [ :create ]
   before_filter :load_objects, :only => [ :index ]
 
+  def self.inherited(subclass)
+    subclass.wrap_parameters :exclude => []
+  end
+
   def index
   end
 
@@ -29,7 +33,8 @@ class ApiApplicationController < ApplicationController
     if @item.save
       render :template => "#{controller_path}/create", :location => send("#{nscname}_url", @item.id), :status => :created
     else
-      render_error @item.errors      
+      set_custom_errors
+      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)      
     end
   end
 
@@ -64,6 +69,9 @@ class ApiApplicationController < ApplicationController
 
   protected
 
+  def set_custom_errors
+  end
+
   def render_500(e)
     raise e if Rails.env.development?
     Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")
@@ -88,9 +96,14 @@ class ApiApplicationController < ApplicationController
     render_error missing_fields
   end
 
-  def render_error errors
-    @errors = format_error(errors)
+  def render_error errors, meta = nil
+    @errors = format_error(errors, meta)
     render :template => '/bad_request_error', :status => find_http_error_code(@errors)
+  end
+
+  def render_custom_errors item, options
+    errors = @item.errors.reject{|k,v| k == options[:remove]} if options[:remove]
+    render_error errors, options[:meta]
   end
 
   def paginate_options

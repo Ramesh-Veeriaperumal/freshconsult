@@ -1,25 +1,22 @@
 1. Have to take a call whether to include custom_code in base error class based on forthcoming error classess
 5. caching in view
 17. rubocop
-18. attr_accessible wrap params - Should we prefix all names with 'Api'
 20. need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF-8")
 21. Should we need to introduce credits/merits for each usage of endpoint?
 23. forums method 
 24. forums customers parameter validation
 7. side loading associations(include as a param in GET requests)
-8. Clean up old discussions controller *****
-9. Nomenclature for concerns
-11. update (override or incremental)
 25. revisit all before filters, the order is a problem.
-combine all discussion methods into one ,example requires feature before filter.
-remove desc html from forum, write complete fields test.
+27. combine all discussion methods into one ,example requires feature before filter.
 26. Should we need to use existing gem for date validations in model?
+28. update with no params will give 200.
 
 Breaking changes in existing APIs
 1. Account suspended
 2. day pass required
 3. handle unverified request
 4. Api limit exceeded
+5. Post validation
 
 completed:
 1. Multijson parse error handling
@@ -41,4 +38,11 @@ completed:
 21. change tests - remove strings and use json expressions.
 22. forum category show
 23. Allow header for 405
+9. Nomenclature for concerns - prefix with "concern"
+18. attr_accessible wrap params - self.inherited method
+28. remove desc html from forum, write complete fields test.
+
+Not necessary:
+8. Clean up old discussions controller *****
+11. update (override or incremental) - override
 

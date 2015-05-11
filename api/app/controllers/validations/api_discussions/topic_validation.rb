@@ -12,7 +12,7 @@ module ApiDiscussions
 
     def initialize(controller_params, item)
       @title = controller_params["title"] || item.try(:title)
-      @forum_id = controller_params["forum_id"] || item.try(:forum_id) # does try(to_i) invoke numericality validation?
+      @forum_id = controller_params["forum_id"] || item.try(:forum_id)
       @user_id = controller_params["user_id"] || item.try(:user_id)
       @sticky = controller_params["sticky"].to_s
       @locked = controller_params["locked"].to_s

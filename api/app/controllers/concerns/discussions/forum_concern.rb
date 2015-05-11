@@ -1,4 +1,4 @@
-module ApiDiscussions::DiscussionsForum
+module Discussions::ForumConcern
   extend ActiveSupport::Concern
 
     included do
