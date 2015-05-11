@@ -221,7 +221,7 @@ describe Support::Discussions::PostsController do
       
 		@account.features.hide_portal_forums.destroy
 	end
-	
+
 	describe "it should create a post if the user is agent" do
 
 		before(:each) do
@@ -280,4 +280,35 @@ describe Support::Discussions::PostsController do
 		response.should redirect_to "/support/discussions/topics/#{topic.id}?page=1"
 	end
 
+  describe "Voting" do 
+    it "should vote a post on put 'like'" do 
+      topic = publish_topic(create_test_topic(@forum))
+      post = create_test_post(topic)
+      vote_count = post.user_votes
+
+      put :like, 
+        :id => post.id,
+        :topic_id => topic.id
+
+      post.reload
+      post.user_votes.should be_eql(vote_count + 1)
+      vote = post.votes.find_by_user_id(User.current.id)
+      vote.should be_an_instance_of(Vote)
+      vote.voteable_id.should eql post.id
+      vote.voteable_type.should eql "Post"
+      response.should render_template 'support/discussions/posts/like'
+
+      vote_count = post.user_votes
+
+      put :like,
+        :id => post.id,
+        :topic_id => topic.id
+
+      post.reload
+      post.user_votes.should be_eql(vote_count - 1)
+      vote = post.votes.find_by_user_id(User.current.id)
+      vote.should be_nil
+      response.should render_template 'support/discussions/posts/like'
+    end
+  end
 end

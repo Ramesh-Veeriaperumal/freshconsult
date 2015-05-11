@@ -4,6 +4,7 @@ module SupportHelper
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Portal::Helpers::DiscussionsHelper
+  include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate

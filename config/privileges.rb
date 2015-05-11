@@ -163,12 +163,12 @@ Authority::Authorization::PrivilegeList.build do
   view_forums do
     resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
     resource :"discussions/forum", :only => [:show, :followers]
-    resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
+    resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote, :users_voted]
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
-    resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
+    resource :topic, :only => [:index, :show, :vote, :destroy_vote]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
-    resource :"discussions/post", :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
+    resource :"discussions/post", :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer, :users_voted]
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]

@@ -2551,6 +2551,10 @@ en:
     edit: Edit Topic
     close: Close Topic
     mark_as_spam: Mark as Spam
+    vote:
+      one: 1 person
+      other: "%{count} people"
+    upvote_appended_text: upvoted this
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -2679,6 +2683,7 @@ en:
       other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
+      upvote: Upvote      
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
@@ -2702,6 +2707,11 @@ en:
         vote_info_include_2: "You and %{vote} People have this Question"
         voted_users_widget_title: People who have this question
     post:
+      upvote: Upvote
+      voted_up_title: people upvoted this post
+      voted_up_message:
+        one: person upvoted this post
+        other: people upvoted this post
       posted_on: "%{user_name} on %{post_date}"
       edit_comment: Edit Comment
       unmark_answer: Unmark as answer
@@ -3152,6 +3162,8 @@ en:
     my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
     topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
+    topic_not_found: "Seems like this topic has been deleted"
+    post_not_found: "Seems like this post has been deleted"
     showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
@@ -3196,16 +3208,28 @@ en:
       merge_note:
         one: "Topic merged into this topic:"
         other: "Topics merged into this topic:"
-    topic_vote:
+      sort_heading: "Sorted by:"
+      sort_order:
+        date: "Oldest First"
+        recency: "Newest First"
+        popularity: "Popular"
+      sort_by_most_recent: "Most Recent"
+      sort_by_most_popular: "Most Popular"
+      sort_by_default: "Default"
+    vote:
       you:
-        one: "You"
-        other: "You and"
+        one: "You "
+        other: "You and "
       more:
-        one: "1 other"
-        other: "%{count} others"
+        one: "1 other "
+        other: "%{count} others "
       people:
-        one: "1 person"
-        other: "%{count} people"
+        one: "1 person "
+        other: "%{count} people "
+    topic_vote:
+      announce:
+        one: "likes this"
+        other: "like this"
       ideas:
         one: "likes this idea"
         other: "like this idea"
@@ -3215,15 +3239,28 @@ en:
       howto:
         one: "has this question"
         other: "have this question"
+      votes: "votes"
+      upvote: "up-vote"
+      upvoted: "up-voted"
+      user_upvote_list_title: "People who up-voted"
+      announce_button: "Do you like this?"
       ideas_button: "Do you like this idea?"
       problem_button: "Do you have this problem?"
       howto_button: "Do you have this question as well?"
+      announce_unlike_button: "unlike!"
       ideas_unlike_button: "unlike!"
       problem_unlike_button: "I don't have this problem!"
       howto_unlike_button: "I don't have this question!"
+      announce_users_voted_title: People who like this 
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
+    post_vote:
+      upvoted: "You have upvoted"
+      upvote: "Upvote"
+      like:
+        one: "like this"
+        other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
       export: "Export tickets"
@@ -6911,6 +6948,9 @@ en:
       replied: replied
       spam: Spam
       waiting_for_approval: Unpublished
+      comment:
+        one: "1 Comment"
+        other: "%{count} Comments"
       locked: Locked
       locked_label: Topic is locked for comments
       merged_label: Topic is merged into another topic

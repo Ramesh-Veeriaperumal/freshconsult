@@ -2229,6 +2229,7 @@ ActiveRecord::Schema.define(:version => 20150429044952) do
     t.boolean  "published",               :default => false
     t.boolean  "spam"
     t.boolean  "trash",                   :default => false
+    t.integer  "user_votes",              :default => 0
   end
 
   add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
@@ -3215,11 +3216,11 @@ ActiveRecord::Schema.define(:version => 20150429044952) do
   add_index "va_rules", ["account_id", "rule_type"], :name => "index_va_rules_on_account_id_and_rule_type"
 
   create_table "votes", :force => true do |t|
-    t.boolean  "vote",                        :default => false
-    t.datetime "created_at",                                     :null => false
+    t.integer  "vote",          :limit => 1,  :default => 1
+    t.datetime "created_at",                                 :null => false
     t.string   "voteable_type", :limit => 30
-    t.integer  "voteable_id",   :limit => 8,  :default => 0,     :null => false
-    t.integer  "user_id",       :limit => 8,  :default => 0,     :null => false
+    t.integer  "voteable_id",   :limit => 8,  :default => 0, :null => false
+    t.integer  "user_id",       :limit => 8,  :default => 0, :null => false
     t.integer  "account_id",    :limit => 8
   end
 

@@ -237,8 +237,7 @@ describe Support::Discussions::TopicsController do
 		vote_count = topic.user_votes
 
 		put :like,
-			:id => topic.id,
-			:vote => "for"
+			:id => topic.id
 
 		liked_topic = @account.topics.find_by_id(topic.id)
 		liked_topic.user_votes.should be_eql(vote_count + 1)
@@ -251,9 +250,8 @@ describe Support::Discussions::TopicsController do
 		#----
 
 		put :unlike,
-			:id => topic.id,
-			:vote => "for"
-
+			:id => topic.id
+			
 		unliked_topic = @account.topics.find_by_id(topic.id)
 		unliked_topic.user_votes.should be_eql(vote_count)
 		vote = unliked_topic.votes.find_by_user_id(@user.id)

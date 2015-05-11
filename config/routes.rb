@@ -1613,11 +1613,13 @@ Helpkit::Application.routes.draw do
         put :vote
         delete :destroy_vote
         get :reply
+        get :users_voted
       end
 
       resources :posts, :except => :new do
         member do
           put :toggle_answer
+          get :users_voted
         end
       end
 
@@ -1810,11 +1812,15 @@ Helpkit::Application.routes.draw do
           get :users_voted
           put :toggle_solution
           get :reply
+          put :toggle_vote
         end
 
         resources :posts, :except => [:index, :new, :show] do
           member do
             put :toggle_answer
+            put :like
+            get :users_voted
+            put :toggle_vote
           end
           collection do
             get :show

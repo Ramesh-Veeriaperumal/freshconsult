@@ -55,14 +55,14 @@
 				{% if best_answer != nil %}
 					{{ best_answer | topic_best_answer }}
 				{% endif %}
-
 				{% snippet topic_vote %}
-
 			</div>
 			<div class="p-content hide" id="post-{{first_post.id}}-edit">
 				<div class="sloading loading-small loading-block"></div>
 			</div>
 		</section>
+
+		{{ topic | post_sort_options, topic.sort_by }}
 
 		{% paginate topic.posts by 15 %}
 			{% for post in paginate.collection %}
@@ -89,8 +89,8 @@
 							{% endif %}
 							{{ post.body_html }}
 						</div>
-
 						{{ post | post_attachments }}
+						{{ post | post_vote_button }}
 					</div>
 					<div class="p-content hide" id="post-{{post.id}}-edit">
 						<div class="sloading loading-small loading-block"></div>

@@ -314,6 +314,16 @@ body.community.moderation.cs-always-show {
 	}
 }
 
+.vote-content{
+	@include border-left(1px solid #eee);
+	@include padding-left(10px);
+	margin-bottom: 20px;
+}
+
+.post-attachment{
+	margin-bottom: 10px;
+}
+
 .modal-body {
 
 	.delete-confirm-warning {
