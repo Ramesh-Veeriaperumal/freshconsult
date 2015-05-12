@@ -14,6 +14,7 @@ module Solution::MetaMethods
 	def self.included(base)
 		base.class_eval do 
 			after_save :save_meta
+			after_destroy :destroy_meta
 		end
 	end
 
@@ -41,6 +42,10 @@ module Solution::MetaMethods
 		end
 		assign_defaults(obj)
 		obj.save
+	end
+
+	def destroy_meta
+		meta_object.destroy
 	end
 
 	def changed_attribs
