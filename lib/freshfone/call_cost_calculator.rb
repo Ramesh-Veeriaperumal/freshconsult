@@ -40,9 +40,9 @@ class Freshfone::CallCostCalculator
 		end
 
 		def get_first_leg_cost
-			first_leg_call = get_twilio_call
+			self.first_leg_call = get_twilio_call
 			puts "Call cost for the first leg of #{args[:call_sid]} : #{first_leg_call.price}"
-			self.total_charge = current_call.present? ? pulse_rate.voicemail_cost : first_leg_call.price.to_f.abs
+			self.total_charge = current_call.present? ? voicemail_cost : first_leg_call.price.to_f.abs
 		end
 	
 		def missed_call_cost
@@ -50,7 +50,7 @@ class Freshfone::CallCostCalculator
 		end
 
 		def voicemail_cost
-			self.total_charge = pulse_rate.voicemail_cost * no_of_pulse(duration_for_call)
+			pulse_rate.voicemail_cost * no_of_pulse(duration_for_call)
 		end
 
 		def no_of_pulse(duration)
@@ -131,12 +131,17 @@ class Freshfone::CallCostCalculator
 		end
 
 		def current_call_duration
-			current_call.call_duration unless current_call.blank?
+			current_call.call_duration
 		end
 
 		def duration_for_call
-			return current_call_duration if current_call.is_childless? #currently only one level of child is present.
+			return first_leg_duration if current_call.is_root? && current_call.is_childless?
+			return current_call_duration if current_call.is_childless? #not root, currently only one level of child is present.
 			parent_call_duration
+		end
+
+		def first_leg_duration
+			first_leg_call.duration
 		end
 
 		def parent_call_duration

@@ -40,6 +40,7 @@ class Freshfone::PulseRate
 	private
 
 		def call_forwarded?
+			return true if forwarded?
 			return false if call.meta.blank?
 			[ Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone], 
 					Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial],
