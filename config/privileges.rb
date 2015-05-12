@@ -54,12 +54,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/user"
     resource :"freshfone/call", :only => [:caller_data, :inspect_call]
     resource :"freshfone/call_history"
-    resource :"freshfone/blacklist_number"
     resource :"freshfone/autocomplete"
     resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
+    resource :"freshfone/caller"
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"

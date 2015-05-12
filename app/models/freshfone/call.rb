@@ -148,7 +148,7 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 	end
 
-	[ :number, :city, :state, :country ].each do |type|
+	[ :number, :city, :state, :country, :id].each do |type|
 		define_method("caller_#{type}") do
 			(caller || {})[type]
 		end

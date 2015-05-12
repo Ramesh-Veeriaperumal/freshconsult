@@ -1183,8 +1183,10 @@ ActiveRecord::Schema.define(:version => 20150429044952) do
     t.string   "city"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "caller_type", :limit => 1,  :default => 0
   end
 
+  add_index "freshfone_callers", ["id", "account_id"], :name => "index_freshfone_callers_on_id_and_account_id", :unique => true
   add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
 
   create_table "freshfone_calls", :id => false, :force => true do |t|
@@ -1254,22 +1256,7 @@ ActiveRecord::Schema.define(:version => 20150429044952) do
 
   add_index "freshfone_ivrs", ["account_id", "freshfone_number_id"], :name => "index_freshfone_ivrs_on_account_id_and_freshfone_number_id"
 
-  create_table "freshfone_number_address", :force => true do |t|
-    t.integer  "account_id",           :limit => 8
-    t.integer  "freshfone_account_id", :limit => 8
-    t.string   "address_sid"
-    t.string   "friendly_name"
-    t.string   "business_name"
-    t.string   "address"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "country",              :limit => 5
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "freshfone_number_addresses", :id => false, :force => true do |t|
+  create_table "freshfone_number_addresses", :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8

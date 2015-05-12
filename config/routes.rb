@@ -440,12 +440,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :blacklist_number do
+    resources :caller do
       collection do
-        post :create
-      end
-      member do
-        delete :destroy
+        post :block
+        post :unblock
       end
     end
 

@@ -192,7 +192,8 @@ class Freshfone::CallFlow
     end
 
     def blacklisted?
-      current_account.freshfone_blacklist_numbers.find_by_number(params[:From].gsub(/^\+/, ''))
+      current_caller = current_account.freshfone_callers.find_by_number(params[:From])
+      current_caller.present? ? current_caller.blocked? : false
     end
 
     def find_user_with_id(performer_id, freshfone_user=nil)
