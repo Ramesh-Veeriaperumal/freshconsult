@@ -59,6 +59,9 @@ class Solution::Article < ActiveRecord::Base
 
   before_save     :set_mobihelp_solution_updated_time, :if => :content_changed?
   before_destroy  :set_mobihelp_solution_updated_time
+  after_save :update_meta_likes, :if  => :thumbs_up_changed? or :thumbs_down_changed?
+  before_create :assign_language
+  # before_save :set_up_to_date
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
@@ -222,6 +225,20 @@ class Solution::Article < ActiveRecord::Base
     end
   end
 
+  def update_meta_likes
+    solution_article_meta.increment(:thumbs_up) if thumbs_up_changed?
+    solution_article_meta.decrement(:thumbs_down) if thumbs_down_changed?
+    solution_article_meta.save
+  end
+
+  def default?
+    language == Account.current.language
+  end
+
+  def set_up_to_date
+    self.outdated = false if published? or (self.changes["status"] and self.changes["status"][1] == STATUS_KEYS_BY_TOKEN[:published])
+  end
+
   def self.article_type_option
     TYPES.map { |i| [I18n.t(i[1]), i[2]] }
   end
@@ -232,8 +249,12 @@ class Solution::Article < ActiveRecord::Base
 
   private
   
+    def assign_language
+      self.language = Account.current.language if self.language.blank?
+    end
+
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.folder.category_id)
+      update_mh_solutions_category_time(solution_article_meta.solution_folder_meta.category_meta_id)
     end
 
     def content_changed?

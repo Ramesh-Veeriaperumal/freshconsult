@@ -14,9 +14,10 @@ class Solution::Folder < ActiveRecord::Base
   belongs_to :solution_folder_meta, :class_name => 'Solution::FolderMeta', :foreign_key => 'parent_id'
   self.table_name =  "solution_folders"
   
-  before_create :populate_account
+  # before_create :populate_account
   after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
+  before_create :assign_language
 
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
@@ -130,6 +131,11 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   private
+
+    def assign_language
+      self.language = Account.current.language if self.language.blank?
+    end
+
     def populate_account
       self.account = category.account
     end

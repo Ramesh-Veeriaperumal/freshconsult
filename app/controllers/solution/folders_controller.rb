@@ -2,6 +2,7 @@
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
   helper AutocompleteHelper
+  include Solution::MetaControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -48,18 +49,16 @@ class Solution::FoldersController < ApplicationController
     end
   end
 
-  def create 
-    current_category = current_account.solution_categories.find(params[:category_id])    
-    @folder = current_category.folders.new(params[nscname]) 
-    @folder.category_id = @new_category.id
-
+  def create
+		@category_meta = @category.solution_category_meta
+    @folder = @meta_obj.solution_folders.build(params[nscname])
     redirect_to_url = solution_category_path(@new_category.id)
     redirect_to_url = new_solution_category_folder_path(@new_category.id) unless
       params[:save_and_create].nil?
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
-      if @folder.save
+      if @meta_obj.save
         format.html { redirect_to redirect_to_url }
         format.xml  { render :xml => @folder, :status => :created }
         format.json  { render :json => @folder, :status => :created }     
@@ -154,6 +153,10 @@ class Solution::FoldersController < ApplicationController
 
     def load_category
       @category = portal_scoper.find_by_id!(params[:category_id])
+    end
+
+    def meta_parent
+      "solution_folder_meta"
     end
 
     def fetch_new_category

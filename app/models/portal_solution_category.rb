@@ -9,4 +9,10 @@ class PortalSolutionCategory < ActiveRecord::Base
 	acts_as_list :scope => :portal
 
 	delegate :name, :to => :solution_category
+
+	before_create :populate_category_meta
+
+	def populate_category_meta
+		self.solution_category_meta_id = self.solution_category_id
+	end
 end
