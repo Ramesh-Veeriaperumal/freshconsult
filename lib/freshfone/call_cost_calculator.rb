@@ -36,7 +36,7 @@ class Freshfone::CallCostCalculator
 	private
 
 		def one_leg_calls?
-			(dial_call_sid.blank? || no_call_duration?)
+			(dial_call_sid.blank? || no_call_duration? || voicemail?)
 		end
 
 		def get_first_leg_cost
