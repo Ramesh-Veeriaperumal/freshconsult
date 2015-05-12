@@ -56,8 +56,9 @@ class Portal < ActiveRecord::Base
 
   has_many :solution_categories,
     :class_name => 'Solution::Category',
-    :through => :portal_solution_categories,
-    :order => "portal_solution_categories.position"
+    :through => :solution_category_meta,
+    :order => "solution_category_meta.position",
+    :conditions => "language = '#{I18n.locale}'"
 
   has_many :portal_forum_categories,
     :class_name => 'PortalForumCategory',

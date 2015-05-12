@@ -9,45 +9,19 @@ class Solution::Category < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
+
+  concerned_with :associations, :meta_associations
   
   self.table_name =  "solution_categories"
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
-  
-  belongs_to_account
-
-  belongs_to :solution_category_meta, 
-    :class_name => 'Solution::CategoryMeta', :foreign_key => "parent_id"
-
-  has_many :solution_folder_meta, :class_name => 'Solution::FolderMeta', :through => :solution_category_meta
-
-  has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
-
-  has_many :solution_folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
-
-  has_many :public_folders, :class_name =>'Solution::Folder' ,  :order => "position", 
-          :conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
-  has_many :published_articles, :through => :public_folders
-  has_many :articles, :through => :folders
-  has_many :portal_solution_categories, 
-    :class_name => 'PortalSolutionCategory', 
-    :foreign_key => :solution_category_id, 
-    :dependent => :delete_all
-
-  has_many :portals, :through => :portal_solution_categories
-  has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
-          :conditions => [" solution_folders.visibility in (?,?) ",
-          VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
    
   after_create :assign_portal
   before_create :assign_language
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
-
-  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :dependent => :destroy
-  has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
   

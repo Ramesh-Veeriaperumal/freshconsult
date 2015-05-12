@@ -9,7 +9,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	acts_as_list :scope => :account
 
-	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta"
+	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => "category_meta_id"
 
 	has_many :solution_folders, :through => :solution_folder_meta
 

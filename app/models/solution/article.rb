@@ -10,41 +10,17 @@ class Solution::Article < ActiveRecord::Base
   include Solution::MetaMethods
   include Redis::RedisKeys
   include Redis::OthersRedis	
+
+  concerned_with :associations, :meta_associations
   
   serialize :seo_data, Hash
 
   concerned_with :body_methods
 
   acts_as_voteable
-
-  belongs_to :folder, :class_name => 'Solution::Folder'
-  belongs_to :user, :class_name => 'User'
-  belongs_to :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => "parent_id"
-  belongs_to_account
   
-  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
-  
-  has_many_attachments
-  has_many_cloud_files
   spam_watcher_callbacks 
-  
-  has_many :activities,
-    :class_name => 'Helpdesk::Activity',
-    :as => 'notable',
-    :dependent => :destroy
-  has_many :tag_uses,
-    :as => :taggable,
-    :class_name => 'Helpdesk::TagUse',
-    :dependent => :destroy
-  has_many :tags, 
-    :class_name => 'Helpdesk::Tag',
-    :through => :tag_uses
 
-  has_many :support_scores, :as => :scorable, :dependent => :destroy
-
-  has_many :article_ticket, :dependent => :destroy
-  has_many :tickets, :through => :article_ticket
-  
   include Mobile::Actions::Article
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution

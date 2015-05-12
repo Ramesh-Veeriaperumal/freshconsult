@@ -5,28 +5,20 @@ class Solution::Folder < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
 
+  concerned_with :associations, :meta_associations
+
   attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id, :case_sensitive => false
-  
-  belongs_to_account
-  belongs_to :category, :class_name => 'Solution::Category'
-  belongs_to :solution_folder_meta, :class_name => 'Solution::FolderMeta', :foreign_key => 'parent_id'
+
   self.table_name =  "solution_folders"
   
   # before_create :populate_account
   after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
-  before_create :assign_language
 
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
-
-  has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
-  has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
-           :conditions => "solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
-
-  has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
   
   scope :alphabetical, :order => 'name ASC'
 

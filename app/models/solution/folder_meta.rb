@@ -7,7 +7,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	belongs_to_account
 
-	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
+	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :foreign_key => "category_meta_id"
 
 	self.primary_key = :id
 
@@ -22,6 +22,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	has_many :customers, :through => :customer_folders, :class_name => 'Solution::CustomerFolder'
 
 	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => 'folder_meta_id'
+
+	has_many :solution_articles, :class_name => "Solution::Article", :through => :solution_article_meta
 
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "account_id"]
 

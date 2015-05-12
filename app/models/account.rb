@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
 
   pod_filter "id"
   
-  concerned_with :associations, :constants, :validations, :callbacks
+  concerned_with :associations, :constants, :validations, :callbacks, :solution_associations
   include CustomerDeprecationMethods
   
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
