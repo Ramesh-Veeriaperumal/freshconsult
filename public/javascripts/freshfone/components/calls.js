@@ -99,9 +99,11 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		setDirectionIncoming: function () {
 			this.direction = callDirection.INCOMING;
+			this.status = callStatus.ACTIVECALL;
 		},
 		setDirectionOutgoing: function () {
 			this.direction = callDirection.OUTGOING;
+			this.status = callStatus.ACTIVECALL;
 		},
 		getCallSid: function () {
 			return this.callSid || this.tConn.parameters.CallSid;
@@ -248,6 +250,8 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 
 			Twilio.Device.disconnectAll();
 			this.timer.stopCallTimer();
+			this.status = callStatus.NONE;
+			this.direction = callDirection.NONE;
 		},
 		mute: function () {
 			if (this.tConn) {
@@ -315,6 +319,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
                     self.lastSound.stop();
                 }      		
 			}
+		},
+		isCallActive : function () {
+			return (this.status == callStatus.ACTIVECALL);
 		}
 	};
 }(jQuery));

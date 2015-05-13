@@ -302,6 +302,12 @@ var FreshfoneUser,
 				}
 			});
 		},
+		makeOffline: function (){
+			if(this.online){
+				this.setStatus(userStatus.OFFLINE);
+				this.online = !this.online;
+			}
+		},
 		bindUserPresenceHover: function () {
 			var self = this;
 			$('.ff_presence_options .availabilityOnPhone').live('click', function(){
@@ -342,5 +348,4 @@ var FreshfoneUser,
 	    }
 		}
 	};
-	
 }(jQuery));
