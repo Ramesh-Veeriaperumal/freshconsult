@@ -54,7 +54,6 @@
           'email'     : '<%=current_user.email%>',
           'account_id': '<%= current_account.id%>'
   };
-  freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
   jQuery(window).on("load",function(){
   	soundManager.setup({debugMode: false});
 	  freshfone.networkErrorSound = soundManager.createSound({
