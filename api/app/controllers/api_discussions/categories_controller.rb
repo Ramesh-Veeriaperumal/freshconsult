@@ -6,6 +6,10 @@ module ApiDiscussions
 
     private
 
+      def load_association
+        @forums = @category.forums
+      end
+
       def validate_params
         params[cname].permit(*(ApiConstants::CATEGORY_FIELDS.map(&:to_s)))
        	category = ApiDiscussions::CategoryValidation.new(params[cname], @item)

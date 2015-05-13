@@ -1,6 +1,6 @@
 module ApiError
 
-	class BaseError
+  class BaseError
 
     API_ERROR_CODES = [
       ["has already been taken", "already_exists", 409],
@@ -13,7 +13,7 @@ module ApiError
       ["is not a number", "datatype_mismatch", 400 ],
       ["list is invalid", "invalid_value", 400]]
 
-	  API_ERROR_CODES_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |i| [i[0], i[1]] }]
+    API_ERROR_CODES_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |i| [i[0], i[1]] }]
     API_HTTP_ERROR_STATUS_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |i| [i[0], i[2]] }]
 
     attr_accessor :message
@@ -21,18 +21,18 @@ module ApiError
     def initialize(value, params_hash = {})
       @message = I18n.t("api.error_messages.#{value.to_s}", params_hash)
     end
-	end
+  end
 
-	class BadRequestError < BaseError
+  class BadRequestError < BaseError
 
-	  attr_accessor :code, :field, :http_code
+    attr_accessor :code, :field, :http_code
     def initialize(attribute, value, params_hash={})
       @code = API_ERROR_CODES_BY_VALUE[value]
       @field = attribute
       @http_code = API_HTTP_ERROR_STATUS_BY_VALUE[value]
       super(value, params_hash)
     end
-	end
+  end
 
   class RequestError < BaseError
 

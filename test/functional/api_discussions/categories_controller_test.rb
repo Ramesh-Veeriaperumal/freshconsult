@@ -132,7 +132,27 @@ module ApiDiscussions
     def test_show
       get :show, :version => "v2", :format => :json, :id => fc.id
       assert_response :success
-      response.body.must_match_json_expression(forum_category_response_pattern(fc.name, fc.description))
+      result_pattern = forum_category_response_pattern(fc.name, fc.description)
+      result_pattern[:forums] = Array
+      response.body.must_match_json_expression(result_pattern)
+    end
+
+    def test_show_with_forums
+      fc = Forum.first.forum_category
+      get :show, :version => "v2", :format => :json, :id => fc.id
+      assert_response :success
+      result_pattern = forum_category_response_pattern(fc.name, fc.description)
+      result_pattern[:forums] = []
+      fc.forums.each do |f|
+        result_pattern[:forums] << forum_pattern(f)
+      end
+      response.body.must_match_json_expression(result_pattern)
+    end
+
+    def test_show_invalid_id
+      get :show, :id => "x", :version => "v2", :format => :json
+      assert_response :not_found
+      assert_equal " ", @response.body  
     end
 
     def test_show_portal_check

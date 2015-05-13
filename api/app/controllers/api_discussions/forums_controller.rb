@@ -11,6 +11,10 @@ module ApiDiscussions
 
 		private
 
+      def load_association
+         @topics = @forum.topics
+      end
+
       def set_custom_errors
         bad_customer_ids = @item.customer_forums.select{|x| x.errors.present?}.collect(&:customer_id).map(&:to_s)
         @item.errors.add("customers", "list is invalid") if bad_customer_ids.present?

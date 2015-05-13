@@ -21,6 +21,7 @@ class ApiApplicationController < ApplicationController
   before_filter :manipulate_params, :only => [:create, :update]
   before_filter :build_object, :only => [ :create ]
   before_filter :load_objects, :only => [ :index ]
+  before_filter :load_association, :only => [:show]
 
   def self.inherited(subclass)
     subclass.wrap_parameters :exclude => []
@@ -163,6 +164,9 @@ class ApiApplicationController < ApplicationController
     fields = constant[:all] 
     constant.keys.each{|key| fields += constant[key] if privilege?(key)}
     fields
+  end
+
+  def load_association
   end
 
 private

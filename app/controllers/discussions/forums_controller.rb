@@ -145,9 +145,9 @@ class Discussions::ForumsController < ApplicationController
 
 	private
 
-        def cname # why?
-           "forum"	
-        end
+    def cname # why?
+      "forum"	
+    end
 
 		def portal_check
 			if current_user.nil? || current_user.customer?

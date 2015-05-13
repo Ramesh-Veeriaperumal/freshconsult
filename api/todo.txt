@@ -10,6 +10,7 @@
 27. combine all discussion methods into one ,example requires feature before filter.
 26. Should we need to use existing gem for date validations in model?
 28. update with no params will give 200.
+29. paginate associations ???
 
 Breaking changes in existing APIs
 1. Account suspended

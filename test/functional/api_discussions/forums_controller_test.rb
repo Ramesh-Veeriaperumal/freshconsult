@@ -169,8 +169,21 @@ module ApiDiscussions
     def test_show
       f = Forum.first
       get :show, :id => f.id, :version => "v2", :format => :json
+      pattern = forum_pattern(f)
+      pattern[:topics] = Array
       assert_response :success
-      response.body.must_match_json_expression(forum_pattern(f))
+      response.body.must_match_json_expression(pattern)
+    end
+
+    def test_show_with_topics
+      f = Forum.where("topics_count >= ?", 1).first || create_test_topic(Forum.first, User.first).forum
+      get :show, :id => f.id, :version => "v2", :format => :json
+      result_pattern = forum_pattern(f)
+      result_pattern[:topics] = []
+      f.topics.each do |t|
+        result_pattern[:topics] << topic_pattern(t)
+      end
+      response.body.must_match_json_expression(result_pattern)
     end
 
   end

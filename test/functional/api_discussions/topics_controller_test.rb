@@ -100,7 +100,9 @@ module ApiDiscussions
     def show
       topic = create_test_topic
       get :show, :version => "v2", :format => :json, :id => topic.id
-      response.body.must_match_json_expression(topic_pattern(topic))
+      result_pattern = topic_pattern(topic)
+      result_pattern[:posts] = Array
+      response.body.must_match_json_expression(result_pattern)
       assert_response :success
     end
 
@@ -108,6 +110,17 @@ module ApiDiscussions
       get :show, :version => "v2", :format => :json, :id => (1000 + Random.rand(11))
       assert_response :not_found
       assert_equal " ", @response.body   
+    end
+
+    def test_show_with_posts
+      t = Topic.where("posts_count > ?", 1).first || create_test_post(Topic.first, User.first).topic
+      get :show, :id => t.id, :version => "v2", :format => :json
+      result_pattern = topic_pattern(t)
+      result_pattern[:posts] = []
+      t.posts.each do |p|
+        result_pattern[:posts] << post_pattern(p)
+      end
+      response.body.must_match_json_expression(result_pattern)
     end
 
     def test_create_without_view_admin_privilege

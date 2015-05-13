@@ -22,6 +22,10 @@ module ApiDiscussions
 
     protected
 
+    def load_association
+      @posts = @topic.posts
+    end
+
     def set_custom_errors
       @error_options = {:remove => :posts}
     end
@@ -52,7 +56,7 @@ module ApiDiscussions
 		end
 
 		def set_forum_id 
-      		assign_user_and_parent @topic, :forum_id, params[cname]
+      assign_user_and_parent @topic, :forum_id, params[cname]
 		end
 
 		def validate_params
