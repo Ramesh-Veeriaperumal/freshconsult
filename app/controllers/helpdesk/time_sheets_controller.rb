@@ -255,15 +255,14 @@ private
     billable = (!params[:billable].blank?) ? [params[:billable].to_s.to_bool] : true
     #search by contact
     contact_email = params[:contact_email]
-    #set_page&per_page
-    page = params[:page] || 1
-    default_per_page = Helpdesk::TimeSheet::PAGINATE_OPTIONS[:per_page]
-    per_page = params[:per_page].blank? || params[:per_page].to_i > default_per_page ? default_per_page : params[:per_page].to_i
-
     #company_id and agent_id if passed null will return all data.  
-    filter_params = {:contact_email => contact_email, :company_ids => company_id, :agent_id => agent_id, :start_date => start_date, :end_date => end_date, :billable => billable}
-    paginate_params = {:per_page => per_page, :page => page.to_i}
-    @time_sheets = current_account.time_sheets.filter(paginate_params , filter_params)
+    unless contact_email.blank?
+      Rails.logger.debug "Timesheets API::get_time_sheets: contact_email=> "+contact_email +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+      @time_sheets = current_account.time_sheets.for_contacts(contact_email).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable).includes(:user, :workable => {:requester => :company})
+    else
+      Rails.logger.debug "Timesheets API::get_time_sheets: company_id=> "+company_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+      @time_sheets = current_account.time_sheets.for_companies(company_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable).includes(:user, :workable => {:requester => :company})
+    end
   end
 
   def validate_time time
