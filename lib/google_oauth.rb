@@ -27,7 +27,7 @@ module GoogleOauth
   end
 
   def construct_redirect_url(account, domain, type, uid)
-    protocol = (account.ssl_enabled? || is_native_mobile?) ? "https" : "http"
+    protocol = account.ssl_enabled? ? "https" : "http"
     if type == "openid"
       url = "https://www.google.com/accounts/o8/site-xrds?hd="+domain
       redirect_url = protocol+"://" + account.host + "/auth/open_id?openid_url="+url
