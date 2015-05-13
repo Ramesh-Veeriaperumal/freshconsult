@@ -358,20 +358,51 @@ class Helpdesk::TicketField < ActiveRecord::Base
     def populate_choices
       return unless @choices
       if(["nested_field"].include?(self.field_type))
-        picklist_values.clear
         clear_picklist_cache
-        @choices.each do |c| 
-          if c.size > 2 && c[2].is_a?(Array)
-            p = picklist_values.build({:value => c[0]})
-            p.choices = c[2]
-          else
-            picklist_values.build({:value => c[0]})
-          end
-        end
+        run_through_picklists(@choices, picklist_values, self)
       elsif("default_status".eql?(self.field_type))
         @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
       end
-    end 
+    end
+
+    def run_through_picklists(choices, picklists, parent)
+      choices.each_with_index do |choice, index|
+        pl_value = choice[0]
+        current_tree = picklists.find{ |p| p.value == pl_value}
+        if current_tree
+          current_tree.position = index + 1
+          if choice[2] 
+            run_through_picklists(choice[2], 
+                                  current_tree.sub_picklist_values, 
+                                  current_tree)
+          elsif current_tree.sub_picklist_values.present?
+            current_tree.sub_picklist_values.destroy_all
+          end
+        else
+          build_picklists(choice, parent, index)
+        end
+        clear_picklists(picklists.map(&:value) - choices.map { |c| c[0] }, picklists)
+      end
+    end
+
+    def build_picklists(choice, parent_pl_value, position=nil)
+      attributes = { :value => choice[0], :position => position+1 }
+      attributes.merge!(:choices => choice[2]) if choice[2]
+      if parent_pl_value.id == self.id
+        picklist_values.build(attributes)
+      elsif choice.size > 2 && choice[2].is_a?(Array)
+        parent_pl_value.sub_picklist_values.build(attributes)
+      else
+        parent_pl_value.sub_picklist_values.build(attributes.except(:choices))
+      end
+    end
+
+    def clear_picklists(values, pl_values)
+      values.each do |value|
+        pl_value = pl_values.find{ |p| p.value == value}
+        pl_value.destroy if pl_value
+      end
+    end
 
     def clear_ticket_type_cache
       if(self.field_type.eql?("default_ticket_type"))
