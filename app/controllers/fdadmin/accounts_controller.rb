@@ -19,7 +19,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:tickets] = fetch_ticket_details(account)
     account_summary[:social] = fetch_social_info(account)
     account_summary[:multi_product] = account.portals.count > 1
-    account_summary[:chat] = { :enabled => account.features?(:chat) , :active => account.chat_setting.active? }
+    account_summary[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
     account_summary[:email] = fetch_email_details(account)
     account_summary[:portals] = fetch_portal_details(account)
     credit = account.freshfone_credit

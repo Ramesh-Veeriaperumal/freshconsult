@@ -2081,6 +2081,12 @@ Helpkit::Application.routes.draw do
           get :export_to_csv
         end
       end
+
+      resources :users, :only => :none do 
+        collection do 
+          get 'get_user'
+        end
+      end
       
     end
   end

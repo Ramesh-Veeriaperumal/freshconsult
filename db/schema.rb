@@ -2350,6 +2350,16 @@ ActiveRecord::Schema.define(:version => 20150429044952) do
 
   add_index "smtp_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
 
+   create_table "service_api_keys", :force => true do |t|
+    t.string   "service_name", :null => false
+    t.string   "api_key",      :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+   end
+
+  add_index "service_api_keys", ["api_key"], :name => "index_service_api_keys_on_api_key", :unique => true
+  add_index "service_api_keys", ["service_name"], :name => "index_service_api_keys_on_service_name", :unique => true
+
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",            :limit => 8
     t.string   "access_token"
