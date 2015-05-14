@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "6b3936726bb270141b02d953ba05d559968335be958664add6c0819a86b7bd11",
-    "current": "6b3936726bb270141b02d953ba05d559968335be958664add6c0819a86b7bd11"
+    "previous": "8eab9d285a64bb13a0b9dfedbd942de6d6f517b09742500815a7a20cbbc3ef70",
+    "current": "8eab9d285a64bb13a0b9dfedbd942de6d6f517b09742500815a7a20cbbc3ef70"
   },
   "fonts": [
-    "public/assets/glyphs_6b3936726bb270141b02d953ba05d559.ttf",
-    "public/assets/glyphs_6b3936726bb270141b02d953ba05d559.svg",
-    "public/assets/glyphs_6b3936726bb270141b02d953ba05d559.woff",
-    "public/assets/glyphs_6b3936726bb270141b02d953ba05d559.eot"
+    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.ttf",
+    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.svg",
+    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.woff",
+    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.eot"
   ],
   "glyphs": {
     "account": {
@@ -549,6 +549,10 @@
     "phone-disable": {
       "codepoint": 61821,
       "source": "public/glyphs/vectors/phone-disable.svg"
+    },
+    "phone-disable-thin": {
+      "codepoint": 61877,
+      "source": "public/glyphs/vectors/phone-disable-thin.svg"
     },
     "plus": {
       "codepoint": 61822,
