@@ -57,6 +57,13 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       } unless contact_email.blank?
   }
 
+  scope :for_contacts_with_id, lambda{|id|
+      {
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:id => id}},
+      } unless id.blank?
+  }
+
   scope :for_products, lambda { |products|
     { 
       :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
