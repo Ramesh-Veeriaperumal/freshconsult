@@ -216,6 +216,25 @@ module ApiDiscussions
         result_pattern[:topics] << topic_pattern(t)
       end
       match_json(result_pattern)
+      assert_response :success
+    end
+
+
+    def test_topics_invalid_id
+      get :topics, construct_params(:id => "x")
+      assert_response :not_found
+      assert_equal " ", @response.body 
+    end
+
+    def test_topics
+      f = Forum.where("topics_count >= ?", 1).first || create_test_topic(Forum.first, User.first).forum
+      get :topics, construct_params(:id => f.id)
+      result_pattern = []
+      f.topics.each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      assert_response :success
+      match_json(result_pattern)
     end
 
   end

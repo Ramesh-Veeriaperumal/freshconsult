@@ -1,8 +1,13 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    before_filter :portal_check, :only => [:show, :index]
+    before_filter :portal_check, :only => [:show]
     include Discussions::CategoryConcern
     skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show]
+
+    def forums
+      @forums = paginate_items(@category.forums)
+      render :partial => '/api_discussions/forums/forum_list' #Need to revisit this based on eager loading associations in show
+    end
 
     private
 

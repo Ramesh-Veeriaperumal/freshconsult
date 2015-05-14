@@ -19,11 +19,13 @@ module ApiDiscussions
       super
     end
 
-  private
-
-    def load_association
-      @posts = @topic.posts
+    def posts
+      @posts = paginate_items(@topic.posts)
+      render :partial => '/api_discussions/posts/post_list' #Need to revisit this based on eager loading associations in show
     end
+
+
+  private
 
     def load_association
       @posts = @topic.posts

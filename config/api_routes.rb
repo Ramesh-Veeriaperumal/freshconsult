@@ -1,9 +1,21 @@
 Helpkit::Application.routes.draw do
   api_routes = Proc.new do
     namespace :api_discussions, :path => "discussions" do
-      resources :categories, :except => [:new, :edit]
-      resources :forums, :except => [:new, :edit, :index]
-      resources :topics, :except => [:new, :edit, :index]
+      resources :categories, :except => [:new, :edit] do
+        member do
+          get :forums
+        end
+      end
+      resources :forums, :except => [:new, :edit, :index] do
+        member do
+          get :topics
+        end
+      end
+      resources :topics, :except => [:new, :edit, :index]do
+        member do
+          get :posts
+        end
+      end
       resources :posts, :except => [:new, :edit, :index, :show]
     end
   end

@@ -139,8 +139,8 @@ module ApiDiscussions
       get :show, construct_params(:id => 1)
     end
 
-    def show
-      topic = create_test_topic
+    def test_show
+      topic = create_test_topic(forum_obj)
       get :show, construct_params(:id => topic.id)
       result_pattern = topic_pattern(topic)
       result_pattern[:posts] = Array
@@ -148,7 +148,7 @@ module ApiDiscussions
       assert_response :success
     end
 
-    def show_invalid_id
+    def test_show_invalid_id
       get :show, construct_params(:id => (1000 + Random.rand(11)))
       assert_response :not_found
       assert_equal " ", @response.body   
@@ -162,6 +162,24 @@ module ApiDiscussions
       t.posts.each do |p|
         result_pattern[:posts] << post_pattern(p)
       end
+      assert_response :success
+      match_json(result_pattern)
+    end
+
+    def test_posts_invalid_id
+      get :posts, construct_params(:id => (1000 + Random.rand(11))) 
+      assert_response :not_found
+      assert_equal " ", @response.body   
+    end
+
+    def test_posts
+      t = Topic.where("posts_count > ?", 1).first || create_test_post(Topic.first, User.first).topic
+      get :posts, construct_params(:id => t.id)
+      result_pattern = []
+      t.posts.each do |p|
+        result_pattern << post_pattern(p)
+      end
+      assert_response :success
       match_json(result_pattern)
     end
 

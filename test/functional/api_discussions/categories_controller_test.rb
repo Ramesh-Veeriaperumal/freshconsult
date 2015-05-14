@@ -5,7 +5,7 @@ module ApiDiscussions
     include ForumHelper
     
     actions = Rails.application.routes.routes.select{|x| x.defaults[:controller] == "api_discussions/categories"}.collect{|x| x.defaults[:action]}.uniq
-    methods = {"index" => :get, "create" => :post, "update" => :put, "destroy" => :delete, "show" => :get}
+    methods = {"index" => :get, "create" => :post, "update" => :put, "destroy" => :delete, "show" => :get, "forums" => :get}
     
     def fc
       ForumCategory.first
@@ -48,7 +48,8 @@ module ApiDiscussions
       end
     end
 
-    actions.select{|a| ["index", "show"].exclude?(a)}.each do |action|
+    #verify_authenticity_token will not get called for get requests. So All GET actions here in exclude array.
+    actions.select{|a| ["index", "show", "forums"].exclude?(a)}.each do |action|
       define_method("test_#{action}_without_token") do 
         with_forgery_protection do
           @request.cookies["_helpkit_session"] = true
@@ -137,6 +138,7 @@ module ApiDiscussions
       assert_response :success
       result_pattern = forum_category_response_pattern(fc.name, fc.description)
       result_pattern[:forums] = Array
+      assert_response :success
       match_json(result_pattern)
     end
 
@@ -149,6 +151,7 @@ module ApiDiscussions
       fc.forums.each do |f|
         result_pattern[:forums] << forum_pattern(f)
       end
+      assert_response :success
       match_json(result_pattern)
     end
 
@@ -247,6 +250,22 @@ module ApiDiscussions
       match_json(forum_category_pattern(ForumCategory.last))
       assert_equal true, response.headers.include?("Location")
       assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result["id"]}", response.headers["Location"]
+    end
+
+    def test_forums
+      get :forums, construct_params(:id => fc.id)
+      assert_response :success
+      result_pattern = []
+      fc.forums.each do |f|
+        result_pattern << forum_pattern(f)
+      end
+      match_json(result_pattern)
+    end
+
+    def test_forums_invalid_id
+      get :forums, construct_params(:id => "x")
+      assert_response :not_found
+      assert_equal " ", @response.body  
     end
   end
 end

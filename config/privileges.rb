@@ -176,9 +176,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :monitorship, :only => [:followers]
 
     # Used for API
-    resource :"api_discussions/category", :only => [:index, :show]
-    resource :"api_discussions/forum", :only => [:show]
-    resource :"api_discussions/topic", :only => [:show]
+    resource :"api_discussions/category", :only => [:index, :show, :forums]
+    resource :"api_discussions/forum", :only => [:show, :topics]
+    resource :"api_discussions/topic", :only => [:show, :posts]
     resource :"api_discussions/post", :only => [:create]
   end
 

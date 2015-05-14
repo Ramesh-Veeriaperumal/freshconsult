@@ -1,4 +1,4 @@
 json.partial! 'api_discussions/categories/forum_category', fc: @category
 json.set! :forums do
-  json.array! @forums, partial: 'api_discussions/forums/forum', as: :f
+  json.partial! 'api_discussions/forums/forum_list'
 end  

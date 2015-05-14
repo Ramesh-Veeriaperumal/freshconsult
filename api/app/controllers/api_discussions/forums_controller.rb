@@ -7,11 +7,13 @@ module ApiDiscussions
     before_filter :portal_check, :only => [:show]
     before_filter :set_account_and_category_id, :only => [:create]
 
-    private
+    
+    def topics
+      @topics = paginate_items(@forum.topics)
+      render :partial => '/api_discussions/topics/topic_list' #Need to revisit this based on eager loading associations in show
+    end
 
-      def load_association
-         @topics = @forum.topics
-      end
+    private
 
       def load_association
          @topics = @forum.topics

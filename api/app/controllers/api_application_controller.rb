@@ -14,7 +14,7 @@ class ApiApplicationController < ApplicationController
     :remove_pjax_param, :remove_rails_2_flash_after
 
   skip_before_filter :check_privilege, :only => [:route_not_found]
-  before_filter :load_object, :only => [ :show, :update, :destroy ]
+  before_filter :load_object, :except => [:create, :index, :route_not_found]
   before_filter :check_params, :only => :update
   before_filter :validate_params, :only => [:create, :update]
   before_filter :manipulate_params, :only => [:create, :update]
@@ -165,6 +165,10 @@ class ApiApplicationController < ApplicationController
     end
 
     def load_association
+    end
+
+    def paginate_items item
+      item.paginate(paginate_options)
     end
 
     def check_params
