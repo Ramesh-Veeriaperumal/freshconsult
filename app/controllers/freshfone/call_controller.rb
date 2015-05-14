@@ -7,6 +7,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
 	
+	include Freshfone::CallerLookup
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
@@ -29,7 +30,7 @@ class Freshfone::CallController < FreshfoneBaseController
 				render :json => {
      		  :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
                           :locals => { :user => @user }),
-		      :user_name => (@user || {})[:name],
+		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
           :call_meta => call_meta
     		}

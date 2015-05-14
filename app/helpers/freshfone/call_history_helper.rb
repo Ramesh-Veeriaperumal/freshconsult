@@ -118,5 +118,7 @@ module Freshfone::CallHistoryHelper
   		"#{t("freshfone.call_history.recording_delete.done_by")} #{call.recording_deleted_by}, on #{formated_date(Time.zone.parse(call.recording_deleted_at.to_s))}"
   	end
   end
-
+   def cannot_make_calls(classname = nil)
+    content_tag :span, nil, {:class => "restrict-call #{classname}"}
+  end
 end

@@ -6202,6 +6202,7 @@ en:
       not_enough_credit: "Not Enough Credit"
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
+      strange_number: "Cannot call a Restricted number"
     call_status:
       default: ""
       completed: "Completed"
@@ -6322,6 +6323,12 @@ en:
         successful: "Call Recording deleted successfully!"
         unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
         error: "Error while deleting a Call Record!!! Please try again after some time"
+      strange_numbers:
+      	restricted: "RESTRICTED"
+      	blocked: "BLOCKED"
+      	unknown: "UNKNOWN"
+      	anonymous: "ANONYMOUS"
+      	empty: "EMPTY"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"

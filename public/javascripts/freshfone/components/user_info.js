@@ -3,6 +3,7 @@ var FreshfoneUserInfo;
 	// "use strict";
 	var customerNumber;
 
+  var strangeNumber;
 	FreshfoneUserInfo = function () {
 		this.init();
 	};
@@ -29,7 +30,8 @@ var FreshfoneUserInfo;
 				outgoing : this.isOutgoing,
 				callerName: null,
 				formattedNumber: this.formattedNumber(),
-				callerLocation: this.callerLocation()
+				callerLocation: this.callerLocation(),
+				strangeNumber : freshfonewidget.classForStrangeNumbers(this.customerNumber)
 			};
 
 			this.removeExistingPopup();
@@ -80,6 +82,7 @@ var FreshfoneUserInfo;
 		},
 		unknownUserFiller: function () {
 			customerNumber = this.customerNumber;
+			strangeNumber = freshfonewidget.classForStrangeNumbers(this.customerNumber);
 			$('.unknown_user_hover').popover({
 				placement: 'above',
 				html: true,
@@ -131,10 +134,10 @@ var FreshfoneUserInfo;
 		},
 
 		userContactHover: function () {
-			var template = "<span><div class='infoblock'><div class='preview_pic' size_type='thumb'></div><div class='user_name'>${number}</div></div></span>",
+			var template = "<span><div class='infoblock'><div class='preview_pic' size_type='thumb'></div><div class='user_name ${strangeNumber}'>${number}</div></div></span>",
 				$div = $("<div />")
 							.append($(template)
-												.tmpl({ number: customerNumber }));
+												.tmpl({ number: customerNumber, strangeNumber: strangeNumber  }));
 			$div.find('.preview_pic').html($('.unknown_user_hover').html());
 			return $div.html();
 		}

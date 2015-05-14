@@ -15,6 +15,7 @@ module ApplicationHelper
   include Integrations::Util
   include Integrations::IntegrationHelper
   include CommunityHelper
+  include Freshfone::CallerLookup
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -1075,11 +1076,11 @@ module ApplicationHelper
 		can_make_calls(number, 'mobile-icons', freshfone_number_id)
 	end
 
-	def can_make_calls(number, class_name=nil, freshfone_number_id=nil)
+	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)
 		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
 		#																	 :'data-freshfone-number-id' => freshfone_number_id,
     #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , number, { :'data-phone-number' => "#{number}",
+    content_tag(:span , can_show_number ? number : nil, { :'data-phone-number' => "#{number}",
                                   :'data-freshfone-number-id' => freshfone_number_id,
                                   :class => "can-make-calls #{class_name}" })
 

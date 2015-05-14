@@ -191,4 +191,17 @@ RSpec.describe FreshfoneController do
     Freshfone::Call.find(freshfone_call.id).ticket.should be_nil
   end
 
+  it 'should create a new call ticket with new customer name accordingly when the call is from Strange Number' do
+    strange_number = "+17378742833"  
+    log_in(@agent)
+    freshfone_call = create_freshfone_call
+    build_freshfone_caller(strange_number)
+    create_freshfone_user if @agent.freshfone_user.blank?
+    params = { :CallSid => freshfone_call.call_sid, :call_log => "Sample Freshfone Ticket", 
+               :requester_name => strange_number, :ticket_subject => "Call with Oberyn", :call_history => "false"}
+    post :create_ticket, params    
+    assigns[:current_call].ticket.requester_name.should be_eql("RESTRICTED")
+    User.last.name.should be_eql("RESTRICTED")
+  end
+  
 end

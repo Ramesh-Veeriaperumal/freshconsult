@@ -1,8 +1,9 @@
-<div class="recent_call_entry can-make-calls" data-phone-number=<%= call.caller_number %>>
+<% is_strange_number = strange_number_class(call.caller_number) %>
+<div class="recent_call_entry <%= is_strange_number.blank? ? 'can-make-calls' : '' %>" data-phone-number=<%= call.caller_number %>>
 	<div class="recent_calls_direction <%= call_direction_class(call) %>"></div>
 	<div class="recent_calls_caller_details">
 		<div class="item_actions">
-			 <span class="user_name">
+			 <span class="user_name <%= !call.customer ? is_strange_number : ''  %> ">
 				 <%= call.customer ? link_to_user(call.customer, {"data-placement" => "topLeft"}) :
 				 	 										number_to_phone(call.caller_number) %>
 			 </span>
@@ -22,6 +23,7 @@
 		</div>
 	</div>
 	<div class="recent_calls_call_user">
-			<%= can_make_phone_calls(call.caller_number) %>
+		<span class="<%= is_strange_number.present? ? 'restrict-call' : 'can-call'%>" >
+		</span>
 	</div>
 </div>

@@ -31,6 +31,14 @@ RSpec.describe Freshfone::CallController do
     call_meta.keys.should be_eql([:number, :group])
   end
 
+  it 'should retrieve caller name accordingly for the strange number' do
+    log_in(@agent)
+    @caller_number = "+17378742833"
+    get :caller_data, {:PhoneNumber => @caller_number, :format => "json"}
+    user_name = json[:user_name]
+    user_name.should be_eql("RESTRICTED")
+  end
+
   it 'should update call status and user presence' do
     set_twilio_signature("freshfone/call/in_call?agent=#{@agent.id}", in_call_params.except("agent"))
     create_freshfone_call("CSATH")
