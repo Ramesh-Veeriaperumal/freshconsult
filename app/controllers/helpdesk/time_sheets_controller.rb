@@ -255,6 +255,12 @@ private
     billable = (!params[:billable].blank?) ? [params[:billable].to_s.to_bool] : true
     #search by contact
     contact = current_account.user_emails.user_for_email(params[:contact_email]) unless params[:contact_email].blank?
+    
+    #temp hack for invalid/non existent contact email to provide backward compatibility.
+    if contact.nil? && params[:contact_email]
+      @time_sheets = []
+      return 
+    end
     #company_id and agent_id if passed null will return all data.  
     unless contact.nil?
       Rails.logger.debug "Timesheets API::get_time_sheets: contact => "+contact.id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
