@@ -4,6 +4,8 @@ module Freshfone::Call::Branches::Missed
     if missed_call?
       current_call.update_call(params)
       call_initiator.missed_call = true
+      add_cost_job 
+      params[:cost_added] = true
       render :xml =>  call_initiator.non_availability
     end
   end

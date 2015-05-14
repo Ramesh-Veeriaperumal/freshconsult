@@ -1,4 +1,14 @@
 class Post < ActiveRecord::Base
+  
+  include Juixe::Acts::Voteable
+
+  SORT_ORDER = {
+    :date => 'id ASC',
+    :popularity => 'user_votes DESC',
+    :recency => 'id DESC'
+  }
+
+  acts_as_voteable
 
   self.primary_key = :id
   def self.per_page() 25 end
@@ -16,7 +26,7 @@ class Post < ActiveRecord::Base
 
   scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
-
+  
   scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
   scope :published, :conditions => {:published => true, :trash => false }
   scope :trashed, :conditions => {:trash => true }
@@ -29,7 +39,7 @@ class Post < ActiveRecord::Base
 
   scope :by_user, lambda { |user|
       { :joins => [:topic],
-        :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ]
+        :conditions => ["posts.user_id = ?  and posts.user_id != topics.user_id", user.id ]
       }
   }
   before_update :unmark_another_answer, :if => :questions? && :topic_has_answer?

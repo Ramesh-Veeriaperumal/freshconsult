@@ -69,6 +69,12 @@ class Integrations::ApplicationsController < Admin::AdminController
     @application = Integrations::Application.example_app
   end
 
+  def show
+    if @installing_application.dynamics_crm?
+      redirect_to :controller=> 'dynamics_crm', :action => 'settings'
+    end
+  end
+
   def destroy
     @installing_application.destroy
     redirect_to :controller=> 'applications', :action => 'index'

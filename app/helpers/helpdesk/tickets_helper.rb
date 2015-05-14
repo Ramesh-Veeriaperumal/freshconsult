@@ -277,10 +277,17 @@ module Helpdesk::TicketsHelper
 
   def ticket_pagination_html(options,full_pagination=false)
     prev = 0
+    tickets_in_current_page = options[:tickets_in_current_page]
     current_page = options[:current_page]
     per_page = params[:per_page]
     no_of_pages = options[:total_pages]
-    visible_pages = full_pagination ? visible_page_numbers(options,current_page,no_of_pages) : []
+    no_count_query = no_of_pages.nil? #no_of_pages can be nil, when no_list_view_count_query feature is enabled
+    if no_count_query
+      last_page = tickets_in_current_page==30 ? current_page+1 : current_page
+    else
+      last_page = no_of_pages
+    end
+    visible_pages = (full_pagination && !no_count_query) ? visible_page_numbers(options,current_page,no_of_pages) : []
     tooltip = 'tooltip' if !full_pagination
 
     content = ""
@@ -292,17 +299,21 @@ module Helpdesk::TicketsHelper
                       title='Previous' 
                       #{shortcut_options('previous') unless full_pagination} >#{options[:previous_label]}</a>"
     end
-    visible_pages.each do |index|
-      # detect gaps:
-      content << '<span class="gap">&hellip;</span>' if prev and index > prev + 1
-      prev = index
-      if( index == current_page )
-        content << "<span class='current'>#{index}</span>"
-      else
-        content << "<a href='/helpdesk/tickets?page=#{index}' rel='next'>#{index}</a>"
+
+    unless no_count_query
+      visible_pages.each do |index|
+        # detect gaps:
+        content << '<span class="gap">&hellip;</span>' if prev and index > prev + 1
+        prev = index
+        if( index == current_page )
+          content << "<span class='current'>#{index}</span>"
+        else
+          content << "<a href='/helpdesk/tickets?page=#{index}' rel='next'>#{index}</a>"
+        end
       end
     end
-    if current_page == no_of_pages
+
+    if current_page == last_page
       content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
     else
       content << "<a class='next_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page+1)}' 

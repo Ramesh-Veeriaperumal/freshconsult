@@ -45,4 +45,11 @@ module RabbitMq::Constants
     "priority", "ticket_type", "source", "requester_id", "due_by", "created_at"
   ]
   
+ REPORTS_TICKET_KEYS = [ "id", "display_id", "account_id", "agent_id", "group_id", 
+    "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
+    "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
+    "time_to_resolution_in_bhrs", "time_to_resolution_in_chrs", "fcr_violation", 
+    "first_response_by_bhrs", "created_at"
+  ]
+  
 end

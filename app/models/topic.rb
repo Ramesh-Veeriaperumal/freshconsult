@@ -45,7 +45,6 @@ class Topic < ActiveRecord::Base
 
   has_many :voices, :through => :posts, :source => :user, :uniq => true, :order => "#{Post.table_name}.id DESC"
 
-  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -122,12 +121,12 @@ class Topic < ActiveRecord::Base
   # Generally with days before DateTime.now - 30.days
   scope :popular, lambda { |days_before|
     { :conditions => ["replied_at >= ?", days_before],
-      :order => 'hits DESC, user_votes DESC, replied_at DESC',
+      :order => "hits DESC, #{Topic.table_name}.user_votes DESC, replied_at DESC",
       :include => :last_post }
   }
 
   scope :sort_by_popular,
-      :order => 'user_votes DESC, hits DESC, replied_at DESC'
+      :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC"
 
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
@@ -178,7 +177,7 @@ class Topic < ActiveRecord::Base
 
   attr_protected :forum_id , :account_id, :published
   # to help with the create form
-  attr_accessor :body_html, :highlight_title
+  attr_accessor :body_html, :highlight_title, :sort_by
 
   IDEAS_STAMPS = [
     [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ],
@@ -360,15 +359,6 @@ class Topic < ActiveRecord::Base
     return unless problems?
     update_attributes(:stamp_type => (solved? ?
                     Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved] : Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]))
-  end
-
-  def users_who_voted
-    users = User.find(:all,
-      :joins => [:votes],
-      :conditions => ["votes.voteable_id = ? and users.account_id = ?", id, account_id],
-      :order => "votes.created_at DESC"
-    )
-    users
   end
 
   def last_post_url

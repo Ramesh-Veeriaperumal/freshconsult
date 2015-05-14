@@ -57,12 +57,23 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       } unless contact_email.blank?
   }
 
+  scope :for_contacts_with_id, lambda{|id|
+      {
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:id => id}},
+      } unless id.blank?
+  }
+
   scope :for_products, lambda { |products|
     { 
       :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
       :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
      } unless products.blank?
   } 
+
+  PAGINATE_OPTIONS = {:per_page => 30, :page => 1}
+
+  FILTER_OPTIONS = { :contact_email => [], :company_ids => [], :agent_id => [], :billable => true, :start_date => 0}
 
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true, 
@@ -90,6 +101,34 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :product_name => I18n.t('helpdesk.time_sheets.product'), 
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
+
+  def self.filter(paginate_options=PAGINATE_OPTIONS, filter_options=FILTER_OPTIONS)
+    filter_options[:end_date] ||= Time.zone.now.to_time
+    associations = [:user, :workable => {:requester => :company}]
+    begin
+      unless filter_options[:contact_email].blank? && filter_options[:company_ids].blank?
+        paginate(paginate_options).where(filter_conditions(filter_options)).joins(join_conditions).preload(associations)
+      else
+        paginate(paginate_options).where(filter_conditions(filter_options)).preload(associations)
+      end  
+    rescue Exception => e
+      error =  {:message => "Should be a valid filter"}
+      Rails.logger.debug("API 500 error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+      return error
+    end
+  end
+
+  def self.filter_conditions filter_options
+    condition = {:executed_at => filter_options[:start_date]..filter_options[:end_date], :billable => filter_options[:billable]}
+    condition[:users] = {:email => filter_options[:contact_email]} unless filter_options[:contact_email].blank?
+    condition[:users] = {:customer_id => filter_options[:company_ids]} unless filter_options[:company_ids].blank?
+    condition[:user_id] = filter_options[:agent_id] unless  filter_options[:agent_id].blank?
+    condition
+  end
+
+  def self.join_conditions
+    [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"]
+  end
 
   def hours 
     seconds = time_spent.to_f

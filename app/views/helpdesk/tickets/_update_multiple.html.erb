@@ -45,7 +45,7 @@
         </label> 
       </div>
       <div class="request_panel clearBoth hide" id="bulkreplyform">
-        <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple", :f => f} %>
+        <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple", :email_configs => current_account.email_configs, :f => f} %>
       </div>
     </div>  
   </div> 

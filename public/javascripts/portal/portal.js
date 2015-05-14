@@ -42,7 +42,11 @@
 
 			if(!_o_data.loadonce){
 				// Setting the submit button to a loading state
-				$(this).button("loading")
+				if (_o_data.noLoading) {
+					$(this).addClass('disabled');
+				} else {
+					$(this).button("loading")
+				}	
 
 				// A data-loading-box will show a loading box in the specified container
 				$(_o_data.loadingBox||"").html("<div class='loading loading-box'></div>")
@@ -240,6 +244,10 @@
 		        $(this).datepicker('option', 'buttonText', "<span class='icon-calendar'></span>" );
 		      }
 		});
+
+		$('[data-toggle=tooltip]').livequery(function() {
+			$(this).tooltip();
+		})
 
 		$('body').on('afterShow', '[rel=remote]', function(ev) {
 			var _self = $(this);

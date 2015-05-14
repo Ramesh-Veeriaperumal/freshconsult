@@ -89,7 +89,8 @@ if Rails.env.test?
     "spec/controllers/integrations/slack_controller_spec.rb",
     "spec/controllers/integrations/remote_configurations_controller_spec.rb",
     "spec/lib/integrations/survey_monkey_spec.rb",
-    "spec/controllers/integrations/cti/customer_details_controller_spec.rb"
+    "spec/controllers/integrations/cti/customer_details_controller_spec.rb",
+    "spec/controllers/integrations/dynamics_crm_controller_spec.rb"
   ]
 
   FreshfoneTests = [

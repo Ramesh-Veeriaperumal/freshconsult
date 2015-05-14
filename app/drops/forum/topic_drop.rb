@@ -41,7 +41,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def first_post
-    published_posts.first
+    @first_post ||= published_posts.first
   end
   
   def last_post
@@ -54,13 +54,14 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def posts
-    unless @per_page.blank?
-      # If the page id is last then calculate the number of pages in the topic
-      @page = [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max if @page == "last"
-      published_posts.filter(@per_page, @page)
+    ordered_posts.filter(@per_page, page_number)
+  end
+
+  def ordered_posts
+    unless (sort_by and Post::SORT_ORDER[sort_by.to_sym]).nil?
+      published_posts.reorder(Post::SORT_ORDER[sort_by.to_sym])
     else
-      # If the collection is not paginated then fetch all posts
-      published_posts.all
+      published_posts
     end
   end
 
@@ -178,6 +179,22 @@ class Forum::TopicDrop < BaseDrop
     portal_user.present? && !source.monitorships.active_monitors.by_user(portal_user).count.zero?
   end
 
+  def sort_by
+    source.sort_by
+  end
+
+  def user_votes
+    source.votes
+  end
+
+  def comment_count
+    @comment_count ||= [source.posts_count - 1, 0].max
+  end
+
+  def voters
+    @source.voters
+  end
+  
   private
 
     def published_posts
@@ -186,6 +203,15 @@ class Forum::TopicDrop < BaseDrop
       else
         source.posts.published
       end
+    end
+
+    def page_number
+      return nil unless @page
+      max_page = [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max 
+      return max_page if @page == "last" or @page.to_i > max_page
+      return 1 if @page.to_i.to_s != @page #Other invalid strings
+      return 1 if @page.to_i <= 0 #Other invalid numbers
+      @page
     end
 
 end

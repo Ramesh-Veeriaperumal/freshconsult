@@ -5,7 +5,8 @@ module Helpdesk::Email::TicketMethods
   include AccountConstants
 
   def get_original_user
-    get_user(orig_email_from_text , email[:email_config], email[:text]) unless orig_email_from_text.blank?
+    email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
+    get_user(email_from_text , email[:email_config], email[:text]) unless email_from_text.blank?
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents

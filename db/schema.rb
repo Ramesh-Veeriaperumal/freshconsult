@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150408144242) do
+ActiveRecord::Schema.define(:version => 20150429044952) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1183,8 +1183,10 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
     t.string   "city"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "caller_type", :limit => 1,  :default => 0
   end
 
+  add_index "freshfone_callers", ["id", "account_id"], :name => "index_freshfone_callers_on_id_and_account_id", :unique => true
   add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
 
   create_table "freshfone_calls", :id => false, :force => true do |t|
@@ -1254,22 +1256,7 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
 
   add_index "freshfone_ivrs", ["account_id", "freshfone_number_id"], :name => "index_freshfone_ivrs_on_account_id_and_freshfone_number_id"
 
-  create_table "freshfone_number_address", :force => true do |t|
-    t.integer  "account_id",           :limit => 8
-    t.integer  "freshfone_account_id", :limit => 8
-    t.string   "address_sid"
-    t.string   "friendly_name"
-    t.string   "business_name"
-    t.string   "address"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "country",              :limit => 5
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "freshfone_number_addresses", :id => false, :force => true do |t|
+  create_table "freshfone_number_addresses", :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8
@@ -2104,6 +2091,14 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
   add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
   add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
 
+  create_table "mobile_app_versions", :force => true do |t|
+    t.integer  "mobile_type"
+    t.string   "app_version"
+    t.boolean  "supported"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -2221,6 +2216,7 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
     t.boolean  "published",               :default => false
     t.boolean  "spam"
     t.boolean  "trash",                   :default => false
+    t.integer  "user_votes",              :default => 0
   end
 
   add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
@@ -3217,11 +3213,11 @@ ActiveRecord::Schema.define(:version => 20150408144242) do
   add_index "va_rules", ["account_id", "rule_type"], :name => "index_va_rules_on_account_id_and_rule_type"
 
   create_table "votes", :force => true do |t|
-    t.boolean  "vote",                        :default => false
-    t.datetime "created_at",                                     :null => false
+    t.integer  "vote",          :limit => 1,  :default => 1
+    t.datetime "created_at",                                 :null => false
     t.string   "voteable_type", :limit => 30
-    t.integer  "voteable_id",   :limit => 8,  :default => 0,     :null => false
-    t.integer  "user_id",       :limit => 8,  :default => 0,     :null => false
+    t.integer  "voteable_id",   :limit => 8,  :default => 0, :null => false
+    t.integer  "user_id",       :limit => 8,  :default => 0, :null => false
     t.integer  "account_id",    :limit => 8
   end
 

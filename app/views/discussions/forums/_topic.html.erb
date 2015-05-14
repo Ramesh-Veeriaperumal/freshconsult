@@ -37,14 +37,12 @@
 			</div>
 		<% end %>
 		<div class="span6 pr15">
-			<% unless @forum.announcement? %>
 			<span class="span6 align-right pull-right">
 				<span class="meta-component <%= 'faded' if topic.user_votes == 0 %>">
 					<%= font_icon "like", :size => 18 %>
 					<%= topic.user_votes %>
 				</span>
 			</span>
-			<% end %>
 			<span class="span6 align-right pull-right">
 				<span class="meta-component <%= 'faded' if topic.reply_count == 0 %>">
 					<%= font_icon "comment-multi", :size => 18 %>

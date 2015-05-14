@@ -8,12 +8,12 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   belongs_to :pickable, :polymorphic => true
 
   has_many :sub_picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue', :include => :sub_picklist_values,
-    :dependent => :destroy
+    :dependent => :destroy, :order => "position"
   
   attr_accessible :value, :choices, :position
+
+  accepts_nested_attributes_for :sub_picklist_values, :allow_destroy => true
   
-  acts_as_list :scope => 'pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
-   \'#{pickable_type}\''
   before_create :set_account_id
   
   # scope_condition for acts_as_list and as well for using index in fetching sub_picklist_values
@@ -24,11 +24,11 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def choices=(c_attr)
     sub_picklist_values.clear
-    c_attr.each do |c| 
+    c_attr.each_with_index do |c, index| 
       if c.size > 2 && c[2].is_a?(Array)
-        sub_picklist_values.build({:value => c[0], :choices => c[2]})
+        sub_picklist_values.build({:value => c[0], :position => index+1, :choices => c[2]})
       else
-        sub_picklist_values.build({:value => c[0]})
+        sub_picklist_values.build({:value => c[0], :position => index+1})
       end
     end  
   end

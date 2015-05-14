@@ -365,6 +365,24 @@ span.fb_add
 		@extend .#{$font-class-name}deleted;
 	}
 }
+
+.fone_icon_connection{
+	@extend .#{$font-class-name}ff-phone;
+	font-size:17px;
+}
+
+.freshfone_connection_error,.freshfone_error_info{
+	.fone_error_wrap{
+		@extend .#{$font-class-name}no-network;
+		font-size:22px;
+	}
+}
+.freshfone_connection_success{
+	.fone_error_wrap{
+		@extend .#{$font-class-name}checkmark-thick;
+		font-size:16px;
+	}
+}
 // -----------------------------------------------------------------------------------------------
 // 										Ticket Details Page
 // -----------------------------------------------------------------------------------------------

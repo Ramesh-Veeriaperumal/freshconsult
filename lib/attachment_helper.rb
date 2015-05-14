@@ -43,11 +43,16 @@
 
       if(page == "cloud_file")
         filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
-        output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank", :title => h(filename))
+        tooltip = filename.size > 15 ? "tooltip" : ""
+        output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
+                           :title => h(attached.content_file_name), :class => "#{tooltip}")
         output << %(<span class="file-size cloud-file"></span>)
       else
         size = number_to_human_size attached.content_file_size
-        output << content_tag( :div,link_to(h(attached.content_file_name.truncate(23)), attached, :target => "_blank"), :class => "ellipsis")
+        tooltip = attached.content_file_name.size > 15 ? "tooltip" : "" 
+        output << content_tag( :div,link_to(h(attached.content_file_name.truncate(15)), attached, :target => "_blank", 
+                              :title => h(attached.content_file_name), :class => "#{tooltip}"),
+                              :class => "ellipsis")
         output << %(<span class="file-size">( #{size} )</span>)
       end
 

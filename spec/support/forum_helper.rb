@@ -38,13 +38,15 @@ module ForumHelper
 							:account_id => @account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
-							:stamp_type => stamp_type
+							:stamp_type => stamp_type,
+							:user_votes => 0
 							)
 		topic.save
 		post = FactoryGirl.build(:post,
 							:account_id => @account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save!
 		publish_post(post)
@@ -59,7 +61,8 @@ module ForumHelper
 							:account_id => @account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
-							:stamp_type => stamp_type
+							:stamp_type => stamp_type,
+							:user_votes => 0
 							)
 		topic.save
 		post = FactoryGirl.build(
@@ -67,6 +70,7 @@ module ForumHelper
 							:account_id => @account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save!
 		attachment = post.attachments.build(
@@ -82,7 +86,8 @@ module ForumHelper
 		post = FactoryGirl.build(:post, 
 							:account_id => @account.id, 
 							:topic_id => topic.id,
-							:user_id => user.id
+							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save
 		post			

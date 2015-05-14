@@ -1,7 +1,7 @@
 namespace :facebook do
   desc 'Check for New facebook feeds..'
 
-  PREMIUM_ACC_IDS = {:staging => [390], :production => [18685,39190,19063,86336,34388,126077]}
+  PREMIUM_ACC_IDS = {:staging => [390], :production => [18685,39190,19063,86336,34388,126077,220561]}
   # rake task to fetch FB private messages.
   task :fetch => :environment do
 

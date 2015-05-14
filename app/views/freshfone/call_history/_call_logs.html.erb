@@ -5,9 +5,10 @@
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
 	<td class="user_details width1">
 		<div class="freshfone_customer relative tooltip">
-				<%= content_tag :span, "", :class => "tooltip blacklist-toggle "+(blocked_number?(call.caller_number) ? '	blacklisted' : 'blacklist').to_s,
-					:"data-number" => call.caller_number.gsub(/^\+/, ''),
-					:title => blocked_number?(call.caller_number) ? t('freshfone.call_history.unblock_number') :
+				<%= content_tag :span, "", :class => "tooltip blacklist-toggle "+(blocked_number?(call.caller_id) ? '	blacklisted' : 'blacklist').to_s,
+					:"data-number" => call.caller_number,
+					:"data-caller_id" => call.caller_id,
+					:title => blocked_number?(call.caller_id) ? t('freshfone.call_history.unblock_number') :
 																														t('freshfone.call_history.block_number') %>
 	
 			<%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
@@ -74,13 +75,11 @@
 	</td>
 	<td class="width4">
 		<div align="left">
-		<% unless children %>
 			<% if call.call_cost.blank? %>
 				<b id="ticket_list_count" class="callhistory-payment-loader"></b>
 			<%else%>
 				$<%= call.call_cost %>
 			<%end%>
-		<% end %>
 		</div>
 	</td>
 	<td class="width2">

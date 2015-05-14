@@ -10,9 +10,10 @@
 				data-title="<%= t('freshfone.call_history.block_number_title') %>"
 				data-width="340"></button>
 			<div id="blacklist-confirmation" class="hide">
-				<%= form_for(:blacklist_number, :url => url_for(:controller => 'freshfone/blacklist_number', 
-							 :action => 'create'), :method => 'post', :remote => true) do |f| %>
+				<%= form_for(:caller, :url => url_for(:controller => 'freshfone/caller', 
+							 :action => 'block'), :method => 'post', :remote => true) do |f| %>
 					<%= f.hidden_field :number %>
+					<%= f.hidden_field :id %>
 				<% end %>
 				<%= t('freshfone.call_history.blacklist_confirmation') %> <span class="number"></span>?
 			</div>

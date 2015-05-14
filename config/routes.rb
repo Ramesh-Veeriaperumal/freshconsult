@@ -440,12 +440,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :blacklist_number do
+    resources :caller do
       collection do
-        post :create
-      end
-      member do
-        delete :destroy
+        post :block
+        post :unblock
       end
     end
 
@@ -665,6 +663,16 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :dynamics_crm do
+      collection do
+        post :settings_update
+        get :edit
+        post :fields_update
+        post :widget_data
+        get :settings
+      end
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
@@ -743,6 +751,7 @@ Helpkit::Application.routes.draw do
         get :existing_email
         post :personalized_email_enable
         post :personalized_email_disable
+        post :toggle_agent_forward_feature
         post :reply_to_email_enable
         post :reply_to_email_disable
         post :id_less_tickets_enable
@@ -1602,11 +1611,13 @@ Helpkit::Application.routes.draw do
         put :vote
         delete :destroy_vote
         get :reply
+        get :users_voted
       end
 
       resources :posts, :except => :new do
         member do
           put :toggle_answer
+          get :users_voted
         end
       end
 
@@ -1799,11 +1810,15 @@ Helpkit::Application.routes.draw do
           get :users_voted
           put :toggle_solution
           get :reply
+          put :toggle_vote
         end
 
         resources :posts, :except => [:index, :new, :show] do
           member do
             put :toggle_answer
+            put :like
+            get :users_voted
+            put :toggle_vote
           end
           collection do
             get :show
@@ -1898,6 +1913,7 @@ Helpkit::Application.routes.draw do
     end
     resources :settings,  :only => [:index] do
       collection do
+        get :mobile_login
         get :mobile_pre_loader
         get :deliver_activation_instructions
       end

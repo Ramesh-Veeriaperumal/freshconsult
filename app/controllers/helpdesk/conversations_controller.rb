@@ -17,7 +17,8 @@ class Helpdesk::ConversationsController < ApplicationController
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
   before_filter :validate_fwd_to_email, :only => [:forward]
-  before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
+  before_filter :check_for_kbase_email, :only => [:reply, :forward]
+  before_filter :set_quoted_text, :only => :reply
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
     :fetch_item_attachments, :set_native_mobile, :except => [:full_text]
   before_filter :set_ticket_status, :except => :forward
@@ -34,11 +35,7 @@ class Helpdesk::ConversationsController < ApplicationController
     if @item.save_note
       clear_saved_draft
       add_forum_post if params[:post_forums]
-      begin
-        create_article if @publish_solution
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      end
+      note_to_kbase
       flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
     else
@@ -51,6 +48,7 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save_note
       add_forum_post if params[:post_forums]
+      note_to_kbase
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
@@ -249,6 +247,14 @@ class Helpdesk::ConversationsController < ApplicationController
           flash[:notice] = t(:"flash.tickets.notes.send_review_request.#{status}")
         else
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)
+        end
+      end
+
+      def note_to_kbase
+        begin
+          create_article if @publish_solution
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
         end
       end
 end

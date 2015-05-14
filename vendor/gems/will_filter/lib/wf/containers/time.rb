@@ -38,8 +38,12 @@ module Wf
               #{table_name}.created_at < '#{::Time.zone.now.beginning_of_day.to_s(:db)}' )]
           when "week" then
             return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_week.to_s(:db)}' "]
+          when "last_week" then
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_day.ago(7.days).to_s(:db)}' "]
           when "month" then
             return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_month.to_s(:db)}' "]
+          when "last_month" then
+            return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_day.ago(1.month).to_s(:db)}' "]
           when "two_months" then
             return [" #{table_name}.created_at > '#{::Time.zone.now.beginning_of_day.ago(2.months).to_s(:db)}' "]
           when "six_months" then

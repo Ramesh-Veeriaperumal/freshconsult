@@ -1001,9 +1001,7 @@ module ApplicationHelper
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
     if fb_page
-      return content_tag(:div, "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible.
-        It looks like username, password, or permission has been changed recently.Kindly
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('facebook_reauth')} <a href='/social/facebook' target='_blank'> #{t('reauthorize_facebook')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
@@ -1011,14 +1009,23 @@ module ApplicationHelper
 
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
-    link = "<a href='/admin/social/streams' target='_blank'>"
     if twt_handle
-      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible.
-        It looks like username or password has been changed recently. Kindly
-        #{link} fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('twitter_reauth')} <a href='/admin/social/streams' target='_blank'> #{t('reauthorize_twitter')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
+  end
+  
+  def social_reauth_required
+    fb_reauth = current_account.fb_reauth_check_from_cache
+    twitter_reauth = current_account.twitter_reauth_check_from_cache
+    if fb_reauth or twitter_reauth
+      reauth_alert = "<div class ='alert-message block-message warning full-width'>"
+      reauth_alert = "#{reauth_alert} <div><a href='/admin/social/streams' target='_blank'>Reauthorize your twitter account</a></div>" if twitter_reauth
+      reauth_alert = "#{reauth_alert} <div><a href='/social/facebook' target='_blank'>Reauthorize your facebook account</a></div>" if fb_reauth
+      reauth_alert = "#{reauth_alert} </div>"
+      reauth_alert.html_safe
+    end
   end
 
   # This helper is for the partial expanded/_ticket.html.erb
