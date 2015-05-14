@@ -1,8 +1,6 @@
 require_relative '../test_helper'
 
 class ApiConstraintsTest < ActionView::TestCase
-
-
   def test_api_constraint_instance
     constraint = ApiConstraints.new({:version => "2"})
     assert_equal "2", constraint.instance_variable_get(:@version)
@@ -30,5 +28,4 @@ class ApiConstraintsTest < ActionView::TestCase
     match = constraint.matches?(request)
     assert_nil match
   end
-
 end

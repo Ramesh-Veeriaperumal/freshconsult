@@ -1,6 +1,6 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
-
+    
     before_filter { |c| c.requires_feature :forums }        
     skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show]
     before_filter :portal_check, :only => [:show]
@@ -8,7 +8,6 @@ module ApiDiscussions
     
     def create
       post  = @topic.posts.build(params[cname].symbolize_keys.delete_if{|x| !(ApiConstants::CREATE_POST_FIELDS.values.flatten.include?(x))})
-      # why? we can set only body_html, created_at, updated_at here. so, is processing the keys necessary?
       assign_user_and_parent post, :topic, @topic
       super
     end
@@ -20,7 +19,11 @@ module ApiDiscussions
       super
     end
 
-    protected
+  private
+
+    def load_association
+      @posts = @topic.posts
+    end
 
     def load_association
       @posts = @topic.posts
@@ -48,9 +51,6 @@ module ApiDiscussions
       end
     end
 
-
-		private
-
 		def portal_check
 			access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
 		end
@@ -64,7 +64,7 @@ module ApiDiscussions
 			params[cname].permit(*(fields.map(&:to_s)))
 			topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
 			unless topic.valid?
-				@errors = format_error(topic.errors)
+				@errors = ErrorHelper.format_error(topic.errors)
 				render :template => '/bad_request_error', :status => 400
 			end
 		end

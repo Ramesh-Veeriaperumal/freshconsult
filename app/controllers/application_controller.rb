@@ -191,12 +191,12 @@ class ApplicationController < ActionController::Base
     end
 
     def day_pass_expired_json
-      @error = ::ApiError::RequestError.new(:access_denied)
+      @error = RequestError.new(:access_denied)
       render :template => '/request_error', :status => 403
     end
 
     def account_suspended_json
-      @error = ::ApiError::RequestError.new(:account_suspended)
+      @error = RequestError.new(:account_suspended)
       render :template => '/request_error', :status => 403
     end
 
@@ -245,7 +245,7 @@ class ApplicationController < ActionController::Base
           render :json => {:logout => 'success'}.to_json
         }
         format.json{
-          @error = ::ApiError::RequestError.new(:unverified_request)
+          @error = RequestError.new(:unverified_request)
           render :template => '/request_error', :status => 401
         }
         format.widget{

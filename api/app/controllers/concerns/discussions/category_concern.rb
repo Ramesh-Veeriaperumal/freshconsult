@@ -1,15 +1,11 @@
 module Discussions::CategoryConcern
   extend ActiveSupport::Concern
+  included do
+    prepend_before_filter { |c| c.requires_feature :forums } # this has to be revisited
+  end
 
-    included do
-      prepend_before_filter { |c| c.requires_feature :forums } # this has to be revisited
-    end
-
-    protected
-
+  private
     def scoper
-  		current_account.forum_categories
-  	end
-
-    private
+      current_account.forum_categories
+    end
 end

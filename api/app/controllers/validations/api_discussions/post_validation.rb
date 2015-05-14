@@ -1,8 +1,6 @@
 module ApiDiscussions
-
-	class PostValidation
+  class PostValidation
     include ActiveModel::Validations 
-    include ApiValidators
 
     attr_accessor :user_id, :body_html, :topic_id, :created_at, :updated_at, :answer
     validates :body_html, :topic_id, :presence => true

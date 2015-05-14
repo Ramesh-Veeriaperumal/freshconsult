@@ -1,5 +1,5 @@
 module ApiDiscussions
-	class CategoryValidation
+  class CategoryValidation
     include ActiveModel::Validations 
 
     attr_accessor :name
@@ -8,5 +8,5 @@ module ApiDiscussions
     def initialize(controller_params, item)
       @name = controller_params["name"] || item.try(:name)
     end
- 	end
+  end
 end

@@ -24,8 +24,8 @@ module JsonPattern
   def bad_request_error_pattern field, value, params_hash={}
     {
       field: "#{field}", 
-      message: I18n.t("api.error_messages.#{value}", params_hash), 
-      code: ApiError::BaseError::API_ERROR_CODES_BY_VALUE[value]
+      message: I18n.t("api.error_messages.#{value}", params_hash.merge(:default => value)), 
+      code: ApiConstants::API_ERROR_CODES_BY_VALUE[value] ||  ApiConstants::DEFAULT_CUSTOM_CODE
     }
   end
 
@@ -45,13 +45,13 @@ module JsonPattern
   def request_error_pattern code, params_hash={}
     {
       code: code, 
-      message: I18n.t("api.error_messages.#{code}", params_hash)
+      message: I18n.t("api.error_messages.#{code}", params_hash.merge(:default => code))
     }
   end
 
   def base_error_pattern code, params_hash={}
     {
-      message: I18n.t("api.error_messages.#{code}", params_hash)
+      message: I18n.t("api.error_messages.#{code}", params_hash.merge(:default => code))
     }
   end
 

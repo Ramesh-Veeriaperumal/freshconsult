@@ -1,7 +1,6 @@
 require_relative '../test_helper'
 
   class ApiApplicationControllerTest < ActionController::TestCase
-    
     def test_latest_version 
       response = ActionDispatch::TestResponse.new
       controller.response = response
@@ -71,5 +70,4 @@ require_relative '../test_helper'
       assert_not_nil @controller.instance_variable_get(:@item)
       assert_equal "test", actual.name
     end
-
   end

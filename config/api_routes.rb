@@ -1,5 +1,4 @@
 Helpkit::Application.routes.draw do
-
   api_routes = Proc.new do
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit]
@@ -16,6 +15,4 @@ Helpkit::Application.routes.draw do
     match "*route_not_found.:format", :to => "api_application#route_not_found"
     match "*route_not_found",         :to => "api_application#route_not_found"
   end
-
-
 end

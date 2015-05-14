@@ -1,49 +1,55 @@
-1. Have to take a call whether to include custom_code in base error class based on forthcoming error classess
-5. caching in view
-17. rubocop
-20. need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF-8")
-21. Should we need to introduce credits/merits for each usage of endpoint?
-23. forums method 
-24. forums customers parameter validation
-7. side loading associations(include as a param in GET requests)
-25. revisit all before filters, the order is a problem.
-27. combine all discussion methods into one ,example requires feature before filter.
-26. Should we need to use existing gem for date validations in model?
-28. update with no params will give 200.
-29. paginate associations ???
+--> Have to take a call whether to include custom_code in base error class based on forthcoming error classess
+--> caching in view
+--> rubocop
+--> need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF-8")
+--> Should we need to introduce credits/merits for each usage of endpoint?
+
+--> side loading associations(include as a param in GET requests)
+--> revisit all before filters, the order is a problem
+--> combine all discussion methods into one ,example requires feature before filter
+--> Should we need to use existing gem for date validations in model?
+--> update (override or incremental) - override
+--> paginate associations ???
+--> api limit in response header
+--> Forum is not a number
+--> only visibility 4 has to allow customer params
+--> post create, rubocop, monitor, caching(db also), metal
 
 Breaking changes in existing APIs
-1. Account suspended
-2. day pass required
-3. handle unverified request
-4. Api limit exceeded
-5. Post validation
+--> Account suspended
+--> day pass required
+--> handle unverified request
+--> Api limit exceeded
+--> Post validation
+--> customer forum validation
 
 completed:
-1. Multijson parse error handling
-6. pagination in index actions
-8. 405 handling
-10. need to add test to keep an eye on controllers filters(test should be written in such a way that it should break if new filters are added)
-11. Do we need to have dependency test for lib/helper methods overriden in our helpers/libs
-14. open_forums, have to investigate
-20. location header in create response - Rashmi
-12. 204 for delete?
-3. Rescue 500
-13. Enforce ssl
-16. inherit instead of concern?
-15. api limit in response header, allowed methods
-9. need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added)
-19. 429 for api limit
-22. tests for middleware
-4. APiApplication controller, test_helper refactoring
-21. change tests - remove strings and use json expressions.
-22. forum category show
-23. Allow header for 405
-9. Nomenclature for concerns - prefix with "concern"
-18. attr_accessible wrap params - self.inherited method
-28. remove desc html from forum, write complete fields test.
+--> Multijson parse error handling
+--> pagination in index actions
+--> 405 handling
+--> need to add test to keep an eye on controllers filters(test should be written in such a way that it should break if new filters are added)
+--> Do we need to have dependency test for lib/helper methods overriden in our helpers/libs
+--> open_forums, have to investigate
+--> location header in create response - Rashmi
+--> 204 for delete?
+--> Rescue 500
+--> Enforce ssl
+--> inherit instead of concern?
+--> api limit in response header, allowed methods
+--> need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added)
+--> 429 for api limit
+--> tests for middleware
+--> APiApplication controller, test_helper refactoring
+--> change tests - remove strings and use json expressions
+--> forum category show
+--> Allow header for 405
+--> Nomenclature for concerns - prefix with "concern"
+--> attr_accessible wrap params - self-->inherited method
+--> remove desc html from forum, write complete fields test
+--> created_at, updated_at only for create
+--> forums customers parameter validation
+
 
 Not necessary:
-8. Clean up old discussions controller *****
-11. update (override or incremental) - override
+--> Clean up old discussions controller *****
 

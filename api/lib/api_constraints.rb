@@ -4,6 +4,6 @@ class ApiConstraints
   end
 
   def matches?(req)
-    has_version = req.headers['Accept'].include?("application/vnd.freshdesk.v#{@version}") if req.headers['Accept']
+    req.headers['Accept'].include?("application/vnd.freshdesk.v#{@version}") if req.headers['Accept']
   end
 end

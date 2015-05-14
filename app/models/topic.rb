@@ -246,7 +246,7 @@ class Topic < ActiveRecord::Base
     
   FORUM_TO_STAMP_TYPE = {
     Forum::TYPE_KEYS_BY_TOKEN[:announce] => [nil],
-    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil],
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil], # nil should always be last, if not, revisit check_stamp_type
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY.keys,
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
   }
@@ -254,9 +254,13 @@ class Topic < ActiveRecord::Base
   def check_stamp_type
     if forum
       allowed_types = FORUM_TO_STAMP_TYPE[forum.forum_type]
-      is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
+      is_valid = allowed_types.include?(stamp_type)
       is_valid &&= check_answers if questions?
-      errors.add(:stamp_type, "allowed values are #{allowed_types}") unless is_valid
+      unless is_valid
+        error_msg = "allowed values are #{allowed_types.join(",")}"
+        error_msg += "nil" if allowed_types.include?(nil)
+        errors.add(:stamp_type, error_msg) 
+      end
     end
   end
 
@@ -457,6 +461,6 @@ class Topic < ActiveRecord::Base
   end
   
   def assign_default_stamps
-    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
+    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type] if forum
   end
 end

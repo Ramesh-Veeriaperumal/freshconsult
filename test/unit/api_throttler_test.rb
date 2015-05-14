@@ -1,7 +1,6 @@
 require_relative '../test_helper'
 
 class ApiThrottlerTest < ActionView::TestCase
-
   def env_for(url, opts={})
     Rack::MockRequest.env_for(url, opts)
   end
@@ -27,5 +26,4 @@ class ApiThrottlerTest < ActionView::TestCase
     assert_equal true, ["Retry-After", "Content-Type"].all? {|key| headers.key? key }
     response.must_match_json_expression(too_many_request_error_pattern)
   end
-
 end

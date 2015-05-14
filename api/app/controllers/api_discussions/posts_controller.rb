@@ -5,28 +5,26 @@ module ApiDiscussions
     before_filter { |c| c.requires_feature :forums }        
     before_filter :set_user_and_topic_id, :only => [:create]
 
-		protected
+    private
 
-		private
+      def set_user_and_topic_id
+        @post.topic_id = params[cname]["topic_id"] 
+        @post.user_id ||= current_user.id
+        @post.portal = current_portal # is it needed for API?
+      end
 
-			def set_user_and_topic_id
-				@post.topic_id = params[cname]["topic_id"] 
-				@post.user_id ||= current_user.id
-				@post.portal = current_portal # is it needed for API?
-			end
+      def validate_params
+        fields = get_fields("ApiConstants::#{action_name.upcase}_POST_FIELDS")
+        params[cname].permit(*(fields.map(&:to_s)))
+        post = ApiDiscussions::PostValidation.new(params[cname], @post)
+        unless post.valid?
+          @errors = ErrorHelper.format_error(post.errors)
+          render :template => '/bad_request_error', :status => 400
+        end
+      end
 
-			def validate_params
-				fields = get_fields("ApiConstants::#{action_name.upcase}_POST_FIELDS")
-				params[cname].permit(*(fields.map(&:to_s)))
-				post = ApiDiscussions::PostValidation.new(params[cname], @post)
-				unless post.valid?
-					@errors = format_error(post.errors)
-					render :template => '/bad_request_error', :status => 400
-				end
-			end
-
-			def scoper
-			  current_account.posts
-			end
+      def scoper
+        current_account.posts
+      end
   end
 end

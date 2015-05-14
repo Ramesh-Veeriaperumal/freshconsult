@@ -15,7 +15,7 @@ class Discussions::ForumsController < ApplicationController
 
 	before_filter :set_selected_tab
 	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]   
-	 #do not change the order of concern as it has direct effect on ordering of before hooks 
+	# do not change the order of concern as it has direct effect on ordering of before hooks 
 	include Discussions::ForumConcern
 
 	before_filter :set_customer_forum_params, :only => [:create, :update]
@@ -145,7 +145,7 @@ class Discussions::ForumsController < ApplicationController
 
 	private
 
-    def cname # why?
+    def cname
       "forum"	
     end
 

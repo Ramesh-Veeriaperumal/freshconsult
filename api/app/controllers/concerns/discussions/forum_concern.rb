@@ -1,21 +1,20 @@
 module Discussions::ForumConcern
   extend ActiveSupport::Concern
+  included do
+     # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
+     before_filter :back_up_topic_ids, :only => [:destroy]
+     before_filter :assign_forum_category_id, :only => [:update]
+  end
 
-    included do
-       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
-       before_filter :back_up_topic_ids, :only => [:destroy]
-       before_filter :assign_forum_category_id, :only => [:update]
-    end
-
-    protected
+  private
   
     def back_up_topic_ids
        @forum.backup_forum_topic_ids  
     end  
 
     def scoper
-  	   current_account.forums
-  	end
+       current_account.forums
+    end
 
     def set_customer_forum_params 
       customers = params[:customers] || params[cname]["customers"]
@@ -26,6 +25,4 @@ module Discussions::ForumConcern
     def assign_forum_category_id
       @forum.forum_category_id = params[cname][:forum_category_id] if params[cname][:forum_category_id]
     end
-
-    private
 end

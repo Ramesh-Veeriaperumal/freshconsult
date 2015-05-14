@@ -7,9 +7,11 @@ module ApiDiscussions
     before_filter :portal_check, :only => [:show]
     before_filter :set_account_and_category_id, :only => [:create]
 
-		protected
+    private
 
-		private
+      def load_association
+         @topics = @forum.topics
+      end
 
       def load_association
          @topics = @forum.topics
@@ -25,22 +27,22 @@ module ApiDiscussions
         set_customer_forum_params
       end
 
-			def portal_check
-				access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
-			end
+      def portal_check
+        access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
+      end
 
-			def set_account_and_category_id # why assign account_id?
-				@forum.account_id ||= current_account.id
-				@forum.forum_category_id = params[cname]["forum_category_id"] # shall we use this assign_forum_category_id method
-			end
+      def set_account_and_category_id
+        @forum.account_id ||= current_account.id
+        @forum.forum_category_id = params[cname]["forum_category_id"] # shall we use this assign_forum_category_id method
+      end
 
-			def validate_params
-				params[cname].permit(*(ApiConstants::FORUM_FIELDS.map(&:to_s)))
-				forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
-				unless forum.valid?
-					@errors = format_error(forum.errors)
-					render :template => '/bad_request_error', :status => 400
-				end
-			end
+      def validate_params
+        params[cname].permit(*(ApiConstants::FORUM_FIELDS.map(&:to_s)))
+        forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
+        unless forum.valid?
+          @errors = ErrorHelper.format_error(forum.errors)
+          render :template => '/bad_request_error', :status => 400
+        end
+      end
   end
 end
