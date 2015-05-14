@@ -64,12 +64,11 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid }, :customer => user)
   end
 
-  def build_freshfone_caller
-    number = "+12345678900"
+  def build_freshfone_caller(number = "+12345678900")
     account = @freshfone_call.account
     caller  = @account.freshfone_callers.find_or_initialize_by_number(number)
     caller.update_attributes({:number => number})
-      @freshfone_call.update_attributes(:caller => caller)
+    @freshfone_call.update_attributes(:caller => caller)
   end
 
   def create_freshfone_user(presence = 0)

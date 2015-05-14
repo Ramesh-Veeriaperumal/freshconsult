@@ -1,6 +1,7 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
 	include Mobile::Actions::Freshfone
+	include Freshfone::CallerLookup
 	self.table_name =  :freshfone_calls
     self.primary_key = :id
 
@@ -355,7 +356,8 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def params_requester_name
-			params[:requester_name] unless params[:requester_name].blank?
+			params[:requester_name] = caller_lookup(caller_number) if params[:requester_name].blank? || params[:requester_name] == caller_number
+			params[:requester_name] 
 		end
 		
 		def params_ticket_subject

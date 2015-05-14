@@ -62,6 +62,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			return this.cached.$restrictedCountryText = this.cached.$restrictedCountryText ||
 																			this.$container.find('.restricted_country');
 		},
+		$strangeNumberText: function() {
+			return this.cached.$strangeNumberText = this.cached.$strangeNumberText || this.$container.find('.strange_number');
+		},
 		$outgoingNumberSelector: function () {
 			return this.cached.$outgoingNumber = this.cached.$outgoingNumber ||
 																			this.$container.find('#outgoing_number_selector');
@@ -186,6 +189,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 			
 
+			this.$strangeNumberText().toggle(false);
 			this.$infoText().hide();
 			this.$restrictedCountryText().hide();
 			this.toggleInvalidNumberText(false);
@@ -198,7 +202,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 
 		toggleInvalidNumberText: function (show) {
 			if (this.$alreadyInCallText().is(":visible")) { this.toggleAlreadyInCallText(false);}
-			if(show && !(this.exceptionalNumberValidation(phoneNumber))){
+			if(show && !(this.exceptionalNumberValidation(phoneNumber)) && !(freshfonewidget.checkForStrangeNumbers(phoneNumber)) ) {
 			 this.$invalidNumberText().toggle(show || false);
 			 this.$invalidPhoneNumber().toggle(!show || false);
 			}
@@ -214,7 +218,11 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.number = $.keypad.selectedCode + this.number;
    			}
 			phoneNumber = this.number;
-			return (this.number !== this.outgoingNumber()) && (isValidNumber(this.number) || this.numberValidation());
+			if(freshfonewidget.checkForStrangeNumbers(this.number)){
+				 this.$strangeNumberText().toggle(true);
+				 return false;
+			}
+			return (this.number !== this.outgoingNumber()) && (isValidNumber(this.number) || this.numberValidation()) ;
 		},
 		numberValidation: function () {
 			if(!(isValidNumber(this.number)) && this.exceptionalNumberValidation(this.number)){
@@ -229,8 +237,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		hideText: function() {
 			$('.invalid_phone_text').hide();
-		    $('.invalid_phone_num').hide();
+		  $('.invalid_phone_num').hide();
 		  this.$restrictedCountryText().hide();
+		  this.$strangeNumberText().toggle(false);
 		},
 		previewIvr: function (id) {
 			var params = {

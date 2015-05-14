@@ -63,5 +63,6 @@
 	  freshfone.networkErrorSound.load();
   });
 
+  freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>

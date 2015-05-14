@@ -1,7 +1,7 @@
 <% if call.caller_number %>
 
 <% current_number = (numbers_hash[call.freshfone_number_id] if @current_number.blank?) %> <!-- Used for All Numbers filter -->
-
+<% is_strange_number = strange_number_class(call.caller_number) %>
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
 	<td class="user_details width1">
 		<div class="freshfone_customer relative tooltip">
@@ -13,7 +13,7 @@
 	
 			<%= call.customer.blank? ? unknown_user_avatar : user_avatar(call.customer) %>
 			
-			<div class="ellipsis">
+			<div class="ellipsis <%= is_strange_number if call.customer.blank? %>">
 					<b><%= call.customer.present? ? link_to_user(call.customer) : call.caller_number %></b>
 			</div>
 			<div class="ff-user-location muted <%= "location_unknown" if call.location.blank? %>"
@@ -115,7 +115,7 @@
 	 <% if current_account_freshfone_numbers.any? %>
 	<td class="width3">
 		<div class="call_user pull-right">
-					<%= can_make_calls(call.caller_number, "", call.freshfone_number_id) %>
+				<%= is_strange_number.present? ? cannot_make_calls() : can_make_calls(call.caller_number,"",call.freshfone_number_id) %>
 			</div>
 		<div class="assigned_ticket <%='converted_ticket' if call.notable_present? %> btn-round pull-right tooltip" 
 		title="<%= call.notable_present? ? 

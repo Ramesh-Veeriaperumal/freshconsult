@@ -109,20 +109,17 @@
 	}
 	.call_user {
 		@extend .btn-round;
-		.can-make-calls {
+		.restrict-call,.can-make-calls {
 			margin: 0 auto;
 			@include size(30px, 30px);
-			text-indent: -9999px;
 			display: block;
 			direction: ltr;
-			padding: 0;
-			font-size: 18px;
-			position: relative;
-			top: 4px;
-			left:1px;
-			&:before{
-				margin-top: 10px;
-			}
+			padding-top: 3px;
+			font-size: 20px;
+			line-height:30px;
+		}
+		.restrict-call{
+			cursor: default;
 		}
 	}
 	.preview_pic img,	.callhistory_helpdesk_avatar {
