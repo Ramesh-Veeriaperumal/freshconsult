@@ -205,8 +205,9 @@ window.liveChat.visitorFormSettings = function($){
 																						: _widget.prechat_fields;
 								var old_dropdown_value = parseInt(oldPrechatFields.dropdown.show);
 								var new_dropdown_value = parseInt(params.prechat_fields.dropdown.show);
-								if(!(old_dropdown_value == new_dropdown_value && old_dropdown_value && new_dropdown_value && chat_pusher)){
-									var availableChannel = chat_pusher.channel('presence-Available-'+SITE_ID);
+								// TODO : TO be pushed to client_wrapper
+								if(!(old_dropdown_value == new_dropdown_value && old_dropdown_value && new_dropdown_value && liveChat.clientWrapper.chat_pusher)){
+									var availableChannel = liveChat.clientWrapper.chat_pusher.channel('presence-Available-'+SITE_ID);
 									var status = new_dropdown_value ? true : false;
 									if(availableChannel){
 										availableChannel.trigger('client-channel-routing', {status: status});
