@@ -19,8 +19,7 @@ module ApiDiscussions
         params[cname].permit(*(ApiConstants::CATEGORY_FIELDS.map(&:to_s)))
         category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
         unless category.valid?
-          @errors = ErrorHelper.format_error(category.errors)
-          render :template => '/bad_request_error', :status => 400
+          render_error category.errors
         end
       end
 

@@ -5,7 +5,7 @@ class Monitorship < ActiveRecord::Base
   belongs_to :monitorable, :polymorphic => true
   belongs_to :user
   belongs_to :portal
-  validates_presence_of :monitorable_type, :monitorable_id
+  validates_presence_of :monitorable_type, :monitorable_id, :user
   validates_uniqueness_of :user_id, :scope => [:monitorable_id, :monitorable_type, :account_id]
   validate :user_has_email
 
@@ -52,7 +52,7 @@ class Monitorship < ActiveRecord::Base
   end
 
   def user_has_email
-  	unless user.has_email?
+  	if user && !user.has_email?
   	  errors.add(:user_id,"Not a valid user")
   	end
   end

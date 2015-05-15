@@ -83,6 +83,22 @@ class ApiApplicationController < ApplicationController
     def set_custom_errors
     end
 
+    def can_send_user?
+      user_id = params[cname][:user_id]
+      if (user_id || @email)
+        @user = current_account.all_users.find_by_email(@email) if @email
+        @user ||= current_account.all_users.find_by_id(user_id)
+        if @user && !is_allowed_to_assume?(@user)
+          render_invalid_user_error
+        end
+      end
+    end
+
+    def render_invalid_user_error
+      @errors = [BadRequestError.new("user_id/email", "invalid_user")]
+      render :template => '/bad_request_error', :status => 400
+    end
+
     def render_500(e)
       raise e if Rails.env.development? || Rails.env.test?
       Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")

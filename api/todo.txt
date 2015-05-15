@@ -14,6 +14,7 @@
 --> Forum is not a number
 --> only visibility 4 has to allow customer params
 --> post create, rubocop, monitor, caching(db also), metal
+--> Bullet for tests?
 
 Breaking changes in existing APIs
 --> Account suspended
@@ -22,6 +23,7 @@ Breaking changes in existing APIs
 --> Api limit exceeded
 --> Post validation
 --> customer forum validation
+--> Monitorship validation
 
 completed:
 --> Multijson parse error handling

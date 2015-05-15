@@ -9,11 +9,15 @@ Helpkit::Application.routes.draw do
       resources :forums, :except => [:new, :edit, :index] do
         member do
           get :topics
+          post :follow, to: :follow
+          delete :follow, to: :unfollow
         end
       end
       resources :topics, :except => [:new, :edit, :index]do
         member do
           get :posts
+          post :follow, to: :follow
+          delete :follow, to: :unfollow
         end
       end
       resources :posts, :except => [:new, :edit, :index, :show]

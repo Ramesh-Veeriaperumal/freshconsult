@@ -1,13 +1,16 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
     
-    before_filter { |c| c.requires_feature :forums }        
-    skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show]
+    before_filter { |c| c.requires_feature :forums }  
+    skip_before_filter :check_privilege, :verify_authenticity_token,
+     :only => [:show, :follow, :unfollow]
+    include Api::DiscussionMonitorConcern
     before_filter :portal_check, :only => [:show]
+    before_filter :can_send_user?, :only => [:create, :follow, :unfollow]
     before_filter :set_forum_id, :only => [:create, :update]
     
     def create
-      post  = @topic.posts.build(params[cname].symbolize_keys.delete_if{|x| !(ApiConstants::CREATE_POST_FIELDS.values.flatten.include?(x))})
+      post = @topic.posts.build(params[cname].symbolize_keys.delete_if{|x| !(ApiConstants::CREATE_POST_FIELDS.values.flatten.include?(x))})
       assign_user_and_parent post, :topic, @topic
       super
     end
@@ -23,7 +26,6 @@ module ApiDiscussions
       @posts = paginate_items(@topic.posts)
       render :partial => '/api_discussions/posts/post_list' #Need to revisit this based on eager loading associations in show
     end
-
 
   private
 
@@ -42,7 +44,7 @@ module ApiDiscussions
 
     def assign_user_and_parent item, parent, value
       if @email.present?
-        item.user = current_account.all_users.find_by_email(@email)
+        item.user = @user
       else
         item.user_id ||= (params[cname][:user_id] || current_user.id)
       end
@@ -66,8 +68,7 @@ module ApiDiscussions
 			params[cname].permit(*(fields.map(&:to_s)))
 			topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
 			unless topic.valid?
-				@errors = ErrorHelper.format_error(topic.errors)
-				render :template => '/bad_request_error', :status => 400
+				render_error topic.errors
 			end
 		end
 

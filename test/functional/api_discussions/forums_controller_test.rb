@@ -237,5 +237,77 @@ module ApiDiscussions
       match_json(result_pattern)
     end
 
+    def test_before_filters_follow_not_logged_in
+      @controller.stubs(:logged_in?).returns(false).once
+      @controller.expects(:verify_authenticity_token).never
+      @controller.expects(:check_privilege).never
+      @controller.expects(:access_denied).once
+      post :follow, construct_params({:id => f_obj.id}, {})
+    end
+
+    def test_before_filters_follow_logged_in
+      @controller.expects(:verify_authenticity_token).never
+      @controller.expects(:check_privilege).never
+      @controller.expects(:access_denied).never
+      post :follow, construct_params({:id => f_obj.id}, {})
+    end
+
+    def test_before_filters_unfollow_not_logged_in
+      @controller.stubs(:logged_in?).returns(false).once
+      @controller.expects(:verify_authenticity_token).never
+      @controller.expects(:check_privilege).never
+      @controller.expects(:access_denied).once
+      delete :unfollow, construct_params({:id => f_obj.id}, {})
+    end
+
+    def test_before_filters_unfollow_logged_in
+      @controller.expects(:verify_authenticity_token).never
+      @controller.expects(:check_privilege).never
+      @controller.expects(:access_denied).never
+      delete :unfollow, construct_params({:id => f_obj.id}, {})
+    end
+
+    def test_follow_invalid_forum_id
+      post :follow, construct_params({:id => 999})
+      assert_response :not_found
+    end
+
+    def test_unfollow_invalid_forum_id
+      delete :unfollow, construct_params({:id => 999})
+      assert_response :not_found
+    end
+
+    def test_permit_toggle_params_valid
+      delete :unfollow, construct_params({:id => f_obj.id}, {:user_id => other_user.id})
+      assert_response :no_content
+      monitorship = Monitorship.where(:monitorable_type => "Forum", :user_id => other_user.id, :monitorable_id => f_obj.id).first
+      refute monitorship.active
+    end
+
+    def test_permit_toggle_params_invalid
+      delete :unfollow, construct_params({:id => f_obj.id}, {:user_id => @agent.id})
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("user_id/email", "invalid_user")])
+    end
+
+    def test_follow_user_id_invalid
+      post :follow, construct_params({:id => f_obj.id}, {:user_id => 999})
+      assert_response :bad_request
+      match_json [bad_request_error_pattern("user", "can't be blank")]
+    end
+
+    def test_new_monitor_follow_user_id_valid
+      user = user_without_monitorships
+      post :follow, construct_params({:id => f_obj.id}, {:user_id => user.id})
+      assert_response :no_content
+      monitorship = Monitorship.where(:monitorable_type => "Forum", :user_id => user.id, :monitorable_id => f_obj.id).first
+      assert monitorship.active
+    end
+
+    def test_new_monitor_unfollow_user_id_invalid
+      delete :unfollow, construct_params({:id => f_obj.id}, {:user_id => 999})
+      assert_response :bad_request
+      match_json [bad_request_error_pattern("user", "can't be blank")]
+    end
   end
 end

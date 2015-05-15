@@ -9,9 +9,9 @@ module ApiConstants
     CATEGORY_FIELDS = [:name, :description]
     FORUM_FIELDS = [:name, :description, :forum_category_id, :forum_type, :forum_visibility, :customers]
     UPDATE_TOPIC_FIELDS = {:all => [:title, :message_html, :stamp_type], :edit_topic => [:sticky, :locked], :manage_forums => [:forum_id]}
-    CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(:view_admin => [:created_at, :updated_at, :email, :user_id])
+    CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(:view_admin => [:created_at, :updated_at], :manage_users => [:email, :user_id])
     UPDATE_POST_FIELDS = {:all => [:body_html, :answer]}
-    CREATE_POST_FIELDS = {:all => [:body_html, :answer, :topic_id], :view_admin => [:created_at, :updated_at, :email, :user_id]}
+    CREATE_POST_FIELDS = {:all => [:body_html, :answer, :topic_id], :view_admin => [:created_at, :updated_at], :manage_users => [:email, :user_id]}
 
   # ValidationConstants
     BOOLEAN_VALUES = ["0", 0, false, "1", 1, true]
@@ -25,7 +25,7 @@ module ApiConstants
   # ErrorConstants
     API_ERROR_CODES = {
         :already_exists => ["has already been taken", "already exists in the selected category"],
-        :invalid_value => ["can't be blank", "is not included in the list"],
+        :invalid_value => ["can't be blank", "is not included in the list", "invalid_user"],
         :datatype_mismatch => ["is not a date", "is not a number"],
         :invalid_field => ["invalid_field"],
         :missing_field => ["missing_field"]

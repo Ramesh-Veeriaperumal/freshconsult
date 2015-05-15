@@ -7101,6 +7101,7 @@ en:
       can't be blank: "Should not be blank"
       invalid_field: "Unexpected/invalid field in request"
       missing_field: "Mandatory attribute missing"
+      invalid_user: "User specified does not have permission."
       access_denied: You are not authorized to perform this action.
       require_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.
       invalid_credentials: You have to be logged in to perform this action.
