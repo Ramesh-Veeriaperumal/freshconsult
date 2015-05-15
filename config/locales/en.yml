@@ -154,6 +154,10 @@ en:
   trail_expiry_one_more_day: "Select a paid or free plan immediately to enjoy uninterrupted access to Freshdesk"
   trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
+  facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
+  reauthorize_facebook: "Reauthorize your facebook account."
+  twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
+  reauthorize_twitter: Reauthorize your twitter handle.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
   upgrade_trial: Upgrade your trial!
@@ -218,6 +222,7 @@ en:
   after_onemonth: After 1 Month
   add_more_lang: Add supported languages to your helpdesk.
   support_multi_languge: Supporting customers across more than one language?
+  many: many
   user:
     company: Company
     photo: Photo
@@ -1764,6 +1769,7 @@ en:
       number:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
+        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in %{country}."
         blank_message: "%{num_type} cannot be blank"
         invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
         add_blacklist_success: "Number blocked successfully"
@@ -2545,6 +2551,10 @@ en:
     edit: Edit Topic
     close: Close Topic
     mark_as_spam: Mark as Spam
+    vote:
+      one: 1 person
+      other: "%{count} people"
+    upvote_appended_text: upvoted this
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -2673,6 +2683,7 @@ en:
       other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
+      upvote: Upvote      
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
@@ -2696,6 +2707,11 @@ en:
         vote_info_include_2: "You and %{vote} People have this Question"
         voted_users_widget_title: People who have this question
     post:
+      upvote: Upvote
+      voted_up_title: people upvoted this post
+      voted_up_message:
+        one: person upvoted this post
+        other: people upvoted this post
       posted_on: "%{user_name} on %{post_date}"
       edit_comment: Edit Comment
       unmark_answer: Unmark as answer
@@ -2798,6 +2814,7 @@ en:
     delete_agent_confirmation: The deleted agent will be available as a contact. This will remove all agent information from the helpdesk. Are you sure you want to proceed?
     convert_agent_confirmation: Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?
     agent_restored: The agent has been restored
+    convert_to_contact: Convert To Contact
     status:
       active: Active
       deleted: Deleted
@@ -3145,6 +3162,8 @@ en:
     my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
     topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
+    topic_not_found: "Seems like this topic has been deleted"
+    post_not_found: "Seems like this post has been deleted"
     showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
@@ -3189,16 +3208,28 @@ en:
       merge_note:
         one: "Topic merged into this topic:"
         other: "Topics merged into this topic:"
-    topic_vote:
+      sort_heading: "Sorted by:"
+      sort_order:
+        date: "Oldest First"
+        recency: "Newest First"
+        popularity: "Popular"
+      sort_by_most_recent: "Most Recent"
+      sort_by_most_popular: "Most Popular"
+      sort_by_default: "Default"
+    vote:
       you:
-        one: "You"
-        other: "You and"
+        one: "You "
+        other: "You and "
       more:
-        one: "1 other"
-        other: "%{count} others"
+        one: "1 other "
+        other: "%{count} others "
       people:
-        one: "1 person"
-        other: "%{count} people"
+        one: "1 person "
+        other: "%{count} people "
+    topic_vote:
+      announce:
+        one: "likes this"
+        other: "like this"
       ideas:
         one: "likes this idea"
         other: "like this idea"
@@ -3208,15 +3239,28 @@ en:
       howto:
         one: "has this question"
         other: "have this question"
+      votes: "votes"
+      upvote: "up-vote"
+      upvoted: "up-voted"
+      user_upvote_list_title: "People who up-voted"
+      announce_button: "Do you like this?"
       ideas_button: "Do you like this idea?"
       problem_button: "Do you have this problem?"
       howto_button: "Do you have this question as well?"
+      announce_unlike_button: "unlike!"
       ideas_unlike_button: "unlike!"
       problem_unlike_button: "I don't have this problem!"
       howto_unlike_button: "I don't have this question!"
+      announce_users_voted_title: People who like this 
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
+    post_vote:
+      upvoted: "You have upvoted"
+      upvote: "Upvote"
+      like:
+        one: "like this"
+        other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
       export: "Export tickets"
@@ -3642,6 +3686,8 @@ en:
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
+    disable_agent_forward: "For forwarded emails, use original sender as requester"
+    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
   step2: Step 2
@@ -5185,6 +5231,38 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    dynamicscrm:
+      label: "DynamicsCRM"
+      helptext: "<h4>Dynamics CRM Integration Help</h4><p><br/> Once you enable this integration, your agents can access Dynamics CRM contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
+      desc: "You can view contact information from DynamicsCRM in Freshdesk."
+      form:
+        instance_type: "Dynamics CRM Instance Type"
+        password: "Password"
+        domain: "User Id"
+        endpoint: "Organization Service SOAP End Point"
+        loginurl: "Login Url"
+        region: "Region"
+        organization_name: "Organization Unique Name"
+        contact_email: "Contact Email"
+        account_email: "Account Email (Optional)"
+        lead_email: "Lead Email (Optional)"
+        instance_info: "On-Demand instances should be converted to IFD for this integration to work."
+        domain_info: "Use super admin's office 365 user ID like name@company.onmicrosoft.com in case of On-demand."
+        organization_name_info: "To locate this go to DynamicsCRM Settings -> Customizations -> DeveloperResources -> Your Organization Information -> Organization Unique Name."
+        end_point_info: "Example: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. To locate this go to DynamicsCRM Settings -> Customizations -> DeveloperResources -> Organisation Service for SOAP protocol in the bottom of the developer resource page."
+        account_email_info : "Enter a valid email ID associated with any account in Dynamics CRM (based on which account associated CRM fields are listed in the next step)"
+        contact_email_info : "Enter a valid email ID associated with any contact in Dynamics CRM (based on which contact associated CRM fields are listed in the next step)"
+        lead_email_info: "Enter a valid email ID associated with any lead in Dynamics CRM (based on which lead associated CRM fields are listed in the next step)"
+        login_url: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Login URL: Policy -> Issuer -> Address."
+        region_info: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Region: SecureTokenService -> AppliesTo."
+        dynamicscrm_settings: "DynamicsCRM Settings"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        error: "Oops, something went wrong! Please verify if you have entered correct values."
+        entity_error: "is not a valid email address for the Entity type"
+        api_error: "Problem gathering API data!"
+
     google_calendar:
       label: "Google Calendar"
       desc: "You can manage events for each ticket with Google Calendar."
@@ -5885,6 +5963,8 @@ en:
   yesterday: Yesterday
   seven_days: This Week
   thirty_days: This Month
+  last_week: Last week
+  last_month: Last month
   two_months: Last 2 months
   six_months: Last 6 months
   set_date: Select Time Period
@@ -6122,6 +6202,7 @@ en:
       not_enough_credit: "Not Enough Credit"
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
+      strange_number: "Cannot call a Restricted number"
     call_status:
       default: ""
       completed: "Completed"
@@ -6182,6 +6263,7 @@ en:
       inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
+      network_error: "Check your Internet Connection"
     call_history:
       title: "Call History"
       sort_by: "Sorted by:"
@@ -6241,6 +6323,12 @@ en:
         successful: "Call Recording deleted successfully!"
         unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
         error: "Error while deleting a Call Record!!! Please try again after some time"
+      strange_numbers:
+      	restricted: "RESTRICTED"
+      	blocked: "BLOCKED"
+      	unknown: "UNKNOWN"
+      	anonymous: "ANONYMOUS"
+      	empty: "EMPTY"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6341,7 +6429,7 @@ en:
         purchase_confirm: "Are you sure?"
         delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
         manage: "Manage"
-        cannot_purchase: "Unable to purchase number for your Freshfone account"
+        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in <span class='certification-country'></span>."
         insuffcient_credits: "Your Freshfone credit is too low to purchase a new number. Please recharge and try again"
         address:
           name: "Company / Name"
@@ -6868,6 +6956,9 @@ en:
       replied: replied
       spam: Spam
       waiting_for_approval: Unpublished
+      comment:
+        one: "1 Comment"
+        other: "%{count} Comments"
       locked: Locked
       locked_label: Topic is locked for comments
       merged_label: Topic is merged into another topic

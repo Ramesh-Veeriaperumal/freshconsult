@@ -102,6 +102,15 @@ class Admin::EmailConfigsController < Admin::AdminController
 
     redirect_to :back
   end
+
+  def toggle_agent_forward_feature
+    if current_account.features_included?(:disable_agent_forward)
+      current_account.features.disable_agent_forward.destroy
+    else
+      current_account.features.disable_agent_forward.create
+    end
+    post_process
+  end
   
   def personalized_email_enable    
     current_account.features.personalized_email_replies.create

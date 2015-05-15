@@ -1,6 +1,7 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
 	include Mobile::Actions::Freshfone
+	include Freshfone::CallerLookup
 	self.table_name =  :freshfone_calls
     self.primary_key = :id
 
@@ -148,7 +149,7 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 	end
 
-	[ :number, :city, :state, :country ].each do |type|
+	[ :number, :city, :state, :country, :id].each do |type|
 		define_method("caller_#{type}") do
 			(caller || {})[type]
 		end
@@ -181,6 +182,7 @@ class Freshfone::Call < ActiveRecord::Base
 	def update_status(params)
 		if params[:DialCallStatus]
 			self.call_status = CALL_STATUS_STR_HASH[params[:DialCallStatus]]
+			self.call_status = CALL_STATUS_HASH[:voicemail] if voicemail_ticket?
 		elsif default? and params[:force_termination]
 			self.call_status = CALL_STATUS_HASH[:'no-answer']
 		end
@@ -354,7 +356,8 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def params_requester_name
-			params[:requester_name] unless params[:requester_name].blank?
+			params[:requester_name] = caller_lookup(caller_number) if params[:requester_name].blank? || params[:requester_name] == caller_number
+			params[:requester_name] 
 		end
 		
 		def params_ticket_subject
@@ -390,7 +393,7 @@ class Freshfone::Call < ActiveRecord::Base
 				:call_id => id,
 				:call_duration => call_duration
 			}
-			record_params.merge!({:voicemail => true}) if (call_status === CALL_STATUS_HASH[:'no-answer'] )
+			record_params.merge!({:voicemail => true}) if ([ CALL_STATUS_HASH[:'no-answer'], CALL_STATUS_HASH[:voicemail]].include?(call_status))
 			record_params.merge!({:agent => user_id}) if ( record_params[:voicemail] && !user_id.nil?)
 			Resque::enqueue_at(30.seconds.from_now, Freshfone::Jobs::CallRecordingAttachment, record_params) if recording_url
 		end

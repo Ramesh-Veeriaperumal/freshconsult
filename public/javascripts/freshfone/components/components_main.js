@@ -5,7 +5,8 @@ var freshfonetimer,
 		freshfonesocket,
 		freshfoneendcall,
 		freshfoneUserInfo,
-		freshfoneNotification;
+		freshfoneNotification,
+		freshfoneNetworkError;
 (function ($) {
 	"use strict";
 	$(document).ready(function() {
@@ -17,13 +18,15 @@ var freshfonetimer,
 		freshfonewidget = new FreshfoneWidget();
 		freshfoneendcall = new FreshfoneEndCall();
 		freshfoneNotification = new FreshfoneNotification();
+		freshfoneNetworkError = new FreshfoneNetworkError();
 
-		freshfonesocket.loadDependencies(freshfonecalls);
+		freshfonesocket.loadDependencies(freshfonecalls,freshfoneNetworkError);
 		freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket,freshfoneNotification);
 		freshfonecalls.loadDependencies(freshfoneuser, freshfonetimer, freshfoneUserInfo);
 		freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser);
 		freshfoneendcall.loadDependencies(freshfonecalls, freshfoneuser, freshfonewidget);
 		freshfoneNotification.loadDependencies(freshfonecalls, freshfoneUserInfo);
+		freshfoneNetworkError.loadDependencies(freshfonewidget,freshfonecalls,freshfoneuser);
 		window.ffLogger = new FreshfoneLogger();
 	});
 	// End ongoing call

@@ -15,6 +15,7 @@ module ApplicationHelper
   include Integrations::Util
   include Integrations::IntegrationHelper
   include CommunityHelper
+  include Freshfone::CallerLookup
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -1001,9 +1002,7 @@ module ApplicationHelper
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
     if fb_page
-      return content_tag(:div, "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible.
-        It looks like username, password, or permission has been changed recently.Kindly
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('facebook_reauth')} <a href='/social/facebook' target='_blank'> #{t('reauthorize_facebook')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
@@ -1011,14 +1010,23 @@ module ApplicationHelper
 
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
-    link = "<a href='/admin/social/streams' target='_blank'>"
     if twt_handle
-      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible.
-        It looks like username or password has been changed recently. Kindly
-        #{link} fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('twitter_reauth')} <a href='/admin/social/streams' target='_blank'> #{t('reauthorize_twitter')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
+  end
+  
+  def social_reauth_required
+    fb_reauth = current_account.fb_reauth_check_from_cache
+    twitter_reauth = current_account.twitter_reauth_check_from_cache
+    if fb_reauth or twitter_reauth
+      reauth_alert = "<div class ='alert-message block-message warning full-width'>"
+      reauth_alert = "#{reauth_alert} <div><a href='/admin/social/streams' target='_blank'>Reauthorize your twitter account</a></div>" if twitter_reauth
+      reauth_alert = "#{reauth_alert} <div><a href='/social/facebook' target='_blank'>Reauthorize your facebook account</a></div>" if fb_reauth
+      reauth_alert = "#{reauth_alert} </div>"
+      reauth_alert.html_safe
+    end
   end
 
   # This helper is for the partial expanded/_ticket.html.erb
@@ -1068,11 +1076,11 @@ module ApplicationHelper
 		can_make_calls(number, 'mobile-icons', freshfone_number_id)
 	end
 
-	def can_make_calls(number, class_name=nil, freshfone_number_id=nil)
+	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)
 		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
 		#																	 :'data-freshfone-number-id' => freshfone_number_id,
     #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , number, { :'data-phone-number' => "#{number}",
+    content_tag(:span , can_show_number ? number : nil, { :'data-phone-number' => "#{number}",
                                   :'data-freshfone-number-id' => freshfone_number_id,
                                   :class => "can-make-calls #{class_name}" })
 

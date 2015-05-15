@@ -31,9 +31,10 @@
 		</label>
 		<div class="controls">
 			<%= form.select :forum_id, grouped_options_for_select(forum_options), 
-				{ :include_blank => t("portal.topic.default_select_option") },
+				{ :include_blank => true },
 				{ :class => "required custom-select", 
-				  :disabled => !@topic.new_record? } %>
+				  :disabled => !@topic.new_record?,
+				  :data => { :placeholder => t("portal.topic.default_select_option") } } %>
 			<%= javascript_tag do %>
 				jQuery("#topic_forum_id").val(<%= params[:forum_id] || @topic.forum_id %>)
 			<% end %>

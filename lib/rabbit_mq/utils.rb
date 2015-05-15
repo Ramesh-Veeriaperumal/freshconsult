@@ -56,6 +56,7 @@ module RabbitMq::Utils
 
   #made this as a function, incase later we want to compress the data before sending
   def send_message(message, key)
+    return unless key.include?("1")
     self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
       Timeout::timeout(CONNECTION_TIMEOUT) {
         publish_message_to_xchg(message, key)

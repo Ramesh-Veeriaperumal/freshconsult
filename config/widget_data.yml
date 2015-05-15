@@ -317,3 +317,12 @@
   description: integrations.seoshop.desc
   application_type: seoshop
 
+- options:
+    display_in_pages:
+    - contacts_show_page_side_bar
+  script: "\n \t\t<div id=\"dynamicscrm_widget\" class=\"integration_widget crm_contact_widget\">\n <div class=\"content\"></div>\n\
+\t\t<div class=\"error name hide\"></div>\n </div>\n <script type=\"text/javascript\">\n CustomWidget.include_js(\"/javascripts/integrations/dynamicscrm.js\");\n dynamicscrmBundle={ reqEmail:\"{{requester.email}}\", domain:\"{{dynamicscrm.domain}}\", endpoint:\"{{dynamicscrm.endpoint}}\"  } ;\n </script>\n "
+  name: dynamicscrm_widget
+  id: 21
+  description: dynamicscrm.widgets.dynamicscrm_widget.description
+  application_type: dynamicscrm

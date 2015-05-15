@@ -8,7 +8,7 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
   end
 
   def mq_auto_refresh_subscriber_properties(action)
-    {}
+    { :model_changes => model_changes_hash}
   end
 
   def mq_auto_refresh_valid(action)
@@ -18,6 +18,30 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
   private
 
   def auto_refresh_keys
-    AUTO_REFRESH_TICKET_KEYS + [{"custom_fields" => ff_aliases}]
+    AUTO_REFRESH_TICKET_KEYS + [{"custom_fields" => (filter_custom_fields.map(&:flexifield_alias) || [])}]
   end
+
+  def model_changes_hash
+    changes = { :custom_fields => {}}
+    flexifields = Hash[filter_custom_fields.map{|entry| [entry.flexifield_name, entry.flexifield_alias]}]
+    @model_changes.each do |key, value|
+      unless value[0].blank?
+        if flexifields[key.to_s]
+          changes[:custom_fields][flexifields[key.to_s]] = value
+        else
+          changes[key.to_s] = value
+        end
+      end
+    end
+    changes
+  end
+
+  def filter_custom_fields
+    Account.current.flexifields_with_ticket_fields_from_cache.select {|field| !non_filter_fields.include?(field.flexifield_coltype)}
+  end
+
+  def non_filter_fields
+    FlexifieldDef::TEXT_COL_TYPES + FlexifieldDef::NUM_COL_TYPES
+  end
+
 end

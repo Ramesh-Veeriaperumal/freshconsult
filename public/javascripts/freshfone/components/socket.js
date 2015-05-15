@@ -39,19 +39,7 @@ var FreshfoneSocket;
 			var self = this;
 			this.freshfoneuser = freshfoneuser;
 			this.connect();
-			self.registerCallbacks();
       this.bindTransfer();
-      this.freshfone_socket_channel.on('connect', function () {
-        self.freshfone_socket_channel.emit('init_freshfone_socket', {
-        'user' : freshfone.current_user, 
-        'account': freshfone.current_account,
-        'account_url': freshfone.account_url });
-
-        if (reconnectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
-          reconnectionAttempts = 1;
-          reconnectTimeout = setTimeout(function () { self.freshfone_socket_channel.socket.reconnect(); }, reconnectFailureDelay);
-        }
-      });
     },
     $freshfoneAvailableAgentsListSearch: $('.ffone_available_agents #online-agents-list .search'),
     $freshfoneAvailableAgentsListSearchSpan: $('.ffone_available_agents #search-agents'),
@@ -62,8 +50,9 @@ var FreshfoneSocket;
     selectedElement: null,
     handleFailure: function () {
     },
-    loadDependencies: function(freshfonecalls) {
+  loadDependencies: function(freshfonecalls,fresfoneNetworkError) {
       this.freshfonecalls = freshfonecalls;
+      this.freshfoneNetworkError = freshfoneNetworkError;
     },
     disconnect: function () {
       if (this.freshfone_socket_channel === undefined) { return; }
@@ -77,6 +66,11 @@ var FreshfoneSocket;
                                         {'sync disconnect on unload': false,
                                         'max reconnection attempts': MAX_RECONNECT_ATTEMPTS});
       this.connectionCreatedAt = new Date();
+
+      this.registerCallbacks();
+    },
+    reconnect: function() {
+      this.freshfone_socket_channel.connect();
     },
     freshfone_nodejs_url: function(){
       var query = freshfone.current_user+'&|&'+freshfone.current_account+'&|&'+$.cookie('helpdesk_node_session');
@@ -84,6 +78,17 @@ var FreshfoneSocket;
     },
     registerCallbacks: function () {
       var self = this;
+      this.freshfone_socket_channel.on('connect', function () {
+        self.freshfone_socket_channel.emit('init_freshfone_socket', {
+        'user' : freshfone.current_user, 
+        'account': freshfone.current_account,
+        'account_url': freshfone.account_url });
+        if (reconnectionAttempts++ >= MAX_RECONNECT_ATTEMPTS) {
+          reconnectionAttempts = 1;
+          reconnectTimeout = setTimeout(function () { self.freshfone_socket_channel.io.reconnect(); }, reconnectFailureDelay);
+        }
+        self.freshfoneNetworkError.hideNetworkErrorWidget();
+      });
 
 			this.freshfone_socket_channel.on('agent_available', function (data) {
 				data = JSON.parse(data) || {};
@@ -171,6 +176,15 @@ var FreshfoneSocket;
 			this.freshfone_socket_channel.on('error', function () {
 				self.handleFailure();
 			});  
+
+      this.freshfone_socket_channel.on('disconnect', function() {
+        self.freshfonecalls.errorcode = 31003; //For ICE Liveness Checking
+        self.freshfoneNetworkError.endCallDueToNetworkError();
+      });
+
+      this.freshfone_socket_channel.on('reconnect',function(){
+        self.freshfoneNetworkError.hideNetworkErrorWidget();
+      });
 			
 			this.freshfone_socket_channel.on('CallTreansferSuccess', function (data) {
 				data = JSON.parse(data);

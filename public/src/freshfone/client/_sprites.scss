@@ -17,14 +17,6 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 	.ignore { @include freshfone-sprite(ignore-call); }
 }
 
-.recent_calls_call_user .can-make-calls,
-.fresfone-call-history .call_user .can-make-calls {
-	@include freshfone-sprite(recentcall);
-}
-.recent_call_entry:hover .recent_calls_call_user .can-make-calls,
-.fresfone-call-history .call_user .can-make-calls:hover {
-	 @include freshfone-sprite(recentcall-hover); 
-};
 
 .popupbox-content .keypad-call:before {
 	content:"";

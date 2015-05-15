@@ -339,16 +339,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "@#{reply_to_user}"
   end
 
+  def round_off_time_hrs seconds
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600)/60.to_f).round
+
+    hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
+  end
+
   def time_tracked
-    time_spent = 0
-    time_sheets.each do |entry|
-      time_spent += entry.running_time
-    end
-    time_spent
+    time_sheets.sum(&:running_time)
+  end
+
+  def billable_hours
+    round_off_time_hrs(time_sheets.hour_billable(true).sum(&:running_time))
   end
 
   def time_tracked_hours
-    hhmm(time_tracked)
+    round_off_time_hrs(time_tracked)
   end
 
   def first_res_time_bhrs

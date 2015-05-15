@@ -53,7 +53,8 @@ describe Integrations::InstalledApplicationsController do
     google_app.destroy if !google_app.nil?
 
     put :install, {:id => 4}
-    response.should redirect_to "/auth/google?origin=install"
+    iapp_id = Integrations::InstalledApplication.with_name("google_contacts").first.id
+    response.should redirect_to "https://login.freshpo.com/auth/google_contacts?origin=id%3D1%26portal_id%3D1%26iapp_id%3D#{iapp_id}"
   end
 
 

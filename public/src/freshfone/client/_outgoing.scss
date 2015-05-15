@@ -73,7 +73,7 @@
             }
         }
     }
-	.invalid_phone_text, .info_message, .already_in_call_text, .restricted_country {
+	.invalid_phone_text, .info_message, .already_in_call_text, .restricted_country, .strange_number {
 		position: absolute;
 		top: 65px;
 		color: $info-text;
@@ -394,13 +394,17 @@
 	.recent_calls_call_user {
 		display: inline-block;
 		vertical-align: top;
-		.can-make-calls {
-			background-repeat: no-repeat;
-			@include text-indent(-9999px);
+		font-size: 20px;
+		line-height:50px;
+		.can-call {
+			background-repeat: no-repeat;	
 			display: block;
 			padding: 0;
 			width: 30px;
 			height: 30px;
+		}
+		.restrict-call {
+			cursor:default;
 		}
 	}
 	.no_call_history {

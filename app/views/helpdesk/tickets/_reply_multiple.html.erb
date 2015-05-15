@@ -1,25 +1,32 @@
 <div id="<%=cntid%>">
     
-    <ul class="ui-form dont-validate">
+    <ul class="ui-form dont-validate bulk-reply">
         <div class="request_form_options">
-           <a id="canned_show" class="slim-button"> <%= t('canned_folders.responses') %> &raquo;</a>
+           <a id="canned_show" class="btn btn-mini"> <%= t('canned_folders.responses') %> &raquo;</a>
         </div>
               
-        <li class="inline-field">
+        <% if email_configs.size > 1 %>
+          <li class="inline-field">
+            <label class="email-config-from"><%= t('ticket.from') %></label>
+            <%= select :email_config, :reply_email, options_for_select(email_configs.map{ |email| [email.reply_email, email.reply_email] }, current_account.primary_email_config.reply_email), {},
+              {:class => "select2 email-config"} %>
+          </li>
+        <% end %>
+        <li class="inline-field reply-content-container">
             <%= f.fields_for(:note_body_attributes, Helpdesk::NoteBody.new) do |ff| %>
                 <%= ff.text_area :body_html, :id => "#{id}-#{cntid}-body", :value => "", :"data-wrap-font-family" => true %>
             <% end %>
             <%= f.hidden_field :private, :value=> 0 %>
             <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
             <%= f.hidden_field :source, :value=> Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
-            <div class="attachment-options" id="attachment-options-reply-multiple">
-                <% unless local_assigns[:no_attachments] %>
-                <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id =>id, :nsc_param => "helpdesk_note" } %>
-                <% end %>                
-                <% if is_application_installed?("screenr") %>
-                    <%= render :partial => "shared/screenr_recorder" , :locals => { :location => "agent_ticket" } %>
-                <% end %>              
-            </div>
+        </li>
+        <li>
+          <% unless local_assigns[:no_attachments] %>
+            <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% end %>
+          <% if is_application_installed?("screenr") %>
+              <%= render :partial => "shared/screenr_recorder" , :locals => { :location => "agent_ticket" } %>
+          <% end %>
         </li>
     </ul>
 </div>
@@ -27,7 +34,7 @@
 
 <%= javascript_tag do %>
 
-    invokeRedactor('reply-multiple-cnt-reply-multiple-body');
+    invokeRedactor('reply-multiple-cnt-reply-multiple-body','bulk-reply');
     
    
     jQuery('#canned_show').die('click');

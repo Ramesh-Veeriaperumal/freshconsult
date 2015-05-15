@@ -52,22 +52,6 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def address_certification(account, number)
-    headers = {
-      :subject => "Freshfone: Certify your address",
-      :to      => account.admin_email,
-      :from    => AppConfig['billing_email'],
-      :sent_on => Time.now,
-      "Reply-to" => "",
-      "Auto-Submitted" => "auto-generated", 
-      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
-    }
-    @freshfone_number = number
-    mail(headers) do |part|
-      part.html { render "address_certification", :formats => [:html] }
-    end.deliver
-  end
-
   def recharge_success(account, recharge_amount, balance)
     headers = {
       :subject => "Your Freshfone credit has been recharged!",

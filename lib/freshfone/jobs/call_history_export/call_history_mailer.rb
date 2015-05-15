@@ -35,7 +35,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryMailer < ActionMailer::Base
 
     def formatted_export_subject(options)
       I18n.t('export_data.call_history.subject',
-        :number => options[:number],
+        :number => @number,
         :range => JSON.parse(options[:export_params][:data_hash])[0]["value"], # Shows date range
         :domain => options[:domain]
         )
@@ -51,7 +51,8 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryMailer < ActionMailer::Base
         hash_item.blank? ? nil : hash_item["value"]
       end
       
-      @number = params[:number]
+      @number = params[:number] == 0 ? t('reports.freshfone.all_numbers') : params[:number]
+
       @range = find_value_of.call("created_at")
       @call_type = find_value_of.call("call_type")
       @agent = params[:account].users.find_by_id(find_value_of.call("user_id"))

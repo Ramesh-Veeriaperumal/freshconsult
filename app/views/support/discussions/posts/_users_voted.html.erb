@@ -1,0 +1,12 @@
+<div id="voted-users" class="user-list">
+    <% @post.voters.each do |user| %>
+    <% if user.id != User.current.id %>
+        <div class="uv-row uv-user-thumb">
+            <%= profile_image(user.to_liquid) %>
+            <div class="ellipsis lead-small">
+                <%= user.name %>
+            </div>
+        </div>
+    <% end %>
+  <% end %>
+</div>

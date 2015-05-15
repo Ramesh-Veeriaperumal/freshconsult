@@ -1,5 +1,6 @@
 class Admin::Freshfone::NumbersController < Admin::AdminController
 	include ::Freshfone::AccountUtil
+	include PostOffice
 	before_filter(:only => [:purchase]) { |c| c.requires_feature :freshfone }
 	before_filter :create_freshfone_account, :only => [:purchase]
 	before_filter :check_active_account, :only => :edit
@@ -7,6 +8,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	before_filter :load_ivr, :only => :edit
 	before_filter :build_attachments, :set_business_calendar,
 							  :only => :update
+	before_filter :verify_address, :only => [:purchase], :if => :address_required?
 	before_filter :add_freshfone_address, :only => [:purchase], :if => :address_required?
 
 	def index
@@ -29,6 +31,12 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 			redirect_to :action => :index
 		end
 		rescue Exception => e
+			if e.message == "PhoneNumber Requires a Local Address" || e.code == 21615 # checking either in case twilio changes the error message
+				Rails.logger.debug "Account #{current_account.id} provided an invalid local address for #{params[:country]}.\nParams:\n#{params.to_json}"
+				flash[:notice] = t('flash.freshfone.number.error')
+				render :json => { :success => false, 
+					:errors => [t('flash.freshfone.number.cannot_purchase', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
+			end
 			flash[:notice] = t('flash.freshfone.number.error')
 			Rails.logger.debug "Error purchasing number for account#{current_account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			redirect_to :action => :index
@@ -155,8 +163,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 
 		def address_required?
-      code = params[:country]
-      Freshfone::Cost::NUMBERS[code]["address_required"] && !address_already_exist?
+      params["address_required"] == "true" && !address_already_exist?
     end
 
     def address_already_exist?
@@ -188,5 +195,13 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 				render :json => { :success => false, 
 					:errors => @freshfone_address.errors.full_messages } and return
 			end
+    end
+
+    def verify_address
+      if PostOffice.validate_postcode(params[:postal_code], params[:country].downcase.to_sym).blank?
+      	flash[:notice] = t('flash.freshfone.number.error')
+				render :json => { :success => false, 
+					:errors => [t('flash.freshfone.number.cannot_purchase', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
+      end
     end
 end

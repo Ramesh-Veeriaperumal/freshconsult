@@ -26,15 +26,17 @@ class Helpdesk::KbaseArticles
 
       content_id = content_ids[key]
 
+      inline = temp_body_html.include?("cid:#{content_id}")
+
       attachment = {
         :content => value, 
         :account_id => account.id, 
-        :description => content_id.present? ? 'content_id' : ''
+        :description => inline ? 'content_id' : ''
       }
 
-      attachment = create_attachment(content_id.present? ? account : article, attachment, key, content_id.present?)
+      attachment = create_attachment(inline ? account : article, attachment, key, inline)
       attachment.save
-      temp_body_html.sub!("cid:#{content_id}", attachment.content.url) if content_id.present?
+      temp_body_html.sub!("cid:#{content_id}", attachment.content.url) if inline
     end
 
     unless content_ids.blank?

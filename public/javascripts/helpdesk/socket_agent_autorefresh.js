@@ -66,7 +66,7 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
       div_name = "#update_message"
     }
 
-    if (jQuery("[data-ticket=" + message.id + "]").length != 0) {
+    if (jQuery("[data-ticket=" + message.display_id + "]").length != 0) {
           show_refresh_alert(message, div_name, tickets_list);
     } else if (filter_options.length != 0) {
         // console.log('The filter_options is not 0', filter_options);
@@ -118,16 +118,16 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               }
 
               var message_val = (message[filter_options[i].condition]) ? 
-                message[filter_options[i].condition].toString()
-                : "-1"; 
-              if (filter_values.indexOf(message_val) >= 0) {
+                message[filter_options[i].condition]
+                : "-1";
+              if (presentInList(filter_values, message_val) >= 0) {
                 count++;
               } 
-            } 
+            }
             else if (
               (filter_options[i].ff_name != "default") &&
               Object.keys(message['custom_fields']).length != 0 &&
-              filter_values.indexOf(message['custom_fields'][filter_options[i].ff_name] + '')>= 0) {
+              presentInList(filter_values, message['custom_fields'][filter_options[i].ff_name]) >= 0) {
                 count++;
             }
         };
@@ -138,6 +138,22 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
         show_refresh_alert(message, div_name, tickets_list);
     }
 };
+
+var presentInList = function(filter_values, msg_val){
+  var msg_type = typeof(msg_val);
+  if (msg_val){
+    if (msg_type == "string" || msg_type == "number"){
+      return filter_values.indexOf(msg_val.toString());
+    }else{
+      for (var i=0; i < msg_val.length; i++){
+        if (filter_values.indexOf(msg_val[i].toString()) >= 0){
+            return 1;
+        }
+      }
+    }
+  }
+  return -1;
+}
 
 window.autoRefresh = function(server, hashed_params, current_username, current_userid){
   var node_socket = agentio.connect(server, {'force new connection':true, 'sync disconnect on unload':true});

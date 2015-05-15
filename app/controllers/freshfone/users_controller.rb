@@ -126,7 +126,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def call_meta_info
-			call = outgoing? ? current_user.freshfone_calls.call_in_progress : customer_in_progress_calls
+			call = current_user.freshfone_calls.call_in_progress #either way its inprogress call for current agent
 			update_call_meta(call) unless call.blank? #sometimes in_call reaches after call:in_call and status is already not in-progress.
 		end
  

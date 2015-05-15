@@ -16,6 +16,9 @@
 <div class="popupbox-content hide freshfone_content_container" rel="freshfone_widget">
 	<%= render 'layouts/shared/freshfone/freshfone_popupbox_content' %>
 </div>
+<div>
+	<%= render 'layouts/shared/freshfone/freshfone_widget_network_error' %>
+</div>
 
 <%= javascript_tag do %>
 	if (typeof freshfone === "undefined") { freshfone = {}; }
@@ -51,5 +54,15 @@
           'email'     : '<%=current_user.email%>',
           'account_id': '<%= current_account.id%>'
   };
+  jQuery(window).on("load",function(){
+  	soundManager.setup({debugMode: false});
+	  freshfone.networkErrorSound = soundManager.createSound({
+	  	id: "freshfoneNetworkErrorSound",
+	  	url: '<%= audio_path("/assets/call_disconnected_due_to_network.mp3") %>'
+	  });
+	  freshfone.networkErrorSound.load();
+  });
+
+  freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>

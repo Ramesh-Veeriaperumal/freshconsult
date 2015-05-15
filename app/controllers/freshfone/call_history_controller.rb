@@ -96,7 +96,7 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 
 		def fetch_blacklist
-			@blacklist_numbers =  current_account.freshfone_blacklist_numbers.pluck(:number)
+			@blacklist_numbers =  current_account.freshfone_callers.blocked_callers.pluck(:id)
 		end
 
 		def get_cookies_for_filter

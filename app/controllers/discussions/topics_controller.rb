@@ -180,31 +180,11 @@ class Discussions::TopicsController < ApplicationController
 		render :layout => false
 	end
 
-	def vote
-		unless @topic.voted_by_user?(current_user)
-			@vote = Vote.new(:vote => params[:vote] == "for")
-			@vote.user_id = current_user.id
-			@topic.votes << @vote
-			@topic.reload
-		end
-		respond_to do |format|
-			format.js
-			format.html { redirect_to discussions_topic_path(@topic) }
-			format.xml  { head 200 }
-		end
+	def users_voted
+		@object = @topic
+		render :partial => 'discussions/shared/users_voted'
 	end
-
-	def destroy_vote
-		@votes = @topic.votes.find(:all, :conditions => ["user_id = ?", current_user.id] )
-		@votes.first.destroy
-		@topic.reload
-		respond_to do |format|
-			format.js { render "vote.rjs" }
-			format.html { redirect_to discussions_topic_path(@topic) }
-			format.xml  { head 200 }
-		end
-	end
-
+	
 	def reply
 		if current_user.agent?
 			path = discussions_topic_path(params[:id])

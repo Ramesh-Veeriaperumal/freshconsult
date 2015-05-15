@@ -696,7 +696,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.seoshop.label"
     s.description = "integrations.seoshop.desc"
     s.account_id = 0
-    s.listing_order = 24
+    s.listing_order = 25
     s.options = {
    :keys_order => [:api_key, :api_secret, :language], 
    :api_key => {  :type => :text,
@@ -742,7 +742,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.box.label"
     s.description = "integrations.box.desc"
     s.account_id = 0
-    s.listing_order = 27
+    s.listing_order = 26
     s.options = {:direct_install => true, :oauth_url => "/auth/box?origin=id%3D{{account_id}}%26portal_id%3D{{portal_id}}%26user_id%3D{{user_id}}", :user_specific_auth => true}
     s.application_type = "box" 
   end 
@@ -752,7 +752,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.czentrix.label"
     s.description = "integrations.czentrix.desc"
     s.account_id = 0
-    s.listing_order = 26
+    s.listing_order = 27
     s.options = {:direct_install => false,:keys_order => [:host_ip,:convert_to_ticket],
         :host_ip => { :type => :text, :required => true, :label => "integrations.czentrix.host_name", 
         :info => "integrations.czentrix.host_name_info"},
@@ -789,7 +789,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.slack.label"  
     s.description = "integrations.slack.desc"
     s.account_id = 0
-    s.listing_order = 30
+    s.listing_order = 29
     s.options = { :keys_order => [:slack_settings],
                   :direct_install => true,
                   :slack_settings => { :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", :partial => "/integrations/applications/slack_setting" },
@@ -799,4 +799,23 @@ if Integrations::Application.count == 0
     s.application_type = "slack"
   end
 
+  five9 = Integrations::Application.seed(:name) do |s|
+    s.name = "five9"
+    s.display_name = "integrations.five9.label"
+    s.description = "integrations.five9.desc"
+    s.account_id = 0
+    s.listing_order = 30
+    s.options = { :direct_install => true }
+    s.application_type = "cti_integration"
+  end
+
+  dynamics_crm = Integrations::Application.seed(:name) do |s|
+    s.name = "dynamicscrm"
+    s.display_name = "integrations.dynamicscrm.label"
+    s.description = "integrations.dynamicscrm.desc"
+    s.account_id = 0
+    s.listing_order = 31
+    s.options = {:direct_install => false }
+    s.application_type = "dynamicscrm"
+  end
 end

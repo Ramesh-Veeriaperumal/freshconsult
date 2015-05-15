@@ -286,7 +286,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def send_reply_email  
       if fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? ,
                 :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
@@ -359,5 +359,9 @@ class Helpdesk::Note < ActiveRecord::Base
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
         end
       end
+    end
+
+    def only_kbase?
+      (self.to_emails | self.cc_emails | self.bcc_emails).compact == [self.account.kbase_email]
     end
 end

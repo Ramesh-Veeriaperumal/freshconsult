@@ -168,5 +168,13 @@ RSpec.describe Freshfone::CallHistoryController do
       csv[1]["Direction"].should be_eql("Transfer")
     end
   end
+   it 'should get recent calls if there is a call from strange number too' do
+    strange_number = "+17378742833"
+    build_freshfone_caller(strange_number)
+    @request.env["HTTP_ACCEPT"] = "application/javascript"
+    get :recent_calls
+    assigns[:calls].should_not be_empty
+    assigns[:calls].last.caller_number.should be_eql("+1"<<Freshfone::CallerLookup::STRANGE_NUMBERS.key("RESTRICTED").to_s)
+  end 
 
 end

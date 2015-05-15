@@ -119,8 +119,11 @@ module Facebook::Core::Util
         <p>#{desc}</p></div></div>"
     elsif "photo".eql?(feed[:type])
       html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
+    elsif "link".eql?(feed[:type])
+      link_story = "<a href=\"#{feed[:link]}\">#{feed[:story]}</a>" if feed[:story]
+      html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><#{link_story}</p></div>"
     end
-
+    
     return html_content
   end
   
