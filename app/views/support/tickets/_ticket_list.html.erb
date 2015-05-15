@@ -11,7 +11,7 @@
 					<div class="ticket-brief">
 					    <div class="ellipsis">
                                               <% # TODO-RAILS3:: calling liquid truncate rather Actionview Helper %>
-					      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => ticket.chat? ? "" : truncate(ticket.description, 350 ), :class => "c-link") %> 
+					      	<%= link_to(ticket.subject + " ##{ticket.display_id}", support_ticket_path(ticket), :title => ticket.chat? ? "" : truncate(ticket.description, 350 ), :class => "c-link") %> 
 					    </div>
 					    <div class="help-text">
 							<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
