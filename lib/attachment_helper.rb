@@ -45,7 +45,7 @@
         filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
         tooltip = filename.size > 15 ? "tooltip" : ""
         output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
-                           :title => h(attached.content_file_name), :class => "#{tooltip}")
+                           :title => h(filename), :class => "#{tooltip}")
         output << %(<span class="file-size cloud-file"></span>)
       else
         size = number_to_human_size attached.content_file_size
