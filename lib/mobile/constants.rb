@@ -32,13 +32,4 @@ module Mobile::Constants
     :cannot_unfavorite => 20,
     :validation_failed => 21
   }
-
-  MOBILE_TYPE_ANDROID = 0
-  MOBILE_TYPE_IOS = 1
-
-  MOBILE_API_RESULT_SHA_FAIL=0
-  MOBILE_API_RESULT_SUCCESS=1
-  MOBILE_API_RESULT_UNSUPPORTED=2
-  MOBILE_API_RESULT_PARAM_FAILED=3
-
 end
