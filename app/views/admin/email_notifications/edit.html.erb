@@ -88,7 +88,16 @@
 
 			});
 		} 
+
+		setTimeout(function(){
+ 			jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
+ 		}, 500)
+
 		});
+
+		setTimeout(function(){
+ 			jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
+ 		}, 500)
 
 		jQuery('.link_placeholder').live("click", function(ev){
 		    ev.preventDefault();
@@ -347,7 +356,9 @@
 					<% if notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
 						<label><b><%= t('message') %></b><span class="required_star">*</span></label> 
 					<%end%>	
-					<%= c.rich_editor :description, {'editor-type' => :email_notification, :id => 'description_'+lang, :class =>"desc_info #{(notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE) ? 'required_redactor' : ''}", :height => "200px"} %>
+					<% email_template = JSON.parse(email_template_settings) %>
+					<%= c.rich_editor :description, {'editor-type' => :email_notification, :id => 'description_'+lang, :class =>"desc_info #{(notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE) ? 'required_redactor' : ''}", :height => "200px", 'data-remove-cursor' => notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? true : false,  :wrapFontSettings => {"font-family" => email_template["font-family"] , "font-size" => email_template["font-size"]} 
+					} %>
 				</div>
 				<div class="row-fluid email-notification-footer"> 
 					<div class="span8">
