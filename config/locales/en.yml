@@ -2995,6 +2995,7 @@ en:
       no_conversations: 'No Conversations'
       all: 'All conversations'
       tickets: Tickets
+      recent_tickets: Recent Tickets
       forums: Forums
       contact_tickets: 'Recent ticket activities'
       contact_forums: 'Recent forum activities'

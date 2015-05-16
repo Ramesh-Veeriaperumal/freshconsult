@@ -29,7 +29,8 @@ module ContactsHelper
   end
 
   def user_activities
-    activities = @user_tickets + @user.recent_posts
+    activities = @user_tickets
+    activities += @user.recent_posts if current_account.features?(:forums)
     activities = activities.sort_by {|item| -item.created_at.to_i}
     activities = activities.take(10)
   end

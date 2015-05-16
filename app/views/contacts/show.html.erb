@@ -128,6 +128,7 @@
 				<% end %>	
 			</div>
 			<div class='contact-edit-padding'>
+			<% if current_account.features?(:forums) %>
 					<% list = [
 						[
 							t('contacts.conversations.all'), '#conv_all', false, {:id => 'conv_all-tab', :'data-hash-url' => false}
@@ -151,9 +152,23 @@
 							</li>
 						</ul>
 					</div>
+				<% else %>
+				<div data-tabs='tabs'>
+          <ul role='tablist'>
+            <li class="dropdown">
+              <h1 class='conv-title conv-menu dropdown-toggle' data-toggle="dropdown">
+                <span class='sub-info'><%= t('contacts.conversations.recent_tickets') %></span>
+              </h1>
+            </li>
+          </ul>
+        </div>
+       <% end %>
+
 				<div class="tab-content">
 					<div class='tab-pane active' id='conv_all'> 
-						<p class='muted'> <%= t("contacts.conversations.contact_all") %> </p>
+						<% if current_account.features?(:forums) %>
+							<p class='muted'> <%= t("contacts.conversations.contact_all") %> </p>
+						<% end %>
 						<div class='timeline' id='timeline'>
 							<ul class='timeline-list'>
 								
