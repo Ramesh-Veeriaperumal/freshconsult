@@ -7110,6 +7110,7 @@ en:
       method_not_allowed: Allowed methods are %{methods}
       internal_error: We're sorry, but something went wrong.
       ssl_required: SSL certificate verification failed.
+      invalid_content_type: Content-Type header should have application/json
       missing_params: Your update call does not have any parameter.
       is not a date: "Should be a valid date."
       is not a number: "Should be a valid number."

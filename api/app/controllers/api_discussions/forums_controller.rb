@@ -3,7 +3,8 @@ module ApiDiscussions
     include Discussions::ForumConcern
      
     before_filter { |c| c.requires_feature :forums }        
-    skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show, :follow, :unfollow]
+    skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show, :follow, :unfollow, :is_following]
+    skip_before_filter :load_object, :only => [:create, :is_following]
     include Api::DiscussionMonitorConcern
     before_filter :portal_check, :only => [:show]
     before_filter :set_account_and_category_id, :only => [:create]

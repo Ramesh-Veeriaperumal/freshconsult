@@ -16,6 +16,7 @@ module TestClassMethods
     @request.env['HTTP_REFERER'] = '/sessions/new'
     @request.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36\
                                   (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+    @request.env['CONTENT_TYPE'] = 'application/json'                            
   end
 
   def set_request_headers

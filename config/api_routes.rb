@@ -11,6 +11,7 @@ Helpkit::Application.routes.draw do
           get :topics
           post :follow, to: :follow
           delete :follow, to: :unfollow
+          get :follow, to: :is_following
         end
       end
       resources :topics, :except => [:new, :edit, :index]do
@@ -18,6 +19,10 @@ Helpkit::Application.routes.draw do
           get :posts
           post :follow, to: :follow
           delete :follow, to: :unfollow
+          get :follow, to: :is_following
+        end
+        collection do 
+          get :followed_by
         end
       end
       resources :posts, :except => [:new, :edit, :index, :show]

@@ -28,12 +28,17 @@ module TestCaseMethods
     params_hash
   end
 
+  def add_content_type
+    @headers ||= {}
+    @headers["CONTENT_TYPE"] = "application/json"
+  end
+
   def other_user
     User.where("id != ?", @agent.id).first || add_new_user(@account)
   end
 
   def user_without_monitorships
-    User.includes(:monitorships).select{|x| x.id != @agent.id && x.monitorships.blank?}.first || create_dummy_customer
+    User.includes(:monitorships).select{|x| x.id != @agent.id && x.monitorships.blank?}.first || add_new_user(@account) # changed as it should have user without any monitorship
   end
 end
 

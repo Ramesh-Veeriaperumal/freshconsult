@@ -2,6 +2,7 @@ module ApiConstants
   
  # ControllerConstants
     API_CURRENT_VERSION = "v2"
+    CONTENT_TYPE_REQUIRED_METHODS = ["POST", "PUT"]
     DEFAULT_PAGINATE_OPTIONS = {
         :per_page => 30,
         :page => 1

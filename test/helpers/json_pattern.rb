@@ -42,6 +42,13 @@ module JsonPattern
     } 
   end
 
+  def un_supported_media_type_error_pattern
+    {
+      code: "invalid_content_type",
+      message: String
+    }
+  end
+
   def request_error_pattern code, params_hash={}
     {
       code: code, 

@@ -1,7 +1,8 @@
 class ApiApplicationController < ApplicationController
   
   respond_to :json
-  prepend_before_filter :response_headers
+  prepend_before_filter :validate_content_type, :if => :content_type_required? # Should be moved to middlewares
+  prepend_before_filter :validate_accept_header, :response_headers
 
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError do |exception| 
@@ -125,6 +126,11 @@ class ApiApplicationController < ApplicationController
       render :template => '/bad_request_error', :status => ErrorHelper.find_http_error_code(@errors)
     end
 
+    def render_request_error code, status
+      @error = RequestError.new(code)
+      render :template => '/request_error', :status => status
+    end
+
     def render_custom_errors item, options
       errors = item.errors.reject{|k,v| k == options[:remove]} if options[:remove]
       render_error errors, options[:meta]
@@ -143,13 +149,10 @@ class ApiApplicationController < ApplicationController
 
     def access_denied
       if current_user
-        @error = RequestError.new(:access_denied)
-        status = 403
+        render_request_error :access_denied, 403
       else
-        @error = RequestError.new(:invalid_credentials)
-        status = 401
+        render_request_error :invalid_credentials, 401
       end
-      render :template => '/request_error', :status => status
     end
     
     def load_object
@@ -188,20 +191,27 @@ class ApiApplicationController < ApplicationController
     end
 
     def check_params
-      if params[cname].blank?
-        @error = RequestError.new(:missing_params)
-        render :template => '/request_error', :status => 400
-      end
+      render_request_error :missing_params, 400 if params[cname].blank?
     end
 
     def ensure_proper_protocol
       return true if Rails.env.test? || Rails.env.development?
-      unless request.ssl?
-        @error = RequestError.new(:ssl_required)
-        render :template => '/request_error', :status => 403
-      end
+      render_request_error(:ssl_required, 403) unless request.ssl?
     end
 
     def manipulate_params
     end
+
+    def content_type_required?
+      ApiConstants::CONTENT_TYPE_REQUIRED_METHODS.include?(request.method) && request.headers["CONTENT_LENGTH"].to_i > 0
+    end
+
+    def validate_content_type
+      render_request_error(:invalid_content_type, 415)  unless request.headers["CONTENT_TYPE"] =~ /application\/json/
+    end
+
+    def validate_accept_header
+      
+    end
+
 end

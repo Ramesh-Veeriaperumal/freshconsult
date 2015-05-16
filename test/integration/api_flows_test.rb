@@ -38,4 +38,25 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response :bad_request
     response.body.must_match_json_expression(invalid_json_error_pattern)
   end
+
+  def test_unsupported_media_type_invalid_content_type
+    @headers["CONTENT_TYPE"] = 'text/plain'
+    post "/api/discussions/categories", '{"category": {"name": "true"}}', @headers
+    assert_response :unsupported_media_type
+    response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+  end
+
+  def test_unsupported_media_type_without_content_type
+    @headers.delete("CONTENT_TYPE")
+    post "/api/discussions/categories", '{"category": {"name": "true"}}', @headers
+    assert_response :unsupported_media_type
+    response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+  end
+
+  def test_unsupported_media_type_get_request
+    @headers.delete("CONTENT_TYPE")
+    get "/api/discussions/categories", nil, @headers
+    assert_response :success
+    assert_equal Array, parse_response(@response.body).class
+  end
 end

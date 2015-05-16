@@ -267,6 +267,21 @@ module ApiDiscussions
       delete :unfollow, construct_params({:id => f_obj.id}, {})
     end
 
+    def test_before_filters_is_following_not_logged_in
+      @controller.stubs(:logged_in?).returns(false).once
+      @controller.expects(:verify_authenticity_token).never
+      @controller.expects(:check_privilege).never
+      @controller.expects(:access_denied).once
+      delete :is_following, construct_params({:id => f_obj.id}, {})
+    end
+
+    def test_before_filters_is_following_logged_in
+      @controller.expects(:verify_authenticity_token).never
+      @controller.expects(:check_privilege).never
+      @controller.expects(:access_denied).never
+      delete :is_following, construct_params({:id => f_obj.id}, {})
+    end
+
     def test_follow_invalid_forum_id
       post :follow, construct_params({:id => 999})
       assert_response :not_found
@@ -308,6 +323,50 @@ module ApiDiscussions
       delete :unfollow, construct_params({:id => f_obj.id}, {:user_id => 999})
       assert_response :bad_request
       match_json [bad_request_error_pattern("user", "can't be blank")]
+    end
+
+    def test_is_following_without_user_id
+      monitor_topic(f_obj, @agent, 1)
+      get :is_following, construct_params(:id => f_obj.id)
+      assert_response :no_content
+    end
+
+    def test_is_following_with_user_id
+      user = user_without_monitorships
+      monitor_forum(f_obj, user, 1)
+      get :is_following, construct_params(:user_id => user.id, :id => f_obj.id)
+      assert_response :no_content
+    end
+
+    def test_is_following_without_privilege_invalid
+      @controller.stubs(:privilege?).with(:manage_forums).returns(false)
+      user = user_without_monitorships
+      monitor_forum(f_obj, user, 1)
+      get :is_following, construct_params(:user_id => user.id, :id => f_obj.id)
+      match_json([bad_request_error_pattern("user_id/email", "invalid_user")])
+    end
+
+    def test_is_following_without_privilege_valid
+      @controller.stubs(:privilege?).with(:manage_forums).returns(false)
+      monitor_forum(f_obj, @agent, 1)
+      get :is_following, construct_params(:user_id => @agent.id, :id => f_obj.id)
+      assert_response :no_content
+    end
+
+    def test_is_following_non_numeric_user_id
+      get :is_following, construct_params(:user_id => "test", :id => f_obj.id)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("user_id", "is not a number")])
+    end
+
+    def test_is_following_invalid_topic_id
+      get :is_following, construct_params(:user_id => @agent.id, :id => 8908908)
+      assert_response :not_found
+    end
+
+    def test_is_following_invalid_user_id
+      get :is_following, construct_params(:user_id => user_without_monitorships.id, :id => f_obj.id)
+      assert_response :not_found
     end
   end
 end

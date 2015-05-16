@@ -15,6 +15,8 @@
 --> only visibility 4 has to allow customer params
 --> post create, rubocop, monitor, caching(db also), metal
 --> Bullet for tests?
+--> should handle unaccepted type in ACCEPT header with 406 error.
+--> should handle xml parse error excpetion in new version if content_type is application/xml
 
 Breaking changes in existing APIs
 --> Account suspended
@@ -50,6 +52,7 @@ completed:
 --> remove desc html from forum, write complete fields test
 --> created_at, updated_at only for create
 --> forums customers parameter validation
+--> should handle post or put api request without/invalid content-type header with 415 error
 
 
 Not necessary:
