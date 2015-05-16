@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "8eab9d285a64bb13a0b9dfedbd942de6d6f517b09742500815a7a20cbbc3ef70",
-    "current": "8eab9d285a64bb13a0b9dfedbd942de6d6f517b09742500815a7a20cbbc3ef70"
+    "previous": "27bbbf66add46d186114039bef20cfd51e243bdbc353d68b8188c327e9681801",
+    "current": "27bbbf66add46d186114039bef20cfd51e243bdbc353d68b8188c327e9681801"
   },
   "fonts": [
-    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.ttf",
-    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.svg",
-    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.woff",
-    "public/assets/glyphs_8eab9d285a64bb13a0b9dfedbd942de6.eot"
+    "public/assets/glyphs_27bbbf66add46d186114039bef20cfd5.ttf",
+    "public/assets/glyphs_27bbbf66add46d186114039bef20cfd5.svg",
+    "public/assets/glyphs_27bbbf66add46d186114039bef20cfd5.woff",
+    "public/assets/glyphs_27bbbf66add46d186114039bef20cfd5.eot"
   ],
   "glyphs": {
     "account": {
@@ -750,7 +750,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"
