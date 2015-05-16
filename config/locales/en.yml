@@ -3687,8 +3687,8 @@ en:
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
-    disable_agent_forward: "When Agent forwards an email from his mailbox to the helpdesk, use original sender’s email address as requester"
-    disable_agent_forward_info: "If disabled, ticket will be created under Agent’s name"
+    disable_agent_forward: "For forwarded emails, use original sender as requester"
+    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
   step2: Step 2

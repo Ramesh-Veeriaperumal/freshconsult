@@ -2091,14 +2091,6 @@ ActiveRecord::Schema.define(:version => 20150216132937) do
   add_index "mobihelp_app_solutions", ["account_id", "app_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_app_id"
   add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
 
-  create_table "mobile_app_versions", :force => true do |t|
-    t.integer  "mobile_type"
-    t.string   "app_version"
-    t.boolean  "supported"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
