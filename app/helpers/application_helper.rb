@@ -1069,11 +1069,11 @@ module ApplicationHelper
   end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'phone-icons', freshfone_number_id)
+		can_make_calls(number, 'phone-icons', freshfone_number_id, true)
 	end
 
 	def can_make_mobile_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'mobile-icons', freshfone_number_id)
+		can_make_calls(number, 'mobile-icons', freshfone_number_id, true)
 	end
 
 	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)
