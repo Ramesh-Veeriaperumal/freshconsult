@@ -291,10 +291,6 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def user_emails_migrated?
-    $redis_others.sismember(USER_EMAIL_MIGRATED, self.id)
-  end
-
   def google_account?
     !google_domain.blank?
   end
