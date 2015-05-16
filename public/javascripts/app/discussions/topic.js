@@ -65,6 +65,7 @@ window.App.Discussions = window.App.Discussions || {};
 		openReplyForm: function () {
 			$('#new-reply').addClass('replying');
 			$('#post_body_html').setFocus();
+			$('.topic-reply').bringToView();
 		},
 
 		closeReplyForm: function () {
