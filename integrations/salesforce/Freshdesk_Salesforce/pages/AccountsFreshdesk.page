@@ -1,0 +1,3 @@
+<apex:page standardController="Account" extensions="AccountsController">
+	<c:AllTickets sObjectId="{!accId}" sObjectName="{!accName}" sObjectEmail="{!accName}" valid_fd="{!valid_fd}" url="{!url}" sObjectType="Account" valid_agent="{!valid_agent}" api_key="{!apikey}" remote_auth="{!site}" filter="{!filter}"/>
+</apex:page>

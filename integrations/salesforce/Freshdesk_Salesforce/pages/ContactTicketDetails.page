@@ -1,0 +1,3 @@
+<apex:page standardController="Contact" extensions="ContactDetailsController">
+    <c:TicketDetails sObjectId="{!contactId}" sObjectName="{!contactName}" sObjectEmail="{!contactEmail}" valid_fd="{!valid_fd}" ticket="{!ticket}" url="{!url}" ticketId="{!ticketId}" ticket_notes="{!ticket_notes}" customFields="{!customFields}" sObjectType="Contact" valid_agent="{!valid_agent}" api_key="{!apikey}" errorMessage="{!errorMessage}" ticketCsat="{!ticketCsat}"/>
+</apex:page>

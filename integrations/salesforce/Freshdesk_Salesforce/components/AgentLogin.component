@@ -1,0 +1,53 @@
+<apex:component controller="TicketDetailsController">
+    
+    <apex:attribute name="api_key" description="Freshdesk API Key"  type="String" required="true"/>
+<script type="text/javascript">
+if(typeof freshdesk === 'undefined'){
+      window.freshdesk = {};
+      freshdesk.TicketDetailsController = TicketDetailsController;
+}
+    $(document).ready(function() {
+        $('.personal_settings').live('click',function(ev) {
+            
+            ev.preventDefault();
+            $('#agent-login').modal();
+            
+        }); 
+    });
+    
+    
+    function agentLogin()
+    {   
+        freshdesk.TicketDetailsController.updateAgent( $('#fdUsername').val() , "X" , function(updateResult, event)
+        {
+            console.log('update result success');
+            console.log(updateResult.success);
+            console.log('event');
+            console.log(event);
+                if (updateResult.success) {
+                    console.log('aasdsadasd');
+                    $('#agent-login').modal('hide');
+                    sAlert('API Key updated. You can now Create new ticket, edit and reply to them ');
+                    
+                } else {
+                    console.log('error');
+                    alert('Could not save the API key, please try again later.');
+                }
+
+        }, {escape:true}); 
+    }
+    
+    
+</script>
+<div id="agent-login" class="modal hide agentLogin">
+    <form class="well">
+        <label for="fdUsername">API Key</label>
+        <input name="fd_username" id="fdUsername" type="text" class="text" value="{!api_key}" />
+        <span class="help-block">You can find your API Key in your profile settings.</span>
+        <div class="modal-footer">
+            <a onClick="javascript:agentLogin();" class="btn">Save Changes</a>
+        </div>
+    </form>
+</div>
+
+</apex:component>

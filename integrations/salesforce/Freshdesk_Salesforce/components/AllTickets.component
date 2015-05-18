@@ -1,0 +1,225 @@
+<apex:component controller="AllTicketsController">
+<apex:includeScript value="{!$Resource.jquery}" />
+
+    <apex:attribute name="sObjectType" description=""  type="String" required="true"/>
+    <apex:attribute name="sObjectId" description="" type="String" required="true"/>
+    <apex:attribute name="sObjectName" description=""  type="String" required="true"/>
+    <apex:attribute name="sObjectEmail" description=""  type="String" required="true"/>
+	<apex:attribute name="remote_auth" description=""  type="RemoteAuth__c" required="true"/>
+    <apex:attribute name="valid_fd" description=""  type="Boolean" required="true"/>
+    <apex:attribute name="valid_agent" description=""  type="Boolean" required="true"/>
+    <apex:attribute name="url" description=""  type="String" required="true"/>
+    <apex:attribute name="api_key" description="Freshdesk API Key to be passed to the AgentLogin Component"  type="String" required="true"/>
+    <apex:attribute name="filter" description=""  type="String" required="true"/>
+
+<apex:pageBlock rendered="{!errorMessage != ''}">
+<img src="{!URLFOR($Resource.warn)}" alt="warning" /> {!HTMLENCODE(errorMessage)} 
+</apex:pageBlock>
+<style>
+.withoutBg {
+	background:#FFF
+}
+.leadTab .secondaryPalette, .individualPalette .leadBlock .secondaryPalette,
+body .bPageBlock,  body .individualPalette .secondaryPalette.bPageBlock,
+body .bEditBlock .pbHeader, body .bLayoutBlock .pbHeader, body .apexp .bPageBlock.apexDefaultPageBlock .pbHeader
+{
+	background:none;
+	border:none;
+	border-bottom:none;
+}
+.hasMotif { margin: 0 }
+.apexp .bPageBlock.apexDefaultPageBlock .pbBody { margin: -8px 0;}
+.bEditBlock .pbHeader > table > tbody > tr > td, .bPageBlock .pbHeader > table > tbody > tr > td, .bLayoutBlock .pbHeader > table > tbody > tr > td, .bEditBlock .pbBottomButtons > table > tbody > tr > td, .bPageBlock .pbBottomButtons > table > tbody > tr > td, .bLayoutBlock .pbBottomButtons > table > tbody > tr > td {
+	padding:5px 0;
+}
+.no-tickets, .new-ticket{
+	display: none;
+}
+
+.pagination-table{
+	width: 100%;
+	padding: 4px;
+}
+
+.pagination-table .previous{
+	width: 47%;
+	text-align: right;
+	padding-right: 30px;
+	border-right: 1px solid #999;
+}
+
+.pagination-table .next{
+	padding-left: 30px;
+}
+
+.pagination-table .help, .pagination-table a{
+	color: #015ba7;
+}
+
+.no-next{
+	text-align: center !important;
+	border: none !important;
+}
+
+.no-previous{
+	text-align: center !important;
+}
+
+</style>
+
+<script type="text/javascript">
+	var current_page = 1;
+	$(document).ready(function(){
+		paginated_tickets('{!sObjectEmail}', current_page, 'init');
+		
+		//Bind pagination links
+		$('.pagination-next').live('click', next);
+		$('.pagination-previous').live('click', previous);
+				
+	});
+	
+	function next(){ 
+		paginated_tickets('{!sObjectEmail}', ++current_page, 'next');
+		$('.pagination-previous').show();
+	}
+	
+	function previous(){
+		if(--current_page < 1){
+			current_page = 1;
+		}else{
+			paginated_tickets('{!sObjectEmail}', current_page, 'previous');
+		}
+	}
+	
+	
+	function loading_tickets(status){
+		if(status){
+			$('.tickets-loading').show();
+			$('.all-tickets-block').hide();
+			//$('.no-tickets').hide();
+		}else{
+			$('.tickets-loading').hide();
+			$('.all-tickets-block').show();
+		}
+	}
+	
+	function new_ticket(){
+		if('{!sObjectType}' != "Account" && '{!sObjectEmail}' != "" && $('.errorM3').length == 0)
+			top.location='/apex/{!sObjectType}CreateTicket?id={!sObjectId}';
+		else{
+			alert("Creation of new tickets is currently disabled for Accounts. Please try from Contacts or Leads section.")
+			return false;
+		}
+		
+	}
+	
+	function all_tickets(){
+		if($('.errorM3').length == 0){
+			window.open("{!url}/helpdesk/tickets?{!HTMLENCODE(filter)}", '_blank');
+		} 
+		else{
+			return false;
+		}
+	}
+	
+</script>
+<apex:form >
+    <apex:actionFunction name="paginated_tickets" action="{!tickets}" oncomplete="ticketsLoaded();" reRender="withoutBg, messages" status="loading-tickets">
+    	<apex:param name="email" value=""/>
+    	<apex:param name="current_page" value=""/>
+    	<apex:param name="type" value=""/>
+    	<apex:param name="reqType" value="{!sObjectType}"/>
+    	<apex:param name="site_Id" value="{!remote_auth.Id}"/>
+    	<apex:param name="site_fd_url_c" value="{!remote_auth.fd_url__c}"/>
+    	<apex:param name="site_fd_username_c" value="{!remote_auth.fd_username__c}"/>
+    </apex:actionFunction>
+    <apex:actionStatus id="loading-tickets" onstart="loading_tickets(true)" onstop="loading_tickets(false)" />
+</apex:form>
+<apex:pageMessages id="messages" />
+<apex:pageBlock id="header_links" rendered="{!IF(errorMessage == '', true, false)}">
+	<div class="pbHeader">
+		<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+			<td class="pbTitle"><h3>Recent Tickets</h3></td>
+			<td class="pbButton" style="float:right"><input type="button"  class="btn new-ticket" target="_top" onclick="new_ticket();" value="New Ticket" /></td>
+			<td class="pbHelp"><span class="help"><a class="linkCol" href="#" onclick="all_tickets();"><span class="linkSpan">Show all tickets in Freshdesk</span></a></span></td>
+		</tr></tbody></table>
+	</div>
+</apex:pageBlock>
+<apex:pageBlock id="withoutBg">
+	<script>
+		function ticketsLoaded(){
+			var isLastPageAvailable = "{!isLastPageAvailable}";
+			var sObjectType = "{!sObjectType}";
+			if(sObjectType == "Account"){
+				$('.new-ticket').hide();
+			}else{
+				$('.new-ticket').show();
+			}
+			if(isLastPageAvailable == "true"){
+				$('.next').show();
+				$('.previous').removeClass('no-next');	
+			}else if(isLastPageAvailable == "false"){
+				$('.next').hide();
+				$('.previous').addClass('no-next');
+			}
+			
+			if(current_page == 1){
+				$('.previous').hide();
+				$('.next').addClass('no-previous');
+			}else{
+				$('.previous').show();
+				$('.next').removeClass('no-previous');
+			}
+			if("{!IF(errorMessage == '', true, false)}" == "true"){
+				$('.pbHeader').show();
+			}else{
+				$('.pbHeader').hide();
+			}
+			$('.no-tickets').show();
+		}
+	</script>
+	<div class="pagination-links">
+		<apex:outputPanel rendered="{!IF((sObjectEmail != '' || sObjectType == 'Account') && ticket_desc.size > 0, true, false)}">
+			<table class="pagination-table" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+				<td class="pbHelp previous"><span class="help">&lt;<a class="linkCol pagination-previous" href="#"><span class="linkSpan">Previous</span></a></span></td>
+				<td class="pbHelp next"><span class="help"><a class="linkCol pagination-next" href="#"><span class="linkSpan">Next</span></a>&gt;</span></td>
+			</tr></tbody></table>
+		</apex:outputPanel>
+	</div>
+	<div class="tickets-loading" style="display:none;">
+	    <div style="text-align: center;">
+	      <img style="padding-top:30px;" src="/img/loading.gif" />
+	    </div>
+	  </div>
+  <apex:pageBlockTable id="tickets-block" styleClass="all-tickets-block" value="{!ticket_desc}" var="tkt" rendered="{!IF(ticket_desc.size > 0, true, false)}">
+   <apex:column >
+   		<apex:facet name="header">Subject</apex:facet>
+	   	<a class="ticket_link" target="_parent" href="/apex/{!sObjectType}TicketDetails?id={!sObjectId}&ticket={!HTMLENCODE(tkt.ticketId)}"> 
+	    {!tkt.subject} 
+	    <span>#{!tkt.ticketId}</span>
+	    </a>
+   </apex:column>
+   
+   <apex:column >
+   	<apex:facet name="header">Status</apex:facet>
+   	{!HTMLENCODE(tkt.status)}
+   </apex:column>
+   <apex:column >
+   	<apex:facet name="header">Priority</apex:facet>
+	{!HTMLENCODE(tkt.priority)}
+   </apex:column>
+   <apex:column >
+   	<apex:facet name="header">Last modified</apex:facet>
+	{!HTMLENCODE(tkt.updatedAt)}
+
+	<a style="float:right; width:30px" target="_blank" href="{!url}/helpdesk/tickets/{!HTMLENCODE(tkt.ticketId)}" title="Open in Freshdesk">
+        <apex:image url="{!URLFOR($Resource.open_new)}" width="14" height="14" /> 
+    </a>
+   </apex:column>
+
+ </apex:pageBlockTable>
+ <apex:outputPanel rendered="{!IF(ticket_desc.size == 0, true, false)}" styleClass="no-tickets" id="no_tickets_panel">
+ 	<br />No records to display
+ </apex:outputPanel>
+</apex:pageBlock>
+</apex:component>
