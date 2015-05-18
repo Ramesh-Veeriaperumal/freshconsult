@@ -5,7 +5,8 @@ module Discussions::CategoryConcern
   end
 
   private
-    def scoper
-      current_account.forum_categories
-    end
+
+  def scoper
+    current_account.forum_categories
+  end
 end

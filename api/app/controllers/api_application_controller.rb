@@ -1,31 +1,30 @@
 class ApiApplicationController < ApplicationController
-  
   respond_to :json
-  prepend_before_filter :validate_content_type, :if => :content_type_required? # Should be moved to middlewares
+  prepend_before_filter :validate_content_type, if: :content_type_required? # Should be moved to middlewares
   prepend_before_filter :validate_accept_header, :response_headers
 
   # do not change the exception order # standard error has to have least priority hence placing at the top.
-  rescue_from StandardError do |exception| 
-    render_500(exception)  
+  rescue_from StandardError do |exception|
+    render_500(exception)
   end
-  rescue_from ActionController::UnpermittedParameters, :with => :invalid_field_handler
-  rescue_from ActionController::ParameterMissing, :with => :missing_field_handler
+  rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
+  rescue_from ActionController::ParameterMissing, with: :missing_field_handler
 
   skip_before_filter :set_default_locale, :set_locale, :freshdesk_form_builder, :remove_rails_2_flash_before,
-    :remove_pjax_param, :remove_rails_2_flash_after
+                     :remove_pjax_param, :remove_rails_2_flash_after
 
-  skip_before_filter :check_privilege, :only => [:route_not_found]
-  before_filter :load_object, :except => [:create, :index, :route_not_found]
-  before_filter :check_params, :only => :update
-  before_filter :validate_params, :only => [:create, :update]
-  before_filter :manipulate_params, :only => [:create, :update]
-  before_filter :build_object, :only => [ :create ]
-  before_filter :load_objects, :only => [ :index ]
-  before_filter :load_association, :only => [:show]
+  skip_before_filter :check_privilege, only: [:route_not_found]
+  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :check_params, only: :update
+  before_filter :validate_params, only: [:create, :update]
+  before_filter :manipulate_params, only: [:create, :update]
+  before_filter :build_object, only: [:create]
+  before_filter :load_objects, only: [:index]
+  before_filter :load_association, only: [:show]
 
   # wrap params will wrap only attr_accessible fields if this is removed.
   def self.inherited(subclass)
-    subclass.wrap_parameters :exclude => []
+    subclass.wrap_parameters exclude: []
   end
 
   def index
@@ -33,10 +32,10 @@ class ApiApplicationController < ApplicationController
 
   def create
     if @item.save
-      render :template => "#{controller_path}/create", :location => send("#{nscname}_url", @item.id), :status => :created
+      render template: "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: :created
     else
       set_custom_errors
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)      
+      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
     end
   end
 
@@ -45,11 +44,11 @@ class ApiApplicationController < ApplicationController
 
   def update
     if @item.update_attributes(params[cname])
-      render :template => "#{controller_path}/update",  :status => :ok
+      render template: "#{controller_path}/update",  status: :ok
     else
       set_custom_errors
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)      
-    end 
+      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
+    end
   end
 
   def destroy
@@ -59,14 +58,14 @@ class ApiApplicationController < ApplicationController
 
   def route_not_found
     path = env['PATH_INFO']
-    allows = ActionDispatch::Routing::HTTP_METHODS.select { |verb|
-      match = Rails.application.routes.recognize_path(path, :method => verb)
+    allows = ActionDispatch::Routing::HTTP_METHODS.select do |verb|
+      match = Rails.application.routes.recognize_path(path, method: verb)
       match[:action] != 'route_not_found'
-    }.map(&:upcase)
+    end.map(&:upcase)
     if allows.present?
-      @error = BaseError.new(:method_not_allowed, :methods => allows.join(", "))
-      render :template => '/base_error', :status => 405
-      response.headers["Allow"] = allows.join(", ")
+      @error = BaseError.new(:method_not_allowed, methods: allows.join(', '))
+      render template: '/base_error', status: 405
+      response.headers['Allow'] = allows.join(', ')
     else
       head :not_found
     end
@@ -74,144 +73,141 @@ class ApiApplicationController < ApplicationController
 
   protected
 
-    def requires_feature(f)
-      return if feature?(f)
-      @error = RequestError.new(:require_feature, :feature => f.to_s.titleize)
-      render :template => '/request_error', :status => 403
-    end
-    
+  def requires_feature(f)
+    return if feature?(f)
+    @error = RequestError.new(:require_feature, feature: f.to_s.titleize)
+    render template: '/request_error', status: 403
+  end
+
   private
-    def set_custom_errors
-    end
 
-    def can_send_user?
-      user_id = params[cname][:user_id]
-      if (user_id || @email)
-        @user = current_account.all_users.find_by_email(@email) if @email
-        @user ||= current_account.all_users.find_by_id(user_id)
-        if @user && !is_allowed_to_assume?(@user)
-          render_invalid_user_error
-        end
-      end
-    end
+  def set_custom_errors
+  end
 
-    def render_invalid_user_error
-      @errors = [BadRequestError.new("user_id/email", "invalid_user")]
-      render :template => '/bad_request_error', :status => 400
+  def can_send_user?
+    user_id = params[cname][:user_id]
+    if user_id || @email
+      @user = current_account.all_users.find_by_email(@email) if @email
+      @user ||= current_account.all_users.find_by_id(user_id)
+      render_invalid_user_error if @user && !is_allowed_to_assume?(@user)
     end
+  end
 
-    def render_500(e)
-      raise e if Rails.env.development? || Rails.env.test?
-      Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      @error = BaseError.new(:internal_error)
-      render :template => '/base_error', :status => 500
-    end
+  def render_invalid_user_error
+    @errors = [BadRequestError.new('user_id/email', 'invalid_user')]
+    render template: '/bad_request_error', status: 400
+  end
 
-    def response_headers
-      response.headers["X-Freshdesk-API-Version"] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
-    end
+  def render_500(e)
+    fail e if Rails.env.development? || Rails.env.test?
+    Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")
+    @error = BaseError.new(:internal_error)
+    render template: '/base_error', status: 500
+  end
 
-    def invalid_field_handler(exception)
-      invalid_fields = Hash[exception.params.collect { |v| [v, "invalid_field"] }]
-      render_error invalid_fields
-    end
+  def response_headers
+    response.headers['X-Freshdesk-API-Version'] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
+  end
 
-    def missing_field_handler(exception)
-      missing_fields = { exception.param => "missing_field" }
-      render_error missing_fields
-    end
+  def invalid_field_handler(exception)
+    invalid_fields = Hash[exception.params.collect { |v| [v, 'invalid_field'] }]
+    render_error invalid_fields
+  end
 
-    def render_error errors, meta = nil
-      @errors = ErrorHelper.format_error(errors, meta)
-      render :template => '/bad_request_error', :status => ErrorHelper.find_http_error_code(@errors)
-    end
+  def missing_field_handler(exception)
+    missing_fields = { exception.param => 'missing_field' }
+    render_error missing_fields
+  end
 
-    def render_request_error code, status
-      @error = RequestError.new(code)
-      render :template => '/request_error', :status => status
-    end
+  def render_error(errors, meta = nil)
+    @errors = ErrorHelper.format_error(errors, meta)
+    render template: '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+  end
 
-    def render_custom_errors item, options
-      errors = item.errors.reject{|k,v| k == options[:remove]} if options[:remove]
-      render_error errors, options[:meta]
-    end
+  def render_request_error(code, status)
+    @error = RequestError.new(code)
+    render template: '/request_error', status: status
+  end
 
-    def paginate_options
-      options = {}
-      options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] ?  ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
-      options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page] 
-      options
-    end
+  def render_custom_errors(item, options)
+    errors = item.errors.reject { |k, v| k == options[:remove] } if options[:remove]
+    render_error errors, options[:meta]
+  end
 
-    def cname
-      controller_name.singularize
-    end
+  def paginate_options
+    options = {}
+    options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
+    options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
+    options
+  end
 
-    def access_denied
-      if current_user
-        render_request_error :access_denied, 403
-      else
-        render_request_error :invalid_credentials, 401
-      end
-    end
-    
-    def load_object
-      @item = self.instance_variable_set('@' + cname,  scoper.find_by_id(params[:id]))
-      unless @item
-        head :not_found # Do we need to put message inside response body for 404?
-      end
-    end
-    
-    def build_object
-      @item = self.instance_variable_set('@' + cname,
-      scoper.is_a?(Class) ? scoper.new(params[cname]) : scoper.build(params[cname]))
-    end
+  def cname
+    controller_name.singularize
+  end
 
-    def load_objects
-      @items = scoper.all.paginate(paginate_options)
-      self.instance_variable_set('@' + cname.pluralize, @items) 
+  def access_denied
+    if current_user
+      render_request_error :access_denied, 403
+    else
+      render_request_error :invalid_credentials, 401
     end
+  end
 
-    def nscname
-      controller_path.gsub('/', '_').singularize
+  def load_object
+    @item = instance_variable_set('@' + cname,  scoper.find_by_id(params[:id]))
+    unless @item
+      head :not_found # Do we need to put message inside response body for 404?
     end
+  end
 
-    def get_fields(constant_name)
-      constant = constant_name.constantize
-      fields = constant[:all] 
-      constant.keys.each{|key| fields += constant[key] if privilege?(key)}
-      fields
-    end
+  def build_object
+    @item = instance_variable_set('@' + cname,
+                                  scoper.is_a?(Class) ? scoper.new(params[cname]) : scoper.build(params[cname]))
+  end
 
-    def load_association
-    end
+  def load_objects
+    @items = scoper.all.paginate(paginate_options)
+    instance_variable_set('@' + cname.pluralize, @items)
+  end
 
-    def paginate_items item
-      item.paginate(paginate_options)
-    end
+  def nscname
+    controller_path.gsub('/', '_').singularize
+  end
 
-    def check_params
-      render_request_error :missing_params, 400 if params[cname].blank?
-    end
+  def get_fields(constant_name)
+    constant = constant_name.constantize
+    fields = constant[:all]
+    constant.keys.each { |key| fields += constant[key] if privilege?(key) }
+    fields
+  end
 
-    def ensure_proper_protocol
-      return true if Rails.env.test? || Rails.env.development?
-      render_request_error(:ssl_required, 403) unless request.ssl?
-    end
+  def load_association
+  end
 
-    def manipulate_params
-    end
+  def paginate_items(item)
+    item.paginate(paginate_options)
+  end
 
-    def content_type_required?
-      ApiConstants::CONTENT_TYPE_REQUIRED_METHODS.include?(request.method) && request.headers["CONTENT_LENGTH"].to_i > 0
-    end
+  def check_params
+    render_request_error :missing_params, 400 if params[cname].blank?
+  end
 
-    def validate_content_type
-      render_request_error(:invalid_content_type, 415)  unless request.headers["CONTENT_TYPE"] =~ /application\/json/
-    end
+  def ensure_proper_protocol
+    return true if Rails.env.test? || Rails.env.development?
+    render_request_error(:ssl_required, 403) unless request.ssl?
+  end
 
-    def validate_accept_header
-      
-    end
+  def manipulate_params
+  end
 
+  def content_type_required?
+    ApiConstants::CONTENT_TYPE_REQUIRED_METHODS.include?(request.method) && request.headers['CONTENT_LENGTH'].to_i > 0
+  end
+
+  def validate_content_type
+    render_request_error(:invalid_content_type, 415)  unless request.headers['CONTENT_TYPE'] =~ /application\/json/
+  end
+
+  def validate_accept_header
+  end
 end
