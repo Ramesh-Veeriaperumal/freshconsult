@@ -286,18 +286,10 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  namespace :segment do
-    resources :identify do
-      collection do
-        post :create
-      end
-    end 
-    resources :group do
-      collection do
-        post :create
-      end
-    end
-  end
+  # segment/group controller will handle all different types in request params # content based routing
+  match '/integrations/segment' => 'segment/identify#create', :constraints => lambda{|req| req.request_parameters["type"] == "identify"}
+  match '/integrations/segment' => 'segment/group#create', :constraints => lambda{|req| req.request_parameters["type"] != "identify"}
+
 
   resources :contact_merge do
     collection do

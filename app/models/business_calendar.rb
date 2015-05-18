@@ -119,7 +119,12 @@ class BusinessCalendar < ActiveRecord::Base
   end
  
   def self.set_user_time_zone
-    Time.zone = User.current.time_zone  
+    begin
+      Time.zone = User.current.time_zone 
+    rescue ArgumentError => e 
+      Rails.logger.info  "User timezone is invalid:: userid:: #{User.current.id}, Timezone :: #{User.current.time_zone}"
+      set_account_time_zone
+    end
   end
   # setting correct timezone and business_calendar based on the context of the ticket ends here
 

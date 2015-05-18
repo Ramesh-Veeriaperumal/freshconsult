@@ -8,7 +8,7 @@ class Signup < ActivePresenter::Base
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone
 
-  after_save :make_user_current, :add_user_email_migrated, :populate_seed_data
+  after_save :make_user_current, :populate_seed_data
 
   def locale=(language)
     @locale = (language.blank? ? I18n.default_locale : language).to_s
@@ -104,11 +104,6 @@ class Signup < ActivePresenter::Base
 
     def make_user_current
       User.current = user
-    end
-
-    def add_user_email_migrated
-      $redis_others.sadd(USER_EMAIL_MIGRATED, account.id)
-      true
     end
 
     def populate_seed_data

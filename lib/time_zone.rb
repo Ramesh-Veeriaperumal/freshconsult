@@ -6,6 +6,10 @@ module TimeZone
     # https://rails.lighthouseapp.com/projects/8994/tickets/2613-fix-spelling-of-kyiv-timezone
     if e.message.include?("Invalid Timezone: Kyev")
       Time.zone = "Kyiv" 
+    elsif Account.current
+       #incase the timezone of the user is incorrect, defaulting to account's timezone
+       #http://bugs.freshdesk.com/helpdesk/tickets/9771
+      Time.zone = Account.current.time_zone 
     else
       raise e
     end
