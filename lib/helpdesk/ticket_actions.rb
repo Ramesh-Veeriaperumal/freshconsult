@@ -250,6 +250,7 @@ module Helpdesk::TicketActions
       end
       @ticket_count = total_entries.to_i
     else
+      load_cached_ticket_filters
       render 'no_paginate' 
     end
   end
