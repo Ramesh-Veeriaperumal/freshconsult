@@ -23,7 +23,7 @@ module RabbitMq::Subscribers::Tickets::Reports
   end
 
   def mq_reports_valid(action) 
-    create_action?(action) || destroy_action?(action) || valid_changes.any?
+    account.features?(:bi_reports) and create_action?(action) || destroy_action?(action) || valid_changes.any?
   end
 
   private
