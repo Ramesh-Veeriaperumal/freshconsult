@@ -55,7 +55,11 @@ class GoogleLoginController < AccountsController
 
     def requested_portal_url
       if params[:state].present?
-        @portal_url ||= state_params['portal_url'] ? state_params['portal_url'][0].to_s : state_params['full_domain'][0].to_s
+        if is_native_mobile?
+          @portal_url = state_params['full_domain'][0].to_s
+        else
+          @portal_url ||= state_params['portal_url'] ? state_params['portal_url'][0].to_s : state_params['full_domain'][0].to_s
+        end
       elsif login_account
         login_account.full_domain
       else
