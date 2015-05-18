@@ -4,7 +4,6 @@ jQuery(document).ready(function($){
 
 	$('.fd_convert_ticket').on('click',function(evt){
 		evt.preventDefault();
-		console.log($(this).attr('id'));
 		var comment_link = this;
 		// var ticket_link= $(this).find('fd_ticket_link').first();
 		var commentId= $(this).attr('id');
@@ -20,7 +19,6 @@ jQuery(document).ready(function($){
 				// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 			$.post(ajaxurl, data, function(response) {
 				resp = jQuery(response).find('response_data').text();
-				console.log("result string: "+resp);
 				$(comment_link).text('View Ticket');
 				if(resp == -1){
 					alert('Got this from the server: ' + resp);
@@ -37,7 +35,7 @@ jQuery(document).ready(function($){
 		}
 	});
 
-	if($('#freshdesk_enable_feedback')[0]!= undefined){
+	if($('#freshdesk_enable_feedback')[0].checked){
 		toggle_feedback_widget();
 	}
 
@@ -45,6 +43,12 @@ jQuery(document).ready(function($){
 		toggle_feedback_widget();
 	});
 
+	if($('#freshdesk_enable_sso')[0].checked){
+	 	toggle_sso();
+	}
+	$('#freshdesk_enable_sso').on('click',function(){
+		toggle_sso();
+	});
 	$('#freshdesk_domain_url').on('blur',function(){
 		toggle_url();
 	});
@@ -63,7 +67,6 @@ jQuery(document).ready(function($){
 	}
 
 	function toggle_feedback_widget(){
-		console.log($('#freshdesk_enable_feedback'));
 		if($('#freshdesk_enable_feedback')[0].checked){
 			$('#freshdesk_feedback_widget_id').slideDown();
 			$('#freshdesk_fb_widget_code').prop('disabled',false);
@@ -71,6 +74,16 @@ jQuery(document).ready(function($){
 		}
 		$('#freshdesk_fb_widget_code').prop('disabled',true);
 		$('#freshdesk_feedback_widget_id').slideUp();
+	}
+
+	function toggle_sso(){
+		if($('#freshdesk_enable_sso')[0].checked){
+			$('#freshdesk_sso_options').slideDown();
+			//$('#freshdesk_fb_widget_code').prop('disabled',false);
+			return;
+		}
+		//$('#freshdesk_fb_widget_code').prop('disabled',true);
+		$('#freshdesk_sso_options').slideUp();
 	}
 
 });
