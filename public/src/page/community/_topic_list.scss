@@ -520,7 +520,14 @@ $community-types: problem #e65e63,
 	}
 	&.sort-active{
 		.comm-item{
+			cursor: move;
 			@include padding-left(60px);
+
+			.reorder-icon, .reorder-icon:hover {
+				background: none;
+				border: none;
+				box-shadow: none;
+			}
 		}
 		.reorder-content{
 			cursor: none;

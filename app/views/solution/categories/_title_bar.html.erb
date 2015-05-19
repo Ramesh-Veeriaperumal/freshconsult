@@ -8,9 +8,15 @@
 	</ul>
 	<ul class="list-actions-right">
 		<li class="list-default-btns">
-			<%= link_to t('reorder'), '#', :id => "folder_reorder_button", :class => "btn" unless(@item.folders.visible(current_user).size <= 1)%>
+			<%= folders_reorder_btn %>
+			<%# link_to t('reorder'), '#', :id => "folder_reorder_button", :class => "btn" unless(@item.folders.visible(current_user).size <= 1)%>
 			<%= new_solutions_button(:category) %>
 		</li>
+		</li>
+	  <li class="list-reorder-btns">
+	    <a href="#" class="btn btn-primary" id="submit_btn">Done</a>
+	    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
+	  </li>
 	</ul>
 	<h2 class="list-title ellipsis"><%= h(@item.name) %></h2>
 </div>

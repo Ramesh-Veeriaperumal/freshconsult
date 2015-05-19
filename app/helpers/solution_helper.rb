@@ -40,4 +40,13 @@ module SolutionHelper
 								:class => "cm-sb-toggle #{extra_classes}",
 								:id => "cm-sb-toggle").html_safe
 	end
+
+	def folders_reorder_btn
+		_op = ""
+		_op << %(<a href="#" class="btn" id="reorder_btn">
+	             #{font_icon "reorder", :size => 13}
+	             #{t('reorder')}
+					   </a>) if privilege?(:manage_solutions)
+		_op.html_safe
+	end
 end

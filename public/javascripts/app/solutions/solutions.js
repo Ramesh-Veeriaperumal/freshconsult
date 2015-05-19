@@ -17,6 +17,7 @@ window.App = window.App || {};
       if (this.current_module !== '') {
         this[this.current_module].onVisit();
       }
+      App.Solutions.Reorder.start();
     },
 
     setSubModule: function () {
@@ -37,7 +38,7 @@ window.App = window.App || {};
         this[this.current_module].onLeave();
         this.current_module = '';
       }
-
+      App.Solutions.Reorder.leave();
     }
   };
 }(window.jQuery));
