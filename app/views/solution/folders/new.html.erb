@@ -1,9 +1,9 @@
 <% content_for :sidebar do -%>&nbsp;<%-end %>
 <%= content_tag :h3, t(".new_folder"), :class => "lead itil-hide" %>
-<%= form_for (@folder), :url => solution_category_folders_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
+<%= form_for (@folder), :url => solution_folders_path , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container align-right itil-hide">
-		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "btn" ) %>
+		<%= link_to(t('cancel'), solution_categories_path, :class => "btn" ) %>
 		<%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "btn" %>
 		<%= submit_tag t('save'), :class => "btn btn-primary" %>
 	</div>

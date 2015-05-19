@@ -3235,6 +3235,9 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
+    add_category: New Category
+    add_folder: New Folder
+    add_article: New Article
     general:
       created_by: Created by
       last_edited: Last Edited by
@@ -3242,7 +3245,6 @@ en:
       feedback: Feedback
       analytics: Analytics
     folders:
-      move_to: Move to
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for publishing the article
       new:

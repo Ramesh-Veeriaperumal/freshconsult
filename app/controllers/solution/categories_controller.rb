@@ -25,9 +25,9 @@ class Solution::CategoriesController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html { @page_canonical = solution_category_url(@item) }# index.html.erb
-      format.xml {  render :xml => @item.to_xml(:include => folder_scope) }
-      format.json  { render :json => @item.to_json(:except => [:account_id,:import_id],
+      format.html
+      format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
+      format.json  { render :json => @category.to_json(:except => [:account_id,:import_id],
                                                   :include => folder_scope) }
     end
   end
@@ -147,7 +147,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category_with_folders
-      @item = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
+      @category = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
     end
     
 end

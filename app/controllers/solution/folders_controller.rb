@@ -10,7 +10,7 @@ class Solution::FoldersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:show, :edit, :update, :destroy, :create]
+  before_filter :load_category, :only => [:new, :show, :edit, :update, :destroy, :create]
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
   
@@ -19,7 +19,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = @category.folders.find(params[:id], :include => {:articles => [:draft, :user]})
+    @item = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
     
     respond_to do |format|
       format.html { @page_canonical = solution_category_folder_url(@category, @item) }
@@ -29,9 +29,9 @@ class Solution::FoldersController < ApplicationController
   end
   
 
-  def new    
-    current_category = current_account.solution_categories.find(params[:category_id])
-    @folder = current_category.folders.new
+  def new
+    @folder = current_account.folders.new
+    @folder.category = @category if params[:category_id]
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @folder }
@@ -157,7 +157,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def load_category
-      @category = portal_scoper.find_by_id!(params[:category_id])
+      @category = current_account.solution_categories.find_by_id!(params[:category_id]) if params[:category_id]
     end
 
     def fetch_new_category

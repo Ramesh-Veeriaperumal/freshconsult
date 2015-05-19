@@ -4,7 +4,7 @@
 	<%= render :partial => 'edit_bar' %>
 <% end %>
 <% content_for :sticky_right do %>
-	<%= preview_portal(support_solution_path(@item), @item) %>
+	<%= preview_portal(support_solution_path(@category), @category) %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder } %>
 <div class="folder-2col">
@@ -14,12 +14,12 @@
 	<% end %>
 </div>
 
-<% if @item.folders.blank? %>
+<% if @category.folders.blank? %>
 	<div class="no-data">
 		<%= t('solution_category.info2') %>
 		<div class="mt20">
 			<% if privilege?(:manage_solutions) %>
-				<%= pjax_link_to(t("solution.folders.new.new_folder"), new_solution_category_folder_path(:category_id => @item.id), :class => "btn btn-primary") %>
+				<%= pjax_link_to(t("solution.add_folder"), new_solution_folders_path(:category_id => @category.id), :class => "btn btn-primary") %>
 			<% end %>
 		</div>
 	</div>
@@ -27,7 +27,7 @@
 <% else %>
 	<form action id="folder-bulk-form" class="clearfix" method="post">
 		<div class="comm-items" data-menu-hover-in='div.comm-item'>
-			<%= render(:partial => "folder", :collection => @item.folders) %>
+			<%= render(:partial => "folder", :collection => @category.folders) %>
 		</div>
 	</form>
 	<%# will_paginate @item.folders, 	:renderer => BootstrapPaginationRenderer,
