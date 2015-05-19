@@ -156,7 +156,7 @@ module ApiDiscussions
     def test_create_invalid_customer_id
       fc = fc_obj
       customer = company
-      post :create, construct_params({}, {:description => "desc", :forum_visibility=> "1", :forum_type => 1,
+      post :create, construct_params({}, {:description => "desc", :forum_visibility=> "4", :forum_type => 1,
        :name => "customer test", :forum_category_id => fc.id, :customers => "#{customer.id},67,78"})
       assert_response :bad_request
       match_json([bad_request_error_pattern("customers", "list is invalid", {:meta => "67, 78"})])
@@ -165,12 +165,30 @@ module ApiDiscussions
     def test_create_with_customer_id
       fc = fc_obj
       customer = company
-      params = {:description => "desc", :forum_visibility=> 1, :forum_type => 1, :name => "customer test 2", :forum_category_id => ForumCategory.first.id, :customers => "#{customer.id}" }
+      params = {:description => "desc", :forum_visibility=> 4, :forum_type => 1, :name => "customer test 2", :forum_category_id => ForumCategory.first.id, :customers => "#{customer.id}" }
       post :create, construct_params({}, params)
       assert_response :success
       match_json(forum_pattern(Forum.last.reload))
       match_json(forum_response_pattern(Forum.last, params))
       assert_equal Forum.last.customer_forums.collect(&:customer_id), [customer.id]
+    end
+
+    def test_create_with_customer_id_and_visibility_not_company_users
+      fc = fc_obj
+      customer = company
+      params = {:description => "desc", :forum_visibility=> 1, :forum_type => 1, :name => "customer test 2", :forum_category_id => ForumCategory.first.id, :customers => "#{customer.id}" }
+      post :create, construct_params({}, params)
+      match_json([bad_request_error_pattern("customers", "invalid_field")])
+      assert_response :bad_request
+    end
+
+    def test_update_with_customer_id_and_visibility_not_company_users
+      fc = fc_obj
+      forum = f_obj
+      customer = company
+      put :update, construct_params({:id => forum.id}, {:forum_visibility => 1, :customers => "#{customer.id}"})
+      match_json([bad_request_error_pattern("customers", "invalid_field")])
+      assert_response :bad_request
     end
 
     def test_before_filters_show

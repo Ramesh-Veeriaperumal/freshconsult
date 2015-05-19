@@ -5,7 +5,7 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
   def test_account_suspended_json
     subscription = @account.subscription
     subscription.update_column(:state, "suspended")
-    post "/agents.json", nil, @headers
+    post "/agents.json", nil, @headers.merge("CONTENT_TYPE" => 'application/json')
     response = parse_response(@response.body)
     assert_equal({"code"=>"account_suspended", "message" => "Your account has been suspended."}, response)
     assert_response :forbidden
@@ -16,7 +16,7 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
     Agent.any_instance.stubs(:occasional).returns(true).once
     subscription = @account.subscription
     subscription.update_column(:state, "active")
-    get "/agents.json", nil, @headers
+    get "/agents.json", nil, @headers.merge("CONTENT_TYPE" => 'application/json')
     response = parse_response(@response.body)
     assert_equal({"code"=>"access_denied", "message" => "You are not authorized to perform this action."}, response)
     assert_response :forbidden
@@ -32,12 +32,12 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_before_filters_application_controller
-    expected_filters = [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, 
+    expected_filters = [:response_headers, :determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, 
       :unset_current_account, :unset_current_portal, :set_current_account, :ensure_proper_protocol, :check_privilege, 
-      :check_account_state, :set_time_zone, :check_day_pass_usage, :check_params, :force_utf8_params, :load_association,
-      :load_object, :manipulate_params, :persist_user_agent, :set_cache_buster, :logging_details, :portal_check, 
-      :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :response_headers, :build_object, 
-      :load_objects, :validate_accept_header, :validate_content_type, :validate_params] 
+      :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params, :persist_user_agent, 
+      :set_cache_buster, :logging_details, :remove_rails_2_flash_after, :set_affiliate_cookie, 
+      :verify_authenticity_token, :load_object, :check_params, :validate_params, :manipulate_params, :build_object, 
+      :load_objects, :load_association, :portal_check]
     actual_filters = ApiDiscussions::CategoriesController._process_action_callbacks.map {|c| c.filter.to_s}.reject{|f| f.starts_with?("_")}.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

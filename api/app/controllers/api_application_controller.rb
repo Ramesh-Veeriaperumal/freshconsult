@@ -1,7 +1,6 @@
 class ApiApplicationController < ApplicationController
   respond_to :json
-  prepend_before_filter :validate_content_type, if: :content_type_required? # Should be moved to middlewares
-  prepend_before_filter :validate_accept_header, :response_headers
+  prepend_before_filter :response_headers
 
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError do |exception|
@@ -198,16 +197,5 @@ class ApiApplicationController < ApplicationController
   end
 
   def manipulate_params
-  end
-
-  def content_type_required?
-    ApiConstants::CONTENT_TYPE_REQUIRED_METHODS.include?(request.method) && request.headers['CONTENT_LENGTH'].to_i > 0
-  end
-
-  def validate_content_type
-    render_request_error(:invalid_content_type, 415)  unless request.headers['CONTENT_TYPE'] =~ /application\/json/
-  end
-
-  def validate_accept_header
   end
 end

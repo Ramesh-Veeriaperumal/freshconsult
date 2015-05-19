@@ -1,7 +1,6 @@
 Todo:
  - Have to take a call whether to include custom_code in base error class based on forthcoming error classess
  - caching in view
- - rubocop customization to remove info severity
  - need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF- 8")
  - Should we need to introduce credits/merits for each usage of endpoint?
  - side loading associations(include as a param in GET requests)
@@ -11,18 +10,15 @@ Todo:
  - update (override or incremental) -  override
  - paginate associations ???
  - api limit in response header
- - only visibility 4 has to allow customer params
  - caching(db also)
  - Metal
  - Bullet for tests?
- - should handle unaccepted type in ACCEPT header with 406 error.
- - should handle xml parse error excpetion in new version if content_type is application/xml
+ - API shouldnt redirect request from Mobile clients
 
 Breaking changes in existing APIs:
  - Account suspended
  - day pass required
  - handle unverified request
- - Api limit exceeded
  - Post validation
  - customer forum validation
  - Monitorship validation
@@ -34,7 +30,7 @@ Completed:
  - need to add test to keep an eye on controllers filters(test should be written in such a way that it should break if new filters are added)
  - Do we need to have dependency test for lib/helper methods overriden in our helpers/libs
  - have to investigate open_forums
- - location header in create response -  Rashmi
+ - location header in create response 
  - 204 for delete?
  - Rescue 500
  - Enforce ssl
@@ -54,10 +50,14 @@ Completed:
  - forums customers parameter validation
  - should handle post or put api request without/invalid content- type header with 415 error
  - post create
- - rubocop
  - monitor
+ - Corrected All rubocop info warnings
+ - should handle unaccepted type in ACCEPT header with 406 error. # not needed as rails itself considers params[:format] 
+ - should handle xml parse error excpetion in new version if content_type is application/xml
+ - only visibility 4 has to allow customer params
 
 Not_necessary:
  - Clean up old discussions controller *****
  - Forum is not a number
+ - rubocop customization to remove info severity
 

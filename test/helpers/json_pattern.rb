@@ -49,6 +49,13 @@ module JsonPattern
     }
   end
 
+  def not_acceptable_error_pattern
+    {
+      code: "invalid_accept_header",
+      message: String
+    }
+  end
+
   def request_error_pattern code, params_hash={}
     {
       code: code, 

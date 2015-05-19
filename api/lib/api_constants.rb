@@ -13,6 +13,10 @@ module ApiConstants
   UPDATE_POST_FIELDS = { all: [:body_html, :answer] }
   CREATE_POST_FIELDS = { all: [:body_html, :answer, :topic_id], view_admin: [:created_at, :updated_at], manage_users: [:email, :user_id] }
 
+  # This hash is used for enumerating forums in reuqest params for all forum_visibility.
+  # Forum request params will include customers only if visibility is company_users
+  API_FORUM_FIELDS = Hash[Forum::VISIBILITY_KEYS_BY_TOKEN.values.push(0).collect { |v| [v, ApiConstants::FORUM_FIELDS.dup] }].each_pair { |k, v| k != Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] ? v.delete(:customers) : v }
+
   # ValidationConstants
   BOOLEAN_VALUES = ['0', 0, false, '1', 1, true]
   LIST_FIELDS = {
