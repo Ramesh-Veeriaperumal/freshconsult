@@ -1,10 +1,10 @@
 === Freshdesk Official===
-Contributors: hjohnpaul, sathishfreshdesk, balakumars
+Contributors: hjohnpaul, sathishfreshdesk, balakumars, shreyasns
 Donate link: 
 Tags: freshdesk, helpdesk, support tool
 Requires at least: 3.4
-Tested up to: 3.9
-Stable tag: 1.6
+Tested up to: 4.1.5
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,11 @@ Manual Installation:
 4. This shows the comment link in the ticket description.
 
 == Changelog ==
+= 1.7 =
+  Added option to enable/disable sso.
+  Logging out of wordpress no longer logs out the Freshdesk session.
+  Added validations for the settings page.
+  Fixed the error showing up on the plugin settings page.
 = 1.6 =
   Fix the SSO login redirect to Freshdesk and on wordpress logout, logout of Freshdesk as well.
 = 1.5 =
@@ -85,8 +90,15 @@ Bug Fix:
 First Release Version.
 
 == Upgrade Notice ==
-  Fix for SSO login redirect back to Freshdesk.
-  Change logout url to Freshdesk logout url so that Freshdesk is also logged out.
+  Added option to enable/disable sso.
+  Logging out of wordpress will no longer logout the Freshdesk session.
+  Added validations for the settings page.
+  Fixed the error showing up on the plugin settings page.
+== 1.7 ==
+  Added option to enable/disable sso.
+  Logging out of wordpress will no longer logout the Freshdesk session.
+  Added validations for the settings page.
+  Fixed the error showing up on the plugin settings page.
 == 1.6 ==
   Fix for SSO login redirect back to Freshdesk.
   Change logout url to Freshdesk logout url so that Freshdesk is also logged out.
