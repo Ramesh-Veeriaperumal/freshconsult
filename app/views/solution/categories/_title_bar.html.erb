@@ -1,0 +1,16 @@
+<div class="list-panel-main">
+	<ul class="list-actions-left">
+		<% if privilege?(:manage_solutions) -%>
+		<li class="category-edit">
+			<%= pjax_link_to("", edit_solution_category_path(@item), :class => font_class(:edit, 23, "tooltip"), :title => "Edit")%>
+		</li>
+		<% end %>
+	</ul>
+	<ul class="list-actions-right">
+		<li class="list-default-btns">
+			<%= link_to t('reorder'), '#', :id => "folder_reorder_button", :class => "btn" unless(@item.folders.visible(current_user).size <= 1)%>
+			<%= new_solutions_button(:category) %>
+		</li>
+	</ul>
+	<h2 class="list-title ellipsis"><%= h(@item.name) %></h2>
+</div>

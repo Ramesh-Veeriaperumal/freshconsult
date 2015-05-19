@@ -2,6 +2,7 @@
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
   helper AutocompleteHelper
+  helper SolutionHelper
 
   include FeatureCheck
   feature_check :solution_drafts

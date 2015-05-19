@@ -4,6 +4,8 @@ class Solution::ArticlesController < ApplicationController
   include Helpdesk::ReorderUtility
   include CloudFilesHelper
   include FeatureCheck
+  helper SolutionHelper
+  
   feature_check :solution_drafts
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
