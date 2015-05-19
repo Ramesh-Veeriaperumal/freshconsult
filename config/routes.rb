@@ -1557,6 +1557,37 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    
+    resources :folders do
+      collection do
+        put :reorder
+      end
+    end
+    
+    resources :articles do
+      collection do
+        put :reorder
+      end
+
+      member do
+        put :thumbs_up
+        put :thumbs_down
+        post :delete_tag
+        delete :destroy
+        put :reset_ratings
+        get :properties
+      end
+      
+      resources :tag_uses
+      
+      resources :drafts do
+        collection do
+          delete :discard
+        end
+      end
+      
+      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
+    end
 
     resources :drafts, :only => [:index] do
       member do
@@ -1565,15 +1596,6 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
-
-    resources :articles, :only => [:show, :create, :destroy] do
-      resources :drafts do
-        collection do
-          delete :discard
-        end
-      end
-      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
-    end
 
   end
 
