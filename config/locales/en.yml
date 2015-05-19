@@ -3242,6 +3242,7 @@ en:
       feedback: Feedback
       analytics: Analytics
     folders:
+      move_to: Move to
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for publishing the article
       new:

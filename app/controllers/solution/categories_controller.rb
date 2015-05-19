@@ -2,6 +2,8 @@
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   include FeatureCheck
+  helper SolutionHelper
+  
   feature_check :solution_drafts
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]

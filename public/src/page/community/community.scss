@@ -559,3 +559,7 @@ body.community.moderation.cs-always-show {
 		  margin-left: -20px;
 	}
 }
+
+.category-edit{
+	@include border-right(1px solid #FFF);
+}

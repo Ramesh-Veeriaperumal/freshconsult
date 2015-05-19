@@ -162,11 +162,15 @@ $community-types: problem #e65e63,
 	{
 		background: rgba(255,255,255,1);
 		padding: 15px 0;
-		border-bottom: 1px solid #D8D8D8;
+		border-bottom: 1px solid #efefef;
 		overflow:hidden;
 		.topic-list-checkbox{
 			@include float(left);
 			@include padding(7px 20px 7px 15px);
+		}
+		.folder-list-checkbox{
+			@include float(left);
+			@include padding(0px 20px 7px 15px);
 		}
 		.preview_pic{
 			img{
@@ -189,7 +193,7 @@ $community-types: problem #e65e63,
 		.comm-item-main{
 			.comm-item-title{
 				font-size: 15px;
-				font-weight: 500;
+				font-weight: inherit;
 			}
 			.comm-item-details{
 				line-height: 1.6;
@@ -530,6 +534,10 @@ $community-types: problem #e65e63,
 		padding: 5px;
 		text-align: center;
 	}
+}
+
+.visibilty-label{
+	font-weight: 500;	
 }
 
 //-------------- Reorder ------------------
