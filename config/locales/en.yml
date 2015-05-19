@@ -2065,6 +2065,7 @@ en:
       group_change: "Agent Group Changed"
       group_change_none: "Agent Group Changed"
       source_change: "Ticket Source"
+      due_date_updated: "Due Date Updated"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2226,6 +2227,10 @@ en:
         short: "{{user_path}} updated source to {{source_name}}"
         without_user: "updated source to <strong>{{source_name}}</strong>"
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
+      due_date_updated:
+        short: "{{user_path}} updated due date to {{due_date_updated}}"
+        without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
+        long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
