@@ -157,6 +157,7 @@ class AuthorizationsController < ApplicationController
         Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
         port = (Rails.env.development? ? ":#{request.port}" : '')
         fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}#{port}" : portal_url(user_account))
+        fb_url = "https://#{user_account.full_domain}" if is_native_mobile? #always use https for requests from mobile app.
         redirect_to fb_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}"
       end
     end

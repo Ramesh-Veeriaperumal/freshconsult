@@ -94,6 +94,12 @@ module Helpdesk::TicketActivities
       end
     end
 
+    def create_due_by_activity
+      create_activity(User.current, 'activities.tickets.due_date_updated.long',
+        {'eval_args' => {'due_date_updated' => ['parse_in_time_zone', self.due_by.to_s(:db)]}}, 
+          'activities.tickets.due_date_updated.short') if self.schema_less_ticket.manual_dueby && self.due_by
+    end
+
     def all_activities(page = 1, no_of_records = 50)
       first_page_count = 3
       if page.blank? or page.to_i == 1

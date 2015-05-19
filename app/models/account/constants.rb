@@ -79,13 +79,13 @@ class Account < ActiveRecord::Base
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
-    :agent_collision => false, :multiple_user_emails => false, :facebook_realtime => true, :social_revamp => false,
+    :agent_collision => false, :multiple_user_emails => true, :facebook_realtime => true, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
-    :round_robin_revamp =>  false, :contact_merge_ui => false, :client_debugging => false, :collision_socket => false,
+    :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
     :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
-    :resource_rate_limit => false, :disable_agent_forward => false}
+    :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false}
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

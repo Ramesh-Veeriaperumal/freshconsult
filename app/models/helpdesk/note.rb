@@ -144,7 +144,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true)
+    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true) and (!self.mobihelp?)
   end
 
   def as_json(options = {})
@@ -317,6 +317,10 @@ class Helpdesk::Note < ActiveRecord::Base
     
     def user_info
       user.get_info if user
+    end
+
+    def mobihelp?
+      self.source == SOURCE_KEYS_BY_TOKEN['mobihelp'] || self.source == SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
     end
 
   private

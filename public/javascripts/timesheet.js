@@ -7,17 +7,20 @@ TicketTimesheet.prototype = {
   initialize: function(initList, _options) {
     this.editid  = null;     
      // Running the autoupdate for the timer when it is active.
-     new PeriodicalExecuter(function(pe) {
+     window.current_running_timer = new PeriodicalExecuter(function(pe) {
         jQuery("div.time_running .time")
          .each(function(){
-            seconds = jQuery(this).data('runningTime');
-            timeout = 10 - seconds % 10;
-            jQuery(this)
-               .html(time_in_hhmm(seconds))
-               .data('runningTime', seconds+timeout);                	    
+            var now = Date.now();
+            var current_timer = jQuery(this);
+            var seconds = current_timer.data('runningTime');
+            var previous_timestamp = jQuery(this).data('timestamp');
+            var timeout = previous_timestamp ? (now - previous_timestamp) / 1000 : 30 - seconds % 10;
+            current_timer.html(time_in_hhmm(seconds))
+               .data('runningTime', seconds+timeout)
+               .data('timestamp', now);
             });
             totalTime("#timesheetlist .time", "#timeentry_timer_total");
-         }, 10);
+         }, 30);
          
          jQuery("#timesheetlist div.timeentry")
               .livequery( this.timeCount, this.timeCount );

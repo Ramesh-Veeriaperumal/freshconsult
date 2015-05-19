@@ -3,18 +3,12 @@ class Mobile::SettingsController < ApplicationController
   include ApplicationHelper
   include Mobile::Constants
 
-
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:deliver_activation_instructions,:mobile_login]
   skip_before_filter :require_user, :only => :mobile_login
 
 	def index
 		render :json => {:success => true , :notifications_url => MobileConfig['notifications_url'][Rails.env]}
 	end
-
-# Mobile devices to fetch admin level settings
-  def mobile_pre_loader
-    render :json => {ff_feature: current_account.freshfone_account, view_social: can_view_social? && handles_associated? , portal_name: current_account.portal_name, portal_id: current_account.id, host_name: current_account.host, user_id: current_user.id }
-  end
 
   # Return full_domain @params cname; @authetication SHA2
   def mobile_login
@@ -44,6 +38,11 @@ class Mobile::SettingsController < ApplicationController
       end 
 
     render :json => {full_domain: full_domain,result_code: result_code}
+  end
+
+# Mobile devices to fetch admin level settings
+  def mobile_pre_loader
+    render :json => {ff_feature: current_account.freshfone_account, view_social: can_view_social? && handles_associated? , portal_name: current_account.portal_name, portal_id: current_account.id, host_name: current_account.host, user_id: current_user.id }
   end
 
   def deliver_activation_instructions

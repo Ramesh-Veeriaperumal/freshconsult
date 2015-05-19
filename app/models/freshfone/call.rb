@@ -180,6 +180,7 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	def update_status(params)
+		self.params = params
 		if params[:DialCallStatus]
 			self.call_status = CALL_STATUS_STR_HASH[params[:DialCallStatus]]
 			self.call_status = CALL_STATUS_HASH[:voicemail] if voicemail_ticket?

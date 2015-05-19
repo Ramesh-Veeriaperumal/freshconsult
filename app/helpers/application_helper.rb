@@ -436,6 +436,10 @@ module ApplicationHelper
     data
   end
 
+  def parse_in_time_zone(time_string) #used in rendering manual due_by change activity
+    "#{formated_date(Time.zone.parse(time_string))}".tap do |f_t| f_t.gsub!(' at', ',') end
+  end
+
   def target_topic_path(topic_id)
     topic = current_account.topics.find(topic_id)
     link_to topic.title, discussions_topic_path(topic.id)
@@ -1069,11 +1073,11 @@ module ApplicationHelper
   end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'phone-icons', freshfone_number_id)
+		can_make_calls(number, 'phone-icons', freshfone_number_id, true)
 	end
 
 	def can_make_mobile_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'mobile-icons', freshfone_number_id)
+		can_make_calls(number, 'mobile-icons', freshfone_number_id, true)
 	end
 
 	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)

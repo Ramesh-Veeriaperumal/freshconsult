@@ -946,6 +946,31 @@ jQuery.scrollTo = function(element, options) {
     }, opts.speed);
 };
 
+jQuery.fn.bringToView = function(options) {
+  var defaults = {
+    speed: 500,
+    offset: 50
+  },
+  $win = jQuery(window),
+  $this = jQuery(this),
+  scrollPosition = $win.scrollTop(),
+  screenBottom = $win.outerHeight(true) + $win.scrollTop(),
+  elementBottom = $this.outerHeight(true) + $this.offset().top;
+
+  var opts = jQuery.extend({}, defaults, options || {});
+  elementBottom += opts.offset;
+  if (elementBottom > screenBottom) {
+    scrollPosition = $win.scrollTop() + (elementBottom - screenBottom);
+  } else if ($this.offset().top < $win.scrollTop()) {
+    scrollPosition = $this.offset().top - opts.offset
+  }
+
+  jQuery('body, html').animate({
+      scrollTop: scrollPosition
+    }, opts);
+
+  return this;
+};
 
 function trigger_event(event_name, event_data){
   jQuery(document).trigger( event_name , event_data );

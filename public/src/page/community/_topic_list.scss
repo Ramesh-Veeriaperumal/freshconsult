@@ -446,6 +446,9 @@ $community-types: problem #e65e63,
 .mini-link {
 	font-size: 12px;
 }
+.long-topic-title {
+	@include margin-left(40px);
+}
 //-------------- Reorder ------------------
 .reorder-icon{
 	@include float(left);

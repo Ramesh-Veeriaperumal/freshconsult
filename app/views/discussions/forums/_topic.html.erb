@@ -12,7 +12,7 @@
 													:class => "latest_reply", 
 													:"data-tip-url" => latest_reply_discussions_topic_path(topic.id))%>
 		</div>
-		<div class="comm-item-details muted">
+		<div class="comm-item-details muted  <%= 'long-topic-title' if topic.title.length > 97 %>">
 			<%= t('topic.details',
 					:user_path => link_to_user(topic.user, :class => 'hover-link'),
 					:created_time => topic.created_at.to_i,

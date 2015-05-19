@@ -13,7 +13,7 @@ class DomainMapping < ActiveRecord::Base
 
 	scope :main_portal, :conditions => ['portal_id IS NULL']
 
-  scope :full_domain, lambda { |cname|
+	scope :full_domain, lambda { |cname|
           {
             :joins => %(INNER JOIN domain_mappings as B on B.account_id = domain_mappings.account_id),
             :conditions => ["B.domain = ? and domain_mappings.portal_id IS ?",cname,nil],

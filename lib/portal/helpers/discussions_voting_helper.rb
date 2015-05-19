@@ -119,7 +119,9 @@ module Portal::Helpers::DiscussionsVotingHelper
   def populate_vote_list_content object
     return "" unless User.current.present?
     output = []
-    voters = object.voters.all(:limit => 6).reject { |user| user.id == User.current.id }.collect(&:name)
+    voters = object.voters.all(:limit => 6).reject { |user| user.id == User.current.id }.collect(&:name).map do |name|
+              name.size > 20 ? name.truncate(20) : name 
+            end
     voters.first(5).each do |name|
       output << "<div>#{h(name)}</div>"
     end
