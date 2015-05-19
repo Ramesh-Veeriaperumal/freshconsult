@@ -1456,6 +1456,9 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
+
+    match '/tickets/filter/article_feedback' => 'tickets#index', :as => :article_feedback_filter
+    
     match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
@@ -1552,6 +1555,7 @@ Helpkit::Application.routes.draw do
             delete :destroy
             put :reset_ratings
             get :properties
+            get :voted_users
           end
           resources :tag_uses
         end
@@ -1567,11 +1571,7 @@ Helpkit::Application.routes.draw do
     match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
 
     resources :articles, :only => [:show, :create, :destroy] do
-      resources :drafts do
-        collection do
-          delete :discard
-        end
-      end
+      resources :drafts
       match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
     end
 

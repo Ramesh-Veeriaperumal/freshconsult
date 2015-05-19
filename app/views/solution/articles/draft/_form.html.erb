@@ -8,21 +8,17 @@
                 :data => form_data_attrs
               } do |f| %>
     <div class="row-fluid">
-      <div class="span6">
+      <div class="span12">
         <%= f.text_field :title, 
                 :class => "text required article-title", 
                 :placeholder => t('solution.solution_title'),
                 :value => "" %>
     
       </div>
-      <div class="span6 pull-right pagination-right header_buttons align-right">
-        <%= link_to t('cancel'), '', :id => "cancel_draft_changes", :class => "btn cancel-button", :id => "edit-cancel-button" %>
-        <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn" %>
-        <%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn" %>
-      </div>
     </div>
     <%= f.error_messages %>
     <div class="row-fluid">
+    <div id="editortool"></div>
     <div class="editor-body">
       <%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", 
             :class => "required", 
@@ -33,14 +29,18 @@
             }
       %>
     </div>
-    <div id="editortool"></div>
     </div>
     
     <% if @article.draft.present? %>
-      <input type="hidden" name="previous_author" value="<%= @article.draft.user.id %>">
-      <input type="hidden" name="original_updated_at" value="<%= @article.draft.modified_at %>">
-      <input type="hidden" name="last_updated_at" value="<%= @article.draft.updation_timestamp %>" id="last-updated-at">
+      <input type="hidden" 
+          name="previous_author" value="<%= @article.draft.user.id %>">
+      <input type="hidden" 
+          name="original_updated_at" value="<%= @article.draft.modified_at %>">
+      <input type="hidden" name="last_updated_at" 
+          value="<%= @article.draft.updation_timestamp %>" id="last-updated-at">
     <% end %>
+    <input type="hidden" name="cancel_draft_changes" 
+          value="1" id="cancel_draft_changes_input" disabled="disabled">
     <hr />
     <%= render	:partial => "/solution/shared/attachment_form",
         :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
@@ -58,21 +58,36 @@
     <% end %>
     
     <% if @article.folder.is_default? %>
-      <div class="control-group select-folder hide">
-        <p class="folder-warning-msg">*<%= t('solution.folders.choose_folder_warning') %></p>
-        <%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
-        <div class="controls">
-          <%= f.select :folder_id , 
-                option_groups_from_collection_for_select( 
-                    current_account.solution_categories.reject(&:is_default), 
-                    :folders, :name, :id, :name, 
-                    (@article.folder.is_default? ? nil : @article.folder_id )
-                ), 
-                {:include_blank => t('solution.folders.choose_folder')}, 
-                :class => "select2 span4 required"
-          %>
+      <div class="row-fluid select-folder hide">
+        <div class="control-group">
+          <p class="folder-warning-msg">*<%= t('solution.folders.choose_folder_warning') %></p>
+          <%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
+          <div class="controls">
+            <%= f.select :folder_id , 
+                  option_groups_from_collection_for_select( 
+                      current_account.solution_categories.reject(&:is_default), 
+                      :folders, :name, :id, :name, 
+                      (@article.folder.is_default? ? nil : @article.folder_id )
+                  ), 
+                  {:include_blank => t('solution.folders.choose_folder')}, 
+                  :class => "select2 span4 required"
+            %>
+          </div>
         </div>
       </div>
     <% end %>
+
+    <div class="row-fluid">
+      <% if privilege?(:delete_solution, @article) %>
+        <div class="pull-left itil-hide">
+          <%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
+        </div>
+      <% end %>
+      <div class="span6 pull-right pagination-right header_buttons align-right">
+        <%= link_to t('cancel'), "#", :class => "btn cancel-button", :id => "edit-cancel-button" %>
+        <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn" %>
+        <%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn" %>
+      </div>
+    </div>
   <% end %>
 </div>

@@ -134,7 +134,7 @@ Authority::Authorization::PrivilegeList.build do
   view_solutions do
     resource :"solution/category", :only => [:index, :show]
     resource :"solution/folder", :only => [:index, :show]
-    resource :"solution/article", :only => [:index, :show]
+    resource :"solution/article", :only => [:index, :show, :voted_users]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]

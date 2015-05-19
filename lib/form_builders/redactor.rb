@@ -22,9 +22,7 @@ module FormBuilders::Redactor
         :allowTagsInCodeSnippet => true,
         :imageUpload => "/solutions_uploaded_images",
         :clipboardImageUpload => "/solutions_uploaded_images/create_file",
-        :imageGetJson => "/solutions_uploaded_images",
-        :buttons => ['formatting','bold','italic','underline','deleted',
-                        'unorderedlist', 'orderedlist','fontcolor', 'backcolor','insert_table']
+        :imageGetJson => "/solutions_uploaded_images"
       }
 
       REDACTOR_TICKET_EDITOR = {

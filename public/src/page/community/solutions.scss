@@ -13,6 +13,9 @@
 .solution{
 	.bread-crumb{
 		margin-bottom: 15px;
+	  border-bottom: 1px solid #ddd;
+	  margin: 0px -20px 15px;
+	  padding: 0px 20px 10px;
 		a{
 			color: #1272de;
 			font-size: 13px;
@@ -28,7 +31,7 @@
 	}
 }
 .solution-header{
-	padding-top: 10px;
+	/*padding-top: 10px;*/
 	background: #fff;
 	.tab{
 		margin: 0 -20px 0;
@@ -336,11 +339,13 @@
 		color: #333;
 		font-weight: 300;
 		margin-left: -4px;
+		height: 25px;
+		margin-bottom: 10px;
 		&:focus{
 			box-shadow: none;
 		}
 	}
-	#editortool{
+	/*#editortool{
 		width: 40px;
 		text-align: center;
 		position: absolute;
@@ -363,9 +368,73 @@
 			}
 		}
 		&.fixtoolbar{
-		position: fixed;
-		right: 390px;
-		top: 110px;
+			position: fixed;
+			right: 390px;
+			top: 110px;
+		}
+	}*/
+	.select-folder{
+		margin-bottom: 20px;
+		.folder-warning-msg {
+			color: brown;
+		}
+		.control-label {
+			float: left;
+			width: 130px;
+			padding-top: 5px;
+			font-weight: 500;
+		}
+		.controls{
+			margin-left: 150px;
+			input, textarea {
+				margin-bottom: 0px;
+			}
+		}
+		.control-label, controls {
+			display: inline;
+		}
 	}
+}
+
+/* For likes and dislikes voted popups */
+#article-likes, #article-dislikes {
+	.voted-user{
+	  
+	  width: 100%;
+	  overflow: hidden;
+	  border-bottom: 1px solid lightgrey;
+    margin-bottom: 5px;
+	  padding-bottom: 3px;
+
+		.avatar-wrap {
+			float: left;
+			.preview_pic {
+				img {
+						  border-radius: 100%;
+		  				width: 40px;
+						  height: 40px;
+				}
+			}
+		}
+		.user-name {
+			float: left;
+			margin-top: 14px;
+		}
+	}
+}
+
+.draft-notif {
+	.error{
+		background-color: #C6656F;
+		color: white;
+		.btn-small{
+			background: #F8EFF0;
+		}
+		.draft-btn {
+			display:none;
+		}
+		.preview-draft-link {
+			color: white;
+		}
 	}
 }

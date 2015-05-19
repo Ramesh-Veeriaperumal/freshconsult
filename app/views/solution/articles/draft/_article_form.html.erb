@@ -1,85 +1,69 @@
-<%= f.error_messages %>
-<% current_item = @article.draft || @article %>
-<div class="form-horizontal">
-	<div class="control-group article-title-input">
-		<%= f.text_field :title, :class => "text required", :placeholder => t('solution.solution_title'),
-		:value =>  current_item.title %>
-	</div>
-	<div class="control-group">
-		<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required", :value => current_item.description, :"data-remove-cursor" => true %>
-	</div>
-	<div class="control-group overflow-visible">
-		<%= render	:partial => "/solution/shared/attachment_form",
-				:locals => { :attach_id => 'article', :nsc_param => 'solution_article',
-					:original_attachments => { 
-						:cloud_files => active_attachments(:cloud_files, @article.draft, @article), 
-						:regular => active_attachments(:attachments, @article.draft, @article) }
-				} %>
-	</div>
-	<% if is_application_installed?("screenr") %>
-		<div class="control-group">
-			<div class="controls">
-				  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
-			</div>
+<div class="article-edit">
+  <%= form_for @article, 
+              :url => solution_category_folder_articles_path(@article.folder.category_id  , @article.folder.id) , 
+              :html => {
+                :multipart => true, 
+                :id => "article-form", 
+                :class => "article-edit-form form-horizontal"
+              } do |f| %>
+    <%= f.error_messages %>
+    <div class="row-fluid">
+      <div class="span12">
+        <%= f.text_field :title, 
+                :class => "text required article-title", 
+                :placeholder => t('solution.solution_title'),
+                :value => "" %>
+    
+      </div>
+    </div>
+    <%= f.error_messages %>
+    <div class="row-fluid">
+    <div id="editortool"></div>
+    <div class="editor-body">
+      <%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", 
+            :class => "required", 
+            :value => '',
+            :data => {
+              :"remove-cursor" => true,
+              :"toolbar-external" => "#editortool"
+            }
+      %>
+    </div>
+    </div>
+    
 
-		</div>
-	<% end %>
-	
-	<div id="solution-properties-container">
-		<% if  @article.new_record? %>
-			<div id="solution-properties-show" class="solution-properties-title sub-lead">
-				<div class="arrow-right  solution-properties-show" id="show-hide-button"></div>
-				<a><%= t('solution.properties') %></a>
-			</div>
-			<br/>
-			<div id="solution-properties">
-				<%= render :partial => "solution/articles/draft/article_properties", :locals => { :f => f} %>
-			</div>
-		<% else %>
-			<% if @article.folder.is_default? %>
-				<div class="control-group select-folder hide">
-					<p class="folder-warning-msg">*<%= t('solution.folders.choose_folder_warning') %></p>
-					<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
-					<div class="controls">
-						<%= f.select :folder_id , 
-									option_groups_from_collection_for_select( 
-											current_account.solution_categories.reject(&:is_default), 
-											:folders, :name, :id, :name, 
-											(@article.folder.is_default? ? nil : @article.folder_id )
-									), 
-									{:include_blank => t('solution.folders.choose_folder')}, 
-									:class => "select2 span4 required"
-						%>
-					</div>
-				</div>
-			<% end %>	
-			<div id="solution-properties-show" class="solution-properties-title solution-seo sub-lead">
-				<span> 
-					<%= link_to( t('solution.articles.edit_properties'), 
-							properties_solution_category_folder_article_path(@article.folder.category, @article.folder, @article, {:edit => true}),
-							:rel => "freshdialog",
-							:class => "article-properties",
-							:title => t('solution.articles.properties'),
-							"data-target" => "#article-properties",
-							"data-width" => "700px",
-							"data-close-label" => t('cancel'),
-							"data-submit-label" => t('save'), 
-						  "data-submit-loading" => t('saving')
-					) %>
-				<span>
-			</div>
-		<% end %>
-	</div>
+    <hr />
+    <%= render	:partial => "/solution/shared/attachment_form",
+        :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
+          :original_attachments => { 
+            :cloud_files => active_attachments(:cloud_files, @article.draft, @article), 
+            :regular => active_attachments(:attachments, @article.draft, @article) }
+        } %>
+    <% if is_application_installed?("screenr") %>
+      <div class="control-group">
+        <div class="controls">
+            <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
+        </div>
+  
+      </div>
+    <% end %>
+
+    <div id="solution-properties-container">
+        <div class="solution-properties-title solution-seo sub-lead">
+        	<span><%= t('solution.properties') %></span>
+        </div>
+        <br/>
+        <div id="solution-properties">
+	        <%= render :partial => "solution/articles/draft/article_properties", :locals => { :f => f} %>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+      <div class="span6 pull-right pagination-right header_buttons align-right">
+        <%= link_to t('cancel'), "#", :class => "btn cancel-button", :id => "edit-cancel-button" %>
+        <%= submit_tag t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn" %>
+        <%= submit_tag t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn" %>
+      </div>
+    </div>
+  <% end %>
 </div>
-<% unless @article.new_record? %>
-	<script type="text/javascript">
-		jQuery('body').one('assetLoaded.fjax', function () {
-			window.autoSaveArticleDraft = App.Solutions.Article.autosaveInitialize(
-				{
-					autosavePath: "<%= autosave_solution_draft_path(@article.id) %>",
-					timestamp: <%= @article.draft.present? ? @article.draft.updation_timestamp : false %>
-				}
-			);
-		});
-	</script>
-<% end %>

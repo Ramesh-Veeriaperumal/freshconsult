@@ -9,8 +9,7 @@ class Solution::DraftsController < ApplicationController
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
 	before_filter :set_selected_tab, :only => [:index]
 	before_filter :page_title, :only => [:index]
-
-	before_filter :load_article, :only => [:publish, :attachments_delete, :discard]
+	before_filter :load_article, :only => [:publish, :attachments_delete, :destroy]
 	before_filter :load_attachment, :only => [:attachments_delete]
 
 	def index
@@ -18,24 +17,16 @@ class Solution::DraftsController < ApplicationController
 	end
 
 	def destroy
-		draft = current_account.solution_drafts.find_by_id(params[:id])
+		draft = @article.draft
 		if draft.present? && !draft.locked?
 			flash[:notice] = t('solution.articles.draft.discard_msg')
 			draft.discarding = true
 			draft.destroy
 		end
-		redirect_to :back
-	end
-	
-	def discard
-		# See if this can be combined with destroy
-		# If necessary, replace the places where "destroy" is being used,
-		# And use this instead. Why do we need Draft's id to discard it.?
-		if @article.draft.present? && !@article.draft.locked?
-			@article.draft.discarding = true
-			@article.draft.destroy
+		respond_to do |format|
+			format.html { redirect_to :back }
+			format.json { render :json => { :success => true} , :status => 200 }
 		end
-		head :ok
 	end
 
 	def publish

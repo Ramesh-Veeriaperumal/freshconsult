@@ -128,6 +128,11 @@ class Solution::ArticlesController < ApplicationController
     render :layout => false
   end
 
+  def voted_users
+    @article = current_account.solution_articles.find(params[:id], :include =>[:votes => :user])
+    render :layout => false
+  end
+
   protected
 
     def load_article
@@ -237,16 +242,24 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def revert_draft_changes
-      (redirect_to :action => "show" and return) unless (@article.draft.present? && latest_content?)
-      @draft = @article.draft
-      if params[:previous_author].present?
-        @draft.user = (User.find(params[:previous_author].to_i) || current_user)
-        @draft.modified_at = Time.parse(params[:original_updated_at])
-        update_draft_attributes
-      else
-        @draft.destroy
+      #TODO : Catch Errors and handle in cancelling draft
+      if (@article.draft.present? && latest_content?)
+        @draft = @article.draft
+        if params[:previous_author].present?
+          @draft.user = (User.find(params[:previous_author].to_i) || current_user)
+          @draft.modified_at = Time.parse(params[:original_updated_at])
+          update_draft_attributes
+        else
+          @draft.destroy
+        end
       end
-      redirect_to :action => "show" and return
+      respond_to do |format|
+        format.html { redirect_to :action => "show" }
+        format.js   { 
+          flash[:notice] = t('solution.articles.draft.revert_msg');
+          render 'draft_reset'
+        }
+      end
     end
 
     def update_draft

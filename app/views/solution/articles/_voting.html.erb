@@ -1,12 +1,19 @@
-<%= font_icon :like %> <%= @article.thumbs_up %> <b><%= t('likes') %></b>, 
-<%= font_icon :dislike %> <%= @article.thumbs_down %> <b><%= t('dislikes') %></b>
+<% if defined?(new_draft_ui) %>
+	<%= font_icon :like %> 
+	<%= @article.thumbs_up %>
+	<%= user_votes_stats(@article.thumbs_up, 1) %>
+	- 
+	<%= font_icon :dislike %> 
+	<%= @article.thumbs_down %> 
+	<%= user_votes_stats(@article.thumbs_down, 0) %>
+<% end %>
 
 <% if current_user.privilege?(:delete_solution) && (@article.thumbs_up > 0 || @article.thumbs_down > 0)
 		reset_url = reset_ratings_solution_category_folder_article_path(@article.folder.category, @article.folder, @article)
 	%>
-
+	<% reset_url = "#{reset_url}?reset_votes=true" if defined?(new_draft_ui) %>
  - 
-	<%= link_to(t('solution.articles.reset_rating.link'),reset_url, 
+	<%= link_to(t('solution.articles.reset_rating.link'), reset_url, 
 			"data-target" => "#article-reset-rating-confirmation", 
 			:rel => "freshdialog", 
 			"title" => t('solution.articles.reset_rating.dialog_title'), 
