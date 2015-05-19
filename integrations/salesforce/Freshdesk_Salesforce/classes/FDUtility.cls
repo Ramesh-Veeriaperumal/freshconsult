@@ -30,14 +30,14 @@ public with sharing class FDUtility {
     
     //Get All Tickets
     public static Ticket[] getAllTickets(string param, string paramType, integer page){
-    	//System.debug('FDUtility getAllTickets' + param + ' --- paramType = ' + paramType);
-    	
+        //System.debug('FDUtility getAllTickets' + param + ' --- paramType = ' + paramType);
+        //System.debug('FDUtility getAllTickets'+' '+'account'+param);
         HttpRequest req = new HttpRequest();
         req.setMethod('GET');
         if(param == null || param.equals(''))
-        {
-        	return new Ticket[0]; //added by roshini
-        	
+        { 
+            return new Ticket[0]; //added by roshini
+            
         }
         string resource = (paramType == 'email') ? ('/helpdesk/tickets.xml?filter_name=all_tickets&email=' + param) : ('/helpdesk/tickets.xml?filter_name=all_tickets&company_name=' + EncodingUtil.urlEncode(param, 'UTF-8'));
         req.setEndpoint(url + resource + '&wf_per_page=5&page=' + page);
@@ -46,7 +46,7 @@ public with sharing class FDUtility {
         EncodingUtil.base64Encode(headerValue);
         req.setHeader('Authorization', authorizationHeader);
         Http http = new Http();
-        if(!isApexTest){
+        if(!(Test.isRunningTest())){
             HTTPResponse res = http.send(req);
             if((res.getHeader('Content-Type') != null && res.getHeader('Content-Type').contains('text/html')) || (res.getStatusCode() == 503) || (res.getStatusCode() == -1)){
                 return new Ticket[0]; //send empty array instead of null - Hrishikesh
@@ -54,7 +54,7 @@ public with sharing class FDUtility {
             ticket_response = res.getBody();
         }
         else{
-            ticket_response = '<?xml version="1.0" encoding="UTF-8"?><helpdesk-tickets type="array"><helpdesk-ticket><created-at type="datetime">2013-06-12T18:35:37+05:30</created-at><deleted type="boolean">false</deleted><delta type="boolean">true</delta><description> hg </description><description-html></description-html><display-id type="integer">148</display-id><due-by type="datetime">2013-06-15T18:35:37+05:30</due-by><email-config-id type="integer" nil="true"></email-config-id><frDueBy type="datetime">2013-06-13T18:35:37+05:30</frDueBy><fr-escalated type="boolean">false</fr-escalated><group-id type="integer">1</group-id><id type="integer">192</id><isescalated type="boolean">false</isescalated><owner-id type="integer" nil="true"></owner-id><priority type="integer">1</priority><requester-id type="integer">224</requester-id><responder-id type="integer">222</responder-id><source type="integer">2</source><spam type="boolean">false</spam><status type="integer">2</status><subject>gh</subject><ticket-type>Lead</ticket-type><to-email nil="true"></to-email><trained type="boolean">false</trained><updated-at type="datetime">2013-07-30T15:14:01+05:30</updated-at><urgent type="boolean">false</urgent><status-name>Open</status-name><requester-status-name>Open</requester-status-name><priority-name>Low</priority-name><source-name>Portal</source-name><requester-name>Rachel</requester-name><responder-name>Lord Skype</responder-name><to_emails></to_emails><custom_field>  <customfield1_1>ettt</customfield1_1></custom_field></helpdesk-ticket></helpdesk-tickets>';
+            ticket_response = '<?xml version="1.0" encoding="UTF-8"?><helpdesk-tickets type="array"><helpdesk-ticket><display-id type="integer">148</display-id><subject>gh</subject><updated-at type="datetime">2013-07-30T15:14:01+05:30</updated-at><status-name>Open</status-name><priority-name>Low</priority-name></helpdesk-ticket><helpdesk-ticket><display-id type="integer">148</display-id><subject>gh</subject><updated-at type="datetime">2013-07-30T15:14:01+05:30</updated-at><status-name>Open</status-name><priority-name>Low</priority-name></helpdesk-ticket><helpdesk-ticket><display-id type="integer">148</display-id><subject>gh</subject><updated-at type="datetime">2013-07-30T15:14:01+05:30</updated-at><status-name>Open</status-name><priority-name>Low</priority-name></helpdesk-ticket><helpdesk-ticket><display-id type="integer">148</display-id><subject>gh</subject><updated-at type="datetime">2013-07-30T15:14:01+05:30</updated-at><status-name>Open</status-name><priority-name>Low</priority-name></helpdesk-ticket><helpdesk-ticket><display-id type="integer">148</display-id><subject>gh</subject><updated-at type="datetime">2013-07-30T15:14:01+05:30</updated-at><status-name>Open</status-name><priority-name>Low</priority-name></helpdesk-ticket></helpdesk-tickets>';
         }
         JSONParser parser = JSON.createParser(ticket_response);
         tickets = new List<Ticket>(); //Update with ticket count from json size
@@ -94,67 +94,73 @@ public with sharing class FDUtility {
     //Fetch CSAT Details
     
     public static String fetchCSATForTicket(string ticketId) {
-		//System.debug('fetch CSAT for id ' + ticketId);
-		HttpRequest req = new HttpRequest();
-	    req.setMethod('GET');
-	    req.setEndpoint(url + '/helpdesk/tickets/' + ticketId + '/surveys.json');
-	    Blob headerValue = Blob.valueOf(apikey + ':' + pwd);
-	    String authorizationHeader = 'Basic ' +
-	    EncodingUtil.base64Encode(headerValue);
-	    req.setHeader('Authorization', authorizationHeader);
-	    Http http = new Http();
-	    String ticket_csat = '';
-	    String rating = '';
-	     if(!isApexTest){
-	     	//System.debug('inside is not Apex Tet code');
+        //System.debug('fetch CSAT for id ' + ticketId);
+        HttpRequest req = new HttpRequest();
+        req.setMethod('GET');
+        req.setEndpoint(url + '/helpdesk/tickets/' + ticketId + '/surveys.json');
+        Blob headerValue = Blob.valueOf(apikey + ':' + pwd);
+        String authorizationHeader = 'Basic ' +
+        EncodingUtil.base64Encode(headerValue);
+        req.setHeader('Authorization', authorizationHeader);
+        Http http = new Http();
+        String ticket_csat = '';
+        String rating = '';
+        String surveyresponse=null;
+         if(!(Test.isRunningTest())){
+            //System.debug('inside is not Apex Tet code');
             HTTPResponse res = http.send(req);
-            if(res.getHeader('Content-Type') == 'text/html; charset=utf-8')
+            if(res.getHeader('Content-Type') == 'text/html; charset=utf-8'){
                 return null;
-            //System.debug('ticket csat response ' + res.getBody());
-            
-            if(res.getBody() != null) {
-            	//System.debug('Inside not Null');
-            JSONParser parser = JSON.createParser(res.getBody());
-			 while (parser.nextToken() != null) {
-				 if (parser.getCurrentToken() == JSONToken.START_OBJECT)  
-				    { 
-						while (parser.nextToken() !=  JSONToken.END_OBJECT)  
-				      	{  
-				      		//System.debug('params text ' + parser.getText());
-				      		if((parser.getText() == 'rating'))
-				      		{
-				      			//System.debug('rating ' );
-				      			parser.nextToken() ;
-				      			rating = parser.getText();
-				      			//System.debug('rating value ' + rating);
-				      			break;
-				      		}//if
-				      	}//while
-					 } //if
-			 }//while
             }
+            
+            surveyresponse=res.getBody();
+            //System.debug('ticket csat response ' + res.getBody());
+          }  
+         else {
+            surveyresponse='[{ "survey_result" : { "agent_id" : null,"created_at" : "2013-08-24T12:58:48+05:30","customer_id" : 4722354,"group_id" : null,"id" : 163649,"rating" : 1,"response_note_id" : null,"survey_id" : 16609,"surveyable_id" : 13714431,"surveyable_type" : "Helpdesk::Ticket","updated_at" : "2013-08-24T12:58:48+05:30" } }]';
+            //System.debug('inside else Apex code');
          }
-	     else {
-	     	//System.debug('inside else Apex code');
-	     }
-	     System.debug('Rating Val == ' + rating);
-	     
-	     if(rating == '1'){
-	     	ticket_csat = 'happy-smily-small.png';
-	     }else if (rating =='2') {
-	     	ticket_csat = 'neutral-smily-small.png';
-	     }else if (rating == '3'){
-	     	ticket_csat = 'unhappy-smily-small.png';
-	     }
-	     //System.debug('ticket_csat return val ' + ticket_csat);
-    	return ticket_csat;
-    	
+            if(surveyresponse != null) {
+                //System.debug('Inside not Null');
+            JSONParser parser = JSON.createParser(surveyresponse);
+             while (parser.nextToken() != null) {
+                 if (parser.getCurrentToken() == JSONToken.START_OBJECT)  
+                    { 
+                        while (parser.nextToken() !=  JSONToken.END_OBJECT)  
+                        {  
+                            //System.debug('params text ' + parser.getText());
+                            if((parser.getText() == 'rating'))
+                            {
+                                //System.debug('rating ' );
+                                parser.nextToken() ;
+                                rating = parser.getText();
+                                //System.debug('rating value ' + rating);
+                                break;
+                            }//if
+                        }//while
+                     } //if
+             }//while
+            }
+         
+         
+         System.debug('Rating Val == ' + rating);
+         
+         if(rating == '1'){
+            ticket_csat = 'happy-smily-small.png';
+         }else if (rating =='2') {
+            ticket_csat = 'neutral-smily-small.png';
+         }else if (rating == '3'){
+            ticket_csat = 'unhappy-smily-small.png';
+         }
+         //System.debug('ticket_csat return val ' + ticket_csat);
+        return ticket_csat;
+        
     }
     
     //Fetch Ticket Details
     public static Ticket fetchTickets(string ticketId){
-    	//System.debug('FDUtility Cls - fetchTickets - id = ' + ticketId + 'isApexTest' + isApexTest);
-    	
+        //System.debug('FDUtility Cls - fetchTickets - id = ' + ticketId + 'isApexTest' + isApexTest);
+        
      HttpRequest req = new HttpRequest();
      req.setMethod('GET');
      req.setEndpoint(url + '/helpdesk/tickets/' + ticketId + '.json');
@@ -164,7 +170,8 @@ public with sharing class FDUtility {
      req.setHeader('Authorization', authorizationHeader);
      Http http = new Http();
      List<CustomFields> custom = null;
-     if(!isApexTest){
+     System.debug('Check for Test environment'+' '+Test.isRunningTest());
+     if(!(Test.isRunningTest())){
             HTTPResponse res = http.send(req);
             if(res.getHeader('Content-Type') == 'text/html; charset=utf-8')
                 return null;
@@ -174,7 +181,8 @@ public with sharing class FDUtility {
             //System.debug('custom = ' + custom);
         }
         else{
-            ticket_response = '{"helpdesk_ticket":{"urgent":false,"updated_at":"2012-06-25T18:52:56+05:30","product_72":null,"owner_id":null,"lev2_72":null,"cc_email":{"fwd_emails":[],"cc_emails":[]},"display_id":819,"created_at":"2012-06-08T18:45:52+05:30","status_name":"Open","id":9006,"delta":true,"cat1_72":null,"ajkdlasdlkjasdl_72":null,"requester_id":11632,"lev3_72":null,"fr_escalated":false,"deleted":false,"aklsdjasdaksdjalsdj_72":null,"attachments":[{"test":"test"}],"to_email":"support@test@test.com","subject":"Testing sales force integration","isescalated":false,"frDueBy":"2012-06-09T18:45:52+05:30","group_id":269,"due_by":"2012-06-11T18:45:52+05:30","adsaksdljasdlkad_72":null,"source_name":"Email","spam":false,"email_config_id":85,"description":"Sales force integration test","custom_field":{"product_72":null,"lev2_72":null,"cat1_72":null,"ajkdlasdlkjasdl_72":null,"lev3_72":null,"aklsdjasdaksdjalsdj_72":null,"adsaksdljasdlkad_72":null},"ticket_type":"Question","responder_id":5778,"description_html":"<div><div>Sales force integration test</div></div>","notes":[{"updated_at":"2012-06-25T18:52:56+05:30","body_html":"","notable_type":"Helpdesk::Ticket","created_at":"2012-06-25T18:52:56+05:30","private":false,"id":4423,"incoming":false,"deleted":false,"user_id":5778,"notable_id":9006,"body":"Testerest    On June 25 @ 04:22 PM, elderscrolls&lt;support@test@test.com&gt; wrote: Yo    -- Note added by test@test.com from Salesforce   ","source":0}],"responder_name":"Sathappan","priority_name":"Low","status":2,"source":1,"trained":false,"priority":1}}';
+        ticket_response = '{"helpdesk_ticket":{"urgent":false,"updated_at":"2012-06-25T18:52:56+05:30","product_72":null,"owner_id":null,"lev2_72":null,"cc_email":{"fwd_emails":[],"cc_emails":[]},"display_id":819,"created_at":"2012-06-08T18:45:52+05:30","status_name":"Open","id":9006,"delta":true,"cat1_72":null,"ajkdlasdlkjasdl_72":null,"requester_id":11632,"lev3_72":null,"fr_escalated":false,"deleted":false,"aklsdjasdaksdjalsdj_72":null,"attachments":[{"content_content_type":"application/pdf","content_file_name":"ruby_on_rails_tutorial_2nd_edition-preview.pdf","id":1020460481,"attachment_url":"https://s3.amazonaws.com"}],"to_email":"support@test@test.com","subject":"Testing sales force integration","isescalated":false,"frDueBy":"2012-06-09T18:45:52+05:30","group_id":269,"due_by":"2012-06-11T18:45:52+05:30","adsaksdljasdlkad_72":null,"source_name":"Email","spam":false,"email_config_id":85,"description":"Sales force integration test","custom_field":{"product_72":null,"agent":"roshini","other2_123875":"subcategory1","other3_123875":"item1","cat1_72":null,"ajkdlasdlkjasdl_72":null,"lev3_72":null,"aklsdjasdaksdjalsdj_72":null,"adsaksdljasdlkad_72":null},"ticket_type":"Question","responder_id":5778,"description_html":"<div><div>Sales force integration test</div></div>","notes":[{"updated_at":"2012-06-25T18:52:56+05:30","body_html":"","notable_type":"Helpdesk::Ticket","created_at":"2012-06-25T18:52:56+05:30","private":false,"id":4423,"incoming":false,"deleted":false,"user_id":5778,"notable_id":9006,"body":"Testerest    On June 25 @ 04:22 PM elderscrolls&lt;support@test@test.com&gt; wrote: Yo    -- Note added by test@test.com from Salesforce   ","source":0}],"responder_name":"Sathappan","priority_name":"Low","status":2,"source":1,"trained":false,"priority":1}}';            custom=new List<CustomFields>();
+        custom = populateCustomFields();
         }
         //System.debug('response - ticket = ' + ticket_response);
         
@@ -185,8 +193,8 @@ public with sharing class FDUtility {
             {     
                 while (parser.nextToken() !=  JSONToken.END_OBJECT)  
                 {  
-                	//System.debug('params text ' + parser.getText());
-                	 
+                    //System.debug('params text ' + parser.getText());
+                     
                     if((parser.getText() == 'cc_email')){
                         if (parser.nextToken() == JSONToken.START_OBJECT)  
                         {
@@ -202,12 +210,43 @@ public with sharing class FDUtility {
                         }
                         
                     }
-                    
-                    if((parser.getText() == 'attachments')){
+    // Ticket attachments                
+                    if((parser.getCurrentToken() == JSONToken.FIELD_NAME) && (parser.getText() == 'attachments')){
+                        att=new List<Attachments>();
                       if(parser.nextToken() == JSONToken.START_ARRAY){
                         while(parser.nextToken() != JSONToken.END_ARRAY){
-                          parser.nextToken();
+                             if(parser.getCurrentToken() == JSONToken.START_OBJECT)
+                                        {
+                                            Attachments atts = new Attachments();
+                                            while(parser.nextToken() != JSONToken.END_OBJECT)
+                                            {
+                                                if((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&(parser.getText() == 'attachment_url'))  
+                                                {
+                                                    parser.nextToken();
+                                                    atts.attachment_url = parser.getText(); 
+                                                }
+                                                if((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&(parser.getText() == 'id'))  
+                                                {
+                                                    parser.nextToken();
+                                                    atts.attachment_id = parser.getText(); 
+                                                }
+                                                if((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&(parser.getText() == 'content_file_name'))  
+                                                {
+                                                    parser.nextToken();
+                                                    atts.content_file_name = parser.getText(); 
+                                                }
+                                                if((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&(parser.getText() == 'content_content_type'))  
+                                                {
+                                                    parser.nextToken();
+                                                    atts.content_file_type = parser.getText(); 
+                                                }   
+                                            }
+                                            
+                                            att.add(atts);
+                                            
+                                        }
                         }
+                        ticket.attachment_list=att;
                       }
                     }
                     
@@ -313,8 +352,10 @@ public with sharing class FDUtility {
                     customFields = new List<CustomFields>();
                     integer j=0;
                     string field_name, field_label, field_type, field_value;
+                    List<CustomFields> nestFields=null;
                     if((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&(parser.getText() == 'custom_field')){
                         
+                          
                         
                           if (parser.nextToken() == JSONToken.START_OBJECT)  
                           {     
@@ -322,15 +363,44 @@ public with sharing class FDUtility {
                               {     
                                    //customFields[j] = new CustomFields();                                 
                                    if(parser.getCurrentToken() == JSONToken.FIELD_NAME){
-                                        if(!isApexTest){
+                                        if(!isApexTest || Test.isRunningTest()){
                                             for(integer k=0; k< custom.size(); k++){
                                                 if(custom.get(k) != null){
                                                     if(custom.get(k).field_name == parser.getText()){
                                                         if(custom.get(k).field_type != null){
-                                                            if(custom.get(k).field_type.startsWith('custom') || custom.get(k).field_type.startsWith('default')){
+                                                            if(custom.get(k).field_type.startsWith('custom') || custom.get(k).field_type.startsWith('default') || custom.get(k).field_type.startsWith('nested')){
                                                                 field_name = custom.get(k).field_name;
                                                                 field_label = custom.get(k).field_label;
                                                                 field_type = custom.get(k).field_type;
+                                                                //nested_fields parser
+                                                                if(field_type.startsWith('nested')){
+                                                                JSONParser nestedFieldsparser = JSON.createParser(ticket_response);
+                                                                while (nestedFieldsparser.nextToken() != null) {
+                                                                            if((nestedFieldsparser.getCurrentToken() == JSONToken.FIELD_NAME) &&(nestedFieldsparser.getText() == 'custom_field')){
+                                                                                 if (nestedFieldsparser.nextToken() == JSONToken.START_OBJECT)  {
+                                                                                     while (nestedFieldsparser.nextToken() !=  JSONToken.END_OBJECT){
+                                                                                        if(nestedFieldsparser.getCurrentToken() == JSONToken.FIELD_NAME){
+                                                                                            for(integer l=0;l< custom.get(k).nestedFields.size(); l++){
+                                                                                                if(custom.get(k).nestedFields.get(l).field_name == nestedFieldsparser.getText()){
+                                                                                                    nestedFieldsparser.nextToken();
+                                                                                                    if(nestedFieldsparser.getText() == 'null'){
+                                                                                                    custom.get(k).nestedFields.get(l).field_value='N/A';
+                                                                                                    }
+                                                                                                    else{
+                                                                                                    custom.get(k).nestedFields.get(l).field_value=nestedFieldsparser.getText(); 
+                                                                                                    }
+                                                                                                    
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                     }
+                                                                                 }
+                                                                            }
+                                                                         
+                                                                     }
+                                                                     nestFields=custom.get(k).nestedFields;
+                                                                }
+                                                                
                                                                 parser.nextToken();
                                                                 field_value = parser.getText();
                                                                 if(field_value == 'null'){
@@ -349,7 +419,7 @@ public with sharing class FDUtility {
                                 
                                         
                                    }
-                              customFields.add(new CustomFields(field_label, field_name, field_type, null, null, field_value));     
+                              customFields.add(new CustomFields(field_label, field_name, field_type, null, null, field_value,nestFields));     
                               j++;
                               }  
                          }
@@ -357,25 +427,12 @@ public with sharing class FDUtility {
                               
                     }
                     
-                    if((parser.getText() == 'notes')){
+                     if((parser.getText() == 'notes')){
                       if(parser.nextToken() == JSONToken.START_ARRAY){
                         while(parser.nextToken() != JSONToken.END_ARRAY){
                           if(parser.getCurrentToken() == JSONToken.START_OBJECT){
-                            while(parser.nextToken() != JSONToken.END_OBJECT){
-                              if(parser.getCurrentToken() == JSONToken.START_OBJECT){
-                                while(parser.nextToken() != JSONToken.END_OBJECT){
-                                            
-                                  if((parser.getText() == 'attachments')){
-                                      if(parser.nextToken() == JSONToken.START_ARRAY){
-                                        while(parser.nextToken() != JSONToken.END_ARRAY){
-                                          parser.nextToken();
-                                        }
-                                      }
-                                    }
-                                    else
-                                    parser.nextToken();  
-                                }
-                              }    
+                            while(parser.nextToken() != JSONToken.END_OBJECT){  
+                                parser.nextToken();  
                             }
                           }
                         }
@@ -400,26 +457,34 @@ public with sharing class FDUtility {
         
         HttpRequest req = new HttpRequest();
          req.setMethod('GET');
-         req.setEndpoint(url + '/helpdesk/tickets/' + ticketId + '/notes.json?human=true');
+         req.setEndpoint(url + '/helpdesk/tickets/' + ticketId + '.json');
          Blob headerValue = Blob.valueOf(apikey + ':' + pwd);
          String authorizationHeader = 'Basic ' +
          EncodingUtil.base64Encode(headerValue);
          req.setHeader('Authorization', authorizationHeader);
          Http http = new Http();
-         if(!isApexTest){
+         if(!(Test.isRunningTest())){
             HTTPResponse res = http.send(req);
             if(res.getHeader('Content-Type') == 'text/html; charset=utf-8')
                 return null;
             ticketRes = res.getBody();
         }
         
+        else{
+            ticketRes = '{"helpdesk_ticket":{"cc_email":{},"notes":[{"note":{"body":"test","body_html":"test_html","deleted":false,"id":1033983131,"incoming":false,"private":true,"source":4,"updated_at":"2015-04-20T15:21:54+05:30","user_id":1003509194,"attachments":[{"content_content_type":"application/pdf","content_file_name":"test.pdf","content_file_size":2217,"id":1020460583,"attachment_url":"https://s3.amazonaws.com/cdn.freshdesk.com"}]}},{"note":{"body":"test","body_html":"test_html","deleted":false,"id":1034103364,"incoming":false,"private":false,"source":0,"updated_at":"2015-04-21T10:07:10+05:30","user_id":1003165614,"attachments":[]}},{"note":{"body":"test","body_html":"test_html","deleted":false,"id":1034103364,"incoming":false,"private":false,"source":0,"updated_at":"2015-04-21T10:07:10+05:30","user_id":1003165614,"attachments":[]}},{"note":{"body":"test","body_html":"test_html","deleted":false,"id":1034103364,"incoming":false,"private":false,"source":0,"updated_at":"2015-04-21T10:07:10+05:30","user_id":1003165614,"attachments":[]}},{"note":{"body":"test","body_html":"test_html","deleted":false,"id":1034103364,"incoming":false,"private":false,"source":0,"updated_at":"2015-04-21T10:07:10+05:30","user_id":1003165614,"attachments":[]}}]}}';
+            
+        }
+        
         JSONParser parser = JSON.createParser(ticketRes);
+        //System.debug(LoggingLevel.INFO,'Ticket notes Response in FDUtility == '+ ticketRes);
         ticket_comment = new TicketComment();
         Integer i=0; 
         ticket_notes = new List<TicketComment>();
         while (parser.nextToken() != null) 
         {
-             if (parser.getCurrentToken() == JSONToken.START_ARRAY)  
+            if(parser.getText() == 'notes'){
+
+                if (parser.nextToken() == JSONToken.START_ARRAY)  
             {  
                 while (parser.nextToken() !=  JSONToken.END_ARRAY)  
                 {
@@ -529,6 +594,13 @@ public with sharing class FDUtility {
                 }
                 
             }               
+
+            }
+             
+        }
+        
+        if(ticket_notes.size() >= 1){
+            ticket_notes.remove(0);
         }
         
         return ticket_notes;
@@ -540,7 +612,7 @@ public with sharing class FDUtility {
     //Create Ticket
     public static remoteObject createTicket(string dataString, string updateFlag, string ticketId, string eMail)
     {
-    	System.debug('FDButility - createTicket - updateFlag' + updateFlag+'emailid '+eMail + 'datastring' + dataString);
+        System.debug('FDButility - createTicket - updateFlag' + updateFlag+'emailid '+eMail + 'datastring' + dataString);
         string requestMethod;
         string requestBody;
         string subject, status, priority, description, ticket_type, reqEndpoint, agent, group_id;
@@ -548,20 +620,36 @@ public with sharing class FDUtility {
         returnObj.success = true;
         returnObj.message = 'Ticket Created';
         CustomFields[] custFields = null;
+        List<CustomFields> nestedFieldsList=new List<CustomFields>();
         if(!isApexTest){
             custFields  = populateCustomFields();
+            //nested_fields
+            for(CustomFields field:custFields){
+                if(field.isNestedField){
+                    for(CustomFields nestedField:field.nestedFields){
+                        //System.debug('Nested fields in FDUtility'+'  '+nestedField.field_name);
+                        nestedFieldsList.add(nestedField);
+                    }
+                }
+            }
+            
+            
             System.debug('custFields ' + custFields);
             if(custFields == null){
                 returnObj.success = false;
                 returnObj.data = 'Unable to update the ticket. Please verify your apikey and domain URL and try again.';
                 return returnObj;
+            }
+            
+            if(nestedFieldsList.size()>0){
+                custFields.addAll(nestedFieldsList);
             }   
         }
         
         try
         {
             if(isApexTest)
-            dataString = 'subject=hello&status=2&priority=1&description_html=test desc&ticket_type=Lead&agent=1&group=1';
+                dataString = 'subject=hello&status=2&priority=1&description_html=test desc&ticket_type=Lead&agent=1&group=1&other2_123875=subcategory1&other3_123875=item1';
                 map<string,string> formData = deserializeString(dataString);
                 
                 remoteObject commentStatus;
@@ -573,20 +661,23 @@ public with sharing class FDUtility {
                 ticket_type = ESAPI.encoder().SFDC_HTMLENCODE(formData.get('ticket_type'));
                 agent = ESAPI.encoder().SFDC_HTMLENCODE(formData.get('agent'));
                 group_id = ESAPI.encoder().SFDC_HTMLENCODE(formData.get('group'));
-                System.debug('formdata agent ' + formData.get('agent'));
-            	System.debug('Agent '+ agent); 
-            	System.debug('status after encoding ' + ESAPI.encoder().SFDC_HTMLENCODE(status));   
-            	//System.debug('description after encoding' +ESAPI.encoder().SFDC_HTMLENCODE(description) );
+                /*System.debug('formdata agent ' + formData.get('agent'));
+                System.debug('Agent '+ agent); 
+                System.debug('status after encoding ' + ESAPI.encoder().SFDC_HTMLENCODE(status));   
+                System.debug('description after encoding' +ESAPI.encoder().SFDC_HTMLENCODE(description) );*/
             //Adding the custom fields to xml payload
             
             string[] fields_xml = dataString.split('&');
             
             string custom_xml = '<custom_field>';
             
+            if(Test.isRunningTest()){
+            custFields=populateCustomFields();
+            }
             
             string[] key_value;
             for(integer i=0; i<fields_xml.size(); i++){
-            	
+                
                 if(!fields_xml[i].startsWith('subject') && !fields_xml[i].startsWith('description_html') && !fields_xml[i].startsWith('ticket_type') && !fields_xml[i].startsWith( 'priority') && !fields_xml[i].startsWith('status') && !fields_xml[i].startsWith('group') && !fields_xml[i].startsWith('agent')){
                     
                     key_value = fields_xml[i].split('=');
@@ -595,6 +686,9 @@ public with sharing class FDUtility {
                         for(integer j=0; j< custFields.size(); j++){
                             if(custFields[j] != null){
                                 if(custFields[j].field_name == key_value[0]){
+                                    if(key_value[1] == 'N/A'){
+                                        key_value[1]=' ';
+                                    }
                                     custom_xml += ('<' + key_value[0] +'><![CDATA[' + EncodingUtil.urlDecode(ESAPI.encoder().SFDC_HTMLENCODE(key_value[1]), 'UTF-8') + ']]></' + key_value[0] + '>');
                                     continue;       
                                 }   
@@ -605,6 +699,7 @@ public with sharing class FDUtility {
                     
                 }
             }
+            System.debug('In fdutility update form'+' '+custom_xml);
             custom_xml += '</custom_field></helpdesk_ticket>';
             returnObj.message = custom_xml;
             String password;
@@ -620,7 +715,7 @@ public with sharing class FDUtility {
                 password = assume_pwd;
                 returnObj.data = 'Ticket Updated';
             }else{
-            	System.debug('Inside ELSE ---------' + agent);
+                System.debug('Inside ELSE ---------' + agent);
                 requestMethod = 'POST';
                 requestBody = '<helpdesk_ticket><email>' + eMail + '</email><subject>' + subject + '</subject><description_html><![CDATA['+ description +']]></description_html><status>'+ status +'</status><priority>'+ priority +'</priority><ticket_type>'+ ticket_type +'</ticket_type><responder_id>'+ agent +'</responder_id><group_id>'+ group_id +'</group_id>';
                 System.debug('request body ' + requestBody);
@@ -637,7 +732,7 @@ public with sharing class FDUtility {
              //reqData = '<![CDATA[' + reqData + ']]';
              req.setBody(reqData);
              String username = apikey;
-             System.debug('username ' + username + 'password ' + password);
+             //System.debug('username ' + username + 'password ' + password);
              Blob headerValue = Blob.valueOf(username + ':' + password);
              String authorizationHeader = 'Basic ' +
              EncodingUtil.base64Encode(headerValue);
@@ -648,7 +743,7 @@ public with sharing class FDUtility {
              if(!isApexTest){
                 res = http.send(req);
                 resData = res.getBody();   
-                System.debug('```resData' + resData); 
+                //System.debug('```resData' + resData); 
              }else{
                 resData = '<helpdesk-tickets type="array"><helpdesk-ticket><account-id type="integer">1</account-id><cc-email type="yaml" nil="true"></cc-email><created-at type="datetime">2011-03-29T12:17:01+05:30</created-at><deleted type="boolean">false</deleted><delta type="boolean">true</delta><description>This is a sample ticket, feel free to delete it.</description><display-id type="integer">1</display-id><due-by type="datetime">2011-04-08T12:16:59+05:30</due-by></helpdesk-ticket></helpdesk-tickets>';
              }
@@ -745,17 +840,17 @@ public with sharing class FDUtility {
             string response;
             HTTPResponse res;
             integer i = 0;
-            System.debug('req - CF ' + req);
-            System.debug('isApexTest ' + isApexTest);
+           // System.debug('req - CF ' + req);
+           // System.debug('isApexTest ' + isApexTest);
             System.debug(LoggingLevel.ERROR, req);
-            if(!isApexTest){
+            if(!(Test.isRunningTest())){
                 res = http.send(req);
                 response = res.getBody();
             }
             else{
-                response = '{"helpdesk_ticket_fields":[{"required":false,"updated_at":"2012-03-30T10:33:16Z","visible_in_portal":true,"editable_in_portal":true,"created_at":"2012-03-30T10:33:15Z","id":1644,"flexifield_def_entry_id":140,"required_in_portal":false,"field_type":"custom_dropdown","choices":{"option":[{"id":"A","value":"A"},{"id":"B","value":"B"},{"id":"c","value":"c"},{"id":"d","value":"d"},{"id":"e","value":"e"},{"id":"f","value":"f"},{"id":"g","value":"g"},{"id":"h","value":"h"},{"id":"i","value":"i"}]},"description":null,"required_for_closure":false,"active":true,"position":5,"label":"Product","label_in_portal":"Product","name":"product_72"},{"required":true,"updated_at":"2011-12-09T13:11:46Z","visible_in_portal":true,"editable_in_portal":true,"created_at":"2011-12-09T13:11:46Z","id":1094,"flexifield_def_entry_id":null,"required_in_portal":true,"field_type":"default_subject","choices":"    ","description":"Ticket subject","required_for_closure":false,"active":true,"position":4,"label":"Subject","label_in_portal":"Subject","name":"subject"},{"required":true,"updated_at":"2012-01-18T09:40:36Z","visible_in_portal":true,"editable_in_portal":false,"created_at":"2011-12-09T13:11:46Z","id":1095,"flexifield_def_entry_id":null,"required_in_portal":false,"field_type":"default_ticket_type","choices":{"option":[{"id":"Question","value":"Question"},{"id":"Incident","value":"Incident"},{"id":"Problem","value":"Problem"},{"id":"Feature Request","value":"Feature Request"},{"id":"Lead","value":"Lead"}]},"description":"Ticket type","required_for_closure":false,"active":true,"position":6,"label":"Type","label_in_portal":"Type","name":"ticket_type"},{"required":false,"updated_at":"2011-12-09T13:11:46Z","visible_in_portal":false,"editable_in_portal":false,"created_at":"2011-12-09T13:11:46Z","id":1096,"flexifield_def_entry_id":null,"required_in_portal":false,"field_type":"default_source","choices":{"option":[{"id":"Email","value":"1"},{"id":"Portal","value":"2"},{"id":"Phone","value":"3"},{"id":"Forum","value":"4"},{"id":"Twitter","value":"5"},{"id":"Facebook","value":"6"},{"id":"Chat","value":"7"}]},"description":"Ticket source","required_for_closure":false,"active":true,"position":7,"label":"Source","label_in_portal":"Source","name":"source"},{"required":true,"updated_at":"2011-12-09T13:11:46Z","visible_in_portal":true,"editable_in_portal":false,"created_at":"2011-12-09T13:11:46Z","id":1097,"flexifield_def_entry_id":null,"required_in_portal":false,"field_type":"default_status","choices":{"option":[{"id":"Open","value":"2"},{"id":"Assigned","value":"7"},{"id":"Waiting for customer","value":"6"},{"id":"Pending","value":"3"},{"id":"Resolved","value":"4"},{"id":"Closed","value":"5"},{"id":"Waiting on 3rd party","value":"8"}]},"description":"Ticket status","required_for_closure":false,"active":true,"position":8,"label":"Status","label_in_portal":"Status","name":"status"},{"required":true,"updated_at":"2012-01-18T09:40:36Z","visible_in_portal":true,"editable_in_portal":false,"created_at":"2011-12-09T13:11:46Z","id":1098,"flexifield_def_entry_id":null,"required_in_portal":false,"field_type":"default_priority","choices":{"option":[{"id":"Low","value":"1"},{"id":"Medium","value":"2"},{"id":"High","value":"3"},{"id":"Urgent","value":"4"}]},"description":"Ticket priority","required_for_closure":false,"active":true,"position":9,"label":"Priority","label_in_portal":"Priority","name":"priority"},{"required":false,"updated_at":"2011-12-09T13:11:46Z","visible_in_portal":false,"editable_in_portal":false,"created_at":"2011-12-09T13:11:46Z","id":1099,"flexifield_def_entry_id":null,"required_in_portal":false,"field_type":"default_group","choices":{"option":[{"id":"QA","value":"269"},{"id":"Sales","value":"270"},{"id":"Sample group3","value":"402"},{"id":"support","value":"403"}]},"description":"Ticket group","required_for_closure":false,"active":true,"position":10,"label":"Group","label_in_portal":"Group","name":"group"}]}';
+            response =  '<helpdesk-ticket-fields type="array"><helpdesk-ticket-field><field-options nil="true"/><field-type>nested_field</field-type><label>Agent</label><name>agent</name><required type="boolean">false</required><nested_ticket_fields><nested_ticket_field><id>1000004467</id><name>other2_123875</name><label>Other2</label><label_in_portal>Other2</label_in_portal><level>2</level></nested_ticket_field><nested_ticket_field><id>1000004467</id><name>other3_123875</name><label>Other3</label><label_in_portal>Other3</label_in_portal><level>3</level></nested_ticket_field></nested_ticket_fields><choices><option><id>roshini</id><value>1003165614</value><choices><option><id>1002771300</id><value>subcategory1</value><choices><option><id>1002771301</id><value>item1</value></option></choices></option></choices></option></choices></helpdesk-ticket-field><helpdesk-ticket-field><field-type>custom_dropdown</field-type><id type="integer">1000579147</id><label>Preference</label><name>preference_123875</name><required type="boolean">true</required><choices><option><id>High</id><value>High</value></option><option><id>Low</id><value>Low</value></option></choices></helpdesk-ticket-field></helpdesk-ticket-fields>';               
             }
-            System.debug('Response - ' + response);
+            //System.debug('Response - ' + response);
             
             DOM.Document doc = new DOM.Document();     
             doc.load(response);
@@ -771,15 +866,18 @@ public with sharing class FDUtility {
     
     public static List<CustomFields> walkThrough(DOM.XMLNode node) {
         string field_name, field_label, field_type;
+        string firstLevelOpt, secondLevelOpt;
         boolean field_required;
         List<CustomFields> cf = new List<CustomFields>();
+        List<CustomFields> nestedFieldList;
         List<FieldOptions> fOptions;
+        boolean thirdNestedOption=false;
         for (Dom.XMLNode child: node.getChildElements()) {
-        	//System.debug('node type ' + child.getNodeType());
+            //System.debug('node type ' + child.getNodeType());
           if (child.getNodeType() == DOM.XMLNodeType.ELEMENT) {
-          	//System.debug('Child Name ' + child.getName());
+            //System.debug('Child Name ' + child.getName());
             if(child.getName() == 'helpdesk-ticket-field'){
-            	//System.debug('inside if helpdesk-ticket-field');
+                //System.debug('inside if helpdesk-ticket-field');
                 for (Dom.XMLNode field: child.getChildElements()) {
                     if(field.getName() == 'name'){
                         field_name = field.getText();
@@ -803,25 +901,127 @@ public with sharing class FDUtility {
                                         fopt.id = option.getText();
                                     }else if(option.getName() == 'value'){
                                         fopt.value = option.getText();
+                                        firstLevelOpt=option.getText();
                                     }
+                                    else if(option.getName() == 'choices'){               //dependent dropdowns
+                                       List<FieldOptions> nestOptions = new List<FieldOptions>();
+                                       Map<string,List<FieldOptions>> dependentOptions = new Map<string,List<FieldOptions>>();
+                                       for (Dom.XMLNode nestchoice: option.getChildElements()) {
+                                        if(nestchoice.getName() == 'option'){
+                                            FieldOptions dependOpt  = new FieldOptions();
+                                            for (Dom.XMLNode nestoption: nestchoice.getChildElements()) {
+                                                if(nestoption.getName() == 'id'){
+                                                     dependOpt.id = nestoption.getText();
+                                                }else if(nestoption.getName() == 'value'){
+                                                     dependOpt.value = nestoption.getText();
+                                                     secondLevelOpt= nestoption.getText();
+                                                }
+                                                 else if(nestoption.getName() == 'choices'){
+                                                    thirdNestedOption=true;
+                                                    List<FieldOptions> nestLevelTwoOpt = new List<FieldOptions>();
+                                                    Map<string,List<FieldOptions>> dependLevelTwoOpts = new Map<string,List<FieldOptions>>();
+                                                    for (Dom.XMLNode nestTwochoice: nestoption.getChildElements()) {
+                                                        if(nestTwochoice.getName() == 'option'){
+                                                            FieldOptions levelTwoOpt  = new FieldOptions();
+                                                            for (Dom.XMLNode nestSecondoption: nestTwochoice.getChildElements()) {
+                                                                if(nestSecondoption.getName() == 'id'){
+                                                                   levelTwoOpt.id = nestSecondoption.getText();
+                                                                }else if(nestSecondoption.getName() == 'value'){
+                                                                   levelTwoOpt.value = nestSecondoption.getText();
+                                                                }
+                                                                
+                                                            }
+                                                            nestLevelTwoOpt.add(levelTwoOpt);
+                                                        }
+                                                    }
+                                                    dependLevelTwoOpts.put(secondLevelOpt,nestLevelTwoOpt);
+                                                    dependOpt.dependentFields=dependLevelTwoOpts;
+                                                 }
+                                            }
+                                            nestOptions.add(dependOpt);
+                                        }
+                                       }
+                                       dependentOptions.put(firstLevelOpt,nestOptions);
+                                       fopt.dependentFields=dependentOptions;
+                                      
+                                    }
+                                   
                                 }
                                 
-                                System.debug('fopt ' + fopt);
+                               // System.debug('fopt ' + fopt);
                                 fOptions.add(fopt);
                             }
                         }
                         
-                       	if(field_type == 'custom_dropdown' || field_type == 'default_group' || field_type == 'default_agent')
-                       	{
+                        if(field_type == 'custom_dropdown' || field_type == 'default_group' || field_type == 'default_agent')
+                        {
                          FieldOptions fopt  = new FieldOptions();
                          fopt.id = 'N/A';
                          fopt.value = ' ';
                          fOptions.add(fopt);
-                       	}
+                        }
+                        
+                        else if(field_type == 'nested_field')
+                        {
+                         FieldOptions keyopt  = new FieldOptions();
+                         Map<String,List<FieldOptions>> optMap1=new Map<String,List<FieldOptions>>();
+                         List<FieldOptions> optList1=new List<FieldOptions>();
+                         keyopt.id = 'N/A';
+                         keyopt.value = 'N/A';
+                         FieldOptions firstkeyopt  = new FieldOptions();
+                         Map<String,List<FieldOptions>> optMap2=new Map<String,List<FieldOptions>>();
+                         List<FieldOptions> optList2=new List<FieldOptions>();
+                         firstkeyopt.id = 'N/A';
+                         firstkeyopt.value = 'N/A';
+                         if(thirdNestedOption){
+                         FieldOptions secondkeyopt  = new FieldOptions();
+                         secondkeyopt.id = 'N/A';
+                         secondkeyopt.value = 'N/A';
+                         optList2.add(secondkeyopt);
+                         optMap2.put(firstkeyopt.value,optList2);
+                         firstkeyopt.dependentFields=optMap2;
+                         thirdNestedOption=false;   
+                         }
+                         optList1.add(firstkeyopt);
+                         optMap1.put(keyopt.value,optList1);
+                         keyopt.dependentFields=optMap1;
+                         fOptions.add(keyopt);
+                        }
                        
                     }
+                    
+                    else if(field.getName() == 'nested_ticket_fields'){
+                        nestedFieldList=new List<CustomFields>();
+                       for(Dom.XMLNode nestedFields: field.getChildElements()){
+                        if(nestedFields.getName() == 'nested_ticket_field'){
+                            CustomFields nestedField=new CustomFields();
+                            for(Dom.XMLNode nestedFieldValues: nestedFields.getChildElements()){
+                                
+                            if(nestedFieldValues.getName() == 'id'){
+                            nestedField.field_id = nestedFieldValues.getText(); 
+                            }   
+                                
+                            else if(nestedFieldValues.getName() == 'name'){
+                            nestedField.field_name = nestedFieldValues.getText();
+                            }
+                            else if(nestedFieldValues.getName() == 'label'){
+                            nestedField.field_label = nestedFieldValues.getText();      
+                            }
+                            
+                            else if(nestedFieldValues.getName() == 'level'){
+                            nestedField.field_level = nestedFieldValues.getText();      
+                            }
+                                
+                            }
+                            nestedFieldList.add(nestedField);
+                        }
+                       }
+                    }
                 }
-                cf.add(new CustomFields(field_label, field_name, field_type, field_required, fOptions, null));  
+                if(field_type!='nested_field'){
+                    nestedFieldList=null;
+                }
+                cf.add(new CustomFields(field_label, field_name, field_type, field_required, fOptions, null,nestedFieldList));  
             }
           }
         }
@@ -838,7 +1038,7 @@ public with sharing class FDUtility {
         req.setHeader('Authorization', authorizationHeader);
         Http http = new Http();
         string response = null;
-        if(!isApexTest){
+        if(!(Test.isRunningTest())){
             HTTPResponse res = http.send(req);
             response = res.getBody();   
         }   
@@ -879,7 +1079,7 @@ public with sharing class FDUtility {
     //General Utility Methods
     
     public static remoteObject handleAssumeIdentityError(remoteObject returnObj, string header, integer statusCode, string resBody){
-    	System.debug('handleAssumeIdentityError remoteobj' + returnObj +'- header '+header +'status Code - ' +statusCode +'resbody '+resBody );
+        System.debug('handleAssumeIdentityError remoteobj' + returnObj +'- header '+header +'status Code - ' +statusCode +'resbody '+resBody );
         if((header.contains('text/html')) && (statusCode != 200 || statusCode != 201) && statusCode != 406 && statusCode != 302 ){
             returnObj.data = 'Unable to update the ticket. Please verify if you have appropriate permissions to edit the ticket and try again.';
             returnObj.success = false;
@@ -927,13 +1127,13 @@ public with sharing class FDUtility {
     
     public static Map<string,string> deserializeString(String argString)
     {     
-    	System.debug('deserialize String ' + argString);
+        System.debug('deserialize String ' + argString);
         string[] params = argString.split('&');
         map<String,String>  formParams = new map<String,String>();
         for(string p : params)
         {   
-        	System.debug('params --- ' +  p);
-        	String encodeString = EncodingUtil.urlDecode(p.substring(p.indexOf('=')+1,p.length()),'UTF-8');
+            System.debug('params --- ' +  p);
+            String encodeString = EncodingUtil.urlDecode(p.substring(p.indexOf('=')+1,p.length()),'UTF-8');
             //formParams.put(EncodingUtil.urlDecode(p.substring(0,p.indexOf('=')),'UTF-8'),EncodingUtil.urlDecode(p.substring(p.indexOf('=')+1,p.length()).replace('\r\n', ''),'UTF-8'));    
             formParams.put(EncodingUtil.urlDecode(p.substring(0,p.indexOf('=')),'UTF-8'),encodeString.replace('\r\n', ''));
             
@@ -978,7 +1178,7 @@ public with sharing class FDUtility {
     
     public static void testPopulateCustomFields(){
         isApexTest = true;
-        populateCustomFields();
+        List<CustomFields> cufields = populateCustomFields();
     } 
     
     public static void testAddComment(){

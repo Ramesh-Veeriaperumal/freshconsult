@@ -20,6 +20,7 @@ global class Ticket {
 	public string cc_email{get; set;}
 	public string to_email{get; set;}
 	public CustomFields[] custom_fields{get; set;}
+	public Attachments[] attachment_list{get;set;}
 	
 	public Ticket(){
 	}

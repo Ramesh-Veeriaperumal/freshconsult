@@ -52,7 +52,10 @@ HashMap.prototype.get = function(key){
   }
 }
 
-custom_field_values = new HashMap();            
+custom_field_values = new HashMap();
+var levelonearrays=[];
+var levelTwoarrays=[];  
+var fieldCounter=1; 
 </script>
 <style>
 
@@ -249,6 +252,26 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
 	border-top: 1px solid #ddd;
 }
 .redactor_box iframe { border-radius: 6px;}
+
+.commentbox { 
+    background-color:#eee; 
+    border-radius: 10px;
+    color:#999; 
+    font-weight:bold; 
+    text-align:center; 
+    padding:10px 0; 
+    cursor:pointer; 
+}
+
+.rtDetails .cnt li label.checkboxlabel {
+	display: inline;
+	font-size: 11px;
+	font-weight: bold;
+	color: #666666;
+	padding: 5px 0;
+	margin-right:8px;
+}
+
 </style>
 
 <apex:pageBlock rendered="{!errorMessage != ''}">
@@ -289,6 +312,13 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
 		        <div class="span12 ticketDescription">
 		        	<apex:outputText escape="false"  value="{!SUBSTITUTE(SUBSTITUTE(JSENCODE(ticket.description),"\r", " "),'\n','<br/>')}"/>
 		        </div>
+		         <div class="">	
+						 <apex:outputPanel rendered = "{!ticket.attachment_list.size > 0}" >
+							 <apex:repeat value="{!ticket.attachment_list}" var="att">
+							    <div><a target="_blank" class="attachment" href="{!url + '/helpdesk/attachments/' + att.attachment_id}"><i class="icon-file"></i> {!HTMLENCODE(att.content_file_name)}  </a></div>
+							  </apex:repeat>
+						 </apex:outputPanel>
+				     </div>
 		        <div class="span12">
 		       		<div class="actionButtons">
 		        		<button id="showReplyForm">Add Note</button> <br /> <br />
@@ -322,6 +352,7 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
 			</form>
 	    	<div id="commentList">
 			</div>
+			<div class="commentbox" id="check" style="display:none;">Load more</div>
 			<apex:repeat value="{!ticket_notes}" var="tComment">
 			<apex:outputPanel rendered="{!NOT(tComment.deleted)}">
 				<div id="tmp_comment">
@@ -378,7 +409,13 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
             </div>
 <script type="text/javascript">
 <apex:repeat value="{!ticket.custom_fields}" var="custom_fields">
-	custom_field_values.put("{!custom_fields.field_name}","{!JSINHTMLENCODE(custom_fields.field_value)}");
+custom_field_values.put("{!custom_fields.field_name}","{!JSINHTMLENCODE(custom_fields.field_value)}");
+if("nested_field" == "{!custom_fields.field_type}"){
+<apex:repeat value="{!custom_fields.nestedFields}" var="nested_fields">
+custom_field_values.put("{!nested_fields.field_name}","{!nested_fields.field_value}");
+</apex:repeat>
+}
+	
 </apex:repeat>
 
 </script>
@@ -409,7 +446,7 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
 			
 			
                 	var selected_value = custom_field_values.get("{!JSINHTMLENCODE(field.field_name)}") || "";
-                	var form_element = "", reqd_class="";;
+                	var form_element = "", reqd_class="";
                 	
                 	if ( selected_value == '' || selected_value == 'null' || selected_value == null)
                 	{
@@ -422,6 +459,7 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 	
                 	switch (field_type) {
                 		case "custom_text":
+                		case "custom_decimal":
                 		case "custom_number":
                 			form_element += "<input id='cf_{!JSINHTMLENCODE(field.field_name)}' type='text' value='" + selected_value + "' class='" + reqd_class + "'  name='{!JSINHTMLENCODE(field.field_name)}' />";
                 			break;
@@ -429,7 +467,6 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 		case "custom_dropdown":
                 			form_element += "<select id='cf_{!JSINHTMLENCODE(field.field_name)}' name='{!JSINHTMLENCODE(field.field_name)}' class='" + reqd_class + "'  />";
                 			
-                			console.log("{!field.field_name}");
   
                 			<apex:repeat value="{!field.options}" var="option">
                 			 if (selected_value == "{!option.id}") {
@@ -442,6 +479,85 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 			</apex:repeat>
                 			form_element += "</select>";
                 			break;
+                			
+                		case "nested_field":
+                		    var nestfield_names=[];
+                		    var nestfield_labels=[];
+                		    var isOption3Available=false;
+                		    var firstDropdown="";
+                		    var secondDropdown="";
+                		    var mandatoryMark="";
+                		    var isMandatory="{!field.field_required}";
+                		    if(isMandatory){
+                		    mandatoryMark="<span class='reqd'>*</span>";
+                		    }
+                		    <apex:repeat value="{!field.nestedFields}" var="nestedField">
+                		    nestfield_names.unshift("{!nestedField.field_name}");
+                		    nestfield_labels.unshift("{!nestedField.field_label}");
+                		    </apex:repeat>
+                		    form_element += "<li><label for='cf_{!JSINHTMLENCODE(field.field_name)}''>{!JSINHTMLENCODE(field.field_label)}"+mandatoryMark+"</label><select id='cf_{!JSINHTMLENCODE(field.field_name)}' name='{!JSINHTMLENCODE(field.field_name)}' class='primary primary"+""+fieldCounter+"'  />";
+                		    <apex:repeat value="{!field.options}" var="option">
+                			 if (selected_value == "{!option.value}") {
+                			 if("{!option.isNestedOption}" == 'true'){
+                			 var levelOneName=nestfield_names.pop();
+                			 var levelOnelabel=nestfield_labels.pop();
+                			firstDropdown= "<li><label for='cf_"+levelOneName+"''>"+levelOnelabel+""+mandatoryMark+"</label><select id='cf_"+ levelOneName +"' name='"+levelOneName+"' class='secondary secondary"+""+fieldCounter+"'  />";
+                			<apex:repeat value="{!option.dependentFields}" var="key1">
+                			if("{!key1}" == "{!option.value}"){
+                			<apex:repeat value="{!option.dependentFields[key1]}" var="nestedoption">
+                			if(custom_field_values.get(levelOneName) == "{!nestedoption.value}"){
+                			if("{!nestedoption.isNestedOption}"== 'true'){
+                			var levelTwoName=nestfield_names.pop();
+                			var levelTwolabel=nestfield_labels.pop();
+                			secondDropdown= "<li><label for='cf_"+levelTwoName+"''>"+levelTwolabel+""+mandatoryMark+"</label><select id='cf_"+ levelTwoName +"' name='"+levelTwoName+"' class='teritary teritary"+""+fieldCounter+"'  />";
+                			<apex:repeat value="{!nestedoption.dependentFields}" var="key2">
+                			if("{!key2}" == "{!nestedoption.value}"){
+                			<apex:repeat value="{!nestedoption.dependentFields[key2]}" var="levelTwooption">
+                			if(custom_field_values.get(levelTwoName) == "{!levelTwooption.value}"){
+                			isOption3Available=true;
+                			secondDropdown += "<option value='{!levelTwooption.value}' selected='selected'>{!levelTwooption.value}</option>";
+                			}
+                			else{
+                			secondDropdown += "<option value='{!levelTwooption.value}'>{!levelTwooption.value}</option>";
+                			}
+                			</apex:repeat>
+                			if(isOption3Available== false){
+                			secondDropdown += "<option value='N/A' selected='selected'>"+"N/A"+"</option>";
+                			}
+                			}
+                			</apex:repeat>
+                			
+                			}
+                			firstDropdown += "<option value='{!nestedoption.value}' selected='selected'>{!nestedoption.value}</option>";
+                			}
+                			else{
+                			firstDropdown += "<option value='{!nestedoption.value}'>{!nestedoption.value}</option>";
+                			}
+                			
+                			
+                			
+                			</apex:repeat>
+                			}
+                			</apex:repeat>
+                			
+                			}
+                				form_element += "<option value='{!option.value}' selected='selected'>{!option.value}</option>";
+                			 }else {
+                				form_element += "<option value='{!option.value}'>{!option.value}</option>";
+               				}
+               				</apex:repeat>
+               				if(firstDropdown != ""){
+                			firstDropdown+="</select></li>"
+                			}
+                			if(secondDropdown != ""){
+                			secondDropdown+="</select></li>"
+                			}
+                			form_element += "</select></li>"+firstDropdown+secondDropdown;
+                			document.write(form_element);
+                			fieldCounter++;
+                			break;
+                		
+                		
                 		case "custom_paragraph":
                 			form_element += "<textarea id='cf_{!JSINHTMLENCODE(field.field_name)}' name='{!JSINHTMLENCODE(field.field_name)}' class='" + reqd_class + "' >" + selected_value + "</textarea>";
                 			break;
@@ -492,7 +608,7 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 			form_element += "<select id='cf_{!JSINHTMLENCODE(field.field_name)}' name='{!JSINHTMLENCODE(field.field_name)}' class='" + reqd_class + "'  />";
                 			<apex:repeat value="{!field.options}" var="option">
                 			
-                			if (selected_value == "{!option.id}") {
+                			if ("{!ticket.groupId}" == "{!option.value}") {
                 				form_element += "<option value='{!option.value}' selected='selected'>{!option.id}</option>";
                 			} else {
                 				form_element += "<option value='{!option.value}'>{!option.id}</option>";
@@ -506,7 +622,7 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 			<apex:repeat value="{!field.options}" var="option">
                 			
                 			$('#notify_agents').append("<option value='{!option.email}'>{!option.id} &lt;{!option.email}&gt; </option>");
-                			if (selected_value == "{!option.id}") {
+                			if ("{!ticket.responderName}" == "{!option.id}") {
                 				form_element += "<option value='{!option.value}' selected='selected'>{!option.id}</option>";
                 			} else {
                 				form_element += "<option value='{!option.value}'>{!option.id}</option>";
@@ -518,7 +634,31 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 		
                 	}
                 	
-                	if (form_element != "") {
+                	if (field_type == "nested_field") {
+                	    var levelonearray={};
+                	    var levelTwoarray={};
+                		<apex:repeat value="{!field.options}" var="option">
+                		<apex:repeat value="{!option.dependentFields}" var="key">
+                		levelonearray["{!key}"]=[];
+                		<apex:repeat value="{!option.dependentFields[key]}" var="field">
+                		levelonearray["{!key}"].push("{!field.value}");
+                		<apex:repeat value="{!field.dependentFields}" var="key2">
+                		if(levelTwoarray["{!key}"] == undefined){
+                		levelTwoarray["{!key}"]={}
+                		}
+                		levelTwoarray["{!key}"]["{!key2}"]=[];
+                		<apex:repeat value="{!field.dependentFields[key2]}" var="nestedField">
+                		levelTwoarray["{!key}"]["{!key2}"].push("{!nestedField.value}");
+                		</apex:repeat>
+                		</apex:repeat>
+                		</apex:repeat>
+                		</apex:repeat>
+                		</apex:repeat>
+                		levelonearrays.push(levelonearray);
+                		levelTwoarrays.push(levelTwoarray);
+                	}
+                	
+                	if (form_element != "" && field_type != "nested_field" && field_type != "custom_checkbox") {
 	                	
                 		document.write('<li>');
                 		document.write('<label for="cf_{!JSINHTMLENCODE(field.field_name)}">{!JSINHTMLENCODE(field.field_label)}');
@@ -531,9 +671,21 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
                 		
                 	}
                 	
+                	if (field_type =="custom_checkbox") {
+                	    var required='';
+                	    if ( '{!field.field_required}' == 'true') { //This is for Required fields
+                			 required=' <span class="reqd">*</span>';
+               			}
+                	    document.write('<li>');
+                		document.write('<label class="checkboxlabel" for="cf_{!JSINHTMLENCODE(field.field_name)}">{!JSINHTMLENCODE(field.field_label)}'+required+'</label>'+form_element);
+                		document.write('</li>');
+                		
+                	}
+                	
                 </script>
                 
         </apex:repeat>
+                             
 					<li>
 						<input type="submit" id="btnUpdateTkt" class="btn" value="Update"  data-default-text="Update" data-disabled-text="Updating..." />
 					</li>
@@ -658,8 +810,27 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
         
     }
     
+    function paginate(){
+    
+    var element=$('.comment').get();
+    var count=element.length;
+    if(count > 5){
+    $('#check').show();
+    }
+    $('.comment').each(function(index){
+    if(index>5){
+    $(this).addClass('hide');
+    }
+    });
+   
+    
+    
+    }
+    
     
     $(window).load(function() {
+    
+        paginate();
         
         $('.chzn-select').chosen();
         $("#showEditTicket").click(function() {
@@ -690,6 +861,70 @@ body input.btn, body input.btnDisabled, body input.btnCancel { padding:2px 10px 
         	$('#newComment').val('');
         	$('#addComment').fadeOut();
         	return false;
+        });
+        
+        
+        
+        $('#check').click(function(){
+         $(this).text('Loading...');
+         var that=$(this);
+        setTimeout(function(){
+         that.hide();
+         $('.hide').removeClass('hide').slideDown();
+        },1000);
+       
+        });
+        
+        
+        $('.primary').change(function(){
+        var dropdownindex=$('.primary').index($(this));
+        var dropdownNumber=dropdownindex+1;
+        $('.secondary'+dropdownNumber).find('option').remove();
+        if($('.teritary'+dropdownNumber).length){
+        $('.teritary'+dropdownNumber).find('option').remove();
+        }
+        $.each(levelonearrays[dropdownindex][$('.primary'+dropdownNumber+' '+'option:selected').text()],function(index,value) {
+        if(index==0){
+        $('.secondary'+dropdownNumber).append("<option value='"+value+"' selected='selected'>"+value+"</option>");
+        }
+        else{
+        $('.secondary'+dropdownNumber).append("<option value='"+value+"'>"+value+"</option>");
+        }
+        });
+        
+        if($('.teritary'+dropdownNumber).length){
+         $.each(levelTwoarrays[dropdownindex][$('.primary'+dropdownNumber+' '+'option:selected').text()][$('.secondary'+dropdownNumber+' '+'option:selected').text()],function(index,value){
+         if(index==0){
+        $('.teritary'+dropdownNumber).append("<option value='"+value+"' selected='selected'>"+value+"</option>");
+        }
+        else{
+        $('.teritary'+dropdownNumber).append("<option value='"+value+"'>"+value+"</option>");
+        }
+        
+        });
+        }
+       
+        
+        
+        });
+        
+         $('.secondary').change(function(){
+        var dropdownindex=$('.secondary').index($(this));
+        var dropdownNumber=dropdownindex+1;
+        if($('.teritary'+dropdownNumber).length){
+         $('.teritary'+dropdownNumber).find('option').remove();
+        $.each(levelTwoarrays[dropdownindex][$('.primary'+dropdownNumber+' '+'option:selected').text()][$('.secondary'+dropdownNumber+' '+'option:selected').text()],function(index,value){
+        if(index==0){
+        $('.teritary'+dropdownNumber).append("<option value='"+value+"' selected='selected'>"+value+"</option>");
+        }
+        else{
+        $('.teritary'+dropdownNumber).append("<option value='"+value+"'>"+value+"</option>");
+        }
+        });
+         
+         
+         }
+        
         });
         	
     });
