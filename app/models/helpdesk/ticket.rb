@@ -166,6 +166,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
+  scope :all_article_tickets,
+    :include => [:article_ticket],
+    :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id"]
+
   class << self # Class Methods
 
     def agent_permission user

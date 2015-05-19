@@ -7,12 +7,6 @@
 	<%= preview_portal(support_solution_path(@category), @category) %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder } %>
-<div class="folder-2col">
-		<%# render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
-	<% if privilege?(:manage_solutions) %>
-		<%# render :partial => "/shared/reorder_list", :locals => { :items => @item.folders.visible(current_user), :action_url => reorder_solution_category_folders_path(@item), :title => :name, :container_id => "folder_sort", :reorder_id => "folder_reorder_button", :list_id => "folder_list"} %>
-	<% end %>
-</div>
 
 <% if @category.folders.blank? %>
 	<div class="no-data">
@@ -25,11 +19,16 @@
 	</div>
 
 <% else %>
-	<form action id="folder-bulk-form" class="clearfix" method="post">
-		<div class="comm-items" data-menu-hover-in='div.comm-item'>
-			<%= render(:partial => "folder", :collection => @category.folders) %>
-		</div>
-	</form>
+
+	<div class="comm-items" id="solution_sort" data-menu-hover-in='div.comm-item'>
+		<%= form_for @item.folders, :url => reorder_solution_category_folders_path(@category), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+		  <input name="reorderlist" type="hidden" value="" />
+		  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @item.id %>" />
+		  <ul class="row-fluid" rel="sortlist">
+				<%= render(:partial => "folder", :collection => @category.folders) %>
+			</ul>
+		<% end %>
+	</div>
 	<%# will_paginate @item.folders, 	:renderer => BootstrapPaginationRenderer,
         				:previous_label => "<b class='arrow-left'></b>",
         				:next_label => "<b class='arrow-right'></b>",

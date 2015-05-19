@@ -23,6 +23,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
+  before_filter :save_article_filter, :only => :index
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :normalize_params, :only => :index
@@ -66,6 +67,10 @@ class Helpdesk::TicketsController < ApplicationController
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
   
+
+  def save_article_filter
+    $redis_tickets.set "article_filter", params[:article_id] if params[:filter_name] == 'article_feedback' && params[:article_id].present?
+  end
  
   def user_ticket
     if params[:email].present?
@@ -93,7 +98,7 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)  
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?  
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?
     respond_to do |format|  
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
@@ -1003,6 +1008,15 @@ class Helpdesk::TicketsController < ApplicationController
       else 
         remove_tickets_redis_key(redis_key)
       end
+      load_article_filter
+    end
+
+    def load_article_filter
+      binding.pry
+      return if params[:article_id].present?
+      return if view_context.current_filter.to_s != 'article_feedback'
+      af = $redis_tickets.get "article_filter"
+      params[:article_id] = af
     end
 
     def handle_unsaved_view
