@@ -6,7 +6,7 @@ class Solution::CategoriesController < ApplicationController
   
   feature_check :solution_drafts
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show, :sidebar,:drafts, :feedbacks]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
@@ -36,7 +36,8 @@ class Solution::CategoriesController < ApplicationController
     @category = current_account.solution_categories.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      #format.html # new.html.erb
+      format.html { render :layout => false}
       format.xml  { render :xml => @category }
     end
   end
@@ -94,6 +95,24 @@ class Solution::CategoriesController < ApplicationController
     end
   end
 
+  def sidebar
+    @drafts = current_account.solution_articles.drafts_by_user(current_user)
+    @feedbacks = Helpdesk::Ticket.first(5) # only for testing 
+    render :partial => "/solution/categories/sidebar"
+  end
+
+  def feedbacks
+    @feedbacks =  Helpdesk::Ticket.first(3) # only for testing 
+    render :partial => "/solution/categories/feedbacks"
+  end
+
+  def drafts
+    @drafts = current_account.solution_articles.all_drafts
+
+    @feedbacks =  Helpdesk::Ticket.first(2) # only for testing
+    render :partial => "/solution/categories/drafts"
+  end
+
   protected
 
     def scoper #possible dead code
@@ -148,6 +167,10 @@ class Solution::CategoriesController < ApplicationController
 
     def load_category_with_folders
       @category = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
+    end
+
+    def default_drafts_scope
+      'drafts-me'
     end
     
 end

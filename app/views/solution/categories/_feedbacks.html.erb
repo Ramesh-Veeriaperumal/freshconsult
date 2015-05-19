@@ -1,0 +1,49 @@
+<% if @feedbacks %>
+<div id="feedbacks-sb">
+<div class="border-top">
+  <div class="inline pull-right">
+          <ul role="tablist">
+            <li class="dropdown">
+              <h5 class="conv-title conv-menu dropdown-toggle" data-toggle="dropdown">
+                <span class="sub-info">My Feedbacks</span>
+                <span class="caret"></span>
+              </h5>
+              <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;">
+              <li>
+                <a href="#conv_all" class="item" data-hash-url="false" data-toggle="tab" id="feedbacks-me" ul_class="tick">
+                My Feedbacks
+                </a>
+              </li>
+            <li class="">
+            <a href="#conv_forums" class="item" data-hash-url="false" data-toggle="tab" id="feedbacks-all" ul_class="tick">
+                All Feedbacks
+              </a>
+              </li>
+          </ul>
+            </li>
+          </ul>
+        </div>
+        <h4 class="inline">Feedbacks</h4>
+      </div>
+
+      <ul class="a-list">
+      <% @feedbacks.first(5).each do |f| %>
+        <li class="a-item">
+           <div>
+              <span>
+                <%= pjax_link_to(f.subject,
+                                "sdf",
+                                { :class => "a-title"}) %>
+              </span> 
+              <p class="muted a-desc"> <%= "Edited by #{f.requester.name}, #{time_ago_in_words(f.created_at)}" %> </p>
+            </div>
+        </li>
+      <% end %>
+    <% if @feedbacks.size > 3 %>
+      <li class="a-item">
+        <a> View All</a>
+      </li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>

@@ -1,0 +1,14 @@
+<%= render :partial => "drafts" %>
+<%= render :partial => "feedbacks" %>
+
+<% if !@drafs and !@feedbacks %>
+  <h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
+    <p><%=t('solution.info4').html_safe%></p>
+    <p><%=t('solution.info9').html_safe%></p>
+    <p><%=t('solution.info10').html_safe%></p>
+    <p><%=t('solution.info11').html_safe%></p>
+    <p><%=t('solution.info12').html_safe%></p>
+    <p><%=t('solution.info13').html_safe%></p>
+    <p><%=t('solution.info14').html_safe%></p>
+    <p><a href="https://support.freshdesk.com/support/solutions/folders/74531" _target="blank"> <%=t('group.learn_more').html_safe%> </a></p>
+<% end %>

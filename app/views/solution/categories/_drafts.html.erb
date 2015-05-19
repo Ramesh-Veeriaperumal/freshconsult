@@ -1,0 +1,46 @@
+<% if @drafts %>
+<div class="inline pull-right">
+        <ul role="tablist">
+          <li class="dropdown">
+            <h5 class="conv-title conv-menu dropdown-toggle" data-toggle="dropdown">
+              <span class="sub-info">My Drafts</span>
+              <span class="caret"></span>
+            </h5>
+            <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;">
+            <li>
+              <a href="#conv_all" class="item" data-hash-url="false" data-toggle="tab" id="drafts-me" ul_class="tick">
+              My Drafts
+              </a>
+            </li>
+          <li class="">
+          <a href="#conv_forums" class="item" data-hash-url="false" data-toggle="tab" id="drafts-all" ul_class="tick">
+              All Drafts
+            </a>
+            </li>
+        </ul>
+          </li>
+        </ul>
+      </div>
+      <h4 class="inline">Drafts</h4>
+    </div>
+
+    <ul class="a-list">
+    <% @drafts.first(5).each do |a| %>
+      <li class="a-item">
+         <div>
+            <span>
+              <%= pjax_link_to(a.title,
+                              solution_category_folder_article_path(a.folder.category,a.folder,a),
+                              { :class => "a-title"}) %>
+            </span> 
+            <p class="muted a-desc"> <%= "Edited by #{a.user.name}, #{time_ago_in_words(a.modified_at)}" %> </p>
+          </div>
+      </li>
+    <% end %>
+  <% if @drafts.size > 3 %>
+    <li class="a-item">
+      <a> View All</a>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

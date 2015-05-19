@@ -1536,6 +1536,9 @@ Helpkit::Application.routes.draw do
     resources :categories do
       collection do
         put :reorder
+        get :sidebar
+        get :drafts
+        get :feedbacks
       end
 
       resources :folders do
