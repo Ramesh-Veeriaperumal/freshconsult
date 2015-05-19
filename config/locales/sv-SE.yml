@@ -1,5 +1,6 @@
 sv-SE: 
   meta:
+    language_id: 25
     language_name: 'Swedish'
   date:
     ago: sedan
