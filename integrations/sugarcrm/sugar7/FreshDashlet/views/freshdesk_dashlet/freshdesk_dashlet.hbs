@@ -1,0 +1,347 @@
+<style>
+.clearfix { *zoom: 1; }
+.clearfix:before, .clearfix:after { display: table; content: ""; }
+.clearfix:after { clear: both; }
+.fd-container{
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	background: #fff;
+	color: #767676;
+	width: 400px;
+	border: 1px solid #c9c9c9;
+	margin:10px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 0 2px #bbb;
+	-moz-box-shadow: 0 0 2px #bbb;
+	box-shadow: 0 0 2px #bbb;
+}
+.fd-app-title{
+	background: #f5f5f5;
+	background: -moz-linear-gradient(top,  #f5f5f5 0%, #f0f0f0 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#f0f0f0));
+	background: -webkit-linear-gradient(top,  #f5f5f5 0%,#f0f0f0 100%);
+	background: -o-linear-gradient(top,  #f5f5f5 0%,#f0f0f0 100%);
+	background: -ms-linear-gradient(top,  #f5f5f5 0%,#f0f0f0 100%);
+	background: linear-gradient(to bottom,  #f5f5f5 0%,#f0f0f0 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#f0f0f0',GradientType=0 );
+	border-bottom: 1px solid #e8e8e8;
+	padding: 10px;
+}
+.fd-content-title{
+	padding: 10px;
+}
+.fd-app-title,
+.fd-content-title{
+	color: #777777;
+	margin: 0;
+	font-size: 13px;
+}
+.fd-tkt-due,.requester{
+	font-size: 13px;
+	padding: 3px 0;
+}
+.fd-tkt-list{
+	padding: 0;
+	margin: 0;
+	font-size: 14px
+}
+.fd-tkt-list li{
+	position: relative;
+	margin:0;
+	padding: 10px 1%;
+	list-style: none;
+	min-height: 60px;
+	border-bottom: 1px solid #dcdcdc;
+}
+.fd-tkt-list li:nth-child(odd){
+	background: #f5f5f5;
+}
+.fd-tkt-status{
+	width: 12%;
+}
+.fd-tkt-title{
+	margin-bottom:5px; 
+	font-weight: bold;
+}
+.fd-tkt-details,
+.fd-tkt-options{
+	font-size: 14px;
+	line-height: normal;
+	width: 77%;
+}
+.fd-tkt-options select{
+	margin-top: 11px;
+}
+.fd-tkt-details span.ellipsis{
+	width: 340px;
+}
+.fd-tkt-details a{
+	display: inline-block;
+	color: #049cdb;
+	line-height: normal;
+}
+.fd-tkt-details a:hover{
+	color: #036690;
+	text-decoration: underline;
+}
+.fd-tkt-button{
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: #f0f0f0;
+	color: #8a8a8a;
+	height: 100%;
+	text-align: center;
+	width: 8%;
+}
+.fd-tkt-button:hover{
+	color: #fff;
+	background: #9e9e9e;
+}
+.fd-tkt-button span{
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	transform: rotate(-90deg);
+	display: inline-block;
+	position: relative;
+	text-align: center;
+	top: 50%;
+	margin-top: -20px;
+	margin-left: -8px;
+}
+.fd-tkt-status,
+.fd-tkt-details{
+	display: inline-block;
+	vertical-align: top;
+}
+.ellipsis{
+	overflow: hidden;
+	-ms-text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.fd-tkt-id{
+	color:#8a8a8a;
+	padding-left: 8px;
+}
+.fd-tkt-date{
+	padding-bottom:5px; 
+}
+.fd-tkt-options{
+	display: none;
+}
+.fd-tkt-options label{
+	width: 40px;
+	display: inline-block;
+}
+.fd-tkt-options select{
+	background: none;
+	border:none;
+	outline: none
+}
+.show{
+	display: inline-block;
+}
+.hide{
+	display: none;;
+}
+</style>
+
+<script src="/modules/freshdesk/assets/js/jquery.jqpagination.js"></script>
+<script src="/modules/freshdesk/assets/js/jquery.timeago.js"></script>
+<link rel="stylesheet" href="/modules/freshdesk/assets/css/jqpagination.css" />
+<link rel="stylesheet" href="/modules/freshdesk/assets/css/sprites.css" />
+<meta charset="UTF-8">
+
+<input type="hidden" id="fd_domain" value="{{this.domain}}">
+<input type="hidden" id="fd_ssl" value="{{this.ssl}}">
+<input type="hidden" id="fd_credential" value="{{this.credentials}}">
+
+{{#if this.showConfig}}
+<div class="fd-content"> <p> <b> No data available. </b> </p>
+{{else}}
+<div class="fd-content"> <div id="fd_loading"> <b> Loading . . . </b> </div>
+			<ul class="fd-tkt-list" >
+{{#each this.ticket_json}}
+				<li class="clearfix fresh_tickets">
+				<span id="{{this.display_id}}">
+					<div class="fd-tkt-status">
+					    {{#eq this.source_name 'Feedback Widget'}} <div class="status-source source-detailed-Feedback_widget hideForList" title="Reported via {{this.source_name}}"></div> {{/eq}}
+	                    <div class="status-source source-detailed-{{this.source_name}} hideForList" title="Reported via {{this.source_name}}"></div>
+					</div>
+					<div class="fd-tkt-options hide">
+						<div><label>Agent:</label>
+							<select name="responder_id" onchange="callApi(this)">
+                                <option value="NULL" {{#eq ../responder_name NULL }} selected = "selected" {{/eq}} > Not Available </option>
+								{{#each ../../ticket_fields.ticket_fields.agent}}
+                                {{../responder_name}} {{@key}}
+									<option value="{{this}}" {{#eq ../responder_name @key }} selected = "selected" {{/eq}} > {{@key}} </option>
+								{{/each}}
+							</select>
+							<b style="display: none"> Updating... </b>
+						</div>
+						<div><label>Status:</label>
+							<select name="status" onchange="callApi(this)">
+								<option value="NULL" {{#eq ../status_name NULL }} selected = "selected" {{/eq}} > Not Available </option>
+                                {{#each ../../ticket_fields.ticket_fields.ticket_status}}
+									<option value="{{this}}" {{#eq ../status_name @key }} selected = "selected" {{/eq}} > {{@key}} </option>
+								{{/each}}
+							</select>
+							<b style="display: none"> Updating... </b>
+						</div>
+						<div><label>Group:</label>
+							<select name="group_id" onchange="callApi(this)">
+								<option value="NULL" {{#eq ../group_id NULL}} selected = "selected" {{/eq}} > Not Available </option>
+                                {{#each ../../ticket_fields.ticket_fields.ticket_group}}
+                                    <option value="{{this}}" {{#eq ../group_id this}} selected = "selected" {{/eq}} > {{@key}} </option>
+								{{/each}}
+							</select>
+							<b style="display: none"> Updating... </b>
+						</div>
+						<div><label>Priority:</label>
+							<select name="priority" onchange="callApi(this)">
+						 {{#each ../../ticket_fields.ticket_fields.ticket_priority}}
+							<option value="{{this}}" {{#eq ../priority_name @key }} selected = "selected" {{/eq}} > {{@key}} </option>
+						 {{/each}}
+						</select>
+						<b style="display: none"> Updating... </b>
+						</div>
+					</div>
+					<div class="fd-tkt-details show">
+						<div class="fd-tkt-title"><a href="{{../../ssl}}://{{../../domain}}/helpdesk/tickets/{{this.display_id}}" target="_blank" class="c-link"><span class="ellipsis"> {{this.subject}}</span><span class="fd-tkt-id">#{{this.display_id}}</span></div></a>
+						<div class="requester">
+							<span>From: {{this.requester_name}},</span>
+							<span>Created: <span class="timeago" title="{{this.created_at}}"> {{this.created_at}} </span></span>
+						</div>
+						<div class="fd-tkt-due">
+                            {{#eq this.status_name 'Open'}} Due: <span class="timeago" title="{{../due_by}}"> {{../due_by}} </span> {{/eq}}
+                            {{#eq this.status_name 'Pending'}} Awaiting your Reply {{/eq}}
+                            {{#eq this.status_name 'Resolved'}} This ticket has been Resolved {{/eq}}
+                            {{#eq this.status_name 'Closed'}} This ticket has been Closed {{/eq}}
+                            {{#eq this.status_name 'Waiting on Customer'}} Awaiting your Reply {{/eq}}
+                            {{#eq this.status_name 'Waiting on Third Party'}} Being Processed {{/eq}}
+                        </div>
+					</div>
+					<div class="fd-tkt-button"><span>...</span></div>
+			</span>	</li>
+{{/each}}
+			</ul>
+{{/if}}
+	</div>
+
+<div class="pagination">
+	<a href="#" class="first" data-action="first">&laquo;</a>
+	<a href="#" class="previous" data-action="previous">&lsaquo;</a>
+	<input type="text" readonly="readonly" />
+	<a href="#" class="next" data-action="next">&rsaquo;</a>
+	<a href="#" class="last" data-action="last">&raquo;</a>
+</div>
+
+<script>
+	$('.fd-tkt-button').click(function(){
+
+		if($(this).parent().find(".fd-tkt-details").hasClass('show')){
+			$(this).parent().find(".fd-tkt-details").removeClass('show').addClass('hide');
+			$(this).parent().find(".fd-tkt-options").addClass('show').removeClass('hide');
+		} else {
+			$(this).parent().find(".fd-tkt-details").addClass('show').removeClass('hide');
+			$(this).parent().find(".fd-tkt-options").removeClass('show').addClass('hide');
+		}
+
+	});
+</script>
+
+<script type="text/javascript">
+	
+	function noData() {
+		$("#fd_loading").hide();
+	}
+
+	function callApi(sel) {
+		var tid = $(sel).closest('span').attr('id');
+		var fkey = sel.name;
+		var fvalue = (sel.value == "NULL") ? null : sel.value;
+		var fssl = document.getElementById("fd_ssl").value;
+		var fcred = document.getElementById("fd_credential").value;
+		var fdomain = document.getElementById("fd_domain").value;
+
+		var img_dom_id = $(sel).next();
+		$(sel).next().show();
+		$(sel).next().html("Updating...");
+
+		$.ajax({
+			type: "POST",
+			url: "custom/clients/base/helper/ticketUpdate.php",
+			data: {ticket_id: tid, field_key: fkey, field_value: fvalue, fd_domain: fdomain, fd_ssl: fssl, fd_credential: fcred},
+			success: function(data, status) {
+                if(status == "success") {
+                    $(sel).next().show();
+                    $(sel).next().html("Updated.");
+                    $(sel).next().hide(10000);
+                } else {
+                    $(sel).next().show();
+                    $(sel).next().html("Retry please.");
+                    $(sel).next().hide(10000);
+                }
+			},
+			error: function (xhr, status) {
+				$(sel).next().show();
+				$(sel).next().html("Retry please.");
+				$(sel).next().hide(10000);
+			}
+		});
+	}
+
+	function showHideDes(sel) {
+		if($(sel).next().is(':hidden')) {
+			$(sel).next().show();
+		} else {
+			$(sel).next().hide();
+		}
+	} 
+
+	$(document).ready(function() {
+		$("span.timeago").timeago();
+		var totalNumRecords = $('.fresh_tickets').length;
+		var recordsPerPage = 6;
+		
+		var fresh_tickets = $(".fresh_tickets");
+
+		for(var i = 1; i <= totalNumRecords ; i++) {
+			var li_ele = fresh_tickets.eq(fresh_tickets.index(this) + i);
+			$(li_ele).hide();
+		}
+
+		for(var i = 1; i<=recordsPerPage; i++) {
+			
+			var li_ele = fresh_tickets.eq(fresh_tickets.index(this) + i);
+			/* To hide the div that shows loading */
+			if( $(li_ele).html() ) {
+				$("#fd_loading").hide();
+			}
+			$(li_ele).show();
+		}
+
+		$('.pagination').jqPagination({
+			max_page : Math.ceil(totalNumRecords / recordsPerPage),
+			paged : function(page) {
+				// loop through all elements and hide
+				for (var i = 1; i <= totalNumRecords; i++) {
+					var li_ele = fresh_tickets.eq(fresh_tickets.index(this) + i);
+					$(li_ele).hide();
+				}
+
+				// find the range of the records for the page
+				var recordsFrom = recordsPerPage * (page-1) + 1;
+				var recordsTo = recordsPerPage * (page);
+
+				// then display only the records on the specified page
+				for (var i = recordsFrom; i<= recordsTo; i++) {
+					var li_ele = fresh_tickets.eq(fresh_tickets.index(this) + i);
+					$(li_ele).show();
+				}
+			}
+		});
+	});
+</script>
