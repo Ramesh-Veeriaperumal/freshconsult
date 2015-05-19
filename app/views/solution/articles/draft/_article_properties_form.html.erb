@@ -1,7 +1,7 @@
 <div id="tab-wrapper" class="tab-wrapper">
 	<%= tabs_for do |tab| %>
 		
-		<% tab.create('tags', 'Tags & folders') do %>
+		<% tab.create('tags', t('solution.articles.prop_tabs.tag_fol')) do %>
 			
 			<%= fields_for :tags  do |tag| %>
 				<div class="control-group row-fluid">
@@ -41,7 +41,7 @@
 		<% end %>
 
 
-		<% tab.create('meta', 'Meta') do %>
+		<% tab.create('meta', t('solution.articles.prop_tabs.meta')) do %>
 			
 			<%= f.fields_for :seo_data  do |s| %>
 								

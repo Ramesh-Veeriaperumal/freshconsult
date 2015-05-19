@@ -1,3 +1,4 @@
 page << "jQuery('#article-reset-rating-confirmation').modal('hide');"
-page.replace_html "article_voting", :partial => "voting.html.erb"
+new_ui_locals = params[:reset_votes].present? ? {:new_draft_ui => true} : {}
+page.replace_html "article_voting", :partial => "voting.html.erb", :locals => new_ui_locals
 page << "jQuery('#article_voting').animateHighlight();"

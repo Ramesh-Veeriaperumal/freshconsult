@@ -3250,6 +3250,9 @@ en:
         category: Category
         visible_to: Visible to
     articles:
+      prop_tabs:
+        tag_fol: "Tags & folders"
+        meta: Meta
       draft:
         show:
           edit: "Edit"
@@ -3263,6 +3266,7 @@ en:
         portal_preview_msg: You are previewing draft version of this article.
         discard_msg: The draft has been discarded.
         discard_confirm: Do you want to discard this draft?
+        revert_msg: "Succesfully reverted changes done in draft."
       locked: Locked
       cant_publish: can't be changed to published of an article in default folder/category
       draft_published_label: There is also a published version.
@@ -3293,6 +3297,8 @@ en:
       article_useful: Glad we could be helpful. Thanks for the feedback.
       article_not_useful: "Thanks for the feedback. We will improve this article."
       error_message: "There is an error %{error_msg}"
+      votes: Votes
+      views: Views
       reset_rating:
         link: "Reset"
         dialog_title: "Reset likes and dislikes"

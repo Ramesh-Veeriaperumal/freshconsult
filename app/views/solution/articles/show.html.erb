@@ -56,6 +56,8 @@
 		
 	 <span class="seperator"></span> 
 	 <div id="article_voting">
+	 	<%= font_icon :like %> <%= @article.thumbs_up %> <b><%= t('likes') %></b>, 
+		<%= font_icon :dislike %> <%= @article.thumbs_down %> <b><%= t('dislikes') %></b>
 		<%= render :partial => "voting", :object => @article %>
 	 </div>
 </div>

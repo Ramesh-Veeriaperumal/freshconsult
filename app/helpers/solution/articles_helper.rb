@@ -36,10 +36,11 @@ module Solution::ArticlesHelper
   end
   
   def discard_link
-    link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article, @article.draft), 
+    link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article.id, @article.draft), 
               :method => 'delete',
-              :confirm => t('solution.articles.draft.discard_confirm')
-            ) if @article.published? and @article.draft.present?
+              :confirm => t('solution.articles.draft.discard_confirm'),
+              :class => 'draft-btn'
+            ) if ( @article.published? && @article.draft.present? )
   end
   
   def form_data_attrs
@@ -49,8 +50,22 @@ module Solution::ArticlesHelper
       :"autosave-path" => autosave_solution_draft_path(@article.id),
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
       :"default-folder" => @article.folder.is_default,
-      :"discard-draft-path" => discard_solution_article_drafts_path(@article)
+      :"draft-discard-url" => "#{solution_article_draft_path(@article.id, @article.draft.present? ? @article.draft : 1)}"
     }
+  end
+
+  def user_votes_stats count, type
+    t_type = (type ==  1) ? 'likes' : 'dislikes'
+    return t(t_type) if count < 1
+    link_to( t(t_type), 
+            voted_users_solution_category_folder_article_path(@article.folder.category, @article.folder, @article, {:vote => type}),
+            :rel => "freshdialog",
+            :class => "article-#{t_type}",
+            :title => t(t_type), 
+            "data-target" => "#article-#{t_type}",
+            "data-template-footer" => "",
+            "data-width" => "400px" 
+          ).html_safe
   end
   
 end

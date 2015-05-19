@@ -63,6 +63,7 @@ Along with the above options, few flags and counters are available which are lis
     successCount: 0,
     failureCount: 0,
     lastSaveStatus: true,
+    timer: null,
 
     //Default options
     opts: {
@@ -78,9 +79,7 @@ Along with the above options, few flags and counters are available which are lis
 
     initialize: function (options) {
       this.opts = $.extend(this.opts, options);
-      
-      this.bindEvents();
-      this.autoSaveTrigger();
+      this.startSaving();
     },
 
     bindEvents: function () {
@@ -133,7 +132,7 @@ Along with the above options, few flags and counters are available which are lis
 
     autoSaveTrigger: function () {
       var $this = this;
-      window.setInterval(function () {
+      this.timer = setInterval(function () {
         if ($this.contentChanged) {
           $this.getContent();
         }
@@ -182,7 +181,14 @@ Along with the above options, few flags and counters are available which are lis
       $.each(this.opts.monitorChangesOf, function (key, value) {
         $(value).off(".autosave");
       });
-    }
+      clearInterval(this.timer);
+    },
+
+    startSaving: function () {
+      this.bindEvents();
+      this.autoSaveTrigger();
+    },
+
   };
 
   /* Autosave PLUGIN Definiton */

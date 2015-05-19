@@ -11,9 +11,10 @@ window.App = window.App || {};
 
     onVisit: function (data) {
       // Check if this is New Version.
-//      if (App.namespace === "solution/articles/new") {
-//        this.eventsForNewPage();
-//      } else if (App.namespace === "solution/articles/show") {
+     if (App.namespace === "solution/articles/new") {
+       this.eventsForNewPage();
+     } 
+     // else if (App.namespace === "solution/articles/show") {
 //        // this.showPage();
 //        // this.showPage2();
 //      } else if (App.namespace === "solution/articles/edit") {
@@ -49,16 +50,6 @@ window.App = window.App || {};
       });
     },
 		
-		scrollHandler: function () {
-			$(window).on('scroll.articles', function () {
-        if ($(window).scrollTop() > 190 && $('#editortool').is(':visible')) {
-          $('#editortool').addClass('fixtoolbar');
-        } else {
-          $('#editortool').removeClass('fixtoolbar');
-        }
-      });
-		},
-		
 		toggleViews: function () {
 			$('.article-edit, .article-view').toggleClass('hide');
 		},
@@ -66,10 +57,20 @@ window.App = window.App || {};
     startEditing: function () {
       $('.sub-content.article-edit').html($('.sub-content.article-view').html());
       this.setFormValues();
-      this.autosaveInitialize();
-      var eTop = $('#editortool').offset().top;
-			this.toggleViews();
-      this.scrollHandler();
+      this.toggleViews();
+
+      //initilaizing autosave
+      if (window.articleDraftAutosave) {
+        window.articleDraftAutosave.startSaving();
+      } else {
+        window.articleDraftAutosave = this.autosaveInitialize();
+      }
+      
+      if ($("#article-form").data().defaultFolder) {
+        this.defaultFolderValidate();
+      }
+      //Disbale the input for cancel draft changes by default
+      $('#cancel_draft_changes_input').prop('disabled', true);
     },
     
     setFormValues: function () {
@@ -92,13 +93,8 @@ window.App = window.App || {};
         $this.animateMasterver(470);
         $('.masterversion-link').removeClass('disable');
       });
-      // $(document).on('keyup.article',function(e){
-      //   if(( e.keyCode == 27 ) && $('.masterversion-link').hasClass('disable') ){
-      //     $('.close-link').trigger('click');
-      //   }
-      // });
-
     },
+
     animateMasterver: function (distance) {
       if ($('html').attr('dir') === 'rtl') {
         $('.master-content').animate({
@@ -119,11 +115,11 @@ window.App = window.App || {};
     
     bindPropertiesToggle: function () {
       $('body').on('click.articles', '#solution-properties-show', function (ev) {
-        var visiblility = $('#solution-properties').is(":visible");
+        var visiblility = $('#solution-properties-seo').is(":visible");
         $('#show-hide-button')
           .toggleClass("arrow-right", visiblility)
           .toggleClass("arrow-down", !visiblility);
-        $('#solution-properties').toggle('fast', function () {});
+        $('#solution-properties-seo').toggle('fast', function () {});
       });
     },
 
@@ -145,44 +141,53 @@ window.App = window.App || {};
     bindForCancel: function () {
       var $this = this;
       $("body").on('click.article', "#edit-cancel-button", function (ev) {
+        console.log("Inside the edit-cancel-button click event bind function.");
         ev.preventDefault();
 				$this.articleDraftAutosave.stopSaving();
         $(".article-edit-form")[0].reset();
         $this.setFormValues();
-				if ($this.hadDraft()) {
-					$this.resetDraftRequest();
-				} else {
-					$this.discardDraftRequest();
-				}
+				$this.resetDraftRequest();
         $this.articleDraftAutosave.contentChanged = false;
-				$(window).off('scroll.articles');
-				$this.toggleViews();
+				$this.cancel_UI_toggle();
       });
     },
-    
-    discardDraftRequest: function () {
-      $.ajax({
-        type: 'DELETE',
-				url: this.data.discardDraftPath
-      });
-    },
-		
-		hadDraft: function () {
-			return (this.data.timestamp && this.data.timestamp > 0);
-		},
     
     resetDraftRequest: function () {
-      
-      // setFormValues
-      // clearAttachments
-      
-      // No Previous Author => No Draft already
-      
-			//TODO-DraftUI If there was NO draft already, delete the autosaved record
-      $.ajax({
-        type: 'POST',
-        data: $('#article-form').serialize()
-      });
+      $('#cancel_draft_changes_input').prop('disabled', false);
+      //request for submitting serialized form if a draft already existed
+      var form_submit = { 
+        type: 'POST', 
+        data: $('.article-edit-form').serialize(),
+        dataType: "script"
+      };
+      //request for discarding draft if a draft didn't exist initially
+      var draft_discard = { 
+        type: 'DELETE', 
+        url: $('.article-edit-form').data().draftDiscardUrl, 
+        dataType: "json" 
+      };
+
+      var handlers = { 
+        success: function () {
+          console.log('Cancel success');
+          //TODO What all to do in cancel request
+        },
+        error: function () {
+          console.log('Cancel error');
+        }
+      };
+
+      var request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit) );
+      //Only if a single autosave is success should we reverse the changes done
+      if (this.articleDraftAutosave.successCount > 0) {
+        $.ajax(request);
+      }
+    },
+
+    cancel_UI_toggle: function () {
+        this.toggleViews();
+        $('.article-view-edit:hidden').show();
+        $(".autosave-notif:visible").hide();
     },
 
     autosaveInitialize: function (data) {
@@ -264,7 +269,9 @@ window.App = window.App || {};
             content = this.htmlToStr(this.message(response.msg, success));
             content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton());
 
-            this.msgElement.html(content).show();
+            // this.msgElement.html(content).show();
+            this.msgElement.html(content).filter(':hidden').show();
+            $('.article-view-edit:visible').hide();
             this.themeChange(!success);
             this.lastUpdatedAt(response);
             this.toggleButtons(success);
@@ -293,9 +300,9 @@ window.App = window.App || {};
       setTimeout(function () {
         $this.formatSeoMeta();
         $this.select2Tags();
-        $("#article-properties-cancel").bind("click", function () {
-          $('#article-properties-content #article-form').resetForm();
-          $('#article-properties-content #article-form .select2').trigger('change');
+        $("#article-prop-cancel").bind("click", function () {
+          $('#article-prop-content #article-form').resetForm();
+          $('#article-prop-content #article-form .select2').trigger('change');
         });
       }, 50);
     },

@@ -15,14 +15,22 @@
 			</p>
 		</div>
 
-		<div class="tags section">
-			<span><%= t(@article.type_name) %></span>
-			<span><%= t(@article.status_name) %></span>
+		<div class="section">
+			<h5 class="leads"><%= t('event.type') %></h5>
+			<p>
+				<span><%= t(@article.type_name) %></span>
+			<p>
+		</div>
+		<div class="folder-name section">
+			<h5 class="leads"><%= t('solution.folders.folder_form.category') %></h5>
+			<p>
+				<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id), {:title => "#{t('solution.folders.folder_form.category')} - #{@article.folder.category.name}" } %>
+			</p>
 		</div>
 		<div class="folder-name section">
 			<h5 class="leads"><%= t('solution.folder') %></h5>
 			<p>
-				<%= pjax_link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), {:title => "#{t('solution.folder')}-#{@article.folder.name}" } %>
+				<%= pjax_link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), {:title => "#{t('solution.folder')} - #{@article.folder.name}" } %>
 			</p>
 		</div>
 		<div class="tags-wrapper section">
@@ -32,9 +40,6 @@
 				<% @article.tags.each do |t| %>
 					<span>
 						<%= t.name %>
-						<% if privilege?(:publish_solution) %>	
-						  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
-	          <% end %>
 					</span>
 				<% end %>
 			</div>

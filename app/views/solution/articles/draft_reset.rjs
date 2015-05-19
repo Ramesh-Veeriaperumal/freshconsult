@@ -1,0 +1,4 @@
+show_growl_flash(page)
+timestamp = @article.draft.present? ? @article.draft.updation_timestamp : false
+page <<	"window.articleDraftAutosave.opts.extraParams.timestamp = #{timestamp};"
+page << "jQuery('#article-form').data().timestamp = #{timestamp};"

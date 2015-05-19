@@ -1,0 +1,24 @@
+<% vote_type = (params[:vote] || 1).to_i %>
+
+<% anonymous_votes = (vote_type == 1 ? @article.thumbs_up : @article.thumbs_down) - @article.votes.count %>
+<% if anonymous_votes > 0 %>
+	<div class="voted-user">
+		<div class="avatar-wrap">
+			<%= user_avatar(nil) %>
+		</div>
+		<div class="user-name">
+			<%= link_to "Anonymous (#{anonymous_votes})", "#" %>
+		</div>
+	</div>
+<% end %>
+
+<% @article.votes.where(:vote => vote_type).each do |vote| %>
+	<div class="voted-user">
+		<div class="avatar-wrap">
+			<%= user_avatar(vote.user) %>
+		</div>
+		<div class="user-name">
+			<%= link_to vote.user.name, user_path(vote.user), :target => "_blank" %>
+		</div>
+	</div>
+<% end %>

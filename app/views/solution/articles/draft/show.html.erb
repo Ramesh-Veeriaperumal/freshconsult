@@ -11,16 +11,16 @@
 		<%= breadcrumb %>
 	</div>
 
-	<div class="solution-header" rel="sticky">
+	<div class="solution-header draft-notif" rel="sticky">
 			<% if @article.draft or !@article.published? %>
-			<div class="sub-content article-view">
-				<p class="pull-left"><%= draft_info_text %> - <%= discard_link %> </p>
+			<div class="sub-content article-view-edit <%= 'error' if @article.draft.present? && @article.draft.locked? %>">
+				<p class="pull-left"><%= draft_info_text %> &nbsp;&nbsp; <%= discard_link %> </p>
 				<p class="pull-right">
-					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post') %>
+					<%= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'draft-btn') %>
 				</p>
 			</div>
 			<% end %>
-			<div class="sub-content autosave-notif hide article-edit"></div>
+			<div class="sub-content autosave-notif hide"></div>
 	</div>
 
 	<!-- Solution page content -->
