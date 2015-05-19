@@ -87,7 +87,9 @@ class Solution::Article < ActiveRecord::Base
   def hit!
     new_count = increment_others_redis(hit_key)
     if new_count >= HITS_CACHE_THRESHOLD
-      self.update_column(:hits, read_attribute(:hits) + HITS_CACHE_THRESHOLD)
+      total_hits = read_attribute(:hits) + HITS_CACHE_THRESHOLD
+      self.update_column(:hits, total_hits)
+      solution_article_meta.update_column(:hits, total_hits) if solution_article_meta
       decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
     end
     true

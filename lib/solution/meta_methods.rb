@@ -14,6 +14,7 @@ module Solution::MetaMethods
 	def self.included(base)
 		base.class_eval do 
 			# after_save :save_meta
+			# after_destroy :destroy_meta
 		end
 	end
 
@@ -36,15 +37,20 @@ module Solution::MetaMethods
 
 	def save_meta
 		obj = meta_object
-		changed_attribs.each do |attrib|
+		changed_attribs(obj).each do |attrib|
 			obj.send("#{attrib}=", self.send(attrib))
 		end
 		assign_defaults(obj)
 		obj.save
 	end
 
-	def changed_attribs
-		self.new_record? ? common_meta_attributes : (common_meta_attributes & self.changes.keys)
+	def destroy_meta
+		meta_object.destroy
+	end
+
+	def changed_attribs(meta_obj = nil)
+		return common_meta_attributes if (self.new_record? || (meta_obj && meta_obj.new_record?))
+		common_meta_attributes & self.changes.keys
 	end
 
 	def new_meta(attributes = {})

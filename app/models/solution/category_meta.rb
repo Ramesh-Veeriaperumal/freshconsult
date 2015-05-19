@@ -20,7 +20,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	has_many :portals, :class_name => "Portal", :through => :portal_solution_categories
 
-	has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :dependent => :destroy
+	has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :foreign_key => :solution_category_meta_id
 		
 	has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
 
