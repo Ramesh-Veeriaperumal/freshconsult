@@ -1,6 +1,6 @@
-ENV["RAILS_ENV"] = "test"
+ENV['RAILS_ENV'] = 'test'
 
-require_relative "helpers/test_files.rb"
+require_relative 'helpers/test_files.rb'
 
 class ActionController::TestCase
   def setup

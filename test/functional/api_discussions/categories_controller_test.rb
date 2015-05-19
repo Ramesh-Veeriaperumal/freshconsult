@@ -3,88 +3,88 @@ require_relative '../../test_helper'
 module ApiDiscussions
   class CategoriesControllerTest < ActionController::TestCase
     include ForumHelper
-    
-    actions = Rails.application.routes.routes.select{|x| x.defaults[:controller] == "api_discussions/categories"}.collect{|x| x.defaults[:action]}.uniq
-    methods = {"index" => :get, "create" => :post, "update" => :put, "destroy" => :delete, "show" => :get, "forums" => :get}
-    
+
+    actions = Rails.application.routes.routes.select { |x| x.defaults[:controller] == 'api_discussions/categories' }.collect { |x| x.defaults[:action] }.uniq
+    methods = { 'index' => :get, 'create' => :post, 'update' => :put, 'destroy' => :delete, 'show' => :get, 'forums' => :get }
+
     def fc
       ForumCategory.first
     end
 
     def wrap_cname(params)
-      {:category => params}
+      { category: params }
     end
 
-    actions.select{|x| x != "show"}.each do |action|
-      define_method("test_#{action}_without_privilege") do 
+    actions.select { |x| x != 'show' }.each do |action|
+      define_method("test_#{action}_without_privilege") do
         controller.class.any_instance.stubs(:allowed_to_access?).returns(false).once
-        send(methods[action], action, construct_params(:id => fc.id))
+        send(methods[action], action, construct_params(id: fc.id))
         assert_response :forbidden
-        match_json(request_error_pattern("access_denied"))
+        match_json(request_error_pattern('access_denied'))
       end
 
-      define_method("test_#{action}_without_login") do 
+      define_method("test_#{action}_without_login") do
         controller.class.any_instance.stubs(:current_user).returns(nil)
-        send(methods[action], action, construct_params(:id => fc.id))
+        send(methods[action], action, construct_params(id: fc.id))
         assert_response :unauthorized
-        match_json(request_error_pattern("invalid_credentials"))
+        match_json(request_error_pattern('invalid_credentials'))
         controller.class.any_instance.unstub(:current_user)
       end
 
       define_method("test_#{action}_check_day_pass_usage") do
         Agent.any_instance.stubs(:occasional).returns(true).once
         subscription = @account.subscription
-        subscription.update_column(:state, "active")
-        send(methods[action], action, construct_params(:id => fc.id))
-        match_json(request_error_pattern("access_denied"))
+        subscription.update_column(:state, 'active')
+        send(methods[action], action, construct_params(id: fc.id))
+        match_json(request_error_pattern('access_denied'))
         assert_response :forbidden
       end
 
       define_method("test_#{action}_requires_feature_disabled") do
         controller.class.any_instance.stubs(:feature?).returns(false).once
-        send(methods[action], action, construct_params(:id => fc.id))
-        match_json(request_error_pattern("require_feature", {:feature => "Forums"}))
+        send(methods[action], action, construct_params(id: fc.id))
+        match_json(request_error_pattern('require_feature', feature: 'Forums'))
         assert_response :forbidden
       end
     end
 
-    #verify_authenticity_token will not get called for get requests. So All GET actions here in exclude array.
-    actions.select{|a| ["index", "show", "forums"].exclude?(a)}.each do |action|
-      define_method("test_#{action}_without_token") do 
+    # verify_authenticity_token will not get called for get requests. So All GET actions here in exclude array.
+    actions.select { |a| %w(index show forums).exclude?(a) }.each do |action|
+      define_method("test_#{action}_without_token") do
         with_forgery_protection do
-          @request.cookies["_helpkit_session"] = true
-          send(methods[action], action, construct_params(:id => fc.id, :authenticity_token => 'foo'))
+          @request.cookies['_helpkit_session'] = true
+          send(methods[action], action, construct_params(id: fc.id, authenticity_token: 'foo'))
         end
         assert_response :unauthorized
-        match_json(request_error_pattern("unverified_request"))
+        match_json(request_error_pattern('unverified_request'))
       end
 
-      define_method("test_#{action}_check_account_state_and_response_headers") do 
+      define_method("test_#{action}_check_account_state_and_response_headers") do
         subscription = @account.subscription
-        subscription.update_column(:state, "suspended")
-        send(methods[action], action, construct_params(:id => fc.id))
-        match_json(request_error_pattern("account_suspended"))
+        subscription.update_column(:state, 'suspended')
+        send(methods[action], action, construct_params(id: fc.id))
+        match_json(request_error_pattern('account_suspended'))
         assert_response :forbidden
-        assert_equal "current=v2; requested=v2", @response.headers["X-Freshdesk-API-Version"] 
-        subscription.update_column(:state, "trial")
+        assert_equal 'current=v2; requested=v2', @response.headers['X-Freshdesk-API-Version']
+        subscription.update_column(:state, 'trial')
       end
     end
 
-    actions.select{|a| ["index", "create"].exclude?(a)}.each do |action|
+    actions.select { |a| ['index', 'create'].exclude?(a) }.each do |action|
       define_method("test_#{action}_load_object_present") do
         ForumCategory.any_instance.stubs(:destroy).returns(true)
-        send(methods[action], action, construct_params({:id => fc.id}, {:name => "new"}))
+        send(methods[action], action, construct_params({ id: fc.id }, name: 'new'))
         assert_equal fc, assigns(:category)
         assert_equal fc, assigns(:item)
       end
 
       define_method("test_#{action}_load_object_not_present") do
-        send(methods[action], action, construct_params(:id => 'x'))
+        send(methods[action], action, construct_params(id: 'x'))
         assert_response :not_found
-        assert_equal " ", @response.body
+        assert_equal ' ', @response.body
       end
     end
-    
+
     def test_index_load_objects
       get :index, request_params
       assert_equal ForumCategory.all, assigns(:items)
@@ -92,49 +92,49 @@ module ApiDiscussions
     end
 
     def test_update_with_extra_params
-      put :update, construct_params({:id => fc.id}, {:test => "new"})
-      match_json([bad_request_error_pattern("test", "invalid_field")])
+      put :update, construct_params({ id: fc.id }, test: 'new')
+      match_json([bad_request_error_pattern('test', 'invalid_field')])
       assert_response :bad_request
     end
 
     def test_update_with_missing_params
-      put :update, construct_params({:id => fc.id}, {})
+      put :update, construct_params({ id: fc.id }, {})
       assert_response :bad_request
-      match_json(request_error_pattern("missing_params"))
+      match_json(request_error_pattern('missing_params'))
     end
 
     def test_update_with_blank_name
-      put :update, construct_params({:id => fc.id}, {:name => ""})
-      match_json([bad_request_error_pattern("name", "can't be blank")])
+      put :update, construct_params({ id: fc.id }, name: '')
+      match_json([bad_request_error_pattern('name', "can't be blank")])
       assert_response :bad_request
     end
 
     def test_update_with_invalid_model
       new_fc = create_test_category
-      put :update, construct_params({:id => fc.id}, {:name => new_fc.name})
-      match_json([bad_request_error_pattern("name", "has already been taken")])
+      put :update, construct_params({ id: fc.id }, name: new_fc.name)
+      match_json([bad_request_error_pattern('name', 'has already been taken')])
       assert_response :conflict
     end
 
     def test_update
-      put :update, construct_params({:id => fc.id}, {:description => "foo"})
-      match_json(forum_category_response_pattern(fc.name, "foo"))
+      put :update, construct_params({ id: fc.id }, description: 'foo')
+      match_json(forum_category_response_pattern(fc.name, 'foo'))
       match_json(forum_category_pattern(fc))
       assert_response :success
-      assert_equal "foo", ForumCategory.find_by_id(fc.id).description
+      assert_equal 'foo', ForumCategory.find_by_id(fc.id).description
     end
 
     def test_destroy
       ForumCategory.any_instance.unstub(:destroy)
-      fc = @account.forum_categories.create!(:name => "temp")
-      delete :destroy, construct_params(:id => fc.id)
-      assert_equal " ", @response.body
+      fc = @account.forum_categories.create!(name: 'temp')
+      delete :destroy, construct_params(id: fc.id)
+      assert_equal ' ', @response.body
       assert_response :no_content
       assert_nil ForumCategory.find_by_id(fc.id)
     end
 
     def test_show
-      get :show, construct_params(:id => fc.id)
+      get :show, construct_params(id: fc.id)
       assert_response :success
       result_pattern = forum_category_response_pattern(fc.name, fc.description)
       result_pattern[:forums] = Array
@@ -144,7 +144,7 @@ module ApiDiscussions
 
     def test_show_with_forums
       fc = Forum.first.forum_category
-      get :show, construct_params(:id => fc.id)
+      get :show, construct_params(id: fc.id)
       assert_response :success
       result_pattern = forum_category_response_pattern(fc.name, fc.description)
       result_pattern[:forums] = []
@@ -156,47 +156,47 @@ module ApiDiscussions
     end
 
     def test_show_invalid_id
-      get :show, construct_params(:id => "x")
+      get :show, construct_params(id: 'x')
       assert_response :not_found
-      assert_equal " ", @response.body  
+      assert_equal ' ', @response.body
     end
 
     def test_show_portal_check
       controller.class.any_instance.stubs(:privilege?).with(:view_forums).returns(false).once
-      get :show, construct_params(:id => fc.id)
+      get :show, construct_params(id: fc.id)
       assert_response :forbidden
-      match_json(request_error_pattern("access_denied"))
+      match_json(request_error_pattern('access_denied'))
     end
 
     def test_create
-      post :create, construct_params({}, {:name => "test", :description => "test desc"})
+      post :create, construct_params({}, name: 'test', description: 'test desc')
       assert_response :success
-      match_json(forum_category_response_pattern("test", "test desc"))
+      match_json(forum_category_response_pattern('test', 'test desc'))
       match_json(forum_category_pattern(ForumCategory.last))
     end
 
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern("name", "can't be blank")
+        bad_request_error_pattern('name', "can't be blank")
       ]
       assert_response :bad_request
       match_json(pattern)
     end
 
     def test_create_unexpected_params
-      post :create, construct_params({}, {"junk" => "new"})
+      post :create, construct_params({}, 'junk' => 'new')
       pattern = [
-        bad_request_error_pattern("junk", "invalid_field")
+        bad_request_error_pattern('junk', 'invalid_field')
       ]
       assert_response :bad_request
       match_json(pattern)
     end
 
     def test_create_blank_name
-      post :create, construct_params({}, {"name" => ""})
+      post :create, construct_params({}, 'name' => '')
       pattern = [
-        bad_request_error_pattern("name", "can't be blank")
+        bad_request_error_pattern('name', "can't be blank")
       ]
       assert_response :bad_request
       match_json(pattern)
@@ -204,9 +204,9 @@ module ApiDiscussions
 
     def test_create_with_duplicate_name
       fc = create_test_category
-      post :create, construct_params({}, {"name" => fc.name})
+      post :create, construct_params({}, 'name' => fc.name)
       pattern = [
-        bad_request_error_pattern("name", "has already been taken")
+        bad_request_error_pattern('name', 'has already been taken')
       ]
       assert_response :conflict
       match_json(pattern)
@@ -230,7 +230,7 @@ module ApiDiscussions
       Rails.env.unstub(:test?)
       @request.unstub(:ssl?)
       assert_response :internal_server_error
-      match_json(base_error_pattern("internal_error"))
+      match_json(base_error_pattern('internal_error'))
     end
 
     def test_ensure_proper_protocol
@@ -238,22 +238,22 @@ module ApiDiscussions
       get :index, request_params
       Rails.env.unstub(:test?)
       assert_response :forbidden
-      match_json(request_error_pattern("ssl_required"))
+      match_json(request_error_pattern('ssl_required'))
     end
 
     def test_create_returns_location_header
       name = Faker::Name.name
-      post :create, construct_params({}, {"name" => name, "description" => "test desc"})
+      post :create, construct_params({}, 'name' => name, 'description' => 'test desc')
       result = parse_response(@response.body)
       assert_response :success
       match_json(forum_category_response_pattern(name))
       match_json(forum_category_pattern(ForumCategory.last))
-      assert_equal true, response.headers.include?("Location")
-      assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result["id"]}", response.headers["Location"]
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result['id']}", response.headers['Location']
     end
 
     def test_forums
-      get :forums, construct_params(:id => fc.id)
+      get :forums, construct_params(id: fc.id)
       assert_response :success
       result_pattern = []
       fc.forums.each do |f|
@@ -263,9 +263,33 @@ module ApiDiscussions
     end
 
     def test_forums_invalid_id
-      get :forums, construct_params(:id => "x")
+      get :forums, construct_params(id: 'x')
       assert_response :not_found
-      assert_equal " ", @response.body  
+      assert_equal ' ', @response.body
+    end
+
+    def test_forums_with_pagination
+      3.times do
+        create_test_forum(fc)
+      end
+      get :forums, construct_params(id: fc.id, per_page: 1)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :forums, construct_params(id: fc.id, per_page: 1, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :forums, construct_params(id: fc.id, per_page: 1, page: 3)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_forums_with_pagination_exceeds_limit
+      40.times do
+        create_test_forum(fc)
+      end
+      get :forums, construct_params(id: fc.id, per_page: 40)
+      assert_response :success
+      assert JSON.parse(response.body).count == 30
     end
   end
 end

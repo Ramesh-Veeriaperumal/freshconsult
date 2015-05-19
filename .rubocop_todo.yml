@@ -13,16 +13,19 @@ Lint/UnusedBlockArgument:
 # Offense count: 9
 Metrics/AbcSize:
   Max: 21
+  Enabled: false
 
 # Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
   Max: 173
+  Enabled: false
 
 # Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 12
+  Enabled: false
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -279,3 +282,40 @@ Style/TrailingWhitespace:
 # Configuration parameters: WordRegex.
 Style/WordArray:
   MinSize: 2
+
+Style/RegexpLiteral:
+  Enabled:false
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+   - test/**/*.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+   - test/**/*.rb
+
+Lint/UselessAssignment:
+  Exclude:
+   - test/**/*.rb
+
+Lint/HandleExceptions:
+  Exclude:
+   - test/**/*.rb
+
+Style/AccessorMethodName:
+  Exclude:
+   - test/**/*.rb
+
+Style/GlobalVars:
+  Exclude:
+   - test/**/*.rb
+
+Style/LambdaCall:
+  Enabled: false
+  Exclude:
+   - test/**/*.rb
+   - api/**/*.rb
+
+Lint/ParenthesesAsGroupedExpression:
+  Exclude:
+   - test/**/*.rb
