@@ -75,6 +75,7 @@ module Redis::RedisKeys
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
 
 	SOLUTION_DRAFTS_SCOPE = "SOLUTION:DRAFTS:%{account_id}:%{user_id}"
+	ARTICLE_FEEDBACK_FILTER = "ARTICLE_FEEDBACK_FILTER:%{account_id}:%{user_id}:%{session_id}"
 
 	def newrelic_begin_rescue
 	    begin

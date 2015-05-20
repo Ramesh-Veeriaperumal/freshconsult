@@ -4520,6 +4520,8 @@ en:
         open_or_pending: Open or Pending
         resolved_or_closed: Resolved or Closed
         no_tickets: You don't have any tickets in current view
+        article_feedback: Article Feedbacks
+        my_article_feedback: My Articles Feedbacks
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:

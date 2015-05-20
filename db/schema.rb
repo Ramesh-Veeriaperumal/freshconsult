@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150316093248) do
+ActiveRecord::Schema.define(:version => 20150520073012) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -196,6 +196,7 @@ ActiveRecord::Schema.define(:version => 20150316093248) do
     t.integer "account_id", :limit => 8
   end
 
+  add_index "article_tickets", ["account_id", "ticket_id"], :name => "index_article_tickets_on_account_id_and_ticket_id", :unique => true
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
 

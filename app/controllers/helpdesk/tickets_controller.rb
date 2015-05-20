@@ -31,6 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
+  before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
@@ -66,11 +67,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
-  
-
-  def save_article_filter
-    $redis_tickets.set "article_filter", params[:article_id] if params[:filter_name] == 'article_feedback' && params[:article_id].present?
-  end
  
   def user_ticket
     if params[:email].present?
@@ -1008,15 +1004,23 @@ class Helpdesk::TicketsController < ApplicationController
       else 
         remove_tickets_redis_key(redis_key)
       end
-      load_article_filter
     end
 
     def load_article_filter
-      binding.pry
-      return if params[:article_id].present?
-      return if view_context.current_filter.to_s != 'article_feedback'
-      af = $redis_tickets.get "article_filter"
-      params[:article_id] = af
+      return if view_context.current_filter.to_s != 'article_feedback' || params[:article_id].present?
+      params[:article_id] = get_tickets_redis_key(article_filter_key)
+    end
+
+    def save_article_filter
+      set_tickets_redis_key(article_filter_key, params[:article_id]) if params[:filter_name] == 'article_feedback' && params[:article_id].present?
+    end
+
+    def article_filter_key
+      (ARTICLE_FEEDBACK_FILTER % { 
+        :account_id => current_account.id,
+        :user_id => current_user.id,
+        :session_id => request.session_options[:id]
+      })
     end
 
     def handle_unsaved_view

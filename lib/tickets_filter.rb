@@ -14,6 +14,8 @@ module TicketsFilter
     [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
+    [:article_feedback, I18n.t('helpdesk.tickets.views.article_feedback'), [:visible]  ],
+    [:my_article_feedback, I18n.t('helpdesk.tickets.views.my_article_feedback'), [:visible]  ],
     
     [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:visible, :my_groups, :open] ],
     [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],

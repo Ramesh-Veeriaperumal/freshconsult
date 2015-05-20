@@ -43,7 +43,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"},spam_condition(false),deleted_condition(false)],
                       "new_and_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
                       "all_tickets" => [spam_condition(false),deleted_condition(false)],
-                      "article_feedback" => [ spam_condition(false), deleted_condition(false)]
+                      "article_feedback" => [spam_condition(false), deleted_condition(false)],
+                      "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
                    
                    
@@ -88,6 +89,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       ##### Some hack for default values
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs["article_tickets.article_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "article_tickets.article_id", :container => :numeric})
+      defs["solution_articles.user_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "solution_articles.user_id", :container => :numeric})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
       defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
@@ -188,7 +190,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def add_article_feedback_conditions(params)
-    add_condition("article_tickets.article_id", :is, params[:article_id]) if params[:article_id].present?
+    add_condition("article_tickets.article_id", :is, params[:article_id]) if params[:article_id].present? && self.name == "article_feedback"
+    add_condition("solution_articles.user_id", :is, User.current.id) if self.name == "my_article_feedback"
   end
 
   def add_tag_filter(params)
@@ -311,7 +314,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
-    all_joins[0].concat(articles_join) if self.name == "article_feedback"
+    all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
+    all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
     all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
     all_joins
   end
@@ -345,9 +349,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   " INNER JOIN helpdesk_ticket_states on helpdesk_ticket_states.ticket_id = helpdesk_tickets.id 
     AND helpdesk_ticket_states.account_id = helpdesk_tickets.account_id "
  end
+ 
+ def article_tickets_join
+  " INNER JOIN `article_tickets` ON `article_tickets`.`ticket_id` = `helpdesk_tickets`.`id` 
+    AND `article_tickets`.`account_id` = `helpdesk_tickets`.`account_id` "
+ end
 
  def articles_join
-  "  INNER JOIN `article_tickets` ON `article_tickets`.`ticket_id` = `helpdesk_tickets`.`id` "
+  "#{article_tickets_join} INNER JOIN `solution_articles` ON `solution_articles`.`id` = `article_tickets`.`article_id` 
+    AND `article_tickets`.`account_id` = `solution_articles`.`account_id` "
  end
   
   
