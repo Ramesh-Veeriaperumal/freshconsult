@@ -19,12 +19,14 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
+    @folder = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
     
     respond_to do |format|
-      format.html { @page_canonical = solution_category_folder_url(@category, @item) }
-      format.xml  { render :xml => @item.to_xml(:include => articles_scope) }
-      format.json { render :json => @item.as_json(:include => articles_scope) }
+      format.html {
+        redirect_to "/solution/drafts/all" if @folder.is_default?
+      }
+      format.xml  { render :xml => @folder.to_xml(:include => articles_scope) }
+      format.json { render :json => @folder.as_json(:include => articles_scope) }
     end
   end
   
@@ -39,7 +41,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-    @folder = @category.folders.find(params[:id])      
+    @folder = current_account.folders.find(params[:id])      
     @customer_id = @folder.customer_folders.collect { |cf| cf.customer_id.to_s }
     respond_to do |format|
       if @folder.is_default?

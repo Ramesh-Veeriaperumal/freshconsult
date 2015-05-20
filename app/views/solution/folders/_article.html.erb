@@ -1,0 +1,49 @@
+<%= content_tag :li, :item_id => article.id,
+		  						:class => "comm-item" do %>
+	<div class="reorder-icon vertical-alignment">
+			<%= font_icon "rearrange", :size => 18, :id => "sortable-icon" %>
+	</div>
+	<div class="vertical-alignment reorder-content row-fluid">
+		<div class="row-fluid clear-left-margin">
+			<div class="solution-list-checkbox">
+				<% if privilege?(:manage_solutions) %>
+						<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>"/>
+				<% end %>
+			</div>
+			<div>
+				<div class="span3 pull-right text-right mt6 pr15">
+					<span class="span4 align-left meta-component <%= 'faded' if article.hits == 0 %>">
+						<%= font_icon "file-visible" %>
+						<%= article.hits %>
+					</span>
+					<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
+						<%= font_icon "like", :size => 18 %>
+						<%= article.thumbs_up %>
+					</span>
+					<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
+						<%= font_icon "dislike", :size => 18 %>
+						<%= article.thumbs_down %>
+					</span>
+				</div>
+				<div class="span2 pull-right mt6 text-center article-info">
+					<% if article.draft.present? %>
+						<span class="label">
+							<%= t('solutions.status.draft')%> 
+						</span>
+					<% end %>
+				</div>
+				<div class="comm-item-main clear-left-margin <%= 'no-checkbox' unless privilege?(:manage_solutions) %>">
+					<div class="comm-item-title">
+						<%= pjax_link_to(h(article.title), solution_article_path(article.id)) %>
+					</div>
+					<div class="comm-item-details muted">
+						<%= t('solution.details',
+						:user_name => article.user,
+						:created_time => article.created_at.to_i,
+						:time_ago => formated_date(article.created_at) ).html_safe %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<% end %>

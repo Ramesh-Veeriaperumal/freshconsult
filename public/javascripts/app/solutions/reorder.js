@@ -10,7 +10,6 @@ window.App.Solutions = window.App.Solutions || {};
 		start: function () {
 			this.toggleReorderButton();
 			this.bindReorderButton();
-			this.bindSortable();
 			this.bindFormSubmit();
 			this.bindButtonSubmit();
 			this.bindCancelReorder();
@@ -26,6 +25,7 @@ window.App.Solutions = window.App.Solutions || {};
 			var $this = this;
 			$('body').on("click.solutions.reorder", "#reorder_btn", function (ev) {
 				ev.preventDefault();
+				$this.bindSortable();
 				$this.classToggle();
 			});
 		},
@@ -61,7 +61,8 @@ window.App.Solutions = window.App.Solutions || {};
 					dataType: 'script',
 					data: { 
 						reorderlist: $this.positionHash(),
-						category_id: $('#reorder_category_id').val()
+						category_id: $('#reorder_category_id').val(),
+						folder_id: $('#reorder_folder_id').val()
 					},
 					success: function () {
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
@@ -69,6 +70,7 @@ window.App.Solutions = window.App.Solutions || {};
 					}
 				});
 				var url = $this.submitUrl;
+				$('.comm-items ul').sortable("destroy");
 				$this.classToggle();
 			});
 		},
@@ -78,6 +80,7 @@ window.App.Solutions = window.App.Solutions || {};
 			$('body').on("click.solutions.reorder", "#cancel_btn", function (ev) {
 				ev.preventDefault();
 				$('.comm-items ul').html($('.comm-items ul').data('list_item'));
+				$('.comm-items ul').sortable("destroy");
 				$this.classToggle();
 			});
 		},

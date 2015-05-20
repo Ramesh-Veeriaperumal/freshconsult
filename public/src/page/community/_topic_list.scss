@@ -168,7 +168,7 @@ $community-types: problem #e65e63,
 			@include float(left);
 			@include padding(7px 20px 7px 15px);
 		}
-		.folder-list-checkbox{
+		.solution-list-checkbox{
 			@include float(left);
 			@include padding(0px 20px 7px 15px);
 		}
@@ -482,6 +482,9 @@ $community-types: problem #e65e63,
 	}
 	.list-default-btns{ display:none; }
 	.list-reorder-btns{	display:inline-block; }
+	.solution-list-checkbox {
+		display:none;
+	}
 }
 
 .explanation {

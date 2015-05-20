@@ -6,14 +6,14 @@
 <% content_for :sticky_right do %>
 	<%= preview_portal(support_solution_path(@category), @category) %>
 <% end %>
-<%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder } %>
+<%= render :partial => '/solution/shared/sticky', :locals => { :page => :category } %>
 
 <% if @category.folders.blank? %>
 	<div class="no-data">
 		<%= t('solution_category.info2') %>
 		<div class="mt20">
 			<% if privilege?(:manage_solutions) %>
-				<%= pjax_link_to(t("solution.add_folder"), new_solution_folders_path(:category_id => @category.id), :class => "btn btn-primary") %>
+				<%= pjax_link_to(t("solution.add_folder"), new_solution_folder_path(:category_id => @category.id), :class => "btn btn-primary") %>
 			<% end %>
 		</div>
 	</div>
@@ -21,7 +21,7 @@
 <% else %>
 
 	<div class="comm-items" id="solution_sort" data-menu-hover-in='div.comm-item'>
-		<%= form_for @category.folders, :url => reorder_solution_category_folders_path(@category), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+		<%= form_for @category.folders, :url => reorder_solution_folders_path(@category), :html => { :method => :put, :class => "form-reorder" } do |f| %>
 		  <input name="reorderlist" type="hidden" value="" />
 		  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
 		  <ul class="row-fluid" rel="sortlist">
@@ -29,8 +29,4 @@
 			</ul>
 		<% end %>
 	</div>
-	<%# will_paginate @item.folders, 	:renderer => BootstrapPaginationRenderer,
-        				:previous_label => "<b class='arrow-left'></b>",
-        				:next_label => "<b class='arrow-right'></b>",
-        				:class => "pagination pagination-centered" %>
 <% end %>

@@ -3240,6 +3240,9 @@ en:
     add_folder: New Folder
     add_article: New Article
     view_feedback: View all feedbacks
+    move_to: Move to
+    change_author: Change Author
+    details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
     general:
       created_by: Created by
       last_edited: Last Edited by

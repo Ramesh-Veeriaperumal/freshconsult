@@ -1,0 +1,23 @@
+<div class="list-panel-main">
+	<ul class="list-actions-left">
+		<% if privilege?(:manage_solutions) -%>
+			<li class="folder-edit">
+				<%= pjax_link_to("", edit_solution_folder_path(@folder.id), :class => font_class(:edit, 23, "tooltip"), :title => "Edit")%>
+			</li>
+		<% end %>
+	</ul>
+	<% if privilege?(:publish_solution) %>
+		<ul class="list-actions-right">
+			<li class="list-default-btns">
+				<%= reorder_btn %>
+				<%= new_solutions_button(:article) %>
+			</li>
+			</li>
+		  <li class="list-reorder-btns">
+		    <a href="#" class="btn btn-primary" id="submit_btn">Done</a>
+		    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
+		  </li>
+		</ul>
+	<% end %>
+	<h2 class="list-title ellipsis"><%= h(@folder.name) %></h2>
+</div>
