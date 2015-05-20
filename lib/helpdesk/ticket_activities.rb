@@ -96,7 +96,7 @@ module Helpdesk::TicketActivities
 
     def create_due_by_activity
       create_activity(User.current, 'activities.tickets.due_date_updated.long',
-        {'eval_args' => {'due_date_updated' => ['parse_in_time_zone', self.due_by.to_s(:db)]}}, 
+        {'eval_args' => {'due_date_updated' => ['formatted_dueby_for_activity', self.due_by.to_i]}}, 
           'activities.tickets.due_date_updated.short') if self.schema_less_ticket.manual_dueby && self.due_by
     end
 
