@@ -28,20 +28,19 @@
 			</div>
 			<div class="section feedback-list">
 				<ul>
-					<li>
-						<p class="feed-title">Need more information</p>
-						<p class="shortnote">I've just installed the freshdesk extension for magento, and i need help on...</p>
-						<p class="feed-time">Steph reported a month ago</p>
-					</li>
-					<li>
-						<p class="feed-title">Need more information</p>
-						<p class="shortnote">I've just installed the freshdesk extension for magento, and i need help on...</p>
-						<p class="feed-time">Steph reported a month ago</p>
-					</li>
+					<% @article.tickets[0..2].each do |ticket| %>
+						<li>
+							<p class="feed-title">
+								<%= pjax_link_to ticket.subject.truncate(80), helpdesk_ticket_path(ticket) %>
+							</p>
+							<p class="shortnote"><%= ticket.description.truncate(75) %></p>
+							<p class="feed-time"><%= ticket.requester.name %> <%= t('portal.reported') %> <span data-livestamp="<%= ticket.created_at.to_i %>">
+						</li>	
+					<% end %>
 				</ul>
 			</div>
 			<div class="section view-all-feed">
-				<a href="#">View all feedback</a>
+				<%= link_to t('solution.view_feedback'), "#{helpdesk_filter_view_default_path('article_feedback')}?article_id=#{@article.id}", :target => "_blank" %>
 			</div>
 		</div>
 	<% end %>
