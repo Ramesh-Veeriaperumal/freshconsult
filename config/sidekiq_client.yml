@@ -1,7 +1,7 @@
 defaults: &defaults
   :verbose: true
   :require: ./config/environment.rb
-  :concurrency: 25
+  :concurrency: 5
   :logfile: ./log/sidekiq.log
   :queues:
     - [sla]
@@ -15,12 +15,9 @@ defaults: &defaults
     - [twitter]
     - [premium_twitter]
     - [sla_scheduler]
-    - [supervisor_scheduler]
-    - [facebook_scheduler]
-    - [premium_facebook_scheduler]
-    - [facebook_comments_scheduler]
-    - [twitter_scheduler]
-    - [premium_twitter_scheduler]
+    - [trail_facebook]
+    - [trail_twitter]
+    - [custom_twitter]
     - [default]
 
 development:

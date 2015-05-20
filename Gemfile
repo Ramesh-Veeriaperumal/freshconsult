@@ -67,7 +67,7 @@ gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 gem 'omniauth-shopify-oauth2', "1.0.0"
 
-gem "sidekiq", :git => "git://github.com/PratheepV/sidekiq.git", :branch => "master"
+gem "sidekiq"
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"

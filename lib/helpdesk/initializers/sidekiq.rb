@@ -8,12 +8,6 @@ Sidekiq.configure_client do |config|
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "SlaScheduler",
-      "TwitterScheduler",
-      "FacebookScheduler",
-      "SupervisorScheduler",
-      "PremiumTwitterScheduler",
-      "PremiumFacebookScheduler",
-      "FacebookCommentsScheduler",
       "Social::TwitterReplyStreamWorker"
     ]
   end
@@ -23,31 +17,19 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = ConnectionPool.new(:size => 25, &$sidekiq_datastore)
+  config.redis = ConnectionPool.new(:size => 5, &$sidekiq_datastore)
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!
   config.server_middleware do |chain|
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
       "SlaScheduler",
-      "TwitterScheduler",
-      "FacebookScheduler",
-      "SupervisorScheduler",
-      "PremiumTwitterScheduler",
-      "PremiumFacebookScheduler",
-      "FacebookCommentsScheduler",
       "Social::TwitterReplyStreamWorker"
     ]
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "SlaScheduler",
-      "TwitterScheduler",
-      "FacebookScheduler",
-      "SupervisorScheduler",
-      "PremiumTwitterScheduler",
-      "PremiumFacebookScheduler",
-      "FacebookCommentsScheduler",
       "Social::TwitterReplyStreamWorker"
     ]
   end
