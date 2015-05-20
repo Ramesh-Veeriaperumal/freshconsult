@@ -258,6 +258,16 @@ body.community.cs-always-show .community-sidebar {
   font-size: 13px;
 }
 
+#solution-home-sidebar{
+  margin: 0;
+}
+
+.sidebar-dropdown{
+  display: inline-block;
+  @include float(right);
+  margin-top: 4px;
+}
+
 @-webkit-keyframes fadeInLeft {
   0% {
     opacity: 0;

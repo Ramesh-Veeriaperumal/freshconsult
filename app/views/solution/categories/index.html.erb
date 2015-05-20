@@ -1,57 +1,49 @@
 <% content_for :helpcard do %>
-
-	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id=> "d-sb",
+	<%= content_tag :div, "", :rel => "remote", :id=> "solution-home-sidebar",
 			  "data-remote-url" => '/solution/categories/sidebar' %>
-	
-
-
-	
-
-
-
-
-
-
-
 <% end %>
-<% if privilege?(:manage_solutions) -%>
-	<div class="pull-right align-right itil-hide" rel="sticky">
-		<%= pjax_link_to(t('solution.draft.name'), solution_drafts_path, { :class => "btn"}) if @solution_drafts_feature %>
-	   <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
-		<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "btn btn-primary",
-		:rel => "freshdialog", 'data-target' => '#new-cat' %>
-	</div>
-<%- end %>
-<h3 class="lead itil-hide"><%=t('solution.title').html_safe%></h3> 
-<div class="search-grey-box ignore-margin-20 search-page">
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder').html_safe, :url => "/search/solutions?term=" } %>
-</div>
+
+	<div class="sol-cat-sticky-title solution-header" rel="sticky">
+		<% if privilege?(:manage_solutions) -%>
+			<div class="pull-right align-right itil-hide">
+				<%= pjax_link_to(t('solution.draft.name'), solution_drafts_path, { :class => "btn"}) if @solution_drafts_feature %>
+			   <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
+				<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "btn btn-primary",
+				:rel => "freshdialog", 'data-target' => '#new-cat' %>
+			</div>
+		<%- end %>
+		<h3 class="lead itil-hide"><%=t('solution.title').html_safe%></h3>
+	</div> 
+
+
+
+
 <div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>
 		<% if !@solution_drafts_feature  || !category.is_default %>
 			<div class="<%= cycle('odd', 'even') %>">
-				<% if (!category.is_default? && privilege?(:manage_solutions)) -%>
-						<div class="action_buttons">
-							<%= link_to t('folder.add_folder').html_safe, new_solution_category_folder_path(category), :class => "first"  %> 
-							<%= link_to t('edit').html_safe ,edit_solution_category_path(category), :class => "last"   %>
-						</div>
-				<% end %>
-				<h4 class="border_title">
+				<h4 class="cat-title-border">
 					<% unless category.folders.empty? %>
-						<%= link_to  "#{h(category.name)} &raquo;".html_safe, category %>
+						<%= link_to  "#{h(category.name)}".html_safe, category %>
 					<% else %>
 						<%= h(category.name) %>
 					<% end %>
 				</h4>  
 				<ul>			
-		  		<% category.folders.each do |folder| %>
+		  		<% category.folders.first(5).each do |folder| %>
 	  				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %>
 	  				  <span>
 	  					  (<%= folder.articles.size %>)
 	  			    </span> 
 	  			  </li>
 				 <% end %> 
+				<% if category.folders.size > 5 %>
+						<% remaining_folders = category.folders.size - 5 %>
+						<li><b><%= link_to "View #{remaining_folders} more folders",  solution_category_path(category)  %></b>
+					  </li>
+				<% end %>
 				</ul>
+
 				<%= content_tag(:span, t('solution_category.info2').html_safe, :class => "no_info_text") if (category.folders.size == 0)  %>
 			</div>
 		<% end %>

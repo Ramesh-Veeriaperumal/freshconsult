@@ -1,19 +1,20 @@
 <% if @drafts %>
-<div class="inline pull-right">
+<% title = params[:scope] ? "All Drafts" : "My Drafts" %>
+<div class="sidebar-dropdown">
         <ul role="tablist">
           <li class="dropdown">
             <h5 class="conv-title conv-menu dropdown-toggle" data-toggle="dropdown">
-              <span class="sub-info">My Drafts</span>
+              <span class="sub-info"><%= title %></span>
               <span class="caret"></span>
             </h5>
             <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;">
             <li>
-              <a href="#conv_all" class="item" data-hash-url="false" data-toggle="tab" id="drafts-me" ul_class="tick">
+              <a class="item" data-hash-url="false" data-toggle="tab" id="drafts-me" ul_class="tick">
               My Drafts
               </a>
             </li>
           <li class="">
-          <a href="#conv_forums" class="item" data-hash-url="false" data-toggle="tab" id="drafts-all" ul_class="tick">
+          <a class="item" data-hash-url="false" data-toggle="tab" id="drafts-all" ul_class="tick">
               All Drafts
             </a>
             </li>
@@ -21,11 +22,10 @@
           </li>
         </ul>
       </div>
-      <h4 class="inline">Drafts</h4>
-    </div>
+      <span class="lead">Drafts</span>
 
     <ul class="a-list">
-    <% @drafts.first(5).each do |a| %>
+    <% @drafts.first(3).each do |a| %>
       <li class="a-item">
          <div>
             <span>
@@ -38,9 +38,12 @@
       </li>
     <% end %>
   <% if @drafts.size > 3 %>
+    <% view_all = params[:scope] ? solution_drafts_path : 
+                  solution_my_drafts_path('all') %>
     <li class="a-item">
-      <a> View All</a>
+      <%= pjax_link_to "View all",view_all %>
     </li>
   <% end %>
   </ul>
+</div>
 <% end %>

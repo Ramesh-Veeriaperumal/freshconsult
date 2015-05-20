@@ -1,21 +1,20 @@
 <% if @feedbacks %>
-<div id="feedbacks-sb">
-<div class="border-top">
-  <div class="inline pull-right">
+  <% title = params[:scope] ? "All Feedbacks" : "My Feedbacks" %>
+  <div class="sidebar-dropdown">
           <ul role="tablist">
             <li class="dropdown">
               <h5 class="conv-title conv-menu dropdown-toggle" data-toggle="dropdown">
-                <span class="sub-info">My Feedbacks</span>
+                <span class="sub-info"><%= title %></span>
                 <span class="caret"></span>
               </h5>
               <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;">
               <li>
-                <a href="#conv_all" class="item" data-hash-url="false" data-toggle="tab" id="feedbacks-me" ul_class="tick">
+                <a id="feedbacks-me" ul_class="tick">
                 My Feedbacks
                 </a>
               </li>
             <li class="">
-            <a href="#conv_forums" class="item" data-hash-url="false" data-toggle="tab" id="feedbacks-all" ul_class="tick">
+              <a id="feedbacks-all" ul_class="tick">
                 All Feedbacks
               </a>
               </li>
@@ -23,27 +22,27 @@
             </li>
           </ul>
         </div>
-        <h4 class="inline">Feedbacks</h4>
-      </div>
+        <span class="lead">Feedbacks</span>
 
       <ul class="a-list">
-      <% @feedbacks.first(5).each do |f| %>
+      <% @feedbacks.first(3).each do |f| %>
         <li class="a-item">
            <div>
               <span>
-                <%= pjax_link_to(f.subject,
-                                "sdf",
-                                { :class => "a-title"}) %>
-              </span> 
+                <%= pjax_link_to(f.subject, helpdesk_ticket_path(f),{:class => "a-title"}) %>
+              </span>
+              <span class="label pull-right"><%= f.status_name %></span> 
               <p class="muted a-desc"> <%= "Edited by #{f.requester.name}, #{time_ago_in_words(f.created_at)}" %> </p>
             </div>
         </li>
       <% end %>
     <% if @feedbacks.size > 3 %>
+    <% view_all = params[:scope] ? "/helpdesk/tickets/filter/article_feedback" : 
+                  "/helpdesk/tickets/filter/my_article_feedback" %>
+
       <li class="a-item">
-        <a> View All</a>
+        <%= pjax_link_to "View all",view_all %>
       </li>
     <% end %>
     </ul>
-  </div>
 <% end %>

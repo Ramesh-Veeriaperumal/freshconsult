@@ -563,3 +563,10 @@ body.community.moderation.cs-always-show {
 .category-edit{
 	@include border-right(1px solid #FFF);
 }
+
+.cat-title-border {
+	font-size: 16px;
+	border-top: 1px solid #ebebeb;
+	padding-top: 6px;
+	margin-top: 8px;
+}

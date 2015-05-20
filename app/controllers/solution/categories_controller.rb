@@ -97,19 +97,17 @@ class Solution::CategoriesController < ApplicationController
 
   def sidebar
     @drafts = current_account.solution_articles.drafts_by_user(current_user)
-    @feedbacks = Helpdesk::Ticket.first(5) # only for testing 
+    @feedbacks = current_account.tickets.article_tickets_by_user(current_user)
     render :partial => "/solution/categories/sidebar"
   end
 
   def feedbacks
-    @feedbacks =  Helpdesk::Ticket.first(3) # only for testing 
+    @feedbacks = current_account.tickets.all_article_tickets
     render :partial => "/solution/categories/feedbacks"
   end
 
   def drafts
     @drafts = current_account.solution_articles.all_drafts
-
-    @feedbacks =  Helpdesk::Ticket.first(2) # only for testing
     render :partial => "/solution/categories/drafts"
   end
 
