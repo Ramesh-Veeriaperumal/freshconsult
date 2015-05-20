@@ -437,7 +437,7 @@ module ApplicationHelper
   end
 
   def formatted_dueby_for_activity(time_in_seconds)
-    "#{formated_date(Time.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
+    "#{formated_date(Time.zone.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
   end
 
   def target_topic_path(topic_id)
