@@ -474,7 +474,7 @@ custom_field_values.put("{!nested_fields.field_name}","{!nested_fields.field_val
                 				form_element += "<option value='{!option.value}' selected='selected'>{!option.id}</option>";
                 			
                 			}else {
-                				form_element += "<option value='{!option.id}'>{!option.value}</option>";
+                				form_element += "<option value='{!option.value}'>{!option.id}</option>";
                				}
                 			</apex:repeat>
                 			form_element += "</select>";
