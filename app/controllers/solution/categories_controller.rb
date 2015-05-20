@@ -3,6 +3,7 @@ class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   include FeatureCheck
   helper SolutionHelper
+  helper Solution::NavmenuHelper
   
   feature_check :solution_drafts
   
@@ -21,6 +22,10 @@ class Solution::CategoriesController < ApplicationController
       format.json  { render :json => @categories.to_json(:except => [:account_id,:import_id],
                                                          :include => folder_scope) }
     end
+  end
+  
+  def navmenu
+    render :partial=> '/solution/shared/navmenu_content'
   end
 
   def show

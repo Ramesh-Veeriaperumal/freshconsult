@@ -1537,6 +1537,7 @@ Helpkit::Application.routes.draw do
       collection do
         put :reorder
         get :sidebar
+        get :navmenu
         get :drafts
         get :feedbacks
       end

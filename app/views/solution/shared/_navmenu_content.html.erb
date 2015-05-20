@@ -1,0 +1,17 @@
+<li>
+  <%= pjax_link_to(t('solution.home'), solution_categories_path, {:"data-page-name" => :home})%>
+</li>
+<% if privilege?(:publish_solution) %>
+<li>
+  <%= pjax_link_to(t('solution.drafts.my_drafts'), solution_drafts_path, {:"data-page-name" => :my_drafts})%>
+</li>
+<li>
+  <%= pjax_link_to(t('solution.drafts.all_drafts'), solution_my_drafts_path(:type => :all), {:"data-page-name" => :all_drafts})%>
+</li>
+<% end %>
+<ul id="cm-sb-solution-categories">
+  <%= navmenu_categories %>
+</ul>
+<script type="text/javascript">
+  // App.Solutions.Sidebar.setCurrentPage();
+</script>

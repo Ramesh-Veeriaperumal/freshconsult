@@ -1,0 +1,16 @@
+<div class="cm-wrapper" id="cm-solutions-wrapper" rel="sticky">
+	<div class="wrapper">
+		<div id="community-solutions-sidebar" class="community-sidebar hide">
+			<i id="cm-sb-solutions-close" class="sidebar-close"></i>
+			<div class="cm-sb-title">
+				<%=	font_icon("sidebar-list",
+						:size => 21,
+						:class => "cm-sb-toggle",
+						:id => "cm-sb-solutions-toggle") %>
+
+				<%= t('discussions.views_categories') %>
+			</div>
+			<ul class="cm-sb-list" id="cm-sb-solution-list" data-remote-url="/solution/categories/navmenu" rel="remote"></ul>
+		</div>
+	</div>
+</div>

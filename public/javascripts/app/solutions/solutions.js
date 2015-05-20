@@ -18,6 +18,7 @@ window.App = window.App || {};
         this[this.current_module].onVisit();
       }
       App.Solutions.Reorder.start();
+			App.Solutions.NavMenu.start();
     },
 
     setSubModule: function () {
@@ -29,6 +30,7 @@ window.App = window.App || {};
       case "solution/articles/show":
       case "solution/articles/new":
         this.current_module = 'Article';
+				break;
       case "solution/categories/index":
         App.Solutions.sideBar.onVisit();
         App.Solutions.feedbacksideBar.onVisit();
@@ -61,27 +63,27 @@ window.App = window.App || {};
       $("body").on('click.sidebar', '#feedbacks-me, #feedbacks-all', this.refreshSideBar.bind(this));
     },
 
-    refreshSideBar: function(ev) {
+    refreshSideBar: function (ev) {
       var target = ev.target.id;
-      if (target == 'feedbacks-all'){
+      if (target === 'feedbacks-all') {
         this.setAllFeedbacks();
-      } else if (target == "feedbacks-me") {
+      } else if (target === "feedbacks-me") {
         this.setMyFeedbacks();
       }
     },
 
-    setMyFeedbacks: function() {
-      if (this.myFeedbacks.empty()){
-        this.myFeedbacks = $('#feedbacks-sb').html(); 
+    setMyFeedbacks: function () {
+      if (this.myFeedbacks.empty()) {
+        this.myFeedbacks = $('#feedbacks-sb').html();
       }
       $('#feedbacks-sb').html(this.myFeedbacks);
     },
 
     setAllFeedbacks: function () {
-      if (this.myFeedbacks.empty()){
-        this.myFeedbacks = $('#feedbacks-sb').html(); 
+      if (this.myFeedbacks.empty()) {
+        this.myFeedbacks = $('#feedbacks-sb').html();
       }
-      if(this.allFeedbacks.empty()){
+      if (this.allFeedbacks.empty()) {
         this.fetchAllFeedbacks();
       }else{
         $('#feedbacks-sb').html(this.allFeedbacks);
