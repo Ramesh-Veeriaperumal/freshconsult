@@ -149,6 +149,21 @@ module Cache::Memcache::Account
     key = FORUM_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
+  
+  def solution_categories_from_cache
+    key = ALL_SOLUTION_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.fetch(cache_key) do
+      self.solution_categories.all(:include => [:portal_solution_categories, :folders]).each do |c|
+        c.folders.map(&:article_count)
+      end
+    end
+  end
+
+  def clear_solution_categories_from_cache
+    key = ALL_SOLUTION_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+  
 
   def sales_manager_from_cache
     if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change

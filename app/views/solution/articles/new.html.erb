@@ -1,3 +1,4 @@
+<% content_for :layoutType do %>community solutions<% end %>
 <h3 class="lead itil-hide"><%=t('solution.add_new_solution')%></h3>
 <div id="article-form-container">
 	<%= form_for @article, :url => solution_category_folder_articles_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>

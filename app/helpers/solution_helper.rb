@@ -1,6 +1,7 @@
 module SolutionHelper
 
 	def solutions_breadcrumb(page = :home)
+		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
 		case page
@@ -86,11 +87,11 @@ module SolutionHelper
 		end
 	end
 
-	def sidebar_toggle(extra_classes="")
+	def sidebar_toggle
 		font_icon("sidebar-list",
 								:size => 21,
-								:class => "cm-sb-toggle #{extra_classes}",
-								:id => "cm-sb-toggle").html_safe
+								:class => "cm-sb-toggle",
+								:id => "cm-sb-solutions-toggle").html_safe
 	end
 
 	def reorder_btn
@@ -101,4 +102,40 @@ module SolutionHelper
 					   </a>) if privilege?(:manage_solutions)
 		_op.html_safe
 	end
+	
+	def category_collection(portal = current_portal)
+		@category_collection ||= begin
+			if portal.blank?
+				{:current => all_categories, :others => []}
+			else
+				{
+					:current => all_categories.select {|c| c.portal_solution_categories.map(&:portal_id).include?(portal.id) },
+					:others => all_categories.reject {|c| c.portal_solution_categories.map(&:portal_id).include?(portal.id) }
+				}
+			end
+		end
+	end
+	
+	def all_categories
+		@all_categories_from_cache ||= current_account.solution_categories_from_cache
+	end
+	
+	def current_categories
+		category_collection[:current].sort do |x,y|
+			category_sort_order(x) <=> category_sort_order(y)
+		end
+	end
+	
+	def other_categories
+		category_collection[:others].sort do |x,y|
+			x.position <=> y.position
+		end
+	end
+	
+	def category_sort_order(cat)
+		(cat.portal_solution_categories.select do |psc|
+			psc.portal_id == current_portal.id
+		end).first.position
+	end
+	
 end

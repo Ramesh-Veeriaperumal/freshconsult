@@ -32,7 +32,10 @@ class Solution::Category < ActiveRecord::Base
           :conditions => [" solution_folders.visibility in (?,?) ",
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
    
-  after_create :assign_portal
+  after_create :assign_portal, :clear_cache
+  after_destroy :clear_cache
+  
+  after_update :clear_cache_with_conditions
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
@@ -88,5 +91,14 @@ class Solution::Category < ActiveRecord::Base
     def set_mobihelp_app_updated_time
       update_mh_app_time(self.id)
     end
+    
+    def clear_cache
+      account.clear_solution_categories_from_cache
+    end
+    
+    def clear_cache_with_condition
+      account.clear_solution_categories_from_cache if self.name_changed?
+    end
+
 
 end

@@ -14,6 +14,11 @@ class ArticleObserver < ActiveRecord::Observer
 
 	def after_create(article) 
 		create_activity(article)
+		article.account.clear_solution_categories_from_cache
+	end
+	
+	def after_destroy(article)
+		article.account.clear_solution_categories_from_cache
 	end
 
 private
@@ -40,8 +45,8 @@ private
   		article.description = description
   	end
 
-	def set_un_html_content(article)
-		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
+		def set_un_html_content(article)
+			article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
     end
 
     def modified_date(article)

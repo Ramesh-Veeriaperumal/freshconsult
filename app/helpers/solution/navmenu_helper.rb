@@ -1,8 +1,12 @@
 module Solution::NavmenuHelper
   
   def navmenu_categories
+    [category_list(category_collection[:current]), category_list(category_collection[:others])].join('').html_safe
+  end
+  
+  def category_list(categories)
     op = []
-    cportal.solution_categories.all(:include => :folders).each do |category|
+    categories.each do |category|
       next if category.is_default?
       op << %(<li class="cm-sb-cat-item">)
       op << %(<i class="forum_expand"></i>) unless category.folders.blank?
@@ -13,7 +17,7 @@ module Solution::NavmenuHelper
       op << folder_list(category.folders, category.id)
       op << %(</li>)
     end
-    op.join('').html_safe
+    op
   end
   
   def folder_list(folders, category_id)
@@ -22,7 +26,7 @@ module Solution::NavmenuHelper
     folders.each do |folder|
       next if folder.is_default?
       op << %( <li class="forum_list_item" id="#{folder.id}_folder"> )
-      op << pjax_link_to( "#{folder.name} (#{folder.articles.size})",
+      op << pjax_link_to( "#{folder.name} (#{folder.article_count})",
                           solution_folder_path(folder), {
                             :"data-folder-id" => folder.id,
                             :"data-category-id" => category_id,
@@ -35,7 +39,7 @@ module Solution::NavmenuHelper
   end
   
   def cportal
-    Portal.find(1)
+    current_portal
   end
   
   def cache_key

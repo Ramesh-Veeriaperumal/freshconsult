@@ -14,11 +14,16 @@ class Solution::Folder < ActiveRecord::Base
   self.table_name =  "solution_folders"
   
   before_create :populate_account
+  
   after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
 
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
+  
+  after_create :clear_cache
+  after_destroy :clear_cache
+  after_update :clear_cache_with_conditions
 
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
@@ -29,6 +34,7 @@ class Solution::Folder < ActiveRecord::Base
   scope :alphabetical, :order => 'name ASC'
 
   attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default, :customer_folders_attributes
+  attr_accessor :count_articles
   
   acts_as_list :scope => :category
   
@@ -36,6 +42,10 @@ class Solution::Folder < ActiveRecord::Base
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    
+  end
+  
+  def article_count
+    self.count_articles ||= articles.size
   end
 
   def self.find_all_folders(account)   
@@ -141,6 +151,14 @@ class Solution::Folder < ActiveRecord::Base
     
     def set_mobihelp_solution_updated_time
       update_mh_solutions_category_time(self.category_id)
+    end
+    
+    def clear_cache
+      account.clear_solution_categories_from_cache
+    end
+    
+    def clear_cache_with_condition
+      account.clear_solution_categories_from_cache unless (self.changes.keys & ['name', 'category_id', 'position']).empty?
     end
 
 end

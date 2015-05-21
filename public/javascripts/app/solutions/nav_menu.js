@@ -142,7 +142,7 @@ window.App.Solutions = window.App.Solutions || {};
 
     bindSidebarClose: function () {
       var $this = this;
-      $(document).on('click.solutions.sidebar', '#cm-sb-close', function (ev) {
+      $(document).on('click.solutions.sidebar', '#cm-sb-solutions-close', function (ev) {
         $this.hide();
       });
     },
@@ -151,24 +151,13 @@ window.App.Solutions = window.App.Solutions || {};
       if (!this.categoriesLoaded) {
         $('#cm-sb-solution-list').trigger('afterShow');
       }
-      $("#community-solutions-sidebar").show();
       $('body').addClass('cs-show');
       this.sidebarActive = true;
     },
 
     hide: function () {
-      var $this = this;
       $('body').removeClass('cs-show');
-      setTimeout(function () {
-        var canShow = $('body').hasClass('cs-always-show');
-        if (!canShow) {
-          $("#community-solutions-sidebar").hide();
-          $this.sidebarActive = false;
-        } else {
-          $("#community-solutions-sidebar").show();
-          $this.sidebarActive = true;
-        }
-      }, 300);
+			this.sidebarActive = false;
     },
     
     toggle: function () {

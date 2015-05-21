@@ -1,3 +1,6 @@
+<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
+<%= content_tag :h3, t('solution_category.new'), :class => "lead itil-hide" %>
 <%= form_for (@category), :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 <% end %>
