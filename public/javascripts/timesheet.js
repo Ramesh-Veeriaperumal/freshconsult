@@ -20,7 +20,7 @@ TicketTimesheet.prototype = {
                .data('timestamp', now);
             });
             totalTime("#timesheetlist .time", "#timeentry_timer_total");
-         }, 30);
+         }, 10);
          
          jQuery("#timesheetlist div.timeentry")
               .livequery( this.timeCount, this.timeCount );
