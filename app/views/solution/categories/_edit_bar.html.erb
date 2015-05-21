@@ -5,14 +5,48 @@
 				<div class="item-checkbox"><input type="checkbox" id="folder-select-all" /></div>
 			<% end %>
 		</li>
-		<li class="lf-item lf-btns faded" id="folder-bulk-action-btn">
+		<li class="lf-item lf-btns faded" id="folder-bulk-action">
 			<span>
-				<a class="drop-right nav-trigger btn" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
 				<div class="fd-menu" id="move_to"></div>
 			</span>
 			<span>
-				<a class="drop-right nav-trigger btn" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
-				<div class="fd-menu" id="visibe_to"></div>
+				<a class="drop-right nav-trigger edit_bar_btn" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
+				<div class="fd-menu" id="visible_to">
+					<div class="left-list">
+						<ul>
+							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
+								<li>
+									<%= link_to visibility[0], "#", :class => "visibility-selector", "data-visibility" => visibility[1] %>
+								</li>
+							<% end %>
+						</ul>
+					</div>
+					<div class="right-select-companies">
+						<form action="#" class="form-horizontal">
+							<div class="control-group row-fluid">
+								<%= text_field :company, :select , :value => current_account.companies.collect{|company| company.name}.join(','), :class => "select2 span12", "data-tags" => "#{escape_javascript(current_account.companies.collect{|company| company.name}.join(',').html_safe)}" %>
+							</div>
+
+							<div class="control-group row-fluid">
+								<div class="add-to-existing">
+									<%= radio_button :company, :add_to_existing, 1, :checked => true %>
+									<%= label_tag :add_to_existing, "Add to Existing" %>
+								</div>
+								<div class="add-to-existing">
+									<%= radio_button :company, :add_to_existing, 0 %>
+									<%= label_tag :add_to_existing, "Replace Existing" %>
+								</div>
+							</div>
+							<div class="control-group row-fluid">
+									<div class="pull-right">
+										<%= link_to t('cancel'), "#", :class => "btn", :id => "company-cancel" %> 
+										<%= submit_tag t('save'), :name => "save", :class => "btn btn-primary", :id => "company-submit" %>
+									</div>
+							</div>
+						</form>	
+					</div>
+				</div>
 			</span>
 		</li>
 	</ul>

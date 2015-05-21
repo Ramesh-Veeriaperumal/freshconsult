@@ -35,7 +35,11 @@ window.App = window.App || {};
         App.Solutions.sideBar.onVisit();
         App.Solutions.feedbacksideBar.onVisit();
         break;
+      case "solution/categories/show":
+        this.current_module = 'Folder';
+        break;
       }
+
     },
 
     onLeave: function (data) {
