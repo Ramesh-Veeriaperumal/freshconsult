@@ -336,7 +336,7 @@
           </div>
           <div class="hide" id="quickbooks-note" >{{quickbooks.quickbooks_note}}</div>
           <script type="text/javascript">
-            quickbooksBundle={domain:"https://quickbooks.api.intuit.com", token_renewal_date:"{{quickbooks.token_renewal_date}}", companyId:"{{quickbooks.company_id}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name}}", reqCompany:"{{requester.company_name}}", agentEmail:"{{agent.email}}", agentName:"{{agent.name}}", ticketId:"{{ticket.id}}", widget_type:"{{widget_type}}"};
+            quickbooksBundle={domain:"https://quickbooks.api.intuit.com", token_renewal_date:"{{quickbooks.token_renewal_date}}", companyId:"{{quickbooks.company_id}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", reqCompany:"{{requester.company_name | escape_html}}", agentEmail:"{{agent.email}}", agentName:"{{agent.name | escape_html}}", ticketId:"{{ticket.id}}", widget_type:"{{widget_type}}"};
             CustomWidget.include_js("/javascripts/integrations/quickbooks.js");
           </script>
   name: quickbooks_timeentry_widget
