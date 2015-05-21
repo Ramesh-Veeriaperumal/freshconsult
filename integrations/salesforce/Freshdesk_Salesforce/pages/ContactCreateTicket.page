@@ -1,3 +1,0 @@
-<apex:page standardController="Contact" extensions="ContactsController">
-        <c:CreateTicket sObjectId="{!contactId}" sObjectName="{!contactName}" sObjectEmail="{!contactEmail}" customFields="{!customFields}" sObjectType="Contact" redirectTo="URLFOR($Action.Contact.View, leadId)"/>
-</apex:page>

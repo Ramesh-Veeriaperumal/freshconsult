@@ -1,3 +1,0 @@
-<apex:page standardController="Lead" extensions="LeadDetailsController">
-    <c:TicketDetails sObjectId="{!leadId}" sObjectName="{!leadName}" sObjectEmail="{!leadEmail}" valid_fd="{!valid_fd}" ticket="{!ticket}" url="{!url}" ticketId="{!ticketId}" ticket_notes="{!ticket_notes}" customFields="{!customFields}" sObjectType="Lead" valid_agent="{!valid_agent}" api_key="{!apikey}"  errorMessage="{!errorMessage}" ticketCsat="{!ticketCsat}"/>
-</apex:page>

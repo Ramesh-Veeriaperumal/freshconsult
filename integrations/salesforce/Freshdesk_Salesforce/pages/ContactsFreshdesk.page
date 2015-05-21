@@ -1,3 +1,0 @@
-<apex:page standardController="Contact" extensions="ContactsController">
-	<c:AllTickets sObjectId="{!contactId}" sObjectName="{!contactName}" sObjectEmail="{!contactEmail}" valid_fd="{!valid_fd}" url="{!url}" sObjectType="Contact" valid_agent="{!valid_agent}" api_key="{!apikey}" remote_auth="{!site}" filter="{!filter}"/>
-</apex:page>

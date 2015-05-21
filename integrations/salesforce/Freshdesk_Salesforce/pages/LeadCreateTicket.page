@@ -1,3 +1,0 @@
-<apex:page standardController="Lead" extensions="LeadsController">
-        <c:CreateTicket sObjectId="{!leadId}" sObjectName="{!leadName}" sObjectEmail="{!leadEmail}" customFields="{!customFields}" sObjectType="Lead" redirectTo="URLFOR($Action.Lead.View, leadId)"/>
-</apex:page>
