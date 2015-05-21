@@ -1,10 +1,12 @@
 config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
+sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client.yml'))[Rails.env]
 
 $sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"])
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
+$sidekiq_redis_pool_size = sidekiq_config[:concurrency]
 
 Sidekiq.configure_client do |config|
-  config.redis = ConnectionPool.new(:size => 5, &$sidekiq_datastore)
+  config.redis = ConnectionPool.new(:size => 1, &$sidekiq_datastore)
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "SlaScheduler",
@@ -17,7 +19,7 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = ConnectionPool.new(:size => 5, &$sidekiq_datastore)
+  config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, &$sidekiq_datastore)
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!
