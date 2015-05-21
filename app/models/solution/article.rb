@@ -232,7 +232,7 @@ class Solution::Article < ActiveRecord::Base
     end
 
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(solution_article_meta.solution_folder_meta.category_meta_id)
+      update_mh_solutions_category_time(solution_article_meta.solution_folder_meta.solution_category_meta_id)
     end
 
     def content_changed?

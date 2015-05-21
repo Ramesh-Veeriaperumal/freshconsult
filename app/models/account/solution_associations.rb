@@ -14,7 +14,6 @@ class Account < ActiveRecord::Base
   has_many :solution_folder_meta, 
     :class_name =>'Solution::FolderMeta', 
     :through => :solution_category_meta
-
   # Without Meta
 
   has_many :portal_solution_categories, :class_name => "PortalSolutionCategory"
@@ -41,25 +40,27 @@ class Account < ActiveRecord::Base
 		:order => "solution_categories.position",
     :through => :solution_category_meta,
     :source => :solution_categories,
-		:conditions => "language = '#{I18n.locale}'"
+		:conditions => proc { "solution_categories.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
 
   has_many :solution_folders_with_meta, 
   	:class_name =>'Solution::Folder', 
   	:through => :solution_folder_meta,
     :source => :solution_folders,
-  	:conditions => "language = '#{I18n.locale}'"
+  	:conditions => proc { "solution_folders.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
 
   has_many :public_folders_with_meta, :through => :solution_categories
 
   has_many :published_articles_with_meta, 
   	:through => :public_folders,
-    :conditions => proc { [" solution_folders.visibility = ? and language = '#{I18n.locale}'", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]}
+    :conditions => proc { [" solution_folders.visibility = ? and 
+      solution_articles.language_id = '#{Solution::LanguageMethods.current_language_id}'", 
+      Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]}
   
   has_many :solution_articles_with_meta, 
   	:class_name =>'Solution::Article',
     :through => :solution_article_meta,
     :source => :solution_articles,
-  	:conditions => "language = '#{I18n.locale}'"
+  	:conditions => proc { "solution_articles.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
 
   # Alias
 

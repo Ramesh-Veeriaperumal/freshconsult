@@ -7,13 +7,9 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	belongs_to_account
 
-	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :foreign_key => "category_meta_id"
-
-	self.primary_key = :id
+	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
 
   acts_as_list :scope => :account
-
-	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :foreign_key => "category_meta_id"
 
 	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true
 
@@ -21,7 +17,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	has_many :customers, :through => :customer_folders, :class_name => 'Solution::CustomerFolder'
 
-	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => 'folder_meta_id'
+	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => :solution_folder_meta_id
 
 	has_many :solution_articles, :class_name => "Solution::Article", :through => :solution_article_meta
 

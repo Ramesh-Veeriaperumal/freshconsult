@@ -12,19 +12,19 @@ class Solution::Folder < ActiveRecord::Base
     :source => :solution_categories,
     :class_name => 'Solution::Category',
     :through => :solution_category_meta,
-    :conditions => "language = '#{I18n.locale}'"
+    :conditions => proc { "solution_categories.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
   
   has_many :articles_with_meta, 
     :class_name => 'Solution::Article', 
     :through => :solution_article_meta, 
     :source => :solution_articles,
-    :conditions => "language = '#{I18n.locale}'"
+    :conditions => proc { "solution_articles.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
 
   has_many :published_articles_with_meta, 
     :class_name => 'Solution::Article', 
     :through => :solution_article_meta, 
     :source => :solution_articles,
-    :conditions => "language = '#{I18n.locale}' and solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
+    :conditions => proc { "solution_articles.language_id = '#{Solution::LanguageMethods.current_language_id}' and solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}" }
 
   FEATURE_BASED_METHODS.each do |method|
     alias_method_chain method, :meta

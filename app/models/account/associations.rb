@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
+  delegate :supported_languages, :to => :account_additional_settings
   has_one  :whitelisted_ip
   has_many :dynamic_notification_templates
 

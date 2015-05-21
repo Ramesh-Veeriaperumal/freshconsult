@@ -7,6 +7,8 @@ class Solution::Category < ActiveRecord::Base
 
 	has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
 
+  has_many :solution_folders, :class_name =>'Solution::Folder', :dependent => :destroy, :order => "position"
+
   has_many :public_folders, 
   	:class_name =>'Solution::Folder' ,  
   	:order => "position", 
@@ -29,6 +31,8 @@ class Solution::Category < ActiveRecord::Base
 
   has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :dependent => :destroy
 
-  has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
+  has_many :mobihelp_apps, 
+    :class_name => 'Mobihelp::App', 
+    :through => :mobihelp_app_solutions, 
 
 end

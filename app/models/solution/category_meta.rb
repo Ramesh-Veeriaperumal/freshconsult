@@ -5,11 +5,9 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	belongs_to_account
 
-	self.primary_key = :id
-
 	acts_as_list :scope => :account
 
-	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => "category_meta_id"
+	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id
 
 	has_many :solution_folders, :through => :solution_folder_meta
 

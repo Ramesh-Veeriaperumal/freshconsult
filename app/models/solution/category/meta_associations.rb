@@ -2,7 +2,7 @@ class Solution::Category < ActiveRecord::Base
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :foreign_key => "parent_id"
 
-  has_many :solution_folder_meta, :class_name => 'Solution::FolderMeta', :through => :solution_category_meta
+  has_many :solution_folder_meta, :class_name => 'Solution::FolderMeta', :through => :solution_category_meta, :foreign_key => :solution_category_meta_id
 
 	has_many :folders_with_meta, 
 		:class_name =>'Solution::Folder' ,
@@ -10,14 +10,14 @@ class Solution::Category < ActiveRecord::Base
 		:source => :solution_folders,
 		:dependent => :destroy, 
 		:order => "position",
-    :conditions => "solution_folders.language = '#{I18n.locale}'"
+    :conditions => proc { "solution_folders.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
 
   has_many :public_folders_with_meta, 
   	:class_name =>'Solution::Folder' ,  
   	:through => :solution_folder_meta,
 		:source => :solution_folders,
 		:order => "position",
-    :conditions => ["solution_folders.language = '#{I18n.locale}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+    :conditions => proc { ["solution_folders.language_id = '#{Solution::LanguageMethods.current_language_id}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
 
   has_many :portal_solution_categories_with_meta, 
     :class_name => 'PortalSolutionCategory',
@@ -43,6 +43,7 @@ class Solution::Category < ActiveRecord::Base
   has_many :mobihelp_app_solutions_with_meta, 
     :class_name => 'Mobihelp::AppSolution',
     :through => :solution_category_meta,
+    :source => :mobihelp_app_solutions,
     :dependent => :destroy
 
   has_many :mobihelp_apps_with_meta,
