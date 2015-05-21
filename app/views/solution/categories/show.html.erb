@@ -13,7 +13,15 @@
 		<%= t('solution_category.info2') %>
 		<div class="mt20">
 			<% if privilege?(:manage_solutions) %>
-				<%= pjax_link_to(t("solution.add_folder"), new_solution_folder_path(:category_id => @category.id), :class => "btn btn-primary") %>
+				<%= link_to(
+							t("solution.add_folder"),
+							new_solution_folder_path(:category_id => @category.id),
+							:class => "btn btn-primary",
+							:rel => "freshdialog",
+							:title => t("solution.add_folder"),
+							"data-target" => "#folder-new",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save'))  %>
 			<% end %>
 		</div>
 	</div>

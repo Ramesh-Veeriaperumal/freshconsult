@@ -31,29 +31,49 @@ module SolutionHelper
 	end
 	
 	def new_solutions_button(default_btn = :article)
-		category = [t('article.add_category'), new_solution_category_path]
-		folder    = [t('article.add_folder'),    new_solution_folder_path(btn_default_params(:folder))]
-		article    = [t("article.add_article"),    new_solution_article_path(btn_default_params(:article))]
-		opts     = {:"data-pjax" => "#body-container"}
+		category = [t('article.add_category'), new_solution_category_path, false, new_btn_opts(:category)]
+		folder    = [t('article.add_folder'),    new_solution_folder_path(btn_default_params(:folder)), false, new_btn_opts(:folder)]
+		article    = [t("article.add_article"),    new_solution_article_path(btn_default_params(:article)), false, new_btn_opts(:article)]
 
 		if privilege?(:manage_solutions)
 			article = nil unless privilege?(:publish_solution)
 			case default_btn
 				when :category
-					btn_dropdown_menu(category, [folder, article], opts)
+					opts = { :title => t("solution.add_category"), "data-target" => "#new-cat" }
+					btn_dropdown_menu(category, [folder, article], opts.merge(default_new_btn_opts))
 				when :folder
-					btn_dropdown_menu(folder, [category, article], opts)
+					opts = { :title => t("solution.add_folder"), "data-target" => "#new-fold" }
+					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
 					if privilege?(:publish_solution)
-						btn_dropdown_menu(article, [category, folder], opts)
+						btn_dropdown_menu(article, [category, folder])
 					else
-						btn_dropdown_menu(folder, [category], opts)
+						btn_dropdown_menu(folder, [category])
 					end
 			end
 		elsif privilege?(:create_article)
 			pjax_link_to(*article, :class => 'btn')
 		else
 			""
+		end
+	end
+
+	def default_new_btn_opts
+		{
+			:rel => 'freshdialog',
+			"data-close-label" => t('cancel'),
+			"data-submit-label" => t('save')
+		}
+	end
+
+	def new_btn_opts(type)
+		case type
+		when :category
+			default_new_btn_opts.merge({ :title => t("solution.add_category"), "data-target" => "#new-cat" })
+		when :folder
+			default_new_btn_opts.merge({ :title => t("solution.add_folder"), "data-target" => "#new-fold" })
+		when :article
+			default_new_btn_opts.merge({ :"data-pjax" => "#body-container" })
 		end
 	end
 

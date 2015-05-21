@@ -482,7 +482,7 @@ $community-types: problem #e65e63,
 	}
 	.list-default-btns{ display:none; }
 	.list-reorder-btns{	display:inline-block; }
-	.solution-list-checkbox {
+	.solution-list-checkbox, .article-details {
 		display:none;
 	}
 }

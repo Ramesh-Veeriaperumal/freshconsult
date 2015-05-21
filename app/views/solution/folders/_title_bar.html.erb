@@ -2,7 +2,13 @@
 	<ul class="list-actions-left">
 		<% if privilege?(:manage_solutions) -%>
 			<li class="folder-edit">
-				<%= pjax_link_to("", edit_solution_folder_path(@folder.id), :class => font_class(:edit, 23, "tooltip"), :title => "Edit")%>
+				<%= link_to( font_icon(:edit, {:size => 23}), 
+						edit_solution_folder_path(@folder),
+						:rel => "freshdialog",
+						:title => t('folder.edit'),
+						"data-target" => "#folder-edit",
+						"data-close-label" => t('cancel'),
+						"data-submit-label" => t('save') ) %>
 			</li>
 		<% end %>
 	</ul>

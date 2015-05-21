@@ -53,7 +53,7 @@ class Solution::CategoriesController < ApplicationController
         flash[:notice] = I18n.t('category_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-        format.html # edit.html.erb
+        format.html { render :layout => false}
       end
       format.xml  { render :xml => @category }
     end
@@ -80,7 +80,7 @@ class Solution::CategoriesController < ApplicationController
   def update
     respond_to do |format| 
       if @category.update_attributes(params[nscname])       
-        format.html { redirect_to :action =>"index" }
+        format.html { redirect_to :action =>"show" }
         format.xml  { render :xml => @category, :status => :created, :location => @category }     
         format.json { render :json => @category, :status => :ok, :location => @category }     
       else

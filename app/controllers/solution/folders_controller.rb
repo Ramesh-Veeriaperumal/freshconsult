@@ -35,7 +35,7 @@ class Solution::FoldersController < ApplicationController
     @folder = current_account.folders.new
     @folder.category = @category if params[:category_id]
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { render :layout => false}
       format.xml  { render :xml => @folder }
     end
   end
@@ -48,14 +48,14 @@ class Solution::FoldersController < ApplicationController
         flash[:notice] = I18n.t('folder_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-         format.html # edit.html.erb
+         format.html { render :layout => false}
       end
       format.xml  { render :xml => @folder }
     end
   end
 
-  def create 
-    current_category = current_account.solution_categories.find(params[:category_id])    
+  def create
+    current_category = current_account.solution_categories.find(params[:category_id] || params[:solution_folder][:category_id])
     @folder = current_category.folders.new(params[nscname]) 
     @folder.category_id = @new_category.id
 
@@ -85,7 +85,7 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|     
       if @folder.update_attributes(params[nscname])       
         format.html do 
-          redirect_to solution_category_folder_path(@new_category.id, @folder.id)
+          redirect_to solution_folder_path(@folder.id)
         end
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     

@@ -11,7 +11,7 @@
 				<% end %>
 			</div>
 			<div>
-				<div class="span3 pull-right text-right mt6 pr15">
+				<div class="span3 pull-right text-right mt6 pr15 article-details">
 					<span class="span4 align-left meta-component <%= 'faded' if article.hits == 0 %>">
 						<%= font_icon "file-visible" %>
 						<%= article.hits %>
@@ -36,7 +36,7 @@
 					<div class="comm-item-title">
 						<%= pjax_link_to(h(article.title), solution_article_path(article.id)) %>
 					</div>
-					<div class="comm-item-details muted">
+					<div class="comm-item-details article-details muted">
 						<%= t('solution.details',
 						:user_name => article.user,
 						:created_time => article.created_at.to_i,

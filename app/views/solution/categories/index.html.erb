@@ -9,7 +9,7 @@
 				<%= pjax_link_to(t('solution.draft.name'), solution_drafts_path, { :class => "btn"}) if @solution_drafts_feature %>
 			   <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
 				<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "btn btn-primary",
-				:rel => "freshdialog", 'data-target' => '#new-cat' %>
+				:rel => "freshdialog", :title => t("solution.add_category"), 'data-target' => '#new-cat' %>
 			</div>
 		<%- end %>
 		<h3 class="lead itil-hide"><%=t('solution.title').html_safe%></h3>
