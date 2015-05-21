@@ -7,25 +7,27 @@
 		</li>
 		<li class="lf-item lf-btns faded" id="folder-bulk-action">
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn disabled folder-bulk-btns" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
 				<div class="fd-menu" id="move_to"></div>
 			</span>
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn disabled folder-bulk-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
 				<div class="fd-menu" id="visible_to">
 					<div class="left-list">
 						<ul>
 							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
 								<li>
 									<%= link_to visibility[0], "#", :class => "visibility-selector", "data-visibility" => visibility[1] %>
-								</li>
+								</li> 
 							<% end %>
 						</ul>
 					</div>
 					<div class="right-select-companies">
 						<form action="#" class="form-horizontal">
 							<div class="control-group row-fluid">
-								<%= text_field :company, :select , :value => current_account.companies.collect{|company| company.name}.join(','), :class => "select2 span12", "data-tags" => "#{escape_javascript(current_account.companies.collect{|company| company.name}.join(',').html_safe)}" %>
+								<div id="company_folders" class="row-fluid">
+				  				<%= render_autocomplete({ :selected_values => nil, :type => :companies }) %>
+				  			</div>
 							</div>
 
 							<div class="control-group row-fluid">

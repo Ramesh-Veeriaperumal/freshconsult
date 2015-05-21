@@ -3,6 +3,7 @@ class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   include FeatureCheck
   helper SolutionHelper
+  helper AutocompleteHelper
   helper Solution::NavmenuHelper
   
   feature_check :solution_drafts

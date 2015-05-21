@@ -7,7 +7,7 @@
 		<div class="row-fluid clear-left-margin">
 			<div class="solution-list-checkbox">
 				<% if privilege?(:manage_solutions) %>
-						<input type="checkbox" id="folder-<%= folder.id %>" name="ids[]" value="<%= folder.id %>"/>
+						<input type="checkbox" id="folder-<%= folder.id %>" name="ids[]" value="<%= folder.id %>" class="folder_ids_checkbox"/>
 				<% end %>
 			</div>
 			<div class="comm-item-main span8 clear-left-margin <%= 'no-checkbox' unless privilege?(:manage_solutions) %>">
