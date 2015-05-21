@@ -548,8 +548,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :remote_configurations
-
+    resources :remote_configurations do
+      get :open_id_complete, on: :collection
+      get :open_id, on: :collection
+    end
+    
     resources :applications do
       member do
         post :custom_widget_preview
@@ -655,6 +658,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '/quickbooks/refresh_access_token' => 'quickbooks#refresh_access_token', :as => :oauth_action
     resources :dynamics_crm do
       collection do
         post :settings_update

@@ -199,4 +199,17 @@ describe AuthorizationsController do
     get :create, :code=>"5e1f89f7246defb1586b31d12ddbadd5", :provider=>"mailchimp"
     response.should redirect_to "#{portal_url}/integrations/applications"
   end
+
+  it "should create authorization for quickbooks" do
+    @request.env["omniauth.origin"] = "id=#{@account.id}"
+    @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
+    {
+      :credentials => { :secret => "WSAAVSrqDQZht0NDWc3pM8s2uiSYC6e5M2fGav3w",
+                        :token => "qyprd4i4GAqClBcnA0jsAxLUv2xq3hRlCtM1OhUDlYbbxUHp"
+                      },
+      :provider => "quickbooks"
+    })
+    get :create, :provider=>"quickbooks"
+    response.should redirect_to "#{portal_url}/integrations/applications/oauth_install/quickbooks"
+  end
 end

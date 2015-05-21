@@ -798,6 +798,18 @@ if Integrations::Application.count == 0
                 }
     s.application_type = "slack"
   end
+  
+  quickbooks = Integrations::Application.seed(:name) do |s|
+    s.name = "quickbooks"
+    s.display_name = "integrations.quickbooks.label"
+    s.description = "integrations.quickbooks.desc"
+    s.account_id = 0
+    s.listing_order = 32
+    s.options = {
+      :direct_install => true,
+      :oauth_url => "/auth/quickbooks?origin=id%3D{{account_id}}"
+    }
+    s.application_type = "quickbooks"
 
   five9 = Integrations::Application.seed(:name) do |s|
     s.name = "five9"

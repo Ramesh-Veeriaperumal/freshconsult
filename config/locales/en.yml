@@ -5203,6 +5203,9 @@ en:
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
+    quickbooks:
+      label: "QuickBooks"
+      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."

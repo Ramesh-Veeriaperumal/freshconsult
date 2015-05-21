@@ -63,6 +63,8 @@ TicketTimesheet.prototype = {
 		   		freshbooksWidget.resetIntegratedResourceIds()
          if (typeof workflowMaxWidget != 'undefined' && workflowMaxWidget) 
           workflowMaxWidget.resetIntegratedResourceIds()
+         if (typeof quickbooksWidget != 'undefined' && quickbooksWidget)
+          quickbooksWidget.resetIntegratedResourceIds()
         });
 
     // //Positioning the button container below the integration widgets
