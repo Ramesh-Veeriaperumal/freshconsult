@@ -142,7 +142,8 @@ module TicketConstants
     :deleted          => "create_deleted_activity",
     :responder_id     => "create_assigned_activity",
     :product_id       => "create_product_activity",
-    :ticket_type      => "create_ticket_type_activity"
+    :ticket_type      => "create_ticket_type_activity",
+    :due_by           => "create_due_by_activity"
   }
 
   REPORT_TYPE_HASH = {

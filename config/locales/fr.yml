@@ -1,5 +1,6 @@
 fr:
   meta:
+    language_id: 11
     language_name: French
   date:
     ago: "il y a"

@@ -1,6 +1,6 @@
 class Social::Workers::Twitter::DirectMessage
   extend Resque::AroundPerform
-  include Social::Twitter::ErrorHandler
+  
   @queue = 'TwitterWorker'
 
   def self.perform(args)
@@ -14,22 +14,12 @@ class Social::Workers::Twitter::DirectMessage
   end
 
   def self.fetch_direct_msgs twt_handle
-    twt_sandbox(twt_handle) do
-      Timeout.timeout(60) do
-        twt_msg = Social::Twitter::DirectMessage.new(twt_handle)
-        twt_msg.process
-      end
+    begin
+      twt_msg = Social::Twitter::DirectMessage.new(twt_handle)
+      twt_msg.process
+    rescue => e
+      Rails.logger.error "Error while processing #{e.inspect}"
     end
   end
-
-  # Possible dead code
-  def self.fetch_twt_mentions twt_handle
-    twt_sandbox(twt_handle) do
-      Timeout.timeout(60) do
-        twt_mention = Social::Twitter::Mention.new(twt_handle)
-        twt_mention.process
-      end
-    end
-  end
-
+  
 end

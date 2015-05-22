@@ -117,6 +117,7 @@ module Helpdesk::TimeSheetsHelper
         [Integrations::Constants::APP_NAMES[:freshbooks],   "#{Integrations::Constants::APP_NAMES[:freshbooks]}_timeentry_widget",   "freshbooksWidget"],
         [Integrations::Constants::APP_NAMES[:harvest],      "#{Integrations::Constants::APP_NAMES[:harvest]}_timeentry_widget",      "harvestWidget"],
         [Integrations::Constants::APP_NAMES[:workflow_max], "#{Integrations::Constants::APP_NAMES[:workflow_max]}_timeentry_widget", "workflowMaxWidget"],
+        [Integrations::Constants::APP_NAMES[:quickbooks], "#{Integrations::Constants::APP_NAMES[:quickbooks]}_timeentry_widget", "quickbooksWidget"]
       ]
     end
 end

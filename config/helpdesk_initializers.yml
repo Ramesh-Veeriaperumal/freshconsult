@@ -11,7 +11,9 @@ helpdesk:
     - akismet_config
     - asset_sync
     - aws_s3
-    - aws_social
+    - aws/dynamo
+    - aws/sns
+    - aws/sqs
     - aws_forums
     - belongs_to_account
     - chat_config

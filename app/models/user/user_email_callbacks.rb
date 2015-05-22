@@ -1,9 +1,9 @@
 class User < ActiveRecord::Base
   
   #next validations are replaced with :on => :create/:update for rails 3
-  before_validation :create_user_email, on: :create, :if => [:email_available?, :user_emails_migrated?]
-  before_validation :update_user_email, on: :update, :if => [:email_changed?, :user_emails_migrated?]
-  after_update :update_verified, :if => [:email_available?, :active_changed?, :user_emails_migrated?]
+  before_validation :create_user_email, on: :create, :if => [:email_available?]
+  before_validation :update_user_email, on: :update, :if => [:email_changed?]
+  after_update :update_verified, :if => [:email_available?, :active_changed?]
 
   #For user email UI feature  
   before_validation :assign_primary_email, on: :create, :if => :has_contact_merge?
@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   def verify_details
     unless ["production", "test"].include?(Rails.env)
       self.reload
-      if user_emails_migrated? and email_available? and no_contact_merge
+      if email_available? and no_contact_merge
         raise error_text unless (self.primary_email.present? and (self.email == self.primary_email.email and self.active == self.primary_email.verified))
       end
 
@@ -85,7 +85,7 @@ class User < ActiveRecord::Base
           reset_primary_email(current_primary.id) if current_primary.email != primary_email.email
         else
           current_primary.primary_role = true
-          self.primary_email = current_primary
+          #self.primary_email = current_primary
         end
         self.email = current_primary.email
       else
@@ -142,10 +142,6 @@ class User < ActiveRecord::Base
   end
 
     #feature checks
-    def user_emails_migrated?
-      # for user email delta
-      self.account.user_emails_migrated?
-    end
 
     def no_multiple_user_emails
       !has_multiple_user_emails?

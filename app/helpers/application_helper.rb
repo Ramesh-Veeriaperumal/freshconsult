@@ -436,6 +436,10 @@ module ApplicationHelper
     data
   end
 
+  def formatted_dueby_for_activity(time_in_seconds)
+    "#{formated_date(Time.zone.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
+  end
+
   def target_topic_path(topic_id)
     topic = current_account.topics.find(topic_id)
     link_to topic.title, discussions_topic_path(topic.id)

@@ -286,18 +286,10 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  namespace :segment do
-    resources :identify do
-      collection do
-        post :create
-      end
-    end 
-    resources :group do
-      collection do
-        post :create
-      end
-    end
-  end
+  # segment/group controller will handle all different types in request params # content based routing
+  match '/integrations/segment' => 'segment/identify#create', :constraints => lambda{|req| req.request_parameters["type"] == "identify"}
+  match '/integrations/segment' => 'segment/group#create', :constraints => lambda{|req| req.request_parameters["type"] != "identify"}
+
 
   resources :contact_merge do
     collection do
@@ -556,8 +548,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :remote_configurations
-
+    resources :remote_configurations do
+      get :open_id_complete, on: :collection
+      get :open_id, on: :collection
+    end
+    
     resources :applications do
       member do
         post :custom_widget_preview
@@ -663,6 +658,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '/quickbooks/refresh_access_token' => 'quickbooks#refresh_access_token', :as => :oauth_action
     resources :dynamics_crm do
       collection do
         post :settings_update
@@ -1913,6 +1909,7 @@ Helpkit::Application.routes.draw do
     end
     resources :settings,  :only => [:index] do
       collection do
+        get :mobile_login
         get :mobile_pre_loader
         get :deliver_activation_instructions
       end

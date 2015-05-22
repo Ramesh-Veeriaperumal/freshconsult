@@ -1,5 +1,6 @@
 es-LA:
   meta:
+    language_id: 7 
     language_name: "Spanish (Latin America)"
   date:
     ago: hace

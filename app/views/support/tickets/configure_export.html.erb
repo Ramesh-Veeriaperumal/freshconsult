@@ -43,13 +43,13 @@
 	 			<% @csv_headers.each do |head| %>
 	 			  	<div class="span4 <%= head[:type] %> <%= cycle("", "", "omega") %>">
 		  				<label class="checkbox nested-parent"> 
-		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
-							<%= head[:label].html_safe %>														
+		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label_in_portal] || head[:label], head[:selected] %> 
+							<%= (head[:label_in_portal] || head[:label]).html_safe %>														
 		  				</label>
 		  				<% head[:levels].each do |level| %>
 			  				<label class="checkbox nested-child"> 
-			    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-								<%= level[:label].html_safe %>
+			    				<%= check_box_tag "export_fields[#{level[:name]}]", (level[:label_in_portal] || level[:label]), false  %> 
+								<%= (level[:label_in_portal] || level[:label]).html_safe %>
 			  				</label>
 			  			<% end %>
 	  			    </div>	

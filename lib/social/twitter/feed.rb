@@ -145,7 +145,7 @@ class Social::Twitter::Feed
     twt_query = Social::Twitter::Query.new(search_params[:q], search_params[:exclude_keywords], search_params[:exclude_handles])
     query     = twt_query.query_string
 
-    twt_sandbox(handle) do
+    twt_sandbox(handle, TWITTER_TIMEOUT[:search]) do
       wrapper = TwitterWrapper.new handle
       twitter = wrapper.get_twitter
       if max_id

@@ -90,6 +90,7 @@ private
 	ACTIVITIES_NOT_TO_COMBINE = [
 									'new_ticket', 
 									'ticket_merge', 'ticket_split', 
+									'due_date_updated',
 									'deleted', 'restored',
 									'timesheet.new', 'timesheet.timer_started', 'timesheet.timer_stopped'
 								]
@@ -123,7 +124,7 @@ private
 	end
 
 	def in_short_span?(activity, previous_activity)
-		activity.created_at - previous_activity[:time] <= 2.minutes or previous_activity[:time] - activity.created_at <= 2.minutes
+		(activity.created_at - previous_activity[:time]).abs <= 2.minutes
 	end
 
 	def same_user?(activity, previous_activity)

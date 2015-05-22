@@ -348,6 +348,12 @@ protected
 
   private
 
+    def set_required_fields
+      @user ||= current_account.users.new
+      @user.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields, 
+                                :error_label => :label }
+    end
+
     def define_contact_properties 
       @merged_user = @user.parent unless @user.parent.nil?
       @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here

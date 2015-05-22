@@ -1,5 +1,6 @@
 en:
   meta:
+   language_id: 6
    language_name: 'English'
   date:
     ago: ago
@@ -134,8 +135,6 @@ en:
   forward: "Forward"
   apply: "Apply"
   myself: "Myself"
-  meta:
-   language_name: 'English'
   one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
@@ -2065,6 +2064,7 @@ en:
       group_change: "Agent Group Changed"
       group_change_none: "Agent Group Changed"
       source_change: "Ticket Source"
+      due_date_updated: "Due Date Updated"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2226,6 +2226,10 @@ en:
         short: "{{user_path}} updated source to {{source_name}}"
         without_user: "updated source to <strong>{{source_name}}</strong>"
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
+      due_date_updated:
+        short: "{{user_path}} updated due date to {{due_date_updated}}"
+        without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
+        long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -2995,6 +2999,7 @@ en:
       no_conversations: 'No Conversations'
       all: 'All conversations'
       tickets: Tickets
+      recent_tickets: Recent Tickets
       forums: Forums
       contact_tickets: 'Recent ticket activities'
       contact_forums: 'Recent forum activities'
@@ -5198,6 +5203,9 @@ en:
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
+    quickbooks:
+      label: "QuickBooks"
+      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
