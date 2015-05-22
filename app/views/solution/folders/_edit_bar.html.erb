@@ -7,13 +7,30 @@
 		</li>
 		<li class="lf-item lf-btns faded" id="article-bulk-action">
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
-				<div class="fd-menu" id="move_to"></div>
+		    <%= select_tag :id,
+		          option_groups_from_collection_for_select(current_account.solution_categories, :folders ,:name, :id,:name), {
+		              :class => "disabled moveto_btn bulk-action-btns select2",
+		              :id => "move_to",
+		              :include_blank => true,
+		              :placeholder => t('solution.articles.move_to')
+		          } %>
 			</span>
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#change_author"><%= t('solution.change_author') %></a>
-				<div class="fd-menu" id="change_author"></div>
+				<%= select_tag :id,
+		          options_for_select(current_account.technicians.map(&:name)), {
+		              :class => "disabled moveto_btn bulk-action-btns select2",
+		              :id => "change_author",
+		              :include_blank => true,
+		              :placeholder => t('solution.change_author')
+		          } %>
 			</span>
 		</li>
 	</ul>
 </div>
+
+<script>
+  jQuery(document).ready(function() { 
+  	jQuery("#move_to").select2();
+  	jQuery("#change_author").select2();
+  });
+</script>

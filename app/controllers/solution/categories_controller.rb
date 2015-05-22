@@ -13,6 +13,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
+  before_filter :set_modal, :only => [:new, :edit]
 
   def index
     @categories = current_portal.solution_categories
@@ -42,8 +43,7 @@ class Solution::CategoriesController < ApplicationController
     @category = current_account.solution_categories.new
 
     respond_to do |format|
-      #format.html # new.html.erb
-      format.html { render :layout => false}
+      format.html { render :layout => false if @modal }
       format.xml  { render :xml => @category }
     end
   end
@@ -54,7 +54,7 @@ class Solution::CategoriesController < ApplicationController
         flash[:notice] = I18n.t('category_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-        format.html { render :layout => false}
+        format.html { render :layout => false if @modal }
       end
       format.xml  { render :xml => @category }
     end
@@ -175,6 +175,10 @@ class Solution::CategoriesController < ApplicationController
 
     def default_drafts_scope
       'drafts-me'
+    end
+
+    def set_modal
+      @modal = true if request.xhr?
     end
     
 end

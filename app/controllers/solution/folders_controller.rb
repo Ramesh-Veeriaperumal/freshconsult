@@ -13,6 +13,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :load_category, :only => [:new, :show, :edit, :update, :destroy, :create]
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
+  before_filter :set_modal, :only => [:new, :edit]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -35,7 +36,7 @@ class Solution::FoldersController < ApplicationController
     @folder = current_account.folders.new
     @folder.category = @category if params[:category_id]
     respond_to do |format|
-      format.html { render :layout => false}
+      format.html { render :layout => false if @modal }
       format.xml  { render :xml => @folder }
     end
   end
@@ -48,7 +49,7 @@ class Solution::FoldersController < ApplicationController
         flash[:notice] = I18n.t('folder_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-         format.html { render :layout => false}
+         format.html { render :layout => false if @modal }
       end
       format.xml  { render :xml => @folder }
     end
@@ -179,6 +180,10 @@ class Solution::FoldersController < ApplicationController
       customer_ids = params[nscname][:customer_folders_attributes][:customer_id] || []
       customer_ids = current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id) unless customer_ids.blank?
       params[nscname][:customer_folders_attributes][:customer_id] = customer_ids.blank? ? [] : customer_ids
+    end
+
+    def set_modal
+      @modal = true if request.xhr?
     end
 
 end

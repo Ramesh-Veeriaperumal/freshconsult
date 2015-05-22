@@ -7,8 +7,13 @@
 		</li>
 		<li class="lf-item lf-btns faded" id="folder-bulk-action">
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
-				<div class="fd-menu" id="move_to"></div>
+		    <%= select_tag :id,
+		          options_for_select(current_account.solution_categories.map(&:name)), {
+		              :class => "disabled moveto_btn bulk-action-btns select2",
+		              :id => "move_to",
+		              :include_blank => true,
+		              :placeholder => t('solution.folders.move_to')
+		          } %>
 			</span>
 			<span>
 				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
@@ -53,3 +58,7 @@
 		</li>
 	</ul>
 </div>
+
+<script>
+  jQuery(document).ready(function() { jQuery("#move_to").select2(); });
+</script>

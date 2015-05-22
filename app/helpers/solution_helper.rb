@@ -25,7 +25,7 @@ module SolutionHelper
 
 	def category_link(folder, page)
 		truncate_length = ( (page == :folder) ? 70 : 40 )
-		category_name = folder.category.name 
+		category_name = folder.category.name
 		options = { :title => category_name } if category_name.length > truncate_length
 		pjax_link_to(truncate(folder.category.name, :length => truncate_length), 
 			 			"/solution/categories/#{folder.category_id}", (options || {}))

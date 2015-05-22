@@ -441,8 +441,6 @@
 
 #folder-bulk-action, #article-bulk-action {
 
-	margin-top: 10px;
-
 	.edit_bar_btn {
 		margin-right: 20px;
 	  background-color: white;
@@ -450,8 +448,14 @@
 	  padding: 5px 22px 5px 8px;
 	}
 
+	.moveto_btn {
+		margin-right: 15px;
+		padding: 0px 0px 3px 0px;
+	}
+
 	.drop-right:after {
 	  margin-left: 8px;
+	  margin-top: 12px;
 	}
 
 	.fd-menu {

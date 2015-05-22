@@ -13,11 +13,11 @@
 			<div class="comm-item-main span8 clear-left-margin <%= 'no-checkbox' unless privilege?(:manage_solutions) %>">
 				<div class="comm-item-title">
 					<%= pjax_link_to(h(folder.name), solution_folder_path(folder.id)) %>
-					<span class="muted">
+					<span class="muted folder-details">
 						(<%= folder.articles.size %>)
 					</span>
 				</div>
-				<div class="comm-item-details muted">
+				<div class="comm-item-details muted folder-details">
 					<span class="visibilty-label"><%= t('solution.folders.folder_form.visible_to').html_safe %>:</span>
 				  <%=Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]%>
 				</div>
