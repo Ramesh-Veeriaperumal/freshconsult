@@ -2,16 +2,16 @@
 	<ul>
 		<li class="lf-item">
 			<% if privilege?(:manage_solutions) %>
-				<div class="item-checkbox"><input type="checkbox" id="article-select-all" /></div>
+				<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
 			<% end %>
 		</li>
-		<li class="lf-item lf-btns faded" id="article-bulk-action-btn">
+		<li class="lf-item lf-btns faded" id="article-bulk-action">
 			<span>
-				<a class="drop-right nav-trigger btn" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
 				<div class="fd-menu" id="move_to"></div>
 			</span>
 			<span>
-				<a class="drop-right nav-trigger btn" href="#" menuid="#change_author"><%= t('solution.change_author') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#change_author"><%= t('solution.change_author') %></a>
 				<div class="fd-menu" id="change_author"></div>
 			</span>
 		</li>

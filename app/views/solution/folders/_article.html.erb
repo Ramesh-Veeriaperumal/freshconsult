@@ -7,7 +7,7 @@
 		<div class="row-fluid clear-left-margin">
 			<div class="solution-list-checkbox">
 				<% if privilege?(:manage_solutions) %>
-						<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>"/>
+						<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				<% end %>
 			</div>
 			<div>

@@ -36,6 +36,7 @@ window.App = window.App || {};
         App.Solutions.feedbacksideBar.onVisit();
         break;
       case "solution/categories/show":
+      case "solution/folders/show":
         this.current_module = 'Folder';
         break;
       }

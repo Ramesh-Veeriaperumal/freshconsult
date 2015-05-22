@@ -2,16 +2,16 @@
 	<ul>
 		<li class="lf-item">
 			<% if privilege?(:manage_solutions) %>
-				<div class="item-checkbox"><input type="checkbox" id="folder-select-all" /></div>
+				<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
 			<% end %>
 		</li>
 		<li class="lf-item lf-btns faded" id="folder-bulk-action">
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn disabled folder-bulk-btns" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#move_to"><%= t('solution.move_to') %></a>
 				<div class="fd-menu" id="move_to"></div>
 			</span>
 			<span>
-				<a class="drop-right nav-trigger edit_bar_btn disabled folder-bulk-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
+				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
 				<div class="fd-menu" id="visible_to">
 					<div class="left-list">
 						<ul>
@@ -22,7 +22,7 @@
 							<% end %>
 						</ul>
 					</div>
-					<div class="right-select-companies">
+					<div class="right-select-companies hide">
 						<form action="#" class="form-horizontal">
 							<div class="control-group row-fluid">
 								<div id="company_folders" class="row-fluid">
@@ -31,12 +31,12 @@
 							</div>
 
 							<div class="control-group row-fluid">
-								<div class="add-to-existing">
-									<%= radio_button :company, :add_to_existing, 1, :checked => true %>
+								<div class="replace-existing">
+									<%= radio_button :company, :add_to_existing, 1, :checked => true, :class => "add-to-existing" %>
 									<%= label_tag :add_to_existing, "Add to Existing" %>
 								</div>
-								<div class="add-to-existing">
-									<%= radio_button :company, :add_to_existing, 0 %>
+								<div class="replace-existing">
+									<%= radio_button :company, :add_to_existing, 0, :class => "add-to-existing" %>
 									<%= label_tag :add_to_existing, "Replace Existing" %>
 								</div>
 							</div>

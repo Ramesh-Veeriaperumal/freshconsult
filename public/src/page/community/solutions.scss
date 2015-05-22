@@ -439,7 +439,7 @@
 	}
 }
 
-#folder-bulk-action {
+#folder-bulk-action, #article-bulk-action {
 
 	margin-top: 10px;
 
@@ -457,6 +457,7 @@
 	.fd-menu {
 		margin-top: 8px;
 	  margin-left: -6px;
+	  min-width: 200px;
 	  .left-list, .right-select-companies {
 	  	float: left;
 	  	min-width: 200px;
@@ -475,7 +476,7 @@
 	  		padding: 4px 14px;
 	  		display: inline-block;
 	  	}
-	  	.add-to-existing {
+	  	.replace-existing {
 	  		display: inline-block;
 	  		margin-right: 10px;
 			  padding-left: 1px;
