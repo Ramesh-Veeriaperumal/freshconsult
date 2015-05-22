@@ -810,6 +810,7 @@ if Integrations::Application.count == 0
       :oauth_url => "/auth/quickbooks?origin=id%3D{{account_id}}"
     }
     s.application_type = "quickbooks"
+  end
 
   five9 = Integrations::Application.seed(:name) do |s|
     s.name = "five9"
