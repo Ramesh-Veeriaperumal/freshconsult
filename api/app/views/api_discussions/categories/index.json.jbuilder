@@ -1,1 +1,6 @@
-json.array! @categories, partial: 'api_discussions/categories/forum_category', as: :fc
+json.array! @categories do |fc|
+  json.cache! fc do
+    json.(fc, :id, :name, :description, :position)
+    json.partial! 'shared/utc_date_format', item: fc
+  end
+end

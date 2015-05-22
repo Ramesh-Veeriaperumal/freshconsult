@@ -1,1 +1,2 @@
-json.partial! 'api_discussions/categories/forum_category', fc: @category
+son.(@category, :id, :name, :description, :position)
+json.partial! 'shared/utc_date_format', item: @category

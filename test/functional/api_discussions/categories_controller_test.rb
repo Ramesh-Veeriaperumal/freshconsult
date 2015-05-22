@@ -2,7 +2,6 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class CategoriesControllerTest < ActionController::TestCase
-    include ForumHelper
 
     actions = Rails.application.routes.routes.select { |x| x.defaults[:controller] == 'api_discussions/categories' }.collect { |x| x.defaults[:action] }.uniq
     methods = { 'index' => :get, 'create' => :post, 'update' => :put, 'destroy' => :delete, 'show' => :get, 'forums' => :get }

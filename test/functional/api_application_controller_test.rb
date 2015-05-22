@@ -18,12 +18,6 @@ class ApiApplicationControllerTest < ActionController::TestCase
     @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(['name', 'test']))
   end
 
-  def test_missing_field_handler
-    error_array = { 'name' => 'missing_field' }
-    @controller.stubs(:render_error).with(error_array).returns(true).once
-    @controller.send(:missing_field_handler, ActionController::ParameterMissing.new('name'))
-  end
-
   def test_cname
     actual = controller.send(:cname)
     assert_equal controller.controller_name.singularize, actual

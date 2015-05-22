@@ -7,7 +7,6 @@ class ApiApplicationController < ApplicationController
     render_500(exception)
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
-  rescue_from ActionController::ParameterMissing, with: :missing_field_handler
 
   skip_before_filter :set_default_locale, :set_locale, :freshdesk_form_builder, :remove_rails_2_flash_before,
                      :remove_pjax_param, :remove_rails_2_flash_after
@@ -111,11 +110,6 @@ class ApiApplicationController < ApplicationController
   def invalid_field_handler(exception)
     invalid_fields = Hash[exception.params.collect { |v| [v, 'invalid_field'] }]
     render_error invalid_fields
-  end
-
-  def missing_field_handler(exception)
-    missing_fields = { exception.param => 'missing_field' }
-    render_error missing_fields
   end
 
   def render_error(errors, meta = nil)

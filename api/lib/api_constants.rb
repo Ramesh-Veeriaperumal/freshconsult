@@ -31,8 +31,7 @@ module ApiConstants
     already_exists: ['has already been taken', 'already exists in the selected category'],
     invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
     datatype_mismatch: ['is not a date', 'is not a number'],
-    invalid_field: ['invalid_field'],
-    missing_field: ['missing_field']
+    invalid_field: ['invalid_field']
   }
   API_HTTP_ERROR_STATUS_BY_CODE = {
     already_exists: 409
