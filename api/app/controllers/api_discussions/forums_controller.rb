@@ -12,7 +12,7 @@ module ApiDiscussions
 
     def topics
       @topics = paginate_items(@forum.topics)
-      render partial: '/api_discussions/topics/topic_list' # Need to revisit this based on eager loading associations in show
+      render template: '/api_discussions/topics/topic_list'
     end
 
     private

@@ -37,5 +37,4 @@ class ApiThrottlerTest < ActionView::TestCase
     assert_equal 200, status
     assert_not_nil response
   end
- 
 end

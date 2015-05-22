@@ -33,7 +33,7 @@ module Api::DiscussionMonitorConcern
 
   def followed_by
     @topics = paginate_items(current_account.topics.followed_by(params[:user_id]))
-    render partial: '/api_discussions/topics/topic_list'
+    render template: '/api_discussions/topics/topic_list'
   end
 
   private

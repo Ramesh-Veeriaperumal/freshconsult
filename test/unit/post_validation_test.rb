@@ -37,6 +37,15 @@ class PostValidationTest < ActionView::TestCase
     assert post.errors.full_messages.include?('Updated at is not a date')
   end
 
+  def test_date_params_empty_string
+    controller_params = { 'created_at' => '', 'updated_at' => '' }
+    item = nil
+    post = ApiDiscussions::PostValidation.new(controller_params, item)
+    refute post.valid?
+    assert post.errors.full_messages.include?('Created at is not a date')
+    assert post.errors.full_messages.include?('Updated at is not a date')
+  end
+
   def test_presence_item_valid
     item = Post.new(body_html: 'test', topic_id: Topic.first)
     controller_params = {}

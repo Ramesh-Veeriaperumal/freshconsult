@@ -24,7 +24,7 @@ module ApiDiscussions
 
     def posts
       @posts = paginate_items(@topic.posts)
-      render partial: '/api_discussions/posts/post_list' # Need to revisit this based on eager loading associations in show
+      render template: '/api_discussions/posts/post_list'
     end
 
     private

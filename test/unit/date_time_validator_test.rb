@@ -29,6 +29,15 @@ class DateTimeValidatorTest < ActionView::TestCase
     assert topic.errors.empty?
   end
 
+  def test_invalid_empty_string_for_allow_nil
+    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:created_at, :updated_at])
+    topic = ApiDiscussions::TopicValidation.new({}, nil)
+    topic.created_at = ''
+    date_time_validator.validate(topic)
+    refute topic.errors.empty?
+    assert topic.errors.full_messages.include?('Created at is not a date')
+  end
+
   def test_invalid_allow_nil
     date_time_validator = DateTimeValidator.new(allow_nil: false, fields: [:created_at, :updated_at])
     topic = ApiDiscussions::TopicValidation.new({}, nil)

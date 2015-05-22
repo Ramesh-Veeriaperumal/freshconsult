@@ -14,6 +14,6 @@ class DateTimeValidator < ActiveModel::Validator
   end
 
   def allow_nil(value)
-    options[:allow_nil] == true && value.blank?
+    options[:allow_nil] == true && value.nil?
   end
 end

@@ -4,7 +4,7 @@ class ApiRequestInterceptorTest < ActionView::TestCase
   def env_for(url, opts = {})
     Rack::MockRequest.env_for(url, opts)
   end
- 
+
   def test_catch_json_parse_errors_for_json_content_type
     test_app = ->(env) { [200, { 'HTTP_HOST' => 'localhost' }, ['OK']] }
     api_request_interceptor = Middleware::ApiRequestInterceptor.new(test_app)
@@ -56,5 +56,4 @@ class ApiRequestInterceptorTest < ActionView::TestCase
     assert_equal true, ['Content-Type'].all? { |key| headers.key? key }
     response.first.must_match_json_expression(invalid_json_error_pattern)
   end
-  
 end
