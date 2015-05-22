@@ -37,7 +37,7 @@
 				</div>
 				<div class='user-info'>
 					<h1 class='lead break-word'><%= h(@company.name) %></h1>
-					<div class='break-word user-job-title'><%= h(@company.description).gsub(/\n/, '<br />') %></div>
+					<div class='break-word user-job-title'><%= company_description(h(@company.description)) %></div>
 					<% if @company_users_size > 0 %>
 						<div class='no-contacts'>
 							<div class='border-wrap left'></div>
