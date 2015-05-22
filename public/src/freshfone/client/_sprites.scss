@@ -33,6 +33,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 }
 
 .message-container {
+	
 	.record_voice { @include freshfone-sprite(ivr-record-icon); }
 	.upload_voice { @include freshfone-sprite(ivr-upload-icon); }
 	.read_message { @include freshfone-sprite(ivr-transcript-icon); }
