@@ -98,12 +98,11 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def call_duration_formatted(duration)
-		formatted_value = ''
 		if duration >= 3600
-			formatted_value = "#{format("%02d", duration / 3600)}:"
-			duration = duration % 3600
+			"%02d:%02d:%02d" % [duration / 3600, (duration / 60) % 60, duration % 60]
+		else
+			"%02d:%02d" % [(duration / 60) % 60, duration % 60]
 		end
-		"#{formatted_value}#{Time.at(duration).gmtime.strftime('%M:%S')}"
 	end
 
 	def export_options
