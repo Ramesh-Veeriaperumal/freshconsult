@@ -66,7 +66,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
       # freshfone_credit.send_later(:perform_auto_recharge)
       set_integ_redis_key(autorecharge_key(freshfone_credit.account_id), "true", 1800) #Key will be expire in 30 mins
       Resque::enqueue(Freshfone::Jobs::AutoRecharge, {:id => freshfone_credit.id})
-      Rails.logger.debug "Auto-Recharge triggered for account #{freshfone_credit.account_id}"
+      Rails.logger.info "Auto-Recharge triggered for account #{freshfone_credit.account_id}"
     end
     
     def restore_freshfone_account_state(freshfone_credit, account)
