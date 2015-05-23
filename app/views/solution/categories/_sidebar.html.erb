@@ -1,23 +1,26 @@
-<% if @drafts %>
-<div id="drafts-sb" class="border-top">
- <%= render :partial => "drafts" %>
+<div class="sidepanel">
+  <% if @drafts or @feedbacks %>
+      <% if @drafts %>
+      <div id="drafts-sb" class="solutions-widget">
+       <%= render :partial => "drafts" %>
+      </div>
+      <% end %>
+
+      <% if @feedbacks %>
+        <div id="feedbacks-sb" class="solutions-widget">
+          <%= render :partial => "feedbacks" %>
+        </div>
+      <% end %>
+  <% else %>
+    <i class="common-icon-help"></i>
+    <h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
+      <p><%=t('solution.info4').html_safe%></p>
+      <p><%=t('solution.info9').html_safe%></p>
+      <p><%=t('solution.info10').html_safe%></p>
+      <p><%=t('solution.info11').html_safe%></p>
+      <p><%=t('solution.info12').html_safe%></p>
+      <p><%=t('solution.info13').html_safe%></p>
+      <p><%=t('solution.info14').html_safe%></p>
+      <p><a href="https://support.freshdesk.com/support/solutions/folders/74531" _target="blank"> <%=t('group.learn_more').html_safe%> </a></p>
+  <% end %>
 </div>
-<% end %>
-
-<% if @feedbacks %>
-  <div id="feedbacks-sb" class="border-top">
-    <%= render :partial => "feedbacks" %>
-  </div>
-<% end %>
-
-<% if !@drafts and !@feedbacks %>
-  <h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
-    <p><%=t('solution.info4').html_safe%></p>
-    <p><%=t('solution.info9').html_safe%></p>
-    <p><%=t('solution.info10').html_safe%></p>
-    <p><%=t('solution.info11').html_safe%></p>
-    <p><%=t('solution.info12').html_safe%></p>
-    <p><%=t('solution.info13').html_safe%></p>
-    <p><%=t('solution.info14').html_safe%></p>
-    <p><a href="https://support.freshdesk.com/support/solutions/folders/74531" _target="blank"> <%=t('group.learn_more').html_safe%> </a></p>
-<% end %>

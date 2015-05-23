@@ -8,7 +8,7 @@ class Solution::CategoriesController < ApplicationController
   
   feature_check :solution_drafts
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show, :sidebar,:drafts, :feedbacks]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
@@ -107,16 +107,6 @@ class Solution::CategoriesController < ApplicationController
     render :partial => "/solution/categories/sidebar"
   end
 
-  def feedbacks
-    @feedbacks = current_account.tickets.all_article_tickets
-    render :partial => "/solution/categories/feedbacks"
-  end
-
-  def drafts
-    @drafts = current_account.solution_articles.all_drafts
-    render :partial => "/solution/categories/drafts"
-  end
-
   protected
 
     def scoper #possible dead code
@@ -173,12 +163,7 @@ class Solution::CategoriesController < ApplicationController
       @category = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
     end
 
-    def default_drafts_scope
-      'drafts-me'
-    end
-
     def set_modal
       @modal = true if request.xhr?
     end
-    
 end

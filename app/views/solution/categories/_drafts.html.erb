@@ -1,49 +1,75 @@
 <% if @drafts %>
-<% title = params[:scope] ? "All Drafts" : "My Drafts" %>
-<div class="sidebar-dropdown">
-        <ul role="tablist">
-          <li class="dropdown">
-            <h5 class="conv-title conv-menu dropdown-toggle" data-toggle="dropdown">
-              <span class="sub-info"><%= title %></span>
-              <span class="caret"></span>
-            </h5>
-            <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;">
-            <li>
-              <a class="item" data-hash-url="false" data-toggle="tab" id="drafts-me" ul_class="tick">
-              My Drafts
+<div class="solutions-widget-header">
+  <div class="sidebar-dropdown">
+    <div data-tabs='tabs'>
+      <ul role="tablist">
+        <li class="dropdown">
+          <h5 class="dropdown-toggle" data-toggle="dropdown">
+            <span class="widget-filter"><%=t('solution.sidebar.drafts.me').html_safe%></span>
+            <span class="caret"></span>
+          </h5>
+          <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+            <li class="widget-filter">
+              <a class="item" href="#drafts-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
+              <%=t('solution.sidebar.drafts.me').html_safe%>
               </a>
             </li>
-          <li class="">
-          <a class="item" data-hash-url="false" data-toggle="tab" id="drafts-all" ul_class="tick">
-              All Drafts
-            </a>
+            <li class="widget-filter">
+              <a class="item" href="#drafts-all" data-hash-url="false" data-toggle="tab"  ul_class="tick">
+                <%=t('solution.sidebar.drafts.all').html_safe%>
+              </a>
             </li>
-        </ul>
-          </li>
-        </ul>
-      </div>
-      <span class="lead">Drafts</span>
-
-    <ul class="a-list">
-    <% @drafts.first(3).each do |a| %>
+          </ul>
+        </li>
+      </ul>
+  </div>
+  </div>
+  <span class="lead lead-small"><%=t('solution.sidebar.drafts.title').html_safe%></span>
+</div>
+<div class="tab-content">
+  <div class='tab-pane active' id='drafts-me'> 
+      <ul class="a-list">
+      <% @drafts.first(3).each do |a| %>
+        <li class="a-item medrafts">
+           <div>
+              <span>
+                <%= pjax_link_to(a.title.truncate(27),
+                                solution_category_folder_article_path(a.folder.category,a.folder,a),
+                                { :class => "a-title"}) %>
+              </span> 
+              <div class="muted a-desc"> <%=t('solution.sidebar.drafts.details', :name => a.user.name,
+                                           :time => time_ago_in_words(a.modified_at)).html_safe%> </div>
+            </div>
+        </li>
+      <% end %>
+    <% if @drafts.size > 3 %>
       <li class="a-item">
-         <div>
-            <span>
-              <%= pjax_link_to(a.title,
-                              solution_category_folder_article_path(a.folder.category,a.folder,a),
-                              { :class => "a-title"}) %>
-            </span> 
-            <p class="muted a-desc"> <%= "Edited by #{a.user.name}, #{time_ago_in_words(a.modified_at)}" %> </p>
-          </div>
+        <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all') %>
       </li>
     <% end %>
-  <% if @drafts.size > 3 %>
-    <% view_all = params[:scope] ? solution_drafts_path : 
-                  solution_my_drafts_path('all') %>
-    <li class="a-item">
-      <%= pjax_link_to "View all",view_all %>
-    </li>
-  <% end %>
-  </ul>
+    </ul>
+  </div>
+  <div class='tab-pane' id='drafts-all'> 
+      <ul class="a-list">
+      <% @drafts.first(3).each do |a| %>
+        <li class="a-item me all">
+           <div>
+              <span>
+                <%= pjax_link_to(a.title.truncate(27),
+                                solution_category_folder_article_path(a.folder.category,a.folder,a),
+                                { :class => "a-title"}) %>
+              </span> 
+              <div class="muted a-desc"> <%=t('solution.sidebar.drafts.details', :name => a.user.name,
+                                           :time => time_ago_in_words(a.modified_at)).html_safe %> </div>
+            </div>
+        </li>
+      <% end %>
+    <% if @drafts.size > 3 %>
+      <li class="a-item">
+        <%= pjax_link_to t('solution.sidebar.view_all'), solution_drafts_path %>
+      </li>
+    <% end %>
+    </ul>
+  </div>
 </div>
 <% end %>

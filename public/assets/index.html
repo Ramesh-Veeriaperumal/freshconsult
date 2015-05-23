@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_70837c36a12cdc8d5ae58b36f593b740.eot");
-  src: url("../../assets/glyphs_70837c36a12cdc8d5ae58b36f593b740.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_70837c36a12cdc8d5ae58b36f593b740.woff") format("woff"),
-       url("../../assets/glyphs_70837c36a12cdc8d5ae58b36f593b740.ttf") format("truetype"),
-       url("../../assets/glyphs_70837c36a12cdc8d5ae58b36f593b740.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.eot");
+  src: url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.woff") format("woff"),
+       url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.ttf") format("truetype"),
+       url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_70837c36a12cdc8d5ae58b36f593b740.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.svg#glyphs") format("svg");
   }
 }
 
@@ -220,6 +220,7 @@
 .ficon-file-edit:before,
 .ficon-file-visible:before,
 .ficon-firefox:before,
+.ficon-folder:before,
 .ficon-folder-o:before,
 .ficon-folder-open-o:before,
 .ficon-forward:before,
@@ -411,6 +412,7 @@
 .ficon-file-edit:before { content: "\f14a"; }
 .ficon-file-visible:before { content: "\f14b"; }
 .ficon-firefox:before { content: "\f14c"; }
+.ficon-folder:before { content: "\f1b3"; }
 .ficon-folder-o:before { content: "\f14d"; }
 .ficon-folder-open-o:before { content: "\f14e"; }
 .ficon-forward:before { content: "\f14f"; }
@@ -519,7 +521,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (177)</h1>
+      <h1>Font Icons (178)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1269,6 +1271,15 @@
         </div>
         <div class="usage">
           <span>firefox</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-folder" class="ficon-folder"></i></span>
+        </div>
+        <div class="usage">
+          <span>folder</span>
         </div>
       </div>
       

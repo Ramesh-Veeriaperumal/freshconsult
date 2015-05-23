@@ -1,5 +1,5 @@
 <% content_for :layoutType do %>community solutions<% end %>
-<% content_for :helpcard do %>
+<% content_for :sidebar do %>
 	<%= content_tag :div, "", :rel => "remote", :id=> "solution-home-sidebar",
 			  "data-remote-url" => '/solution/categories/sidebar' %>
 <% end %>
@@ -16,28 +16,30 @@
 <% end %>
 <%= render :partial => '/solution/shared/sticky' %>
 
-<div class="clearfix solution-list" id="categories_list">			
-	<% @categories.each do |category| %>
+<div class="solution-list pull-left" id="categories_list">			
+	<% current_categories.each do |category| %>
 		<% if !@solution_drafts_feature  || !category.is_default %>
 			<div class="<%= cycle('odd', 'even') %>">
 				<h4 class="cat-title-border">
 					<% unless category.folders.empty? %>
-						<%= link_to  "#{h(category.name)}".html_safe, category %>
+						<%= pjax_link_to  "#{h(category.name)}".html_safe, category %>
 					<% else %>
 						<%= h(category.name) %>
 					<% end %>
 				</h4>  
 				<ul>			
 		  		<% category.folders.first(5).each do |folder| %>
-	  				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %>
-	  				  <span>
+	  				<li>
+	  					<i id="ficon-folder" class="ficon-folder"></i>
+	  					<%= pjax_link_to h(folder.name),  solution_category_folder_path(category, folder)  %>
+	  				  <span class="muted">
 	  					  (<%= folder.articles.size %>)
 	  			    </span> 
 	  			  </li>
 				 <% end %> 
 				<% if category.folders.size > 5 %>
 						<% remaining_folders = category.folders.size - 5 %>
-						<li><b><%= link_to "View #{remaining_folders} more folders",  solution_category_path(category)  %></b>
+						<li class="label-bold"><%= pjax_link_to t('solution.folders.view_all', :count => remaining_folders).html_safe,  solution_category_path(category)  %>
 					  </li>
 				<% end %>
 				</ul>

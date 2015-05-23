@@ -1,48 +1,75 @@
 <% if @feedbacks %>
-  <% title = params[:scope] ? "All Feedbacks" : "My Feedbacks" %>
-  <div class="sidebar-dropdown">
-          <ul role="tablist">
-            <li class="dropdown">
-              <h5 class="conv-title conv-menu dropdown-toggle" data-toggle="dropdown">
-                <span class="sub-info"><%= title %></span>
-                <span class="caret"></span>
-              </h5>
-              <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;">
-              <li>
-                <a id="feedbacks-me" ul_class="tick">
-                My Feedbacks
+  <div class="solutions-widget-header">
+    <div class="sidebar-dropdown">
+        <div data-tabs='tabs'>
+            <ul role="tablist">
+              <li class="dropdown">
+                <h5 class="dropdown-toggle" data-toggle="dropdown">
+                  <span class="widget-filter"><%=t('solution.sidebar.feedbacks.me')%></span>
+                  <span class="caret"></span>
+                </h5>
+                <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+                <li class="widget-filter">
+                  <a class="item" href="#feedbacks-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                    <%=t('solution.sidebar.feedbacks.me')%>
+                  </a>
+                </li>
+              <li class="widget-filter">
+                <a class="item" href="#feedbacks-all" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                  <%=t('solution.sidebar.feedbacks.all')%>
                 </a>
+                </li>
+            </ul>
               </li>
-            <li class="">
-              <a id="feedbacks-all" ul_class="tick">
-                All Feedbacks
-              </a>
-              </li>
-          </ul>
-            </li>
-          </ul>
+            </ul>
         </div>
-        <span class="lead">Feedbacks</span>
+     </div>
+     <span class="lead lead-small"><%=t('solution.sidebar.feedbacks.title')%></span>
+ </div>
 
-      <ul class="a-list">
-      <% @feedbacks.first(3).each do |f| %>
+  <div class="tab-content">
+    <div class='tab-pane active' id='feedbacks-me'>
+        <ul class="a-list">
+        <% @feedbacks.first(3).each do |f| %>
+          <li class="a-item">
+             <div>
+                <span>
+                  <%= pjax_link_to(f.subject.truncate(27), helpdesk_ticket_path(f),{:class => "a-title"}) %>
+                </span>
+                <span class="label pull-right label-light"><%= f.status_name %></span> 
+                <div class="muted a-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
+                                           :time => time_ago_in_words(f.updated_at)).html_safe%> </div>
+              </div>
+          </li>
+        <% end %>
+      <% if @feedbacks.size > 3 %>
         <li class="a-item">
-           <div>
-              <span>
-                <%= pjax_link_to(f.subject, helpdesk_ticket_path(f),{:class => "a-title"}) %>
-              </span>
-              <span class="label pull-right"><%= f.status_name %></span> 
-              <p class="muted a-desc"> <%= "Edited by #{f.requester.name}, #{time_ago_in_words(f.created_at)}" %> </p>
-            </div>
+          <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/my_article_feedback" %>
         </li>
       <% end %>
-    <% if @feedbacks.size > 3 %>
-    <% view_all = params[:scope] ? "/helpdesk/tickets/filter/article_feedback" : 
-                  "/helpdesk/tickets/filter/my_article_feedback" %>
+      </ul>
+    </div>
 
-      <li class="a-item">
-        <%= pjax_link_to "View all",view_all %>
-      </li>
-    <% end %>
-    </ul>
+    <div class='tab-pane' id='feedbacks-all'>
+        <ul class="a-list">
+        <% @feedbacks.first(3).each do |f| %>
+          <li class="a-item">
+             <div>
+                <span>
+                  <%= pjax_link_to(f.subject.truncate(27), helpdesk_ticket_path(f),{:class => "a-title"}) %>
+                </span>
+                <span class="label pull-right label-light"><%= f.status_name %></span> 
+                <div class="muted a-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
+                                           :time => time_ago_in_words(f.updated_at)).html_safe%>  </div>
+              </div>
+          </li>
+        <% end %>
+      <% if @feedbacks.size > 3 %>
+        <li class="a-item">
+          <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/article_feedback"%>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+  </div> 
 <% end %>

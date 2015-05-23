@@ -235,37 +235,56 @@ body.community.cs-always-show .community-sidebar {
 	-webkit-animation: none;
 }
 
-.border-top {
-  font-size: 16px;
-  border-top: 2px solid #ebebeb;
-  padding-top: 6px;
-  margin-top: 8px;
-}
-
 .inline{
   display: inline-block;
 }
 
 .a-item{
-  margin-top: 7px;
+  margin-bottom: 16px;
 }
 
 .a-title{
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .a-desc {
-  font-size: 13px;
+  font-size: 12px;
+}
+
+.solutions-widget-header {
+  margin-top: 5px;
+  margin-bottom: 12px;
+}
+
+.solutions-widget {
+  border-top: 2px solid #BBB9B9;
+  padding-top: 6px;
+  margin-top: 8px;
+  margin-bottom: 23px;
+}
+
+.widget-filter {
+  font-weight: 500;
+  font-size: 12px
+}
+
+.label-light {
+  background-color: #ECECEC;
+  color: #999;
 }
 
 #solution-home-sidebar{
-  margin: 0;
+margin: 0;
 }
 
 .sidebar-dropdown{
   display: inline-block;
   @include float(right);
   margin-top: 4px;
+}
+
+.lead-small{
+  font-size: 16.5px;
 }
 
 @-webkit-keyframes fadeInLeft {
