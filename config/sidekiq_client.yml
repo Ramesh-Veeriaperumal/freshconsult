@@ -26,8 +26,12 @@ development:
 staging:
   <<: *defaults
 
+production:
+  <<: *defaults
+
 slave:
   <<: *defaults
 
 test:
   <<: *defaults
+
