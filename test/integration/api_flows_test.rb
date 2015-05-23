@@ -33,7 +33,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_invalid_json
-    post '/api/discussions/categories', '{"category": {"name": "true"', @headers.merge('CONTENT_TYPE' => 'application/json')
+    post '/api/discussions/categories', '{"category": {"name": "true"', @write_headers
     assert_response :bad_request
     response.body.must_match_json_expression(invalid_json_error_pattern)
   end

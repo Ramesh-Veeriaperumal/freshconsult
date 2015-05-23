@@ -102,19 +102,19 @@ module ApiDiscussions
       topic_obj.update_column(:locked, false)
     end
 
-    # def test_create_agent_email_topic_locked
-    #   user = agent
-    #   @agent.stubs(:can_assume?).returns(true)
-    #   topic_obj.update_column(:locked, true)
-    #   params = {:body_html => "test", "topic_id" => topic_obj.id,
-    #    "email" => user.email}
-    #   post :create, construct_params({}, params)
-    #   match_json(post_pattern(Post.last))
-    #   match_json(post_pattern(params, Post.last))
-    #   assert_response :created
-    #   topic_obj.update_column(:locked, false)
-    #   @agent.unstub(:can_assume?)
-    # end
+    def test_create_agent_email_topic_locked
+      user = agent
+      controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
+      topic_obj.update_column(:locked, true)
+      params = {:body_html => "test", "topic_id" => topic_obj.id,
+       "email" => user.email}
+      post :create, construct_params({}, params)
+      match_json(post_pattern(Post.last))
+      match_json(post_pattern(params, Post.last))
+      assert_response :created
+      topic_obj.update_column(:locked, false)
+      @agent.unstub(:can_assume?)
+    end
 
     def test_create_invalid_model
       topic_obj.update_column(:locked, true)

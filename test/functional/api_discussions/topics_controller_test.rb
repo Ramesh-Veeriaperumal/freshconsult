@@ -28,7 +28,7 @@ module ApiDiscussions
 
     def test_create_with_email
       user = other_user
-      @agent.stubs(:can_assume?).returns(true)
+      controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', email: user.email)
       match_json(topic_pattern(last_topic))
@@ -383,16 +383,17 @@ module ApiDiscussions
       match_json(request_error_pattern('missing_params'))
     end
 
-    # def test_update
-    #   topic = first_topic
-    #   params = {:title => "New", :message_html => "New msg",
-    #    :stamp_type => Topic::FORUM_TO_STAMP_TYPE[Forum.last.forum_type].last,
-    #    :sticky => !topic.sticky, :locked => !topic.locked, :forum_id => Forum.last.id}
-    #   put :update, construct_params({:id => topic.id}, params)
-    #   match_json(topic_pattern(topic.reload))
-    #   match_json(topic_pattern(params, topic))
-    #   assert_response :success
-    # end
+    def test_update
+      forum = Forum.where(:forum_type => 2).first
+      topic = first_topic
+      params = {:title => "New", :message_html => "New msg",
+       :stamp_type => Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
+       :sticky => !topic.sticky, :locked => !topic.locked, :forum_id => forum.id}
+      put :update, construct_params({:id => topic.id}, params)
+      match_json(topic_pattern(topic.reload))
+      match_json(topic_pattern(params, topic))
+      assert_response :success
+    end
 
     def test_update_with_invalid_stamp_type
       forum = first_topic.forum
@@ -515,9 +516,10 @@ module ApiDiscussions
     end
 
     def test_is_following_with_user_id
+      topic = first_topic
       user = user_without_monitorships
-      monitor_topic(first_topic, user, 1)
-      get :is_following, construct_params(user_id: user.id, id: first_topic.id)
+      monitor_topic(topic, user, 1)
+      get :is_following, construct_params(user_id: user.id, id: topic.id)
       assert_response :no_content
     end
 
@@ -530,9 +532,10 @@ module ApiDiscussions
     end
 
     def test_is_following_without_privilege_valid
+      topic = first_topic
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
-      monitor_topic(first_topic, @agent, 1)
-      get :is_following, construct_params(user_id: @agent.id, id: first_topic.id)
+      monitor_topic(topic, @agent, 1)
+      get :is_following, construct_params(user_id: @agent.id, id: topic.id)
       assert_response :no_content
     end
 

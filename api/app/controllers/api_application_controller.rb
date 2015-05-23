@@ -154,8 +154,7 @@ class ApiApplicationController < ApplicationController
   end
 
   def build_object
-    @item = instance_variable_set('@' + cname,
-                                  scoper.is_a?(Class) ? scoper.new(params[cname]) : scoper.build(params[cname]))
+    @item = instance_variable_set('@' + cname, scoper.new(params[cname]))
   end
 
   def load_objects

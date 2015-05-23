@@ -4,7 +4,7 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
   def test_account_suspended_json
     subscription = @account.subscription
     subscription.update_column(:state, 'suspended')
-    post '/agents.json', nil, @headers.merge('CONTENT_TYPE' => 'application/json')
+    post '/agents.json', nil, @write_headers
     response = parse_response(@response.body)
     assert_equal({ 'code' => 'account_suspended', 'message' => 'Your account has been suspended.' }, response)
     assert_response :forbidden
@@ -15,7 +15,7 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
     Agent.any_instance.stubs(:occasional).returns(true).once
     subscription = @account.subscription
     subscription.update_column(:state, 'active')
-    get '/agents.json', nil, @headers.merge('CONTENT_TYPE' => 'application/json')
+    get '/agents.json', nil, @write_headers
     response = parse_response(@response.body)
     assert_equal({ 'code' => 'access_denied', 'message' => 'You are not authorized to perform this action.' }, response)
     assert_response :forbidden

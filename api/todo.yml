@@ -14,6 +14,7 @@ Todo:
  - Metal
  - Bullet for tests?
  - API shouldnt redirect request from Mobile clients
+ - Paginate fires extra queries?
 
 Breaking changes in existing APIs:
  - Account suspended
@@ -22,6 +23,7 @@ Breaking changes in existing APIs:
  - Post validation
  - customer forum validation
  - Monitorship validation
+ - Stamp type validation
 
 Completed:
  - Multijson parse error handling
