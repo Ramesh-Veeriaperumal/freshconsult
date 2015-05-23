@@ -83,6 +83,7 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
+  validates :user, presence: true, if: -> {user_id.present?}
 
   def all_attachments
     shared_attachments=self.attachments_sharable
