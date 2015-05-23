@@ -11,7 +11,7 @@ module ImportCsvUtil
     Rails.logger.debug("Import File uploaded :: #{params[:file]}")
     store_file
     read_file session[:map_fields][:file_path],true
-    @fields = current_account.send("#{params[:type]}_form").fields.map{|f| {
+    @fields = current_account.send("#{params[:type]}_form").send("#{params[:type]}_fields").map{|f| {
       :name  => f.name, 
       :label => f.label
     }}
