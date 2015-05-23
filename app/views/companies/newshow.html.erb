@@ -97,7 +97,7 @@
 				<% if @total_company_tickets.size > 10 %>
 					<div class='contact_tickets'>
 						<div class="more_results">
-							<%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more", :'data-parallel-placeholder'=>"#ticket-leftFilter", :'data-parallel-url'=>"/helpdesk/tickets/filter_options", :'data-pjax'=>"#body-container" %>
+							<%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
 						</div>
 					</div>
 				<% end %>

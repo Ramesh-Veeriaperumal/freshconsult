@@ -189,7 +189,7 @@
 						<% if (no_tickets_shown < @total_user_tickets_size || @total_user_tickets_size > 10) and !@user.deleted %>
 							<div class='contact_tickets'>
 								<div class="more_results">
-									<%= link_to t('contacts.view_all',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more", :'data-parallel-placeholder'=>"#ticket-leftFilter", :'data-parallel-url'=>"/helpdesk/tickets/filter_options", :'data-pjax'=>"#body-container" %>
+									<%= link_to t('contacts.view_all',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
 								</div>
 							</div>
 						<% end %>
