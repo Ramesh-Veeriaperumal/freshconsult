@@ -14,7 +14,7 @@
 		  	</table>
 		  	<% if @ticket.requester.tickets.visible.size > 5 %>
 			  	<div class="more_results">
-			  		<%= link_to t('contacts.show_more',:nick_name => @ticket.requester.display_name), helpdesk_requester_filter_path(:requester_id => @ticket.requester.id) , :id => "show_more", :'data-pjax' => '#body-container', :'data-parallel-placeholder'=>"#ticket-leftFilter", :'data-parallel-url'=>"/helpdesk/tickets/filter_options" %>
+			  		<%= link_to t('contacts.show_more',:nick_name => @ticket.requester.display_name), helpdesk_requester_filter_path(:requester_id => @ticket.requester.id) , :id => "show_more" %>
 			  	</div>
 		  	<% end %>
 	  	<% end %>
