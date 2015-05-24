@@ -15,7 +15,6 @@ class Helpdesk::TicketsController < ApplicationController
   include CustomerDeprecationMethods::NormalizeParams
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
-  helper Helpdesk::TicketsExportHelper
   include Helpdesk::TagMethods
 
   before_filter :redirect_to_mobile_url  

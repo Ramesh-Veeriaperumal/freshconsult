@@ -132,30 +132,6 @@
                            }
      });
   });
-
-  setExportCreatedRange = function(){
-  var startDate, endDate;
-    if(jQuery('#created_date_range').is(':visible')){
-        jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>);
-        var dateFormat = getDateFormat('mediumDate');
-        var createdDateRange = jQuery('#created_date_range').val().split(' - ');
-        startDate = (new Date(createdDateRange[0])).toString(dateFormat);
-        endDate = (new Date(createdDateRange[1])).toString(dateFormat);
-    }else{
-      jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:thirt_days]%>);
-      startDate = "<%= formated_date(1.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
-      endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
-    }
-    jQuery("#date_filter").trigger('change');
-    jQuery('#start_date').val(startDate);
-    jQuery('#end_date').val(endDate);
-  };
-
-  jQuery('#export_tickets').click(function(){
-    if(jQuery('#exportFilter').length > 0){
-      setExportCreatedRange();
-    }
-  });
 <%- end %>
 
 

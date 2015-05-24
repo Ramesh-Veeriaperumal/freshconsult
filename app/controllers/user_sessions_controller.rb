@@ -386,7 +386,6 @@ include GoogleLoginHelper
 
     def remove_old_filters
       remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
-      remove_tickets_redis_key(EXPORT_TICKET_FIELDS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
     end
 
     def mark_agent_unavailable
