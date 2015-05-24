@@ -28,9 +28,8 @@
 		<hr/>
 		<li class="control-group">
 			<label class="control-label">
-				<%= check_box_tag :toggle_checks, '', false,	:class => 'tooltip', 
-																											:"data-placement" => 'below', 
-																											:title => 'Check/Uncheck all' %>
+				<%= check_box_tag :toggle_checks, '', false, :class => 'tooltip', :"data-placement" => 'below',
+								  :title => t('export_data.check_uncheck_title') %>
 				<strong><%= t('export_data.select_header') %></strong>
 			</label><br/><br/><br/>
 				<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
@@ -38,14 +37,14 @@
 		 			<% @csv_headers.each do |head| %>
 		 			  	<div class="item <%= head[:type] %>">
 			  				<label class="checkbox prime"> 
-			    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
+							<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], export_fields_redis.include?(head[:value]) || head[:selected] %>
 								<%= head[:label].html_safe %>														
 			  				</label>
 			  				<%if head[:levels]%>
 				  				<div class="tree_line">
 					  				<% head[:levels].each do |level| %>
 						  				<label class="checkbox level"> 
-						    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
+										<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], export_fields_redis.include?(level[:name])  %>
 											<%= level[:label].html_safe %>
 						  				</label>
 						  			<% end %>
@@ -122,14 +121,11 @@
 				dates.not( this ).datepicker( "option", option, date );
 				jQuery(this).prop("date", date);
 			}
-		}); 
-		
-		jQuery("#start_date").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-		jQuery("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-		
+		});
+		setExportCreatedRange();
 	});
 	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
-   	ev.preventDefault();
+	ev.preventDefault();
    	return false;
   });
 <% end %>
