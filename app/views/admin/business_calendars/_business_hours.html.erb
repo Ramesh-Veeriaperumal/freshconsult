@@ -15,9 +15,9 @@
 
         var _parent = jQuery(element).parents('.timerange').first();
         var _cal_index = _parent.data('dayNumber');
-        _condition = compute_validity(TIME_CONTAINERS.map(function(id){
+        _condition = compute_validity(map_end_time(TIME_CONTAINERS.map(function(id){
     		return _parent.find("#"+id + '_' + _cal_index).val();
-    	}));
+    	})));
 
         return _condition;
    }, '');
@@ -57,6 +57,8 @@
     		return _parent.find("#"+id + '_' + _cal_index).val();
     	})
 
+    	_time_array = map_end_time(_time_array);
+
         _condition = compute_validity(_time_array);
 
         jQuery(_parent).find('.outline').toggle(_condition);
@@ -66,6 +68,16 @@
 		return _condition ?
 				calculate_duration(_time_array) :  "<a href='#' class='error'></a><%= t('business_hours.valid_time') %>"
 				
+	}
+
+	//Following function is for the use case,
+    //when end time is "12:00 am(midnight)", the start time can be set to any value.
+	map_end_time = function(_time_array){
+    	if ( _time_array[2] == "12:00" && _time_array[3] == "am" ){
+    		_time_array[2] = "11:60";
+    		_time_array[3] = "pm";
+    	}
+    	return _time_array;
 	}
 
 	compute_validity = function(range_array){
