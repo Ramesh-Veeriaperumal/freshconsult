@@ -2084,6 +2084,13 @@ Helpkit::Application.routes.draw do
         end
       end
       
+      resources :subscription_announcements, :only => [:create,:index] do 
+        collection do 
+          put 'update'
+          delete 'destroy'
+        end
+      end
+      
     end
   end
 
