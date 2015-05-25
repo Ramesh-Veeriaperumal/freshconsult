@@ -111,6 +111,14 @@ class Solution::FoldersController < ApplicationController
     end
   end
 
+  def visible_to
+    p "#"*50, "Inside Visible to"
+    change_visibility
+    # respond_to do |format|
+    #   format.js
+    # end
+  end
+
  protected
 
   def scoper #possible dead code
@@ -178,12 +186,47 @@ class Solution::FoldersController < ApplicationController
 
     def validate_customers
       customer_ids = params[nscname][:customer_folders_attributes][:customer_id] || []
-      customer_ids = current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id) unless customer_ids.blank?
+      customer_ids = valid_customers(customer_ids) unless customer_ids.blank?
       params[nscname][:customer_folders_attributes][:customer_id] = customer_ids.blank? ? [] : customer_ids
     end
 
     def set_modal
       @modal = true if request.xhr?
+    end
+
+    def visibility_validate?
+      Solution::Folder::VISIBILITY.map { |v| v[2]}.include?(params[:visibility].to_i)
+    end
+
+    # def valid_folders
+    #   current_account.folders.find_all_by_id(params[:folderIds], :select => "id").map(&:id)
+    # end
+
+    def valid_customers(customer_ids)
+      current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id)
+    end
+
+    def change_visibility
+      return unless visibility_validate?
+      
+      visibility = params[:visibility].to_i
+      customer_ids, add_to_existing = [], false
+      if params[:visibility].to_i == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+        customer_ids = valid_customers(params[:companies])
+        if customer_ids.blank?
+          flash[:notice] = "You haven't selected any valid companies."
+          return
+        end
+        add_to_existing = (params[:addToExisting].to_i == 1)
+      end
+      
+      @folders = current_account.folders.find_all_by_id(params[:folderIds])
+      @folders.each do |folder|
+        if folder.add_visibility(visibility, customer_ids, add_to_existing)
+          p "Successfully inside add visibility"
+          flash[:notice] = "Successfully changed the visibility."
+        end
+      end
     end
 
 end

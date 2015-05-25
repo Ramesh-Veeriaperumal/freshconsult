@@ -1,4 +1,4 @@
-    
+
 @import "../../settings/settings";
 /* Solution header related styles */
 .pseudo-circle{
@@ -471,6 +471,15 @@
 	  	height: 100%;
 	  	border-left: 1px solid #ccc;
 	  	padding: 5px 10px;
+	  	margin-left: 10px;
+	  	
+	  	.autocomplete_filter .select2-container {
+	  		width: 100%;
+	  	}
+	  	.company-form-submit-btns {
+	  		margin-top: 20px;
+	  		margin-bottom: 0px;
+	  	}
 	  }
 	  li a {
 	  	padding: 6px 10px 6px 25px;
@@ -483,7 +492,7 @@
 	  	.replace-existing {
 	  		display: inline-block;
 	  		margin-right: 10px;
-			  padding-left: 1px;
+			  padding-left: 2px;
 	  		label {
 	  			padding-left: 4px;
   			  display: inline-block;

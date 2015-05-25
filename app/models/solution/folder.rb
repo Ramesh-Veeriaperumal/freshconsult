@@ -23,7 +23,7 @@ class Solution::Folder < ActiveRecord::Base
   
   after_create :clear_cache
   after_destroy :clear_cache
-  after_update :clear_cache_with_conditions
+  # after_update :clear_cache_with_conditions
 
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
@@ -136,6 +136,12 @@ class Solution::Folder < ActiveRecord::Base
     Resque.enqueue(Search::IndexUpdate::FolderArticles, { :current_account_id => account_id, :folder_id => id })
   end
 
+  def add_visibility(visibility, customer_ids, add_to_existing)
+    add_companies(customer_ids, add_to_existing) if visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+    self.visibility = visibility
+    save
+  end
+
   private
     def populate_account
       self.account = category.account
@@ -159,6 +165,13 @@ class Solution::Folder < ActiveRecord::Base
     
     def clear_cache_with_condition
       account.clear_solution_categories_from_cache unless (self.changes.keys & ['name', 'category_id', 'position']).empty?
+    end
+
+    def add_companies(customer_ids, add_to_existing)
+      customer_folders.destroy_all unless add_to_existing
+      customer_ids.each do |cust_id|
+        customer_folders.build({:customer_id =>cust_id})
+      end
     end
 
 end

@@ -154,7 +154,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
-    resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :visible_to]
     resource :"solution/draft", :only => [:autosave, :index, :destroy, :publish, :attachments_delete]
   end
 

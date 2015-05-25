@@ -8,6 +8,7 @@ window.App = window.App || {};
   App.Solutions.Folder = {
     
     data: {},
+    submitData: {},
 
     onVisit: function (data) {
       console.log("Loaded the folder.js");
@@ -31,7 +32,7 @@ window.App = window.App || {};
     },
 
     getSelectedFolderIds: function () {
-      this.data.selectedFolderIds = $('.item_ids_checkbox:checked').map(function(_, el) {
+      this.data.folderIds = $('.item_ids_checkbox:checked').map(function(_, el) {
         return $(el).val();
       }).get();
     },
@@ -74,11 +75,13 @@ window.App = window.App || {};
 
     allSelectAction: function (checked) {
       $(".item_ids_checkbox").attr('checked', checked);
-      this.toggleActionsClass(!checked);
+      this.selectedFoldersCount();
     },
 
     visibleToSelection: function (data) {
-      this.data.visibility = data.visibility;
+      this.submitData = {};
+      this.submitData.visibility = data.visibility;
+      this.data.visibleToUrl = data.url;
       if ( data.visibility === 4) {
         this.toggleCompanyClass(true);
         this.eventsForCompanySelect();
@@ -119,19 +122,43 @@ window.App = window.App || {};
     },
 
     getCompanyData: function () {
-      if ( this.data.visibility == 4 ) {
-        this.data.companies = $("#customers_filter").val();
-        this.data.addToExisting = $(".right-select-companies .add-to-existing:checked").val();
+      if ( this.submitData.visibility == 4 ) {
+        this.submitData.companies = $("#customers_filter").val();
+        this.submitData.addToExisting = $(".right-select-companies .add-to-existing:checked").val();
       }
+      this.submitData.folderIds = this.data.folderIds;
     },
 
     visibleToSubmit: function () {
+      var $this = this;
       this.preVisibleToSubmitActions();
-      console.log(" Visibility : "+ this.data.visibility);
-      if (this.data.visibility == 4 ) {
-        console.log(" Companies : "+ this.data.companies);
-        console.log(" Add To Existing : "+ this.data.addToExisting); 
-      }
+      this.loadingAnimation();
+
+
+      console.log("Visibility : ");
+      console.log(this.submitData);
+      
+
+      $.ajax({
+        url: $this.data.visibleToUrl,
+        type: 'POST',
+        data: this.submitData,
+        dataType: "script",
+        success: $.proxy(this.onSaveSuccess, this),
+        error: $.proxy(this.onSaveError, this)
+      });
+    },
+
+    onSaveSuccess: function () {
+      console.log("success");
+    },
+
+    onSaveError: function () {
+      console.log("error");
+    },
+
+    loadingAnimation: function () {
+
     }
 
 

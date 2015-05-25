@@ -22,7 +22,8 @@
 						<ul>
 							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
 								<li>
-									<%= link_to visibility[0], "#", :class => "visibility-selector", "data-visibility" => visibility[1] %>
+									<%= link_to visibility[0], "#", :class => "visibility-selector", "data-visibility" => visibility[1],
+									"data-url" => "#{visible_to_solution_folders_path}" %>
 								</li> 
 							<% end %>
 						</ul>
@@ -45,9 +46,9 @@
 									<%= label_tag :add_to_existing, "Replace Existing" %>
 								</div>
 							</div>
-							<div class="control-group row-fluid">
+							<div class="control-group row-fluid company-form-submit-btns">
 									<div class="pull-right">
-										<%= link_to t('cancel'), "#", :class => "btn", :id => "company-cancel" %> 
+										<input type="reset" class="btn" id="company-cancel" value="<%= t('cancel') %>" />
 										<%= submit_tag t('save'), :name => "save", :class => "btn btn-primary", :id => "company-submit" %>
 									</div>
 							</div>
