@@ -467,17 +467,6 @@ var scrollToError = function(){
 // End of Due-by time JS
 
 
-//Show alert on sending a reply to DM as a tweet
-	$('body').on('click.ticket_details', '#tweet-reply-btn', function(e) {
-		tweet_type = $(this).data('tweet-type');
-    if(tweet_type == 'dm' && jQuery("#tweet_type_selector").is(':hidden')){
-      confirm_message = $(this).data('confirm-message');
-      if(!confirm(confirm_message)){
-      	e.stopImmediatePropagation();
-      }
-    }
-	});
-
 	if (jQuery('.requester-info-sprite').length < 2) {
 		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
 	}
@@ -656,19 +645,16 @@ var scrollToError = function(){
 			success: function(data){ 
 				if (data.user_follows == true)
 				{
-					$('#tweet_type_selector').show();
 					$('#not_following_message').hide();
 				}
 				else
 				{
-					$('#tweet_type_selector').hide();
-					$('#tweet_type').val(':mention');
 					$('#not_following_message').html(data.user_follows)
 					$('#not_following_message').show();
 				}
 			}
 		});
-	}); 
+	});  
 
 	//End of Twitter Replybox JS
 
