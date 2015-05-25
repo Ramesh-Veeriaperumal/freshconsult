@@ -1,25 +1,31 @@
 <% if @drafts %>
+<% my_drafts = @drafts.drafts_by_user(current_user) %>
 <div class="solutions-widget-header">
   <div class="sidebar-dropdown">
     <div data-tabs='tabs'>
       <ul role="tablist">
         <li class="dropdown">
           <h5 class="dropdown-toggle" data-toggle="dropdown">
-            <span class="widget-filter"><%=t('solution.sidebar.drafts.me').html_safe%></span>
-            <span class="caret"></span>
+            <% title = my_drafts.blank? ? t('solution.sidebar.drafts.all') : t('solution.sidebar.drafts.me') %> 
+            <span class="widget-filter drafts-filter-title"><%= title %></span>
+            <% unless my_drafts.blank? %>
+              <span class="caret"></span>
+            <% end %>
           </h5>
-          <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
-            <li class="widget-filter">
-              <a class="item" href="#drafts-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
-              <%=t('solution.sidebar.drafts.me').html_safe%>
-              </a>
-            </li>
-            <li class="widget-filter">
-              <a class="item" href="#drafts-all" data-hash-url="false" data-toggle="tab"  ul_class="tick">
-                <%=t('solution.sidebar.drafts.all').html_safe%>
-              </a>
-            </li>
-          </ul>
+          <% unless my_drafts.blank? %>
+            <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+              <li class="widget-filter">
+                <a class="item drafts-filter-me" href="#drafts-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                <%=t('solution.sidebar.drafts.me').html_safe%>
+                </a>
+              </li>
+              <li class="widget-filter drafts-filter-all">
+                <a class="item" href="#drafts-all" data-hash-url="false" data-toggle="tab"  ul_class="tick">
+                  <%=t('solution.sidebar.drafts.all').html_safe%>
+                </a>
+              </li>
+            </ul>
+          <% end %>
         </li>
       </ul>
   </div>
@@ -27,9 +33,10 @@
   <span class="lead lead-small"><%=t('solution.sidebar.drafts.title').html_safe%></span>
 </div>
 <div class="tab-content">
-  <div class='tab-pane active' id='drafts-me'> 
+  <% active = my_drafts.blank? ? '' : 'active' %>
+  <div class='tab-pane <%= active %>' id='drafts-me'> 
       <ul class="a-list">
-      <% @drafts.first(3).each do |a| %>
+      <% my_drafts.first(3).each do |a| %>
         <li class="a-item medrafts">
            <div>
               <span>
@@ -42,14 +49,14 @@
             </div>
         </li>
       <% end %>
-    <% if @drafts.size > 3 %>
+    <% if my_drafts.size > 3 %>
       <li class="a-item">
         <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all') %>
       </li>
     <% end %>
     </ul>
   </div>
-  <div class='tab-pane' id='drafts-all'> 
+  <div class='tab-pane <%= 'active' if active.empty? %>' id='drafts-all'> 
       <ul class="a-list">
       <% @drafts.first(3).each do |a| %>
         <li class="a-item me all">

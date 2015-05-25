@@ -2417,6 +2417,7 @@ en:
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
+    more_catogories: "View more on other products..."
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: Select a product portal...

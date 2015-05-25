@@ -36,10 +36,20 @@ window.App = window.App || {};
         this.current_module = 'Folder';
         break;
       case "solution/categories/index":
-        $('#solution-home-sidebar').trigger('afterShow');
+        this.configureSidebar();
         break;
       }
 
+    },
+
+    configureSidebar: function() {
+      $('#solution-home-sidebar').trigger('afterShow');
+      $("body").on('click', '.drafts-filter-me, .drafts-filter-all', function(e){
+        $('.drafts-filter-title').text(e.target.text)
+      });
+      $("body").on('click', '.feedbacks-filter-me, .feedbacks-filter-all', function(e){
+        $('.feedbacks-filter-title').text(e.target.text)
+      });
     },
 
     onLeave: function (data) {

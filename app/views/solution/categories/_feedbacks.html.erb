@@ -1,25 +1,31 @@
 <% if @feedbacks %>
+  <% my_feedbacks = @feedbacks.article_tickets_by_user(current_user) %>
   <div class="solutions-widget-header">
     <div class="sidebar-dropdown">
         <div data-tabs='tabs'>
             <ul role="tablist">
               <li class="dropdown">
                 <h5 class="dropdown-toggle" data-toggle="dropdown">
-                  <span class="widget-filter"><%=t('solution.sidebar.feedbacks.me')%></span>
-                  <span class="caret"></span>
+                  <% title = my_feedbacks.blank? ? t('solution.sidebar.feedbacks.all') : t('solution.sidebar.feedbacks.me') %> 
+                  <span class="widget-filter feedbacks-filter-title"><%= title %></span>
+                  <% unless my_feedbacks.blank? %>
+                    <span class="caret"></span>
+                  <% end %>
                 </h5>
-                <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
-                <li class="widget-filter">
-                  <a class="item" href="#feedbacks-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
-                    <%=t('solution.sidebar.feedbacks.me')%>
-                  </a>
-                </li>
-              <li class="widget-filter">
-                <a class="item" href="#feedbacks-all" data-hash-url="false" data-toggle="tab" ul_class="tick">
-                  <%=t('solution.sidebar.feedbacks.all')%>
-                </a>
-                </li>
-            </ul>
+                <% unless my_feedbacks.blank? %>
+                  <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="widget-filter">
+                      <a class="item feedbacks-filter-me" href="#feedbacks-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                        <%=t('solution.sidebar.feedbacks.me')%>
+                      </a>
+                    </li>
+                    <li class="widget-filter feedbacks-filter-all">
+                      <a class="item" href="#feedbacks-all" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                        <%=t('solution.sidebar.feedbacks.all')%>
+                      </a>
+                    </li>
+                  </ul>
+                <% end %>
               </li>
             </ul>
         </div>
@@ -28,13 +34,15 @@
  </div>
 
   <div class="tab-content">
-    <div class='tab-pane active' id='feedbacks-me'>
+    <% active = my_feedbacks.blank? ? '' : 'active' %>
+    <div class='tab-pane <%= active %>' id='feedbacks-me'>
         <ul class="a-list">
-        <% @feedbacks.first(3).each do |f| %>
+        <% my_feedbacks.first(3).each do |f| %>
           <li class="a-item">
              <div>
                 <span>
-                  <%= pjax_link_to(f.subject.truncate(27), helpdesk_ticket_path(f),{:class => "a-title"}) %>
+                  <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27),
+                                   helpdesk_ticket_path(f),{:class => "a-title"}) %>
                 </span>
                 <span class="label pull-right label-light"><%= f.status_name %></span> 
                 <div class="muted a-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
@@ -42,7 +50,7 @@
               </div>
           </li>
         <% end %>
-      <% if @feedbacks.size > 3 %>
+      <% if my_feedbacks.size > 3 %>
         <li class="a-item">
           <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/my_article_feedback" %>
         </li>
@@ -50,13 +58,14 @@
       </ul>
     </div>
 
-    <div class='tab-pane' id='feedbacks-all'>
+    <div class='tab-pane <%= 'active' if active.empty? %>' id='feedbacks-all'>
         <ul class="a-list">
         <% @feedbacks.first(3).each do |f| %>
           <li class="a-item">
              <div>
                 <span>
-                  <%= pjax_link_to(f.subject.truncate(27), helpdesk_ticket_path(f),{:class => "a-title"}) %>
+                  <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27), 
+                                    helpdesk_ticket_path(f),{:class => "a-title"}) %>
                 </span>
                 <span class="label pull-right label-light"><%= f.status_name %></span> 
                 <div class="muted a-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,

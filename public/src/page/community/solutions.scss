@@ -512,10 +512,15 @@
 	font-weight: 500;
 }
 
-.sol-sticky-content {
-	overflow: hidden;
-	padding: 0 20px;
-	padding-top: 10px;
-	border-bottom: 1px solid #eee;
-	box-shadow: 0 6px 9px -3px #848484;
+.sol-sticky {
+	padding: 10px 20px 0px;
+	margin-left: -20px;
+	margin-right: -20px;
+}
+
+.view-more-cat{
+	border-top:1px solid #eee;
+	padding-top:10px;
+	text-align: center;
+	width:100%;
 }
