@@ -310,6 +310,9 @@ Style/GlobalVars:
   Exclude:
    - test/**/*.rb
 
+Lint/EndAlignment:
+  AutoCorrect: true
+
 Style/LambdaCall:
   Enabled: false
   Exclude:

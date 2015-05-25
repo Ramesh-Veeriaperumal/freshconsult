@@ -2,7 +2,7 @@
 
 # class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
 #   def test_create_post_in_a_new_category
-    
+
 #   end
 
 #   def test_delete_category_deletes_dependents

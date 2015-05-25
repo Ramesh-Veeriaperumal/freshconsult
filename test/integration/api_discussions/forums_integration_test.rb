@@ -1,25 +1,23 @@
 require_relative '../../test_helper'
 
 class ForumsIntegrationest < ActionDispatch::IntegrationTest
-
   def test_query_count
-
     v2 = {}
     v1 = {}
     v2_expected = {
-      :create => 8,
-      :show => 4,
-      :update => 8,
-      :destroy => 13,
-      :follow => 9,
-      :unfollow => 9,
-      :is_following => 3,
-      :topics => 4
+      create: 8,
+      show: 4,
+      update: 8,
+      destroy: 13,
+      follow: 9,
+      unfollow: 9,
+      is_following: 3,
+      topics: 4
     }
 
     # create
-    v1[:create] = count_queries { post("/discussions/forums.json", v1_forum_payload, @write_headers) }
-    v2[:create], v2[:api_create] = count_api_queries { post("/api/discussions/forums", v2_forum_payload, @write_headers) }
+    v1[:create] = count_queries { post('/discussions/forums.json', v1_forum_payload, @write_headers) }
+    v2[:create], v2[:api_create] = count_api_queries { post('/api/discussions/forums', v2_forum_payload, @write_headers) }
 
     id1 = Forum.last(2).first.id
     id2 = Forum.last.id

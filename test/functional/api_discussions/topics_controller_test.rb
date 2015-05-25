@@ -385,12 +385,12 @@ module ApiDiscussions
     end
 
     def test_update
-      forum = Forum.where(:forum_type => 2).first
+      forum = Forum.where(forum_type: 2).first
       topic = first_topic
-      params = {:title => "New", :message_html => "New msg",
-       :stamp_type => Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
-       :sticky => !topic.sticky, :locked => !topic.locked, :forum_id => forum.id}
-      put :update, construct_params({:id => topic.id}, params)
+      params = { title: 'New', message_html: 'New msg',
+                 stamp_type: Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
+                 sticky: !topic.sticky, locked: !topic.locked, forum_id: forum.id }
+      put :update, construct_params({ id: topic.id }, params)
       match_json(topic_pattern(topic.reload))
       match_json(topic_pattern(params, topic))
       assert_response :success

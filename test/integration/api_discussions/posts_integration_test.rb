@@ -1,21 +1,19 @@
 require_relative '../../test_helper'
 
 class PostsIntegrationTest < ActionDispatch::IntegrationTest
-
   def test_query_count
-
     v2 = {}
     v1 = {}
     v2_expected = {
-      :create => 6,
-      :update => 3,
-      :destroy => 9
+      create: 6,
+      update: 3,
+      destroy: 9
     }
     t = Topic.first
 
     # create
     v1[:create] = count_queries { post("/discussions/topics/#{t.id}/posts.json", v1_post_payload(t), @write_headers) }
-    v2[:create], v2[:api_create] = count_api_queries { post("/api/discussions/posts", v2_post_payload(t), @write_headers) }
+    v2[:create], v2[:api_create] = count_api_queries { post('/api/discussions/posts', v2_post_payload(t), @write_headers) }
 
     id1 = Post.last(2).first.id
     id2 = Post.last.id

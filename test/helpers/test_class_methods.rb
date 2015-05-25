@@ -24,14 +24,14 @@ module TestClassMethods
     @write_headers = @headers.merge('CONTENT_TYPE' => 'application/json')
   end
 
-  def count_api_queries(&block)
+  def count_api_queries
     QueryCounter.total_query_count = 0
     QueryCounter.api_query_count = 0
     yield
     [QueryCounter.total_query_count, QueryCounter.api_query_count]
   end
 
-  def count_queries(&block)
+  def count_queries
     QueryCounter.total_query_count = 0
     yield
     QueryCounter.total_query_count

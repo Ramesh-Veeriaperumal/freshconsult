@@ -1,24 +1,22 @@
 require_relative '../../test_helper'
 
 class TopicsIntegrationest < ActionDispatch::IntegrationTest
-
   def test_query_count
-
     v2 = {}
     v1 = {}
     v2_expected = {
-      :create => 7,
-      :show => 4,
-      :update => 12,
-      :destroy => 12,
-      :follow => 8,
-      :unfollow => 9,
-      :is_following => 3,
-      :posts => 4
+      create: 7,
+      show: 4,
+      update: 12,
+      destroy: 12,
+      follow: 8,
+      unfollow: 9,
+      is_following: 3,
+      posts: 4
     }
 
-    path = "/discussions/topics.json"
-    api_path = "/api/discussions/topics"
+    path = '/discussions/topics.json'
+    api_path = '/api/discussions/topics'
 
     # create
     v1[:create] = count_queries { post(path, v1_topics_payload, @write_headers) }
@@ -36,7 +34,7 @@ class TopicsIntegrationest < ActionDispatch::IntegrationTest
 
     # posts
     v1[:posts] = count_queries { get(id_path, nil, @headers) }
-    v2[:posts], v2[:api_posts] = count_api_queries { get(api_id_path + "/posts", nil, @headers) }
+    v2[:posts], v2[:api_posts] = count_api_queries { get(api_id_path + '/posts', nil, @headers) }
     # there is no posts method in v1
 
     # update

@@ -73,7 +73,7 @@ module ApiDiscussions
 
     def test_create_mandatory_params
       topic = topic_obj
-      post :create, construct_params({}, :body_html => 'test', :topic_id => topic.id)
+      post :create, construct_params({}, body_html: 'test', topic_id: topic.id)
       assert_response :created
       match_json(post_pattern(Post.last))
       match_json(post_pattern({ body_html: 'test', topic_id: topic.id,
@@ -107,8 +107,8 @@ module ApiDiscussions
       user = agent
       controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
       topic_obj.update_column(:locked, true)
-      params = {:body_html => "test", "topic_id" => topic_obj.id,
-       "email" => user.email}
+      params = { :body_html => 'test', 'topic_id' => topic_obj.id,
+                 'email' => user.email }
       post :create, construct_params({}, params)
       match_json(post_pattern(Post.last))
       match_json(post_pattern(params, Post.last))
