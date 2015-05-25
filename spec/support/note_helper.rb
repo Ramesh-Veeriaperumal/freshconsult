@@ -13,4 +13,12 @@ module NoteHelper
     test_note.save_note
     test_note
   end
+
+  def note_params(params_hash={})
+    params = {:body_html => Faker::Lorem.paragraph}
+    params[:private] = params_hash[:private] unless params_hash[:private].nil?
+    params[:user_id] = params_hash[:user_id] if params_hash[:user_id]
+    params.merge!({:attachments => [{:resource => params_hash[:file]}] }) unless params_hash[:file].nil?
+    {:helpdesk_note => params}
+  end
 end

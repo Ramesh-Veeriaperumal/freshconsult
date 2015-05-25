@@ -30,16 +30,16 @@
 		<div class="position">
 		    <div class="smily <%= @rating == Survey::HAPPY ? 'rating-selected' : '' %>">
 		    	<i class="smiley-happy"></i>
-		    	<span><%= t('.happy') %></span>
+		    	<span><%= @survey_handle.survey.happy_text %></span>
 			</div>
 		    <div class="smily <%= @rating == Survey::NEUTRAL ? 'rating-selected' : '' %>">
 			    <i class="smiley-neutral"></i>
-			    <span><%= t('.neutral') %></span>
+			    <span><%= @survey_handle.survey.neutral_text %></span>
 			</div>
 
 			<div class="smily <%= @rating == Survey::UNHAPPY ? 'rating-selected' : '' %>">
 	      		<i class="smiley-unhappy"></i>
-	      		<span><%= t('.unhappy') %></span>
+	      		<span><%= @survey_handle.survey.unhappy_text %></span>
 			</div>
 		</div>
 	 	

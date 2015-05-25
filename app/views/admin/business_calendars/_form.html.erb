@@ -65,6 +65,9 @@
 											<% if (end_of_workday.eql?("11:59:59") and (workday_start.eql?("12:00 am") or beginning_of_workday.eql?("00:00:00"))) %>
 												<% end_of_workday = beginning_of_workday = "12:00" %>
 												<% end_of_workday_range = beginning_of_workday_range = "am" %>
+											<% elsif end_of_workday.eql?("11:59:59") %>
+												<% end_of_workday = "12:00" %>
+												<% end_of_workday_range = "am" %>
 											<% end %>
 										<%else%>
 											<% beginning_of_workday="8:00" %>

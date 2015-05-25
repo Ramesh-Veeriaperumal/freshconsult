@@ -200,6 +200,7 @@ class Helpdesk::ConversationsController < ApplicationController
         format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type} }
         format.html { redirect_to @parent }
         format.nmobile { render :json => { :server_response => false } }
+        format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
       end
     end
     
