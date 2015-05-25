@@ -1,0 +1,2 @@
+page.replace_html "folders_list", :partial => "solution/categories/folder", :collection => @category.folders
+page << "jQuery('#gritter-notice-wrapper').remove()"

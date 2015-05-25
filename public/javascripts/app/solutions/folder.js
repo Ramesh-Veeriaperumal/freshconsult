@@ -21,18 +21,18 @@ window.App = window.App || {};
     },
 
     initialData: function () {
-      this.data.totalFolders = $(".item_ids_checkbox").length;
+      this.data.totalElements = $(".item_ids_checkbox").length;
     },
 
-    selectedFoldersCount: function () {
+    selectedElementsCount: function () {
       var count = $(".item_ids_checkbox:checked").length;
-      this.toggleSelectAll(this.data.totalFolders === count);
+      this.toggleSelectAll(this.data.totalElements === count);
       this.toggleActionsClass(!(count > 0));
-      this.getSelectedFolderIds();
+      this.getSelectedElementIds();
     },
 
-    getSelectedFolderIds: function () {
-      this.data.folderIds = $('.item_ids_checkbox:checked').map(function(_, el) {
+    getSelectedElementIds: function () {
+      this.data.selectedElementIds = $('.item_ids_checkbox:checked').map(function(_, el) {
         return $(el).val();
       }).get();
     },
@@ -58,7 +58,7 @@ window.App = window.App || {};
 
       //generic for folder listing and article listing page
       $('body').on('change.folders_articles', '.item_ids_checkbox', function () {
-        $this.selectedFoldersCount();
+        $this.selectedElementsCount();
       });
 
       $('body').on('change.folders_articles', '#fa_item-select-all', function () {
@@ -71,11 +71,69 @@ window.App = window.App || {};
         $this.visibleToSelection($(this).data());
       });
 
+      //binding for folders move to
+      $('#folder-bulk-action #move_to').on('change.folders_articles', function() {
+        console.log(this.value);
+        console.log($this.data.selectedElementIds);
+        $.ajax({
+          url: "/solution/folders/move_to",
+          type: 'PUT',
+          dataType: 'script',
+          data: {
+            categoryId: this.value,
+            foldersList: $this.data.selectedElementIds
+          },
+          success: function () {
+            console.log('success');
+           }
+         });
+        $('#move_to').select2("val", "");
+      });
+
+      //binding for articles move to
+      $('#article-bulk-action #move_to').on('change.folders_articles', function() {
+        console.log(this.value);
+        console.log($this.data.selectedElementIds);
+        $.ajax({
+          url: "/solution/articles/move_to",
+          type: 'PUT',
+          dataType: 'script',
+          data: {
+            folderId: this.value,
+            articlesList: $this.data.selectedElementIds
+          },
+          success: function () {
+            console.log('success');
+           }
+         });
+        $('#move_to').select2("val", "");
+      });
+
+      //binding for change author
+      $('#change_author').on('change.folders_articles', function () {
+        console.log(this.value);
+        console.log($this.data.selectedElementIds);
+        $.ajax({
+          url: "/solution/articles/change_author",
+          type: 'PUT',
+          dataType: 'script',
+          data: {
+            userId: this.value,
+            articlesList: $this.data.selectedElementIds
+          },
+          success: function () {
+            console.log('success');
+           }
+         });
+        $('#change_author').select2("val", "");
+        $('#change_author').removeClass('select2-container-active');
+      });
+
     },
 
     allSelectAction: function (checked) {
       $(".item_ids_checkbox").attr('checked', checked);
-      this.selectedFoldersCount();
+      this.selectedElementsCount();
     },
 
     visibleToSelection: function (data) {
@@ -126,7 +184,7 @@ window.App = window.App || {};
         this.submitData.companies = $("#customers_filter").val();
         this.submitData.addToExisting = $(".right-select-companies .add-to-existing:checked").val();
       }
-      this.submitData.folderIds = this.data.folderIds;
+      this.submitData.folderIds = this.data.selectedElementIds;
     },
 
     visibleToSubmit: function () {
@@ -159,8 +217,10 @@ window.App = window.App || {};
 
     loadingAnimation: function () {
 
+    },
+
+    removeElementsAfterMoveTo: function () {
+      $('li:has(input[type=checkbox]:checked)').remove();
     }
-
-
   };
 }(window.jQuery));

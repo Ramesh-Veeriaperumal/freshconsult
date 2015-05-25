@@ -16,6 +16,8 @@ class Solution::ArticlesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
   before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
+  before_filter :old_folder, :only => [:move_to]
+  before_filter :bulk_update_folder, :only => [:move_to, :unmove]
   
 
   def index
@@ -133,6 +135,37 @@ class Solution::ArticlesController < ApplicationController
   def voted_users
     @article = current_account.solution_articles.find(params[:id], :include =>[:votes => :user])
     render :layout => false
+  end
+
+  def move_to
+    flash[:notice] = render_to_string(
+      :inline => t("solution.flash.articles_move_to",
+                      :undo => "<%= link_to(t('undo'), { :action => :unmove, :articlesList => params[:articlesList], :folderId => @folder_id }, { :'data-remote' => true, :'data-method' => :put }) %>"
+                  )).html_safe
+
+    respond_to do |format|
+      format.js { render 'solution/articles/move_to.rjs' }
+    end
+  end
+
+  def unmove
+    @folder = current_account.folders.find(params[:folderId])
+    respond_to do |format|
+      format.js { render 'solution/articles/unmove.rjs' }
+    end
+  end
+
+  def change_author
+    params[:articlesList].each do |a|
+      @item = current_account.solution_articles.find(a)
+      @item.user_id = params[:userId]
+      @item.save
+    end
+    @articles = current_account.solution_articles.find_all_by_id(params[:articlesList])
+    flash[:notice] = t("solution.flash.articles_changed_author")
+    respond_to do |format|
+      format.js { render 'solution/articles/change_author.rjs' }
+    end
   end
 
   protected
@@ -321,5 +354,16 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
+    def bulk_update_folder
+      params[:articlesList].each do |a|
+        item = current_account.solution_articles.find(a)
+        item.folder_id = params[:folderId]
+        item.save
+      end
+    end
+
+    def old_folder
+      @folder_id = current_account.solution_articles.find(params[:articlesList].first).folder_id
+    end
 
 end

@@ -3254,7 +3254,11 @@ en:
     add_article: New Article
     view_feedback: View all feedbacks
     change_author: Change Author
-    details: "By %{user_name}, %{time_ago}"
+    details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    flash:
+      folders_move_to: "Folders have been moved to the selected category %{undo}"
+      articles_move_to: "Articles have been moved to the selected folder %{undo}"
+      articles_changed_author: Author has been succesfully changed
     general:
       created_by: Created by
       last_edited: Last Edited by

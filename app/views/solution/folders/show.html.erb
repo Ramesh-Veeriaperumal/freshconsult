@@ -25,7 +25,7 @@
       <input name="reorderlist" type="hidden" value="" />
       <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @folder.category.id %>" />
       <input name="folder_id" id="reorder_folder_id" type="hidden" value="<%= @folder.id %>" />
-      <ul class="row-fluid" rel="sortlist">
+      <ul class="row-fluid" rel="sortlist" id="articles_list">
         <%= render(:partial => "article", :collection => @folder.articles) %>
       </ul>
     <% end %>

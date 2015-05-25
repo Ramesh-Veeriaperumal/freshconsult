@@ -1,0 +1,2 @@
+page << "App.Solutions.Folder.removeElementsAfterMoveTo()"
+show_growl_flash(page)

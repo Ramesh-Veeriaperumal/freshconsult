@@ -23,7 +23,7 @@ class Solution::Folder < ActiveRecord::Base
   
   after_create :clear_cache
   after_destroy :clear_cache
-  # after_update :clear_cache_with_conditions
+  after_update :clear_cache_with_condition
 
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",

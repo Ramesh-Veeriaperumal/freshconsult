@@ -1,0 +1,5 @@
+@articles.each do |article|
+	page.replace "item_"+article.id.to_s, render(:partial => "/solution/folders/article", :locals => {:article => article}).html_safe
+end
+
+show_growl_flash(page)

@@ -14,6 +14,8 @@ class Solution::FoldersController < ApplicationController
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
   before_filter :set_modal, :only => [:new, :edit]
+  before_filter :old_category, :only => [:move_to]
+  before_filter :bulk_update_category, :only => [:move_to, :unmove]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -117,6 +119,24 @@ class Solution::FoldersController < ApplicationController
     # respond_to do |format|
     #   format.js
     # end
+  end
+
+  def move_to
+    flash[:notice] = render_to_string(
+      :inline => t("solution.flash.folders_move_to",
+                      :undo => "<%= link_to(t('undo'), { :action => :unmove, :foldersList => params[:foldersList], :categoryId => @category_id }, { :'data-remote' => true, :'data-method' => :put }) %>"
+                  )).html_safe
+
+    respond_to do |format|
+      format.js { render 'solution/folders/move_to.rjs' }
+    end
+  end
+
+  def unmove
+    @category = current_account.solution_categories.find(params[:categoryId])
+    respond_to do |format|
+      format.js { render 'solution/folders/unmove.rjs' }
+    end
   end
 
  protected
@@ -227,6 +247,18 @@ class Solution::FoldersController < ApplicationController
           flash[:notice] = "Successfully changed the visibility."
         end
       end
+    end
+
+    def bulk_update_category
+      params[:foldersList].each do |f|
+        item = current_account.folders.find(f)
+        item.category_id = params[:categoryId]
+        item.save
+      end
+    end
+
+    def old_category
+      @category_id = current_account.folders.find(params[:foldersList].first).category_id
     end
 
 end

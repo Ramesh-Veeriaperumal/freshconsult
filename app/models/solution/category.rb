@@ -35,7 +35,7 @@ class Solution::Category < ActiveRecord::Base
   after_create :assign_portal, :clear_cache
   after_destroy :clear_cache
   
-  after_update :clear_cache_with_conditions
+  after_update :clear_cache_with_condition
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time

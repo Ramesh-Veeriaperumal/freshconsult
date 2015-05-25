@@ -8,7 +8,7 @@
 		<li class="lf-item lf-btns faded" id="folder-bulk-action">
 			<span>
 		    <%= select_tag :id,
-		          options_for_select(current_account.solution_categories.map(&:name)), {
+		          options_for_select(current_account.solution_categories.reject { |sc| sc.is_default? || sc.id == @category.id }.collect{|c|[c.name, c.id]}), {
 		              :class => "disabled moveto_btn bulk-action-btns select2",
 		              :id => "move_to",
 		              :include_blank => true,

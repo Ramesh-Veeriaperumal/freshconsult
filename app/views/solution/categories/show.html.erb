@@ -32,7 +32,7 @@
 		<%= form_for @category.folders, :url => reorder_solution_folders_path(@category), :html => { :method => :put, :class => "form-reorder" } do |f| %>
 		  <input name="reorderlist" type="hidden" value="" />
 		  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
-		  <ul class="row-fluid" rel="sortlist">
+		  <ul class="row-fluid" rel="sortlist" id="folders_list">
 				<%= render(:partial => "folder", :collection => @category.folders) %>
 			</ul>
 		<% end %>
