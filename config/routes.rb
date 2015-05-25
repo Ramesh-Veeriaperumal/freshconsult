@@ -2003,6 +2003,9 @@ Helpkit::Application.routes.draw do
       resources :subscriptions, :only => [:none] do
         collection do
           get :display_subscribers
+          get :customers
+          get :customer_summary
+          get :deleted_customers
         end
       end
 
