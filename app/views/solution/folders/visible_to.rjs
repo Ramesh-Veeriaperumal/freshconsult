@@ -1,0 +1,4 @@
+show_growl_flash(page)
+@folders.each do |folder|
+	page.replace "item_"+folder.id.to_s, render(:partial => "/solution/categories/folder", :locals => {:folder => folder}).html_safe
+end
