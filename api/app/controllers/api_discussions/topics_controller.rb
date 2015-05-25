@@ -45,8 +45,10 @@ module ApiDiscussions
     def assign_user_and_parent(item, parent, value)
       if @email.present?
         item.user = @user
+      elsif params[cname][:user_id]
+        item.user_id ||= params[cname][:user_id]
       else
-        item.user_id ||= (params[cname][:user_id] || current_user.id)
+        item.user ||= current_user
       end
       if item.has_attribute?(parent.to_sym)
         item.send(:write_attribute, parent, value[parent]) if value.key?(parent)

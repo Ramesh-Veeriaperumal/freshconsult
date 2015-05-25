@@ -7,8 +7,10 @@ module ApiDiscussions
     def create
       if @email.present?
         @post.user = @user
+      elsif params[cname][:user_id]
+        @post.user_id ||= params[cname][:user_id]
       else
-        @post.user_id ||= (params[cname][:user_id] || current_user.id)
+        @post.user = current_user
       end
       super
     end

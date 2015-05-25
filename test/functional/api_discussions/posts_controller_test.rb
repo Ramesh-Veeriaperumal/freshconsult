@@ -72,10 +72,11 @@ module ApiDiscussions
     end
 
     def test_create_mandatory_params
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id)
+      topic = topic_obj
+      post :create, construct_params({}, :body_html => 'test', :topic_id => topic.id)
       assert_response :created
       match_json(post_pattern(Post.last))
-      match_json(post_pattern({ body_html: 'test', topic_id: topic_obj.id,
+      match_json(post_pattern({ body_html: 'test', topic_id: topic.id,
                                 user_id: @agent.id }, Post.last))
     end
 
@@ -113,7 +114,7 @@ module ApiDiscussions
       match_json(post_pattern(params, Post.last))
       assert_response :created
       topic_obj.update_column(:locked, false)
-      @agent.unstub(:can_assume?)
+      controller.class.any_instance.unstub(:is_allowed_to_assume?)
     end
 
     def test_create_invalid_model

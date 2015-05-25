@@ -46,7 +46,7 @@ module TestCaseMethods
   end
 
   def other_user
-    User.where('id != ?', @agent.id).first || add_new_user(@account)
+    User.select{|x| @agent.can_assume?(x)}.first || create_dummy_customer
   end
 
   def user_without_monitorships
@@ -68,8 +68,7 @@ module TestCaseMethods
     { :forum_id => f.id, :title => Faker::Name.name }
   end
 
-  def post_params
-    t = Topic.first
+  def post_params(t)
     {:body_html => Faker::Lorem.paragraph, :topic_id => t.id}
   end
 
@@ -82,7 +81,6 @@ module TestCaseMethods
   end
 
   def v2_forum_payload
-    
     forum_params.to_json
   end
 
@@ -98,12 +96,12 @@ module TestCaseMethods
     topic_params.merge(:message_html => Faker::Lorem.paragraph).to_json
   end
 
-  def v1_post_payload
-    {:post => post_params}.to_json
+  def v1_post_payload(t)
+    {:post => post_params(t)}.to_json
   end
 
-  def v2_post_payload
-    post_params.to_json
+  def v2_post_payload(t)
+    post_params(t).to_json
   end
 end
 
