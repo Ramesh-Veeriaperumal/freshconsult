@@ -2,6 +2,6 @@ module Social
   class TrialTwitterWorker < Social::TwitterWorker
     
     
-    sidekiq_options :queue => :trail_twitter, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :trial_twitter, :retry => 0, :backtrace => true, :failures => :exhausted
   end
 end

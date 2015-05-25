@@ -15,8 +15,8 @@ defaults: &defaults
     - [twitter]
     - [premium_twitter]
     - [sla_scheduler]
-    - [trail_facebook]
-    - [trail_twitter]
+    - [trial_facebook]
+    - [trial_twitter]
     - [custom_twitter]
     - [default]
 
@@ -26,8 +26,12 @@ development:
 staging:
   <<: *defaults
 
+production:
+  <<: *defaults
+
 slave:
   <<: *defaults
 
 test:
   <<: *defaults
+
