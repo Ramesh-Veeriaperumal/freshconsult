@@ -57,7 +57,7 @@ class Admin::GettingStartedController < Admin::AdminController
 
     def twitter_wrapper
       @wrapper = TwitterWrapper.new @twitter_item, {:current_account => current_account,
-                                             :callback_url => authdone_social_twitters_url }
+                                             :callback_url => authdone_admin_social_twitters_url }
     end
   
     def build_twitter_item
