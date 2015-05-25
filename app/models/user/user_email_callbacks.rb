@@ -85,7 +85,7 @@ class User < ActiveRecord::Base
           reset_primary_email(current_primary.id) if current_primary.email != primary_email.email
         else
           current_primary.primary_role = true
-          self.primary_email = current_primary
+          #self.primary_email = current_primary
         end
         self.email = current_primary.email
       else

@@ -85,8 +85,11 @@ class Account < ActiveRecord::Base
 
   has_one :subscription
   has_many :subscription_payments
+  has_many :portal_solution_categories, :class_name => "PortalSolutionCategory"
   has_many :solution_categories, :class_name =>'Solution::Category', :include =>:folders, :order => "solution_categories.position"
+  has_many :solution_category_meta, :class_name =>'Solution::CategoryMeta', :include =>:solution_folder_meta, :order => "solution_category_meta.position"
   has_many :solution_articles, :class_name =>'Solution::Article'
+  has_many :solution_article_meta, :class_name =>'Solution::ArticleMeta'
   has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'
 
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
@@ -147,6 +150,9 @@ class Account < ActiveRecord::Base
   has_many :posts
 
   has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories
+  #The following is a duplicate association. Added this for metaprogramming
+  has_many :solution_folders, :class_name =>'Solution::Folder', :through => :solution_categories
+  has_many :solution_folder_meta, :class_name =>'Solution::FolderMeta', :through => :solution_category_meta
   has_many :public_folders, :through => :solution_categories
   has_many :published_articles, :through => :public_folders,
     :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
@@ -246,6 +252,9 @@ class Account < ActiveRecord::Base
   has_many :chat_widgets
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
+  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
 
   has_many :forum_moderators
+
+  has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
 end

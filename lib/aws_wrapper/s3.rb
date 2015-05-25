@@ -32,12 +32,15 @@ module AwsWrapper
     # `keys` - Array of object keys ["sample/object1.csv", "sample/object2.csv"]
     def self.batch_delete(bucket_name, keys)
       key_hash = keys.map {|k| { key: k} }
-      $s3_client.delete_objects({
-        bucket: bucket_name,
-        delete: {
-          objects: key_hash
-        }
-      })
+      # Only 1000 keys can be deleted in a single API call
+      key_hash.each_slice(1000) do |sliced_keys|
+        $s3_client.delete_objects({
+          bucket: bucket_name,
+          delete: {
+            objects: sliced_keys
+          }
+        })
+      end
     end
     
   end

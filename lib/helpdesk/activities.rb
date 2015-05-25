@@ -90,6 +90,7 @@ private
 	ACTIVITIES_NOT_TO_COMBINE = [
 									'new_ticket', 
 									'ticket_merge', 'ticket_split', 
+									'due_date_updated',
 									'deleted', 'restored',
 									'timesheet.new', 'timesheet.timer_started', 'timesheet.timer_stopped'
 								]

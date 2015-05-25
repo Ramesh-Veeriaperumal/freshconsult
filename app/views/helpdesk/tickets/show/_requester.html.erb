@@ -5,7 +5,7 @@
 		<ul class="tkt-tabs">
 			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
 			<%
-			crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm]
+			crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks]
 			crm_apps.each do |crm_app| 
 				if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
 				<li><a href="#contact_info_<%=crm_app%>" class="requester-info-sprite requester-info-<%=crm_app%>"></a></li>
@@ -35,7 +35,7 @@
 	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
 
 		<%
-		@liquid_objects = {"requester" => @ticket.requester}
+		@liquid_objects = {"requester" => @ticket.requester, "widget_type" => "_contacts"}
 		widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) 
 		%>
 		<textarea class="hide"><div id="<%=crm_app%>"><%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %></div></textarea>

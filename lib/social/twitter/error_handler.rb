@@ -9,8 +9,12 @@ module Social::Twitter::ErrorHandler
     
     include Social::Util
 
-    def twt_sandbox(handle)
+    def twt_sandbox(handle, timeout = TwitterConfig::TWITTER_TIMEOUT)
+      
+      #overide timeout according the the env timeout values
+      timeout = TwitterConfig::TWITTER_TIMEOUT if TwitterConfig::TWITTER_TIMEOUT > timeout
       exception = nil
+      
       @social_error_msg = nil      
       begin
         @sandbox_handle = handle
@@ -22,7 +26,7 @@ module Social::Twitter::ErrorHandler
           @social_error_msg = "#{I18n.t('social.streams.twitter.handle_auth_error')}"
         end
 
-        Timeout.timeout(TwitterConfig::TWITTER_TIMEOUT) do
+        Timeout.timeout(timeout) do
           return_value = yield unless @social_error_msg
         end
 

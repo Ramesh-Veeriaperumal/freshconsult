@@ -1,5 +1,6 @@
 nb-NO: 
   meta: 
+    language_id: 17
     language_name: 'Norwegian'
   helpdesk:
     tickets:

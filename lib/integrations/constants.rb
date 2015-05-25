@@ -24,6 +24,7 @@ module Integrations::Constants
     :seoshop => "seoshop",
     :box => 'box',
     :slack => "slack",
+    :quickbooks => "quickbooks",
     :dynamicscrm => "dynamicscrm"
   }
 

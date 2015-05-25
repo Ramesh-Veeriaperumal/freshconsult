@@ -1,5 +1,6 @@
 ko:
   meta:
+    language_id: 16 
     language_name: Korean
   date:
     ago: "일 전에"
