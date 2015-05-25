@@ -49,4 +49,8 @@ module ContactsCompaniesHelper
     end
     li = content_tag(:li, (head+value), :class => 'show-field')
   end
+
+  def company_description description
+    description.gsub(/(\r\n|\n|\r)/, '<br />').html_safe
+  end
 end

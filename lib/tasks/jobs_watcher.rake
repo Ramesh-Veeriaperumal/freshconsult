@@ -1,5 +1,5 @@
 FAILED_DELAYED_JOBS_THRESHOLD = Rails.env.production? ? 100 : 2
-TOTAL_DELAYED_JOBS_THRESHOULD = Rails.env.production? ? 500 : 50
+TOTAL_DELAYED_JOBS_THRESHOULD = Rails.env.production? ? 800 : 50
 #pagerduty constants 
 TOTAL_DJ_PAGERDUTY_THRESHOULD = Rails.env.production? ? 5000 : 50
 FAILED_DJ_PAGERDUTY_THRESHOLD = Rails.env.production? ? 200 : 2

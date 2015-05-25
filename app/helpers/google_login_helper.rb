@@ -62,7 +62,7 @@ module GoogleLoginHelper
   end
 
   def verify_domain_user
-    domain_user = login_account.all_users.find_by_email(email)
+    domain_user = login_account.user_emails.user_for_email(email)
     if domain_user.blank?
       domain_user = create_user(login_account, name, email)
     elsif !domain_user.active?

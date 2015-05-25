@@ -1,25 +1,37 @@
 class User < ActiveRecord::Base
   
-  #next validations are replaced with :on => :create/:update for rails 3
+  #------User email callbacks starts here------------------------------
+  #If the user is created by API call or agent create we need to create user_email
   before_validation :create_user_email, on: :create, :if => [:email_available?]
+
+  #If email is updated for user through API or google or if the agent email is updated
+  #user_email should be updated
   before_validation :update_user_email, on: :update, :if => [:email_changed?]
+
+  #To update the verified in user_email, when the active is changed
   after_update :update_verified, :if => [:email_available?, :active_changed?]
 
-  #For user email UI feature  
+  #For user email UI feature. To assign primary email. contact form with multiple emails.
   before_validation :assign_primary_email, on: :create, :if => :has_contact_merge?
-  before_validation :update_user_table_email, on: :create, :if => :has_contact_merge?
 
-  before_validation :set_primary_email, on: :update, :if => [:has_contact_merge?]
+  #To update user table's email on user create through contact form with multiple emails
+  before_validation :update_user_table_email, on: :create, :if => :has_contact_merge?, :unless => [:email_available?]
 
+  #To update the primary email on user's update through contact form with multiple emails
+  before_validation :set_primary_email, on: :update, :if => [:has_contact_merge?], :unless => [:email_changed?]
+
+  #To remove duplicate emails. needed only for contact form with multiple emails
   before_validation :remove_duplicate_emails, :if => :has_contact_merge?
 
-  #user email related callback changes for user
-  before_update :make_inactive, :if => :email_changed?
-  after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
-  after_commit :send_activation_email, on: :update, :if => [:email_updated?]  
-
+  #Sanity check. Not enforced in production and test
   after_commit :verify_details_on_create, on: :create
   after_commit :verify_details_on_update, on: :update
+
+  #------User email callbacks ends here------------------------------
+
+  before_update :make_inactive, :if => :email_changed?
+  after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
+  after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def drop_authorization
     authorizations.each do |auth|
@@ -85,7 +97,7 @@ class User < ActiveRecord::Base
           reset_primary_email(current_primary.id) if current_primary.email != primary_email.email
         else
           current_primary.primary_role = true
-          self.primary_email = current_primary
+          #self.primary_email = current_primary
         end
         self.email = current_primary.email
       else

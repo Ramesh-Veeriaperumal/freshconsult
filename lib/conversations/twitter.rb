@@ -2,6 +2,7 @@ module Conversations::Twitter
 
   include Social::Dynamo::Twitter
   include Social::Twitter::ErrorHandler
+  include Social::Constants
 
   def send_tweet_as_mention(ticket = @parent, note = @item, tweet_body = @tweet_body)
     current_account = Account.current
@@ -18,7 +19,7 @@ module Conversations::Twitter
         :body => tweet_body,
         :in_reply_to_id => status_id
       }
-      error_msg, return_value = twt_sandbox(@reply_handle) {
+      error_msg, return_value = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) {
         twt = tweet_to_twitter(@reply_handle, tweet_params)
 
         #update dynamo
@@ -51,7 +52,7 @@ module Conversations::Twitter
       status_id = latest_tweet.tweet_id
       req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
 
-      error_msg, return_value = twt_sandbox(@reply_handle) {
+      error_msg, return_value = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) {
         twitter  = TwitterWrapper.new(@reply_handle).get_twitter
         msg_body = tweet_body
         resp = twitter.create_direct_message(req_twt_id, msg_body)

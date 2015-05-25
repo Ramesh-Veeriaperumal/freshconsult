@@ -436,8 +436,8 @@ module ApplicationHelper
     data
   end
 
-  def parse_in_time_zone(time_string) #used in rendering manual due_by change activity
-    "#{formated_date(Time.zone.parse(time_string))}".tap do |f_t| f_t.gsub!(' at', ',') end
+  def formatted_dueby_for_activity(time_in_seconds)
+    "#{formated_date(Time.zone.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
   end
 
   def target_topic_path(topic_id)

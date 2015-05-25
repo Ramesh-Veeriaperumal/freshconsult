@@ -122,7 +122,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     renderNewEmail: function() {
-      var email=$('#emails_con input.useremail').length;
+      var email=$('#emails_con input.useremail:last').parent().data("count")+1;
       var att_name="user[user_emails_attributes]["+email+"]";
       $(JST["app/contacts/add_email"]({"email" : email, "att_name" : att_name})).appendTo('ul.user_emails');
     },

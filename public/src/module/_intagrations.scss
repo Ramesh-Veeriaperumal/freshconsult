@@ -272,7 +272,8 @@
 		}
 		div > span {
 			@include float(left);
-			width: 193px;
+			width: 180px;
+			word-wrap: break-word;
 
 			#contact-address{
 				display: table;

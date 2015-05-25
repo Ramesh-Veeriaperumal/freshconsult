@@ -46,6 +46,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+    resource :"integrations/quickbook"
     resource :"integrations/dynamics_crm", :only => [:widget_data]
 
     #Freshfone

@@ -1,5 +1,6 @@
 es:
   meta:
+   language_id: 8
    language_name: 'Spanish'
   date:
     ago: hace

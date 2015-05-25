@@ -14,13 +14,13 @@ TicketTimesheet.prototype = {
             var current_timer = jQuery(this);
             var seconds = current_timer.data('runningTime');
             var previous_timestamp = jQuery(this).data('timestamp');
-            var timeout = previous_timestamp ? (now - previous_timestamp) / 1000 : 30 - seconds % 10;
+            var timeout = previous_timestamp ? (now - previous_timestamp) / 1000 : 10 - seconds % 10;
             current_timer.html(time_in_hhmm(seconds))
                .data('runningTime', seconds+timeout)
                .data('timestamp', now);
             });
             totalTime("#timesheetlist .time", "#timeentry_timer_total");
-         }, 30);
+         }, 10);
          
          jQuery("#timesheetlist div.timeentry")
               .livequery( this.timeCount, this.timeCount );
@@ -63,6 +63,8 @@ TicketTimesheet.prototype = {
 		   		freshbooksWidget.resetIntegratedResourceIds()
          if (typeof workflowMaxWidget != 'undefined' && workflowMaxWidget) 
           workflowMaxWidget.resetIntegratedResourceIds()
+         if (typeof quickbooksWidget != 'undefined' && quickbooksWidget)
+          quickbooksWidget.resetIntegratedResourceIds()
         });
 
     // //Positioning the button container below the integration widgets

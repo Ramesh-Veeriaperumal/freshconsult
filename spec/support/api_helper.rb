@@ -42,6 +42,8 @@ module APIHelper
   
   NOTE_ATTRIBS = ["body", "body_html", "created_at", "deleted", "id", "incoming", "private", "source", "updated_at", "user_id", "attachments", "support_email"]
 
+  ATTACHMENT_ATTRIBS = ["content_content_type", "content_file_name", "content_file_size", "created_at", "id", "updated_at", "attachment_url"]
+
   TICKET_UPDATE_ATTRIBS = ["deleted", "display_id", "subject", "status_name", "requester_status_name", "priority_name", "source_name", "requester_name", "responder_name", "to_emails", "product_id"]
   
   CONTACT_ATTRIBS = ["active", "address", "created_at", "customer_id", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at", "company_id", "custom_field"]

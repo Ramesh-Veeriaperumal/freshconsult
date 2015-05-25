@@ -101,6 +101,10 @@ Freshdesk.Widget.prototype={
 			merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
 			reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.username;
 		}
+		else if (this.options.auth_type == 'OAuth1') {
+			reqData.auth_type = 'OAuth1';
+			reqData.app_name = this.options.app_name.toLowerCase().replace(' ', '_');
+		}
 		else{
 			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
