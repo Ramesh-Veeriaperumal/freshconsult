@@ -46,9 +46,8 @@
               </span> 
               <div class="muted a-desc"> 
                 <%=t('solution.sidebar.drafts.details',
-                                  :user_name => a.user.name,
-                                  :created_time => a.modified_at.to_i,
-                                  :time_ago => formated_date(a.modified_at)).html_safe%> </div>
+                                  :name => a.user.name, 
+                                  :time => time_ago_in_words(a.modified_at)).html_safe%> </div>
             </div>
         </li>
       <% end %>
