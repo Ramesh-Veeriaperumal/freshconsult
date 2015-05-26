@@ -21,14 +21,14 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  def test_handle_unverified_request
-    with_forgery_protection do
-      post '/contacts.json', { version: 'v2', format: :json, authenticity_token: 'foo' }, @headers.merge('HTTP_COOKIE' => '_helpkit_session=true')
-    end
-    response = parse_response(@response.body)
-    assert_response :unauthorized
-    assert_equal({ 'code' => 'unverified_request', 'message' => 'You have initiated a unverifiable request.' }, response)
-  end
+  # def test_handle_unverified_request
+  #   with_forgery_protection do
+  #     post '/contacts.json', { version: 'v2', format: :json, authenticity_token: 'foo' }, @headers.merge('HTTP_COOKIE' => '_helpkit_session=true')
+  #   end
+  #   response = parse_response(@response.body)
+  #   assert_response :unauthorized
+  #   assert_equal({ 'code' => 'unverified_request', 'message' => 'You have initiated a unverifiable request.' }, response)
+  # end
 
   def test_before_filters_application_controller
     expected_filters = [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, :unset_current_account,

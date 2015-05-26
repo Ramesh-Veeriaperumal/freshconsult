@@ -5,19 +5,19 @@ module TestCaseMethods
   end
 
   def with_forgery_protection
-    old_value = ActionController::Base.allow_forgery_protection
-    ActionController::Base.allow_forgery_protection = true
+    old_value = @controller.allow_forgery_protection
+    @controller.allow_forgery_protection = true
     yield
   ensure
-    ActionController::Base.allow_forgery_protection = old_value
+    @controller.allow_forgery_protection = old_value
   end
 
   def with_caching(on = true)
-    caching = ActionController::Base.perform_caching
-    ActionController::Base.perform_caching = on
+    caching = @controller.perform_caching
+    @controller.perform_caching = on
     yield
   ensure
-    ActionController::Base.perform_caching = caching
+    ActionController::Metal.perform_caching = caching
   end
 
   def clear_cache

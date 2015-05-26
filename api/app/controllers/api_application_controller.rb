@@ -19,6 +19,7 @@ class ApiApplicationController < ActionController::Metal
   include ActionController::ParamsWrapper
   include ActionController::Instrumentation  # need this for active support instrumentation.
 
+  set_metal_config 
   append_view_path "#{Rails.root}/api/app/views"
 
   prepend_before_filter :response_headers
