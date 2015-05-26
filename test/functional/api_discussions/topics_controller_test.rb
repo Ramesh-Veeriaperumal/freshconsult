@@ -26,6 +26,17 @@ module ApiDiscussions
       assert_response :created
     end
 
+    def test_create_returns_location_header
+      post :create, construct_params({}, forum_id: forum_obj.id,
+                                         title: 'test title', message_html: 'test content')
+      match_json(topic_pattern(last_topic))
+      match_json(topic_pattern({ forum_id: forum_obj.id, title: 'test title', posts_count: 1 }, last_topic))
+      assert_response :created
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/discussions/topics/#{result['id']}", response.headers['Location']
+    end
+
     def test_create_with_email
       user = other_user
       controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
@@ -269,7 +280,7 @@ module ApiDiscussions
     end
 
     def test_show_with_posts
-      t = Topic.where('posts_count > ?', 1).first || create_test_post(first_topic, User.first).topic
+      t = create_test_post(create_test_topic(forum_obj), User.first).topic
       get :show, construct_params(id: t.id)
       result_pattern = topic_pattern(t)
       result_pattern[:posts] = []
@@ -300,15 +311,12 @@ module ApiDiscussions
     def test_posts_with_pagination
       t = Topic.where('posts_count > ?', 1).first || create_test_post(first_topic, User.first).topic
       3.times do
-        create_test_post(first_topic, User.first)
+        create_test_post(t, User.first)
       end
       get :posts, construct_params(id: t.id, per_page: 1)
       assert_response :success
       assert JSON.parse(response.body).count == 1
       get :posts, construct_params(id: t.id, per_page: 1, page: 2)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-      get :posts, construct_params(id: t.id, per_page: 1, page: 3)
       assert_response :success
       assert JSON.parse(response.body).count == 1
     end
@@ -453,7 +461,7 @@ module ApiDiscussions
 
     def test_followed_by
       user = user_without_monitorships
-      monitor_topic(first_topic, user, 1)
+      monitor_topic(create_test_topic(forum_obj), user, 1)
       @controller.stubs(:privilege?).with(:manage_forums).returns(true)
       get :followed_by, construct_params(user_id: user.id)
       assert_response :success
@@ -479,7 +487,7 @@ module ApiDiscussions
     end
 
     def test_followed_by_without_user_id
-      monitor_topic(first_topic, @agent, 1)
+      monitor_topic(create_test_topic(forum_obj), @agent, 1)
       get :followed_by, request_params
       assert_response :success
       result_pattern = []
@@ -500,7 +508,7 @@ module ApiDiscussions
 
     def test_followed_by_without_privilege_valid
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
-      monitor_topic(first_topic, @agent, 1)
+      monitor_topic(create_test_topic(forum_obj), @agent, 1)
       get :followed_by, request_params
       assert_response :success
       result_pattern = []
@@ -510,19 +518,20 @@ module ApiDiscussions
       match_json result_pattern
     end
 
-    # def test_is_following_without_user_id
-    #   monitor_topic(first_topic, @agent, 1)
-    #   get :is_following, construct_params(id: first_topic.id)
-    #   assert_response :no_content
-    # end
+    def test_is_following_without_user_id
+      topic = create_test_topic(forum_obj)
+      monitor_topic(topic, @agent, 1)
+      get :is_following, construct_params(id: topic.id)
+      assert_response :no_content
+    end
 
-    # def test_is_following_with_user_id
-    #   topic = first_topic
-    #   user = user_without_monitorships
-    #   monitor_topic(topic, user, 1)
-    #   get :is_following, construct_params(user_id: user.id, id: topic.id)
-    #   assert_response :no_content
-    # end
+    def test_is_following_with_user_id
+      topic = create_test_topic(forum_obj)
+      user = user_without_monitorships
+      monitor_topic(topic, user, 1)
+      get :is_following, construct_params(user_id: user.id, id: topic.id)
+      assert_response :no_content
+    end
 
     def test_is_following_without_privilege_invalid
       user = user_without_monitorships
@@ -533,14 +542,14 @@ module ApiDiscussions
       @controller.unstub(:privilege?)
     end
 
-    # def test_is_following_without_privilege_valid
-    #   topic = first_topic
-    #   monitor_topic(topic, @agent, 1)
-    #   @controller.stubs(:privilege?).with(:manage_forums).returns(false)
-    #   get :is_following, construct_params(user_id: @agent.id, id: topic.id)
-    #   assert_response :no_content
-    #   @controller.unstub(:privilege?)
-    # end
+    def test_is_following_without_privilege_valid
+      topic = create_test_topic(forum_obj)
+      monitor_topic(topic, @agent, 1)
+      @controller.stubs(:privilege?).with(:manage_forums).returns(false)
+      get :is_following, construct_params(user_id: @agent.id, id: topic.id)
+      assert_response :no_content
+      @controller.unstub(:privilege?)
+    end
 
     def test_is_following_non_numeric_user_id
       get :is_following, construct_params(user_id: 'test', id: first_topic.id)

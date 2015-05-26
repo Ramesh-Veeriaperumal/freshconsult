@@ -80,6 +80,18 @@ module ApiDiscussions
                                 user_id: @agent.id }, Post.last))
     end
 
+    def test_create_returns_location_header
+      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id)
+      assert_response :created
+      match_json(post_pattern(Post.last))
+      match_json(post_pattern({ body_html: 'test', topic_id: topic_obj.id,
+                                user_id: @agent.id }, Post.last))
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/discussions/posts/#{result['id']}", response.headers['Location']
+    end
+
+
     def test_create_customer_user
       topic_obj.update_column(:locked, false)
       user = customer

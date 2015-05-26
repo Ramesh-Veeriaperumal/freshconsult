@@ -1,5 +1,26 @@
-class ApiApplicationController < ApplicationController
-  respond_to :json
+class ApiApplicationController < ActionController::Metal
+ 
+  include ActionController::Head #Need when calling head
+  include ActionController::Helpers #needed for calling methods which are defined as helper methods. 
+  include ActionController::Redirecting
+  include ActionController::Rendering 
+  include ActionController::RackDelegation  #Needed so that reqeest and response method will be delegated to Rack
+  include ActionController::Caching  
+  include Rails.application.routes.url_helpers # Need for location header in response
+  include ActiveSupport::Rescuable #Dependency with strong params
+  include ActionController::MimeResponds 
+  include ActionController::ImplicitRender
+  include ActionController::StrongParameters
+  include ActionController::Cookies
+  include ActionController::RequestForgeryProtection # should we need this?
+  include ActionController::HttpAuthentication::Basic::ControllerMethods
+  include AbstractController::Callbacks 
+  include ActionController::Rescue
+  include ActionController::ParamsWrapper
+  include ActionController::Instrumentation  # need this for active support instrumentation.
+
+  append_view_path "#{Rails.root}/api/app/views"
+
   prepend_before_filter :response_headers
 
   # do not change the exception order # standard error has to have least priority hence placing at the top.
@@ -8,8 +29,23 @@ class ApiApplicationController < ApplicationController
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
 
-  skip_before_filter :set_default_locale, :set_locale, :freshdesk_form_builder, :remove_rails_2_flash_before,
-                     :remove_pjax_param, :remove_rails_2_flash_after
+  include Api::ApplicationConcern
+
+  # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
+  around_filter :select_shard
+  prepend_before_filter :determine_pod
+  before_filter :unset_current_account, :unset_current_portal, :set_current_account
+  before_filter :ensure_proper_protocol
+  include Authority::FreshdeskRails::ControllerHelpers
+  before_filter :check_account_state, :except => [:show,:index]
+  before_filter :set_time_zone, :check_day_pass_usage 
+  before_filter :force_utf8_params
+  include AuthenticationSystem
+  include HelpdeskSystem 
+  include SubscriptionSystem
+  protect_from_forgery
+  before_filter :verify_authenticity_token, :if => :api_request?
+
 
   skip_before_filter :check_privilege, only: [:route_not_found]
   before_filter :load_object, except: [:create, :index, :route_not_found]
@@ -22,7 +58,7 @@ class ApiApplicationController < ApplicationController
 
   # wrap params will wrap only attr_accessible fields if this is removed.
   def self.inherited(subclass)
-    subclass.wrap_parameters exclude: []
+    subclass.wrap_parameters  format:[:json], exclude: []
   end
 
   def index

@@ -141,6 +141,19 @@ module ApiDiscussions
       assert_response :created
     end
 
+    def test_create_returns_location_header
+      name = Faker::Name.name
+      post :create, construct_params({}, description: 'desc', forum_visibility: '1',
+                                         forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      match_json(forum_pattern Forum.last)
+      match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      assert_response :created
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/discussions/forums/#{result['id']}", response.headers['Location']
+    end
+
+
     def test_create_no_params
       post :create, construct_params({}, {})
       pattern = [bad_request_error_pattern('name', "can't be blank"),
@@ -224,11 +237,13 @@ module ApiDiscussions
     end
 
     def test_show_with_topics
-      f = Forum.where('topics_count >= ?', 1).first || create_test_topic(Forum.first, User.first).forum
-      get :show, construct_params(id: f.id)
-      result_pattern = forum_pattern(f)
+      forum = Forum.first
+      create_test_topic(forum, User.first)
+      forum.reload
+      get :show, construct_params(id: forum.id)
+      result_pattern = forum_pattern(forum)
       result_pattern[:topics] = []
-      f.topics.each do |t|
+      forum.topics.each do |t|
         result_pattern[:topics] << topic_pattern(t)
       end
       match_json(result_pattern)
