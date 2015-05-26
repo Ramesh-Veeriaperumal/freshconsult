@@ -903,7 +903,11 @@ Helpkit::Application.routes.draw do
 
     resources :roles
     namespace :social do
-      resources :streams, :only => :index
+      resources :streams, :only => :index do
+        collection do
+          get :authorize_url
+        end
+      end
       resources :twitter_streams do
         collection do
           post :preview
