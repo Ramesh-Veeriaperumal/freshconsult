@@ -52,5 +52,9 @@ class Mobile::SettingsController < ApplicationController
    render :json => {result: true}
 
   end  
-	
+   
+  def configurations
+    render :json => {:user => current_user.as_config_json, :account => current_account.as_config_json }
+  end	
+
 end

@@ -1912,6 +1912,7 @@ Helpkit::Application.routes.draw do
         get :mobile_login
         get :mobile_pre_loader
         get :deliver_activation_instructions
+        get :configurations
       end
     end
     resources :freshfone do 
