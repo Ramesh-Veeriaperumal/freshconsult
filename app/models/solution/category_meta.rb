@@ -10,7 +10,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id"
 
 	has_many :portal_solution_categories, :class_name => 'PortalSolutionCategory', 
-		:foreign_key => :solution_category_meta_id, :dependent => :delete_all
+		:foreign_key => :solution_category_meta_id
 
 	has_many :portals, :class_name => "Portal", :through => :portal_solution_categories
 

@@ -45,7 +45,9 @@ module Solution::MetaMethods
 	end
 
 	def destroy_meta
-		meta_object.destroy
+		obj = meta_object
+		return if obj.new_record?
+		obj.destroy
 	end
 
 	def changed_attribs(meta_obj = nil)
