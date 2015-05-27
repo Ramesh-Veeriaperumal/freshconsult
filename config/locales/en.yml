@@ -2417,7 +2417,7 @@ en:
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
-    more_catogories: "View more on other products..."
+    more_catogories: "See all Categories"
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: Select a product portal...
@@ -3267,7 +3267,7 @@ en:
       analytics: Analytics
     folders:
       move_to: Move to another category
-      view_all: "View %{count} more folders..."
+      view_all: "View all folders..."
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for publishing the article
       new:

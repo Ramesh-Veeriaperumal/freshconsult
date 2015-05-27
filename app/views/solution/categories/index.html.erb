@@ -22,11 +22,7 @@
 		<% if !@solution_drafts_feature  || !category.is_default %>
 			<div class="<%= cycle('odd', 'even') %>">
 				<h4 class="cat-title-border">
-					<% unless category.folders.empty? %>
-						<%= pjax_link_to  "#{h(category.name)}".html_safe, category %>
-					<% else %>
-						<%= h(category.name) %>
-					<% end %>
+						<%= pjax_link_to  "#{h(category.name)}".html_safe, category %>				
 				</h4>  
 				<ul>			
 		  		<% category.folders.first(5).each do |folder| %>
@@ -39,8 +35,8 @@
 	  			  </li>
 				 <% end %> 
 				<% if category.folders.size > 5 %>
-						<% remaining_folders = category.folders.size - 5 %>
-						<li class="label-bold"><%= pjax_link_to t('solution.folders.view_all', :count => remaining_folders).html_safe,  solution_category_path(category)  %>
+						<li><%= pjax_link_to t('solution.folders.view_all').html_safe,  solution_category_path(category), 
+										:class => "more-cat"  %>
 					  </li>
 				<% end %>
 				</ul>
@@ -50,7 +46,7 @@
 		<% end %>
 	<%end%>
 
-	<% unless other_categories.blank? %>
+	<% if other_categories.blank? %>
 		<div class="view-more-cat pull-left">
 			<a href="#" class="show-more-cat"><%= t('solution_category.more_catogories').html_safe %></a>
 		</div>
@@ -72,8 +68,8 @@
 			  			  </li>
 						 <% end %> 
 						<% if category.folders.size > 5 %>
-								<% remaining_folders = category.folders.size - 5 %>
-								<li class="label-bold"><%= pjax_link_to t('solution.folders.view_all', :count => remaining_folders).html_safe,  solution_category_path(category)  %>
+								<li><%= pjax_link_to t('solution.folders.view_all').html_safe,  solution_category_path(category,
+																			:class => "more-cat")  %>
 							  </li>
 						<% end %>
 						</ul>

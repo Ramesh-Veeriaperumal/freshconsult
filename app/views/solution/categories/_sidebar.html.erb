@@ -1,12 +1,12 @@
 <div class="sidepanel">
-  <% if @drafts or @feedbacks %>
-      <% if @drafts %>
+  <% unless @drafts.blank? and @feedbacks.blank? %>
+      <% unless @drafts.blank? %>
       <div id="drafts-sb" class="solutions-widget">
        <%= render :partial => "drafts" %>
       </div>
       <% end %>
 
-      <% if @feedbacks %>
+      <% unless @feedbacks.blank? %>
         <div id="feedbacks-sb" class="solutions-widget">
           <%= render :partial => "feedbacks" %>
         </div>

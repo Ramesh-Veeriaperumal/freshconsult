@@ -1,4 +1,4 @@
-<% if @feedbacks %>
+<% unless @feedbacks.blank? %>
   <% my_feedbacks = @feedbacks.article_tickets_by_user(current_user) %>
   <div class="solutions-widget-header">
     <div class="sidebar-dropdown">

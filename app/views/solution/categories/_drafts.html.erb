@@ -1,4 +1,4 @@
-<% if @drafts %>
+<% unless @drafts.blank? %>
 <% my_drafts = @drafts.drafts_by_user(current_user) %>
 <div class="solutions-widget-header">
   <div class="sidebar-dropdown">
@@ -53,7 +53,7 @@
       <% end %>
     <% if my_drafts.size > 3 %>
       <li class="a-item">
-        <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all') %>
+        <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all'), :class => "see-all" %>
       </li>
     <% end %>
     </ul>
@@ -75,7 +75,7 @@
       <% end %>
     <% if @drafts.size > 3 %>
       <li class="a-item">
-        <%= pjax_link_to t('solution.sidebar.view_all'), solution_drafts_path %>
+        <%= pjax_link_to t('solution.sidebar.view_all'), solution_drafts_path, :class => "see-all" %>
       </li>
     <% end %>
     </ul>

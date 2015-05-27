@@ -10,6 +10,7 @@ window.App.Solutions = window.App.Solutions || {};
     onVisit: function () {
       this.configureSideBar();
       this.bindHandlers();
+      this.setupSearch();
     },
     
     configureSideBar: function () {
@@ -27,6 +28,10 @@ window.App.Solutions = window.App.Solutions || {};
         $('.other-portal-cat').show();
         $('.view-more-cat').hide();
       });
+    },
+
+    setupSearch: function () {
+      // search bar configuration should be here
     },
 
     onLeave: function () {
