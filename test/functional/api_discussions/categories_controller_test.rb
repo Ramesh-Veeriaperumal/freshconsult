@@ -160,7 +160,7 @@ module ApiDiscussions
     end
 
     def test_show_portal_check
-      controller.class.any_instance.stubs(:privilege?).with(:view_forums).returns(false).once
+      User.any_instance.stubs(:privilege?).returns(false).once
       get :show, construct_params(id: fc.id)
       assert_response :forbidden
       match_json(request_error_pattern('access_denied'))

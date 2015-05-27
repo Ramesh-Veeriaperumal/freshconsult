@@ -59,5 +59,6 @@ helpdesk:
     - statsd_config
     - big_brother
     - metal_settings
+    - launch_profiler
 
 
