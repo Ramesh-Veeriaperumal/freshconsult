@@ -1572,9 +1572,9 @@ Helpkit::Application.routes.draw do
     resources :folders do
       collection do
         put :reorder
-        post :visible_to
         put :move_to
         put :unmove
+        put :visible_to
       end
     end
     

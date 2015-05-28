@@ -3275,6 +3275,12 @@ en:
       folder_form:
         category: Category
         visible_to: Visible to
+      visibility:
+        no_companies: You haven't selected any valid companies.
+        success: Successfully changed the visibility.
+        extra_companies:  
+          one: " and one more company."
+          other: " and %{count} more companies."
     articles:
       move_to: Move to another folder
       prop_tabs:
@@ -3387,7 +3393,6 @@ en:
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
     user_details: "By <span class='user'>%{user}</span>, %{time}"
-    draft_user_details: "<span class='article-user'>%{user}</span> edited article "
     feedback_message_1: "Need more information"
     feedback_message_2: "Difficult to understand"
     feedback_message_3: "Inaccurate/irrelevant content"

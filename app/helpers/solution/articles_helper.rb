@@ -67,5 +67,14 @@ module Solution::ArticlesHelper
             "data-width" => "400px" 
           ).html_safe
   end
+
+  def company_visibility_tooltip(folder)
+    count = folder.customers.size - 5
+    company_names = folder.customers[0..4].map(&:name).join(', ')
+    company_names += t('solution.folders.visibility.extra_companies', :count => count) if count > 0
+    %(<span #{ "class=\"tooltip\" title=\"#{company_names}\"" if folder.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]}>
+        #{Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]}
+      </span>).html_safe
+  end
   
 end

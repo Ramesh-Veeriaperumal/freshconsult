@@ -5,6 +5,7 @@ class Solution::CategoriesController < ApplicationController
   helper SolutionHelper
   helper AutocompleteHelper
   helper Solution::NavmenuHelper
+  helper Solution::ArticlesHelper
   
   feature_check :solution_drafts
   

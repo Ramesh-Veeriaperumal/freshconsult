@@ -330,6 +330,13 @@
     min-height: 400px;
 		.redactor_box{
 			border: 0;
+			padding-left: 11px;
+			.redactor_editor {
+				min-height: 380px;
+			}
+			.redactor_toolbar {
+				background: none;
+			}
 		}
 	}
 	.article-title{
@@ -341,6 +348,10 @@
 		margin-left: -4px;
 		height: 25px;
 		margin-bottom: 10px;
+		border-bottom: 1px solid #eee;
+		border-radius: 0;
+		padding-left: 0px;
+		
 		&:focus{
 			box-shadow: none;
 		}
@@ -441,6 +452,10 @@
 
 #folder-bulk-action, #article-bulk-action {
 
+	.visible-to-btn {
+		display: inline-block;
+	}
+
 	.edit_bar_btn {
 		margin-right: 20px;
 	  background-color: white;
@@ -455,7 +470,7 @@
 
 	.drop-right:after {
 	  margin-left: 8px;
-	  margin-top: 12px;
+	  margin-top: 5px;
 	}
 
 	.fd-menu {
@@ -465,6 +480,11 @@
 	  .left-list, .right-select-companies {
 	  	float: left;
 	  	min-width: 200px;
+	  }
+	  .left-list {
+	  	li a {
+		  	padding: 6px 10px 6px 25px;
+		  }
 	  }
 	  .right-select-companies {
 	  	width: 300px;
@@ -480,9 +500,9 @@
 	  		margin-top: 20px;
 	  		margin-bottom: 0px;
 	  	}
-	  }
-	  li a {
-	  	padding: 6px 10px 6px 25px;
+	  	a.select2-search-choice-close {
+			  position: absolute;
+			}
 	  }
 	  .control-group {
 	  	a {
@@ -504,11 +524,6 @@
 	  }
 	}
 
-	#visible_to {
-		&.fd-menu {
-		  margin-left: 91px;
-		}
-	}
 }
 
 .sol-cat-sticky-title {
@@ -539,4 +554,75 @@
 
 .sol-list {
 	width: 100%;
+}
+
+/* Draft listing view */
+
+#drafts-section {
+	
+	.solution-drafts {
+		
+		overflow: hidden;
+		border-top: 1px solid #ccc;
+	  margin: 0px -20px 10px;
+	  padding: 0px 20px;
+		
+		.draft-list-item {
+			  
+		  padding: 10px 0px;
+		  border-bottom: 1px solid #eee;
+		  line-height: 1.8em;
+	    margin-left: 0px;
+	    
+	    .parent-link {
+	    	color: rgb(51, 51, 51);
+	    }
+
+	    .draft-title {
+    	  font-weight: 500; 
+			  font-size: 14px;
+	    }
+
+	    .draft-icon-file {
+	    	color: #bbb;
+	    }
+
+	    .draft-icon-mail {
+	    	color: #555;
+	    }
+		}
+	}	
+}
+
+.draft-listing-header {
+	.item {
+		margin-right: 20px;
+		padding-bottom: 8px;
+		display: inline-block;
+	}
+	.heading {
+		font-size: 16px;
+		font-weight: 400;
+	}
+	.active {
+		border-bottom: 3px solid #CCCCCC;
+		color: #444;
+	}
+	.portal-selector {
+		margin-right: 20px;
+	}
+
+	.portal-menu {
+		font-weight: 400;
+		font-size: 13px;
+		min-width: 250px;
+	}
+
+	.drop-right {
+		color: #222;
+	}
+
+	.sticky_left {
+		margin-top: -5px;
+	}
 }

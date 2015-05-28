@@ -3,6 +3,7 @@ class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
   helper AutocompleteHelper
   helper SolutionHelper
+  helper Solution::ArticlesHelper
 
   include FeatureCheck
   feature_check :solution_drafts
@@ -114,11 +115,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def visible_to
-    p "#"*50, "Inside Visible to"
-    change_visibility
-    # respond_to do |format|
-    #   format.js
-    # end
+    change_visibility if visibility_validate?
   end
 
   def move_to
@@ -218,23 +215,17 @@ class Solution::FoldersController < ApplicationController
       Solution::Folder::VISIBILITY.map { |v| v[2]}.include?(params[:visibility].to_i)
     end
 
-    # def valid_folders
-    #   current_account.folders.find_all_by_id(params[:folderIds], :select => "id").map(&:id)
-    # end
-
     def valid_customers(customer_ids)
       current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id)
     end
 
     def change_visibility
-      return unless visibility_validate?
-      
       visibility = params[:visibility].to_i
       customer_ids, add_to_existing = [], false
       if params[:visibility].to_i == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
         customer_ids = valid_customers(params[:companies])
         if customer_ids.blank?
-          flash[:notice] = "You haven't selected any valid companies."
+          flash[:notice] = t('solution.folders.visibility.no_companies')
           return
         end
         add_to_existing = (params[:addToExisting].to_i == 1)
@@ -243,8 +234,7 @@ class Solution::FoldersController < ApplicationController
       @folders = current_account.folders.find_all_by_id(params[:folderIds])
       @folders.each do |folder|
         if folder.add_visibility(visibility, customer_ids, add_to_existing)
-          p "Successfully inside add visibility"
-          flash[:notice] = "Successfully changed the visibility."
+          flash[:notice] = t('solution.folders.visibility.success')
         end
       end
     end

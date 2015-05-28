@@ -199,7 +199,7 @@ window.App = window.App || {};
 
       $.ajax({
         url: $this.data.visibleToUrl,
-        type: 'POST',
+        type: 'PUT',
         data: this.submitData,
         dataType: "script",
         success: $.proxy(this.onSaveSuccess, this),

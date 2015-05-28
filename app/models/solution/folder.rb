@@ -30,6 +30,7 @@ class Solution::Folder < ActiveRecord::Base
            :conditions => "solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
 
   has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
+  has_many :customers, :through => :customer_folders
   
   scope :alphabetical, :order => 'name ASC'
 
@@ -170,7 +171,7 @@ class Solution::Folder < ActiveRecord::Base
     def add_companies(customer_ids, add_to_existing)
       customer_folders.destroy_all unless add_to_existing
       customer_ids.each do |cust_id|
-        customer_folders.build({:customer_id =>cust_id})
+        customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
       end
     end
 

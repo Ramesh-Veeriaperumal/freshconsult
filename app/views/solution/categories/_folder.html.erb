@@ -19,7 +19,7 @@
 				</div>
 				<div class="comm-item-details muted folder-details">
 					<span class="visibilty-label"><%= t('solution.folders.folder_form.visible_to').html_safe %>:</span>
-				  <%=Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]%>
+					<%= company_visibility_tooltip(folder) %>
 				</div>
 			</div>
 		</div>

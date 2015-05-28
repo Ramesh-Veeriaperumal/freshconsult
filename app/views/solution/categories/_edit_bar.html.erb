@@ -15,14 +15,14 @@
 		              :placeholder => t('solution.folders.move_to')
 		          } %>
 			</span>
-			<span>
+			<span class="visible-to-btn">
 				<a class="drop-right nav-trigger edit_bar_btn disabled bulk-action-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
 				<div class="fd-menu" id="visible_to">
 					<div class="left-list">
 						<ul>
 							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
 								<li>
-									<%= link_to visibility[0], "#", :class => "visibility-selector", "data-visibility" => visibility[1],
+									<%= link_to visibility[0], "javascipt:void(0);", :class => "visibility-selector", "data-visibility" => visibility[1],
 									"data-url" => "#{visible_to_solution_folders_path}" %>
 								</li> 
 							<% end %>

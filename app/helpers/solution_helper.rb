@@ -137,5 +137,14 @@ module SolutionHelper
 			psc.portal_id == current_portal.id
 		end).first.position
 	end
+
+	def helpcard_content(notes, title, info_base)
+		output = []
+		output << %(<h3 class="lead">#{t(title).html_safe}</h3>)
+		notes.each do |num|
+			output << %(<p> #{t(info_base + num.to_s).html_safe} </p>)
+		end
+		output.join("").html_safe
+	end
 	
 end

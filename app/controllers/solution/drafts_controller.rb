@@ -2,6 +2,7 @@ class Solution::DraftsController < ApplicationController
 
 	include Solution::DraftContext
 	include FeatureCheck
+	helper SolutionHelper
 	feature_check :solution_drafts
 
 	before_filter :drafts_feature_enabled?
