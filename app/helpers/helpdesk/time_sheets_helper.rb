@@ -26,7 +26,7 @@ module Helpdesk::TimeSheetsHelper
         page << "try{"
         page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
         page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
-        page << "#{app[2]}.logTimeEntry(#{timeentry.id});"
+        page << "#{app[2]}.createTimeEntry(#{timeentry.id});"
         page << "}"
         page << "}catch(e){ log(e)}"
       end
@@ -38,11 +38,12 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
       unless app_detail.blank? or timeentry.blank?
-        integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
-        unless integrated_app.blank?
-          page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
-          page << "#{app[2]}.logTimeEntry(#{timeentry.id});"
-        end
+        page << "try{"
+        page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
+        page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
+        page << "#{app[2]}.logTimeEntry(#{timeentry.id});"
+        page << "}"
+        page << "}catch(e){ log(e)}"
       end
     end
   end
@@ -67,19 +68,21 @@ module Helpdesk::TimeSheetsHelper
   
   def modifyTimesheetApps(timeentry)
     script = ""
+    script += %Q|jQuery("#timeentry_apps_add").detach().appendTo("#edit_timeentry_#{timeentry.id} .edit_timesheet").show();|
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
       unless app_detail.blank? or timeentry.blank?
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         #script += "console.log('#{integrated_app.inspect}');"
         if integrated_app.blank?
-          script += "#{app[2]}.resetIntegratedResourceIds('', '');"
+          script += "#{app[2]}.resetIntegratedResourceIds();"
         else
+
           script += "#{app[2]}.resetIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
         end
       end
     end
-    script
+    html_safe(script)
   end
 
   def agent_list

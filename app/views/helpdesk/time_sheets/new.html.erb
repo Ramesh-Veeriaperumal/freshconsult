@@ -13,8 +13,12 @@
 <% end %>
 
 <script type="text/javascript">
-  jQuery('#timeentry_apps_add').detach().appendTo('#timeentry_add');
-  jQuery('#timeentry_apps_add').show();
-
-  jQuery('.modal.in #time_entry_hhmm').focus();
+  function onAddTimeshowFields() {
+    jQuery('#timeentry_apps_add').detach().appendTo('#timeentry_add').show();
+    jQuery('.modal.in #time_entry_hhmm').focus();  
+  }
+    onAddTimeshowFields();
+    jQuery("#triggerAddTime").on("click", function(){
+       onAddTimeshowFields();
+  });
 </script>

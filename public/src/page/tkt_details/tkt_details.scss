@@ -2142,7 +2142,7 @@ ol, ul, li{
 }
 
 // Timesheet Modal CSS Overrides and new CSS
-.ticket_details #timeentry_add, .ticket_details .timeentry_edit {
+.ticket_details #timeentry_add, .ticket_details .timeentry_edit, .ticket_details .edit_timesheet {
 	margin: 5px;
 	padding: 0;
 	@include clear(both);
