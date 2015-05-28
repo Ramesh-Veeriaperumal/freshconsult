@@ -151,10 +151,12 @@ module Cache::Memcache::Account
   end
   
   def solution_categories_from_cache
-    key = ALL_SOLUTION_CATEGORIES % { :account_id => self.id }
-    MemcacheKeys.fetch(cache_key) do
-      self.solution_categories.all(:include => [:portal_solution_categories, :folders]).each do |c|
-        c.folders.map(&:article_count)
+    MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
+      self.solution_categories.all(:include => [:portal_solution_categories, :folders]).collect do |cat|
+        {
+          :folders => cat.folders.map(&:as_cache),
+          :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
+        }.merge(cat.as_cache).with_indifferent_access
       end
     end
   end

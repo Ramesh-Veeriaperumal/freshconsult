@@ -9,6 +9,8 @@ class Solution::Category < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
+
+  CACHEABLE_ATTRS = ["id","name","account_id","position","is_default"]
   
   self.table_name =  "solution_categories"
   
@@ -80,6 +82,12 @@ class Solution::Category < ActiveRecord::Base
     portal_solution_category = self.portal_solution_categories.build
     portal_solution_category.portal_id = account.main_portal.id
     portal_solution_category.save
+  end
+
+  def as_cache
+    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
+      res.merge({ attribute => self.send(attribute) })
+    end).with_indifferent_access
   end
    
   private 

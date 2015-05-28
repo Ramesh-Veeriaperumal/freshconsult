@@ -13,9 +13,18 @@ class PortalSolutionCategory < ActiveRecord::Base
   after_create :clear_cache
   after_destroy :clear_cache
   after_update :clear_cache, :if => :position_changed?
+
+  CACHEABLE_ATTRS = ["portal_id","position"]
   
   def position_changed?
     self.changes.key?("position")
+  end
+
+
+  def as_cache
+    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
+      res.merge({ attribute => self.send(attribute) })
+    end).with_indifferent_access
   end
 
   def clear_cache

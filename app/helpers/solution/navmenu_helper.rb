@@ -7,14 +7,14 @@ module Solution::NavmenuHelper
   def category_list(categories)
     op = []
     categories.each do |category|
-      next if category.is_default?
+      next if category[:is_default]
       op << %(<li class="cm-sb-cat-item">)
-      op << %(<i class="forum_expand"></i>) unless category.folders.blank?
-      op << pjax_link_to(category.name, solution_category_path(category), {
-                  :"data-category-id" => category.id,
-                  :id => "sb-#{dom_id(category)}"
+      op << %(<i class="forum_expand"></i>) unless category[:folders].blank?
+      op << pjax_link_to(category[:name], solution_category_path(:id => category[:id]), {
+                  :"data-category-id" => category[:id],
+                  :id => "fsdfjslkdflsdf"
                 })
-      op << folder_list(category.folders, category.id)
+      op << folder_list(category[:folders], category[:id])
       op << %(</li>)
     end
     op
@@ -24,13 +24,13 @@ module Solution::NavmenuHelper
     op = []
     op << %( <ul class="forum_list" id="#{category_id}_folders"> )
     folders.each do |folder|
-      next if folder.is_default?
-      op << %( <li class="forum_list_item" id="#{folder.id}_folder"> )
-      op << pjax_link_to( "#{folder.name} (#{folder.article_count})",
-                          solution_folder_path(folder), {
-                            :"data-folder-id" => folder.id,
+      next if folder[:is_default]
+      op << %( <li class="forum_list_item" id="#{folder[:id]}_folder"> )
+      op << pjax_link_to( "#{folder[:name]} (#{folder[:article_count]})",
+                          solution_folder_path(:id => folder[:id]), {
+                            :"data-folder-id" => folder[:id],
                             :"data-category-id" => category_id,
-                            :id => "sb-#{dom_id(folder)}"
+                            :id => "sfnsdkjfl"
                         })
       op << %( </li> )
     end

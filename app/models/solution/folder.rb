@@ -5,6 +5,7 @@ class Solution::Folder < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
 
+  CACHEABLE_ATTRS = ["is_default","name","id","article_count"]
   attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id, :case_sensitive => false
@@ -141,6 +142,12 @@ class Solution::Folder < ActiveRecord::Base
     add_companies(customer_ids, add_to_existing) if visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
     self.visibility = visibility
     save
+  end
+
+  def as_cache
+    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
+      res.merge({ attribute => self.send(attribute) })
+    end).with_indifferent_access
   end
 
   private
