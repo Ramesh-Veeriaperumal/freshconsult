@@ -665,7 +665,7 @@ ol, ul, li{
 #not_following_message {
 	padding:8px 10px;
 	@include margin-left(10px);
-	display: inline-block;
+	display: none;
 }
 
 .conversation_thread, .content .controls .control-left {

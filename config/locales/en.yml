@@ -4784,6 +4784,7 @@ en:
         forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
         client_error: We could not process your request. Please try after sometime.
         wrong_call: Trying to unfavorite a tweet that has not been favorited
+        not_following: The user does not allow direct messages if they are not following you. Please send your reply as a tweet
         cannot_reply: You dont have permission to reply to a tweet.
         cannot_retweet: You dont have permission to retweet a tweet.
         cannot_favorite: You dont have permission to favorite a tweet.

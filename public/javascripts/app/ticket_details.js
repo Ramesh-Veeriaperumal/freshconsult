@@ -633,14 +633,16 @@ var scrollToError = function(){
 	// For Twitter Replybox
 	$("body").on("change.ticket_details", '#twitter_handle', function (){
 		twitter_handle= $('#twitter_handle').val();
-		req_twt_id = $('#requester_twitter_handle').val();
+		tweet_type = $('#tkt_tweet_type').val();
+		in_reply_to = $('#in_reply_to_handle').val();
+		
 		istwitter = $('#cnt-reply').data('isTwitter');
-		if (!istwitter || req_twt_id == "" || twitter_handle == "")        
+		if (!istwitter || in_reply_to == "" || twitter_handle == "" || tweet_type == 'dm')        
 			return ;
 
 		$.ajax({   
 			type: 'GET',
-			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
+			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+in_reply_to,
 			contentType: 'application/text',
 			success: function(data){ 
 				if (data.user_follows == true)

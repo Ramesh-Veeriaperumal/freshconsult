@@ -50,7 +50,8 @@ module Social::Twitter::ErrorHandler
         notify_error(exception)
 
       rescue Twitter::Error::Forbidden => exception
-        @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
+        @social_error_msg =  exception.message.include?("not following") ? 
+                              "#{I18n.t('social.streams.twitter.not_following')}" : "#{I18n.t('social.streams.twitter.client_error')}"
         notify_error(exception)
 
       rescue Twitter::Error::GatewayTimeout => exception
