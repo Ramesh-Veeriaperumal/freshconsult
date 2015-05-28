@@ -19,6 +19,9 @@
 		<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
 		<%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
 		<%= f.hidden_field :private , :value => "false" %>
+    <%= hidden_field_tag :tkt_tweet_type, @ticket.tweet.tweet_type, :id => "tkt_tweet_type" %>
+    <%= hidden_field_tag :in_reply_to_handle, @ticket.latest_twitter_comment_user, :id => "in_reply_to_handle" %>
+    
 		<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
 		<ul class="ui-form dont-validate">
 			<li class="inline-field field">
