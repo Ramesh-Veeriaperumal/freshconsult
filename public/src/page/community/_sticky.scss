@@ -3,21 +3,26 @@
 		@include margin(0px -20px 0 -20px);
 		@include padding(15px 20px 0 20px);
 		border-bottom: 1px solid #CCC;
-	}	
+	}
 }
 #sticky_header {
 	background-color: #FFF;
 	padding-top: 15px;
+	.ficon-search{
+		font-size: 22px;
+		@include margin-right(16px);
+		cursor: pointer;
+	}
 	&.is_stuck {
 		margin-top: 0;
 		border-bottom: 1px solid #CCC;
 		@include box-shadow(0 6px 6px -6px rgba(0, 0, 0, 0.15));
 	}
-	
+
 	&.sticky_border {
 		border-bottom: solid 1px #dadada;
 	}
-	
+
 	.sticky_panel{
 		@include pie-clearfix;
 		height:36px;
@@ -34,7 +39,7 @@
 		.guided-tour-button{
 			display: inline;
 			padding: 8px 8px 8px 33px;
-			@if $rtl { 
+			@if $rtl {
 				padding: 5px 8px 5px 33px;
 				margin-right:15px;
 				display: inline-block;
@@ -51,5 +56,43 @@
 		height: 16px;
 		display: inline-block;
 		@include margin(-2px 5px -3px 0px);
+	}
+}
+
+/* Solution search */
+.sticky_search_wrap{
+	position: absolute;
+	width: 100%;
+	@include left(0);
+	top: -200px;
+	background-color: #fff;
+	z-index: 10;
+	box-shadow: 0px 2px 3px rgba(0,0,0,0.1);
+	&.search-ani{
+		top:0;
+		@include transition(all 0.2s ease);
+	}
+	.ficon-search{
+		color: #c1c1c1;
+		position: absolute;
+		@include left(15px);
+		top: 25px;
+	}
+	input{
+		width: 100%;
+		padding: 35px 40px;
+		margin-bottom: 0px;
+		border: none;
+		border-bottom: 1px #ccc solid;
+		border-radius: 0;
+		font-size: 19px;
+  	line-height: 23px;
+		box-sizing: border-box;
+	}
+	.search-hide{
+		cursor: pointer;
+		position: absolute;
+		@include right(20px);
+		top: 27px;
 	}
 }

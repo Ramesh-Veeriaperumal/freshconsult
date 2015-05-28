@@ -11,7 +11,7 @@ window.App = window.App || {};
     onFirstVisit: function (data) {
       this.onVisit(data);
     },
-		
+
     onVisit: function (data) {
       this.setSubModule();
       if (this.current_module !== '') {
@@ -41,7 +41,7 @@ window.App = window.App || {};
       }
 
     },
-    
+
     onLeave: function (data) {
       if (this.current_module !== '') {
         this[this.current_module].onLeave();
@@ -50,5 +50,12 @@ window.App = window.App || {};
       App.Solutions.Reorder.leave();
     }
   };
+
+  $("#search-show").click(function () {
+	   $('#sticky_search_wrap').addClass('search-ani');
+    });
+      $("#search-hide").click(function () {
+	  $('#sticky_search_wrap').removeClass('search-ani');
+  });
 
 }(window.jQuery));

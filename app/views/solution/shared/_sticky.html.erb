@@ -1,9 +1,19 @@
 <% page ||= :home %>
 <% sticky_class ||= "" %>
-<div id="sticky_header" class="<%= sticky_class %>" 
-      rel="sticky" data-collapsed="true" 
-      data-scroll-top="true" 
+<div id="sticky_header" class="<%= sticky_class %>"
+      rel="sticky" data-collapsed="true"
+      data-scroll-top="true"
       data-sticky-bottom="true">
+
+  <div class="sticky_search_wrap" id="sticky_search_wrap">
+    <i class="ficon-search"></i>
+    <div class="sticky_search">
+      <input placeholder='Search All Solutions' type='text'>
+    </div>
+    <!-- <a id="hide" class="search-hide">Clear</a> -->
+    <a id="search-hide" class="search-hide">Clear</a>
+  </div>
+
   <div class="sticky_panel" data-collapsible="true">
     <%= sidebar_toggle %>
     <div class="sticky_left">
@@ -19,6 +29,9 @@
       <% else %>
         &nbsp;
       <% end %>
+      <div class="pull-right pt5">
+        <i class="ficon-search" id="search-show"></i>
+      </div>
   	</div>
   </div>
   <div class="sticky_title"><%= yield :sticky_title %></div>
