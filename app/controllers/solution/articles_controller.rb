@@ -4,7 +4,6 @@ class Solution::ArticlesController < ApplicationController
   include Helpdesk::ReorderUtility
   include CloudFilesHelper
   helper AutocompleteHelper
-  include Solution::MetaControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -17,6 +16,8 @@ class Solution::ArticlesController < ApplicationController
   before_filter :load_meta_objects, :only => [:create, :new]
   before_filter :load_article_meta, :only => :edit
   before_filter :load_dynamic_objects, :only => :edit
+  
+  include Solution::MetaControllerMethods
   
   def index
     redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
@@ -33,7 +34,9 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def new
-    @article = current_account.solution_articles.new  
+    current_folder = Solution::Folder.first
+    current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
+    @article = current_folder.articles_without_meta.new  
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html # new.html.erb
@@ -50,7 +53,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    @article = @meta_obj.solution_articles.new(params[nscname]) 
+    @article = @article_meta.solution_articles.new(params[nscname]) 
     set_item_user 
 
     redirect_to_url = @article
@@ -59,7 +62,7 @@ class Solution::ArticlesController < ApplicationController
     set_solution_tags
     set_outdated
     respond_to do |format|
-      if (@category_by_language || create_language_category) && (@folder_by_language || create_language_folder) && @meta_obj.save
+      if (@category_by_language || create_language_category) && (@folder_by_language || create_language_folder) && @article_meta.save
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }

@@ -24,4 +24,10 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "account_id"]
 
+	after_create :assign_portal
+
+	def assign_portal
+		portal_solution_category = self.portal_solution_categories.build(:portal_id => account.main_portal.id)
+		portal_solution_category.save
+	end
 end

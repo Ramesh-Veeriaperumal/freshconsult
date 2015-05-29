@@ -29,6 +29,7 @@ class Solution::Folder < ActiveRecord::Base
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
   include Solution::MetaMethods
+  include Solution::LanguageMethods
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    
@@ -123,10 +124,6 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   private
-
-    def assign_language
-      self.language = Account.current.language if self.language.blank?
-    end
 
     def populate_account
       self.account = category.account

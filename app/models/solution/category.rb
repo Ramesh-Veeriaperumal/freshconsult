@@ -16,9 +16,6 @@ class Solution::Category < ActiveRecord::Base
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
-   
-  after_create :assign_portal
-  before_create :assign_language
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
@@ -30,6 +27,7 @@ class Solution::Category < ActiveRecord::Base
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
   include Solution::MetaMethods
+  include Solution::LanguageMethods
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'
@@ -57,19 +55,8 @@ class Solution::Category < ActiveRecord::Base
   def to_liquid
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
-
-  def assign_portal
-    portal_solution_category = self.portal_solution_categories.build
-    portal_solution_category.portal_id = account.main_portal.id
-    portal_solution_category.solution_category_meta_id = solution_category_meta.id
-    portal_solution_category.save
-  end
    
   private 
-
-    def assign_language
-      self.language = Account.current.language if self.language.blank?
-    end
 
     def set_mobihelp_solution_updated_time
       update_mh_solutions_category_time(self.id)

@@ -7,8 +7,6 @@ module Solution::MetaMethods
 		"Solution::Article" => ['solution_folder_meta_id', 'folder_id']
 	}
 
-	include Solution::LanguageMethods
-
 	def self.included(base)
 		base.class_eval do 
 			# after_save :save_meta

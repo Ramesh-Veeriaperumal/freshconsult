@@ -51,12 +51,13 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def create
-    @category = @meta_obj.solution_categories.build(params[nscname])
+    @category_meta.portal_ids = params[nscname].delete("portal_ids")
+    @category = @category_meta.solution_categories.build(params[nscname])
     redirect_to_url = solution_categories_url
     redirect_to_url = new_solution_category_path unless params[:save_and_create].nil?
     
     respond_to do |format|
-      if @meta_obj.save
+      if @category_meta.save
         format.html { redirect_to redirect_to_url }
         format.xml  { render :xml => @category, :status => :created, :location => @category }
         format.json { render :json => @category, :status => :created, :location => @category }

@@ -4,6 +4,9 @@ class Solution::Article < ActiveRecord::Base
 
 	belongs_to :folder, :class_name => 'Solution::Folder'
 
+  #duplicate association to load folder without meta
+  belongs_to :solution_folder, :class_name => 'Solution::Folder', :foreign_key => :folder_id
+
   belongs_to :user, :class_name => 'User'
 
   belongs_to_account

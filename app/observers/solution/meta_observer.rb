@@ -9,6 +9,6 @@ class Solution::MetaObserver < ActiveRecord::Observer
 		child_obj = Account.current.send(scoper).find(meta_obj.id)
 		child_obj.class.where("id = #{child_obj.id}").
 			update_all(:parent_id => meta_obj.id, 
-			:language_id => Solution::MetaMethods::LANGUAGE_MAPPING[Account.current.language][:language_id])
+			:language_id => Solution::LanguageMethods::LANGUAGE_MAPPING[Account.current.language][:language_id])
 	end
 end

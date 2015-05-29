@@ -4,6 +4,10 @@ module Solution::LanguageMethods
 		I18n.available_locales.inject(HashWithIndifferentAccess.new) { |h,lang| h[lang] = I18n.t('meta', locale: lang); h }
 	)
 
+	def self.included(base)
+		base.scope :find_by_language, lambda { |lang| {:conditions => {:language_id => LANGUAGE_MAPPING[lang][:language_id] }}}
+	end
+
 	def self.current_language_id
 		portal = Portal.current || Account.current.main_portal
 		supported_languages = [portal.language, Account.current.supported_languages].flatten

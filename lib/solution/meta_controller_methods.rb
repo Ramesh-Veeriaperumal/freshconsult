@@ -17,8 +17,7 @@ module Solution::MetaControllerMethods
 
 	def build_meta_obj
 		# To be changed and tested
-		# @meta_obj = self.instance_variable_set("@#{cname}_meta", current_account.send(meta_parent).new)
-		@meta_obj = current_account.send(meta_parent).new
+		@meta_obj = self.instance_variable_set("@#{cname}_meta", current_account.send(meta_parent).new)
 		assign_meta_attributes
 		assign_meta_associations
 	end
@@ -26,6 +25,7 @@ module Solution::MetaControllerMethods
 	def assign_meta_associations
 		current_klass = controller_name.singularize.to_sym
 		return unless META_ASSOCIATIONS.keys.include?(current_klass)
+		binding.pry
 		@meta_obj.send("solution_#{META_ASSOCIATIONS[current_klass]}_meta=", instance_variable_get("@#{META_ASSOCIATIONS[current_klass]}_meta"))
 	end
 

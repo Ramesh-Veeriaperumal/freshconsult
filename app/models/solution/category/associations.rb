@@ -33,6 +33,6 @@ class Solution::Category < ActiveRecord::Base
 
   has_many :mobihelp_apps, 
     :class_name => 'Mobihelp::App', 
-    :through => :mobihelp_app_solutions, 
+    :through => :mobihelp_app_solutions 
 
 end

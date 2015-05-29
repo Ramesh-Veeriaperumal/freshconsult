@@ -8,6 +8,7 @@ class Solution::Article < ActiveRecord::Base
   include Mobihelp::AppSolutionsUtils
 
   include Solution::MetaMethods
+  include Solution::LanguageMethods
   include Redis::RedisKeys
   include Redis::OthersRedis	
 
@@ -36,7 +37,6 @@ class Solution::Article < ActiveRecord::Base
   before_save     :set_mobihelp_solution_updated_time, :if => :content_changed?
   before_destroy  :set_mobihelp_solution_updated_time
   after_save :update_meta_likes, :if  => :thumbs_up_changed? or :thumbs_down_changed?
-  before_create :assign_language
   # before_save :set_up_to_date
 
   validates_presence_of :title, :description, :user_id , :account_id
@@ -226,10 +226,6 @@ class Solution::Article < ActiveRecord::Base
   end
 
   private
-  
-    def assign_language
-      self.language = Account.current.language if self.language.blank?
-    end
 
     def set_mobihelp_solution_updated_time
       update_mh_solutions_category_time(solution_article_meta.solution_folder_meta.solution_category_meta_id)
