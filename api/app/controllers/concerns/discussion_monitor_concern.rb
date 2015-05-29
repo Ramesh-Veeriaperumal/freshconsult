@@ -3,7 +3,8 @@ module DiscussionMonitorConcern
   included do
     before_filter :access_denied, only: [:follow, :unfollow, :followed_by, :is_following], unless: :logged_in?
     before_filter :permit_toggle_params, :fetch_monitorship, only: [:follow, :unfollow]
-    before_filter :validate_user_id, :allow_monitor?, :fetch_active_monitorship_for_user, only: [:is_following]
+    before_filter :validate_user_id, :allow_monitor?, only: [:followed_by, :is_following]
+    before_filter :fetch_active_monitorship_for_user, only: [:is_following]
   end
 
   def follow

@@ -5,7 +5,6 @@ module ApiDiscussions
                        only: [:show, :follow, :unfollow, :is_following, :followed_by]
     skip_before_filter :load_object, only: [:followed_by, :create, :index, :is_following]
     include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
-    before_filter :validate_user_id, :allow_monitor?, only: [:followed_by]
     before_filter :portal_check, only: [:show]
     before_filter :can_send_user?, only: [:create, :follow, :unfollow]
     before_filter :set_forum_id, only: [:create, :update]
