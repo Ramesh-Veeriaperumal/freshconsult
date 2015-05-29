@@ -57,6 +57,9 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     unavailableUserListItem: function(id){
        this.agent = this.getAgent(id);
        this.timeInWords(this.agent);
+       if(this.agent.presence==this.Status.BUSY){
+        this.presence_in_words = freshfone.call_in_progress;
+      }
       return { id : this.agent.id, 
                data_id : "<span class='id' data-id='"+this.agent.id+"'></span>",
                name : this.agent.name,

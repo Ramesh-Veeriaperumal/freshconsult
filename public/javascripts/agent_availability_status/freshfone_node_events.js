@@ -10,7 +10,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
 
     changeToAvailableAgent: function (agent) {
       this.userListUpdate(agent,this.filter.Status.ONLINE,this.filter.Preference.TRUE);
-       this.ifBusyToAvailable(agent);      
+       this.ifWasBusy(agent,this.filter.AvailableAgentList);      
        this.removeAgent(agent,this.filter.UnavailableAgentList);
        this.addAvailableAgentToList(agent);
        this.filter.sortLists();
@@ -18,6 +18,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
     changeToUnavailableAgent: function (agent) {  
       this.userListUpdate(agent,this.filter.Status.OFFLINE,this.filter.Preference.FALSE);
+       this.ifWasBusy(agent,this.filter.UnavailableAgentList);
        this.removeAgent(agent,this.filter.AvailableAgentList);
        this.addUnavailableAgentToList(agent);
        this.filter.sortLists();
@@ -31,6 +32,14 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
               $.each(this.filter.availableListArray,jQuery.proxy(function(index,value)  {
                   if(value==agent.id){
                       var item=this.filter.AvailableAgentList.get("id",agent.id);
+                      item.values({presence_time_in_s: freshfone.call_in_progress });
+                  }
+              },this));
+            }
+            if(this.filter.UnavailableAgentList.get("id",agent.id)){
+              $.each(this.filter.unavailableListArray,jQuery.proxy(function(index,value)  {
+                  if(value==agent.id){
+                      var item=this.filter.UnavailableAgentList.get("id",agent.id);
                       item.values({presence_time_in_s: freshfone.call_in_progress });
                   }
               },this));
@@ -65,10 +74,10 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
       }
     },
     
-    ifBusyToAvailable: function(agent){
-       if(this.filter.AvailableAgentList.get("id",agent.id)){
+    ifWasBusy: function(agent,list){
+       if(list.get("id",agent.id)){
          var agent=this.filter.getAgent(agent.id);
-        var item=this.filter.AvailableAgentList.get("id",agent.id);
+        var item=list.get("id",agent.id);
        var presence_in_words=agent.last_call_time==null ? freshfone.no_activity :'<span data-livestamp="'+agent.last_call_time+'"></span>';
      item.values({presence_time_in_s: presence_in_words});
       }
@@ -76,11 +85,13 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
    userListUpdate: function(agent,presence,preference){
     var last_call=agent.presence_time==""? null:agent.presence_time;
+    var on_phone=agent.on_phone==="true"? true: false;
         $.each(freshfone.agents,jQuery.proxy(function(index,value)  {
             if(value["id"]==agent.id){
                value["presence"]=presence;
                value["preference"]=preference;
                value["last_call_time"]= last_call;
+               value["on_phone"]=on_phone;
                this.filter.timeInWords(this.filter.getAgent(agent.id));
             }  
         },this)); 
@@ -90,7 +101,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
           list.remove("id",agent.id);
           }
     }
-    
+   
   };
   
   }(window.jQuery));
