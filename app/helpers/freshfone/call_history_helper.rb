@@ -106,7 +106,7 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def export_options
-		[t('export_data.csv'), t('export_data.xls')]
+		[{ i18n: t('export_data.csv'), en: "CSV" }, { i18n: t('export_data.xls'), en: "Excel" }]
 	end
 
 	def export_messages
