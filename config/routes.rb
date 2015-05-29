@@ -420,18 +420,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :call_history do
-      member do 
-        delete :destroy_recording
-      end
-      collection do
-        get :custom_search
-        get :children
-        get :recent_calls
-        get :export
-      end
-    end
-
     resources :caller do
       collection do
         post :block
@@ -494,6 +482,20 @@ Helpkit::Application.routes.draw do
   end
 
   match '/freshfone/preview_ivr/:id' => 'freshfone#preview_ivr', :via => :post
+  
+  namespace :freshfone, :path => "phone" do
+    resources :call_history do
+      member do 
+        delete :destroy_recording
+      end
+      collection do
+        get :custom_search
+        get :children
+        get :recent_calls
+        get :export
+      end
+    end
+  end
 
   resources :users do
     collection do
@@ -874,7 +876,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :freshfone, :only => [:index] do
+    resources :freshfone, :only => [:index], :path => 'phone' do
       collection do
         get :search
         put :toggle_freshfone
@@ -883,7 +885,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    namespace :freshfone do
+    namespace :freshfone, :path => 'phone' do
       resources :numbers do
         collection do
           post :purchase
@@ -1089,7 +1091,7 @@ Helpkit::Application.routes.draw do
     end
 
 
-    namespace :freshfone do
+    namespace :freshfone, :path => "phone" do
       resources :summary_reports, :controller => 'summary_reports' do
         collection do
           post :generate
