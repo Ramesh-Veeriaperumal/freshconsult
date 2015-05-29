@@ -153,7 +153,6 @@ module ApiDiscussions
       assert_equal "http://#{@request.host}/api/v2/discussions/forums/#{result['id']}", response.headers['Location']
     end
 
-
     def test_create_no_params
       post :create, construct_params({}, {})
       pattern = [bad_request_error_pattern('name', "can't be blank"),

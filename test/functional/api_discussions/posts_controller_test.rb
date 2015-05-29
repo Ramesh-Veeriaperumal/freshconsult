@@ -91,7 +91,6 @@ module ApiDiscussions
       assert_equal "http://#{@request.host}/api/v2/discussions/posts/#{result['id']}", response.headers['Location']
     end
 
-
     def test_create_customer_user
       topic_obj.update_column(:locked, false)
       user = customer

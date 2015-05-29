@@ -71,4 +71,24 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get '/api/discussions/categories', nil,  @headers.merge('HTTP_ACCEPT' => 'application/json')
     assert_response :success
   end
+
+  def test_account_suspended_json
+    subscription = @account.subscription
+    subscription.update_column(:state, 'suspended')
+    post '/api/discussions/categories', nil, @write_headers
+    response = parse_response(@response.body)
+    assert_equal({ 'code' => 'account_suspended', 'message' => 'Your account has been suspended.' }, response)
+    assert_response :forbidden
+    subscription.update_column(:state, 'trial')
+ end
+
+  def test_day_pass_expired_json
+    Agent.any_instance.stubs(:occasional).returns(true).once
+    subscription = @account.subscription
+    subscription.update_column(:state, 'active')
+    get '/agents.json', nil, @write_headers
+    response = parse_response(@response.body)
+    assert_equal({ 'code' => 'access_denied', 'message' => 'You are not authorized to perform this action.' }, response)
+    assert_response :forbidden
+  end
 end

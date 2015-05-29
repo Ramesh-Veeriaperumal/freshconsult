@@ -1,15 +1,21 @@
 Todo:
  - combine all discussion methods into one and example requires feature before filter
  - Paginate fires extra queries?
+ - Investigate rails-api
+ - array should be datatype for list
+ - Middlewares which is not needed for API
+ - move concerns to web
+ - revisit concerns. Avoid using concerns.
+ - multipart form data handle
+
 
 Breaking changes in existing APIs:
- - Account suspended
  - day pass required
- - handle unverified request
  - Post validation
  - customer forum validation
  - Monitorship validation
  - Stamp type validation
+
 Deferred:
  - caching(db also)
  - update (override or incremental) -  override

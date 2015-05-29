@@ -1,27 +1,4 @@
-class ApiApplicationController < ActionController::Metal
- 
-  include ActionController::Head #Need when calling head
-  include ActionController::Helpers #needed for calling methods which are defined as helper methods. 
-  include ActionController::Redirecting
-  include ActionController::Rendering 
-  include ActionController::RackDelegation  #Needed so that reqeest and response method will be delegated to Rack
-  include ActionController::Caching  
-  include Rails.application.routes.url_helpers # Need for location header in response
-  include ActiveSupport::Rescuable #Dependency with strong params
-  include ActionController::MimeResponds 
-  include ActionController::ImplicitRender
-  include ActionController::StrongParameters
-  include ActionController::Cookies
-  include ActionController::RequestForgeryProtection # should we need this?
-  include ActionController::HttpAuthentication::Basic::ControllerMethods
-  include AbstractController::Callbacks 
-  include ActionController::Rescue
-  include ActionController::ParamsWrapper
-  include ActionController::Instrumentation  # need this for active support instrumentation.
-
-  set_metal_config 
-  append_view_path "#{Rails.root}/api/app/views"
-
+class ApiApplicationController < MetalApiController
   prepend_before_filter :response_headers
 
   # do not change the exception order # standard error has to have least priority hence placing at the top.
@@ -29,24 +6,27 @@ class ApiApplicationController < ActionController::Metal
     render_500(exception)
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
+  rescue_from DomainNotReady, with: :route_not_found
 
-  include Api::ApplicationConcern
+  include Concerns::ApplicationConcern
 
+  # ************************ App specific Before filters Starts ******************************#
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
-  before_filter :check_account_state, :except => [:show,:index]
-  before_filter :set_time_zone, :check_day_pass_usage 
+  before_filter :check_account_state, except: [:show, :index]
+  before_filter :set_time_zone, :check_day_pass_usage
   before_filter :force_utf8_params
   include AuthenticationSystem
-  include HelpdeskSystem 
+  include HelpdeskSystem
+  include ControllerLogger
   include SubscriptionSystem
   protect_from_forgery
-  before_filter :verify_authenticity_token, :if => :api_request?
-
+  before_filter :verify_authenticity_token, if: :api_request?
+  # ************************ App specific Before filters Ends ******************************#
 
   skip_before_filter :check_privilege, only: [:route_not_found]
   before_filter :load_object, except: [:create, :index, :route_not_found]
@@ -56,11 +36,6 @@ class ApiApplicationController < ActionController::Metal
   before_filter :build_object, only: [:create]
   before_filter :load_objects, only: [:index]
   before_filter :load_association, only: [:show]
-
-  # wrap params will wrap only attr_accessible fields if this is removed.
-  def self.inherited(subclass)
-    subclass.wrap_parameters  format:[:json], exclude: []
-  end
 
   def index
   end
@@ -78,9 +53,7 @@ class ApiApplicationController < ActionController::Metal
   end
 
   def update
-    if @item.update_attributes(params[cname])
-      render template: "#{controller_path}/update",  status: :ok
-    else
+    unless @item.update_attributes(params[cname])
       set_custom_errors
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
     end
@@ -228,4 +201,15 @@ class ApiApplicationController < ActionController::Metal
 
   def manipulate_params
   end
+  
+  def check_account_state
+    render_request_error(:account_suspended, 403) unless current_account.active?
+  end
+
+  def handle_unverified_request
+    super
+    post_process_unverified_request
+    render_request_error(:unverified_request, 401)
+  end
+
 end

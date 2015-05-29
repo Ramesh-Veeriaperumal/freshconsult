@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
 
-  include Api::ApplicationConcern
+  include Concerns::ApplicationConcern
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
@@ -47,6 +47,29 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   #
   
+   def check_account_state
+    unless current_account.active?
+      respond_to do |format|
+        account_suspended_hash = { account_suspended: true }
+
+        format.xml { render xml: account_suspended_hash.to_xml }
+        format.json { account_suspended_hash.to_json }
+        format.nmobile { render json: account_suspended_hash.to_json }
+        format.js { render json: account_suspended_hash.to_json }
+        format.widget { render json: account_suspended_hash.to_json }
+        format.html do
+          if privilege?(:manage_account)
+            flash[:notice] = t('suspended_plan_info')
+            return redirect_to(subscription_url)
+          else
+            flash[:notice] = t('suspended_plan_admin_info', email: current_account.admin_email)
+            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+          end
+        end
+      end
+    end
+  end
+
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
@@ -121,6 +144,31 @@ class ApplicationController < ActionController::Base
       response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
       response.headers["Pragma"] = "no-cache"
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
+
+  def handle_unverified_request
+    super
+    post_process_unverified_request
+    portal_redirect_url = root_url
+    if params[:portal_type] == 'facebook'
+      portal_redirect_url += 'support/home'
+    else
+      portal_redirect_url += 'support/login'
+    end
+    respond_to do |format|
+      format.html  do
+        redirect_to portal_redirect_url
+      end
+      format.nmobile do
+        render json: { logout: 'success' }.to_json
+      end
+      format.json do
+        render json: { logout: 'success' }.to_json
+      end
+      format.widget do
+        render json: { logout: 'success' }
+      end
+    end
   end
 
   protected

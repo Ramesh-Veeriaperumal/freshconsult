@@ -58,6 +58,5 @@ helpdesk:
     - wrap_parameters
     - statsd_config
     - big_brother
-    - metal_settings
 
 
