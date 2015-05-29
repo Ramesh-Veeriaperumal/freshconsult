@@ -4,7 +4,8 @@ module ApiDiscussions
     skip_before_filter :check_privilege, :verify_authenticity_token,
                        only: [:show, :follow, :unfollow, :is_following, :followed_by]
     skip_before_filter :load_object, only: [:followed_by, :create, :index, :is_following]
-    include Api::DiscussionMonitorConcern
+    include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
+    before_filter :validate_user_id, :allow_monitor?, only: [:followed_by]
     before_filter :portal_check, only: [:show]
     before_filter :can_send_user?, only: [:create, :follow, :unfollow]
     before_filter :set_forum_id, only: [:create, :update]
@@ -25,6 +26,11 @@ module ApiDiscussions
     def posts
       @posts = paginate_items(@topic.posts)
       render template: '/api_discussions/posts/post_list'
+    end
+
+    def followed_by
+      @topics = paginate_items(current_account.topics.followed_by(params[:user_id]))
+      render template: '/api_discussions/topics/topic_list'
     end
 
     private

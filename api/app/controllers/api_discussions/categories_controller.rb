@@ -1,6 +1,6 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    include Discussions::CategoryConcern
+    prepend_before_filter { |c| c.requires_feature :forums }
     skip_before_filter :verify_authenticity_token, only: [:show]
 
     def forums
@@ -22,6 +22,10 @@ module ApiDiscussions
 
     def portal_check
       access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
+    end
+
+    def scoper
+      current_account.forum_categories
     end
   end
 end

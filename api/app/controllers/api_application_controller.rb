@@ -211,5 +211,4 @@ class ApiApplicationController < MetalApiController
     post_process_unverified_request
     render_request_error(:unverified_request, 401)
   end
-
 end

@@ -3,8 +3,8 @@ class DiscussionsController < ApplicationController
 	include ModelControllerMethods
 	include Helpdesk::ReorderUtility
 	include Community::ModerationCount
-    include Discussions::CategoryConcern # methods and filters that are also used by api are moved to this concern
-
+	
+	before_filter { |c| c.requires_feature :forums } 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]
 	before_filter :check_no_topics, :only => [:index]
@@ -97,6 +97,10 @@ class DiscussionsController < ApplicationController
 
 		def content_scope
 			@content_scope = ''
+		end
+
+		def scoper
+			current_account.forum_categories
 		end
 
 		def portal_scoper

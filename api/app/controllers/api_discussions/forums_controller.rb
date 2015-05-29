@@ -1,12 +1,10 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    include Discussions::ForumConcern
-
     before_filter { |c| c.requires_feature :forums }
     skip_before_filter :check_privilege, :verify_authenticity_token, only: [:follow, :unfollow, :is_following]
     skip_before_filter :load_object, only: [:create, :is_following]
-    include Api::DiscussionMonitorConcern
-    before_filter :set_account_and_category_id, only: [:create]
+    include DiscussionMonitorConcern
+    before_filter :set_account_and_category_id, only: [:create, :update]
     before_filter :can_send_user?, only: [:follow, :unfollow]
 
     def topics
@@ -14,7 +12,17 @@ module ApiDiscussions
       render template: '/api_discussions/topics/topic_list'
     end
 
+    def delete
+      # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
+      @forum.backup_forum_topic_ids
+      super
+    end
+
     private
+
+    def scoper
+      current_account.forums
+    end
 
     def load_association
       @topics = @forum.topics
@@ -27,7 +35,9 @@ module ApiDiscussions
     end
 
     def manipulate_params
-      set_customer_forum_params
+      customers = params[cname]['customers']
+      params[cname][:customer_forums_attributes] = {}
+      params[cname][:customer_forums_attributes][:customer_id] = (customers ? customers.split(',') : [])
     end
 
     def portal_check
@@ -36,7 +46,7 @@ module ApiDiscussions
 
     def set_account_and_category_id
       @forum.account_id ||= current_account.id
-      @forum.forum_category_id = params[cname]['forum_category_id'] # shall we use this assign_forum_category_id method
+      @forum.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']
     end
 
     def validate_params

@@ -80,7 +80,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal({ 'code' => 'account_suspended', 'message' => 'Your account has been suspended.' }, response)
     assert_response :forbidden
     subscription.update_column(:state, 'trial')
- end
+  end
 
   def test_day_pass_expired_json
     Agent.any_instance.stubs(:occasional).returns(true).once

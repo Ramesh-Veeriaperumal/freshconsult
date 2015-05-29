@@ -7,7 +7,7 @@ class MetalApiController < ActionController::Metal
   # For configuration(like perform_caching, allow_forgery_protection) to be loaded for action controller metal, there are methods originally in base needs to be declared.
   extend Compatibility
 
-  # Lazy loading hooks metal controller.
+  # Lazy loading hooks for metal controller.
   ActiveSupport.run_load_hooks(:action_controller, self)
 
   # Metal controller doesn't know the view path. So appending it.
