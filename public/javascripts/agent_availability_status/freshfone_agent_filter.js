@@ -131,6 +131,12 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
               }
             }
           }
+        if (this.agent.presence==this.Status.OFFLINE && this.agent.preference==this.Preference.TRUE && !this.agent.on_phone){
+              if(!this.UnavailableAgentList.get("id",id)){
+              this.UnavailableAgentList.add(this.unavailableUserListItem(id));
+              }
+            }   
+
         if (this.agent.presence==this.Status.OFFLINE||this.agent.presence==this.Status.BUSY){
             if(this.agent.preference==this.Preference.FALSE){
               if(!this.UnavailableAgentList.get("id",id)){
