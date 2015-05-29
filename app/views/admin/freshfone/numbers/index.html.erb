@@ -3,15 +3,15 @@
 <% content_for :sidebar do %>
 	<div class="sidepanel">
 		<i class="common-icon-help"></i>
-		<h3 class="lead"><%=t('freshfone.admin.numbers.sidebar_title')%></h3>
-		<p><%= t('freshfone.admin.numbers.sidebar_content').html_safe %></p>
+		<h3 class="lead"><%=t('freshfone.admin.numbers.title')%></h3>
+		<p><%= t('freshfone.admin.numbers.info').html_safe %></p>
 	</div>
 <% end %>
 
 <div class="list-page">
 	<div class="list-page-header"	>
 		<div class="row-fluid">
-			<div class="span6"><h3 class="title"><%= t('freshfone.admin.freshfone_numbers_title') %></h3></div>
+			<div class="span6"><h3 class="title"><%= t('freshfone.admin.freshfone_numbers') %></h3></div>
 			<div class="span6 pull-right pagination-right header_buttons align-right" >
 				<% if @numbers.any? %>
 			 		<%# form_tag(toggle_freshfone_admin_freshfone_path, 

@@ -3,7 +3,7 @@ class FreshfoneNotifier < ActionMailer::Base
 
   def account_expiring(account, trial_days = nil)
     headers = {
-      :subject       => "Warning. Your phone trial will expire in #{trial_days}",
+      :subject       => "Your Freshfone account will expire in #{trial_days}",
       :to            => account.admin_email,
       :from          => AppConfig['billing_email'],
       :sent_on       => Time.now,
@@ -37,7 +37,7 @@ class FreshfoneNotifier < ActionMailer::Base
 
   def suspended_account(account)
     headers = {
-      :subject => "Your phone channel is temporarily suspended",
+      :subject => "Your Freshfone account is temporarily suspended",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
       :sent_on => Time.now,
@@ -54,7 +54,7 @@ class FreshfoneNotifier < ActionMailer::Base
 
   def recharge_success(account, recharge_amount, balance)
     headers = {
-      :subject => 'Phone credit recharge successful',
+      :subject => "Your Freshfone credit has been recharged!",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
       :sent_on  => Time.now,
@@ -64,7 +64,6 @@ class FreshfoneNotifier < ActionMailer::Base
     }
     @recharge_amount = recharge_amount
     @balance         = balance
-    @account         = account
 
     mail(headers) do |part|
       part.html { render "recharge_success", :formats => [:html]}
@@ -73,7 +72,7 @@ class FreshfoneNotifier < ActionMailer::Base
 
   def low_balance(account, balance)
     headers = {
-      :subject => 'Warning. Low on Phone credits',
+      :subject => "Your Freshfone credit is running low!",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
       :sent_on => Time.now,
@@ -90,7 +89,7 @@ class FreshfoneNotifier < ActionMailer::Base
 
   def trial_number_expiring(account, number, trial_days = nil)
     headers = {
-      :subject => 'Warning. Phone trial about to expire',
+      :subject => "Your Freshfone number #{number} will expire in #{trial_days}",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
       :sent_on => Time.now,
@@ -108,7 +107,7 @@ class FreshfoneNotifier < ActionMailer::Base
  
   def billing_failure(account, args, current_call, exception)
     headers = {
-      :subject => "Phone Credit Calculation Error for #{account.id} :: call sid :#{args[:call_sid]}",
+      :subject => "Freshfone Credit Calculation Error for #{account.id} :: call sid :#{args[:call_sid]}",
       :to      => FreshfoneConfig['billing_error_email'],
       :from    => AppConfig['billing_email'],
       :sent_on => Time.now,
@@ -128,7 +127,7 @@ class FreshfoneNotifier < ActionMailer::Base
 
   def recharge_failure(account, recharge_amount, balance)
     headers = {
-      :subject => 'Failed to recharge phone credits',
+      :subject => "Recharge failed for your Freshfone account",
       :to => account.admin_email,
       :from => AppConfig['billing_email'],
       "Reply-to" => "",

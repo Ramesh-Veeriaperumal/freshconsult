@@ -6,9 +6,9 @@ class Admin::Freshfone::CreditsController < ApplicationController
 
 	def purchase
 		if @freshfone_credit.purchase
-      flash[:notice] = t('flash.freshfone.credits.successful_purchase')
+      flash[:notice] = t('flash.freshfone.credits.success')
     else
-      flash[:error] = t('flash.freshfone.credits.unsuccessful_purchase')
+      flash[:error] = t('flash.freshfone.credits.error')
     end
     redirect_to subscription_url
 	end

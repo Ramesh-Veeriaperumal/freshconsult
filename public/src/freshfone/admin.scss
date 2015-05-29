@@ -316,10 +316,13 @@
     margin-bottom: 20px;
   }
 }
-.fresfhone_flash_message, .small_note{
+.fresfhone_flash_message {
   display: block;
   position: relative;
   margin-top: 10px;
+  p {
+    font-size: 14px;  
+  } 
 }
 .success_flash, .error_flash {
   text-align: center;
@@ -340,28 +343,4 @@
 }
 .purchase-footer .address-required-alert {
   color: #888;
-}
-.freshfone_video {
-  @include margin (50px 50px 10px 60px);
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  @include padding (0px 10px 10px 10px);
-  background: #eee;
-  .title {
-    @include padding(10px 10px 10px 2px);
-    display: block;
-    text-align: center;
-  }
-}
-.ff_seperator {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  right: 0;
-  top: 310px;
-  border-bottom: 1px solid #ccc;
-}
-.ff_welcome_page {
-  @include margin(20px 0 20px 30px);
 }

@@ -1,11 +1,18 @@
 <div>
-	Hi <%=@account.admin_first_name%>,<div><br></div>
-	<div>We want to let you know that your phone channel has been temporarily suspended due to insufficient balance.</div>
-	<div>You will not be able to answer or make calls during this period.</div>
+	Hi,<div><br></div>
+	<div>We want to let you know that your Freshfone account is temporarily suspended due to insufficient balance.</div>
 	<div><br></div>
-	<div>Please <%= link_to "recharge your phone credits", "http://#{@account.full_domain}/subscription" %> immediately to avoid losing your phone numbers.</div>
+	<div>You will not be able to answer or make calls from Freshfone during this period.</div>
 	<div><br></div>
-	<div>Regards,</div>
-	<div>The Freshdesk Team</div>
+	<div>Please recharge your Freshfone account immediately to avoid losing your account..</div>
+	<div><br></div>
+	<div><%= link_to "Recharge Now", "http://#{@account.full_domain}/subscription" %></div>
+	<div><br></div>
+	<div>Regards</div>
+	<div><br></div>
+	<div>Vijay Shankar&nbsp;</div>
+	<div><%= AppConfig['from_email'] %></div>
+	<div>Customer Support Advocate</div>
+	<div>Freshdesk - refreshing customer support!</div>
 	<div><br></div>
 </div>

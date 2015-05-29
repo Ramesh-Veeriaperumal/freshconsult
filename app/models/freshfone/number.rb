@@ -257,10 +257,10 @@ class Freshfone::Number < ActiveRecord::Base
 
 		def validate_purchase
 			if invalid_credit_and_country
-				errors.add(:base,I18n.t('freshfone.admin.numbers.failure_purchase'))
+				errors.add(:base,I18n.t('freshfone.admin.numbers.cannot_purchase'))
 				return false
 			end
-			errors.add(:base,I18n.t('freshfone.admin.numbers.low_credits')) unless sufficient_credits?
+			errors.add(:base,I18n.t('freshfone.admin.numbers.insuffcient_credits')) unless sufficient_credits?
 		end
 
 		def assign_number_to_message

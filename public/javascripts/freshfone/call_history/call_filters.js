@@ -217,7 +217,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.setFilterData();
           self.showProgress();
           $.ajax({
-            url : '/phone/call_history/export',
+            url : '/freshfone/call_history/export',
             data : $(self.$filterSortForm).serialize() + '&export_to=' + $(ev.target).attr('data-format'),
             success : function() {
               self.cleanupLoader();

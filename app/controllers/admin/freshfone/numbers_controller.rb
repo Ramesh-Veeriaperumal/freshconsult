@@ -19,7 +19,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	def purchase
 		begin
 		if purchase_number.save
-			flash[:notice] = t('flash.freshfone.number.successful_purchase')
+			flash[:notice] = t('flash.freshfone.number.success')
 			respond_to do |format|
 				format.html { redirect_to edit_admin_freshfone_number_path(@purchased_number) }
 				format.json { render :json => { :success => true, :redirect_url => edit_admin_freshfone_number_path(@purchased_number)} }
@@ -91,10 +91,10 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 		def check_active_account
 			if current_account.freshfone_credit.zero_balance?
-				flash[:notice] = t('freshfone.general.suspended_on_low_balance_msg')
+				flash[:notice] = t('freshfone.general.suspended_on_low_balance')
 				redirect_to admin_freshfone_numbers_path 
 			elsif current_account.freshfone_account.suspended?
-				flash[:notice] = t('freshfone.general.suspended_account_msg')
+				flash[:notice] = t('freshfone.general.suspended_account')
 				redirect_to admin_freshfone_numbers_path 	
 			end
 		end

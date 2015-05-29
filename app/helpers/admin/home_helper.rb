@@ -13,8 +13,8 @@
         :pjax                          =>   true,
         :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:chat)
       },
-      :"phone-channel"                   =>   {
-        :url                           =>   "/admin/phone",
+      :freshfone                       =>   {
+        :url                           =>   "/admin/freshfone",
         :privilege                     =>   privilege?(:admin_tasks)
       },
       :"twitter"                       =>   {
@@ -188,7 +188,7 @@
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp"],
+      :"support-channels"       =>    ["email", "freshchat", "freshfone", "twitter", "facebook-setting", "feedback", "mobihelp"],
       :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-fields", "customer-portal", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
@@ -218,7 +218,7 @@
       :freshchat                  =>      {
           :open_keywords          =>      [:chat_integration]
       },
-      :"phone-channel"            =>      {
+      :freshfone                  =>      {
           :open_keywords          =>      [:phone_integration]
       },
       :feedback                   =>      {

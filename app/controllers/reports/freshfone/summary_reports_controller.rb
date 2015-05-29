@@ -24,7 +24,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
     @calls = filter(@start_date,@end_date)
     headers = csv_hash.keys.sort
     send_data csv_string(headers), :type => 'text/csv; charset=utf-8; header=present', 
-            :disposition => "attachment; filename=phone_summary_report.csv"
+            :disposition => "attachment; filename=freshfone_summary_report.csv"
   end
 
 

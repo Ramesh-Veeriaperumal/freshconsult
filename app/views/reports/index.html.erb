@@ -40,7 +40,7 @@
 					survey_activity_url}) %>
 			<%end%>
 			<% if freshfone_reports? %>
-				<%= report_item({:label => t('reports.freshfone.ff_report_title'), :class => 'summary-report-icon', :url => reports_freshfone_summary_reports_url}) %>
+				<%= report_item({:label => t('reports.freshfone.report_title'), :class => 'summary-report-icon', :url => reports_freshfone_summary_reports_url}) %>
 			<%end%>
 			<% if chat_activated? %>
 				<%= report_item({:label => t('reports.freshchat.report_title'), :class => 'chat-summary', :url => reports_freshchat_summary_reports_url}) %>

@@ -54,7 +54,7 @@
             search_freshfone.abort();
         }
         search_freshfone = $.ajax({
-            url: '/admin/phone/available_numbers',
+            url: '/admin/freshfone/available_numbers',
             data: {
                 "search_options": search_options,
                 "country": $supportedCountries.val()
@@ -78,7 +78,7 @@
             search_freshfone.abort();
         }
         search_freshfone = $.ajax({
-            url: '/admin/phone/available_numbers',
+            url: '/admin/freshfone/available_numbers',
             data: {
                 "search_options": search_options,
                 "country": $('#toll_free_supported_countries').val()

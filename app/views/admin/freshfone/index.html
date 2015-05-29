@@ -1,25 +1,25 @@
 <% content_for :sidebar do -%>&nbsp;<%-end %>
  
 <%= stylesheet_link_tag_with_rtl :'cdn/freshfone_admin' %>
-<% @page_title = t('freshfone.admin.welcome_page.title_text')%>
+<% @page_title = t('freshfone.admin.welcome_page.title')%>
 <div class="list-page-body ">
-  <h3 class="lead"> <%= t('freshfone.admin.feature_request_content.title_text') %> </h3>
+  <h3 class="lead"> <%= t('freshfone.admin.feature_request_content.title') %> </h3>
   <ul class="ui-form">
     <li class="inline-field">
-      <div class="row-fluid admin_help_image ff_welcome_page">
+      <div class="row-fluid admin_help_image">
         <div class="span3 image-centered">
           <i class="ficon-calling fsize-72 ff-admin-img"></i>
         </div>
         <div class="span8 freshfone_admin_content">
-          <h2 class="title">  <%= t('freshfone.admin.feature_request_content.heading_text') %> </h2>
+          <h2 class="title">  <%= t('freshfone.admin.feature_request_content.heading') %> </h2>
           <ul class="info-data disc">
-            <li><%= t('freshfone.admin.feature_request_content.number_info') %> </li>
-            <li><%= t('freshfone.admin.feature_request_content.ivr_info') %> </li>
-            <li><%= t('freshfone.admin.feature_request_content.recording_info') %>  </li>
+            <li><%= t('freshfone.admin.feature_request_content.about_numbers') %> </li>
+            <li><%= t('freshfone.admin.feature_request_content.about_ivr') %> </li>
+            <li><%= t('freshfone.admin.feature_request_content.about_recording') %>  </li>
           </ul>
           <div class="content_footer">
             <a href='http://freshdesk.com/freshfone' target="_blank">
-              <%= t('freshfone.admin.feature_request_content.learn_more') %>
+              <%= t('freshfone.admin.feature_request_content.read_more') %>
             </a>
             <span class="muted"> &nbsp;&nbsp;&nbsp; |  &nbsp;&nbsp;&nbsp; </span>
               <a href="http://freshdesk.com/freshfone/pricing" target="_blank">
@@ -28,19 +28,15 @@
           </div>
           <a href="#" class="btn btn-primary btn-large freshfone_feature_request"
           id="freshfone_feature_request" data-loading-text="Requesting..">
-            <%= t('freshfone.admin.feature_request_content.button_text')%>
+            <%= t('freshfone.admin.feature_request_content.button_label')%>
           </a>
-          <div class="small_note muted"> 
+          <div class='fresfhone_flash_message' id="ff_feature_request">
+            <div class="small_note muted"> 
               <p>
-                <%= t('freshfone.admin.feature_request_content.additional_info')%>
+                <%= t('freshfone.admin.feature_request_content.additional_note')%>
               </p>
             </div>
-          <div class='fresfhone_flash_message' id="ff_feature_request"></div>    
-        </div>
-        <div class="ff_seperator"></div>
-        <div class='freshfone_video'>
-          <span class='title'><%= t('freshfone.admin.feature_request_content.video_title')%></span>
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/MDgwVv2jb4E?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+          </div>    
         </div>
       </div>
     </li>
@@ -48,7 +44,7 @@
 </div>
 <%=javascript_tag do %> 
   if (typeof freshfone === "undefined") { freshfone = {}; }
-  freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success')%>" ;
+  freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success_message_flash')%>" ;
   freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
 <%- end %>
 <%= javascript_include_tag :'cdn/freshfone_welcome_page' %>
