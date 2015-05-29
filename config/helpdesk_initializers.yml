@@ -58,5 +58,6 @@ helpdesk:
     - wrap_parameters
     - statsd_config
     - big_brother
+    - launch_profiler
 
 

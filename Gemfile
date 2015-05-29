@@ -44,6 +44,12 @@ group :development, :test do
   gem 'meta_request'
 end
 
+group :development do
+  gem 'rack-mini-profiler'
+  gem 'capybara'
+  gem 'launchy'
+end
+
 gem "mail"
 gem "i18n", "~> 0.6.0"
 gem "RedCloth", "4.2.9"

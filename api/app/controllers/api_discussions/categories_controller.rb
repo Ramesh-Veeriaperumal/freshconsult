@@ -1,8 +1,7 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    before_filter :portal_check, only: [:show]
     include Discussions::CategoryConcern
-    skip_before_filter :check_privilege, :verify_authenticity_token, only: [:show]
+    skip_before_filter :verify_authenticity_token, only: [:show]
 
     def forums
       @forums = paginate_items(@category.forums)
