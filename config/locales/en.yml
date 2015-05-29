@@ -4330,7 +4330,9 @@ en:
       history:
         recent_item: Recent Items
     dashboard:
+      agent_availability: Agent Availability
       round_robin:
+        ticket_assignment: Ticket Assignment
         all_agents : All agents
         showing:  Showing
         available_agents: Available agents
@@ -4339,8 +4341,19 @@ en:
         na: N/A
         since_now: Since 1 second
         header: Automatic ticket assignment
-        view_agent_status: View agent status
-        no_agents_available: No agents available in the group
+        view_agent_status: Agent Availability Status
+        no_agents: "- No Agents -" 
+        back: Back
+      freshfone:
+        ffone: Freshfone
+        sort_by: Sorted by
+        last_modified: Last Activity
+        name: Name
+        accepting: Accepting
+        not_accepting: Not Accepting
+        call_in_progress: Call in progress
+        no_agents: "- No Agents -"
+        no_activity: "No Activity"
       index:
         todo_title: To-Do
       summary:

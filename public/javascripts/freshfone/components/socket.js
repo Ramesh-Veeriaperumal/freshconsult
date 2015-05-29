@@ -92,6 +92,9 @@ var FreshfoneSocket;
 
 			this.freshfone_socket_channel.on('agent_available', function (data) {
 				data = JSON.parse(data) || {};
+		if(typeof App.Freshfoneagents!="undefined"){
+ 			 App.Freshfoneagents.Node.changeToAvailableAgent(data.user);
+ 			}
 				if(data.user.id == freshfone.current_user) {
           self.toggleUserStatus(userStatus.ONLINE);
           return;
@@ -130,6 +133,9 @@ var FreshfoneSocket;
           if(!self.$externalNumbersList.is(':visible')){
             self.noAvailableAgentsToggle();
           }
+        if(typeof App.Freshfoneagents!="undefined"){
+    		  App.Freshfoneagents.Node.changeToUnavailableAgent(data.user);
+         }
 				});
 				
 				this.freshfone_socket_channel.on('agent_busy', function (data) {
@@ -137,6 +143,9 @@ var FreshfoneSocket;
 		
 					if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
 					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.BUSY); }
+				if(typeof App.Freshfoneagents!="undefined"){	
+					App.Freshfoneagents.Node.changeToBusyAgent(data.user);
+				}
 				});
 
 			this.freshfone_socket_channel.on('credit_change', function (data) {

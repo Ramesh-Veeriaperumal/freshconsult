@@ -1,0 +1,26 @@
+ <div class="list-page-body list-page-body-sleek">
+ 		<div class="ticket-minimal-tab current" id="ticket-tab-1">
+ 			
+			<table class="table available-agents" id="accepting-table">
+				<% if @available_agents.empty? %>
+ 					<h3 id="ticket-available" class="list-noinfo" ><%= t('helpdesk.dashboard.round_robin.no_agents') %></h3>
+ 				<% end %>
+ 				<h3  style="display:none;" id="ticket-accepting" class="list-noinfo" ><%= t('helpdesk.dashboard.round_robin.no_agents') %></h3>
+				<%= render :partial => "agent", :collection => @available_agents,:locals => {:table_id =>"available" } %>
+			</table>
+		</div>
+
+		<div class="ticket-minimal-tab " id="ticket-tab-2">
+			
+			<table class="table " id="not-accepting-table">
+				<% if @unavailable_agents.empty? %>
+					<h3 id="ticket-unavailable" class="list-noinfo" ><%= t('helpdesk.dashboard.round_robin.no_agents') %></h3>
+				<% end %>	
+				<h3  style="display:none;" id="ticket-not-accepting" class="list-noinfo" ><%= t('helpdesk.dashboard.round_robin.no_agents') %></h3>
+				<%= render :partial => "agent", :collection => @unavailable_agents ,:locals => {:table_id =>"unavailable" }%>
+			</table>
+		</div>	
+</div>
+<script type="text/javascript">
+	App.Dashboard.bindToggle();
+</script> 

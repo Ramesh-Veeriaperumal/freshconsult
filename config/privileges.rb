@@ -353,7 +353,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
-    resource :"helpdesk/dashboard",:only => [:agent_status]
+    resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
   end
 
   manage_account do

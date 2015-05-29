@@ -1,9 +1,9 @@
 input,textarea{width:98%;}
-input,textarea, input[type="text"], input[type="password"], 
-input[type="datetime"], input[type="datetime-local"], 
-input[type="date"], input[type="month"], input[type="time"], 
-input[type="week"], input[type="number"], input[type="email"], 
-input[type="url"], input[type="search"], input[type="tel"], 
+input,textarea, input[type="text"], input[type="password"],
+input[type="datetime"], input[type="datetime-local"],
+input[type="date"], input[type="month"], input[type="time"],
+input[type="week"], input[type="number"], input[type="email"],
+input[type="url"], input[type="search"], input[type="tel"],
 input[type="color"], .uneditable-input{
     @include padding-left(1%);
     @include padding-right(0);
@@ -27,7 +27,7 @@ input[type="file"]{
 }
 .control-group.bold{
   .control-label{
-    font-weight:500;  
+    font-weight:500;
   }
 }
 del{
@@ -200,7 +200,7 @@ html.touch .dialog-well .actions {
   margin-bottom: $baseLineHeight;
   font-size: $baseFontSize * 1.5;
   font-weight: 200;
-  line-height: $baseLineHeight * 1.5; 
+  line-height: $baseLineHeight * 1.5;
   span{
     display: inline-block;
     border-top: 4px solid #c7c7c7;
@@ -239,7 +239,7 @@ ul.inline > li, ol.inline > li {
 
 .widget h6{ text-transform: none; }
 .info-text{ color:#888888; }
-.list-widget{ 
+.list-widget{
   list-style: none;
   padding:0;
   margin:0;
@@ -293,7 +293,7 @@ ul.inline > li, ol.inline > li {
   padding:0;
 }
 
-.tooltip.disabled{ 
+.tooltip.disabled{
   pointer-events:auto;
   cursor: not-allowed;
  }
@@ -328,9 +328,9 @@ ul.inline > li, ol.inline > li {
 //---------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------
-//                                  ATTACHMENT DROP IN EMAIL - CSS 
+//                                  ATTACHMENT DROP IN EMAIL - CSS
 //---------------------------------------------------------------------------------------------------
- 
+
 .attach-error{
  @extend .alert;
 }
@@ -349,7 +349,7 @@ ul.inline > li, ol.inline > li {
         @include left(100%);
         top:0;
         width:3px;
-        height:97%; 
+        height:97%;
         z-index:999;
         display: table-cell !important;
   }
@@ -381,7 +381,7 @@ ul.inline > li, ol.inline > li {
 //---------------------------------------------------------------------------------------------------
 //                                        RTL Changes in pattern
 //---------------------------------------------------------------------------------------------------
-@if $rtl { 
+@if $rtl {
   .btn-group > .btn + .dropdown-toggle{
     float:left;
   }
@@ -407,4 +407,37 @@ body .fc-layout #sidebar{
 }
 .community .is_stuck{
   z-index: 8;
+}
+
+//---------------------------------------------------------------------------------------------------
+//                            Sleek Tabs - New tab style for New UI
+//---------------------------------------------------------------------------------------------------
+.nav-tabs.sleek-tab {
+  border-color: #a0a0a0;
+  margin-bottom: 10px;
+}
+.nav-tabs.sleek-tab > li {
+  margin-bottom: -1px;
+  margin-top: -2px;
+  @include margin-left(0);
+  @include margin-right($common-padding);
+}
+.nav-tabs.sleek-tab > li > a {
+  padding: 10px 0;
+  @include border-radius(0);
+  background-color: transparent;
+  border: none;
+  &:hover {
+    background-color: transparent;
+    border: none;
+  }
+}
+// Active state, and it's :hover to override normal :hover
+.nav-tabs.sleek-tab > .active > a,
+.nav-tabs.sleek-tab > .active > a:hover {
+  color: $gray;
+  background-color: $white;
+  border: none;
+  border-bottom: 4px solid #a0a0a0;
+  cursor: default;
 }
