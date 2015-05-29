@@ -142,6 +142,7 @@ Style/IndentHash:
 Style/IndentationConsistency:
   AutoCorrect: true
   Enabled: true
+  EnforcedStyle: rails
 
 # Offense count: 10
 # Cop supports --auto-correct.

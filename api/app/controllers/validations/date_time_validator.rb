@@ -7,13 +7,13 @@ class DateTimeValidator < ActiveModel::Validator
 
   private
 
-  def parse_time(value)
-    Time.zone.parse(value)
-    rescue
-      return false
-  end
+    def parse_time(value)
+      Time.zone.parse(value)
+      rescue
+        return false
+    end
 
-  def allow_nil(value)
-    options[:allow_nil] == true && value.nil?
-  end
+    def allow_nil(value)
+      options[:allow_nil] == true && value.nil?
+    end
 end

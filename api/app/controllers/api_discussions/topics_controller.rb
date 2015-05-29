@@ -34,51 +34,51 @@ module ApiDiscussions
 
     private
 
-    def load_association
-      @posts = @topic.posts
-    end
-
-    def set_custom_errors
-      @error_options = { remove: :posts }
-    end
-
-    def manipulate_params
-      params[cname][:body_html] = params[cname].delete(:message_html) if params[cname].key?(:message_html)
-      @email = params[cname].delete(:email) if params[cname].key?(:email)
-    end
-
-    def assign_user_and_parent(item, parent, value)
-      if @email.present?
-        item.user = @user
-      elsif params[cname][:user_id]
-        item.user_id ||= params[cname][:user_id]
-      else
-        item.user ||= current_user
+      def load_association
+        @posts = @topic.posts
       end
-      if item.has_attribute?(parent.to_sym)
-        item.send(:write_attribute, parent, value[parent]) if value.key?(parent)
-      else
-        item.association(parent.to_sym).writer(value)
+
+      def set_custom_errors
+        @error_options = { remove: :posts }
       end
-    end
 
-    def portal_check
-      access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
-    end
+      def manipulate_params
+        params[cname][:body_html] = params[cname].delete(:message_html) if params[cname].key?(:message_html)
+        @email = params[cname].delete(:email) if params[cname].key?(:email)
+      end
 
-    def set_forum_id
-      assign_user_and_parent @topic, :forum_id, params[cname]
-    end
+      def assign_user_and_parent(item, parent, value)
+        if @email.present?
+          item.user = @user
+        elsif params[cname][:user_id]
+          item.user_id ||= params[cname][:user_id]
+        else
+          item.user ||= current_user
+        end
+        if item.has_attribute?(parent.to_sym)
+          item.send(:write_attribute, parent, value[parent]) if value.key?(parent)
+        else
+          item.association(parent.to_sym).writer(value)
+        end
+      end
 
-    def validate_params
-      fields = get_fields("ApiConstants::#{action_name.upcase}_TOPIC_FIELDS")
-      params[cname].permit(*(fields.map(&:to_s)))
-      topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
-      render_error topic.errors unless topic.valid?
-    end
+      def portal_check
+        access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
+      end
 
-    def scoper
-      current_account.topics
-    end
+      def set_forum_id
+        assign_user_and_parent @topic, :forum_id, params[cname]
+      end
+
+      def validate_params
+        fields = get_fields("ApiConstants::#{action_name.upcase}_TOPIC_FIELDS")
+        params[cname].permit(*(fields.map(&:to_s)))
+        topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
+        render_error topic.errors unless topic.valid?
+      end
+
+      def scoper
+        current_account.topics
+      end
   end
 end

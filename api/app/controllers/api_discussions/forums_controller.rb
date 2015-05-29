@@ -20,40 +20,40 @@ module ApiDiscussions
 
     private
 
-    def scoper
-      current_account.forums
-    end
+      def scoper
+        current_account.forums
+      end
 
-    def load_association
-      @topics = @forum.topics
-    end
+      def load_association
+        @topics = @forum.topics
+      end
 
-    def set_custom_errors
-      bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id).map(&:to_s)
-      @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
-      @error_options = { remove: :customer_forums, meta: "#{bad_customer_ids.join(', ')}" }
-    end
+      def set_custom_errors
+        bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id).map(&:to_s)
+        @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
+        @error_options = { remove: :customer_forums, meta: "#{bad_customer_ids.join(', ')}" }
+      end
 
-    def manipulate_params
-      customers = params[cname]['customers']
-      params[cname][:customer_forums_attributes] = {}
-      params[cname][:customer_forums_attributes][:customer_id] = (customers ? customers.split(',') : [])
-    end
+      def manipulate_params
+        customers = params[cname]['customers']
+        params[cname][:customer_forums_attributes] = {}
+        params[cname][:customer_forums_attributes][:customer_id] = (customers ? customers.split(',') : [])
+      end
 
-    def portal_check
-      access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
-    end
+      def portal_check
+        access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
+      end
 
-    def set_account_and_category_id
-      @forum.account_id ||= current_account.id
-      @forum.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']
-    end
+      def set_account_and_category_id
+        @forum.account_id ||= current_account.id
+        @forum.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']
+      end
 
-    def validate_params
-      fields = ApiConstants::API_FORUM_FIELDS[params[cname][:forum_visibility].to_i] || ApiConstants::FORUM_FIELDS
-      params[cname].permit(*(fields.map(&:to_s)))
-      forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
-      render_error forum.errors unless forum.valid?
-    end
+      def validate_params
+        fields = ApiConstants::API_FORUM_FIELDS[params[cname][:forum_visibility].to_i] || ApiConstants::FORUM_FIELDS
+        params[cname].permit(*(fields.map(&:to_s)))
+        forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
+        render_error forum.errors unless forum.valid?
+      end
   end
 end
