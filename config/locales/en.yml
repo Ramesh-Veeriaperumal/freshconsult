@@ -4330,7 +4330,9 @@ en:
       history:
         recent_item: Recent Items
     dashboard:
+      agent_availability: Agent Availability
       round_robin:
+        ticket_assignment: Ticket Assignment
         all_agents : All agents
         showing:  Showing
         available_agents: Available agents
@@ -4339,8 +4341,19 @@ en:
         na: N/A
         since_now: Since 1 second
         header: Automatic ticket assignment
-        view_agent_status: View agent status
-        no_agents_available: No agents available in the group
+        view_agent_status: Agent Availability Status
+        no_agents: "- No Agents -" 
+        back: Back
+      freshfone:
+        ffone: Freshfone
+        sort_by: Sorted by
+        last_modified: Last Activity
+        name: Name
+        accepting: Accepting
+        not_accepting: Not Accepting
+        call_in_progress: Call in progress
+        no_agents: "- No Agents -"
+        no_activity: "No Activity"
       index:
         todo_title: To-Do
       summary:
@@ -4784,6 +4797,7 @@ en:
         forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
         client_error: We could not process your request. Please try after sometime.
         wrong_call: Trying to unfavorite a tweet that has not been favorited
+        not_following: The user does not allow direct messages if they are not following you. Please send your reply as a tweet
         cannot_reply: You dont have permission to reply to a tweet.
         cannot_retweet: You dont have permission to retweet a tweet.
         cannot_favorite: You dont have permission to favorite a tweet.
@@ -5240,9 +5254,9 @@ en:
         username: "Username"
         password: "Password"
     dynamicscrm:
-      label: "DynamicsCRM"
+      label: "Dynamics CRM"
       helptext: "<h4>Dynamics CRM Integration Help</h4><p><br/> Once you enable this integration, your agents can access Dynamics CRM contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
-      desc: "You can view contact information from DynamicsCRM in Freshdesk."
+      desc: "You can view contact information from Dynamics CRM in Freshdesk."
       form:
         instance_type: "Dynamics CRM Instance Type"
         password: "Password"
@@ -5256,14 +5270,14 @@ en:
         lead_email: "Lead Email (Optional)"
         instance_info: "On-Demand instances should be converted to IFD for this integration to work."
         domain_info: "Use super admin's office 365 user ID like name@company.onmicrosoft.com in case of On-demand."
-        organization_name_info: "To locate this go to DynamicsCRM Settings -> Customizations -> DeveloperResources -> Your Organization Information -> Organization Unique Name."
-        end_point_info: "Example: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. To locate this go to DynamicsCRM Settings -> Customizations -> DeveloperResources -> Organisation Service for SOAP protocol in the bottom of the developer resource page."
+        organization_name_info: "To locate this go to Dynamics CRM Settings -> Customizations -> DeveloperResources -> Your Organization Information -> Organization Unique Name."
+        end_point_info: "Example: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. To locate this go to Dynamics CRM Settings -> Customizations -> DeveloperResources -> Organisation Service for SOAP protocol in the bottom of the developer resource page."
         account_email_info : "Enter a valid email ID associated with any account in Dynamics CRM (based on which account associated CRM fields are listed in the next step)"
         contact_email_info : "Enter a valid email ID associated with any contact in Dynamics CRM (based on which contact associated CRM fields are listed in the next step)"
         lead_email_info: "Enter a valid email ID associated with any lead in Dynamics CRM (based on which lead associated CRM fields are listed in the next step)"
         login_url: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Login URL: Policy -> Issuer -> Address."
         region_info: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Region: SecureTokenService -> AppliesTo."
-        dynamicscrm_settings: "DynamicsCRM Settings"
+        dynamicscrm_settings: "Dynamics CRM Settings"
         contact: "Contact Fields"
         lead: "Lead Fields"
         account: "Account Fields"

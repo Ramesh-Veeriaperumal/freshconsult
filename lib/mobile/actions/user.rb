@@ -2,6 +2,14 @@ module Mobile::Actions::User
 
 	include Mobile::Actions::Push_Notifier
 
+  CONFIG_JSON_INCLUDE = {
+      only: [:id], 
+      :include =>{ :roles => { :only => [:id, :name, :default_role] } },
+      :methods => [:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, 
+        :can_view_solutions, :can_merge_or_split_tickets,:can_reply_ticket, :manage_scenarios,:can_view_time_entries,
+        :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]
+      }
+
 	def to_mob_json_search(opts={})
     options = { 
       :methods => [ :avatar_url, :is_agent, :is_customer,  :is_client_manager, :company_name,:user_time_zone],
@@ -20,6 +28,10 @@ module Mobile::Actions::User
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
     }.merge(opts)
     as_json(options,true)
+  end
+
+  def as_config_json
+    as_json(CONFIG_JSON_INCLUDE,true)
   end
 
   def original_avatar

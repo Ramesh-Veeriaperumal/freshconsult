@@ -1,16 +1,48 @@
-<div class="list-page agent-status">
-<a href="/helpdesk">< <%= t('helpdesk.dashboard.round_robin.back_to_dashboard') %> </a>
-	<div class="list-page-header">
-		<h3 class="lead"><%= t('helpdesk.dashboard.round_robin.available_agents') %></h3>
-		<div class="row-fluid lead-desc">
-			<p class="span8"><%= t('helpdesk.dashboard.round_robin.info1') %></p>
-			<div id="agents-filter" class="agents-filter span4">
-				<%= render :partial => "agents_filter", :locals => {:group => @group}  %>
-			</div>		
-		</div>
-	</div>
-	<div id="agents-list" class="agents-list agents-list-round-robin" data-text-since="<%= t('helpdesk.dashboard.round_robin.since_now') %>">
-		<%= render :partial => "agents_list", :locals => {:available_agents => @available_agents, :non_available_agents => @unavailable_agents} %>
-	</div>
+<p class="mb20 clearfix"><a href="/helpdesk">< <%= t('helpdesk.dashboard.round_robin.back') %> </a></p>
+
+<div class="availabilty-status">
+ 
+      <h5 class="lead"><%= t('helpdesk.dashboard.agent_availability') %></h5>
+
+            <ul data-tabs="tabs" class="tabs nav-tabs roundrobin-tabs sleek-tab">
+                  <% if round_robin? %>
+                       <li class="tab-ticket">
+                          <a  class="tickets-tab" id="ticket-assignment-tab" href="#ticket-assignment" ><%= t('helpdesk.dashboard.round_robin.ticket_assignment') %></a>
+                        </li>
+                  <% end %> 
+
+                  <% if freshfone_active? %>
+                        <li class="tab-freshfone" >
+                            <a class= "freshfone-tab" id="ffone-tab" href="#ffone" ><%= t('helpdesk.dashboard.freshfone.ffone') %></a>
+                        </li>
+                  <% end %>
+            </ul>
+
+            <div class="tab-content">
+                  <% if round_robin? %>
+                     <%= render :partial => "ticket_assignment" %>
+                  <% end %>
+
+                  <% if freshfone_active? %>
+                     <%= render :partial => "freshfone" %>
+                  <% end %>
+            </div>
+           
+          <% content_for :sidebar do %>
+            &nbsp;
+          <% end %>
+
 </div>
-<%= render :partial => 'sidebar' %>
+
+
+<%= javascript_tag do %>
+    active_tab_order={"tickets-tab": <%= round_robin? %>,"freshfone-tab":<%=freshfone_active? %>} 
+    jQuery.each(active_tab_order,jQuery.proxy(function(index,value)  {
+          if(value){
+            jQuery('.'+index).tab('show');
+            return false;
+          }
+       },this)); 
+<% end %>
+
+

@@ -665,7 +665,7 @@ ol, ul, li{
 #not_following_message {
 	padding:8px 10px;
 	@include margin-left(10px);
-	display: inline-block;
+	display: none;
 }
 
 .conversation_thread, .content .controls .control-left {
@@ -771,7 +771,6 @@ ol, ul, li{
 	}
 
 	#tweet_type_selector {
-		display: none;
 		position: relative;
 		top: 5px;
 	 	@include right(15px);
@@ -2143,7 +2142,7 @@ ol, ul, li{
 }
 
 // Timesheet Modal CSS Overrides and new CSS
-.ticket_details #timeentry_add, .ticket_details .timeentry_edit {
+.ticket_details #timeentry_add, .ticket_details .timeentry_edit, .ticket_details .edit_timesheet {
 	margin: 5px;
 	padding: 0;
 	@include clear(both);

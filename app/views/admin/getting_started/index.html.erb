@@ -226,7 +226,7 @@
 								<div class="textbox-note"><%=t('.social_info_text')%></div>
 								
 								<div class="social"><a href="<%=@fb_client.authorize_url(session[:state])%>" class="facebook simple" target="_blank"><%=t('.social_add_account')%></a></div>
-								<div class="social"><a href="<%=@auth_redirect_url%>" class="twitter simple" target="_blank"><%=t('.social_add_account')%></a></div>
+								<div class="social"><a href="<%= authorize_url_admin_social_streams_path %>" class="twitter simple" target="_blank"><%=t('.social_add_account')%></a></div>
 						</div>
 
 					</div>

@@ -1,2 +1,3 @@
-page.replace_html "agents-list", :partial => "agents_list"
-page.replace_html "agents-filter", :partial => "agents_filter"
+page.replace_html "agents-list", :partial => "ticket_agents_list"
+page.replace_html "agents-filter", :partial => "ticket_agents_filter"
+page << "App.Dashboard.updateAgentList();"
