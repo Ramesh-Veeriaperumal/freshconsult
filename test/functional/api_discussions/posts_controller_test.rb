@@ -59,14 +59,14 @@ module ApiDiscussions
 
     def test_update_with_extra_params
       post =  post_obj
-      put :update, construct_params({ id: post.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s, 
-                   updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
+      put :update, construct_params({ id: post.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s,
+                                                     updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
       assert_response :bad_request
       match_json([bad_request_error_pattern('topic_id', 'invalid_field'),
-        bad_request_error_pattern('created_at', 'invalid_field'),
-        bad_request_error_pattern('updated_at', 'invalid_field'),
-        bad_request_error_pattern('email', 'invalid_field'),
-        bad_request_error_pattern('user_id', 'invalid_field')])
+                  bad_request_error_pattern('created_at', 'invalid_field'),
+                  bad_request_error_pattern('updated_at', 'invalid_field'),
+                  bad_request_error_pattern('email', 'invalid_field'),
+                  bad_request_error_pattern('user_id', 'invalid_field')])
     end
 
     def test_update_with_nil_values

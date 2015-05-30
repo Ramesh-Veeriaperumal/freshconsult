@@ -50,7 +50,7 @@ module ApiConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN.values | Forum::VISIBILITY_KEYS_BY_TOKEN.values.map(&:to_s)
   FORUM_TYPE_KEYS_BY_TOKEN = Forum::TYPE_KEYS_BY_TOKEN.values | Forum::TYPE_KEYS_BY_TOKEN.values.map(&:to_s)
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
-  
+
   # ErrorConstants
   API_ERROR_CODES = {
     already_exists: ['has already been taken', 'already exists in the selected category'],

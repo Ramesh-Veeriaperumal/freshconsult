@@ -433,11 +433,11 @@ module ApiDiscussions
 
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
-                                         title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', "is not a number"),
+                                                            title: nil, message_html: nil)
+      match_json([bad_request_error_pattern('forum_id', 'is not a number'),
                   bad_request_error_pattern('title', "can't be blank"),
                   bad_request_error_pattern('message_html', "can't be blank")
-                  ])
+                 ])
       assert_response :bad_request
     end
 
