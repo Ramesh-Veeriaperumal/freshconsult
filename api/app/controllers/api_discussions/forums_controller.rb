@@ -35,9 +35,8 @@ module ApiDiscussions
       end
 
       def manipulate_params
-        customers = params[cname]['customers']
-        params[cname][:customer_forums_attributes] = {}
-        params[cname][:customer_forums_attributes][:customer_id] = (customers ? customers.split(',') : [])
+        customers = params[cname]['customers'] || []
+        params[cname][:customer_forums_attributes] = { customer_id: customers }
       end
 
       def portal_check
@@ -50,8 +49,7 @@ module ApiDiscussions
       end
 
       def validate_params
-        fields = ApiConstants::API_FORUM_FIELDS[params[cname][:forum_visibility].to_i] || ApiConstants::FORUM_FIELDS
-        params[cname].permit(*(fields.map(&:to_s)))
+        params[cname].permit(*(ApiConstants::FORUM_FIELDS))
         forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
         render_error forum.errors unless forum.valid?
       end

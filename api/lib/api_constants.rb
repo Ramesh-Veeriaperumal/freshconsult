@@ -28,7 +28,7 @@ module ApiConstants
     page: 1
   }
   CATEGORY_FIELDS = [:name, :description]
-  FORUM_FIELDS = [:name, :description, :forum_category_id, :forum_type, :forum_visibility, :customers]
+  FORUM_FIELDS = ['name', 'description', 'forum_category_id', 'forum_type', 'forum_visibility', 'customers', 'customers' => []]
   UPDATE_TOPIC_FIELDS = { all: [:title, :message_html, :stamp_type], edit_topic: [:sticky, :locked], manage_forums: [:forum_id] }
   CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(view_admin: [:created_at, :updated_at], manage_users: [:email, :user_id])
   UPDATE_POST_FIELDS = { all: [:body_html, :answer] }
