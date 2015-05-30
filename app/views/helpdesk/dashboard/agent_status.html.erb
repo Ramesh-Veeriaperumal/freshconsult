@@ -11,11 +11,6 @@
                         </li>
                   <% end %> 
 
-                  <% if freshfone_active? %>
-                        <li class="tab-freshfone" >
-                            <a class= "freshfone-tab" id="ffone-tab" href="#ffone" ><%= t('helpdesk.dashboard.freshfone.ffone') %></a>
-                        </li>
-                  <% end %>
             </ul>
 
             <div class="tab-content">
@@ -23,9 +18,6 @@
                      <%= render :partial => "ticket_assignment" %>
                   <% end %>
 
-                  <% if freshfone_active? %>
-                     <%= render :partial => "freshfone" %>
-                  <% end %>
             </div>
            
           <% content_for :sidebar do %>
@@ -36,7 +28,7 @@
 
 
 <%= javascript_tag do %>
-    active_tab_order={"tickets-tab": <%= round_robin? %>,"freshfone-tab":<%=freshfone_active? %>} 
+    active_tab_order={"tickets-tab": <%= round_robin? %>} 
     jQuery.each(active_tab_order,jQuery.proxy(function(index,value)  {
           if(value){
             jQuery('.'+index).tab('show');
