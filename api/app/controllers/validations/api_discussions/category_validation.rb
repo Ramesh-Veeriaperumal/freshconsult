@@ -1,12 +1,12 @@
 module ApiDiscussions
-  class CategoryValidation
+  class CategoryValidation < ApiValidation
     include ActiveModel::Validations
 
     attr_accessor :name
-    validates_presence_of :name
+    validates :name, presence: true
 
-    def initialize(controller_params, item)
-      @name = controller_params['name'] || item.try(:name)
+    def initialize(request_params, item)
+      super(request_params, item)
     end
   end
 end

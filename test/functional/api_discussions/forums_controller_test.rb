@@ -201,6 +201,19 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
+    def test_update_with_nil_values
+      fc = fc_obj
+      forum = f_obj
+      customer = company
+      put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
+      pattern = [bad_request_error_pattern('name', "can't be blank"),
+                 bad_request_error_pattern('forum_category_id', 'is not a number'),
+                 bad_request_error_pattern('forum_visibility', 'is not included in the list', list: '1,2,3,4'),
+                 bad_request_error_pattern('forum_type', 'is not included in the list', list: '1,2,3,4')]
+      match_json(pattern)
+      assert_response :bad_request
+    end
+
     def test_before_filters_show
       controller.class.any_instance.expects(:verify_authenticity_token).never
       controller.class.any_instance.expects(:check_privilege).once

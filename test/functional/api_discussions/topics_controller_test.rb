@@ -431,6 +431,16 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
+    def test_update_with_nil_values
+      put :update, construct_params({ id: first_topic.id }, forum_id: nil,
+                                         title: nil, message_html: nil)
+      match_json([bad_request_error_pattern('forum_id', "is not a number"),
+                  bad_request_error_pattern('title', "can't be blank"),
+                  bad_request_error_pattern('message_html', "can't be blank")
+                  ])
+      assert_response :bad_request
+    end
+
     def test_create_with_email_without_assume_privilege
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', email: @agent.email)

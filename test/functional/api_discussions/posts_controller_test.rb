@@ -29,25 +29,51 @@ module ApiDiscussions
       match_json(post_pattern({ body_html: 'test reply 2', answer: true }, post.reload))
     end
 
+    def test_update_blank_message
+      post = post_obj
+      put :update, construct_params({ id: post.id }, body_html: '')
+      assert_response :bad_request
+      match_json([bad_request_error_pattern('body_html', "can't be blank")])
+    end
+
     def test_update_invalid_answer
       post = post_obj
-      put :update, construct_params({ id: post }, body_html: 'test reply 2', answer: 90)
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('answer', 'is not included in the list', list: '')])
+      match_json([bad_request_error_pattern('answer', 'is not included in the list', list: '0,false,1,true')])
     end
 
     def test_update_with_user_id
       post =  post_obj
-      put :update, construct_params({ id: post }, body_html: 'test reply 2', user_id: User.first)
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', user_id: User.first)
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id', 'invalid_field')])
     end
 
     def test_update_with_topic_id
       post =  post_obj
-      put :update, construct_params({ id: post }, body_html: 'test reply 2', topic_id: topic_obj)
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', topic_id: topic_obj)
       assert_response :bad_request
       match_json([bad_request_error_pattern('topic_id', 'invalid_field')])
+    end
+
+    def test_update_with_extra_params
+      post =  post_obj
+      put :update, construct_params({ id: post.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s, 
+                   updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern('topic_id', 'invalid_field'),
+        bad_request_error_pattern('created_at', 'invalid_field'),
+        bad_request_error_pattern('updated_at', 'invalid_field'),
+        bad_request_error_pattern('email', 'invalid_field'),
+        bad_request_error_pattern('user_id', 'invalid_field')])
+    end
+
+    def test_update_with_nil_values
+      post =  post_obj
+      put :update, construct_params({ id: post.id }, body_html: nil)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern('body_html', "can't be blank")])
     end
 
     def test_destroy

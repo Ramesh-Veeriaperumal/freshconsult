@@ -1,5 +1,5 @@
 module ApiDiscussions
-  class TopicValidation
+  class TopicValidation < ApiValidation
     include ActiveModel::Validations
 
     attr_accessor :title, :forum_id, :user_id, :created_at, :updated_at, :sticky, :locked,
@@ -10,16 +10,9 @@ module ApiDiscussions
     validates :forum_id, numericality: true
     validates :stamp_type, :user_id, numericality: { allow_nil: true }
 
-    def initialize(controller_params, item)
-      @title = controller_params['title'] || item.try(:title)
-      @forum_id = controller_params['forum_id'] || item.try(:forum_id)
-      @user_id = controller_params['user_id'] || item.try(:user_id)
-      @sticky = controller_params['sticky']
-      @locked = controller_params['locked']
-      @stamp_type = controller_params['stamp_type'] || item.try(:stamp_type)
-      @created_at = controller_params['created_at']
-      @updated_at = controller_params['updated_at']
-      @message_html = controller_params['message_html'] || item.try(:first_post).try(:body_html)
+    def initialize(request_params, item)
+      @message_html = item.try(:first_post).try(:body_html) if item
+      super(request_params, item)
     end
   end
 end

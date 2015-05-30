@@ -210,6 +210,12 @@ module ApiDiscussions
       match_json(pattern)
     end
 
+     def test_update_with_nil_name
+      put :update, construct_params({ id: fc.id }, :name => nil)
+      match_json([bad_request_error_pattern('name', "can't be blank")])
+      assert_response :bad_request
+    end
+
     def test_index
       get :index, request_params
       pattern = []

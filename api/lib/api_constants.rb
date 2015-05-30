@@ -44,9 +44,13 @@ module ApiConstants
     forum_visibility: Forum::VISIBILITY_KEYS_BY_TOKEN.values.join(','),
     forum_type: Forum::TYPE_KEYS_BY_TOKEN.values.join(','),
     sticky: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
-    locked: BOOLEAN_VALUES.map(&:to_s).uniq.join(',')
+    locked: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
+    answer: BOOLEAN_VALUES.map(&:to_s).uniq.join(',')
   }
-
+  FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN.values | Forum::VISIBILITY_KEYS_BY_TOKEN.values.map(&:to_s)
+  FORUM_TYPE_KEYS_BY_TOKEN = Forum::TYPE_KEYS_BY_TOKEN.values | Forum::TYPE_KEYS_BY_TOKEN.values.map(&:to_s)
+  FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
+  
   # ErrorConstants
   API_ERROR_CODES = {
     already_exists: ['has already been taken', 'already exists in the selected category'],
