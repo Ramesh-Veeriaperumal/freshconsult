@@ -280,7 +280,7 @@ module ApiDiscussions
     end
 
     def test_show_with_posts
-      t = create_test_post(create_test_topic(forum_obj), User.first).topic
+      t = create_test_topic(forum_obj)
       get :show, construct_params(id: t.id)
       result_pattern = topic_pattern(t)
       result_pattern[:posts] = []
