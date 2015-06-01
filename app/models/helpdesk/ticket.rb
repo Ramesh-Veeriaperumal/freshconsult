@@ -322,7 +322,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_since(since_id)
-    return notes.visible.exclude_source('meta').newest_first.since(since_id)
+    return notes.visible.exclude_source('meta').since(since_id)
   end
 
   def conversation_before(before_id)

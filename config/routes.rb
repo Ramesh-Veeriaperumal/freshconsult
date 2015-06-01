@@ -1336,6 +1336,7 @@ Helpkit::Application.routes.draw do
           post :twitter
           post :facebook
           post :mobihelp
+          get :traffic_cop
           get :full_text
         end
       end

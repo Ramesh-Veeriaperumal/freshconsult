@@ -32,6 +32,11 @@ class Helpdesk::Note < ActiveRecord::Base
   scope :public, :conditions => { :private => false } 
   scope :private, :conditions => { :private => true } 
    
+  scope :last_traffic_cop_note,
+    :conditions => ["private = ? or incoming = ?",false,true],
+    :order => "created_at DESC",
+    :limit => 1
+
   scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =
  'Helpdesk::Note'"],
