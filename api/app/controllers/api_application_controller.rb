@@ -40,7 +40,7 @@ class ApiApplicationController < MetalApiController
 
   def create
     if @item.save
-      render template: "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
+      render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
       set_custom_errors
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
@@ -71,7 +71,7 @@ class ApiApplicationController < MetalApiController
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
       @error = BaseError.new(:method_not_allowed, methods: allows.join(', '))
-      render template: '/base_error', status: 405
+      render '/base_error', status: 405
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
       head :not_found
@@ -83,7 +83,7 @@ class ApiApplicationController < MetalApiController
     def requires_feature(f)
       return if feature?(f)
       @error = RequestError.new(:require_feature, feature: f.to_s.titleize)
-      render template: '/request_error', status: 403
+      render '/request_error', status: 403
     end
 
   private
@@ -103,14 +103,14 @@ class ApiApplicationController < MetalApiController
 
     def render_invalid_user_error
       @errors = [BadRequestError.new('user_id/email', 'invalid_user')]
-      render template: '/bad_request_error', status: 400
+      render '/bad_request_error', status: 400
     end
 
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       @error = BaseError.new(:internal_error)
-      render template: '/base_error', status: 500
+      render '/base_error', status: 500
     end
 
     def response_headers
@@ -124,12 +124,12 @@ class ApiApplicationController < MetalApiController
 
     def render_error(errors, meta = nil)
       @errors = ErrorHelper.format_error(errors, meta)
-      render template: '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+      render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
     end
 
     def render_request_error(code, status)
       @error = RequestError.new(code)
-      render template: '/request_error', status: status
+      render '/request_error', status: status
     end
 
     def render_custom_errors(item, options)

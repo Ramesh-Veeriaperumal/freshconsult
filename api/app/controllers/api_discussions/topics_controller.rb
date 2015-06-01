@@ -24,12 +24,12 @@ module ApiDiscussions
 
     def posts
       @posts = paginate_items(@topic.posts)
-      render template: '/api_discussions/posts/post_list'
+      render '/api_discussions/posts/post_list'
     end
 
     def followed_by
       @topics = paginate_items(current_account.topics.followed_by(params[:user_id]))
-      render template: '/api_discussions/topics/topic_list'
+      render '/api_discussions/topics/topic_list'
     end
 
     private

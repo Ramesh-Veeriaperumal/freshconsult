@@ -9,7 +9,7 @@ module ApiDiscussions
 
     def topics
       @topics = paginate_items(@forum.topics)
-      render template: '/api_discussions/topics/topic_list'
+      render '/api_discussions/topics/topic_list'
     end
 
     def delete
