@@ -94,12 +94,12 @@ module FreshfoneSpecHelper
     @parent_call.root.increment(:children_count).save
   end
 
-  def create_dummy_freshfone_users(n=3)
+  def create_dummy_freshfone_users(n=3,presence=nil)
     @dummy_users = []; @dummy_freshfone_users = []
     n.times do 
       new_agent = add_agent_to_account(@account, {:available => 1, :name => Faker::Name.name, :email => Faker::Internet.email, :role => 3, :active => 1})
       user = new_agent.user
-      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => 1 })
+      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => presence || 1})
       user.save!
       user.reload
       @dummy_freshfone_users << freshfone_user

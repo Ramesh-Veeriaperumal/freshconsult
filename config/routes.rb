@@ -903,7 +903,11 @@ Helpkit::Application.routes.draw do
 
     resources :roles
     namespace :social do
-      resources :streams, :only => :index
+      resources :streams, :only => :index do
+        collection do
+          get :authorize_url
+        end
+      end
       resources :twitter_streams do
         collection do
           post :preview
@@ -1248,7 +1252,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-
+  match '/helpdesk/dashboard/:group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
     resources :tags do
@@ -1479,7 +1483,6 @@ Helpkit::Application.routes.draw do
 
 
     match '/sales_manager' => 'dashboard#sales_manager'
-    match '/agent-status' => 'dashboard#agent_status'
     
     resources :articles do
       collection do
@@ -1912,6 +1915,7 @@ Helpkit::Application.routes.draw do
         get :mobile_login
         get :mobile_pre_loader
         get :deliver_activation_instructions
+        get :configurations
       end
     end
     resources :freshfone do 
@@ -2003,6 +2007,9 @@ Helpkit::Application.routes.draw do
       resources :subscriptions, :only => [:none] do
         collection do
           get :display_subscribers
+          get :customers
+          get :customer_summary
+          get :deleted_customers
         end
       end
 
@@ -2081,6 +2088,13 @@ Helpkit::Application.routes.draw do
       resources :users, :only => :none do 
         collection do 
           get 'get_user'
+        end
+      end
+      
+      resources :subscription_announcements, :only => [:create,:index] do 
+        collection do 
+          put 'update'
+          delete 'destroy'
         end
       end
       

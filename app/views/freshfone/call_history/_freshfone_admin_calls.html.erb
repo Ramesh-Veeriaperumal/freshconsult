@@ -50,8 +50,8 @@
 					<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="export_options">
 						<% export_options.each do |option| %>
 							<li>
-								<a href="#" class="export_option" data-format="<%=option.downcase%>">
-									<%=option%>
+								<a href="#" class="export_option" data-format="<%=option[:en].downcase%>">
+									<%=option[:i18n]%>
 								</a>
 							</li>
 						<% end %>

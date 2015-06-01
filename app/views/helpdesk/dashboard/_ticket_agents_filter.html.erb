@@ -1,0 +1,8 @@
+<li class="m10 ml20 dropdown pull-left">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      <b>
+      	<%= @group.nil? ? t('helpdesk.dashboard.round_robin.all_agents') : @group.name %></b><b class="caret">
+      </b>
+  </a>
+  <%= group_list_filter %>
+</li>

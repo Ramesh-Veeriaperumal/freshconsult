@@ -1,0 +1,31 @@
+<%= render :partial => "freshfone_pill" %>
+
+<li class="m10 ml20 group dropdown pull-left">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      <b id="group_name"><span class="filter-name"><%= t('helpdesk.dashboard.round_robin.all_agents') %></span></b>
+      <b class="caret"></b>
+  </a>
+  <ul class="dropdown-menu">
+     <li class="all-agents" data-id="0"><a href="#"><%= t('helpdesk.dashboard.round_robin.all_agents') %></a></li>
+      <span class="seperator"></span>
+        <% groups.each do |group| %>
+          <li data-id="<%= group.id %>"><a href="#"><%= group.name %></a></li>
+        <% end %>
+  </ul>
+</li>
+<li class="m10 ml20 sort dropdown pull-left">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= t('helpdesk.dashboard.freshfone.sort_by') %>
+      <b id="sort_by"><span class="sort-filter"><%= t('helpdesk.dashboard.freshfone.last_modified') %></span></b>
+      <b class="caret"></b>
+  </a>
+  <ul class="dropdown-menu">
+     <li class="sort_name" data-id="sort_name">
+      <a href="#"><%= t('helpdesk.dashboard.freshfone.name') %>
+      </a>
+     </li>
+     <li class="sort_presence" data-id="sort_presence">
+      <a href="#"><%= t('helpdesk.dashboard.freshfone.last_modified') %>
+      </a>
+     </li>
+  </ul>
+</li>

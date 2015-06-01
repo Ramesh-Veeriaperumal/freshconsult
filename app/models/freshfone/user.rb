@@ -33,6 +33,8 @@ class Freshfone::User < ActiveRecord::Base
 	validates_inclusion_of :incoming_preference, :in => INCOMING.values,
 		:message => "%{value} is not a valid incoming preference"
 
+	scope :agents_with_avatar, lambda { {
+							:include => [:user => [:avatar]]}}	
 	scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user }}
 	scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago] }}
 	scope :online_agents_with_avatar, lambda { {

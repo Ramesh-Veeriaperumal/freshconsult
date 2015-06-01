@@ -10,7 +10,7 @@
   application_type: capsule_crm
 
 - options: 
-  script: "\n      <div id=\"freshbooks_widget\" api_url=\"{{freshbooks.api_url}}\" title=\"{{freshbooks.title}}\">\n        <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"freshbooks-note\" >{{freshbooks.freshbooks_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/freshbooks.js\");\n        freshbooksBundle={ k:\"{{freshbooks.api_key}}\", application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n    "
+  script: "\n      <div id=\"freshbooks_widget\" api_url=\"{{freshbooks.api_url}}\" title=\"{{freshbooks.title}}\">\n        <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"freshbooks-note\" >{{freshbooks.freshbooks_note}}</div>\n      <script type=\"text/javascript\">\n           freshbooksBundle={ k:\"{{freshbooks.api_key}}\", application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n       CustomWidget.include_js(\"/javascripts/integrations/freshbooks.js\");\n    </script>\n    "
   name: freshbooks_timeentry_widget
   id: 2
   description: freshbooks.widgets.timeentry_widget.description
@@ -18,7 +18,7 @@
 
 - options: 
   script: "\n\
-    \t    <div id=\"harvest_widget\" title=\"{{harvest.title}}\">\n       <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"harvest-note\" >{{harvest.harvest_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/harvest.js\");\n        harvestBundle={domain:\"{{harvest.domain}}\", application_id:\"{{application.id}}\", current_user:\"{{current_user.id}}\",integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n\
+    \t    <div id=\"harvest_widget\" title=\"{{harvest.title}}\">\n       <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"harvest-note\" >{{harvest.harvest_note}}</div>\n      <script type=\"text/javascript\">\n harvestBundle={domain:\"{{harvest.domain}}\", application_id:\"{{application.id}}\", current_user:\"{{current_user.id}}\",integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n \n        CustomWidget.include_js(\"/javascripts/integrations/harvest.js\");\n      </script>\n\
     \t  "
   name: harvest_timeentry_widget
   id: 3
@@ -36,7 +36,7 @@
            </pre>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/atlassian-jira.js");
-            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | h}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}" } ;
+            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | h}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}", attachments: {{cloud_files}} } ;
           </script>
   name: jira_widget
   id: 4
@@ -55,7 +55,7 @@
   application_type: sugarcrm
 
 - options: 
-  script: "\n      <div id=\"workflow_max_widget\" title=\"{{workflow_max.title}}\">\n        <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"workflowmax-note\" >{{workflow_max.workflow_max_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/workflow_max.js\");\n        workflowMaxBundle={ k:\"{{workflow_max.api_key}}\", a:\"{{workflow_max.account_key}}\", api_url:\"https://api.workflowmax.com\" , application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n    "
+  script: "\n      <div id=\"workflow_max_widget\" title=\"{{workflow_max.title}}\">\n        <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"workflowmax-note\" >{{workflow_max.workflow_max_note}}</div>\n      <script type=\"text/javascript\">\n             workflowMaxBundle={ k:\"{{workflow_max.api_key}}\", a:\"{{workflow_max.account_key}}\", api_url:\"https://api.workflowmax.com\" , application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      CustomWidget.include_js(\"/javascripts/integrations/workflow_max.js\");\n   </script>\n    "
   name: workflow_max_timeentry_widget
   id: 6
   description: workflow_max.widgets.timeentry_widget.description

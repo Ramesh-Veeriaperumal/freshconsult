@@ -282,7 +282,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
-        hash.merge!({:reply_template => parsed_reply_template(@ticket,@signature)})
+        hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.is_twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.is_twitter?
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?

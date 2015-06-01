@@ -14,8 +14,13 @@ describe Helpdesk::DashboardController do
   before(:each) do
     login_admin
     @agent.make_current
+    create_test_freshfone_account
   end
 
+  after(:each) do
+    Freshfone::User.destroy_all
+  end  
+  
   after(:all) do
     @account.subscription.update_attributes(:state => "trial")
   end
@@ -104,4 +109,38 @@ describe Helpdesk::DashboardController do
     ApplicationController.any_instance.unstub(:super)
     @account.make_current
   end
+
+
+  it "should have only online freshfone agents" do
+    create_dummy_freshfone_users(10,1)
+    get :agent_status
+    assigns[:freshfone_agents].map{|agent| agent.presence}.uniq.should be_eql([1])
+    response.should be_success
+  end
+
+  it "should have only offline freshfone agents" do
+    create_dummy_freshfone_users(10,0)
+    get :agent_status
+    assigns[:freshfone_agents].map{|agent| agent.presence}.uniq.should be_eql([0])
+    response.should be_success
+  end
+
+  it "should have online and offline freshfone agents" do
+    create_dummy_freshfone_users(5,0)
+    create_dummy_freshfone_users(5,1)
+    get :agent_status
+    assigns[:freshfone_agents].map{|agent| agent.presence}.uniq.should be_eql([0,1])
+    response.should be_success
+  end
+
+  it "should load freshfone agents" do
+    create_dummy_freshfone_users(5,0)
+    create_dummy_freshfone_users(5,1)
+    get :agent_status
+    response.body.should =~ /- No Agents -/
+  end
+
+  
+
+  
 end

@@ -76,12 +76,21 @@ module Freshfone::NodeEvents
       { :members => @user.account.freshfone_users.raw_online_agents.count,
         :user => { :id => @user.id,
                    :name => @user.name, 
-                   :avatar => user_avatar(@user).to_str}}
-    end
+                   :avatar => user_avatar(@user).to_str,
+                   :presence_time => @user.freshfone_user.last_call_at,
+                   :on_phone => @user.freshfone_user.available_on_phone
+                   }
+      }
+    end 
 
     def offline_message
       { :members => @user.account.freshfone_users.raw_online_agents.count,
-        :user => { :id => @user.id }}
+        :user => { :id => @user.id,
+                   :name => @user.name, 
+                   :presence_time => @user.freshfone_user.last_call_at,
+                   :on_phone => @user.freshfone_user.available_on_phone
+                   }
+      }
     end
 
     def token_message(token)

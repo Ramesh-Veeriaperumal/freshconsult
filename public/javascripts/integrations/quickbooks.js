@@ -358,10 +358,16 @@ QuickBooksWidget.prototype = {
         this.freshdeskWidget.local_integratable_id = local_integratable_id;
         this.freshdeskWidget.remote_integratable_id = remote_integratable_id;
         if (!is_delete_request){
-            if (quickbooksBundle.remote_integratable_id)
+            if (quickbooksBundle.remote_integratable_id){
+                jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').attr('checked',true);
+                jQuery('.quickbooks_timetracking_widget .integration_container').toggle(jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').prop('checked'));
                 this.retrieveTimeEntry();
-            else
+            }
+            else{
+                jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').attr('checked',false);
+                jQuery('.quickbooks_timetracking_widget .integration_container').toggle(jQuery('.quickbooks_timetracking_widgets .app-logo input:checkbox').prop('checked'));
                 this.resetTimeEntryForm();
+            }
         }
     },
 
@@ -572,7 +578,9 @@ QuickBooksWidget.prototype = {
         });
     },
 
-    createTimeEntry: function(resultCallback) {
+    createTimeEntry: function(integratable_id,resultCallback) {
+        if(integratable_id)
+            this.freshdeskWidget.local_integratable_id = integratable_id;
         var employee_id = $("quickbooks-timeentry-employee").value;
         var client_id = $("quickbooks-timeentry-client").value;
         var minutes = Math.round(($("quickbooks-timeentry-hours").value || 0) * 60);

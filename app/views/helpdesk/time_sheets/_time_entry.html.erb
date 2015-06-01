@@ -12,6 +12,7 @@
                     "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
                     "data-width" => 450,
                     "data-submit-label" => t('update'),
+                    "id" => "edit_#{time_entry.id}",
                     :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
       <%= link_to "delete", helpdesk_time_sheet_url(time_entry), 
                   :method => :delete,

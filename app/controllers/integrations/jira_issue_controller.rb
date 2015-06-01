@@ -87,6 +87,7 @@ class Integrations::JiraIssueController < ApplicationController
      if(params["issue"] && params["issue"]["key"] && params["auth_key"])
        remote_integratable_id = params["issue"]["key"]
        auth_key = params["auth_key"]
+       data = params["comment"]? params["comment"]["body"]: "@"
        # TODO:  Costly query.  Needs to revisit and index the integrated_resources table and/or split the quries.
        @installed_app = Integrations::InstalledApplication.with_name(APP_NAMES[:jira]).first(:select=>["installed_applications.*,integrated_resources.local_integratable_id,integrated_resources.remote_integratable_id"],
                                                                                              :joins=>"INNER JOIN integrated_resources ON integrated_resources.installed_application_id=installed_applications.id",
@@ -94,9 +95,9 @@ class Integrations::JiraIssueController < ApplicationController
        unless @installed_app.blank?
             local_integratable_id = @installed_app.local_integratable_id
             account_id = @installed_app.account_id
-            recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
+            recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment => Digest::SHA512.hexdigest(data)})
             if recently_updated_by_fd # If JIRA has been update recently with same params then ignore that event.
-              remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
+              remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment => Digest::SHA512.hexdigest(data)})
               @installed_app = nil
               Rails.logger.info("Recently freshdesk updated JIRA with same params. So ignoring the event.")
             end

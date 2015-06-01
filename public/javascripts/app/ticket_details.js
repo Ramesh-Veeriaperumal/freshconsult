@@ -467,17 +467,6 @@ var scrollToError = function(){
 // End of Due-by time JS
 
 
-//Show alert on sending a reply to DM as a tweet
-	$('body').on('click.ticket_details', '#tweet-reply-btn', function(e) {
-		tweet_type = $(this).data('tweet-type');
-    if(tweet_type == 'dm' && jQuery("#tweet_type_selector").is(':hidden')){
-      confirm_message = $(this).data('confirm-message');
-      if(!confirm(confirm_message)){
-      	e.stopImmediatePropagation();
-      }
-    }
-	});
-
 	if (jQuery('.requester-info-sprite').length < 2) {
 		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
 	}
@@ -644,31 +633,30 @@ var scrollToError = function(){
 	// For Twitter Replybox
 	$("body").on("change.ticket_details", '#twitter_handle', function (){
 		twitter_handle= $('#twitter_handle').val();
-		req_twt_id = $('#requester_twitter_handle').val();
+		tweet_type = $('#tkt_tweet_type').val();
+		in_reply_to = $('#in_reply_to_handle').val();
+		
 		istwitter = $('#cnt-reply').data('isTwitter');
-		if (!istwitter || req_twt_id == "" || twitter_handle == "")        
+		if (!istwitter || in_reply_to == "" || twitter_handle == "" || tweet_type == 'dm')        
 			return ;
 
 		$.ajax({   
 			type: 'GET',
-			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
+			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+in_reply_to,
 			contentType: 'application/text',
 			success: function(data){ 
 				if (data.user_follows == true)
 				{
-					$('#tweet_type_selector').show();
 					$('#not_following_message').hide();
 				}
 				else
 				{
-					$('#tweet_type_selector').hide();
-					$('#tweet_type').val(':mention');
 					$('#not_following_message').html(data.user_follows)
 					$('#not_following_message').show();
 				}
 			}
 		});
-	}); 
+	});  
 
 	//End of Twitter Replybox JS
 

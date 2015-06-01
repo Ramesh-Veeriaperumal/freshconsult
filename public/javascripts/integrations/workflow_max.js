@@ -199,7 +199,8 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	logTimeEntry:function(integratable_id) {
-		if(integratable_id) this.freshdeskWidget.local_integratable_id = integratable_id;
+		if(integratable_id) 
+			this.freshdeskWidget.local_integratable_id = integratable_id;
 		if (workflowMaxBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
@@ -207,7 +208,8 @@ WorkflowMaxWidget.prototype = {
 		}
 	},
 
-	createTimeEntry:function(resultCallback) {
+	createTimeEntry:function(integratable_id,resultCallback) {
+		if(integratable_id) this.freshdeskWidget.local_integratable_id = integratable_id;
 		//if(jQuery('.integration_container').css('display') != "none")
 		{
 			if (workflowMaxWidget.validateInput()) 
@@ -318,10 +320,16 @@ WorkflowMaxWidget.prototype = {
 		this.freshdeskWidget.local_integratable_id = local_integratable_id
 		this.freshdeskWidget.remote_integratable_id = remote_integratable_id
 		if (!is_delete_request)
-	   		if (workflowMaxBundle.remote_integratable_id)
+	   		if (workflowMaxBundle.remote_integratable_id){
+	   			jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').attr('checked',true);	
+                jQuery('.workflow_max_timetracking_widget .integration_container').toggle(jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').prop('checked'));
 	   			this.retrieveTimeEntry();
-	   		else
+	   		}
+	   		else{
+	   			jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').attr('checked',false);	
+                jQuery('.workflow_max_timetracking_widget .integration_container').toggle(jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').prop('checked'));
 	   			this.resetTimeEntryForm();
+	   		}
 	},
 
 	retrieveTimeEntry:function(resultCallback){
@@ -336,26 +344,21 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	resetTimeEntryForm: function(){
-		if(this.timeEntryXml) {
+		if(this.timeEntryXml) {             
 			// Editing the existing entry. Select already associated entry in the drop-downs that are already loaded.
 			time_entry_node = XmlUtil.extractEntities(this.timeEntryXml, "Response")
 			if (time_entry_node.length > 0) {
 				staff_id = this.get_time_entry_prop_value(time_entry_node[0], ["Staff", "ID"]);
 				UIUtil.chooseDropdownEntry("workflow-max-timeentry-staff", staff_id);
-				this.staffChanged(staff_id)
-
-				job_id = this.get_time_entry_prop_value(time_entry_node[0], ["Job", "ID"]);
-				task_id = this.get_time_entry_prop_value(time_entry_node[0], ["Task", "ID"]);
-				UIUtil.chooseDropdownEntry("workflow-max-timeentry-jobs", job_id);
-				UIUtil.chooseDropdownEntry("workflow-max-timeentry-tasks", task_id);
+				this.staffChanged(staff_id);
 			}
-			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
-		} else {
+		} else {             
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, job and task drop down be selected with the last selected entry itself. 
 		}
 		$("workflow-max-timeentry-hours").value = "";
 		$("workflow-max-timeentry-notes").value = workflowMaxBundle.workflowMaxNote.escapeHTML();
 		$("workflow-max-timeentry-notes").focus();
+		
 	},
 
 	isRespSuccessful:function(resXml){
@@ -522,10 +525,9 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	get_time_entry_prop_value: function(timeEntryXml, fetchEntity) {
-		time_entry_node = XmlUtil.extractEntities(timeEntryXml, "Time")
-		if (time_entry_node.length > 0) {
-			time_entry_node = time_entry_node[0];
-			return XmlUtil.getNodeValueStr(time_entry_node, fetchEntity);
+		time_entry_node_value = XmlUtil.extractEntities(timeEntryXml, "Time")
+		if (time_entry_node_value.length > 0) {
+			return XmlUtil.getNodeValueStr(time_entry_node_value[0], fetchEntity);
 		}
 	},
 
@@ -709,18 +711,34 @@ WorkflowMaxWidget.prototype = {
 		var searchTerm = null;
 		job_list = XmlUtil.extractEntities(this.jobData, "Job"); jobData=[];
 		if(job_list.length)
-		{
+		{   
+		  if(this.timeEntryXml){
+			for(var i=0;i<job_list.length;i++){
+				job_node = job_list[i];
+				job_id = XmlUtil.getNodeValue(job_node, "ID");
+				selected_client_list = XmlUtil.extractEntities(job_node, "Client");
+				selected_client_id = XmlUtil.getNodeValue(selected_client_list[0], "ID");
+				if(job_id == this.get_time_entry_prop_value(time_entry_node[0], ["Job", "ID"])){
+					client_id = selected_client_id;
+					UIUtil.chooseDropdownEntry("workflow-max-timeentry-client", client_id);
+					break;
+				}
+			}
+		}
+
 			for(var i=0;i<job_list.length;i++) 
 			{
 				job_node = job_list[i];
 				selected_client_list = XmlUtil.extractEntities(job_node, "Client");
 				selected_client_id = XmlUtil.getNodeValue(selected_client_list[0], "ID");
+
+				job_id = XmlUtil.getNodeValue(job_node, "ID");		
 				if(selected_client_id == $("workflow-max-timeentry-client").value)
 				{
 					job_id = XmlUtil.getNodeValue(job_node, "ID");
 					job_name = XmlUtil.getNodeValue(job_node, "Name");
 					jobData.push({"ID":job_id,"Name":job_name.escapeHTML()});
-				}
+				}	
 			}
 		}
 		
@@ -731,6 +749,11 @@ WorkflowMaxWidget.prototype = {
 		//UIUtil.sortDropdown("workflow-max-timeentry-jobs");
 		UIUtil.hideLoading('workflow-max','jobs','-timeentry');
 		$("workflow-max-timeentry-jobs").enable();
+        
+        if(this.timeEntryXml){
+		job_id = this.get_time_entry_prop_value(time_entry_node[0], ["Job", "ID"]);
+	    UIUtil.chooseDropdownEntry("workflow-max-timeentry-jobs", job_id);
+	   }
 		this.jobChanged($("workflow-max-timeentry-jobs").value);
 	},
 
@@ -778,6 +801,7 @@ WorkflowMaxWidget.prototype = {
 							taskData = this.constructTasks(tasks_list);
 							this.loadTaskComboBox(taskData,searchTerm);
 						}
+						else this.loadTaskEntry("");
 					}.bind(this)
 				});
 
@@ -831,7 +855,13 @@ WorkflowMaxWidget.prototype = {
 		$("workflow-max-timeentry-tasks").enable();
 		this.enableWfmVariables();
 
+        if(this.timeEntryXml){
+		task_id = this.get_time_entry_prop_value(time_entry_node[0], ["Task", "ID"]);
+		UIUtil.chooseDropdownEntry("workflow-max-timeentry-tasks", task_id);
+		this.timeEntryXml = "";  			 // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
+        }
 	},
+
 	enableWfmVariables:function () {
 		$("workflow-max-timeentry-hours").enable();
 		$("workflow-max-timeentry-notes").enable();
@@ -938,6 +968,7 @@ WorkflowMaxWidget.prototype = {
 		task_id = XmlUtil.getNodeValueStr(resEntities[0],"ID");
 		return task_id;
 	},
+	
 }
 
 workflowMaxWidget = new WorkflowMaxWidget(workflowMaxBundle, workflow_maxinline);
