@@ -15,13 +15,9 @@ module ApiDiscussions
       end
 
       def validate_params
-        params[cname].permit(*(ApiConstants::CATEGORY_FIELDS.map(&:to_s)))
+        params[cname].permit(*(ApiConstants::CATEGORY_FIELDS))
         category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
         render_error category.errors unless category.valid?
-      end
-
-      def portal_check
-        access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
       end
 
       def scoper

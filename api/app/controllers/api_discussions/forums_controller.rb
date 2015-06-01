@@ -1,6 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    before_filter { |c| c.requires_feature :forums }
+    before_filter { |c| c.requires_feature :forums } # should not be moved to concern as it disrupts the web controller
     skip_before_filter :check_privilege, :verify_authenticity_token, only: [:follow, :unfollow, :is_following]
     skip_before_filter :load_object, only: [:create, :is_following]
     include DiscussionMonitorConcern
@@ -28,19 +28,9 @@ module ApiDiscussions
         @topics = @forum.topics
       end
 
-      def set_custom_errors
-        bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id).map(&:to_s)
-        @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
-        @error_options = { remove: :customer_forums, meta: "#{bad_customer_ids.join(', ')}" }
-      end
-
       def manipulate_params
         customers = params[cname]['customers'] || []
         params[cname][:customer_forums_attributes] = { customer_id: customers }
-      end
-
-      def portal_check
-        access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
       end
 
       def set_account_and_category_id
@@ -52,6 +42,12 @@ module ApiDiscussions
         params[cname].permit(*(ApiConstants::FORUM_FIELDS))
         forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
         render_error forum.errors unless forum.valid?
+      end
+
+      def set_custom_errors
+        bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
+        @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
+        @error_options = { remove: :customer_forums, meta: "#{bad_customer_ids.join(', ')}" }
       end
   end
 end

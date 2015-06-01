@@ -8,12 +8,12 @@ class DateTimeValidator < ActiveModel::Validator
   private
 
     def parse_time(value)
-      Time.zone.parse(value)
+      Time.zone.parse(value) # This will raise exception only if value is not a string, for values it cannot parse it returns nil.
       rescue
         return false
     end
 
-    def allow_nil(value)
+    def allow_nil(value) # if validation allows nil values and the value is nil, this will pass the validation.
       options[:allow_nil] == true && value.nil?
     end
 end

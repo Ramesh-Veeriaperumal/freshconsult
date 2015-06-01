@@ -116,7 +116,7 @@ module ApiDiscussions
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id])
       assert_response :success
       match_json(forum_pattern(forum.reload))
-      match_json(forum_response_pattern(forum, forum_visibility: 4, customers: "#{customer.id}"))
+      match_json(forum_response_pattern(forum, forum_visibility: 4, customers: [customer.id]))
     end
 
     def test_create_validate_presence
@@ -196,7 +196,7 @@ module ApiDiscussions
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 1, customers: "#{customer.id}")
+      put :update, construct_params({ id: forum.id }, forum_visibility: 1, customers: [customer.id])
       match_json([bad_request_error_pattern('customers', 'invalid_field')])
       assert_response :bad_request
     end
@@ -423,6 +423,7 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_invalid
+      monitor_forum(f_obj, @agent, 1)
       delete :unfollow, construct_params({ id: f_obj.id }, user_id: @agent.id)
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
@@ -442,8 +443,8 @@ module ApiDiscussions
       assert monitorship.active
     end
 
-    def test_new_monitor_unfollow_user_id_invalid
-      delete :unfollow, construct_params({ id: f_obj.id }, user_id: 999)
+    def test_new_monitor_follow_user_id_invalid
+      post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response :bad_request
       match_json [bad_request_error_pattern('user', "can't be blank")]
     end

@@ -10,7 +10,7 @@ module ApiDiscussions
     before_filter :set_forum_id, only: [:create, :update]
 
     def create
-      post = @topic.posts.build(params[cname].symbolize_keys.delete_if { |x| !(ApiConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
+      post = @topic.posts.build(params[cname].delete_if { |x| !(ApiConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
       assign_user_and_parent post, :topic, @topic
       super
     end
@@ -49,16 +49,16 @@ module ApiDiscussions
 
       def assign_user_and_parent(item, parent, value)
         if @email.present?
-          item.user = @user
+          item.user = @user # will be set in can_send_user?
         elsif params[cname][:user_id]
           item.user_id ||= params[cname][:user_id]
         else
           item.user ||= current_user
         end
-        if item.has_attribute?(parent.to_sym)
+        if item.has_attribute?(parent.to_sym) # eg: topic has forum_id
           item.send(:write_attribute, parent, value[parent]) if value.key?(parent)
         else
-          item.association(parent.to_sym).writer(value)
+          item.association(parent.to_sym).writer(value) # here topic is not yet saved hence, topic_id cannot be retrieved.
         end
       end
 
@@ -72,7 +72,7 @@ module ApiDiscussions
 
       def validate_params
         fields = get_fields("ApiConstants::#{action_name.upcase}_TOPIC_FIELDS")
-        params[cname].permit(*(fields.map(&:to_s)))
+        params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
         render_error topic.errors unless topic.valid?
       end

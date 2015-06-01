@@ -12,9 +12,9 @@ class ErrorHelper
       errors.collect(&:http_code).group_by { |i| i }.max { |x, y| x[1].length <=> y[1].length }[0]
     end
 
-    def get_translation_params(attribute, meta)
-      { list: ApiConstants::LIST_FIELDS[attribute],
-        meta: meta }
+    def get_translation_params(attribute, meta) 
+      { list: ApiConstants::LIST_FIELDS[attribute], # this gives the accepted list when param fails inclusion validation.
+        meta: meta } # this is being set in set_custom_errors
     end
   end
 end

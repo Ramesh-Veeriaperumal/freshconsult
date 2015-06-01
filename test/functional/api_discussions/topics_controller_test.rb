@@ -227,6 +227,7 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_valid
+      monitor_topic(first_topic, other_user, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: other_user.id)
       assert_response :no_content
       monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: other_user.id,
@@ -235,6 +236,7 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_invalid
+      monitor_topic(first_topic, @agent, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: @agent.id)
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
@@ -258,8 +260,8 @@ module ApiDiscussions
       controller.class.any_instance.unstub(:is_allowed_to_assume?)
     end
 
-    def test_new_monitor_unfollow_user_id_invalid
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: 999)
+    def test_new_monitor_follow_user_id_invalid
+      post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response :bad_request
       match_json [bad_request_error_pattern('user', "can't be blank")]
     end

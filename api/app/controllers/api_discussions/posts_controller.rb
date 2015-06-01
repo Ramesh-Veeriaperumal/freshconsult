@@ -29,7 +29,7 @@ module ApiDiscussions
 
       def validate_params
         fields = get_fields("ApiConstants::#{action_name.upcase}_POST_FIELDS")
-        params[cname].permit(*(fields.map(&:to_s)))
+        params[cname].permit(*(fields))
         post = ApiDiscussions::PostValidation.new(params[cname], @post)
         render_error post.errors unless post.valid?
       end
@@ -41,7 +41,7 @@ module ApiDiscussions
       def check_lock
         if params[cname][:user_id] || @email # email is removed from params, as it is not a model attr.
           locked = @post.topic.try(:locked?)
-          if locked
+          if locked # if topic is locked, a customer cannot post.
             customer = @user.try(:is_customer)
             render_invalid_user_error if customer
           end

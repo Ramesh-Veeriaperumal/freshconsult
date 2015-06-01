@@ -36,11 +36,11 @@ class ApiApplicationController < MetalApiController
   before_filter :load_objects, only: [:index]
   before_filter :load_association, only: [:show]
 
-  def index; end
+  def index; end # load_objects will load all objects and index.json.jbuilder will render the result.
 
   def create
     if @item.save
-      render template: "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: :created
+      render template: "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
       set_custom_errors
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
@@ -48,11 +48,12 @@ class ApiApplicationController < MetalApiController
   end
 
   def show
+    # load_object will load the object and show.json.jbuilder will render the result.
   end
 
   def update
     unless @item.update_attributes(params[cname])
-      set_custom_errors
+      set_custom_errors # this will set @error_options if necessary.
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
     end
   end
@@ -68,11 +69,11 @@ class ApiApplicationController < MetalApiController
       match = Rails.application.routes.recognize_path(path, method: verb)
       match[:action] != 'route_not_found'
     end.map(&:upcase)
-    if allows.present?
+    if allows.present? # route is present, but method is not allowed.
       @error = BaseError.new(:method_not_allowed, methods: allows.join(', '))
       render template: '/base_error', status: 405
       response.headers['Allow'] = allows.join(', ')
-    else
+    else # route not present.
       head :not_found
     end
   end
@@ -88,9 +89,10 @@ class ApiApplicationController < MetalApiController
   private
 
     def set_custom_errors
+      # This is used to manipulate the model errors to a format that is acceptable.
     end
 
-    def can_send_user?
+    def can_send_user? # if user_id or email of a user, is included in params, the current_user should have ability to assume that user.
       user_id = params[cname][:user_id]
       if user_id || @email
         @user = current_account.all_users.find_by_email(@email) if @email
@@ -106,7 +108,7 @@ class ApiApplicationController < MetalApiController
 
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
-      Rails.logger.debug("API 500 error: #{params} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       @error = BaseError.new(:internal_error)
       render template: '/base_error', status: 500
     end
@@ -115,7 +117,7 @@ class ApiApplicationController < MetalApiController
       response.headers['X-Freshdesk-API-Version'] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
     end
 
-    def invalid_field_handler(exception)
+    def invalid_field_handler(exception) # called if extra fields are present in params.
       invalid_fields = Hash[exception.params.collect { |v| [v, 'invalid_field'] }]
       render_error invalid_fields
     end
@@ -170,11 +172,11 @@ class ApiApplicationController < MetalApiController
       instance_variable_set('@' + cname.pluralize, @items)
     end
 
-    def nscname
+    def nscname # namespaced controller name
       controller_path.gsub('/', '_').singularize
     end
 
-    def get_fields(constant_name)
+    def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
       fields = constant[:all]
       constant.keys.each { |key| fields += constant[key] if privilege?(key) }
@@ -182,13 +184,14 @@ class ApiApplicationController < MetalApiController
     end
 
     def load_association
+      # This is used to load the association before the show method.
     end
 
     def paginate_items(item)
       item.paginate(paginate_options)
     end
 
-    def check_params
+    def check_params # update withut any params, is not allowed.
       render_request_error :missing_params, 400 if params[cname].blank?
     end
 
@@ -198,6 +201,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def manipulate_params
+      # This will be used to map incoming parameters to parameters that the model would understand
     end
 
     def check_account_state
