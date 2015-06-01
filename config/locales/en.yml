@@ -4308,6 +4308,7 @@ en:
       addcc: "Add cc"
       cc: "cc"
       bcc: "bcc"
+      response_added_alert: "Ticket has been updated with new replies. Please review them before sending."
       reply_form:
         title: Reply to %{email}
         cc: Cc
@@ -7206,3 +7207,4 @@ en:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: This shorthand is already in use.
+  new_label: "NEW"

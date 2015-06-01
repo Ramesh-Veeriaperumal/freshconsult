@@ -260,17 +260,18 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-          @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
-
+        @ticket_notes       = @ticket_notes.reverse
+        @ticket_notes_total = @ticket.conversation_count
+        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
       }
-	  format.json {
-		render :json => @item.to_json
-	  }
+	    format.json {
+		    render :json => @item.to_json
+	    }
       format.js
       format.nmobile {
         hash = {}
