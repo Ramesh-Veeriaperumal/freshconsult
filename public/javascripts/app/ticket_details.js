@@ -962,13 +962,17 @@ var scrollToError = function(){
 			},
 			success: function(response, statusCode, xhr) {
 				var statusChangeField = $('#send_and_set');
-				if($('#response_added_alert').length > 0){
+				
+				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
 					}
 					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
 						triggerDraftSaving();
 					}
+
+					_form.trigger('focusin.keyboard_shortcuts');
+
 					if(statusChangeField.data('val') != undefined && statusChangeField.data('val') != ""){
 						changeStatusTo(currentStatus);
 						statusChangeField.data('val','');
