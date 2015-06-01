@@ -271,6 +271,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def has_unseen_notes?
+        return false if params["last_note_id"].nil?
         last_public_note    = @parent.notes.visible.last_traffic_cop_note.first
         late_public_note_id = last_public_note.blank? ? -1 : last_public_note.id
         return late_public_note_id > params["last_note_id"].to_i
