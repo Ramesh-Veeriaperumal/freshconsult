@@ -1,18 +1,23 @@
 module Solution::LanguageMethods
+	
+	extend ActiveSupport::Concern
 
 	LANGUAGE_MAPPING = (
 		I18n.available_locales.inject(HashWithIndifferentAccess.new) { |h,lang| h[lang] = I18n.t('meta', locale: lang); h }
 	)
 
-	def self.included(base)
-		base.scope :find_by_language, lambda { |lang| {:conditions => {:language_id => LANGUAGE_MAPPING[lang][:language_id] }}}
+	included do
+		scope :find_by_language, lambda { |lang| {:conditions => {:language_id => LANGUAGE_MAPPING[lang][:language_id] }}}
 	end
 
-	def self.current_language_id
-		portal = Portal.current || Account.current.main_portal
-		supported_languages = [portal.language, Account.current.supported_languages].flatten
-		current_language = supported_languages.include?(I18n.locale.to_s) ? I18n.locale : portal.language 
-		LANGUAGE_MAPPING[current_language][:language_id]
+	module ClassMethods
+		def current_language_id
+			return nil unless Portal.current || Account.current
+			portal = Portal.current || Account.current.main_portal
+			supported_languages = [portal.language, Account.current.supported_languages].flatten
+			current_language = supported_languages.include?(I18n.locale.to_s) ? I18n.locale : portal.language 
+			LANGUAGE_MAPPING[current_language][:language_id]
+		end
 	end
 
 	def language=(value)
@@ -29,5 +34,6 @@ module Solution::LanguageMethods
 
 	def language_name
 		LANGUAGE_MAPPING[language_code][:language_name]
-	end	
+	end
+
 end

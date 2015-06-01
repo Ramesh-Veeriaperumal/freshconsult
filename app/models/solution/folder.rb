@@ -14,7 +14,6 @@ class Solution::Folder < ActiveRecord::Base
   self.table_name =  "solution_folders"
   
   # before_create :populate_account
-  after_save :set_article_delta_flag
   before_update :clear_customer_folders, :backup_folder_changes
 
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
@@ -91,13 +90,6 @@ class Solution::Folder < ActiveRecord::Base
       customer_folders.destroy_all if (visibility_changed? and visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_users])
   end
   
-  def set_article_delta_flag
-    self.articles.each do |article|
-      article.delta = true
-      article.save
-    end
-  end
-
   def has_company_visiblity?
     visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
