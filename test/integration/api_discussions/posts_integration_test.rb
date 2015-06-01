@@ -7,7 +7,7 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
     v2_expected = {
       create: 6,
       update: 3,
-      destroy: 9
+      destroy: 10
     }
     t = Topic.first
 

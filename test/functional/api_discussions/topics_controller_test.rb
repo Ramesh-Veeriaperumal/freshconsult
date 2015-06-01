@@ -394,6 +394,20 @@ module ApiDiscussions
       match_json(request_error_pattern('missing_params'))
     end
 
+    def test_destroy
+      topic = first_topic
+      delete :destroy, construct_params(id: topic.id)
+      assert_equal ' ', @response.body
+      assert_response :no_content
+      assert_nil Topic.find_by_id(topic.id)
+    end
+
+    def test_destroy_invalid_id
+      delete :destroy, construct_params(id: (1000 + Random.rand(11)))
+      assert_equal ' ', @response.body
+      assert_response :not_found
+    end
+
     def test_update
       forum = Forum.where(forum_type: 2).first
       topic = first_topic
