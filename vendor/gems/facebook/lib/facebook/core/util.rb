@@ -95,7 +95,8 @@ module Facebook::Core::Util
     if fb_page
       if @parent.is_fb_message?
         unless Facebook::Core::Message.new(fb_page).send_reply(@parent, @item)
-          return flash[:notice] = t(:'facebook.error_on_reply_fb')
+          flash[:notice] = fb_page.reauth_required ? t(:'facebook.error_on_reply_fb') : t(:'facebook.user_blocked')
+          return 
         end
       else
         unless Facebook::Core::Comment.new(fb_page, nil).send_reply(parent_post, @item)
@@ -118,8 +119,11 @@ module Facebook::Core::Util
         <p>#{desc}</p></div></div>"
     elsif "photo".eql?(feed[:type])
       html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
+    elsif "link".eql?(feed[:type])
+      link_story = "<a href=\"#{feed[:link]}\">#{feed[:story]}</a>" if feed[:story]
+      html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><#{link_story}</p></div>"
     end
-
+    
     return html_content
   end
   

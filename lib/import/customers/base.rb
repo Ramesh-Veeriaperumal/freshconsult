@@ -20,7 +20,7 @@ class Import::Customers::Base
     UserNotifier.notify_customers_import(mailer_params)
     (item_import = current_account.send("#{@params[:type]}_import")) && item_import.destroy
   rescue => e
-    NewRelic::Agent.notice_error(e)
+    NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
     UserNotifier.notify_customers_import(mailer_params(true))
   ensure
@@ -34,6 +34,7 @@ class Import::Customers::Base
     @csv_headers = @rows.shift
     @rows.each do |row|
       assign_field_values row
+      next if !@item.nil? && @item.helpdesk_agent?     
       save_item row
     end    
   end

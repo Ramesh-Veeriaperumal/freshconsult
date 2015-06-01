@@ -8,6 +8,7 @@ module Fdadmin::AccountsControllerMethods
 		account_info[:created_at] = account.created_at
 		account_info[:sso_enabled] = account.sso_enabled
 		account_info[:ssl_enabled] = account.ssl_enabled
+		account_info[:time_zone] = account.time_zone
 		account_info
 	end
 

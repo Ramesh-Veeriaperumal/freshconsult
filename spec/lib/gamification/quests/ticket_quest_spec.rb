@@ -84,6 +84,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
     it "must revoke the achieved quests if any of the resolved tickets is reopened again and the quest conditions and data are not satisfied" do
       all_tickets = @account.tickets.find_all_by_responder_id(@agent.user_id)
       ticket = all_tickets.first
+      achieved_quest_created_at = @agent.achieved_quests.first.created_at
       ticket.resolved?.should be true
       current_agent_points = @agent.points
       Resque.inline = true
@@ -93,6 +94,7 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       expected_agent_points = current_agent_points - @quest.points - OVERALL_RESOLUTION_POINTS
       @agent.achieved_quests.should be_empty
       @quest.support_scores.count.should eql(2)
+      @quest.support_scores.last.created_at.should eql(achieved_quest_created_at)
       @agent.points.should eql(expected_agent_points)
     end
   end
@@ -164,12 +166,14 @@ RSpec.describe Gamification::Quests::ProcessTicketQuests do
       ticket = all_tickets.last
       ticket.resolved?.should be true
       current_agent_points = @agent.points
+      achieved_quest_created_at = @agent.achieved_quests.first.created_at
       Resque.inline = true
       ticket.update_attributes(:status => 2) # Status changed from resolved to open again
       ticket.reload
       @agent.reload
       expected_agent_points = current_agent_points - OVERALL_RESOLUTION_POINTS - @quest.points
       @agent.achieved_quests.should be_empty
+      @quest.support_scores.last.created_at.should eql(achieved_quest_created_at)
       @agent.points.should eql(expected_agent_points)
     end
   end

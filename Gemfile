@@ -16,6 +16,7 @@ gem 'strong_parameters', "0.2.3"
 gem "mysql2", "~> 0.3.0"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
+gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "~> 3.0"
 gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
@@ -65,16 +66,18 @@ gem "omniauth-openid"
 gem "omniauth-google"
 gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
+gem "omniauth-quickbooks"
 gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "omniauth-surveymonkey", "1.0.0"
+gem "dynamics_crm", "~> 0.4.1"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 gem 'omniauth-shopify-oauth2', "1.0.0"
 
-gem "sidekiq", :git => "git://github.com/PratheepV/sidekiq.git", :branch => "master"
+gem "sidekiq"
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
@@ -82,6 +85,7 @@ gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :requir
 gem "ruby-openid-apps-discovery", "1.2.0"
 gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch => "master"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
+gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
 gem "ruby-saml", "0.8.1"
 
@@ -101,7 +105,7 @@ gem "newrelic_rpm","3.9.9.275"
 gem "faraday" , "0.9"
 gem "twitter", "~> 5.5.1"
 gem "gnip-rule", "0.4.1"
-gem "curb", "~> 0.8.4"
+gem "curb", "~> 0.8.5"
 gem "sanitize", "2.0.3"
 gem "koala", "1.10.1"
 gem "spreadsheet", "0.6.8"
@@ -154,6 +158,7 @@ gem "routing-filter", "~> 0.3.1"
 gem "paperclip", "~> 2.8.0"
 
 gem "aws-sdk", "~> 1.11.3"
+gem "aws-sdk-resources", '~> 2'
 gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 
 
@@ -162,7 +167,7 @@ gem "premailer", "~> 1.8.0"
 
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 
-gem "bunny", "1.2.1"
+gem "bunny", "1.7.0"
 
 gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/add_pod_support-0.0.1"
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
@@ -223,7 +228,7 @@ group :test do
   gem "autotest-fsevent", "0.1.1"
   gem "autotest-growl", "0.2.0"
   gem "autotest-rails", "4.1.0"
-  gem "faker", "~> 1.0.1"
+  gem "faker", "~> 1.4.3"
   gem "simplecov", "~> 0.7.1"
   gem "simplecov-csv"
   gem "database_cleaner"

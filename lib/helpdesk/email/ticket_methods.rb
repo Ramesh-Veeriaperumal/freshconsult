@@ -5,7 +5,8 @@ module Helpdesk::Email::TicketMethods
   include AccountConstants
 
   def get_original_user
-    get_user(orig_email_from_text , email[:email_config], email[:text]) unless orig_email_from_text.blank?
+    email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
+    get_user(email_from_text , email[:email_config], email[:text]) unless email_from_text.blank?
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
@@ -113,6 +114,20 @@ module Helpdesk::Email::TicketMethods
     begin
       header_info_update(ticket_message_id)
       ticket.save_ticket!
+      
+      # Insert header to schema_less_ticket_dynamo
+      begin
+        Timeout::timeout(0.5) do
+          dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
+          dynamo_obj['account_id'] = Account.current.id
+          dynamo_obj['ticket_id'] = ticket.id
+          dynamo_obj['headers'] = JSON.parse(self.email[:headers]).map{|x| "#{x[0]}: #{x[1]}" }.join("\n")
+          dynamo_obj.save
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+      
     rescue ActiveRecord::RecordInvalid => e
       FreshdeskErrorsMailer.error_email(ticket,email,e)
     end

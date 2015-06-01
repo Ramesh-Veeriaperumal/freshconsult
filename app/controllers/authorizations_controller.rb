@@ -24,12 +24,12 @@ class AuthorizationsController < ApplicationController
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "facebook"
       create_for_facebook(params)
-    elsif @omniauth['provider'] == "google"
-      create_for_google(params)
     elsif OAUTH2_PROVIDERS.include?(@omniauth['provider'])
       create_for_oauth2(@omniauth['provider'], params)
     elsif EMAIL_MARKETING_PROVIDERS.include?(@omniauth['provider'])
       create_for_email_marketing_oauth(@omniauth['provider'], params)
+    elsif OAUTH1_PROVIDERS.include?(@omniauth['provider'])
+      create_for_oauth1(@omniauth['provider'], params)
     end
   end
 
@@ -61,6 +61,7 @@ class AuthorizationsController < ApplicationController
       if origin.has_key?('id') 
         @account_id = origin['id'][0].to_i
         @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id') 
+        @iapp_id = origin['iapp_id'][0].to_i if origin.has_key?('iapp_id')
       elsif origin.has_key?('pid') # Fallback
         origin = origin['pid'][0].to_i
         portal = Portal.find(origin.to_i)
@@ -82,47 +83,27 @@ class AuthorizationsController < ApplicationController
       request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
   end
 
-  def create_for_google(params)
-    user_info = @omniauth['info']
-    unless user_info.blank?
-      if @omniauth_origin.blank? || @omniauth_origin.include?("integrations") 
-        Rails.logger.error "The session variable to omniauth is not preserved or not set properly."
-        @omniauth_origin = "install"
-      end
-      @google_account = Integrations::GoogleAccount.new
-      @db_google_account = Integrations::GoogleAccount.find_by_account_id_and_email(current_account, user_info["email"])
-      if !@db_google_account.blank? && @omniauth_origin == "install"
-        Rails.logger.error "As already an account has been configured can not configure one more account."
-        flash[:error] = t("integrations.google_contacts.already_exist")
-        redirect_to edit_integrations_installed_application_path(params[:iapp_id]) 
-      else
-        @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(current_account)
-        @google_account.account = current_account
-        @google_account.token = @omniauth['credentials']['token']
-        @google_account.secret = @omniauth['credentials']['secret']
-        @google_account.name = user_info["name"]
-        @google_account.email = user_info["email"]
-        @google_account.sync_group_name = "Freshdesk Contacts"
-        Rails.logger.debug "@google_account details #{@google_account.inspect} existing_google_accounts #{@existing_google_accounts.inspect}"
-        # Fetch all the groups
-        @google_groups = @google_account.fetch_all_google_groups
-        # Reuse the group id, if the group with same name already exist.
-        @google_groups.each { |g_group|
-          @google_account.sync_group_id = g_group.group_id if g_group.name == @google_account.sync_group_name
-        }
-        render 'integrations/google_accounts/edit'
-      end
+  def create_for_oauth1(provider, params)
+    config_params = {
+      'app_name' => "#{@app_name}",
+      'oauth_token' => "#{@omniauth.credentials.token}",
+      'oauth_token_secret' => "#{@omniauth.credentials.secret}"
+    }
+
+    if (provider == Integrations::Constants::APP_NAMES[:quickbooks])
+      config_params['company_id'] = params['realmId']
+      config_params['token_renewal_date'] = Time.now + Integrations::Quickbooks::Constant::TOKEN_RENEWAL_DAYS.days
     end
+    set_oauth_redirect_url(config_params)
   end
 
   def create_for_oauth2(provider, params)
-    
     if OAUTH2_OMNIAUTH_CRENDENTIALS.include? provider
       access_token = @omniauth.credentials
     else
       access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, @app_name)
     end
-  
+
     config_params = { 
       'app_name' => "#{@app_name}",
       'refresh_token' => "#{@omniauth.credentials.refresh_token}",
@@ -136,18 +117,14 @@ class AuthorizationsController < ApplicationController
         config_params['shop_name'] = params[:shop]
       when "box"
         config_params['email'] = @omniauth.extra.raw_info.login
+      when "google_contacts"
+        config_params['info'] = {"email" => @omniauth['info']['email'], "first_name" => @omniauth['info']['first_name'],
+                                  "last_name" => @omniauth['info']['last_name'], "name" => @omniauth['info']['name']}
+        config_params['origin'] = @omniauth_origin
+        config_params['iapp_id'] = @iapp_id
     end
 
-    config_params = config_params.to_json
-    app = get_integrated_app
-    #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
-    #user's account and install the application from inside the user's account.
-    key_options = { :account_id => @account_id, :provider => @app_name}
-    key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
-    Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
-    
-    redirect_url = get_redirect_url(app,@app_name)
-    redirect_to redirect_url
+    set_oauth_redirect_url(config_params)
   end
 
     def create_for_email_marketing_oauth(provider, params)
@@ -186,6 +163,7 @@ class AuthorizationsController < ApplicationController
         Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
         port = (Rails.env.development? ? ":#{request.port}" : '')
         fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}#{port}" : portal_url(user_account))
+        fb_url = "https://#{user_account.full_domain}" if is_native_mobile? #always use https for requests from mobile app.
         redirect_to fb_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}"
       end
     end
@@ -303,7 +281,22 @@ class AuthorizationsController < ApplicationController
       origin_account.all_users.find_by_id(@origin_user_id) if origin_account && @origin_user_id
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack"]
+  private
+    def set_oauth_redirect_url(config_params)
+      config_params = config_params.to_json
+      app = get_integrated_app
+      #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
+      #user's account and install the application from inside the user's account.
+      key_options = { :account_id => @account_id, :provider => @app_name}
+      key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
+      Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
+
+      redirect_url = get_redirect_url(app,@app_name)
+      redirect_to redirect_url
+    end
+
+  OAUTH1_PROVIDERS = ["quickbooks"]
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack", "google_contacts"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
   OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "shopify","slack"]
 end

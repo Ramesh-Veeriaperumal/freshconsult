@@ -291,10 +291,6 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def user_emails_migrated?
-    $redis_others.sismember(USER_EMAIL_MIGRATED, self.id)
-  end
-
   def google_account?
     !google_domain.blank?
   end
@@ -334,6 +330,10 @@ class Account < ActiveRecord::Base
 
   def rabbit_mq_exchange
     $rabbitmq_shards[id%($rabbitmq_shards).count]
+  end
+
+  def rabbit_mq_ticket_exchange
+    $rabbitmq_ticket_shards[id%($rabbitmq_ticket_shards).count]
   end
 
   protected

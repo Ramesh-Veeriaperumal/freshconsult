@@ -15,11 +15,18 @@ module Freshfone::CallHistoryHelper
 		]
 	end
 
+	def numbers_hash
+		@numbers ||=current_account.all_freshfone_numbers.reduce({}){|obj,c| obj.merge!({c.id=>c.number})}
+	
+	end
+
 	def freshfone_numbers_options
 		numbers_options = []
 		numbers_options = @all_freshfone_numbers.map{|c|
 			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name.to_s) }
-		 }.to_json
+		 }
+		numbers_options.unshift({:value => t('reports.freshfone.all_numbers'),:deleted=> false, :id=> 0 ,:name=> t('reports.freshfone.all_call_types')})
+		numbers_options.to_json
 	end
 
 	def agents_list
@@ -81,22 +88,25 @@ module Freshfone::CallHistoryHelper
 		end
 	end
 
-	def blocked_number?(number)
-		@blacklist_numbers.include? number.gsub(/^\+/, '')
+	def blocked_number?(id)
+		@blacklist_numbers.include?(id)
 	end
-
+	
 	def country_name(country_code)
 		country = Country.coded(country_code)
 		country ? country.name : nil
 	end
 
 	def call_duration_formatted(duration)
-		format = (duration >= 3600) ? "%H:%M:%S" : "%M:%S"
-		Time.at(duration).gmtime.strftime(format)
+		if duration >= 3600
+			"%02d:%02d:%02d" % [duration / 3600, (duration / 60) % 60, duration % 60]
+		else
+			"%02d:%02d" % [(duration / 60) % 60, duration % 60]
+		end
 	end
 
 	def export_options
-		[t('export_data.csv'), t('export_data.xls')]
+		[{ i18n: t('export_data.csv'), en: "CSV" }, { i18n: t('export_data.xls'), en: "Excel" }]
 	end
 
 	def export_messages
@@ -106,4 +116,12 @@ module Freshfone::CallHistoryHelper
 			:range_limit_message => t('export_data.call_history.range_limit_message', range: Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS )
 		}
 	end
+  def recording_deleted_title(call)
+  	if call.present? && call.recording_deleted_info.present?
+  		"#{t("freshfone.call_history.recording_delete.done_by")} #{call.recording_deleted_by}, on #{formated_date(Time.zone.parse(call.recording_deleted_at.to_s))}"
+  	end
+  end
+   def cannot_make_calls(classname = nil)
+    content_tag :span, nil, {:class => "restrict-call #{classname}"}
+  end
 end

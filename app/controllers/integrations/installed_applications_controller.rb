@@ -4,6 +4,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
   include Integrations::Slack::SlackConfigurationsUtil
+  include Integrations::GoogleAccountsHelper
+  helper Integrations::GoogleAccountsHelper
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
@@ -36,7 +38,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       if successful
         if @installing_application.name == "google_contacts"
           Rails.logger.info "Redirecting to google_contacts oauth."
-          redirect_to "/auth/google?origin=install"
+          redirect_to "#{oauth2_url(@installed_application)}"
           return
         elsif @installing_application.name == "shopify"
           shop_name = (@installed_application.configs_shop_name.include? ".myshopify.com") ? @installed_application.configs_shop_name : @installed_application.configs_shop_name+".myshopify.com"
@@ -88,6 +90,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def edit
+    redirect_to :controller => "dynamics_crm", :action => "edit" if @installing_application.dynamics_crm?
     if @installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
       redirect_to :controller=> 'applications', :action => 'index'
@@ -151,6 +154,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       @channels = channel_name if @installing_application.slack? 
     end
     @installed_application.set_configs params[:configs]
+    @installed_application.set_configs({"OAuth2" => []}) if @installing_application.name == "google_contacts"
   end
 
   def set_auth_key

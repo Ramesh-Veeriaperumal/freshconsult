@@ -2,10 +2,9 @@
 <%= render :partial => 'layouts/shared/cti/toolbar' %>
 <div id="ameyoIframeDiv"></div>
 
-<%= javascript_include_tag "http://" + (Integrations::InstalledApplication.with_name "drishti").first.configs[:inputs][:host_ip] + "/ameyowebaccess/en/js/ameyo-integration.js" %>
-
-	<script type="text/javascript" language="javascript"
-		src="/javascripts/cti/ameyo/ameyo_custom.js"></script>
+<% path = request.protocol + get_app_config('drishti')[:host_ip] + "/ameyowebaccess/en/js/ameyo-integration.js" %>
+<script type="text/javascript" language="javascript" src='<%=path%>'></script>
+<script type="text/javascript" language="javascript" src="/javascripts/cti/ameyo/ameyo_custom.js"></script>
 	<script>
 		var crmOrigin;
 		var ameyoBaseUrl = location.protocol + "//";
@@ -19,16 +18,7 @@
                         iframeHtml = '<iframe height="350px" width="200px" id="ameyoIframe" src="' + iframeUrl + '"></iframe>';
                         iframeDiv.innerHTML = iframeHtml;
                 }
-		function login() {
-		alert("LoginCalled");	
-		doLogin(document.getElementById("userId").value, 
-			document.getElementById("password").value 
-//			,document.getElementById("authType").value
-			);
-		}
-		function logout() {
-			doLogout();
-		}
+		
 		jQuery(document).ready(function() {
 		drishti_widget = new DrishtiWidget();
 		initialise();

@@ -1,5 +1,6 @@
 vi:
   meta:
+    language_id: 27
     language_name: "Vietnamese"
   helpdesk:
     tickets:

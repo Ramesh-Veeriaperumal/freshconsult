@@ -12,18 +12,6 @@ GIT
       rest-client (~> 1.6)
 
 GIT
-  remote: git://github.com/PratheepV/sidekiq.git
-  revision: 708125eaa9bd28bc4f9f841ac5f00ad1b8cfb34e
-  branch: master
-  specs:
-    sidekiq (3.0.1)
-      celluloid (>= 0.15.2)
-      connection_pool (>= 2.0.0)
-      json
-      redis (>= 3.0.6)
-      redis-namespace (>= 1.3.1)
-
-GIT
   remote: git://github.com/Shopify/active_merchant
   revision: f441a69337ec9779dc383b3156d61006c1024526
   tag: v1.43.1
@@ -36,6 +24,13 @@ GIT
       json (~> 1.7)
       money (< 7.0.0)
       nokogiri (~> 1.4)
+
+GIT
+  remote: git://github.com/chrisbutcher/postoffice.git
+  revision: 499eed5c1deee5eb78ea07220ebcc61c9012b834
+  branch: master
+  specs:
+    postoffice (0.0.9)
 
 GIT
   remote: git://github.com/freshdesk/Marketo.git
@@ -59,7 +54,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/large-hadron-migrator.git
-  revision: 27972aca9fb5720d3150e8afd8f757123eb747f6
+  revision: 0672d428cdd985520bffbcbd97ca47ad55333a52
   specs:
     lhm (1.2.0)
 
@@ -175,6 +170,13 @@ GIT
   specs:
     rails-dev-boost (0.3.0)
       railties (>= 3.0)
+
+GIT
+  remote: git@github.com:freshdesk/fd_rate_limiter.git
+  revision: 30a7b6deb34c992e84498facdec397527c551b47
+  branch: dynamic_rules
+  specs:
+    fd_rate_limiter (0.0.1)
 
 PATH
   remote: vendor/gems/acts_as_voteable
@@ -416,6 +418,12 @@ GEM
       json (~> 1.4)
       nokogiri (< 1.6.0)
       uuidtools (~> 2.1)
+    aws-sdk-core (2.0.41)
+      builder (~> 3.0)
+      jmespath (~> 1.0)
+      multi_json (~> 1.0)
+    aws-sdk-resources (2.0.41)
+      aws-sdk-core (= 2.0.41)
     beefcake (0.3.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -426,7 +434,7 @@ GEM
       builder
     buftok (0.2.0)
     builder (3.0.4)
-    bunny (1.2.1)
+    bunny (1.7.0)
       amq-protocol (>= 1.9.2)
     byebug (4.0.5)
       columnize (= 0.9.0)
@@ -437,8 +445,8 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    celluloid (0.15.2)
-      timers (~> 1.1.0)
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
     chargebee (1.2.9)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
@@ -464,7 +472,7 @@ GEM
       sass (>= 3.2, < 3.5)
     compass-rails (2.0.0)
       compass (>= 0.12.2)
-    connection_pool (2.0.0)
+    connection_pool (2.2.0)
     css_parser (1.3.5)
       addressable
     curb (0.8.4)
@@ -487,8 +495,8 @@ GEM
     factory_girl_rails (4.4.0)
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
-    faker (1.0.1)
-      i18n (~> 0.4)
+    faker (1.4.3)
+      i18n (~> 0.5)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.0)
@@ -531,6 +539,7 @@ GEM
     hashie (3.2.0)
     hashr (0.0.22)
     hike (1.2.3)
+    hitimes (1.2.2)
     htmlentities (4.3.1)
     http (0.5.1)
       http_parser.rb
@@ -554,6 +563,8 @@ GEM
       multi_json (~> 1.2)
     jira4r (0.3.0)
       soap4r
+    jmespath (1.0.2)
+      multi_json (~> 1.0)
     journey (1.0.4)
     json (1.8)
     json-compare (0.1.8)
@@ -816,6 +827,12 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
+    sidekiq (3.3.4)
+      celluloid (>= 0.16.0)
+      connection_pool (>= 2.1.1)
+      json
+      redis (>= 3.0.6)
+      redis-namespace (>= 1.3.1)
     signet (0.5.1)
       addressable (>= 2.2.3)
       faraday (>= 0.9.0.rc5)
@@ -864,7 +881,8 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
-    timers (1.1.0)
+    timers (4.0.1)
+      hitimes
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -926,10 +944,11 @@ DEPENDENCIES
   autotest-growl (= 0.2.0)
   autotest-rails (= 4.1.0)
   aws-sdk (~> 1.11.3)
+  aws-sdk-resources (~> 2)
   better_errors (~> 1.1.0)
   binding_of_caller
   braintree (= 2.10.0)
-  bunny (= 1.2.1)
+  bunny (= 1.7.0)
   business_time!
   byebug
   capybara
@@ -951,8 +970,9 @@ DEPENDENCIES
   encryptor (= 1.1.3)
   facebook!
   factory_girl_rails (= 4.4.0)
-  faker (~> 1.0.1)
+  faker (~> 1.4.3)
   faraday (= 0.9)
+  fd_rate_limiter!
   features!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
@@ -1013,6 +1033,7 @@ DEPENDENCIES
   paperclip (~> 2.8.0)
   paperclip_ext!
   pg
+  postoffice!
   premailer (~> 1.8.0)
   prototype-rails (~> 3.2.0)
   prototype_legacy_helper (= 0.0.0)!
@@ -1055,7 +1076,7 @@ DEPENDENCIES
   seed-fu!
   sentient_user!
   sharding!
-  sidekiq!
+  sidekiq
   simplecov (~> 0.7.1)
   simplecov-csv
   simplecov-rcov

@@ -1,5 +1,6 @@
 en:
   meta:
+   language_id: 6
    language_name: 'English'
   date:
     ago: ago
@@ -134,8 +135,6 @@ en:
   forward: "Forward"
   apply: "Apply"
   myself: "Myself"
-  meta:
-   language_name: 'English'
   one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
@@ -154,6 +153,10 @@ en:
   trail_expiry_one_more_day: "Select a paid or free plan immediately to enjoy uninterrupted access to Freshdesk"
   trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
+  facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
+  reauthorize_facebook: "Reauthorize your facebook account."
+  twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
+  reauthorize_twitter: Reauthorize your twitter handle.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
   upgrade_trial: Upgrade your trial!
@@ -218,6 +221,7 @@ en:
   after_onemonth: After 1 Month
   add_more_lang: Add supported languages to your helpdesk.
   support_multi_languge: Supporting customers across more than one language?
+  many: many
   user:
     company: Company
     photo: Photo
@@ -790,9 +794,11 @@ en:
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
+        simple_none: "None"
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
         captcha: "Enable CAPTCHA to help avoid spam"
+        forum_captcha: "Logged in users should enter CAPTCHA to create topic"
         view_solutions: "Who can view solutions"
         view_forums: "Who can view forums"
         notify_agents: "Send Moderation and Spam Notification to:"
@@ -1684,6 +1690,9 @@ en:
       agents: Agents
       all: All
       select_company: Select Companies
+    follower:
+      title: "Forum Followers"
+      description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   additional_email_verification: Additional Email Verification
@@ -1738,6 +1747,7 @@ en:
             post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic after a standard moderation process."
+          not_allowed: "Please select different forum. You are not allowed to post in this forum."
         posts:
           spam_check: "Thank you for posting in our forums. Your post will appear once it has been approved."
       tickets:
@@ -1758,6 +1768,7 @@ en:
       number:
         success: "Number successfully added to your Freshfone account"
         error: "Error purchasing number for your Freshfone account."
+        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in %{country}."
         blank_message: "%{num_type} cannot be blank"
         invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
         add_blacklist_success: "Number blocked successfully"
@@ -2043,7 +2054,7 @@ en:
         timer_stopped: "Timer Stopped"
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
-      ticket_split: "Ticket Splitted"
+      ticket_split: "Ticket Split"
       status_change: "%{value}"
       deleted: "Ticket Deleted"
       restored: "Ticket Restored"
@@ -2053,6 +2064,7 @@ en:
       group_change: "Agent Group Changed"
       group_change_none: "Agent Group Changed"
       source_change: "Ticket Source"
+      due_date_updated: "Due Date Updated"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2214,6 +2226,10 @@ en:
         short: "{{user_path}} updated source to {{source_name}}"
         without_user: "updated source to <strong>{{source_name}}</strong>"
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
+      due_date_updated:
+        short: "{{user_path}} updated due date to {{due_date_updated}}"
+        without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
+        long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -2373,6 +2389,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
       all_agents: All agents
@@ -2538,6 +2555,10 @@ en:
     edit: Edit Topic
     close: Close Topic
     mark_as_spam: Mark as Spam
+    vote:
+      one: 1 person
+      other: "%{count} people"
+    upvote_appended_text: upvoted this
     post: Post Topic
     add_comment: Post comment
     update_comment: "Update comment"
@@ -2601,6 +2622,9 @@ en:
     spam_action: Approve and Publish
     replied_time: " replied, %{time_in_words} ago"
     visible_in: Visible in
+    follower:
+      title: "Topic Followers"
+      description: "Agents added as followers receives email alerts when a new reply is posted"
   activerecord:
     errors:
       models:
@@ -2655,8 +2679,15 @@ en:
   save_reply: Save Reply
   forum_shared:
     follow_topic: Follow this topic
+    followers:
+      one: "%{count} Follower"
+      other: "%{count} Followers"
+    followers_title:
+      one: "1 person follows this Forum"
+      other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
+      upvote: Upvote      
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
@@ -2680,6 +2711,11 @@ en:
         vote_info_include_2: "You and %{vote} People have this Question"
         voted_users_widget_title: People who have this question
     post:
+      upvote: Upvote
+      voted_up_title: people upvoted this post
+      voted_up_message:
+        one: person upvoted this post
+        other: people upvoted this post
       posted_on: "%{user_name} on %{post_date}"
       edit_comment: Edit Comment
       unmark_answer: Unmark as answer
@@ -2780,7 +2816,9 @@ en:
     type: Agent Type
     delete_agent: Delete Agent
     delete_agent_confirmation: The deleted agent will be available as a contact. This will remove all agent information from the helpdesk. Are you sure you want to proceed?
+    convert_agent_confirmation: Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?
     agent_restored: The agent has been restored
+    convert_to_contact: Convert To Contact
     status:
       active: Active
       deleted: Deleted
@@ -2949,10 +2987,10 @@ en:
       enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
-      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact_all: 'Recent ticket and forum activities'
@@ -2961,6 +2999,7 @@ en:
       no_conversations: 'No Conversations'
       all: 'All conversations'
       tickets: Tickets
+      recent_tickets: Recent Tickets
       forums: Forums
       contact_tickets: 'Recent ticket activities'
       contact_forums: 'Recent forum activities'
@@ -2991,6 +3030,9 @@ en:
     unverified:
       no_contacts: You don't have any unverified contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
+    segment_api:
+      invalid_type: Invalid operation. Check your type.
+      email_blank: Email can't be blank 
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
@@ -3125,6 +3167,8 @@ en:
     my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
     topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
+    topic_not_found: "Seems like this topic has been deleted"
+    post_not_found: "Seems like this post has been deleted"
     showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
@@ -3169,16 +3213,28 @@ en:
       merge_note:
         one: "Topic merged into this topic:"
         other: "Topics merged into this topic:"
-    topic_vote:
+      sort_heading: "Sorted by:"
+      sort_order:
+        date: "Oldest First"
+        recency: "Newest First"
+        popularity: "Popular"
+      sort_by_most_recent: "Most Recent"
+      sort_by_most_popular: "Most Popular"
+      sort_by_default: "Default"
+    vote:
       you:
-        one: "You"
-        other: "You and"
+        one: "You "
+        other: "You and "
       more:
-        one: "1 other"
-        other: "%{count} others"
+        one: "1 other "
+        other: "%{count} others "
       people:
-        one: "1 person"
-        other: "%{count} people"
+        one: "1 person "
+        other: "%{count} people "
+    topic_vote:
+      announce:
+        one: "likes this"
+        other: "like this"
       ideas:
         one: "likes this idea"
         other: "like this idea"
@@ -3188,15 +3244,28 @@ en:
       howto:
         one: "has this question"
         other: "have this question"
+      votes: "votes"
+      upvote: "up-vote"
+      upvoted: "up-voted"
+      user_upvote_list_title: "People who up-voted"
+      announce_button: "Do you like this?"
       ideas_button: "Do you like this idea?"
       problem_button: "Do you have this problem?"
       howto_button: "Do you have this question as well?"
+      announce_unlike_button: "unlike!"
       ideas_unlike_button: "unlike!"
       problem_unlike_button: "I don't have this problem!"
       howto_unlike_button: "I don't have this question!"
+      announce_users_voted_title: People who like this 
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
+    post_vote:
+      upvoted: "You have upvoted"
+      upvote: "Upvote"
+      like:
+        one: "like this"
+        other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
       export: "Export tickets"
@@ -3622,6 +3691,8 @@ en:
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
+    disable_agent_forward: "For forwarded emails, use original sender as requester"
+    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
   step2: Step 2
@@ -3646,6 +3717,7 @@ en:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
+    user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
   logo: Logo
@@ -3925,6 +3997,8 @@ en:
     non_monitor_flash: You have stopped following this %{type}
     follow_title: Follow
     unfollow_title: Unfollow
+    me: Me
+    pick_agents: Add agents
   forums:
     search_all:
       placeholder: Search All Topics
@@ -3938,7 +4012,7 @@ en:
   company:
     created: Company was successfully created.
     updated: Company was successfully updated.
-    created_view: Company was successfully created. <a href="%{company_url}"> View company. </a>
+    created_view: Company was successfully created. <a href="%{company_url}" data-pjax="#body-container"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA Policy
     name: Company name
@@ -4256,7 +4330,9 @@ en:
       history:
         recent_item: Recent Items
     dashboard:
+      agent_availability: Agent Availability
       round_robin:
+        ticket_assignment: Ticket Assignment
         all_agents : All agents
         showing:  Showing
         available_agents: Available agents
@@ -4265,8 +4341,19 @@ en:
         na: N/A
         since_now: Since 1 second
         header: Automatic ticket assignment
-        view_agent_status: View agent status
-        no_agents_available: No agents available in the group
+        view_agent_status: Agent Availability Status
+        no_agents: "- No Agents -" 
+        back: Back
+      freshfone:
+        ffone: Freshfone
+        sort_by: Sorted by
+        last_modified: Last Activity
+        name: Name
+        accepting: Accepting
+        not_accepting: Not Accepting
+        call_in_progress: Call in progress
+        no_agents: "- No Agents -"
+        no_activity: "No Activity"
       index:
         todo_title: To-Do
       summary:
@@ -4377,6 +4464,7 @@ en:
           title: "Reply to %{user}"
         history:
           recent_item: Recent Items
+        max_tag_length_msg: "Tag cannot be greater than 32 characters"
         due_date:
           when_is_it_due: When's it Due?
           today: Today
@@ -4709,6 +4797,7 @@ en:
         forbidden_error: This action has been forbidden for your account. Please check account permissions with Twitter.
         client_error: We could not process your request. Please try after sometime.
         wrong_call: Trying to unfavorite a tweet that has not been favorited
+        not_following: The user does not allow direct messages if they are not following you. Please send your reply as a tweet
         cannot_reply: You dont have permission to reply to a tweet.
         cannot_retweet: You dont have permission to retweet a tweet.
         cannot_favorite: You dont have permission to favorite a tweet.
@@ -4894,10 +4983,8 @@ en:
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     five9:
       label: "Five9"
-      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
-      helptext: "This is Five9 helptext"
-      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
-      recording_path: "Directory path for the call recording"
+      desc: "Make inbound & outbound calls, record the call details and log them into a Freshdesk ticket"
+      helptext: "<h4>Five9 Integration Help</h4><p><br/>Install Five9 Agent Desktop Toolkit and you can then type in your Five9 Username and Password to login.<br/>Now when you receive a inbound call, there will be a automatic screen pop-up that provides contextual data about customers</p>"
     drishti:
       label: "Ameyo"
       desc: "Answer calls or trigger an outgoing call with this powerful Ameyo's telephony capabilities embedded inside Freshdesk"
@@ -5130,6 +5217,9 @@ en:
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
+    quickbooks:
+      label: "QuickBooks"
+      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
@@ -5163,6 +5253,38 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    dynamicscrm:
+      label: "Dynamics CRM"
+      helptext: "<h4>Dynamics CRM Integration Help</h4><p><br/> Once you enable this integration, your agents can access Dynamics CRM contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
+      desc: "You can view contact information from Dynamics CRM in Freshdesk."
+      form:
+        instance_type: "Dynamics CRM Instance Type"
+        password: "Password"
+        domain: "User Id"
+        endpoint: "Organization Service SOAP End Point"
+        loginurl: "Login Url"
+        region: "Region"
+        organization_name: "Organization Unique Name"
+        contact_email: "Contact Email"
+        account_email: "Account Email (Optional)"
+        lead_email: "Lead Email (Optional)"
+        instance_info: "On-Demand instances should be converted to IFD for this integration to work."
+        domain_info: "Use super admin's office 365 user ID like name@company.onmicrosoft.com in case of On-demand."
+        organization_name_info: "To locate this go to Dynamics CRM Settings -> Customizations -> DeveloperResources -> Your Organization Information -> Organization Unique Name."
+        end_point_info: "Example: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. To locate this go to Dynamics CRM Settings -> Customizations -> DeveloperResources -> Organisation Service for SOAP protocol in the bottom of the developer resource page."
+        account_email_info : "Enter a valid email ID associated with any account in Dynamics CRM (based on which account associated CRM fields are listed in the next step)"
+        contact_email_info : "Enter a valid email ID associated with any contact in Dynamics CRM (based on which contact associated CRM fields are listed in the next step)"
+        lead_email_info: "Enter a valid email ID associated with any lead in Dynamics CRM (based on which lead associated CRM fields are listed in the next step)"
+        login_url: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Login URL: Policy -> Issuer -> Address."
+        region_info: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Region: SecureTokenService -> AppliesTo."
+        dynamicscrm_settings: "Dynamics CRM Settings"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        error: "Oops, something went wrong! Please verify if you have entered correct values."
+        entity_error: "is not a valid email address for the Entity type"
+        api_error: "Problem gathering API data!"
+
     google_calendar:
       label: "Google Calendar"
       desc: "You can manage events for each ticket with Google Calendar."
@@ -5415,13 +5537,17 @@ en:
         agent_calls_count: "Calls"
         total_unanswered_calls: "Unanswered Calls"
         num_of_transfered: "No of Transfers"
+        num_of_external_transfers: "External Transfers"
         unanswered_transfers: "Unanswered Transfers"
         answered_percentage: "Answer %"
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
+        others: "Others"
+        external: "External Numbers"
         includes_transfer: "Includes transferred calls"
         no_agent: "- No Agent -"
+        no_external: "Transfers made to external numbers are not included"
       time_sheets:
         billable: "Billable Hours"
         non_billable: "Non-Billable Hours"
@@ -5859,6 +5985,8 @@ en:
   yesterday: Yesterday
   seven_days: This Week
   thirty_days: This Month
+  last_week: Last week
+  last_month: Last month
   two_months: Last 2 months
   six_months: Last 6 months
   set_date: Select Time Period
@@ -6096,6 +6224,7 @@ en:
       not_enough_credit: "Not Enough Credit"
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
+      strange_number: "Cannot call a Restricted number"
     call_status:
       default: ""
       completed: "Completed"
@@ -6134,9 +6263,11 @@ en:
       busy: "Ongoing Call"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
-      transfer_agents: "Search Available Agents..."
+      transfer_agents: "Type an agent or group name..."
+      transfer_numbers: "Type an external number..."
       unavailable_agents: "Agents are not available to transfer call"
-      agents_count_in_group: "%{count} agents available"
+      no_transfers: "No recent transfers"
+      agents_count_in_group: "%{count} Agents"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -6154,6 +6285,7 @@ en:
       inactive: "Freshfone low on credit. Contact Account admin"
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
+      network_error: "Check your Internet Connection"
     call_history:
       title: "Call History"
       sort_by: "Sorted by:"
@@ -6192,6 +6324,7 @@ en:
       save_ticket: "Convert to ticket"
       convert: "Convert"
       helpdesk: Helpdesk
+      external: "External"
       block_number: "Block"
       unblock_number: "Unblock"
       block_number_title: "Block number"
@@ -6202,7 +6335,22 @@ en:
       filter_option_missed_calls: "Missed"
       filter_option_voicemail: "Voicemail"
       filter_option_blocked_calls: "Blocked"
-
+      recording_delete:
+        done_by: "Deleted By"
+        tooltip: "Delete Recording"
+        confirmation_btn: "Delete"
+        confirmation_heading: "Please Confirm.."
+        confirmation_warning: "This will delete the recorded message permanentely."
+        confirmation_notification: "Are you sure you want to delete?"
+        successful: "Call Recording deleted successfully!"
+        unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
+        error: "Error while deleting a Call Record!!! Please try again after some time"
+      strange_numbers:
+      	restricted: "RESTRICTED"
+      	blocked: "BLOCKED"
+      	unknown: "UNKNOWN"
+      	anonymous: "ANONYMOUS"
+      	empty: "EMPTY"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6287,6 +6435,7 @@ en:
         recording_privacy_public: "Visible to customers and agents"
         recording_privacy_private: "Visible only to agents"
         name_maxlength: "Name cannot have more than 255 Characters"
+        number_accessible: "Accessible by"
       numbers:
         title: "Support customers with Freshfone"
         info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
@@ -6302,7 +6451,7 @@ en:
         purchase_confirm: "Are you sure?"
         delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
         manage: "Manage"
-        cannot_purchase: "Unable to purchase number for your Freshfone account"
+        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in <span class='certification-country'></span>."
         insuffcient_credits: "Your Freshfone credit is too low to purchase a new number. Please recharge and try again"
         address:
           name: "Company / Name"
@@ -6829,6 +6978,9 @@ en:
       replied: replied
       spam: Spam
       waiting_for_approval: Unpublished
+      comment:
+        one: "1 Comment"
+        other: "%{count} Comments"
       locked: Locked
       locked_label: Topic is locked for comments
       merged_label: Topic is merged into another topic

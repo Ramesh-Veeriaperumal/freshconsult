@@ -12,11 +12,10 @@
 				data-method='delete'
 				data-confirm="<%= t('topic.delete_confirm') %>" />
 			<input class="btn" type="button" id="topic-spam"
-				data-action-url='<%= current_account.features_included?(:spam_dynamo) ?
-				spam_multiple_discussions_unpublished_index_path : spam_multiple_discussions_moderation_index_path %>'
+				data-action-url='<%= spam_multiple_discussions_unpublished_index_path %>'
 				value="<%=t('topic.mark_as_spam')%>"
 				data-method='put'
-				data-confirm="<%= current_account.features_included?(:spam_dynamo) ? t('topic.spam_delete_confirm') : t('topic.spam_confirm')%>" />
+				data-confirm="<%= t('topic.spam_delete_confirm') %>" />
 		</li>
 		<li class="lf-item lf-hover" id="lf-item-sort">
 			<div class="item-sort">

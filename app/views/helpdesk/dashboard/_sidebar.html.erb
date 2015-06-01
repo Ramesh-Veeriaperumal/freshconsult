@@ -1,16 +1,12 @@
 <% content_for :sidebar do %>
   <%= sidebar_content %>
-
-  <% if params[:action] != 'agent_status' and current_account.features?(:round_robin) and 
-    current_user.privilege?(:admin_tasks) and current_account.groups.round_robin_groups.any? %>
-  <div class="sidepanel pt10">
-    <h3 class="title"><%= t('helpdesk.dashboard.round_robin.header') %></h3>
-    <a href="/helpdesk/agent-status"><%= t('helpdesk.dashboard.round_robin.view_agent_status') %> </a>
-  </div>
+  <% if params[:action] != 'agent_status' and round_robin? %>
+    <div class="sidepanel pt10">
+      <a class="dashboard_agent_status_link" href="/helpdesk/agent_status"><%= t('helpdesk.dashboard.round_robin.view_agent_status') %> </a>
+    </div>
   <% end %>
 
   <% if gamification_feature?(current_account) %>
-
   	<%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "mini-leaderboard",
   						 "data-remote-url" => mini_list_helpdesk_leaderboard_index_path() %>
 

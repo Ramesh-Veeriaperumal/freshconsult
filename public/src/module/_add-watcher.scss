@@ -10,7 +10,7 @@ div.monitor_div{
 	*width: 43px;
 }
 
-div.watchers_tooltip{
+div.watchers_tooltip, div.followers_tooltip{
     position: absolute;
     border: 1px solid #aaa;
     @include margin(6px 0 0 -9px);
@@ -23,7 +23,7 @@ div.watchers_tooltip{
     @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 -2px 0 rgba(0, 0, 0, 0.4));
     @include border-radius(5px);
     z-index: 10000;
-    .watcher-close{
+    .watcher-close, .follower-close{
     	position: absolute;
 	 	@include right(11px);
 		@include border-radius(20px);
@@ -38,17 +38,17 @@ div.watchers_tooltip{
 		padding-top: 1px;
 		cursor: pointer;
     }
-    .watcher_label{
+    .watcher_label, .follower_label {
         font-size: 16px;
         font-weight: 300;
     }
-    #watcherlist{
+    #watcherlist, #followerlist{
     	@include clear(both);
-    	border: 1px solid #CCC;
-		@include border-radius(4px);
-		padding: 3px 6px 1px;
-		height: auto;
-		margin-top: -4px;
+    	border: 1px solid #aaa;
+  		@include border-radius(0 0 4px 4px);
+  		padding: 3px 7px;
+  		height: auto;
+  		border-top: 0;
 
     	.agent_name{
 	    	max-width: 157px;
@@ -86,13 +86,16 @@ div.watchers_tooltip{
     	overflow: hidden;
     }
 
-    .add_watcher_text, .view_watcher_text{
+    .add_watcher_text, .view_watcher_text,
+    .add_follower_text, .view_follower_text{
         a{
         	color: #369;
         }
     }
     .changing-link{
-	    &.add_watcher_text,&.view_watcher_text{
+	    &.add_watcher_text,&.view_watcher_text,
+      &.add_follower_text,&.view_follower_text,
+      {
 			position: absolute;
 			top: 23px;
 		 @include right(-2px);
@@ -112,20 +115,20 @@ div.watchers_tooltip{
 		font-weight: normal;
     }
 
-    .no_watcher_text{
+    .no_watcher_text, .no_follower_text {
         font-size: 13px;
         padding-top: 18px;
         @include text-align(center);
         color: #777;
     }
 
-    .watcher_text{
+    .watcher_text, .follower_text{
     	color: #888;
     	font-size:13px;
     	margin-top: 2px;
     }
 
-    .watcher_list{
+    .watcher_list, .follower_list{
     	@include float(left);
         padding-top: 4px;
         font-size: 13px;
@@ -152,7 +155,7 @@ div.watchers_tooltip{
 	    }
 	}
 
-	.unwatch{
+	.unwatch, .unfollow {
 		@include float(left);
 		margin-top: 4px;
 		@include margin-right(5px);
@@ -183,14 +186,22 @@ div.watchers_tooltip{
 		}
 	}
 
+  .arrow-top-right{
+    &:before{
+     @include left(240px);
+    }
+  }
+
 	.select_agents{
 		@include clear(both);
 	}
 
-    .watcher_input{
+    .watcher_input, .follower_input{
     	@include margin(10px 0 0 0);
-		width: 100%;
+		  width: 100%;
     	.select2-choices{
+        @include border-bottom-left-radius(0);
+        @include border-bottom-right-radius(0);
     		@include padding-left(20px);
     	}
 	}
@@ -208,7 +219,7 @@ div.watchers_tooltip{
 		@include margin-right(-4px);
 	}
 
-	.submit_watcher{
+	.submit_watcher, .submit_follower{
 		@include margin-left(2px);
 	}
 }
@@ -223,7 +234,7 @@ div.watchers_tooltip{
   100% { background: rgba(#ff0,0);}
 }
 
-.watcher_remove {
+.watcher_remove, .follower_remove {
   @include animation(watcher_rem 0.8s ease-out 1);
 }
 
@@ -231,6 +242,13 @@ div.watchers_tooltip{
   0% { background: rgba(#ff0000,.2);}
   100% { background: rgba(#ff0000,0);}
 }
+.select-watcher .select2-choices .select2-search-field,
+.select-follower .select2-choices .select2-search-field {
+  min-width:200px;
+  height:auto;
+  @include text-align(left);
+}
+
 
 // ------------------------------------------------------------------------------------------------------------
 //												  Add Watcher End 

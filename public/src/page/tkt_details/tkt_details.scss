@@ -665,7 +665,7 @@ ol, ul, li{
 #not_following_message {
 	padding:8px 10px;
 	@include margin-left(10px);
-	display: inline-block;
+	display: none;
 }
 
 .conversation_thread, .content .controls .control-left {
@@ -771,7 +771,6 @@ ol, ul, li{
 	}
 
 	#tweet_type_selector {
-		display: none;
 		position: relative;
 		top: 5px;
 	 	@include right(15px);
@@ -1262,13 +1261,12 @@ ol, ul, li{
 		background: #aaa;
 		color: #FFF;
 		border: solid 1px #FFF;
-		@include text-shadow(-1px -1px 0 rgba(0,0,0,0.28));
 		max-width: 150px;
 		display: block;
 		@include border-radius(5px);
 		font-size: 12px;
 		padding: 1px 15px 3px;
-		font-weight: bold;
+		font-weight: 500;
 		text-overflow: ellipsis;
 		height: 18px;
 		white-space: nowrap;
@@ -2144,7 +2142,7 @@ ol, ul, li{
 }
 
 // Timesheet Modal CSS Overrides and new CSS
-.ticket_details #timeentry_add, .ticket_details .timeentry_edit {
+.ticket_details #timeentry_add, .ticket_details .timeentry_edit, .ticket_details .edit_timesheet {
 	margin: 5px;
 	padding: 0;
 	@include clear(both);

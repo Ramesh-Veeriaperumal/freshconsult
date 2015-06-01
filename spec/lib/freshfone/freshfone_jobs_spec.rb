@@ -19,13 +19,16 @@ RSpec.describe 'CallRecordingAttachment' do
 
   it 'should fetch twilio recording' do
     call = create_freshfone_call
-    call.update_attributes(:recording_url => 
-      "http://api.twilio.com/2010-04-01/Accounts/AC9fa514fa8c52a3863a76e2d76efa2b8e/Recordings/REbd383eb591106df8d80bb556d3b6f59e")
+    call.update_attributes(:recording_url => "#{Rails.root}/spec/fixtures/files/callrecording")
     args = {:call_id => call.id, :call_sid => call.call_sid}
+    Twilio::REST::Recording.any_instance.stubs(:duration).returns(10)
+    Freshfone::Jobs::CallRecordingAttachment.stubs(:release_data).returns(true)
     Freshfone::Jobs::CallRecordingAttachment.perform_job(args)
     call.reload
     call.recording_audio.should be_an_instance_of(Helpdesk::Attachment)
     call.recording_audio.attachable_id.should be_eql(call.id)
+    Twilio::REST::Recording.any_instance.unstub(:duration)
+    Freshfone::Jobs::CallRecordingAttachment.unstub(:release_data)
   end
 
   it 'should nullify recording url if recording less than 5 seconds' do
@@ -39,6 +42,22 @@ RSpec.describe 'CallRecordingAttachment' do
     call.recording_audio.should be_blank
     call.recording_url.should be_blank
   end
+
+  it 'should not create the audio attachment, if the recording is deleted by the user already' do
+    call = create_freshfone_call
+    call.update_attributes(:recording_url => 
+      "http://api.twilio.com/2010-04-01/Accounts/AC9fa514fa8c52a3863a76e2d76efa2b8e/Recordings/REbd383eb591106df8d80bb556d3b6f59e")
+    args = {:call_id => call.id, :call_sid => call.call_sid}
+    recording = mock()
+    Twilio::REST::Recordings.any_instance.stubs(:get).returns(recording)
+    recording.stubs(:delete).returns(true)
+    call.delete_recording(@agent.id)
+    Freshfone::Jobs::CallRecordingAttachment.perform_job(args)
+    call.reload
+    expect(call.recording_audio).to be_nil
+    Twilio::REST::Recordings.any_instance.unstub(:get)
+  end
+
 end
 
 RSpec.describe 'CallQueueWait' do

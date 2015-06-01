@@ -21,30 +21,6 @@ describe Support::Discussions::PostsController do
 		@category.destroy
 	end
 
-
-	it "should create a new post on post 'create'" do
-		topic = publish_topic(create_test_topic(@forum))
-		post_body = Faker::Lorem.paragraph
-		old_follower_count = Monitorship.count
-		@user.make_current
-
-		post :create, 
-      :post => {
-      :body_html =>"<p>#{post_body}</p>"
-    },
-      :topic_id => topic.id
-
-		new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
-		new_post.should_not be_nil
-		new_post.topic_id.should eql topic.id
-		new_post.user_id.should eql @user.id
-		new_post.account_id.should eql @account.id
-		Monitorship.count.should eql old_follower_count + 1
-		Monitorship.last.portal_id.should_not be_nil
-
-		response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{new_post.id}"
-	end
-
 	it "should not create a new post on post 'create' when post is invalid" do
 		topic = publish_topic(create_test_topic(@forum))
 
@@ -211,140 +187,6 @@ describe Support::Discussions::PostsController do
 			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
 		end
 	end
-
-
-	describe "should check for spam" do
-
-		before(:each) do
-			@account.reload
-			@account.features.moderate_all_posts.destroy
-			@account.features.moderate_posts_with_links.destroy
-			@account.reload
-		end
-
-		it "with 'do not moderate feature' and should mark as published" do
-			topic = publish_topic(create_test_topic(@forum))
-			post_body = Faker::Lorem.paragraph
-			
-			Resque.inline = true
-
-			post :create, 
-        :post => {
-        :body_html =>"<p>#{post_body}</p>"
-      },
-        :topic_id => topic.id
-
-			Resque.inline = false
-
-			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
-			post.published.should eql true
-			response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
-		end
-
-		it "with 'moderate all posts' feature and should mark as unpublished" do
-			topic = publish_topic(create_test_topic(@forum))
-			post_body = Faker::Lorem.paragraph
-
-			@account.features.moderate_all_posts.create
-			Resque.inline = true
-
-			post :create, 
-        :post => {
-        :body_html =>"<p>#{post_body}</p>"
-      },
-        :topic_id => topic.id
-
-			Resque.inline = false
-
-			post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
-			post.published.should eql(false)
-			response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
-		end
-
-		it "with 'moderate posts with link' feature and with email" do
-			topic = publish_topic(create_test_topic(@forum))
-			post_body = Faker::Lorem.paragraph
-			email = Faker::Internet.email
-
-			@account.features.moderate_posts_with_links.create
-			Resque.inline = true
-
-			post :create, 
-        :post => {
-        :body_html =>"<p>#{post_body}#{email}</p>"
-      },
-        :topic_id => topic.id
-
-			Resque.inline = false
-
-			post = @account.posts.find_by_body_html("<p>#{post_body}#{email}</p>")
-			post.published.should eql(false)
-			response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
-		end
-
-		it "with 'moderate posts with link' feature and with phone number" do
-			topic = publish_topic(create_test_topic(@forum))
-			post_body = Faker::Lorem.paragraph
-			phone = ForumHelper::PHONE_NUMBERS.sample
-
-			@account.features.moderate_posts_with_links.create
-			Resque.inline = true
-
-			post :create, 
-        :post => {
-        :body_html =>"<p>#{post_body} #{phone}</p>"
-      },
-        :topic_id => topic.id
-
-			Resque.inline = false
-
-			post = @account.posts.find_by_body_html("<p>#{post_body} #{phone}</p>")
-			post.published.should eql false
-			response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
-		end
-
-		it "with 'moderate posts with link' feature and with link" do
-			topic = publish_topic(create_test_topic(@forum))
-			post_body = Faker::Lorem.paragraph
-			link = Faker::Internet.url
-
-			@account.features.moderate_posts_with_links.create
-			Resque.inline = true
-
-			post :create, 
-        :post => {
-        :body_html =>"<p>#{post_body} #{link}</p>"
-      },
-        :topic_id => topic.id
-
-			Resque.inline = false
-
-			post = @account.posts.find_by_body_html("<p>#{post_body} #{link}</p>")
-			post.published.should eql false
-			response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
-		end
-
-		it "with 'moderate posts with link' feature and with whitelisted link" do
-			topic = publish_topic(create_test_topic(@forum))
-			post_body = Faker::Lorem.paragraph
-			whitelisted_link = "https://www.youtube.com/watch?v=lbJO8MBCyp4"
-
-			@account.features.moderate_posts_with_links.create
-			Resque.inline = true
-
-			post :create, 
-        :post => {
-        :body_html =>"<p>#{post_body} #{whitelisted_link}</p>"
-      },
-        :topic_id => topic.id
-
-			Resque.inline = false
-
-			post = @account.posts.find_by_body_html("<p>#{post_body} #{whitelisted_link}</p>")
-			post.published.should eql true
-			response.should redirect_to "/support/discussions/topics/#{topic.id}/page/last#post-#{post.id}"
-		end
-	end
 	
 	it "should redirect to support home if portal forums is disabled" do
 		topic = publish_topic(create_test_topic(@forum))
@@ -379,4 +221,94 @@ describe Support::Discussions::PostsController do
       
 		@account.features.hide_portal_forums.destroy
 	end
+
+	describe "it should create a post if the user is agent" do
+
+		before(:each) do
+			login_admin
+			@topic = publish_topic(create_test_topic(@forum))
+		end
+
+		it "should create a post with attachments on post 'create'" do
+			post_body = Faker::Lorem.paragraph
+			old_follower_count = Monitorship.count
+		
+			post :create,
+				:topic_id => @topic.id,
+				:post => { :body_html =>"<p>#{post_body}</p>",
+					:attachments => [{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}]}
+
+			new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+			new_post.should be_instance_of(Post)
+			new_post.user_id.should be_eql @agent.id
+			new_post.topic_id.should be_eql @topic.id
+			new_post.account_id.should be_eql @account.id
+			Monitorship.count.should eql old_follower_count + 1
+			Monitorship.last.portal_id.should_not be_nil
+			
+			response.should redirect_to "/support/discussions/topics/#{@topic.id}/page/last#post-#{new_post.id}"
+		end
+
+		it "should not create a post on post 'create' when the post is invalid" do
+			
+			post :create, 
+						:post => {
+								:body_html =>""
+								},
+						:topic_id => @topic.id
+
+			@account.posts.find_by_body_html('').should be_nil
+
+			response.should redirect_to "/support/discussions/topics/#{@topic.id}?page=1"
+		end
+		
+	end
+
+	it "should not create a new post on post 'create' when topic is locked" do
+		topic = lock_topic(create_test_topic(@forum))
+		topic.published = false
+		topic.save
+		post_body = Faker::Lorem.paragraph
+
+		post :create, 
+					:post => {
+							:body_html =>"<p>#{post_body}</p>"
+							},
+					:topic_id => topic.id
+
+		@account.posts.find_by_body_html("<p>#{post_body}</p>").should be_nil
+		response.should redirect_to "/support/discussions/topics/#{topic.id}?page=1"
+	end
+
+  describe "Voting" do 
+    it "should vote a post on put 'like'" do 
+      topic = publish_topic(create_test_topic(@forum))
+      post = create_test_post(topic)
+      vote_count = post.user_votes
+
+      put :like, 
+        :id => post.id,
+        :topic_id => topic.id
+
+      post.reload
+      post.user_votes.should be_eql(vote_count + 1)
+      vote = post.votes.find_by_user_id(User.current.id)
+      vote.should be_an_instance_of(Vote)
+      vote.voteable_id.should eql post.id
+      vote.voteable_type.should eql "Post"
+      response.should render_template 'support/discussions/posts/like'
+
+      vote_count = post.user_votes
+
+      put :like,
+        :id => post.id,
+        :topic_id => topic.id
+
+      post.reload
+      post.user_votes.should be_eql(vote_count - 1)
+      vote = post.votes.find_by_user_id(User.current.id)
+      vote.should be_nil
+      response.should render_template 'support/discussions/posts/like'
+    end
+  end
 end

@@ -258,14 +258,6 @@ $iconColorList: "ticket" $bg_color_ticket,
 		width: 240px;
 		vertical-align: top;
 	}
-	.company-btns {
-		display: none;
-	}
-	&.is_stuck {
-		.company-btns {
-			display: block;
-		}
-	}
 }
 
 .contact-sidebar {

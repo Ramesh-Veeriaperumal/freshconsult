@@ -17,7 +17,7 @@
     		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
     		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %> data-created=<%= (ticket.created_at.to_i) %>>
                     <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
-                    :class =>"item_info", :target=>"_blank" ) %>
+                    :class =>"item_info", :target=>"_blank", :"data-pjax" => '#body-container' ) %>
     			          <div class="info-data hideForList">
     			          	<span class="merge-ticket-info">
     			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 

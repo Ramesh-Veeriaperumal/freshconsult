@@ -23,26 +23,28 @@ class Topic < ActiveRecord::Base
   before_save :set_sticky
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
+  before_validation :assign_default_stamps, :if => :forum_id_changed?, :on => :update
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
-  has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
+  has_many :monitors, :through => :monitorships, :source => :user, 
+                      :conditions => ["#{Monitorship.table_name}.active = ?", true],
+                      :order => "#{Monitorship.table_name}.id DESC"
 
   has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id DESC", :class_name => 'Post'
-  has_one  :first_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id ASC", :class_name => 'Post'
+  has_one  :first_post, :order => "#{Post.table_name}.id ASC", :class_name => 'Post', :autosave => true
 
   has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
 
   has_many :voices, :through => :posts, :source => :user, :uniq => true, :order => "#{Post.table_name}.id DESC"
 
-  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -127,12 +129,12 @@ class Topic < ActiveRecord::Base
   # Generally with days before DateTime.now - 30.days
   scope :popular, lambda { |days_before|
     { :conditions => ["replied_at >= ?", days_before],
-      :order => 'hits DESC, user_votes DESC, replied_at DESC',
+      :order => "hits DESC, #{Topic.table_name}.user_votes DESC, replied_at DESC",
       :include => :last_post }
   }
 
   scope :sort_by_popular,
-      :order => 'user_votes DESC, hits DESC, replied_at DESC'
+      :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC"
 
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
@@ -183,7 +185,7 @@ class Topic < ActiveRecord::Base
 
   attr_protected :forum_id , :account_id, :published
   # to help with the create form
-  attr_accessor :body_html, :highlight_title
+  attr_accessor :body_html, :highlight_title, :sort_by
 
   IDEAS_STAMPS = [
     [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ],
@@ -374,15 +376,6 @@ class Topic < ActiveRecord::Base
                     Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved] : Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]))
   end
 
-  def users_who_voted
-    users = User.find(:all,
-      :joins => [:votes],
-      :conditions => ["votes.voteable_id = ? and users.account_id = ?", id, account_id],
-      :order => "votes.created_at DESC"
-    )
-    users
-  end
-
   def last_post_url
     if self.last_post_id.present?
       Rails.application.routes.url_helpers.support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
@@ -445,11 +438,11 @@ class Topic < ActiveRecord::Base
   end
 
   def spam_count
-    SpamCounter.count(id, :spam, account_id)
+    SpamCounter.count(id, :spam)
   end
 
   def unpublished_count
-    SpamCounter.count(id, :unpublished, account_id)
+    SpamCounter.count(id, :unpublished)
   end
 
   def has_unpublished_posts?
@@ -458,6 +451,11 @@ class Topic < ActiveRecord::Base
   
   def hit_key
     TOPIC_HIT_TRACKER % {:account_id => account_id, :topic_id => id }
+  end
+
+  def unsubscribed_agents
+    user_ids = monitors.map(&:id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
   end
   
   def assign_default_stamps

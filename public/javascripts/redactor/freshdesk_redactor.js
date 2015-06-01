@@ -49,6 +49,11 @@
 	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", clipboardImageUpload:"/tickets_uploaded_images/create_file", setFontSettings:true, wrapFontSettings:Helpdesk.settings, allowTagsInCodeSnippet:true,
 	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
 	         	break;
+	        case 'bulk-reply':
+			jQuery(element_id).redactor({
+				focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", setFontSettings:true, wrapFontSettings:Helpdesk.settings, allowTagsInCodeSnippet:true,
+				buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
+			break;
 	        case 'signature':
 	         	jQuery(element_id).redactor({ focus: false,convertDivs: false, autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
 	        default:

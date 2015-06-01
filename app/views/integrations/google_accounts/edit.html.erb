@@ -1,7 +1,6 @@
 <% content_for :helpcard do %><div class="helpcard"><%=t('integrations.google_contacts.edit_helptext').html_safe%></div><% end %>
 <h3 class="title"><%=t("integrations.google_contacts.edit_form.#{@omniauth_origin}_title").html_safe%></h3>
-<%  action = @omniauth_origin == "import" ? "import_contacts" : "update" %>
-<%= form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => action, :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) } do |f|  %>
+<%= form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => "update", :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) }, method: :put do |f|  %>
 	<ul class="ui-form google_accounts">
 			
 			<div class="error alert hide" id="error_display"></div>

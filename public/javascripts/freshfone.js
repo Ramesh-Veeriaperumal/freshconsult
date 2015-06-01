@@ -184,11 +184,11 @@
             ev.preventDefault();
             $(this).button("loading");
             $buy_numbers_form = $this.parents('form');
-            if(address_required){
-              $('#freshfone_address_form').submit();
-            } else {
-              $this.parents('form').submit();  
-            }
+          if (address_required) {
+            $('#freshfone_address_form').submit();  
+          } else {
+            $this.parents('form').submit();
+          }
         });
         resetErrorMessages();
         
@@ -201,8 +201,9 @@
 
     });
 
-    $('#freshfone_address_form').submit( function() {
-        var valuesToSubmit = $(this).serialize();
+    $('#freshfone_address_form').submit( function(ev) {
+        ev.preventDefault();
+        var valuesToSubmit = $(this).serialize()+ '&' + $buy_numbers_form.serialize();
         $(".ajaxerrorExplanation").toggle(false);
         $.ajax({
             type: "POST",
@@ -212,8 +213,8 @@
             success: function(data){
                 if(data.success) {
                     $('.purchaseErrorExplanation').toggle(false);
-                    $buy_numbers_form.submit();  
-                } else {
+                    window.location.href = data.redirect_url;
+                } else{
                     resetErrorMessages();
                     $('.purchaseErrorExplanation').toggle(true);
                     populateErrorMessage(data.errors);
@@ -226,7 +227,7 @@
                 resetPurchaseButton();
             }
         });
-        return false;
+        // return false;
     });
     function populateErrorMessage(formErrors) {
       $.map(formErrors, function(error){

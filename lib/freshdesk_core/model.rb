@@ -105,6 +105,10 @@ module FreshdeskCore::Model
                           "solution_folders",
                           "portal_solution_categories",
                           "solution_articles",
+                          "solution_article_bodies",
+                          "solution_category_meta",
+                          "solution_folder_meta",
+                          "solution_article_meta",
                          
                         "subscriptions",
 
@@ -156,7 +160,6 @@ module FreshdeskCore::Model
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
     remove_card_info(account)
-    $redis_others.srem(USER_EMAIL_MIGRATED, account.id) #for contact merge delta
     
     delete_data_from_tables(account.id)
     account.destroy

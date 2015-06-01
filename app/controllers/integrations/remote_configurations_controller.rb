@@ -15,6 +15,30 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
     partial_link params[:app]
   end
 
+  def open_id
+    url = Integrations::Quickbooks::Constant::OPENID_URL
+    return_url = open_id_complete_integrations_remote_configurations_url + "?app=#{params[:app]}"
+    rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
+    authenticate_with_open_id(url,{ :required =>rqrd_data, :return_to => return_url }) do |result|
+    end     
+  end
+  
+  def open_id_complete
+    resp = request.env[Rack::OpenID::RESPONSE]    
+    logger.debug "The resp.status is :: #{resp.status}"    
+    data = Hash.new
+	if resp.status == :success
+	  ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
+	  data["email"] = ax_response.data["http://axschema.org/contact/email"].first
+	  data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
+	  data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first      
+      partial_link params[:app]
+	else
+      logger.debug "Authentication failed....delivering error page"    
+      redirect_to '/500.html'
+	end
+  end
+
   def create
     domain = params[:domain].partition('://').last.sub('/', '')
     domain_mapping = DomainMapping.find_by_domain(domain)
@@ -22,8 +46,13 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
       Sharding.select_shard_of(domain) do
         if(params["app"] == "seoshop")
           process_seoshop(domain, domain_mapping.account_id)
+        elsif(params[:app] == "quickbooks")
+          @valid_domain = true
+          partial_link params[:app]
         end
       end
+    else
+      show_notice "This is an invalid freshdesk domain."
     end
   end
 
@@ -36,6 +65,7 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
 private
   def authorize_freshdesk_user
     begin
+      return if(params[:app] = "quickbooks")
       site = RestClient::Resource.new("#{params[:domain]}/health_check.json", params[:key], "X")
       response = site.get(:accept => "application/json")
       if !response.body.include? "success"
@@ -102,6 +132,7 @@ private
   end
 
   def partial_link(app)
-    render :template => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations'
+    render :template => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations' if(app == 'seoshop')
+    render :template => "integrations/applications/quickbooks_login", :locals => {:page => app}, :layout => 'remote_configurations' if(app == 'quickbooks')
   end
 end

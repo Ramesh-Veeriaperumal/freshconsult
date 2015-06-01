@@ -9,7 +9,7 @@
 	<div class="top-strip">
 		<div class="wrapper">
 		<div class="wrapper-shadow">
-			<div class="brand">
+			<div class="fd-branding">
 		    	<%= link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
 			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
 		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/assets/misc/logo.png?721013" : @survey_handle.portal.logo.content.url(:logo)) %>
@@ -30,16 +30,16 @@
 		<div class="position">
 		    <div class="smily <%= @rating == Survey::HAPPY ? 'rating-selected' : '' %>">
 		    	<i class="smiley-happy"></i>
-		    	<span><%= t('.happy') %></span>
+		    	<span><%= @survey_handle.survey.happy_text %></span>
 			</div>
 		    <div class="smily <%= @rating == Survey::NEUTRAL ? 'rating-selected' : '' %>">
 			    <i class="smiley-neutral"></i>
-			    <span><%= t('.neutral') %></span>
+			    <span><%= @survey_handle.survey.neutral_text %></span>
 			</div>
 
 			<div class="smily <%= @rating == Survey::UNHAPPY ? 'rating-selected' : '' %>">
 	      		<i class="smiley-unhappy"></i>
-	      		<span><%= t('.unhappy') %></span>
+	      		<span><%= @survey_handle.survey.unhappy_text %></span>
 			</div>
 		</div>
 	 	

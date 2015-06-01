@@ -8,7 +8,6 @@ class Helpdesk::Note < ActiveRecord::Base
   include Mobile::Actions::Note
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
-  include RabbitMq::Note
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
@@ -84,6 +83,7 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
+  validates :user, presence: true, if: -> {user_id.present?}
 
   def all_attachments
     shared_attachments=self.attachments_sharable
@@ -145,7 +145,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true)
+    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true) and (!self.mobihelp?)
   end
 
   def as_json(options = {})
@@ -278,12 +278,16 @@ class Helpdesk::Note < ActiveRecord::Base
     self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
   end
   
+  # Instance level spam watcher condition
+  # def rl_enabled?
+  #   self.account.features?(:resource_rate_limit) && !self.instance_variable_get(:@skip_resource_rate_limit)
+  # end
+
   protected
 
     def send_reply_email  
-      add_cc_email     
       if fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? ,
                 :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
@@ -316,7 +320,18 @@ class Helpdesk::Note < ActiveRecord::Base
       user.get_info if user
     end
 
+    def mobihelp?
+      self.source == SOURCE_KEYS_BY_TOKEN['mobihelp'] || self.source == SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
+    end
+
   private
+  
+    # def rl_exceeded_operation
+    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
+    #           :user_id => self.user_id }
+    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
+    # end
+
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end
@@ -349,5 +364,9 @@ class Helpdesk::Note < ActiveRecord::Base
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
         end
       end
+    end
+
+    def only_kbase?
+      (self.to_emails | self.cc_emails | self.bcc_emails).compact == [self.account.kbase_email]
     end
 end

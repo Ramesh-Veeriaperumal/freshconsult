@@ -1,6 +1,6 @@
 <input class="user_phone" id="number" type="tel">
-<% if current_account_freshfone_numbers.length == 1 %>
- <% number = current_account_freshfone_numbers.first %>
+<% if current_account_freshfone_number_hash.length == 1 %>
+ <% number = current_account_freshfone_number_hash.first %>
     <span data-number_id='<%= number[1] %>' class="outgoing_number hide"
 				id="outgoing_number_selector"><%= number[0] %></span>
 <% else %>
@@ -22,3 +22,4 @@
 <span class="info_message hide"><%=t('freshfone.dialpad.not_enough_credit')%></span>
 <span class="restricted_country hide"><%=t('freshfone.dialpad.restricted_country')%></span>
 
+<span class="strange_number hide"><%=t('freshfone.dialpad.strange_number')%></span>

@@ -12,7 +12,9 @@ module Facebook::Constants
     :comment          => "comment",
     :reply_to_comment => "reply_to_comment",
     :photo            => "photo",
-    :video            => "video"
+    :video            => "video",
+    :share            => "share",
+    :link             => "link"
   }
   
   POST_TYPE_CODE = {
@@ -24,5 +26,5 @@ module Facebook::Constants
   
   COMMENT_FIELDS = "id, from, can_comment, created_time, message, parent, attachment"
   
-  POST_FIELDS = "id, type, from, message, description, created_time, link, picture, name, object_id"  
+  POST_FIELDS = "id, type, from, message, description, created_time, link, picture, name, object_id, story"  
 end

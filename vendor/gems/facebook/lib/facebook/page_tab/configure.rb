@@ -27,13 +27,8 @@ module Facebook
         #if app_id is present it is from the new app
         #populating page token also
         if page
-          if app_id
-            @app_id = FacebookConfig::PAGE_TAB_APP_ID
-            @page_token = page.page_token_tab
-          else
-            @app_id = FacebookConfig::APP_ID
-            @page_token = page.page_token
-          end
+          @app_id = app_id ? FacebookConfig::PAGE_TAB_APP_ID : FacebookConfig::APP_ID
+          @page_token = page.page_token
           @graph = Koala::Facebook::API.new(@page_token) if @page_token
         end
       end

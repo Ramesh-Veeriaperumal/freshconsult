@@ -13,6 +13,8 @@ class Support::Discussions::TopicsController < SupportController
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => :destroy
+  before_filter :set_sort_by, :only => :show
+  before_filter :fetch_vote, :toggle_vote, :only => [:like, :unlike]
 
   before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
@@ -80,80 +82,35 @@ class Support::Discussions::TopicsController < SupportController
 
   def create
 		@forum = forum_scoper.find(params[:topic][:forum_id])
-
-		if current_user.customer? and current_account.features_included?(:spam_dynamo)
-			sqs_create
-		else
-			topic_saved, post_saved = false, false
-			# this is icky - move the topic/first post workings into the topic model?
-			Topic.transaction do
-				@topic  = @forum.topics.build(topic_param)
-				assign_protected
-				@post       = @topic.posts.build(post_param.merge(post_request_params))
-				@post.topic = @topic
-				@post.user  = current_user
-				@post.account_id = current_account.id
-				@post.portal = current_portal.id
-				# only save topic if post is valid so in the view topic will be a new record if there was an error
-				@topic.body_html = @post.body_html # incase save fails and we go back to the form
-				build_attachments
-				if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
-					topic_saved = @post.valid? and @topic.save
-					post_saved = @post.save
-				end
-			end
-
-			if topic_saved && post_saved
-				respond_to do |format|
-					format.html {
-						flash[:notice] = t('.flash.portal.discussions.topics.spam_check')
-						redirect_to support_discussions_path
-					}
-					format.xml  { render :xml => @topic }
-				end
-			else
-				respond_to do |format|
-					format.html {
-						set_portal_page :new_topic
-						render :new
-					}
-					format.xml  { render :xml => @topic.errors }
-				end
-			end
+		if @forum.announcement?
+			flash[:notice] = t(".flash.portal.discussions.topics.not_allowed")
+			creation_response(false) 
+			return
 		end
+		@topic  = @forum.topics.build(topic_param)
+		@topic.body_html = params[:topic][:body_html] # incase save fails and we go back to the form
+		creation_response(cleared_captcha && (current_user.customer? ? sqs_create : create_in_db))
 	end
 
-  def sqs_create 
-    @topic  = @forum.topics.build(topic_param)
-    if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
-      sqs_post_param = post_param.clone.delete_if { |k,v| k == :forum_id }.merge(post_request_params)
-      sqs_post_param[:topic] = { :title => topic_param[:title], :forum_id => @forum.id }
+	def sqs_create
+		sqs_post = SQSPost.new(sqs_post_param)
 
-      sqs_post = SQSPost.new(sqs_post_param)
-      sqs_post[:attachments] = processed_attachments
-      sqs_post[:cloud_file_attachments] = params["cloud_file_attachments"] || []
-      sqs_post[:portal] = current_portal.id
-      sqs_post_saved = sqs_post.save
-    end
-    @topic.body_html = params[:topic][:body_html]
-    if sqs_post_saved
-      respond_to do |format|
-        format.html {
-          flash[:notice] = flash_msg_on_topic_create
-          redirect_to support_discussions_path
-        }
-        # format.xml  { render :xml => @topic } #should be discussed!
-      end
-    else
-      respond_to do |format|
-        format.html {
-          set_portal_page :new_topic
-          render :new
-        }
-        format.xml  { render :xml => sqs_post.errors }
-      end
-    end
-  end
+		sqs_post.save
+	end
+
+	def create_in_db
+		# this is icky - move the topic/first post workings into the topic model?
+		assign_protected 
+		@post = @topic.posts.build(post_param.merge(post_request_params))
+
+		@post.topic = @topic
+		@post.user  = current_user
+		@post.account_id = current_account.id
+		@post.portal = current_portal.id
+		build_attachments
+
+		@topic.save
+	end
 
   def update
     respond_to do |format|
@@ -198,22 +155,12 @@ class Support::Discussions::TopicsController < SupportController
     end
   end
 
-
   def like
-    unless @topic.voted_by_user?(current_user)
-      @vote = Vote.new(:vote => params[:vote] == "for")
-      @vote.user_id = current_user.id
-      @topic.votes << @vote
-    end
-    load_topic
     render :partial => "topic_vote", :object => @topic
   end
 
   def unlike
-     @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
-     @votes.first.destroy
-     load_topic
-     render :partial => "topic_vote", :object => @topic
+    render :partial => "topic_vote", :object => @topic
   end
 
   def my_topics
@@ -254,16 +201,21 @@ class Support::Discussions::TopicsController < SupportController
     end
 
     def load_topic
-      @topic = scoper.find(params[:id])
-      @forum = @topic.forum
-      @forum_category = @forum.forum_category
-
-      wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
-      raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+      @topic = scoper.find_by_id(params[:id])
       
-      unless @forum.visible?(current_user)
-        store_location
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+      if @topic.nil?
+        resource_not_found :topic
+      else
+        @forum = @topic.forum
+        @forum_category = @forum.forum_category
+      
+        wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
+        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+
+        unless @forum.visible?(current_user)
+          store_location
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+        end
       end
     end
     
@@ -281,6 +233,26 @@ class Support::Discussions::TopicsController < SupportController
 
     def forum_scoper
       current_portal.portal_forums
+    end
+
+    def creation_response(success)
+      if success
+        respond_to do |format|
+          format.html {
+            flash[:notice] = flash_msg_on_topic_create
+            redirect_to support_discussions_path
+          }
+          # format.xml  { render :xml => @topic } #should be discussed!
+        end
+      else
+        respond_to do |format|
+          format.html {
+            set_portal_page :new_topic
+            render :new
+          }
+          format.xml  { render :xml => @topic.errors }
+        end
+      end
     end
 
     def topic_param
@@ -303,5 +275,26 @@ class Support::Discussions::TopicsController < SupportController
           :user_agent => request.env['HTTP_USER_AGENT']
         }
       }
+    end
+
+    def sqs_post_param
+      {
+        :topic => { :title => topic_param[:title], :forum_id => @forum.id },
+        :attachments => processed_attachments,
+        :cloud_file_attachments => params["cloud_file_attachments"] || [],
+        :portal => current_portal.id
+      }.merge(post_param.clone.delete_if { |k,v| k == :forum_id }).merge(post_request_params)
+    end
+
+    def cleared_captcha
+      current_account.features_included?(:forum_captcha_disable) || verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
+    end
+
+    def set_sort_by
+      @topic.sort_by = params[:sort] || 'date'
+    end
+
+    def vote_parent
+      @topic
     end
 end

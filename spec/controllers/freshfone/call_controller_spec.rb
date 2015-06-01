@@ -31,6 +31,14 @@ RSpec.describe Freshfone::CallController do
     call_meta.keys.should be_eql([:number, :group])
   end
 
+  it 'should retrieve caller name accordingly for the strange number' do
+    log_in(@agent)
+    @caller_number = "+17378742833"
+    get :caller_data, {:PhoneNumber => @caller_number, :format => "json"}
+    user_name = json[:user_name]
+    user_name.should be_eql("RESTRICTED")
+  end
+
   it 'should update call status and user presence' do
     set_twilio_signature("freshfone/call/in_call?agent=#{@agent.id}", in_call_params.except("agent"))
     create_freshfone_call("CSATH")
@@ -53,6 +61,19 @@ RSpec.describe Freshfone::CallController do
     freshfone_call = @account.freshfone_calls.find_by_call_sid("CDIRECT")
     freshfone_call.should be_inprogress
     freshfone_call.direct_dial_number.should be_eql("9994269753")
+    xml.should be_eql({:Response=>nil})
+  end
+
+  it 'should update call status on direct dial success callback' do 
+    set_twilio_signature("/freshfone/call/external_transfer_success?direct_dial_number=919876543210&source_agent=@agent.id&call_back=false&outgoing=", 
+      external_transfer_success_params.except("direct_dial_number"))
+    create_freshfone_call("CTRANSFER")
+    create_freshfone_call_meta(@freshfone_call,'+919876543210')
+     @freshfone_user.update_attributes(:presence => 2)
+
+    post :external_transfer_success, external_transfer_success_params.merge({"call_back"=>"false", "source_agent" => @agent.id, "outgoing"=>""})
+    freshfone_call = @account.freshfone_calls.find_by_call_sid("CTRANSFER")
+    expect(freshfone_call.direct_dial_number).to be_eql("+919876543210")
     xml.should be_eql({:Response=>nil})
   end
 

@@ -52,7 +52,7 @@ var FreshfoneMessage;
 		// 'Secure' IE forced hack
 		if (!$.browser.msie) {
 			ev.preventDefault();
-
+			setGroupIds();
 			$('.number-settings').ajaxSubmit({
 				dataType: 'json',
 				async: false,
@@ -98,9 +98,37 @@ var FreshfoneMessage;
 		}
 		
 	});
+	$("#selectGroupAccess").on('click', function(e){
+		$("#s2id_access_groups").toggle(true);
+		$("#defaultGroupAccess").toggle(false);
+		e.preventDefault();
+	});
+	$(window).on('load',function() {
+		$("#access_groups").select2();
+		freshfone.old_groups_list = $("#access_groups").val() || [];
+		if (freshfone.old_groups_list.length == 0) {
+			$("#s2id_access_groups").toggle(false);
+			$("#defaultGroupAccess").toggle(true);
+		}
+	});
+	function setGroupIds () {
+		var new_list = [], 
+				added_agents=[], 
+				removed_agents = [],
+				old_list = freshfone.old_groups_list;
+		new_list = jQuery("#access_groups").val() || [];
+		make_group_list(new_list,old_list,added_agents);
+		make_group_list(old_list,new_list,removed_agents);
+		$("#added_list").val(String(added_agents));
+		$("#removed_list").val(String(removed_agents));
+	}
+	
+	function make_group_list(array1,array2,result_array) {
+		$.grep(array1, function(el) {
+			if ($.inArray(el, array2) == -1) result_array.push(el);
+		});
+	}
 
-	
-	
 	function replacePrefix(source, replaceText, replaceWith) {
 		var replaceFiller = new RegExp('\\$\\{' + replaceText + '\\}');
 		source = $.extend({}, source); // clone

@@ -1,10 +1,14 @@
 class MonitorshipsController < ApplicationController
+
+  helper DiscussionsHelper
+
   before_filter :access_denied, :unless => :logged_in?
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:toggle,:is_following]
   before_filter :unprocessable_entity, :unless => :valid_request
   before_filter :fetch_monitorship, :only => :toggle
-  
+  before_filter :load_parent , :only => [:followers, :toggle]  
+
   def toggle
     send(params[:type])
     respond_to do |format|
@@ -27,7 +31,15 @@ class MonitorshipsController < ApplicationController
     end
   end
 
+  def followers
+    render(:partial => "monitorships/followers")
+  end
+
   private
+
+    def load_parent
+      @parent = params[:object].capitalize.constantize.find(params[:id])  
+    end
 
     def assign_flash
       flash[:notice] = t((@monitorship.active? ? 'monitorships.monitor_flash' : 'monitorships.non_monitor_flash'), :type => params[:object])
@@ -58,7 +70,8 @@ class MonitorshipsController < ApplicationController
     end
 
     def fetch_monitorship
-      @monitorship = Monitorship.find_or_initialize_by_user_id_and_monitorable_id_and_monitorable_type(current_user.id, params[:id], params[:object].capitalize)
+      user_id = params[:user_id] || current_user.id      
+      @monitorship = Monitorship.find_or_initialize_by_user_id_and_monitorable_id_and_monitorable_type(user_id, params[:id], params[:object].capitalize)
     end
     
     def follow

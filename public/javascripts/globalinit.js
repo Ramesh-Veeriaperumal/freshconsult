@@ -354,6 +354,26 @@ window.xhrPool = [];
             hoverPopup = false;
           },1000);
       });
+    $("a[rel=ff-hover-popover]").live('mouseenter',function(ev) {
+          ev.preventDefault();
+          if(!freshfoneuser.online){ return;}
+          var element = $(this);
+          // Introducing a slight delay so that the popover does not show up
+          // when just passing thru this element.
+          var timeoutDelayShow = setTimeout(function(){
+            clearTimeout(hidePopoverTimer);
+            hideActivePopovers(ev);
+            widgetPopup = element.popover('show');
+            hoverPopup = true;
+          }, 300);
+          element.data('timeoutDelayShow', timeoutDelayShow);
+
+        }).live('mouseleave',function(ev) {
+            clearTimeout($(this).data('timeoutDelayShow'));
+            hidePopoverTimer = setTimeout(function() {
+              $('.hover-card-agent').parent().remove();
+            },1000);
+      });
 
     $("a[rel=widget-popover], a[rel=click-popover-below-left]").live("click", function(e){
         e.preventDefault();
@@ -693,7 +713,7 @@ window.xhrPool = [];
         $.scrollTo('body');
       })
 
-      $('#Activity .activity > a.notelink').livequery(function() {
+      $('#Activity .activity > a').livequery(function() {
         $(this).attr('data-pjax', '#body-container')
       });
 			
@@ -714,6 +734,18 @@ window.xhrPool = [];
         $(this).data('formChanged', true);
       });
       
+      $('[rel="select-choice"]').livequery(function(ev) {
+        jQuery(this).select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+        var $select_content = $(this).siblings('.select2-container');
+        var disableField = $(this).data('disableField');
+        disableField = disableField.split(',');
+        $select_content.find(".select2-search-choice div").each(function(index,element){
+          value = jQuery(element).text();
+          if($.inArray(value, disableField ) != -1) {
+            jQuery(element).next("a").remove();
+          }
+        });
+      })
    });
 })(jQuery);
 

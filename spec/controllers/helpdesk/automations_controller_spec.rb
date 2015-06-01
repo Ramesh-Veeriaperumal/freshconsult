@@ -71,6 +71,17 @@ describe Helpdesk::ScenarioAutomationsController do
     @account.scn_automations.find_by_id(@test_scn.id).action_data.should_not be_eql(@test_scn.action_data)
   end
 
+  # validation on edit scenario - (case changes in scenario name)
+
+  it "should update scenario name with case changes in letters" do
+    put :update, {:va_rule=>{"name"=>"Move To Support", "description"=>Faker::Lorem.sentence(3),
+                           :accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}},
+                  :action_data=>[{:name=>"priority", :value=>"3"},{:name=>"status", :value=>"3"}].to_json,  :name=>"status", :value=>"3",:id=>@test_scn.id}
+    @account.scn_automations.find_by_id(@test_scn.id).name.should be_eql("Move To Support")
+  end
+
+
+
   it "should delete a scenario" do
     delete_scn=create_scn_automation_rule({:account_id=>@account.id,:accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}})
     delete :destroy, {:id=>delete_scn.id}

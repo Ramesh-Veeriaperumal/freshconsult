@@ -48,26 +48,21 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def agent_status
-    all_agents = {}
-
-    if @current_group_filter
-      available_agents_list = @group.round_robin_queue.reverse
-
-      unavailable_agents_list = @group.agents.all(:select => "users.id").map(&:id).map(&:to_s) - available_agents_list
-      agent_ids = available_agents_list + unavailable_agents_list
-      all_agents = current_account.agents.where(user_id: agent_ids).includes([{:user => :avatar}]).reorder("field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
-    end
-
-    @available_agents   = all_agents[true] || []
-    @unavailable_agents = all_agents[false] || []
-
+    load_ticket_assignment
+    load_freshfone
     respond_to do |format|
       format.html # index.html.erb
-      format.js do
+      format.js do 
         render :agent_status, :formats => [:rjs]
       end
     end
   end
+
+  def load_ffone_agents_by_group 
+    @group = current_account.groups.find_by_id(params[:group_id])
+    @agent_ids = @group.agents.inject([]){ |result, agent| result << agent.id }
+    render :json => { :id => @agent_ids }
+  end 
 
   protected
     def recent_activities(activity_id)
@@ -79,6 +74,25 @@ class Helpdesk::DashboardController < ApplicationController
     end
 
   private
+    def load_ticket_assignment
+      all_agents = {}
+
+      if @current_group_filter
+        available_agents_list = @group.round_robin_queue.reverse
+
+        unavailable_agents_list = @group.agents.all(:select => "users.id").map(&:id).map(&:to_s) - available_agents_list
+        agent_ids = available_agents_list + unavailable_agents_list
+        all_agents = current_account.agents.where(user_id: agent_ids).includes([{:user => :avatar}]).reorder("field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
+      end
+
+      @available_agents   = all_agents[true] || []
+      @unavailable_agents = all_agents[false] || []
+    end
+
+    def load_freshfone
+       @freshfone_agents = current_account.freshfone_users.agents_with_avatar
+    end
+
     def load_items
       @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10, :total_entries => 1000)
     end

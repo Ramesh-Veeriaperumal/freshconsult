@@ -24,20 +24,28 @@ class Freshfone::PulseRate
 
 	def pulse_charge
 		return outgoing_cost if outgoing?
-		forwarded ? forwarded_cost : incoming_cost
+		call_forwarded? ? forwarded_cost : incoming_cost
 	end
 
-	def one_legged_call_cost
+	def voicemail_cost
 		self.country = call.freshfone_number.country
 		self.number = call.freshfone_number.number
 		return FRESHFONE_CHARGES['VOICEMAIL'][forwarded_call_type].to_f		
 	end
 
 	def missed_call_cost
-		FRESHFONE_CHARGES['MISSED_OR_BUSY'].to_f
+		incoming? ? FRESHFONE_CHARGES['MISSED_OR_BUSY'][:incoming].to_f : FRESHFONE_CHARGES['MISSED_OR_BUSY'][:outgoing].to_f
 	end
 
 	private
+
+		def call_forwarded?
+			return true if forwarded?
+			return false if call.meta.blank?
+			[ Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone], 
+					Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial],
+					Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]].include?(call.meta.device_type)
+		end
 
 		def outgoing_cost
 			self.country = caller_country
@@ -54,10 +62,14 @@ class Freshfone::PulseRate
 		end
 
 		def forwarded_cost
-			self.number = call.direct_dial_number || call.agent.available_number
+			self.number = call.direct_dial_number || forwarded_number
 			self.country =  GlobalPhone.parse(number).territory.name unless GlobalPhone.parse(number).blank?
 
 			calculate(forwarded_call_type)
+		end
+
+		def forwarded_number
+			call.meta.meta_info unless call.meta.blank?
 		end
 
 		# MaxLength of the existing numbers  

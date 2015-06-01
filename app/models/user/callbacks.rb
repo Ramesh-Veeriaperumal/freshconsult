@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
+  before_validation :set_password, :if => [:active?, :email_available?, :no_password?]
   
   before_create :set_company_name
   before_create :populate_privileges, :if => :helpdesk_agent?
@@ -65,6 +66,12 @@ class User < ActiveRecord::Base
   def discard_blank_email
     self[:email] = nil
   end
+
+  def set_password
+    secure_string = SecureRandom.base64(User::PASSWORD_LENGTH)
+    self.password = secure_string
+    self.password_confirmation = secure_string
+  end
   
   def set_contact_name 
     if self.name.blank? && email_obtained.present?
@@ -103,6 +110,10 @@ class User < ActiveRecord::Base
   end
 
   private
+
+  def no_password?
+    !password and !crypted_password
+  end
 
   def validate_time_zone time_zone
     !(ActiveSupport::TimeZone.all.map(&:name).include? time_zone)

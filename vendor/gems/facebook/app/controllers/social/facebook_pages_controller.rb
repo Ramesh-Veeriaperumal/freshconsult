@@ -97,10 +97,9 @@ class Social::FacebookPagesController < Admin::AdminController
 
   # Duplicate method
   def  add_page_tab
-    if params[:code]
+    if params[:tabs_added]
       begin
-        @fb_client_tab.auth(params[:code])
-        @edit_tab = true
+        @fb_client_tab.page_tab_add(params[:tabs_added])
       rescue Exception => e
         flash[:error] = t('facebook.not_authorized')
       end

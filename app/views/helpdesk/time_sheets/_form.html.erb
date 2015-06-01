@@ -41,11 +41,11 @@
 	      event: 'focus'
 	    }
 	  });
-
+	
 	jQuery('#new_timeentry [data-submit=modal]').attr('data-start-text', '<%= t(".start_timer") %>');
 	jQuery('#new_timeentry [data-submit=modal]').button('start');
-	jQuery('#time_entry_hhmm').keyup(function(ev) {
-		if (trim(jQuery(this).val()) == '')
+	jQuery('.modal.in .hhmm_time_duration').keyup(function(ev) {
+		if (trim(jQuery(".modal.in .hhmm_time_duration").val()) == '')
 			jQuery('#new_timeentry [data-submit=modal]').button('start');
 		else
 			jQuery('#new_timeentry [data-submit=modal]').button('reset');

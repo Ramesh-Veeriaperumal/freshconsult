@@ -81,6 +81,12 @@ module Social::Constants
       "interactions" => nil
     }
   }
+  
+  TWITTER_TIMEOUT = {
+    :search => 5,
+    :dm     => 10,
+    :reply  => 10
+  }
 
   STREAM_VOLUME_RETENION_PERIOD = 28.days
   

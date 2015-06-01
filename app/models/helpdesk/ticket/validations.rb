@@ -7,6 +7,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   validates_uniqueness_of :display_id, :scope => :account_id
   validate :due_by_validation, :if => :due_by
+  #validate :frDueBy_validation, :if => :frDueBy
 
   validate on: :create do |ticket|
     req = ticket.requester
@@ -28,7 +29,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def due_by_validation
-    self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by < created_at
+    self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by < created_at_date
   end
 
+  def frDueBy_validation
+    self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if frDueBy < created_at_date
+  end
+
+  def created_at_date #To handle API call having frDueBy and due_by without created_at
+    created_at || Time.zone.now
+  end
 end

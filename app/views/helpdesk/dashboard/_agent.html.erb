@@ -1,16 +1,23 @@
-<tr id="agent_status_<%= agent.user.id %>">
+<tr data-id="<%= table_id %>" id="agent_status_<%= agent.user.id %>">
   <td>
-    <a href="#" class="cust-list-avatar"><%= user_avatar(agent.user)%></a>
-    <p class="text-info"><%= h agent.user.display_name %></p>
+
+    <%= check_box_tag :available, 0, agent.available?, :class => 'filter_item',
+      "data-checked-label" => "On",
+      "data-unchecked-label" => "Off",
+      "data-id" => agent.user.id,
+      "data-url" => toggle_availability_agent_path(agent.user.id),
+      "data-availability" => agent.available?,
+      :id => "agent_available_#{agent.user.id}" %>
+   
+   
+
   </td>
+
   <td>
-      <%= check_box_tag :available, 0, agent.available?, :class => 'filter_item', 
-        "data-checked-label" => "On", 
-        "data-unchecked-label" => "Off",
-        "data-id" => agent.user.id,
-        "data-url" => toggle_availability_agent_path(agent.user.id),
-        "data-availability" => agent.available?,
-        :id => "agent_available_#{agent.user.id}" %>
-      <span class="active_since vertical-alignment"><%= agent.active_since.nil? ? t('helpdesk.dashboard.round_robin.na') : "Since " + timediff_in_words(Time.now - agent.active_since) %></span>
+    <a class="cust-list-avatar"><%= user_avatar(agent.user)%></a>
+    <span href="#"><%= h agent.user.display_name %></span>
+  </td>
+  <td class="text-right">
+      <span class="active_since muted"><%= agent.active_since.nil? ? t('helpdesk.dashboard.round_robin.na') : "Since " + timediff_in_words(Time.now - agent.active_since) %></span>
   </td>
 </tr>

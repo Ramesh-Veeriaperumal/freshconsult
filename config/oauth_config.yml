@@ -19,12 +19,23 @@ oauth_options:
     token_url: /api/oauth2/token
     authorize_url: /api/oauth2/authorize
   slack:
-    site: "https://slack.com"  
-    
+    site: "https://slack.com" 
+  quickbooks:
+    site: "https://oauth.intuit.com"
+    request_token_path: "/oauth/v1/get_request_token"
+    authorize_url: "https://appcenter.intuit.com/Connect/Begin"
+    access_token_path: "/oauth/v1/get_access_token" 
+  google_contacts:
+    site: https://accounts.google.com
+    token_url: /o/oauth2/token
+
 development:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzddB6NCYAJVslYxFc.rabGWq9hI7uRXIKqFvCm4IoVzHOtMEkwrHs7dwcLZa
   consumer_secret: 7977697105566556112
+ quickbooks:
+  consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
+  consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
@@ -43,6 +54,14 @@ development:
   options:
     scope: read write sign
     api_key: vsg6tg9qsdhmp28q2yugtdng
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
+  consumer_secret: UtAAhjbukdfktyIuxWQovVxE
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_oauth2:
   provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
@@ -80,6 +99,17 @@ defaults: &defaults
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
+ quickbooks:
+  consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
+  consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
+  consumer_secret: UtAAhjbukdfktyIuxWQovVxE
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_oauth2:
   provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
@@ -117,6 +147,9 @@ staging:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
   consumer_secret: 7527225363657893740
+ quickbooks:
+  consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
+  consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
@@ -129,6 +162,14 @@ staging:
     prompt: none
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
     name: google_login
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
+  consumer_secret: UtAAhjbukdfktyIuxWQovVxE
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_gadget_oauth2:
   provider: google_oauth2
   consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
@@ -169,9 +210,20 @@ production:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzd2iOSIknPyJj9LL1Y5IqbQPB9BbzrJRfdkPHFA5QJs9YIQxBJqqX70IXc78
   consumer_secret: 4449493033389148724
+ quickbooks:
+  consumer_token: qyprdspxhaEDF9y8hixSOacRuh4lYt
+  consumer_secret: ifISBYQG8peHZZUbeUaVgjOpl0VN9UYTe4KoxEXw
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 354224567032-abbutsrfm490t6i3h6ulf41go7sh216e.apps.googleusercontent.com
+  consumer_secret: X2HZKWNsAlVssUgWRaimPMS4
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_oauth2:
   provider: google_oauth2
   consumer_token: 367378856688.apps.googleusercontent.com

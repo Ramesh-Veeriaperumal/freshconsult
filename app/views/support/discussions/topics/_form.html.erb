@@ -31,9 +31,10 @@
 		</label>
 		<div class="controls">
 			<%= form.select :forum_id, grouped_options_for_select(forum_options), 
-				{ :include_blank => t("portal.topic.default_select_option") },
+				{ :include_blank => true },
 				{ :class => "required custom-select", 
-				  :disabled => !@topic.new_record? } %>
+				  :disabled => !@topic.new_record?,
+				  :data => { :placeholder => t("portal.topic.default_select_option") } } %>
 			<%= javascript_tag do %>
 				jQuery("#topic_forum_id").val(<%= params[:forum_id] || @topic.forum_id %>)
 			<% end %>
@@ -72,7 +73,7 @@
 		</div>
 	</div>
 
-	<% if @topic.new_record? %>
+	<% if @topic.new_record? && !current_account.features_included?(:forum_captcha_disable)%>
 		<div class="control-group"> 
 	    	<%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
 	    	<div class="controls recaptcha-control">

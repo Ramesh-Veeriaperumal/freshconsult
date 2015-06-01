@@ -12,10 +12,12 @@ window.App.Discussions = window.App.Discussions || {};
 			this.lookForHash();
 			this.bindHandlers();
 			this.cleanInlineCSS();
+			App.Discussions.Monitorship.init();
 		},
 
 		onLeave: function () {
 			this.unbindHandlers();
+			App.Discussions.Monitorship.unbind();
 		},
 
 		cleanInlineCSS: function () {
@@ -63,6 +65,7 @@ window.App.Discussions = window.App.Discussions || {};
 		openReplyForm: function () {
 			$('#new-reply').addClass('replying');
 			$('#post_body_html').setFocus();
+			$('.topic-reply').bringToView();
 		},
 
 		closeReplyForm: function () {
