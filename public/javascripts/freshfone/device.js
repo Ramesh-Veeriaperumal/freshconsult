@@ -53,6 +53,7 @@
 			}
 			var dontUpdateCallCount = previewMode() || recordingMode();
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
+			freshfonesocket.bindTransfer();
 			freshfonecalls.onCallStopSound();
 		});
 

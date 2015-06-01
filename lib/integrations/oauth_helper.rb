@@ -21,20 +21,6 @@ module Integrations::OauthHelper
       return access_token
     end
 
-    def auth_oauth2?(account, app_name, google_acc)
-      installed_app = account.installed_applications.with_name(app_name).first
-      unless installed_app[:configs].blank? #can nest it to the below block using &&
-        unless installed_app[:configs][:inputs]["OAuth2"].blank?
-          # No need to assign, last statement returns.
-          value = installed_app[:configs][:inputs]["OAuth2"].include?("#{google_acc.email}") ? true : false
-        else
-          false
-        end
-      else
-        false
-      end
-    end
-
     def self.get_oauth_options(provider)
       @config = File.join(Rails.root, 'config', 'oauth_config.yml')
       options_hash = (YAML::load_file @config)['oauth_options'][provider]      

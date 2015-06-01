@@ -80,35 +80,80 @@ class Support::Discussions::TopicsController < SupportController
 
   def create
 		@forum = forum_scoper.find(params[:topic][:forum_id])
-		if @forum.announcement?
-			flash[:notice] = t(".flash.portal.discussions.topics.not_allowed")
-			creation_response(false) 
-			return
+
+		if current_user.customer? and current_account.features_included?(:spam_dynamo)
+			sqs_create
+		else
+			topic_saved, post_saved = false, false
+			# this is icky - move the topic/first post workings into the topic model?
+			Topic.transaction do
+				@topic  = @forum.topics.build(topic_param)
+				assign_protected
+				@post       = @topic.posts.build(post_param.merge(post_request_params))
+				@post.topic = @topic
+				@post.user  = current_user
+				@post.account_id = current_account.id
+				@post.portal = current_portal.id
+				# only save topic if post is valid so in the view topic will be a new record if there was an error
+				@topic.body_html = @post.body_html # incase save fails and we go back to the form
+				build_attachments
+				if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
+					topic_saved = @post.valid? and @topic.save
+					post_saved = @post.save
+				end
+			end
+
+			if topic_saved && post_saved
+				respond_to do |format|
+					format.html {
+						flash[:notice] = t('.flash.portal.discussions.topics.spam_check')
+						redirect_to support_discussions_path
+					}
+					format.xml  { render :xml => @topic }
+				end
+			else
+				respond_to do |format|
+					format.html {
+						set_portal_page :new_topic
+						render :new
+					}
+					format.xml  { render :xml => @topic.errors }
+				end
+			end
 		end
-		@topic  = @forum.topics.build(topic_param)
-		@topic.body_html = params[:topic][:body_html] # incase save fails and we go back to the form
-		creation_response(cleared_captcha && (current_user.customer? ? sqs_create : create_in_db))
 	end
 
-	def sqs_create
-		sqs_post = SQSPost.new(sqs_post_param)
+  def sqs_create 
+    @topic  = @forum.topics.build(topic_param)
+    if verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
+      sqs_post_param = post_param.clone.delete_if { |k,v| k == :forum_id }.merge(post_request_params)
+      sqs_post_param[:topic] = { :title => topic_param[:title], :forum_id => @forum.id }
 
-		sqs_post.save
-	end
-
-	def create_in_db
-		# this is icky - move the topic/first post workings into the topic model?
-		assign_protected 
-		@post = @topic.posts.build(post_param.merge(post_request_params))
-
-		@post.topic = @topic
-		@post.user  = current_user
-		@post.account_id = current_account.id
-		@post.portal = current_portal.id
-		build_attachments
-
-		@topic.save
-	end
+      sqs_post = SQSPost.new(sqs_post_param)
+      sqs_post[:attachments] = processed_attachments
+      sqs_post[:cloud_file_attachments] = params["cloud_file_attachments"] || []
+      sqs_post[:portal] = current_portal.id
+      sqs_post_saved = sqs_post.save
+    end
+    @topic.body_html = params[:topic][:body_html]
+    if sqs_post_saved
+      respond_to do |format|
+        format.html {
+          flash[:notice] = flash_msg_on_topic_create
+          redirect_to support_discussions_path
+        }
+        # format.xml  { render :xml => @topic } #should be discussed!
+      end
+    else
+      respond_to do |format|
+        format.html {
+          set_portal_page :new_topic
+          render :new
+        }
+        format.xml  { render :xml => sqs_post.errors }
+      end
+    end
+  end
 
   def update
     respond_to do |format|
@@ -238,26 +283,6 @@ class Support::Discussions::TopicsController < SupportController
       current_portal.portal_forums
     end
 
-    def creation_response(success)
-      if success
-        respond_to do |format|
-          format.html {
-            flash[:notice] = flash_msg_on_topic_create
-            redirect_to support_discussions_path
-          }
-          # format.xml  { render :xml => @topic } #should be discussed!
-        end
-      else
-        respond_to do |format|
-          format.html {
-            set_portal_page :new_topic
-            render :new
-          }
-          format.xml  { render :xml => @topic.errors }
-        end
-      end
-    end
-
     def topic_param
       param = params[:topic].symbolize_keys
       param.delete_if{|k, v| [:body_html].include? k }
@@ -278,18 +303,5 @@ class Support::Discussions::TopicsController < SupportController
           :user_agent => request.env['HTTP_USER_AGENT']
         }
       }
-    end
-
-    def sqs_post_param
-      {
-        :topic => { :title => topic_param[:title], :forum_id => @forum.id },
-        :attachments => processed_attachments,
-        :cloud_file_attachments => params["cloud_file_attachments"] || [],
-        :portal => current_portal.id
-      }.merge(post_param.clone.delete_if { |k,v| k == :forum_id }).merge(post_request_params)
-    end
-
-    def cleared_captcha
-      current_account.features_included?(:forum_captcha_disable) || verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
     end
 end

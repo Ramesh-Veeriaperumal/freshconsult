@@ -38,24 +38,6 @@ describe Solution::ArticlesController do
     response.should render_template("solution/articles/show")    
   end
 
-
-  describe "should render the show page of an article even if article_body is not proper" do
-    before(:each) do
-      @sample_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-        :user_id => @agent.id, :status => "2", :art_type => "1" } )
-    end
-
-    it "should render show page even if the article body is not present" do
-      @sample_article.article_body.destroy
-      show_page_rendered_properly?(@sample_article)
-    end
-
-    it "should render show page if the content is not present in the article body record" do
-      @sample_article.article_body.update_attributes({:description => nil, :desc_un_html => nil})
-      show_page_rendered_properly?(@sample_article)
-    end
-  end
-
   it "should redirect user with no privilege to login" do 
     session = UserSession.find
     session.destroy
@@ -115,20 +97,6 @@ describe Solution::ArticlesController do
     @account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)            
   end
 
-  it "should create a new solution article and the content must be saved in article bodies table" do
-    name = "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
-    art_description_text = Faker::Lorem.sentence(3)
-    art_description = "<p>#{art_description_text}</p>"
-    post :create, { :solution_article => {
-        :title => name,
-        :description => art_description ,
-        :folder_id => @test_folder.id, :status => 2, :art_type => 1
-      }
-    }
-    article_obj = @account.solution_articles.find_by_title(name)
-    check_article_body_integrity(article_obj, art_description, art_description_text)
-  end
-
   it "should redirect to new page if article create fails" do 
     post :create, :solution_article => {:description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id, :status => 2, :art_type => 1},
                                         :tags => {:name => ""}
@@ -154,23 +122,6 @@ describe Solution::ArticlesController do
                   }
     @test_article.reload                  
     @account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)    
-  end
-
-  it "should update a solution article and any changes made in the content should reflect in article_bodies table" do
-    art_description_text = Faker::Lorem.sentence(3)
-    art_description = "<p>#{art_description_text}</p>"
-    put :update, { :id => @test_article.id, 
-                   :solution_article => {:title => @test_article.title,
-                                          :description => art_description,
-                                          :folder_id => @test_folder.id,
-                                          :status => "2",
-                                          :art_type => "1"
-                                          },
-                    :category_id => @test_category.id,
-                    :folder_id => @test_folder.id
-                  }
-    @test_article.reload                  
-    check_article_body_integrity(@test_article, art_description, art_description_text)
   end
 
   it "should add attahchment to article" do 

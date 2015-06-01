@@ -15,18 +15,11 @@ module Freshfone::CallHistoryHelper
 		]
 	end
 
-	def numbers_hash
-		@numbers ||=current_account.all_freshfone_numbers.reduce({}){|obj,c| obj.merge!({c.id=>c.number})}
-	
-	end
-
 	def freshfone_numbers_options
 		numbers_options = []
 		numbers_options = @all_freshfone_numbers.map{|c|
 			{ :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name.to_s) }
-		 }
-		numbers_options.unshift({:value => t('reports.freshfone.all_numbers'),:deleted=> false, :id=> 0 ,:name=> t('reports.freshfone.all_call_types')})
-		numbers_options.to_json
+		 }.to_json
 	end
 
 	def agents_list
@@ -91,7 +84,7 @@ module Freshfone::CallHistoryHelper
 	def blocked_number?(number)
 		@blacklist_numbers.include? number.gsub(/^\+/, '')
 	end
-	
+
 	def country_name(country_code)
 		country = Country.coded(country_code)
 		country ? country.name : nil
@@ -113,10 +106,4 @@ module Freshfone::CallHistoryHelper
 			:range_limit_message => t('export_data.call_history.range_limit_message', range: Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS )
 		}
 	end
-  def recording_deleted_title(call)
-  	if call.present? && call.recording_deleted_info.present?
-  		"#{t("freshfone.call_history.recording_delete.done_by")} #{call.recording_deleted_by}, on #{formated_date(Time.zone.parse(call.recording_deleted_at.to_s))}"
-  	end
-  end
-
 end

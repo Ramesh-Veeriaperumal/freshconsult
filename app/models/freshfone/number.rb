@@ -17,8 +17,6 @@ class Freshfone::Number < ActiveRecord::Base
 						:foreign_key => :freshfone_number_id, :dependent => :delete_all
 	has_one :ivr, :class_name => 'Freshfone::Ivr',
 					:foreign_key => :freshfone_number_id, :dependent => :delete
-	has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
-  					:dependent => :delete_all, :foreign_key => :freshfone_number_id
 	belongs_to :business_calendar
 
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
@@ -56,7 +54,6 @@ class Freshfone::Number < ActiveRecord::Base
 	
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
 	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
-	ALL_NUMBERS = "0" #Used in Call History and Reports for filtering
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
@@ -76,7 +73,6 @@ class Freshfone::Number < ActiveRecord::Base
 		:conditions => ["number in (?, ?)", from, to] }
 	}
 	scope :expired, :conditions => { :state => 2 }
-	scope :numbers_with_groups, :include => :freshfone_number_groups
 
 
 	VOICE_HASH.each_pair do |k, v|
@@ -192,24 +188,7 @@ class Freshfone::Number < ActiveRecord::Base
 	def unused_attachments
 		attachments.reject{ |a| inuse_attachment_ids.include? a.id }
 	end
-
-	def self.accessible_freshfone_numbers(current_user, freshfone_numbers=[])
-		all_numbers = numbers_with_groups
-		agent_groups = current_user.agent_groups.collect{|ag| ag.group_id}
-		freshfone_numbers = all_numbers.reject { |number|
-			number_groups = number.freshfone_number_groups.collect{|group| group.group_id}
-			(number_groups.present? && (number_groups&agent_groups).blank?)
-		}
-		freshfone_numbers
-	end
-
-	def can_access_by_agent?(user)
-		number_groups = freshfone_number_groups.collect{|group| group.group_id}
-		return true if number_groups.blank?
-		agent_groups = user.agent_groups.collect{|ag| ag.group_id}
-		(number_groups&agent_groups).present?
-	end
-
+  
 	private
 
 		def set_renewal_date

@@ -24,7 +24,6 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   has_one  :whitelisted_ip
   has_many :dynamic_notification_templates
-  has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
@@ -87,7 +86,6 @@ class Account < ActiveRecord::Base
   has_many :subscription_payments
   has_many :solution_categories, :class_name =>'Solution::Category', :include =>:folders, :order => "solution_categories.position"
   has_many :solution_articles, :class_name =>'Solution::Article'
-  has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'
 
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'

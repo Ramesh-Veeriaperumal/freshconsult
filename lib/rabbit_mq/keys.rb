@@ -1,4 +1,4 @@
 module RabbitMq::Keys
-  TICKET_SUBSCRIBERS = ["auto_refresh"]
-  NOTE_SUBSCRIBERS = []
+  TICKET_SUBSCRIBERS = []
+  NOTE_SUBSCRIBERS   = []
 end

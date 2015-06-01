@@ -118,7 +118,7 @@
 	<input type="hidden" name="wf_order_type" value="<%= params[:wf_order_type] || 'desc' %>" />    
 	<input type="hidden" name="page" value="1" />
 	<input type="hidden" name="data_hash" value="" />
-	<input type="hidden" name="number_id" value="" />
+	<input type="hidden" name="number_id" value="<%= @current_number.id %>" />
 	<div rel='filter'>
 	</div>
 </form>

@@ -2479,6 +2479,7 @@ da:
       info1: "Du kan frit tilpasse din selvbetjeningsportal hvor kunder og agenter  logger ind. Designe udseendet og udtrykket af ​​din helpdesk med dit logo og tema ved at uploade logo og favicon, give din helpdesk et navn, og tilpasse dine portal farver."
     cancel:
       cancel_account: "Opsig Freshdesk konto"
+      goback: "&#x2190; Tilbage til kontoindstillinger"
       delete_my_account: "Slet min konto"
       confirm_and_cancel_my_account: "Jeg bekræfter, at jeg ønsker at opsige min konto og slette alle mine data..."
       you_must_confirm: "Du skal bekræfte din abonnementsopsigelse"

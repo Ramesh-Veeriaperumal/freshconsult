@@ -57,7 +57,7 @@ class Freshfone::UsersController < ApplicationController
 				if @freshfone_user.save
 					render(:json => { :update_status => true,
 						:token => @freshfone_user.get_capability_token(force_generate_token?),
-						:client => default_client, :expire => EXPIRES, :availability_on_phone => @freshfone_user.available_on_phone? })
+						:client => default_client, :expire => EXPIRES })
 				else
 					render :json => { :update_status => false }
 				end

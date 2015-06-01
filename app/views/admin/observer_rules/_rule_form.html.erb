@@ -87,6 +87,7 @@
 		<%= render :partial=> 'admin/shared/advanced_webhook_usecase' %>
 	</div>
 </div>
+<%= link_to(t('clone'), clone_rule_admin_observer_rule_path(@va_rule.id), :class => "pull-left btn btn-flat") if params[:action] == "edit"%>
 <div class="button-container pull-right itil-hide">
 	<input type="hidden" name="save_json" id="savejson" value="" />
 	<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>

@@ -244,7 +244,7 @@ RSpec.describe Support::Solutions::ArticlesController do
 
 		random_message = rand(4) + 1
     post :create_ticket, :id => test_article.id,
-      :helpdesk_ticket => { :email => Faker::Internet.email },
+      :helpdesk_ticket => { :email => "example@example.com" },
       :helpdesk_ticket_description => description,
       :message => [1]
    
@@ -254,24 +254,6 @@ RSpec.describe Support::Solutions::ArticlesController do
     ArticleTicket.find(:all, :conditions => { :article_id => test_article.id }).map(&:ticket_id).should include ticket.id
     ArticleTicket.find_by_ticket_id(ticket).article_id.should eql test_article.id
     ticket.subscriptions.find_by_user_id(test_article.user_id).should be_nil
-  end
-
-  it "should not create ticket while submitting feedback form for non logged in users with invalid email" do
-		agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-		test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
-		 :status => "2", :art_type => "1" , :user_id => "#{agent.id}"} )
-		
-		user_count = @account.users.count
-    ticket_count = test_article.article_ticket.count
-
-    post :create_ticket, :id => test_article.id,
-      :helpdesk_ticket => { :email => 'example@example' },
-      :helpdesk_ticket_description => Faker::Lorem.paragraph,
-      :message => [1]
-   
-    response.code.should be_eql("200")
-    @account.users.count.should eql user_count
-    test_article.article_ticket.count.should eql ticket_count
   end
 
   it "should show a published article to user" do

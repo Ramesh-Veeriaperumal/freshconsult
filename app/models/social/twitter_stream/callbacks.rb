@@ -9,7 +9,7 @@ class Social::TwitterStream < Social::Stream
   before_validation :valid_rule?, :if => :gnip_subscription?
   before_save :update_rule_value, :unless => :gnip_subscription?
   before_save :persist_previous_changes
-  after_commit :subscribe_to_gnip, on: :create, :if => :gnip_subscription?
+  after_commit :subscribe_to_gnip, :create_global_access, on: :create, :if => :gnip_subscription?
   after_commit :populate_ticket_rule, on: :create
   after_commit :update_gnip_subscription, on: :update, :if => :gnip_subscription?
   after_commit :unsubscribe_from_gnip, on: :destroy, :if =>  :gnip_subscription?

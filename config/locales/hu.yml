@@ -3134,7 +3134,7 @@ hu:
     send_verification_email: "Aktiváció elküldése"
     unverified: "Nem érvényesített email"
     info4: "<strong>MEGJEGYZÉS:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>."
-    spf_info: "Freshdeskben a válasz emailek a releváns ügyfélszolgálati email címről fognak kimenni. Nagyon hasznos, ha egy <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF rekordot</a> állít be a DNS zónájába, hogy emailjei maradéktalanul megérkezzenek."
+    spf_info: "Freshdeskben a válasz emailek a releváns ügyfélszolgálati email címről fognak kimenni. Nagyon hasznos, ha egy <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF rekordot</a> állít be a DNS zónájába, hogy emailjei maradéktalanul megérkezzenek."
     helpcard:
       tour1: "Email cím beállításához segítség"
       info5: "Az Ön alapértelmezett ügyfélszolgálati email címe: <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Minden emailt, amit erre a címre küldenek, átkonvertáljuk kérelemmé."

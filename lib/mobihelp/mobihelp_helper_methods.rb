@@ -25,15 +25,15 @@ module Mobihelp::MobihelpHelperMethods
         app_key = authKey.split(":")[0]
         app_secret = authKey.split(":")[1] 
         if app_key.blank? or app_secret.blank?
-          render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS]))
+          render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS])
           return
         end
         @mobihelp_app = fetch_app_from_cache(current_account, app_key)
       end
       if @mobihelp_app.nil? or (@mobihelp_app.app_secret != app_secret)
-        render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS]))
+        render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS])
       elsif @mobihelp_app.deleted
-        render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_APP_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_APP_DELETED]))
+        render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_APP_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_APP_DELETED])
       end
     end
 
@@ -87,26 +87,7 @@ module Mobihelp::MobihelpHelperMethods
       device = Mobihelp::Device.find_by_device_uuid(@device_uuid)
 
       if device
-        render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_DUPLICATE_DEVICE_ID], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_DUPLICATE_DEVICE_ID]))
+        render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_DUPLICATE_DEVICE_ID], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_DUPLICATE_DEVICE_ID])
       end
     end
-
-    def mobihelp_user_login
-      unless current_user # override validated user check for mobihelp tickets
-        User.current = @current_user = User.find_by_single_access_token(params['k']) #ignore active / check
-      end
-    end
-
-    def valid_user?
-      current_user.present? and not (current_user.deleted? or current_user.blocked?)
-    end
-
-    def render_json(data)
-      respond_to do |format|
-        format.json {
-          render :json => data
-        }
-      end
-    end
-    
 end

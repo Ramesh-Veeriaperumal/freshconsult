@@ -75,7 +75,7 @@ describe Freshfone::UsersController do
     @request.env["HTTP_ACCEPT"] = "application/json"
     controller.stubs(:bridge_queued_call)
     post :refresh_token, {:status => 1}
-    json.keys.should be_eql([:update_status, :token, :client, :expire, :availability_on_phone])
+    json.keys.should be_eql([:update_status, :token, :client, :expire])
   end
 
   it 'should not get a new capa token on incorrect freshfone user' do

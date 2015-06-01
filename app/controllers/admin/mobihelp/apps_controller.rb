@@ -61,19 +61,13 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
     def build_mobihelp_app
       @app = Mobihelp::App.new if @app.nil?
       @app.attributes = params[:mobihelp_app]
-
-      app_solution_ids = @app.app_solutions(:select => :category_id, :order => "position").map(&:category_id)
-      category_ids     = @app.category_ids.map(&:to_i) || []
-
-      unless app_solution_ids == category_ids
-        @app.app_solutions.clear
-
-        if category_ids
-          category_ids.each_with_index do |category_id, index|
-            @app.app_solutions.build({ 
+      @app.app_solutions.clear  
+  
+      if @app.category_ids
+        @app.category_ids.each_with_index do |category_id, index|
+          @app.app_solutions.build({ 
               :category_id => category_id, 
               :position => index+1 })
-          end
         end
       end
     end

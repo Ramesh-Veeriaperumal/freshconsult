@@ -608,7 +608,6 @@ var scrollToError = function(){
 
 		$(this).select2({
 			multiple: true,
-			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
 			ajax: { 
@@ -630,8 +629,6 @@ var scrollToError = function(){
 	    initSelection : function (element, callback) {
 	      callback(hash_val);
 	    },
-	    formatInputTooLong: function () { 
-      	return MAX_TAG_LENGTH_MSG; },
 		  createSearchChoice:function(term, data) { 
 		  	//Check if not already existing & then return
         if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)

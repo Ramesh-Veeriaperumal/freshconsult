@@ -1,6 +1,7 @@
 shared_path = node[:opsworks] ? "/data/helpkit/shared" : config.shared_path
 rel_path = node[:opsworks] ? "#{release_path}" : "#{config.release_path}"
 puts ":::::::::::release path is ::: #{rel_path.inspect}"
+run "ln -nfs #{shared_path}/config/memcached.yml #{rel_path}/config/memcached.yml"
 run "ln -nfs #{shared_path}/config/database_cluster.yml  #{rel_path}/config/database.yml"
 run "ln -nfs #{shared_path}/config/elasticsearch.yml  #{rel_path}/config/elasticsearch.yml"
 run "ln -nfs #{shared_path}/config/redshift.yml  #{rel_path}/config/redshift.yml"

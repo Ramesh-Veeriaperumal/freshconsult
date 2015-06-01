@@ -16,9 +16,9 @@ class ForumUnpublished < Dynamo
 		ForumUnpublishedNext
 	end
 
-	def self.by_user(user, user_timestamp)
+	def self.by_user(acc, user, user_timestamp)
 		query(
-			:account_id => Account.current.id,
+			:account_id => acc,
 			:user_timestamp => 
 			[:between, user_timestamp, next_user_timestamp(user)],
 			:ascending => true

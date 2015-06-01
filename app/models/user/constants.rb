@@ -35,5 +35,4 @@ class User < ActiveRecord::Base
                                 "external_id", "job_title", "language"]
 
   MAX_USER_EMAILS = 5
-  PASSWORD_LENGTH = 4
 end

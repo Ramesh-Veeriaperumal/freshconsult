@@ -154,16 +154,9 @@ unless Account.current
 	  a.addon_type = addon_types[:agent_quantity]
 	end
 
-	chat_routing = Subscription::Addon.seed(:name) do |a|
-	  a.name = 'Chat Routing'
-	  a.amount = 5.0
-	  a.renewal_period = 1
-	  a.addon_type = addon_types[:agent_quantity]
-	end
-
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization, 
 									multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
-									custom_slas, custom_mailbox, whitelisted_ips, chat_routing ]
+									custom_slas, custom_mailbox, whitelisted_ips ]
 
 	estate_addons = [custom_mailbox, whitelisted_ips]
 	garden_addons = all_addons - [ multiple_business_hours, custom_domain, custom_slas ]

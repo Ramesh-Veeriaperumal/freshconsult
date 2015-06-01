@@ -34,16 +34,16 @@ include Freshfone::CallHistoryHelper
 
 
   def filter_number_options
-    numbers_options = freshfone_numbers.map{|c|
-      { :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name.to_s) }
-     }
-    numbers_options.unshift({:value => t('reports.freshfone.all_numbers'),:deleted=> false, :id=> 0 ,:name=> t('reports.freshfone.all_call_types')})
-    numbers_options.to_json
+    number_options = [{:id => Reports::FreshfoneReport::ALL_NUMBERS, :value => t('reports.freshfone.all_numbers'), 
+        :deleted => false, :name => t('reports.freshfone.all_numbers')},{:value => "", :deleted => false, :name => "" }]
+    numbers_options = freshfone_numbers.reverse.reduce(number_options){|obj, c|
+      obj.push({ :id => c.id, :value => c.number_name, :deleted => c.deleted, :name => c.name })
+     }.to_json
   end
 
   def filter_default_number
     selected_number = freshfone_numbers.find(@freshfone_number)
-    {:id => selected_number.id, :value => "#{selected_number.name} (#{selected_number.number})" }.to_json
+    {:id => selected_number.id, :value => selected_number.number_name }.to_json
   end
 
   # Count Methods (results from query: def report_query)
@@ -60,14 +60,6 @@ include Freshfone::CallHistoryHelper
 
   def voicemails_count(calls)
     calls.sum(&:voicemail)
-  end
-
-  def external_transfers_count(calls)
-    calls.sum(&:external_transfers) || 0
-  end
-
-  def direct_dial_count(calls)
-    calls.sum(&:direct_dial_count) || 0
   end
 
   def unanswered_transfers(calls)

@@ -58,12 +58,6 @@ class Freshfone::CallActions
     current_call.root.increment(:children_count).save if build_child.save
   end
 
-  def register_external_transfer(outgoing = false)
-  	self.outgoing = outgoing
-  	return if current_call.blank?
-  	current_call.root.increment(:children_count).save if build_child.save
-  end
-
 	def save_call_meta(group)
 		current_call.group_id = group
 		current_call.save

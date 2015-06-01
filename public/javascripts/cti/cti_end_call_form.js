@@ -87,7 +87,7 @@ var remoteId=0;
 			},
 			formatResult: function (result) {
 				var userDetails = result.email || result.mobile || result.phone;
-				if(userDetails && (userDetails).trim() != "") {
+				if(userDetails && $(userDetails).trim != "") {
 					userDetails = "(" + userDetails + ")";
 				} else {
 					if (!result.id) { userDetails = "New requester";}

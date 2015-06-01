@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "579573c1726cad31dabba43b8141788741dac4151546012f2a72ef882f4bafac",
-    "current": "579573c1726cad31dabba43b8141788741dac4151546012f2a72ef882f4bafac"
+    "previous": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c",
+    "current": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c"
   },
   "fonts": [
-    "public/assets/glyphs_579573c1726cad31dabba43b81417887.ttf",
-    "public/assets/glyphs_579573c1726cad31dabba43b81417887.svg",
-    "public/assets/glyphs_579573c1726cad31dabba43b81417887.woff",
-    "public/assets/glyphs_579573c1726cad31dabba43b81417887.eot"
+    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.ttf",
+    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.svg",
+    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.woff",
+    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.eot"
   ],
   "glyphs": {
     "account": {
@@ -17,14 +17,6 @@
     "agent": {
       "codepoint": 61697,
       "source": "public/glyphs/vectors/agent.svg"
-    },
-    "agent-fchat-off": {
-      "codepoint": 61872,
-      "source": "public/glyphs/vectors/agent-fchat-off.svg"
-    },
-    "agent-fchat-on": {
-      "codepoint": 61873,
-      "source": "public/glyphs/vectors/agent-fchat-on.svg"
     },
     "all-streams": {
       "codepoint": 61698,
@@ -206,10 +198,6 @@
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
     },
-    "deleted": {
-      "codepoint": 61875,
-      "source": "public/glyphs/vectors/deleted.svg"
-    },
     "disconnected": {
       "codepoint": 61743,
       "source": "public/glyphs/vectors/disconnected.svg"
@@ -294,10 +282,6 @@
       "codepoint": 61763,
       "source": "public/glyphs/vectors/ff-dialpad.svg"
     },
-    "ff-group": {
-      "codepoint": 61874,
-      "source": "public/glyphs/vectors/ff-group.svg"
-    },
     "ff-mic": {
       "codepoint": 61764,
       "source": "public/glyphs/vectors/ff-mic.svg"
@@ -314,21 +298,9 @@
       "codepoint": 61767,
       "source": "public/glyphs/vectors/ff-on-call.svg"
     },
-    "ff-on-mobile": {
-      "codepoint": 61871,
-      "source": "public/glyphs/vectors/ff-on-mobile.svg"
-    },
     "ff-phone": {
       "codepoint": 61768,
       "source": "public/glyphs/vectors/ff-phone.svg"
-    },
-    "ff-via-browser": {
-      "codepoint": 61869,
-      "source": "public/glyphs/vectors/ff-via-browser.svg"
-    },
-    "ff-via-phone": {
-      "codepoint": 61870,
-      "source": "public/glyphs/vectors/ff-via-phone.svg"
     },
     "file": {
       "codepoint": 61769,
@@ -727,7 +699,7 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": false,
+    "debug": true,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -742,7 +714,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

@@ -90,9 +90,6 @@ class Discussions::ForumsController < ApplicationController
 		end
 	end
 
-	def followers
-	  render :layout => false
-	end
 
 	protected
 

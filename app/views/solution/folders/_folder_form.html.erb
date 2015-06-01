@@ -26,8 +26,7 @@
 	    	</div>
 	    	<br>
 	    	<div id="company_folders" class="row-fluid">
-  				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies, 
-  					:max_limit => 250 }) %>
+  				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
   			</div>
 	  	</div>
     </li>

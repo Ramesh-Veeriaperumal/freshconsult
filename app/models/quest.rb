@@ -131,13 +131,11 @@ class Quest < ActiveRecord::Base
   def revoke!(user)
     user_ach_quest = user.achieved_quest(self)
     return if user_ach_quest.nil?
+    user_ach_quest.delete
     support_scores.create({:score => -(points.to_i),
           :user => user,
           :score_trigger => QUEST_SCORE_TRIGGERS_BY_ID[category],
-          :account => account,
-          :created_at => user_ach_quest.created_at,
-          :updated_at => user_ach_quest.updated_at })
-    user_ach_quest.delete
+          :account => account})
     clear_quests_cache_for_user(user)
   end
 

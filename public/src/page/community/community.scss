@@ -28,7 +28,7 @@ body.community {
 	@import "show";
 	@import "conversation";
 	@import "topic_list";
-	
+
 	&.forms .controls .toggle-button {
 		@include margin-left(0);
 	}
@@ -111,32 +111,6 @@ body.community {
 	}
 }
 
-#follower-container {
-	display: inline-block;
-}
-
-div.forum-follower {
-	margin-top: 32px;
-	@include margin-left(-5px);
-}
-
-.topic-follower-right {
-	right: 75px;
-}
-
-div.follower_label {
-	@include text-align(left);
-}
-
-.forum-follower-list .trans-bg li {
-		height: 100%;
-}
-
-.forum-followers-list {
-	margin-top: 5px;
-	@include margin-right(15px);
-}
-
 .list-title{
 	font-size: 20px;
 	line-height: 2.4;
@@ -149,14 +123,6 @@ div.follower_label {
 	@include margin-right(12px);
 	margin-top: 10px;
 	@include margin-left(15px);
-}
-
-.list-inline {
-	display: inline-block;
-}
-
-.followers-list {
-  @include margin-right(10px); 
 }
 
 .list-query-panel{

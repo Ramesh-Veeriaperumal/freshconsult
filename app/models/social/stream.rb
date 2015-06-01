@@ -23,8 +23,6 @@ class Social::Stream < ActiveRecord::Base
     :dependent => :destroy
 
   delegate :groups, :users, :to => :accessible
-  
-  accepts_nested_attributes_for :accessible
 
   def create_global_access
     accessible = self.create_accessible(:access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all] ) if accessible.nil?

@@ -12,11 +12,6 @@
 		visibility: visible;
 	}
 }
-.modal-body{
-	.recording_delete_warning{
-		border-radius: 4px;
-	}
-}
 .fresfone-call-history {
 //	change css
 	overflow: hidden;
@@ -83,46 +78,24 @@
 		}
 	}
 	.assigned_ticket {
-		@include margin-right(12px);
+		color: $ch-assigned-ticket;
 		.spinner{
 		 @include left(12px !important);
 		}
 	}
-	.btn-round{
-		[class*="#{$font-class}"]{
-			position: relative;
-			top: 10px;
-			display: block;
-		}
-		border-radius: 50%;
-		cursor: pointer;
-		@include size(36px, 36px);
-		padding: 0;
-		text-align: center;
-		box-shadow: none;
-		background-color: #fff;
-		border: 1px solid #ddd;
-		&:hover{
-			background-color:#f9f9f9;
-			border-color:#aaa;
-		}
-	}
 	.call_user {
-		@extend .btn-round;
+		@include border-left(1px solid $ch-call-user-border);
+		@include margin-right(-12px);
 		.can-make-calls {
+			height: 30px;
+			width: 30px;
 			margin: 0 auto;
-			@include size(30px, 30px);
-			text-indent: -9999px;
+			background-repeat: no-repeat;
+			cursor:pointer;
 			display: block;
+			text-indent: -9999px;
 			direction: ltr;
 			padding: 0;
-			font-size: 18px;
-			position: relative;
-			top: 4px;
-			left:1px;
-			&:before{
-				margin-top: 10px;
-			}
 		}
 	}
 	.preview_pic img,	.callhistory_helpdesk_avatar {
@@ -154,57 +127,13 @@
 		margin-top: 4px;
 		text-transform: capitalize;
 	}
-	.curved_border{
-		height:40px;
-		width:100px;
-		border:1px solid $ch-ui360-border;
-		@include border-radius(20px);
-		.spinner{
-			padding-top:19px;
-			@include padding-left(1px);
-		}
-	}
 	.ui360 {
-		@extend .curved_border;
+		border: 1px solid $ch-ui360-border;
+		@include border-radius(20px);
+		width: 100px;
 		background-color: $ch-ui360-background;
-		float:left;
-		cursor:pointer;
-		&:hover{
-			border-color:#aaaaaa;
-			background-color:#eee;
-		}
 	}
-	.recording_delete{
-		position:relative;
-		top:10px;
-		float:right;
-	}
-	.show_recording_delete{
-		height:43px;
-		width:100%;
-		&:hover .recording_delete{
-			display:block;
-		}
-	}
-	.recording_deleted{
-		@extend .curved_border;
-		background-repeat: repeat;
-		span{
-			font-size:13px;
-			color:#999;
-			@include text-shadow(0px 2px 1px #fff);	
-			top:4px;
-			position:relative;
-		}		
-		&:before{
-			font-size:25px;
-			top : 10px;
-			position: relative;
-			color:#ccc;
-			@include right(7px);
-		}
-	}
-	.playing, .playing:hover {
+	.playing {
 		background-color: $ch-ui360-playing-background;
 		border-color: $ch-ui360-playing-border;
 		@include box-shadow(inset -1px 0px 7px -1px $ch-ui360-playing-shadow);
@@ -230,11 +159,13 @@
 		background-repeat: no-repeat;
 		cursor: default;
 	}
-	.converted_ticket{
-		background-color:#f9f9f9;
-		border-color:#eee;
-		span{
-			@include size(100%,100%);
+	.create_freshfone_ticket,
+	.converted_ticket {
+		@include padding(6px 0 6px 30px);
+		background-repeat: no-repeat;
+		font-weight: 500;
+		@if $rtl{
+			background-position-x: 30px;
 		}
 	}
 	.transfer_call {
@@ -468,7 +399,4 @@
 .list-page-freshfone-numbers .freshfone-lead {
 	margin-bottom: 3px !important;
 	font-weight: 400;
-}
-.select2-results .select2-result-label{
-	margin: 5px;
 }

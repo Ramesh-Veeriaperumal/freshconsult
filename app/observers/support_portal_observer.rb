@@ -1,7 +1,7 @@
 class SupportPortalObserver < ActiveRecord::Observer
 
   observe Topic, Portal::Template, Post, Helpdesk::TicketField, ContactField, Portal, 
-	ForumCategory, Forum, Solution::Category, Solution::Folder, Solution::Article, Solution::ArticleBody,
+	ForumCategory, Forum, Solution::Category, Solution::Folder, Solution::Article,
 	Portal::Page, ChatSetting, ChatWidget, BusinessCalendar, PortalSolutionCategory, PortalForumCategory
 
 	include Redis::RedisKeys

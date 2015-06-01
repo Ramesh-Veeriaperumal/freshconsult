@@ -139,9 +139,6 @@ var FreshfoneWidget;
 		hideTransfer: function () {
 			$('#freshfone_available_agents .transfering_call').hide();
 		},
-		resetTransferMenuList: function(){
-			$('#transfer-menu-items li').first().trigger('click');
-		},
 		resetPreviewMode: function () {
 			this.previewMode(true);
 		},

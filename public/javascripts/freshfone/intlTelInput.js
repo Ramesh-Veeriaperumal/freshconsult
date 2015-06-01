@@ -808,9 +808,9 @@ https://github.com/Bluefieldscom/intl-tel-input.git
         },
         initLSCountries: function() {
             if(freshfone.country_preference.length == 0){
-             freshfone.country_preference = $.parseJSON('[' + freshfone.original_stringify(this._getCountryData(this._getCountryCode(freshfonecalls.outgoingNumber())).iso2) + ']');
+             freshfone.country_preference = $.parseJSON('[' + JSON.stringify(this._getCountryData(this._getCountryCode(freshfonecalls.outgoingNumber())).iso2) + ']');
             }
-            localStorage.setItem("callerPreference",freshfone.original_stringify(freshfone.country_preference));
+            localStorage.setItem("callerPreference",JSON.stringify(freshfone.country_preference));
             return freshfone.country_preference;
         },
         getLSObject: function(country_preference_string){
@@ -825,7 +825,7 @@ https://github.com/Bluefieldscom/intl-tel-input.git
               freshfone.country_preference.unshift(freshfonecalls.callerLocation().toLowerCase());
             }
           }
-            localStorage.setItem("callerPreference", freshfone.original_stringify(freshfone.country_preference));
+            localStorage.setItem("callerPreference", JSON.stringify(freshfone.country_preference));
         },
          // update the selected flag
         updateFlag: function(number) {

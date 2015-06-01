@@ -96,7 +96,7 @@ class Support::SearchController < SupportController
               if SearchUtil.es_exact_match?(params[:term])
                 f.query { |q| q.match :_all, SearchUtil.es_filter_exact(params[:term]), :type => :phrase }
               else
-                f.query { |q| q.match :_all, SearchUtil.es_filter_key(params[:term], false), :analyzer => "include_stop" }
+                f.query { |q| q.string SearchUtil.es_filter_key(params[:term]), :analyzer => "include_stop" }
               end
               f.filter :term, { :account_id => current_account.id }
               f.filter :or, { :not => { :exists => { :field => :status } } },

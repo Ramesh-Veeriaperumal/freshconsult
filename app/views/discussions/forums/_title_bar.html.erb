@@ -3,22 +3,25 @@
 		<i class="forum-type-<%= @forum.type_symbol %>"></i>
 	</div>
 	<ul class="list-actions-left">
-
-		<li class="monitor-list add-follower" id ="follower-container" >
-			<%= monitor_container(@forum) %>
-			<% status = @monitor ? '' : 'active' %>
-			<%= follower_button(@forum,status) %>
+		<li id="monitorship_link">
+			<%= link_to "", toggle_monitorship_path("forum", @forum.id, (@monitor ? "follow" : "unfollow")), 
+				:remote => true, :method => :post,
+				:class => "forum_follow_icon tooltip #{@monitor ? '' : 'active'}",
+				:id => "toggle_monitorship_status",
+				:"data-hide-before" => 'this',
+				:"data-loading" => 'monitorship_link',
+				:"data-loading-classes" => 'sloading loading-tiny',
+				:title => t((@monitor ? 'monitorships.follow_title' : 'monitorships.unfollow_title')),
+				:"data-keybinding" => "#{shortcut("community_actions.monitor_forum")}" %>
 		</li>
-
 		<% if privilege?(:manage_forums) -%>
 		<li>
 			<%= pjax_link_to("", edit_discussions_forum_path(@forum), :class => font_class(:edit, 23, "tooltip"), :title => "Edit")%>
 		</li>
 		<% end %>
 	</ul>
-	<ul class="list-actions-right forum-list">
-		<%= followers_count(@forum) %>		
-		<li class="list-inline">
+	<ul class="list-actions-right">
+		<li>
 			<%= new_discussions_button(:topic) %>
 		</li>
 	</ul>

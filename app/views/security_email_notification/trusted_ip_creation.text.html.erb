@@ -1,6 +1,6 @@
 Hi,<br><br>
 
-The trusted IP security settings in your helpdesk has been enabled by <%= @doer %>. Your helpdesk is now restricted to IPs between
+The trusted IP security settings in your helpdesk has been enabled. Your helpdesk is now restricted to IPs between
 <ul>
 	<% @changes.each do |ip_range| %>
 	<li> <%= ip_range["start_ip"] %>  -  <%= ip_range["end_ip"] %> </li>

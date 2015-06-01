@@ -177,22 +177,8 @@ module Integrations::GoogleContactsUtil
   end
 
   def enable_integration(goog_acc)
-    config_hash = construct_installed_app_config(goog_acc)
-    Integrations::Application.install_or_update(APP_NAMES[:google_contacts], goog_acc.account, config_hash)
+    Integrations::Application.install_or_update(APP_NAMES[:google_contacts], goog_acc.account)
     goog_acc.save!
-  end
-
-  def remove_installed_app_config(google_acc_id)
-    current_config = nil
-    google_acc = current_account.google_accounts.find_by_id(google_acc_id)
-    installed_app = current_account.installed_applications.with_name("google_contacts").first
-    current_config = installed_app["configs"][:inputs] unless installed_app["configs"].blank?
-    unless current_config.blank? || current_config["OAuth2"].blank?
-      if current_config["OAuth2"].include?("#{google_acc.email}") #Redundant check, remove it in the next iteration.
-        current_config["OAuth2"].delete("#{google_acc.email}") 
-        installed_app.save
-      end
-    end
   end
 
   private
@@ -204,19 +190,6 @@ module Integrations::GoogleContactsUtil
           entry_element.delete_element(delete_element)
         end
       end
-    end
-
-    def construct_installed_app_config goog_acc
-      installed_app = goog_acc.account.installed_applications.with_name("google_contacts").first
-      current_config = nil # Can do a compact & flatten and can make the initial assignment as {}
-      current_config = installed_app["configs"][:inputs] unless installed_app["configs"].blank?
-      unless current_config.blank? || current_config["OAuth2"].blank?
-        current_config["OAuth2"] << "#{goog_acc.email}"
-      else
-        current_config = {}
-        current_config["OAuth2"] = ["#{goog_acc.email}"]
-      end
-      current_config
     end
 
     def copy(from_user, to_user)

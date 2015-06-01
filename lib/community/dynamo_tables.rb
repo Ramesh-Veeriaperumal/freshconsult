@@ -12,25 +12,24 @@ module Community::DynamoTables
 
   NEXT_MODERATION_CLASSES = [ ForumSpamNext, ForumUnpublishedNext, SpamCounterNext ]
 
-  def self.create(args = {})
-    @failed = []
-    MODERATION_MODULES_BY_CLASS.each do |klass|
+	def self.create(args = {})
+  	MODERATION_MODULES_BY_CLASS.each do |klass|
       new_table = Class.new(Dynamo) do 
 
         include klass[1]
 
         def self.initialize(current_class, args)
-          @current_class = current_class
-          @args = args
-        end
+	        @current_class = current_class
+	        @args = args
+	      end
 
         def self.table_name
-          if @args.blank?
-            @current_class.afternext
-          else
-            prefix = @current_class.table_name.split(Rails.env[0..3]).first
-            %{#{prefix}#{Rails.env[0..3]}_#{(Time.new(@args[:year], @args[:month])).strftime('%Y_%m')}}
-          end
+        	if @args.blank?
+	          @current_class.afternext
+	        else
+	        	prefix = @current_class.table_name.split(Rails.env[0..3]).first
+	        	%{#{prefix}#{Rails.env[0..3]}_#{(Time.new(@args[:year], @args[:month])).strftime('%Y_%m')}}
+	        end
         end
       end
 
@@ -40,13 +39,11 @@ module Community::DynamoTables
       if new_table.create_table
         puts "** Done ** #{new_table.table_name} **"
       else
-        @failed << "Creation of Table - #{new_table.table_name}"
         puts "** Failed ** #{new_table.table_name} **"
       end
     end
 
     increase_throughput if args.blank? && (Rails.env != "test")
-    ForumErrorsMailer.table_creation_failed(:errors => @failed) unless @failed.blank?
   end
 
   def self.increase_throughput 
@@ -55,11 +52,9 @@ module Community::DynamoTables
         if klass.update_throughput(DYNAMO_THROUGHPUT[:read], DYNAMO_THROUGHPUT[:write])
           puts "** Done ** #{klass.table_name} **"
         else
-          @failed << "Updating Throughput of Table - #{klass.table_name}"
           puts "** Failed ** #{klass.table_name} **"
         end
       rescue Exception => e
-        @failed << "Exception while Updating Throughput of Table - #{klass.table_name}"
         puts "** Exception while updating throughput for #{klass.table_name} **"
         puts e
       end

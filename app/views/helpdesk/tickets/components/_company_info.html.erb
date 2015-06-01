@@ -5,6 +5,6 @@
 <% end %>
 <% unless user.company.blank? %>
 	<div class="break-word user-company-name" title="<%= h user.company.name %>">
-		<%= link_to(h(user.company.name), user.company, :'data-pjax' => "#body-container")  %>
+		<%= link_to(h(user.company.name), user.company)  %>
 	</div>
 <% end %>

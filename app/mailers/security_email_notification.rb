@@ -21,7 +21,7 @@ class SecurityEmailNotification < ActionMailer::Base
     end.deliver
   end
 
-  def admin_alert_mail(model, subject, body_message_file, changed_attributes, doer)
+  def admin_alert_mail(model, subject, body_message_file, changed_attributes)
     Time.zone = Account.current.time_zone
     headers = {
       :to    => Account.current.notification_emails,
@@ -36,7 +36,6 @@ class SecurityEmailNotification < ActionMailer::Base
     @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model
-    @doer = doer
 
     mail(headers) do | part|
       part.text { render "#{body_message_file}.text.plain.erb" }

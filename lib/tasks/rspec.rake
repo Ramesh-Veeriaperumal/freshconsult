@@ -64,8 +64,7 @@ if Rails.env.test?
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
     "spec/models/mobihelp/app_spec.rb",
-    "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb",
-    "spec/controllers/mobihelp/articles_controller_spec.rb"
+    "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
   ]
 
   IntegrationTests = [ 
@@ -115,10 +114,7 @@ if Rails.env.test?
     "spec/controllers/topics_controller_spec.rb",
     "spec/models/monitorship_spec.rb",
     "spec/controllers/support/discussions/*_spec.rb",
-    "spec/controllers/support/discussions_controller_spec.rb",
-    "spec/controllers/monitorships_controller_spec.rb",
-    "spec/mailers/forum_mailer_spec.rb",
-    "spec/mailers/topic_mailer_spec.rb"
+    "spec/controllers/support/discussions_controller_spec.rb"
   ]
 
   ForumDynamoTests = [

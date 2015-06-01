@@ -60,7 +60,7 @@ body { background: $background; }
 /* ------------------------------------------------------------------------------------------- 	*/	
 
 .header { background-color: $header_color; }
-.fd-branding .logo_text, .header_links, .header_links a, .header_links a:hover, .ui-widget-header { 
+.brand .logo_text, .header_links, .header_links a, .header_links a:hover, .ui-widget-header { 
 	color: $header_ctxt_color; 
 }
 .header_links a.nav-trigger:before { border-top-color: $header_ctxt_color; }
@@ -74,7 +74,7 @@ body { background: $background; }
     background-size: 53% 101%;
     background-repeat: no-repeat;
 }
-//.fd-branding .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
+//.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
 .nav_search div.search_bar { border-color:darken($tab_color, 8%); } 
 .header-notification-wrapper .ficon-help{ 
 	color: rgba($header_ctxt_color, 0.4);

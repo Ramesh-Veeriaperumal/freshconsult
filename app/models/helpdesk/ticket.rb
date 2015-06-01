@@ -24,6 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
+  include RabbitMq::Ticket
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -34,7 +35,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -331,12 +332,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def conversation_count(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').size
-  end
-  
-  def latest_twitter_comment_user
-    latest_tweet = notes.latest_twitter_comment.first
-    reply_to_user = latest_tweet.nil? ? requester.twitter_id : latest_tweet.user.twitter_id
-    "@#{reply_to_user}"
   end
 
   def time_tracked
@@ -770,11 +765,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def requester_fb_profile_id
     requester.fb_profile_id
   end
-  
-  # Instance level spam watcher condition
-  # def rl_enabled?
-  #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?
-  # end
 
 
   def search_fields_updated?
@@ -794,11 +784,4 @@ class Helpdesk::Ticket < ActiveRecord::Base
       doer_id = Thread.current[:observer_doer_id]
       @model_changes[:responder_id] && responder && responder_id != doer_id && responder != User.current
     end
-
-    # def rl_exceeded_operation
-    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
-    #                                                          :user_id => self.requester_id }
-    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
-    # end
-
 end

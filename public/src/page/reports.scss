@@ -922,11 +922,6 @@ $animation_timing: .1s;
 .twipsy.below .twipsy-arrow{
  @include left(12%);	
 }
-.report-no-external-msg{
-	float: left;
-	font-size:12px;
-	padding-right: 10px;
-}
 .report-help-icon{
 	border: 0;
 	@include float(right);
@@ -974,8 +969,4 @@ $animation_timing: .1s;
 			border-bottom: 1px solid #ddd;
 			margin: 0px 10px 10px;
 		}
-}
-
-.select2-results .select2-result-label{
-	margin: 5px;
 }

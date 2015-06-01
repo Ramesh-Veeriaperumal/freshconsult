@@ -3,8 +3,6 @@ Agent Collision:
 Chat:
   - :chat
   - :chat_enable
-Chat Routing:
-  - :chat_routing
 Custom Domain:
   - :custom_domain
 Custom Mailbox:

@@ -17,18 +17,18 @@ module Cache::Memcache::Mobihelp::Solution
     }
   end
 
-  def solutions_with_category(category_ids)
+  def solutions_with_category(categories)
     category_json_strings = []
-    category_ids.each do |category_id|
-      category_json_strings << solutions(category_id)
+    categories.each do |category|
+      category_json_strings << solutions(category)
     end
     "[#{category_json_strings.join(",")}]"
   end
 
-  def solutions_without_category(category_ids)
+  def solutions_without_category(categories)
     category_json_strings = []
-    category_ids.each do |category_id|
-      category_hash = ActiveSupport::JSON.decode(solutions(category_id))
+    categories.each do |category|
+      category_hash = ActiveSupport::JSON.decode(solutions(category))
       category_hash["category"]["public_folders"].each do |f|
         category_json_strings << {"folder" => f}.to_json
       end
@@ -45,15 +45,9 @@ module Cache::Memcache::Mobihelp::Solution
       MOBIHELP_SOLUTION_UPDATED_TIME % { :account_id => account_id, :app_id => app_id }
     end
 
-    def solutions(category_id)
-      MemcacheKeys.fetch(mobihelp_solutions_key(category_id)) {
-
-        category = Solution::Category.includes(:public_folders => 
-          {:published_articles => [:tags]}).find_by_id_and_account_id(category_id, account_id)
-
-        category.to_json(:except => :account_id, :include => {:public_folders => 
-          {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 
-          :except => :account_id}}, :except => :account_id}})
+    def solutions(category)
+      MemcacheKeys.fetch(mobihelp_solutions_key(category.id)) { 
+        category.to_json(:except => :account_id, :include => {:public_folders => {:include => :published_articles}} )
       }
     end
 

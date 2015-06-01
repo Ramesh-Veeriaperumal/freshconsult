@@ -324,11 +324,11 @@ module Helpdesk::TicketsHelper
     }.to_json.html_safe
   end
 
-  def socket_auth_params(connection)
+  def socket_auth_params
     aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     aes.encrypt
-    aes.key = Digest::SHA256.digest(NodeConfig[connection]["key"]) 
-    aes.iv  = NodeConfig[connection]["iv"]
+    aes.key = Digest::SHA256.digest(NodeConfig["key"]) 
+    aes.iv  = NodeConfig["iv"]
 
     account_data = {
       :account_id => current_user.account_id, 
@@ -340,10 +340,6 @@ module Helpdesk::TicketsHelper
 
   def agentcollision_socket_host
     "#{request.protocol}#{NodeConfig["socket_host"]}"
-  end
-
-  def autorefresh_socket_host
-    "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
   end
 
   def auto_refresh_channel

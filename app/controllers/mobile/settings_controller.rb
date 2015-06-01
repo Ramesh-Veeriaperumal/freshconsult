@@ -13,11 +13,13 @@ class Mobile::SettingsController < ApplicationController
   end
 
   def deliver_activation_instructions
-
-   #Code Moved to accounts/new_signup_free , so that activation mail is sent without second get request.
-
-   render :json => {result: true}
-
+  	current_user = current_account.users.find_by_email(params[:email]) if params.has_key?(:email)
+    if current_user.nil?
+      render :json => {result: false}
+    else
+      current_user.deliver_admin_activation
+      render :json => {result: true}
+    end
   end  
 	
 end

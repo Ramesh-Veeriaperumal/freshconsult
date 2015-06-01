@@ -34,6 +34,9 @@
 /* Importing chat availability icon */
 @import "cdn-ignored/sprites/chat/*.png";
 $chat-layout:horizontal;
+.agent-fchat-on { @include chat-sprite(status-on); }
+
+.agent-fchat-off { @include chat-sprite(status-off); }
 
 .icon_remove{
   cursor:pointer;

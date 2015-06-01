@@ -179,9 +179,6 @@
 
 	    // Page specific script invocations
 	    switch(portal['current_page_name']){
-	    	case 'submit_ticket':
-	    		$("#meta_user_agent").val(window.navigator.userAgent);
-	    		break;
 	    	case 'ticket_view':
 			    // Tickets quoted text auto adjust
 			    $.each($('.p-desc'), function(i, item){

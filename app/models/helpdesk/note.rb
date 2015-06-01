@@ -8,6 +8,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include Mobile::Actions::Note
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
+  include RabbitMq::Note
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
@@ -277,14 +278,10 @@ class Helpdesk::Note < ActiveRecord::Base
     self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
   end
   
-  # Instance level spam watcher condition
-  # def rl_enabled?
-  #   self.account.features?(:resource_rate_limit) && !self.instance_variable_get(:@skip_resource_rate_limit)
-  # end
-
   protected
 
     def send_reply_email  
+      add_cc_email     
       if fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
@@ -320,13 +317,6 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
   private
-  
-    # def rl_exceeded_operation
-    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
-    #           :user_id => self.user_id }
-    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
-    # end
-
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end

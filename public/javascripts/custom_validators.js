@@ -205,21 +205,6 @@ $.validator.addMethod( //override email to sync ruby's email validation
     'Please enter a valid email address.'
 );
 
-//UserEmail Validation
-$.validator.addMethod( //override email to sync ruby's email validation
-    'useremail',
-    function(value, element){
-        var result = this.optional(element) || /^[a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
-        if(!result)
-          $(element).addClass("email-error");
-        else
-          $(element).removeClass("email-error");
-        return result
-    },
-    'Please enter a valid email address.'
-);
-
-
 $.validator.addMethod("time_12", function(value, element){
   if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
   var t = value.split(' ');

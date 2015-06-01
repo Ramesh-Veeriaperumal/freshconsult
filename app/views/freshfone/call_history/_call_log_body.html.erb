@@ -1,31 +1,10 @@
 <% unless calls.blank? %>
-	<table class="table table-striped" id="calls-expanded">
+	<table class="table table-striped">
 		<%= render :partial => "call_logs",
 		:collection => calls,
 		:as => :call,
 		:locals => {:children => false} %>
 	</table>
-	<button class="hide" id="open-delete-recording-confirmation"
-				rel="freshdialog"
-				data-submit-label="<%= t('freshfone.call_history.recording_delete.confirmation_btn') %>"
-				data-close-label="<%= t('freshfone.call_history.cancel') %>"
-				data-target="#recording-deletion-confirmation"
-				data-title="<%= t('freshfone.call_history.recording_delete.confirmation_heading') %>"
-				data-width="500px"
-				data-close-on-submit="true"
-				data-keyboard="true">
-	</button>
-	<div id="recording-deletion-confirmation" class="hide recording_delete_confirm delete-confirm-warning">
-		<div class="delete-confirm-warning-icon delete-notice">
-		</div>
-		<div class="delete-confirm-warning-message">
-			<p>
-				<b><%= t('freshfone.call_history.recording_delete.confirmation_warning')%></b><br/>
-				<%= t('freshfone.call_history.recording_delete.confirmation_notification') %>
-			</p>	
-		</div>
-		<input type="hidden" id="deletion_call_id" />
-	</div>
 	<%= will_paginate calls, :renderer => BootstrapPaginationRenderer, 
 																	:previous_label => "<b class='arrow-left'></b>",
 																	:next_label => "<b class='arrow-right'></b>",

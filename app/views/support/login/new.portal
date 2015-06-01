@@ -12,7 +12,7 @@
 				{% snippet forgot_password_form %}
 			</div>
 			{% if portal.can_submit_ticket_without_login %}
-				{% unless portal.has_forums or portal.has_solutions %}				
+				{% unless portal.has_forums and portal.has_solutions %}				
 				<hr />
 				<div>
 					<a href="{{ portal.new_ticket_url }}" class="btn btn-newticket">

@@ -39,28 +39,4 @@ module SolutionsHelper
     @account.solution_articles.size.should eql article_size+1
   end
 
-  def show_page_rendered_properly?(test_article)
-    get :show, :id => test_article.id, :category_id => test_article.folder.category_id, :folder_id => test_article.folder_id
-    response.body.should =~ /#{test_article.title}/
-    response.body.should =~ /#{test_article.description}/
-    response.should render_template("solution/articles/show")
-  end
-
-  def check_article_body_integrity(article_obj, art_description, art_description_text)
-    article_body = article_obj.original_article_body
-    article_obj.should be_an_instance_of(Solution::Article)
-    article_body.should be_an_instance_of(Solution::ArticleBody)
-    
-    article_obj.read_attribute(:description).should be_eql(art_description)
-    article_obj.description.should be_eql(art_description)
-    article_obj[:description].should be_eql(art_description)
-
-    article_obj.read_attribute(:desc_un_html).strip.should be_eql(art_description_text)
-    article_obj.desc_un_html.strip.should be_eql(art_description_text)
-    article_obj[:desc_un_html].strip.should be_eql(art_description_text)
-
-    Solution::Article::BODY_ATTRIBUTES.each do |attrib|
-      article_body.send(attrib).should be_eql(article_obj.read_attribute(attrib))
-    end
-  end
 end

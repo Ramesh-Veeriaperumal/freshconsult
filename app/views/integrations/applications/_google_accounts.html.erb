@@ -2,7 +2,7 @@
 <%if google_accs.blank?
 	action_name = params[:action] == "edit" ? t("integrations.google_contacts.add_more") : t("application.enable")%>
 	<%=t("integrations.google_contacts.form.account_not_configured", :action => action_name).html_safe%>
-	<div class="center"><%= link_to(t("integrations.google_contacts.add_more"), "#{oauth2_url}", :class => "uiButton special") if params[:action] == "edit" %></div><br/>
+	<div class="center"><%= link_to(t("integrations.google_contacts.add_more"), "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "edit" %></div><br/>
 <%else
 	google_acc = google_accs[0]
 %>
@@ -43,7 +43,7 @@
 			<%}%>
 		</table>
 		<div class="buttons">
-			<%= link_to(t("integrations.google_contacts.add_more").html_safe, "#{oauth2_url(@installed_application)}", :class => "uiButton special") if params[:action] == "edit" %>
+			<%= link_to(t("integrations.google_contacts.add_more").html_safe, "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "edit" %>
 		</div>
 	</div>
 <%end%>

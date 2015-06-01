@@ -2,10 +2,9 @@
 <%
   actual_calls_count = helpdesk_calls_count(calls)
   num_of_calls = calls_count(calls)
-  total_num_of_calls = actual_calls_count - direct_dial_count(calls)
   unanswered_count =  unanswered_calls_count(calls)
   voice_count = voicemails_count(calls)
-  num_of_transfered = num_of_calls - (actual_calls_count + external_transfers_count(calls))
+  num_of_transfered = num_of_calls - actual_calls_count
   total_unanswered_transfers = unanswered_transfers(calls)
   avg_time_in_secs = helpdesk_handle_time(calls) || 0
   seconds = ((avg_time_in_secs%3600)%60).round
@@ -13,17 +12,16 @@
   #-----------old calls -------------
   old_actual_calls_count = helpdesk_calls_count(old_calls)
   old_num_of_calls = calls_count(old_calls)
-  old_total_num_of_calls = old_actual_calls_count - direct_dial_count(old_calls)
   old_unanswered_count = unanswered_calls_count(old_calls)
   old_voice_count = voicemails_count(old_calls)
-  old_num_of_transfered = old_num_of_calls - (old_actual_calls_count + external_transfers_count(old_calls))
+  old_num_of_transfered = old_num_of_calls - old_actual_calls_count
   old_total_unanswered_transfers = unanswered_transfers(old_calls)
   old_avg_time_in_secs = helpdesk_handle_time(old_calls) || 0
   old_seconds = ((old_avg_time_in_secs%3600)%60).round
   %>
 <div class="report-summary-header">
   <ul class="inline">
-    <li><h1><%= total_num_of_calls.to_i %></h1></li>
+    <li><h1><%= actual_calls_count.to_i %></h1></li>
     <li><h1><%= unanswered_count.to_i%></h1></li>
     <% if @call_type.to_i != Freshfone::Call::CALL_TYPE_HASH[:outgoing] %>
       <li><h1><%= voice_count.to_i%></h1></li>
@@ -37,7 +35,7 @@
   <ul class="inline">
     <li> 
     <small>
-    <% metric_obj = percentage_change(old_total_num_of_calls, total_num_of_calls  ,:num_of_calls)%>
+    <% metric_obj = percentage_change(old_actual_calls_count, actual_calls_count  ,:num_of_calls)%>
     <% unless metric_obj.blank? %>
       <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
     <%end%>

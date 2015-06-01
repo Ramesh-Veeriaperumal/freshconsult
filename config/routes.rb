@@ -286,19 +286,6 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  namespace :segment do
-    resources :identify do
-      collection do
-        post :create
-      end
-    end 
-    resources :group do
-      collection do
-        post :create
-      end
-    end
-  end
-
   resources :contact_merge do
     collection do
       get :search
@@ -384,7 +371,6 @@ Helpkit::Application.routes.draw do
         post :direct_dial_success
         get :inspect_call
         get :caller_data
-        post :external_transfer_success
         post :call_transfer_success
       end
     end
@@ -414,10 +400,7 @@ Helpkit::Application.routes.draw do
         post :transfer_outgoing_call
         post :transfer_incoming_to_group
         post :transfer_outgoing_to_group
-        post :transfer_incoming_to_external
-        post :transfer_outgoing_to_external
         get :available_agents
-        get :available_external_numbers
       end
     end
 
@@ -429,9 +412,6 @@ Helpkit::Application.routes.draw do
     end
 
     resources :call_history do
-      member do 
-        delete :destroy_recording
-      end
       collection do
         get :custom_search
         get :children
@@ -1576,15 +1556,9 @@ Helpkit::Application.routes.draw do
 
   namespace :discussions do
     resources :forums, :except => :index do
-
       collection do
         put :reorder
       end
-
-      member do
-        get :followers
-      end
-      
     end
 
     match '/topics/:id/page/:page' => 'topics#show'
@@ -1732,10 +1706,6 @@ Helpkit::Application.routes.draw do
 
   get 'discussions/:object/:id/subscriptions/is_following(.:format)', 
     :controller => 'monitorships', :action => 'is_following', 
-    :as => :get_monitorship
-
-  get 'discussions/:object/:id/subscriptions', 
-    :controller => 'monitorships', :action => 'followers', 
     :as => :view_monitorship
 
   match 'discussions/:object/:id/subscriptions/:type(.:format)',
@@ -1923,13 +1893,6 @@ Helpkit::Application.routes.draw do
         get :articles
       end
     end
-
-    resources :articles do 
-      member do
-        put :thumbs_up
-        put :thumbs_down
-      end
-    end
   end
 
   namespace :notification do
@@ -1966,8 +1929,6 @@ Helpkit::Application.routes.draw do
         get :fetch_reseller_account_info
         get :fetch_account_activity
         post :remove_reseller_subscription
-        post :fetch_affiliates
-        post :edit_affiliate
       end
     end
   end
@@ -2047,25 +2008,6 @@ Helpkit::Application.routes.draw do
           get :index
         end
       end
-
-      resources :spam_watch, :only => :none do 
-        collection do 
-          get :spam_details   
-          put :block_user   
-          put :hard_block   
-          put :spam_user   
-          put :internal_whitelist
-        end
-      end
-
-      resources :subscription_events, :only => :none do 
-        collection do 
-          get :current_month_summary
-          get :custom_month
-          get :export_to_csv
-        end
-      end
-      
     end
   end
 

@@ -1,97 +1,33 @@
-<div  class="transfer_call_container">
-  <!-- Transfering message -->
-  <div class="transfering_call hide">
-    <%= t('freshfone.widget.transferring').html_safe %>
-  </div>
+<div class="transfer_call_container">
+	<div class="transfering_call hide">
+		<%= t('freshfone.widget.transferring').html_safe %>
+	</div>
+	<div class="add_call_note">
+		<div id="online-agents-list">
+		<span id='search-agents'>
+			<span class="available_agents_searchicon searchicon"></span>
+				<input class="search" placeholder="<%= t('freshfone.widget.transfer_agents') %>" />
+				</span>
+		    <ul class="available_agents_list"></ul>
+		</div>
 
-  <!-- Menu -->
-  <div class="transfer-call-header">
-        <div type="button" id='transfer-icon-menu' class="btn btn-default dropdown-toggle transfer-dropdown-button" data-toggle="dropdown" data-menu='transfer-agent-icon' aria-expanded="false">
-        	<div id='transfer-menu-btn'><i class="ficon-ff-group fsize-16"></i></div><span class="caret transfer-caret"></span>
-        </div>
-       <!-- toggle menu list -->
-        <ul id='transfer-menu-items' class="dropdown-menu transfer-menu-list" role="menu">
-          <li class="hide transfer-agent-icon">
-          	<a href="#"><i id='transfer-agent-list' class="ficon-ff-group fsize-16"></i></a>
-          </li>
-          <li class='transfer-number-icon' id='external-number-menu'>
-          	<a href="#"><i id='transfer-number-list' class="ficon-ff-dialpad fsize-14"></i></a>
-          </li>
-        </ul>
-
-    <!--- ListJS  -->
-
-  <div id='transfer-list' data-list='transfer-agent-icon' class="list">
-    <div id='online-agents-list' class="transfer-agent-icon">
-      <div class='list-component'>
-        <input class="search" placeholder="<%= t('freshfone.widget.transfer_agents') %>" />
-        <ul class="available_agents_list"></ul>
-
-        <!--template -->
-        <div class="hide">
-          <!-- A template element is needed when list is empty, TODO: needs a better solution -->
-          <li id="agents-item" >
-             <h3 class="available_agents_avatar avatar"></h3>
-              <span class="transfer-agent-onover-icon">
-               <i id='transfer-call-icon' class="ficon-arrow-right-2 fsize-12"></i>
-             </span>
-             <p class="available_agents_name name"></p>
-             <span class="hide sortname"></span>
-             <div class="agent-group-name ">
-                <div class="available_group_agents_name"></div>
-                <div class="agents_count muted"></div>
-             </div>
-             <span class="hide id"></span>
-             <span class="hide agents_ids"></span>
-             <span class="hide group_id"></span>
-          </li>
-        </div>
-      </div>
-
-      <div class="no_available_agents">
-        <label>
-          <%= t('freshfone.widget.unavailable_agents') %>
-        </label>
-      </div>
-    </div>
-   
-
-
-    <div id='external-numbers-list' class="hide transfer-number-icon">
-      <div class='list-component'>
-        <input class="search" id='search-external' placeholder="<%= t('freshfone.widget.transfer_numbers') %>" />
-        <ul class="available_numbers_list"></ul>
-        
-        <ul class="search-number-label" id='new_external_number' class='hide'>
-          <li id='external-number' class='transfer-active'>
-               <span class="transfer-phone-icons">
-                 <i class="ficon-ff-group fsize-16"></i>
-               </span>
-                <span class="transfer-onover-icons">
-                 <i class="ficon-arrow-right-2 fsize-12"></i>
-               </span>
-               <p class="available_agents_name name" id="external_number_label"></p>
-          </li>
-        </ul>
-         <!--template -->
-        <div class="hide">
-          <li id="numbers-item" >
-             <span class="transfer-phone-icons">
-               <i class="ficon-ff-group fsize-16"></i>
-             </span>
-             <p class="available_agents_name name external_number"></p>
-             <span class="transfer-onover-icons">
-               <i id='transfer-call-icon' class="ficon-arrow-right-2 fsize-12"></i>
-             </span>
-             <span class="hide id"></span>
-          </li>
-        </div>
-        <div class="no_available_numbers hide">
-          <%= t('freshfone.widget.no_transfers') %>
-        </div>
-      </div>
-    </div>
-   
-
-  </div>
+		<div class="hide">
+		    <!-- A template element is needed when list is empty, TODO: needs a better solution -->
+		    <li id="agents-item" >
+		       <h3 class="available_agents_avatar avatar"></h3>
+		       <p class="available_agents_name name"></p>
+		       <span class="hide sortname"></span>
+		       <div class="agent-group-name ">
+		       		<div class="available_group_agents_name"></div>
+		       		<div class="agents_count"></div>
+		       </div>
+					 <span class="hide id"></span>
+					 <span class="hide agents_ids"></span>
+					 <span class="hide group_id"></span>
+		    </li>
+		</div>
+		<div class="no_available_agents">
+			<%= t('freshfone.widget.unavailable_agents') %>
+		</div>
+	</div>	
 </div>

@@ -2,7 +2,6 @@ class Support::Solutions::ArticlesController < SupportController
   
   include Helpdesk::TicketActions
   include Solution::Feedback
-  include Solution::ArticlesVotingMethods
 
   before_filter :load_and_check_permission, :except => :index
 
@@ -20,7 +19,7 @@ class Support::Solutions::ArticlesController < SupportController
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
 
   before_filter :generate_ticket_params, :only => :create_ticket
-  after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
+  after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket
 
   def handle_unknown
      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -43,6 +42,28 @@ class Support::Solutions::ArticlesController < SupportController
     end
   end
 
+  def thumbs_up
+    update_votes(:thumbs_up, 1)
+    render :text => I18n.t('solution.articles.article_useful')
+  end
+
+  def thumbs_down
+    # Voting down the article
+    update_votes(:thumbs_down, 0)
+    
+    # Getting a new object for submitting the feeback for the article
+    @ticket = Helpdesk::Ticket.new
+    respond_to do |format|
+      format.xml{ head :ok }
+      format.json { head :ok }
+      format.html {
+        render :partial => "feedback_form", :locals => { :ticket => @ticket, :article => @article }
+      }
+      
+    end
+
+  end
+
   def hit
     @article.hit! unless agent?
     render_tracker
@@ -50,12 +71,8 @@ class Support::Solutions::ArticlesController < SupportController
   
   def create_ticket
     # Message to the user based on success of ticket submission
-    create_the_ticket(nil, true) ?
-    	render(:text => I18n.t('solution.articles.article_not_useful')) : feedback_error
-  end
-
-  def feedback_error
-  	render :partial => "feedback_form"
+    render :text => (create_the_ticket(nil, true)) ? 
+     I18n.t('solution.articles.article_not_useful') : I18n.t(:'solution.articles.error_message', :error_msg => @ticket.errors )
   end
 
   private
@@ -96,9 +113,21 @@ class Support::Solutions::ArticlesController < SupportController
       }
     end
 
-    def no_error
-      !@ticket.errors.any?
+    def update_votes(incr, vote)
+      return if agent?
+      @article.increment!(incr) and return unless current_user
+
+      @vote.vote = vote
+      if @vote.new_record?
+        @article.increment!(incr)
+      elsif @vote.vote_changed?
+        @article.send("toggle_#{incr}!")
+      end
+      @vote.save
     end
 
+    def load_vote
+      @vote = @article.votes.find_or_initialize_by_user_id(current_user.id) if current_user
+    end
 end
 

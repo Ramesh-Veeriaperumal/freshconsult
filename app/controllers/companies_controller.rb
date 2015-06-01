@@ -3,7 +3,6 @@ class CompaniesController < ApplicationController
   
   include HelpdeskControllerMethods
   include ExportCsvUtil
-  include CompaniesHelperMethods
   
   before_filter :set_selected_tab
   before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies]
@@ -152,5 +151,15 @@ class CompaniesController < ApplicationController
 
     def after_destroy_url
       return companies_url
+    end
+
+    def set_required_fields
+      @company.required_fields = { :fields => current_account.company_form.agent_required_company_fields, 
+                                :error_label => :label }
+    end
+
+    def set_validatable_custom_fields
+      @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
+                                          :error_label => :label }
     end
 end

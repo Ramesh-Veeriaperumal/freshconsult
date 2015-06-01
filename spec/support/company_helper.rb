@@ -40,13 +40,4 @@ module CompanyHelper
     company.attributes.symbolize_keys.except(*skipped_keys)
   end
 
-   def get_default_company
-    Company.first_or_create do |company|
-      company.name = Faker::Name.name
-      company.description = Faker::Lorem.sentence
-      company.note        = Faker::Lorem.sentence
-      company.domains     = Faker::Internet.domain_name
-    end
-  end
-
 end

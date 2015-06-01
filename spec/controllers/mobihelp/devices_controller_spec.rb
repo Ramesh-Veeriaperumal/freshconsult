@@ -13,7 +13,6 @@ describe Mobihelp::DevicesController do
   before(:each) do
     @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(@mobihelp_app) 
     @request.params['format'] = "html"
-    @request.env["HTTP_ACCEPT"] = "application/json"
     @device_attr = {
       "user" => {
         "name" => "Mobihelp User",

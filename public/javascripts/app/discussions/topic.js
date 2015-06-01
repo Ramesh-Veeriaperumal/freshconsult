@@ -12,12 +12,10 @@ window.App.Discussions = window.App.Discussions || {};
 			this.lookForHash();
 			this.bindHandlers();
 			this.cleanInlineCSS();
-			App.Discussions.Monitorship.init();
 		},
 
 		onLeave: function () {
 			this.unbindHandlers();
-			App.Discussions.Monitorship.unbind();
 		},
 
 		cleanInlineCSS: function () {

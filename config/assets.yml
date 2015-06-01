@@ -114,7 +114,6 @@ javascripts:
     - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js
-    - public/javascripts/helpdesk/socket_agent_autorefresh.js
     - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
@@ -526,12 +525,10 @@ javascripts:
     - public/javascripts/app/merge_tickets.js
 
   contacts:
-    - public/javascripts/app/contacts/contacts.js
-    - public/javascripts/app/contacts/contact_form.js
-    - public/javascripts/app/contacts/contacts_merge.js
-    - public/javascripts/app/contacts/contact_view.js
-    - public/javascripts/app/contacts/email_template.jst
-    - public/javascripts/app/contacts/add_email.jst
+    - public/javascripts/app/contacts.js
+    - public/javascripts/app/contact_form.js
+    - public/javascripts/app/contacts_merge.js
+    - public/javascripts/app/contact_view.js
 
   companies:
     - public/javascripts/app/companies.js

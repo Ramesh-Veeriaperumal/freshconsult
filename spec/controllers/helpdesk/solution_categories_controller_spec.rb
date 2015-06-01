@@ -118,11 +118,6 @@ describe Solution::CategoriesController do
   end
 
   it "should delete a solution category" do
-    mobihelp_app = create_mobihelp_app
-    mobihelp_app_solution = create_mobihelp_app_solutions({:app_id => mobihelp_app.id, 
-                              :category_id => @test_category.id, :position => 1, 
-                              :account_id => @account.id})
-
     delete :destroy, :id => @test_category.id
     @account.solution_categories.find_by_name(@test_category.name).should be_nil
     response.should redirect_to(solution_categories_url)

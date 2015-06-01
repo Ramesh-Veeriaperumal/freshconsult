@@ -126,8 +126,6 @@ class SupportController < ApplicationController
                        :keywords => @page_keywords,
                        :canonical => @page_canonical }
                        
-      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
-                       
       @meta = HashDrop.new( @page_meta )
     end
 

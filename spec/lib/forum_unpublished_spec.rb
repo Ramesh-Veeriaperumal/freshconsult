@@ -43,18 +43,18 @@ describe ForumUnpublished do
 
 	it "should update the count on creation of new topic" do
 
-		unpublished_count = SpamCounter.unpublished_count
+		unpublished_count = SpamCounter.unpublished_count(@account.id)
 
 		create_dynamo_topic("ForumUnpublished", @forum)
 
-		SpamCounter.unpublished_count.should eql unpublished_count + 1
+		SpamCounter.unpublished_count(@account.id).should eql unpublished_count + 1
 
-		approval_post_count = SpamCounter.count(@topic.id, :unpublished)
+		approval_post_count = SpamCounter.count(@topic.id, :unpublished, @account.id)
 
 		create_dynamo_post("ForumUnpublished", @topic)
 
-		SpamCounter.unpublished_count.should eql unpublished_count + 2
-		SpamCounter.count(@topic.id, :unpublished).should eql approval_post_count + 1
+		SpamCounter.unpublished_count(@account.id).should eql unpublished_count + 2
+		SpamCounter.count(@topic.id, :unpublished, @account.id).should eql approval_post_count + 1
 
 	end
 
@@ -79,7 +79,7 @@ describe ForumUnpublished do
 			include_topics << create_dynamo_topic("ForumUnpublished", @forum).attributes
 		end
 
-		last_month = ForumUnpublished.last_month.records.map(&:attributes)
+		last_month = ForumUnpublished.last_month(@account.id).records.map(&:attributes)
 
 		last_month.should_not =~ not_include_topics
 		last_month.should =~ include_topics
@@ -93,7 +93,7 @@ describe ForumUnpublished do
 			last_2_days_posts << create_dynamo_topic("ForumUnpublished", @forum, {:timestamp => (Time.now - i.day).utc.to_f}).attributes
 		end
 
-		ForumUnpublished.next((Time.now - 2.day).utc.to_f).records.map(&:attributes).should =~ last_2_days_posts
+		ForumUnpublished.next(@account.id, (Time.now - 2.day).utc.to_f).records.map(&:attributes).should =~ last_2_days_posts
 		
 	end
 
@@ -103,7 +103,7 @@ describe ForumUnpublished do
 			topic_posts << create_dynamo_post("ForumUnpublished", @topic).attributes
 		end
 
-		ForumUnpublished.topic_spam(@topic.id).records.map(&:attributes).should =~ topic_posts
+		ForumUnpublished.topic_spam(@account.id, @topic.id).records.map(&:attributes).should =~ topic_posts
 	end
 
 	it "should delete all the posts of a given topic" do
@@ -112,11 +112,11 @@ describe ForumUnpublished do
 			topic_posts << create_dynamo_post("ForumUnpublished", @topic).attributes
 		end
 
-		ForumUnpublished.topic_spam(@topic.id).records.map(&:attributes).should =~ topic_posts
+		ForumUnpublished.topic_spam(@account.id, @topic.id).records.map(&:attributes).should =~ topic_posts
 
-		ForumUnpublished.delete_topic_spam(@topic.id)
+		ForumUnpublished.delete_topic_spam(@account.id, @topic.id)
 
-		ForumUnpublished.topic_spam(@topic.id).records.should eql []
+		ForumUnpublished.topic_spam(@account.id, @topic.id).records.should eql []
 	end
 
 	it "should return all the posts by the user" do
@@ -128,7 +128,7 @@ describe ForumUnpublished do
 			user_posts << create_dynamo_topic("ForumUnpublished", @forum).attributes
 		end
 		
-		ForumUnpublished.by_user(@customer.id, next_user_timestamp(@customer)).records.map(&:attributes).should =~ user_posts
+		ForumUnpublished.by_user(@account.id, @customer.id, next_user_timestamp(@customer)).records.map(&:attributes).should =~ user_posts
 	end
 
 end

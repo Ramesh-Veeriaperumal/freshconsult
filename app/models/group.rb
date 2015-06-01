@@ -37,10 +37,7 @@ class Group < ActiveRecord::Base
         ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
      }
     }
-  
-   has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
-              :foreign_key => "group_id", :dependent => :delete_all
-
+    
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
                    :ticket_assign_type, :business_calendar_id,
                    :added_list, :removed_list, :agent_groups_attributes

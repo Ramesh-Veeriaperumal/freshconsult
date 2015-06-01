@@ -1,7 +1,6 @@
 <div class="tag_list">
 <% tags.each { |tag| %>
-	<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}, :class => 'btn btn-flat', 
-		:'data-pjax' => "#body-container") %>
+	<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}, :class => 'btn btn-flat') %>
 <% } %> 
 <% if add_tag %>
 	<a class='btn btn-flat add-new-tag' href='#'>

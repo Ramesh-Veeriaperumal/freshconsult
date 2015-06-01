@@ -54,8 +54,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def valid_ticket_contact given_ticket
-    (given_ticket.requester.email and in_requester_email?(given_ticket)) or (given_ticket.included_in_cc?(user.email)) or 
-    (email[:from][:email] == given_ticket.sender_email)
+    (given_ticket.requester.email and in_requester_email?(given_ticket)) or (given_ticket.included_in_cc?(user.email))
   end
 
   def in_requester_email? given_ticket

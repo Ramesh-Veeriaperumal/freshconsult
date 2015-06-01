@@ -1,6 +1,6 @@
 <input class="user_phone" id="number" type="tel">
-<% if current_account_freshfone_number_hash.length == 1 %>
- <% number = current_account_freshfone_number_hash.first %>
+<% if current_account_freshfone_numbers.length == 1 %>
+ <% number = current_account_freshfone_numbers.first %>
     <span data-number_id='<%= number[1] %>' class="outgoing_number hide"
 				id="outgoing_number_selector"><%= number[0] %></span>
 <% else %>

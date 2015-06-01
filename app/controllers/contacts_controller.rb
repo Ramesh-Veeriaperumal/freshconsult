@@ -3,7 +3,6 @@ class ContactsController < ApplicationController
    include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
-   include UserHelperMethods
 
    before_filter :redirect_to_mobile_url
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
@@ -21,6 +20,13 @@ class ContactsController < ApplicationController
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
+   
+  def check_demo_site
+    if AppConfig['demo_site'][Rails.env] == current_account.full_domain
+      flash[:notice] = t(:'flash.not_allowed_in_demo_site')
+      redirect_to :back
+    end
+  end
   
   def index
     respond_to do |format|
@@ -307,7 +313,7 @@ protected
     if current_account.features_included?(:contact_merge_ui)
       @user.user_emails.each do |ue|
         if(ue.new_record? and @user.errors[:"user_emails.email"].include? "has already been taken")
-          @existing_user ||= current_account.user_emails.user_for_email(ue.email)
+          @existing_user = current_account.user_emails.user_for_email(ue.email)
         end
       end
       init_user_email
@@ -346,6 +352,13 @@ protected
     contacts_url
   end
 
+  def clean_params
+    if params[:user]
+      params[:user].delete(:helpdesk_agent)
+      params[:user].delete(:role_ids)
+    end
+  end
+
   private
 
     def define_contact_properties 
@@ -353,6 +366,11 @@ protected
       @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here
       @total_user_tickets_size = current_account.tickets.permissible(current_user).requester_active(@user).visible.count
       @user_tickets = @total_user_tickets.newest(10).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+    end
+
+    def initialize_and_signup!
+      @user ||= current_account.users.new #by Shan need to check later  
+      @user.signup!(params)
     end
 
     def get_formatted_message(exception)
@@ -369,12 +387,24 @@ protected
        @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by).preload(:avatar, :company)
+          scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by)
         end
       cookies[:contacts_sort] = @sort_state
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
       end
+    end
+
+    def set_required_fields
+      @user ||= current_account.users.new
+      @user.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields, 
+                                :error_label => :label }
+    end
+
+    def set_validatable_custom_fields
+      @user ||= current_account.users.new
+      @user.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
+                                          :error_label => :label }
     end
 
     def init_user_email

@@ -31,7 +31,6 @@ module Freshfone::CallValidator
     elsif isOutgoing? && !isPreviewOrRecord? && !authorized_country?(params[:phone_number],current_account)
       status = :dial_restricted_country
     end
-    status
   end
 
   def isOutgoing?

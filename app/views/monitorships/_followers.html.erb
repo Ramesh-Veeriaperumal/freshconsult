@@ -1,7 +1,0 @@
-<%= follower_content(@parent) %>
-<% if @parent.monitorships.present? %>
-    <%= render :partial => "monitorships/followers_list", 
-               :locals => {
-                  :parent => @parent,
-                } %>
-<% end %> 

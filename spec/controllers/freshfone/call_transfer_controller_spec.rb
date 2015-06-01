@@ -43,28 +43,6 @@ RSpec.describe Freshfone::CallTransferController do
     assigns[:freshfone_users].collect { |u| u[:id] }.should_not include(dummy)
   end
 
-  it 'should render valid external incoming transfer twiml on correct inputs' do
-    request.env["HTTP_ACCEPT"] = "application/json"
-    log_in(@agent)
-    Twilio::REST::Call.any_instance.stubs(:update).returns(true)
-    outgoing = "false"
-    post :initiate, initiate_external_params(outgoing)
-    json.should be_eql({:call => "success"})
-  end
-
-  it 'should return empty for available external numbers for transfer' do
-    log_in(@agent)
-    get :available_external_numbers
-    expect(assigns[:external_numbers]).to be_empty
-  end
-
-  it 'should return all available external numbers for transfer' do
-    log_in(@agent)
-    create_external_transfered_call
-    get :available_external_numbers
-    expect(assigns[:external_numbers]).not_to be_empty
-  end
-
   it 'should render incoming transfer twiml' do
     create_dummy_freshfone_users(1)
     query_params = "id=#{@dummy_users.first.id}&source_agent=#{@agent.id}"
@@ -87,20 +65,4 @@ RSpec.describe Freshfone::CallTransferController do
     xml[:Response][:Dial][:Client].should be_eql(@dummy_users.first.id.to_s)
   end
 
-  it 'should render incoming transfer twiml' do
-    query_params = "number=%2B919876543210&source_agent=#{@agent.id}"
-    set_twilio_signature("/freshfone/call_transfer/transfer_incoming_to_external?#{query_params}", 
-      incoming_external_transfer_params)
-    post :transfer_incoming_to_external, 
-      incoming_external_transfer_params.merge({ "number"=>"+919876543210", "source_agent"=> @agent.id})
-    expect(xml[:Response][:Dial][:Number]).to be_eql("+919876543210")
-  end
-
-  it 'should render outgoing external transfer twiml' do
-    query_params = "number=919876543210&source_agent=#{@agent.id}"
-    set_twilio_signature("/freshfone/call_transfer/transfer_outgoing_to_external?#{query_params}", outgoing_external_transfer_params)
-    post :transfer_outgoing_to_external, outgoing_external_transfer_params.merge({ "number"=>"+919876543210", "source_agent"=> @agent.id})
-    expect(response.status).to eq(200)
-    expect(xml[:Response][:Dial][:Number]).to be_eql("+919876543210")
-  end
 end

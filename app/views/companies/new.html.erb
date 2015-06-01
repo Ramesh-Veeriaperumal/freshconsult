@@ -6,12 +6,16 @@
 			<h3 class='lead pull-left'> 
 				<%= t('company.new') %> 
 			</h3>
-		<div class="pull-right">
-				<%= link_to t('cancel'), companies_path(), :class => "btn", :'data-pjax' => "#body-container" %>
+		<div class="pull-right company-btns">
+				<%= link_to t('cancel'), companies_path(), :class => "btn" %>
 				<%= f.submit t('save'), :class => "btn btn-primary" %> 
 			</div>
 		</div>
 	</div>
 	<br/>
 	<%= render :partial => "form", :locals => { :f => f } %>
+	<div class="pull-right mt20">
+	  <%= link_to t('cancel'), companies_path(), :class => "btn" %>
+	  <%= f.submit t('save'), {:class => "btn btn-primary"} %> 
+	</div>
 <% end %>

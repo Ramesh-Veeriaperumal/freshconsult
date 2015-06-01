@@ -37,38 +37,36 @@ module Freshfone::Jobs
 		
 		def self.perform_job(args)
 			@data = nil
-			fetch_details(args)
-			unless @call.recording_deleted
-				begin
-					if @call.recording_audio.present?
-						Rails.logger.debug "Duplicate job for freshfone record attachment  for 
-						account => #{@account.id} call sid => #{@call.call_sid}"
-						return
-					end
-					fetch_twilio_recording
-					#Ignoring recordings of duration less than 5 seconds
-					if @recording_duration.to_i < 5
-					 	@call.recording_url = nil
-					 	@call.save
-					 	@recording.delete
-					else
-						set_status_voicemail if args[:voicemail]
-						download_data
-						build_recording_audio
-					end
-				rescue Exception => e
-					if args[:attempt].present?
-						NewRelic::Agent.notice_error(e, {:description => "Freshfone CallRecordingAttachments job 
-							failed call_sid => #{@call.call_sid} :: account => #{@account.id} :: 
-							recording_sid => #{@recording_sid} :: attempt #{args[:attempt]}"})
-						raise e if (args[:attempt] == 2)
-					end				
-					attempt = args[:attempt].present? ? (args[:attempt]+1) : 1
-					Resque::enqueue_at((attempt * 15).minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, 
-						args.merge!({:attempt => attempt}))
-				ensure
-					release_data
+			begin
+				fetch_details(args)
+				if @call.recording_audio.present?
+					Rails.logger.debug "Duplicate job for freshfone record attachment  for 
+					account => #{@account.id} call sid => #{@call.call_sid}"
+					return
 				end
+				fetch_twilio_recording
+				#Ignoring recordings of duration less than 5 seconds
+				if @recording_duration.to_i < 5
+				 	@call.recording_url = nil
+				 	@call.save
+				 	@recording.delete
+				else
+					set_status_voicemail if args[:voicemail]
+					download_data 
+					build_recording_audio
+				end
+			rescue Exception => e
+				if args[:attempt].present?
+					NewRelic::Agent.notice_error(e, {:description => "Freshfone CallRecordingAttachments job 
+						failed call_sid => #{@call.call_sid} :: account => #{@account.id} :: 
+						recording_sid => #{@recording_sid} :: attempt #{args[:attempt]}"})
+					raise e if (args[:attempt] == 2)
+				end				
+				attempt = args[:attempt].present? ? (args[:attempt]+1) : 1
+				Resque::enqueue_at((attempt * 15).minutes.from_now, Freshfone::Jobs::CallRecordingAttachment, 
+					args.merge!({:attempt => attempt}))
+			ensure
+				release_data
 			end
 			create_voicemail_ticket(args) if args[:voicemail] && @call.recording_audio
 		end
@@ -78,7 +76,7 @@ module Freshfone::Jobs
 			def self.fetch_details(args)
 				@account = Account.current
 				@call = @account.freshfone_calls.find_by_id(args[:call_id])
-				@file_url = @call.recording_url + ".mp3" unless @call.recording_deleted
+				@file_url = @call.recording_url + ".mp3"
 				@file_name = args[:call_sid]
 			end
 

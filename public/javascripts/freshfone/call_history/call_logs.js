@@ -8,8 +8,6 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.setLocationIfUnknown();
       this.bindCreateTicket();
       this.bindChildCalls();
-      this.bindDeleteRecordingModal();
-      this.bindDeleteRecording();
     },
     initializeElements: function () {
       this.$freshfoneCallHistory = $('.fresfone-call-history');
@@ -58,30 +56,6 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         }
       });
     },
-    bindDeleteRecordingModal:function(){
-      this.$freshfoneCallHistory.on('click.freshfonecallhistory.calllogs','.delete_recording_btn',
-        function(ev){
-          $('#open-delete-recording-confirmation').trigger('click');
-          $('#deletion_call_id').val($(this).data('call-id'));          
-        }
-      );
-    },
-    bindDeleteRecording:function(){
-      $('body').on('click.freshfonecallhistory.calllogs','#recording-deletion-confirmation-submit',
-      function(ev){
-        ev.preventDefault();
-        $('#call-id-'+$('#deletion_call_id').val()).empty().addClass("sloading loading-small curved_border");
-        $.ajax({
-          url:'/freshfone/call_history/'+$('#deletion_call_id').val()+'/destroy_recording',
-          type:'DELETE',
-          success:function(result){
-            $('#call-id-'+$('#deletion_call_id').val()).removeClass("sloading loading-small curved_border");
-          },
-          error:function(jqXHR,textStatus,errorThrown){
-          }
-        });
-      });
-    },
     bindCreateTicket: function () {
       this.$freshfoneCallHistory.on('click.freshfonecallhistory.calllogs', '.create_freshfone_ticket',
        function (ev) {
@@ -91,7 +65,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         freshfoneendcall.inCall = false;
         freshfoneendcall.callerId = $(this).data( "customer-id");
         freshfoneendcall.callerName = $(this).data("customer-name");
-        freshfoneendcall.number = $(this).data("number");
+        freshfoneendcall.number = "+" + $(this).data("number");
         freshfoneendcall.date = $(this).data("date");
         freshfoneendcall.agent = $(this).data("responder-id");
         freshfoneendcall.directDialNumber = $(this).data("direct-dial-number");

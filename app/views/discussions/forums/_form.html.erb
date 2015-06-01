@@ -35,8 +35,7 @@
 			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, {}, { :class => "select2 input-xlarge" } %>
 			<br/><br/>
 			<span id="company_forums">
-				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies, 
-					:max_limit => 250 }) %>
+				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
 			</span>
 		</div>
 	</div>

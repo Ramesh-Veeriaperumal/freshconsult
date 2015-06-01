@@ -13,7 +13,6 @@ window.App.Discussions = window.App.Discussions || {};
 		onVisit: function () {
 			this.bindHandlers();
 			this.bindForBulkActions();
-			App.Discussions.Monitorship.init();
 		},
 
 		bindHandlers: function () {
@@ -182,7 +181,6 @@ window.App.Discussions = window.App.Discussions || {};
 		onLeave: function () {
 			clearTimeout(this.filterTimer);
 			$('body').off('.discussions.topic_list');
-			App.Discussions.Monitorship.unbind();
 		}
 	};
 }(window.jQuery));

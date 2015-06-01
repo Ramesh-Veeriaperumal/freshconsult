@@ -1,5 +1,4 @@
 class Integrations::Cti::CustomerDetailsController < ApplicationController
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:verify_session]
   SECRET_KEY = "3f1fd135e84c2a13c212c11ff2f4b205725faf706345716f4b6996f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f"
   
   include ApplicationHelper
@@ -9,7 +8,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   def fetch
     mobile_number = params[:user][:mobile]
     mobile_number = mobile_number[-10..-1] || mobile_number
-    user = current_account.users.with_contact_number(mobile_number).first
+    user = User.with_contact_number(mobile_number).first
     href = ""
     if user.blank?
       user_hash = {:mobile => mobile_number,:avatar => user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
@@ -21,7 +20,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       user_hash = { :name => user.name, :email => user.email, :mobile => mobile_number, :description => user.description,
       :job_title => user.job_title, :company_name => user.company_name, :tickets => tickets_json,:avatar => avatar,:href => href}
     end
-    agent = current_account.users.find_by_email(params[:agent][:email])
+    agent = User.find_by_email(params[:agent][:email])
     if agent.blank?
       new_user  = current_account.users.new 
       new_user.email = params[:agent][:email]
@@ -36,7 +35,6 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
 
   def create_note
     rec = params[:recordingUrl]
-    params[:remoteId]="" if params[:remoteId]==0
     note_desc = "#{params[:msg]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:remoteId]}"
     @ticket = current_account.tickets.find_by_display_id(params[:ticketId])
     if @ticket.blank?
@@ -71,10 +69,9 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   end
 
   def create_ticket
-    params[:ticket][:remoteId]="" if params[:ticket][:remoteId]==0
     rec = params[:ticket][:recordingUrl]
     ticket_desc = "#{params[:ticket][:description]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:ticket][:remoteId]}"
-    user = current_account.users.find_by_email(params[:ticket][:email])
+    user = User.find_by_email(params[:ticket][:email])
     if user.blank?
       user  = current_account.users.new
       user.name = params[:ticket][:requester_name].blank? ? params[:ticket][:number] : params[:ticket][:requester_name]

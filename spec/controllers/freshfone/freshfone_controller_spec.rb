@@ -93,7 +93,7 @@ RSpec.describe FreshfoneController do
 
   it 'should respond with ok status' do
     log_in(@agent)
-    get :dial_check, { :phone_number => "+918754693849", :is_country => "true" }
+    get :dial_check, { :phone_number => "+918754693849" }
     result = JSON.parse(response.body).symbolize_keys
     result.should include(:status => "ok") 
   end
@@ -108,17 +108,17 @@ RSpec.describe FreshfoneController do
 
   it 'should respond with dial restricted country status' do
     log_in(@agent)
-    get :dial_check, { :phone_number => "+8558754693849" , :is_country => "true"} 
+    get :dial_check, { :phone_number => "+8558754693849" } 
     result = JSON.parse(response.body).symbolize_keys
     result.should include(:status => "dial_restricted_country") 
   end
 
   it "must throw exception if country is not present" do
     log_in(@agent)
-    get :dial_check, { :phone_number => "+2478754693849" , :is_country => "true"} 
+    get :dial_check, { :phone_number => "+2478754693849" } 
     begin
       expect(response).to raise_error
-    rescue Exception => e
+    rescue
     end
   end
 

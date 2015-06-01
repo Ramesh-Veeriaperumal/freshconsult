@@ -3386,6 +3386,10 @@ body.popup-body{ min-width: 0px; }
 		}
 	}
 
+	.ue_input.default_email{
+		background-color: #fffdf7;
+	}
+
 	#cancel_email{
 		@include margin-left(9px);
 	}
@@ -3415,8 +3419,6 @@ body.popup-body{ min-width: 0px; }
 	span.email-tick.primary{
 		color: #7ba70f;
 		cursor: default;
-		@include float(right);
-		@include margin-right(10px);
 	}
 
 	span.email-tick.secondary{
@@ -3426,9 +3428,8 @@ body.popup-body{ min-width: 0px; }
 	span.email-tick.unverified{
 		color: #888888;
 		cursor: default;
-		padding-top: 1px;
-		right: 55px;
-		position: absolute;
+		padding-top: 5px;
+		@include margin-left(-18px);
 	}
 
 	span.email-tick.greyed{
@@ -3506,13 +3507,6 @@ body.popup-body{ min-width: 0px; }
 		display: inline-block;
 		height: 12px;
 		width: 12px;
-		@include float(right);
-		@include margin-right(10px);
-	}
-
-	.ue_text{
-		display: inline-block;
-		@include margin(0 0 0 5px);
 	}
 
 }

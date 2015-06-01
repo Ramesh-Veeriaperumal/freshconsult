@@ -287,4 +287,5 @@ describe Discussions::TopicsController do
 			@account.topics.find_by_id(topic.id).should be_nil
 		end
 	end
+
 end

@@ -24,6 +24,8 @@ class AuthorizationsController < ApplicationController
       create_for_sso(@omniauth)
     elsif @omniauth['provider'] == "facebook"
       create_for_facebook(params)
+    elsif @omniauth['provider'] == "google"
+      create_for_google(params)
     elsif OAUTH2_PROVIDERS.include?(@omniauth['provider'])
       create_for_oauth2(@omniauth['provider'], params)
     elsif EMAIL_MARKETING_PROVIDERS.include?(@omniauth['provider'])
@@ -59,7 +61,6 @@ class AuthorizationsController < ApplicationController
       if origin.has_key?('id') 
         @account_id = origin['id'][0].to_i
         @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id') 
-        @iapp_id = origin['iapp_id'][0].to_i if origin.has_key?('iapp_id')
       elsif origin.has_key?('pid') # Fallback
         origin = origin['pid'][0].to_i
         portal = Portal.find(origin.to_i)
@@ -79,6 +80,39 @@ class AuthorizationsController < ApplicationController
     request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or
      (Rails.env.development? and
       request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
+  end
+
+  def create_for_google(params)
+    user_info = @omniauth['info']
+    unless user_info.blank?
+      if @omniauth_origin.blank? || @omniauth_origin.include?("integrations") 
+        Rails.logger.error "The session variable to omniauth is not preserved or not set properly."
+        @omniauth_origin = "install"
+      end
+      @google_account = Integrations::GoogleAccount.new
+      @db_google_account = Integrations::GoogleAccount.find_by_account_id_and_email(current_account, user_info["email"])
+      if !@db_google_account.blank? && @omniauth_origin == "install"
+        Rails.logger.error "As already an account has been configured can not configure one more account."
+        flash[:error] = t("integrations.google_contacts.already_exist")
+        redirect_to edit_integrations_installed_application_path(params[:iapp_id]) 
+      else
+        @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(current_account)
+        @google_account.account = current_account
+        @google_account.token = @omniauth['credentials']['token']
+        @google_account.secret = @omniauth['credentials']['secret']
+        @google_account.name = user_info["name"]
+        @google_account.email = user_info["email"]
+        @google_account.sync_group_name = "Freshdesk Contacts"
+        Rails.logger.debug "@google_account details #{@google_account.inspect} existing_google_accounts #{@existing_google_accounts.inspect}"
+        # Fetch all the groups
+        @google_groups = @google_account.fetch_all_google_groups
+        # Reuse the group id, if the group with same name already exist.
+        @google_groups.each { |g_group|
+          @google_account.sync_group_id = g_group.group_id if g_group.name == @google_account.sync_group_name
+        }
+        render 'integrations/google_accounts/edit'
+      end
+    end
   end
 
   def create_for_oauth2(provider, params)
@@ -102,11 +136,6 @@ class AuthorizationsController < ApplicationController
         config_params['shop_name'] = params[:shop]
       when "box"
         config_params['email'] = @omniauth.extra.raw_info.login
-      when "google_contacts"
-        config_params['info'] = {"email" => @omniauth['info']['email'], "first_name" => @omniauth['info']['first_name'],
-                                  "last_name" => @omniauth['info']['last_name'], "name" => @omniauth['info']['name']}
-        config_params['origin'] = @omniauth_origin
-        config_params['iapp_id'] = @iapp_id
     end
 
     config_params = config_params.to_json
@@ -274,7 +303,7 @@ class AuthorizationsController < ApplicationController
       origin_account.all_users.find_by_id(@origin_user_id) if origin_account && @origin_user_id
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack", "google_contacts"]
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
   OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "shopify","slack"]
 end

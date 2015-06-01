@@ -1,6 +1,5 @@
 var globalmenus = {},
 	IvrMenu;
-	var original_stringify = JSON.stringify;
 (function ($) {
 	"use strict";
 	IvrMenu = function (ivr, jsonMenu) {
@@ -8,7 +7,7 @@ var globalmenus = {},
 		this.ivr = ivr;
 		this.jsonMenu = jsonMenu;
 		this.setDefaults();
-		this.json_stringify = original_stringify;
+		this.json_stringify = JSON.stringify;
 		
 	};
 	IvrMenu.prototype = {

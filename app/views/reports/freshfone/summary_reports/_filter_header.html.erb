@@ -3,7 +3,7 @@
   <li><%=t('reports.freshfone.time_period')%> : <strong><%= @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date%></strong></li>
 
   <% number_value = t("reports.freshfone.all_numbers") 
-    if @freshfone_number != Freshfone::Number::ALL_NUMBERS
+    if @freshfone_number != Reports::FreshfoneReport::ALL_NUMBERS
      number_value = freshfone_numbers.find(@freshfone_number).number_name
     %>
   <%end%>

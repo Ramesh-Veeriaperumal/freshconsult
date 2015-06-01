@@ -38,8 +38,7 @@
 					  	<% else 
 					  		if application[:options][:oauth_url].blank? %>
 					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
-					  			<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe,
-					  			 "/integrations/installed_applications/#{application.id}/install", :method => :put,:class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
+
 					  		<% else 
 					  			 auth_url = application.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id, :user_id => current_user.id},application[:name]) %>
 						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		

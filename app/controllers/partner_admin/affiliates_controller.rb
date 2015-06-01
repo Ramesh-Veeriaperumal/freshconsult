@@ -8,7 +8,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   skip_filter :select_shard # as select shard is around filter need to skip both                      
   
   around_filter :select_account_shard, :only => :add_affiliate_transaction
-  before_filter :ensure_right_parameters, :fetch_account, 
+  before_filter :authenticate_using_basic_auth, :ensure_right_parameters, :fetch_account, 
                 :only => :add_affiliate_transaction
   
   #Reseller portal verifications
@@ -24,8 +24,6 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 
   RECORDS_PER_PAGE = 30
   TIME_ALLOWED = 1800
-  RESELLER_TOKEN = "FDRES"
-  AFFILIATE = "Share A Sale"
 
   #Shareasale methods
   def select_account_shard(&block)
@@ -103,61 +101,17 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     render_json_object({:success => true})
   end
 
-  def fetch_affiliates
-    affiliates = {}
-    shareasale_affiliates = SubscriptionAffiliate.all.select{ |affiliate| affiliate.name.eql?(AFFILIATE) }
-    others = SubscriptionAffiliate.all.select{ |affiliate| !affiliate.name.eql?(AFFILIATE) and !affiliate.token.include?(RESELLER_TOKEN) }
-    affiliates[:shareasale_affiliates] = fetch_accounts(shareasale_affiliates, true)
-    affiliates[:others] = fetch_accounts(others)
-    
-    affiliates[:coupon_discount] = load_discounts(AffiliateDiscount.all.select{|discount| discount.discount_type.eql?(1)})
-    affiliates[:percent_discount] = load_discounts(AffiliateDiscount.all.select{|discount| discount.discount_type.eql?(2)})
-    render :json => { :success => true, :data => affiliates.to_json }
-
-  end
-
-  def edit_affiliate
-    affiliate = SubscriptionAffiliate.find_by_token(params["token"])
-    result = affiliate.update_attributes(params["affiliate"])
-    if result
-      render_json_object('Affiliate successfully updated.')
-    else
-      render_json_object('')
-    end
-  end
-
   protected
-    def fetch_accounts(account_list, calc_fees = false)
-      all_accounts = []
-      account_list.each do |account|
-        accounts = account.attributes.except("created_at", "updated_at")
-        accounts[:discount] = load_discounts(account.discounts)
-        accounts[:commission] = account.fees if calc_fees
-        all_accounts << accounts 
-      end
-      all_accounts
-    end
-
-    def load_discounts(discount_list)
-      all_discounts = []
-      discount_list.each do |discount|
-        all_discounts << discount.attributes
-      end
-      all_discounts
-    end
-
     def ensure_right_parameters
-      unless authenticate_using_basic_auth == 401 #Check for authorization and right params
-        if ((!request.ssl?) or
-          (!request.post?) or 
-          (params[:tracking].blank?) or 
-          (params[:userID].blank?) or 
-          (params[:commission].blank?) or
-          (params[:transID].blank?) or
-          (params[:amount].blank?))
-          return render :xml => ArgumentError, :status => 500
-     	  end
-      end
+      if ((!request.ssl?) or
+        (!request.post?) or 
+        (params[:tracking].blank?) or 
+        (params[:userID].blank?) or 
+        (params[:commission].blank?) or
+        (params[:transID].blank?) or
+        (params[:amount].blank?))
+        return render :xml => ArgumentError, :status => 500
+   	  end
     end
 
     def ensure_right_affiliate

@@ -1,10 +1,11 @@
 class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
-	around_filter :select_master_shard , :except => :get_country_list
-	before_filter :load_account
+	
 	before_filter :validate_credits, :only => [:add_credits]
 	before_filter :notify_freshfone_ops , :except => :get_country_list
-
+	around_filter :select_master_shard , :except => :get_country_list
+	before_filter :load_account
+	
 	def add_credits
 		@freshfone_credit = @account.freshfone_credit
 		@freshfone_credit.present? ? update_credits : create_credits
@@ -176,7 +177,16 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
 	def validate_credits
 		if (params[:credits].blank? || params[:credits].to_i > 100)
-			render :json => {:status => "error"} and return
+			redirect_to :back
+		end
+	end
+
+	def validate_freshfone_action
+		freshfone_action = params[:freshfone_action]
+		if freshfone_action.blank?
+			redirect_to :back
+		else
+			send freshfone_action if respond_to? freshfone_action
 		end
 	end
 
