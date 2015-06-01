@@ -286,6 +286,6 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def check_for_public_notes
-        traffic_cop_warning unless params[:helpdesk_note][:private].to_bool
+        traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
       end
 end
