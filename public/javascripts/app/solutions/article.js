@@ -25,10 +25,12 @@ window.App = window.App || {};
       this.setDataFromPage();
       this.bindHandlers();
       highlight_code();
+      App.Solutions.SearchConfig.onVisit();
     },
     
     onLeave: function (data) {
       $('body').off('.articles');
+      App.Solutions.SearchConfig.onLeave();
     },
     
     resetData: function () {

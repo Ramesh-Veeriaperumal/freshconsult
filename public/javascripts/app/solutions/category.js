@@ -10,7 +10,7 @@ window.App.Solutions = window.App.Solutions || {};
     onVisit: function () {
       this.configureSideBar();
       this.bindHandlers();
-      this.setupSearch();
+      App.Solutions.SearchConfig.onVisit();
     },
     
     configureSideBar: function () {
@@ -30,12 +30,9 @@ window.App.Solutions = window.App.Solutions || {};
       });
     },
 
-    setupSearch: function () {
-      // search bar configuration should be here
-    },
-
     onLeave: function () {
       $('body').off('.solutionCategory');
+      App.Solutions.SearchConfig.onLeave();
     }
   };
 }(window.jQuery));

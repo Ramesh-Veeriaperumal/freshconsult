@@ -14,10 +14,12 @@ window.App = window.App || {};
       console.log("Loaded the folder.js");
       this.initialData();
       this.bindHandlers();
+      App.Solutions.SearchConfig.onVisit();
     },
     
     onLeave: function (data) {
       $('body').off('.folders_articles');
+      App.Solutions.SearchConfig.onLeave();
     },
 
     initialData: function () {

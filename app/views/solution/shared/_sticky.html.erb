@@ -1,5 +1,6 @@
 <% page ||= :home %>
 <% sticky_class ||= "" %>
+<% search_url ||= "/search/solutions?term=" %>
 <div id="sticky_header" class="<%= sticky_class %>"
       rel="sticky" data-collapsed="true"
       data-scroll-top="true"
@@ -8,7 +9,7 @@
   <div class="sticky_search_wrap" id="sticky_search_wrap">
     <i class="ficon-search"></i>
     <div class="sticky_search">
-      <input placeholder='Search All Solutions' type='text'>
+      <input class="community-search" data-search-url="<%=search_url%>" placeholder='Search All Solutions' type='text'>
     </div>
     <!-- <a id="hide" class="search-hide">Clear</a> -->
     <a id="search-hide" class="search-hide">Clear</a>

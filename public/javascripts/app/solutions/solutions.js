@@ -51,11 +51,4 @@ window.App = window.App || {};
     }
   };
 
-  $("#search-show").click(function () {
-	   $('#sticky_search_wrap').addClass('search-ani');
-    });
-      $("#search-hide").click(function () {
-	  $('#sticky_search_wrap').removeClass('search-ani');
-  });
-
 }(window.jQuery));

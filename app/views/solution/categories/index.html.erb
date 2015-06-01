@@ -16,6 +16,9 @@
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :sticky_class => "sol-sticky" } %>
 
+<div class="search-page">
+	<ul id="page_search_results" style="display:none;" class="community-search result-wrapper"></ul>
+</div>
 <div class="solution-list sol-list pull-left" id="categories_list">	
 
 	<% current_categories.each do |category| %>
@@ -84,4 +87,12 @@
 <% if privilege?(:manage_solutions) -%>	
 	<%= render :partial => "/shared/reorder_list", :locals => { :items => current_portal.portal_solution_categories,  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
 <% end %>
+
+<script type="text/javascript">
+	window.SEARCH_RESULT_LANG = {
+		by : "<%= t('search.created_by') %>",
+		in : "<%= t('search.in') %>",
+		no_result :  '<li><%= t("search.no_results_msg") %></li>'
+	}
+</script>
    

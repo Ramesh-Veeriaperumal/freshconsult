@@ -5725,6 +5725,8 @@ en:
     sorted_by: "Sorted by:"
     by: "by:"
     in: "in"
+    created_by: "Created by"
+    edited_by: "Edited by"
     requested_by: "Requested by,"
     agent: "Agent:"
     status: "Status:"
