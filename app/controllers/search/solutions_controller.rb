@@ -39,6 +39,7 @@ class Search::SolutionsController < Search::SearchController
 		def search_filter_query f, search_in         
 			unless search_in.blank?
 				f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
+				f.filter :term,  { 'folder_id' => params[:folder_id] } if params[:folder_id]
 			end
 		end
 

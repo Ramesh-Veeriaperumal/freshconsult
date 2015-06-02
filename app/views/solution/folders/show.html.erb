@@ -6,7 +6,8 @@
 <% content_for :sticky_right do %>
   <%= preview_portal(support_solutions_folder_path(@folder), @folder.category) %>
 <% end %>
-<%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder } %>
+<%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder,
+                      :search_url => "/search/solutions?folder_id=#{@folder.id}&term="} %>
 
 <% if @folder.articles.blank? %>
   <div class="no-data">
@@ -19,9 +20,9 @@
   </div>
 
 <% else %>
-
-  <div class="comm-items" id="solution_sort" data-menu-hover-in='div.comm-item'>
-    <%= form_for @folder.articles, :url => reorder_solution_articles_path(@folder.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+  <%= render :partial => '/solution/shared/search_container' %>
+  <div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
+    <%= form_for @folder.articles, :url => reorder_solution_articles_path(:folder_id => @folder.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
       <input name="reorderlist" type="hidden" value="" />
       <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @folder.category.id %>" />
       <input name="folder_id" id="reorder_folder_id" type="hidden" value="<%= @folder.id %>" />

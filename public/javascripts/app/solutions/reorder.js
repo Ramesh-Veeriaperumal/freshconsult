@@ -27,6 +27,7 @@ window.App.Solutions = window.App.Solutions || {};
 				ev.preventDefault();
 				$this.bindSortable();
 				$this.classToggle();
+				$this.hideSearchIcon();
 			});
 		},
 
@@ -66,6 +67,7 @@ window.App.Solutions = window.App.Solutions || {};
 					},
 					success: function () {
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
+						$this.showSearchIcon();
 						// App.Discussions.Sidebar.reload();
 					}
 				});
@@ -82,6 +84,7 @@ window.App.Solutions = window.App.Solutions || {};
 				$('.comm-items ul').html($('.comm-items ul').data('list_item'));
 				$('.comm-items ul').sortable("destroy");
 				$this.classToggle();
+				$this.showSearchIcon();
 			});
 		},
 
@@ -91,6 +94,14 @@ window.App.Solutions = window.App.Solutions || {};
 				positionHash.set(item.getAttribute('item_id'), index + 1);
 			});
 			return positionHash.toJSON();
+		},
+
+		showSearchIcon: function () {
+			$('#search-show').show();
+		},
+
+		hideSearchIcon: function () {
+			$('#search-show').hide();
 		},
 
 		leave: function () {
