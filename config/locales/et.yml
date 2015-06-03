@@ -5688,7 +5688,7 @@ et:
     delete_multiple: "Valitud valmisvastused kustutati!"
     no_delete: "Vaikekausta ei saa kustutada!"
     create_new: "Loo uus"
-    no_response_admin: "Selles kaustas ei ole ühtki vastust <a href={{link}} id='new_resp'>Loo uus</a>"
+    no_response_admin: "Selles kaustas ei ole ühtki vastust <a href=%{link} id='new_resp'>Loo uus</a>"
     select_folder: "Vali kaust"
     select_group: "Vali grupp"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."

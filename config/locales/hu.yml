@@ -1669,7 +1669,7 @@ hu:
     delete_multiple: "A kiválaszott tárolt válasz törölve!"
     no_delete: "Alapértelmezett mappa nem törölhető!"
     create_new: "Új létrehozása"
-    no_response_admin: "Nincs tároltválasz a mappában <a href={{link}} id='new_resp'>Új létrehozása</a>"
+    no_response_admin: "Nincs tároltválasz a mappában <a href=%{link} id='new_resp'>Új létrehozása</a>"
     select_folder: "Mappa kiválasztása"
   portalcss:
     publish_changes: "Mentés és publikálás"
