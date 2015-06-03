@@ -3,7 +3,7 @@
 	.preview_pic img{
 		height:25px;
 		width:25px;
-    @include border-radius(0);
+    @include border-radius(5px);
 	}
 	.contact-append{
 		margin-bottom: 5px;

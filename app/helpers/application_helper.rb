@@ -556,16 +556,21 @@ module ApplicationHelper
     #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
     #Remove once found the cause.
     user = User.new if user.nil?
-    img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
-    if options.include?(:width)
-      img_tag_options[:width] = options.fetch(:width)
-      img_tag_options[:height] = options.fetch(:height)
-    end 
-    avatar_content = MemcacheKeys.fetch(["v11","avatar",profile_size,user],30.days.to_i) do
-      img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+    if user.avatar
+      img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
+      avatar_content = MemcacheKeys.fetch(["v14","avatar",profile_size,user],30.days.to_i) do
+        avatar_url = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
+        img_tag_options[:"data-src"] = avatar_url
+        img_tag_options[:"data-src-retina"] = avatar_url
+        img_tag_options[:class] = profile_size
+        ActionController::Base.helpers.content_tag(:div,
+        ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
+        :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+      end
+       avatar_content
+    else
+      avatar_generator(user.name, profile_size, profile_class, options)
     end
-    avatar_content
   end
   
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
@@ -574,7 +579,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end
-    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_url(user, profile_size = :thumb)
@@ -585,18 +590,44 @@ module ApplicationHelper
     user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
 
-  def is_user_social( user, profile_size )
+  def is_user_social( user, profile_size)
     if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
-    else
-      "/assets/misc/profile_blank_#{profile_size}.gif"
+    else 
+      false
     end
+  end
+
+  def avatar_generator( username, profile_size = :thumb, profile_class, opt )
+    img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class] }
+    
+    username = username.lstrip
+
+    if isalpha(username[0])
+       content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
+    else
+       content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    end
+  end
+
+  def unique_code(username)
+    images = Dir.glob(Rails.root+"public/images/avatar/background/1x/*.*")
+    hash = 0
+    username.each_byte do |c|        
+      hash = c + ((hash << 5) - hash);
+    end
+    unique_code = hash % (images.length)
+    unique_code
+  end
+
+  def isalpha(str)
+    str.match(/[^!@#,\$%\^\&\*\(\)\+_\-\?\<\>:"';\.\d ]$/)
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
     handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
-      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.gif"
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.jpg"
     end
     handle_avatar
   end

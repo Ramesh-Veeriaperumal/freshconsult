@@ -102,7 +102,8 @@ ul.activityfeed li{
 	font-size:1.1em; line-height:1.6;
 	.preview_pic{
 		@include margin-left(-52px);
-		margin-top:3px; 
+		@include margin-right(0px);
+		
 	}
 	.username{
 	   font-weight:bold;
@@ -113,7 +114,7 @@ ul.activityfeed li{
    		text-decoration:none; 
 	}
 	.activity_time{ color:#a6a6a6; padding-top:3px; text-transform:lowercase;}
-	div.preview_pic img{ width:40px; height:40px; }
+	div.preview_pic img{ &.preview_pic{margin-left: 0;}width:40px; height:40px;@include border-radius(50%); }
 }
 
 // ----------------------------------------------------------------------------
@@ -180,7 +181,6 @@ ul.activityfeed li{
 
 div.profile_pic img{
 	@include box-shadow(rgba(0,0,0,0.3) 0 7px 14px -8px);
-	border: 1px solid rgba(0,0,0,0.1);
 	@include border-radius(6px);
 }
 
@@ -1091,16 +1091,20 @@ a.page_title{
 .contact-box{
 	@include padding-left(170px);
 	div.profile_pic{
+		border-radius: 6px;
 		@include float(left);
 		@include margin-left(-150px);
 		width:127px;
-		margin-top:5px;
-		@include text-align(center); 
+		margin-top:5px; 
 		img{
 		   max-width:130px;
 		   min-width: 90px;
 		   max-height: 160px;
 		}
+	}
+	.avatar-text{
+		@include box-shadow(rgba(0, 0, 0, 0.3) 0 7px 14px -8px);
+ 		border-radius: 6px;
 	}
 	.info-highlight{
 		@include margin(15px 0 0 -171px);
@@ -4016,4 +4020,69 @@ $adm-bdr:#F0F0F0;
 	}
 }
 
-// End
+$i: 9;
+@while $i >= 0 {
+	.bg-#{$i} { background-image: url('/images/avatar/background/1x/#{$i}bthumb.png');background-size: 100%;}
+	$i: $i - 1;
+}
+
+div.avatar-text{
+	color: #fff;
+	text-transform: uppercase;
+}
+div.thumb{
+	border-radius: 10%;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 18px;
+	font-weight: 200;
+	color: rgba(255,255,255,0.8);
+}
+div.medium{
+	border-radius: 10%;
+	width: 127px;
+	height: 127px;
+	line-height: 127px;
+	font-size: 60px;
+	font-weight: 100;
+	text-align: right;
+	@include padding( 25px 15px 0 0 );
+	@include box-sizing(border-box);
+	color: rgba(255,255,255,0.6);
+	text-shadow: 0 0 8px #fff;
+}
+div.small{
+	border-radius: 10%;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	font-weight: 400;
+}
+.circle{
+	@include border-radius(50% !important);
+}
+img.preview_pic{
+	margin-left: 0;
+}
+img.thumb{
+	width: 40px;
+	height: 40px;
+}
+img.medium{
+	width: 127px;
+	height: 127px;
+}
+img.small{
+	width: 25px;
+	height: 25px;
+}
+@media  only screen and (min-device-pixel-ratio: 2), 
+        only screen and (min-resolution: 192dpi) {
+ $j: 9;
+@while $j >= 0 {
+	.bg-#{$j} { background-image: url('/images/avatar/background/2x/#{$j}bthumb.png');background-size: 100%;}
+	$j: $j - 1;
+}
+}

@@ -72,7 +72,7 @@
 	<div class='contact-show'>
 		<div class='contact-info-fields'>
 			<div class='contact-info-fields-content'>
-				<%= user_avatar(@user, :medium, "profile_pic avatar-pic") %>
+				<%= user_avatar(@user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
 				<div class='user-info'>
 					<h1 class='lead break-word'><%= h(@user.display_name) %></h1>
 					<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>

@@ -9,7 +9,7 @@
     <div class="conversations">
       <div id="original_feed" class="tweets-conv tweets-feed clearfix">
         <div class="span1 prof-pic image-lazy-load">
-          <img src="/images/misc/profile_blank_thumb.gif" 
+          <img src="/images/misc/profile_blank_thumb.jpg" 
           data-src="<%= normal_twt_avatar(@retweets[:status].user[:image])%>" 
           data-src-retina="<%= bigger_twt_avatar(@retweets[:status].user[:image])%>"/>
         </div>
@@ -35,7 +35,7 @@
       <% @retweets[:feeds].each_with_index do |retweet, index| %>
         <div class="tweets-conv tweets-feed clearfix" >
           <div class="span1 prof-pic image-lazy-load">
-            <img src="/images/misc/profile_blank_thumb.gif" 
+            <img src="/images/misc/profile_blank_thumb.jpg" 
             data-src="<%= normal_twt_avatar(retweet.user[:image])%>" 
             data-src-retina="<%= bigger_twt_avatar(retweet.user[:image])%>" class="small32" />
           </div>
