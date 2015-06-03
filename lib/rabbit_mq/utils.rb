@@ -36,7 +36,7 @@ module RabbitMq::Utils
         valid = construct_message_for_subscriber(f, message, model, action)
         key = generate_routing_key(key, valid)
       }
-      send_message(message, key)
+      send_message(message.to_json, key)
     end
   end
 
