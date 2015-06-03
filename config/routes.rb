@@ -2098,6 +2098,14 @@ Helpkit::Application.routes.draw do
           delete 'destroy'
         end
       end
+
+      resources :manage_users, :only => :none do
+        collection do
+          get :get_whitelisted_users
+          post :add_whitelisted_user_id
+          delete :remove_whitelisted_user_id
+        end
+      end
       
     end
   end
