@@ -63,7 +63,8 @@ class Admin::Mobihelp::AppsController < Admin::AdminController
       @app.attributes = params[:mobihelp_app]
 
       app_solution_ids = @app.app_solutions(:select => :category_id, :order => "position").map(&:category_id)
-      category_ids     = @app.category_ids.map(&:to_i) || []
+
+      category_ids     = @app.category_ids.blank? ? [] : @app.category_ids.map(&:to_i)
 
       unless app_solution_ids == category_ids
         @app.app_solutions.clear
