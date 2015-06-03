@@ -1017,9 +1017,9 @@ module ApplicationHelper
       feature?(:twitter) && privilege?(:manage_tickets)
     end
 
-    def additional_settings?
+    def social_enabled?
       settings = current_account.account_additional_settings.additional_settings
-      settings.blank? || settings[:enable_social]
+      settings.blank? || settings[:enable_social].nil? || settings[:enable_social]
     end
 
     def handles_associated?
@@ -1027,7 +1027,7 @@ module ApplicationHelper
     end
 
     def can_view_welcome_page?
-      privilege?(:view_admin) && can_view_social? && additional_settings?
+      privilege?(:view_admin) && can_view_social? && social_enabled?
     end
 
   def tour_button(text, tour_id)
