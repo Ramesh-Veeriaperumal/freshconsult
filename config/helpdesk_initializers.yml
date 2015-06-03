@@ -61,5 +61,6 @@ helpdesk:
     - statsd_config
     - big_brother
     - launch_profiler
+    - clean_api_middlewares
 
 
