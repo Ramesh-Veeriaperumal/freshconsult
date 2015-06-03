@@ -48,6 +48,7 @@ window.App = window.App || {};
         this.current_module = '';
       }
       App.Solutions.Reorder.leave();
+      App.Solutions.NavMenu.leave();
     }
   };
 
