@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="span8">
-		<%= pjax_link_to h(current_item.title).truncate(35), solution_category_folder_article_path(article.folder.category_id, article.folder, article), { :class => "draft-title"} %>
+		<%= pjax_link_to h(current_item.title).truncate(35), "#{solution_article_path(article)}#edit", { :class => "draft-title"} %>
 		<br/>
 		<div class="muted">
 			<%= t('search.in') %>
@@ -16,7 +16,7 @@
 				<%= t('solution.draft.kbase') %>
 			<% else %>
 				<%= pjax_link_to article.folder.name, 
-						solution_category_folder_path(article.folder.category_id, article.folder),
+						solution_folder_path(article.folder_id),
 						{ :class => "parent-link" } %>
 			<% end %>
 		</div>

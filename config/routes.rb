@@ -1473,12 +1473,6 @@ Helpkit::Application.routes.draw do
 
     match '/sales_manager' => 'dashboard#sales_manager'
     match '/agent-status' => 'dashboard#agent_status'
-    
-    resources :articles do
-      collection do
-        get :autocomplete
-      end
-    end
 
     resources :attachments do
       member do

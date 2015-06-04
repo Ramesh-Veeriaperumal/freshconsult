@@ -10,20 +10,15 @@ window.App = window.App || {};
     data: {},
 
     onVisit: function (data) {
-      // Check if this is New Version.
-     if (App.namespace === "solution/articles/new") {
-       this.eventsForNewPage();
-     } 
-     // else if (App.namespace === "solution/articles/show") {
-//        // this.showPage();
-//        // this.showPage2();
-//      } else if (App.namespace === "solution/articles/edit") {
-//        this.defaultFolderValidate();
-//      }
+      
+      if (App.namespace === "solution/articles/new") {
+        this.eventsForNewPage();
+      } 
 			
       this.resetData();
       this.setDataFromPage();
       this.bindHandlers();
+      this.handleEdit();
       highlight_code();
       App.Solutions.SearchConfig.onVisit();
     },
@@ -32,10 +27,20 @@ window.App = window.App || {};
       $('body').off('.articles');
       App.Solutions.SearchConfig.onLeave();
     },
+
+    handleEdit: function () {
+      if (window.location.hash === "#edit") {
+        $(".article-edit-btn").trigger('click');
+      }
+    },
     
     resetData: function () {
       this.data.title = null;
       this.data.description = null;
+    },
+
+    editUrlChange: function (editingFlag) {
+      window.location.hash = (editingFlag ? "#edit" : "");
     },
     
     setDataFromPage: function () {
@@ -71,6 +76,8 @@ window.App = window.App || {};
       if ($("#article-form").data().defaultFolder) {
         this.defaultFolderValidate();
       }
+
+      this.editUrlChange(true);
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
     },
@@ -143,7 +150,6 @@ window.App = window.App || {};
     bindForCancel: function () {
       var $this = this;
       $("body").on('click.article', "#edit-cancel-button", function (ev) {
-        console.log("Inside the edit-cancel-button click event bind function.");
         ev.preventDefault();
 				$this.articleDraftAutosave.stopSaving();
         $(".article-edit-form")[0].reset();
@@ -151,6 +157,7 @@ window.App = window.App || {};
 				$this.resetDraftRequest();
         $this.articleDraftAutosave.contentChanged = false;
 				$this.cancel_UI_toggle();
+        $this.editUrlChange(false);
       });
     },
     
@@ -227,7 +234,7 @@ window.App = window.App || {};
     autosaveDomManipulate: function (response) {
 
       var changeDom = {
-        mainElement: $(".draft-info-box"),
+        mainElement: $(".draft-notif"),
         msgElement: $(".autosave-notif"),
         lastSuccess: false,
         liveTimeStamp: function () {
@@ -247,9 +254,8 @@ window.App = window.App || {};
           return element.wrap('<div/>').parent().html();
         },
         themeChange: function (isError) {
-          this.mainElement
+          this.msgElement
             .toggleClass('error', isError)
-            .toggleClass('success', isError)
             .show();
         },
         lastUpdatedAt: function (response) {
@@ -288,13 +294,6 @@ window.App = window.App || {};
         this.articleDraftAutosave.lastSaveStatus = false;
         changeDom.manipulate(response, false);
       }
-    },
-
-    showPage: function () {
-      if ($("#folder-section").height() > $("#article-section").height()) {
-        $("#article-section").css("minHeight", $("#folder-section").height());
-      }
-      highlight_code();
     },
 
     articleProperties: function () {

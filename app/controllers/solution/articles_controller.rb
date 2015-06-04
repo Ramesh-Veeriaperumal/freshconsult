@@ -346,12 +346,8 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def render_edit
-      if @solution_drafts_feature
-        return unless load_draft
-        render "solution/articles/draft/edit"
-      else
-        render "solution/articles/edit"
-      end
+      return if @solution_drafts_feature && !load_draft
+      redirect_to "#{solution_article_path(@article)}#edit"
     end
 
     def bulk_update_folder

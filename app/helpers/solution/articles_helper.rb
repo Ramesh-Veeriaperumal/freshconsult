@@ -7,7 +7,7 @@ module Solution::ArticlesHelper
       output << pjax_link_to(t('solution.draft.name'), solution_drafts_path)
     else
       output << pjax_link_to(@article.folder.category.name, solution_category_path(@article.folder.category))
-      output << pjax_link_to(@article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder))
+      output << pjax_link_to(@article.folder.name, solution_folder_path(@article.folder))
     end
     output.join(' ').html_safe
   end

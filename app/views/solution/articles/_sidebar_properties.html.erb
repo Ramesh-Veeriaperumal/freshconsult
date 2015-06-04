@@ -2,7 +2,7 @@
 			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
 			<p class="edit span1 pull-right">
 				<%= link_to( t('edit'), 
-						properties_solution_category_folder_article_path(@article.folder.category, @article.folder, @article, {:edit => true}),
+						properties_solution_article_path(@article, {:edit => true}),
 						:rel => "freshdialog",
 						:class => "article-properties",
 						:title => t('solution.articles.properties'),
@@ -30,7 +30,7 @@
 		<div class="folder-name section">
 			<h5 class="leads"><%= t('solution.folder') %></h5>
 			<p>
-				<%= pjax_link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), {:title => "#{t('solution.folder')} - #{@article.folder.name}" } %>
+				<%= pjax_link_to @article.folder.name, solution_folder_path(@article.folder_id), {:title => "#{t('solution.folder')} - #{@article.folder.name}" } %>
 			</p>
 		</div>
 		<div class="tags-wrapper section">
