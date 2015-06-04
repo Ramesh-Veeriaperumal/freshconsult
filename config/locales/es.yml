@@ -5681,7 +5681,7 @@ es:
     delete_multiple: "La respuesta tipo seleccionada fue eliminada"
     no_delete: "La carpeta por defecto no puede ser eliminada"
     create_new: "Crear nuevo"
-    no_response_admin: "No hay respuestas en esta carpeta, crear nueva <a href=%{link} id='new_resp'></a>"
+    no_response_admin: "No hay respuestas en esta carpeta,<a href=%{link} id='new_resp'>Crear nueva</a>"
     select_folder: "Selecciona la carpeta"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."
