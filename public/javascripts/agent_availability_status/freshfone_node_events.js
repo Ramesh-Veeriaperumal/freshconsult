@@ -63,7 +63,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
          var agent=this.filter.getAgent(agent.id);
         var item=list.get("id",agent.id);
        var presence_in_words=agent.last_call_time==null ? freshfone.no_activity :'<span data-livestamp="'+agent.last_call_time+'"></span>';
-     item.values({presence_time_in_s: presence_in_words});
+     item.values({presence_time_in_s: presence_in_words, presence_time: agent.last_call_time});
       }
     },
     
