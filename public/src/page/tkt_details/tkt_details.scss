@@ -1663,6 +1663,11 @@ ol, ul, li{
 			margin-top: 3px;
 			border: 1px #bbb solid;
 		}
+		img{
+			width: 25px;
+			height: 25px;
+			border-radius: 5%;
+		}
 	}	
 	.crm_contact_widget .contact-type {
 	 @include right(0);
@@ -1702,8 +1707,8 @@ ol, ul, li{
 		}
 
 		.requester-avatar-wrap {
-			@include padding(0 10px 10px  0);
-			width: 30px;
+			@include padding(6px 10px 10px 0);
+			width: 25px;
 		}
 
 		.note {
