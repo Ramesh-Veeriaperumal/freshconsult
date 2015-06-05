@@ -197,7 +197,7 @@ class Freshfone::Call < ActiveRecord::Base
 			delete_twilio_recording(user_id)
 			self.update_attributes!(build_recording_delete_params(user_id))
 		rescue Exception => e
-			Rails.logger.debug "Error Deleting the Call Recording for call id:#{self.id}, account id: #{account.id}, recording_sid: #{recording_sid}, User Id: #{user_id}
+			Rails.logger.debug "Error Deleting the Call Recording for call id:#{self.id}, account id: #{account.id} User Id: #{user_id}
 			.\n #{e.message}\n #{e.backtrace.join("\n\t")}"
 			raise e
 		end
@@ -425,15 +425,14 @@ class Freshfone::Call < ActiveRecord::Base
 				date = (Time.now.utc.ago 7.days)
 				if self.updated_at >= date.beginning_of_day
 					FreshfoneNotifier.call_recording_deletion_failure(
-					  :account_id => @account.id,
-					  :call_id => @self.id,
+					  :account_id => account.id,
+					  :call_id => self.id,
 					  :exception => e,
 					  :recording_url => recording_url,
 					  :user_id => user_id,
 					  :updated_at => updated_at)
 				end
-				Rails.logger.debug "Error deleting the recording from twilio for call id :#{self.id}, account id: #{account.id}, recording_sid: #{recording_sid}, User Id: #{user_id}.\n
-				#{e.message}\n #{e.backtrace.join("\n\t")}"
+				Rails.logger.debug "Error deleting the recording from twilio for call id :#{self.id}, account id: #{account.id}, recording_sid: #{recording_sid}, User Id: #{user_id}.\n Message: #{e.message}"
 			end
 		end
 end
