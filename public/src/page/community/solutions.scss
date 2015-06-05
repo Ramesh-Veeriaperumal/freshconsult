@@ -422,6 +422,14 @@
   }
 }
 
+.bulk-action-menu {
+	input {
+		border-radius: 5px;
+	  margin: 3px 0px 3px 4px;
+	  width: 95%
+	}
+}
+
 #folder-bulk-action, #article-bulk-action {
 
   .visible-to-btn {

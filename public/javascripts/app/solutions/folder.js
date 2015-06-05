@@ -14,6 +14,7 @@ window.App = window.App || {};
       console.log("Loaded the folder.js");
       this.initialData();
       this.bindHandlers();
+      this.removeCurrentFolder();
       App.Solutions.SearchConfig.onVisit();
     },
     
@@ -108,6 +109,10 @@ window.App = window.App || {};
       $('body').on('change.folders_articles', '#solution_folder_visibility', function () {
         $this.show_hide_customers();
       });
+    },
+
+    removeCurrentFolder: function () {
+      $('#article-bulk-action #move_to option').each(function(i, x) { if (x.value == $('h2').attr('folder-id')) x.remove(); });
     },
 
     allSelectAction: function (checked) {
