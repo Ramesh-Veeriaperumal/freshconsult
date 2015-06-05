@@ -29,20 +29,12 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
           this.userListUpdate(agent,this.filter.Status.BUSY,this.filter.Preference.TRUE);
           if(agent.preference==this.filter.Preference.TRUE){
             if(this.filter.AvailableAgentList.get("id",agent.id)){
-              $.each(this.filter.availableListArray,jQuery.proxy(function(index,value)  {
-                  if(value==agent.id){
                       var item=this.filter.AvailableAgentList.get("id",agent.id);
                       item.values({presence_time_in_s: freshfone.call_in_progress });
-                  }
-              },this));
             }
             if(this.filter.UnavailableAgentList.get("id",agent.id)){
-              $.each(this.filter.unavailableListArray,jQuery.proxy(function(index,value)  {
-                  if(value==agent.id){
                       var item=this.filter.UnavailableAgentList.get("id",agent.id);
                       item.values({presence_time_in_s: freshfone.call_in_progress });
-                  }
-              },this));
             }
          this.filter.updateNoOfAgents();
           }
@@ -50,27 +42,19 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
     addAvailableAgentToList: function(agent){
       if(!this.filter.AvailableAgentList.get("id",agent.id)){
-        $.each(this.filter.unavailableListArray,jQuery.proxy(function(index,value)  {
-          if(value==agent.id){
             this.filter.addAgentByDevice(agent.id);
             this.filter.availableListArray[agent.id]=agent.id; 
             this.filter.updateNoOfAgents();
-          }
-          },this)); 
-         this.filter.unavailableListArray.splice(agent.id,1,'');
+            this.filter.unavailableListArray.splice(agent.id,1,'');
       }
     },
    
     addUnavailableAgentToList: function(agent){
       if(!this.filter.UnavailableAgentList.get("id",agent.id)){
-        $.each(this.filter.availableListArray,jQuery.proxy(function(index,value)  {
-        if(value==agent.id){
           this.filter.UnavailableAgentList.add(this.filter.unavailableUserListItem(agent.id)); 
           this.filter.unavailableListArray[agent.id]=agent.id; 
           this.filter.updateNoOfAgents();
-        }
-        },this)); 
-       this.filter.availableListArray.splice(agent.id,1,'');
+          this.filter.availableListArray.splice(agent.id,1,'');
       }
     },
     

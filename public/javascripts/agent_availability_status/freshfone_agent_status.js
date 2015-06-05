@@ -8,7 +8,7 @@ window.App = window.App || {};
     onVisit: function (data) {
       App.AgentEvents.ticketEventsInit();
       App.AgentEvents.agentTabEventsInit();
-  		if(freshfone.agents!= undefined && typeof freshfone != "undefined"){
+  		if(typeof freshfone != "undefined"){
           this.Filter.init();
           this.Node.init();
           App.AgentEvents.ffoneEventsInit();

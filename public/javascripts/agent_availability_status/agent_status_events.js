@@ -11,6 +11,7 @@ window.App = window.App || {};
       this.ffoneGroupDropdown();
       this.ffoneSortDropdown();
       this.ffoneAgentPillSelection();
+      this.listenToSocket();
     },
     ticketEventsInit : function(){
       this.ticketsAgentPillSelection();
@@ -91,6 +92,23 @@ window.App = window.App || {};
      },
     leave: function() {
       $('body').off('.agentevents');
+      $(document).off('.agentevents');
+    },
+
+    listenToSocket: function(){
+      $(document).on("ffone_socket.agentevents", function (ev, data) {
+        switch (data.event){
+          case "agent_available":
+            App.Freshfoneagents.Node.changeToAvailableAgent(data.user);
+            break;
+          case "agent_unavailable": 
+            App.Freshfoneagents.Node.changeToUnavailableAgent(data.user);
+            break;
+          case "agent_busy":
+            App.Freshfoneagents.Node.changeToBusyAgent(data.user);
+            break;
+        }
+      });  
     }
 
   };
