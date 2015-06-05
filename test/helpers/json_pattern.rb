@@ -169,7 +169,7 @@ module JsonPattern
       product_id:  expected_output[:product_id] || ticket.product_id,
       attachments: Array,
       notes: Array,
-      tags:  expected_output[:tags] || ticket.tags,
+      tags:  expected_output[:tags] || ticket.tag_names,
       custom_fields:  expected_output[:custom_fields] || ticket.custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

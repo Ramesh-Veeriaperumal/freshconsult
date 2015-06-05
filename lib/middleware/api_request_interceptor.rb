@@ -34,7 +34,7 @@ class Middleware::ApiRequestInterceptor
   end
 
   def validate_content_type
-    unless  @content_type =~ /application\/json/
+    unless  @content_type =~ /multipart\/form-data|application\/json/
       @stop_proceeding = true
       @status, @headers, @response = [415, {'Content-Type' => 'application/json'}, 
                                       [{:message => 'Content-Type header should have application/json', :code => 'invalid_content_type'}.to_json]]

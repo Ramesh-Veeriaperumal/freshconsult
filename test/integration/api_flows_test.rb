@@ -44,6 +44,12 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     response.body.must_match_json_expression(un_supported_media_type_error_pattern)
   end
 
+  def test_multipart_valid_content_type
+    post '/api/tickets', {"ticket"=> {"email"=> "test@abc.com", "subject"=> "Test Subject"}}, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
+    assert_response :created
+    assert_equal Hash, parse_response(@response.body).class
+  end
+
   def test_unsupported_media_type_without_content_type
     post '/api/discussions/categories', '{"category": {"name": "true"}}', @headers
     assert_response :unsupported_media_type

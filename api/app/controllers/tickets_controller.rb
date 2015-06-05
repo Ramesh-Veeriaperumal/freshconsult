@@ -1,12 +1,16 @@
 class TicketsController < ApiApplicationController
+  wrap_parameters :ticket, exclude: [], format: [:json, :multipart_form]
+
   include Helpdesk::TicketActions
   include Concerns::TicketConcern
   include Helpdesk::TagMethods
+  include CloudFilesHelper
 
   before_filter :assign_protected, only: [:create]
 
   def create
     add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for teh account.
+    build_normal_attachments(@item,params[cname][:attachments])
     if @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
@@ -30,6 +34,7 @@ class TicketsController < ApiApplicationController
       @tags = params[cname][:tags].map(&:strip) if params[cname][:tags]
       clean_params([:cc_emails, :custom_fields, :tags, :fr_due_by])
       build_ticket_body_attributes
+      params[cname][:attachments] = params[cname][:attachments].map{|att| {:resource => att}} if params[cname][:attachments]
     end
 
     def validate_params
@@ -45,7 +50,6 @@ class TicketsController < ApiApplicationController
     def assign_protected
       @item.product ||= current_portal.product
       @item.display_id = params[cname][:display_id]
-      # build_attachments @item, cname.to_sym # Attachments should be part of same action.
     end
 
     def clean_params(params_to_be_deleted)

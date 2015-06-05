@@ -25,6 +25,19 @@ class TicketsValidationHelper
       end
     end
 
+    def attachment_validator
+      proc do |record, attr, value_array|
+        if value_array.is_a? Array
+          value_array.each do |value|
+            unless value.is_a? ApiConstants::UPLOADED_FILE_TYPE
+              record.errors.add attr, "invalid_format" 
+              break
+            end
+          end
+        end
+      end
+    end
+
     def valid_email?(value)
       # the commented line should be included if email regex is different for diff attributes
       # email_regex = ApiConstants.constants.include?"ApiConstants::#{attr}_REGEX" ? EMAIL_REGEX : const_value

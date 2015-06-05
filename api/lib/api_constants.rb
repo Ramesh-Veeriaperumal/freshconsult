@@ -37,8 +37,8 @@ module ApiConstants
   CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(view_admin: ['created_at', 'updated_at'], manage_users: ['email', 'user_id'])
   UPDATE_POST_FIELDS = { all: ['body_html', 'answer'] }
   CREATE_POST_FIELDS = { all: %w(body_html answer topic_id), view_admin: ['created_at', 'updated_at'], manage_users: ['email', 'user_id'] }
-  TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }]
-  CREATE_TICKET_FIELDS = %w(cc_emails description description_html display_id due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject ticket_type product_id tags) | TICKET_ARRAY_FIELDS
+  TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }, { 'attachments' => [] }]
+  CREATE_TICKET_FIELDS = %w(cc_emails description description_html display_id due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject ticket_type product_id tags attachments) | TICKET_ARRAY_FIELDS
 
   # *********************************-- ValidationConstants --*********************************************
 
@@ -58,6 +58,7 @@ module ApiConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN.values | Forum::VISIBILITY_KEYS_BY_TOKEN.values.map(&:to_s)
   FORUM_TYPE_KEYS_BY_TOKEN = Forum::TYPE_KEYS_BY_TOKEN.values | Forum::TYPE_KEYS_BY_TOKEN.values.map(&:to_s)
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
+  UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 
   # *********************************-- ErrorConstants --*********************************************
 

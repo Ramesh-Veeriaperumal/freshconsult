@@ -3,7 +3,7 @@ class TicketValidation < ApiValidation
 
   attr_accessor :id, :cc_emails, :description, :description_html, :display_id, :due_by, :email_config_id, :fr_due_by, :group_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :responder_id, :source, :status, :subject, :ticket_type,
-                :product_id, :tags, :custom_fields, :account
+                :product_id, :tags, :custom_fields, :account, :attachments
 
   validates_with DateTimeValidator, fields: [:due_by, :fr_due_by], allow_nil: true
   validates :group_id, :requester_id, :responder_id, :display_id, :product_id, :email_config_id, numericality: { allow_nil: true }
@@ -12,9 +12,10 @@ class TicketValidation < ApiValidation
   validates :priority, inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
   validate :allowed_status? # Can't use inclusion validator as dynamic messages are not feasible
   validates :source, inclusion: { in: 1..TicketConstants::SOURCES.size }, allow_nil: true
-  validates_with DataTypeValidator, rules: { 'Array' => ['tags', 'cc_emails'], 'Hash' => ['custom_fields'] }, allow_nil: true
+  validates_with DataTypeValidator, rules: { 'Array' => ['tags', 'cc_emails', 'attachments'], 'Hash' => ['custom_fields'] }, allow_nil: true
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'is not a valid email' }, if: :email_required?
   validates_each :cc_emails, &TicketsValidationHelper.email_validator # Expects a block
+  validates_each :attachments, &TicketsValidationHelper.attachment_validator
   validate :allowed_types? # Can't use inclusion validator as dynamic messages are not feasible
   # Should be part of bulk create API.
   # validates :closed_at, inclusion: { in: [nil], message: "invalid_field" }, :if => proc{|x| x.status != Helpdesk::TicketStatus.status_keys_by_name(Account.current)["Closed"] }

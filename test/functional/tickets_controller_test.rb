@@ -186,6 +186,30 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('dsfsdf', 'invalid_field')])
   end
 
+  def test_create_with_attachment
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg') 
+    params = ticket_params_hash.merge('attachments' => [file, file2])
+    stub_const(ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+      post :create, construct_params({}, params)
+    end
+    assert_response :created
+    response_params = params.except(:tags, :attachments)
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    assert Helpdesk::Ticket.last.attachments.count == 2
+  end
+
+  def test_create_with_invalid_attachment_params_format
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = ticket_params_hash.merge('attachments' => [1, 2])
+    stub_const( ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+      post :create, construct_params({}, params)
+    end
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+  end
+
   # def test_create_with_custom_fields
   #   put :update, :jsonData => @default_fields.merge(:controller => :ticket_fields)
   # end

@@ -8,7 +8,7 @@ Todo:
  - "Application controller before filters(controller logger, cache buster) to be added"
  - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
  - "Expose email config and product index"
-
+ - Tickets? phone source?
 
 Breaking changes in existing APIs:
  - day pass required

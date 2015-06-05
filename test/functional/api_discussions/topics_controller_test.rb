@@ -235,6 +235,20 @@ module ApiDiscussions
       refute monitorship.active
     end
 
+    def test_unfollow_user_id_invalid
+      monitor_topic(first_topic, other_user, 1)
+      delete :unfollow, construct_params({ id: first_topic.id }, user_id: 999)
+      assert_response :not_found
+    end
+
+    def test_unfollow_valid_params_invalid_record
+      monitor = Monitorship.where(:monitorable_type => "Topic").last
+      user = User.find_by_id(monitor.user_id)
+      user.update_column(:email, nil)
+      delete :unfollow, construct_params({ id: monitor.monitorable_id }, user_id: user.id)
+      assert_response :bad_request
+    end
+
     def test_permit_toggle_params_invalid
       monitor_topic(first_topic, @agent, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: @agent.id)

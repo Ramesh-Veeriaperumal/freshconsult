@@ -22,6 +22,15 @@ module TestCaseMethods
     ActionController::Metal.perform_caching = caching
   end
 
+  def stub_const(parent, const, value, &block)
+    const = const.to_s
+    old_value = parent.const_get(const)
+    parent.const_set(const, value)
+    yield
+  ensure
+    parent.const_set(const, old_value)
+  end
+
   def clear_cache
     Rails.cache.clear
   end
