@@ -660,6 +660,7 @@ GEM
       rack (>= 0.4)
     rack-contrib (1.2.0)
       rack (>= 0.9.1)
+    rack-cors (0.3.1)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.2)
@@ -974,6 +975,7 @@ DEPENDENCIES
   prototype_legacy_helper (= 0.0.0)!
   pry
   rack (~> 1.4.5)
+  rack-cors (~> 0.3.1)
   rack-openid!
   rack-ssl!
   rack-test (~> 0.6.2)
