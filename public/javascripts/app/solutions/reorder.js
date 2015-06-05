@@ -69,6 +69,7 @@ window.App.Solutions = window.App.Solutions || {};
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
 						$this.showSearchIcon();
 						// App.Discussions.Sidebar.reload();
+						$('body').trigger('afterReorder');
 					}
 				});
 				var url = $this.submitUrl;

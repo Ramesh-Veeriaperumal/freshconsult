@@ -46,10 +46,11 @@ module SolutionHelper
 					opts = { :title => t("solution.add_folder"), "data-target" => "#new-fold" }
 					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
+					opts = { :"data-pjax" => "#body-container" }
 					if privilege?(:publish_solution)
-						btn_dropdown_menu(article, [category, folder])
+						btn_dropdown_menu(article, [category, folder], opts)
 					else
-						btn_dropdown_menu(folder, [category])
+						btn_dropdown_menu(folder, [category], opts)
 					end
 			end
 		elsif privilege?(:create_article)
@@ -63,7 +64,8 @@ module SolutionHelper
 		{
 			:rel => 'freshdialog',
 			"data-close-label" => t('cancel'),
-			"data-submit-label" => t('save')
+			"data-submit-label" => t('save'),
+			:"data-pjax" => nil
 		}
 	end
 
@@ -74,7 +76,7 @@ module SolutionHelper
 		when :folder
 			default_new_btn_opts.merge({ :title => t("solution.add_folder"), "data-target" => "#new-fold" })
 		when :article
-			default_new_btn_opts.merge({ :"data-pjax" => "#body-container" })
+			{ :"data-pjax" => "#body-container", :title => nil, :rel => nil }
 		end
 	end
 

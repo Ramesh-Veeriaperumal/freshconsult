@@ -75,6 +75,10 @@ window.App = window.App || {};
         $this.visibleToSelection($(this).data());
       });
 
+      $('body').on('afterReorder.folders_articles', function () {
+        App.Solutions.NavMenu.reload();
+      });
+
       //binding for folders move to
       $('#folder-bulk-action #move_to').on('change.folders_articles', function() {
         console.log(this.value);
@@ -249,6 +253,12 @@ window.App = window.App || {};
         $("#customers_filter").trigger("liszt:updated");
         $('.company_folders').hide();
       }
+    },
+
+    hideSelectAll: function () {
+        if ($('#fa_item-select-all:checked').size() > 0) {
+          $("#fa_item-select-all").attr('checked',false);
+        }
     }
   };
 }(window.jQuery));

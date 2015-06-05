@@ -604,3 +604,18 @@
     margin-top: -5px;
   }
 }
+
+.community-search::-webkit-input-placeholder {
+	font-weight: 300;
+	font-size: 16px;
+}
+
+.community-search::-moz-placeholder {
+	font-weight: 300;
+	font-size: 16px;
+}
+
+.community-search::-ms-input-placeholder {
+  font-weight: 300;
+	font-size: 16px;
+}

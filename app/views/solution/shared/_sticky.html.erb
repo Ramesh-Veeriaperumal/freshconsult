@@ -32,7 +32,8 @@
         &nbsp;
       <% end %>
       <% unless defined?(search_url).nil?  %>
-        <div class="pull-right pt5">
+        <% extra_padding = page == :home ? 'pt5' : '' %>
+        <div class="pull-right <%= extra_padding %>">
           <i class="ficon-search" id="search-show"></i>
         </div>
       <% end %>
