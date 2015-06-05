@@ -1,4 +1,6 @@
 module TestCaseMethods
+  include TicketFieldsHelper
+
   def parse_response(response)
     JSON.parse(response)
     rescue
@@ -102,6 +104,26 @@ module TestCaseMethods
 
   def v2_post_payload(t)
     post_params(t).to_json
+  end
+
+  def create_custom_field
+    @default_fields = ticket_field_hash(@account.ticket_fields, @account)
+    @default_fields.map { |f_d| f_d.delete(:level_three_present) }
+    @default_fields.push(type: 'paragraph', field_type: 'custom_paragraph',
+                         label: 'Problem',
+                         label_in_portal: 'Problem',
+                         description: '',
+                         active: true,
+                         required: false,
+                         required_for_closure: false,
+                         visible_in_portal: true,
+                         editable_in_portal: true,
+                         required_in_portal: false,
+                         id: nil,
+                         choices: [],
+                         levels: [],
+                         action: 'create')
+    @default_fields
   end
 end
 

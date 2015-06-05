@@ -1,5 +1,6 @@
 Helpkit::Application.routes.draw do
   api_routes = Proc.new do
+    resources :tickets
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit] do
         member do

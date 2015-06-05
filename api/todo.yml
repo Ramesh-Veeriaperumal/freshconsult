@@ -2,12 +2,12 @@ Todo:
  - combine all discussion methods into one and example requires feature before filter
  - Paginate fires extra queries?
  - Investigate rails-api
- - array should be datatype for list
- - Middlewares which is not needed for API
- - move concerns to web
- - revisit concerns. Avoid using concerns.
  - multipart form data handle
  - API Layer middleware Removal using YAML settings file.
+ - ticket custom fields test
+ - "Application controller before filters(controller logger, cache buster) to be added"
+ - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
+ - "Expose email config and product index"
 
 
 Breaking changes in existing APIs:
@@ -62,6 +62,10 @@ Completed:
  - only visibility 4 has to allow customer params
  - caching in view
  - Metal
+ - move concerns to web
+ - revisit concerns. Avoid using concerns.
+ - array should be datatype for list
+ - Middlewares which is not needed for API
 
 Not_necessary:
  - Clean up old discussions controller *****

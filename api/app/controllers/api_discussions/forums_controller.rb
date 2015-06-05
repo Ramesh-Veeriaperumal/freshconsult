@@ -1,6 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    before_filter { |c| c.requires_feature :forums } # should not be moved to concern as it disrupts the web controller
+    before_filter { |c| c.requires_feature :forums }
     skip_before_filter :check_privilege, :verify_authenticity_token, only: [:follow, :unfollow, :is_following]
     skip_before_filter :load_object, only: [:create, :is_following]
     include DiscussionMonitorConcern
@@ -12,7 +12,7 @@ module ApiDiscussions
       render '/api_discussions/topics/topic_list'
     end
 
-    def delete
+    def destroy
       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
       @forum.backup_forum_topic_ids
       super

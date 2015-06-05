@@ -79,6 +79,9 @@ Authority::Authorization::PrivilegeList.build do
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
+
+    # Used for API
+    resource :"ticket"
 	end
 
   reply_ticket do
