@@ -6,13 +6,13 @@
   <td class="check">
   	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
+  <% unless user_page %>
 <td class="userpic">
-	<% unless user_page %>
 	<div class="hideForList">
 		<%= user_avatar(ticket.requester,:thumb, "preview_pic circle") %>
 	</div>
-	<% end %>
 </td>
+<% end %>
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
   	
 	<div class="ticket_subject">
