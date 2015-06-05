@@ -16,8 +16,8 @@ class Solution::ArticlesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
   before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
-  before_filter :old_folder, :only => [:move_to]
-  before_filter :bulk_update_folder, :only => [:move_to, :unmove]
+  before_filter :old_folder, :cleanup, :only => [:move_to]
+  before_filter :bulk_update_folder, :only => [:move_to, :move_back]
   
 
   def index
@@ -138,37 +138,41 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def move_to
-    flash[:notice] = render_to_string(
-      :inline => t("solution.flash.articles_move_to",
-                      :undo => "<%= link_to(t('undo'), { :action => :unmove, :articlesList => params[:articlesList], :folderId => @folder_id }, { :'data-remote' => true, :'data-method' => :put }) %>"
-                  )).html_safe
+    flash[:notice] = moved_flash_msg if @updated_items
 
     respond_to do |format|
       format.js { render 'solution/articles/move_to.rjs' }
     end
   end
 
-  def unmove
-    @folder = current_account.folders.find(params[:folderId])
+  def move_back
+    @folder = current_account.folders.find(params[:parent_id])
     respond_to do |format|
-      format.js { render 'solution/articles/unmove.rjs' }
+      format.js { render 'solution/articles/move_back.rjs' }
     end
   end
 
   def change_author
-    params[:articlesList].each do |a|
-      @item = current_account.solution_articles.find(a)
-      @item.user_id = params[:userId]
-      @item.save
+    @updated_items = []
+    params[:items].each do |a|
+      item = current_account.solution_articles.find(a)
+      item.user_id = params[:parent_id]
+      item.save
+      @updated_items << item.id
     end
-    @articles = current_account.solution_articles.find_all_by_id(params[:articlesList])
-    flash[:notice] = t("solution.flash.articles_changed_author")
+    @articles = current_account.solution_articles.find_all_by_id(params[:items])
+    flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
     respond_to do |format|
       format.js { render 'solution/articles/change_author.rjs' }
     end
   end
 
   protected
+
+    def cleanup
+      params[:items] = params[:items].map(&:to_i)
+      params[:parent_id] = params[:parent_id].to_i
+    end
 
     def load_article
       @article = current_account.solution_articles.find(params[:id], :include =>[:draft])
@@ -351,15 +355,32 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def bulk_update_folder
-      params[:articlesList].each do |a|
+      @updated_items = []
+      params[:items].each do |a|
         item = current_account.solution_articles.find(a)
-        item.folder_id = params[:folderId]
-        item.save
+        if item
+          item.folder_id = params[:parent_id]
+          item.save
+          @updated_items << item.id
+        end
       end
     end
 
     def old_folder
-      @folder_id = current_account.solution_articles.find(params[:articlesList].first).folder_id
+      @folder_id = current_account.solution_articles.find(params[:items].first).folder_id
+    end
+
+    def moved_flash_msg
+      render_to_string(
+      :inline => t("solution.flash.articles_move_to",
+                      :folder_name => current_account.folders.find(params[:parent_id]).name,
+                      :undo => view_context.link_to(t('undo'), '#', 
+                                    :id => 'articles_undo_bulk',
+                                    :data => { 
+                                      :items => @updated_items, 
+                                      :parent_id => @folder_id
+                                    })
+                  )).html_safe
     end
 
 end

@@ -15,8 +15,8 @@ class Solution::FoldersController < ApplicationController
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
   before_filter :set_modal, :only => [:new, :edit]
-  before_filter :old_category, :only => [:move_to]
-  before_filter :bulk_update_category, :only => [:move_to, :unmove]
+  before_filter :old_category, :cleanup, :only => [:move_to]
+  before_filter :bulk_update_category, :only => [:move_to, :move_back]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -119,24 +119,26 @@ class Solution::FoldersController < ApplicationController
   end
 
   def move_to
-    flash[:notice] = render_to_string(
-      :inline => t("solution.flash.folders_move_to",
-                      :undo => "<%= link_to(t('undo'), { :action => :unmove, :foldersList => params[:foldersList], :categoryId => @category_id }, { :'data-remote' => true, :'data-method' => :put }) %>"
-                  )).html_safe
+    flash[:notice] = moved_flash_msg if @updated_items
 
     respond_to do |format|
       format.js { render 'solution/folders/move_to.rjs' }
     end
   end
 
-  def unmove
-    @category = current_account.solution_categories.find(params[:categoryId])
+  def move_back
+    @category = current_account.solution_categories.find(params[:parent_id])
     respond_to do |format|
-      format.js { render 'solution/folders/unmove.rjs' }
+      format.js { render 'solution/folders/move_back.rjs' }
     end
   end
 
  protected
+
+  def cleanup
+    params[:items] = params[:items].map(&:to_i)
+    params[:parent_id] = params[:parent_id].to_i
+  end
 
   def scoper #possible dead code
     eval "Solution::#{cname.classify}"
@@ -240,15 +242,30 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      params[:foldersList].each do |f|
+      @updated_items = []
+      params[:items].each do |f|
         item = current_account.folders.find(f)
-        item.category_id = params[:categoryId]
+        item.category_id = params[:parent_id]
         item.save
+        @updated_items << item.id
       end
     end
 
     def old_category
-      @category_id = current_account.folders.find(params[:foldersList].first).category_id
+      @category_id = current_account.folders.find(params[:items].first).category_id
+    end
+
+    def moved_flash_msg
+      render_to_string(
+      :inline => t("solution.flash.folders_move_to",
+                      :category_name => current_account.solution_categories.find(params[:parent_id]).name,
+                      :undo => view_context.link_to(t('undo'), '#', 
+                                    :id => 'folders_undo_bulk',
+                                    :data => { 
+                                      :items => @updated_items, 
+                                      :parent_id => @category_id
+                                    })
+                  )).html_safe
     end
 
 end

@@ -1,5 +1,5 @@
 @articles.each do |article|
 	page.replace "item_"+article.id.to_s, render(:partial => "/solution/folders/article", :locals => {:article => article}).html_safe
 end
-
-show_growl_flash(page)
+page << "App.Solutions.Folder.toggleActionsClass(true)"
+show_ajax_flash(page) if @updated_items

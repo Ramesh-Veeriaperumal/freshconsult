@@ -46,7 +46,8 @@ window.App = window.App || {};
       } else {
         $(".bulk-action-btns").addClass('disabled');
         $("#move_to").addClass('hide');
-        $("#visible_to").addClass('hide'); 
+        $("#visible_to").addClass('hide');
+        $("#change_author").addClass('hide');
       }
     },
 
@@ -77,60 +78,36 @@ window.App = window.App || {};
       $('#folder-bulk-action #move_to').on('change.folders_articles', function() {
         console.log(this.value);
         console.log($this.data.selectedElementIds);
-        $.ajax({
-          url: "/solution/folders/move_to",
-          type: 'PUT',
-          dataType: 'script',
-          data: {
-            categoryId: this.value,
-            foldersList: $this.data.selectedElementIds
-          },
-          success: function () {
-            console.log('success');
-           }
-         });
-        $('#move_to').select2("val", "");
+        $this.bulk_action($this, 'folders', 'move_to', this.value);
       });
 
       //binding for articles move to
       $('#article-bulk-action #move_to').on('change.folders_articles', function() {
         console.log(this.value);
         console.log($this.data.selectedElementIds);
-        $.ajax({
-          url: "/solution/articles/move_to",
-          type: 'PUT',
-          dataType: 'script',
-          data: {
-            folderId: this.value,
-            articlesList: $this.data.selectedElementIds
-          },
-          success: function () {
-            console.log('success');
-           }
-         });
-        $('#move_to').select2("val", "");
+        $this.bulk_action($this, 'articles', 'move_to', this.value);
       });
 
       //binding for change author
       $('#change_author').on('change.folders_articles', function () {
         console.log(this.value);
         console.log($this.data.selectedElementIds);
-        $.ajax({
-          url: "/solution/articles/change_author",
-          type: 'PUT',
-          dataType: 'script',
-          data: {
-            userId: this.value,
-            articlesList: $this.data.selectedElementIds
-          },
-          success: function () {
-            console.log('success');
-           }
-         });
-        $('#change_author').select2("val", "");
-        $('#change_author').removeClass('select2-container-active');
+        $this.bulk_action($this, 'articles', 'change_author', this.value);
       });
 
+      //bindings for undo
+      $('body').on('click.folders_articles', '#folders_undo_bulk', function () {
+        $this.undo_bulk_action($(this), "folders");
+      });
+
+      $('body').on('click.folders_articles', '#articles_undo_bulk', function () {
+        $this.undo_bulk_action($(this), "articles");
+      });
+
+      //folder visibility
+      $('body').on('change.folders_articles', '#solution_folder_visibility', function () {
+        $this.show_hide_customers();
+      });
     },
 
     allSelectAction: function (checked) {
@@ -221,8 +198,52 @@ window.App = window.App || {};
 
     },
 
+    bulk_action: function (obj, list_name, action_name, parentId) {
+      $.ajax({
+        url: "/solution/" + list_name + "/" + action_name,
+        type: 'PUT',
+        dataType: 'script',
+        data: {
+          parent_id: parentId,
+          items: obj.data.selectedElementIds
+        },
+        success: function () {
+          console.log('success');
+         }
+       });
+      jQuery("#" + action_name).select2('val', '');
+    },
+
+    undo_bulk_action: function (obj, list_name) {
+      $('#noticeajax').hide();
+      $.ajax({
+        url: "/solution/" + list_name + "/move_back",
+        type: 'PUT',
+        dataType: 'script',
+        data: {
+          parent_id: obj.data('parent-id'),
+          items: obj.data('items')
+        },
+        success: function () {
+          console.log('success');
+         }
+       });
+    },
+
     removeElementsAfterMoveTo: function () {
       $('li:has(input[type=checkbox]:checked)').remove();
+    },
+
+    show_hide_customers: function () {
+      var visiblity = $('#solution_folder_visibility').val();        
+      if (visiblity == 4) {
+        $('.company_folders').show();
+      }
+      else {
+        $('#customers_filter').val("");
+        $("#customers_filter").trigger("liszt:updated");
+        $('.company_folders').hide();
+      }
     }
   };
 }(window.jQuery));

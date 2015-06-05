@@ -1538,14 +1538,14 @@ Helpkit::Application.routes.draw do
         collection do
           put :reorder
           put :move_to
-          put :unmove
+          put :move_back
         end
 
         resources :articles do
           collection do
             put :reorder
             put :move_to
-            put :unmove
+            put :move_back
             put :change_author
           end
 
@@ -1567,7 +1567,7 @@ Helpkit::Application.routes.draw do
       collection do
         put :reorder
         put :move_to
-        put :unmove
+        put :move_back
         put :visible_to
       end
     end
@@ -1576,7 +1576,7 @@ Helpkit::Application.routes.draw do
       collection do
         put :reorder
         put :move_to
-        put :unmove
+        put :move_back
         put :change_author
       end
 

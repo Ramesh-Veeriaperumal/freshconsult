@@ -425,29 +425,28 @@
 #folder-bulk-action, #article-bulk-action {
 
   .visible-to-btn {
-    display: inline-block;
-  }
+		display: inline-block;
+		background-color: white;
+	  border: 1px solid lightgrey;
+	  padding: 4px 4px 6px 10px;
+	  border-radius: 5px;
 
-  .edit_bar_btn {
-    margin-right: 20px;
-    background-color: white;
-    border: 1px solid lightgrey;
-    padding: 5px 22px 5px 8px;
-  }
+	  a {
+	  	color: #888;
+	  }
+	}
 
-  .moveto_btn {
-    margin-right: 15px;
-    padding: 0px 0px 3px 0px;
-  }
+	.right-btn {
+		@include margin-left(10px);
+	}
 
   .drop-right:after {
     margin-left: 8px;
-    margin-top: 5px;
   }
 
   .fd-menu {
     margin-top: 8px;
-    margin-left: -6px;
+    margin-left: -11px;
     min-width: 200px;
     .left-list, .right-select-companies {
       float: left;
@@ -495,7 +494,6 @@
       }
     }
   }
-
 }
 
 .sol-cat-sticky-title {

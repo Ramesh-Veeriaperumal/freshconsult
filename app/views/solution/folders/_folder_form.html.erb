@@ -1,57 +1,37 @@
-	<ul id="folder-form-container" class="form-horizontal">  
-	    <%= f.error_messages %>
-		<li class="control-group">
-	    	<%= f.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
-	    	<div class="controls">
-	    		<%= f.text_field :name, :class => "required" %>
-	    	</div>
-		</li>
-		<li class="control-group">
-			<%= f.label(:description, t('description'), { :class => 'control-label'}) %>
-			<div class="controls">
-		 		<%= f.text_area :description, :class => "smallpara" %>
-		 	</div>
-		</li>  
-		<li class="control-group">
-			<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
-			<div class="controls">
-		 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
-		 	</div>
-		</li>
-		<li class="companies_select control-group">
-    	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
+<ul id="folder-form-container" class="form-horizontal">  
+    <%= f.error_messages %>
+	<li class="control-group">
+    	<%= f.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
     	<div class="controls">
-    		<div class="row-fluid">
-		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
-	    	</div>
-	    	<br>
-	    	<div id="company_folders" class="row-fluid">
-  				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
-  			</div>
-	  	</div>
-    </li>
-	</ul>	
-    <%= javascript_tag do %>  
-     jQuery(document).ready(function(){ 			         
-		jQuery('#solution_folder_visibility')
-			.bind("change", function(e){
-				show_hide_customers();
-		});		
-		function show_hide_customers(){
-			visiblity = jQuery('#solution_folder_visibility').val();				
-				if (visiblity  == 4)
-				{
-				   jQuery('#company_folders').show();
-				}
-				else
-				{
-				  jQuery('#customers_filter').val("");
-				  jQuery("#customers_filter").trigger("liszt:updated");
-				  jQuery('#company_folders').hide();
-
-				}
-			};
-
-	    show_hide_customers();			  	
-	});  
-     <% end %>
+    		<%= f.text_field :name, :class => "required" %>
+    	</div>
+	</li>
+	<li class="control-group">
+		<%= f.label(:description, t('description'), { :class => 'control-label'}) %>
+		<div class="controls">
+	 		<%= f.text_area :description, :class => "smallpara" %>
+	 	</div>
+	</li>  
+	<li class="control-group">
+		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
+		<div class="controls">
+	 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
+	 	</div>
+	</li>
+	<li class="companies_select control-group">
+  	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
+  	<div class="controls">
+  		<div class="row-fluid">
+	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
+    	</div>
+    	<br>
+    	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
+				<%= render_autocomplete({
+								:selected_values => selected_companies(@customer_id),
+								:type => :companies,
+								:dom_id => "folder_customers"
+				}) %>
+			</div>
+  	</div>
+  </li>
+</ul>

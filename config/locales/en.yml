@@ -3254,10 +3254,11 @@ en:
     add_article: New Article
     view_feedback: View all feedbacks
     change_author: Change Author
+    move_to: Move to
     details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
     flash:
-      folders_move_to: "Folders have been moved to the selected category %{undo}"
-      articles_move_to: "Articles have been moved to the selected folder %{undo}"
+      folders_move_to: 'Folders have been moved to the selected category "<b>%{category_name}</b>" %{undo}'
+      articles_move_to: 'Articles have been moved to the selected folder "<b>%{folder_name}</b>" %{undo}'
       articles_changed_author: Author has been succesfully changed
     general:
       created_by: Created by
@@ -3266,7 +3267,6 @@ en:
       feedback: Feedback
       analytics: Analytics
     folders:
-      move_to: Move to another category
       view_all: "View all folders..."
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for publishing the article
@@ -3282,7 +3282,6 @@ en:
           one: " and one more company."
           other: " and %{count} more companies."
     articles:
-      move_to: Move to another folder
       prop_tabs:
         tag_fol: "Tags & folders"
         meta: Meta

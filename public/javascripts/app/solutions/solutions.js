@@ -33,6 +33,7 @@ window.App = window.App || {};
         break;
       case "solution/categories/show":
       case "solution/folders/show":
+      case "solution/folders/new":
         this.current_module = 'Folder';
         break;
       case "solution/categories/index":

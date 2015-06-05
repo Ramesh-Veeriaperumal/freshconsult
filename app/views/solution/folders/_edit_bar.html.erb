@@ -7,30 +7,29 @@
 		</li>
 		<li class="lf-item lf-btns faded" id="article-bulk-action">
 			<span>
-		    <%= select_tag :id,
-		          option_groups_from_collection_for_select(current_account.solution_categories.reject(&:is_default?), :folders ,:name, :id, :name), {
-		              :class => "disabled moveto_btn bulk-action-btns select2",
-		              :id => "move_to",
-		              :include_blank => true,
-		              :placeholder => t('solution.articles.move_to')
-		          } %>
-			</span>
-			<span>
 				<%= select_tag :id,
-		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
-		              :class => "disabled moveto_btn bulk-action-btns select2",
-		              :id => "change_author",
-		              :include_blank => true,
-		              :placeholder => t('solution.change_author')
-		          } %>
+	          option_groups_from_collection_for_select(current_account.solution_categories.reject(&:is_default?), :folders ,:name, :id, :name), {
+	          		:class => "disabled bulk-action-btns select2",
+	              :id => "move_to",
+	              :'data-dropdown-auto-width' => true,
+	              :include_blank => true,
+	              :placeholder => t('solution.move_to'),
+	              :"data-show-below-only" => true
+	          } %>
+			</span>
+			<span class="right-btn">
+				<%= select_tag :id,
+	          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
+	          		:class => "disabled bulk-action-btns select2",
+	              :id => "change_author",
+	              :'data-dropdown-auto-width' => true,
+	              :include_blank => true,
+	              :placeholder => t('solution.move_to'),
+	              :"data-show-below-only" => true,
+	              :include_blank => true,
+	              :placeholder => t('solution.change_author')
+	          } %>
 			</span>
 		</li>
 	</ul>
 </div>
-
-<script>
-  jQuery(document).ready(function() { 
-  	jQuery("#move_to").select2();
-  	jQuery("#change_author").select2();
-  });
-</script>
