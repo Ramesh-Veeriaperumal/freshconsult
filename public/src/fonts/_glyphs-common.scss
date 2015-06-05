@@ -10,7 +10,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
   color:#333;
 }
 
-.#{$font-class}freshfone,.#{$font-class}phone-enable{
+.#{$font-class}freshfone,.#{$font-class}phone-enable,.#{$font-class}phone-channel{
 	@extend .#{$font-class}ff-phone;	
 }
 // -----------------------------------------------------------------------------------------------
