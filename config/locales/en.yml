@@ -4346,7 +4346,7 @@ en:
         no_agents: "- No Agents -" 
         back: Back
       freshfone:
-        ffone: Freshfone
+        phone: Phone
         sort_by: Sorted by
         last_modified: Last Activity
         name: Name

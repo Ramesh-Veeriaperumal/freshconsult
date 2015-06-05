@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
-    :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false, :ffone_agent_availability => false,
+    :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false, :phone_agent_availability => false,
     :agent_collision => false, :multiple_user_emails => true, :facebook_realtime => true, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,

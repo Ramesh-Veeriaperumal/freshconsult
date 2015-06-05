@@ -78,6 +78,6 @@ module Helpdesk::DashboardHelper
 	 def freshfone_active?
 	 	current_user.privilege?(:admin_tasks) and
 	 	current_account.freshfone_active? and 
-	 	current_account.features?(:ffone_agent_availability)
+	 	current_account.features?(:phone_agent_availability)
 	 end
 end
