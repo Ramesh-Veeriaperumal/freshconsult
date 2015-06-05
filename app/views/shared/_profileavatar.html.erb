@@ -15,8 +15,7 @@
 <%#= label(:user, :photo, t('user.photo')) %>
 <% if(type == "edit" &&  user.avatar) %>
 	<div class="profile_pic" id="AvatarPic">
-		<%= image_tag user.avatar.expiring_url(:medium), :alt => user.name,
-									:onerror => "imgerror(this)" %>
+		<%= user_avatar(@user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
 	</div>
 	<div id="AvatarInput" style="display:none;">
 		<%= fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>

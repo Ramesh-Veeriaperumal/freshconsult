@@ -1550,7 +1550,7 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
-        freshfone: "Freshfone"
+        phone-channel: "Phone"
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Customer Portal
@@ -1724,7 +1724,7 @@ en:
         success: "The integration has been enabled successfully!"
         error: "Error in enabling the integration."
         cti_error: "Multiple integrations of type CTI can not be enabled."
-        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
+        freshfone_alert: "CTI integration cannot be enabled when your phone channel is enabled."
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
@@ -1762,13 +1762,13 @@ en:
 
     freshfone:
       credits:
-        success: "Successfully purchased Freshfone Credits"
-        error: "Error purchasing Freshfone Credits"
+        successful_purchase: "Successfully purchased phone credits."
+        unsuccessful_purchase: "Error purchasing phone credits."
         invalid_recharge_amount: "Enter a valid recharge amount"
       number:
-        success: "Number successfully added to your Freshfone account"
-        error: "Error purchasing number for your Freshfone account."
-        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in %{country}."
+        successful_purchase: "Successfully purchased phone number."
+        unsuccessful_purchase: "Error purchasing phone number."
+        invalide_address_error: "Unable to purchase number. Kindly make sure the address is a valid local address in %{country}."
         blank_message: "%{num_type} cannot be blank"
         invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
         add_blacklist_success: "Number blocked successfully"
@@ -4308,6 +4308,7 @@ en:
       addcc: "Add cc"
       cc: "cc"
       bcc: "bcc"
+      response_added_alert: "Ticket has been updated with new replies. Please review them before sending."
       reply_form:
         title: Reply to %{email}
         cc: Cc
@@ -4345,7 +4346,7 @@ en:
         no_agents: "- No Agents -" 
         back: Back
       freshfone:
-        ffone: Freshfone
+        phone: Phone
         sort_by: Sorted by
         last_modified: Last Activity
         name: Name
@@ -5516,7 +5517,7 @@ en:
         range_exceed: "Range cannot exceed 90 days"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
-        report_title: "Freshfone Summary"
+        ff_report_title: "Phone Summary"
         summary_title: "Agent Call Summary "
         agent: "Agent"
         group: "Group"
@@ -6206,17 +6207,17 @@ en:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
-    number: "Freshfone Number"
+    ff_number: "Phone Number"
     subscription:
       auto_recharge_text: "We'll only charge your account when the balance falls below $5"
       current_balance: "Your current balance"
-      purchase: "Purchase Freshfone Credits"
+      purchase_text: "Purchase Phone Credits"
       setup_auto_recharge: "Setup Auto Recharge"
-      no_credit_card: "Enter payment information to purchase Freshfone credits"
+      no_credit_card_text: "Enter payment information to purchase phone credits"
       recharge_now_text: "Refill your balance with a one-time payment"
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
-      followup_text: "worth Freshfone credits"
+      followup: "worth phone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       could_be_invalid_number: "Could be an invalid number."
@@ -6239,13 +6240,14 @@ en:
       restricted: "Restricted"
       all_calls: "All Calls"
     general:
-      suspended_account: "Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls"
-      suspended_on_low_balance: "Your Freshfone account is currently suspended. Please recharge to activate your account"
+      suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
+      suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
     dashboard:
+      title: "Phone"
       in_conversation: "In-conversation"
       available_agents: "Available Agents"
-      freshfone_recharge_alert: Freshfone is currently unavailable. To make and receive calls please contact your account administrator.
-      admin_freshfone_recharge_alert: Freshfone is currently unavailable due to low balance. <a href='/subscription'> Recharge </a> immediately to make and receive calls.
+      freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please recharge to continue."
+      admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a> to continue."
     widget:
       ignore: "Ignore"
       accept: "Accept"
@@ -6282,7 +6284,7 @@ en:
       save: "Save"
       notes: "Notes"
       new_requester: "New requester"
-      inactive: "Freshfone low on credit. Contact Account admin"
+      low_credit: "Low on phone credit. Please contact your account admin."
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
       network_error: "Check your Internet Connection"
@@ -6376,10 +6378,10 @@ en:
       settings: "Settings"
       greetings: "Greetings"
       messages: "Messages"
-      freshfone_numbers: "Freshfone Numbers"
-      disable_alert: "<b>Important:</b> Disabling your freshfone account will not prevent the monthly rental on your freshfone numbers. To avoid getting charged, please delete the purchased numbers. "
-      purchase_credit: "Purchase Freshfone credits to buy local or toll-free numbers and start using Freshfone"
-      purchase_numbers: "Buy local or toll-free numbers to start using Freshfone and support your customers over phone"
+      freshfone_numbers_title: "Phone"
+      suspended_alert: "<b>Important:</b> Disabling your phone channel will not prevent the monthly rental on your numbers. To avoid getting charged, please delete the purchased numbers."
+      purchase_credit_text: "Purchase credits to buy numbers, make and receive calls using the phone channel."
+      purchase_numbers_text: "Buy a local or toll free number and support customers anywhere across the world over phone"
       search: "Search by digits or phrases"
       local: "Local"
       toll_free: "Toll-Free"
@@ -6387,8 +6389,8 @@ en:
         simultaneous: "Call all agents"
         round_robin: "Call idle agent first"
       number_settings:
-        title: "Managing your call center with Freshfone"
-        info: "<b>Assigning phone calls to agents and groups</b><br/>You can use Freshfone to setup a interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the interactive messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your Freshfone number</b><br>You could also configure each and every Freshfone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and gets attached to your tickets. You can also restrict Freshfone from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/>"
+        title_text: "Managing your call center"
+        info_content: "<b>Assigning phone calls to agents and groups</b></br>You can set up an interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your number</b><br>You could also configure each and every phone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and attached to your tickets, and the recording can be publicly available to customers or kept private. You can also restrict your phone channel from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Read more about customizing your number</a>"
         non_business_hours: "Accept Calls during…"
         business_calendar: "Select Business Hour"
         transcript_voice: "Transcript Voice"
@@ -6437,8 +6439,8 @@ en:
         name_maxlength: "Name cannot have more than 255 Characters"
         number_accessible: "Accessible by"
       numbers:
-        title: "Support customers with Freshfone"
-        info: "Freshfone is Freshdesk’s integrated telephony system. You can set up Freshfone to receive support calls through your browser or phone, and make outbound calls to customers. Freshfone also allows you to keep a record of all calls, and convert interesting phone conversations into tickets. You could also avoid calls from certain numbers by blocking them in the call history. <br/><br/> <b>Setting up Freshfone</b><br/>To start using Freshfone, you will first need to enable it, and purchase an incoming support number. Freshdesk currently lets you purchase phone numbers in 28 countries. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated Voice Response (IVR) systems in Freshfone to better categorize customers when they call your support number, and channelize them to the right department, team or agent. Freshfone lets you create upto 2 levels of Smart IVRs."
+        sidebar_title: "Freshdesk’s built-in phone channel"
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the countries listed here and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/freshfone'>Read more about what you can do with phone</a>."
         purchase_number: "Purchase Number"
         purchase_phone_number: "Buy Number (%{number})"
         buy: "Buy Number"
@@ -6451,8 +6453,8 @@ en:
         purchase_confirm: "Are you sure?"
         delete_alert: "A number once deleted cannot be purchased again. Are you sure you want to delete the number?"
         manage: "Manage"
-        cannot_purchase: "Unable to purchase number for your Freshfone account. Kindly make sure the address is a valid local address in <span class='certification-country'></span>."
-        insuffcient_credits: "Your Freshfone credit is too low to purchase a new number. Please recharge and try again"
+        failure_purchase: "Unable to purchase the phone number. Kindly make sure the address is a valid local address in <span class='certification-country'></span>."
+        low_credits: "Your phone credit is too low to purchase a new number. Please recharge and try again."
         address:
           name: "Company / Name"
           address: "Address"
@@ -6462,8 +6464,8 @@ en:
           country: "Country"
           required_field: "All fields are required"
         setup:
-          title: "Setting up Freshfone"
-          info: "In order to get started with Freshfone, you will first need to purchase a call-in number to offer your customers. You can purchase a Local number in any of 28* countries that Freshfone currently supports. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple Freshfone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk.<br/><br/> Once you have purchased a Freshfone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
+          title_text: "Setting up a call center"
+          info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any country listed here. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/freshfone/pricing'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
       invalid_attachment: "Attachment '%{name}' is not a valid audio file/ its size is greater than 5MB"
       ivr:
         simple_message_title: "Simple Message"
@@ -6504,21 +6506,22 @@ en:
         seed_menu_name: "Welcome/Start Menu"
         invalid_number_format: "Enter valid phone number with '+' prefix and country code in front of the number"
       welcome_page:
-        title: "Welcome to Freshfone"
+        title_text: "Phone"
       feature_request_content:
-        title: "Freshfone"
-        heading: "Support your customers with Freshfone"
-        about_numbers: "Purchase support numbers from across the globe"
-        about_ivr: "Create IVR's and route calls to the right agents"
-        about_recording: "Record customer conversations and access it anywhere"
-        read_more: "Read more"
+        title_text: "Phone"
+        heading_text: "Support your customers using the phone channel"
+        number_info: "Purchase local and toll-free numbers from across the globe"
+        ivr_info: "Route calls to the right agent and group using IVR"
+        recording_info: "Record and convert calls to tickets, just like your emails"
+        learn_more: "Learn more"
         pricing: "See all call rates and supported countries"
-        email_subject: "Freshfone Request - %{account_name}"
+        request_subject: "Phone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
-        success_message_flash: "Thanks for your interest in Freshfone. We will get back to you shortly."
+        success: "We will get back to you within two business days."
         error_message: "Sorry we can not make your request right now. Try again later."
-        additional_note: "Freshfone request will take two business days"
-        button_label: "Request for Freshfone"
+        additional_info: "You will be able to purchase numbers, make and take calls once the phone channel is enabled in your account"
+        button_text: "Request for phone"
+        video_title: "Watch the video to find out what you can do with the phone channel"
   freshchat:
     feature_request:
       title: "Welcome to Live Chat"
@@ -7206,3 +7209,4 @@ en:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: This shorthand is already in use.
+  new_label: "NEW"

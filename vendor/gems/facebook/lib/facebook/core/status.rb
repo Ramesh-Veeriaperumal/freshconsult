@@ -9,7 +9,8 @@ class Facebook::Core::Status < Facebook::Core::Post
     @feed = feed
     if feed.post_id
       return if @account.facebook_posts.find_by_post_id(feed.post_id)
-      process(nil, realtime_subscription)
+      process
     end
   end
+  
 end

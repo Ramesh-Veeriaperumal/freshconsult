@@ -389,6 +389,10 @@
 		font-size: 12px;
 		line-height: 17px;
 	}
+	.avatar-text{
+		@include box-shadow(rgba(0, 0, 0, 0.3) 0 7px 14px -8px);
+		border-radius: 6px;
+	}
 }
 
 .avatar-options {

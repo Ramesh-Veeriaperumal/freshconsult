@@ -12,10 +12,10 @@ class Facebook::KoalaWrapper::Comment
 
 
   def initialize(fan_page)
-    @account   = fan_page.account
-    @fan_page  = fan_page
-    @rest      = Koala::Facebook::API.new(fan_page.page_token)
-    @comments  = []
+    @account          = fan_page.account
+    @fan_page         = fan_page
+    @rest             = Koala::Facebook::API.new(fan_page.page_token)
+    @comments         = []
   end
 
   def fetch(comment_id)
@@ -33,10 +33,10 @@ class Facebook::KoalaWrapper::Comment
     @created_at         =  Time.zone.parse(@comment[:created_time])
     @parent             =  @comment[:parent].symbolize_keys! if (@comment[:parent] and @comment[:parent][:id]!="0")
     @subject            =  truncate_subject(@description, 100)
-    @parent_post        =  "#{@fan_page.page_id}_#{@comment[:id].split('_').first}"
     @comments           =  @comment[:comments]["data"] if @comment[:comments]
     @can_comment        =  @comment[:can_comment]
     @post_type          =  @parent.blank? ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
+    @parent_post        =  @comment[:object] ? "#{@fan_page.page_id}_#{@comment[:object]['id']}" : "#{@fan_page.page_id}_#{@comment[:id].split('_').first}"
   end
 
   def visitor_post?

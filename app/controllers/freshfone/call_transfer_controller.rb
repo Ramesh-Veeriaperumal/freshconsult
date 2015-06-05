@@ -18,7 +18,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		@freshfone_users = freshfone_user_scoper.online_agents_with_avatar.map do |freshfone_user|
 			{ :available_agents_name => freshfone_user.name, 
 				:sortname => "A_#{freshfone_user.name}",#to order agents,groups correspondingly
-				:available_agents_avatar => user_avatar(freshfone_user.user),
+				:available_agents_avatar => user_avatar(freshfone_user.user, :thumb, "preview_pic small circle"),
 				:id => freshfone_user.user_id
 			}
 		end 

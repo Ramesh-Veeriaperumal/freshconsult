@@ -5687,7 +5687,7 @@ tr:
     delete_multiple: "Seçili hazır cevaplar silindi!"
     no_delete: "Varsayılan klasör silinemez !"
     create_new: "Yeni Oluştur"
-    no_response_admin: "Bu klasörün içinde cevap yok <a href={{link}} id='new_resp'>Yeni Oluştur</a>"
+    no_response_admin: "Bu klasörün içinde cevap yok <a href=%{link} id='new_resp'>Yeni Oluştur</a>"
     select_folder: "Klasör Seç"
     select_group: "Grup Seç"
     visibility_change: "Hazır cevapları <b> Kişisel Klasörden</b> taşımak üzeresiniz. {{num_responses}} . Taşımadan önce, lütfen hazır cevabın kullanılabilirliğini değiştirin."

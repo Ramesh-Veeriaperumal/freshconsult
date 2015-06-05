@@ -1,4 +1,5 @@
 class SecurityEmailNotification < ActionMailer::Base
+  layout "email_font"
 
   def agent_alert_mail(model, subject, changed_attributes)
     Time.zone = model.time_zone
@@ -14,6 +15,7 @@ class SecurityEmailNotification < ActionMailer::Base
     @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model
+    @account = Account.current
 
     mail(headers) do | part|
       part.text { render "agent_alert_mail.text.plain.erb" }
@@ -37,6 +39,7 @@ class SecurityEmailNotification < ActionMailer::Base
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model
     @doer = doer
+    @account = Account.current
 
     mail(headers) do | part|
       part.text { render "#{body_message_file}.text.plain.erb" }

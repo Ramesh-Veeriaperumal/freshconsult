@@ -2379,7 +2379,7 @@ zh-CN:
     edit: 编辑场景
     shared: 已共享
     personal: 个人
-    no_scenario: "没有个人场景<a href={{link}}>新建</a>"
+    no_scenario: "没有个人场景<a href=%{link}>新建</a>"
     visibility:
       groups: 组中的客服
       all_agents: 所有客服
@@ -5685,7 +5685,7 @@ zh-CN:
     delete_multiple: 所选自动回复模板已删除!!
     no_delete: "无法删除缺省的文件夹 !!"
     create_new: 新建
-    no_response_admin: "此文件夹中没有任何回复模板<a href={{link}} id='new_resp'>新建</a>"
+    no_response_admin: "此文件夹中没有任何回复模板<a href=%{link} id='new_resp'>新建</a>"
     select_folder: 选择文件夹
     select_group: 选择组
     visibility_change: "您即将从<b>个人文件夹</b>移动{{num_responses}}自动回复。在移动前，请更改自动回复的可用性。"

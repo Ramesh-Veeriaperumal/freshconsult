@@ -43,7 +43,7 @@ class Facebook::Core::Feed
   end
 
   def feed_id
-    post_id || comment_id
+    clazz == POST_TYPE[:comment] ? comment_id : post_id
   end
 
   def parent_id

@@ -2376,7 +2376,7 @@ ko:
     edit: "시나리오 편집"
     shared: 공유됨
     personal: 개별
-    no_scenario: "개별 시나리오가 없습니다. <a href={{link}}>새로 생성</a>"
+    no_scenario: "개별 시나리오가 없습니다. <a href=%{link}>새로 생성</a>"
     visibility:
       groups: "그룹의 에이전트"
       all_agents: "모든 에이전트"
@@ -5688,7 +5688,7 @@ ko:
     delete_multiple: "선택한 응답 템플릿이 삭제되었습니다."
     no_delete: "기본 폴더는 삭제할 수 없습니다."
     create_new: "새로 생성"
-    no_response_admin: "이 폴더에 응답이 없습니다. <a href={{link}} id='new_resp'>새로 생성</a>"
+    no_response_admin: "이 폴더에 응답이 없습니다. <a href=%{link} id='new_resp'>새로 생성</a>"
     select_folder: "폴더 선택"
     select_group: "그룹 선택"
     visibility_change: "<b>개별 폴더</b>에서 응답 템플릿 {{num_responses}}개를 옮기려 합니다. 옮기기 전에 응답 템플릿의 사용 가능성을 변경하십시오."

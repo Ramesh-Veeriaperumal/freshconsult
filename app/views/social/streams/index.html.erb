@@ -9,7 +9,7 @@
             <li><a href="#" id="unifiedStreams" class="active" tittle="All"><%= font_icon "all-streams", :size => 24 %><span>All</span></a></li>
             <% @streams.each do |stream| %>
               <li class="strmlst"><a href="#" class="image-lazy-load item_info" data-stream-id="<%= stream.id %>" title="<%= h(stream.name) %>">
-                <img src="/images/misc/profile_blank_thumb.gif" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
+                <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
                 <span><%= h(stream.name) %></span></a></li>
             <% end %>
           </ul>

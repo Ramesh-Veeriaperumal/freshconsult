@@ -3,17 +3,16 @@
 	<% display ||= 9 %>
 	<div class="widget user-list">
 		<div class="muted mb20"><%= title %></div>
-
 		<% user_list.all(:limit => display).each do |user| %>
-			<%= link_to user_avatar(user), user, :class => 'tooltip', :title => user.name, :"data-placement" => 'below' %>
+			<%= link_to user_avatar(user, :thumb, 'preview_pic small circle'), user, :class => 'tooltip tooltip-icon', :title => user.name, :"data-placement" => 'below' %>
 		<% end %>
 
 		<%= more_user_avatar(count - display, href, {
 															:"data-target" => "##{modal_target}", :rel => :freshdialog,
-															:"data-template-footer" => "",
-															:title => title, :"data-title" => title,
-															:"data-width" => '400px'
-														}) %>
+														:"data-template-footer" => "",
+														:title => title, :"data-title" => title,
+														:"data-width" => '400px'
+											}) %>
 	</div>
 <% end %>
 </div>

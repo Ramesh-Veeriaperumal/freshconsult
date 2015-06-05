@@ -3,7 +3,7 @@
 <% link_target = local_assigns.has_key?(:new_tab) ? "_blank" : "_self"  %>
 <% strange_number = strange_number?(user.available_number) if user.available_number.present? %>
 <div class="contact_hover">
-    <%= user_avatar(user) %>
+    <%= user_avatar(user, :thumb, 'preview_pic small') %>
   <div class="infoblock muted">
     <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target, :'data-pjax' => '#body-container'), :class => "user_name"%>
     <% if user.parent.present? %>

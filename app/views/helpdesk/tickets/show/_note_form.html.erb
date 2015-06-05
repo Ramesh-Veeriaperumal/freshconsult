@@ -56,6 +56,7 @@
     </ul> 
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+    <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
 
     <div id="toggle-note-visibility">
       <label><%= t("helpdesk.tickets.note.public_note_tip") %></label>

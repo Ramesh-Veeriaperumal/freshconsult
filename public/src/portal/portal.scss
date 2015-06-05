@@ -4,4 +4,70 @@
 
 @import "portal-all";
 
+$i: 10;
+@while $i >= 0 {
+	.bg-#{$i} { background-image: url('/images/avatar/background/1x/#{$i}bthumb.png');background-size: 100%;}
+	$i: $i - 1;
+}
 
+div.avatar-text{
+	color: #fff;
+	text-transform: uppercase;
+	text-align: center;
+}
+div.thumb{
+	border-radius: 10%;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 18px;
+	font-weight: 200;
+	color: rgba(255,255,255,0.8);
+}
+div.medium{
+	border-radius: 10%;
+	width: 127px;
+	height: 127px;
+	line-height: 127px;
+	font-size: 60px;
+	font-weight: 100;
+	text-align: right;
+	padding: 25px 15px 0 0;
+	@include box-sizing(border-box);
+	color: rgba(255,255,255,0.6);
+	text-shadow: 0 0 8px #fff;
+}
+div.small{
+	border-radius: 10%;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	font-weight: 400;
+}
+.circle{
+	@include border-radius(50% !important);
+}
+img.preview_pic{
+	margin-left: 0;
+}
+img.thumb{
+	width: 40px;
+	height: 40px;
+}
+img.medium{
+	width: 127px;
+	height: 127px;
+}
+img.small{
+	width: 25px;
+	height: 25px;
+}
+@media  only screen and (min-device-pixel-ratio: 2), 
+        only screen and (min-resolution: 192dpi) {
+ $j: 9;
+@while $j >= 0 {
+	.bg-#{$j} { background-image: url('/images/avatar/background/2x/#{$j}bthumb.png');background-size: 100%;}
+	$j: $j - 1;
+}
+}

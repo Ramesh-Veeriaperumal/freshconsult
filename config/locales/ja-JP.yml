@@ -2379,7 +2379,7 @@ ja-JP:
     edit: シナリオを編集する
     shared: シェアされました
     personal: パーソナル
-    no_scenario: "パーソナル シナリオはありません<a href={{link}}>新規作成</a>"
+    no_scenario: "パーソナル シナリオはありません<a href=%{link}>新規作成</a>"
     visibility:
       groups: グループのエージェント
       all_agents: 全てのエージェント
@@ -5685,7 +5685,7 @@ ja-JP:
     delete_multiple: 選択された定型応答文が削除されました！！
     no_delete: デフォルトフォルダは削除できません！！
     create_new: 新規作成
-    no_response_admin: "このフォルダに応答はありません<a href={{link}} id='new_resp'>新規作成</a>"
+    no_response_admin: "このフォルダに応答はありません<a href=%{link} id='new_resp'>新規作成</a>"
     select_folder: フォルダを選択
     select_group: グループを選択
     visibility_change: "あなたは<b>パーソナルフォルダ</b>から{{num_responses}}件の定型応答文を移動しようとしています。移動する前に、定型応答文の使用可能者を変更してください。"
