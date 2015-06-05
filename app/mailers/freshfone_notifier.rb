@@ -213,6 +213,22 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def call_recording_deletion_failure(params)
+  	headers = {
+  		:subject => "Error on Call Recording Deletion in Twilio",
+  		:to => FreshfoneConfig['ops_alert']['mail']['to'],
+  		:from => FreshfoneConfig['ops_alert']['mail']['from'],
+  		:sent_on => Time.now,
+  		"Reply-to" => "",
+  		"Auto-Submitted" => "auto-generated",
+  		"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+  	}
+  	@params = params
+  	mail(headers) do |part|
+  		part.html { render "call_recording_deletion_failure"}
+  	end.deliver
+  end
+
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end
   include MailerDeliverAlias
