@@ -3264,7 +3264,7 @@ en:
       upvoted: "You have upvoted"
       upvote: "Upvote"
       like:
-        one: "like this"
+        one: "likes this"
         other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
