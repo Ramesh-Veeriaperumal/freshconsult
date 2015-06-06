@@ -4,9 +4,9 @@
 
 @import "portal-all";
 
-$i: 10;
+$i: 9;
 @while $i >= 0 {
-	.bg-#{$i} { background-image: url('/images/avatar/background/1x/#{$i}bthumb.png');background-size: 100%;}
+	.bg-#{$i} { background-image: image-url('/images/avatar/background/1x/#{$i}bthumb.png');background-size: 100%;}
 	$i: $i - 1;
 }
 
@@ -67,7 +67,7 @@ img.small{
         only screen and (min-resolution: 192dpi) {
  $j: 9;
 @while $j >= 0 {
-	.bg-#{$j} { background-image: url('/images/avatar/background/2x/#{$j}bthumb.png');background-size: 100%;}
+	.bg-#{$j} { background-image: image-url('/images/avatar/background/2x/#{$j}bthumb.png');background-size: 100%;}
 	$j: $j - 1;
 }
 }
