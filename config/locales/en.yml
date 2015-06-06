@@ -4693,6 +4693,7 @@ en:
     closed_at: closed
     from: From
     to: To
+    check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
     no_tickets_mail:
