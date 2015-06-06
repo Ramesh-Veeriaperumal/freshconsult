@@ -3039,6 +3039,9 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
+    assigned_agent:
+      text: Assigned Agent
+      description: Ticket's agent
     sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
     human_name: SLA Policy
     sla_targets: SLA Targets
