@@ -219,6 +219,7 @@ label.overlabel{
 	div.preview_pic{
 		@include float(right);
 		margin: 0;
+		@include border-radius(0);
 		img {
 			@include border-radius(0);
 			width: auto;
