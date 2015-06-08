@@ -2,11 +2,15 @@ class Mobile::TicketsController < ApplicationController
   include Helpdesk::TicketsHelper
   include Mobile::Controllers::Ticket
   include ActionView::Helpers::CsrfHelper
+  include HelpdeskControllerMethods
 
   before_filter :require_user_login, :set_mobile
   
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
   
+  MOBILE_FILTERS = [ :overdue, :due_today, :on_hold, :open, :new ]
+
+  MAX_TICKET_LIMIT = 60
 
   def view_list
     agent_view_list
@@ -30,6 +34,28 @@ class Mobile::TicketsController < ApplicationController
   def load_reply_emails
     reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     render :json => reply_emails
+  end
+
+  def mobile_filter_count
+    agent_filter = params[:agent_filter] == "true"
+    counts_hash  = {}
+    MOBILE_FILTERS.each do |element|
+      counts_hash[element] = {
+        :count => filter_count(element, (element != :new && agent_filter))
+      }
+    end
+    render :json => counts_hash
+  end
+
+  def get_filtered_tickets
+    agent_filter = params[:agent_filter] == "true"
+    selector = params[:filter_name].to_sym 
+    from_display_id = params[:display_id].to_i
+    limit = params[:limit].to_i > MAX_TICKET_LIMIT ? MAX_TICKET_LIMIT : params[:limit].to_i
+    order_type = ["DESC","ASC"].include?(params[:order_type]) ? params[:order_type] : "ASC" 
+    ticket_set = filter_tickets(selector, agent_filter).mobile_filtered_tickets(from_display_id,limit,"created_at #{order_type}") 
+    tickets_json = ticket_set.map(&:to_mob_json_index)
+    render :json => { :tickets => tickets_json, :top_view => top_view }
   end
 
   private
@@ -92,6 +118,20 @@ class Mobile::TicketsController < ApplicationController
         :type => :filter, :count => count )
     } 
     render :json => view_list.to_json
+  end
+
+  def filter_count(selector, agent_filter=false)
+    Sharding.run_on_slave do
+      tickets = filter_tickets(selector, agent_filter)
+      tickets.count
+    end
+  end
+
+  def filter_tickets(selector, agent_filter)
+    filter_scope = current_account.tickets.permissible(current_user)
+    filter_scope = filter_scope.where(:responder_id => current_user.id) if agent_filter
+    filter_tickets = TicketsFilter.filter(filter(selector), current_user, filter_scope)
+    filter_tickets
   end
 
 end
