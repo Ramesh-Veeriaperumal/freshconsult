@@ -24,7 +24,7 @@ class TicketsController < ApiApplicationController
   end
 
   def update
-    # build_normal_attachments(@item,params[cname][:attachments])
+    build_normal_attachments(@item, params[cname][:attachments])
     if @item.update_ticket_attributes(params[cname])
       update_tags(@tags, true, @item) if @tags # add tags if update is successful.
     else
@@ -34,7 +34,7 @@ class TicketsController < ApiApplicationController
   end
 
   def destroy
-    if @item.update_attribute(:deleted, true)
+    if @item.update_attributes({deleted: true})
       head 204
     else
       set_custom_errors

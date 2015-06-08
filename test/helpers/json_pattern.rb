@@ -149,7 +149,6 @@ module JsonPattern
       description:  expected_output[:description] || ticket.description,
       description_html: expected_output[:description_html] || ticket.description_html,
       display_id: expected_output[:display_id] || ticket.display_id,
-      deleted: expected_output[:deleted] || ticket.deleted,
       fr_escalated:  expected_output[:fr_escalated] || ticket.fr_escalated,
       is_escalated:  expected_output[:is_escalated] || ticket.isescalated,
       spam:  expected_output[:spam] || ticket.spam,

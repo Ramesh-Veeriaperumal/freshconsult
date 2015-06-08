@@ -39,7 +39,7 @@ module ApiConstants
   CREATE_POST_FIELDS = { all: %w(body_html answer topic_id), view_admin: ['created_at', 'updated_at'], manage_users: ['email', 'user_id'] }
   TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }, { 'attachments' => [] }]
   CREATE_TICKET_FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | TICKET_ARRAY_FIELDS
-  UPDATE_TICKET_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | [{ 'tags' => [String] }]
+  UPDATE_TICKET_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | TICKET_ARRAY_FIELDS.reject {|k| k['cc_emails']}
 
   # *********************************-- ValidationConstants --*********************************************
 

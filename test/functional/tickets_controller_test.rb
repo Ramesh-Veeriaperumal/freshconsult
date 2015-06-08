@@ -16,7 +16,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def update_ticket_params_hash
-    agent = add_test_agent(@account, role: 4)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
     params_hash = { description: description, subject: subject, priority: 4, status: 3, type: 'Lead',
@@ -257,29 +257,30 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
 
-  # def test_update_with_attachment
-  #   file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
-  #   file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-  #   params = ticket_params_hash.merge('attachments' => [file, file2])
-  #   stub_const(ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
-  #     post :create, construct_params({}, params)
-  #   end
-  #   assert_response :created
-  #   response_params = params.except(:tags, :attachments)
-  #   match_json(ticket_pattern(params, Helpdesk::Ticket.last))
-  #   match_json(ticket_pattern({}, Helpdesk::Ticket.last))
-  #   assert Helpdesk::Ticket.last.attachments.count == 2
-  # end
+  def test_update_with_attachment
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params = update_ticket_params_hash.merge('attachments' => [file, file2])
+    t = ticket
+    stub_const(ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+      put :update, construct_params({ id: t.display_id }, params)
+    end
+    assert_response :success
+    response_params = params.except(:tags, :attachments)
+    match_json(ticket_pattern(params, t.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert ticket.attachments.count == 2
+  end
 
-  # def test_update_with_invalid_attachment_params_format
-  #   file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
-  #   params = ticket_params_hash.merge('attachments' => [1, 2])
-  #   stub_const( ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
-  #     post :create, construct_params({}, params)
-  #   end
-  #   assert_response :bad_request
-  #   match_json([bad_request_error_pattern('attachments', 'invalid_format')])
-  # end
+  def test_update_with_invalid_attachment_params_format
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = update_ticket_params_hash.merge('attachments' => [1, 2])
+    stub_const( ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+      put :update, construct_params({ id: ticket.display_id }, params)
+    end
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+  end
 
   def test_update
     params_hash = update_ticket_params_hash
@@ -323,10 +324,11 @@ class TicketsControllerTest < ActionController::TestCase
     email = Faker::Internet.email
     params_hash = update_ticket_params_hash.merge(email: email, requester_id: nil)
     count = User.count
-    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
-    match_json(ticket_pattern(params_hash.merge(requester_id: User.last.id), ticket.reload))
-    match_json(ticket_pattern({}, ticket.reload))
+    match_json(ticket_pattern(params_hash.merge(requester_id: User.last.id), t.reload))
+    match_json(ticket_pattern({}, t.reload))
     assert User.count == (count + 1)
     assert User.find(ticket.reload.requester_id).email == email
   end
@@ -524,12 +526,13 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_destroy_invalid
-    requester_id = ticket.requester_id
-    ticket.update_column(:requester_id, nil)
-    delete :destroy, construct_params({id: ticket.display_id})
+    t = create_ticket(ticket_params_hash)
+    requester_id = t.requester_id
+    t.update_column(:requester_id, nil)
+    delete :destroy, construct_params({id: t.display_id})
+    t.update_column(:requester_id, requester_id)
     assert_response :bad_request
     match_json([bad_request_error_pattern('requester_id', "can't be blank")])
-    ticket.update_column(:requester_id, requester_id)
   end
 
   def test_destroy_invalid_id
@@ -593,9 +596,8 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:can_view_all_tickets?).returns(false)
     User.any_instance.stubs(:group_ticket_permission).returns(true)
     User.any_instance.stubs(:assigned_ticket_permission).returns(false)
-    t = create_ticket(ticket_params_hash)
     group = create_group_with_agents(@account, {}, [@agent.id])
-    Helpdesk::Ticket.any_instance.stubs(:group_id).returns(group.id)
+    t = create_ticket(ticket_params_hash.merge(group_id: group.id))
     delete :destroy, construct_params(id: t.display_id)
     assert_response :no_content
   end
