@@ -1,6 +1,6 @@
 (function($) {
 	$(document).ready(function(){
-		
+		var searchText;
 		$('[rel=sla_checkbox]').itoggle({
 			checkedLabel: 'On',
 			uncheckedLabel: 'Off'
@@ -66,6 +66,7 @@
 					url: agent_autocomplete_path,
 					quietMillis: 1000,
 					data: function (term) { 
+						searchText = term;
 							return {
 								q: term,
 								sla: true
@@ -78,6 +79,9 @@
 								this.id = this.user_id;
 								this.email = temp;
 							});
+							if(assigned_agent_value.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
+								data.results.push({email: assigned_agent_desc, id: assigned_agent_id, user_id: assigned_agent_id, value: assigned_agent_value})
+							}
 							return {results: data.results};
 					}
 			},
@@ -183,11 +187,17 @@
 			generate_select(this);
 		});
 
+		var setAssignedAgent = function(next_level){
+			var hidden_element = next_level.first().find('input.agents_id');
+			hidden_element.select2('data', [{email: "",id: assigned_agent_id, value: assigned_agent_value}]);
+		}
+
 		//Executed upon click of "Add next level" button
   	$('.add_next_level div').click(function(){
 			var parent = $(this).parents('table');
 			var next_level = parent.find('tr:hidden');
 			
+			setAssignedAgent(next_level);
 			if(next_level.length) {	
 				var element = next_level.first();
 				//Add validation class and set next availabe time

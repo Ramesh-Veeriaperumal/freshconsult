@@ -3039,6 +3039,9 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
+    assigned_agent:
+      text: Assigned Agent
+      description: Ticket's agent
     sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
     human_name: SLA Policy
     sla_targets: SLA Targets
@@ -3264,7 +3267,7 @@ en:
       upvoted: "You have upvoted"
       upvote: "Upvote"
       like:
-        one: "like this"
+        one: "likes this"
         other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
@@ -4693,6 +4696,7 @@ en:
     closed_at: closed
     from: From
     to: To
+    check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
     no_tickets_mail:
@@ -5219,7 +5223,7 @@ en:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
     quickbooks:
-      label: "QuickBooks"
+      label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
     zohocrm:
       label: "Zoho CRM"
