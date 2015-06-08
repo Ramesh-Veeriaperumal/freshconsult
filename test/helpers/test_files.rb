@@ -19,3 +19,4 @@ include ForumHelper
 include CompanyHelper
 include UsersHelper
 include TicketHelper
+include GroupHelper

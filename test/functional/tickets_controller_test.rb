@@ -523,12 +523,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert Helpdesk::Ticket.find_by_display_id(ticket.display_id).deleted == true
   end
 
-  # def test_destroy_invalid
-  #   ticket.update_column(:requester_id, nil)
-  #   delete :destroy, construct_params({id: ticket.display_id})
-  #   assert_response :bad_request
-  #   match_json([bad_request_error_pattern('requester_id', "can't be blank")])
-  # end
+  def test_destroy_invalid
+    requester_id = ticket.requester_id
+    ticket.update_column(:requester_id, nil)
+    delete :destroy, construct_params({id: ticket.display_id})
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+    ticket.update_column(:requester_id, requester_id)
+  end
 
   def test_destroy_invalid_id
     delete :destroy, construct_params(id: '78798')
