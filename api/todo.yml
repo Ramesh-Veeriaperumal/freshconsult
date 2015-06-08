@@ -9,6 +9,10 @@ Todo:
  - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
  - "Expose email config and product index"
  - Tickets? phone source?
+ - AMS for ticket repsonse
+ - display_id and ticket states to be supported in bulk import / bulk create
+ - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
+ - Validate picklist values for custom drop down fields in ticket
 
 Breaking changes in existing APIs:
  - day pass required

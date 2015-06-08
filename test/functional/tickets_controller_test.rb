@@ -10,13 +10,29 @@ class TicketsControllerTest < ActionController::TestCase
     user
   end
 
+  def ticket
+    ticket = Helpdesk::Ticket.first || create_ticket(ticket_params_hash)
+    ticket
+  end
+
+  def update_ticket_params_hash
+    agent = add_test_agent(@account, role: 4)
+    subject = Faker::Lorem.words(10).join(' ')
+    description = Faker::Lorem.paragraph
+    params_hash = { description: description, subject: subject, priority: 4, status: 3, type: 'Lead',
+                    responder_id: agent.id, source: 4, tags: ['update_tag1', 'update_tag2'],
+                    due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s, group_id: Group.last.id }
+    params_hash
+  end
+
   def ticket_params_hash
     cc_emails = [Faker::Internet.email, Faker::Internet.email]
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
     email = Faker::Internet.email
+    tags = [Faker::Name.name, Faker::Name.name]
     params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                    priority: 2, status: 3, ticket_type: 'Problem', responder_id: @agent.id, source: 2, tags: ['tag1', 'tag2'],
+                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 2, tags: tags,
                     due_by: 14.days.since.to_s, fr_due_by: 1.days.since.to_s, group_id: Group.first.id }
     params_hash
   end
@@ -26,29 +42,36 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
+  def test_create_with_email
+    params = { email: Faker::Internet.email }
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
   def test_create_numericality_invalid
-    params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x',
-                                      display_id: 'y', group_id: 'g')
+    params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     post :create, construct_params({}, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('requester_id', 'is not a number'),
                 bad_request_error_pattern('responder_id', 'is not a number'),
                 bad_request_error_pattern('product_id', 'is not a number'),
                 bad_request_error_pattern('email_config_id', 'is not a number'),
-                bad_request_error_pattern('display_id', 'is not a number'),
                 bad_request_error_pattern('group_id', 'is not a number')])
   end
 
   def test_create_inclusion_invalid
-    params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, ticket_type: 'jk', source: '89')
+    params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('priority', 'is not included in the list', list: '1,2,3,4'),
                 bad_request_error_pattern('status', 'is not included in the list', list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('ticket_type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,4,5,6,7,8,9')])
+                bad_request_error_pattern('type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,4,7,8,9')])
   end
 
   def test_create_presence_requester_id_invalid
@@ -120,6 +143,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
     assert_equal "http://#{@request.host}/api/v2/tickets/#{result['display_id']}", response.headers['Location']
@@ -130,6 +154,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
   def test_create_with_new_twitter_user
@@ -137,6 +162,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert User.last.twitter_id == '@test'
   end
 
@@ -146,7 +172,15 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert User.last.phone == phone
+  end
+
+  def test_create_with_new_fb_user
+    params = ticket_params_hash.except(:email).merge(facebook_id:  Faker::Name.name)
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
   end
 
   def test_create_with_existing_fb_user
@@ -156,6 +190,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert User.count == count
   end
 
@@ -166,6 +201,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert User.count == count
   end
 
@@ -173,6 +209,17 @@ class TicketsControllerTest < ActionController::TestCase
     user = add_new_user_without_email(@account)
     count = User.count
     params = ticket_params_hash.except(:email).merge(phone: user.phone, name: Faker::Name.name)
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    assert User.count == count
+  end
+
+  def test_create_with_existing_email
+    user = add_new_user(@account)
+    count = User.count
+    params = ticket_params_hash.except(:email).merge(email: user.email)
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
@@ -188,9 +235,9 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_attachment
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
-    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg') 
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = ticket_params_hash.merge('attachments' => [file, file2])
-    stub_const(ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
       post :create, construct_params({}, params)
     end
     assert_response :created
@@ -203,12 +250,370 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_invalid_attachment_params_format
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = ticket_params_hash.merge('attachments' => [1, 2])
-    stub_const( ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
       post :create, construct_params({}, params)
     end
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
+
+  # def test_update_with_attachment
+  #   file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+  #   file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+  #   params = ticket_params_hash.merge('attachments' => [file, file2])
+  #   stub_const(ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+  #     post :create, construct_params({}, params)
+  #   end
+  #   assert_response :created
+  #   response_params = params.except(:tags, :attachments)
+  #   match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+  #   match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  #   assert Helpdesk::Ticket.last.attachments.count == 2
+  # end
+
+  # def test_update_with_invalid_attachment_params_format
+  #   file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+  #   params = ticket_params_hash.merge('attachments' => [1, 2])
+  #   stub_const( ApiConstants, "UPLOADED_FILE_TYPE", Rack::Test::UploadedFile) do
+  #     post :create, construct_params({}, params)
+  #   end
+  #   assert_response :bad_request
+  #   match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+  # end
+
+  def test_update
+    params_hash = update_ticket_params_hash
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+  end
+
+  def test_update_with_new_email_without_nil_requester_id
+    params_hash = update_ticket_params_hash.merge(email:  Faker::Internet.email)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+  end
+
+  def test_update_with_new_twitter_id_without_nil_requester_id
+    params_hash = update_ticket_params_hash.merge(twitter_id:  "@#{Faker::Name.name}")
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+  end
+
+  def test_update_with_new_phone_without_nil_requester_id
+    params_hash = update_ticket_params_hash.merge(phone: Faker::PhoneNumber.phone_number, name:  Faker::Name.name)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+  end
+
+  def test_update_with_new_email_with_nil_requester_id
+    email = Faker::Internet.email
+    params_hash = update_ticket_params_hash.merge(email: email, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.merge(requester_id: User.last.id), ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == (count + 1)
+    assert User.find(ticket.reload.requester_id).email == email
+  end
+
+  def test_update_with_new_twitter_id_with_nil_requester_id
+    twitter_id = "@#{Faker::Name.name}"
+    params_hash = update_ticket_params_hash.merge(twitter_id: twitter_id, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.merge(requester_id: User.last.id), ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == (count + 1)
+    assert User.find(ticket.reload.requester_id).twitter_id == twitter_id
+  end
+
+  def test_update_with_new_phone_with_nil_requester_id
+    phone = Faker::PhoneNumber.phone_number
+    name = Faker::Name.name
+    params_hash = update_ticket_params_hash.merge(phone: phone, name: name, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.merge(requester_id: User.last.id), ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == (count + 1)
+    assert User.find(ticket.reload.requester_id).phone == phone
+    assert User.find(ticket.reload.requester_id).name == name
+  end
+
+  def test_update_with_new_fb_id
+    params_hash = update_ticket_params_hash.merge(facebook_id: Faker::Name.name, requester_id: nil)
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+  end
+
+  def test_update_with_status_resolved_and_due_by
+    params_hash = { status: 4, due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('due_by', 'invalid_field'),
+                bad_request_error_pattern('fr_due_by', 'invalid_field')])
+  end
+
+  def test_update_with_status_closed_and_due_by
+    params_hash = { status: 5, due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('due_by', 'invalid_field'),
+                bad_request_error_pattern('fr_due_by', 'invalid_field')])
+  end
+
+  def test_update_numericality_invalid
+    params_hash = update_ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', 'is not a number'),
+                bad_request_error_pattern('responder_id', 'is not a number'),
+                bad_request_error_pattern('product_id', 'is not a number'),
+                bad_request_error_pattern('email_config_id', 'is not a number'),
+                bad_request_error_pattern('group_id', 'is not a number')])
+  end
+
+  def test_update_inclusion_invalid
+    params_hash = update_ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('priority', 'is not included in the list', list: '1,2,3,4'),
+                bad_request_error_pattern('status', 'is not included in the list', list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,4,7,8,9')])
+  end
+
+  def test_update_presence_requester_id_invalid
+    params_hash = update_ticket_params_hash.except(:email).merge(requester_id: nil)
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+  end
+
+  def test_update_presence_name_invalid
+    params_hash = update_ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number, requester_id: nil)
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('name', "can't be blank")])
+  end
+
+  def test_update_email_format_invalid
+    params_hash = update_ticket_params_hash.merge(email: 'test@', requester_id: nil)
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('email', 'is not a valid email')])
+  end
+
+  def test_update_data_type_invalid
+    cc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
+    params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [])
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('tags', 'is not a/an Array'),
+                bad_request_error_pattern('custom_fields', 'is not a/an Hash')])
+  end
+
+  def test_update_date_time_invalid
+    params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('due_by', 'is not a date'),
+                bad_request_error_pattern('fr_due_by', 'is not a date')])
+  end
+
+  def test_update_invalid_model
+    params_hash = update_ticket_params_hash.except(:email).merge(group_id: 89_089, product_id: 9090, email_config_id: 89_789, requester_id: 8989, responder_id: 8987)
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', 'should be a valid email address'),
+                bad_request_error_pattern('group', "can't be blank"),
+                bad_request_error_pattern('responder', "can't be blank"),
+                bad_request_error_pattern('email_config', "can't be blank")])
+  end
+
+  def test_update_extra_params_invalid
+    params_hash = update_ticket_params_hash.merge(junk: 'test')
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('junk', 'invalid_field')])
+  end
+
+  def test_update_empty_params
+    params_hash = {}
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json(request_error_pattern('missing_params'))
+  end
+
+  def test_update_with_existing_fb_user
+    user = add_new_user_with_fb_id(@account)
+    params_hash = update_ticket_params_hash.except(:email).merge(facebook_id: user.fb_profile_id, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+  end
+
+  def test_update_with_existing_twitter
+    user = add_new_user_with_twitter_id(@account)
+    params_hash = update_ticket_params_hash.except(:email).merge(twitter_id: user.twitter_id, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+    assert User.find(ticket.reload.requester_id).twitter_id == user.twitter_id
+  end
+
+  def test_update_with_existing_phone
+    user = add_new_user_without_email(@account)
+    params_hash = update_ticket_params_hash.except(:email).merge(phone: user.phone, name: Faker::Name.name, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+    assert User.find(ticket.reload.requester_id).phone == user.phone
+  end
+
+  def test_update_with_existing_email
+    user = add_new_user(@account)
+    params_hash = update_ticket_params_hash.merge(email: user.email, requester_id: nil)
+    count = User.count
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, ticket.reload))
+    match_json(ticket_pattern({}, ticket.reload))
+    assert User.count == count
+    assert User.find(ticket.reload.requester_id).email == user.email
+  end
+
+  def test_update_with_invalid_custom_fields
+    params_hash = update_ticket_params_hash.merge('custom_fields' => { 'dsfsdf' => 'dsfsdf' })
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('dsfsdf', 'invalid_field')])
+  end
+
+  def test_destroy
+    delete :destroy, construct_params(id: ticket.display_id)
+    assert_response :no_content
+    assert Helpdesk::Ticket.find_by_display_id(ticket.display_id).deleted == true
+  end
+
+  # def test_destroy_invalid
+  #   ticket.update_column(:requester_id, nil)
+  #   delete :destroy, construct_params({id: ticket.display_id})
+  #   assert_response :bad_request
+  #   match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+  # end
+
+  def test_destroy_invalid_id
+    delete :destroy, construct_params(id: '78798')
+    assert_response :not_found
+  end
+
+  def test_update_verify_permission_invalid_permission
+    User.any_instance.stubs(:has_ticket_permission?).with(ticket).returns(false).once
+    put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_verify_permission_ticket_trashed
+    Helpdesk::Ticket.any_instance.stubs(:trashed).returns(true).once
+    put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_delete_has_ticket_permission_invalid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
+    delete :destroy, construct_params(id: ticket.display_id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_delete_has_ticket_permission_valid
+    t = create_ticket(ticket_params_hash)
+    User.any_instance.stubs(:can_view_all_tickets?).returns(true)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
+    delete :destroy, construct_params(id: t.display_id)
+    assert_response :no_content
+  end
+
+  def test_delete_group_ticket_permission_invalid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).once
+    User.any_instance.stubs(:group_ticket_permission).returns(true).once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false).once
+    Helpdesk::Ticket.stubs(:group_tickets_permission).returns([])
+    delete :destroy, construct_params(id: ticket.display_id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_delete_assigned_ticket_permission_invalid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
+    Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([])
+    delete :destroy, construct_params(id: ticket.display_id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_delete_group_ticket_permission_valid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
+    t = create_ticket(ticket_params_hash)
+    group = create_group_with_agents(@account, {}, [@agent.id])
+    Helpdesk::Ticket.any_instance.stubs(:group_id).returns(group.id)
+    delete :destroy, construct_params(id: t.display_id)
+    assert_response :no_content
+  end
+
+  def test_delete_assigned_ticket_permission_valid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
+    t = create_ticket(ticket_params_hash)
+    Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
+    delete :destroy, construct_params(id: t.display_id)
+    assert_response :no_content
+  end
+
+  # def test_update_manual_due_by
+  #   params_hash = update_ticket_params_hash
+  #   put :update, construct_params({id: ticket.id}, update_ticket_params_hash)
+  #   assert_response :success
+  #   match_json(ticket_pattern(params_hash, ticket.reload))
+  # end
 
   # def test_create_with_custom_fields
   #   put :update, :jsonData => @default_fields.merge(:controller => :ticket_fields)

@@ -1,6 +1,4 @@
 class TicketsValidationHelper
-  # Need to use current_account instead of Account.current
-
   class << self
     def ticket_status_values(account)
       Helpdesk::TicketStatus.status_keys_by_name(account).values
@@ -19,7 +17,10 @@ class TicketsValidationHelper
       proc do |record, attr, value_array|
         if value_array.is_a? Array
           value_array.each do |value|
-            record.errors.add attr, 'is not a valid email' unless valid_email?(value)
+            unless valid_email?(value)
+              record.errors.add attr, 'is not a valid email'
+              break
+            end
           end
         end
       end
@@ -30,7 +31,7 @@ class TicketsValidationHelper
         if value_array.is_a? Array
           value_array.each do |value|
             unless value.is_a? ApiConstants::UPLOADED_FILE_TYPE
-              record.errors.add attr, "invalid_format" 
+              record.errors.add attr, 'invalid_format'
               break
             end
           end

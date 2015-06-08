@@ -15,4 +15,4 @@ json.set! :is_escalated, @ticket.isescalated
 json.set! :notes, []
 json.set! :tags, @ticket.tag_names
 json.set! :custom_fields, @ticket.custom_field
-json.partial! 'shared/utc_date_format', item: @ticket, add: { resolved_at: :resolved_at, closed_at: :closed_at, due_by: :due_by, frDueBy: :fr_due_by }
+json.partial! 'shared/utc_date_format', item: @ticket, add: { due_by: :due_by, frDueBy: :fr_due_by }

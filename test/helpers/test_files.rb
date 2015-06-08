@@ -18,3 +18,4 @@ include APIAuthHelper
 include ForumHelper
 include CompanyHelper
 include UsersHelper
+include TicketHelper

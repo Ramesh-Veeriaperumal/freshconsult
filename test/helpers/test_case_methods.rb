@@ -31,6 +31,13 @@ module TestCaseMethods
     parent.const_set(const, old_value)
   end
 
+  def assert_user_count(incremented = false)
+    count = incremented ? (User.count + 1) : User.count
+    yield
+  ensure
+    assert User.count == count
+  end
+
   def clear_cache
     Rails.cache.clear
   end

@@ -242,7 +242,7 @@ module ApiDiscussions
     end
 
     def test_unfollow_valid_params_invalid_record
-      monitor = Monitorship.where(:monitorable_type => "Topic").last
+      monitor = Monitorship.where(monitorable_type: 'Topic').last
       user = User.find_by_id(monitor.user_id)
       user.update_column(:email, nil)
       delete :unfollow, construct_params({ id: monitor.monitorable_id }, user_id: user.id)

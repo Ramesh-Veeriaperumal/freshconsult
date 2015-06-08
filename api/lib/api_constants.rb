@@ -38,7 +38,8 @@ module ApiConstants
   UPDATE_POST_FIELDS = { all: ['body_html', 'answer'] }
   CREATE_POST_FIELDS = { all: %w(body_html answer topic_id), view_admin: ['created_at', 'updated_at'], manage_users: ['email', 'user_id'] }
   TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }, { 'attachments' => [] }]
-  CREATE_TICKET_FIELDS = %w(cc_emails description description_html display_id due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject ticket_type product_id tags attachments) | TICKET_ARRAY_FIELDS
+  CREATE_TICKET_FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | TICKET_ARRAY_FIELDS
+  UPDATE_TICKET_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | [{ 'tags' => [String] }]
 
   # *********************************-- ValidationConstants --*********************************************
 
@@ -50,9 +51,9 @@ module ApiConstants
     locked: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
     answer: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
     priority: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.join(','),
-    source: (1..TicketConstants::SOURCES.size).to_a.join(',')
+    source:  TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :facebook).values.join(',')
   }
-  
+
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
 
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN.values | Forum::VISIBILITY_KEYS_BY_TOKEN.values.map(&:to_s)
