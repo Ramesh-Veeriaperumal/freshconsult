@@ -3,7 +3,7 @@ module ModerationUtil
 
   include ActionDispatch::Routing::UrlFor
 
-  EMAIL_PATTERN = /(\A.*[-A-Z0-9.'_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10}).*\z)/i
+  EMAIL_PATTERN = /(^.*[-A-Z0-9.'_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10}).*$)/i
   NUMBER_PATTERN = /((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?([A-Z,0-9]{2,4})(-| )?([A-Z,0-9]{3,4})(-| )?(( x| ext)(-| )?\d{1,5}){0,1}/
 
   APPROVED_DOMAINS = YAML::load_file(File.join(Rails.root, 'config', 'whitelisted_link_domains.yml'))
