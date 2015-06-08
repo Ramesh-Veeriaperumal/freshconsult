@@ -64,7 +64,7 @@
 				</div>
 				<div class="col-center">
 				  <%if i_app_index.nil? or !application[:options][:direct_install].blank?%>
-					  <%= content_tag(:h2, t(application.display_name)) %>
+					  <%= content_tag(:h2, t(application.display_name).html_safe) %>
 					<%else%>
 					  <%= content_tag(:h2, link_to(t(application.display_name),edit_integrations_installed_application_path(@installed_applications[i_app_index]), :title => t("application.configure_addon") )) %>
 					<%end%>
