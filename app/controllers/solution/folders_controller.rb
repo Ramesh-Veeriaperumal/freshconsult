@@ -19,6 +19,7 @@ class Solution::FoldersController < ApplicationController
 
   def show    
     @item = @category.folders.find(params[:id], :include => :articles)
+    #META-READ-CHECK
     
     respond_to do |format|
       format.html { @page_canonical = solution_category_folder_url(@category, @item) }

@@ -10,20 +10,23 @@ class Solution::Category < ActiveRecord::Base
 		:source => :solution_folders,
 		:dependent => :destroy, 
 		:order => "position",
-    :conditions => proc { "solution_folders.language_id = '#{Solution::LanguageMethods.current_language_id}'" }
+		:readonly => false,
+		:conditions => proc { "solution_folders.language_id = '#{Solution::Folder.current_language_id}'" }
 
   has_many :public_folders_with_meta, 
   	:class_name =>'Solution::Folder' ,  
   	:through => :solution_folder_meta,
 		:source => :solution_folders,
 		:order => "position",
-    :conditions => proc { ["solution_folders.language_id = '#{Solution::LanguageMethods.current_language_id}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
+		:readonly => false,
+    :conditions => proc { ["solution_folders.language_id = '#{Solution::Category.current_language_id}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
 
   has_many :portal_solution_categories_with_meta, 
     :class_name => 'PortalSolutionCategory',
     :through => :solution_category_meta,
     :source => :portal_solution_categories,
     :foreign_key => :solution_category_id, 
+		:readonly => false,
     :dependent => :delete_all
 
   has_many :published_articles_with_meta, :through => :public_folders_with_meta
@@ -37,6 +40,7 @@ class Solution::Category < ActiveRecord::Base
     :through => :solution_folder_meta,
     :source => :solution_folders,
     :order => "position", 
+		:readonly => false,
     :conditions => [" solution_folders.visibility in (?,?) ",
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
 
@@ -44,9 +48,11 @@ class Solution::Category < ActiveRecord::Base
     :class_name => 'Mobihelp::AppSolution',
     :through => :solution_category_meta,
     :source => :mobihelp_app_solutions,
+		:readonly => false,
     :dependent => :destroy
 
   has_many :mobihelp_apps_with_meta,
+		:readonly => false,
     :class_name => 'Mobihelp::App', 
     :through => :mobihelp_app_solutions_with_meta
 
