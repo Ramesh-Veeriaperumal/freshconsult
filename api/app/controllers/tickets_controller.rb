@@ -35,7 +35,7 @@ class TicketsController < ApiApplicationController
   end
 
   def destroy
-    if @item.update_attributes({deleted: true})
+    if @item.update_attributes(deleted: true)
       head 204
     else
       set_custom_errors
@@ -139,7 +139,7 @@ class TicketsController < ApiApplicationController
     end
 
     def load_object
-      condition = "display_id = ? "
+      condition = 'display_id = ? '
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
       item = scoper.where(condition, params[:id]).first
       @item = instance_variable_set('@' + cname, item)

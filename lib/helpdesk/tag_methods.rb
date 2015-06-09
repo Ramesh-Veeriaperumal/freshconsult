@@ -30,6 +30,7 @@ module Helpdesk::TagMethods
     unless tags.blank?
         tag_uses = item.tag_uses.tags_to_remove(item.id, tags.map{ |tag| tag.id }, "Helpdesk::Ticket")
         item.tag_uses.destroy tag_uses
+        item.tags.reject!{|tag| tags.include?(tag)}
     end
   end
 

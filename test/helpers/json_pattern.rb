@@ -142,7 +142,7 @@ module JsonPattern
   end
 
   def deleted_ticket_pattern(expected_output = {}, ticket)
-    ticket_pattern(expected_output, ticket).merge(:deleted => (expected_output[:deleted] || ticket.deleted))
+    ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted))
   end
 
   def ticket_pattern(expected_output = {}, ticket)
