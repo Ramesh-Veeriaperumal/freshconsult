@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48",
-    "current": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48"
+    "previous": "eb4c392a2f1325fd26e07569dd2fee2b1fb253ae7aa89a5f8341277ce249fee0",
+    "current": "eb4c392a2f1325fd26e07569dd2fee2b1fb253ae7aa89a5f8341277ce249fee0"
   },
   "fonts": [
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.ttf",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.woff",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot"
+    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.ttf",
+    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.svg",
+    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.woff",
+    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.eot"
   ],
   "glyphs": {
     "account": {
@@ -349,6 +349,10 @@
     "firefox": {
       "codepoint": 61772,
       "source": "public/glyphs/vectors/firefox.svg"
+    },
+    "folder": {
+      "codepoint": 61879,
+      "source": "public/glyphs/vectors/folder.svg"
     },
     "folder-o": {
       "codepoint": 61773,
@@ -740,10 +744,6 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
-    "font_ascent": 448,
-    "font_descent": 64,
-    "font_design_size": 16,
-    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
