@@ -9,7 +9,8 @@ class TicketsController < ApiApplicationController
 
   before_filter :assign_protected, only: [:create, :update]
   before_filter :verify_ticket_permission, only: [:update, :show]
-  before_filter :has_ticket_permission?, only: [:destroy]
+  before_filter :has_ticket_permission?, only: [:destroy, :assign]
+  before_filter :restrict_params, only: [:assign, :restore]
 
   def create
     add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
@@ -42,10 +43,33 @@ class TicketsController < ApiApplicationController
     end
   end
 
+  def assign
+    user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
+    if user
+      @ticket.responder = user
+      @ticket.save ? (head 204) : render_error(@item.errors)
+    else
+      @errors = [BadRequestError.new('responder', "can't be blank")]
+      render '/bad_request_error', status: 400
+    end
+  end
+
+  def restore
+    if @ticket.update_attribute(:deleted, false)
+      head 204
+    else
+      render_error(@item.errors)
+    end
+  end
+
   private
 
     def scoper
       current_account.tickets
+    end
+
+    def restrict_params
+      params[cname].permit(*("ApiConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
     end
 
     def manipulate_params
@@ -115,7 +139,10 @@ class TicketsController < ApiApplicationController
     end
 
     def load_object
-      @item = instance_variable_set('@' + cname,  scoper.find_by_param(params[:id], current_account))
+      condition = "display_id = ? "
+      condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
+      item = scoper.where(condition, params[:id]).first
+      @item = instance_variable_set('@' + cname, item)
       head :not_found unless @item
     end
 end

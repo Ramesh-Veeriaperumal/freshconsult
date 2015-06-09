@@ -81,7 +81,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     # Used for API
-    resource :"ticket"
+    resource :"ticket", :only => [:show, :create, :index]
 	end
 
   reply_ticket do
@@ -111,6 +111,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                            :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action"
+    resource :"ticket", :only => [:update, :assign]
   end
 
   edit_conversation do
@@ -132,6 +133,7 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_ticket do
     resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :empty_trash]
+    resource :"ticket", :only => [:restore, :destroy]
   end
 
   # ************** SOLUTIONS **************************

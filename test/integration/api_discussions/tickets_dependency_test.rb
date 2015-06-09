@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 class TicketsDependencyTest < ActionDispatch::IntegrationTest
   def test_before_filters_web_tickets_controller
-    expected_filters =  [:determine_pod, :response_headers, :activate_authlogic, :select_shard, :unset_current_account,
+    expected_filters =  [:determine_pod, :response_headers, :restrict_params, :activate_authlogic, :select_shard, :unset_current_account,
                          :unset_current_portal, :set_current_account, :ensure_proper_protocol, :check_privilege,
                          :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params,
                          :set_affiliate_cookie, :verify_authenticity_token, :load_object, :check_params,
