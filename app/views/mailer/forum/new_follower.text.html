@@ -1,0 +1,26 @@
+<style>
+  <%= render :file => "mailer/css/mailer.css" %>
+</style>
+
+<div class="body">
+  <div class="mail_content">
+    <b>Added as forum follower</b>
+  </div>
+  <div class="forum_content">
+    <div class="actual_content">
+      You have been added as a follower by <%= @user.name %> to this forum.
+      <br/><br/>
+          <div class="forum-title">
+            <%= link_to @forum.name, discussions_forum_url(@forum.id, :host => @portal.host) %> <br/>
+          </div>
+          <%= @forum.description %>
+    </div>
+    <br>
+  </div>
+  <div class="unsubscribe">
+    <%= link_to 'Stop following this forum',toggle_monitorship_url(:object => "forum", 
+                      :id => @forum.id, :type=>"unfollow", :host=> @portal.host) %>
+  <br/><br/>
+  </div>
+  <br><br>
+</div>

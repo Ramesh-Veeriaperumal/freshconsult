@@ -200,7 +200,7 @@ class Freshfone::CallInitiator
 		end
 
 		def quit_voicemail_url
-			"#{host}/freshfone/voicemail/quit_voicemail"
+			"#{host}/freshfone/voicemail/quit_voicemail?cost_added=#{params[:cost_added]}"
 		end
 
 		def transfer_call_status_url(call_back)

@@ -208,4 +208,12 @@ describe Discussions::ForumsController do
 			response.should redirect_to(support_discussions_forum_path(@forum))
 		end
 	end	
+
+	it "should render followers list" do 
+		forum_category = create_test_category
+		forum = create_test_forum(forum_category)
+		get :followers, :id => forum.id
+		response.should render_template('discussions/forums/followers')
+	end
+
 end

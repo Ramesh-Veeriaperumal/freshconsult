@@ -7,6 +7,7 @@ class Social::TwitterController < Social::BaseController
   include Social::Twitter::Constants
   include Mobile::Actions::Social
   include Social::Util
+  include Social::Constants
 
   before_filter :fetch_live_feeds, :only => [:twitter_search, :show_old, :fetch_new]
   before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
@@ -409,7 +410,7 @@ class Social::TwitterController < Social::BaseController
         :in_reply_to_id => in_reply_to
       }
       reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
-      @sandbox_error_msg, return_value = twt_sandbox(reply_handle) {
+      @sandbox_error_msg, return_value = twt_sandbox(reply_handle, TWITTER_TIMEOUT[:reply]) {
         twt = tweet_to_twitter(reply_handle, tweet_params)
         @interactions[:current] << recent_agent_reply(twt, nil) if twt
       }

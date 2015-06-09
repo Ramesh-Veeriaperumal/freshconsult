@@ -8,8 +8,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$freshfoneCallHistory = $('.fresfone-call-history');
       this.bindBlacklistElements();
     },
-    blockNumber: function (number) {
-      this.$freshfoneCallHistory.find('.blacklist[data-number="' + number + '"]')
+    blockNumber: function (id) {
+      this.$freshfoneCallHistory.find('.blacklist[data-caller_id="' + id + '"]')
         .removeClass('blacklist')
         .addClass('blacklisted')
         .attr('title', freshfone.unblockNumberText);
@@ -26,21 +26,24 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         $('#open-blacklist-confirmation').trigger('click');
         $(this).addClass('disabled');
         $('#blacklist-confirmation .number')
-          .text('+' + $(this).data('number'));
-        $('#blacklist_number_number').val($(this).data('number'));
+          .text($(this).data('number'));
+        $('#caller_number').val($(this).data('number'));
+        $('#caller_id').val($(this).data('caller_id'));
       });
     },
     bindUnblockButton: function () {
       var self = this;
       this.$freshfoneCallHistory.on('click.freshfonecallhistory.callblacklist', '.blacklisted',
        function (ev) {
-        var number = $(this).data('number');
+        var number = $(this).data('number'),
+        caller_id = $(this).data('caller_id');
         self.$freshfoneCallHistory.find('.blacklisted[data-number="' + number + '"]')
           .removeClass('blacklisted')
           .addClass('blacklisting sloading loading-tiny');
         $.ajax({
-          url: '/freshfone/blacklist_number/' + number,
-          type: 'DELETE',
+          url: '/freshfone/caller/unblock',
+          data: { caller : {id : caller_id} },
+          type: 'post',
           async: true,
           success: function (data) {self.unblockSuccess(data, number)},
           error: function (data) {self.unblockError(data, number)}

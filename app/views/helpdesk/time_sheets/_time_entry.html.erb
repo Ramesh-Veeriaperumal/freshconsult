@@ -12,6 +12,7 @@
                     "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
                     "data-width" => 450,
                     "data-submit-label" => t('update'),
+                    "id" => "edit_#{time_entry.id}",
                     :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
       <%= link_to "delete", helpdesk_time_sheet_url(time_entry), 
                   :method => :delete,
@@ -19,10 +20,10 @@
                   :confirm => "Delete this time entry?" %>
     </div>
   <% end %>
-  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user) if time_entry.user %></div>
+  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user, :thumb, 'small') if time_entry.user %></div>
   <div class="details">
     <h4>
-      <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"") %>
+      <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"", :'data-pjax' => '#body-container') %>
       <span class="tracked_time">
         <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
                             :class => "time",
@@ -43,7 +44,7 @@
       </div>
     </div>
     <div class="note">
-      <%= RedCloth.new(h(time_entry.note) || "").to_html.html_safe %>
+      <%= time_entry_note(h(time_entry.note) || "") %>
     </div> 
   </div>
 </div>

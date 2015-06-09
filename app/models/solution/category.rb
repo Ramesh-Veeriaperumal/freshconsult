@@ -19,7 +19,11 @@ class Solution::Category < ActiveRecord::Base
   
   belongs_to_account
 
+  belongs_to :solution_category_meta, 
+    :class_name => 'Solution::CategoryMeta', :foreign_key => "parent_id"
+
   has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
+  has_many :solution_folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
   has_many :public_folders, :class_name =>'Solution::Folder' ,  :order => "position", 
           :conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
   has_many :published_articles, :through => :public_folders
@@ -50,6 +54,8 @@ class Solution::Category < ActiveRecord::Base
   acts_as_list :scope => :account
 
   scope :customer_categories, {:conditions => {:is_default=>false}}
+
+  include Solution::MetaMethods
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'

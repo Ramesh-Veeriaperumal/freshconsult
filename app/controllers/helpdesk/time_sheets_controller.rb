@@ -28,7 +28,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         render :xml=>@time_sheets.to_xml({:root=>"time_entries"})
       end
        format.json do
-        render :json=>@time_sheets
+        render :json=>@time_sheets, :status => find_status #temp_hack. Will be addressed in API_Versioning
       end
       format.mobile do
         render :json=>@time_sheets.all(:order => "executed_at").to_json()
@@ -232,8 +232,8 @@ private
   def get_time_sheets
     normalize_params
     # start date is set to the zero if nothing is specified similarly End date is set to current time.
-    start_date = (params[:start_date].blank?) ? 0: Time.zone.parse(params[:start_date])
-    end_date =  (params[:end_date].blank?) ? Time.zone.now.to_time : Time.zone.parse(params[:end_date])
+    start_date = validate_time(params[:start_date]) ? Time.zone.parse(params[:start_date]): Helpdesk::TimeSheet::FILTER_OPTIONS[:start_date] 
+    end_date =  validate_time(params[:end_date]) ? Time.zone.parse(params[:end_date]): Time.zone.now.to_time 
     
     #agent/email name 
     email = params[:email]
@@ -252,21 +252,36 @@ private
     end
     agent_id = params[:agent_id] || []
 
-    billable = (!params[:billable].blank? && !params[:billable].to_s.eql?("falsetrue")) ? [params[:billable].to_s.to_bool] : true
+    billable = (!params[:billable].blank?) ? [params[:billable].to_s.to_bool] : true
     #search by contact
-    contact_email = params[:contact_email]
-
+    contact = current_account.user_emails.user_for_email(params[:contact_email]) unless params[:contact_email].blank?
+    
+    #temp hack for invalid/non existent contact email to provide backward compatibility.
+    if contact.nil? && params[:contact_email]
+      @time_sheets = []
+      return 
+    end
     #company_id and agent_id if passed null will return all data.  
-    unless contact_email.blank?
-      Rails.logger.debug "Timesheets API::get_time_sheets: contact_email=> "+contact_email +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
-      @time_sheets = current_account.time_sheets.for_contacts(contact_email).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+    unless contact.nil?
+      Rails.logger.debug "Timesheets API::get_time_sheets: contact => "+contact.id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
+      @time_sheets = current_account.time_sheets.for_contacts_with_id(contact.id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable).includes(:user, :workable => {:requester => :company})
     else
       Rails.logger.debug "Timesheets API::get_time_sheets: company_id=> "+company_id.to_s() +" agent_id =>"+ agent_id.to_s() + " billable=>" + billable.to_s+ " from =>"+ start_date.to_s+ " till=> " + end_date.to_s
-      @time_sheets = current_account.time_sheets.for_companies(company_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
+      @time_sheets = current_account.time_sheets.for_companies(company_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable).includes(:user, :workable => {:requester => :company})
     end
-
   end
 
+  def validate_time time
+    begin
+      parsed_time = Time.zone.parse(time)
+    rescue
+      return false 
+    end
+  end
+
+  def find_status
+    @time_sheets.kind_of?(Hash) ? 400 : 200
+  end
 
   def check_agents_in_account
     #ADDED for SECURITY ISSUE: Users from other account are allowed to be added

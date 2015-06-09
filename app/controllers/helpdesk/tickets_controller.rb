@@ -99,7 +99,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
-        if @items.empty? && !params[:page].nil? && params[:page] != '1'
+        if (@items.length < 1) && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'  
           @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         end
@@ -261,17 +261,18 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-          @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
-
+        @ticket_notes       = @ticket_notes.reverse
+        @ticket_notes_total = @ticket.conversation_count
+        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
       }
-	  format.json {
-		render :json => @item.to_json
-	  }
+	    format.json {
+		    render :json => @item.to_json
+	    }
       format.js
       format.nmobile {
         hash = {}
@@ -283,7 +284,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
-        hash.merge!({:reply_template => parsed_reply_template(@ticket,@signature)})
+        hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.is_twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.is_twitter?
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?

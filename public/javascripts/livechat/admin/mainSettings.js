@@ -39,9 +39,9 @@ window.liveChat.mainSettings = function($){
           if(resp.status == "success"){
             if(toggledState){
               $('#chat_widgets_list').removeClass("disable-widgets");
-              if($('#livechat_layout') && window.chatSocket){
+              if($('#livechat_layout') && window.liveChat.clientWrapper){
                 $('#livechat_layout,#chat-availability').show();
-                window.chatSocket.connect();
+                window.liveChat.clientWrapper.connectPrimaryClient();
               }else{
                 $('body').append('<div id="livechat_layout" class="fc-layout"></div>');
                 $.getScript(js_asset_url+"/js/chat.js");
@@ -49,8 +49,8 @@ window.liveChat.mainSettings = function($){
             }else{
               $('#chat_widgets_list').addClass("disable-widgets");
               $('#livechat_layout,#chat-availability').hide();
-              if(window.chatSocket){
-                window.chatSocket.disconnect();
+              if(window.liveChat.clientWrapper){
+                window.liveChat.clientWrapper.disconnectPrimaryClient();
               }
             }
           }

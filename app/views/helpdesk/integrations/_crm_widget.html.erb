@@ -1,9 +1,9 @@
-<%crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm]
+<%crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :quickbooks]
 crm_apps.each { |crm_app| 
 if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
 	<div id="<%=crm_app%>" class="sidepanel">
 		<%
-		 @liquid_objects = {"requester" => user}
+		 @liquid_objects = {"requester" => user, "widget_type" => "_contacts"}
 		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) %>
 		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
 </div>

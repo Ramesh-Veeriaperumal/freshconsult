@@ -1,5 +1,7 @@
 module DiscussionsHelper
 	include Helpdesk::TicketsHelperMethods
+	include Community::MonitorshipHelper
+
 
 	def discussions_breadcrumb(page = :home)
 		_output = []
@@ -282,4 +284,14 @@ module DiscussionsHelper
   def display_count(count)
   	"(#{count})" if count > 0
   end
+  
+  def populate_vote_list_content object
+    return "" unless User.current.present?
+    output = object.voters.all(:limit => 5).collect(&:name).map do |name|
+    					h(name.size > 20 ? name.truncate(20) : name)
+    				 end
+    output << "..." if object.user_votes > 5
+    output.join("<br>").html_safe
+  end
+  
 end

@@ -344,6 +344,7 @@ javascripts:
     - public/javascripts/freshfone/components/timer.js
     - public/javascripts/freshfone/components/socket.js
     - public/javascripts/freshfone/components/end_call_form.js
+    - public/javascripts/freshfone/components/network_error.js
     - public/javascripts/freshfone/components/components_main.js
     - public/javascripts/freshfone/intlTelInput.js
     - public/javascripts/freshfone/device.js

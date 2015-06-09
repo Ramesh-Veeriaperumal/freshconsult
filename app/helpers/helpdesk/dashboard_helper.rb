@@ -42,13 +42,42 @@ module Helpdesk::DashboardHelper
 	end
 
 	def group_list_filter
-	    filter_list = current_account.groups.round_robin_groups.map{ |grp| 
+	    filter_list = current_account.groups.round_robin_groups.map{ |grp|
 	      [grp.name,"?group_id=#{grp.id}",false]
 	    }
 	     dropdown_menu filter_list, TOOLBAR_LINK_OPTIONS
 	end
-	
+
 	def chat_activated?
     	!current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.display_id
   	end
+
+
+	def groups
+		current_account.groups_from_cache
+	end
+
+	def ffone_user_list
+	 	agents_list =  @freshfone_agents.map { |agent|
+	 	{ 	:id => agent.user_id,
+	 		:name => agent.name,
+	 		:last_call_time => (agent.last_call_at) ,
+	 		:presence => agent.presence,
+	 		:on_phone => agent.available_on_phone,
+	 		:avatar => user_avatar(agent.user),
+	 		:preference => agent.incoming_preference}
+	  }.to_json
+	 end
+
+	 def round_robin?
+	 	current_user.privilege?(:admin_tasks) and
+	 	current_account.features?(:round_robin) and
+    	current_account.groups.round_robin_groups.any?   	
+	 end
+
+	 def freshfone_active?
+	 	current_user.privilege?(:admin_tasks) and
+	 	current_account.freshfone_active? and 
+	 	current_account.features?(:phone_agent_availability)
+	 end
 end

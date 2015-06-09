@@ -12,6 +12,14 @@ class Social::FacebookPage < ActiveRecord::Base
   scope :active, :conditions => ["enable_page=?", true]
   scope :reauth_required, :conditions => ["reauth_required=?", true]
   scope :valid_pages, :conditions => ["reauth_required=? and enable_page=?", false, true]
+  
+  scope :paid_acc_pages, 
+              :conditions => ["subscriptions.state IN ('active', 'free')"],
+              :joins      =>  "INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id"
+              
+  scope :trail_acc_pages, 
+              :conditions => ["subscriptions.state = 'trial'"],
+              :joins      => "INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id"
 
   #account_id is removed from validation check.
 

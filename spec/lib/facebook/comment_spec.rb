@@ -27,7 +27,7 @@ RSpec.describe Facebook::Core::Post do
     
       post_id = complete_post_id.split("_").last
       comment_id = "#{post_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(comment_id)
+      realtime_feed = sample_realtime_comment_feed(complete_post_id, comment_id)
       comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
       
       Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment)
@@ -46,13 +46,13 @@ RSpec.describe Facebook::Core::Post do
     end 
   end
   
-  it "should create a ticket and note when the parent post is not converted to a ticket and import visitor posts in enabled and the comment is from a visitor" do
+  it "should create a ticket and note when the parent post is not converted to a ticket and import visitor posts in enabled" do
     unless @account.features?(:social_revamp)
       comment_id = "#{get_social_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(comment_id)
+      feed_id = "#{@fb_page.page_id}_#{comment_id.split('_').first}"
+      realtime_feed = sample_realtime_comment_feed(feed_id, comment_id)
       comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
       
-      feed_id = "#{@fb_page.page_id}_#{comment_id.split('_').first}"
       facebook_feed = sample_facebook_feed(true, feed_id, true)
       
       #stub the api call for koala
@@ -80,15 +80,16 @@ RSpec.describe Facebook::Core::Post do
     end  
   end
   
-   it "should create a ticket and note when the parent post is not converted to a ticket and import company posts in enabled and the comment is from a company" do
+   it "should create a ticket and note when the parent post is not converted to a ticket and import company posts in enabled and the comment is from a visitor" do
     Social::FacebookPage.update_all("import_company_posts = true", "page_id = #{@fb_page.page_id}")
     
     unless @account.features?(:social_revamp)
       comment_id = "#{get_social_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(comment_id)
+      feed_id = "#{@fb_page.page_id}_#{comment_id.split('_').first}"
+      
+      realtime_feed = sample_realtime_comment_feed(feed_id, comment_id)
       comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
       
-      feed_id = "#{@fb_page.page_id}_#{comment_id.split('_').first}"
       facebook_feed = sample_facebook_feed(false, feed_id, true)
       
       #stub the api call for koala

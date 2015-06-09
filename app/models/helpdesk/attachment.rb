@@ -30,6 +30,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :url => "/:s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket_name],
     :whiny => false,
+    :restricted_characters => /[&$+,\/:;=?@<>\[\]\{\}\|\\\^~%#]/,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
 
    scope :gallery_images,

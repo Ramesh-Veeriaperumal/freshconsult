@@ -28,6 +28,8 @@ class AuthorizationsController < ApplicationController
       create_for_oauth2(@omniauth['provider'], params)
     elsif EMAIL_MARKETING_PROVIDERS.include?(@omniauth['provider'])
       create_for_email_marketing_oauth(@omniauth['provider'], params)
+    elsif OAUTH1_PROVIDERS.include?(@omniauth['provider'])
+      create_for_oauth1(@omniauth['provider'], params)
     end
   end
 
@@ -81,14 +83,27 @@ class AuthorizationsController < ApplicationController
       request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
   end
 
+  def create_for_oauth1(provider, params)
+    config_params = {
+      'app_name' => "#{@app_name}",
+      'oauth_token' => "#{@omniauth.credentials.token}",
+      'oauth_token_secret' => "#{@omniauth.credentials.secret}"
+    }
+
+    if (provider == Integrations::Constants::APP_NAMES[:quickbooks])
+      config_params['company_id'] = params['realmId']
+      config_params['token_renewal_date'] = Time.now + Integrations::Quickbooks::Constant::TOKEN_RENEWAL_DAYS.days
+    end
+    set_oauth_redirect_url(config_params)
+  end
+
   def create_for_oauth2(provider, params)
-    
     if OAUTH2_OMNIAUTH_CRENDENTIALS.include? provider
       access_token = @omniauth.credentials
     else
       access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, @app_name)
     end
-  
+
     config_params = { 
       'app_name' => "#{@app_name}",
       'refresh_token' => "#{@omniauth.credentials.refresh_token}",
@@ -109,16 +124,7 @@ class AuthorizationsController < ApplicationController
         config_params['iapp_id'] = @iapp_id
     end
 
-    config_params = config_params.to_json
-    app = get_integrated_app
-    #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
-    #user's account and install the application from inside the user's account.
-    key_options = { :account_id => @account_id, :provider => @app_name}
-    key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
-    Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
-    
-    redirect_url = get_redirect_url(app,@app_name)
-    redirect_to redirect_url
+    set_oauth_redirect_url(config_params)
   end
 
     def create_for_email_marketing_oauth(provider, params)
@@ -157,6 +163,7 @@ class AuthorizationsController < ApplicationController
         Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
         port = (Rails.env.development? ? ":#{request.port}" : '')
         fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}#{port}" : portal_url(user_account))
+        fb_url = "https://#{user_account.full_domain}" if is_native_mobile? #always use https for requests from mobile app.
         redirect_to fb_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}"
       end
     end
@@ -274,6 +281,21 @@ class AuthorizationsController < ApplicationController
       origin_account.all_users.find_by_id(@origin_user_id) if origin_account && @origin_user_id
   end
 
+  private
+    def set_oauth_redirect_url(config_params)
+      config_params = config_params.to_json
+      app = get_integrated_app
+      #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
+      #user's account and install the application from inside the user's account.
+      key_options = { :account_id => @account_id, :provider => @app_name}
+      key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
+      Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
+
+      redirect_url = get_redirect_url(app,@app_name)
+      redirect_to redirect_url
+    end
+
+  OAUTH1_PROVIDERS = ["quickbooks"]
   OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack", "google_contacts"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
   OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "shopify","slack"]

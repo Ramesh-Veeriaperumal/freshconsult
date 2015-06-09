@@ -1,7 +1,7 @@
 <% if @numbers.any? %>
 	<% unless feature?(:freshfone) %>
 		<div class="alert alert-page alert-notice freshfone-disabled-alert" rel="permanent">
-			<%= t('freshfone.admin.disable_alert').html_safe %>
+			<%= t('freshfone.admin.suspended_alert').html_safe %>
 		</div>
 	<% end %>
 	<div class="list-page-body ">

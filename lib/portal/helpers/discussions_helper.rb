@@ -46,18 +46,6 @@ module Portal::Helpers::DiscussionsHelper
 		end
 	end
 
-	def topic_info_with_votes topic
-		output = []
-		output << topic_brief(topic)
-		output << last_post_brief(topic.to_liquid) if topic.has_comments
-		output << bold(topic_votes(topic)) if(topic.votes > 0)
-		output.join(", ")
-	end
-
-	def topic_votes topic
-		pluralize topic.votes, "vote"
-	end
-
 	def topic_icon topic
 		output = []
 		output << %(<span id="sticky-topic-icon" data-toggle="tooltip" title="#{t('discussions.topics.sticky')}"><span class="icon-sticky"></span></span>) if topic.source.sticky?
@@ -355,10 +343,46 @@ HTML
 		output.join('').html_safe
 	end
 
-	protected
+	def topic_info_with_votes topic
+	  output = []
+	  output << topic_brief(topic)
+	  output << last_post_brief(topic.to_liquid) if topic.has_comments
+	  output << bold(topic_votes(topic)) if(topic.votes> 0)
+	  output.join(", ")
+	end
 
-		def link_to_topic topic
-			link_to topic['title'], topic.topic_url
+	def topic_votes topic
+	  pluralize topic.votes, "vote"
+	end
+
+	def post_sort_options topic, sort_by
+		return "" if topic.comment_count < 1
+		output = ""
+		output << %(<div class="sort-posts clearfix">)
+		output << %(<strong class='pull-left'>#{I18n.t('discussions.topics.comment', :count => topic.comment_count)}</strong>)
+
+		if topic.comment_count > 1
+			output << '<span class="post-sort dropdown pull-right align-left">'
+			output << '<ul class="dropdown-menu pull-left" role="menu" aria-labelledby="dropdownMenu">'
+			Post::SORT_ORDER.keys.each do |order|
+				status = order.to_s == sort_by ? 'active' : ''
+				output << "<li class='#{status}'><a href='/support/discussions/topics/#{topic.id}?sort=#{order}'>"
+				output << t("portal.topic.sort_order.#{order}")
+				output << "</a></li>"
+			end
+			output << '</ul><span class="dropdown-toggle" data-toggle="dropdown">'
+			output << "Sorted by <a href='#'><b> #{t("portal.topic.sort_order.#{sort_by}")} </b>"
+			output << '<i class="caret"></i></a></span></span>'
 		end
+
+		output << %(</div>)
+		output << '<hr>'
+		output.html_safe
+	end
+
+	protected
+	def link_to_topic topic
+		link_to topic['title'], topic.topic_url
+	end
 
 end

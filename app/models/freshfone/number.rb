@@ -56,6 +56,7 @@ class Freshfone::Number < ActiveRecord::Base
 	
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
 	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
+	ALL_NUMBERS = "0" #Used in Call History and Reports for filtering
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
@@ -256,10 +257,10 @@ class Freshfone::Number < ActiveRecord::Base
 
 		def validate_purchase
 			if invalid_credit_and_country
-				errors.add(:base,I18n.t('freshfone.admin.numbers.cannot_purchase'))
+				errors.add(:base,I18n.t('freshfone.admin.numbers.failure_purchase'))
 				return false
 			end
-			errors.add(:base,I18n.t('freshfone.admin.numbers.insuffcient_credits')) unless sufficient_credits?
+			errors.add(:base,I18n.t('freshfone.admin.numbers.low_credits')) unless sufficient_credits?
 		end
 
 		def assign_number_to_message

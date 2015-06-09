@@ -1,4 +1,8 @@
 <% @page_title = "Dashboard" %>
+<% if current_user && current_user.privilege?(:view_admin) %>
+  <%= check_fb_reauth_required  %>
+  <%= check_twitter_reauth_required %>
+<% end %>
 
 <div class="index-page-content">
   <%= render :partial => "summary" %>

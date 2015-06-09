@@ -2,6 +2,7 @@ class Support::Discussions::PostsController < SupportController
 
 	include SpamAttachmentMethods
 	include CloudFilesHelper
+	include SupportDiscussionsControllerMethods
 	include Community::Moderation
 
 	before_filter { |c| c.requires_feature :forums }
@@ -10,6 +11,7 @@ class Support::Discussions::PostsController < SupportController
   before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
+	before_filter :fetch_vote, :toggle_vote, :only => :like
  	before_filter :verify_user, :only => :destroy
  	before_filter :verify_topic_user, :only => [:toggle_answer]
 
@@ -143,12 +145,18 @@ class Support::Discussions::PostsController < SupportController
 		render :layout => false
 	end
 
+	def like
+	end
+	
+	def users_voted
+		render :partial => "users_voted", :object => @post
+	end
+
 private
 	def load_topic
 		@topic = scoper.find_by_id(params[:topic_id])
 		if @topic.nil?
-			flash[:notice] = I18n.t('portal.topic_deleted')
-			redirect_to support_discussions_path
+			resource_not_found :topic
 		else
 			@forum = @topic.forum
 			@forum_category = @forum.forum_category
@@ -159,11 +167,15 @@ private
 	end
 
 	def find_post
-		@post = Post.find_by_id_and_topic_id(params[:id], params[:topic_id]) || raise(ActiveRecord::RecordNotFound)
-		(raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
-		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
+		@post = Post.find_by_id_and_topic_id(params[:id], params[:topic_id])
+		if @post.nil?
+			resource_not_found :post
+		else
+			(raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id))
+			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
+		end
 	end
-
+	
 	def scoper
 		current_account.portal_topics
 	end
@@ -185,4 +197,9 @@ private
 	def verify_topic_user
 		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless (current_user.agent? || @topic.user == current_user)
 	end
+
+	def vote_parent
+		@post
+	end
+
 end

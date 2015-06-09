@@ -46,6 +46,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+    resource :"integrations/quickbook"
+    resource :"integrations/dynamics_crm", :only => [:widget_data]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -53,12 +55,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/user"
     resource :"freshfone/call", :only => [:caller_data, :inspect_call]
     resource :"freshfone/call_history"
-    resource :"freshfone/blacklist_number"
     resource :"freshfone/autocomplete"
     resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
+    resource :"freshfone/caller"
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
@@ -81,7 +83,7 @@ Authority::Authorization::PrivilegeList.build do
 
   reply_ticket do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
-    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp]
+    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp, :traffic_cop]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties
     resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
@@ -163,18 +165,19 @@ Authority::Authorization::PrivilegeList.build do
 
   view_forums do
     resource :discussion, :only => [:index, :show, :your_topics, :sidebar, :categories]
-    resource :"discussions/forum", :only => [:show]
-    resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote]
+    resource :"discussions/forum", :only => [:show, :followers]
+    resource :"discussions/topic", :only => [:show, :component, :latest_reply, :vote, :destroy_vote, :users_voted]
     resource :forum_category, :only => [:index, :show]
     resource :forum, :only => [:index, :show]
-    resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
+    resource :topic, :only => [:index, :show, :vote, :destroy_vote]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
-    resource :"discussions/post", :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer]
+    resource :"discussions/post", :only => [:index, :show, :create, :toggle_answer, :monitored, :best_answer, :users_voted]
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
     resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
+    resource :monitorship, :only => [:followers]
   end
 
   # create_edit_forum_category
@@ -335,6 +338,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/installed_application"
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
+    resource :"integrations/dynamics_crm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"
@@ -351,8 +355,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
-    resource :"helpdesk/dashboard",:only => [:agent_status]
     resource :"solution/article", :only => [:change_author]
+    resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
   end
 
   manage_account do

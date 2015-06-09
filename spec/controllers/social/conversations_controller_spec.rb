@@ -163,13 +163,13 @@ RSpec.describe Helpdesk::ConversationsController do
         sample_put_comment = { "id" => put_comment_id }
 
         # stub the calls
-        Facebook::Fql::Posts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
+        Facebook::Graph::Posts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
         Koala::Facebook::API.any_instance.stubs(:fql_query).returns(fql_feeds)
         Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed) 
         Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment) 
         
         # Create FB post ticket
-        Facebook::Fql::Posts.new(@fb_page).fetch
+        Facebook::Graph::Posts.new(@fb_page).fetch
         fb_post = Social::FbPost.find_by_post_id(post_id)
         fb_post.should_not be_nil
         fb_post.is_ticket?.should be true
@@ -200,7 +200,7 @@ RSpec.describe Helpdesk::ConversationsController do
         sample_fb_dms = sample_dm_threads(thread_id, actor_id, msg_id)
         Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
         Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_fb_dms)
-        Facebook::Core::Message.new(@fb_page).fetch_messages
+        Facebook::Graph::Message.new(@fb_page).fetch_messages
         
         dm = Social::FbPost.find_by_post_id(msg_id)
         dm.should_not be_nil

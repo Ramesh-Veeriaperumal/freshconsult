@@ -16,6 +16,8 @@ module ApplicationHelper
   include Integrations::IntegrationHelper
   include CommunityHelper
   include TabHelper
+  include Freshfone::CallerLookup
+  
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -436,6 +438,10 @@ module ApplicationHelper
     data
   end
 
+  def formatted_dueby_for_activity(time_in_seconds)
+    "#{formated_date(Time.zone.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
+  end
+
   def target_topic_path(topic_id)
     topic = current_account.topics.find(topic_id)
     link_to topic.title, discussions_topic_path(topic.id)
@@ -552,16 +558,21 @@ module ApplicationHelper
     #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
     #Remove once found the cause.
     user = User.new if user.nil?
-    img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
-    if options.include?(:width)
-      img_tag_options[:width] = options.fetch(:width)
-      img_tag_options[:height] = options.fetch(:height)
-    end 
-    avatar_content = MemcacheKeys.fetch(["v11","avatar",profile_size,user],30.days.to_i) do
-      img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      ActionController::Base.helpers.content_tag(:div, ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+    if user.avatar
+      img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
+      avatar_content = MemcacheKeys.fetch(["v14","avatar",profile_size,user],30.days.to_i) do
+        avatar_url = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
+        img_tag_options[:"data-src"] = avatar_url
+        img_tag_options[:"data-src-retina"] = avatar_url
+        img_tag_options[:class] = profile_size
+        ActionController::Base.helpers.content_tag(:div,
+        ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
+        :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+      end
+       avatar_content
+    else
+      avatar_generator(user.name, profile_size, profile_class, options)
     end
-    avatar_content
   end
   
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
@@ -570,7 +581,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end
-    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_url(user, profile_size = :thumb)
@@ -581,18 +592,42 @@ module ApplicationHelper
     user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
 
-  def is_user_social( user, profile_size )
+  def is_user_social( user, profile_size)
     if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
-    else
-      "/assets/misc/profile_blank_#{profile_size}.gif"
+    else 
+      false
     end
+  end
+
+  def avatar_generator( username, profile_size = :thumb, profile_class, opt )
+    img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class] }
+    username = username.lstrip
+    if username.present? && isalpha(username[0])
+       content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
+    else
+       content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    end
+  end
+
+  def unique_code(username)
+    images = Dir.glob(Rails.root+"public/images/avatar/background/1x/*.*")
+    hash = 0
+    username.each_byte do |c|        
+      hash = c + ((hash << 5) - hash);
+    end
+    unique_code = hash % (images.length)
+    unique_code
+  end
+
+  def isalpha(str)
+    str.match(/[^!@#,\$%\^\&\*\(\)\+_\-\?\<\>:"';\.\d ]$/)
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
     handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
-      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.gif"
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.jpg"
     end
     handle_avatar
   end
@@ -611,7 +646,7 @@ module ApplicationHelper
                        "data-contact-id" => user.id,
                        "data-contact-url" => hover_card_contact_path(user)  }
 
-      link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
+      pjax_link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
       # link_to(h(user.display_name), user, options)
     else
       content_tag(:strong, h(user.display_name), options)
@@ -943,7 +978,7 @@ module ApplicationHelper
 
   private
     def solutions_tab
-      if !current_portal.solution_categories.empty?
+      if current_portal.solution_categories.exists?
         ['/solution/categories', :solutions, solutions_visibility?]
       else
         ['#', :solutions, false]
@@ -951,7 +986,7 @@ module ApplicationHelper
     end
 
     def forums_tab
-      if !current_portal.forum_categories.empty?
+      if current_portal.forum_categories.exists?
         ['/discussions', :forums,  forums_visibility?]
       else
         ['#', :forums, false]
@@ -982,9 +1017,9 @@ module ApplicationHelper
       feature?(:twitter) && privilege?(:manage_tickets)
     end
 
-    def additional_settings?
+    def social_enabled?
       settings = current_account.account_additional_settings.additional_settings
-      settings.blank? || settings[:enable_social]
+      settings.blank? || settings[:enable_social].nil? || settings[:enable_social]
     end
 
     def handles_associated?
@@ -992,7 +1027,7 @@ module ApplicationHelper
     end
 
     def can_view_welcome_page?
-      privilege?(:view_admin) && can_view_social? && additional_settings?
+      privilege?(:view_admin) && can_view_social? && social_enabled?
     end
 
   def tour_button(text, tour_id)
@@ -1002,9 +1037,7 @@ module ApplicationHelper
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
     if fb_page
-      return content_tag(:div, "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible.
-        It looks like username, password, or permission has been changed recently.Kindly
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('facebook_reauth')} <a href='/social/facebook' target='_blank'> #{t('reauthorize_facebook')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
@@ -1012,20 +1045,29 @@ module ApplicationHelper
 
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
-    link = "<a href='/admin/social/streams' target='_blank'>"
     if twt_handle
-      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible.
-        It looks like username or password has been changed recently. Kindly
-        #{link} fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('twitter_reauth')} <a href='/admin/social/streams' target='_blank'> #{t('reauthorize_twitter')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
+  end
+  
+  def social_reauth_required
+    fb_reauth = current_account.fb_reauth_check_from_cache
+    twitter_reauth = current_account.twitter_reauth_check_from_cache
+    if fb_reauth or twitter_reauth
+      reauth_alert = "<div class ='alert-message block-message warning full-width'>"
+      reauth_alert = "#{reauth_alert} <div><a href='/admin/social/streams' target='_blank'>Reauthorize your twitter account</a></div>" if twitter_reauth
+      reauth_alert = "#{reauth_alert} <div><a href='/social/facebook' target='_blank'>Reauthorize your facebook account</a></div>" if fb_reauth
+      reauth_alert = "#{reauth_alert} </div>"
+      reauth_alert.html_safe
+    end
   end
 
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else
@@ -1062,18 +1104,18 @@ module ApplicationHelper
   end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'phone-icons', freshfone_number_id)
+		can_make_calls(number, 'phone-icons', freshfone_number_id, true)
 	end
 
 	def can_make_mobile_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'mobile-icons', freshfone_number_id)
+		can_make_calls(number, 'mobile-icons', freshfone_number_id, true)
 	end
 
-	def can_make_calls(number, class_name=nil, freshfone_number_id=nil)
+	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)
 		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
 		#																	 :'data-freshfone-number-id' => freshfone_number_id,
     #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , number, { :'data-phone-number' => "#{number}",
+    content_tag(:span , can_show_number ? number : nil, { :'data-phone-number' => "#{number}",
                                   :'data-freshfone-number-id' => freshfone_number_id,
                                   :class => "can-make-calls #{class_name}" })
 
@@ -1088,11 +1130,11 @@ module ApplicationHelper
   end
 
   def current_account_freshfone_names
-      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
+      @current_account_freshfone_names ||= current_account_freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
   end
   
  def current_account_freshfone_details
-    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
+    @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
 
  def freshfone_presence_status_class

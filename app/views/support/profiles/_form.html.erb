@@ -5,8 +5,7 @@
 	    <div class="row-fluid">
 	    	<fieldset class="span3 avatar-span">
 				<div class='avatar-pic'>
-					<% avatar_url = @profile.avatar ? @profile.avatar.expiring_url(:medium) : '/assets/misc/profile_blank_medium.gif' %>
-					<img src="<%= avatar_url %>" alt="<%= @profile.name %>" onerror="imgerror(this)" />
+				  <%= user_avatar(@profile, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
   					<p class='ie9-file-change-msg break-word'> </p>
 				</div>
 

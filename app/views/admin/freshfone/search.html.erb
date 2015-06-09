@@ -44,7 +44,7 @@
 			 		:id => 'freshfone_address_form') do %>
 			 		<div class="ajaxerrorExplanation errorExplanation hide">
 			 			<label class='error'>
-			 				<%= t('freshfone.admin.numbers.cannot_purchase') %>
+			 				<%= t('freshfone.admin.numbers.failure_purchase').html_safe  %>
 			 			</label>
 			 		</div>
 			 		<div class="purchaseErrorExplanation errorExplanation hide">
@@ -58,8 +58,8 @@
 
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title"><%=t('freshfone.admin.numbers.setup.title')%></h3>
-		<p><%= t('freshfone.admin.numbers.setup.info').html_safe %></p>
+		<h3 class="title"><%=t('freshfone.admin.numbers.setup.title_text')%></h3>
+		<p><%= t('freshfone.admin.numbers.setup.info_text').html_safe %></p>
 	</div>
 <% end %>
  

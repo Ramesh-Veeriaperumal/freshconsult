@@ -41,7 +41,7 @@ module Freshfone::CallsRedisMethods
 
   def auto_recharge_throttle_limit_reached?(account_id)
     is_exist = get_key(autorecharge_key(account_id))
-    Rails.logger.debug "Auto-Recharge attempt with in 30 mins for account #{account_id}" unless is_exist.blank?
+    Rails.logger.info "Auto-Recharge attempt with in 30 mins for account #{account_id}" unless is_exist.blank?
     return is_exist.blank?
   end
 end

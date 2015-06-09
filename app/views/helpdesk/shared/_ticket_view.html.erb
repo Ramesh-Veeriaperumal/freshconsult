@@ -3,8 +3,8 @@
 </div>
 
 <div id="ticket-sub-toolbar">
-	<% unless @items.empty? %>
-  <%= render :partial => "/helpdesk/shared/ticket_sort" , :inline => true %>
+  <% if(@items.length > 0) %>
+  	<%= render :partial => "/helpdesk/shared/ticket_sort" , :inline => true %>
   <% end %>
 </div>
 

@@ -50,7 +50,7 @@ class Freshfone::UsersController < ApplicationController
 	end
 	
 	def refresh_token
-		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user), is_native_mobile?)
+		@freshfone_user.change_presence_and_preference(params[:status], view_context.user_avatar(current_user,:thumb, "preview_pic", {:width => "30px", :height => "30px"}), is_native_mobile?)
 		resolve_busy if is_agent_busy?
 		respond_to do |format|
 			format.any(:json, :nmobile) {
@@ -126,7 +126,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def call_meta_info
-			call = outgoing? ? current_user.freshfone_calls.call_in_progress : customer_in_progress_calls
+			call = current_user.freshfone_calls.call_in_progress #either way its inprogress call for current agent
 			update_call_meta(call) unless call.blank? #sometimes in_call reaches after call:in_call and status is already not in-progress.
 		end
  

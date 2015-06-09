@@ -33,14 +33,15 @@ window.Fjax = window.Fjax || {};
 		paths: {
 			"/discussions": 'discussions',
 			"/admin": 'admin',
-			"/freshfone/call_history": 'freshfonecallhistory',
-			"/reports/freshfone/summary_reports": 'freshfonereports',
+			"/phone/call_history": 'freshfonecallhistory',
+			"/reports/phone/summary_reports": 'freshfonereports',
 			"/contacts": 'contacts',
 			"/users": 'contacts',
 			"/companies": 'companies',
 			"/helpdesk/tickets": 'tickets',
 			"/search": 'search',
-			"/solution": 'solutions'
+			"/solution": 'solutions',
+			"/helpdesk/agent_status": 'freshfoneagents'
 		},
 		LOADING_WAIT: 60
 	};

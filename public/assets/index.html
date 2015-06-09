@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.eot");
-  src: url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.woff") format("woff"),
-       url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.ttf") format("truetype"),
-       url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot");
+  src: url("../../assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.woff") format("woff"),
+       url("../../assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.ttf") format("truetype"),
+       url("../../assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg#glyphs") format("svg");
   }
 }
 
@@ -154,6 +154,7 @@
 .ficon-arrow-right-2:before,
 .ficon-arrow-up:before,
 .ficon-arrow-up-2:before,
+.ficon-available-on-mobile:before,
 .ficon-bell:before,
 .ficon-billing:before,
 .ficon-blank-file:before,
@@ -186,6 +187,7 @@
 .ficon-customer-portal:before,
 .ficon-date:before,
 .ficon-day_pass:before,
+.ficon-deleted:before,
 .ficon-disconnected:before,
 .ficon-dislike:before,
 .ficon-dispatcher:before,
@@ -220,7 +222,6 @@
 .ficon-file-edit:before,
 .ficon-file-visible:before,
 .ficon-firefox:before,
-.ficon-folder:before,
 .ficon-folder-o:before,
 .ficon-folder-open-o:before,
 .ficon-forward:before,
@@ -259,6 +260,7 @@
 .ficon-multi-product:before,
 .ficon-no-arrow-left:before,
 .ficon-no-arrow-right:before,
+.ficon-no-network:before,
 .ficon-notice:before,
 .ficon-notice-o:before,
 .ficon-number:before,
@@ -271,6 +273,7 @@
 .ficon-phone:before,
 .ficon-phone-block:before,
 .ficon-phone-disable:before,
+.ficon-phone-disable-thin:before,
 .ficon-plus:before,
 .ficon-post-edit:before,
 .ficon-pushpin:before,
@@ -346,6 +349,7 @@
 .ficon-arrow-right-2:before { content: "\f10c"; }
 .ficon-arrow-up:before { content: "\f10d"; }
 .ficon-arrow-up-2:before { content: "\f10e"; }
+.ficon-available-on-mobile:before { content: "\f1b6"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
@@ -378,6 +382,7 @@
 .ficon-customer-portal:before { content: "\f12c"; }
 .ficon-date:before { content: "\f12d"; }
 .ficon-day_pass:before { content: "\f12e"; }
+.ficon-deleted:before { content: "\f1b3"; }
 .ficon-disconnected:before { content: "\f12f"; }
 .ficon-dislike:before { content: "\f130"; }
 .ficon-dispatcher:before { content: "\f131"; }
@@ -412,7 +417,6 @@
 .ficon-file-edit:before { content: "\f14a"; }
 .ficon-file-visible:before { content: "\f14b"; }
 .ficon-firefox:before { content: "\f14c"; }
-.ficon-folder:before { content: "\f1b3"; }
 .ficon-folder-o:before { content: "\f14d"; }
 .ficon-folder-open-o:before { content: "\f14e"; }
 .ficon-forward:before { content: "\f14f"; }
@@ -451,6 +455,7 @@
 .ficon-multi-product:before { content: "\f16f"; }
 .ficon-no-arrow-left:before { content: "\f170"; }
 .ficon-no-arrow-right:before { content: "\f171"; }
+.ficon-no-network:before { content: "\f1b4"; }
 .ficon-notice:before { content: "\f172"; }
 .ficon-notice-o:before { content: "\f173"; }
 .ficon-number:before { content: "\f174"; }
@@ -463,6 +468,7 @@
 .ficon-phone:before { content: "\f17b"; }
 .ficon-phone-block:before { content: "\f17c"; }
 .ficon-phone-disable:before { content: "\f17d"; }
+.ficon-phone-disable-thin:before { content: "\f1b5"; }
 .ficon-plus:before { content: "\f17e"; }
 .ficon-post-edit:before { content: "\f17f"; }
 .ficon-pushpin:before { content: "\f180"; }
@@ -521,7 +527,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (178)</h1>
+      <h1>Font Icons (181)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -677,6 +683,15 @@
         </div>
         <div class="usage">
           <span>arrow-up-2</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-available-on-mobile" class="ficon-available-on-mobile"></i></span>
+        </div>
+        <div class="usage">
+          <span>available-on-mobile</span>
         </div>
       </div>
       
@@ -965,6 +980,15 @@
         </div>
         <div class="usage">
           <span>day_pass</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-deleted" class="ficon-deleted"></i></span>
+        </div>
+        <div class="usage">
+          <span>deleted</span>
         </div>
       </div>
       
@@ -1271,15 +1295,6 @@
         </div>
         <div class="usage">
           <span>firefox</span>
-        </div>
-      </div>
-      
-      <div class="glyph">
-        <div class="preview-glyphs">
-          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-folder" class="ficon-folder"></i></span>
-        </div>
-        <div class="usage">
-          <span>folder</span>
         </div>
       </div>
       
@@ -1627,6 +1642,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-no-network" class="ficon-no-network"></i></span>
+        </div>
+        <div class="usage">
+          <span>no-network</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-notice" class="ficon-notice"></i></span>
         </div>
         <div class="usage">
@@ -1730,6 +1754,15 @@
         </div>
         <div class="usage">
           <span>phone-disable</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-phone-disable-thin" class="ficon-phone-disable-thin"></i></span>
+        </div>
+        <div class="usage">
+          <span>phone-disable-thin</span>
         </div>
       </div>
       

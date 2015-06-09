@@ -67,13 +67,30 @@ describe Integrations::RemoteConfigurationsController do
     session[:flash][:notice].should =~ /Application is not installed in this Domain!/
   end
 
-  it "should say unable to authorize user" do
+  it "should say unable to authorize user for seoshop" do
     post :create, {
       :domain => "https://integrations.freshdesk.com",
       :key => "Zi9wklsdf0lEsUepRNYtLFFl0",
-      :app_params => {}
+      :app_params => {},
+      :app => "seoshop",
     }
     session[:flash][:notice].should =~ /Unable to authorize user in Freshdesk..... Please check your domain and API Key...../
+  end
+
+  it "should display login msg image if its a freshdesk domain for quickbooks" do
+    post :create, {
+      :domain => "https://integrations.freshdesk.com",
+      :app => "quickbooks",     
+    }
+    response.body.should =~ /showMsgAndRedirect\(\"login\"/
+  end
+  
+  it "should say invalid freshdesk domain" do
+    post :create, {
+      :domain => "https://integrate.freshdesk.com",
+      :app => "quickbooks"
+    }
+    session[:flash][:notice].should =~ /This is an invalid freshdesk domain./
   end
 
   it "Missing param" do

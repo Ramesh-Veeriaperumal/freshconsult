@@ -36,7 +36,7 @@ module RabbitMq::Utils
         valid = construct_message_for_subscriber(f, message, model, action)
         key = generate_routing_key(key, valid)
       }
-      send_message(message, key)
+      send_message(message.to_json, key)
     end
   end
 
@@ -56,14 +56,18 @@ module RabbitMq::Utils
 
   #made this as a function, incase later we want to compress the data before sending
   def send_message(message, key)
+    return unless key.include?("1")
     self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
       Timeout::timeout(CONNECTION_TIMEOUT) {
         publish_message_to_xchg(message, key)
       }
-    end    
+    end
+  rescue Timeout::Error => e 
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Timeout Error"}})
+    Rails.logger.error("RabbitMq Timeout Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    # RabbitMq::Init.start
+    RabbitMq::Init.start
   end
 end

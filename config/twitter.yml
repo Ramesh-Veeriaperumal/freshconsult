@@ -12,7 +12,7 @@ callback_url:
   production: http://twitterintegration.heroku.com/twitter/auth
   development: http://localhost:3000/twitter/authdone
 twitter_timeout:
-  production: 20
-  staging: 20
-  development: 20
-  test: 20
+  production: 2
+  staging: 2
+  development: 10
+  test: 10

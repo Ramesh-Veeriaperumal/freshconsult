@@ -19,6 +19,7 @@ module Freshfone::Call::CallCallbacks
   end
 
   def call_transfer_success
+    in_call_meta_info
     update_agent_presence(params[:source_agent]) unless params[:call_back].to_bool
     current_call.user_id  ||= params[:agent] if params[:group_transfer] && params[:group_transfer].to_bool
     current_call.update_call(params)

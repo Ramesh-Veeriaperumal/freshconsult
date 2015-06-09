@@ -47,26 +47,13 @@ module Facebook
         fb_pages
       }
 
-      PAGE_TAB_BLOCK = Proc.new{ |pages,oauth_access_token|
-        pages.each do |page|
-          page.symbolize_keys!
-          if Account.current
-            page_tab = Account.current.facebook_pages.find_by_page_id(page[:id])
-            if page_tab
-              #This needs to be cleaned up once the migration is done
-              if page_tab.page_token_tab && page_tab.page_token_tab.empty?
-                fb_tab = Facebook::PageTab::Configure.new(page_tab)
-                tab = fb_tab.execute("get")
-                name = tab["name"] unless tab.blank?
-                fb_tab.execute("remove")
-              end
-              page_tab.update_attribute(:page_token_tab,page[:access_token])
-              if name
-                fb_tab = Facebook::PageTab::Configure.new(page_tab,"page_tab")
-                fb_tab.execute("add")
-                fb_tab.execute("update",name)
-              end
-            end
+      PAGE_TAB_BLOCK = Proc.new{ |tabs_added|
+        if Account.current
+          page_ids = tabs_added.keys
+          page_tabs = Account.current.facebook_pages.find_all_by_page_id(page_ids)
+          @edit_tab = true unless page_tabs.blank?
+          page_tabs.each do |page_tab|
+            page_tab.update_attribute(:page_token_tab, page_tab.page_id) if tabs_added[page_tab.page_id.to_s]
           end
         end
       }
@@ -89,12 +76,18 @@ module Facebook
 
       # Returns the complete url the client should hit inorder to authorize with facebook
       # params[state] is the session state object
-      def authorize_url(state)
-        permissions = Facebook::Oauth::Constants::PERMISSION.join(',')
+      def authorize_url(state, page_tab = false)
+        if page_tab
+          permissions = Facebook::Oauth::Constants::PAGE_TAB_PERMISSION.join(',')
+          url = Facebook::Oauth::Constants::PAGE_TAB_URL
+        else
+          permissions = Facebook::Oauth::Constants::PERMISSION.join(',')
+          url = Facebook::Oauth::Constants::URL
+        end
         fb_params = "?client_id=#{@fb_app_id}&"+
           "redirect_uri=#{@call_back_url}&"+
           "state=#{state}&scope=#{permissions}"
-          url = Facebook::Oauth::Constants::URL + fb_params
+        auth_url = url + fb_params
       end
 
       # gets the access token and page token once code is passed
@@ -106,6 +99,10 @@ module Facebook
         pages = @graph.get_connections("me", "accounts")
         pages = pages.collect{|p| p  unless p["category"].eql?("Application")}.compact
         eval((@app_type+"_block").upcase).call(pages, oauth_access_token)
+      end
+      
+      def page_tab_add(tabs_added)
+        PAGE_TAB_BLOCK.call(tabs_added)
       end
 
       def profile_name(profile_id, fan_page)

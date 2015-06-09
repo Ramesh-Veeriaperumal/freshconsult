@@ -14,8 +14,8 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     begin
       check_and_create_export EXPORT_TYPE
       export_call_history
-      mail_options = { :user => @current_user, :number => @current_number.number, :account => @current_account,
-          :domain => @current_account.host, :export_params => export_params }
+      mail_options = { :user => @current_user, :number => get_number_string, :account => @current_account,
+           :domain => @current_account.host, :export_params => export_params }
       mail_options.merge!({:url => hash_url(@current_account.host)}) unless @calls.blank?
       CallHistoryMailer.deliver_call_history_export(mail_options)
     rescue Exception => e
@@ -68,14 +68,14 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     def derive_query
       filter = Freshfone::Filters::CallFilter.new(Freshfone::Call)
       conditions = filter.deserialize_from_params_with_validation(export_params).sql_conditions
-      conditions.first.concat(" and freshfone_calls.call_status not in (?)")
-      conditions.push(Freshfone::Call::INTERMEDIATE_CALL_STATUS)
+      conditions.first.concat(" and freshfone_calls.call_status not in (?) and freshfone_calls.freshfone_number_id in (?)")
+      conditions.push(Freshfone::Call::INTERMEDIATE_CALL_STATUS, get_number_ids)
     end
 
     def execute_query query_array
       results = []
-      current_number.freshfone_calls.order.where(*query_array).find_in_batches(batch_size: 1000) do |batch| 
-        results.push(batch)
+      @current_account.freshfone_calls.order.where(*query_array).find_in_batches(batch_size: 1000) do |batch| 
+         results.push(batch)
       end
       results.flatten!
       # results.reverse! if export_params[:wf_order_type] == "desc"
@@ -84,6 +84,18 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
 
     def to_hash activerecord_relation
       activerecord_relation.map { |phone_call| field_hash.call(phone_call) }
+    end
+
+    def all_numbers?
+     export_params[:number_id].to_i == 0
+    end
+
+    def get_number_string
+      all_numbers? ? 0 : @current_account.all_freshfone_numbers.find_by_id(export_params[:number_id]).number
+    end
+
+    def get_number_ids
+      all_numbers? ? @current_account.all_freshfone_numbers.map { |n| n.id } : [export_params[:number_id]]
     end
 
     def current_number
@@ -125,7 +137,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
           "Customer Country" => t_call.caller_country.blank? ? "-" : t_call.caller_country,
           "Direction" => call_direction_class(t_call),
           "Agent Name" => agent_name_class(t_call),
-          "Helpdesk Number" => @current_number.number,
+          "Helpdesk Number" => t_call.freshfone_number.blank? ? "-" : t_call.freshfone_number.number,
           "Call Status" => call_status_class(t_call),
           "Transfer Count" => t_call.children_count,
           "Parent Call ID" => t_call.parent_id.blank? ? "-" : t_call.parent_id - (@first_call_id - 1),

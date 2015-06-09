@@ -174,7 +174,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     headers = {
       :subject                                => fwd_formatted_subject(ticket),
-      :to                                     => note.to_emails,
+      :to                                     => note.to_emails - [note.account.kbase_email],
       :cc                                     => note.cc_emails,
       :bcc                                    => note.bcc_emails,
       :from                                   => note.from_email,
@@ -306,15 +306,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
     @account = ticket.account
+    @ticket = ticket
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)
     end
 
     mail(headers) do |part|
-      part.text { @body }
-      part.html { @body_html }
+      part.text { render "email_to_requester.text.plain" }
+      part.html { render "email_to_requester.text.html" }
     end.deliver
+
   end
   
   def internal_email(ticket, receips, content, sub=nil)
@@ -334,15 +336,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
     @account = ticket.account
+    @ticket = ticket
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)
     end
 
     mail(headers) do |part|
-      part.text { @body }
-      part.html { @body_html }
+      part.text { render "internal_email.text.plain" }
+      part.html { render "internal_email.text.html" }
     end.deliver
+
   end
 
   private

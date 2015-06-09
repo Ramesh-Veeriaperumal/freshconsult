@@ -4,12 +4,18 @@
                         "data-remote" => true, 
                         "data-update" => "vote-feedback-container",
                         :class => "form-portal" } do |f| %>
+  <div class="span12">
+  	<div class="span9"><%= f.error_messages %></div>
+  </div>
 
   <% unless current_user %>
     <div class="control-group">
       <label id="requester-label" for="helpdesk_ticket_email" class="control-label required"><%= t('your_email') %></label>
       <div class="controls">
-        <input type="text" id="helpdesk_ticket_email" class="required email span8" name="helpdesk_ticket[email]" />
+        <input type="email" id="helpdesk_ticket_email" class="required email span8" 
+              name="helpdesk_ticket[email]"
+              value="<%= params[:helpdesk_ticket][:email] if params[:helpdesk_ticket] %>" />
+        
       </div>
     </div>
   <% end %>
@@ -19,14 +25,15 @@
     <div class="controls">
       <div class="align-feedback">
         <% Solution::Feedback::ALLOWED_MESSAGES.each do |i| %>
-          <%= check_box_tag 'message[]', i, false, 
-              :class => 'pull-left', :id => "feedback_message_#{i}",
+          <%= check_box_tag 'message[]', i, (params[:message] || []).include?(i.to_s),
+              :class => 'pull-left', 
+              :id => "feedback_message_#{i}",
               :"data-select-one" => true %>
           <label class="sol-feedback-message checkbox" for="feedback_message_<%= i %>">
             <%= t("solution.feedback_message_#{i}") %>
           </label>
         <% end %>
-        <%= text_area_tag "helpdesk_ticket_description", "", :rows => 5, 
+        <%= text_area_tag "helpdesk_ticket_description", params['helpdesk_ticket_description'], :rows => 5, 
               :class => "span8 select_atleast_one", 
               :placeholder => t('comments'),
               :"data-select-one" => true %>

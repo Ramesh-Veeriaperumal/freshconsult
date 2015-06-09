@@ -38,13 +38,15 @@ module ForumHelper
 							:account_id => @account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
-							:stamp_type => stamp_type
+							:stamp_type => stamp_type,
+							:user_votes => 0
 							)
 		topic.save
 		post = FactoryGirl.build(:post,
 							:account_id => @account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save!
 		publish_post(post)
@@ -59,7 +61,8 @@ module ForumHelper
 							:account_id => @account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
-							:stamp_type => stamp_type
+							:stamp_type => stamp_type,
+							:user_votes => 0
 							)
 		topic.save
 		post = FactoryGirl.build(
@@ -67,6 +70,7 @@ module ForumHelper
 							:account_id => @account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save!
 		attachment = post.attachments.build(
@@ -82,7 +86,8 @@ module ForumHelper
 		post = FactoryGirl.build(:post, 
 							:account_id => @account.id, 
 							:topic_id => topic.id,
-							:user_id => user.id
+							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save
 		post			
@@ -128,6 +133,7 @@ module ForumHelper
 									:portal_id => portal_id
 									)
 		monitorship.save
+		monitorship
 	end
 
 	def monitor_forum(forum, user = @user, portal_id = nil)
@@ -141,6 +147,7 @@ module ForumHelper
 									:portal_id => portal_id
 									)
 		monitorship.sneaky_save
+		monitorship
 	end
 
 	def vote_topic(topic, user = @user)
@@ -176,4 +183,8 @@ module ForumHelper
 		@current_user_session = UserSession.find
 		@current_user_session.destroy
 	end
+
+	def email_from_friendly_email friendly_email
+	  friendly_email.split("<")[1].split(">")[0]
+	end 
 end

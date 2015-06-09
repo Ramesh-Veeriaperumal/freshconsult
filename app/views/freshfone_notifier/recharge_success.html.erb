@@ -1,13 +1,8 @@
 <div>
-  Hi,<div><br></div>
-  <div>Your Freshfone account has been sucessfully recharged with <%= number_to_currency(@recharge_amount) %>.</div> 
+  Hi <%=@account.admin_first_name%>,<div><br></div>
+  <div>We have successfully recharged your phone credits with <%= number_to_currency(@recharge_amount) %>.</div> 
   <div><br></div>
-  <div>You currently have a credit of <%= number_to_currency(@balance) %> in your account.</div>
-  <div><br></div>
-  <div>Regards,</div>
-  <div>Vijay Shankar&nbsp;</div>
-  <div><%= AppConfig['from_email'] %></div>
-  <div>Customer Support Advocate</div>
-  <div>Freshdesk - refreshing customer support!</div>
+  <div>Happy Supporting!</div>
+  <div>The Freshdesk Team</div>
   <div><br></div>
 </div>

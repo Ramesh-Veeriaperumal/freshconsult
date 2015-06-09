@@ -180,6 +180,16 @@ module Cache::Memcache::Account
     end
   end
 
+  def account_additional_settings_from_cache
+    key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.account_additional_settings }
+  end
+
+  def clear_account_additional_settings_from_cache
+    key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }

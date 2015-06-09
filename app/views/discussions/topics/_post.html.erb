@@ -24,7 +24,7 @@ unpublished =  !original && !post.published
 		</p>
 	</div>
 	<% end %>
-	<%= link_to user_avatar(post.user), post.user, :class => 'avatar-wrap' %>
+	<%= link_to user_avatar(post.user, :thumb, 'preview_pic circle'), post.user, :class => 'avatar-wrap' %>
 
 	<div class="post">
 		<div class="author">
@@ -93,7 +93,7 @@ unpublished =  !original && !post.published
 			<div class="post-edit hide" rel="remote"
 					data-remote-url="<%= edit_discussions_topic_post_path(:topic_id => @topic.id, :id => post.id) %>"></div>
 		<% end %>
-			<div class="attachment_wrapper mb20">
+			<div class="attachment_wrapper post-attachment">
 				<ul class="attachment_list">
 				    <% post.attachments.each do |attached| %> 
 				    	<%= attachment_list(attached, privilege?(:edit_topic, post), "article",nil) %>
@@ -104,6 +104,10 @@ unpublished =  !original && !post.published
 						<% end %>
 				</ul>
 			</div>
+
+			<%= render :partial => 'discussions/topics/widgets/vote_info',
+						:locals => { :first_post => @first_post, :post => post, :topic => @topic } %>
+						
 		<% if original && @topic.answered? && @topic.answer %>
 			<%= render :partial => 'discussions/shared/answer',
 						:locals => {

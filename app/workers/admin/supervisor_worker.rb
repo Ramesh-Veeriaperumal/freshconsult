@@ -1,10 +1,9 @@
 module Admin
   class SupervisorWorker < BaseWorker
 
-    
     sidekiq_options :queue => :supervisor, :retry => 0, :backtrace => true, :failures => :exhausted
 
-    def perform(msg)
+    def perform
       account = Account.current
       supervisor_rules = execute_on_db { account.supervisor_rules }
       return unless supervisor_rules.count > 0 
@@ -19,14 +18,17 @@ module Admin
           logger.info "rule name::::::::::#{rule.name}"
           logger.info "conditions::::::: #{conditions.inspect}"
           logger.info "negate_conditions::::#{negate_conditions.inspect}"
-          joins  = execute_on_db { rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"]) }
+          joins = execute_on_db { rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"]) }
           tickets = execute_on_db { account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*") }
           tickets.each do |ticket|
             begin
               rule.trigger_actions ticket
               ticket.save_ticket!
             rescue Exception => e
-              NewRelic::Agent.notice_error(e)
+              logger.info "::::::::::::::::::::error:::::::::::::#{rule.inspect}"
+              logger.info e
+              logger.info ticket.inspect
+              NewRelic::Agent.notice_error(e,{:description => "Error while executing supervisor rule for a tkt :: #{ticket.id} :: account :: #{account.id}" })
               next
             end
           end
@@ -38,7 +40,7 @@ module Admin
         rescue Exception => e
           logger.info e.backtrace.join("\n")
           logger.info "something is wrong: #{e.message}"
-          raise e
+          NewRelic::Agent.notice_error(e)
         rescue
           logger.info "something went wrong"
         end
@@ -61,6 +63,5 @@ module Admin
       def logging_format(account,tickets_count,rule,rule_total_time)
         "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets=#{tickets_count}, time_taken=#{rule_total_time}, rule=#{rule.name}, host_name=#{Socket.gethostname} "      
       end 
-      
   end
 end

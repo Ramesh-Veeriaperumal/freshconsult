@@ -275,6 +275,7 @@ var FreshfoneEndCall;
 			$('#end_call').modal('hide');
 		},
 		initRequesterValue: function () {
+			this.$requesterName.removeData('requester_id');
 			var initData = this.$requesterName.val(),self = this;
 				if(initData.blank()) { return;}
 				$.ajax({

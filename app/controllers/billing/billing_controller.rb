@@ -58,15 +58,17 @@ class Billing::BillingController < ApplicationController
 
     if LIVE_CHAT_EVENTS.include? params[:event_type]
       retrieve_account unless @account
-      Resque.enqueue(Workers::Livechat, 
-        {
-          :worker_method => "update_site", 
-          :siteId        => @account.chat_setting.display_id, 
-          :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
-                              :suspended => !@account.active?
-                             }
-        }
-      )
+      if @account && @account.chat_setting && @account.subscription && @account.chat_setting.display_id
+        Resque.enqueue(Workers::Livechat, 
+          {
+            :worker_method => "update_site", 
+            :siteId        => @account.chat_setting.display_id, 
+            :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
+                                :suspended => !@account.active?
+                               }
+          }
+        )
+      end
     end
 
     Account.reset_current_account

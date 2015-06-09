@@ -37,6 +37,16 @@ module FormBuilders::Redactor
                       '|','fontcolor', 'backcolor', '|' ,'link', 'image']
       }
 
+      REDACTOR_EMAIL_NOTIFICATION_EDITOR = {
+        :focus => false,
+        :autoresize => false,
+        :tabindex => 2,
+        :convertDivs => false,
+        :setFontSettings => true,
+        :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|' ,'link', 'removeFormat']
+      }
+
       REDACTOR_DEFAULT_EDITOR = {
         :focus => true,
         :autoresize => false,
@@ -90,6 +100,8 @@ module FormBuilders::Redactor
             REDACTOR_FORUM_EDITOR
           when :ticket then
             REDACTOR_TICKET_EDITOR
+          when :email_notification then
+            REDACTOR_EMAIL_NOTIFICATION_EDITOR
           else
             REDACTOR_DEFAULT_EDITOR
         end

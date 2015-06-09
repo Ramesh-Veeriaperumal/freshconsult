@@ -20,8 +20,12 @@
 <div class="hide" id="jira_widget_dialog">
 	<textarea style="display:none" rel="lazyload">
 	  <div class="content"><div class="negtive-margin">
-	    <%
-	    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
+      <% cloud_files = [] 
+        @ticket.cloud_files.each do |file|
+          cloud_files.push(file.url)
+        end
+      %>
+      <% @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource , "cloud_files" => cloud_files.to_json } %>
 	    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) 
 	    widget_code = widget_code.gsub("}}", " | encode_html}}")
 	    %>
@@ -44,8 +48,9 @@
         <div id="<%=app.name%>" class="widget ">
         	<!-- <h3 class="title"><%= h(installed_app.configs_title || t(app.display_name) )%></h3> -->
 			<div class="content">
+        
 			<!-- <textarea style="display:none"> -->
-				<%=widget_code%>
+				<%= widget_code %>
 			<!-- </textarea> -->
 			</div>
         </div>

@@ -713,7 +713,7 @@ window.xhrPool = [];
         $.scrollTo('body');
       })
 
-      $('#Activity .activity > a.notelink').livequery(function() {
+      $('#Activity .activity > a').livequery(function() {
         $(this).attr('data-pjax', '#body-container')
       });
 			
@@ -734,6 +734,18 @@ window.xhrPool = [];
         $(this).data('formChanged', true);
       });
       
+      $('[rel="select-choice"]').livequery(function(ev) {
+        jQuery(this).select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+        var $select_content = $(this).siblings('.select2-container');
+        var disableField = $(this).data('disableField');
+        disableField = disableField.split(',');
+        $select_content.find(".select2-search-choice div").each(function(index,element){
+          value = jQuery(element).text();
+          if($.inArray(value, disableField ) != -1) {
+            jQuery(element).next("a").remove();
+          }
+        });
+      })
    });
 })(jQuery);
 

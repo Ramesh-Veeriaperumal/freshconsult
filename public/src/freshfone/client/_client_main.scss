@@ -1,3 +1,4 @@
+
 .grey_widget_background {
 	direction:ltr;
 	position: fixed;
@@ -80,7 +81,7 @@
 		margin-top: 3px;
 	}	
 }
-.can-make-calls {
+.restrict-call, .can-make-calls {
 	cursor: pointer;
 	height: 16px;
 	display: inline-block;
@@ -119,7 +120,7 @@
 		.dash-lbl{ font-size: 12px; }
 	}
 }
-.dashboard_call_history_link {
+.dashboard_call_history_link, .dashboard_agent_status_link {
 	display: inline-block;
 	@include box-sizing(border-box);
 	height: 30px;

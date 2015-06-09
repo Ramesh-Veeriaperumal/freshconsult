@@ -7,7 +7,7 @@
     $(self).addClass('disabled');
     $(".small_note").hide();
     $.ajax({
-      url: '/admin/freshfone/request_freshfone_feature',
+      url: '/admin/phone/request_freshfone_feature',
       type: "post",
       success: function () {
         $freshfone_flash

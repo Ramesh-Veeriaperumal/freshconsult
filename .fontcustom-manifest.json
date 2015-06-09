@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "4ae0d6813b3b053e0d245a1e806ed5177cb1c59f734baf431e1a66e29c58d059",
-    "current": "4ae0d6813b3b053e0d245a1e806ed5177cb1c59f734baf431e1a66e29c58d059"
+    "previous": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48",
+    "current": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48"
   },
   "fonts": [
-    "public/assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.ttf",
-    "public/assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.svg",
-    "public/assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.woff",
-    "public/assets/glyphs_4ae0d6813b3b053e0d245a1e806ed517.eot"
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.ttf",
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg",
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.woff",
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot"
   ],
   "glyphs": {
     "account": {
@@ -77,6 +77,10 @@
     "arrow-up-2": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
+    "available-on-mobile": {
+      "codepoint": 61878,
+      "source": "public/glyphs/vectors/available-on-mobile.svg"
     },
     "bell": {
       "codepoint": 61711,
@@ -205,6 +209,10 @@
     "day_pass": {
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "deleted": {
+      "codepoint": 61875,
+      "source": "public/glyphs/vectors/deleted.svg"
     },
     "disconnected": {
       "codepoint": 61743,
@@ -341,10 +349,6 @@
     "firefox": {
       "codepoint": 61772,
       "source": "public/glyphs/vectors/firefox.svg"
-    },
-    "folder": {
-      "codepoint": 61875,
-      "source": "public/glyphs/vectors/folder.svg"
     },
     "folder-o": {
       "codepoint": 61773,
@@ -498,6 +502,10 @@
       "codepoint": 61809,
       "source": "public/glyphs/vectors/no-arrow-right.svg"
     },
+    "no-network": {
+      "codepoint": 61876,
+      "source": "public/glyphs/vectors/no-network.svg"
+    },
     "notice": {
       "codepoint": 61810,
       "source": "public/glyphs/vectors/notice.svg"
@@ -545,6 +553,10 @@
     "phone-disable": {
       "codepoint": 61821,
       "source": "public/glyphs/vectors/phone-disable.svg"
+    },
+    "phone-disable-thin": {
+      "codepoint": 61877,
+      "source": "public/glyphs/vectors/phone-disable-thin.svg"
     },
     "plus": {
       "codepoint": 61822,
@@ -728,6 +740,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {

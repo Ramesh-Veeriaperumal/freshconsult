@@ -82,6 +82,7 @@
 .article-body{
 	@include text-formatting;
 	big{ font-size: inherit; }
+	overflow-x: auto;
 	table{ 
 		@extend .table !optional; 
 		table-layout: fixed;
@@ -150,9 +151,27 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .topic-stamp{ margin-top: 10px; }
 
 /* Forum and ticket details style */
-#vote-toolbar{
-	#topic-vote-down-button{ display: none; }
-	&:hover #topic-vote-down-button{ display: inline; }
+
+.vote-bar .tooltip-inner {
+	line-height: 1.5em;
+	@include text-align(left);
+}
+
+.vote-like-btn {
+	border: 1px solid #ccc;
+	padding-bottom: 3px;
+	border-radius: 5px;
+	@include margin-right(10px);
+
+	&.disabled {
+		pointer-events: none;
+		opacity: 0.2;
+		}
+
+	&:hover{
+		text-decoration:none;
+		color: #727374;
+		}
 }
 
 /* A small colen is added in front of the 
@@ -166,6 +185,23 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		@include margin-left(-8px);
 		top: -3px;
 	}
+}
+
+
+.vote-count {
+	&:hover{ text-decoration:none; }
+}
+
+.post-sort .dropdown-toggle a {
+	text-decoration: none;
+}
+
+.post-sort .dropdown-toggle a .caret{
+	margin-top: 9px;
+}
+
+.voted{
+	background-color: #8B8883;
 }
 
 /* Background for a sticky topic in the list view */
@@ -190,7 +226,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include border-radius(5px);
 	position: relative;
 	margin: 0 0 10px;
-	
 	/* To handle the paragraph tags coming in from redactor */
 	p{ margin: 0; }
 	hr{
@@ -203,7 +238,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .p-desc{
 	word-break: normal; 
 	word-wrap: break-word; 
-	
+	overflow-x: auto;
+
 	// Fix for elements breaking layout with inline styles	
 	div, p, ol, ul, li, article, aside,
 	details, figcaption, figure, footer,

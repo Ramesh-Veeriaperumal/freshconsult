@@ -1,28 +1,34 @@
 # encoding: utf-8
 class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
+  self.table_name =  "solution_articles"
+
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  self.table_name =  "solution_articles"
   include Mobihelp::AppSolutionsUtils
 
+  include Solution::MetaMethods
   include Redis::RedisKeys
   include Redis::OthersRedis	
   
   serialize :seo_data, Hash
 
+  concerned_with :body_methods
+
   acts_as_voteable
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
+  belongs_to :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => "parent_id"
   belongs_to_account
   
-  xss_sanitize :only => [:description],  :article_sanitizer => [:description]
   has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   
   has_many_attachments
   has_many_cloud_files
   spam_watcher_callbacks 
+  
+  rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
   
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
@@ -129,7 +135,9 @@ class Solution::Article < ActiveRecord::Base
   def hit!
     new_count = increment_others_redis(hit_key)
     if new_count >= HITS_CACHE_THRESHOLD
-      self.update_column(:hits, read_attribute(:hits) + HITS_CACHE_THRESHOLD)
+      total_hits = read_attribute(:hits) + HITS_CACHE_THRESHOLD
+      self.update_column(:hits, total_hits)
+      solution_article_meta.update_column(:hits, total_hits) if solution_article_meta
       decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
     end
     true
@@ -250,6 +258,11 @@ class Solution::Article < ActiveRecord::Base
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
+  
+  # Instance level spam watcher condition
+  def rl_enabled?
+    self.account.features?(:resource_rate_limit)
+  end
 
   def create_draft_from_article(opts={})
     draft = build_draft_from_article(opts)
@@ -298,6 +311,12 @@ class Solution::Article < ActiveRecord::Base
     
     def hit_key
       SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
+    end
+
+    def rl_exceeded_operation
+      key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
+            :user_id => self.user_id }
+      $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
     end
     
 end

@@ -1,9 +1,15 @@
+<%= content_tag :div, :class => "edit_timesheet" do %>
 <%= form_for @time_entry, :as => :time_entry, :url => helpdesk_time_sheet_path, :method => :put,
  	:html => {:class => "timesheet_form"}, :remote => true do |f| %>
   <%= render :partial => "form", :object => f, :locals => {:edit => @time_entry, :type =>"edit"} %>
 <% end %>
+<% end %>
 
-<%= javascript_tag do -%>
+<%= javascript_tag do %>
 	jQuery('.modal.in #time_entry_hhmm').focus();
 	<%= modifyTimesheetApps(@time_entry) %>
+	jQuery("#edit_<%= @time_entry.id %>").on("click", function(){
+	<%= modifyTimesheetApps(@time_entry) %>
+	});
+
 <% end %>

@@ -64,12 +64,11 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid }, :customer => user)
   end
 
-  def build_freshfone_caller
-    number = "+12345678900"
+  def build_freshfone_caller(number = "+12345678900")
     account = @freshfone_call.account
     caller  = @account.freshfone_callers.find_or_initialize_by_number(number)
     caller.update_attributes({:number => number})
-      @freshfone_call.update_attributes(:caller => caller)
+    @freshfone_call.update_attributes(:caller => caller)
   end
 
   def create_freshfone_user(presence = 0)
@@ -95,12 +94,12 @@ module FreshfoneSpecHelper
     @parent_call.root.increment(:children_count).save
   end
 
-  def create_dummy_freshfone_users(n=3)
+  def create_dummy_freshfone_users(n=3,presence=nil)
     @dummy_users = []; @dummy_freshfone_users = []
     n.times do 
       new_agent = add_agent_to_account(@account, {:available => 1, :name => Faker::Name.name, :email => Faker::Internet.email, :role => 3, :active => 1})
       user = new_agent.user
-      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => 1 })
+      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => presence || 1})
       user.save!
       user.reload
       @dummy_freshfone_users << freshfone_user

@@ -44,7 +44,7 @@ class Workers::Livechat
 		end
 
 		def update_site(args)
-			response = HTTParty.post(@url+"/sites/update",:body => args)
+			response = HTTParty.post(@url+"/sites/update",:body => args) unless args[:siteId].blank?
 		end
 
 		def group_channel(args)

@@ -43,7 +43,7 @@ class SsoController < ApplicationController
   end
 
   def google_login
-    protocol = current_account.ssl_enabled? ? "https" : "http"
+    protocol = (current_account.ssl_enabled? || is_native_mobile?) ? "https" : "http"
     if @current_user.nil? || @current_user.deleted
       user_deleted
     else

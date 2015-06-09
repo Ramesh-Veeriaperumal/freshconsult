@@ -4,6 +4,7 @@ module SupportHelper
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Portal::Helpers::DiscussionsHelper
+  include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
@@ -130,7 +131,7 @@ module SupportHelper
 								<span>#{ I18n.t('header.check_ticket_status') }</span>
 							</a>
 						</div> )
-		output << %( <div> <a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
+		output << %( <div> <a href="tel:#{ h(portal['contact_info']) }" class="mobile-icon-nav-contact contact-info ellipsis">
 						<span>#{ h(portal['contact_info']) }</span>
 					 </a> </div> ) if portal['contact_info']
 
@@ -199,13 +200,23 @@ module SupportHelper
 	end
 
 	# User image page
-	def profile_image user, more_classes = "", width = "50px", height = "50px"
+	def profile_image user, more_classes = "", width = "50px", height = "50px", profile_size = 'thumb'
 		output = []
-		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}">
-							<img src="/assets/misc/profile_blank_thumb.gif" onerror="imgerror(this)" )
-		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
-		output << %(			width="#{width}" height="#{height}" />
-						</div> )
+		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}"> )
+		if user['profile_url']
+			output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> ) 
+		else
+			username = user['name'].lstrip
+
+			if isalpha(username[0])
+				output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
+				output << %( #{username[0]} )
+				output << %( </div>)
+			else
+				output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+			end
+		end
+		output << %( </div> )
 		output.join("").html_safe
 	end
 
@@ -522,9 +533,9 @@ module SupportHelper
 		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences,
-			:image_placeholders => { 	:spacer 		=> spacer_image_url,
-			 							:profile_thumb 	=> "#{asset_host_url}/assets/misc/profile_blank_thumb.gif",
-										:profile_medium => "#{asset_host_url}/assets/misc/profile_blank_medium.gif" }
+			:image_placeholders => { :spacer => spacer_image_url,
+			 												:profile_thumb => image_path("misc/profile_blank_thumb.jpg"),
+															 :profile_medium => image_path("misc/profile_blank_medium.jpg") }
 		}.to_json
 	end
 
@@ -649,7 +660,7 @@ module SupportHelper
 
 	def attachment_item attachment, can_delete = false
 		output = []
-
+		tooltip = "data-toggle='tooltip' title='#{attachment.filename}'" if attachment.filename.size > 15
 		output << %(<div class="attachment">)
 		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
@@ -657,7 +668,8 @@ module SupportHelper
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
+		output << %(<a href="#{attachment.url}" class="filename" target="_blank" #{tooltip} 
+		            >#{ attachment.filename.truncate(15) } </a>)
 		output << %(</div>)
 		output << %(<div>(#{  attachment.size  }) </div>)
 		output << %(</div>)
@@ -670,13 +682,15 @@ module SupportHelper
 		output = []
 
 		output << %(<div class="attachment">)
+		tooltip = "data-toggle='tooltip' title='#{cloud_file.filename}'" if cloud_file.filename.size > 15
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank">#{ cloud_file.filename } </a>)
+		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank"
+			        #{tooltip}>#{ cloud_file.filename.truncate(15) } </a>)
 		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
 		output << %(</div>)

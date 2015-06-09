@@ -17,14 +17,6 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 	.ignore { @include freshfone-sprite(ignore-call); }
 }
 
-.recent_calls_call_user .can-make-calls,
-.fresfone-call-history .call_user .can-make-calls {
-	@include freshfone-sprite(recentcall);
-}
-.recent_call_entry:hover .recent_calls_call_user .can-make-calls,
-.fresfone-call-history .call_user .can-make-calls:hover {
-	 @include freshfone-sprite(recentcall-hover); 
-};
 
 .popupbox-content .keypad-call:before {
 	content:"";
@@ -41,14 +33,13 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 }
 
 .message-container {
+	
 	.record_voice { @include freshfone-sprite(ivr-record-icon); }
 	.upload_voice { @include freshfone-sprite(ivr-upload-icon); }
 	.read_message { @include freshfone-sprite(ivr-transcript-icon); }
 	.attach-file-done { @include freshfone-sprite(attached-file); }
 
 }
-.create_freshfone_ticket { @include freshfone-sprite(callhistory-convert); }
-.converted_ticket { @include freshfone-sprite(callhistory-converted); }
 
 .outgoing_call_icon { @include freshfone-sprite(call-history-outgoing); }
 .outgoing_missed_call_icon { @include freshfone-sprite(call-history-outgoing-miss); }
@@ -69,6 +60,9 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 .callhistory-payment-loader { background-image: image-url('/assets/animated/payment-loader.gif') }
 
 
+.recording_deleted{
+	background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAH0lEQVQIW2NkQAWSjEh8SQYGhucwATAHJAkSgHNAAgBJLgMeVQZnUgAAAABJRU5ErkJggg==');
+}
 // font icon styles
 .freshfone_widget{
 	.popupbox-tabs{

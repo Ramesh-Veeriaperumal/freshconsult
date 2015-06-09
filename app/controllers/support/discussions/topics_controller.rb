@@ -13,6 +13,8 @@ class Support::Discussions::TopicsController < SupportController
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => :destroy
+  before_filter :set_sort_by, :only => :show
+  before_filter :fetch_vote, :toggle_vote, :only => [:like, :unlike]
 
   before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
@@ -153,22 +155,12 @@ class Support::Discussions::TopicsController < SupportController
     end
   end
 
-
   def like
-    unless @topic.voted_by_user?(current_user)
-      @vote = Vote.new(:vote => params[:vote] == "for")
-      @vote.user_id = current_user.id
-      @topic.votes << @vote
-    end
-    load_topic
     render :partial => "topic_vote", :object => @topic
   end
 
   def unlike
-     @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
-     @votes.first.destroy
-     load_topic
-     render :partial => "topic_vote", :object => @topic
+    render :partial => "topic_vote", :object => @topic
   end
 
   def my_topics
@@ -209,16 +201,21 @@ class Support::Discussions::TopicsController < SupportController
     end
 
     def load_topic
-      @topic = scoper.find(params[:id])
-      @forum = @topic.forum
-      @forum_category = @forum.forum_category
-
-      wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
-      raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+      @topic = scoper.find_by_id(params[:id])
       
-      unless @forum.visible?(current_user)
-        store_location
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+      if @topic.nil?
+        resource_not_found :topic
+      else
+        @forum = @topic.forum
+        @forum_category = @forum.forum_category
+      
+        wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
+        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+
+        unless @forum.visible?(current_user)
+          store_location
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+        end
       end
     end
     
@@ -291,5 +288,13 @@ class Support::Discussions::TopicsController < SupportController
 
     def cleared_captcha
       current_account.features_included?(:forum_captcha_disable) || verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
+    end
+
+    def set_sort_by
+      @topic.sort_by = params[:sort] || 'date'
+    end
+
+    def vote_parent
+      @topic
     end
 end

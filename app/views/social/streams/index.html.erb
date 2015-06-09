@@ -9,7 +9,7 @@
             <li><a href="#" id="unifiedStreams" class="active" tittle="All"><%= font_icon "all-streams", :size => 24 %><span>All</span></a></li>
             <% @streams.each do |stream| %>
               <li class="strmlst"><a href="#" class="image-lazy-load item_info" data-stream-id="<%= stream.id %>" title="<%= h(stream.name) %>">
-                <img src="/images/misc/profile_blank_thumb.gif" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
+                <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
                 <span><%= h(stream.name) %></span></a></li>
             <% end %>
           </ul>
@@ -86,9 +86,14 @@
     </div>
 
     <div class="tw-explorer">
-      <div class="info-highlight fs-notify">
-          <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
-      </div>
+      <% social_reauth = social_reauth_required %>
+      <% if social_reauth.present? %>
+       <%= social_reauth %>
+      <% else %>
+        <div class="info-highlight fs-notify">
+            <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
+        </div>
+      <% end %>
       
       <% if privilege?(:reply_ticket) and @visible_handles.any? %>
         <div class="ph-grey">

@@ -5,7 +5,6 @@
 
 	<%= render :partial => "discussions/topics/widgets/merged_topics_list" if @topic.merged_topics.present?  %>
 
-	<%= render :partial => 'discussions/topics/widgets/vote', :locals => { :topic => @topic } if @topic.published && !@forum.announcement? && !@topic.merged_topic_id.present? %>
 	<% if (@forum.ideas? or @forum.problems?) && !@topic.merged_topic_id.present?
 		if privilege?(:edit_topic, @topic) %>
 			<%= render :partial => 'discussions/topics/widgets/stamp' %>
@@ -14,14 +13,6 @@
 		<% end 
 	end %>
 	<%= render :partial => "discussions/topics/widgets/ticket" if privilege?(:manage_tickets) && !@topic.merged_topic_id.present? %>
-
-	<%= render :partial => "discussions/topics/widgets/user_list", :locals => {
-								:title => t("discussions.topics.title_meta.vote_info.#{@forum.type_symbol}", :count => @topic.user_votes),
-								:count => @topic.user_votes,
-								:user_list => @topic.voters,
-								:modal_target => "voted_users_all",
-								:href => discussions_topic_component_path(:id => @topic.id, :name => 'voted_users')
-							} if @topic.user_votes?  && !@forum.announcement? %>
 
 	<% voices_count = @topic.voices.count %>
 	<%= render :partial => "discussions/topics/widgets/user_list", :locals => {
@@ -34,12 +25,11 @@
 
 	<% monitors_count = @topic.monitors.count %>
 	<%= render :partial => "discussions/topics/widgets/user_list", :locals => {
-								:title => t("discussions.topics.title_meta.following", :count => monitors_count),
-								:count => monitors_count,
-								:user_list => @topic.monitors,
-								:modal_target => "following_users_all",
-								:href => discussions_topic_component_path(:id => @topic.id, :name => 'following_users')
-							} if monitors_count > 0 %>
-
+									:title => t("discussions.topics.title_meta.following", :count => monitors_count),
+									:count => monitors_count,
+									:user_list => @topic.monitors,
+									:modal_target => "following_users_all",
+									:href => discussions_topic_component_path(:id => @topic.id, :name => 'following_users')
+								} %>
 
 </div>

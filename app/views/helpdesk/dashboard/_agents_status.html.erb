@@ -4,8 +4,8 @@
     <p class="text-info"><%= h agent.user.display_name %></p>
   </td>
   <td>
-      <%= check_box_tag :available, 0, agent.available?, :class => 'filter_item', 
-        "data-checked-label" => "On", 
+      <%= check_box_tag :available, 0, agent.available?, :class => 'filter_item',
+        "data-checked-label" => "On",
         "data-unchecked-label" => "Off",
         "data-id" => agent.user.id,
         "data-url" => "/agents/toggle_availability",

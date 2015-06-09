@@ -1,0 +1,14 @@
+Added as forum follower
+
+<%= "_" * 100 %>
+
+You have been added as a follower by <%= @user.name %> to this forum. 
+
+<%= @forum.name %>
+<%= @forum.description %>
+
+<%= "_" * 100 %>
+
+<%= link_to 'Stop following this forum',toggle_monitorship_url(:object => "forum", 
+                  :id => @forum.id, :type=>"unfollow", :host=> @portal.host), :class => "desc" %>
+

@@ -140,7 +140,8 @@
 									:class => "new_ticket tooltip" ,
 									:title => t("header.new_ticket_tip").html_safe,
 									'data-placement' => "below",
-									"data-keybinding" => shortcut('app_nav.ticket_new') ) %>
+									"data-keybinding" => shortcut('app_nav.ticket_new'),
+									"data-pjax" => "#body-container" ) %>
 						<% else %>
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>

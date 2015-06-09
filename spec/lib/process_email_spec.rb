@@ -315,6 +315,18 @@ RSpec.describe Helpdesk::ProcessEmail do
 			solutions_incremented?(@article_size)
 		end
 
+		it "should create an article by email and the content must get stored in article bodies table" do
+			email = new_email({:email_config => @account.kbase_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			Helpdesk::ProcessEmail.new(email).perform
+			solution = Solution::Article.last
+			article_body = solution.original_article_body
+			article_body.should be_an_instance_of(Solution::ArticleBody)
+			Solution::Article::BODY_ATTRIBUTES.each do |attrib|
+				article_body.send(attrib).should be_eql(solution.read_attribute(attrib))
+			end
+		end
+
 		it "article failure - non agent" do
 			email = new_email({:email_config => @account.kbase_email})
 			Helpdesk::ProcessEmail.new(email).perform

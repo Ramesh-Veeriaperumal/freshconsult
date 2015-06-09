@@ -1,5 +1,7 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
+  # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
+
 	before_validation :populate_requester, :set_default_values
 
 	before_validation :set_token, on: :create
@@ -241,11 +243,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.account.make_current
     Time.zone = self.account.time_zone    
   end
- 
-  def set_user_time_zone 
-    Time.zone = User.current.time_zone  
-  end
 
+  def set_user_time_zone
+    begin
+      Time.zone = User.current.time_zone 
+    rescue ArgumentError => e 
+      Rails.logger.info  "User timezone is invalid:: userid:: #{User.current.id}, Timezone :: #{User.current.time_zone}"
+      set_account_time_zone
+    end
+  end
+ 
   def publish_new_ticket_properties
      publish_ticket_properties("new")
   end

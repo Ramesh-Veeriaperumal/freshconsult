@@ -5,6 +5,8 @@ class Social::Twitter::DirectMessage
   attr_accessor :twitter, :twt_handle
   include Social::Twitter::TicketActions
   include Social::Dynamo::Twitter
+  include Social::Twitter::ErrorHandler
+  include Social::Constants
 
   def initialize(twt_handle, options = {})
     wrapper         = TwitterWrapper.new twt_handle
@@ -13,13 +15,15 @@ class Social::Twitter::DirectMessage
   end
 
   def process
-    tweets = twt_handle.last_dm_id.blank? ? twitter.direct_messages : twitter.direct_messages({:since_id => twt_handle.last_dm_id})
-    last_tweet_id = tweets[0].id unless tweets.blank?
-    tweets.sort! { |x,y| Time.at(x.created_at).utc <=> Time.at(y.created_at).utc } unless tweets.blank?
-    tweets.each do |twt|
-      create_fd_item(twt, twt_handle)
+    social_error_msg, tweets = fetch_dms 
+    if social_error_msg.blank?
+      last_tweet_id = tweets[0].id unless tweets.blank?
+      tweets.sort! { |x,y| Time.at(x.created_at).utc <=> Time.at(y.created_at).utc } unless tweets.blank?
+      tweets.each do |twt|
+        create_fd_item(twt, twt_handle)
+      end
+      twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
     end
-    twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
   end
 
 
@@ -68,6 +72,12 @@ class Social::Twitter::DirectMessage
       :posted_at => twt.attrs[:created_at]
     }
     update_dm(stream_id, params)
+  end
+  
+  def fetch_dms
+    twt_sandbox(twt_handle, TWITTER_TIMEOUT[:dm]) do
+      twt_handle.last_dm_id.blank? ? twitter.direct_messages : twitter.direct_messages({:since_id => twt_handle.last_dm_id})
+    end
   end
 
 end

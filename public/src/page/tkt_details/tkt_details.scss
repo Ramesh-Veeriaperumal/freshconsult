@@ -665,7 +665,7 @@ ol, ul, li{
 #not_following_message {
 	padding:8px 10px;
 	@include margin-left(10px);
-	display: inline-block;
+	display: none;
 }
 
 .conversation_thread, .content .controls .control-left {
@@ -673,7 +673,7 @@ ol, ul, li{
 }
 	
 .conversation_thread {
-	@include padding(0 30px 15px 7px);
+	@include padding(0 30px 15px 12px);
 	margin-top:-10px;
 	list-style: none;
      
@@ -690,16 +690,27 @@ ol, ul, li{
 
 	.conversation{
 		margin-bottom: 22px;
-		position: relative;
-
+		position: relative; 
 		&:hover {
 			.avatar-wrap, .commentbox {
-				border-color: #bbb;
+				border-color: #aaa;
 			}
-
 			.commentbox:before {
-				@include border-right-color(#bbb);
+				@include border-right-color(#aaa);
 			}
+		}
+	}
+
+	.alert-container{
+		@include margin-left(29px);
+		background: #900;
+		border-radius: 5px 5px 0 0;
+		@include padding(8px);
+		label{
+			color: #fff;
+			font-size: 13px;
+			font-weight: 600;
+			@include padding-left(5px);
 		}
 	}
 
@@ -771,7 +782,6 @@ ol, ul, li{
 	}
 
 	#tweet_type_selector {
-		display: none;
 		position: relative;
 		top: 5px;
 	 	@include right(15px);
@@ -1155,7 +1165,7 @@ ol, ul, li{
 		border-color: rgba(255, 253, 248, 0);
 		@include border-right-color(#fffdf8);
 		border-width: 8px;
-		top: 25px;
+		top: 20px;
 		margin-top: -8px;
 	}
 
@@ -1163,8 +1173,14 @@ ol, ul, li{
 		border-color: rgba(204, 204, 204, 0);
 		@include border-right-color(#bbb);
 		border-width: 9px;
-		top: 25px;
+		top: 20px;
 		margin-top: -9px;
+		@include transition(border 500ms ease-out);
+	}
+	&:hover{
+		&:before{
+			@include border-right-color(#aaa);
+		}
 	}
 
 	blockquote.freshdesk_quote {
@@ -1185,6 +1201,18 @@ ol, ul, li{
 		@include transition(opacity .5s linear); 
 
 		@include margin(-9px -10px 0 0);
+	}
+
+	.note-label{
+		position: absolute;
+		right: 15px;
+		top: 12px;
+		background-color: #ffd16d;
+		border-radius: 16px;
+		color: #333;
+		font-size: 10px;
+		box-shadow: 0 0 0px 1px #fff;
+		font-weight: 500;
 	}
 
 	a.conv-action-icon {
@@ -1262,13 +1290,12 @@ ol, ul, li{
 		background: #aaa;
 		color: #FFF;
 		border: solid 1px #FFF;
-		@include text-shadow(-1px -1px 0 rgba(0,0,0,0.28));
 		max-width: 150px;
 		display: block;
 		@include border-radius(5px);
 		font-size: 12px;
 		padding: 1px 15px 3px;
-		font-weight: bold;
+		font-weight: 500;
 		text-overflow: ellipsis;
 		height: 18px;
 		white-space: nowrap;
@@ -1314,7 +1341,9 @@ ol, ul, li{
 		margin-bottom: 10px;
 		font-weight: bold;
 	}
-
+}
+.commentbox.u-styled{
+	border-radius: 0 0 5px 5px;
 }
 .ticket_details {
 	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat {
@@ -1446,6 +1475,7 @@ ol, ul, li{
 	border: 1px #eee solid;
 	@include box-shadow(none);
 	@include float(none);
+	@include transition(border 500ms ease-out);
 	&:after{
 		border-color: rgba(255, 253, 248, 0);
 		@include border-right-color(#e9e9e9);
@@ -1454,6 +1484,9 @@ ol, ul, li{
 	&:before{
 		border-color: rgba(255, 253, 248, 0);
 		@include border-right-color(#eee);
+	}
+	&:hover{
+		border: 1px #aaa solid;
 	}
 }
 
@@ -1564,15 +1597,15 @@ ol, ul, li{
 	}
 }
 .ticket_show .avatar-wrap {
-	width: 44px;
-	height: 44px;
+	width: 40px;
+	height: 40px;
 	z-index: 100;
 	@include border-radius(50%);
 	background: #fff;
 	position: absolute;
 	border: 1px solid #eee;
 	@include margin(0 0 3px 0);
-	padding: 2px;
+	padding: 0;
 	@include text-align(center);
 	@include float(left);
  	@include left(-35px);
@@ -1584,8 +1617,6 @@ ol, ul, li{
 			@include border-radius(50%);
 			position: relative;
 			top: 0;
-			height: 44px;
-			width: 44px;
 		}
 	}
 	.avatar {
@@ -1594,7 +1625,9 @@ ol, ul, li{
 		top: 2px;
 	}
 	&:hover{
+		@include transition(border 500ms ease-out);
 		text-decoration: none;
+		border: 1px solid #aaa;
 	}
 }
 
@@ -1629,6 +1662,11 @@ ol, ul, li{
 			@include border-radius(6px);
 			margin-top: 3px;
 			border: 1px #bbb solid;
+		}
+		img{
+			width: 25px;
+			height: 25px;
+			border-radius: 5%;
 		}
 	}	
 	.crm_contact_widget .contact-type {
@@ -1669,8 +1707,8 @@ ol, ul, li{
 		}
 
 		.requester-avatar-wrap {
-			@include padding(0 10px 10px  0);
-			width: 30px;
+			@include padding(6px 10px 10px 0);
+			width: 25px;
 		}
 
 		.note {
@@ -2144,7 +2182,7 @@ ol, ul, li{
 }
 
 // Timesheet Modal CSS Overrides and new CSS
-.ticket_details #timeentry_add, .ticket_details .timeentry_edit {
+.ticket_details #timeentry_add, .ticket_details .timeentry_edit, .ticket_details .edit_timesheet {
 	margin: 5px;
 	padding: 0;
 	@include clear(both);

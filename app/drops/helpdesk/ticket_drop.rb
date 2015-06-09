@@ -140,8 +140,12 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.public_notes.exclude_source('meta')
 	end
 
+	def billable_hours
+		@billable_hours ||= @source.billable_hours
+	end
+
 	def total_time_spent
-		@formatted_time ||= calculate_time_spent
+		@formatted_time ||= @source.time_tracked_hours
 	end
 
 	def satisfaction_survey		
@@ -198,10 +202,4 @@ class Helpdesk::TicketDrop < BaseDrop
 		@portal
 	end
 
-	private 
-
-		def calculate_time_spent
-			minutes = @source.time_sheets.inject(0){ |total,time_sheet| total + time_sheet.time_spent }/60
-			"%02d:%02d" % [ minutes/60, minutes%60] 
-		end
 end

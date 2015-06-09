@@ -1,6 +1,9 @@
 module AccountAdditionalSettings::AdditionalSettings
 
   include AccountConstants
+
+  DEFAULT_RLIMIT = {'helpdesk_tickets' => {'enable' => false},'helpdesk_notes' => {'enable' => false},
+    'solution_articles' => {'enable' => false}}
   
   def email_template_settings
     (self.additional_settings.is_a?(Hash) and self.additional_settings[:email_template]) ? 

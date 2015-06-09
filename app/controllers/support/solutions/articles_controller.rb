@@ -20,7 +20,7 @@ class Support::Solutions::ArticlesController < SupportController
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
 
   before_filter :generate_ticket_params, :only => :create_ticket
-  after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket
+  after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
   before_filter :adapt_attachments, :only => [:show]
 
@@ -53,8 +53,12 @@ class Support::Solutions::ArticlesController < SupportController
   
   def create_ticket
     # Message to the user based on success of ticket submission
-    render :text => (create_the_ticket(nil, true)) ? 
-     I18n.t('solution.articles.article_not_useful') : I18n.t(:'solution.articles.error_message', :error_msg => @ticket.errors )
+    create_the_ticket(nil, true) ?
+    	render(:text => I18n.t('solution.articles.article_not_useful')) : feedback_error
+  end
+
+  def feedback_error
+  	render :partial => "feedback_form"
   end
 
   private
@@ -131,6 +135,10 @@ class Support::Solutions::ArticlesController < SupportController
         deleted_att_ids = @article.draft.meta[:deleted_attachments][att_type]
       end
       return att.select {|a| !deleted_att_ids.include?(a.id)}
+    end
+    
+    def no_error
+      !@ticket.errors.any?
     end
 
 end

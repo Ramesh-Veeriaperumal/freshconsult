@@ -1,6 +1,7 @@
 class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
 	around_filter :select_master_shard , :except => :get_country_list
+	around_filter :select_slave_shard , :only => :get_country_list
 	before_filter :load_account
 	before_filter :validate_credits, :only => [:add_credits]
 	before_filter :notify_freshfone_ops , :except => :get_country_list

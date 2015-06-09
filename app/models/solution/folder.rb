@@ -12,6 +12,7 @@ class Solution::Folder < ActiveRecord::Base
   
   belongs_to_account
   belongs_to :category, :class_name => 'Solution::Category'
+  belongs_to :solution_folder_meta, :class_name => 'Solution::FolderMeta', :foreign_key => 'parent_id'
   self.table_name =  "solution_folders"
   
   before_create :populate_account
@@ -41,6 +42,8 @@ class Solution::Folder < ActiveRecord::Base
   acts_as_list :scope => :category
   
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
+
+  include Solution::MetaMethods
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    
