@@ -1,0 +1,382 @@
+
+// ------------------------------------------------------------------------------------------------------------
+// 														merge contacts css 
+// ------------------------------------------------------------------------------------------------------------
+
+#contact-mergebox{
+
+  .merge-content{
+    overflow-y: scroll;
+    height: 270px;
+    @include margin(0);
+    border: 1px solid #d1d1d1;
+    @include border-radius(5px);
+    background-color: #f8f8f8;
+  }
+
+  .round-icon{
+    padding: 0px 4px;
+    background-color: #99bf47;
+    color: #fff;
+    @include border-radius(100%);
+    @include float(left);
+    margin-top: 17px;
+    @include margin-right(10px);
+    font-weight: bold;
+  }
+
+  li.disabled {
+    .round-icon.ficon-plus{
+      background-color: #e3e3e3;
+    }
+  }
+
+  .round-icon.remove-icon{
+    background-color: #ff9291;
+    @include margin-left(10px);
+    cursor: pointer;
+  }
+
+  .round-icon.remove-icon.disabled{
+    background-color: #e3e3e3;
+  }
+
+  .round-icon.clicked{
+    color: #333;
+    background: none;
+    font-size: 20px;
+    @include padding(0px);
+  }
+
+  .contact-primary{
+    .round-icon.remove-icon{
+      background-color: #e3e3e3;
+      cursor: default;
+    }
+  }
+
+  .content-merge-adjust{
+  	@include float(left);
+  }
+
+  .match_results{
+    min-height: 50px;
+    overflow-y: scroll;
+    display: none;
+    width: 100%;
+    max-height: 250px;
+    border-top: 1px solid #c9c9c9;
+    li{
+      border: none;
+      border-bottom: 1px solid #e4e4e4;
+      background-color: white;
+      height: 50px;
+      &:hover{
+        background-color: #f8f8f8;
+      }
+    }
+    .autocompletepane{
+      position: static;
+    }
+  }
+
+  .match_results.loading-center{
+  	height: 142px;
+  }
+
+  .added-contact{
+  	color: #AAA !important;
+  	span{
+  		color: #AAA !important;
+  	}
+  }
+
+  .mergebox{
+  	overflow: hidden;
+  	margin-top: 10px;
+  	.button-container{
+  		width: 100% !important;
+  		@include margin-left(0px);
+  		clear: both;
+  	}
+  	.search-content{
+      max-height: 270px;
+      border: 1px solid #d1d1d1;
+      @include border-radius(5px);
+  		overflow: hidden;
+  		@include float(right);
+  		.searchicon{
+        position: relative;
+        display: inline;
+        @include float(right);
+        top: -31px;
+        right: 5px;
+  		}
+  		.typed{
+        background: none;
+  			&:before{
+  				content: '\00d7';
+  				font-size: 18px;
+  				font-weight: bold;
+  				line-height: 0;
+  			}
+  		}
+  	}
+  }
+
+  .merge_results{
+		width: 98%;
+		min-height: 50px;
+		max-height: 210px;
+		padding: 1px;
+		overflow-y: scroll;
+		border: 1px solid #b7b7b7;
+		@include border-radius(4px);
+		display: none;
+		clear: both;
+	}
+
+  .search_merge{
+    height: 22px;
+    width: 100%;
+    border: none;
+  	@include padding-right(20px);
+  }
+
+  .small-loader{
+  	background: url(/images/load.gif) no-repeat;
+  	background-position: center center;
+  	background-size: 17px 17px;
+  }
+
+
+  .merge_entity{
+  	min-height: 50px;
+  }
+
+  .contactelement{
+  	.contact_item_info{
+  		color: #333;
+  		&:hover{
+  			color: #333;
+  		}
+  	}
+  }
+
+  .contact_data{
+  	max-width: 230px;
+  	overflow: hidden;
+  	span{
+  		color: #888;
+  		font-size: 12px;
+  		line-height: 15px;
+  		display: block;
+  	}
+  }
+
+  .merge-contact{
+    border-bottom: 1px solid #d1d1d1;
+    min-height: 60px;
+    overflow: hidden;
+  	background-color: white;
+  }
+
+  .m-content-show{
+  	margin-bottom: 15px;
+  }
+
+  .contact-area{
+  	background-color: white;
+    width: 87%;
+    display: inline-block;
+    padding-bottom: 500em;
+    margin-bottom: -500em;
+  }
+
+  .m-primary-marker{
+    min-height: 40px;
+    padding-bottom: 500em;
+    margin-bottom: -500em;
+    width: 13%;
+    display: inline-block;
+    height: 100%;
+    @include float(left);
+  	background-color: #eeeeee;
+  	padding-top: 20px;
+  	&:hover{
+  		cursor: pointer;
+  	}
+  }
+
+  .contact_merge_element{
+    @include float(right);
+    width: 88%;
+    margin-top: 10px;
+    div.preview_pic{
+      border: none;
+      img{
+        @include border-radius(5px);     
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+  .contact_merge_element.cm_user{
+    width: 100%;
+    @include float(none);
+  }
+
+  .marker{
+  	@include padding-right(17px);
+  	@include margin-left(12px);
+  }
+
+  .user-contact{
+  	@include margin-left(10px);
+  	margin-top: 10px;
+  	div.preview_pic{
+  		position: static;
+      height: 30px;
+      width: 30px;
+  		img{
+  			width: 30px;
+  			height: 30px;
+  		}
+  	}
+  }
+
+  #confirm_merge_box
+  {
+  	overflow: hidden;
+  	.button-container{
+  		border-top: 1px solid #cecece;
+  		@include margin-left(10px);
+  		clear: both;
+  	}
+  	.info-text{
+  		@include float(right);
+  		background-color: #fffcdb;
+  		@include margin(14px 10px 30px 0);
+  		width: 300px;
+  		min-height: 200px;
+  		@include padding(15px);
+  		line-height: 17px;
+  		border: 1px solid #eeeeee;
+  		color: #333333;
+  		font-size: 12px;
+  		@include border-radius(4px);
+  		h3{
+  			display: block;
+  			font-weight: bold;
+  			font-size: 12px;
+  		}
+  	}
+  }
+
+  .m-contact-special{
+  	@include float(left);
+  	width: 52%;
+  	@include margin-left(10px);
+  	max-height: 300px;
+  	overflow-y: scroll;
+  	margin-bottom: 30px; 
+  }
+
+  .primary-contact{
+  	background-color: #f8f8f8;
+  	height: 60px;
+  	vertical-align: middle;
+  	border: 1px solid #eeeeee;
+  	@include border-radius(4px);
+  }
+
+  .line{
+  	width: 6%;
+  	border-top: 1px solid #b7b7b7;
+    position: absolute;
+  	height: 1px;
+  	@include float(left);
+  	margin-top: 30px;
+  }
+
+  .one-contact{
+    height: 60px;
+  	.last-line{
+  		z-index: 0;
+  		height: 30px;
+  		@include margin(40px 0 0 -9px);
+  		@include border-left(15px solid #ffffff);
+  	}
+    .contact-area{
+      @include float(right);
+      width: 89%;
+      height: 60px;
+      vertical-align: middle;
+      position: relative;
+      border: 1px solid #eeeeee;
+      @include border-radius(4px);
+      @include padding(0);
+      @include margin(0);
+    }
+  }
+
+  .merge-ready{
+  	@include border-left(1px solid #b7b7b7);
+  	@include margin-left(20px);
+  	padding-top: 15px;
+  }
+
+  #back-user-merge{
+  	@include float(left);
+  }
+
+  #avatar_image{
+  	display: inline-block;
+  	vertical-align: middle;
+  	position: static;
+    @include float(left);
+  }
+
+  .user_info_item{
+  	display: inline-block;
+  	vertical-align: middle;
+    @include float(right);
+    width: 85%;
+  }
+
+  #pic{ vertical-align: middle; }
+
+  .contact-primary{
+  	.m-primary-marker{
+  		background-color: #bdbdbd;
+  		&:hover{ cursor:pointer; }
+  	}
+  }
+
+  .merge-search-field{
+    overflow: hidden;
+    height: 30px;
+    display: block;
+  }
+
+  .merge_results .autocompletepane li, .merge_results .autocompletepane li.selected{
+  	border: none;
+  	background-color: white;
+  	height: 50px;
+  	&:hover{
+  		background-color: #f8f8f8;
+  	}
+  }
+
+  .cm_user{
+    .user_info_item{
+      width: 78%;
+    }
+  }
+
+  p.errors{
+  color: red;
+  }
+}
+/* end */

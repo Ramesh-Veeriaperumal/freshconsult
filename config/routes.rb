@@ -279,11 +279,6 @@ Helpkit::Application.routes.draw do
       put :update_contact
       put :update_description_and_tags
     end
-    resources :contact_merge do
-      collection do
-        get :search
-      end
-    end
   end
 
   # segment/group controller will handle all different types in request params # content based routing
@@ -296,7 +291,6 @@ Helpkit::Application.routes.draw do
       get :search
       post :new
       post :confirm
-      post :complete
       post :merge
     end
   end

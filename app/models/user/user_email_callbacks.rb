@@ -117,6 +117,7 @@ class User < ActiveRecord::Base
     if primary_email
       if email_available?
         self.primary_email.email = self[:email]
+        self.primary_email.verified = false
       else
         self.primary_email.mark_for_destruction
       end

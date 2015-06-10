@@ -1,0 +1,19 @@
+<div class="merge-contact">
+  <div class="m-primary-marker tooltip" title="<%= primary %>">
+    <span class="marker"></span>
+  </div>
+  <div class="contact-area" data-id="<%= id %>" data-emails="<%= emails %>" data-twitter="<%= twitter %>" data-facebook="<%= facebook %>" data-phone="<%= phone %>">
+  <span class="round-icon remove-icon ficon-minus fsize-15"></span>
+  <div data-uid="<%= id %>" class="user-contact contact_merge_element cm_user">
+    <div id="avatar_image">
+      <div id="pic" class="preview_pic" size_type="thumb">
+        <img alt="" onerror="imgerror(this)" src="<%= avatar %>"></img>
+        </div>
+      </div>
+      <div class="user_info_item">
+        <a class="contact_item_info" href="/contacts/<%= id %>" target="_blank"><b><%= name %></b></a>
+        <div class="contact_data"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2942,6 +2942,7 @@ en:
     edit_contact: Edit contact
     edit: Edit Contact
     merged_into: Contact merged to
+    merged_info: "Contact merged to : "
     save_changes: Save changes
     save: Save
     export_start: Your Contact data will be sent to your email shortly!
@@ -5907,6 +5908,7 @@ en:
   merge_contacts:
     header: "Important:<br />You are about to merge %{number} contacts with %{name}."
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into %{name}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into %{name}"
+    new_info: "This cannot be undone.<br />Merging will move all the tickets, notes and contact information from the secondary contacts into %{name}. Also, the secondary contacts will been deleted and cannot be restored. <br /><br />Click <b>Confirm and merge</b> to continue"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
     email_activated: "email id already activated"
@@ -5925,6 +5927,7 @@ en:
     merge_contact: "Merge Contact"
     verify: "Send Verification"
     remove: "Remove"
+    validation: "Cannot add more than "
     success: "Contacts have been successfully merged"
     verify_mail: "Verification email sent"
     activate_email: "Activation email sent"
@@ -5937,6 +5940,9 @@ en:
     email_remove: "Are you sure you want to remove this Email?"
     default_email: "Default Email"
     additional_email: "Additional Email Verification"
+    primary_contact: "Primary contact"
+    mark_as_primary: "Mark as primary"
+    merge_progress: "Please wait while the contacts are being merged. This might take a few minutes."
   portalcss:
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
