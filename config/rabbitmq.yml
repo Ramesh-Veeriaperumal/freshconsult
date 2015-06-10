@@ -4,6 +4,12 @@ defaults: &defaults
     port: 5672
     username: guest
     password: guest
+    automatically_recover: true
+    recover_from_connection_close: true
+    heartbeat: 30
+    threaded: true
+  shards: 1
+  resources: ['ticket', 'note']
   secret_key: UIQX9K3VE716I1CB1X1DMB4EGL9963FP
 
 development:

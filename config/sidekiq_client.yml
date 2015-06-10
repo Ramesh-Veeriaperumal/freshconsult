@@ -19,6 +19,7 @@ defaults: &defaults
     - [trial_facebook]
     - [trial_twitter]
     - [custom_twitter]
+    - [rabbitmq_publish]
     - [default]
 
 development:
