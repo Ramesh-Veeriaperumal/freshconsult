@@ -77,7 +77,7 @@ class ContactMergeController < ApplicationController
       items.map do |i| 
         {
           :id => i.id, 
-          :name => i.name, 
+          :name => h(i.name), 
           :email => i.email, 
           :title => i.job_title, 
           :company => i.company_name,

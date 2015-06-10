@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="user_info_item">
-        <a class="contact_item_info" href="/contacts/<%= id %>" target="_blank"><b><%= name %></b></a>
+        <a class="contact_item_info" href="/contacts/<%= id %>" target="_blank"><b><%= escapeHtml(name) %></b></a>
         <div class="contact_data"></div>
       </div>
     </div>
