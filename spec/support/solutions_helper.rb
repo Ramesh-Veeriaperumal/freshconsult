@@ -2,7 +2,8 @@ module SolutionsHelper
 
   def create_category(params = {})
     test_category = FactoryGirl.build(:solution_categories, :name => params[:name] || Faker::Name.name,
-              :description => params[:description], :is_default => params[:is_default])
+              :description => params[:description], :is_default => params[:is_default], 
+              :portal_ids => params[:portal_ids] || [] )
     test_category.account_id = @account.id
     test_category.save(validate: false)
     test_category
@@ -62,5 +63,71 @@ module SolutionsHelper
     Solution::Article::BODY_ATTRIBUTES.each do |attrib|
       article_body.send(attrib).should be_eql(article_obj.read_attribute(attrib))
     end
+  end
+
+  def create_portal(params = {})
+    test_portal = FactoryGirl.build(:portal, 
+                      :name=> params[:portal_name] || Faker::Name.name, 
+                      :portal_url => params[:portal_url] || "", 
+                      :language=>"en",
+                      :forum_category_ids => (params[:forum_category_ids] || [""]),
+                      :solution_category_ids => (params[:solution_category_ids] || [""]),
+                      :account_id => @account.id,
+                      :preferences=> { 
+                        :logo_link=>"", 
+                        :contact_info=>"", 
+                        :header_color=>"#252525",
+                        :tab_color=>"#006063", 
+                        :bg_color=>"#efefef" 
+                      })
+    test_portal.save(validate: false)
+    test_portal
+  end
+
+  def solution_test_setup
+    @categories = []
+    @portals = []
+
+    0..5.times do 
+      @portals << create_portal
+    end
+
+    for i in (1..5) do 
+      cat = create_category( { :name => "#{Faker::Lorem.sentence(3)}",
+                                        :description => "#{Faker::Lorem.sentence(3)}", 
+                                        :is_default => false,
+                                        :portal_ids => rand_portal_ids
+                              })
+      @categories << cat
+      for i in (1..5) do 
+        folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", 
+                                      :description => "#{Faker::Lorem.sentence(3)}",  
+                                      :visibility => 1,
+                                      :category_id => cat.id } )
+        for i in (1..5) do 
+          create_article( { :title => "#{Faker::Lorem.sentence(3)}", 
+                            :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id,
+                            :user_id => @agent.id, :status => "2", :art_type => "1" } )
+        end
+      end
+    end
+  end
+
+  def rand_portal_ids
+    ((rand(2..5)).times.collect do
+      (@portals || []).map(&:id).sample
+    end).uniq
+  end
+
+  def solution_cache_test_setup
+    ActionController::Base.perform_caching = true
+    @current_account = Account.current
+    @current_portal  = Portal.first.make_current
+    @cache_key = MemcacheKeys::ALL_SOLUTION_CATEGORIES % { :account_id => @current_account.id }
+    solution_test_setup
+  end
+
+  def check_cache_invalidation
+    $memcache.get(@cache_key).should be_nil
   end
 end

@@ -128,4 +128,8 @@ describe Solution::CategoriesController do
     response.should redirect_to(solution_categories_url)
   end
 
+  it "should render sidebar" do
+    xhr :get, :sidebar
+    response.should render_template "/solution/categories/_sidebar"
+  end
 end
