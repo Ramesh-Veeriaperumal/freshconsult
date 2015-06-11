@@ -47,6 +47,8 @@ module ApiConstants
   UPDATE_TICKET_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | TICKET_ARRAY_FIELDS.reject { |k| k['cc_emails'] }
   ASSIGN_TICKET_FIELDS = ['user_id']
   RESTORE_TICKET_FIELDS = []
+  CREATE_NOTE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', { 'notify_emails' => [String] }, 'ticket_id', { 'attachments' => [ActionDispatch::Http::UploadedFile] }]
+  UPDATE_NOTE_FIELDS = ['body', 'body_html', { 'attachments' => [] }]
 
   DELETED_SCOPE = {
     'update' => false,
@@ -65,7 +67,9 @@ module ApiConstants
     locked: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
     answer: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
     priority: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.join(','),
-    source:  TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :facebook).values.join(',')
+    source:  TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values.join(','),
+    private: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
+    incoming: BOOLEAN_VALUES.map(&:to_s).uniq.join(',')
   }
 
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/

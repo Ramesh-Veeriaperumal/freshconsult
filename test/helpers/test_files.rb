@@ -20,3 +20,4 @@ include CompanyHelper
 include UsersHelper
 include TicketHelper
 include GroupHelper
+include NoteHelper

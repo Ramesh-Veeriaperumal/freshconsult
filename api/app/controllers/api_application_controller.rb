@@ -36,7 +36,9 @@ class ApiApplicationController < MetalApiController
   before_filter :load_objects, only: [:index]
   before_filter :load_association, only: [:show]
 
-  def index; end # load_objects will load all objects and index.json.jbuilder will render the result.
+  def index
+    # load_objects will load all objects and index.json.jbuilder will render the result.
+  end
 
   def create
     if @item.save
@@ -88,6 +90,21 @@ class ApiApplicationController < MetalApiController
 
   private
 
+    def assign_and_clean_params(params_hash)
+      # Assign original fields with api params
+      params_hash.each_pair do |api_field, attr_field|
+        params[cname][attr_field] = params[cname][api_field] if params[cname][api_field]
+      end
+      clean_params(params_hash.keys)
+    end
+
+    def clean_params(params_to_be_deleted)
+      # Delete the fields from params before calling build or save or update_attributes
+      params_to_be_deleted.each do |field|
+        params[cname].delete(field)
+      end
+    end
+
     def set_custom_errors
       # This is used to manipulate the model errors to a format that is acceptable.
     end
@@ -95,7 +112,7 @@ class ApiApplicationController < MetalApiController
     def can_send_user? # if user_id or email of a user, is included in params, the current_user should have ability to assume that user.
       user_id = params[cname][:user_id]
       if user_id || @email
-        @user = current_account.all_users.find_by_email(@email) if @email
+        @user = current_account.all_users.find_by_email(@email) if @email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
         render_invalid_user_error if @user && !is_allowed_to_assume?(@user)
       end

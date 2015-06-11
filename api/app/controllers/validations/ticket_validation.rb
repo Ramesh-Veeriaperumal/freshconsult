@@ -11,13 +11,14 @@ class TicketValidation < ApiValidation
   validates :name, presence: true, if: :name_required?
   validates :priority, inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
   validate :allowed_status? # Can't use inclusion validator as dynamic messages are not feasible
-  validates :source, inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :facebook).values }, allow_nil: true
+  validates :source, inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
   validates_with DataTypeValidator, rules: { 'Array' => %w(tags cc_emails attachments), 'Hash' => ['custom_fields'] }, allow_nil: true
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'is not a valid email' }, if: :email_required?
   validates_each :cc_emails, &TicketsValidationHelper.email_validator # Expects a block
   validates_each :attachments, &TicketsValidationHelper.attachment_validator
   validate :allowed_types? # Can't use inclusion validator as dynamic messages are not feasible
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :allow_due_by?
+  # validate :allowed_picklist_values?
 
   def initialize(request_params, item, account)
     @account = account
@@ -58,4 +59,13 @@ class TicketValidation < ApiValidation
       errors.add(:type, "Should be a value in the list #{allowed_values.join(',')}")
     end
   end
+
+  # def allowed_picklist_values?
+  #   allowed_values = TicketsValidationHelper.ticket_drop_down_field_choices_by_key(@account)
+  #   (custom_fields || {}).each_pair do |key, value|
+  #     if allowed_values[key] && !(allowed_values[key].include?(value))
+  #       errors.add(key.to_sym, "Should be a value in the list #{allowed_values[key].join(',')}")
+  #     end
+  #   end
+  # end
 end

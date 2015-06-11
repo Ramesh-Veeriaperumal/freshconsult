@@ -12,6 +12,10 @@ class TicketsValidationHelper
       account.flexifields_with_ticket_fields_from_cache.collect(&:flexifield_alias)
     end
 
+    # def ticket_drop_down_field_choices_by_key(account)
+    #   account.custom_dropdown_fields_from_cache.collect {|y| [y.name, y.choices.flatten.uniq]}.to_h
+    # end
+
     # Validates email for each value in the array attribute.
     def email_validator
       proc do |record, attr, value_array|

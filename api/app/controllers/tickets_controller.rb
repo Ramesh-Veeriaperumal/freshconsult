@@ -5,11 +5,10 @@ class TicketsController < ApiApplicationController
   include Concerns::TicketConcern
   include Helpdesk::TagMethods
   include CloudFilesHelper
-  include Utils::Unhtml
 
   before_filter :assign_protected, only: [:create, :update]
   before_filter :verify_ticket_permission, only: [:update, :show]
-  before_filter :has_ticket_permission?, only: [:destroy, :assign]
+  before_filter :ticket_permission?, only: [:destroy, :assign]
   before_filter :restrict_params, only: [:assign, :restore]
 
   def create
@@ -19,8 +18,7 @@ class TicketsController < ApiApplicationController
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
-      set_custom_errors # Do we need this?
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
+      render_error(@item.errors)
     end
   end
 
@@ -29,18 +27,13 @@ class TicketsController < ApiApplicationController
     if @item.update_ticket_attributes(params[cname])
       update_tags(@tags, true, @item) if @tags # add tags if update is successful.
     else
-      set_custom_errors # Do we need this?
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
+      render_error(@item.errors)
     end
   end
 
   def destroy
-    if @item.update_attributes(deleted: true)
-      head 204
-    else # Do we need this?
-      set_custom_errors
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
-    end
+    @item.update_attribute(:deleted, true)
+    head 204
   end
 
   def assign
@@ -99,38 +92,24 @@ class TicketsController < ApiApplicationController
       @item.product ||= current_portal.product
     end
 
-    def assign_and_clean_params(params_hash)
-      # Assign original fields with api params
-      params_hash.each_pair do |api_field, attr_field|
-        params[cname][attr_field] = params[cname][api_field] if params[cname][api_field]
-      end
-      clean_params(params_hash.keys)
-    end
-
-    def clean_params(params_to_be_deleted)
-      params_to_be_deleted.each do |field|
-        params[cname].delete(field)
-      end
-    end
-
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
       render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.trashed
     end
 
-    def has_ticket_permission?
+    def ticket_permission?
       # Should allow to delete ticket based on agents ticket permission privileges.
-      unless current_user.can_view_all_tickets? || has_group_ticket_permission?(params[:id]) || has_assigned_ticket_permission?(params[:id])
+      unless current_user.can_view_all_tickets? || group_ticket_permission?(params[:id]) || assigned_ticket_permission?(params[:id])
         render_request_error :access_denied, 403
       end
     end
 
-    def has_group_ticket_permission?(ids)
+    def group_ticket_permission?(ids)
       # Check if current user has group ticket permission and if ticket also belongs to the same group.
       current_user.group_ticket_permission && scoper.group_tickets_permission(current_user, ids).present?
     end
 
-    def has_assigned_ticket_permission?(ids)
+    def assigned_ticket_permission?(ids)
       # Check if current user has restricted ticket permission and if ticket also assigned to the current user.
       current_user.assigned_ticket_permission && scoper.assigned_tickets_permission(current_user, ids).present?
     end

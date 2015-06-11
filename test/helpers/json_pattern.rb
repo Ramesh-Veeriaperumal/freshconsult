@@ -152,7 +152,7 @@ module JsonPattern
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email[:reply_cc],
       description:  expected_output[:description] || ticket.description,
       description_html: expected_output[:description_html] || ticket.description_html,
-      display_id: expected_output[:display_id] || ticket.display_id,
+      ticket_id: expected_output[:display_id] || ticket.display_id,
       fr_escalated:  expected_output[:fr_escalated] || ticket.fr_escalated,
       is_escalated:  expected_output[:is_escalated] || ticket.isescalated,
       spam:  expected_output[:spam] || ticket.spam,
@@ -166,7 +166,7 @@ module JsonPattern
       source: expected_output[:source] || ticket.source,
       status: expected_output[:status] || ticket.status,
       subject:  expected_output[:subject] || ticket.subject,
-      ticket_type:  expected_output[:ticket_type] || ticket.ticket_type,
+      type:  expected_output[:ticket_type] || ticket.ticket_type,
       to_email:  expected_output[:to_email] || ticket.to_email,
       to_emails: expected_output[:to_emails] || ticket.to_emails,
       product_id:  expected_output[:product_id] || ticket.product_id,
@@ -178,6 +178,23 @@ module JsonPattern
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       due_by: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       fr_due_by: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def note_pattern(expected_output = {}, note)
+    {
+      body: expected_output[:body] || note.body,
+      body_html: expected_output[:body_html] || note.body_html,
+      id: Fixnum,
+      incoming: expected_output[:incoming] || note.incoming,
+      private: expected_output[:private] || note.private,
+      user_id: expected_output[:user_id] || note.user_id,
+      support_email: note.support_email,
+      ticket_id: expected_output[:ticket_id] || note.notable_id,
+      notified_to: expected_output[:notify_emails] || note.to_emails,
+      attachments: Array,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 

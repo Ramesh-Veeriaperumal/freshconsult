@@ -82,6 +82,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API
     resource :"ticket", :only => [:show, :create, :index]
+    resource :"note", only: [:create]
 	end
 
   reply_ticket do
@@ -116,10 +117,12 @@ Authority::Authorization::PrivilegeList.build do
 
   edit_conversation do
     resource :"helpdesk/note", :only => [:destroy, :restore]
+    resource :note, only: [:destroy]
   end
 
   edit_note do
     resource :"helpdesk/note", :only => [:edit, :update], :owned_by => { :scoper => :notes }
+    resource :"note", only: [:update], :owned_by => { :scoper => :notes }
   end
 
   view_time_entries do

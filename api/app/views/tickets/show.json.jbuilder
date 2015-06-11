@@ -3,7 +3,10 @@ json.cache! @ticket do # ticket caching
   json.set! :fwd_emails, @ticket.cc_email[:fwd_emails]
   json.set! :reply_cc_emails, @ticket.cc_email[:reply_cc]
 
-  json.(@ticket, :description, :description_html, :display_id, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :requester_status_name, :to_emails, :product_id, :source, :spam, :status, :subject, :ticket_type, :to_email, :urgent)
+  json.(@ticket, :description, :description_html, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :requester_status_name, :to_emails, :product_id, :source, :spam, :status, :subject, :to_email, :urgent)
+
+  json.set! :ticket_id, @ticket.display_id
+  json.set! :type, @ticket.ticket_type
 
   json.set! :is_escalated, @ticket.isescalated
 

@@ -20,7 +20,7 @@ class TicketsControllerTest < ActionController::TestCase
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
     params_hash = { description: description, subject: subject, priority: 4, status: 3, type: 'Lead',
-                    responder_id: agent.id, source: 4, tags: ['update_tag1', 'update_tag2'],
+                    responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
                     due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s, group_id: Group.last.id }
     params_hash
   end
@@ -32,7 +32,7 @@ class TicketsControllerTest < ActionController::TestCase
     email = Faker::Internet.email
     tags = [Faker::Name.name, Faker::Name.name]
     params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 2, tags: tags,
+                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
                     due_by: 14.days.since.to_s, fr_due_by: 1.days.since.to_s, group_id: Group.first.id }
     params_hash
   end
@@ -71,7 +71,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('priority', 'is not included in the list', list: '1,2,3,4'),
                 bad_request_error_pattern('status', 'is not included in the list', list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,4,7,8,9')])
+                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,7,8,9')])
   end
 
   def test_create_presence_requester_id_invalid
@@ -146,7 +146,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
-    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['display_id']}", response.headers['Location']
+    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['ticket_id']}", response.headers['Location']
   end
 
   def test_create_with_existing_user
@@ -411,7 +411,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('priority', 'is not included in the list', list: '1,2,3,4'),
                 bad_request_error_pattern('status', 'is not included in the list', list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,4,7,8,9')])
+                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,7,8,9')])
   end
 
   def test_update_presence_requester_id_invalid
@@ -548,16 +548,6 @@ class TicketsControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: ticket.display_id)
     assert_response :no_content
     assert Helpdesk::Ticket.find_by_display_id(ticket.display_id).deleted == true
-  end
-
-  def test_destroy_invalid
-    t = create_ticket(ticket_params_hash)
-    requester_id = t.requester_id
-    t.update_column(:requester_id, nil)
-    delete :destroy, construct_params(id: t.display_id)
-    t.update_column(:requester_id, requester_id)
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
   end
 
   def test_destroy_invalid_id

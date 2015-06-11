@@ -12,7 +12,8 @@ Todo:
  - AMS for ticket repsonse
  - display_id and ticket states to be supported in bulk import / bulk create
  - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
- - Validate picklist values for custom drop down fields in ticket
+ - "Validate picklist values for custom drop down & dependent fields in ticket"
+ - tests for checking privileges for a action.
 
 Breaking changes in existing APIs:
  - day pass required

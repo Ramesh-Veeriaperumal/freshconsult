@@ -7,7 +7,7 @@ class TicketsDependencyTest < ActionDispatch::IntegrationTest
                          :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params,
                          :set_affiliate_cookie, :verify_authenticity_token, :load_object, :check_params,
                          :validate_params, :manipulate_params, :build_object, :load_objects, :load_association,
-                         :assign_protected, :verify_ticket_permission, :has_ticket_permission?]
+                         :assign_protected, :verify_ticket_permission, :ticket_permission?]
     actual_filters = TicketsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

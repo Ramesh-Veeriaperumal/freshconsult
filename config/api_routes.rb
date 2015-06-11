@@ -6,6 +6,7 @@ Helpkit::Application.routes.draw do
         put :restore
       end
     end
+    resources :notes, :except => [:new, :edit, :show, :index]
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
 
