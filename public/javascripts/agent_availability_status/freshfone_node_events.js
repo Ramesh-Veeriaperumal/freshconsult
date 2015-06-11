@@ -26,18 +26,20 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
     changeToBusyAgent: function (agent) {
       var agent=this.filter.getAgent(agent.id);
-          this.userListUpdate(agent,this.filter.Status.BUSY,this.filter.Preference.TRUE);
+          this.userListUpdate(agent,this.filter.Status.BUSY,agent.preference);
           if(agent.preference==this.filter.Preference.TRUE){
             if(this.filter.AvailableAgentList.get("id",agent.id)){
                       var item=this.filter.AvailableAgentList.get("id",agent.id);
                       item.values({presence_time_in_s: freshfone.call_in_progress });
             }
+          } 
+           if(agent.preference==this.filter.Preference.FALSE){
             if(this.filter.UnavailableAgentList.get("id",agent.id)){
                       var item=this.filter.UnavailableAgentList.get("id",agent.id);
                       item.values({presence_time_in_s: freshfone.call_in_progress });
             }
+          }  
          this.filter.updateNoOfAgents();
-          }
     },
     
     addAvailableAgentToList: function(agent){
