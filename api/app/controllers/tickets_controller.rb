@@ -19,7 +19,7 @@ class TicketsController < ApiApplicationController
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
-      set_custom_errors
+      set_custom_errors # Do we need this?
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
     end
   end
@@ -29,7 +29,7 @@ class TicketsController < ApiApplicationController
     if @item.update_ticket_attributes(params[cname])
       update_tags(@tags, true, @item) if @tags # add tags if update is successful.
     else
-      set_custom_errors
+      set_custom_errors # Do we need this?
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
     end
   end
@@ -37,7 +37,7 @@ class TicketsController < ApiApplicationController
   def destroy
     if @item.update_attributes(deleted: true)
       head 204
-    else
+    else # Do we need this?
       set_custom_errors
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
     end
@@ -55,11 +55,8 @@ class TicketsController < ApiApplicationController
   end
 
   def restore
-    if @ticket.update_attributes(deleted: false)
-      head 204
-    else
-      render_error(@item.errors)
-    end
+    @ticket.update_attribute(:deleted, false)
+    head 204
   end
 
   private

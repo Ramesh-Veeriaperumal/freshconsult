@@ -1,11 +1,13 @@
 json.array! @api_ticket_fields do |tf|
-  json.(tf, :id, :default, :description, :editable_in_portal, :label, :label_in_portal, :name, :position, :required, :required_for_closure, :required_in_portal, :visible_in_portal)
-  json.set! :portal_cc, tf.field_options.try(:[], 'portalcc') if tf.field_type == 'default_requester'
-  json.set! :portal_cc_to, tf.field_options.try(:[], 'portalcc_to') if tf.field_type == 'default_requester'
+  json.cache! tf do
+    json.(tf, :id, :default, :description, :editable_in_portal, :label, :label_in_portal, :name, :position, :required, :required_for_closure, :required_in_portal, :visible_in_portal)
+    json.set! :portal_cc, tf.field_options.try(:[], 'portalcc') if tf.field_type == 'default_requester'
+    json.set! :portal_cc_to, tf.field_options.try(:[], 'portalcc_to') if tf.field_type == 'default_requester'
 
-  json.set! :type, tf.field_type
+    json.set! :type, tf.field_type
 
-  json.partial! 'shared/utc_date_format', item: tf
+    json.partial! 'shared/utc_date_format', item: tf
+  end
 
   json.set! :choices, tf.api_choices(@account)
 
@@ -14,9 +16,11 @@ json.array! @api_ticket_fields do |tf|
 
     json.set! :nested_ticket_fields do
       json.array! tf.nested_ticket_fields do |tf_nested_field|
-        json.(tf_nested_field, :description, :id, :label, :label_in_portal, :level, :name, :ticket_field_id)
+        json.cache! tf_nested_field do
+          json.(tf_nested_field, :description, :id, :label, :label_in_portal, :level, :name, :ticket_field_id)
 
-        json.partial! 'shared/utc_date_format', item: tf_nested_field
+          json.partial! 'shared/utc_date_format', item: tf_nested_field
+        end
       end
     end
   end

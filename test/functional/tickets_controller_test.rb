@@ -675,15 +675,6 @@ class TicketsControllerTest < ActionController::TestCase
     match_json [bad_request_error_pattern('test', 'invalid_field')]
   end
 
-  def test_restore_invalid_record
-    ticket.update_column(:deleted, true)
-    ticket.update_column(:requester_id, nil)
-    put :restore, construct_params({ id: ticket.display_id }, {})
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
-    ticket.update_column(:requester_id, User.first.id)
-  end
-
   def test_assign_invalid_record
     ticket.update_column(:requester_id, nil)
     put :assign, construct_params(id: ticket.display_id)
