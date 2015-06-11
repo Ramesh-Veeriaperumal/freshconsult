@@ -140,7 +140,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     when "default_group"
       Hash[current_account.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }]
     when "default_product"
-      Hash[current_account.products.collect { |e| [CGI.escapeHTML(e.name), e.id] }]
+      Hash[current_account.products_from_cache.collect { |e| [CGI.escapeHTML(e.name), e.id] }]
     when "nested_field"
       picklist_values.collect { |c| c.value }
     else
