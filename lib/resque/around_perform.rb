@@ -1,5 +1,5 @@
 module Resque::AroundPerform
-
+include ResqueLogger
   def before_enqueue_job_watcher(*args)
     args[0][:enqueued_at] = Time.now if args[0].is_a?(Hash)
   end
@@ -23,7 +23,8 @@ end
       account = Account.find_by_id(account_id)
       if account
         account.make_current 
-        $statsd.increment "resque.#{@queue}.#{account.id}" 
+        #$statsd.increment "resque.#{@queue}.#{account.id}" 
+        logging_details(@queue,account.id)
       end
       TimeZone.set_time_zone
     end
