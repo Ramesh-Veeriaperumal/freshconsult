@@ -10,7 +10,7 @@ class RabbitmqWorker
     publish_message_to_xchg($rabbitmq_model_exchange[exchange_key], message, rounting_key)
     Rails.logger.info("Published RMQ message via Sidekiq")
     # Handling only the network related failures
-  rescue Bunny::ConnectionClosedError, Bunny::NetworkErrorWrapper => e
+  rescue Bunny::ConnectionClosedError, Bunny::NetworkErrorWrapper, NoMethodError => e
     NewRelic::Agent.notice_error(e, {
                                    :custom_params => {
                                      :description => "RabbitMq Sidekiq Publish Error",
