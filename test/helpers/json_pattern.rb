@@ -180,6 +180,55 @@ module JsonPattern
       fr_due_by: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
+
+  def ticket_field_pattern(tf, hash = {})
+    {
+      id: tf.id,
+      default: tf.default,
+      description: tf.description,
+      type: tf.field_type,
+      editable_in_portal: tf.editable_in_portal,
+      label: tf.label,
+      label_in_portal: tf.label_in_portal,
+      name: tf.name,
+      position: tf.position,
+      required: tf.required,
+      required_for_closure: tf.required_for_closure,
+      required_in_portal: tf.required_in_portal,
+      visible_in_portal: tf.visible_in_portal,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      choices: hash[:choices] || Array
+    }
+  end
+
+  def requester_ticket_field_pattern(tf)
+    ticket_field_pattern(tf).merge(
+      portal_cc: tf.field_options['portalcc'],
+      portal_cc_to: tf.field_options['portalcc_to']
+    )
+  end
+
+  def ticket_field_nested_pattern(tf, hash = {})
+    ticket_field_pattern(tf).merge(
+      nested_ticket_fields: Array,
+      nested_choices: hash['nested_choices'] || Array
+    )
+  end
+
+  def nested_ticket_fields_pattern(ntf)
+    {
+      description: ntf.description,
+      id: ntf.id,
+      label: ntf.label,
+      label_in_portal: ntf.label_in_portal,
+      level: ntf.level,
+      name: ntf.name,
+      ticket_field_id: ntf.ticket_field_id,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
 end
 
 include JsonPattern

@@ -7,6 +7,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
+
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit] do
         member do

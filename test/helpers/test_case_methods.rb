@@ -22,13 +22,21 @@ module TestCaseMethods
     ActionController::Metal.perform_caching = caching
   end
 
-  def stub_const(parent, const, value, &block)
+  def stub_const(parent, const, value, &_block)
     const = const.to_s
     old_value = parent.const_get(const)
     parent.const_set(const, value)
     yield
   ensure
     parent.const_set(const, old_value)
+  end
+
+  def as_controller(controller, &_block)
+    old_controller = self
+    @controller = controller
+    yield
+  ensure
+    @controller = old_controller
   end
 
   def assert_user_count(incremented = false)
@@ -50,6 +58,10 @@ module TestCaseMethods
     response.body.must_match_json_expression json
   end
 
+  def match_custom_json(response, json)
+    response.must_match_json_expression json
+  end
+
   # pass params that are to be wrapped by controller name for 'wrapped'
   # and the rest like 'id' for 'unwrapped'
   def construct_params(unwrapped, wrapped = false)
@@ -64,7 +76,7 @@ module TestCaseMethods
   end
 
   def other_user
-    User.select{|x| @agent.can_assume?(x)}.first || create_dummy_customer
+    User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
   end
 
   def user_without_monitorships

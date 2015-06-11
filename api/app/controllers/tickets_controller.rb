@@ -55,7 +55,7 @@ class TicketsController < ApiApplicationController
   end
 
   def restore
-    if @ticket.update_attribute(:deleted, false)
+    if @ticket.update_attributes(deleted: false)
       head 204
     else
       render_error(@item.errors)
