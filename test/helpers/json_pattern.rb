@@ -198,6 +198,23 @@ module JsonPattern
     }
   end
 
+  def reply_note_pattern(expected_output = {}, note)
+    {
+      body: expected_output[:body] || note.body,
+      body_html: expected_output[:body_html] || note.body_html,
+      id: Fixnum,
+      user_id: expected_output[:user_id] || note.user_id,
+      from_email: note.from_email,
+      cc_emails: expected_output[:cc_emails] || note.cc_emails,
+      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
+      ticket_id: expected_output[:ticket_id] || note.notable_id,
+      replied_to: note.to_emails,
+      attachments: Array,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
   def ticket_field_pattern(tf, hash = {})
     {
       id: tf.id,

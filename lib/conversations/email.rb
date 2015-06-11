@@ -40,12 +40,16 @@ module Conversations::Email
     end
   end
 
-  def check_for_kbase_email
+  def kbase_email_included?(request_params)
     kbase_email = current_account.kbase_email
-    if (params[:helpdesk_note].slice(*[:to_emails, :cc_emails, :bcc_emails]).values.flatten.include?(kbase_email))
+    if (request_params.slice(*[:to_emails, :cc_emails, :bcc_emails]).values.flatten.include?(kbase_email))
       @item.bcc_emails.delete(kbase_email)
       @item.cc_emails.delete(kbase_email)
       @publish_solution = privilege?(:publish_solution) 
     end
+  end
+
+  def check_for_kbase_email
+    kbase_email_included?(params[:helpdesk_note])
   end
 end

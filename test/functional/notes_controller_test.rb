@@ -19,6 +19,14 @@ class NotesControllerTest < ActionController::TestCase
     Helpdesk::Note.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
   end
 
+  def reply_note_params_hash
+    body = Faker::Lorem.paragraph
+    email = [Faker::Internet.email, Faker::Internet.email]
+    bcc_emails = [Faker::Internet.email, Faker::Internet.email]
+    params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails }
+    params_hash
+  end
+
   def create_note_params_hash
     body = Faker::Lorem.paragraph
     email = [Faker::Internet.email, Faker::Internet.email]
@@ -34,6 +42,14 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create
     params_hash = create_note_params_hash
+    post :create, construct_params({}, params_hash)
+    assert_response :created
+    match_json(note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(note_pattern({}, Helpdesk::Note.last))
+  end
+
+  def test_create_public_note
+    params_hash = create_note_params_hash.merge(private: false)
     post :create, construct_params({}, params_hash)
     assert_response :created
     match_json(note_pattern(params_hash, Helpdesk::Note.last))
@@ -154,6 +170,194 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
     params_hash = create_note_params_hash
     post :create, construct_params({}, params_hash)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+  end
+
+  def test_reply_without_kbase_email
+    params_hash = reply_note_params_hash
+    article_count = Solution::Article.count
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert article_count == Solution::Article.count
+  end
+
+  def test_reply_with_cc_kbase_mail
+    article_count = Solution::Article.count
+    params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert (article_count + 1) == Solution::Article.count
+    assert Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.description == Helpdesk::Note.last.body_html
+    refute Helpdesk::Note.last.cc_emails.include?(@account.kbase_email)
+  end
+
+  def test_reply_with_bcc_kbase_mail
+    article_count = Solution::Article.count
+    params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert (article_count + 1) == Solution::Article.count
+    assert Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.description == Helpdesk::Note.last.body_html
+    refute Helpdesk::Note.last.bcc_emails.include?(@account.kbase_email)
+  end
+
+  def test_reply_with_cc_kbase_mail_without_privilege
+    article_count = Solution::Article.count
+    User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
+    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
+    params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert article_count == Solution::Article.count
+  end
+
+  def test_reply_with_bcc_kbase_mail_without_privilege
+    article_count = Solution::Article.count
+    User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
+    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
+    params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert article_count == Solution::Article.count
+  end
+
+  def test_reply_with_cc_kbase_mail_short_subject
+    article_count = Solution::Article.count
+    t = create_ticket(subject: 'ui')
+    params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
+    post :reply, construct_params({ ticket_id: t.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert (article_count + 1) == Solution::Article.count
+    refute Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.title == "Ticket:#{t.display_id} subject is too short to be an article title"
+    assert Solution::Article.last.description == Helpdesk::Note.last.body_html
+    refute Helpdesk::Note.last.cc_emails.include?(@account.kbase_email)
+  end
+
+  def test_reply_with_user_id_valid
+    params_hash = reply_note_params_hash.merge(user_id: user.id)
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+  end
+
+  def test_reply_with_user_id_invalid_privilege
+    params_hash = reply_note_params_hash.merge(user_id: user.id)
+    controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+    controller.class.any_instance.unstub(:is_allowed_to_assume?)
+  end
+
+  def test_reply_numericality_invalid
+    params_hash = { user_id: 'x' }
+    post :reply, construct_params({ ticket_id: 'x' }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('user_id', 'is not a number'),
+                bad_request_error_pattern('ticket_id', 'is not a number')])
+  end
+
+  def test_reply_datatype_invalid
+    params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x' }
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cc_emails', 'is not a/an Array'),
+                bad_request_error_pattern('attachments', 'is not a/an Array'),
+                bad_request_error_pattern('bcc_emails', 'is not a/an Array')])
+  end
+
+  def test_reply_email_format_invalid
+    params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'] }
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cc_emails', 'is not a valid email'),
+                bad_request_error_pattern('bcc_emails', 'is not a valid email')])
+  end
+
+  def test_reply_invalid_ticket_id
+    params_hash = { body_html: 'test' }
+    post :reply, construct_params({ ticket_id: '6786878' }, params_hash)
+    assert_response :not_found
+  end
+
+  def test_reply_invalid_model
+    params_hash = { body_html: 'test', user_id: 789_789_789 }
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('user', "can't be blank")])
+  end
+
+  def test_reply_extra_params
+    params_hash = { body_html: 'test', junk: 'test' }
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('junk', 'invalid_field')])
+  end
+
+  def test_reply_returns_location_header
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    assert_response :created
+    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    result = parse_response(@response.body)
+    assert_equal true, response.headers.include?('Location')
+    assert_equal "http://#{@request.host}/api/v2/notes/#{result['id']}", response.headers['Location']
+  end
+
+  def test_reply_with_attachment
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params = reply_note_params_hash.merge('attachments' => [file, file2])
+    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
+      post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    end
+    assert_response :created
+    response_params = params.except(:attachments)
+    match_json(reply_note_pattern(params, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert Helpdesk::Note.last.attachments.count == 2
+  end
+
+  def test_reply_with_invalid_attachment_params_format
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = reply_note_params_hash.merge('attachments' => [1, 2])
+    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
+      post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    end
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+  end
+
+  def test_reply_without_privilege
+    User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(false).at_most_once
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end

@@ -47,6 +47,7 @@ module ApiConstants
   UPDATE_TICKET_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | TICKET_ARRAY_FIELDS.reject { |k| k['cc_emails'] }
   ASSIGN_TICKET_FIELDS = ['user_id']
   RESTORE_TICKET_FIELDS = []
+  REPLY_NOTE_FIELDS = ['body', 'body_html', 'user_id', { 'cc_emails' => [String] }, { 'bcc_emails' => [String] }, 'ticket_id', { 'attachments' => [ActionDispatch::Http::UploadedFile] }]
   CREATE_NOTE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', { 'notify_emails' => [String] }, 'ticket_id', { 'attachments' => [ActionDispatch::Http::UploadedFile] }]
   UPDATE_NOTE_FIELDS = ['body', 'body_html', { 'attachments' => [] }]
 
@@ -55,6 +56,11 @@ module ApiConstants
     'assign' => false,
     'restore' => true,
     'destroy' => false
+  }
+
+  NOTE_TYPE_FOR_ACTION = {
+    'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+    'reply'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
   }
 
   # *********************************-- ValidationConstants --*********************************************

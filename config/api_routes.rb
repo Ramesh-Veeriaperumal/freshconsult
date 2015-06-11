@@ -10,6 +10,8 @@ Helpkit::Application.routes.draw do
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
 
+    match 'tickets/:ticket_id/reply' => 'notes#reply', :via => :post
+
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit] do
         member do
