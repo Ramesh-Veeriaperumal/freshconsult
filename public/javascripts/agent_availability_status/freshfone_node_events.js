@@ -11,16 +11,16 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     changeToAvailableAgent: function (agent) {
       this.userListUpdate(agent,this.filter.Status.ONLINE,this.filter.Preference.TRUE);
        this.ifWasBusy(agent,this.filter.AvailableAgentList);      
-       this.removeAgent(agent,this.filter.UnavailableAgentList);
        this.addAvailableAgentToList(agent);
+       this.filter.updateNoOfAgents();  
        this.filter.sortLists();
     },
     
     changeToUnavailableAgent: function (agent) {  
       this.userListUpdate(agent,this.filter.Status.OFFLINE,this.filter.Preference.FALSE);
        this.ifWasBusy(agent,this.filter.UnavailableAgentList);
-       this.removeAgent(agent,this.filter.AvailableAgentList);
        this.addUnavailableAgentToList(agent);
+       this.filter.updateNoOfAgents();  
        this.filter.sortLists();
      },
     
@@ -41,20 +41,18 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     },
     
     addAvailableAgentToList: function(agent){
-      if(!this.filter.AvailableAgentList.get("id",agent.id)){
-            this.filter.addAgentByDevice(agent.id);
-            this.filter.availableListArray[agent.id]=agent.id; 
-            this.filter.updateNoOfAgents();
-            this.filter.unavailableListArray.splice(agent.id,1,'');
+      if(!this.filter.AvailableAgentList.get("id",agent.id)&&
+          this.filter.UnavailableAgentList.get("id",agent.id)){
+          this.filter.addAgentByDevice(agent.id);
+          this.removeAgent(agent,this.filter.UnavailableAgentList);
       }
     },
    
     addUnavailableAgentToList: function(agent){
-      if(!this.filter.UnavailableAgentList.get("id",agent.id)){
+      if(!this.filter.UnavailableAgentList.get("id",agent.id)&&
+          this.filter.AvailableAgentList.get("id",agent.id)){
           this.filter.UnavailableAgentList.add(this.filter.unavailableUserListItem(agent.id)); 
-          this.filter.unavailableListArray[agent.id]=agent.id; 
-          this.filter.updateNoOfAgents();
-          this.filter.availableListArray.splice(agent.id,1,'');
+          this.removeAgent(agent,this.filter.AvailableAgentList);
       }
     },
     
@@ -81,11 +79,9 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
         },this)); 
     },
     removeAgent:function(agent,list){
-      if(list.get("id",agent.id)){
           list.remove("id",agent.id);
-          }
     }
-   
+    
   };
   
   }(window.jQuery));
