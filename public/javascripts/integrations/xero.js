@@ -208,6 +208,12 @@ callbackForCreate: function(evt){
     }
 },
 fetch_records: function(xeroBundle){
+	if ( !xeroBundle.reqEmail ) {
+		var a_tag = "<p class='disc xero_ul_sidebar' id='xero_no_contact' style='color: rgb(111, 103, 103); padding-top: 10px; text-align: justify;'> Email address not available for this requester. A valid Email is required to fetch the invoices from xero. </p>"
+		jQuery('#xero .content').html(xerOWidget.XERO_FORM_INVOICES.evaluate({}));
+		jQuery('#xero_invoice_link').html(a_tag);
+	}
+	else{
 	new Ajax.Request("/integrations/xero/fetch", {
 			asynchronous: true,
 			method: "get",
@@ -219,7 +225,8 @@ fetch_records: function(xeroBundle){
 				jQuery('#xero .content').html(xerOWidget.XERO_FORM_INVOICES.evaluate({}));
 				jQuery('#xero_invoice_link').html(a_tag);
 			}
-});
+  });
+}	
 },
 load_invoices: function(arr){
 		jQuery("#xero_loading").remove();
@@ -454,13 +461,13 @@ render_lineitems: function(id,divID)
 			jQuery('#'+ divID + ' #construct_rules').constructRules();
 			jQuery('.add_new_list').hide();
 			jQuery('.rules_list_wrapper .input_text_2').attr('readonly', true);
-			if(jQuery("#xero_dialog_create-content .bind-remove-icon").length == 1){
-			  jQuery("#xero_dialog_create-content .bind-remove-icon").addClass('disabled');
+			if(jQuery("#xero_dialog_create .bind-remove-icon").length == 1){
+			  jQuery("#xero_dialog_create .bind-remove-icon").addClass('disabled');
 			}
 		}
-		 jQuery("#xero_dialog_create-content .bind-remove-icon").bind("click",function(e){
-			if(jQuery("#xero_dialog_create-content .bind-remove-icon").length == 1){
-				jQuery("#xero_dialog_create-content .bind-remove-icon").addClass('disabled');
+		 jQuery("#xero_dialog_create .bind-remove-icon").bind("click",function(e){
+			if(jQuery("#xero_dialog_create .bind-remove-icon").length == 1){
+				jQuery("#xero_dialog_create .bind-remove-icon").addClass('disabled');
 			}
 		});
 		
