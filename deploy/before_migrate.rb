@@ -30,4 +30,11 @@ run "ln -nfs #{shared_path}/config/chat.yml #{rel_path}/config/chat.yml"
 run "ln -nfs #{shared_path}/config/email.yml #{rel_path}/config/email.yml"
 run "ln -nfs #{shared_path}/config/pod_info.yml #{rel_path}/config/pod_info.yml"
 run "ln -nfs #{shared_path}/config/redis_routes.yml #{rel_path}/config/redis_routes.yml"
+run "ln -nfs #{shared_path}/config/integrations_config.yml #{rel_path}/config/integrations_config.yml"
+# Xero Cert files start
+run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{rel_path}/config/cert/integrations/xero/entrust-cert.pem"
+run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-private-nopass.pem #{rel_path}/config/cert/integrations/xero/entrust-private-nopass.pem"
+run "ln -nfs #{shared_path}/config/cert/integrations/xero/privatekey.pem #{rel_path}/config/cert/integrations/xero/privatekey.pem"
+run "ln -nfs #{shared_path}/config/cert/integrations/xero/publickey.cer #{rel_path}/config/cert/integrations/xero/publickey.cer"
+# Xero Cert files end
 # run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{rel_path}/public" if ::File.directory?("/data/helpkit/current") && ::File.directory?("/data/helpkit/current/public/assets")

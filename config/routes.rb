@@ -668,6 +668,19 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :xero do 
+      get :authorize 
+      get :fetch 
+      get :render_accounts
+      get :render_currency
+      get :fetch_create_contacts
+      get :get_invoice
+      delete :delete_invoice
+      get :authdone
+      get :install
+      post :create_invoices
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
