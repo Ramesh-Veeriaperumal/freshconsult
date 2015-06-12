@@ -5,23 +5,30 @@ module SolutionHelper
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		case page
-			when :category
-				_output << truncate(h(@category.name), :length => 120)
-			when :folder
-				_output << category_link(@folder, page)
-				_output << truncate(h(@folder.name), :length => 50)
-			when :article
-				_output << category_link(@folder, page)
-				_output << folder_link(@folder)
-			else
+		_output << h(t('solution.add_article')) if default_category?
+		unless default_category?
+			case page
+				when :category
+					_output << truncate(h(@category.name), :length => 120)
+				when :folder
+					_output << category_link(@folder, page)
+					_output << truncate(h(@folder.name), :length => 50)
+				when :article
+					_output << category_link(@article.folder, page)
+					_output << folder_link(@article.folder)
+				else
+			end
 		end
 		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join("")}</div>".html_safe
 	end
 
+	def default_category?
+		((@category || (@folder.respond_to?(:category) ? @folder.category : @article.folder.category)) || {})[:is_default]
+	end
+
 	def folder_link folder
 		options = { :title => folder.name } if folder.name.length > 40
-		pjax_link_to(truncate(folder.name, :length => 40), solution_folder_path(folder.category.id, folder.id), (options || {}))
+		pjax_link_to(truncate(folder.name, :length => 40), solution_folder_path(folder.id), (options || {}))
 	end
 
 	def category_link(folder, page)

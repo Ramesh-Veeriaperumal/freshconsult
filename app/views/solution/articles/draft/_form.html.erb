@@ -1,4 +1,4 @@
-<div class="article-edit hide">
+<div class="article-edit <%= 'hide' unless @article.new_record? %>">
   <%= form_for @article, 
               :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , 
               :html => {
@@ -12,7 +12,7 @@
         <%= f.text_field :title, 
                 :class => "text required article-title", 
                 :placeholder => t('solution.solution_title'),
-                :value => "" %>
+                :value => @article.title %>
     
       </div>
     </div>
@@ -22,7 +22,7 @@
     <div class="editor-body">
       <%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", 
             :class => "required", 
-            :value => '',
+            :value => @article.description,
             :data => {
               :"remove-cursor" => true,
               :"toolbar-external" => "#editortool"

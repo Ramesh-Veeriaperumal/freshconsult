@@ -55,6 +55,10 @@ window.App = window.App || {};
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
       });
+      $('body').on('click.articles', '.article-history .ellipsis', function () {
+        $('.created-history').toggleClass('hide');
+        $('.article-history .ellipsis').toggleClass('hide');
+      });
     },
 		
 		toggleViews: function () {

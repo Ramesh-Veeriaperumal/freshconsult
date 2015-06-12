@@ -76,5 +76,9 @@ module Solution::ArticlesHelper
         #{Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]}
       </span>).html_safe
   end
+
+  def created_at_ellipsis?
+    @article.published? && (@article.created_at != @article.modified_at) && @article.modified_at.present?
+  end
   
 end

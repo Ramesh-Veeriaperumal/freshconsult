@@ -19,6 +19,7 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
+  belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
   belongs_to :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => "parent_id"
   belongs_to_account
   
@@ -283,7 +284,7 @@ class Solution::Article < ActiveRecord::Base
 
   def publish!
     set_status(true)
-    # self.modified_by = User.current.id
+    self.modified_by = User.current.id
     save
   end
 

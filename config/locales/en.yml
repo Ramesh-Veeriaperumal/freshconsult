@@ -3325,7 +3325,7 @@ en:
       articles_changed_author: Author has been succesfully changed
     general:
       created_by: Created by
-      last_edited: Last Edited by
+      last_published: Last Published by
       article_prop: Article Properties
       feedback: Feedback
       analytics: Analytics

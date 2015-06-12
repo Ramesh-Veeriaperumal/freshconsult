@@ -1,11 +1,7 @@
-<div class="solution">
-	<!-- Solution header --> 
-	<div class="bread-crumb">
-		<%= breadcrumb %>
-	</div>
-</div>
+<% content_for :layoutType do %>community solutions<% end %>
+<%= render :partial => '/solution/shared/sticky', :locals => { :page => :article} %>
 
-	<%= render :partial => 'solution/articles/draft/article_form' %>
+<%= render :partial => 'solution/articles/draft/article_form' %>
 		
 <% content_for :helpcard do %>
 	<h3 class="lead"> <%=t('solution.title').html_safe%> </h3>

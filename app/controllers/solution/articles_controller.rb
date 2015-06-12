@@ -18,6 +18,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :cleanup, :only => [:move_to]
   before_filter :bulk_update_folder, :only => [:move_to, :move_back]
+  before_filter :set_current_folder, :only => [:create]
   
 
   def index
@@ -60,8 +61,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    current_folder = Solution::Folder.find(params[:solution_article][:folder_id]) 
-    @article = current_folder.articles.new(params[nscname]) 
+    @article = @current_folder.articles.new(params[nscname]) 
     set_item_user 
 
     build_attachments
@@ -381,6 +381,16 @@ class Solution::ArticlesController < ApplicationController
                                       :parent_id => @folder_id
                                     })
                   )).html_safe
+    end
+
+    def set_current_folder
+      begin
+        folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
+        @current_folder = Solution::Folder.find(folder_id)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        @current_folder = current_account.solution_folders.first
+      end
     end
 
 end

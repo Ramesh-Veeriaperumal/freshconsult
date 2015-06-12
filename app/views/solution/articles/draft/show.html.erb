@@ -6,26 +6,14 @@
 
 <div class="solution">
 
-	<!-- Solution header --> 
-	<div class="bread-crumb">
-		<%= breadcrumb %>
-		<span class="pull-right">
-			<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
-		</span>
-	</div>
-
-	<div class="solution-header draft-notif" rel="sticky">
-			<% if @article.draft or !@article.published? %>
-			<div class="sub-content article-view-edit <%= 'error' if @article.draft.present? && @article.draft.locked? %>">
-				<p class="pull-left"><%= draft_info_text %> &nbsp;&nbsp; <%= discard_link %> </p>
-				<p class="pull-right">
-					<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") %>
-					<%#= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'draft-btn') %>
-				</p>
-			</div>
-			<% end %>
-			<div class="sub-content autosave-notif hide"></div>
-	</div>
+	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :sticky_title do %>
+		<%= render :partial => 'notification_bar' %>
+	<% end %>
+	<% content_for :sticky_right do %>
+	  <%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
+	<% end %>
+	<%= render :partial => '/solution/shared/sticky', :locals => { :page => :article} %>
 
 	<!-- Solution page content -->
 	<div class="solution-content">

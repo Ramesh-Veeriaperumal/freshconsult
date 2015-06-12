@@ -1,20 +1,21 @@
 <div class="solution-details">
-	<div class="draft-history sidebar-section">
-		<div class="created-history">		
+	<div class="article-history sidebar-section">
+		
+		<div class="created-history <%= 'hide' if created_at_ellipsis? %>">		
 			<p><%= t('solution.general.created_by') %></p>
 			<p><%= @article.user.name %></p>
 			<p><%= formated_date(@article.created_at) %></p>
 		</div>
-		<div class="edited-history">
-			<% if @article.draft.present? || !@article.published? %>
-				<p><%= t('solution.general.last_edited') %></p>
-				<p><%= @current_item.user.name %></p>
-				<p><%= formated_date(@current_item.modified_at) %></p>
-			<% end %>	
-		</div>
-		<div class="tags">
-			<span><%= t(@article.status_name) %></span>
-		</div>
+
+		<% if created_at_ellipsis?  %>	
+			<div class="ellipsis">...</div>
+
+			<div class="edited-history">
+					<p><%= t('solution.general.last_published') %></p>
+					<p><%= @article.modified_by.present? ? @article.recent_author.name : @article.user.name %></p>
+					<p><%= formated_date(@article.modified_at) %></p>
+			</div>
+		<% end %>
 	</div>
 
 	<div class="sidebar-section" id="sidebar-prop">

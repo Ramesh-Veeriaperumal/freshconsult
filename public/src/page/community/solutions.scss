@@ -28,6 +28,13 @@
       }
     }
   }
+  #article-form {
+    #editortool {
+      .redactor_toolbar {
+        background: none;
+      }
+    }
+  }
 }
 .solution-header{
   /*padding-top: 10px;*/
@@ -83,6 +90,7 @@
     line-height: 35px;
     padding: 0 20px;
     box-shadow: 0 5px 5px -5px #333;
+    border-top: 1px solid #ccc;
     p{
       margin: 0;
     }
@@ -160,15 +168,29 @@
   padding: 20px;
   .sidebar-section{
     padding: 10px 0;
-    border-bottom: 2px solid #0e0e0e;
+    border-bottom: 2px solid #ccc;
+    &.article-history {
+      .ellipsis {
+        padding: 0px 6px 5px 11px;
+        background-color: #ddd;
+        border-radius: 3px;
+        width: 15px;
+        line-height: 10px;
+        margin-bottom: 15px;
+        cursor: pointer;
+      }
+      .created-history {
+        margin-bottom: 15px;
+      }
+    }
     p{
       margin: 0;
     }
     .title-wrapper{
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       .leads{
-        font-size: 16px;
-        font-weight: 500;
+        font-size: 19px;
+        font-weight: 300;
       }
       .edit{
         font-size: 13px;
@@ -177,10 +199,12 @@
     }
     .section{
       padding: 5px 0;
+      margin-bottom: 5px;
       .leads{
         font-weight: 500;
         padding-bottom: 5px;
         color: #333;
+        display: inline-block;
       }
     }
 
@@ -323,18 +347,22 @@
 
 .article-edit{
   .editor-body{
-    margin: 0px -15px;
+    /*margin: 0px -15px;*/
     width:95%;
     float: left;
     min-height: 400px;
     .redactor_box{
       border: 0;
-      padding-left: 11px;
       .redactor_editor {
         min-height: 380px;
+        padding: 15px 5px !important;
       }
       .redactor_toolbar {
         background: none;
+        border: none;
+        .redactor_separator {
+          display: none;
+        }
       }
     }
   }
@@ -344,7 +372,6 @@
     font-size: 20px;
     color: #333;
     font-weight: 300;
-    margin-left: -4px;
     height: 25px;
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
@@ -545,6 +572,12 @@
     margin: 0px -20px 10px;
     padding: 0px 20px;
     
+    .draft_info_data {
+      margin-top: 15px;
+      font-size: 15px;
+      color: #888;
+    }
+
     .draft-list-item {
         
       padding: 10px 0px;
