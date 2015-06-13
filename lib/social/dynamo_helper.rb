@@ -139,8 +139,12 @@ module Social::DynamoHelper
       }
       options[:attribute_updates][key] = update_hash
     end
-
-    $social_dynamoDb.update_item(options)
+    
+    begin
+      $social_dynamoDb.update_item(options)
+    rescue AWS::DynamoDB::Errors::ValidationException => e
+      notify_social_dev("DynamoDB Validation Exception In Update" , item)
+    end
   end
   
   # Eventually consistent read

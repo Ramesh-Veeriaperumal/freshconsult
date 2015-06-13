@@ -279,11 +279,6 @@ Helpkit::Application.routes.draw do
       put :update_contact
       put :update_description_and_tags
     end
-    resources :contact_merge do
-      collection do
-        get :search
-      end
-    end
   end
 
   # segment/group controller will handle all different types in request params # content based routing
@@ -296,7 +291,6 @@ Helpkit::Application.routes.draw do
       get :search
       post :new
       post :confirm
-      post :complete
       post :merge
     end
   end
@@ -672,6 +666,19 @@ Helpkit::Application.routes.draw do
         post :widget_data
         get :settings
       end
+    end
+
+    namespace :xero do 
+      get :authorize 
+      get :fetch 
+      get :render_accounts
+      get :render_currency
+      get :fetch_create_contacts
+      get :get_invoice
+      delete :delete_invoice
+      get :authdone
+      get :install
+      post :create_invoices
     end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
@@ -1906,6 +1913,8 @@ Helpkit::Application.routes.draw do
         get :get_portal
         get :ticket_properties
         get :load_reply_emails
+        get :get_filtered_tickets
+        get :mobile_filter_count
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end

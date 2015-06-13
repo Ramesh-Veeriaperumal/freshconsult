@@ -59,6 +59,10 @@ class Freshfone::Credit < ActiveRecord::Base
 		update_credit(-rate)
 	end
 
+  def add_credit(rate)
+    update_credit(rate)
+  end
+
 	def renew_number(rate, freshfone_number_id)
 		if deduce(rate)
 			account.freshfone_other_charges.create(

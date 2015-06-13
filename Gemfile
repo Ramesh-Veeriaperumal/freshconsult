@@ -6,6 +6,7 @@ gem "rake", "~> 10.4.0"
 gem "rack", "~> 1.4.5"
 gem "rails","3.2.18"
 
+gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
 
 gem "json", "~> 1.8"
@@ -81,6 +82,7 @@ gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branc
 gem "ruby-saml", "0.8.1"
 
 
+gem 'xero_gateway', '~> 2.1.0'
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"
 

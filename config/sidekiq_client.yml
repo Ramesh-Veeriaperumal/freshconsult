@@ -4,6 +4,7 @@ defaults: &defaults
   :concurrency: 5
   :logfile: ./log/sidekiq.log
   :queues:
+    - [merge_contacts]
     - [sla]
     - [premium_supervisor]
     - [supervisor]
@@ -18,6 +19,7 @@ defaults: &defaults
     - [trial_facebook]
     - [trial_twitter]
     - [custom_twitter]
+    - [rabbitmq_publish]
     - [default]
 
 development:

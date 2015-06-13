@@ -113,8 +113,19 @@ module CustomFields
         end
 
         def construct_disabled
-          anchor = @field_value
-          anchor = (content_tag :a, @field_value, :href => @field_value, :target => '_blank') if @dom_type == :url
+          anchor ||= begin
+            case @dom_type
+              when :date
+                format_date
+                @field_value
+              when :url
+                content_tag :a, @field_value, :href => @field_value, :target => '_blank'
+              when :dropdown_blank
+                CGI.unescapeHTML(@field_value.to_s)
+              else 
+                @field_value
+            end
+          end
           content_tag :div, anchor, :class => "disabled-field"
         end
 

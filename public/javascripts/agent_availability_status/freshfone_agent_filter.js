@@ -69,21 +69,10 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                presence_time_in_s : this.presence_in_words,
               }
     },
-    
-    makeAgentArray: function(id){
-      this.agent=this.getAgent(id);
-      if(this.agent.presence==this.Status.ONLINE||this.agent.presence==this.Status.BUSY){
-          this.availableListArray[id]=id;
-      }
-      if(this.agent.presence==this.Status.OFFLINE){
-          this.unavailableListArray[id]=id;
-      }
-    },
     populateAgents: function(){  
          this.AvailableAgentList.clear();
          this.UnavailableAgentList.clear();
          $.each(freshfone.agents,jQuery.proxy(function(index,value)  {
-            this.makeAgentArray(value["id"]);
             this.addAgentByPresence(value["id"]);
          },this)); 
          this.setTickIcon(this.sort_order_list[0]);
@@ -111,7 +100,6 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                     method: 'GET',
                     success: function (data) {
                           data.id.each(function(g_id){
-                            self.makeAgentArray(g_id);
                             self.addAgentByPresence(g_id);
                           });    
                      self.setTickIcon(self.sort_order_list[0]);

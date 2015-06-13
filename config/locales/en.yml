@@ -2942,6 +2942,7 @@ en:
     edit_contact: Edit contact
     edit: Edit Contact
     merged_into: Contact merged to
+    merged_info: "Contact merged to : "
     save_changes: Save changes
     save: Save
     export_start: Your Contact data will be sent to your email shortly!
@@ -3039,6 +3040,9 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
+    assigned_agent:
+      text: Assigned Agent
+      description: Ticket's agent
     sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
     human_name: SLA Policy
     sla_targets: SLA Targets
@@ -3264,7 +3268,7 @@ en:
       upvoted: "You have upvoted"
       upvote: "Upvote"
       like:
-        one: "like this"
+        one: "likes this"
         other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
@@ -4693,6 +4697,7 @@ en:
     closed_at: closed
     from: From
     to: To
+    check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
     no_tickets_mail:
@@ -5219,7 +5224,7 @@ en:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
     quickbooks:
-      label: "QuickBooks"
+      label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
     zohocrm:
       label: "Zoho CRM"
@@ -5458,6 +5463,9 @@ en:
       desc: "Attach and Share your data/files from Box."
       helptext: "<h4>Box integration help</h4><br/><p>The Box Integration lets agents and users browse for files from their Box folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p> Your Box Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
+    xero:
+      label: "Xero"
+      desc: "You can create new invoice for the recorded time against the ticket and view the most recent invoices with links to modify them in Xero"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
@@ -5903,6 +5911,7 @@ en:
   merge_contacts:
     header: "Important:<br />You are about to merge %{number} contacts with %{name}."
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into %{name}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into %{name}"
+    new_info: "This cannot be undone.<br />Merging will move all the tickets, notes and contact information from the secondary contacts into %{name}. Also, the secondary contacts will been deleted and cannot be restored. <br /><br />Click <b>Confirm and merge</b> to continue"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
     email_activated: "email id already activated"
@@ -5921,6 +5930,7 @@ en:
     merge_contact: "Merge Contact"
     verify: "Send Verification"
     remove: "Remove"
+    validation: "Cannot add more than "
     success: "Contacts have been successfully merged"
     verify_mail: "Verification email sent"
     activate_email: "Activation email sent"
@@ -5933,6 +5943,9 @@ en:
     email_remove: "Are you sure you want to remove this Email?"
     default_email: "Default Email"
     additional_email: "Additional Email Verification"
+    primary_contact: "Primary contact"
+    mark_as_primary: "Mark as primary"
+    merge_progress: "Please wait while the contacts are being merged. This might take a few minutes."
   portalcss:
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?

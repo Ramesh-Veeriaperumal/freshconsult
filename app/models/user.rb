@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
-                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
+                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -216,8 +216,16 @@ class User < ActiveRecord::Base
     string_uc04.to_i
   end
 
+  def parent_id?
+    !parent_id.zero?
+  end
+
   def parent_id=(p_id)
     self.string_uc04 = p_id.to_s
+  end
+
+  def emails
+    self.user_emails.map(&:email)
   end
 
   def tag_names= updated_tag_names
@@ -312,7 +320,7 @@ class User < ActiveRecord::Base
 
   scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, users.account_id, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
