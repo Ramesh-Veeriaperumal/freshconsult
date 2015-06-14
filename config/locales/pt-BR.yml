@@ -2897,7 +2897,7 @@ pt-BR:
   ticket_past_due_by: "Venceu %{time} atrás"
   ticket_past_due_by_live: "Venceu <abbr data-livestamp='%{timestamp}'>%{time} atrás</abbr>"
   ticket_future_due_by: "Vence em %{time}"
-  ticket_future_due_by_live: "Vence<abbr data-livestamp='%{timestamp}'> em %{time}</abbr>"
+  ticket_future_due_by_live: "Vence <abbr data-livestamp='%{timestamp}'> em %{time}</abbr>"
   ticket_pending_since_time: "Pendente desde"
   ticket_resolved_at_time: "Solucionado em"
   ticket_closed_at_time: "Fechado em"
