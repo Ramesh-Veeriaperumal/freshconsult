@@ -25,12 +25,12 @@
 		<% if !@solution_drafts_feature  || !category[:is_default] %>
 			<div class="<%= cycle('odd', 'even') %>">
 				<h4 class="cat-title-border">
-						<%= pjax_link_to  "#{h(category[:name])}".html_safe,solution_category_path(:id =>category[:id]) %>				
+					<i class="ficon-categories cat-title-icon"></i>
+					<%= pjax_link_to  "#{h(category[:name])}".html_safe, solution_category_path(:id =>category[:id]) %>				
 				</h4>  
 				<ul>			
 		  		<% category[:folders].first(5).each do |folder| %>
 	  				<li>
-	  					<i id="ficon-folder" class="ficon-folder"></i>
 	  					<%= pjax_link_to h(folder[:name]), 
 	  							solution_category_folder_path(:category_id => category[:id], :id => folder[:id])  %>
 	  				  <span class="muted">
@@ -39,7 +39,7 @@
 	  			  </li>
 				 <% end %> 
 				<% if category[:folders].size > 5 %>
-						<li><%= pjax_link_to t('solution.folders.view_all').html_safe,  solution_category_path(:id =>category[:id]), 
+						<li class="no-bullet"><%= pjax_link_to t('solution.folders.view_all').html_safe,  solution_category_path(:id =>category[:id]), 
 										:class => "more-cat"  %>
 					  </li>
 				<% end %>

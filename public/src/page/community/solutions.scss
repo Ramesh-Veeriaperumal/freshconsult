@@ -656,3 +656,35 @@
     }
   }
 }
+
+.solution-list {
+  .odd, .even {
+    .cat-title-border {
+      font-size: 14px;
+      border-top: 2px solid #DDDCDC;
+      padding-top: 6px;
+      margin-top: 8px;
+      font-weight: 500;
+      .cat-title-icon {
+        margin-right: 6px;
+      }
+    }
+    ul {
+      margin-left: 5px;
+      li {
+        list-style-type: disc;
+        list-style-position: inside;
+        color: #ddd;
+        a {
+          margin-left: -21px;
+        }
+      }
+      li {
+        &.no-bullet{
+          list-style-type: none;
+          padding-left: 15px;
+        }
+      }
+    } 
+  }
+}
