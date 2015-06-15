@@ -73,6 +73,9 @@ RSpec.describe Freshfone::CallHistoryController do
   end
 
   it 'should get recent calls' do
+  	@account.freshfone_calls.destroy_all
+  	create_freshfone_call
+  	build_freshfone_caller
     @request.env["HTTP_ACCEPT"] = "application/javascript"
     get :recent_calls
     assigns[:calls].should_not be_empty
@@ -169,6 +172,8 @@ RSpec.describe Freshfone::CallHistoryController do
     end
   end
    it 'should get recent calls if there is a call from strange number too' do
+   	@account.freshfone_calls.destroy_all
+   	create_freshfone_call
     strange_number = "+17378742833"
     build_freshfone_caller(strange_number)
     @request.env["HTTP_ACCEPT"] = "application/javascript"

@@ -177,10 +177,10 @@ module FreshfoneSpecHelper
     twiml.deep_symbolize_keys if twiml.present?
   end
 
-  def create_ff_address
+  def create_ff_address(post_code = Faker::Address.postcode)
     name = Faker::Name.name
     address_params = { :friendly_name => name, :business_name => name, :address => Faker::Address.street_address,
-        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => Faker::Address.postcode,
+        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => post_code,
         :country => 'DE'
     }
     @account.freshfone_account.freshfone_addresses.new(address_params).save
