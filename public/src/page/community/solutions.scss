@@ -376,7 +376,7 @@
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
     border-radius: 0;
-    padding-left: 0px;
+    padding-left: 6px;
     width: 100%;
 
     &:focus{
@@ -418,17 +418,13 @@
 
     .avatar-wrap {
       float: left;
-      .preview_pic {
-        img {
-              border-radius: 100%;
-              width: 40px;
-              height: 40px;
-        }
-      }
     }
     .user-name {
       float: left;
-      margin-top: 14px;
+      margin-top: 5px;
+      .anonymous {
+        margin-left: -8px;
+      }
     }
   }
 }
@@ -651,4 +647,12 @@
 .community-search::-ms-input-placeholder {
   font-weight: 300;
 	font-size: 16px;
+}
+
+.solution-content {
+  .article-edit {
+    .article-title {
+      padding-left: 0px;
+    }
+  }
 }

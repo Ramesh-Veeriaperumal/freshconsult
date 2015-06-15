@@ -51,11 +51,14 @@
 			<p class="leads span2"><%= t('solution.general.analytics') %></p>
 		</div>
 		<div class="section">
-			<h5 class="leads"><%= t('solution.articles.views') %></h5>
-			<p>
-				<%= font_icon :"file-visible" %> 
-				<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
-			</p>
+			<% if @article.hits > 0 %>
+				<h5 class="leads"><%= t('solution.articles.views') %></h5>
+				<p>
+					<%= font_icon :"file-visible" %> 
+					<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
+				</p>
+			<% end %>
+
 			<br/>
 			<h5 class="leads"><%= t('solution.articles.votes') %></h5>
 			<p id="article_voting"> 

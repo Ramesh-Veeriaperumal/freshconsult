@@ -224,7 +224,7 @@ class Solution::FoldersController < ApplicationController
     def change_visibility
       visibility = params[:visibility].to_i
       customer_ids, add_to_existing = [], false
-      if params[:visibility].to_i == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+      if visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
         customer_ids = valid_customers(params[:companies])
         if customer_ids.blank?
           flash[:notice] = t('solution.folders.visibility.no_companies')

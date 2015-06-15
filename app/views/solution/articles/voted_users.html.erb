@@ -4,10 +4,10 @@
 <% if anonymous_votes > 0 %>
 	<div class="voted-user">
 		<div class="avatar-wrap">
-			<%= user_avatar(nil) %>
+			<%= user_avatar(nil, :small) %>
 		</div>
 		<div class="user-name">
-			<%= link_to "Anonymous (#{anonymous_votes})", "#" %>
+			<%= link_to "Anonymous (#{anonymous_votes})", "#", :class => 'anonymous' %>
 		</div>
 	</div>
 <% end %>
@@ -15,7 +15,7 @@
 <% @article.votes.where(:vote => vote_type).each do |vote| %>
 	<div class="voted-user">
 		<div class="avatar-wrap">
-			<%= user_avatar(vote.user) %>
+			<%= user_avatar(vote.user, :small) %>
 		</div>
 		<div class="user-name">
 			<%= link_to vote.user.name, user_path(vote.user), :target => "_blank" %>
