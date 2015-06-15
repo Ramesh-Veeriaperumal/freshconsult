@@ -76,8 +76,10 @@ module Portal::Helpers::DiscussionsVotingHelper
   end
 
   def vote_count_suffix object
+    votes_to_show = object.user_votes
+    votes_to_show += 1 if object.voted_by_user?(User.current)
     type_symbol = object.is_a?(Topic) ? object.forum.type_symbol: "like"
-    " " + I18n.t("portal.#{object.class.to_s.downcase}_vote.#{type_symbol}", :count => object.user_votes)
+    " " + I18n.t("portal.#{object.class.to_s.downcase}_vote.#{type_symbol}", :count => votes_to_show)
   end
 
   def vote_count_link object

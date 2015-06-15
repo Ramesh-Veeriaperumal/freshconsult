@@ -1,6 +1,6 @@
 (function($) {
 
-var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
+var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
 save_draft = function(content) {
@@ -260,6 +260,10 @@ $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() 
 	if(hasMoment && moment){
 	  $(this).attr('title', moment(hasMoment).fromNow());
 	}
+});
+
+$('body').on('mouseover.ticket_details', ".conversation", function() {
+	$(this).find('.note-label').remove();
 });
 
 // Attach file button click action
@@ -781,7 +785,7 @@ var scrollToError = function(){
 			//Remove To Address
 			_form.find('.forward_email li.choice').remove();
 		}
-
+		$('#response_added_alert').remove();
 	});
 
 	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
@@ -837,27 +841,35 @@ var scrollToError = function(){
 				if(propertiesForm.valid()) {
 
 					if($.browser.msie) {
-						handleIEReply(_form);
-						submitTicketProperties();
-						return true;
-					}
-					ev.preventDefault();
-					blockConversationForm(_form);
-					if(propertiesForm.data('updated')) {
-		      			submitNewConversation(_form, ev, submitTicketProperties);
-		      		}	
+						if(eligibleForReply(_form)){
+							handleIEReply(_form);
+							submitTicketProperties();
+							return true;
+						}
+						changeStatusTo(currentStatus);
+						statusChangeField.data('val', '');
+						return false;
+					} else {
+						ev.preventDefault();
+						blockConversationForm(_form);
+						submitNewConversation(_form, ev, submitTicketProperties);
+		      }
 				} else {
 					ev.preventDefault();
 					scrollToError();
 				}
 			} else {
 				if($.browser.msie) {
-					handleIEReply(_form);
-					return true;
+					if(eligibleForReply(_form)){
+						handleIEReply(_form);
+						return true;
+					}
+					return false;
+				} else {
+					ev.preventDefault();
+					blockConversationForm(_form);
+					submitNewConversation(_form, ev, afterTktPropertiesUpdate);
 				}
-				ev.preventDefault();
-				blockConversationForm(_form);
-				submitNewConversation(_form, ev, afterTktPropertiesUpdate);
 			}
 			
 		} else {
@@ -883,6 +895,29 @@ var scrollToError = function(){
 		if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
 			stopDraftSaving();
 		}
+	}
+
+	var eligibleForReply = function(_form) {
+		var replyStatus;
+		$('#response_added_alert').remove();
+		if(_form.data('cntId') == 'cnt-fwd' || jQuery(_form).find('#helpdesk_note_private[type=checkbox]').is(':checked')){
+			return true;
+		}
+		$.ajax({
+			type: 'GET',
+			url: "/helpdesk/tickets/"+TICKET_DETAILS_DATA['displayId']+"/conversations/traffic_cop",
+			dataType: 'script',
+			async: false,
+			data: { last_note_id: $('.last_note_id').val(), since_id: TICKET_DETAILS_DATA['last_note_id'] },
+			success: function(data) {
+				if($('#response_added_alert').length > 0){
+					replyStatus = false;
+				} else {
+					replyStatus = true;
+				}
+			}
+		});
+		return replyStatus;
 	}
 
 	var blockConversationForm = function(_form) {
@@ -926,8 +961,24 @@ var scrollToError = function(){
 
 			},
 			success: function(response, statusCode, xhr) {
-				if($.trim(response).length){
+				var statusChangeField = $('#send_and_set');
+				
+				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
+					if (_form.data('panel')) {
+						$('#' + _form.data('panel')).unblock();
+					}
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						triggerDraftSaving();
+					}
 
+					_form.trigger('focusin.keyboard_shortcuts');
+
+					if(statusChangeField.data('val') != undefined && statusChangeField.data('val') != ""){
+						changeStatusTo(currentStatus);
+						statusChangeField.data('val','');
+						$('.ticket_details #helpdesk_ticket_status').data('updated',false);
+					}
+				}else if($.trim(response).length){
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
 						$('#' + _form.data('panel')).hide();
@@ -986,7 +1037,6 @@ var scrollToError = function(){
 						triggerDraftSaving();
 					}
 				}
-
 			},
 			error: function(response) {
 				
@@ -1203,7 +1253,7 @@ var scrollToError = function(){
     $('body').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      
+      currentStatus = $('#helpdesk_ticket_status').val();
       jQuery('body').click();
 
       var new_status	= $(this).data('statusVal'),
@@ -1228,7 +1278,6 @@ var scrollToError = function(){
 	});
 
 	$('body').on('click', '.reminder_check', function () {
-		console.log('asda');
 		$(this).parent().addClass('disabled');
 	});
 

@@ -118,6 +118,7 @@ namespace :scheduler do
     puts "::::Queue Name::: #{queue_name}"
     if empty_queue?(queue_name)
       Sharding.run_on_all_slaves do
+        Account.reset_current_account
         Social::FacebookPage.current_pod.send(FACEBOOK_TASKS[task_name][:account_method]).each do |fb_page|
           Account.reset_current_account
           account = fb_page.account
@@ -137,6 +138,7 @@ namespace :scheduler do
     puts "::::Queue Name::: #{queue_name}"
     if empty_queue?(queue_name)
       Sharding.run_on_all_slaves do
+        Account.reset_current_account
         Social::TwitterHandle.current_pod.send(TWITTER_TASKS[task_name][:account_method]).each do |twitter_handle|
           Account.reset_current_account
           account = twitter_handle.account

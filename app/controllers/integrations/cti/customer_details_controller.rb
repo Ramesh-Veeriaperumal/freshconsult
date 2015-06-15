@@ -2,9 +2,6 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:verify_session]
   SECRET_KEY = "3f1fd135e84c2a13c212c11ff2f4b205725faf706345716f4b6996f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f"
   
-  include ApplicationHelper
-  include ActionView::Helpers::TagHelper
-  include ActionView::Helpers::AssetTagHelper
   
   def fetch
     mobile_number = params[:user][:mobile]
@@ -12,9 +9,9 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     user = current_account.users.with_contact_number(mobile_number).first
     href = ""
     if user.blank?
-      user_hash = {:mobile => mobile_number,:avatar => user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
+      user_hash = {:mobile => mobile_number,:avatar => view_context.user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
     else
-      avatar = user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })
+      avatar = view_context.user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })
       user_tickets = current_account.tickets.permissible(user).requester_active(user).newest(2)
       tickets_json = user_tickets.to_json
       href = "/contacts/" + (user.id).to_s

@@ -15,6 +15,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta"
 
-	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "account_id"]
+	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "account_id", "created_at"]
 
 end

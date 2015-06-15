@@ -2379,7 +2379,7 @@ sv-SE:
     edit: "Redigera scenario"
     shared: Delat
     personal: Personligt
-    no_scenario: "Inga personliga scenarier <a href={{link}}>Skapa nytt</a>"
+    no_scenario: "Inga personliga scenarier <a href=%{link}>Skapa nytt</a>"
     visibility:
       groups: "Agenter i gruppen"
       all_agents: "Alla agenter"
@@ -5680,7 +5680,7 @@ sv-SE:
     delete_multiple: "Det valda kapslade svaret har tagits bort."
     no_delete: "Det går inte att ta bort standardmappen."
     create_new: "Skapa ny"
-    no_response_admin: "Inga svar i den här mappen <a href={{link}} id='new_resp'>Skapa nytt</a>"
+    no_response_admin: "Inga svar i den här mappen <a href=%{link} id='new_resp'>Skapa nytt</a>"
     select_folder: "Välj mapp"
     select_group: "Välj grupp"
     visibility_change: "Du kommer att flytta {{num_responses}} standardsvar från din <b> personliga mapp</b>. Innan du flyttar dem bör du ändra tillgängligheten för standardsvaret."

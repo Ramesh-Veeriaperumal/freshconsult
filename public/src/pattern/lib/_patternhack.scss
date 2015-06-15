@@ -107,6 +107,11 @@ span.input-information{
   vertical-align: middle;
 }
 
+.cust-list-avatar{
+  img.preview_pic{
+    margin-right: 0;
+  }
+}
 /* After including type.scss in pattern this class have to removed*/
 .no-results{
  color: #ccc;

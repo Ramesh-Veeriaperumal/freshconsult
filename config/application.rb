@@ -88,6 +88,7 @@ module Helpkit
     # middleware for statsd
     config.middleware.use "Statsd::Rack::Middleware", statsd
 
+    config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000

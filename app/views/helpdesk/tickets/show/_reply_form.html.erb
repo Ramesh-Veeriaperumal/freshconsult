@@ -131,6 +131,8 @@
       <%= f.hidden_field :from_email, :id => "reply_from_email_#{cntid}", :value => @selected_reply_email%>
       <%= f.hidden_field :email_config_id, :value => @selected_email_config_id %>
       <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+      <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
+
       <div class="clearfix zeroh" ></div>
       <div class="post_in_forum">
 

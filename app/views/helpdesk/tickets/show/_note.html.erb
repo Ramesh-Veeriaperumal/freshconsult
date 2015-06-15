@@ -12,7 +12,7 @@ minimizable ||= false
 			data-timestamp="<%= note.created_at.to_i%>" 
 			class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user) %></div>
+	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 

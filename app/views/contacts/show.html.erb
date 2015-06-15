@@ -46,6 +46,9 @@
 						</ul>
 					<% end %>
 				<% end %>
+
+				<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features?(:contact_merge_ui) %>
+
 				<% if privilege?(:delete_contact) and @user != current_user and 
 											!@user.deleted? and !@user.spam? and !@user.blocked? %>
 					<%= link_to("<i class='icon-trash'></i>".html_safe, "/contacts/#{@user.id}", 
@@ -72,7 +75,7 @@
 	<div class='contact-show'>
 		<div class='contact-info-fields'>
 			<div class='contact-info-fields-content'>
-				<%= user_avatar(@user, :medium, "profile_pic avatar-pic") %>
+				<%= user_avatar(@user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
 				<div class='user-info'>
 					<h1 class='lead break-word'><%= h(@user.display_name) %></h1>
 					<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
@@ -99,6 +102,7 @@
 		  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :get ) }".html_safe) if @user.blocked? || @user.spam? %>
 		  		</div>
 			<% end %>
+			<% unless @user.parent.present? %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
 				<%= form_for @user,
 					:url => {:controller => 'contacts', :action => 'update_description_and_tags'},
@@ -127,6 +131,7 @@
 					<% end %>
 				<% end %>	
 			</div>
+			<% end %>
 			<div class='contact-edit-padding'>
 			<% if current_account.features?(:forums) %>
 					<% list = [

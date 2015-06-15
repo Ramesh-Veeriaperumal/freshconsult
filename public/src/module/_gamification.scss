@@ -448,14 +448,17 @@ li.dashboard-quest-points {
 	padding:8px 0;
 	.preview_pic{
 		padding:2px;
-		background:#AFAFAF;
 		@include border-radius(3em);
-		line-height:0;
+	}
+	.avatar-text{
+		line-height: 40px;
 	}
 	.preview_pic img{
 		@include border-radius(2em);
-		width:36px;
-		height:36px;
+		padding: 0;
+		margin: 0;
+		width: 40px;
+		height: 40px;
 	}
 	.help-text{
 		color:#666;

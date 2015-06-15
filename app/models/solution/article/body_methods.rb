@@ -4,6 +4,8 @@ class Solution::Article < ActiveRecord::Base
 
 	BODY_ATTRIBUTES = [ "description", "desc_un_html" ]
 
+	delegate :description, :desc_un_html, :to => :article_body
+
 	alias :original_article_body :article_body
 
 	def article_body
@@ -13,11 +15,6 @@ class Solution::Article < ActiveRecord::Base
 	BODY_ATTRIBUTES.each do |attrib|
 		define_method "#{attrib}=" do |value|
 			article_body.send("#{attrib}=", value)
-			write_attribute(attrib, article_body.send("#{attrib}"))
-		end
-
-		define_method attrib do
-			article_body.send(attrib) || read_attribute(attrib)
 		end
 	end
 

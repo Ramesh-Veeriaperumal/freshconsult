@@ -5692,7 +5692,7 @@ ca:
     delete_multiple: "Les respostes preconfigurades seleccionades van ser esborrades!"
     no_delete: "La carpeta per defecte no pot ser eliminada!!"
     create_new: "Crear nou"
-    no_response_admin: "No hi ha respostes en aquesta carpeta <a href={{link}} id='new_resp'>Crea una nova</a>"
+    no_response_admin: "No hi ha respostes en aquesta carpeta <a href=%{link} id='new_resp'>Crea una nova</a>"
     select_folder: "Seleccionar carpeta"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."

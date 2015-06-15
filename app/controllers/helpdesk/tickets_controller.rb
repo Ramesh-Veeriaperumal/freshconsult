@@ -15,6 +15,7 @@ class Helpdesk::TicketsController < ApplicationController
   include CustomerDeprecationMethods::NormalizeParams
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
+  helper Helpdesk::TicketsExportHelper
   include Helpdesk::TagMethods
 
   before_filter :redirect_to_mobile_url  
@@ -260,17 +261,18 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-          @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
-
+        @ticket_notes       = @ticket_notes.reverse
+        @ticket_notes_total = @ticket.conversation_count
+        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
       }
-	  format.json {
-		render :json => @item.to_json
-	  }
+	    format.json {
+		    render :json => @item.to_json
+	    }
       format.js
       format.nmobile {
         hash = {}
@@ -818,10 +820,6 @@ class Helpdesk::TicketsController < ApplicationController
       helpdesk_tickets_path
     end
     
-    def scoper_user_filters
-      current_account.ticket_filters.my_ticket_filters(current_user)
-    end
-
     def process_item
        @item.spam = false
        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/save_and_close_notice') if save_and_close?

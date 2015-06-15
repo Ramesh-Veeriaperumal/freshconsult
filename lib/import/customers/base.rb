@@ -34,7 +34,7 @@ class Import::Customers::Base
     @csv_headers = @rows.shift
     @rows.each do |row|
       assign_field_values row
-      next if !@item.nil? && @item.helpdesk_agent?     
+      next if is_user? && !@item.nil? && @item.helpdesk_agent?     
       save_item row
     end    
   end
@@ -71,6 +71,10 @@ class Import::Customers::Base
 
   def current_account
     @account ||= (Account.current || Account.find_by_id(params[:account_id]))
+  end
+
+  def is_user?
+    @type == "user"
   end
 
   def set_validatable_custom_fields

@@ -2379,7 +2379,7 @@ fr:
     edit: "Modifier le scénario"
     shared: Partagé
     personal: Personnel
-    no_scenario: "Aucun scénario personnel <a href={{link}}>Créer nouveau</a>"
+    no_scenario: "Aucun scénario personnel <a href=%{link}>Créer nouveau</a>"
     visibility:
       groups: "Agents du groupe"
       all_agents: "Tous les agents"
@@ -5685,7 +5685,7 @@ fr:
     delete_multiple: "Les réponses prédéfinies sélectionnées ont été supprimées !!"
     no_delete: "Le dossier par défaut ne peut pas être supprimé !!"
     create_new: "Créer nouveau"
-    no_response_admin: "Aucune réponse dans le dossier <a href={{link}} id='new_resp'>Créer nouveau</a>"
+    no_response_admin: "Aucune réponse dans le dossier <a href=%{link} id='new_resp'>Créer nouveau</a>"
     select_folder: "Choisir le dossier"
     select_group: "Sélectionner un groupe"
     visibility_change: "Vous êtes sur le point de déplacer {{num_responses}} réponses prédéfinies à partir de votre <b>Dossier personnel</b>. Avant de poursuivre, veuillez modifier la disponibilité des réponses prédéfinies."

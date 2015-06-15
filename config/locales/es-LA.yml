@@ -2376,7 +2376,7 @@ es-LA:
     edit: "Editar escenario"
     shared: Compartido
     personal: Personal
-    no_scenario: "No hay escenarios personales <a href={{link}}>Crear nuevo</a>"
+    no_scenario: "No hay escenarios personales <a href=%{link}>Crear nuevo</a>"
     visibility:
       groups: "Agentes en el grupo"
       all_agents: "Todos los agentes"
@@ -5683,7 +5683,7 @@ es-LA:
     delete_multiple: "Se eliminaron las respuestas predeterminadas seleccionadas."
     no_delete: "La carpeta predeterminada no puede ser eliminada."
     create_new: "Crear nuevo"
-    no_response_admin: "No hay respuestas en esta carpeta. <a href={{link}} id='new_resp'>Crear nueva</a>"
+    no_response_admin: "No hay respuestas en esta carpeta. <a href=%{link} id='new_resp'>Crear nueva</a>"
     select_folder: "Seleccionar carpeta"
     select_group: "Seleccionar grupo"
     visibility_change: "Está a punto de mover {{num_responses}} respuestas predeterminadas de su <b> carpeta personal</b>. Antes de moverlas, cambie la disponibilidad de las respuestas predeterminadas."

@@ -72,7 +72,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         ev.preventDefault();
         $('#call-id-'+$('#deletion_call_id').val()).empty().addClass("sloading loading-small curved_border");
         $.ajax({
-          url:'/freshfone/call_history/'+$('#deletion_call_id').val()+'/destroy_recording',
+          url:'/phone/call_history/'+$('#deletion_call_id').val()+'/destroy_recording',
           type:'DELETE',
           success:function(result){
             $('#call-id-'+$('#deletion_call_id').val()).removeClass("sloading loading-small curved_border");

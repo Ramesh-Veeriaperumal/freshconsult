@@ -165,6 +165,14 @@ label.overlabel{
 	height:35px;
 	overflow:hidden;
 	@include border-radius(3px);
+	.preview_pic{
+		margin-right: 0;
+	}
+	.thumb{
+		height: 35px;
+		width: 35px;
+		line-height: 35px;
+	}
 	a{
 		@include float(left);
 		background-color:#000;
@@ -211,6 +219,7 @@ label.overlabel{
 	div.preview_pic{
 		@include float(right);
 		margin: 0;
+		@include border-radius(0);
 		img {
 			@include border-radius(0);
 			width: auto;

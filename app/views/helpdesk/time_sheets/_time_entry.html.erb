@@ -20,7 +20,7 @@
                   :confirm => "Delete this time entry?" %>
     </div>
   <% end %>
-  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user) if time_entry.user %></div>
+  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user, :thumb, 'small') if time_entry.user %></div>
   <div class="details">
     <h4>
       <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"", :'data-pjax' => '#body-container') %>

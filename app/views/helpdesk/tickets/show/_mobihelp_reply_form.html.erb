@@ -15,6 +15,7 @@
     <%= f.hidden_field :private , :value => "false" %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["mobihelp"]%>  
     <%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
+    <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field clearField message">
         <ul class="redactor_toolbar">

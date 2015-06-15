@@ -2379,7 +2379,7 @@ nl:
     edit: "Scenario bewerken"
     shared: Gedeeld
     personal: Persoonlijk
-    no_scenario: "Geen persoonlijke scenario's <a href={{link}}>Maken</a>"
+    no_scenario: "Geen persoonlijke scenario's <a href=%{link}>Maken</a>"
     visibility:
       groups: "Medewerkers in groep"
       all_agents: "Alle medewerkers"
@@ -5685,7 +5685,7 @@ nl:
     delete_multiple: "De geselecteerde standaardantwoorden zijn verwijderd."
     no_delete: "De standaardmap kan niet worden verwijderd."
     create_new: "Nieuw maken"
-    no_response_admin: "Deze map bevat geen antwoorden.<a href={{link}} id='new_resp'>Nieuwe maken</a>"
+    no_response_admin: "Deze map bevat geen antwoorden.<a href=%{link} id='new_resp'>Nieuwe maken</a>"
     select_folder: "Map selecteren"
     select_group: "Groep selecteren"
     visibility_change: "U wilt {{num_responses}} standaardantwoorden uit uw <b> persoonlijke map</b> verplaatsen. Voordat u dit doet, moet u de beschikbaarheid van de standaardantwoorden wijzigen."

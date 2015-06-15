@@ -21,7 +21,7 @@
             this.$scriptElement = $('<div class="construct_rule"/>',{ "data-default-value" : this.$scriptElement.data('defaultValue')}).html(this.$scriptElement.html());
             var $currentChilds = this.$scriptElement.children(); 
             var elementList = [];
-console.log(" ---- rule --- ");
+
             $currentChilds.each(function(){
 
                 var options = $(this).children('option');
@@ -88,7 +88,7 @@ console.log(" ---- rule --- ");
                 add_new_list = true;
             this.$currentElement.children('.rules_list_wrapper').find('.error').remove();
             $.each(last_list, function(index, list_element){
-                 list_element = $(list_element).children().children('input')
+                 list_element = $(list_element).children().children('input:not(:hidden)')
 
                 $.each(list_element, function(i,element){
                     if (element.value == null || element.value == ""){
@@ -246,7 +246,7 @@ console.log(" ---- rule --- ");
                         multiple: true,
                         allowClear : true,
                     });
-                } else if($(value).attr('rel') == 'input_text'){
+                } else if($(value).attr('rel') == 'input_text' || $(value).attr('rel') == 'hidden_text'){
 
                 }
 
@@ -297,16 +297,16 @@ console.log(" ---- rule --- ");
 
                 $.each(object, function(key, value){
 
-                    var $input = $list.find('[data-refer-key=' + key + ']');
-                    var refer_key = $input.data('referKey');
-
+                    var $input = $list.find('[data-refer-key=' + key + ']'),
+                        refer_key = $input.data('referKey'),
+                        rel = $input.attr('rel');            
                     if($.inArray(object[refer_key], disable_field ) != -1){
                         $list.addClass('overlay');
                         $list.find('.bind-remove-icon').off();
                         $list.find('.remove_list').removeClass('bind-remove-icon');
                     }
 
-                    if($input.attr('rel') == 'dropdown'){
+                    if( rel == 'dropdown'){
 
                         $.each(self.inputArea[$input.attr('rel')][$input.data('currentType')],function(i, v){
                             if(v.id == value){
@@ -330,7 +330,7 @@ console.log(" ---- rule --- ");
 
                         $input.select2('val', selected_value).trigger('change');
 
-                    } else if($input.attr('rel') == 'multi_select'){
+                    } else if( rel == 'multi_select'){
                         // Initilize select2 for multi select
                         var select2_data = self.getValue($input[0]);
                         var init_select2 = [];
@@ -351,7 +351,7 @@ console.log(" ---- rule --- ");
 
                         $input.select2('val', init_select2).trigger('change')
 
-                    } else if($input.attr('rel') == 'input_text'){
+                    } else if(rel == 'input_text' || rel == 'hidden_text'){
 
                         $input.val(value);
                     }

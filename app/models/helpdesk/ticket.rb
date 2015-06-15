@@ -166,6 +166,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
+  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
+    :conditions => ["display_id > (?)",display_id],
+    :limit => limit,
+    :order => order_param
+    }
+  }
+  
   class << self # Class Methods
 
     def agent_permission user
@@ -322,7 +329,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_since(since_id)
-    return notes.visible.exclude_source('meta').newest_first.since(since_id)
+    return notes.visible.exclude_source('meta').since(since_id)
   end
 
   def conversation_before(before_id)

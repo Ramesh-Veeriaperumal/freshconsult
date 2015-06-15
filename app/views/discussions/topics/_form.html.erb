@@ -8,7 +8,7 @@
 			<span class="required_star">*</span>
 			</label>
 		<div class="controls">
-			<%= form.text_field :title, :class => "required text", :tabindex => 10 %>
+			<%= form.text_field :title, :class => "required text", :autofocus => true %>
 		</div>
 	</div>
 	<div class="control-group">
@@ -20,7 +20,7 @@
 			<%= form.rich_editor(:body_html,
 						:class => 'required_redactor',
 						:value => !@topic.new_record? ? @topic.posts.first.body_html : "",
-						:tabindex => 20, :height => "200px", 'editor-type' => :forum) %>
+						:height => "200px", 'editor-type' => :forum) %>
 
 			<%= render :partial=> "discussions/shared/attachment_form", :locals => {
 										:attachments => {

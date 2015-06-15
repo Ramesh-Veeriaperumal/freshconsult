@@ -221,6 +221,10 @@
 
 	var agents_hash = <%= ActiveSupport::JSON.encode(@agents_cache).html_safe %>  || {} ;
 	var companies = <%= ActiveSupport::JSON.encode(@companies).html_safe %> || [];
+
+	var assigned_agent_id = '<%= Helpdesk::SlaPolicy::custom_users_id_by_type[:assigned_agent] %>';
+	var assigned_agent_value = '<%= Helpdesk::SlaPolicy::custom_users_value_by_type[:assigned_agent] %>';
+	var assigned_agent_desc = '<%= Helpdesk::SlaPolicy::custom_users_desc_by_type[:assigned_agent] %>';
 	
 	var is_default = <%= @sla_policy.is_default %>
 	var placeholder = { company: '<%= t('sla_policy.company_placeholder').html_safe %>', 

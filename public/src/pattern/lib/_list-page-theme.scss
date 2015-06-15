@@ -35,8 +35,7 @@
 
         .preview_pic{
             img{
-                width: 30px;
-                height: 30px;
+ 
             }
         }
 
@@ -116,13 +115,10 @@
         .cust-list-avatar
         {
             div.preview_pic{
-            border: 1px solid #CCC;
-            @include border-radius(100%);
-            @include size(22px, 22px);
-            }
-            img{
-                @include size(22px, 22px);
                 @include border-radius(100%);
+            }
+            img{  
+                @include border-radius(100%);     
             }
         }
     }
