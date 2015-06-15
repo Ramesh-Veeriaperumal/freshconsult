@@ -4064,6 +4064,9 @@ div.small{
 }
 .circle{
 	@include border-radius(50% !important);
+	img{
+		@include border-radius(50% !important);
+	}
 }
 img.preview_pic{
 	margin-left: 0;
