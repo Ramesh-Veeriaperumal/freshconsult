@@ -34,16 +34,18 @@ module AccountConstants
       :moment_date_with_week  => 'ddd, D MMM, YYYY',
       :datepicker       => 'd M, yy',
       :datepicker_escaped   => 'd M yy',
-      :datepicker_full_date => 'D, d M, yy'
+      :datepicker_full_date => 'D, d M, yy',
+      :mediumDate => 'd MMM, yyyy'
     },
       :us => {
       :moment_date_with_week  => 'ddd, MMM D, YYYY',
       :datepicker       => 'M d, yy',
       :datepicker_escaped   => 'M d yy',
-      :datepicker_full_date => 'D, M d, yy'
+      :datepicker_full_date => 'D, M d, yy',
+      :mediumDate => 'MMM d, yyyy'
     }
-  } 
-  
+  }
+
   DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten] 
 
   EMAIL_VALIDATOR = /(\A[-A-Z0-9.'’_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i

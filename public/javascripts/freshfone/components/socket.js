@@ -92,6 +92,11 @@ var FreshfoneSocket;
 
 			this.freshfone_socket_channel.on('agent_available', function (data) {
 				data = JSON.parse(data) || {};
+        var result = {
+            user: data.user,
+            event: "agent_available"
+        }
+        trigger_event('ffone_socket', result);
 				if(data.user.id == freshfone.current_user) {
           self.toggleUserStatus(userStatus.ONLINE);
           return;
@@ -130,6 +135,13 @@ var FreshfoneSocket;
           if(!self.$externalNumbersList.is(':visible')){
             self.noAvailableAgentsToggle();
           }
+      
+          var result = {
+            user: data.user,
+            event: "agent_unavailable"
+          }
+          trigger_event('ffone_socket', result);
+       
 				});
 				
 				this.freshfone_socket_channel.on('agent_busy', function (data) {
@@ -137,7 +149,12 @@ var FreshfoneSocket;
 		
 					if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
 					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.BUSY); }
-				});
+          var result = {
+            user: data.user,
+            event: "agent_busy"
+          }
+          trigger_event('ffone_socket', result);
+				}); 
 
 			this.freshfone_socket_channel.on('credit_change', function (data) {
 				(data === 'enable') ? freshfonewidget.enableFreshfoneWidget() : 

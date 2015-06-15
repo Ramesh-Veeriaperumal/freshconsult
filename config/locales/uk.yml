@@ -5741,7 +5741,7 @@ uk:
     delete_multiple: "Обрані шаблонні відповіді видалені!"
     no_delete: "Папка за замовчуванням не може бути видалена!"
     create_new: "Створити новий"
-    no_response_admin: "Немає відповідей в цій папці <a href={{link}} id='new_resp'> Створити новий</a>"
+    no_response_admin: "Немає відповідей в цій папці <a href=%{link} id='new_resp'> Створити новий</a>"
     select_folder: "Обрати папку"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."

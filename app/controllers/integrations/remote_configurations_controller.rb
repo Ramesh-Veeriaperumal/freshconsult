@@ -65,7 +65,7 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
 private
   def authorize_freshdesk_user
     begin
-      return if(params[:app] = "quickbooks")
+      return if(params[:app] == "quickbooks")
       site = RestClient::Resource.new("#{params[:domain]}/health_check.json", params[:key], "X")
       response = site.get(:accept => "application/json")
       if !response.body.include? "success"

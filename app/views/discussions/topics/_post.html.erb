@@ -24,7 +24,7 @@ unpublished =  !original && !post.published
 		</p>
 	</div>
 	<% end %>
-	<%= link_to user_avatar(post.user), post.user, :class => 'avatar-wrap' %>
+	<%= link_to user_avatar(post.user, :thumb, 'preview_pic circle'), post.user, :class => 'avatar-wrap' %>
 
 	<div class="post">
 		<div class="author">

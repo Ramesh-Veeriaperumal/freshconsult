@@ -48,6 +48,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
     resource :"integrations/dynamics_crm", :only => [:widget_data]
+    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :delete_invoice]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -87,7 +88,7 @@ Authority::Authorization::PrivilegeList.build do
 
   reply_ticket do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
-    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp]
+    resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp, :traffic_cop]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties
     resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
@@ -390,6 +391,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
+    resource :"integrations/xero", :only => [:authorize, :authdone]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

@@ -323,4 +323,8 @@ protected
     end
   end
 
+  def scoper_user_filters
+    current_account.ticket_filters.my_ticket_filters(current_user)
+  end
+
 end

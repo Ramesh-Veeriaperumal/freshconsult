@@ -2379,7 +2379,7 @@ de:
     edit: "Szenario bearbeiten"
     shared: Geteilt
     personal: Persönlich
-    no_scenario: "Keine persönlichen Szenarien <a href={{link}}>Neu erstellen</a>"
+    no_scenario: "Keine persönlichen Szenarien <a href=%{link}>Neu erstellen</a>"
     visibility:
       groups: "Agenten in Gruppe"
       all_agents: "Alle Agents"
@@ -5683,7 +5683,7 @@ de:
     delete_multiple: "Die ausgewählten vorgefertigten Antworten wurden gelöscht."
     no_delete: "Der Standardordner kann nicht gelöscht werden."
     create_new: "Neu erstellen"
-    no_response_admin: "Keine Antwort in diesem Order. <a href={{link}} id='new_resp'>Neu erstellen</a>"
+    no_response_admin: "Keine Antwort in diesem Order. <a href=%{link} id='new_resp'>Neu erstellen</a>"
     select_folder: "Ordner auswählen"
     select_group: "Gruppe auswählen"
     visibility_change: "Sie werden gleich {{num_responses}} vorgefertigte Antworten in Ihren <b> persönlichen Ordner</b> verschieben. Bevor Sie dies tun, ändern Sie die Verfügbarkeit der vorgefertigten Antworten."

@@ -40,9 +40,10 @@
 	freshfone.freshfone_user_busy_text = "<%= t('freshfone.widget.busy') %>";
 	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
 	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number').html_safe%>";
-	freshfone.widget_inactive = "<%= t('freshfone.widget.inactive') %>";
+	freshfone.widget_inactive = "<%= t('freshfone.widget.low_credit') %>";
 	freshfone.new_requester = "<%= t('freshfone.widget.new_requester') %>";
 	freshfone.freshfone_nodejs_url = "<%= FreshfoneConfig['node_url'] %>";
+	freshfone.full_domain = '<%= current_account.full_domain %>';
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
@@ -66,3 +67,9 @@
   freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+  <%= javascript_tag do %>	
+  App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+  App.Phone.Metrics.start(<%= AppMetrics::FRESHFONE_METRIC_EVENTS.to_json.html_safe %>);
+  <% end %>
+<% end %>

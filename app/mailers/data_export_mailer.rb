@@ -13,6 +13,7 @@ class DataExportMailer < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @url = options[:url]
+    @account = Account.current
     mail(headers) do | part|
       part.html { render "data_backup", :formats => [:html] }
     end.deliver
@@ -31,6 +32,7 @@ class DataExportMailer < ActionMailer::Base
     }
     @user = options[:user]
     @url  = options[:url]
+    @account = @user.account
     mail(headers) do |part|
       part.html { render "ticket_export", :formats => [:html] }
     end.deliver
@@ -48,6 +50,7 @@ class DataExportMailer < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     @user = options[:user]
+    @account = @user.account
     mail(headers) do |part|
       part.html { render "no_tickets", :formats => [:html] }
     end.deliver

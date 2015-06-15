@@ -103,8 +103,8 @@
 // }
 
 .merge_results li #resp-icon.clicked, .match_results li #resp-icon.clicked:hover{@include symbols-sprite(resp-icon-clicked); }
-#marker{ @include symbols-sprite(tickUnselect); }
-.cont-primary #marker{ @include symbols-sprite(tickSelect); }
+#marker, .marker{ @include symbols-sprite(tickUnselect); }
+.cont-primary #marker, .contact-primary .marker{ @include symbols-sprite(tickSelect); }
 
 .source-badge-wrap .source{
 	&.collision_refresh{

@@ -831,4 +831,14 @@ if Integrations::Application.count == 0
     s.options = {:direct_install => false }
     s.application_type = "dynamicscrm"
   end
+
+  xero =  Integrations::Application.seed(:name) do |s|
+    s.name = "xero"
+    s.display_name = "integrations.xero.label"
+    s.description = "integrations.xero.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 33
+    s.options = {:direct_install => true, :auth_url=> "/integrations/xero/authorize"}
+    s.application_type = "xero"
+  end
 end

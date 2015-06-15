@@ -14,7 +14,7 @@
             <%= link_to @topic.title, discussions_topic_url(@topic.id, :host => @portal.host) %> <br/>
           </div>
           <div class="profile_img">
-            <img src="<%= profile_image_user_url(@user.id, :host => @portal.host)%>" width="30" height="30" />
+            <img src="<%= profile_image_user_url(@topic.first_post.user.id, :host => @portal.host)%>" width="30" height="30" />
           </div>
           <div class="user_identity">
             <b class="user_name"><%= @topic.first_post.user.name %></b><br />

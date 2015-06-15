@@ -32,7 +32,7 @@
 			longpress = false;
 		},
 		onMousedown: function (keypad, inst) {
-
+			freshfoneMetricsOnClick($(this));
 			freshfonecalls.hideText();
 			if($(this).attr('class').indexOf("keypad-call") == -1){
 				freshfonecalls.exceptionalNumber = false;
@@ -96,6 +96,8 @@
 	// Dialpad show
 	$('.ongoingDialpad, .showDialpad')
 		.on('shown', function (e) {
+			freshfoneMetricsOnKeyPress();
+			freshfoneMetricsOnPaste();
 			$number.keypad('show');
 			$number.intlTelInput("setPreferredCountries");
 			freshfonecalls.hideText();
@@ -152,4 +154,43 @@
 	           }
             
        });
+	
+	function freshfoneMetricsOnClick(classValue){
+		if(classValue.hasClass('keypad-key')){
+				if(freshfonecalls.isOngoingCall()){
+					App.Phone.Metrics.recordSource("CLICK_IVR");
+					App.Phone.Metrics.push_event();
+				}
+				else{
+					App.Phone.Metrics.recordSource("DIAL_BY_NUM_PAD");
+				}
+			}
+			if(classValue.hasClass('keypad-special')){
+				App.Phone.Metrics.push_event();
+			}
+	}
+
+	function freshfoneMetricsOnKeyPress(){
+		jQuery(".user_phone").keypress(function(ev){
+				if(ev.keyCode===13){
+					App.Phone.Metrics.push_event();
+				}
+				else{
+					if(freshfonecalls.isOngoingCall()){
+						App.Phone.Metrics.recordSource("KEY_IVR");
+						App.Phone.Metrics.push_event();
+					}
+					else{
+						App.Phone.Metrics.recordSource("DIAL_BY_KEY");
+					}
+				}
+			});
+	}
+
+	function freshfoneMetricsOnPaste(){
+		$(".user_phone").bind('paste', function() {
+   			App.Phone.Metrics.recordSource("DIAL_BY_NUM_PASTE");
+		});
+	}
+
 }(jQuery));

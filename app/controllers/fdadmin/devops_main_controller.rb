@@ -8,6 +8,7 @@ class Fdadmin::DevopsMainController < ApplicationController
   skip_before_filter :ensure_proper_protocol
   skip_before_filter :check_day_pass_usage
   skip_around_filter :select_shard
+  prepend_before_filter :set_time_zone
   before_filter :verify_signature
   before_filter :check_freshops_subdomain
 
@@ -23,6 +24,10 @@ class Fdadmin::DevopsMainController < ApplicationController
         render :nothing => true, :status => 401 and return
       end
       Rails.logger.debug(": : : -> SHA SIGNATURE VERIFIED <- : : :")
+    end
+
+    def set_time_zone
+      Time.zone = 'Pacific Time (US & Canada)'
     end
 
     def determine_api_key

@@ -19,7 +19,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	def purchase
 		begin
 		if purchase_number.save
-			flash[:notice] = t('flash.freshfone.number.success')
+			flash[:notice] = t('flash.freshfone.number.successful_purchase')
 			respond_to do |format|
 				format.html { redirect_to edit_admin_freshfone_number_path(@purchased_number) }
 				format.json { render :json => { :success => true, :redirect_url => edit_admin_freshfone_number_path(@purchased_number)} }
@@ -27,17 +27,17 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		else
 			flash[:notice] = (@purchased_number.errors.any?) ? 
 												@purchased_number.errors.full_messages.to_sentence :
-												t('flash.freshfone.number.error')
+												t('flash.freshfone.number.unsuccessful_purchase')
 			redirect_to :action => :index
 		end
 		rescue Exception => e
 			if e.message == "PhoneNumber Requires a Local Address" || e.code == 21615 # checking either in case twilio changes the error message
 				Rails.logger.debug "Account #{current_account.id} provided an invalid local address for #{params[:country]}.\nParams:\n#{params.to_json}"
-				flash[:notice] = t('flash.freshfone.number.error')
+				flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 				render :json => { :success => false, 
-					:errors => [t('flash.freshfone.number.cannot_purchase', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
+					:errors => [t('flash.freshfone.number.invalide_address_error', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
 			end
-			flash[:notice] = t('flash.freshfone.number.error')
+			flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 			Rails.logger.debug "Error purchasing number for account#{current_account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			redirect_to :action => :index
 		end
@@ -91,10 +91,10 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 		def check_active_account
 			if current_account.freshfone_credit.zero_balance?
-				flash[:notice] = t('freshfone.general.suspended_on_low_balance')
+				flash[:notice] = t('freshfone.general.suspended_on_low_balance_msg')
 				redirect_to admin_freshfone_numbers_path 
 			elsif current_account.freshfone_account.suspended?
-				flash[:notice] = t('freshfone.general.suspended_account')
+				flash[:notice] = t('freshfone.general.suspended_account_msg')
 				redirect_to admin_freshfone_numbers_path 	
 			end
 		end
@@ -149,7 +149,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		end
 
 		def human_name
-			t('freshfone.number')
+			t('freshfone.ff_number')
 		end
 
 		def number_type
@@ -191,7 +191,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
     	unless build_address.save
 				flash[:notice] = (@freshfone_address.errors.any?) ? 
 												@freshfone_address.errors.full_messages.to_sentence :
-												t('flash.freshfone.number.error')
+												t('flash.freshfone.number.unsuccessful_purchase')
 				render :json => { :success => false, 
 					:errors => @freshfone_address.errors.full_messages } and return
 			end
@@ -199,9 +199,9 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
     def verify_address
       if PostOffice.validate_postcode(params[:postal_code], params[:country].downcase.to_sym).blank?
-      	flash[:notice] = t('flash.freshfone.number.error')
+      	flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 				render :json => { :success => false, 
-					:errors => [t('flash.freshfone.number.cannot_purchase', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
+					:errors => [t('flash.freshfone.number.invalide_address_error', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
       end
     end
 end

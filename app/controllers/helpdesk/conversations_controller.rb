@@ -15,14 +15,16 @@ class Helpdesk::ConversationsController < ApplicationController
   include Social::Util
   helper Helpdesk::NotesHelper
   
-  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
+  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :only => [:reply, :forward]
   before_filter :set_quoted_text, :only => :reply
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
-    :fetch_item_attachments, :set_native_mobile, :except => [:full_text]
-  before_filter :set_ticket_status, :except => :forward
+    :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
+  before_filter :set_ticket_status, :except => [:forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
+  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp]
+  before_filter :check_for_public_notes, :only => [:note]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -114,6 +116,15 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def full_text
     render :text => @item.full_text_html.to_s.html_safe
+  end
+
+  def traffic_cop
+    return if traffic_cop_warning
+    respond_to do |format|
+      format.js {
+        render  :nothing => true
+      }
+    end
   end
 
   protected
@@ -257,5 +268,25 @@ class Helpdesk::ConversationsController < ApplicationController
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
         end
+      end
+
+      def has_unseen_notes?
+        return false if params["last_note_id"].nil?
+        last_public_note    = @parent.notes.visible.last_traffic_cop_note.first
+        late_public_note_id = last_public_note.blank? ? -1 : last_public_note.id
+        return late_public_note_id > params["last_note_id"].to_i
+      end
+
+      def traffic_cop_warning
+        return unless has_unseen_notes?
+        respond_to do |format|
+          format.js {
+            render :file => "helpdesk/notes/traffic_cop.rjs" and return true
+          }
+        end
+      end
+
+      def check_for_public_notes
+        traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
       end
 end

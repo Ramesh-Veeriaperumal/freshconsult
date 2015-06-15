@@ -1,4 +1,4 @@
- <div class="tab-pane " id="ffone">
+ <div class="tab-pane " id="phone">
         <div class="list-page">
              <div class="list-page-header clearfix">
                <ul class="">
@@ -30,7 +30,6 @@
 </div>
             <%= javascript_tag do %>
               if (typeof freshfone === "undefined") { freshfone = {}; }
-              freshfone.t_flag=<%= round_robin?  %>
               freshfone.agents=<%= ffone_user_list.html_safe %>;
               freshfone.no_agents="<%= t('helpdesk.dashboard.freshfone.no_agents') %>";
               freshfone.name="<%= t('helpdesk.dashboard.freshfone.name') %>";

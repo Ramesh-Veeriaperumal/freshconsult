@@ -15,14 +15,17 @@ window.App.Discussions = window.App.Discussions || {};
     addListeners: function () {
       $("body").on('change.monitorship', '.follower_input', this.addFollower.bind(this));
       $("body").on('click.monitorship', '.unfollow', this.removeFollower.bind(this));
-      $("body").on('click.monitorship', '#monitorship_link, #toggle_monitorship_status', this.showAddFollower);
+      $("body").on('click.monitorship', '#toggle_monitorship_status', this.toggleAddFollower);
       $("body").on('click.monitorship', '.follower-close', function () {
         $("#new_follower_page").hide();
       });
       $("body").on('click.monitorship', this.clickedOutside);
     },
-    showAddFollower: function () {
-      $("#new_follower_page").show();
+    toggleAddFollower: function () {
+      $("#new_follower_page").toggle();
+      if ($("#new_follower_page").is(':visible')) {
+        $('.follower_input .select2-search-field').focus();
+      };
     },
     clickedOutside: function (e) {
       var container =  $('#follower-container');

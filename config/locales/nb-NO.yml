@@ -1539,7 +1539,7 @@ nb-NO:
     delete_multiple: "Det valgte ferdigsvaret ble slettet"
     no_delete: "Standard mappe kan ikke slettes!"
     create_new: "Opprett ny"
-    no_response_admin: "Ingen svar i denne mappen <a href={{link}} id='new_resp'>Opprett nytt</a>"
+    no_response_admin: "Ingen svar i denne mappen <a href=%{link} id='new_resp'>Opprett nytt</a>"
     select_folder: "Velg mappe"
   portalcss:
     reset_all_changes: "Nullstill alle endringer"

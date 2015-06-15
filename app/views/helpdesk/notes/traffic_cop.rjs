@@ -1,0 +1,16 @@
+@notes = @parent.conversation_since(params[:since_id]).reverse
+public_notes = @notes.select{ |note| note.private == false || note.incoming == true }
+page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
+
+page << "jQuery('#response_added_alert').remove()"
+
+page.insert_html :bottom, 'all_notes', :partial => "helpdesk/tickets/show/response_added_alert"
+
+page << "jQuery('.commentbox-dark').addClass('u-styled')"
+
+public_notes.each do |note|
+	page << %{jQuery('#helpdesk_note_#{note.id} .commentbox').append("<span class='note-label text-center label label-warning pl10 pr10'>#{t('new_label')}</span>")}
+end
+
+# Assigning the last public note id when added
+page << "jQuery('.last_note_id').val(#{public_notes.last.id})" unless public_notes.empty?

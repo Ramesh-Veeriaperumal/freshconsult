@@ -1,5 +1,5 @@
 <div class="conversation">
-	<%= link_to_function user_avatar(current_user), "return false;" , :class => 'avatar-wrap' %>
+	<%= link_to_function user_avatar(current_user, :thumb, 'preview_pic circle'), "return false;" , :class => 'avatar-wrap' %>
 	<div class="post">
 		<div id="pseudo-reply" rel="topic-reply" class="sub-lead vertical-alignment">
 			<a><%=t('reply')%></a>

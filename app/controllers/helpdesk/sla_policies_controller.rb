@@ -152,11 +152,13 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
 
     def fetch_agents
       unless @agents_id.blank? 
+        assigned_agent_id = Helpdesk::SlaPolicy::custom_users_id_by_type[:assigned_agent]
         @agents_cache = {}
         @agents_id.uniq!
         current_account.users.technicians.visible.find(:all, :conditions => ["id in (?)", @agents_id], 
                         :select => "id, name, email").each{|agent| 
                         @agents_cache[agent.id] = {:name => agent.name, :email => agent.email}}
+        @agents_cache[assigned_agent_id] = {:name => Helpdesk::SlaPolicy::custom_users_value_by_type[:assigned_agent], :email => ""} if @agents_id.include? assigned_agent_id
       end
     end
   

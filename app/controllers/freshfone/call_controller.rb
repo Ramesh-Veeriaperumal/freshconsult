@@ -65,7 +65,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	    #from the same number targeting different groups.
 	    call = current_account.freshfone_calls.first(:joins => [:caller], 
 	            :include => [:freshfone_number], 
-	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]}, :order => "freshfone_calls.created_at DESC")
+	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]}, :order => "freshfone_calls.id DESC")
 	    if call.present?
 		    { :number => call.freshfone_number.number_name,
 		    	:group 	=> (call.group.present?) ? call.group.name : ""

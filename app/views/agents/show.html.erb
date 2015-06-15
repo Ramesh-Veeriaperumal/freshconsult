@@ -70,7 +70,7 @@
 		</div>
 	  <% end %>
 
-		<%= user_avatar(@user, :medium, "profile_pic") %>	
+		<%= user_avatar(@user, :medium, "profile_pic", {:width => "120px"}) %>	
 		<h3 class="title"><%= h(@user.display_name) %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>

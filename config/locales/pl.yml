@@ -2409,7 +2409,7 @@ pl:
     edit: "Zakończ scenariusz"
     shared: Udostępnione
     personal: Osobiste
-    no_scenario: "Brak scenariuszy osobistych <a href={{link}}>Utwórz nowy</a>"
+    no_scenario: "Brak scenariuszy osobistych <a href=%{link}>Utwórz nowy</a>"
     visibility:
       groups: "Konsultantów w grupie"
       all_agents: "Wszyscy konsultanci"
@@ -5738,7 +5738,7 @@ pl:
     delete_multiple: "Wybrane szablony odpowiedzi zostały usunięte!"
     no_delete: "Nie można usunąć domyślnego folderu!"
     create_new: "Utwórz nowy"
-    no_response_admin: "Brak odpowiedzi w tym folderze <a href={{link}} id='new_resp'>Utwórz nowy</a>"
+    no_response_admin: "Brak odpowiedzi w tym folderze <a href=%{link} id='new_resp'>Utwórz nowy</a>"
     select_folder: "Wybierz folder"
     select_group: "Wybierz grupę"
     visibility_change: "Zaraz przeniesiesz szablony odpowiedzi w liczbie {{num_responses}} ze swojego<b> Folderu osobistego</b>. Przed przeniesieniem zmień dostępność szablonu odpowiedzi."

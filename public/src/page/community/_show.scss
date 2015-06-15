@@ -31,7 +31,11 @@
 			background: white;
 			clear: both;
 			margin-bottom: 2px;
-
+			a.tooltip-icon{
+				width: $widget_avatar_size;
+				height: $widget_avatar_size;
+				display: inline-block;
+			}
 			&#stamp-data{
 				min-height: 36px;
 				#stamp_type{
@@ -58,7 +62,6 @@
 
 			&.user-list {
 				.preview_pic{
-					float: none;
 					img {
 						border-radius: 50%;
 						width: $widget_avatar_size;

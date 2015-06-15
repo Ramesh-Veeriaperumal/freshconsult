@@ -159,7 +159,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
   end
 
 	def update_credits
-		if @freshfone_credit.increment!(:available_credit, by = params[:credits].to_i)
+		if @freshfone_credit.add_credit(params[:credits].to_i)
 			create_payment params[:credits]
 		end
 	end

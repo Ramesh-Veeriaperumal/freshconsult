@@ -9,8 +9,7 @@ class Social::WelcomeController < ApplicationController
   
   def index
     @selected_tab = :social
-    additional_settings = current_account.account_additional_settings.additional_settings
-    @twitter_enable = (additional_settings.blank? ||  additional_settings[:enable_social]) 
+    @twitter_enable = social_enabled?
   end
 
   def get_stats
@@ -94,7 +93,7 @@ class Social::WelcomeController < ApplicationController
   end  
   
   def can_view_welcome_page?
-    basic_previlege = privilege?(:view_admin) && can_view_social? && additional_settings?
+    basic_previlege = privilege?(:view_admin) && can_view_social? && social_enabled?
     if basic_previlege
       redirect_to social_streams_url if handles_associated?
     else
@@ -106,9 +105,9 @@ class Social::WelcomeController < ApplicationController
     feature?(:twitter) && privilege?(:manage_tickets)
   end  
   
-  def additional_settings?
+  def social_enabled?
     settings = current_account.account_additional_settings.additional_settings
-    settings.blank? || settings[:enable_social]
+    settings.blank? || settings[:enable_social].nil? || settings[:enable_social]
   end
 
   def handles_associated?
