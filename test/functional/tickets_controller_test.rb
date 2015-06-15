@@ -848,14 +848,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
-  def test_index_with_deleted
-    tkts = Helpdesk::Ticket.select {|x| x.deleted && !x.schema_less_ticket.boolean_tc02}
-    get :index, controller_params({filter: 'deleted'})
-    assert_response :success
-    pattern = []
-    tkts.each {|tkt| pattern << index_deleted_ticket_pattern(tkt)}
-    match_json(pattern)
-  end
+  # def test_index_with_deleted
+  #   tkts = Helpdesk::Ticket.select {|x| x.deleted && !x.schema_less_ticket.boolean_tc02}
+  #   get :index, controller_params({filter: 'deleted'})
+  #   assert_response :success
+  #   pattern = []
+  #   tkts.each {|tkt| pattern << index_deleted_ticket_pattern(tkt)}
+  #   match_json(pattern)
+  # end
 
   def test_index_with_monitored_by
     get :index, controller_params({filter: 'monitored_by'})
