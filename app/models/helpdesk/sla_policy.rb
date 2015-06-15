@@ -163,7 +163,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       to_return = []
       conditions.each_pair do |k, v| #each_pair
         to_return << (Va::Condition.new({:name => k, :value => v, 
-                        :operator => "in"} , account))
+                        :operator => "in"} , Account.current))
       end if conditions
       to_return
     end
