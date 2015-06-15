@@ -145,6 +145,14 @@ module JsonPattern
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted))
   end
 
+  def index_ticket_pattern(ticket)
+    ticket_pattern(ticket).except(:attachments, :notes, :tags)
+  end
+
+  def index_deleted_ticket_pattern(ticket)
+    index_ticket_pattern(ticket).merge(deleted: ticket.deleted)
+  end
+
   def ticket_pattern(expected_output = {}, ticket)
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],

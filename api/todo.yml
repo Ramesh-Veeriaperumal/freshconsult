@@ -14,6 +14,7 @@ Todo:
  - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
  - "Validate picklist values for custom drop down & dependent fields in ticket"
  - tests for checking privileges for a action.
+ - Handle global unpermitted params for wrong datatype errors.
 
 Breaking changes in existing APIs:
  - day pass required

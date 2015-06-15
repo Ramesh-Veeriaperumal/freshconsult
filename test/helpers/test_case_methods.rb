@@ -6,6 +6,16 @@ module TestCaseMethods
     rescue
   end
 
+
+  def remove_wrap_params
+    @old_wrap_params = @controller._wrapper_options
+    @controller._wrapper_options = {:format => []}
+  end
+
+  def set_wrap_params
+    @controller._wrapper_options = @old_wrap_params
+  end
+
   def with_forgery_protection
     old_value = @controller.allow_forgery_protection
     @controller.allow_forgery_protection = true

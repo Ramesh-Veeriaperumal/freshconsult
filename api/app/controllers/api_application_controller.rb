@@ -158,6 +158,7 @@ class ApiApplicationController < MetalApiController
       options = {}
       options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
       options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
+      options[:total_entries] = options[:page]*options[:per_page]
       options
     end
 
@@ -184,8 +185,8 @@ class ApiApplicationController < MetalApiController
       @item = instance_variable_set('@' + cname, scoper.new(params[cname]))
     end
 
-    def load_objects
-      @items = scoper.all.paginate(paginate_options)
+    def load_objects(items = scoper)
+      @items = items.paginate(paginate_options)
       instance_variable_set('@' + cname.pluralize, @items)
     end
 

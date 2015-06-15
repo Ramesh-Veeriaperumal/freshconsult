@@ -2,7 +2,8 @@ require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
   def wrap_cname(params)
-    { api_ticket_fields: params }
+    remove_wrap_params
+    {}
   end
 
   def test_index_with_choices
@@ -169,5 +170,25 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
       relevant_ntf = relevant_response['nested_ticket_fields'].find { |ntf| ntf['id'] == x.id }
       match_custom_json(relevant_ntf.to_json, nested_ticket_fields_pattern(x))
     end
+  end
+
+  def test_index_with_invalid_filter
+    get :index, construct_params({:test => "junk"}, {})
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("test", "invalid_field")])
+  end
+
+  def test_index_with_invalid_filter_value
+    get :index, construct_params({:type => "junk"}, {})
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("type", "can't be blank")])
+  end
+
+  def test_index_with_valid_filter
+    get :index, construct_params({:type => "nested_field"}, {})
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal ["nested_field"], response.collect{|x| x["type"]}.uniq 
+    assert_equal 1, response.count
   end
 end

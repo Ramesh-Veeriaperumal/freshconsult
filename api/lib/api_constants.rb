@@ -30,6 +30,7 @@ module ApiConstants
     per_page: 30,
     page: 1
   }
+  DEFAULT_PARAMS = [:version, :format, :k].map(&:to_s)
 
   # *********************************-- DiscussionConstants --*********************************************
 
@@ -50,13 +51,20 @@ module ApiConstants
   REPLY_NOTE_FIELDS = ['body', 'body_html', 'user_id', { 'cc_emails' => [String] }, { 'bcc_emails' => [String] }, 'ticket_id', { 'attachments' => [ActionDispatch::Http::UploadedFile] }]
   CREATE_NOTE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', { 'notify_emails' => [String] }, 'ticket_id', { 'attachments' => [ActionDispatch::Http::UploadedFile] }]
   UPDATE_NOTE_FIELDS = ['body', 'body_html', { 'attachments' => [] }]
-
+  TICKET_ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s)
+  TICKET_ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s)
+  TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0,2,3,4)
   DELETED_SCOPE = {
     'update' => false,
     'assign' => false,
     'restore' => true,
     'destroy' => false
   }
+  INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type)
+
+  # *********************************-- TicketFieldConstants --*********************************************
+
+  TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
 
   NOTE_TYPE_FOR_ACTION = {
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
@@ -75,7 +83,10 @@ module ApiConstants
     priority: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.join(','),
     source:  TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values.join(','),
     private: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
-    incoming: BOOLEAN_VALUES.map(&:to_s).uniq.join(',')
+    incoming: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
+    order_type: TICKET_ORDER_TYPE.join(','),
+    order_by: TICKET_ORDER_BY.join(','),
+    filter: TICKET_FILTER.join(',')
   }
 
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/

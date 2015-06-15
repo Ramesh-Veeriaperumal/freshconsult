@@ -117,6 +117,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       user.id ] } }
       
   scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
+  scope :api_permissible, lambda { |user| {:conditions => api_agent_permission(user)}}
 
   scope :assigned_tickets_permission , lambda { |user,ids| { 
     :select => "helpdesk_tickets.display_id",
@@ -182,6 +183,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
                    :assigned_tickets =>["responder_id=?", user.id]}
                    
       return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    end
+
+    def api_agent_permission(user) # group_tickets query is conditionally executed
+      case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+      when :assigned_tickets
+        ["responder_id=?", user.id]
+      when :group_tickets
+        ["group_id in (?) OR responder_id=? OR requester_id=?", 
+                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
+      else
+        []
+      end
     end
 
     def find_by_param(token, account)

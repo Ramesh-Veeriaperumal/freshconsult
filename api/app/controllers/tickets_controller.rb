@@ -10,6 +10,13 @@ class TicketsController < ApiApplicationController
   before_filter :verify_ticket_permission, only: [:update, :show]
   before_filter :ticket_permission?, only: [:destroy, :assign]
   before_filter :restrict_params, only: [:assign, :restore]
+  skip_before_filter :load_objects, only: [:index]
+  before_filter :validate_filter_params, only: [:index]
+
+
+  def index
+    load_objects tickets_filter(scoper)
+  end
 
   def create
     add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
@@ -53,6 +60,89 @@ class TicketsController < ApiApplicationController
   end
 
   private
+
+    def paginate_options
+      options = super
+      options[:order] = order_clause
+      options
+    end
+
+    def order_clause
+      order_by =  params[:order_by] || 'created_at'
+      order_type = params[:order_type] || 'desc'
+      "helpdesk_tickets.#{order_by} #{order_type} "
+    end
+
+    def tickets_filter(tickets)
+      tickets = tickets.where(deleted: false, spam: false).api_permissible(current_user)
+      @value.each do |key|
+        clause = filter_conditions[key.to_sym] || {}
+        tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
+      end
+      tickets
+    end
+
+    def filter_conditions
+      {
+        :spam => {
+          :conditions => {:spam => true}
+        },
+        :deleted => {
+          :conditions => {:deleted => true, helpdesk_schema_less_tickets: {boolean_tc02: false}}, 
+          :joins => :schema_less_ticket
+        },
+        :new_and_my_open => {
+          :conditions => {:status => 2,  :responder_id => [nil, current_user.id]}
+        },
+        :monitored_by => {
+          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}},
+          :joins => :subscriptions
+        },
+        :requester_id => {
+          :conditions => {:requester_id => @requester.try(:id)}
+        },
+        :company_id => {
+          :conditions => {users: {customer_id: @company.try(:id), deleted: false}},
+          :joins => :requester
+        }
+      }
+    end
+
+    def check_requester
+      @value << :requester_id
+      @requester = current_account.users.where(id: params[:requester_id]).first
+      @errors << [:requester_id, "can't be blank"] if !@requester
+    end
+
+    def check_company
+      @value << :company_id
+      @company = current_account.companies.find_by_id(params[:company_id])
+      @errors << [:company_id, "can't be blank"] if !@company
+    end
+
+    def check_filter
+      filter = (Array.wrap(params[:filter]) & ApiConstants::TICKET_FILTER).first
+      @value << filter
+      @errors << ['filter', 'is not included in the list'] unless filter
+    end
+
+    def check_sort_params
+      @errors << ['order_type', 'is not included in the list'] if 
+        params[:order_type] && ApiConstants::TICKET_ORDER_TYPE.exclude?(params[:order_type])
+      @errors << ['order_by', 'is not included in the list'] if 
+        params[:order_by] && ApiConstants::TICKET_ORDER_BY.exclude?(params[:order_by])
+    end
+
+    def validate_filter_params
+      params.permit(*ApiConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      @errors = []
+      @value = []
+      check_filter if params[:filter]
+      check_company if params[:company_id]
+      check_requester if params[:requester_id]
+      check_sort_params if params[:order_by] || params[:order_type]      
+      render_error @errors if @errors.present?
+    end
 
     def scoper
       current_account.tickets
