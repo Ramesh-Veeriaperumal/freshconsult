@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "eb4c392a2f1325fd26e07569dd2fee2b1fb253ae7aa89a5f8341277ce249fee0",
-    "current": "eb4c392a2f1325fd26e07569dd2fee2b1fb253ae7aa89a5f8341277ce249fee0"
+    "previous": "0f9827d399e2341168a6f1323f0160accd44eed0668e49c8587c58e6ef3aafcf",
+    "current": "0f9827d399e2341168a6f1323f0160accd44eed0668e49c8587c58e6ef3aafcf"
   },
   "fonts": [
-    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.ttf",
-    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.svg",
-    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.woff",
-    "public/assets/glyphs_eb4c392a2f1325fd26e07569dd2fee2b.eot"
+    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.ttf",
+    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.svg",
+    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.woff",
+    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.eot"
   ],
   "glyphs": {
     "account": {
@@ -133,6 +133,14 @@
     "caret-up": {
       "codepoint": 61723,
       "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "categories": {
+      "codepoint": 61880,
+      "source": "public/glyphs/vectors/categories.svg"
+    },
+    "categories-orphan": {
+      "codepoint": 61881,
+      "source": "public/glyphs/vectors/categories-orphan.svg"
     },
     "chat-bubble": {
       "codepoint": 61724,
@@ -349,10 +357,6 @@
     "firefox": {
       "codepoint": 61772,
       "source": "public/glyphs/vectors/firefox.svg"
-    },
-    "folder": {
-      "codepoint": 61879,
-      "source": "public/glyphs/vectors/folder.svg"
     },
     "folder-o": {
       "codepoint": 61773,

@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_eb4c392a2f1325fd26e07569dd2fee2b.eot");
-  src: font-url("glyphs_eb4c392a2f1325fd26e07569dd2fee2b.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_eb4c392a2f1325fd26e07569dd2fee2b.woff") format("woff"),
-       font-url("glyphs_eb4c392a2f1325fd26e07569dd2fee2b.ttf") format("truetype"),
-       font-url("glyphs_eb4c392a2f1325fd26e07569dd2fee2b.svg#glyphs") format("svg");
+  src: font-url("glyphs_0f9827d399e2341168a6f1323f0160ac.eot");
+  src: font-url("glyphs_0f9827d399e2341168a6f1323f0160ac.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_0f9827d399e2341168a6f1323f0160ac.woff") format("woff"),
+       font-url("glyphs_0f9827d399e2341168a6f1323f0160ac.ttf") format("truetype"),
+       font-url("glyphs_0f9827d399e2341168a6f1323f0160ac.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_eb4c392a2f1325fd26e07569dd2fee2b.svg#glyphs") format("svg");
+    src: font-url("glyphs_0f9827d399e2341168a6f1323f0160ac.svg#glyphs") format("svg");
   }
 }
 
@@ -54,6 +54,8 @@
 .ficon-caret-left:before,
 .ficon-caret-right:before,
 .ficon-caret-up:before,
+.ficon-categories:before,
+.ficon-categories-orphan:before,
 .ficon-chat-bubble:before,
 .ficon-chat-disable:before,
 .ficon-chat-enable:before,
@@ -108,7 +110,6 @@
 .ficon-file-edit:before,
 .ficon-file-visible:before,
 .ficon-firefox:before,
-.ficon-folder:before,
 .ficon-folder-o:before,
 .ficon-folder-open-o:before,
 .ficon-forward:before,
@@ -250,6 +251,8 @@
 .ficon-caret-left:before { content: "\f119"; }
 .ficon-caret-right:before { content: "\f11a"; }
 .ficon-caret-up:before { content: "\f11b"; }
+.ficon-categories:before { content: "\f1b8"; }
+.ficon-categories-orphan:before { content: "\f1b9"; }
 .ficon-chat-bubble:before { content: "\f11c"; }
 .ficon-chat-disable:before { content: "\f11d"; }
 .ficon-chat-enable:before { content: "\f11e"; }
@@ -304,7 +307,6 @@
 .ficon-file-edit:before { content: "\f14a"; }
 .ficon-file-visible:before { content: "\f14b"; }
 .ficon-firefox:before { content: "\f14c"; }
-.ficon-folder:before { content: "\f1b7"; }
 .ficon-folder-o:before { content: "\f14d"; }
 .ficon-folder-open-o:before { content: "\f14e"; }
 .ficon-forward:before { content: "\f14f"; }
