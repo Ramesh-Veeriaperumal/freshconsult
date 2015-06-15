@@ -209,7 +209,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     onLeave: function (data) {
-
+      $('body').off('.contact_form');
     }
   };
 }(window.jQuery));
