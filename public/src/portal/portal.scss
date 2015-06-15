@@ -14,6 +14,10 @@ div.avatar-text{
 	color: #fff;
 	text-transform: uppercase;
 	text-align: center;
+	@include user-select(none);
+	cursor: default;
+	font-weight: 100;
+  	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 div.thumb{
 	border-radius: 10%;

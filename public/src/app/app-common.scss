@@ -4029,6 +4029,8 @@ $i: 9;
 div.avatar-text{
 	color: #fff;
 	text-transform: uppercase;
+	@include user-select(none);
+	cursor: default;
 }
 div.thumb{
 	border-radius: 10%;

@@ -7,7 +7,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 <div class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>" data-timestamp="<%= activity[:time].to_i%>"> 
 	<% if activity[:user] %>
 	<div class="avatar-wrap">
-		<%= user_avatar(activity[:user]) %>
+		<%= user_avatar(activity[:user], :thumb, 'preview_pic circle') %>
 	</div>
 	<% end %>
 	<div class="commentbox <%= (activity[:user].blank? or activity[:user].agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
