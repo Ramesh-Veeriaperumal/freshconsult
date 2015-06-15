@@ -288,12 +288,12 @@ module ApiDiscussions
     end
 
     def test_forums_with_pagination_exceeds_limit
-      40.times do
-        create_test_forum(fc)
-      end
-      get :forums, construct_params(id: fc.id, per_page: 40)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      get :forums, construct_params(id: fc.id, per_page: 4)
       assert_response :success
-      assert JSON.parse(response.body).count == 30
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
   end
 end

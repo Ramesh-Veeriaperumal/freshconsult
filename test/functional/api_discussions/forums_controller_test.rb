@@ -352,12 +352,12 @@ module ApiDiscussions
     end
 
     def test_topics_with_pagination_exceeds_limit
-      40.times do
-        create_test_topic(f_obj, User.first)
-      end
-      get :topics, construct_params(id: f_obj.id, per_page: 40)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      get :topics, construct_params(id: f_obj.id, per_page: 4)
       assert_response :success
-      assert JSON.parse(response.body).count == 30
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 
     def test_before_filters_follow_not_logged_in

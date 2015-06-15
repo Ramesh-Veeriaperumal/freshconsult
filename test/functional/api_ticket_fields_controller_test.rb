@@ -33,7 +33,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{labels[0].downcase}_#{@account.id}",
-                                             flexifield_name: 'ffs_04}',
+                                             flexifield_name: 'ffs_04',
                                              flexifield_order: 5,
                                              flexifield_coltype: 'dropdown',
                                              account_id: @account.id)
