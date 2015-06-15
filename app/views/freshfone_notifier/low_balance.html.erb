@@ -1,15 +1,9 @@
 <div>
-  Hi,<div><br></div>
-  <div>Your Freshfone credit is running low. You currently have <%= number_to_currency(@balance) %>. </div>
-  <div><br></div>
-  <div>Please <%= link_to "Recharge", "http://#{@account.full_domain}/subscription" %> immediately to continue using Freshfone.</div>
-  <div><br></div>
-  <div>Note, you can avoid a low balance warning in the future by setting up <%= link_to "automatic replenishment", "http://#{@account.full_domain}/subscription" %> of your account when it gets low.</div>
+  Hi <%=@account.admin_first_name%>,<div><br></div>
+  <div>Your phone credit is running low. You currently have <%= number_to_currency(@balance) %>. </div>
+  <div>Please <%= link_to "recharge", "http://#{@account.full_domain}/subscription" %> immediately to continue supporting over phone.</div>
   <div><br></div>
   <div>Regards,</div>
-  <div>Vijay Shankar&nbsp;</div>
-  <div><%= AppConfig['from_email'] %></div>
-  <div>Customer Support Advocate</div>
-  <div>Freshdesk - refreshing customer support!</div>
+  <div>The Freshdesk Team</div>
   <div><br></div>
 </div>

@@ -1,0 +1,8 @@
+DIAL_BY_KEY: Calling through dialpad(Using Keys)
+DIAL_BY_NUM_PAD: Calling through dialpad(Using Number Pad)
+DIAL_BY_NUM_PASTE: Calling through dialpad(Number was pasted)
+CLICK_CALL_BTN: Calling through call history page
+CLICK_NUM: Calling by clicking number
+CLICK_IVR: Clicked keypad key while on call:trying to use IVR
+KEY_IVR: Typed key while on call:trying to use IVR
+RECENT_CALL_BTN: Calling through recent calls

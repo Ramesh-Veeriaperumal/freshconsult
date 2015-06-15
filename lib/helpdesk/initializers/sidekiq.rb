@@ -10,7 +10,8 @@ Sidekiq.configure_client do |config|
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "SlaScheduler",
-      "Social::TwitterReplyStreamWorker"
+      "Social::TwitterReplyStreamWorker",
+      "RabbitmqWorker"
     ]
   end
 end
@@ -26,13 +27,15 @@ Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
       "SlaScheduler",
-      "Social::TwitterReplyStreamWorker"
+      "Social::TwitterReplyStreamWorker",
+      "RabbitmqWorker"
     ]
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "SlaScheduler",
-      "Social::TwitterReplyStreamWorker"
+      "Social::TwitterReplyStreamWorker",
+      "RabbitmqWorker"
     ]
   end
 end

@@ -1,6 +1,6 @@
 
 // ------------------------------------------------------------------------------------------------------------
-// 														merge user css 
+// 														merge css 
 // ------------------------------------------------------------------------------------------------------------
 #user-mail{
 	width: 200px;
@@ -269,12 +269,10 @@
 	.info-text{
 		@include float(right);
 		background-color: #fffcdb;
-		margin-top: 14px;
-		@include margin-right(10px);
-		margin-bottom: 30px;
+		@include margin(14px 10px 30px 0);
 		width: 240px;
 		min-height: 200px;
-		padding: 15px;
+		@include padding(15px);
 		line-height: 17px;
 		border: 1px solid #eeeeee;
 		color: #333333;
@@ -333,7 +331,7 @@
 		vertical-align: middle;
 		border: 1px solid #eeeeee;
 		@include border-radius(4px);
-		margin-top: 2px;
+		@include margin(0 0 0 2px);
 		#resp-icon{
 			margin-top: 20px;
 		}
@@ -397,7 +395,6 @@
 }
 
 /* end */
-
 
 // ------------------------------------------------------------------------------------------------------------
 // 														ticket merge css 

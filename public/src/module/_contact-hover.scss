@@ -3,7 +3,7 @@
 	.preview_pic img{
 		height:25px;
 		width:25px;
-    @include border-radius(0);
+    @include border-radius(5px);
 	}
 	.contact-append{
 		margin-bottom: 5px;
@@ -21,10 +21,16 @@
       @include margin-right(6px);
       padding: 2px;
 		} 
+    p.merged_user{
+        margin-top: 10px;
+    }
 		.hover-contact-box{
 			color:inherit;
 			@include padding(2px 10px 2px 0);
 		}
+    a.hover-contact-box.merged_user{
+      color: #06c;
+    }
   }
   .product-email-logo, .product-call, .product-phone, .product-twitter{
 	 	display: inline-block;

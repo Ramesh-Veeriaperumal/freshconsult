@@ -15,7 +15,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   before_save :before_save_customize
   after_save :after_save_customize
 
-  scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins("INNER JOIN applications ON applications.id=installed_applications.application_id").select('installed_applications.*')}
+  scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
   
   def to_liquid

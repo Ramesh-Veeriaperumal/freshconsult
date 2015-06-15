@@ -5737,7 +5737,7 @@ cs:
     delete_multiple: "Zvolená připravená odpověď nemohla být smazána!!"
     no_delete: "Implicitní složka nemůže být smazána!!"
     create_new: "Vytvořit novou"
-    no_response_admin: "V <a href={{link}} id='new_resp'>této složce</a> nejsou žádné odpovědi. Vytvořte novou"
+    no_response_admin: "V <a href=%{link} id='new_resp'>této složce</a> nejsou žádné odpovědi. Vytvořte novou"
     select_folder: "Zvolte složku"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."

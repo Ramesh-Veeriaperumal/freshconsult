@@ -73,6 +73,7 @@
 
 	if (jQuery('#ticket_fields :checked').length == 0) {
 		jQuery('#err_no_fields_selected').removeClass('hide');
+		jQuery('#export_tickets').data().freshdialog['$submitBtn'].button('reset');
 		return false;
 	} else {
 		jQuery('#err_no_fields_selected').addClass('hide');

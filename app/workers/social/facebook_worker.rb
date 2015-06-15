@@ -37,7 +37,7 @@ module Social
       def fetch_fb_messages fan_page
         sandbox(true) do
           @fan_page = fan_page
-          fb_worker = Facebook::Core::Message.new(@fan_page)
+          fb_worker = Facebook::Graph::Message.new(@fan_page)
           fb_worker.fetch_messages
         end
       end
@@ -48,8 +48,8 @@ module Social
           @fan_page.update_attributes(:realtime_subscription => "true") if @fan_page.account.features?(:facebook_realtime)
                 
           if @fan_page.company_or_visitor?
-            fb_posts = Facebook::Fql::Posts.new(@fan_page)
-            Koala.config.api_version == "v2.2" ? fb_posts.fetch_latest_posts : fb_posts.fetch
+            fb_posts = Facebook::Graph::Posts.new(@fan_page)
+            fb_posts.fetch_latest_posts
           end      
         end
       end

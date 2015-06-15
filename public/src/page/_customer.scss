@@ -91,11 +91,6 @@
 		margin-top:10px;
 		margin-bottom:5px;
 	}
-	.profile_pic{
-		img{
-			width:160px;
-		}
-	}
 	.seperator{
 		padding-top:40px;
 		@include margin-left(0);
@@ -322,6 +317,12 @@ $iconColorList: "ticket" $bg_color_ticket,
 	.profile_pic {
 		text-align: center;
 		margin-top: 20px;
+	}
+	.avatar-text{
+		text-align: right;
+		margin-left: 60px;
+ 		@include box-shadow(rgba(0, 0, 0, 0.3) 0 7px 14px -8px);
+ 		border-radius: 6px;
 	}
 	.user-info {
 		text-align: center;

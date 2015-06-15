@@ -6,13 +6,15 @@
   <td class="check">
   	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
   </td>
-
+  <% unless user_page %>
+<td class="userpic">
+	<div class="hideForList">
+		<%= user_avatar(ticket.requester,:thumb, "preview_pic circle") %>
+	</div>
+</td>
+<% end %>
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
-  	<% unless user_page %>
-	<span class="hideForList">
-		<%= user_avatar(ticket.requester,:thumb, "preview_pic" , { :width => "45px", :height => "45px" }) %>
-	</span>
-	<% end %>
+  	
 	<div class="ticket_subject">
 		<span class="sc-item-cursor priority-border  priority-<%=ticket.priority_key%> shorcuts-info"></span>
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">

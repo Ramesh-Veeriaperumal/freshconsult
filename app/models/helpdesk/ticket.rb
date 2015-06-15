@@ -166,6 +166,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
+  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
+    :conditions => ["display_id > (?)",display_id],
+    :limit => limit,
+    :order => order_param
+    }
+  }
+  
   class << self # Class Methods
 
     def agent_permission user

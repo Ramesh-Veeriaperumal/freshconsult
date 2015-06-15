@@ -60,7 +60,7 @@ class Integrations::Application < ActiveRecord::Base
 
   def self.install_or_update(app_name, account_id, params={})
     app = Integrations::Application.find_by_name(app_name)
-    installed_application = Integrations::InstalledApplication.first(:conditions=>["application_id = ? and account_id=?", app, account_id])
+    installed_application = Integrations::InstalledApplication.find_by_application_id_and_account_id(app.id, account_id)
     if installed_application.blank?
       installed_application = Integrations::InstalledApplication.new
       installed_application.application = app

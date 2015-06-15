@@ -2379,7 +2379,7 @@ it:
     edit: "Modifica scenario"
     shared: Condiviso
     personal: Personale
-    no_scenario: "Nessuno scenario personale <a href={{link}}>Crea nuovo</a>"
+    no_scenario: "Nessuno scenario personale <a href=%{link}>Crea nuovo</a>"
     visibility:
       groups: "Agenti nel gruppo"
       all_agents: "Tutti gli agenti"
@@ -5682,7 +5682,7 @@ it:
     delete_multiple: "Le risposte predefinite selezionate sono state eliminate."
     no_delete: "La cartella predefinita non può essere eliminata."
     create_new: "Crea nuova"
-    no_response_admin: "Nessuna risposta nella cartella <a href={{link}} id='new_resp'>Crea nuova</a>"
+    no_response_admin: "Nessuna risposta nella cartella <a href=%{link} id='new_resp'>Crea nuova</a>"
     select_folder: "Scegli cartella"
     select_group: "Seleziona gruppo"
     visibility_change: "Si stanno per spostare le {{num_responses}} risposte predefinite dalla <b> Cartella personale</b>. Prima dello spostamento, modificare la disponibilità della risposta predefinita."

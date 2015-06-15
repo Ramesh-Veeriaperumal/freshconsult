@@ -5039,7 +5039,7 @@ ar:
     delete_multiple: تم حذف الاستجابات الجاهزة التي تم تحديدها!!
     no_delete: يتعذر حذف المجلد الافتراضي!!
     create_new: إنشاء جديد
-    no_response_admin: "لا توجد استجابات في هذا المجلد <a href={{link}} id='new_resp'>إنشاء جديد</a>"
+    no_response_admin: "لا توجد استجابات في هذا المجلد <a href=%{link} id='new_resp'>إنشاء جديد</a>"
     select_folder: تحددي مجلد
   merge_contacts:
     header: "هام:<br />أنت على وشك دمج جهات اتصال %{number} مع %{name}."

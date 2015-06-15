@@ -14,7 +14,7 @@ module Facebook::KoalaWrapper::ExceptionHandler
     APP_RATE_LIMIT           = 4
     USER_RATE_LIMIT          = 17
     PERMISSION_ERROR         = [200, 299]
-    IGNORED_ERRORS           = [230]
+    IGNORED_ERRORS           = [230, 275]
     ERROR_MESSAGES           = {:permission_error => "manage_pages",  :auth_error => "impersonate" }
     
     def sandbox(return_value = nil)

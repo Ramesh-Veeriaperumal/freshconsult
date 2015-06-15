@@ -820,10 +820,6 @@ class Helpdesk::TicketsController < ApplicationController
       helpdesk_tickets_path
     end
     
-    def scoper_user_filters
-      current_account.ticket_filters.my_ticket_filters(current_user)
-    end
-
     def process_item
        @item.spam = false
        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/save_and_close_notice') if save_and_close?

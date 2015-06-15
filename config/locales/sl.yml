@@ -5742,7 +5742,7 @@ sl:
     delete_multiple: "Izbran pripravljen odgovor uspešno izbrisan!!"
     no_delete: "Privzeta mapa ne more biti izbrisana!!"
     create_new: "Izdelaj novo"
-    no_response_admin: "V izbrani mapi ni pripravljenih odgovorov <a href={{link}} id='new_resp'> Izdelajte nove </a>"
+    no_response_admin: "V izbrani mapi ni pripravljenih odgovorov <a href=%{link} id='new_resp'> Izdelajte nove </a>"
     select_folder: "Izberi mapo"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."

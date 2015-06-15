@@ -50,7 +50,7 @@ class Freshfone::UsersController < ApplicationController
 	end
 	
 	def refresh_token
-		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user), is_native_mobile?)
+		@freshfone_user.change_presence_and_preference(params[:status], view_context.user_avatar(current_user,:thumb, "preview_pic", {:width => "30px", :height => "30px"}), is_native_mobile?)
 		resolve_busy if is_agent_busy?
 		respond_to do |format|
 			format.any(:json, :nmobile) {

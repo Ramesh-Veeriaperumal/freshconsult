@@ -20,10 +20,10 @@ class Facebook::Core::Comment
   def add(feed)
     @feed = feed
     @comment_id = feed.comment_id
-    process(nil, realtime_subscription) if @comment_id
+    process if @comment_id
   end
   
-  def process(koala_comment = nil, real_time_update = true, convert = false)
+  def process(koala_comment = nil, convert = false)
     @koala_comment = koala_comment if koala_comment.present?
     return if feed_converted?(@koala_comment.feed_id)
     
@@ -32,8 +32,8 @@ class Facebook::Core::Comment
       #post flow will convert all comments and reply to comments 
       add_as_post_and_note(@feed, @koala_comment.parent_post, convert)
     else
-      note = add_as_note(post.postable, @koala_comment, real_time_update)
-      process_reply_to_comments
+      note = add_as_note(post.postable, @koala_comment)
+      process_reply_to_comments if note
     end    
   end
 
@@ -76,22 +76,20 @@ class Facebook::Core::Comment
   
   private 
     def add_as_post_and_note(feed, post_id, convert = false)
-      convert_comment, convert_args = convert_args(koala_comment, convert)
-      if convert_comment
-        @koala_post.fetch(post_id)
-        type = @koala_post.company_post? ? POST_TYPE[:status] : POST_TYPE[:post]
-        ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, @koala_post).process(@koala_post, realtime_subscription)
-      end
+      @koala_post.fetch(post_id)
+      type = @koala_post.company_post? ? POST_TYPE[:status] : POST_TYPE[:post]
+      convert = true if @koala_comment.visitor_post? and @fan_page.import_company_posts
+      ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, @koala_post).process(@koala_post, convert)
     end
     
     def process_comment_as_ticket(convert_args)
-      add_as_ticket(@fan_page, @koala_comment, realtime_subscription, convert_args)
+      add_as_ticket(@fan_page, @koala_comment, convert_args)
     end
     
     def process_reply_to_comments
       @koala_comment.comments.each do |c|
         comment = koala_reply_to_comment(c)
-        Facebook::Core::ReplyToComment.new(@fan_page, comment).process(nil, realtime_subscription)
+        Facebook::Core::ReplyToComment.new(@fan_page, comment).process
       end
     end
     
@@ -101,9 +99,5 @@ class Facebook::Core::Comment
       koala_comment.parse
       koala_comment
     end
-    
-    def realtime_subscription
-      fan_page.realtime_subscription
-    end 
     
 end

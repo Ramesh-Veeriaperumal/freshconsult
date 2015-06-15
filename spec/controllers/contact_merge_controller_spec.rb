@@ -133,7 +133,7 @@ describe ContactMergeController do
    facebook_feed = sample_facebook_feed(false, feed_id).symbolize_keys!
    Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_fql_feed)
    Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)  
-   fb_posts = Facebook::Fql::Posts.new(@fb_page)
+   fb_posts = Facebook::Graph::Posts.new(@fb_page)
    fb_posts.fetch
     post1 = @account.facebook_posts.find_by_post_id(feed_id)
     post1.should_not be_nil
@@ -160,7 +160,7 @@ describe ContactMergeController do
    facebook_feed = sample_facebook_feed(false, feed_id).symbolize_keys!
    Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_fql_feed)
    Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)  
-   fb_posts = Facebook::Fql::Posts.new(@fb_page)
+   fb_posts = Facebook::Graph::Posts.new(@fb_page)
    fb_posts.fetch
     post1 = @account.facebook_posts.find_by_post_id(feed_id)
     post1.should_not be_nil
@@ -251,7 +251,7 @@ describe ContactMergeController do
    facebook_feed = sample_facebook_feed(false, feed_id).symbolize_keys!
    Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_fql_feed)
    Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)  
-   fb_posts = Facebook::Fql::Posts.new(@fb_page)
+   fb_posts = Facebook::Graph::Posts.new(@fb_page)
    fb_posts.fetch
     post1 = @account.facebook_posts.find_by_post_id(feed_id)
     post1.should_not be_nil

@@ -5678,7 +5678,7 @@ fi:
     delete_multiple: "Valitut tallennetut vastaukset poistettiin!!"
     no_delete: "Oletuskansiota ei voi poistaa!!"
     create_new: "Luo uusi"
-    no_response_admin: "Ei vastauksia tässä kansiossa <a href={{link}} id='new_resp'> Luo uusi</a>"
+    no_response_admin: "Ei vastauksia tässä kansiossa <a href=%{link} id='new_resp'> Luo uusi</a>"
     select_folder: "Valitse kansio"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."

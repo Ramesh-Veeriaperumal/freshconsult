@@ -22,7 +22,7 @@ module RabbitMq::Utils
 
   private
 
-  def publish_to_rabbitmq(model, action)
+  def publish_to_rabbitmq(exchange, model, action)
     if RABBIT_MQ_ENABLED
       message = { 
         "object"                =>  model,
@@ -36,7 +36,7 @@ module RabbitMq::Utils
         valid = construct_message_for_subscriber(f, message, model, action)
         key = generate_routing_key(key, valid)
       }
-      send_message(message, key)
+      send_message(exchange, message.to_json, key)
     end
   end
 
@@ -55,19 +55,34 @@ module RabbitMq::Utils
   end
 
   #made this as a function, incase later we want to compress the data before sending
-  def send_message(message, key)
+  def send_message(exchange, message, key)
     return unless key.include?("1")
     self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
       Timeout::timeout(CONNECTION_TIMEOUT) {
-        publish_message_to_xchg(message, key)
+        publish_message_to_xchg(Account.current.rabbit_mq_exchange(exchange), message, key)
       }
     end
   rescue Timeout::Error => e 
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Timeout Error"}})
     Rails.logger.error("RabbitMq Timeout Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+    RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    RabbitMq::Init.restart
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    RabbitMq::Init.start
+    RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    RabbitMq::Init.restart
   end
+
+  def publish_message_to_xchg(exchange, message, key)
+    # Having all the messages as persistant is an overkill. Need to refactor
+    # so that the options for publish can be passed as a parameter. Messages
+    # should also have message_id for unique identification
+    exchange.publish(
+      message, 
+      :routing_key => key,
+      :persistant => true
+    )
+  end
+
 end

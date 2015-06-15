@@ -28,7 +28,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         return
       end
       if current_account.freshfone_active?
-        flash[:notice] = t(:'flash.application.install.freshfone_enabled')
+        flash[:notice] = t(:'flash.application.install.freshfone_alert')
         redirect_to :controller=> 'applications', :action => 'index'
         return
       end

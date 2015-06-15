@@ -79,7 +79,7 @@ class UsersController < ApplicationController
 
   def profile_image
     load_object
-    redirect_to (@user.avatar.nil? ? "/images/misc/profile_blank_thumb.gif" : 
+    redirect_to (@user.avatar.nil? ? "/images/misc/profile_blank_thumb.jpg" : 
       @user.avatar.expiring_url(:thumb, 300))
   end
   

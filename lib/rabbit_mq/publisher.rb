@@ -13,9 +13,9 @@ module RabbitMq::Publisher
     }
         
     # include the corresponding exchange of the model
-    exchange_type = MODEL_TO_EXCHANGE_MAPPING[model_name]
-    base.send(:include,
-              "RabbitMq::Exchanges::#{exchange_type.camelize}".constantize)
+    exchange_name = MODEL_TO_EXCHANGE_MAPPING[model_name]
+    # base.send(:include,
+    #           "RabbitMq::Exchanges::#{exchange_name.camelize}".constantize)
     
     CRUD.each_with_index do |action, index|
       base.class_eval do
@@ -23,7 +23,8 @@ module RabbitMq::Publisher
         if actions_to_publish.include?(action)
           method_name = "publish_#{action}_#{model_name}_to_rabbitmq"
           after_commit :"#{method_name}", on: :"#{action}"
-          define_method(method_name) { publish_to_rabbitmq(model_name, action) }
+          define_method(method_name) {
+            publish_to_rabbitmq(exchange_name, model_name, action) }
         end
       end
     end

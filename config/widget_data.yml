@@ -343,3 +343,28 @@
   id: 22
   description: integrations.quickbooks.desc
   application_type: quickbooks
+
+- options:
+    display_in_pages:
+    - helpdesk_tickets_show_page_side_bar
+  script: |-
+          <div id="xero_widget">
+              <div class="content"><div id="xero_loading" class="sloading loading-block loading-small"></div></div>
+              <div class="error"></div>
+          </div>
+          <script type="text/javascript">
+            jQuery("#xero").prepend('<h3 id="xero-title" class="title">Xero</h3>');
+            jQuery("#xero").addClass('inactive');
+            xeroBundle={invoice_name:"",integrated_resource_id:"",remote_integratable_id:"",reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", reqCompanyName:"{{requester.company_name | escape_html}}",application_id:"{{application.id}}", ticket_id:"{{ticket.id}}", ticket_timesheet: {{timesheet}} } ;
+            jQuery("#xero-title").click(function() { 
+                     if(jQuery("[src^='/javascripts/integrations/xero.js']")) {
+                       jQuery("[src^='/javascripts/integrations/xero.js']").remove();
+                       jQuery("#xero .content").html('<div id="xero_loading" class="sloading loading-block loading-small"></div>');
+                      }
+                      CustomWidget.include_js("/javascripts/integrations/xero.js");
+            });
+          </script>
+  name: xero_widget
+  id: 21
+  description: integrations.xero.desc
+  application_type: xero

@@ -1,0 +1,11 @@
+if @target_users.blank? || !@error.blank?
+  page.show :invalid_user
+  page.replace_html :invalid_user, t('merge_contacts.validation')+@error
+  page << "jQuery('#new_merge_confirm').button('reset');jQuery('#new_merge_confirm').val('Continue');"
+else
+  page.hide :show_merge
+  page.hide :invalid_user 
+  page << "jQuery('p.errors').html('')"
+  page.replace_html :confirm_merge_box, :partial => "confirm_merge"
+  page.show :confirm_merge_box  
+end

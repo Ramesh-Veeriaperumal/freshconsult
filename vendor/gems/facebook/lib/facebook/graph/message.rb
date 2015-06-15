@@ -1,4 +1,4 @@
-class Facebook::Core::Message
+class Facebook::Graph::Message
   include Facebook::Core::Util
   include Facebook::KoalaWrapper::ExceptionHandler
 

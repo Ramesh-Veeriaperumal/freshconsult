@@ -2383,7 +2383,7 @@ pt-BR:
     edit: "Editar cenário"
     shared: Compartilhado
     personal: Pessoal
-    no_scenario: "Nenhum cenário pessoal <a href={{link}}>Criar novo</a>"
+    no_scenario: "Nenhum cenário pessoal <a href=%{link}>Criar novo</a>"
     visibility:
       groups: "Analistas no grupo"
       all_agents: "Todos os analistas"
@@ -5699,7 +5699,7 @@ pt-BR:
     delete_multiple: "As respostas predefinidas selecionadas foram excluídas."
     no_delete: "A pasta padrão não pode ser excluída."
     create_new: "Criar nova"
-    no_response_admin: "Nenhuma respostas nesta pasta <a href={{link}} id='new_resp'>Criar nova</a>"
+    no_response_admin: "Nenhuma respostas nesta pasta <a href=%{link} id='new_resp'>Criar nova</a>"
     select_folder: "Selecionar pasta"
     select_group: "Selecionar grupo"
     visibility_change: "Você está prestes a mover {{num_responses}} respostas predefinidas da sua <b>Pasta pessoal</b>. Antes de movê-las, altere a disponibilidade das respostas predefinidas."

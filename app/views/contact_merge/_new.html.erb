@@ -1,0 +1,53 @@
+<%= javascript_include_tag 'cdn/contact_templates' %>
+<%= javascript_tag do -%>
+  merge_class = window.App.Contacts.Contacts_merge;
+  merge_class.initialize(<%= @source_user.to_indexed_json.html_safe %>);
+  merge_class.searchUrl = "<%= search_contact_merge_index_path(@source_user.id) %>?parent_user=<%= @source_user.id %>&";
+  merge_class.ErrorSentance = "<%= t('merge_contacts.validation') %>"
+  merge_class.markPrimary = "<%= t('merge_contacts.mark_as_primary') %>"
+  merge_class.primaryText = "<%= t('merge_contacts.primary_contact') %>"
+  merge_class.bindAutocompleter();
+<%- end %>
+<div id="confirm_merge_box"></div>
+<p class="errors"></p>
+<div id="show_merge" class="mergebox row-fluid">
+  <div class="span6 merge-content">
+    <div class="m-content-show">
+      <div class="merge-contact contact-primary present-contact">
+        <div class="m-primary-marker tooltip" title="<%= t('merge_contacts.primary_contact') %>">
+          <span class="marker"></span>
+        </div>
+        <div class="contact-area" data-id="<%= h(@source_user.id) %>">
+          <span class="round-icon remove-icon ficon-minus fsize-15 disabled"></span>
+          <div data-uid=<%= h(@source_user.id) %> class="user-contact contact_merge_element cm_user">
+            <%= user_avatar(@source_user) %>
+            <div class="user_info_item">
+            <a class="contact_item_info"><b><%= h(@source_user.name) %></b></a>
+            <div class="contact_data">
+              <% @source_user.user_emails.each do |ue| %>
+              <span><%= h(ue.email) %></span>
+              <% end %>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contacts-empty merge_entity"></div>
+    </div>
+  </div>
+  <div class="search-content span6">
+    <span class="merge-search-field">
+    <input type="text" id="search-user" name="search-user" class="search_merge" placeholder="Search contacts to merge"/><span class="searchicon"></span></span>
+      <div id="search_results" class="match_results"></div>
+  </div>
+  <%= form_tag do -%>
+  <input type="hidden" name="parent_user" id="parent_user_id" value="<%=params[:parent_user]%>" />
+  <div id="inputs"></div>
+  <div class="button-container">
+    <a class="btn"id="cancel_new_merge" data-dismiss="modal"><%= t('cancel') %></a>
+    <%= submit_to_remote "Merge", "Continue", :url => { :controller => 'contact_merge', :action => "confirm", :id => params[:id] }, :html => {:class => "btn btn-primary disabled", :role => 'button', 'disabled' => 'disabled', "data-loading-text" => t('merge_contacts.please_wait'), :id => "new_merge_confirm"}%>
+  </div>
+  <%- end %>
+    <div id="invalid_user" class="info-highlight" style="display:none;"></div>
+</div>   
+

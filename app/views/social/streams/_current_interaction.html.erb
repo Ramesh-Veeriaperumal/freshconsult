@@ -13,7 +13,7 @@
   <% current_tweet_class = (feed.feed_id.to_i == @feed_id.to_i) ? "current_feed" : ""%>
   <div id="conv_div_<%= feed.feed_id%>" class="tweets-conv tweets-feed twt-rply clearfix <%=current_tweet_class%>" data-feed-id = "<%= feed.feed_id%>" >
     <div class="span1 prof-pic image-lazy-load">
-      <img src="/images/misc/profile_blank_thumb.gif" data-src="<%= normal_twt_avatar(feed.user[:image])%>" data-src-retina="<%= bigger_twt_avatar(feed.user[:image])%>"/>
+      <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= normal_twt_avatar(feed.user[:image])%>" data-src-retina="<%= bigger_twt_avatar(feed.user[:image])%>"/>
     </div>
 
     <div class="span10 tweet-box">
@@ -117,7 +117,7 @@
             
             <div class="twt-options clearfix">
               <div class="twt-profile image-lazy-load twt-as-pop">
-                <img src="/images/misc/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+                <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
               </div>
               
               <div class="twt-as">
@@ -161,7 +161,7 @@
             
             <div class="twt-options clearfix">
               <div class="twt-profile image-lazy-load twt-as-pop">
-                <img src="/images/misc/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+                <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
               </div>
               
       
