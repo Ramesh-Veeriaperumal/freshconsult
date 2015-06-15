@@ -1,8 +1,9 @@
 require 'spec_helper'
-include Redis::RedisKeys
-include Redis::OthersRedis
 
 describe Group do
+	include Redis::RedisKeys
+	include Redis::OthersRedis
+
 	before(:all) do 
     	@group = create_group(@account,{:ticket_assign_type => 1, :name =>  Faker::Name.name})
  	end
