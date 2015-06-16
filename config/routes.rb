@@ -1457,7 +1457,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'canned_responses/show/:id'  => 'canned_responses#show'
-    match 'canned_responses/index/:id' => 'canned_responses#index'
+    match 'canned_responses/index/:id' => 'canned_responses#index', :as => :canned_responses_index
     match 'canned_responses/show'      => 'canned_responses#show'
 
     resources :reminders do

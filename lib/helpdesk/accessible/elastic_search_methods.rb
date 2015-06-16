@@ -69,18 +69,19 @@ module Helpdesk::Accessible::ElasticSearchMethods
       permissions
     end
 
-    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil)
+    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil)
       begin
+        Search::EsIndexDefinition.es_cluster(current_account.id)
         es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
         return nil unless Tire.index(es_alias).exists?
         user_groups = current_user.agent_groups.map(&:group_id)
         search_text = params[:search_string]
-        Search::EsIndexDefinition.es_cluster(current_account.id)
         item = Tire.search Search::EsIndexDefinition.searchable_aliases([model_name], current_account.id), options do |search|
           search.query do |query|
             query.filtered do |f|
               f.query { |q| q.string "*#{search_text}*", :analyzer => "include_stop" } if search_text.present?
               f.filter :bool, :should => es_filter_query(user_groups,visible_options)
+              f.filter :bool, :must => { :term => { :folder_id => folder_id } } if folder_id
             end
           end
           search.sort { |t| t.by(sort_option,'asc') } if sort_option
@@ -91,5 +92,33 @@ module Helpdesk::Accessible::ElasticSearchMethods
         nil
       end
     end
+
+    def ca_folders_from_es(model_name,options,visible_options={})
+      begin
+        Search::EsIndexDefinition.es_cluster(current_account.id)
+        es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
+        return nil unless Tire.index(es_alias).exists?
+        user_groups = current_user.agent_groups.map(&:group_id)
+        item = Tire.search Search::EsIndexDefinition.searchable_aliases([model_name], current_account.id), options do |search|
+          search.query do |query|
+            query.filtered do |f|
+              f.filter :bool, :should => es_filter_query(user_groups,visible_options)
+            end
+          end
+          search.facet "ca_folders" do |ft|
+            ft.terms :folder_id
+          end
+        end
+        item.results.facets
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        nil
+      end
+    end
+
+    def default_visiblity
+      {:global_type => true, :user_type => true, :group_type => true}
+    end
+
 
 end
