@@ -9,12 +9,13 @@ describe Helpdesk::DashboardController do
     @forum_category = create_test_category
     @forum = create_test_forum(@forum_category)
     @id = @account.activities.last.id
+    create_test_freshfone_account
+    @account.features.phone_agent_availability.create
   end
 
   before(:each) do
     login_admin
     @agent.make_current
-    create_test_freshfone_account
   end
 
   after(:each) do
