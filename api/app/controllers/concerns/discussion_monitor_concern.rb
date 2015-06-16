@@ -2,8 +2,8 @@ module DiscussionMonitorConcern
   extend ActiveSupport::Concern
   included do
     before_filter :access_denied, only: [:follow, :unfollow, :followed_by, :is_following], unless: :logged_in?
-	before_filter :permit_toggle_params, only: [:follow, :unfollow]
-	before_filter :fetch_monitorship, only: [:follow]
+    before_filter :permit_toggle_params, only: [:follow, :unfollow]
+    before_filter :fetch_monitorship, only: [:follow]
     before_filter :validate_user_id, :allow_monitor?, only: [:followed_by, :is_following]
     before_filter :fetch_active_monitorship_for_user, only: [:is_following]
     before_filter :find_monitorship, only: [:unfollow]
@@ -45,9 +45,7 @@ module DiscussionMonitorConcern
       user_id = params[cname][:user_id] || current_user.id
       @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(
         user_id, @item.id, @item.class.to_s)
-      unless @monitorship
-        head 404
-      end
+      head 404 unless @monitorship
     end
 
     def fetch_active_monitorship_for_user

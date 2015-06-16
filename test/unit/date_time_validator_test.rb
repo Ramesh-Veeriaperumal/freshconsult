@@ -1,48 +1,55 @@
 require_relative '../test_helper'
 
 class DateTimeValidatorTest < ActionView::TestCase
+  class TestValidation
+    include ActiveModel::Validations
+
+    attr_accessor :fr_due_by, :due_by
+    validates_with DateTimeValidator, fields: [:fr_due_by, :due_by], allow_nil: true
+  end
+
   def test_valid_date_time
-    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:created_at, :updated_at])
-    topic = ApiDiscussions::TopicValidation.new({}, nil)
-    topic.created_at = Time.zone.now.to_s
-    topic.updated_at = Time.zone.now.to_s
-    date_time_validator.validate(topic)
-    assert topic.errors.empty?
+    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:fr_due_by, :due_by])
+    test = TestValidation.new
+    test.due_by = Time.zone.now.to_s
+    test.fr_due_by = Time.zone.now.to_s
+    date_time_validator.validate(test)
+    assert test.errors.empty?
   end
 
   def test_invalid_date_time
-    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:created_at, :updated_at])
-    topic = ApiDiscussions::TopicValidation.new({}, nil)
-    topic.created_at = 'test'
-    topic.updated_at = Time.zone.now.to_s
-    date_time_validator.validate(topic)
-    refute topic.errors.empty?
-    refute topic.errors.full_messages.include?('Updated at is not a date')
-    assert topic.errors.full_messages.include?('Created at is not a date')
+    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:fr_due_by, :due_by])
+    test = TestValidation.new
+    test.due_by = 'test'
+    test.fr_due_by = Time.zone.now.to_s
+    date_time_validator.validate(test)
+    refute test.errors.empty?
+    refute test.errors.full_messages.include?('Fr due by is not a date')
+    assert test.errors.full_messages.include?('Due by is not a date')
   end
 
   def test_valid_allow_nil
-    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:created_at, :updated_at])
-    topic = ApiDiscussions::TopicValidation.new({}, nil)
-    topic.created_at = nil
-    date_time_validator.validate(topic)
-    assert topic.errors.empty?
+    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:fr_due_by, :due_by])
+    test = TestValidation.new
+    test.due_by = nil
+    date_time_validator.validate(test)
+    assert test.errors.empty?
   end
 
   def test_invalid_empty_string_for_allow_nil
-    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:created_at, :updated_at])
-    topic = ApiDiscussions::TopicValidation.new({}, nil)
-    topic.created_at = ''
-    date_time_validator.validate(topic)
-    refute topic.errors.empty?
-    assert topic.errors.full_messages.include?('Created at is not a date')
+    date_time_validator = DateTimeValidator.new(allow_nil: true, fields: [:fr_due_by, :due_by])
+    test = TestValidation.new
+    test.due_by = ''
+    date_time_validator.validate(test)
+    refute test.errors.empty?
+    assert test.errors.full_messages.include?('Due by is not a date')
   end
 
   def test_invalid_allow_nil
-    date_time_validator = DateTimeValidator.new(allow_nil: false, fields: [:created_at, :updated_at])
-    topic = ApiDiscussions::TopicValidation.new({}, nil)
-    date_time_validator.validate(topic)
-    refute topic.errors.empty?
-    assert_equal ['Created at is not a date', 'Updated at is not a date'], topic.errors.full_messages
+    date_time_validator = DateTimeValidator.new(allow_nil: false, fields: [:fr_due_by, :due_by])
+    test = TestValidation.new
+    date_time_validator.validate(test)
+    refute test.errors.empty?
+    assert_equal ['Fr due by is not a date', 'Due by is not a date'], test.errors.full_messages
   end
 end
