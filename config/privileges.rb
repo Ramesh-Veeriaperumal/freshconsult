@@ -199,8 +199,8 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API V2
     resource :"api_discussions/category", :only => [:index, :show, :forums]
-    resource :"api_discussions/forum", :only => [:show, :topics]
-    resource :"api_discussions/topic", :only => [:show, :posts]
+    resource :"api_discussions/forum", :only => [:show, :topics, :follow, :unfollow, :is_following]
+    resource :"api_discussions/topic", :only => [:show, :posts, :follow, :unfollow, :is_following, :followed_by]
     resource :"api_discussions/post", :only => [:create]
   end
 

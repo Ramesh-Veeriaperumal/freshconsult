@@ -1,7 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
     before_filter { |c| c.requires_feature :forums }
-    skip_before_filter :check_privilege, :verify_authenticity_token, only: [:follow, :unfollow, :is_following]
     skip_before_filter :load_object, only: [:create, :is_following]
     include DiscussionMonitorConcern
     before_filter :set_account_and_category_id, only: [:create, :update]

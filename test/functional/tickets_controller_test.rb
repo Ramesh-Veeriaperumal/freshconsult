@@ -844,7 +844,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params
     assert_response :success
     response = parse_response @response.body
-    assert_equal 15, response.size
+    assert_equal 21, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     Helpdesk::Ticket.update_all(responder_id: nil)
@@ -858,6 +858,15 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
+  end
+
+  def test_index_with_invalid_sort_params
+    get :index, controller_params(order_type: 'test', order_by: 'test')
+    assert_response :bad_request
+    pattern = [bad_request_error_pattern('order_type', 'is not included in the list', list: 'asc,desc')]
+    pattern << bad_request_error_pattern('order_by', 'is not included in the list', 
+      list: 'due_by,created_at,updated_at,priority,status')
+    match_json(pattern)
   end
 
   def test_index_with_extra_params
@@ -944,11 +953,12 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_filter_and_requester
-    get :index, controller_params(filter: 'new_and_my_open', requester_id: User.last.id)
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 0, response.count
 
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: User.first.id)
     get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
     assert_response :success
     response = parse_response @response.body
@@ -962,8 +972,9 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.count
 
-    tkt = Helpdesk::Ticket.where(requester_id: Company.first.users.map(&:id).first).first
-    tkt.update_attributes(status: 2)
+    user_id = Company.first.users.map(&:id).first
+    tkt = Helpdesk::Ticket.first
+    tkt.update_attributes(status: 2, requester_id: user_id, responder_id: nil)
     get :index, controller_params(filter: 'new_and_my_open', company_id: Company.first.id)
     assert_response :success
     response = parse_response @response.body
@@ -992,6 +1003,16 @@ class TicketsControllerTest < ActionController::TestCase
                                   requester_id: User.first.id, filter: 'new_and_my_open')
     assert_response :success
     response = parse_response @response.body
+    assert_equal 0, response.size
+
+    user_id = company.users.map(&:id).first
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user_id,
+      status: 2, responder_id: nil)
+    get :index, controller_params(company_id: company.id,
+                                  requester_id: user_id, filter: 'new_and_my_open')
+    assert_response :success
+    response = parse_response @response.body
     assert_equal 1, response.size
   end
+
 end

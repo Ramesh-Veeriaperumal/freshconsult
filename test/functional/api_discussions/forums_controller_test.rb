@@ -360,49 +360,22 @@ module ApiDiscussions
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 
-    def test_before_filters_follow_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      post :follow, construct_params({ id: f_obj.id }, {})
-    end
-
     def test_before_filters_follow_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
       post :follow, construct_params({ id: f_obj.id }, {})
-    end
-
-    def test_before_filters_unfollow_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      delete :unfollow, construct_params({ id: f_obj.id }, {})
     end
 
     def test_before_filters_unfollow_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
       delete :unfollow, construct_params({ id: f_obj.id }, {})
     end
 
-    def test_before_filters_is_following_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      delete :is_following, construct_params({ id: f_obj.id }, {})
-    end
-
     def test_before_filters_is_following_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :is_following, construct_params({ id: f_obj.id }, {})
+      get :is_following, construct_params({ id: f_obj.id }, {})
     end
 
     def test_follow_invalid_forum_id

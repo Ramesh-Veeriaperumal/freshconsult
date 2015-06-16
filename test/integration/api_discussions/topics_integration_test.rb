@@ -9,7 +9,7 @@ class TopicsIntegrationest < ActionDispatch::IntegrationTest
       show: 4,
       update: 12,
       destroy: 12,
-      follow: 8,
+      follow: 4,
       unfollow: 9,
       is_following: 3,
       posts: 4

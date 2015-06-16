@@ -151,64 +151,28 @@ module ApiDiscussions
       get :show, construct_params(id: 1)
     end
 
-    def test_before_filters_follow_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      post :follow, construct_params({ id: first_topic.id }, {})
-    end
-
     def test_before_filters_follow_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
       post :follow, construct_params({ id: first_topic.id }, {})
-    end
-
-    def test_before_filters_unfollow_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      delete :unfollow, construct_params({ id: first_topic.id }, {})
     end
 
     def test_before_filters_unfollow_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
       delete :unfollow, construct_params({ id: first_topic.id }, {})
     end
 
-    def test_before_filters_is_following_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      post :is_following, construct_params({ id: first_topic.id }, {})
-    end
-
     def test_before_filters_is_following_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :is_following, construct_params({ id: first_topic.id }, {})
-    end
-
-    def test_before_filters_followed_by_not_logged_in
-      @controller.stubs(:logged_in?).returns(false).once
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
-      @controller.expects(:access_denied).once
-      post :followed_by, request_params
+      get :is_following, construct_params({ id: first_topic.id }, {})
     end
 
     def test_before_filters_followed_by_logged_in
-      @controller.expects(:verify_authenticity_token).never
-      @controller.expects(:check_privilege).never
+      @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :followed_by, request_params
+      get :followed_by, request_params
     end
 
     def test_follow_invalid_topic_id

@@ -2,7 +2,7 @@ module ApiDiscussions
   class TopicsController < ApiApplicationController
     before_filter { |c| c.requires_feature :forums }
     skip_before_filter :check_privilege, :verify_authenticity_token,
-                       only: [:show, :follow, :unfollow, :is_following, :followed_by]
+                       only: [:show]
     skip_before_filter :load_object, only: [:followed_by, :create, :index, :is_following]
     include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
     before_filter :portal_check, only: [:show]
