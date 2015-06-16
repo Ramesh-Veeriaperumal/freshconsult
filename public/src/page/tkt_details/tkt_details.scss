@@ -1126,7 +1126,8 @@ ol, ul, li{
 
     .note-forward-form {
     	padding: 5px;
-    	margin: 0 0 20px;
+    	margin: 0px;
+    	padding-bototm: 0px;
     	background: transparent;
     	@include border-radius(5px);
     }
@@ -1225,20 +1226,17 @@ ol, ul, li{
 		height:32px;
 		@include float(right);
 		display: block;
-		@include border-right(solid 1px #ebebeb);
-		color: #535353;
-		font-size: 23px;
-
+		color: rgba(0,0,0,0.35);
+		font-size: 20px;
 		width: 35px;
 		padding-left: 15px;
 		padding-top: 10px;
 		&:first-child {
-			@include border-right(none);
 			@include border-radius(0 4px 0 0);
 		}
 
 		&:hover {
-			background-color: #FFF;
+			color: #000;
 		}
 		&.conv-actions-edit {
 			font-size: 22px;
@@ -1495,6 +1493,46 @@ ol, ul, li{
 	}
 }
 
+.inline_reply_form{
+	border: none;
+	padding: 0;
+	position: relative;
+	right: -15px;
+	@include margin-left(-30px);
+	top: 24px;
+	.form-layout{
+		display: block;	
+		padding: 10px;
+		&:before, &:after{
+			display: none;
+		}
+	}
+
+	.inline-form-layout{
+		@extend .form-layout;
+		margin: 0 auto;
+	}
+}
+.inline_form_commentbox{
+	background: rgba(0,0,0,0.02);
+	border: none;
+	border-top: 1px rgba(0,0,0,0.05) solid;
+	border-radius: 0;
+	box-shadow: none;
+}
+#inline_reply_form{
+	margin-bottom: 0;
+	background-color: transparent;
+	.request_panel .button-container{
+		@include padding(0 2px 2px 30px);
+	}
+	&.conversation_thread .conversation{ 
+		margin-bottom: 0;
+		position: relative;
+		top: 11px;
+		border-radius: 0px 0px 3px 3px;
+	}
+}
 .commentbox-info{
 	position: relative;
 	@include margin-left(40px);

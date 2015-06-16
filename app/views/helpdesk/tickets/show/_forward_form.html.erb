@@ -25,6 +25,7 @@
               :id => "HelpdeskFwd_#{cntid}", 
               :rel => 'forward_form', 
               "data-panel" => conv_id.nil? ? "cnt-fwd" : "cnt-fwd-#{@note.id}",
+              "data-form" => "inline_form",
               "data-show-pseudo-reply" => conv_id.nil?.to_s,
               "data-fetch-latest" => 'true',
               "data-destroy-editor" => conv_id.nil?.to_s,
@@ -163,6 +164,9 @@
 
 <script type="text/javascript">
     jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){}).validate()
+      jQuery('html, body').animate({
+        scrollTop: jQuery("#<%= cntid %>").offset().top-110
+    }, 100);
 </script>
 
 <% end %>

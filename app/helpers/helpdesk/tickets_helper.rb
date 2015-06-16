@@ -161,7 +161,8 @@ module Helpdesk::TicketsHelper
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+<div>#{signature}</div>"
     quoted_text = ""
 
     if quoted or forward
@@ -322,6 +323,14 @@ module Helpdesk::TicketsHelper
     end
     content << "</div>" if full_pagination
     content
+  end
+
+  def remote_note_forward_form options
+    content_tag(:div, "", 
+                :id => options[:id], 
+                :class => "request_panel note-forward-form hide", 
+                :rel => "remote", 
+                "data-remote-url" => options[:path]).html_safe
   end
 
   def faye_auth_params

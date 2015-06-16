@@ -1309,6 +1309,7 @@ Helpkit::Application.routes.draw do
       member do
         get :reply_to_conv
         get :forward_conv
+        get :reply_to_forward
         get :view_ticket
         put :assign
         put :restore
@@ -1346,6 +1347,7 @@ Helpkit::Application.routes.draw do
           post :forward
           post :note
           post :twitter
+          post :reply_to_forward
           post :facebook
           post :mobihelp
           get :traffic_cop

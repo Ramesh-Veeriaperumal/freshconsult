@@ -4462,6 +4462,16 @@ en:
           addbcc: Add Bcc
           removebcc: Remove Bcc
           not_sent:  Reply was not forwarded!
+        reply_to_forward:
+          title: Reply
+          cc: Cc
+          to: To
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+          not_sent: Reply was not sent!
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
@@ -4541,6 +4551,7 @@ en:
           reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"
@@ -5781,6 +5792,7 @@ en:
   fwd_to: "Forward"
   add_cc: Add Cc
   add_a_cc: Add a CC
+  reply_to_fwd: Reply
   add_new_requester: "Add new requester"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
@@ -5816,6 +5828,7 @@ en:
   forwarded_to: "Forwarded to"
   replied_to: "Replied to"
   notified_to: "Notified to"
+  reply_to_forward: "replied to forward"
   to: "to"
   cc_emails_key: ", cc : %{cc_emails}"
   bcc_emails_key: ", bcc : %{bcc_emails}"
