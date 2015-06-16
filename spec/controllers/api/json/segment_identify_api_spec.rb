@@ -49,7 +49,6 @@ describe Segment::IdentifyController do
         @params[:user].delete(:email)
 		post :create, @params.merge!(:format => 'json', :type => 'identify'), :content_type => 'application/json'
 		result = parse_json(response)
-		debugger
 		expected = (response.status == 400) && result["message"] == "Email can't be blank"
 		expect(expected).to eq(true)
 	end
