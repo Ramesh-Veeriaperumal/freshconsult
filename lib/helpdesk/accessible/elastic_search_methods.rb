@@ -69,7 +69,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
       permissions
     end
 
-    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil)
+    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil, id_data = nil)
       begin
         Search::EsIndexDefinition.es_cluster(current_account.id)
         es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
@@ -82,6 +82,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
               f.query { |q| q.string "*#{search_text}*", :analyzer => "include_stop" } if search_text.present?
               f.filter :bool, :should => es_filter_query(user_groups,visible_options)
               f.filter :bool, :must => { :term => { :folder_id => folder_id } } if folder_id
+              f.filter :bool, :must => { :ids => { :values => id_data }} if id_data
             end
           end
           search.sort { |t| t.by(sort_option,'asc') } if sort_option
