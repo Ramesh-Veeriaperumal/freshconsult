@@ -445,12 +445,54 @@
   }
 }
 
+#solution_sort {
+  .comm-item-main {
+    margin-left: 15px;
+  }
+
+  .solution-list-checkbox {
+    padding: 0px 17px 7px 17px;
+  }
+}
+
 .bulk-action-menu {
 	input {
 		border-radius: 5px;
 	  margin: 3px 0px 3px 4px;
 	  width: 95%
 	}
+
+  margin-top: 3px;
+  border-radius: 5px;
+  border-color: #0080FF;
+}
+
+.bulk-action-button.select2-dropdown-open {
+  border-bottom: solid 1px #0080FF;
+  border-radius: 3px;
+}
+
+.sol-visibility {
+  margin: -8px 0px 8px 15px;
+  font-size: 100%;
+}
+
+.sol-visibility-label {
+  font-weight: 500;
+}
+
+.sol-details-left {
+  float: left;
+}
+
+.sol-details-right {
+  float: left;
+  width: 95%;
+  border-left: 1px solid white;
+}
+
+.orphan-cat-info {
+  color: #DF013A;
 }
 
 #folder-bulk-action, #article-bulk-action {

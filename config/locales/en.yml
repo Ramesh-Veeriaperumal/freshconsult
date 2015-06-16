@@ -3299,6 +3299,7 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
+    orphan_category_info: "This category is not associated to any portal"
     sidebar:
       view_all: "View all"
       drafts:

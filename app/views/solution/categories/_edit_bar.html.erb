@@ -2,9 +2,7 @@
 	<ul>
 		<% if @category.folders.count > 0 %>
 			<li class="lf-item">
-				<% if privilege?(:manage_solutions) %>
-					<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
-				<% end %>
+				<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
 			</li>
 		<% end %>
 		<li class="lf-item lf-btns faded" id="folder-bulk-action">
@@ -15,6 +13,7 @@
 		              :id => "move_to",
 		              :'data-dropdown-auto-width' => true,
 		              :'data-dropdown-css-class' => 'bulk-action-menu',
+		              :'data-container-css-class' => 'bulk-action-button',
 		              :include_blank => true,
 		              :placeholder => t('solution.move_to'),
 		              :"data-show-below-only" => true

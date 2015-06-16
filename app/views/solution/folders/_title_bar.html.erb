@@ -1,29 +1,36 @@
 <div class="list-panel-main">
-	<ul class="list-actions-left">
-		<% if privilege?(:manage_solutions) -%>
-			<li class="folder-edit">
-				<%= link_to( font_icon(:edit, {:size => 23}), 
-						edit_solution_folder_path(@folder),
-						:rel => "freshdialog",
-						:title => t('folder.edit'),
-						"data-target" => "#folder-edit",
-						"data-close-label" => t('cancel'),
-						"data-submit-label" => t('save') ) %>
-			</li>
-		<% end %>
-	</ul>
-	<% if privilege?(:publish_solution) %>
-		<ul class="list-actions-right">
-			<li class="list-default-btns">
-				<%= reorder_btn %>
-				<%= new_solutions_button(:article) %>
-			</li>
-			</li>
-		  <li class="list-reorder-btns">
-		    <a href="#" class="btn btn-primary" id="submit_btn">Done</a>
-		    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
-		  </li>
+	<div class="sol-details-left">
+		<ul class="list-actions-left">
+			<% if privilege?(:manage_solutions) -%>
+				<li class="folder-edit">
+					<%= link_to( font_icon(:edit, {:size => 23}), 
+							edit_solution_folder_path(@folder),
+							:rel => "freshdialog",
+							:title => t('folder.edit'),
+							"data-target" => "#folder-edit",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save') ) %>
+				</li>
+			<% end %>
 		</ul>
-	<% end %>
-	<h2 class="list-title ellipsis" folder-id="<%= @folder.id %>"><%= h(@folder.name) %></h2>
+	</div>
+	<div class="sol-details-right">
+		<% if privilege?(:publish_solution) %>
+			<ul class="list-actions-right">
+				<li class="list-default-btns">
+					<%= reorder_btn %>
+					<%= new_solutions_button(:article) %>
+				</li>
+				</li>
+			  <li class="list-reorder-btns">
+			    <a href="#" class="btn btn-primary" id="submit_btn">Done</a>
+			    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
+			  </li>
+			</ul>
+		<% end %>
+		<h2 class="list-title ellipsis" folder-id="<%= @folder.id %>"><%= h(@folder.name) %></h2>
+		<div class="sol-visibility muted">
+			<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder) %>
+		</div>
+	</div>
 </div>

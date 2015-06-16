@@ -121,5 +121,30 @@ module SolutionHelper
 		end
 		output.join("").html_safe
 	end
+
+	def portals_for_category(category)
+	  content = ""
+	  names = category.portals.map{|p| h(truncate(p.portal_name, :length => 20)) }
+	  content << " "
+	  if names.present?
+			content << names.first(2).join(', ')
+			content << %{
+				<span
+					class="tooltip"
+					data-html="true"
+					data-placement="right"
+					title="#{names[2..-1].join('<br /> ')}">
+				...</span>
+			} if names.size > 2
+			content.html_safe
+		else
+			content << %{
+				<span
+					class="orphan-cat-info">
+				#{t('solution.orphan_category_info')}</span>
+			}
+			content.html_safe
+		end
+	end
 	
 end

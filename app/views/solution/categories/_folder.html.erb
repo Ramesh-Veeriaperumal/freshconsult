@@ -5,12 +5,13 @@
 	</div>
 	<div class="vertical-alignment reorder-content row-fluid">
 		<div class="row-fluid clear-left-margin">
-			<div class="solution-list-checkbox">
-				<% if privilege?(:manage_solutions) %>
-						<input type="checkbox" id="folder-<%= folder.id %>" name="ids[]" value="<%= folder.id %>" class="item_ids_checkbox"/>
-				<% end %>
-			</div>
-			<div class="comm-item-main span8 clear-left-margin <%= 'no-checkbox' unless privilege?(:manage_solutions) %>">
+			<% if privilege?(:manage_solutions) %>
+				<div class="solution-list-checkbox">
+					<input type="checkbox" name="ids[]" value="<%= folder.id %>" 
+							id="folder-<%= folder.id %>" class="item_ids_checkbox"/>
+				</div>
+			<% end %>
+			<div class="comm-item-main span8 clear-left-margin">
 				<div class="comm-item-title">
 					<%= pjax_link_to(h(folder.name), solution_folder_path(folder.id)) %>
 					<span class="muted folder-details">

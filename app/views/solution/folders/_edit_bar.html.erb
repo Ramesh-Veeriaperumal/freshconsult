@@ -1,9 +1,7 @@
 <div class="list-query-panel">
 	<ul>
 		<li class="lf-item">
-			<% if privilege?(:manage_solutions) %>
-				<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
-			<% end %>
+			<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
 		</li>
 		<li class="lf-item lf-btns faded" id="article-bulk-action">
 			<span>
@@ -13,25 +11,29 @@
 	              :id => "move_to",
 	              :'data-dropdown-auto-width' => true,
 	              :'data-dropdown-css-class' => 'bulk-action-menu',
+		          	:'data-container-css-class' => 'bulk-action-button',
 	              :include_blank => true,
 	              :placeholder => t('solution.move_to'),
 	              :"data-show-below-only" => true
 	          } %>
 			</span>
-			<span class="right-btn">
-				<%= select_tag :id,
-	          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
-	          		:class => "disabled bulk-action-btns select2",
-	              :id => "change_author",
-	              :'data-dropdown-auto-width' => true,
-	              :'data-dropdown-css-class' => 'bulk-action-menu',
-	              :include_blank => true,
-	              :placeholder => t('solution.move_to'),
-	              :"data-show-below-only" => true,
-	              :include_blank => true,
-	              :placeholder => t('solution.change_author')
-	          } %>
-			</span>
+			<% if privilege?(:admin_tasks) %>
+				<span class="right-btn">
+					<%= select_tag :id,
+		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
+		          		:class => "disabled bulk-action-btns select2",
+		              :id => "change_author",
+		              :'data-dropdown-auto-width' => true,
+		              :'data-dropdown-css-class' => 'bulk-action-menu',
+			          	:'data-container-css-class' => 'bulk-action-button',
+		              :include_blank => true,
+		              :placeholder => t('solution.move_to'),
+		              :"data-show-below-only" => true,
+		              :include_blank => true,
+		              :placeholder => t('solution.change_author')
+		          } %>
+				</span>
+			<% end %>
 		</li>
 	</ul>
 </div>
