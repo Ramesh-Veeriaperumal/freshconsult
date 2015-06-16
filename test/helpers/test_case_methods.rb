@@ -6,10 +6,9 @@ module TestCaseMethods
     rescue
   end
 
-
   def remove_wrap_params
     @old_wrap_params = @controller._wrapper_options
-    @controller._wrapper_options = {:format => []}
+    @controller._wrapper_options = { format: [] }
   end
 
   def set_wrap_params

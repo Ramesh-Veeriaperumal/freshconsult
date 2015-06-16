@@ -53,7 +53,7 @@ module ApiConstants
   UPDATE_NOTE_FIELDS = ['body', 'body_html', { 'attachments' => [] }]
   TICKET_ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s)
   TICKET_ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s)
-  TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0,2,3,4)
+  TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 2, 3, 4)
   DELETED_SCOPE = {
     'update' => false,
     'assign' => false,

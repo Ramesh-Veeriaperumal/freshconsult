@@ -6,7 +6,10 @@ json.array! @tickets do |tkt|
 
     json.set! :deleted, tkt.deleted if tkt.deleted
 
-    json.(tkt, :description, :description_html, :display_id, :fr_escalated, :spam, :urgent, :requester_status_name, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :ticket_type, :to_email, :to_emails, :product_id)
+    json.(tkt, :description, :description_html, :fr_escalated, :spam, :urgent, :requester_status_name, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email, :to_emails, :product_id)
+
+    json.set! :ticket_id, tkt.display_id
+    json.set! :type, tkt.ticket_type
 
     json.partial! 'shared/utc_date_format', item: tkt, add: { due_by: :due_by, frDueBy: :fr_due_by }
 
@@ -14,5 +17,4 @@ json.array! @tickets do |tkt|
   end
 
   json.set! :custom_fields, tkt.custom_field
-
 end

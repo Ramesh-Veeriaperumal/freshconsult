@@ -13,7 +13,7 @@ class TicketsControllerTest < ActionController::TestCase
 
 
   def wrap_cname(params = {})
-    {ticket: params}
+    { ticket: params }
   end
 
   def requester
@@ -839,155 +839,159 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
   end
 
-  # def test_index_without_permitted_tickets
-  #   byebug
-  #   Helpdesk::Ticket.update_all(:responder_id => User.last.id)
-  #   get :index, controller_params
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 13, response.size
+  def test_index_without_permitted_tickets
+    Helpdesk::Ticket.update_all(responder_id: User.last.id)
+    get :index, controller_params
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 15, response.size
 
-  #   @agent.agent.update_attributes(ticket_permission: 3)
-  #   get :index, controller_params
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 0, response.size
+    Agent.any_instance.stubs(:ticket_permission).returns(3)
+    Helpdesk::Ticket.update_all(responder_id: nil)
+    get :index, controller_params
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.size
 
-  #   Helpdesk::Ticket.first.update_attributes(responder_id: @agent.id)
-  #   get :index, controller_params
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 1, response.size
-  # end
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id)
+    get :index, controller_params
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
 
-  # def test_index_with_extra_params
-  #   hash = {filter_name: 'test', company_name: 'test'}
-  #   get :index, controller_params(hash)
-  #   assert_response :bad_request
-  #   pattern = []
-  #   hash.keys.each {|key| pattern << bad_request_error_pattern(key, 'invalid_field')}
-  #   match_json pattern
-  # end
+  def test_index_with_extra_params
+    hash = { filter_name: 'test', company_name: 'test' }
+    get :index, controller_params(hash)
+    assert_response :bad_request
+    pattern = []
+    hash.keys.each { |key| pattern << bad_request_error_pattern(key, 'invalid_field') }
+    match_json pattern
+  end
 
   def test_index_with_invalid_params
-    get :index, controller_params({company_id: 999, requester_id: 999, filter: 'x'})
-    pattern = [bad_request_error_pattern('filter', 'is not included in the list', {:list => 'new_and_my_open,monitored_by,spam,deleted'})]
+    get :index, controller_params(company_id: 999, requester_id: 999, filter: 'x')
+    pattern = [bad_request_error_pattern('filter', 'is not included in the list', list: 'new_and_my_open,monitored_by,spam,deleted')]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     pattern << bad_request_error_pattern('requester_id', "can't be blank")
     assert_response :bad_request
     match_json pattern
   end
 
-  # def test_index_with_new_and_my_open
-  #   get :index, controller_params({filter: 'new_and_my_open'})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 3, response.size
-  # end
-
-  def test_index_with_spam
-    get :index, controller_params({filter: 'spam'})
-    assert_response :success
-    response = parse_response @response.body
-    assert_equal 0, response.size
-
-    Helpdesk::Ticket.first.update_attributes(spam: true)
-    get :index, controller_params({filter: 'spam'})
+  def test_index_with_new_and_my_open
+    get :index, controller_params(filter: 'new_and_my_open')
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
-  # def test_index_with_deleted
-  #   tkts = Helpdesk::Ticket.select {|x| x.deleted && !x.schema_less_ticket.boolean_tc02}
-  #   get :index, controller_params({filter: 'deleted'})
-  #   assert_response :success
-  #   pattern = []
-  #   tkts.each {|tkt| pattern << index_deleted_ticket_pattern(tkt)}
-  #   match_json(pattern)
-  # end
+  def test_index_with_spam
+    get :index, controller_params(filter: 'spam')
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.size
+
+    Helpdesk::Ticket.first.update_attributes(spam: true)
+    get :index, controller_params(filter: 'spam')
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+  def test_index_with_deleted
+    tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
+    get :index, controller_params(filter: 'deleted')
+    assert_response :success
+    pattern = []
+    tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
+    match_json(pattern)
+  end
 
   def test_index_with_monitored_by
-    get :index, controller_params({filter: 'monitored_by'})
+    get :index, controller_params(filter: 'monitored_by')
     assert_response :success
     response = parse_response @response.body
     assert_equal 0, response.count
 
-    subscription = FactoryGirl.build(:subscription, :account_id => @account.id,
-                                                :ticket_id => Helpdesk::Ticket.first.id,
-                                                :user_id => @agent.id)
+    subscription = FactoryGirl.build(:subscription, account_id: @account.id,
+                                                    ticket_id: Helpdesk::Ticket.first.id,
+                                                    user_id: @agent.id)
     subscription.save
-    get :index, controller_params({filter: 'monitored_by'})
+    get :index, controller_params(filter: 'monitored_by')
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.count
   end
 
   def test_index_with_requester
-    get :index, controller_params({requester_id: User.last.id})
+    get :index, controller_params(requester_id: User.last.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.count
     set_wrap_params
   end
 
-  # def test_index_with_company
-  #   company = create_company
-  #   user = User.first
-  #   tkt = Helpdesk::Ticket.where(:requester_id => user.id).first
-  #   user.update_attributes(customer_id: company.id)
-  #   get :index, controller_params({company_id: 1})
-  #   assert_response :success
-  #   match_json([index_ticket_pattern(tkt)])
-  # end
+  def test_index_with_company
+    company = Company.first || create_company
+    user = User.first
+    user.update_attributes(customer_id: company.id)
+    get :index, controller_params(company_id: company.id)
+    assert_response :success
 
-  # def test_index_with_filter_and_requester
-  #   get :index, controller_params({filter: 'new_and_my_open', requester_id: User.last.id})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 0, response.count
+    tkts = Helpdesk::Ticket.where(requester_id: user.id)
+    pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
+    match_json(pattern)
+  end
 
-  #   get :index, controller_params({filter: 'new_and_my_open', requester_id: User.first.id})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 1, response.count
-  # end
+  def test_index_with_filter_and_requester
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: User.last.id)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.count
 
-  # def test_index_with_filter_and_company
-  #   get :index, controller_params({filter: 'new_and_my_open', company_id: Company.first.id})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 0, response.count
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.count
+  end
 
-  #   tkt = Helpdesk::Ticket.where(:requester_id => Company.first.users.map(&:id).first).first
-  #   tkt.update_attributes(status: 2)
-  #   get :index, controller_params({filter: 'new_and_my_open', company_id: Company.first.id})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 1, response.count
-  # end
+  def test_index_with_filter_and_company
+    Helpdesk::Ticket.update_all(status: 3)
+    get :index, controller_params(filter: 'new_and_my_open', company_id: Company.first.id)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.count
 
-  # def test_index_with_company_and_requester
-  #   company = Company.first
-  #   users = User.first(2)
-  #   get :index, controller_params({company_id: company.id, requester_id: users.first.id})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 1, response.size
+    tkt = Helpdesk::Ticket.where(requester_id: Company.first.users.map(&:id).first).first
+    tkt.update_attributes(status: 2)
+    get :index, controller_params(filter: 'new_and_my_open', company_id: Company.first.id)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.count
+  end
 
-  #   get :index, controller_params({company_id: company.id, requester_id: users.last.id})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 0, response.size
-  # end
+  def test_index_with_company_and_requester
+    company = Company.first
+    users = User.first(2)
+    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: users.first.id).count
+    get :index, controller_params(company_id: company.id, requester_id: users.first.id)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal expected_size, response.size
 
-  # def test_index_with_requester_filter_company
-  #   remove_wrap_params
-  #   company = Company.first
-  #   get :index, controller_params({company_id: company.id, 
-  #     requester_id: User.first.id, filter: 'new_and_my_open'})
-  #   assert_response :success
-  #   response = parse_response @response.body
-  #   assert_equal 1, response.size
-  # end
+    get :index, controller_params(company_id: company.id, requester_id: users.last.id)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.size
+  end
+
+  def test_index_with_requester_filter_company
+    remove_wrap_params
+    company = Company.first
+    get :index, controller_params(company_id: company.id,
+                                  requester_id: User.first.id, filter: 'new_and_my_open')
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
 end
