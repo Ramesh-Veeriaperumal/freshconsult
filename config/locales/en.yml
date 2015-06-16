@@ -3313,6 +3313,8 @@ en:
         details: "%{name} reported %{time}" 
     home: Solutions Home
     add_category: New Category
+    orphan: Orphan
+    orphan_category_msg: This category is not visible in any portal.
     add_folder: New Folder
     add_article: New Article
     view_feedback: View all feedbacks

@@ -22,7 +22,11 @@
 			<h5 class="leads"><%= t('solution.folders.folder_form.category') %>:</h5>
 			<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id), {:title => "#{t('solution.folders.folder_form.category')} - #{@article.folder.category.name}" } %>
 			<p class="muted">
-				<%= t('solution_category.product_portal_visibility') %> <%= @article.folder.category.portals.map(&:name).join(", ") %>
+				<% if @article.folder.category.portals.count > 0 %>
+					<%= t('solution_category.product_portal_visibility') %> <%= @article.folder.category.portals.map(&:name).join(", ") %>
+				<% else %>
+					<%= t('solution.orphan_category_msg') %>
+				<% end %>
 			</p>
 		</div>
 		<div class="folder-name section">
