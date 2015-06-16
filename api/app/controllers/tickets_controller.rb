@@ -2,7 +2,6 @@ class TicketsController < ApiApplicationController
   wrap_parameters :ticket, exclude: [], format: [:json, :multipart_form]
 
   include Helpdesk::TicketActions
-  include Concerns::TicketConcern
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
@@ -202,6 +201,19 @@ class TicketsController < ApiApplicationController
     def assigned_ticket_permission?(ids)
       # Check if current user has restricted ticket permission and if ticket also assigned to the current user.
       current_user.assigned_ticket_permission && scoper.assigned_tickets_permission(current_user, ids).present?
+    end
+
+    def build_ticket_body_attributes
+      if params[cname][:description] || params[cname][:description_html]
+        unless params[cname].has_key?(:ticket_body_attributes)
+          ticket_body_hash = {:ticket_body_attributes => { :description => params[cname][:description],
+                                  :description_html => params[cname][:description_html] }} 
+          params[cname].merge!(ticket_body_hash).tap do |t| 
+            t.delete(:description) if t[:description]
+            t.delete(:description_html) if t[:description_html]
+          end 
+        end 
+      end
     end
 
     def load_object

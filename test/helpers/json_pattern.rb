@@ -153,7 +153,10 @@ module JsonPattern
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted)
   end
 
-  def ticket_pattern(expected_output = {}, ticket)
+  def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
+    expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
+    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.ignore_extra_keys! : ticket.custom_field
+
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email[:fwd_emails],
@@ -181,7 +184,7 @@ module JsonPattern
       attachments: Array,
       notes: Array,
       tags:  expected_output[:tags] || ticket.tag_names,
-      custom_fields:  expected_output[:custom_fields] || ticket.custom_field,
+      custom_fields:  expected_custom_field || ticket_custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       due_by: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

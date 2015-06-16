@@ -17,7 +17,6 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
   include Helpdesk::TagMethods
-  include Concerns::TicketConcern
 
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -1050,6 +1049,19 @@ class Helpdesk::TicketsController < ApplicationController
         return redirect_to support_ticket_url(@ticket)
       elsif !privilege?(:manage_tickets)
         access_denied
+      end
+    end
+
+    def build_ticket_body_attributes
+      if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
+        unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
+          ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],
+                                  :description_html => params[:helpdesk_ticket][:description_html] }} 
+          params[:helpdesk_ticket].merge!(ticket_body_hash).tap do |t| 
+            t.delete(:description) if t[:description]
+            t.delete(:description_html) if t[:description_html]
+          end 
+        end 
       end
     end
 
