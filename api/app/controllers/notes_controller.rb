@@ -16,7 +16,7 @@ class NotesController < ApiApplicationController
 
   def reply
     # publish solution is being set in kbase_email_included based on privilege and email params
-    create_solution_article if create_note && @publish_solution 
+    create_solution_article if create_note && @publish_solution
   end
 
   def update
@@ -86,7 +86,7 @@ class NotesController < ApiApplicationController
 
     def manipulate_params
       params[cname][:source] = ApiConstants::NOTE_TYPE_FOR_ACTION[action_name] unless @item
-      # only note can have choices for private field. 
+      # only note can have choices for private field.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
       assign_and_clean_params(notify_emails: :to_emails, ticket_id: :notable_id)
       build_note_body_attributes

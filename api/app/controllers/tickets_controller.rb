@@ -13,7 +13,6 @@ class TicketsController < ApiApplicationController
   skip_before_filter :load_objects, only: [:index]
   before_filter :validate_filter_params, only: [:index]
 
-
   def index
     load_objects tickets_filter(scoper)
   end
@@ -84,26 +83,26 @@ class TicketsController < ApiApplicationController
 
     def filter_conditions
       {
-        :spam => {
-          :conditions => {:spam => true}
+        spam: {
+          conditions: { spam: true }
         },
-        :deleted => {
-          :conditions => {:deleted => true, helpdesk_schema_less_tickets: {boolean_tc02: false}}, 
-          :joins => :schema_less_ticket
+        deleted: {
+          conditions: { deleted: true, helpdesk_schema_less_tickets: { boolean_tc02: false } },
+          joins: :schema_less_ticket
         },
-        :new_and_my_open => {
-          :conditions => {:status => 2,  :responder_id => [nil, current_user.id]}
+        new_and_my_open: {
+          conditions: { status: 2,  responder_id: [nil, current_user.id] }
         },
-        :monitored_by => {
-          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}},
-          :joins => :subscriptions
+        monitored_by: {
+          conditions: { helpdesk_subscriptions: { user_id: current_user.id } },
+          joins: :subscriptions
         },
-        :requester_id => {
-          :conditions => {:requester_id => @requester.try(:id)}
+        requester_id: {
+          conditions: { requester_id: @requester.try(:id) }
         },
-        :company_id => {
-          :conditions => {users: {customer_id: @company.try(:id), deleted: false}},
-          :joins => :requester
+        company_id: {
+          conditions: { users: { customer_id: @company.try(:id), deleted: false } },
+          joins: :requester
         }
       }
     end
@@ -111,13 +110,13 @@ class TicketsController < ApiApplicationController
     def check_requester
       @value << :requester_id
       @requester = current_account.users.where(id: params[:requester_id]).first
-      @errors << [:requester_id, "can't be blank"] if !@requester
+      @errors << [:requester_id, "can't be blank"] unless @requester
     end
 
     def check_company
       @value << :company_id
       @company = current_account.companies.find_by_id(params[:company_id])
-      @errors << [:company_id, "can't be blank"] if !@company
+      @errors << [:company_id, "can't be blank"] unless @company
     end
 
     def check_filter
@@ -127,9 +126,9 @@ class TicketsController < ApiApplicationController
     end
 
     def check_sort_params
-      @errors << ['order_type', 'is not included in the list'] if 
+      @errors << ['order_type', 'is not included in the list'] if
         params[:order_type] && ApiConstants::TICKET_ORDER_TYPE.exclude?(params[:order_type])
-      @errors << ['order_by', 'is not included in the list'] if 
+      @errors << ['order_by', 'is not included in the list'] if
         params[:order_by] && ApiConstants::TICKET_ORDER_BY.exclude?(params[:order_by])
     end
 
@@ -140,7 +139,7 @@ class TicketsController < ApiApplicationController
       check_filter if params[:filter]
       check_company if params[:company_id]
       check_requester if params[:requester_id]
-      check_sort_params if params[:order_by] || params[:order_type]      
+      check_sort_params if params[:order_by] || params[:order_type]
       render_error @errors if @errors.present?
     end
 

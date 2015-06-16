@@ -14,5 +14,4 @@ json.array! @tickets do |tkt|
   end
 
   json.set! :custom_fields, tkt.custom_field
-
 end

@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
-  def wrap_cname(params)
+  def wrap_cname(_params)
     remove_wrap_params
     {}
   end
@@ -173,22 +173,22 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_filter
-    get :index, construct_params({:test => "junk"}, {})
+    get :index, construct_params({ test: 'junk' }, {})
     assert_response :bad_request
-    match_json([bad_request_error_pattern("test", "invalid_field")])
+    match_json([bad_request_error_pattern('test', 'invalid_field')])
   end
 
   def test_index_with_invalid_filter_value
-    get :index, construct_params({:type => "junk"}, {})
+    get :index, construct_params({ type: 'junk' }, {})
     assert_response :bad_request
-    match_json([bad_request_error_pattern("type", "can't be blank")])
+    match_json([bad_request_error_pattern('type', "can't be blank")])
   end
 
   def test_index_with_valid_filter
-    get :index, construct_params({:type => "nested_field"}, {})
+    get :index, construct_params({ type: 'nested_field' }, {})
     assert_response :success
     response = parse_response @response.body
-    assert_equal ["nested_field"], response.collect{|x| x["type"]}.uniq 
+    assert_equal ['nested_field'], response.collect { |x| x['type'] }.uniq
     assert_equal 1, response.count
   end
 end
