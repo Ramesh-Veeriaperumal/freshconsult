@@ -22,6 +22,7 @@ Breaking changes in existing APIs:
  - customer forum validation
  - Monitorship validation
  - Stamp type validation
+ - validate presence of user in Agent Groups
 
 Deferred:
  - caching(db also)

@@ -360,6 +360,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"social/facebook_tab"
     resource :"admin/survey"
     resource :group
+    resource :"api_group"
     resource :ticket_field
     resource :"admin/contact_field"
     resource :"admin/company_field"

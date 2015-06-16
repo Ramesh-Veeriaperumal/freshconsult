@@ -7,7 +7,7 @@ class AgentGroup < ActiveRecord::Base
   belongs_to :user
   belongs_to :group
 
-  validates_presence_of :user_id
+  validates_presence_of :user
 
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.remove_from_chatgroup_channel }, on: :destroy
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.add_to_chatgroup_channel }, on: :create
@@ -31,5 +31,4 @@ class AgentGroup < ActiveRecord::Base
                                         :agent_id => user_id, :group_id => group_id,
                                         :type => 'add'}) if account.freshchat_routing_enabled?
   end
-
 end

@@ -150,8 +150,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_custom_errors(item, options)
-      errors = item.errors.reject { |k, v| k == options[:remove] } if options[:remove]
-      render_error errors, options[:meta]
+      if options.nil?
+        render_error item.errors
+      else
+        errors = item.errors.reject { |k, v| k == options[:remove] } if options[:remove].blank?
+        render_error errors, options[:meta]
+      end
     end
 
     def paginate_options
@@ -163,7 +167,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def cname
-      controller_name.singularize
+      singularized_cname = controller_name.singularize
+      c_name = ApiConstants::CONTROLLER_NAMES_MAP[singularized_cname.to_sym]
+      c_name.blank? ? singularized_cname : c_name
     end
 
     def access_denied

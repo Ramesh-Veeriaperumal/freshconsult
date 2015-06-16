@@ -274,6 +274,23 @@ module JsonPattern
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
+
+  def group_pattern(expected_output = {}, group)
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    {
+      id: Fixnum,
+      name: expected_output[:name] || group.name,
+      description: expected_output[:description] || group.description,
+      business_calendar_id: expected_output[:business_calendar_id] || group.business_calendar_id,
+      escalate_to: expected_output[:escalate_to] || group.escalate_to,
+      ticket_assign_type: expected_output[:ticket_assign_type] || group.ticket_assign_type,
+      agent_list: group.agent_groups.map { |agents| agents.id.to_s }.join(','),
+      assign_time: expected_output[:assign_time] || group.assign_time,
+      created_at: expected_output[:ignore_created_at] ? %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$} : expected_output[:created_at],
+      updated_at: expected_output[:ignore_updated_at] ? %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$} : expected_output[:updated_at]
+    }
+  end
 end
 
 include JsonPattern
