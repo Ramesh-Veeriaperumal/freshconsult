@@ -112,7 +112,7 @@ module TestCaseMethods
   end
 
   def group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph }
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_list: '1,2' }
   end
 
   def group_payload
@@ -150,8 +150,6 @@ module TestCaseMethods
   def v2_post_payload(t)
     post_params(t).to_json
   end
-
- 
 end
 
 include TestCaseMethods

@@ -150,12 +150,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_custom_errors(item, options)
-      if options.nil?
-        render_error item.errors
-      else
-        errors = item.errors.reject { |k, v| k == options[:remove] } if options[:remove].blank?
-        render_error errors, options[:meta]
-      end
+      errors = item.errors
+      errors = item.errors.reject { |k, v| k == options[:remove] } if options[:remove]
+      render_error errors, options[:meta]
     end
 
     def paginate_options

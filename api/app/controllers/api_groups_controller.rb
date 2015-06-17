@@ -2,6 +2,10 @@ class ApiGroupsController < ApiApplicationController
   before_filter :build_agents, only: [:create, :update]
   before_filter :drop_agents, only: [:update]
 
+  def index
+    @groups = @groups.find(:all, include: :agent_groups)
+  end
+
   private
 
     def validate_params

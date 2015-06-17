@@ -5,10 +5,10 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 7,
+      create: 11,
       show: 4,
-      update: 8,
-      index: 8,
+      update: 12,
+      index: 4,
       destroy: 11
     }
 
@@ -27,6 +27,7 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
     v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/groups', nil, @headers) }
     v1[:index] = count_queries { get('/groups.json', nil, @headers) }
     # destroy
+
     v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/v2/groups/#{id1}", nil, @headers) }
     v1[:destroy] = count_queries { delete("/groups/#{id2}.json", nil, @headers) }
     v1.keys.each do |key|

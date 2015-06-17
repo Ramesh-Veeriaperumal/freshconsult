@@ -9,6 +9,7 @@ class ApiGroupValidation < ApiValidation
   validate :validate_agents_list
 
   def validate_agents_list
+    @error_options = {}
     bad_agent_ids = []
     unless agent_list.nil?
       if agent_list.is_a?(String) && !agent_list.empty?
