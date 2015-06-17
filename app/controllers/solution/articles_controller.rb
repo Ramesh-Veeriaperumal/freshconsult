@@ -28,6 +28,7 @@ class Solution::ArticlesController < ApplicationController
   def show
     @enable_pattern = true
     @article = current_account.solution_articles.find_by_id!(params[:id], :include => [:folder, :draft, :tickets])
+    @page_title = @article.title
     respond_to do |format|
       format.html {
         @current_item = @article.draft || @article
@@ -52,6 +53,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def edit
+    @page_title = @article.title
     respond_to do |format|
       format.html {
         render_edit

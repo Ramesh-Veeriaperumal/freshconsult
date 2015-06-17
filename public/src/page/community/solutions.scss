@@ -582,13 +582,6 @@
   color: #78B1EA;
 }
 
-.sol-sticky {
-  padding: 10px 20px 5px;
-  margin-left: -20px;
-  margin-right: -20px;
-  border-bottom: 1px solid #ccc;
-}
-
 .view-more-cat{
   border-top:1px solid #eee;
   padding-top:10px;
@@ -783,3 +776,19 @@
     } 
   }
 }
+
+.sol-sticky {
+  margin: -20px;
+  padding: 20px 20px 0;
+  margin-bottom: 0;
+}
+
+.cat-visible-to {
+  border: 1px solid #5897fb;
+  border-radius: 4px 4px 4px 4px;
+  a:hover, a.selected {
+    background: #1272de;
+    color: #fff;
+  }
+}
+

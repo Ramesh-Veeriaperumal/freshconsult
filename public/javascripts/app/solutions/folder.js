@@ -139,6 +139,11 @@ window.App = window.App || {};
 
     toggleCompanyClass: function (flag) {
       $(".right-select-companies").toggleClass('hide', !flag);
+      if (flag) {
+        $($('#visible_to ul li a')[3]).addClass('selected')
+      } else {
+        $($('#visible_to ul li a')[3]).removeClass('selected')
+      }
     },
 
     eventsForCompanySelect: function () {

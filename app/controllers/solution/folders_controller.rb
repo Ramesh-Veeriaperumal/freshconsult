@@ -24,6 +24,7 @@ class Solution::FoldersController < ApplicationController
 
   def show    
     @folder = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
+    @page_title = @folder.name
     
     respond_to do |format|
       format.html {
@@ -45,7 +46,8 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-    @folder = current_account.folders.find(params[:id])      
+    @folder = current_account.folders.find(params[:id])
+    @page_title = @folder.name      
     @customer_id = @folder.customer_folders.collect { |cf| cf.customer_id.to_s }
     respond_to do |format|
       if @folder.is_default?

@@ -32,6 +32,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def show
+    @page_title = @category.name
     respond_to do |format|
       format.html
       format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
@@ -50,6 +51,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def edit
+    @page_title = @category.name
     respond_to do |format|
       if @category.is_default?
         flash[:notice] = I18n.t('category_edit_not_allowed')
