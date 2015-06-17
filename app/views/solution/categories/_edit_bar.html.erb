@@ -1,10 +1,8 @@
 <div class="list-query-panel">
 	<ul>
-		<% if @category.folders.count > 0 %>
-			<li class="lf-item">
-				<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
-			</li>
-		<% end %>
+		<li class="lf-item">
+			<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
+		</li>
 		<li class="lf-item lf-btns faded" id="folder-bulk-action">
 			<span>
 				<%= select_tag :id,

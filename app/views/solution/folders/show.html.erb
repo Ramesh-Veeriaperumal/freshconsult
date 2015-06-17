@@ -1,12 +1,12 @@
 <% content_for :layoutType do %>community solutions<% end %>
 <% content_for :sticky_title do %>
   <%= render :partial => 'title_bar' %>
-  <%= render :partial => 'edit_bar' if privilege?(:manage_solutions) %>
+  <%= render :partial => 'edit_bar' if privilege?(:manage_solutions) && @folder.articles.count > 0 %>
 <% end %>
 <% content_for :sticky_right do %>
   <%= preview_portal(support_solutions_folder_path(@folder), @folder.category) %>
 <% end %>
-<%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder, :sticky_class => "sol-sticky",
+<%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder,
                       :search_url => "/search/solutions?folder_id=#{@folder.id}&term="} %>
 
 <% if @folder.articles.blank? %>
