@@ -64,6 +64,7 @@ Along with the above options, few flags and counters are available which are lis
     failureCount: 0,
     lastSaveStatus: true,
     timer: null,
+    minContentLengthCheck: true,
 
     //Default options
     opts: {
@@ -74,6 +75,7 @@ Along with the above options, few flags and counters are available which are lis
         title: "#solution_article_title"
       },
       extraParams: {},
+      minContentLength: 0,
       responseCallback: function () {}
     },
 
@@ -106,8 +108,9 @@ Along with the above options, few flags and counters are available which are lis
 
       this.contentChanged = false;
       this.savingContentFlag = true;
-
-      this.saveContent();
+      if (this.minContentLengthCheck) {
+        this.saveContent();
+      }
     },
     
     getMainContent: function () {
@@ -116,6 +119,12 @@ Along with the above options, few flags and counters are available which are lis
       $.each(this.opts.monitorChangesOf, function (key, value) {
         var $el = $(value);
         $this.content[key] = $el.val();
+        if ('minContentLength' in $this.opts) {
+          $this.minContentLengthCheck = ($this.content[key].length > $this.opts.minContentLength);
+          if ($this.minContentLengthCheck == false) {
+            return;
+          }
+        }
         $el.data('previousSavedData', $el.val());
       });
     },

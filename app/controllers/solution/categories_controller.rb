@@ -155,16 +155,16 @@ class Solution::CategoriesController < ApplicationController
       { :folders => { :except => [:account_id,:import_id] }}
     end
 
-    def portal_scoper
-      current_portal.solution_categories
+    def account_scoper
+      current_account.solution_categories
     end
 
     def load_category
-      @category = portal_scoper.find_by_id!(params[:id])
+      @category = account_scoper.find_by_id!(params[:id])
     end
 
     def load_category_with_folders
-      @category = portal_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
+      @category = account_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
     end
 
     def set_modal

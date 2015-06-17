@@ -213,6 +213,7 @@ window.App = window.App || {};
           title: "#solution_article_title"
         },
         extraParams: {timestamp: data.timestamp},
+        minContentLength: 3,
         responseCallback: $.proxy(this.autosaveDomManipulate, this)
       };
 
