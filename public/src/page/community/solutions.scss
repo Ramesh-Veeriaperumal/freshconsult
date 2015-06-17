@@ -783,6 +783,11 @@
   margin-bottom: 0;
 }
 
+body.community #sticky_header.category-sticky.is_stuck {
+    border-bottom:0;
+    @include box-shadow(none);
+}
+
 .cat-visible-to {
   border: 1px solid #5897fb;
   border-radius: 4px 4px 4px 4px;
@@ -791,4 +796,3 @@
     color: #fff;
   }
 }
-
