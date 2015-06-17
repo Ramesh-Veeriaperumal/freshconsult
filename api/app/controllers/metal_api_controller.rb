@@ -1,6 +1,28 @@
 class MetalApiController < ActionController::Metal
   # Modules to be included for metal controller to work for our APP
-  ApiConstants::METAL_MODULES.each do |x|
+
+  METAL_MODULES = [ # Do not change the order of modules included
+    ActionController::Head, # needed when calling head
+    ActionController::Helpers, # needed for calling methods which are defined as helper methods.
+    ActionController::Redirecting,
+    ActionController::Rendering,
+    ActionController::RackDelegation,  # Needed so that reqeest and response method will be delegated to Rack
+    ActionController::Caching,
+    Rails.application.routes.url_helpers, # Need for location header in response
+    ActiveSupport::Rescuable, # Dependency with strong params
+    ActionController::MimeResponds,
+    ActionController::ImplicitRender,
+    ActionController::StrongParameters,
+    ActionController::Cookies,
+    ActionController::RequestForgeryProtection,
+    ActionController::HttpAuthentication::Basic::ControllerMethods,
+    AbstractController::Callbacks,
+    ActionController::Rescue,
+    ActionController::ParamsWrapper,
+    ActionController::Instrumentation  # need this for active support instrumentation.
+  ]
+
+  METAL_MODULES.each do |x|
     send(:include, x)
   end
 

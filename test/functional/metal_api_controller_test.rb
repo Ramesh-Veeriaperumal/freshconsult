@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 class MetalApiControllerTest < ActionController::TestCase
   def test_included_modules
-    assert (ApiConstants::METAL_MODULES - MetalApiController.included_modules).empty?
+    assert (MetalApiController::METAL_MODULES - MetalApiController.included_modules).empty?
   end
 
   def test_included_view_paths

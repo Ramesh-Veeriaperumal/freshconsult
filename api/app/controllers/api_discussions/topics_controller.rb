@@ -10,7 +10,7 @@ module ApiDiscussions
     before_filter :set_forum_id, only: [:create, :update]
 
     def create
-      post = @topic.posts.build(params[cname].delete_if { |x| !(ApiConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
+      post = @topic.posts.build(params[cname].delete_if { |x| !(DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
       assign_user_and_parent post, :topic, @topic
       super
     end
@@ -71,7 +71,7 @@ module ApiDiscussions
       end
 
       def validate_params
-        fields = get_fields("ApiConstants::#{action_name.upcase}_TOPIC_FIELDS")
+        fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
         params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
         render_error topic.errors unless topic.valid?

@@ -2,16 +2,16 @@ require_relative '../test_helper'
 
 class ApiErrorTest < ActionView::TestCase
   def test_base_error
-    base_error = BaseError.new(ApiConstants::API_ERROR_CODES.first[1][0])
-    assert_equal I18n.t("api.error_messages.#{ApiConstants::API_ERROR_CODES.first[1][0]}"), base_error.message
+    base_error = BaseError.new(BaseError::API_ERROR_CODES.first[1][0])
+    assert_equal I18n.t("api.error_messages.#{BaseError::API_ERROR_CODES.first[1][0]}"), base_error.message
   end
 
   def test_bad_request
-    base_error = BadRequestError.new('name', ApiConstants::API_ERROR_CODES.first[1][0])
-    code = ApiConstants::API_ERROR_CODES.first[0]
+    base_error = BadRequestError.new('name', BaseError::API_ERROR_CODES.first[1][0])
+    code = BaseError::API_ERROR_CODES.first[0]
     assert_equal code, base_error.code
-    assert_equal I18n.t("api.error_messages.#{ApiConstants::API_ERROR_CODES.first[1][0]}"), base_error.message
-    assert_equal ApiConstants::API_HTTP_ERROR_STATUS_BY_CODE[code], base_error.http_code
+    assert_equal I18n.t("api.error_messages.#{BaseError::API_ERROR_CODES.first[1][0]}"), base_error.message
+    assert_equal BaseError::API_HTTP_ERROR_STATUS_BY_CODE[code], base_error.http_code
     assert_equal 'name', base_error.field
   end
 

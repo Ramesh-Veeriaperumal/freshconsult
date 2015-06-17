@@ -1,6 +1,8 @@
 class ApiValidation
   include ActiveModel::Validations
 
+  FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
+
   def initialize(request_params, item)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
     if item
@@ -15,6 +17,6 @@ class ApiValidation
   end
 
   def format_value(value)
-    (ApiConstants::FORMATTED_TYPES.include?(value.class) ? value.to_s : value)
+    (FORMATTED_TYPES.include?(value.class) ? value.to_s : value)
   end
 end

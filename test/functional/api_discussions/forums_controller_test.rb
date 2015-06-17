@@ -55,7 +55,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_type: 7897)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('forum_type', 'is not included in the list', list: ApiConstants::LIST_FIELDS[:forum_type])])
+      match_json([bad_request_error_pattern('forum_type', 'is not included in the list', list: ErrorHelper::LIST_FIELDS[:forum_type])])
     end
 
     def test_update_invalid_forum_visibility
@@ -63,7 +63,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_visibility: 7897)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('forum_visibility', 'is not included in the list', list: ApiConstants::LIST_FIELDS[:forum_visibility])])
+      match_json([bad_request_error_pattern('forum_visibility', 'is not included in the list', list: ErrorHelper::LIST_FIELDS[:forum_visibility])])
     end
 
     def test_update_duplicate_name
