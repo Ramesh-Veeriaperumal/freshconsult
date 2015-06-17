@@ -1,13 +1,20 @@
 <div class="sidepanel">
   <% unless @drafts.blank? and @feedbacks.blank? %>
+
+      <% unless @orphan_categories.blank? %>
+      <div class="solutions-widget">
+       <%= render :partial => "orphan_categories" %>
+      </div>
+      <% end %>
+
       <% unless @drafts.blank? %>
-      <div id="drafts-sb" class="solutions-widget">
+      <div class="solutions-widget">
        <%= render :partial => "drafts" %>
       </div>
       <% end %>
 
       <% unless @feedbacks.blank? %>
-        <div id="feedbacks-sb" class="solutions-widget">
+        <div class="solutions-widget">
           <%= render :partial => "feedbacks" %>
         </div>
       <% end %>

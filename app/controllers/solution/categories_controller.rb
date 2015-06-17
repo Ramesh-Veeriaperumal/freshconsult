@@ -107,6 +107,7 @@ class Solution::CategoriesController < ApplicationController
   def sidebar
     @drafts = current_account.solution_articles.drafts_by_user(current_user)
     @feedbacks = current_account.tickets.article_tickets_by_user(current_user)
+    @orphan_categories = orphan_categories
     render :partial => "/solution/categories/sidebar"
   end
 
@@ -168,5 +169,9 @@ class Solution::CategoriesController < ApplicationController
 
     def set_modal
       @modal = true if request.xhr?
+    end
+
+    def orphan_categories
+      current_account.solution_categories_from_cache.select { |cat| cat['portal_solution_categories'].empty?}
     end
 end

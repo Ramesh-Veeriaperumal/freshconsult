@@ -1,6 +1,7 @@
 <% unless @drafts.blank? %>
 <% my_drafts = @drafts.drafts_by_user(current_user) %>
 <div class="solutions-widget-header">
+  <span class="ficon-file fsize-18 pr9"></span>
   <div class="sidebar-dropdown">
     <div data-tabs='tabs'>
       <ul role="tablist">
@@ -34,17 +35,17 @@
 </div>
 <div class="tab-content">
   <% active = my_drafts.blank? ? '' : 'active' %>
-  <div class='tab-pane <%= active %>' id='drafts-me'> 
-      <ul class="a-list">
+  <div class='tab-pane sidebar-list <%= active %>' id="drafts-me" > 
+      <ul>
       <% my_drafts.first(3).each do |a| %>
-        <li class="a-item medrafts">
+        <li>
            <div>
               <span>
                 <%= pjax_link_to(a.title.truncate(27),
-                                solution_category_folder_article_path(a.folder.category,a.folder,a),
-                                { :class => "a-title"}) %>
+                                solution_category_folder_article_path(a.folder.category,a.folder,a)
+                               ) %>
               </span> 
-              <div class="muted a-desc"> 
+              <div class="muted list-desc"> 
                 <%=t('solution.sidebar.drafts.details',
                                   :name => a.user.name, 
                                   :time => time_ago_in_words(a.modified_at)).html_safe%> </div>
@@ -52,31 +53,31 @@
         </li>
       <% end %>
     <% if my_drafts.size > 3 %>
-      <li class="a-item">
-        <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all'), :class => "see-all" %>
-      </li>
+      <span>
+        <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all'), { :class => "view-all"} %>
+      </span>
     <% end %>
     </ul>
   </div>
-  <div class='tab-pane <%= 'active' if active.empty? %>' id='drafts-all'> 
-      <ul class="a-list">
+  <div class='tab-pane sidebar-list <%= 'active' if active.empty? %>' id="drafts-all"> 
+      <ul >
       <% @drafts.first(3).each do |a| %>
-        <li class="a-item me all">
+        <li>
            <div>
               <span>
                 <%= pjax_link_to(a.title.truncate(27),
-                                solution_category_folder_article_path(a.folder.category,a.folder,a),
-                                { :class => "a-title"}) %>
+                                solution_category_folder_article_path(a.folder.category,a.folder,a)
+                              ) %>
               </span> 
-              <div class="muted a-desc"> <%=t('solution.sidebar.drafts.details', :name => a.user.name,
+              <div class="muted list-desc"> <%=t('solution.sidebar.drafts.details', :name => a.user.name,
                                            :time => time_ago_in_words(a.modified_at)).html_safe %> </div>
             </div>
         </li>
       <% end %>
     <% if @drafts.size > 3 %>
-      <li class="a-item">
-        <%= pjax_link_to t('solution.sidebar.view_all'), solution_drafts_path, :class => "see-all" %>
-      </li>
+      <span>
+        <%= pjax_link_to t('solution.sidebar.view_all'), solution_drafts_path, { :class => "view-all"} %>
+      </span>
     <% end %>
     </ul>
   </div>

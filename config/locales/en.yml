@@ -3301,7 +3301,10 @@ en:
   solution:
     orphan_category_info: "This category is not associated to any portal"
     sidebar:
+      orphan: "Orphan Categories"
+      orphan_desc: "These categories are not associated in any portal"
       view_all: "View all"
+      view_less: "View less"
       drafts:
         title: "Drafts"
         me: "Your Drafts" 
@@ -3309,7 +3312,7 @@ en:
         details: "Edited by %{name}, %{time}" 
       feedbacks:
         title: "Article Feedbacks"
-        me: "Your Feedbacks"
+        me: "Your Feedback"
         all: "All Feedbacks"
         details: "%{name} reported %{time}" 
     home: Solutions Home

@@ -34,6 +34,18 @@ window.App.Solutions = window.App.Solutions || {};
       $("body").on('click.solutionCategory', '#categories_sort_cancel', function () {
         $('#search-show').show();
       });
+
+      $("body").on('click.solutionCategory', '.orphan-view-all', function () {
+        $('.more-orphan-cat').show();
+        $('.orphan-view-all').hide();
+        $('.orphan-view-less').show();
+      });
+
+      $("body").on('click.solutionCategory', '.orphan-view-less', function () {
+        $('.more-orphan-cat').hide();
+        $('.orphan-view-all').show();
+        $('.orphan-view-less').hide();
+      });
     },
 
     onLeave: function () {
