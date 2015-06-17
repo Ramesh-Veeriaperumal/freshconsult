@@ -196,7 +196,7 @@ Along with the above options, few flags and counters are available which are lis
     startSaving: function () {
       this.bindEvents();
       this.autoSaveTrigger();
-    },
+    }
 
   };
 

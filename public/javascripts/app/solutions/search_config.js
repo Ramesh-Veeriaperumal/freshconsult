@@ -20,8 +20,7 @@ window.App.Solutions = window.App.Solutions || {};
     },
 
     searchStrategy: function (e) {
-      var searchString = e.target.value.replace(/^\s+|\s+$/g, "");
-      var resultList = $('#page_search_results'), $this = this;
+      var searchString = e.target.value.replace(/^\s+|\s+$/g, ""), resultList = $('#page_search_results'), $this = this;
       if (!searchString.empty() && searchString.length > 1 && this.currentString !== searchString) {
         this.currentString = searchString;
         resultList.hide().empty();
@@ -60,7 +59,7 @@ window.App.Solutions = window.App.Solutions || {};
           }
         });
       } else {
-        resultHtml = SEARCH_RESULT_LANG["no_result"];
+        resultHtml = SEARCH_RESULT_LANG.no_result;
       }
       resultList.html(resultHtml).show();
       $('.solution-list').hide();

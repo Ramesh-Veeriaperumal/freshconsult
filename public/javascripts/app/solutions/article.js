@@ -13,7 +13,7 @@ window.App = window.App || {};
       
       if (App.namespace === "solution/articles/new") {
         this.eventsForNewPage();
-      } 
+      }
 			
       this.resetData();
       this.setDataFromPage();
@@ -168,29 +168,27 @@ window.App = window.App || {};
     resetDraftRequest: function () {
       $('#cancel_draft_changes_input').prop('disabled', false);
       //request for submitting serialized form if a draft already existed
-      var form_submit = { 
-        type: 'POST', 
+      var form_submit = {
+        type: 'POST',
         data: $('.article-edit-form').serialize(),
         dataType: "script"
-      };
+      },
       //request for discarding draft if a draft didn't exist initially
-      var draft_discard = { 
-        type: 'DELETE', 
-        url: $('.article-edit-form').data().draftDiscardUrl, 
-        dataType: "json" 
-      };
-
-      var handlers = { 
-        success: function () {
-          console.log('Cancel success');
+				draft_discard = {
+					type: 'DELETE',
+					url: $('.article-edit-form').data().draftDiscardUrl,
+					dataType: "json"
+				},
+				handlers = {
+					success: function () {
+						console.log('Cancel success');
           //TODO What all to do in cancel request
-        },
-        error: function () {
-          console.log('Cancel error');
-        }
-      };
-
-      var request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit) );
+					},
+					error: function () {
+						console.log('Cancel error');
+					}
+				},
+				request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit));
       //Only if a single autosave is success should we reverse the changes done
       if (this.articleDraftAutosave.successCount > 0) {
         $.ajax(request);
@@ -198,9 +196,9 @@ window.App = window.App || {};
     },
 
     cancel_UI_toggle: function () {
-        this.toggleViews();
-        $('.article-view-edit:hidden').show();
-        $(".autosave-notif:visible").hide();
+      this.toggleViews();
+      $('.article-view-edit:hidden').show();
+      $(".autosave-notif:visible").hide();
     },
 
     autosaveInitialize: function (data) {
