@@ -8,7 +8,7 @@ module ApiDiscussions
     before_filter :can_send_user?, only: [:follow, :unfollow]
 
     def topics
-      @topics = paginate_items(@forum.topics)
+      @topics = paginate_items(load_association)
       render '/api_discussions/topics/topic_list'
     end
 

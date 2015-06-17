@@ -1,3 +1,5 @@
+# For configuration(like perform_caching, allow_forgery_protection) to be loaded for action controller metal, there are methods originally in base needs to be declared.
+# So that lazy load hooks will set the configuration accordingly. Suggested bt rails-api
 module Compatibility
   def cache_store; end
 

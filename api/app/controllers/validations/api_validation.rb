@@ -3,6 +3,7 @@ class ApiValidation
 
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
 
+  # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
   def initialize(request_params, item)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
     if item

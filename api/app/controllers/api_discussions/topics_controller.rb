@@ -23,7 +23,7 @@ module ApiDiscussions
     end
 
     def posts
-      @posts = paginate_items(@topic.posts)
+      @posts = paginate_items(load_association)
       render '/api_discussions/posts/post_list'
     end
 
