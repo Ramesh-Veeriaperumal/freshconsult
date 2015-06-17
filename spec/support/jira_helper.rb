@@ -51,7 +51,9 @@ module JiraHelper
       :local_integratable_id => @ticket.id, 
       :local_integratable_type => "issue-tracking", 
       :remote_key => "#{integrated_resource.remote_integratable_id}", 
-      :application_id => @installed_application.application_id }
+      :application_id => @installed_application.application_id,
+      :cloud_attachment => "Box or Dropbox Attachments in Freshdesk :- www.dropbox.com"
+       }
   end
 
   def notify_params(integrated_resource)
