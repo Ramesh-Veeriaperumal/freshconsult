@@ -31,6 +31,7 @@
             <%= javascript_tag do %>
               if (typeof freshfone === "undefined") { freshfone = {}; }
               freshfone.agents=<%= ffone_user_list.html_safe %>;
+              freshfone.group_from_cookie="<%= current_group%>";
               freshfone.no_agents="<%= t('helpdesk.dashboard.freshfone.no_agents') %>";
               freshfone.name="<%= t('helpdesk.dashboard.freshfone.name') %>";
               freshfone.last_modifed="<%= t('helpdesk.dashboard.freshfone.last_modified') %>";

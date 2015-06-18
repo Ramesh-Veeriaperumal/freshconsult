@@ -1264,7 +1264,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-  match '/helpdesk/dashboard/:group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
+  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
     resources :tags do
