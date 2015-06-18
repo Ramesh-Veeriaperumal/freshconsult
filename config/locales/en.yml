@@ -3451,6 +3451,7 @@ en:
     info18: "A published article can be edited and saved as draft which retains the published version on the portal while having an additional draft version for agents to edit. This is useful when you need to update articles, without taking them down from your portal."
     info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
     info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
+    info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag
