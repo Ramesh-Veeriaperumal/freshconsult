@@ -50,7 +50,9 @@ class Helpdesk::Note < ActiveRecord::Base
           schema_less_note.to_emails = notable.from_email 
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
-        schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails = reset_emails(emails)
+        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
+        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
+        schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
       elsif reply_to_forward?
         schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails = reset_emails(emails)
       elsif note?
