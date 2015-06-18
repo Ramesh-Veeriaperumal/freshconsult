@@ -114,25 +114,26 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
     addAgentByPresence: function (id) {
         this.agent=this.getAgent(id);
-        if (this.agent.presence==this.Status.ONLINE||this.agent.presence==this.Status.BUSY||this.agent.on_phone){
+        if (this.agent.presence==this.Status.ONLINE){
+              if(!this.AvailableAgentList.get("id",id)){
+                this.addAgentByDevice(id);
+              }
+        }  
+        if (this.agent.presence==this.Status.BUSY){
            if(this.agent.preference==this.Preference.TRUE){
               if(!this.AvailableAgentList.get("id",id)){
                 this.addAgentByDevice(id);
               }
             }
-          }
-        if (this.agent.presence==this.Status.OFFLINE && this.agent.preference==this.Preference.TRUE && !this.agent.on_phone){
-              if(!this.UnavailableAgentList.get("id",id)){
+            else{
               this.UnavailableAgentList.add(this.unavailableUserListItem(id));
-              }
-            }   
+            }
+        }  
 
-        if (this.agent.presence==this.Status.OFFLINE||this.agent.presence==this.Status.BUSY){
-            if(this.agent.preference==this.Preference.FALSE){
+        if (this.agent.presence==this.Status.OFFLINE){
               if(!this.UnavailableAgentList.get("id",id)){
               this.UnavailableAgentList.add(this.unavailableUserListItem(id));
               }
-            }  
         }
     },
     
