@@ -124,7 +124,7 @@ module SolutionHelper
 
 	def portals_for_category(category)
 	  content = ""
-	  names = category.portals.map{|p| h(truncate(p.portal_name, :length => 20)) }
+	  names = category.portals.map{|p| h(p.portal_name) }
 	  content << " "
 	  if names.present?
 			content << names.first(2).join(', ')
