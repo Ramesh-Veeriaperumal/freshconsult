@@ -18,7 +18,6 @@ class Integrations::PivotalTrackerController < ApplicationController
     if @installed_app && @installed_app["configs"][:inputs]["pivotal_update"] == "1"
       pivotal_updates = JSON(request.raw_post)
       exclude_arr = ["accepted_at", "updated_at","owner_ids","label_ids", "labels", "after_id", "owned_by_id", "before_id"]
-      pivotal_values = pivotal_updates["changes"].first
       primary_resources = pivotal_updates["primary_resources"].first
       story_id = primary_resources["id"]
       project_id = pivotal_updates["project"]["id"]
@@ -26,6 +25,7 @@ class Integrations::PivotalTrackerController < ApplicationController
       performer_id = pivotal_updates["performed_by"]["id"]
       case pivotal_updates["kind"].to_sym
         when :story_update_activity
+          pivotal_values = pivotal_updates["changes"].find{|x| x["kind"] == "story"}
           changes = "<div> Story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a>
             updated with following changes:<br/><br/>"
           pivotal_values["original_values"].each do |key, value|

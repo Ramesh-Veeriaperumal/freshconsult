@@ -175,6 +175,14 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::NoteDrop.new self
   end
 
+  def third_party_response?
+    schema_less_note.category == CATEGORIES[:third_party_response]
+  end
+
+  def reply_to_forward?
+    schema_less_note.category == CATEGORIES[:reply_to_forward]
+  end
+
   def support_email
     hash = parse_email_text(self.from_email)
     hash[:email]
@@ -254,6 +262,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def kind
+    return "reply_to_forward" if reply_to_forward? 
     return "private_note" if private_note?
     return "public_note" if public_note?
     return "forward" if fwd_email?
@@ -282,6 +291,16 @@ class Helpdesk::Note < ActiveRecord::Base
   def fb_reply_allowed?
     self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
   end
+
+  def load_note_reply_cc
+    if self.third_party_response?
+      [self.cc_emails, self.from_email.to_a]
+    elsif (self.reply_to_forward? || self.fwd_email?)
+      [self.cc_emails, self.to_emails.to_a]
+    else
+      [[], []]
+    end
+  end
   
   # Instance level spam watcher condition
   # def rl_enabled?
@@ -303,7 +322,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def add_cc_email
       cc_email_hash_value = notable.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : notable.cc_email_hash
-      if fwd_email?
+      if fwd_email? || reply_to_forward?
         fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]
         fwd_emails.delete_if {|email| (email == notable.requester.email)}
         cc_email_hash_value[:fwd_emails]  = fwd_emails

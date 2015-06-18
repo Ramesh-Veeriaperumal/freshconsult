@@ -96,8 +96,8 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   forward_ticket do
-    resource :"helpdesk/ticket", :only => [:forward_conv]
-    resource :"helpdesk/conversation", :only => [:forward]
+    resource :"helpdesk/ticket", :only => [:forward_conv, :reply_to_forward]
+    resource :"helpdesk/conversation", :only => [:forward, :reply_to_forward]
   end
 
   merge_or_split_ticket do

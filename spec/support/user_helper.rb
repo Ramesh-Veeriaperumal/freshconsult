@@ -60,6 +60,7 @@ module UsersHelper
 
   def add_user_with_multiple_emails(account, number)
     new_user = add_new_user(@account)
+    new_user.helpdesk_agent = 0;
     new_user.save
     new_user.reload
     number.times do |i|

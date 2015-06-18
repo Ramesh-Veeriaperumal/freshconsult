@@ -2,7 +2,7 @@
 
 <li class="m10 ml20 group dropdown pull-left">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-      <b id="group_name"><span class="filter-name"><%= t('helpdesk.dashboard.round_robin.all_agents') %></span></b>
+      <b id="group_name"><span class="filter-name"><%= @freshfone_group.nil? ? t('helpdesk.dashboard.round_robin.all_agents') : @freshfone_group.name %></span></b>
       <b class="caret"></b>
   </a>
   <ul class="dropdown-menu">

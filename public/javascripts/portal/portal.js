@@ -238,12 +238,12 @@
 				}
 			})
 		})
-
-		$(".image-lazy-load img").unveil(200, function() {
-		    $(this).load(function() {
-		      this.style.opacity = 1;
-		    });
-		});
+		
+		$(".image-lazy-load img").livequery(function(ev){
+          $(this).unveil(200, function() {
+              this.style.opacity = 1;
+          });
+     	});
 		
 		// If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
 		$(window).on('beforeunload', function(ev){

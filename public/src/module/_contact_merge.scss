@@ -216,7 +216,7 @@
     div.preview_pic{
       border: none;
       img{
-        @include border-radius(5px);     
+        @include border-radius(10%);     
         width: 30px;
         height: 30px;
       }
@@ -240,6 +240,7 @@
   		position: static;
       height: 30px;
       width: 30px;
+      line-height: 30px;
   		img{
   			width: 30px;
   			height: 30px;

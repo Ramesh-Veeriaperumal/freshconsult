@@ -1264,7 +1264,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-  match '/helpdesk/dashboard/:group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
+  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
     resources :tags do
@@ -1309,6 +1309,7 @@ Helpkit::Application.routes.draw do
       member do
         get :reply_to_conv
         get :forward_conv
+        get :reply_to_forward
         get :view_ticket
         put :assign
         put :restore
@@ -1346,6 +1347,7 @@ Helpkit::Application.routes.draw do
           post :forward
           post :note
           post :twitter
+          post :reply_to_forward
           post :facebook
           post :mobihelp
           get :traffic_cop
@@ -1455,7 +1457,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'canned_responses/show/:id'  => 'canned_responses#show'
-    match 'canned_responses/index/:id' => 'canned_responses#index'
+    match 'canned_responses/index/:id' => 'canned_responses#index', :as => :canned_responses_index
     match 'canned_responses/show'      => 'canned_responses#show'
 
     resources :reminders do
@@ -2067,6 +2069,7 @@ Helpkit::Application.routes.draw do
           put :country_restriction
           get :get_country_list
           post :country_restriction
+          post :new_freshfone_account
         end
       end
 

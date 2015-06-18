@@ -2,7 +2,7 @@
 	<ul class="base_set">
 		<% @topic.votes.all(:include => [:user], :order => "created_at DESC").each do |vote| %>
 			<li>
-				<%= user_avatar(vote.user) %><%= link_to_user vote.user, :class => "avatar-wrap" , :qid => "#{vote.user.id}" %>
+				<%= user_avatar(vote.user, :thumb, 'preview_pic thumb circle') %><%= link_to_user vote.user, :class => "avatar-wrap" , :qid => "#{vote.user.id}" %>
 				<div class="muted">
 					<abbr data-livestamp="<%= vote.created_at.to_i %>"><%= formated_date(vote.created_at) %></abbr>
 				</div>

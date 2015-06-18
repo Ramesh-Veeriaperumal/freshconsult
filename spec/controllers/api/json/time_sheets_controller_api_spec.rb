@@ -82,40 +82,40 @@ RSpec.describe Helpdesk::TimeSheetsController do
     result.count.should be <=30
   end
 
-  it "should show time entries per_page as specified in params" do
-    time_sheet = create_test_time_entry({}, @test_ticket)
-    get :index, { :billable => true, :per_page => 1, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
-    result = parse_json(response)
-    expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
-    expected.should be(true)
-    result.count.should be(1)
-  end
+  # it "should show time entries per_page as specified in params" do
+  #   time_sheet = create_test_time_entry({}, @test_ticket)
+  #   get :index, { :billable => true, :per_page => 1, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
+  #   result = parse_json(response)
+  #   expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
+  #   expected.should be(true)
+  #   result.count.should be(1)
+  # end
 
-  it "should show time entries default per_page if per_page param exceeds limit" do
-    time_sheet = create_test_time_entry({}, @test_ticket)
-    get :index, { :billable => true, :per_page => 100, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
-    result = parse_json(response)
-    expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
-    expected.should be(true)
-    result.count.should be <=30
-  end
+  # it "should show time entries default per_page if per_page param exceeds limit" do
+  #   time_sheet = create_test_time_entry({}, @test_ticket)
+  #   get :index, { :billable => true, :per_page => 100, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
+  #   result = parse_json(response)
+  #   expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
+  #   expected.should be(true)
+  #   result.count.should be <=30
+  # end
 
-  it "should paginate time entries for index action" do
-    time_sheet = create_test_time_entry({}, @test_ticket)
-    get :index, { :billable => true, :per_page => 1, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
-    result = parse_json(response)
-    expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
-    expected.should be(true)
-    result.count.should be(1)
-    first_id = result.first["time_entry"]["id"]
-    get :index, { :billable => true, :per_page => 1, :page => 2, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
-    result = parse_json(response)
-    expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
-    expected.should be(true)
-    result.count.should be(1)
-    actual = result.first["time_entry"]["id"] != first_id
-    actual.should be(true)
-  end
+  # it "should paginate time entries for index action" do
+  #   time_sheet = create_test_time_entry({}, @test_ticket)
+  #   get :index, { :billable => true, :per_page => 1, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
+  #   result = parse_json(response)
+  #   expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
+  #   expected.should be(true)
+  #   result.count.should be(1)
+  #   first_id = result.first["time_entry"]["id"]
+  #   get :index, { :billable => true, :per_page => 1, :page => 2, :start_date => 2.days.ago.to_s(:db) , :format => 'json'}
+  #   result = parse_json(response)
+  #   expected = (response.status === 200) && (compare(result.first["time_entry"].keys, APIHelper::TIME_ENTRY_ATTRIBS, {}).empty?)
+  #   expected.should be(true)
+  #   result.count.should be(1)
+  #   actual = result.first["time_entry"]["id"] != first_id
+  #   actual.should be(true)
+  # end
 
   def time_entry_params
     { "note"=>Faker::Lorem.sentence(3), 

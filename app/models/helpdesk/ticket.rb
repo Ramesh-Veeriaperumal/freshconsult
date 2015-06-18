@@ -304,6 +304,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.get_info if requester
   end
 
+  def requester_phone
+    (requester_has_phone?)? requester.phone : requester.mobile if requester
+  end
+
   def not_editable?
     requester and !requester_has_email? and !requester_has_phone?
   end
@@ -314,10 +318,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_has_phone?
     requester and requester.phone.present?
-  end
-
-  def requester_has_phone?
-    requester.phone.present?
   end
 
   def encode_display_id

@@ -289,7 +289,13 @@ Autocompleter.MultiValue = Class.create({
       var fieldValue = $F(event.element());
       var separatorIndex = 0;
       if (event.keyCode == 188) {
-        separatorIndex = fieldValue.indexOf(',');
+
+        if(this.getEntry(0) != undefined){
+          this.selectEntry();
+        } else {
+          separatorIndex = fieldValue.indexOf(',');
+        }
+      
       } else if (event.keyCode == 32 && !this.options.allowSpaces) {
         separatorIndex = fieldValue.indexOf(' ');
       };

@@ -8,14 +8,24 @@ class MergeContacts < BaseWorker
     :object     => "votes",
     :poly_type  => :voteable_type, 
     :poly_id    => "voteable_id", 
-    :types      => CommunityConstants::VOTEABLE_TYPES
+    :types      => CommunityConstants::VOTEABLE_TYPES,
+    :user       => :user_id
   }
 
   MONITOR_OPTIONS = {
     :object     => "monitorships",
     :poly_type  => :monitorable_type, 
     :poly_id    => "monitorable_id", 
-    :types      => CommunityConstants::MONITORABLE_TYPES
+    :types      => CommunityConstants::MONITORABLE_TYPES,
+    :user       => :user_id
+  }
+
+  TAG_OPTIONS = {
+    :object     => "tag_uses",
+    :poly_type  => :taggable_type,
+    :poly_id    => "tag_id",
+    :types      => ["User"],
+    :user       => :taggable_id
   }
 
   def perform(args)
@@ -44,22 +54,26 @@ class MergeContacts < BaseWorker
     move_accessory_attributes children_ids
     move_helpdesk_activities children_ids
     move_forum_activities children_ids
+    move_polymorphic_objects children_ids
   end
 
   def move_accessory_attributes children_ids
-    update_by_batches(@account.tag_uses, "taggable_id", ["taggable_id in (?) and taggable_type = 'User'", children_ids])
     move_each_of(["google_contacts", "user_credentials", "mobihelp_devices"], children_ids)
   end
 
   def move_forum_activities children_ids
     move_each_of(["posts", "topics"], children_ids)
-    update_communities_meta(children_ids, VOTE_OPTIONS)
-    update_communities_meta(children_ids, MONITOR_OPTIONS)
   end
 
   def move_helpdesk_activities children_ids
     update_by_batches(@account.tickets, "requester_id", ["requester_id in (?)", children_ids])
     move_each_of(["notes"], children_ids)
+  end
+
+  def move_polymorphic_objects children_ids
+    [MONITOR_OPTIONS, VOTE_OPTIONS, TAG_OPTIONS].each do |options|
+      update_polymorphic(children_ids, options)
+    end
   end
 
   #Moving relations by batches of 500
@@ -93,11 +107,11 @@ class MergeContacts < BaseWorker
   # We are doing this as a user should not have multiple monitorships/votes for the same topic/forum etc.
   # We are moving the ones not present in the parent and deleting the ones that are repeated in the target.
   # We are not moving them in batches due to this
-  def update_communities_meta children_ids, options
+  def update_polymorphic children_ids, options
     update_ids, delete_ids = [], []
     options[:types].each do |obj|        
       current_children_objects  = @account.send(options[:object])
-                                    .where({:user_id => children_ids, options[:poly_type] => obj})
+                                    .where({options[:user] => children_ids, options[:poly_type] => obj})
       current_parent_object_ids = @parent_user.send(options[:object])
                                     .where({options[:poly_type] => obj})
                                     .select(options[:poly_id])
@@ -112,7 +126,7 @@ class MergeContacts < BaseWorker
         end
       end
     end
-    @account.send(options[:object]).where({:id => update_ids}).update_all({:user_id => @parent_user.id}) if update_ids.present?
+    @account.send(options[:object]).where({:id => update_ids}).update_all({options[:user] => @parent_user.id}) if update_ids.present?
     @account.send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
   end
   

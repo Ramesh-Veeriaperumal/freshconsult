@@ -64,18 +64,24 @@ module Helpdesk::DashboardHelper
 	 		:last_call_time => (agent.last_call_at) ,
 	 		:presence => agent.presence,
 	 		:on_phone => agent.available_on_phone,
-	 		:avatar => user_avatar(agent.user),
+	 		:avatar => user_avatar(agent.user, 'thumb', 'preview_pic thumb'),
 	 		:preference => agent.incoming_preference}
 	  }.to_json
 	 end
 
+	 def current_group
+	 	@freshfone_group_current
+	 end	
+
 	 def round_robin?
+	 	@round_robin_enabled ||=
 	 	current_user.privilege?(:admin_tasks) and
 	 	current_account.features?(:round_robin) and
     	current_account.groups.round_robin_groups.any?   	
 	 end
 
 	 def freshfone_active?
+	 	@freshfone_enabled ||=
 	 	current_user.privilege?(:admin_tasks) and
 	 	current_account.freshfone_active? and 
 	 	current_account.features?(:phone_agent_availability)
