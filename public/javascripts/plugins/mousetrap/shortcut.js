@@ -126,6 +126,8 @@
             }else if($('#new_watcher_page:visible').get(0)){ 
                  $(".watcher-close").trigger('click');
             }else if($('.blockUI:visible').get(0)){
+            }else if ($('.sol-sticky #sticky_search_wrap').is(':visible')) {
+                App.Solutions.SearchConfig.hideSearch();
             }else{ 
                 $(".watcher-close").trigger('click');    
                 document.getElementById('header_search').value = '';
