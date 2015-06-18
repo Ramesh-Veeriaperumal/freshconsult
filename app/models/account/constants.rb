@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
     :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
-    :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
+    :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => true, 
     :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false}
 
 
