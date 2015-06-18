@@ -107,6 +107,31 @@ window.App = window.App || {};
       $('body').on('change.folders_articles', '#solution_folder_visibility', function () {
         $this.show_hide_customers();
       });
+
+      $("body").on('click.folders_articles', function (e) {
+        var container =  $('.visible-to-btn');
+        if (!container.is(e.target) && container.has(e.target).length === 0) {
+          $this.unSelectVisibleTo();
+        } else {
+          if ($('#visible_to').is(':visible')) {
+            $this.selectVisibleTo();
+          } else {
+            $this.unSelectVisibleTo();
+          }
+        }
+      });
+    },
+
+    selectVisibleTo: function () {
+      $('.visible-to-btn').addClass('highlight-border');
+      $('.visible-to-btn .bulk-action-btns').removeClass('drop-right');
+      $('.visible-to-btn .bulk-action-btns').addClass('visible-to-selected');
+    },
+
+    unSelectVisibleTo: function () {
+      $('.visible-to-btn').removeClass('highlight-border');
+      $('.visible-to-btn .bulk-action-btns').addClass('drop-right');
+      $('.visible-to-btn .bulk-action-btns').removeClass('visible-to-selected');
     },
 
     removeCurrentFolder: function () {

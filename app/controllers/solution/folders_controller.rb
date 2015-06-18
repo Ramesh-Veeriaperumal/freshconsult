@@ -28,7 +28,7 @@ class Solution::FoldersController < ApplicationController
     
     respond_to do |format|
       format.html {
-        redirect_to "/solution/drafts/all" if @folder.is_default?
+        redirect_to solution_my_drafts_path('all') if @folder.is_default?
       }
       format.xml  { render :xml => @folder.to_xml(:include => articles_scope) }
       format.json { render :json => @folder.as_json(:include => articles_scope) }
