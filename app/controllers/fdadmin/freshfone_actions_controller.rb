@@ -1,5 +1,5 @@
 class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
-
+  include Freshfone::AccountUtil
 	around_filter :select_master_shard , :except => :get_country_list
 	around_filter :select_slave_shard , :only => :get_country_list
 	before_filter :load_account
@@ -134,6 +134,22 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 			end
 		end
 	end
+
+  def new_freshfone_account
+    result = []
+    freshfone_account = create_freshfone_account(@account)
+    if freshfone_account.present?
+      result = { 
+        :twilio_subaccount_id => freshfone_account.twilio_subaccount_id,
+        :friendly_name => freshfone_account.friendly_name
+      }
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
 
 	private
 

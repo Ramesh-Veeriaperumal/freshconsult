@@ -2069,6 +2069,7 @@ Helpkit::Application.routes.draw do
           put :country_restriction
           get :get_country_list
           post :country_restriction
+          post :new_freshfone_account
         end
       end
 
