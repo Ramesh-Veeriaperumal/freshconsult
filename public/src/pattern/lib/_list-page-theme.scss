@@ -6,6 +6,16 @@
             margin-bottom:20px;
         }
     }
+    img.thumb, div.thumb{
+        @include size(25px, 25px);
+    }
+    div.thumb{
+        line-height: 25px;
+    }
+    img.thumb{
+        position: relative;
+        top: 2px;
+    }
     .list-page-subheader{
         font-size: 12px;
         margin-top: 8px;
@@ -31,12 +41,6 @@
           input[type="checkbox"]{
             margin-top:10px;
           }
-        }
-
-        .preview_pic{
-            img{
- 
-            }
         }
 
         .list-page-table-header{
@@ -435,4 +439,3 @@ ul.ffone-minimal-swap li, ul.ticket-minimal-swap li{
  &.current{display: table;}
  td{ line-height: 24px;}
 }
-
