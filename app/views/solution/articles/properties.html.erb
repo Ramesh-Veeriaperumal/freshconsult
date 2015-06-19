@@ -1,5 +1,5 @@
 <%= form_for @article, 
-			:url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , 
+			:url => solution_article_path(@article.id) , 
 			:html => {:id => "article-form", :class => "form-horizontal"}, 
 			:remote => true do |f| %>
 		<div id="solution-properties-container">
