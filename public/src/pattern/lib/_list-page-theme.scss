@@ -6,16 +6,6 @@
             margin-bottom:20px;
         }
     }
-    img.thumb, div.thumb{
-        @include size(25px, 25px);
-    }
-    div.thumb{
-        line-height: 25px;
-    }
-    img.thumb{
-        position: relative;
-        top: 2px;
-    }
     .list-page-subheader{
         font-size: 12px;
         margin-top: 8px;
