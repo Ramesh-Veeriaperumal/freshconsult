@@ -790,8 +790,12 @@
 
 .sol-sticky {
   margin: -20px;
-  padding: 20px 20px 5px;
+  padding: 20px 20px 0px;
   margin-bottom: 0;
+}
+
+.solution-home-header {
+  padding-bottom: 5px;
   border-bottom: 1px solid #ddd;
 }
 
