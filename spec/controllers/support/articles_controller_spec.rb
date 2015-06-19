@@ -95,7 +95,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql true
+    vote.vote?.should eql true
     response.code.should be_eql("200")
   end
 
@@ -122,7 +122,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql true
+    vote.vote?.should eql true
     @public_article2.thumbs_up.should eql(likes + 1)
     @public_article2.thumbs_down.should eql(dislikes - 1)
   end
@@ -155,7 +155,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql false
+    vote.vote?.should eql false
     response.code.should be_eql("200")
   end
 
@@ -182,7 +182,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql false
+    vote.vote?.should eql false
     @public_article3.thumbs_up.should eql(likes - 1)
     @public_article3.thumbs_down.should eql(dislikes + 1)
   end
