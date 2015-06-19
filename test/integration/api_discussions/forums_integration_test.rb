@@ -5,12 +5,12 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 8,
+      create: 9,
       show: 4,
-      update: 8,
-      destroy: 13,
-      follow: 9,
-      unfollow: 9,
+      update: 9,
+      destroy: 14,
+      follow: 10,
+      unfollow: 10,
       is_following: 3,
       topics: 4
     }

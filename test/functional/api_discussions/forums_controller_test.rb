@@ -273,7 +273,6 @@ module ApiDiscussions
     end
 
     def test_before_filters_show
-      controller.class.any_instance.expects(:verify_authenticity_token).never
       controller.class.any_instance.expects(:check_privilege).once
       get :show, construct_params(id: 1)
     end

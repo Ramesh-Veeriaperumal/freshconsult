@@ -5,12 +5,11 @@ class TicketsControllerTest < ActionController::TestCase
     remove_wrap_params
     request_params.merge(params)
   end
-  
-  CUSTOM_FIELDS = ["number", "checkbox", "text", "paragraph"]
 
-  custom_fields_values = {"number" => 32234, "checkbox" => true, "text" => Faker::Name.name, "paragraph" =>  Faker::Lorem.paragraph}
-  update_custom_fields_values = {"number" => 12, "checkbox" => nil, "text" => Faker::Name.name, "paragraph" =>  Faker::Lorem.paragraph}
+  CUSTOM_FIELDS = %w(number checkbox text paragraph)
 
+  custom_fields_values = { 'number' => 32_234, 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  update_custom_fields_values = { 'number' => 12, 'checkbox' => nil, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
 
   def wrap_cname(params = {})
     { ticket: params }
@@ -269,16 +268,16 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_nested_custom_fields
-    params = ticket_params_hash.merge({custom_fields: {"country_#{@account.id}" => "Australia", "state_#{@account.id}" => "Queensland", "city_#{@account.id}" => "Brisbane" }})
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
     post :create, construct_params({}, params)
-    assert_response :created 
+    assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
   def test_create_with_custom_dropdown
-    create_custom_field_dropdown("movies", ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
-    params = ticket_params_hash.merge({custom_fields: {"movies_#{@account.id}" => 'Pursuit of Happiness'}})
+    create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    params = ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => 'Pursuit of Happiness' })
     post :create, construct_params({}, params)
     assert_response :created
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
@@ -288,7 +287,7 @@ class TicketsControllerTest < ActionController::TestCase
   CUSTOM_FIELDS.each do |custom_field|
     define_method("test_create_with_custom_#{custom_field}") do
       create_custom_field("test_custom_#{custom_field}", custom_field)
-      params = ticket_params_hash.merge({custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => custom_fields_values[custom_field]}})
+      params = ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => custom_fields_values[custom_field] })
       post :create, construct_params({}, params)
       assert_response :created
       match_json(ticket_pattern(params, Helpdesk::Ticket.last))
@@ -296,7 +295,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
 
     define_method("test_update_with_custom_#{custom_field}") do
-      params_hash = update_ticket_params_hash.merge({custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => update_custom_fields_values[custom_field]}})
+      params_hash = update_ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => update_custom_fields_values[custom_field] })
       t = ticket
       put :update, construct_params({ id: t.display_id }, params_hash)
       assert_response :success
@@ -593,7 +592,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_nested_custom_fields
     t = ticket
-    params = update_ticket_params_hash.merge({custom_fields: {"country_#{@account.id}" => "USA", "state_#{@account.id}" => "California", "city_#{@account.id}" => "Burlingame" }})
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'USA', "state_#{@account.id}" => 'California', "city_#{@account.id}" => 'Burlingame' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response :success
     match_json(ticket_pattern(params, t.reload))
@@ -602,7 +601,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_custom_dropdown
     t = ticket
-    params = update_ticket_params_hash.merge({custom_fields: {"movies_#{@account.id}" => 'Pursuit of Happiness'}})
+    params = update_ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => 'Pursuit of Happiness' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response :success
     match_json(ticket_pattern(params, t.reload))
@@ -864,8 +863,8 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(order_type: 'test', order_by: 'test')
     assert_response :bad_request
     pattern = [bad_request_error_pattern('order_type', 'is not included in the list', list: 'asc,desc')]
-    pattern << bad_request_error_pattern('order_by', 'is not included in the list', 
-      list: 'due_by,created_at,updated_at,priority,status')
+    pattern << bad_request_error_pattern('order_by', 'is not included in the list',
+                                         list: 'due_by,created_at,updated_at,priority,status')
     match_json(pattern)
   end
 
@@ -1007,12 +1006,11 @@ class TicketsControllerTest < ActionController::TestCase
 
     user_id = company.users.map(&:id).first
     Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user_id,
-      status: 2, responder_id: nil)
+                                                                        status: 2, responder_id: nil)
     get :index, controller_params(company_id: company.id,
                                   requester_id: user_id, filter: 'new_and_my_open')
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
   end
-
 end

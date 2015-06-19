@@ -23,8 +23,6 @@ class ApiApplicationController < MetalApiController
   include HelpdeskSystem
   include ControllerLogger
   include SubscriptionSystem
-  protect_from_forgery
-  before_filter :verify_authenticity_token, if: :api_request?
   # ************************ App specific Before filters Ends ******************************#
 
   skip_before_filter :check_privilege, only: [:route_not_found]
@@ -89,6 +87,63 @@ class ApiApplicationController < MetalApiController
     end
 
   private
+
+    def not_get_request?
+      @not_get_request ||= !request.get?
+    end
+
+    def get_email_user(username, pwd)
+      user = User.find_by_user_emails(username) # existing method used by authlogic to find user
+      if user && !user.deleted
+        valid_password = user.valid_password?(pwd) # valid_password - AuthLogic method
+        if valid_password
+          update_info(user) 
+          user
+        else
+          update_failed_login_count(user)
+          nil
+        end
+      end
+    end
+
+    # This increases for each consecutive failed login. 
+    # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
+    def update_failed_login_count(user)
+      user.failed_login_count ||= 0
+      user.failed_login_count += 1 
+      user.save
+    end
+      
+    # See Authlogic::Session::MagicColumns for more details
+    def update_info(user)
+      user.login_count ||= 0
+      user.login_count += 1 # Increased every time an explicit login is made.
+      user.last_login_at = user.current_login_at # Updates with the value of current_login_at before it is reset.
+      user.current_login_at = Time.now.utc # Updates with the current time when an explicit login is made.
+      user.failed_login_count = 0
+      user.current_login_ip = request.ip # Updates with the request ip when an explicit login is made.
+      user.last_login_ip = user.current_login_ip # Updates with the value of current_login_ip before it is reset.
+      user.save
+    end
+
+    # Authlogic does not change the column values if logged in by a session, cookie, or basic http auth
+    def get_token_user(username)
+      user = User.find_by_single_access_token(username)
+      return user if user && !user.deleted && !user.blocked && user.active?
+    end
+
+    def current_user
+      return @current_user if defined?(@current_user)
+      if not_get_request?
+        # authenticate using auth headers
+        authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
+          @current_user = get_email_user(username, password) || get_token_user(username)
+        end
+      elsif current_user_session # fall back to old session based auth
+        @current_user = (session.has_key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
+      end
+      @current_user
+    end
 
     def assign_and_clean_params(params_hash)
       # Assign original fields with api params
@@ -229,9 +284,4 @@ class ApiApplicationController < MetalApiController
       render_request_error(:account_suspended, 403) unless current_account.active?
     end
 
-    def handle_unverified_request
-      super
-      post_process_unverified_request
-      render_request_error(:unverified_request, 401)
-    end
 end

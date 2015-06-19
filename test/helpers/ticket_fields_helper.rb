@@ -1,9 +1,8 @@
 module TicketFieldsHelper
+  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal' }
 
-  FIELD_MAPPING = {"number" => "int", "checkbox" => "boolean", "paragraph" => "text", "decimal" => "decimal"}
-  
-  def create_custom_field(name, type) 
-    flexifield_mapping = type == "text" ? "ffs_13" : "ff_#{FIELD_MAPPING[type]}05"
+  def create_custom_field(name, type)
+    flexifield_mapping = type == 'text' ? 'ffs_13' : "ff_#{FIELD_MAPPING[type]}05"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
@@ -43,8 +42,8 @@ module TicketFieldsHelper
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
 
-    field_choices = choices.collect {|x| [x, '0']} 
-    pv_attr = choices.collect {|x| {'value' => x}}
+    field_choices = choices.collect { |x| [x, '0'] }
+    pv_attr = choices.collect { |x| { 'value' => x } }
 
     picklist_vals_l1 = []
     field_choices.map(&:first).each_with_index do |l1_val, index1|

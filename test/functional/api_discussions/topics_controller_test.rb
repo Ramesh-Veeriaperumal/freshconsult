@@ -145,7 +145,6 @@ module ApiDiscussions
     end
 
     def test_before_filters_show
-      @controller.expects(:verify_authenticity_token).never
       @controller.expects(:check_privilege).never
       @controller.expects(:portal_check).once
       get :show, construct_params(id: 1)

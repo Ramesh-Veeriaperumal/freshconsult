@@ -63,4 +63,5 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_not_nil @controller.instance_variable_get(:@item)
     assert_equal 'test', actual.name
   end
+
 end
