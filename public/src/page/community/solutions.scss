@@ -790,8 +790,9 @@
 
 .sol-sticky {
   margin: -20px;
-  padding: 20px 20px 0;
+  padding: 20px 20px 5px;
   margin-bottom: 0;
+  border-bottom: 1px solid #ddd;
 }
 
 body.community #sticky_header.category-sticky.is_stuck {
