@@ -204,6 +204,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :email_notification_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+
   # contacts and companies import
   resources :customers_import do
     collection do
