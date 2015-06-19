@@ -3299,7 +3299,7 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
-    orphan_category_info: "This category is not associated to any portal"
+    orphan_category_info: "This category is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
       orphan_desc: "These categories are not associated in any portal"
@@ -3318,7 +3318,6 @@ en:
     home: Solutions Home
     add_category: New Category
     orphan: Orphan
-    orphan_category_msg: This category is not visible in any portal.
     add_folder: New Folder
     add_article: New Article
     view_feedback: View all feedbacks
