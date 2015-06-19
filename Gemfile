@@ -116,7 +116,7 @@ gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 
 
-gem 'chargebee', "~> 1.2.9"
+gem 'chargebee', "~> 1.5.1"
 
 gem 'encryptor', '1.1.3'
 gem "dalli"

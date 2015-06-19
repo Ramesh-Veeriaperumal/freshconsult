@@ -255,9 +255,9 @@
 	.preview_pic {
 		display:inline-block;
 		img{
-			width: 30px;
-			height:30px;	
-			border: 1px solid #9a9a9a;
+			height: 25px;
+			width: 25px;
+			border-radius: 10%;	
 		}
 		@include margin-right(5px);
 	}

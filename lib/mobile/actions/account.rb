@@ -14,7 +14,7 @@ module Mobile::Actions::Account
 
   CONFIG_JSON_INCLUDE = {
       only: [:id], 
-      :methods => [:portal_name, :full_domain, :social_feature, :timesheets_feature, :freshfone_feature]
+      :methods => [:portal_name, :full_domain, :social_feature, :timesheets_feature, :freshfone_feature, :freshfone_activated]
   }
 
 	def to_mob_json(deep=false)
@@ -55,6 +55,10 @@ module Mobile::Actions::Account
     freshfone_enabled?
   end
 
+  def freshfone_activated
+    freshfone_numbers.present?
+  end
+  
   def social_feature
     (features?(:twitter) && User.current.privilege?(:manage_tickets)) && !twitter_handles_from_cache.blank?
   end

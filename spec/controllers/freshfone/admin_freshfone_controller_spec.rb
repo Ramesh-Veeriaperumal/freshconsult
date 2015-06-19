@@ -12,7 +12,7 @@ describe Admin::FreshfoneController do
 
   it 'should redirect to numbers on index action' do
     get :index
-    response.should redirect_to('/admin/freshfone/numbers')
+    response.should redirect_to('/admin/phone/numbers')
   end
 
   it 'should return all available phone numbers on search' do
@@ -38,6 +38,6 @@ describe Admin::FreshfoneController do
 
   it 'should redirect to numbers on toggle_freshfone action' do
     get :toggle_freshfone
-    response.should redirect_to('/admin/freshfone/numbers')
+    response.should redirect_to('/admin/phone/numbers')
   end
 end

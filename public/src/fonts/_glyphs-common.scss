@@ -524,6 +524,11 @@ span.fb_add
 		border-radius: 50%;
 		font-size: 12px;
 	}
+  .forward-reply{
+    border: none;
+    border-radius: 0;
+    text-align: inherit;
+  }
 	.commentbox {
 		.conv-actions-reply{
 			text-indent: inherit;

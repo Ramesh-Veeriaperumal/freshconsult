@@ -6,9 +6,9 @@
     <% end %>
 	</td>
 	<td >
-		<a href="#" class="cust-list-avatar">
+		<div class="cust-list-avatar">
 			<%= user_avatar(contact)%> <!-- class="img-circle" have to add in img tag for circle-->
-		</a>
+		</div>
 		<div class="text-info">
 			<strong><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name", :'data-pjax' => "#body-container") %></strong>
 			<% unless contact.job_title.blank? %>

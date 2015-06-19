@@ -34,6 +34,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 		<% content_for :onload_script do -%>
 	        new Autocompleter.MultiValue("cc_emails", cachedLookup, 
 	        							  $A(),{frequency: 0.1, 
+	        							  allowSpaces: true,
 	        							  acceptNewValues: true,separatorRegEx:/;|,/});
 		<%- end %>
 	<% end %>

@@ -220,6 +220,7 @@ label.overlabel{
 		@include float(right);
 		margin: 0;
 		@include border-radius(0);
+		cursor: pointer;
 		img {
 			@include border-radius(0);
 			width: auto;

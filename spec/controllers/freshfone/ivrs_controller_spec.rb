@@ -13,7 +13,7 @@ RSpec.describe Freshfone::IvrsController do
   it 'should render the number for ivr on show' do
     ivr = @number.ivr
     get :show, {:id => ivr.id}
-    response.should redirect_to("/admin/freshfone/numbers/#{@number.id}/edit")
+    response.should redirect_to("/admin/phone/numbers/#{@number.id}/edit")
   end
 
   it 'should return all ivrs for the account' do
@@ -44,7 +44,7 @@ RSpec.describe Freshfone::IvrsController do
     ivr = @number.ivr
     put :update, params
     @account.ivrs.find(ivr.id).menus.first.message.should be_eql(message)
-    response.should redirect_to("/admin/freshfone/numbers/#{@number.id}")
+    response.should redirect_to("/admin/phone/numbers/#{@number.id}")
   end
 
   it 'should not update the welcome message on preview' do

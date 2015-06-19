@@ -1,11 +1,12 @@
 .tkt-details-sticky {
-	border-bottom: solid 1px #DADADA;
+	border-bottom: solid 1px #eee;
 	@include margin-left(-$common-padding);
 	@include margin-right(-$common-padding);
 	padding: 10px $common-padding;
 	background: #FFF;
 }
 .tkt-details-sticky.is_stuck {
+	border-bottom-color: #fff;
 	@include box-shadow(0 2px 4px rgba(63, 63, 63, 0.1));
 }
 

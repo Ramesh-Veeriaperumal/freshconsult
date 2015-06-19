@@ -60,9 +60,10 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
-  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
-  before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
+  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
+  before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
+  before_filter :load_note_reply_cc, :only => [:reply_to_forward]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
@@ -873,11 +874,14 @@ class Helpdesk::TicketsController < ApplicationController
     reply_to_all_emails
   end
 
+  def load_note_reply_cc
+    @to_cc_emails, @to_email = @note.load_note_reply_cc
+  end
+
   def load_by_param(id)
     current_account.tickets.find_by_param(id,current_account)
   end
 
-  
   private
 
     def find_topic

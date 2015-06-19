@@ -4462,6 +4462,16 @@ en:
           addbcc: Add Bcc
           removebcc: Remove Bcc
           not_sent:  Reply was not forwarded!
+        reply_to_forward:
+          title: Reply
+          cc: Cc
+          to: To
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+          not_sent: Reply was not sent!
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
@@ -4541,6 +4551,7 @@ en:
           reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"
@@ -4738,6 +4749,7 @@ en:
       tags: "Tags"
       survey_result: "Survey Result"
       product: "Product"
+      requester_phone: "Requester Phone"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed. 
@@ -5780,6 +5792,7 @@ en:
   fwd_to: "Forward"
   add_cc: Add Cc
   add_a_cc: Add a CC
+  reply_to_fwd: Reply
   add_new_requester: "Add new requester"
   fwd_success_msg: "The ticket has been successfully forwarded"
   validate_fwd_to_email_msg: "Please enter a valid email address"
@@ -5815,6 +5828,7 @@ en:
   forwarded_to: "Forwarded to"
   replied_to: "Replied to"
   notified_to: "Notified to"
+  reply_to_forward: "replied to forward"
   to: "to"
   cc_emails_key: ", cc : %{cc_emails}"
   bcc_emails_key: ", bcc : %{bcc_emails}"
@@ -6403,7 +6417,7 @@ en:
         round_robin: "Call idle agent first"
       number_settings:
         title_text: "Managing your call center"
-        info_content: "<b>Assigning phone calls to agents and groups</b></br>You can set up an interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your number</b><br>You could also configure each and every phone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and attached to your tickets, and the recording can be publicly available to customers or kept private. You can also restrict your phone channel from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Read more about customizing your number</a>"
+        info_content: "<b>Assigning phone calls to agents and groups</b></br>You can set up an interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your number</b><br>You could also configure each and every phone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and attached to your tickets, and the recording can be publicly available to customers or kept private. You can also restrict your phone channel from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Read more about customizing your number</a>"
         non_business_hours: "Accept Calls during…"
         business_calendar: "Select Business Hour"
         transcript_voice: "Transcript Voice"
@@ -6453,7 +6467,7 @@ en:
         number_accessible: "Accessible by"
       numbers:
         sidebar_title: "Freshdesk’s built-in phone channel"
-        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the countries listed here and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/freshfone'>Read more about what you can do with phone</a>."
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
         purchase_number: "Purchase Number"
         purchase_phone_number: "Buy Number (%{number})"
         buy: "Buy Number"
@@ -6478,7 +6492,7 @@ en:
           required_field: "All fields are required"
         setup:
           title_text: "Setting up a call center"
-          info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any country listed here. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/freshfone/pricing'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
+          info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
       invalid_attachment: "Attachment '%{name}' is not a valid audio file/ its size is greater than 5MB"
       ivr:
         simple_message_title: "Simple Message"

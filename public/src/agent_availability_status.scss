@@ -1,0 +1,20 @@
+@import "./settings/settings";
+.list-page{
+	margin:0 auto;
+    .list-page-header{
+        margin-bottom: 10px;
+        .lead{
+            margin-bottom:20px;
+        }
+    }
+		img.thumb, div.thumb{
+	        @include size(25px, 25px);
+	    }
+	    div.thumb{
+	        line-height: 25px;
+	    }
+	    img.thumb{
+	        position: relative;
+	        top: 2px;
+	    }
+}	    

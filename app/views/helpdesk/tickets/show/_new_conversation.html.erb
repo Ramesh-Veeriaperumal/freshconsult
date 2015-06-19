@@ -1,14 +1,3 @@
-<%= javascript_tag do %>
-jQuery(document).ready(function(){
-	var localStore = localStorage["local_ca_response"]
-	if(localStore == undefined){
-		localStore = "";
-	}
-	var s = jQuery("#canned_response_show").prop("href")
-	jQuery("#canned_response_show").prop("href", s+localStore)
-});
-<% end %>
-
 <div class="redactor conversation_thread">
 	<div class="conversation">
 		<div class="avatar-wrap"><%= user_avatar(current_user, :thumb, "preview_pic circle") %></div>
@@ -16,7 +5,7 @@ jQuery(document).ready(function(){
 			<div id="TicketForms">
 				<div class="hide">
 		      <%= link_to( t(:'ticket.canned_responses.ca_response'), 
-		      							"/helpdesk/canned_responses/index/#{@ticket.display_id}?recent_ids=", 
+		      							helpdesk_canned_responses_index_path(@ticket.display_id), 
 		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
 		      							:id => "canned_response_show", "data-target" => "#canned_responses",
 		      							:title => t(:'ticket.canned_responses.ca_responses')) %>

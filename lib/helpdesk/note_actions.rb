@@ -4,7 +4,7 @@ module Helpdesk::NoteActions
 
   def conversation_info(note)
     return "" if (note.schema_less_note.nil? or note.to_emails.blank?)
-    conv_type = note.fwd_email? ? t("forwarded_to") : (note.outbound_email? ? t("replied_to") : 
+    conv_type = note.fwd_email? ? t("forwarded_to") : ((note.outbound_email? || note.reply_to_forward?) ? t("replied_to") : 
       (note.note? ? t("notified_to") : t("to")))
     t("conv_contacts_info", :conv_type_msg => conv_type, 
       :to_emails => parse_to_comma_sep_emails(note.to_emails),

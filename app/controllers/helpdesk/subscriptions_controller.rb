@@ -28,7 +28,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
                                                "#{current_user.name}")
         end
 	    respond_to do |format|
-    	    format.html{render :nothing => true}
+    	    format.html{render :partial => "helpdesk/subscriptions/ticket_watcher_list"}
         	format.nmobile {render :json => { :success => true }.to_json }
     	end
       else

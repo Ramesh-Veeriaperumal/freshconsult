@@ -16,12 +16,12 @@ class Helpdesk::ConversationsController < ApplicationController
   helper Helpdesk::NotesHelper
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
-  before_filter :validate_fwd_to_email, :only => [:forward]
+  before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
   before_filter :check_for_kbase_email, :only => [:reply, :forward]
   before_filter :set_quoted_text, :only => :reply
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
     :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
-  before_filter :set_ticket_status, :except => [:forward, :traffic_cop]
+  before_filter :set_ticket_status, :except => [:forward, :reply_to_forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
   before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp]
   before_filter :check_for_public_notes, :only => [:note]
@@ -57,6 +57,19 @@ class Helpdesk::ConversationsController < ApplicationController
       flash[:error] = @item.errors.full_messages.to_sentence 
       create_error(:fwd)
     end
+  end
+
+  def reply_to_forward
+    build_attachments @item, :helpdesk_note
+    if @item.save_note
+      add_forum_post if params[:post_forums]
+      flash[:notice] = t(:'fwd_success_msg')
+      process_and_redirect
+    else
+      flash[:error] = @item.errors.full_messages.to_sentence 
+      create_error(:fwd)
+    end
+
   end
 
   def note
