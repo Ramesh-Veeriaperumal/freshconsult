@@ -7058,8 +7058,8 @@ en:
             other: "%{count} people like this Idea"
             zero: "None"
           announce:
-            one: "%{count} Person likes this Annoucement"
-            other: "%{count} people like this Annoucement"
+            one: "%{count} Person likes this Announcement"
+            other: "%{count} people like this Announcement"
             zero: "None"
           problem:
             one: "%{count} Person has this Problem"

@@ -29,6 +29,11 @@ class Topic < ActiveRecord::Base
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
+  has_many :merged_monitorships,
+           :as => :monitorable,
+           :class_name => "Monitorship", 
+           :through => :merged_topics,
+           :source => :monitorships
   has_many :monitors, :through => :monitorships, :source => :user, 
                       :conditions => ["#{Monitorship.table_name}.active = ?", true],
                       :order => "#{Monitorship.table_name}.id DESC"
