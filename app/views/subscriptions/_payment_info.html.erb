@@ -6,8 +6,8 @@
 	   </div>
 	   <%= @subscription.card_number %>
 	 <% if @subscription.billing_address %>
-	 <span class = "billing-address"> <%= t('billing_address').html_safe %> </span>
-	 	<%= @subscription.billing_address.humanize.gsub("\n","<br>").html_safe %>
+	 <span class = "billing-address"> <%=t('billing_address') %> </span>
+	 	<%= h(@subscription.billing_address.humanize).gsub("\n","<br>").html_safe %>
 	 <% end %>
 	</div>
 </div>

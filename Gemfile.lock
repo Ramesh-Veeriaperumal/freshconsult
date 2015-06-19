@@ -436,7 +436,7 @@ GEM
     callsite (0.0.11)
     celluloid (0.16.0)
       timers (~> 4.0.0)
-    chargebee (1.2.9)
+    chargebee (1.5.6)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
     chunky_png (1.3.1)
@@ -463,7 +463,7 @@ GEM
     connection_pool (2.2.0)
     css_parser (1.3.5)
       addressable
-    curb (0.8.4)
+    curb (0.8.8)
     dalli (2.7.0)
     database_cleaner (1.2.0)
     debug_inspector (0.0.2)
@@ -471,6 +471,10 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     dynamic_form (1.1.4)
+    dynamics_crm (0.4.1)
+      builder (>= 3.0.0, < 4.0.0)
+      curb (~> 0.8, >= 0.8.5)
+      mimemagic (~> 0.2, >= 0.2.1)
     ejs (1.1.1)
     encryptor (1.1.3)
     equalizer (0.0.9)
@@ -553,7 +557,7 @@ GEM
     journey (1.0.4)
     json (1.8)
     json-compare (0.1.8)
-    json_pure (1.8.1)
+    json_pure (1.8.2)
     jwt (1.0.0)
     koala (1.10.1)
       addressable
@@ -581,6 +585,7 @@ GEM
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (1.25.1)
+    mimemagic (0.3.0)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     money (6.2.1)
@@ -894,12 +899,12 @@ DEPENDENCIES
   bunny (= 1.7.0)
   business_time!
   carmen!
-  chargebee (~> 1.2.9)
+  chargebee (~> 1.5.1)
   clockwork (= 0.4.1)
   compass-blueprint (= 1.0.0)
   compass-rails (= 2.0.0)
   country_select!
-  curb (~> 0.8.4)
+  curb (~> 0.8.5)
   custom_fields!
   dalli
   database_cleaner
@@ -907,6 +912,7 @@ DEPENDENCIES
   delayed_job!
   dev_notification!
   dynamic_form
+  dynamics_crm (~> 0.4.1)
   ejs (= 1.1.1)
   encryptor (= 1.1.3)
   facebook!
