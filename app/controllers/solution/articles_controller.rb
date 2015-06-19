@@ -3,10 +3,7 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   include CloudFilesHelper
-  include FeatureCheck
   helper SolutionHelper
-  
-  feature_check :solution_drafts
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -32,7 +29,7 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       format.html {
         @current_item = @article.draft || @article
-        render (@solution_drafts_feature ? "solution/articles/draft/show" : "show")
+        render "show"
       }
       format.xml  { render :xml => @article }
       format.json { render :json => @article }
@@ -46,7 +43,7 @@ class Solution::ArticlesController < ApplicationController
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html {
-        render @solution_drafts_feature ? "solution/articles/draft/new" : "new"
+        render "new"
       }
       format.xml  { render :xml => @article }
     end
@@ -79,7 +76,7 @@ class Solution::ArticlesController < ApplicationController
         format.json  { render :json => @article, :status => :created, :location => @article }
       else
         format.html { 
-          render @solution_drafts_feature ? "solution/articles/draft/new" : "new"
+          render "new"
         }
         format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
       end
@@ -91,7 +88,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    if @solution_drafts_feature and (save_as_draft? || publish? || cancel_draft_changes?) 
+    if save_as_draft? || publish? || cancel_draft_changes?
       publish? ? publish_article : (cancel_draft_changes? ? revert_draft_changes : update_draft)
       return
     end
@@ -352,7 +349,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def render_edit
-      return if @solution_drafts_feature && !load_draft
+      return if !load_draft
       redirect_to "#{solution_article_path(@article)}#edit"
     end
 

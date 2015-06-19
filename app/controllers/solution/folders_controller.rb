@@ -5,9 +5,6 @@ class Solution::FoldersController < ApplicationController
   helper SolutionHelper
   helper Solution::ArticlesHelper
 
-  include FeatureCheck
-  feature_check :solution_drafts
-
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title

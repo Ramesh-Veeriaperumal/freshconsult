@@ -1,13 +1,10 @@
 # encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
-  include FeatureCheck
   helper SolutionHelper
   helper AutocompleteHelper
   helper Solution::NavmenuHelper
   helper Solution::ArticlesHelper
-  
-  feature_check :solution_drafts
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]

@@ -1,73 +1,29 @@
-<% content_for :layoutType do %>community solutions<% end %>
-<div class="folder-2col"> 
-	<div class="folder_section" id="folder-section">
-		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
- </div>  	
+<% content_for :sidebar do %>
+	<div class="solution-sidebar">
+		<%= render partial: "sidebar" %>
+	</div>
+<% end %>
 
- <div class="artical_section" id="article-section">
- 	<div class="crumbs">
-	 	<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
-		<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
-		<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%>
-		<%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) %>
- 	</div>
+<div class="solution">
 
-	<div class="floatr">
-    <% if privilege?(:publish_solution) %>
-  		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
-    <% end %>
+	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :sticky_title do %>
+		<%= render :partial => 'notification_bar' %>
+	<% end %>
+	<% content_for :sticky_right do %>
+	  <%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
+	<% end %>
+	<%= render :partial => '/solution/shared/sticky', :locals => { :page => :article} %>
+
+	<!-- Solution page content -->
+	<div class="solution-content">
+		<%= render :partial => "view" %>
+		<%= render :partial => "form" %>
 	</div>
 
-	<h2 class="title">
-		<%= h(@article.title) %>
-	</h2>
-	<div class="help-text">
-		By <b> <%= @article.user.name %></b>, <%= formated_date(@article.modified_at) %>
-
-		<%= content_tag(:span, t('private'), :class => "label tooltip", 
-					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
-		<span class="label"><%= t(@article.type_name) %></span>
-	</div> 
-	 
-	
-	  <div class="solution_title">
-			<div class="tag_list"> 
-			<% @article.tags.map.each do |t| %> 
-				<div class="item">
-          <% if privilege?(:publish_solution) %>	
-					  <%= link_to('<i class="icon-close"></i>'.html_safe, solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
-          <% end %>
-					<%= h(t.name) %>
-				</div>
-			<% end %>
-			</div>
-	 </div>
-	 <span class="seperator"></span>
-	 <div class="solutions_text clearfix">
-		<%= @article.description.html_safe %>
-	 </div>
-		<ul class="attachment_list">
-		    <% @article.attachments.each do |attached| %> 
-		    	<%= attachment_list(attached, privilege?(:publish_solution), "article",nil) %>
-		    <% end %>
-		    <% @article.cloud_files.each do |cloud_file| %> 
-				<%= attachment_list(cloud_file, privilege?(:publish_solution), "cloud_file",nil) %>
-			<% end %>
-		</ul>
-		
-	 <span class="seperator"></span> 
-	 <div id="article_voting">
-	 	<%= font_icon :like %> <%= @article.thumbs_up %> <b><%= t('likes') %></b>, 
-		<%= font_icon :dislike %> <%= @article.thumbs_down %> <b><%= t('dislikes') %></b>
-		<%= render :partial => "voting", :object => @article %>
-	 </div>
 </div>
-</div>
-</div> 
 
-<script type="text/javascript">
-  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
-    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
-
-  highlight_code();
-</script>
+<!-- Article properties overlay -->
+<% content_for :dialogs do %>
+	<div id="article-prop" class="hide"></div>
+<% end %>

@@ -1,11 +1,7 @@
 class Solution::DraftsController < ApplicationController
 
 	include Solution::DraftContext
-	include FeatureCheck
 	helper SolutionHelper
-	feature_check :solution_drafts
-
-	before_filter :drafts_feature_enabled?
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
 	before_filter :set_selected_tab, :only => [:index]
@@ -51,10 +47,6 @@ class Solution::DraftsController < ApplicationController
 	end
 
 	private
-
-		def drafts_feature_enabled?
-			access_denied unless @solution_drafts_feature
-		end
 
 		def scope
 			(params[:type] == 'all') ? (get_portal_id == 0 ? [:all_drafts] : [:portal_drafts, get_portal_id]) : [:drafts_by_user, current_user]

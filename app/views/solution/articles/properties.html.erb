@@ -4,7 +4,7 @@
 			:remote => true do |f| %>
 		<div id="solution-properties-container">
 			<div id="solution-properties">
-				<%= render :partial => "solution/articles/draft/article_properties_form", :locals => { :f => f} %>
+				<%= render :partial => "article_properties_form", :locals => { :f => f} %>
 				
 				<% if @article.published? %>
 					<div class="publish-settings">

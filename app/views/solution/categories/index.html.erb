@@ -22,7 +22,7 @@
 <div class="solution-list sol-list pull-left" id="categories_list">	
 
 	<% current_categories.each do |category| %>
-		<% if !@solution_drafts_feature  || !category[:is_default] %>
+		<% if !category[:is_default] %>
 			<div class="<%= cycle('odd', 'even') %>">
 				<h4 class="cat-title-border">
 					<i class="ficon-categories cat-title-icon"></i>
@@ -31,8 +31,7 @@
 				<ul>			
 		  		<% category[:folders].first(5).each do |folder| %>
 	  				<li>
-	  					<%= pjax_link_to h(folder[:name]), 
-	  							solution_category_folder_path(:category_id => category[:id], :id => folder[:id])  %>
+	  					<%= pjax_link_to h(folder[:name]), solution_folder_path(folder[:id]) %>
 	  				  <span class="muted">
 	  					  (<%= folder[:article_count] %>)
 	  			    </span> 
@@ -55,7 +54,7 @@
 		</div>
 		<div class="other-portal-cat hide"> 
 			<% other_categories.each do |category| %>
-				<% if !@solution_drafts_feature  || !category[:is_default] %>
+				<% if !category[:is_default] %>
 					<div class="<%= cycle('odd', 'even') %> <%= 'orphaned-category' unless category.respond_to?(:portal_solution_categories) %>">
 						<h4 class="cat-title-border tooltip">
 								<i class="<%= category.respond_to?(:portal_solution_categories) ? 'ficon-categories' : 'ficon-categories-orphan tooltip' %> cat-title-icon" data-original-title="<%= t('solution.orphan') unless category.respond_to?(:portal_solution_categories) %>"></i>
@@ -64,8 +63,7 @@
 						<ul>			
 				  		<% category[:folders].first(5).each do |folder| %>
 			  				<li>
-			  					<%= pjax_link_to h(folder[:name]),
-			  							solution_category_folder_path(:category_id => category[:id], :id => folder[:id])  %>
+			  					<%= pjax_link_to h(folder[:name]), solution_folder_path(folder[:id]) %>
 			  				  <span class="muted">
 			  					  (<%= folder[:article_count] %>)
 			  			    </span> 

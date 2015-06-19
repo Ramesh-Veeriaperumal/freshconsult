@@ -4,7 +4,6 @@
 			<p class="pull-left"><%= draft_info_text %> &nbsp;&nbsp; <%= discard_link %> </p>
 			<p class="pull-right">
 				<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") %>
-				<%#= link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), :method => 'post', :class => 'draft-btn') %>
 			</p>
 		</div>
 		<% end %>

@@ -2,7 +2,6 @@ module Solution::DraftContext
 	include Redis::RedisKeys
 	
 	def save_context
-		return unless @solution_drafts_feature
 		@drafts_context = current_portal.id
 		newrelic_begin_rescue do
 			$redis_others.set(solutions_draft_key, params[:portal].to_i) if portal_check
