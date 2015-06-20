@@ -107,7 +107,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
             end
           end
           search.facet "ca_folders" do |ft|
-            ft.terms :folder_id
+            ft.terms :folder_id, :size => options[:size]
           end
         end
         item.results.facets
