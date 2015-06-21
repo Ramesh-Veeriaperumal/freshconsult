@@ -1525,6 +1525,7 @@ Helpkit::Application.routes.draw do
       end
       member do
         put :activate
+        put :company_sla
       end
     end
 

@@ -3091,6 +3091,11 @@ en:
     applicable_info: Select at least one trigger condition.
     disabled_old_policy: Set a trigger condition to enable this SLA policy.
     default_policy: Default SLA Policy cannot be turned off.
+    update_company_sla_api:
+      update_failed: SLA policy update failed.
+      invalid_arguments_for_update: Invalid arguments.
+      invalid_data_type: Company ids should be a comma separated value.
+      default_policy_update: Cannot update default SLA policy.
   left: Left
   subscription:
     error:
@@ -7237,3 +7242,5 @@ en:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: This shorthand is already in use.
   new_label: "NEW"
+  api:
+    record_not_found: Resource not found.
