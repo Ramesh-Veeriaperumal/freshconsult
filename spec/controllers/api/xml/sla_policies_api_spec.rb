@@ -6,7 +6,6 @@ describe Helpdesk::SlaPoliciesController do
 
   before(:all) do
     @now = (Time.now.to_f*1000).to_i
-    @sla_policy_1 = create_sla_policy(@agent)
     @new_company_1 = FactoryGirl.build(:company, :name => Faker::Name.name)
     @new_company_1.save
     @new_company_1.reload
@@ -29,7 +28,7 @@ describe Helpdesk::SlaPoliciesController do
   it "should list all sla_policies on index action" do
     get :index, :format => 'xml'
     result = parse_xml(response)
-    expected = (response.status == 200) && (compare(result.first["helpdesk_sla_policy"].keys,APIHelper::SLA_POLICY_ATTRIBS,{}).empty?)
+    expected = (response.status == 200) && (compare(result["helpdesk_sla_policies"].first.keys, APIHelper::SLA_POLICY_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
 
