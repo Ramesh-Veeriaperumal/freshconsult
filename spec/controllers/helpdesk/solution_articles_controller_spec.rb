@@ -228,7 +228,7 @@ describe Solution::ArticlesController do
       @article.updated_at.should eql @article.modified_at
     end
 
-    it "should be modified when description changes" do
+    it "should be modified when article body changes" do
       sleep(2)
       put :update, { :id => @article.id, 
                     :solution_article => { :description => Faker::Lorem.sentence(2) },
@@ -237,7 +237,7 @@ describe Solution::ArticlesController do
                     :folder_id => @test_folder.id 
                   }
       @article.reload
-      @article.updated_at.should eql @article.modified_at
+      @article.article_body.updated_at.should eql @article.modified_at
     end
 
     it "should not change when other column values changes" do

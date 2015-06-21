@@ -7,7 +7,7 @@ class ArticleObserver < ActiveRecord::Observer
 	def before_save(article)
 		remove_script_tags(article)
 		set_un_html_content(article)
-		modified_date(article) if (article.description_changed? or article.title_changed?)
+		modified_date(article) if (article.article_body.changed? or article.title_changed?)
 		article.article_changes
 		article.seo_data ||= {}
 	end
