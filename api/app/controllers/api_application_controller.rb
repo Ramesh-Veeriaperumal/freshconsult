@@ -97,7 +97,8 @@ class ApiApplicationController < MetalApiController
       if user && !user.deleted
         valid_password = user.valid_password?(pwd) # valid_password - AuthLogic method
         if valid_password
-          update_info(user) 
+          # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
+          update_failed_login_count(user, true) if user.failed_login_count != 0
           user
         else
           update_failed_login_count(user)
@@ -106,23 +107,15 @@ class ApiApplicationController < MetalApiController
       end
     end
 
-    # This increases for each consecutive failed login. 
+    # This increases for each consecutive failed login.
     # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
-    def update_failed_login_count(user)
-      user.failed_login_count ||= 0
-      user.failed_login_count += 1 
-      user.save
-    end
-      
-    # See Authlogic::Session::MagicColumns for more details
-    def update_info(user)
-      user.login_count ||= 0
-      user.login_count += 1 # Increased every time an explicit login is made.
-      user.last_login_at = user.current_login_at # Updates with the value of current_login_at before it is reset.
-      user.current_login_at = Time.now.utc # Updates with the current time when an explicit login is made.
-      user.failed_login_count = 0
-      user.current_login_ip = request.ip # Updates with the request ip when an explicit login is made.
-      user.last_login_ip = user.current_login_ip # Updates with the value of current_login_ip before it is reset.
+    def update_failed_login_count(user, reset = false)
+      if reset
+        user.failed_login_count = 0
+      else
+        user.failed_login_count ||= 0
+        user.failed_login_count += 1
+      end
       user.save
     end
 
@@ -137,10 +130,13 @@ class ApiApplicationController < MetalApiController
       if not_get_request?
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
-          @current_user = get_email_user(username, password) || get_token_user(username)
+          @current_user = get_token_user(username) || get_email_user(username, password)
         end
       elsif current_user_session # fall back to old session based auth
-        @current_user = (session.has_key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
+        @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
+        if @current_user && @current_user.failed_login_count != 0
+          update_failed_login_count(@current_user, true)
+        end
       end
       @current_user
     end
@@ -283,5 +279,4 @@ class ApiApplicationController < MetalApiController
     def check_account_state
       render_request_error(:account_suspended, 403) unless current_account.active?
     end
-
 end

@@ -5,16 +5,16 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 11,
+      create: 12,
       show: 4,
-      update: 12,
+      update: 13,
       index: 4,
-      destroy: 11
+      destroy: 12
     }
 
     # create
-    v2[:create], v2[:api_create] = count_api_queries { post('/api/v2/groups', group_payload, @write_headers) }
     v1[:create] = count_queries { post('/groups.json', group_payload, @write_headers) }
+    v2[:create], v2[:api_create] = count_api_queries { post('/api/v2/groups', group_payload, @write_headers) }
     id1 = Group.last(2).first.id
     id2 = Group.last.id
     # show
