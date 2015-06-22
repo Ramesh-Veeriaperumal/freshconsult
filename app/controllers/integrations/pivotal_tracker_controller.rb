@@ -2,6 +2,8 @@ class Integrations::PivotalTrackerController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:pivotal_updates]
   before_filter :check_app_installed?, :only => [:pivotal_updates, :update_config, :get_performer_email]
+
+  include Integrations::PivotalTracker::Constant
   
   def tickets
     tkt = current_account.tickets.permissible(current_user)  
@@ -16,8 +18,7 @@ class Integrations::PivotalTrackerController < ApplicationController
 
   def pivotal_updates
     if @installed_app && @installed_app["configs"][:inputs]["pivotal_update"] == "1"
-      pivotal_updates = JSON(request.raw_post)
-      exclude_arr = ["accepted_at", "updated_at","owner_ids","label_ids", "labels", "after_id", "owned_by_id", "before_id"]
+      pivotal_updates = JSON(request.raw_post)     
       primary_resources = pivotal_updates["primary_resources"].first
       story_id = primary_resources["id"]
       project_id = pivotal_updates["project"]["id"]
@@ -25,7 +26,7 @@ class Integrations::PivotalTrackerController < ApplicationController
       performer_id = pivotal_updates["performed_by"]["id"]
       case pivotal_updates["kind"].to_sym
         when :story_update_activity
-          pivotal_values = pivotal_updates["changes"].find{|x| x["kind"] == "story"}
+          pivotal_values = pivotal_updates["changes"].find{|x| x["kind"] == PIVOTAL_STORY}
           changes = "<div> Story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a>
             updated with following changes:<br/><br/>"
           pivotal_values["original_values"].each do |key, value|
@@ -35,7 +36,7 @@ class Integrations::PivotalTrackerController < ApplicationController
             end
             value = "none" if pivotal_values["original_values"][key] == nil
             pivotal_values["new_values"][key] = "none" if pivotal_values["new_values"][key] == nil
-            changes += "#{key} changed from #{value} to #{pivotal_values["new_values"][key]} <br/>" unless exclude_arr.include?(key)
+            changes += "#{key} changed from #{value} to #{pivotal_values["new_values"][key]} <br/>" unless EXCLUDE_ARR.include?(key)
           end
           changes = "<div>#{pivotal_updates["message"]} for the story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a>" if pivotal_updates["highlight"] == "rejected"
           changes += "</div>"

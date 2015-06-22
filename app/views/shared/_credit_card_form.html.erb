@@ -1,107 +1,55 @@
+<%
+if @subscription.trial? or @subscription.trial_expired?
+  status = "true"
+else
+  status = "false"
+end
+%>
 
-  <% if @creditcard.errors.any? %>
-    <div class="errorExplanation">
-      <%= content_tag( :h2, t("errors_in_payment_info") ) %>
-      <ul>
-        <%= @creditcard.errors.full_messages.map {|m| content_tag('li', m)} %>
-      </ul>
-    </div>
-  <% end %>
-
-  <% if @address.errors.any? %>
-    <div class="errorExplanation">
-      <%= content_tag( :h2, t("errors_in_your_address") ) %>
-      <ul>
-        <%= @address.errors.full_messages.map {|m| content_tag('li', m)} %>
-      </ul>
-    </div>
-  <% end %>
-
-  <% if @subscription && @subscription.errors.any? %>
-    <div class="errorExplanation">
-      <%= content_tag( :h2, t("errors_in_payment") ) %>
-      <ul>
-        <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
-      </ul>
-    </div>
-  <% end %>
-
-<div class="control-group">
-	<%= content_tag( :label, t('card_number') , :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= text_field :creditcard, :number,
-						:class => "required input-special input-xlarge", 
-						:"data-encrypted-name" => "number" %>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('expires'), :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= select :creditcard, :month, (1 .. 12) %>
-		<%= select :creditcard, :year, (Time.now.year .. 10.years.from_now.year) %>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('security_code'), :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= password_field :creditcard, :verification_value, 
-								:size => 4, :maxlength => 4, 
-								:class => "required input-special input-mini", 
-								:"data-encrypted-name" => "cvv" %>
-
-		<%= link_to_function(t("what_is_cvv"), "jQuery('#cvv-info').toggle();") %> 
-			
-		<div id="cvv-info" class="cvv-help-text" style="display:none;">
-			<%= link_to_function("", "jQuery('#cvv-info').toggle();", :class => "close") %> 
-			<%= image_tag "#{asset_host_url}/assets/helpimages/card_cvv.gif", :width => "201px", :height => "341px" %>
-		</div>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('first_name'), :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= text_field :creditcard, :first_name, :class => "required input-special input-xlarge" %>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('last_name'), :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= text_field :creditcard, :last_name, :class => "required input-special input-xlarge" %>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('country'), :class => "required control-label" ) %> 
-	<div class="controls">
-	    <%= country_select :address, :country, ['United States', 'Canada'] %>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('user.address'), :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= text_field :address, :address1, :class => "required input-special input-xlarge" %>
-	</div>
-	<br />
-	<div class="controls">
-		<%= text_field :address, :address2, :class => "input-special input-xlarge" %>
-	</div>
+<div id ="iframe-div">
+    <div id ="process-request" class = "cb-process-request hide">
+        <p> <span class ="sloading mt100"><span class="pl20" style="">Please wait...</span></span> </p>
 </div>
 
-<div class="control-group">
-	<%= content_tag( :label, t('city'), :class => "required control-label" ) %> 
-	<div class="controls">
-		<%= text_field :address, :city, :class => "required input-special input-xlarge" %>
-	</div>
-</div>
+<script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js">            
+</script>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        var pId = "<%=@hosted_page.id%>";
+        var pUrl = "<%=@hosted_page.url%>";
+        subscribeResponseEmbedHandler(pId, pUrl);
+    });           
 
-<div class="control-group">
-	<%= content_tag( :label, t('state'), :class => "required control-label" ) %>  
-	<div class="controls">
-		<%= text_field :address, :state, :class => "required input-special input-xlarge" %>
-	</div>
-</div>
-<div class="control-group">
-	<%= content_tag( :label, t('zip'), :class => "required control-label" ) %>  
-	<div class="controls">
-		<%= text_field :address, :zip, :class => "required input-special input-medium" %>
-	</div>
-</div>
+    function subscribeResponseEmbedHandler(pageId, cardUrl) {
+         var hostedPageId = pageId;
+         var iframeContainer = jQuery('#iframe-div');
+         var x = ChargeBee.embed(cardUrl, "<%=@subscription.currency_billing_site%>").load({
+             addIframe: function(iframe) {
+                iframeContainer.append(iframe);
+             },
+             onLoad: function(iframe, width, height) {
+                 var style= 'width:100%;';
+                 style = style + 'height:' + height + 'px;';
+                 iframe.setAttribute('style', style);
+             },
+             onSuccess: function(iframe) {
+              jQuery("#process-request").removeClass("hide");
+              redirectToSubscriptionTab();
+              jQuery.post( "<%=billing_subscription_path%>",{charge_now: "<%=status%>"}, function( data ) {
+                jQuery("#process-request").addClass("hide");
+                window.location.assign("<%=subscription_path%>");
+              });
+             },
+             onCancel: function(iframe) {
+              window.location.assign("<%=subscription_path%>");
+             }
+         });
+    }
+
+    function redirectToSubscriptionTab()
+    {
+        setTimeout(function(){
+            window.location.assign("<%=subscription_path%>");
+        },15000);
+    }
+</script>

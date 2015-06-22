@@ -72,10 +72,13 @@ class SubscriptionsController < ApplicationController
           flash[:notice] = t('billing_info_update')
           flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
         end
-        redirect_to subscription_url  
+        request.xhr?  ? render(:json => 200) : redirect_to(subscription_url)
       else
         redirect_to :action => "billing"
       end
+    else
+      result = billing_subscription.update_payment_method(current_account.id)
+      @hosted_page = result.hosted_page
     end
   end
 
@@ -181,7 +184,8 @@ class SubscriptionsController < ApplicationController
 
     def activate_subscription
       begin
-        result = billing_subscription.activate_subscription(scoper)
+        billing_address = @customer_details.nil? ? {} : billing_address(@customer_details.card)
+        result = billing_subscription.activate_subscription(scoper, billing_address)
         scoper.set_next_renewal_at(result.subscription)
         scoper.save!
       rescue Exception => e
@@ -190,12 +194,25 @@ class SubscriptionsController < ApplicationController
       end
     end
 
+    def billing_address(card_details)
+      {
+        :billing_address => 
+        {
+          :first_name => card_details.first_name,
+          :last_name => card_details.last_name,
+          :line1 => "#{card_details.billing_addr1} #{card_details.billing_addr2}", 
+          :city => card_details.billing_city, 
+          :state => card_details.billing_state,
+          :zip => card_details.billing_zip, 
+          :country => card_details.billing_country
+        }
+      }
+    end
+
     def add_card_to_billing
       begin
-        @creditcard.number = params[:number]
-        @creditcard.verification_value = params[:cvv]
-        result = billing_subscription.store_card(@creditcard, @address, scoper)        
-        scoper.set_billing_info(result.card)
+        @customer_details = billing_subscription.retrieve_subscription(current_account.id)
+        scoper.set_billing_info(@customer_details.card)
         scoper.save!
       rescue Exception => e
         handle_error(e, t('card_error'))
@@ -229,7 +246,7 @@ class SubscriptionsController < ApplicationController
     def handle_error(error, custom_error_msg)
       Rails.logger.debug "Subscription Error::::: #{error}"      
 
-      if (error_msg = error.message.split(/error_msg/).last.sub(/http.*/,""))
+      if (error_msg = error.json_obj[:error_msg].split(/error_msg/).last.sub(/http.*/,""))
         flash[:notice] = error_msg #chargebee_error_message
       else
         flash[:notice] = custom_error_msg
