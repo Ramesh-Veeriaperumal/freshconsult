@@ -60,13 +60,13 @@ module APIHelper
 
   TOPIC_ATTRIBS = ["account_id", "created_at", "delta", "forum_id", "hits", "id", "import_id", "last_post_id", "locked", "merged_topic_id", "posts_count", "published", "replied_at", "replied_by", "stamp_type", "sticky", "title", "updated_at", "user_id", "user_votes"]
 
-  POST_ATTRIBS = ["answer", "body", "body_html", "created_at", "forum_id", "id", "published", "spam", "topic_id", "trash", "updated_at", "user_id"]
+  POST_ATTRIBS = ["answer", "body", "body_html", "created_at", "forum_id", "id", "published", "spam", "topic_id", "trash", "updated_at", "user_id", "user_votes"]
 
-  SOLUTION_CATEGORY_ATTRIBS = ["created_at", "description", "id", "is_default", "name", "position", "updated_at"]
+  SOLUTION_CATEGORY_ATTRIBS = ["created_at", "description", "id", "is_default", "language_id", "name", "parent_id", "position", "updated_at"]
 
-  SOLUTION_FOLDER_ATTRIBS = ["category_id", "created_at", "description", "id", "is_default", "name", "position", "updated_at", "visibility"]
+  SOLUTION_FOLDER_ATTRIBS = ["category_id", "created_at", "description", "id", "is_default", "language_id", "name", "parent_id", "position", "updated_at", "visibility"]
 
-  SOLUTION_ARTICLE_ATTRIBS = ["art_type", "bool_01", "created_at", "datetime_01", "delta", "desc_un_html", "description", "folder_id", "hits", "id", "int_01", "int_02", "int_03", "language", "modified_at", "modified_by", "outdated", "parent_id", "position", "seo_data", "status", "string_01", "string_02", "thumbs_down", "thumbs_up", "title", "updated_at", "user_id", "tags", "folder"]
+  SOLUTION_ARTICLE_ATTRIBS = ["art_type", "bool_01", "created_at", "datetime_01", "delta", "desc_un_html", "description", "folder_id", "hits", "id", "int_01", "int_02", "int_03", "language_id", "modified_at", "modified_by", "outdated", "parent_id", "position", "seo_data", "status", "string_01", "string_02", "thumbs_down", "thumbs_up", "title", "updated_at", "user_id", "tags", "folder"]
 
   SURVEY_ATTRIBS = ["agent_id", "created_at", "customer_id", "group_id", "id", "rating", "response_note_id", "survey_id", "surveyable_id", "surveyable_type", "updated_at"]
 
