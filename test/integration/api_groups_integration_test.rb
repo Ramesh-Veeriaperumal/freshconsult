@@ -30,8 +30,6 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
 
     v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/v2/groups/#{id1}", nil, @headers) }
     v1[:destroy] = count_queries { delete("/groups/#{id2}.json", nil, @headers) }
-    p v1
-    p v2
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
       assert v2[key] <= v1[key]
