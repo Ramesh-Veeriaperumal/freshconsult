@@ -5354,6 +5354,8 @@ en:
           label: "Survey Link Text"
           description: "This text appears below your signature at the bottom of the email sent to the customer, along with the survey link."
           default_content: "Please take this survey to help us serve you better. It won't take more than 2 mins."
+      canned_response_error: "No agent or no survey assigned for group '"
+      canned_response_group_error: "No survey assigned for 'All Groups'."
     shopify:
       label: "Shopify"
       desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
