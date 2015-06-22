@@ -12,7 +12,7 @@ class TicketValidation < ApiValidation
   validates :priority, inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
   validate :allowed_status? # Can't use inclusion validator as dynamic messages are not feasible
   validates :source, inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
-  validates_with DataTypeValidator, rules: { 'Array' => %w(tags cc_emails attachments), 'Hash' => ['custom_fields'] }, allow_nil: true
+  validates_with DataTypeValidator, rules: { Array => %w(tags cc_emails attachments), Hash => ['custom_fields'] }, allow_nil: true
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'is not a valid email' }, if: :email_required?
   validates_each :cc_emails, &TicketsValidationHelper.email_validator # Expects a block
   validates_each :attachments, &TicketsValidationHelper.attachment_validator

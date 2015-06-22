@@ -6,7 +6,7 @@ class NoteValidation < ApiValidation
   validates :user_id, numericality: { allow_nil: true }
   validates :ticket_id, numericality: true
   validates :private, :incoming, inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
-  validates_with DataTypeValidator, rules: { 'Array' => %w(notify_emails attachments cc_emails bcc_emails) }, allow_nil: true
+  validates_with DataTypeValidator, rules: { Array => %w(notify_emails attachments cc_emails bcc_emails) }, allow_nil: true
   validates_each :notify_emails, :cc_emails, :bcc_emails, &TicketsValidationHelper.email_validator
   validates_each :attachments, &TicketsValidationHelper.attachment_validator
 
