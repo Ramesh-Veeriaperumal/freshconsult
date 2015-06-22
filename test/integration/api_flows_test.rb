@@ -104,17 +104,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_authenticating_post_request_with_password
-    fields = [:login_count, :current_login_at, :perishable_token]
-    values = fields.map{|x| @agent[x]}
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
     @write_headers = set_custom_auth_headers(@write_headers, 'sample@freshdesk.com', 'test')
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response :created
-    new_values = fields.map{|x| @agent.reload[x]}
-    fields.size.times {|i| assert values[i] != new_values[i], "Expected #{values[i]} to not equal #{new_values[i]}"}
   end
 
-  def test_authenticating_post_request_with_invalid_pwd
+  def test_authenticating_post_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
     pt = @agent.perishable_token
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
@@ -123,6 +119,35 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
     assert_equal flc + 1, @agent.reload.failed_login_count
     assert pt != @agent.perishable_token
+
+    post '/api/discussions/categories', v2_category_payload, @write_headers
+    assert_response :unauthorized
+    assert_equal flc + 2, @agent.reload.failed_login_count
+
+    @write_headers = set_custom_auth_headers(@write_headers, 'sample@freshdesk.com', 'test')
+    post '/api/discussions/categories', v2_category_payload, @write_headers
+    assert_response :created
+    assert_equal 0, @agent.reload.failed_login_count
+  end
+
+  def test_authenticating_get_request_with_consecutive_invalid_pwd
+    flc = @agent.failed_login_count || 0
+    pt = @agent.perishable_token
+
+    @headers = set_custom_auth_headers(@headers, 'sample@freshdesk.com', 'tes')
+    get '/api/discussions/categories', nil, @headers
+    assert_response :unauthorized
+    assert_equal flc + 1, @agent.reload.failed_login_count
+    assert pt != @agent.perishable_token
+
+    get '/api/discussions/categories', nil, @headers
+    assert_response :unauthorized
+    assert_equal flc + 2, @agent.reload.failed_login_count
+
+    @headers = set_custom_auth_headers(@headers, 'sample@freshdesk.com', 'test')
+    get '/api/discussions/categories', nil, @headers
+    assert_response :success
+    assert_equal 0, @agent.reload.failed_login_count
   end
 
   def test_authenticating_post_request_with_token

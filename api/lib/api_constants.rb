@@ -39,7 +39,7 @@ module ApiConstants
   CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(view_admin: ['created_at', 'updated_at'], manage_users: ['email', 'user_id'])
   UPDATE_POST_FIELDS = { all: ['body_html', 'answer'] }
   CREATE_POST_FIELDS = { all: %w(body_html answer topic_id), view_admin: ['created_at', 'updated_at'], manage_users: ['email', 'user_id'] }
-  GROUP_FIELDS = ['name', 'description', 'escalate_to', 'assign_time', 'ticket_assign_type', 'agent_list']
+  GROUP_FIELDS = %w(name description escalate_to assign_time ticket_assign_type agent_list)
 
   # *********************************-- TicketConstants --*********************************************
 
@@ -120,5 +120,5 @@ module ApiConstants
   DEFAULT_HTTP_CODE = 400
 
   # *********************************-- Controller Names Map --*********************************************
-    CONTROLLER_NAMES_MAP =  { api_group: "group" }
+  CONTROLLER_NAMES_MAP =  { api_group: 'group' }
 end

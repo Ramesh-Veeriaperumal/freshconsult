@@ -1,4 +1,4 @@
-json.array! @tickets.includes(:ticket_old_body, :ticket_status, :schema_less_ticket, :flexifield => {:flexifield_def => :flexifield_def_entries}) do |tkt|
+json.array! @tickets.includes(:ticket_old_body, :ticket_status, :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries }) do |tkt|
   json.cache! tkt do
     json.set! :cc_emails, tkt.cc_email[:cc_emails]
     json.set! :fwd_emails, tkt.cc_email[:fwd_emails]

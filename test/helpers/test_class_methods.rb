@@ -32,7 +32,7 @@ module TestClassMethods
 
   def set_custom_auth_headers(headers, part1, part2)
     auth = ActionController::HttpAuthentication::Basic.encode_credentials(part1, part2)
-    headers.merge({ 'HTTP_AUTHORIZATION' => auth, 'HTTP_HOST' => 'localhost.freshpo.com' })
+    headers.merge('HTTP_AUTHORIZATION' => auth, 'HTTP_HOST' => 'localhost.freshpo.com')
   end
 
   def count_api_queries

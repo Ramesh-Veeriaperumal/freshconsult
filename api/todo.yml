@@ -1,20 +1,14 @@
 Todo:
- - combine all discussion methods into one and example requires feature before filter
- - Paginate fires extra queries?
- - Investigate rails-api
- - multipart form data handle
  - API Layer middleware Removal using YAML settings file.
- - ticket custom fields test
  - "Application controller before filters(controller logger, cache buster) to be added"
  - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
  - "Expose email config and product index"
  - Tickets? phone source?
- - AMS for ticket repsonse
  - display_id and ticket states to be supported in bulk import / bulk create
  - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
- - "Validate picklist values for custom drop down & dependent fields in ticket"
  - tests for checking privileges for a action.
  - Handle global unpermitted params for wrong datatype errors.
+ - Fix miniprofiler, mobile actions, oj, ticket fields, review tkts, review groups
 
 Breaking changes in existing APIs:
  - day pass required
@@ -34,8 +28,13 @@ Deferred:
  - paginate associations ???
  - need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF- 8")
  - Should we need to introduce credits/merits for each usage of endpoint?
+ - "Validate picklist values for custom drop down & dependent fields in ticket"
 
 Completed:
+ - ticket custom fields test
+ - multipart form data handle
+ - Investigate rails-api
+ - Paginate fires extra queries?
  - Multijson parse error handling
  - pagination in index actions
  - 405 handling
@@ -75,8 +74,10 @@ Completed:
  - Middlewares which is not needed for API
 
 Not_necessary:
+ - AMS for ticket repsonse
  - Clean up old discussions controller *****
  - Forum is not a number
  - rubocop customization to remove info severity
  - Have to take a call whether to include custom_code in base error class based on forthcoming error classess
+ - combine all discussion methods into one and example requires feature before filter
 

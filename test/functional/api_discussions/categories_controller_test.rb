@@ -48,14 +48,6 @@ module ApiDiscussions
 
     # verify_authenticity_token will not get called for get requests. So All GET actions here in exclude array.
     actions.select { |a| %w(index show forums).exclude?(a) }.each do |action|
-      define_method("test_#{action}_without_token") do
-        with_forgery_protection do
-          @request.cookies['_helpkit_session'] = true
-          send(methods[action], action, construct_params(id: fc.id, authenticity_token: 'foo'))
-        end
-        assert @response.status != :unauthorized
-      end
-
       define_method("test_#{action}_check_account_state_and_response_headers") do
         subscription = @account.subscription
         subscription.update_column(:state, 'suspended')
