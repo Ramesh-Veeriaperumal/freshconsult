@@ -1,17 +1,16 @@
 class UpdateVaRulesFilterData < ActiveRecord::Migration
 shard :all
 
-def migrate(direction)
+	def migrate(direction)
     self.send(direction)
-end
+	end
 
-def up
-	failed_accounts = []
-	Account.find_in_batches(:batch_size => 300) do |accounts|
-  	accounts.each do |account|
-  		Account.reset_current_account
-	    begin
-	      Sharding.select_shard_of(account.id) do
+	def up
+		failed_accounts = []
+		Account.find_in_batches(:batch_size => 300) do |accounts|
+	  	accounts.each do |account|
+	  		Account.reset_current_account
+		    begin  
 	      	next if account.nil?
 	      	account.make_current
 		  		account.all_va_rules.each do |va_rule|
@@ -34,16 +33,15 @@ def up
 			  		end
 			  		va_rule.save if to_be_saved
 			  	end
+				rescue Exception => e
+		    	puts ":::::::::::#{e}:::::::::::::"
+		    	failed_accounts << account.id
 				end
-			rescue Exception => e
-	    	puts ":::::::::::#{e}:::::::::::::"
-	    	failed_accounts << account.id
 			end
 		end
+		puts failed_accounts.inspect
+  	failed_accounts
 	end
-	puts failed_accounts.inspect
-  failed_accounts
-end
 
   def down
   end
