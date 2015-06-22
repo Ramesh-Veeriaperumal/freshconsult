@@ -849,6 +849,7 @@ en:
           app_key: App Key
           app_secret: App Secret
           integration_details: Integration Details
+          saving: Saving...
         index:
           title: Mobihelp Apps
           new_app: New App
