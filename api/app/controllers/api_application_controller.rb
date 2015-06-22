@@ -19,6 +19,8 @@ class ApiApplicationController < MetalApiController
   before_filter :check_account_state, except: [:show, :index]
   before_filter :set_time_zone, :check_day_pass_usage
   before_filter :force_utf8_params
+  before_filter :set_cache_buster
+  before_filter :logging_details 
   include AuthenticationSystem
   include HelpdeskSystem
   include ControllerLogger
@@ -171,6 +173,12 @@ class ApiApplicationController < MetalApiController
         @user ||= current_account.all_users.find_by_id(user_id)
         render_invalid_user_error if @user && !is_allowed_to_assume?(@user)
       end
+    end
+
+    def set_cache_buster
+      response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+      response.headers["Pragma"] = "no-cache"
+      response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
     end
 
     def render_invalid_user_error
