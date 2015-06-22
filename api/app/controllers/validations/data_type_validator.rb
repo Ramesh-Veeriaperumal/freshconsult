@@ -14,6 +14,6 @@ class DataTypeValidator < ActiveModel::Validator
     end
 
     def valid_type?(type, value)
-      value.is_a? Object.const_get(type) # type is a string. But is_a? expects class or module name. So Object.const_get?
+      value.is_a? type 
     end
 end
