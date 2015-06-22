@@ -268,7 +268,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_nested_custom_fields
-    create_dependent_custom_field(%w(Country State City))
+    # create_dependent_custom_field(%w(Country State City))
     params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
     post :create, construct_params({}, params)
     assert_response :created
