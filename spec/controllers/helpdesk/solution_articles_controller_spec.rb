@@ -340,6 +340,28 @@ describe Solution::ArticlesController do
         end
       end
 
+      it "should not change author of articles unless admin" do
+        @agent3 = add_test_agent
+        @agent3.privileges = "4161535"
+        @agent3.save
+        
+        log_in(@agent3)
+
+        #initially the author should be different
+        [@test_article3, @test_article4].each do |article|
+          article.user_id.should_not be_eql(@agent3.id)
+        end
+
+        put :change_author, :items => @article_ids, :parent_id => @agent3.id
+
+        #the author should be changed
+        [@test_article3, @test_article4].each do |article|
+          article.reload
+          article.user_id.should_not be_eql(@agent3.id)
+        end
+
+      end
+
     end
 
   end
