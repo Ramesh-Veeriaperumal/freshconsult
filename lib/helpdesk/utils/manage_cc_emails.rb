@@ -6,7 +6,12 @@ module Helpdesk::Utils::ManageCcEmails
 	def add_to_reply_cc(new_cc_emails, ticket, note, ticket_cc_hash)
 		note_creator = parse_email(note.user.email)[:email]
 		return if ticket.included_in_fwd_emails?(note_creator)
-		ticket_cc_hash[:reply_cc] = (new_cc_emails | ((ticket_cc_hash[:cc_emails] || []).find { |ccs| ccs.include?(note_creator.to_s) }).to_a)
+		if ticket.requester_id == note.user_id || note.user.agent?
+			ticket_cc_hash[:reply_cc] = new_cc_emails
+		else
+			email_hash = ticket_cc_hash[:reply_cc].map {|cc| parse_email(cc)[:email] }
+			ticket_cc_hash[:reply_cc] = ticket_cc_hash[:reply_cc] + (new_cc_emails.reject {|cc| email_hash.include?(parse_email(cc)[:email])})
+		end
 	end
 
 	# To emails in Cc code to come here...
