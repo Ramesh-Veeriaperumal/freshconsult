@@ -57,11 +57,17 @@ class TicketsController < ApiApplicationController
     head 204
   end
 
+  def notes
+    @notes = paginate_items(@ticket.notes).preload(:note_old_body, :schema_less_note, :attachments)
+    render '/notes/index'
+  end
+
   private
 
     def paginate_options
       options = super
-      options[:order] = order_clause
+      # this being used by notes action also. Hence order options based on action.
+      options[:order] = order_clause if ApiConstants::ORDER_BY_SCOPE["#{action_name}"]
       options
     end
 

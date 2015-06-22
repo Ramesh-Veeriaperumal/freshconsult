@@ -4,6 +4,7 @@ Helpkit::Application.routes.draw do
       member do
         put :assign
         put :restore
+        get :notes
       end
     end
     resources :notes, :except => [:new, :edit, :show, :index]

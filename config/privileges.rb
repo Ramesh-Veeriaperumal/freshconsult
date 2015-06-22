@@ -82,7 +82,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index]
+    resource :"ticket", :only => [:show, :create, :index, :notes]
     resource :"note", only: [:create]
 	end
 

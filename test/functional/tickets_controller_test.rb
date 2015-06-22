@@ -268,6 +268,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_nested_custom_fields
+    create_dependent_custom_field(%w(Country State City))
     params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
     post :create, construct_params({}, params)
     assert_response :created
@@ -1012,5 +1013,61 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
+  end
+
+  def test_notes
+    t = ticket
+    get :notes, controller_params({id: t.id})
+    assert_response :success
+    result_pattern = []
+    t.notes.each do |n|
+      result_pattern << note_pattern(n)
+    end
+    match_json(result_pattern)
+  end
+
+  def test_notes_without_privilege
+    t = ticket
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
+    get :notes, controller_params({id: t.display_id})
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_notes_invalid_id
+    get :notes, controller_params({id: 56756767})
+    assert_response :not_found
+    assert_equal ' ', @response.body
+  end
+
+  def test_notes_eager_loaded_association
+    t = ticket
+    get :notes, controller_params({id: t.display_id})
+    assert_response :success
+    assert controller.instance_variable_get(:@notes).all?{|x| x.association(:attachments).loaded?}
+    assert controller.instance_variable_get(:@notes).all?{|x| x.association(:schema_less_note).loaded?}
+    assert controller.instance_variable_get(:@notes).all?{|x| x.association(:note_old_body).loaded?}
+  end
+
+  def test_notes_with_pagination
+    t = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2).notable
+    3.times do
+      create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+    end
+    get :notes, construct_params(id: t.display_id, per_page: 1)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    get :notes, construct_params(id: t.display_id, per_page: 1, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+  end
+
+  def test_notes_with_pagination_exceeds_limit
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+    get :notes, construct_params(id: ticket.display_id, per_page: 4)
+    assert_response :success
+    assert JSON.parse(response.body).count == 3
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 end
