@@ -1,6 +1,6 @@
 class Search::EsIndexDefinition
 
-  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3"]
+  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3", "fd_es_index_4"]
 
 	class << self
 		include ErrorHandle
@@ -379,7 +379,8 @@ class Search::EsIndexDefinition
     index = case account_id
             when 1..55000      then 0
             when 55001..180000 then 1
-            else                    2
+            when 180000..238931 then 2
+            else                    3
             end
     # index = (account_id <= 55000) ? 0 : 1
     Tire.configure { url Es_aws_urls[index] }
