@@ -4,8 +4,7 @@ describe Solution::DraftsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
-  #starting specs for drafts controller with feature enabled
-  describe "With feature enabled" do
+  describe "Solution Drafts" do
 
 	  before(:all) do
 	  	@agent1 = add_test_agent
@@ -23,8 +22,6 @@ describe Solution::DraftsController do
 
 	    @draft_article2 = create_article( {:title => "article2 agent2 #{@agent2.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, 
 	      :status => "1", :art_type => "1", :user_id => "#{@agent2.id}" } )
-
-	    @account.features.solution_drafts.create
 	  end
 
 	  #start : specs for index action
@@ -36,7 +33,7 @@ describe Solution::DraftsController do
 
 		  it "should render current author drafts listing if index is hit" do
 		    get :index
-		    response.body.should =~ /#{@draft_article1.title}/
+		    response.body.should =~ /#{@draft_article1.title.truncate(35)}/
 		  end
 
 		  it "should render only the current author's drafts only" do
@@ -155,6 +152,30 @@ describe Solution::DraftsController do
 	  		@draft_article3.draft.should_not be_blank
 	  	end
 
+
+	  	it "should send a notification mail if draft is discard by somebody other than the author" do
+	  		draft = @draft_article3.draft
+	  		draft.user_id = @agent2.id
+	  		draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:work_in_progress]
+	  		draft.save
+
+	  		#draft should not be of the agent who discards draft
+	  		draft.user_id.should_not be_eql(@agent1.id)
+
+	  		delete :destroy, :id => @draft_article3.draft.id, :article_id => @draft_article3.id
+
+	  		#should redirect to where i came from
+	  		response.should redirect_to "where_i_came_from"
+	  		#the succesfully discarded flash msg should be present
+	  		expect(flash[:notice]).to be_present
+	  		@draft_article3.reload
+	  		#the draft should not be present
+	  		@draft_article3.draft.should_not be_present
+
+	      Delayed::Job.last.handler.should include('DraftMailer')
+	      Delayed::Job.last.handler.should include('discard_notification')
+	  	end
+
 		end
 		#end : specs for destroy action
 
@@ -256,12 +277,12 @@ describe Solution::DraftsController do
 			describe "drafts index page" do
 		  	it "should render my drafts page with only current authors drafts" do
 		  		get :index
-		  		response.body.should =~ /#{@draft_article3.draft.title}/
+		  		response.body.should =~ /#{@draft_article3.draft.title.truncate(35)}/
 		  	end
 
 		  	it "should not render drafts of other agents" do
 		  		get :index
-		  		response.body.should_not =~ /#{@draft_article2.title}/
+		  		response.body.should_not =~ /#{@draft_article2.title.truncate(35)}/
 		  	end
 		  end
 		  #end: Drafts index/My drafts page
@@ -270,7 +291,7 @@ describe Solution::DraftsController do
 		  describe "all drafts page" do
 		  	it "should display current users own drafts" do
 		  		get :index, :type => :all
-		  		response.body.should =~ /#{@draft_article3.draft.title}/
+		  		response.body.should =~ /#{@draft_article3.draft.title.truncate(35)}/
 		  	end
 
 		  	it "should display other users drafts also" do
@@ -281,78 +302,6 @@ describe Solution::DraftsController do
 		  #end: All drafts page
 		end
 		#end : specs for Views testing
-
-	end
-	#end of specs for drafts controller with feature enabled
-
-	describe "Without feature enabled" do
-		before(:all) do
-	    @agent1 = add_test_agent
-	    @test_category = create_category( {:name => "test category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-	    @public_folder  = create_folder({
-	                                      :name => "Public #{Faker::Name.name} visible to All", 
-	                                      :description => "#{Faker::Lorem.sentence(3)}", 
-	                                      :visibility => 1,
-	                                      :category_id => @test_category.id 
-	                                    })
-	    @published_article = create_article( {:title => "article_pub agent1[#{@agent1.id}] #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, 
-	      :status => "2", :art_type => "1" , :user_id => "#{@agent1.id}"} )
-
-	    @draft_article1 = create_article( {:title => "article1 agent1 #{@agent1.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(1)}", :folder_id => @public_folder.id, 
-	      :status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	    Account.current.remove_feature(:solution_drafts)
-	  end
-
-	  describe "Action" do
-	  	before(:each) do
-				log_in(@agent1)
-				@draft_article3 = create_article( {:title => "Article 3 attachment delete agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
-	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	  		@draft_article3.create_draft_from_article({:title => "Draft 3 for attachment delete #{Faker::Name.name}", :description => "Desc 4 : #{Faker::Lorem.sentence(4)}"})
-				@attachment = @draft_article3.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
-                                            :description => Faker::Name.first_name, 
-                                            :account_id => @draft_article3.account_id)
-				@attachment.save
-	  		request.env["HTTP_REFERER"] = "where_i_came_from"
-	  	end
-
-	  	it "should redirect to login page if index action is hit" do
-		    get :index
-		   	response.code.should be_eql("302")
-		  end
-
-		  it "should redirect to login page if publish action is hit" do
-	  		post :publish, :id => @draft_article1.id
-	  		response.code.should be_eql("302")
-	  		@draft_article1.reload
-	  		@draft_article1.status.should_not be_eql(Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
-	  	end
-
-	  	it "should redirect to login page if destroy action is hit" do
-	  		delete :destroy, :id => 255, :article_id => @draft_article1.id
-	  		response.code.should be_eql("302")
-	  		response.should_not redirect_to "where_i_came_from"
-	  	end
-
-	  	it "should redirect to login page if attachment_destroy action is hit" do
-	  		draft = @draft_article3.draft
-	  		draft.should_not be_blank
-	  		@draft_article3.attachments.should be_present
-
-	  		delete :attachments_delete, :article_id => @draft_article3.id, :attachment_type => :attachment, :attachment_id => @attachment.id
-
-	  		response.code.should be_eql("302")
-	  		response.should_not redirect_to "where_i_came_from"
-	  	end
-
-	  	it "should redirect to login page if autosave action is hit" do
-	  		xhr :post, :autosave, :id => @draft_article3.id, :title => "New", :description => "New Desc", :timestamp => @draft_article3.draft.updation_timestamp
-	  		response.body.should =~ /window.location.href = (.+)support(.+)login/
-	  		response.code.should be_eql("200")
-	  	end
-
-	  end
-
 	end
 	  
 end

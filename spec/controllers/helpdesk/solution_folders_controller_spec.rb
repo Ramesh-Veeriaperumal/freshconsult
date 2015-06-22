@@ -121,7 +121,7 @@ describe Solution::FoldersController do
         },
       :category_id => @test_category.id
     @account.folders.find_by_name("#{name}").should be_an_instance_of(Solution::Folder)
-    response.should redirect_to(solution_category_folder_path(@test_category.id, @test_folder.id))
+    response.should redirect_to(solution_folder_path(@test_folder.id))
   end
 
   it "should not edit a default folder" do 
@@ -136,67 +136,118 @@ describe Solution::FoldersController do
     response.should redirect_to(solution_category_path(@test_category))    
   end
 
-  describe "Folder Show [Drafts feature]"  do
+  # Folder Bulk Actions starts from here
+  describe "Folder Bulk Actions"  do
+
     before(:all) do
-      @agent1 = add_test_agent
-      @agent2 = add_test_agent
-      @account.features.solution_drafts.create
-
-      @test_category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )       
-
-      @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
-       :category_id => @test_category.id } )
+      @test_category2 = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+      @test_folder3 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+      @test_folder4 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+      @folder_ids = [@test_folder3.id, @test_folder4.id]
     end
 
-    it "should show the published article without draft label" do
-      @published_article = create_article( {:title => "article1 agent1 #{@agent1.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(1)}", :folder_id => @test_folder.id, 
-        :status => "2", :art_type => "1", :user_id => "#{@agent1.id}" } )
-      get :show, :category_id => @test_category.id, :id => @test_folder.id
-      response.body.should =~ /#{@published_article.title}/
-      response.body.should_not =~ /draft_label_hover/
-      response.body.should_not =~ /draft_label/
-      @published_article.destroy
+    # Start : Visible to
+    describe "Visible to action"  do
+
+      it "should change selected folders visibility to logged in users" do
+        put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        end
+      end
+
+      it "should change all selected folders visibility to anyone" do
+        put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+        end
+      end
+
+
+      it "should change all selected folders visibility to agents" do
+        put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:agents]
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:agents])
+        end
+      end
+
+      describe "Adding Company visibility" do
+
+        before(:all) do
+          @company1 = Company.new(:name => Faker::Name.name)
+          @company1.account_id = @test_folder.account_id
+          @company1.save
+          @company2 = Company.new(:name => "#{Faker::Name.name} - 2")
+          @company2.account_id = @test_folder.account_id
+          @company2.save
+        end
+
+        it "should change visibility: replace existing companies" do
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id, @company2.id], :addToExisting => 0
+          [@test_folder3, @test_folder4].each do |folder|
+            folder.reload
+            folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should include(@company2.id, @company1.id)
+          end
+
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id], :addToExisting => 0
+          [@test_folder3, @test_folder4].each do |folder|
+            folder.reload
+            folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should include(@company1.id)
+          end
+        end
+
+        it "should change visibility: add to existing companies" do
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company2.id], :addToExisting => 1
+          [@test_folder3, @test_folder4].each do |folder|
+            folder.reload
+            folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should include(@company2.id, @company1.id)
+          end
+        end
+
+      end
+
     end
+    # End : Visible to
 
-    it "should show the published article with a draft version with a draft label" do
-      @published_article_with_draft = create_article( {:title => "article2 agent1 #{@agent1.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(1)}", :folder_id => @test_folder.id, 
-        :status => "2", :art_type => "1", :user_id => "#{@agent1.id}" } )
-      @published_article_with_draft.create_draft_from_article({:title => "Draft 1 for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
-      get :show, :category_id => @test_category.id, :id => @test_folder.id
-      response.body.should =~ /#{@published_article_with_draft.draft.title}/
-      response.body.should =~ /\"subject_style\sdraft_label\stooltip\"/
-      @published_article_with_draft.destroy
+    # Start : Move to Action
+    describe "Move to action" do
+
+      it "should move selected folders to another category" do
+        put :move_to, :items => @folder_ids, :parent_id => @test_category2.id
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.category_id.should be_eql(@test_category2.id)
+        end
+      end
+
+      it "should render move_to.rjs" do
+        xhr :put, :move_to, :items => @folder_ids, :parent_id => @test_category2.id
+        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo\(\)/
+      end
+
+      it "should reverse the changes done by move_to" do
+        put :move_back, :items => @folder_ids, :parent_id => @test_category.id
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.category_id.should be_eql(@test_category.id)
+        end
+      end
+
+      it "should render move_back" do
+        xhr :put, :move_back, :items => @folder_ids, :parent_id => @test_category.id
+        response.should render_template('solution/folders/move_back')
+      end
+
     end
-
-    it "should show the draft only article with draft label" do
-      @draft_article1 = create_article( {:title => "article3 agent1 #{@agent1.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(1)}", :folder_id => @test_folder.id, 
-        :status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-      get :show, :category_id => @test_category.id, :id => @test_folder.id
-      response.body.should =~ /#{@draft_article1.title}/
-      response.body.should =~ /subject_style/
-      response.body.should_not =~ /draft_label_hover/
-      @draft_article1.destroy
-    end
-
-    it "should show locked tooltip for edit icon if the article is locked for editing by somebody" do
-      @draft_article1 = create_article( {:title => "article4 agent1 #{@agent1.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(1)}", :folder_id => @test_folder.id, 
-        :status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-      @draft_article1.create_draft_from_article({:title => "Draft 4 for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
-      draft = @draft_article1.draft
-      draft.user_id = @agent2.id
-      draft.status = 0
-      draft.save
-
-      @draft_article1.reload
-
-      get :show, :category_id => @test_category.id, :id => @test_folder.id
-      response.body.should =~ /tooltip\"\stitle=\"Locked\"/
-      response.body.should =~ /subject_style/
-      response.body.should_not =~ /draft_label_hover/
-      response.body.should =~ /#{@draft_article1.draft.title}/
-      @draft_article1.destroy
-    end
+    # End : Move to action
 
   end
+  # END : Folder Bulk Actions
 
 end
