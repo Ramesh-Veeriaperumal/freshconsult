@@ -20,7 +20,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :logging_details 
+  before_filter :logging_details
   include AuthenticationSystem
   include HelpdeskSystem
   include ControllerLogger
@@ -172,9 +172,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_cache_buster
-      response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
-      response.headers["Pragma"] = "no-cache"
-      response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+      response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+      response.headers['Pragma'] = 'no-cache'
+      response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
     end
 
     def render_invalid_user_error

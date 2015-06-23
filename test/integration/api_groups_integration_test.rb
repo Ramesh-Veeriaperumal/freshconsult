@@ -5,11 +5,11 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 12,
-      show: 4,
-      update: 13,
-      index: 4,
-      destroy: 12
+      create: 10,
+      show: 2,
+      update: 11,
+      index: 2,
+      destroy: 10
     }
 
     # create

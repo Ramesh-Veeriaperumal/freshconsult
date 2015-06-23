@@ -42,7 +42,8 @@ class NotesController < ApiApplicationController
     end
 
     def create_note
-      @item.user_id ||= current_user.id
+      @item.user ||= current_user if @item.user_id.blank? # assign user instead of id as the object is already loaded.
+      @item.notable = @ticket # assign notable instead of id as the object is already loaded.
       build_normal_attachments(@item, params[cname][:attachments])
       if @item.save_note
         render "/notes/#{action_name}", location: send("#{nscname}_url", @item.id), status: 201
@@ -63,7 +64,7 @@ class NotesController < ApiApplicationController
     end
 
     def load_ticket # Needed here in controller to find the item by display_id
-      @ticket = Helpdesk::Ticket.find_by_param(params[cname][:notable_id], current_account)
+      @ticket = current_account.tickets.find_by_param(params[cname][:notable_id], current_account)
       unless @ticket
         head(404) && return if "#{action_name.upcase}" == 'REPLY' # render 404 if reply action is called else 400
         @errors = [BadRequestError.new('ticket_id', "can't be blank")]

@@ -58,8 +58,7 @@ module ApiConstants
     'update' => false,
     'assign' => false,
     'restore' => true,
-    'destroy' => false,
-    'notes' => false
+    'destroy' => false
   }
   ORDER_BY_SCOPE = {
     'index' => true,

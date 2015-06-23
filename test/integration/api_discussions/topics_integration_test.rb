@@ -5,14 +5,14 @@ class TopicsIntegrationest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 8,
-      show: 4,
-      update: 13,
-      destroy: 13,
-      follow: 5,
-      unfollow: 10,
-      is_following: 3,
-      posts: 4
+      create: 6,
+      show: 2,
+      update: 11,
+      destroy: 11,
+      follow: 3,
+      unfollow: 8,
+      is_following: 1,
+      posts: 2
     }
 
     path = '/discussions/topics.json'

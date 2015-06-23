@@ -5,12 +5,12 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 8,
-      show: 4,
-      update: 8,
-      index: 3,
-      destroy: 10,
-      forums: 4
+      create: 6,
+      show: 2,
+      update: 6,
+      index: 1,
+      destroy: 8,
+      forums: 2
     }
 
     # create

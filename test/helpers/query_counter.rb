@@ -8,7 +8,7 @@ class QueryCounter
   end
 
   IGNORED_SQL = [/SHOW/]
-  API_SQL = /api/
+  API_SQL = /\/api\//
 
   def call(_name, _start, _finish, _message_id, values)
     unless 'CACHE' == values[:name]

@@ -92,6 +92,20 @@ module TestCaseMethods
     User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
   end
 
+  def v2_ticket_params
+    { email: Faker::Internet.email, cc_emails: [Faker::Internet.email, Faker::Internet.email], description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
+      priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: [Faker::Name.name, Faker::Name.name],
+      due_by: 14.days.since.to_s, fr_due_by: 1.days.since.to_s, group_id: Group.first.id
+    }
+  end
+
+  def v1_ticket_params
+    { email: Faker::Internet.email, description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
+      priority: 2, status: 3, ticket_type: 'Problem', responder_id: @agent.id, source: 1,
+      due_by: 14.days.since.to_s, frDueBy: 1.days.since.to_s, group_id: Group.first.id
+    }
+  end
+
   def category_params
     { name: Faker::Name.name,  description: Faker::Lorem.paragraph }
   end
@@ -149,6 +163,35 @@ module TestCaseMethods
 
   def v2_post_payload(t)
     post_params(t).to_json
+  end
+
+  def v1_ticket_payload
+    { helpdesk_ticket: v1_ticket_params, helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" },
+      cc_emails: "#{Faker::Internet.email}, #{Faker::Internet.email}" }.to_json
+  end
+
+  def v2_ticket_payload
+    v2_ticket_params.to_json
+  end
+
+  def v1_note_payload
+    { helpdesk_note: { body: Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], private: true } }.to_json
+  end
+
+  def v2_note_payload
+    { body: Faker::Lorem.paragraph, notify_emails: [Faker::Internet.email, Faker::Internet.email], ticket_id: Helpdesk::Ticket.first.display_id, private: true }.to_json
+  end
+
+  def v2_note_update_payload
+    { body: Faker::Lorem.paragraph }.to_json
+  end
+
+  def v1_reply_payload
+    { helpdesk_note: { body: Faker::Lorem.paragraph, source: 0, private: false,  cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] } }.to_json
+  end
+
+  def v2_reply_payload
+    { body:  Faker::Lorem.paragraph, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
 end
 

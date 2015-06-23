@@ -1017,7 +1017,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_notes
     t = ticket
-    get :notes, controller_params({id: t.id})
+    get :notes, controller_params(id: t.id)
     assert_response :success
     result_pattern = []
     t.notes.each do |n|
@@ -1029,24 +1029,24 @@ class TicketsControllerTest < ActionController::TestCase
   def test_notes_without_privilege
     t = ticket
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    get :notes, controller_params({id: t.display_id})
+    get :notes, controller_params(id: t.display_id)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_notes_invalid_id
-    get :notes, controller_params({id: 56756767})
+    get :notes, controller_params(id: 56_756_767)
     assert_response :not_found
     assert_equal ' ', @response.body
   end
 
   def test_notes_eager_loaded_association
     t = ticket
-    get :notes, controller_params({id: t.display_id})
+    get :notes, controller_params(id: t.display_id)
     assert_response :success
-    assert controller.instance_variable_get(:@notes).all?{|x| x.association(:attachments).loaded?}
-    assert controller.instance_variable_get(:@notes).all?{|x| x.association(:schema_less_note).loaded?}
-    assert controller.instance_variable_get(:@notes).all?{|x| x.association(:note_old_body).loaded?}
+    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:attachments).loaded? }
+    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:schema_less_note).loaded? }
+    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:note_old_body).loaded? }
   end
 
   def test_notes_with_pagination

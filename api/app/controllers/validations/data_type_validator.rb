@@ -14,6 +14,6 @@ class DataTypeValidator < ActiveModel::Validator
     end
 
     def valid_type?(type, value)
-      value.is_a? type 
+      value.is_a? type
     end
 end
