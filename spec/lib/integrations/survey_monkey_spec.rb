@@ -81,7 +81,7 @@ RSpec.describe Integrations::SurveyMonkey do
     result.should eql(true)
   end
 
-  it "should show place holder for canned response when integration is enabled " do
+  it "should show place holder canned response when all group option is enabled " do
     result = Integrations::SurveyMonkey::placeholder_allowed?(@account)
     result.should eql(true)
   end

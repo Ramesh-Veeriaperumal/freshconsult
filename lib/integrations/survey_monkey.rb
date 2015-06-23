@@ -1,9 +1,6 @@
 require 'sanitize'
 
 module Integrations::SurveyMonkey
-
-  SURVEY_MONKEY_PLACEHOLDER = "{{ticket.surveymonkey_survey}}"
-
   # CALLED : When survey is sent on reply.
   def self.survey specific_include, ticket, user
     return nil unless enabled? ticket.account_id
@@ -38,7 +35,12 @@ module Integrations::SurveyMonkey
   end
 
   def self.placeholder_allowed? account
-    enabled?(account.id)
+    return false unless enabled? account.id
+
+    # Allow the place holder for a canned response when the all groups survey link is configured.
+    installed_app = account.installed_applications.with_name('surveymonkey').first
+    url = survey_url_by_version(installed_app)
+    url.present?
   end
 
   def self.survey_html ticket
