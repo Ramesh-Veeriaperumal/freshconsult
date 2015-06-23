@@ -60,11 +60,12 @@ module ApiConstants
     'restore' => true,
     'destroy' => false
   }
+
+  INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type created_since updated_since)
   ORDER_BY_SCOPE = {
     'index' => true,
     'notes' => false
   }
-  INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type)
 
   # *********************************-- TicketFieldConstants --*********************************************
 

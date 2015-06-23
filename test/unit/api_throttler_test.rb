@@ -13,7 +13,7 @@ class ApiThrottlerTest < ActionView::TestCase
                                                            'HTTP_HOST' => 'localhost.freshpo.com')
     assert_equal 429, status
     assert_equal true, ['Retry-After', 'Content-Type'].all? { |key| headers.key? key }
-    response.must_match_json_expression(too_many_request_error_pattern)
+    assert_equal ["{\"message\":\"You have exceeded the limit of requests per hour\"}"], response
   end
 
   def test_api_throttler_for_json_response_without_api_path

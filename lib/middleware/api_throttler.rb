@@ -60,7 +60,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     elsif @api_resource.starts_with?('/api/')
       error_output = "You have exceeded the limit of requests per hour"
       @status, @headers,@response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'application/json'}, 
-                                      {:message => error_output}.to_json]
+                                      [{:message => error_output}.to_json]]
     else
       @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]
