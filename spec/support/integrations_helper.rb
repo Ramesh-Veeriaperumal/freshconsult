@@ -27,5 +27,21 @@ module IntegrationsHelper
 		application
 	end
 
+	def widget_params(now)
+    {"utf8"=>"✓",
+   "authenticity_token"=>"TSQNqx+CSrN7DbfaZABzIL8LdL8bDIv83vEtrtJknW8=",
+   "helpdesk_ticket"=>
+    {"email"=>"test@gamil.com", "name"=>"test name", "subject"=>"New Ticket #{now}", "ticket_body_attributes"=>{"description_html"=>"<p>test desc</p>\r\n"}, "source"=>"9"},
+   "dropboxURL"=>"",
+   "retainParams"=>"{\"widgetType\":\"popup\"}",
+   "commit"=>"Submitting..",
+   "meta"=>
+    {"user_agent"=>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36",
+     "referrer"=>"http://localhost:3000/admin/widget_config"},
+   "widgetType"=>"popup",
+   "action"=>"create",
+   "controller"=>"widgets/feedback_widgets"} 
+  end
+
 end
 
