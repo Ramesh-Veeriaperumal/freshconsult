@@ -48,6 +48,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
     resource :"integrations/dynamics_crm", :only => [:widget_data]
+    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :delete_invoice]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -95,8 +96,8 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   forward_ticket do
-    resource :"helpdesk/ticket", :only => [:forward_conv]
-    resource :"helpdesk/conversation", :only => [:forward]
+    resource :"helpdesk/ticket", :only => [:forward_conv, :reply_to_forward]
+    resource :"helpdesk/conversation", :only => [:forward, :reply_to_forward]
   end
 
   merge_or_split_ticket do
@@ -357,6 +358,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/mobihelp/app"
     resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
+    resource :"integrations/xero", :only => [:authorize, :authdone]
   end
 
   manage_account do

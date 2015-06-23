@@ -14,6 +14,7 @@ class Topic < ActiveRecord::Base
 			new_vote = find_or_initialize_vote(source_vote.user_id, target)
 			new_vote.vote = source_vote.vote
 			new_vote.account_id = source_vote.account_id
+			new_vote.created_at ||= source_vote.created_at
 			new_vote.save
 		end
 	end

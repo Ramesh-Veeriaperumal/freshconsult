@@ -17,7 +17,7 @@ RSpec.describe Integrations::JiraIssueController do
 
   before(:each) do
     log_in(@agent)
-    @ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
+    @ticket = create_ticket({ :status => 2}, create_group(@account, {:name => "Tickets"}))
   end
 
   it "fetches jira projects issues" do
@@ -25,10 +25,18 @@ RSpec.describe Integrations::JiraIssueController do
     response.body.should =~ /res_projects/
   end
 
-  it "should create new issue in jira and insert into integrated resources (create)" do
+  it "should create new issue in jira and insert into integrated resources (create) and push existing notes to jira" do
     post :create, create_params
     ir = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
     ir.should_not be_nil
+    # Resque.inline = true
+    file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
+    note = create_note({:source => @ticket.source, :ticket_id => @ticket.id, :user_id => @agent.id})
+    note.attachments.build(:content => file,:description => Faker::Lorem.characters(10) ,:account_id => note.account_id)
+    note.save_note
+    jira_obj = Integrations::JiraIssue.new(@installed_application)
+    response = jira_obj.push_existing_notes_to_jira(ir.remote_integratable_id,@ticket)
+    response.should_not be_nil
   end
 
   it "should delete integrated resources (unlink)" do
@@ -81,7 +89,7 @@ RSpec.describe Integrations::JiraIssueController do
     integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id)
     redis_key = INTEGRATIONS_JIRA_NOTIFICATION % { :account_id => @account.id, 
                 :local_integratable_id => integrated_resource.local_integratable_id, 
-                :remote_integratable_id => integrated_resource.remote_integratable_id }
+                :remote_integratable_id => integrated_resource.remote_integratable_id, :comment => Digest::SHA512.hexdigest("@")}
     set_integ_redis_key(redis_key, controller.params)
     webhook_object = Integrations::JiraWebhook.new(notify_params(integrated_resource))
     Integrations::JiraWebhook.any_instance.stubs(:parse_jira_webhook).returns(webhook_object)

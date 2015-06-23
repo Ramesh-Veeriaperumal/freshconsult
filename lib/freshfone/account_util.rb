@@ -1,7 +1,7 @@
 module Freshfone::AccountUtil
 
   def create_freshfone_account(account = nil)
-    account = current_account if defined? current_account && account.blank?
+    account = current_account if defined?(current_account) && account.blank?
     Freshfone::SubAccount.new(account).create 
   end
 

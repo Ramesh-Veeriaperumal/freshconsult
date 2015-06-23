@@ -73,6 +73,8 @@ RSpec.describe Freshfone::CallFlow do
   end
 
   it 'should render twiml for an outgoing call' do
+  	@number.freshfone_number_groups.delete_all
+  	@number.freshfone_number_groups.reload
     number = Faker::Base.numerify('(###)###-####')
     outgoing_key = FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => @account.id }
     remove_value_from_set(outgoing_key, @agent.id)

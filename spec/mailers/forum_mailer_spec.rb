@@ -11,6 +11,7 @@ RSpec.describe ForumMailer do
   describe "Notification for new follower" do
 
     before(:each) do
+      ActionMailer::Base.perform_deliveries = false
       @monitorship = monitor_forum(@forum,@follower,@account.main_portal.id)
       @mail = ForumMailer.notify_new_follower(@forum,@follower,@monitorship.portal,@monitorship)
     end

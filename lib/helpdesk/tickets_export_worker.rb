@@ -132,7 +132,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def delete_invisible_fields
-    headers = export_params[:export_fields].keys.sort
+    headers = export_params[:export_fields].keys
     headers.delete_if{|header_key|
       !allowed_fields.include?(header_key)
     }

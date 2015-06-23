@@ -1,6 +1,6 @@
 class Search::EsIndexDefinition
 
-  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3"]
+  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3", "fd_es_index_4"]
 
 	class << self
 		include ErrorHandle
@@ -13,7 +13,7 @@ class Search::EsIndexDefinition
 
   # Used for new model migrations
   def additional_models
-    [:scenario_automations]
+    [:admin_canned_responses, :scenario_automations]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
@@ -244,7 +244,13 @@ class Search::EsIndexDefinition
           :account_id => { :type => :long },
           :active => { :type => :boolean  },
           :rule_type => { :type => :long },
-          :name => { :type => :string },
+          :name => {
+            :type => :multi_field,
+            :fields => {
+              :name => {:type => :string},
+              :raw_name => {:type => :string, :analyzer => :case_insensitive}
+            }
+          },
           :es_group_accesses => { :type => :long },
           :es_user_accesses => { :type => :long },
           :es_access_type => { :type => :long }
@@ -262,7 +268,13 @@ class Search::EsIndexDefinition
           :es_group_accesses => { :type => :long },
           :es_user_accesses => { :type => :long },
           :es_access_type => { :type => :long },
-          :title => { :type => :string }
+          :title => {
+            :type => :multi_field,
+            :fields => {
+              :title => {:type => :string},
+              :raw_title => {:type => :string, :analyzer => :case_insensitive}
+            }
+          },
         }
       }
     }
@@ -289,7 +301,8 @@ class Search::EsIndexDefinition
               },
               :analyzer => {
                 :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
-                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
+                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] },
+                :case_insensitive => { :type => "custom", :tokenizer => "keyword", :filter => [ "lowercase" ] }
               }
             }
           },
@@ -366,7 +379,8 @@ class Search::EsIndexDefinition
     index = case account_id
             when 1..55000      then 0
             when 55001..180000 then 1
-            else                    2
+            when 180000..238931 then 2
+            else                    3
             end
     # index = (account_id <= 55000) ? 0 : 1
     Tire.configure { url Es_aws_urls[index] }

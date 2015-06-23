@@ -35,24 +35,6 @@ describe Solution::ArticlesController do
     response.should render_template("solution/articles/show")    
   end
 
-
-  describe "should render the show page of an article even if article_body is not proper" do
-    before(:each) do
-      @sample_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-        :user_id => @agent.id, :status => "2", :art_type => "1" } )
-    end
-
-    it "should render show page even if the article body is not present" do
-      @sample_article.article_body.destroy
-      show_page_rendered_properly?(@sample_article)
-    end
-
-    it "should render show page if the content is not present in the article body record" do
-      @sample_article.article_body.update_attributes({:description => nil, :desc_un_html => nil})
-      show_page_rendered_properly?(@sample_article)
-    end
-  end
-
   it "should redirect user with no privilege to login" do 
     session = UserSession.find
     session.destroy
@@ -272,7 +254,7 @@ describe Solution::ArticlesController do
       @test_article.thumbs_down = rand(5..10)
       @test_article.votes.build(:vote => 1, :user_id => @user.id)
       @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
-      @test_article.save
+      @test_article.reload.save
       put :reset_ratings, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
       @test_article.reload
       @test_article.thumbs_up.should eql 0

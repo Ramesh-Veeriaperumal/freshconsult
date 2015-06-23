@@ -52,17 +52,17 @@ module SolutionsHelper
     article_obj.should be_an_instance_of(Solution::Article)
     article_body.should be_an_instance_of(Solution::ArticleBody)
     
-    article_obj.read_attribute(:description).should be_eql(art_description)
     article_obj.description.should be_eql(art_description)
     article_obj[:description].should be_eql(art_description)
 
-    article_obj.read_attribute(:desc_un_html).strip.should be_eql(art_description_text)
     article_obj.desc_un_html.strip.should be_eql(art_description_text)
     article_obj[:desc_un_html].strip.should be_eql(art_description_text)
 
-    Solution::Article::BODY_ATTRIBUTES.each do |attrib|
-      article_body.send(attrib).should be_eql(article_obj.read_attribute(attrib))
-    end
+    article_body.description.should be_eql(art_description)
+    article_body[:description].should be_eql(art_description)
+
+    article_body.desc_un_html.strip.should be_eql(art_description_text)
+    article_body[:desc_un_html].strip.should be_eql(art_description_text)
   end
 
   def create_portal(params = {})

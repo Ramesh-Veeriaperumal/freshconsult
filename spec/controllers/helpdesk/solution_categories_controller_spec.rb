@@ -43,7 +43,7 @@ describe Solution::CategoriesController do
   end
 
   it "should reorder categories" do
-    categories = @account.solution_categories
+    categories = @account.main_portal.portal_solution_categories
     count = categories.count
     position_arr = (1..count).to_a.shuffle
     reorder_hash = {}
@@ -51,8 +51,9 @@ describe Solution::CategoriesController do
       reorder_hash[c.id] = position_arr[i] 
     end    
     put :reorder, :reorderlist => reorder_hash.to_json
+    categories.reload
     categories.each do |c|
-      c.portal_solution_categories.first.position.should be_eql(reorder_hash[c.id])
+      c.position.should be_eql(reorder_hash[c.id])
     end          
   end  
 

@@ -176,6 +176,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :include => [:article_ticket],
     :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id"] 
 
+  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
+    :conditions => ["display_id > (?)",display_id],
+    :limit => limit,
+    :order => order_param
+    }
+  }
+  
   class << self # Class Methods
 
     def agent_permission user
@@ -307,6 +314,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.get_info if requester
   end
 
+  def requester_phone
+    (requester_has_phone?)? requester.phone : requester.mobile if requester
+  end
+
   def not_editable?
     requester and !requester_has_email? and !requester_has_phone?
   end
@@ -317,10 +328,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_has_phone?
     requester and requester.phone.present?
-  end
-
-  def requester_has_phone?
-    requester.phone.present?
   end
 
   def encode_display_id

@@ -1,6 +1,6 @@
 class Search::AutocompleteController < ApplicationController
 
-  USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }] }}
+  USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }, :user_emails] }}
 
   def agents
     begin

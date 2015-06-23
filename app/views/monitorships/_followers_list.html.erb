@@ -7,7 +7,7 @@
       <% order_followers(parent).each do |monitor| %>
         <li>
           <div class="user_image clearfix">
-            <%= user_avatar(monitor, :thumb, "preview_pic" , 
+            <%= user_avatar(monitor, :thumb, "preview_pic circle small" , 
                             { :width => "36px", :height => "36px" })  %>
           </div>
           <% if monitor.id == current_user.id %>

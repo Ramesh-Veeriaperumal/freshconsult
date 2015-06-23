@@ -108,6 +108,8 @@ class Account < ActiveRecord::Base
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy'
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
+  has_many :google_contacts, :class_name => 'GoogleContact'
+  has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
@@ -153,6 +155,8 @@ class Account < ActiveRecord::Base
 
   has_many :topics
   has_many :posts
+  has_many :monitorships
+  has_many :votes
 
   has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories
   #The following is a duplicate association. Added this for metaprogramming

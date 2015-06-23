@@ -15,6 +15,11 @@ if Rails.env.test?
       twilio_application_id "AP932260611f4e4830af04e4e3fed66276"
     end
 
+    factory :meta, :class => Freshfone::CallMeta do
+    	meta_info ""
+    	device_type 4
+    end
+
     factory :freshfone_number, :class => Freshfone::Number do
       number "+12407433321"
       region  "Pennsylvania"

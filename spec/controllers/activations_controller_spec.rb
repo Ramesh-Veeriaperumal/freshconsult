@@ -68,7 +68,7 @@ describe ActivationsController do
   it "should shout message for active user" do
     @account.features.contact_merge_ui.create
     get :new_email, :activation_code => @user2.user_emails.last.perishable_token
-    session["flash"][:notice].should eql "New email id has been activated"
+    session["flash"][:notice].should eql "email id already activated"
     @account.features.contact_merge_ui.destroy
   end
 

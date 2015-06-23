@@ -43,8 +43,10 @@ module FormBuilders::Redactor
         :tabindex => 2,
         :convertDivs => false,
         :setFontSettings => true,
+        :imageUpload => "/email_notification_uploaded_images",
+        :clipboardImageUpload => "/email_notification_uploaded_images/create_file",
         :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
-                      '|','fontcolor', 'backcolor', '|' ,'link', 'removeFormat']
+                      '|','fontcolor', 'backcolor', '|', 'image','link', 'removeFormat']
       }
 
       REDACTOR_DEFAULT_EDITOR = {

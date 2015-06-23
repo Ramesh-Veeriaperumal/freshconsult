@@ -808,7 +808,7 @@ var scrollToError = function(){
 		var _form = $(this);
 		if (_form.valid()) {
 
-			if (_form.attr('rel') == 'forward_form')  {
+			if (_form.attr('rel') == 'forward_form' || _form.attr('rel') == 'reply_to_forward_form')  {
 				//Check for To Addresses.              
 				if (_form.find('input[name="helpdesk_note[to_emails][]"]').length == 0 )
 				{
@@ -921,8 +921,11 @@ var scrollToError = function(){
 	}
 
 	var blockConversationForm = function(_form) {
-		if (_form.data('panel')) {
-			$('#' + _form.data('panel')).block({
+		var panel = _form.data('panel');
+		if (panel) {
+			var form_el = $('#' + panel);
+			form_el = _form.data("form") ? form_el.find(".commentbox") : form_el;
+			form_el.block({
 				message: " <h1>...</h1> ",
 				css: {
 					display: 'none',

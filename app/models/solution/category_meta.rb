@@ -18,6 +18,6 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		
 	has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
 
-	COMMON_ATTRIBUTES = ["position", "is_default", "account_id"]
+	COMMON_ATTRIBUTES = ["position", "is_default", "account_id", "created_at"]
 
 end

@@ -130,8 +130,6 @@ describe ContactsController do
     user1.user_emails.size.should eql 3
     @account.user_emails.user_for_email(test_email).should be_an_instance_of(User)
     u = @account.user_emails.user_for_email(test_email)
-    Delayed::Job.last.handler.should include(u.name)
-    Delayed::Job.last.handler.should include("deliver_email_activation")
   end
 
   # it "should update a primary_email" do
@@ -276,11 +274,11 @@ describe ContactsController do
   it "should verify email" do
     Delayed::Job.delete_all
     u = add_user_with_multiple_emails(@account, 3)
-    u.active = true
+    u.active = false
     u.save
     u.reload
     get :verify_email, :email_id => u.user_emails.last.id, :format => 'js'
-    Delayed::Job.last.handler.should include("deliver_email_activation")
+    Delayed::Job.last.handler.should include("deliver_user_activation")
     response.body.should =~ /Activation mail sent/
   end
 

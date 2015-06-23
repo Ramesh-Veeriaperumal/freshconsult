@@ -25,7 +25,8 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     },
     init: function () {
       this.start();
-      this.populateAgents();
+       var g_id=freshfone.group_from_cookie==""? 0 : freshfone.group_from_cookie;
+      this.populateAgentsByGroups(g_id);
     },
     getAgent: function(agent_id){
       return freshfone.agents.find(function(agent){
@@ -69,21 +70,10 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                presence_time_in_s : this.presence_in_words,
               }
     },
-    
-    makeAgentArray: function(id){
-      this.agent=this.getAgent(id);
-      if(this.agent.presence==this.Status.ONLINE||this.agent.presence==this.Status.BUSY){
-          this.availableListArray[id]=id;
-      }
-      if(this.agent.presence==this.Status.OFFLINE){
-          this.unavailableListArray[id]=id;
-      }
-    },
     populateAgents: function(){  
          this.AvailableAgentList.clear();
          this.UnavailableAgentList.clear();
          $.each(freshfone.agents,jQuery.proxy(function(index,value)  {
-            this.makeAgentArray(value["id"]);
             this.addAgentByPresence(value["id"]);
          },this)); 
          this.setTickIcon(this.sort_order_list[0]);
@@ -95,55 +85,55 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
       this.UnavailableAgentList.clear();
       this.availableListArray=[];
       this.unavailableListArray=[];
-      if(group_id==0){
-        this.populateAgents();
-      }
-      else{
-        this.getAgentsByGroup(group_id);   
-      }
+      this.getAgentsByGroup(group_id);   
     },
 
-    getAgentsByGroup: function (group_id) {
+    getAgentsByGroup: function (freshfone_group_id) {
       var self=this;
-       $.ajax({           
-                    url:  '/helpdesk/dashboard/'+group_id+'/agents',
-                    dataType: "json",
-                    method: 'GET',
-                    success: function (data) {
-                          data.id.each(function(g_id){
-                            self.makeAgentArray(g_id);
-                            self.addAgentByPresence(g_id);
-                          });    
-                     self.setTickIcon(self.sort_order_list[0]);
-                     self.sortLists();
-                     self.updateNoOfAgents();
-                    } ,
-                    error: function(data){
-                    }
-              });
+           $.ajax({           
+                        url:  '/helpdesk/dashboard/'+freshfone_group_id+'/agents',
+                        dataType: "json",
+                        method: 'GET',
+                        success: function (data) {
+                              if(data.id=="0"){
+                                self.populateAgents();
+                              }
+                              else{
+                                data.id.each(function(g_id){
+                                  self.addAgentByPresence(g_id);
+                                });   
+                                self.setTickIcon(self.sort_order_list[0]);
+                                self.sortLists();
+                                self.updateNoOfAgents();
+                              }  
+                        } ,
+                        error: function(data){
+                        }
+                  });
     },
     
     addAgentByPresence: function (id) {
         this.agent=this.getAgent(id);
-        if (this.agent.presence==this.Status.ONLINE||this.agent.presence==this.Status.BUSY||this.agent.on_phone){
+        if (this.agent.presence==this.Status.ONLINE){
+              if(!this.AvailableAgentList.get("id",id)){
+                this.addAgentByDevice(id);
+              }
+        }  
+        if (this.agent.presence==this.Status.BUSY){
            if(this.agent.preference==this.Preference.TRUE){
               if(!this.AvailableAgentList.get("id",id)){
                 this.addAgentByDevice(id);
               }
             }
-          }
-        if (this.agent.presence==this.Status.OFFLINE && this.agent.preference==this.Preference.TRUE && !this.agent.on_phone){
-              if(!this.UnavailableAgentList.get("id",id)){
+            else{
               this.UnavailableAgentList.add(this.unavailableUserListItem(id));
-              }
-            }   
+            }
+        }  
 
-        if (this.agent.presence==this.Status.OFFLINE||this.agent.presence==this.Status.BUSY){
-            if(this.agent.preference==this.Preference.FALSE){
+        if (this.agent.presence==this.Status.OFFLINE){
               if(!this.UnavailableAgentList.get("id",id)){
               this.UnavailableAgentList.add(this.unavailableUserListItem(id));
               }
-            }  
         }
     },
     

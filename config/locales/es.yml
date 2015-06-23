@@ -4401,7 +4401,7 @@ es:
           reply: "%{user_name} contestado en %{note_date}"
           forward: "%{user_name} reenviado en %{note_date}"
         created_on_live:
-          private_note: "%{user_name} agregó una nota pública <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          private_note: "%{user_name} agregó una nota privada <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           public_note: "%{user_name} agregó una nota pública <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           phone_note: "%{user_name} añadió una conversación telefónica <abbr data-livestamp='%{timestamp}'></abbr>%{note_date}"
           reply: "%{user_name} respondió <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"

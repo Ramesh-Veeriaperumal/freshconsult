@@ -1,3 +1,4 @@
+<%= stylesheet_link_tag :'cdn/agent_availability_status' %>
 <p class="mb20 clearfix"><a href="/helpdesk">< <%= t('helpdesk.dashboard.round_robin.back') %> </a></p>
 
 <div class="availabilty-status">
@@ -6,14 +7,14 @@
 
             <ul data-tabs="tabs" class="tabs nav-tabs roundrobin-tabs sleek-tab">
                   <% if round_robin? %>
-                       <li class="tab-ticket">
+                       <li class="tab-ticket active">
                           <a  class="tickets-tab" id="ticket-assignment-tab" href="#ticket-assignment" ><%= t('helpdesk.dashboard.round_robin.ticket_assignment') %></a>
                         </li>
                   <% end %> 
 
                   <% if freshfone_active? %>
-                        <li class="tab-freshfone" >
-                            <a class= "freshfone-tab" id="phone-tab" href="#phone" ><%= t('helpdesk.dashboard.freshfone.phone') %></a>
+                        <li class="tab-phone" >
+                            <a class= "phone-tab" id="phone-tab" href="#phone" ><%= t('helpdesk.dashboard.freshfone.phone') %></a>
                         </li>
                   <% end %>
 
@@ -38,13 +39,20 @@
 
 
 <%= javascript_tag do %>
-    active_tab_order={"tickets-tab": <%= round_robin? %>,"freshfone-tab": <%= freshfone_active? %> } 
+  var active_tab = window.location.hash
+  if(active_tab == "#phone"){
+    jQuery(active_tab+'-tab').tab('show');
+  }
+  else{
+    active_tab_order={"tickets-tab": <%= round_robin? %>,"phone-tab": <%= freshfone_active? %> } 
     jQuery.each(active_tab_order,jQuery.proxy(function(index,value)  {
           if(value){
             jQuery('.'+index).tab('show');
             return false;
           }
        },this)); 
+  }  
+
 <% end %>
 
 

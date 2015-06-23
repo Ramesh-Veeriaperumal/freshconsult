@@ -272,7 +272,7 @@
         },
 
         addForumFollower = function (ev, key) {
-            App.Discussions.Monitorship.showAddFollower();
+            App.Discussions.Monitorship.toggleAddFollower();
         },
 
         KB = {

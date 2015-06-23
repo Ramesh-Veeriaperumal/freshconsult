@@ -328,12 +328,12 @@ class Account < ActiveRecord::Base
     self.sso_options = set_sso_options_hash
   end
 
-  def rabbit_mq_exchange
-    $rabbitmq_shards[id%($rabbitmq_shards).count]
+  def rabbit_mq_exchange(model_name)
+    $rabbitmq_model_exchange[rabbit_mq_exchange_key(model_name)]
   end
 
-  def rabbit_mq_ticket_exchange
-    $rabbitmq_ticket_shards[id%($rabbitmq_ticket_shards).count]
+  def rabbit_mq_exchange_key(model_name)
+    "#{model_name.pluralize}_#{id%($rabbitmq_shards)}"
   end
 
   protected

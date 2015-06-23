@@ -204,6 +204,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :email_notification_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+
   # contacts and companies import
   resources :customers_import do
     collection do
@@ -279,11 +285,6 @@ Helpkit::Application.routes.draw do
       put :update_contact
       put :update_description_and_tags
     end
-    resources :contact_merge do
-      collection do
-        get :search
-      end
-    end
   end
 
   # segment/group controller will handle all different types in request params # content based routing
@@ -296,7 +297,6 @@ Helpkit::Application.routes.draw do
       get :search
       post :new
       post :confirm
-      post :complete
       post :merge
     end
   end
@@ -672,6 +672,19 @@ Helpkit::Application.routes.draw do
         post :widget_data
         get :settings
       end
+    end
+
+    namespace :xero do 
+      get :authorize 
+      get :fetch 
+      get :render_accounts
+      get :render_currency
+      get :fetch_create_contacts
+      get :get_invoice
+      delete :delete_invoice
+      get :authdone
+      get :install
+      post :create_invoices
     end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
@@ -1257,7 +1270,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-  match '/helpdesk/dashboard/:group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
+  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
     resources :tags do
@@ -1302,6 +1315,7 @@ Helpkit::Application.routes.draw do
       member do
         get :reply_to_conv
         get :forward_conv
+        get :reply_to_forward
         get :view_ticket
         put :assign
         put :restore
@@ -1339,6 +1353,7 @@ Helpkit::Application.routes.draw do
           post :forward
           post :note
           post :twitter
+          post :reply_to_forward
           post :facebook
           post :mobihelp
           get :traffic_cop
@@ -1448,7 +1463,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'canned_responses/show/:id'  => 'canned_responses#show'
-    match 'canned_responses/index/:id' => 'canned_responses#index'
+    match 'canned_responses/index/:id' => 'canned_responses#index', :as => :canned_responses_index
     match 'canned_responses/show'      => 'canned_responses#show'
 
     resources :reminders do
@@ -1952,6 +1967,8 @@ Helpkit::Application.routes.draw do
         get :get_portal
         get :ticket_properties
         get :load_reply_emails
+        get :get_filtered_tickets
+        get :mobile_filter_count
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end
@@ -2104,6 +2121,7 @@ Helpkit::Application.routes.draw do
           put :country_restriction
           get :get_country_list
           post :country_restriction
+          post :new_freshfone_account
         end
       end
 
