@@ -6,3 +6,9 @@ CLICK_NUM: Calling by clicking number
 CLICK_IVR: Clicked keypad key while on call:trying to use IVR
 KEY_IVR: Typed key while on call:trying to use IVR
 RECENT_CALL_BTN: Calling through recent calls
+IN_NOTES_ON_CALL: caller notes used while on call:Incoimng 
+IN_NOTES_AFTER_CALL: caller notes used after call:Incoming
+IN_NOTES_ALL: caller notes used during and after call:Incoming
+OUT_NOTES_ON_CALL: caller notes used while on call:Outgoing
+OUT_NOTES_AFTER_CALL: caller notes used after call:Outgoing
+OUT_NOTES_ALL: caller notes used during and after call:Outgoing
