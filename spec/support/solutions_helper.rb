@@ -63,4 +63,21 @@ module SolutionsHelper
     article_body.desc_un_html.strip.should be_eql(art_description_text)
     article_body[:desc_un_html].strip.should be_eql(art_description_text)
   end
+
+  def check_meta_integrity(object)
+    meta_obj = object.reload.meta_object
+    meta_obj.should be_an_instance_of(object.meta_class)
+    object.common_meta_attributes.each do |attrib|
+      meta_obj.send(attrib).should be_eql(object.send(attrib))
+    end
+    parent_keys = object.assign_keys
+    meta_obj.send(parent_keys.first).should be_eql(object.send(parent_keys.last))
+  end
+
+  def check_position(parent, assoc_name)
+    parent.reload.send(assoc_name).each do |obj|
+      meta_assoc = obj.meta_association
+      obj.position.should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
+    end
+  end
 end

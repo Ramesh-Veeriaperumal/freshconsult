@@ -50,6 +50,7 @@ class Solution::Article < ActiveRecord::Base
   include Mobile::Actions::Article
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  include Community::HitMethods
 
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
@@ -105,21 +106,6 @@ class Solution::Article < ActiveRecord::Base
   
   def to_s
     nickname
-  end
-
-  def hit!
-    new_count = increment_others_redis(hit_key)
-    if new_count >= HITS_CACHE_THRESHOLD
-      total_hits = read_attribute(:hits) + HITS_CACHE_THRESHOLD
-      self.update_column(:hits, total_hits)
-      solution_article_meta.update_column(:hits, total_hits) if solution_article_meta
-      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
-    end
-    true
-  end
-
-  def hits
-    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
   end
   
   def related(current_portal, size = 10)

@@ -74,6 +74,7 @@ module Redis::RedisKeys
 	USER_EMAIL_MIGRATED = "user_email_migrated"
 	
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
+	SOLUTION_META_HIT_TRACKER = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
 
 	def newrelic_begin_rescue
