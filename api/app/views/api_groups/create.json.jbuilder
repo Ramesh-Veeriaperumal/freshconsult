@@ -1,3 +1,5 @@
-json.(@group, :id, :name, :description, :business_calendar_id, :escalate_to, :ticket_assign_type, :assign_time)
-json.agent_list @group.agent_groups.map { |agents| agents.id.to_s }.join(',')
-json.partial! 'shared/utc_date_format', item: @group
+json.(@api_group, :id, :name, :description, :business_calendar_id, :escalate_to)
+json.unassigned_for ApiConstants::UNASSIGNED_FOR_MAP.key(@api_group.assign_time)
+json.auto_ticket_assign @api_group.ticket_assign_type == 1 ? true : false
+json.agents @api_group.agent_groups.map(&:user_id)
+json.partial! 'shared/utc_date_format', item: @api_group

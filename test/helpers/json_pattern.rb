@@ -284,11 +284,11 @@ module JsonPattern
       description: expected_output[:description] || group.description,
       business_calendar_id: expected_output[:business_calendar_id] || group.business_calendar_id,
       escalate_to: expected_output[:escalate_to] || group.escalate_to,
-      ticket_assign_type: expected_output[:ticket_assign_type] || group.ticket_assign_type,
-      agent_list: group.agent_groups.map { |agents| agents.id.to_s }.join(','),
-      assign_time: expected_output[:assign_time] || group.assign_time,
-      created_at: expected_output[:ignore_created_at] ? %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$} : expected_output[:created_at],
-      updated_at: expected_output[:ignore_updated_at] ? %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$} : expected_output[:updated_at]
+      auto_ticket_assign: expected_output[:auto_ticket_assign] || (group.ticket_assign_type == 1 ? true : false),
+      agents: group.agent_groups.map(&:user_id),
+      unassigned_for: expected_output[:unassigned_for] || (ApiConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 end

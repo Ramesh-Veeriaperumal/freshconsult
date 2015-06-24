@@ -125,12 +125,20 @@ module TestCaseMethods
     { body_html: Faker::Lorem.paragraph, topic_id: t.id }
   end
 
-  def group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_list: '1,2' }
+  def v1_group_params
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_list: '1,3' }
+  end
+
+  def v2_group_params
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agents: [1, 3] }
   end
 
   def group_payload
-    { group: group_params }.to_json
+    { group: v1_group_params }.to_json
+  end
+
+  def v2_group_payload
+    v2_group_params.to_json
   end
 
   def v2_category_payload
