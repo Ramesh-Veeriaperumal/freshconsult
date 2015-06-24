@@ -57,7 +57,7 @@ class Solution::Draft < ActiveRecord::Base
 
 	def lock_for_editing!
 		return false if self.locked?
-		self.status, self.user = STATUS_KEYS_BY_TOKEN[:editing], User.current
+		self.status, self.user_id = STATUS_KEYS_BY_TOKEN[:editing], User.current.id
 		save
 	end
 
@@ -67,7 +67,7 @@ class Solution::Draft < ActiveRecord::Base
 
 	def populate_defaults
 		self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
-		self.user ||= User.current
+		self.user_id ||= User.current.id
 		self.modified_at = Time.now.utc unless self.modified_at_changed?
 	end
 

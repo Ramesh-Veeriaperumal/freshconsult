@@ -217,7 +217,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def valid_customers(customer_ids)
-      current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id)
+      current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id) if customer_ids.present?
     end
 
     def change_visibility

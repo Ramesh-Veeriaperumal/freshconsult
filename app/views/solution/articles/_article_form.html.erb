@@ -13,15 +13,15 @@
         <%= f.text_field :title, 
                 :class => "text required article-title", 
                 :placeholder => t('solution.solution_title'),
-                :value => @article.title %>
+                :value => (@article.draft || @article).title %>
     
       </div>
     </div>
     <div class="row-fluid">
       <div class="editor-body">
         <%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", 
-              :class => "required", 
-              :value => @article.description,
+              :class => "redactor_required", 
+              :value => (@article.draft || @article).description,
               :data => {
                 :"remove-cursor" => true
               }

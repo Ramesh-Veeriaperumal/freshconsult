@@ -80,12 +80,12 @@ class Solution::DraftsController < ApplicationController
 		end
 
 		def editable?
-			@draft.user == current_user || @draft.user == nil || !@draft.locked?
+			@draft.user_id == current_user.id || @draft.user_id == nil || !@draft.locked?
 		end
 
 		def autosave_content_validate
 			if content_changed?
-				msg = (@draft.user == current_user) ? [:content_changed_you] : [:content_changed_other, {:name => @draft.user.name}]
+				msg = (@draft.user_id == current_user.id) ? [:content_changed_you] : [:content_changed_other, {:name => @draft.user.name}]
 				return autosave_response(*msg)
 			end
 			autosave_save_draft

@@ -22,7 +22,7 @@
 		<%= render :partial => 'sidebar_properties' %>
 	</div>
 
-	<% if @article.tickets.count > 0 %>
+	<% if @article.tickets.present? %>
 		<div class="sidebar-section feedback">
 			<div class="title-wrapper">
 				<p class="leads span2"><%= t('solution.general.feedback') %></p>

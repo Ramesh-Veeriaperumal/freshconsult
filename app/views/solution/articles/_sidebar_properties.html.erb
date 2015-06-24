@@ -22,7 +22,7 @@
 			<h5 class="leads"><%= t('solution.folders.folder_form.category') %>:</h5>
 			<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id), {:title => "#{t('solution.folders.folder_form.category')} - #{@article.folder.category.name}" } %>
 			<p class="muted">
-				<% if @article.folder.category.portals.count > 0 %>
+				<% if @article.folder.category.portals.present? %>
 					<%= t('solution_category.product_portal_visibility') %> <%= @article.folder.category.portals.map(&:name).join(", ") %>
 				<% else %>
 					<span class="red"><%= t('solution.orphan_category_info') %></span>
@@ -39,7 +39,7 @@
 		<div class="tags-wrapper section">
 			<h5 class="leads"><%= t('filter_options.tags') %></h5>
 			<div class="tags">
-				<%= t('no_tags') if @article.tags.count < 1 %>
+				<%= t('no_tags') if @article.tags.blank? %>
 				<% @article.tags.each do |t| %>
 					<span>
 						<%= t.name %>

@@ -197,7 +197,7 @@ window.App = window.App || {};
 
     getCompanyData: function () {
       if (this.submitData.visibility === 4) {
-        this.submitData.companies = $("#customers_filter").val();
+        this.submitData.companies = $("#change_folder_customers_filter").val();
         this.submitData.addToExisting = $(".right-select-companies .add-to-existing:checked").val();
       }
       this.submitData.folderIds = this.data.selectedElementIds;

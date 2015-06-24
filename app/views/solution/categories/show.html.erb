@@ -1,7 +1,7 @@
 <% content_for :layoutType do %>community solutions<% end %>
 <% content_for :sticky_title do %>
 	<%= render :partial => 'title_bar' %>
-	<%= render :partial => 'edit_bar' if privilege?(:manage_solutions) && @category.folders.count > 0 %>
+	<%= render :partial => 'edit_bar' if privilege?(:manage_solutions) && @category.folders.present? %>
 <% end %>
 <% content_for :sticky_right do %>
 	<%= preview_portal(support_solution_path(@category), @category) %>

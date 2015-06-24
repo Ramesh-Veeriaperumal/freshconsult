@@ -161,7 +161,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category_with_folders
-      @category = account_scoper.find_by_id!(params[:id], :include => {:folders => {:articles => :draft}})
+      @category = account_scoper.find_by_id!(params[:id], :include => {:folders => [:customers]})
     end
 
     def set_modal
