@@ -5,7 +5,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	belongs_to_account
 
-	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta"
+	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => "solution_category_meta_id"
 
 	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id"
 
