@@ -1,11 +1,14 @@
 require 'sanitize'
 
 module Integrations::SurveyMonkey
+
+  SURVEY_MONKEY_PLACEHOLDER = "{{ticket.surveymonkey_survey}}"
+
   # CALLED : When survey is sent on reply.
   def self.survey specific_include, ticket, user
-    return nil unless enabled? ticket.account_id
+    return nil unless enabled?
     s_while = specific_include ? Survey::SPECIFIC_EMAIL_RESPONSE : Survey::ANY_EMAIL_RESPONSE
-    installed_app = ticket.account.installed_applications.with_name('surveymonkey').first
+    installed_app = sm_installed_app(ticket.account)
     send_while = installed_app.configs[:inputs]['send_while'].to_i if installed_app
     url = survey_url(installed_app, ticket, user) unless send_while.blank?
 
@@ -15,8 +18,8 @@ module Integrations::SurveyMonkey
 
   # CALLED: When survey is sent for ticket status change.
   def self.survey_for_notification notification_type, ticket
-    return nil unless enabled? ticket.account_id
-    installed_app = ticket.account.installed_applications.with_name('surveymonkey').first
+    return nil unless enabled?
+    installed_app = sm_installed_app(ticket.account)
     agent = ticket.responder
     if !agent and notification_type!=Survey::PLACE_HOLDER
       last_note = ticket.notes.visible.agent_public_responses.last
@@ -34,13 +37,10 @@ module Integrations::SurveyMonkey
     {:link => url, :text => installed_app.configs[:inputs]['survey_text']}
   end
 
-  def self.placeholder_allowed? account
-    return false unless enabled? account.id
-
-    # Allow the place holder for a canned response when the all groups survey link is configured.
-    installed_app = account.installed_applications.with_name('surveymonkey').first
-    url = survey_url_by_version(installed_app)
-    url.present?
+  def self.enabled?
+    MemcacheKeys.fetch("surveymonkey_#{Account.current.id}") {
+      sm_installed_app.present?
+    }
   end
 
   def self.survey_html ticket
@@ -48,21 +48,9 @@ module Integrations::SurveyMonkey
                        :surveymonkey_survey => survey_for_notification(Survey::PLACE_HOLDER, ticket)})
   end
 
-  #checks for both account validity and whether SM integration is enabled
-  def self.enabled? account_id
-    MemcacheKeys.fetch("surveymonkey_#{account_id}") {
-      account ||= Account.find(account_id)
-      if account
-        ret_value = !account.installed_applications.with_name('surveymonkey').first.nil?
-      else
-        ret_value = false
-      end
-    }
-  end
-
-  def self.show_surveymonkey_checkbox? account
-    return false unless enabled? account.id
-    installed_app = account.installed_applications.with_name('surveymonkey').first
+  def self.show_surveymonkey_checkbox?
+    return false unless enabled?
+    installed_app = sm_installed_app
     send_while = installed_app.configs[:inputs]['send_while'].to_i if installed_app
     return true if send_while and send_while == Survey::SPECIFIC_EMAIL_RESPONSE
     false
@@ -107,6 +95,10 @@ module Integrations::SurveyMonkey
       url = installed_app.configs[:inputs]['survey_link']
     end
     url
+  end
+
+  def self.sm_installed_app account=Account.current
+    account.installed_applications.with_name("#{Integrations::Constants::APP_NAMES[:surveymonkey]}").first
   end
 
 end

@@ -213,7 +213,7 @@ if Rails.env.test?
     
   UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
                 GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests]
+                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests, IntegrationTests]
 
   UnitTests.flatten!.uniq!
 

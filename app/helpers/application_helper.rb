@@ -540,9 +540,10 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
                       'Includes satisfaction survey.', 'ticket_satisfaction_survey'
                       ] if current_account.features?(:surveys, :survey_links)
-    place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
-                      'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
-                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
+    sm_place_holder = Integrations::SurveyMonkey::SURVEY_MONKEY_PLACEHOLDER
+    place_holders[:tickets] << ["#{sm_place_holder}", 'Surveymonkey survey',
+                      'Includes text/link to survey in Surveymonkey', "#{sm_place_holder}"
+                      ] if Integrations::SurveyMonkey.enabled?
     place_holders
   end
 

@@ -1,3 +1,11 @@
+sm_place_holder = Integrations::SurveyMonkey::SURVEY_MONKEY_PLACEHOLDER
+if @ca_resp.content.include?("#{sm_place_holder}") && Helpdesk::TicketDrop.new(@ticket).surveymonkey_survey.blank?
+    flash[:error] = @ticket.group.present? ? "#{t(:'integrations.surveymonkey.canned_response_error')} #{@ticket.group.name}'."
+                                           : "#{t(:'integrations.surveymonkey.canned_response_group_error')}"
+    show_ajax_flash page
+    page << "window.scrollTo(0,0);"
+end
+
 if @a_template
 	page << "insertIntoConversation(\"#{escape_javascript(@a_template)}\")"
 else
