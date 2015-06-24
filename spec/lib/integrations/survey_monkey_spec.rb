@@ -81,6 +81,13 @@ RSpec.describe Integrations::SurveyMonkey do
     result.should eql(true)
   end
 
+  it "should show place holder canned response when all group option is enabled " do
+    result = Integrations::SurveyMonkey::placeholder_allowed?(@account)
+    result.should eql(true)
+  end
+
+  
+
   it "should give the link configured for all group when no group is selected" do
     # for this @ticket.group_id should not be in the @input_options group
     @ticket.group_id  = 3

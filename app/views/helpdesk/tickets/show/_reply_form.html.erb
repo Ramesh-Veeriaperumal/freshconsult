@@ -148,7 +148,7 @@
 
         <% show_satisfaction_survey_checkbox = @ticket.account.survey.can_send?(@ticket,
                                         Survey::SPECIFIC_EMAIL_RESPONSE) 
-           show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox?
+           show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox? @ticket.account
         %>
 
         <% if show_satisfaction_survey_checkbox and !show_surveymonkey_checkbox%>
