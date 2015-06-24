@@ -96,6 +96,10 @@ module Helpdesk::TicketsHelper
     SELECTOR_NAMES[current_selector]
   end
 
+  def trash_in_progress?
+    key_exists?(EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id})
+  end
+
   def context_check_box(text, checked_context, unchecked_context, selector = nil)
 
     checked_url = url_for(:filters => [checked_context] + (selector || current_selector))

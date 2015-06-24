@@ -1872,6 +1872,7 @@ en:
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
       empty_trash:
+        delay_delete: Please wait while we delete all tickets from your trash. This might take a few minutes.
         success: The trash was emptied.
       delete_forever:
         success: '%{tickets} deleted.'
