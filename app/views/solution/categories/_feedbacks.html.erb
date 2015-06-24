@@ -1,83 +1,84 @@
-<% unless @feedbacks.blank? %>
-  <% my_feedbacks = @feedbacks.article_tickets_by_user(current_user) %>
-  <div class="solutions-widget-header">
-    <span class="ficon-like fsize-18 pr9"></span>
-    <div class="sidebar-dropdown">
-        <div data-tabs='tabs'>
-            <ul role="tablist">
-              <li class="dropdown">
-                <h5 class="dropdown-toggle" data-toggle="dropdown">
-                  <% title = my_feedbacks.blank? ? t('solution.sidebar.feedbacks.all') : t('solution.sidebar.feedbacks.me') %> 
-                  <span class="widget-filter feedbacks-filter-title"><%= title %></span>
-                  <% unless my_feedbacks.blank? %>
-                    <span class="caret"></span>
-                  <% end %>
-                </h5>
-                <% unless my_feedbacks.blank? %>
-                  <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
-                    <li class="widget-filter">
-                      <a class="item feedbacks-filter-me" href="#feedbacks-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
-                        <%=t('solution.sidebar.feedbacks.me')%>
-                      </a>
-                    </li>
-                    <li class="widget-filter feedbacks-filter-all">
-                      <a class="item" href="#feedbacks-all" data-hash-url="false" data-toggle="tab" ul_class="tick">
-                        <%=t('solution.sidebar.feedbacks.all')%>
-                      </a>
-                    </li>
-                  </ul>
+
+<% my_feedbacks = @feedbacks.article_tickets_by_user(current_user) %>
+<% my_feedbacks_count = my_feedbacks.size %>
+
+<div class="solutions-widget-header">
+  <span class="ficon-like fsize-18 pr9"></span>
+  <div class="sidebar-dropdown">
+      <div data-tabs='tabs'>
+          <ul role="tablist">
+            <li class="dropdown">
+              <h5 class="dropdown-toggle" data-toggle="dropdown">
+                <% title = my_feedbacks_count < 1 ? t('solution.sidebar.feedbacks.all') : t('solution.sidebar.feedbacks.me') %> 
+                <span class="widget-filter feedbacks-filter-title"><%= title %></span>
+                <% unless my_feedbacks_count < 1 %>
+                  <span class="caret"></span>
                 <% end %>
-              </li>
-            </ul>
-        </div>
-     </div>
-     <span class="lead lead-small"><%=t('solution.sidebar.feedbacks.title')%></span>
- </div>
+              </h5>
+              <% unless my_feedbacks_count < 1 %>
+                <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+                  <li class="widget-filter">
+                    <a class="item feedbacks-filter-me" href="#feedbacks-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                      <%=t('solution.sidebar.feedbacks.me')%>
+                    </a>
+                  </li>
+                  <li class="widget-filter feedbacks-filter-all">
+                    <a class="item" href="#feedbacks-all" data-hash-url="false" data-toggle="tab" ul_class="tick">
+                      <%=t('solution.sidebar.feedbacks.all')%>
+                    </a>
+                  </li>
+                </ul>
+              <% end %>
+            </li>
+          </ul>
+      </div>
+   </div>
+   <span class="lead lead-small"><%=t('solution.sidebar.feedbacks.title')%></span>
+</div>
 
-  <div class="tab-content">
-    <% active = my_feedbacks.blank? ? '' : 'active' %>
-    <div class='tab-pane sidebar-list <%= active %>' id="feedbacks-me" >
-        <ul>
-        <% my_feedbacks.first(3).each do |f| %>
-          <li >
-             <div>
-                <span>
-                  <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27),
-                                   helpdesk_ticket_path(f)) %>
-                </span>
-                <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
-                                           :time => time_ago_in_words(f.updated_at)).html_safe%> </div>
-              </div>
-          </li>
-        <% end %>
-      <% if my_feedbacks.size > 3 %>
-        <span>
-          <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/my_article_feedback", { :class => "view-all"} %>
-        </span>
+<div class="tab-content">
+  <% active = my_feedbacks_count < 1 ? '' : 'active' %>
+  <div class='tab-pane sidebar-list <%= active %>' id="feedbacks-me" >
+      <ul>
+      <% my_feedbacks.first(3).each do |f| %>
+        <li >
+           <div>
+              <span>
+                <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27),
+                                 helpdesk_ticket_path(f)) %>
+              </span>
+              <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
+                                         :time => time_ago_in_words(f.updated_at)).html_safe%> </div>
+            </div>
+        </li>
       <% end %>
-      </ul>
-    </div>
+    <% if my_feedbacks_count > 3 %>
+      <span>
+        <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/my_article_feedback", { :class => "view-all"} %>
+      </span>
+    <% end %>
+    </ul>
+  </div>
 
-    <div class='tab-pane sidebar-list <%= 'active' if active.empty? %>' id="feedbacks-all">
-        <ul >
-        <% @feedbacks.first(3).each do |f| %>
-          <li>
-             <div>
-                <span>
-                  <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27), 
-                                    helpdesk_ticket_path(f)) %>
-                </span>
-                <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
-                                           :time => time_ago_in_words(f.updated_at)).html_safe%>  </div>
-              </div>
-          </li>
-        <% end %>
-      <% if @feedbacks.size > 3 %>
-        <span>
-          <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/article_feedback", { :class => "view-all"}%>
-        </span>
+  <div class='tab-pane sidebar-list <%= 'active' if active.empty? %>' id="feedbacks-all">
+      <ul >
+      <% @feedbacks.first(3).each do |f| %>
+        <li>
+           <div>
+              <span>
+                <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27), 
+                                  helpdesk_ticket_path(f)) %>
+              </span>
+              <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
+                                         :time => time_ago_in_words(f.updated_at)).html_safe%>  </div>
+            </div>
+        </li>
       <% end %>
-      </ul>
-    </div>
-  </div> 
-<% end %>
+    <% if @feedbacks.size > 3 %>
+      <span>
+        <%= pjax_link_to t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/article_feedback", { :class => "view-all"}%>
+      </span>
+    <% end %>
+    </ul>
+  </div>
+</div> 

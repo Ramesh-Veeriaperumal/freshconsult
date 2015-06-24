@@ -1,5 +1,5 @@
-<% unless @drafts.blank? %>
 <% my_drafts = @drafts.drafts_by_user(current_user) %>
+<% my_drafts_count = my_drafts.size %>
 <div class="solutions-widget-header">
   <span class="ficon-file fsize-18 pr9"></span>
   <div class="sidebar-dropdown">
@@ -7,13 +7,13 @@
       <ul role="tablist">
         <li class="dropdown">
           <h5 class="dropdown-toggle" data-toggle="dropdown">
-            <% title = my_drafts.blank? ? t('solution.sidebar.drafts.all') : t('solution.sidebar.drafts.me') %> 
+            <% title = my_drafts_count < 1 ? t('solution.sidebar.drafts.all') : t('solution.sidebar.drafts.me') %> 
             <span class="widget-filter drafts-filter-title"><%= title %></span>
-            <% unless my_drafts.blank? %>
+            <% unless my_drafts_count < 1 %>
               <span class="caret"></span>
             <% end %>
           </h5>
-          <% unless my_drafts.blank? %>
+          <% unless my_drafts_count < 1 %>
             <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
               <li class="widget-filter">
                 <a class="item drafts-filter-me" href="#drafts-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
@@ -34,7 +34,7 @@
   <span class="lead lead-small"><%=t('solution.sidebar.drafts.title').html_safe%></span>
 </div>
 <div class="tab-content">
-  <% active = my_drafts.blank? ? '' : 'active' %>
+  <% active = my_drafts_count < 1 ? '' : 'active' %>
   <div class='tab-pane sidebar-list <%= active %>' id="drafts-me" > 
       <ul>
       <% my_drafts.first(3).each do |a| %>
@@ -42,7 +42,7 @@
            <div>
               <span>
                 <%= pjax_link_to(a.title.truncate(27),
-                                solution_category_folder_article_path(a.folder.category,a.folder,a)
+                                solution_article_path(a.id)
                                ) %>
               </span> 
               <div class="muted list-desc"> 
@@ -52,7 +52,7 @@
             </div>
         </li>
       <% end %>
-    <% if my_drafts.size > 3 %>
+    <% if my_drafts_count > 3 %>
       <span>
         <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all'), { :class => "view-all"} %>
       </span>
@@ -66,7 +66,7 @@
            <div>
               <span>
                 <%= pjax_link_to(a.title.truncate(27),
-                                solution_category_folder_article_path(a.folder.category,a.folder,a)
+                                solution_article_path(a.id)
                               ) %>
               </span> 
               <div class="muted list-desc"> <%=t('solution.sidebar.drafts.details', :name => a.user.name,
@@ -82,4 +82,3 @@
     </ul>
   </div>
 </div>
-<% end %>
