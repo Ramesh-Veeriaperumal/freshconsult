@@ -111,6 +111,7 @@ class Helpdesk::TicketsController < ApplicationController
           @show_options = show_options
         end
         @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
+        flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
@@ -551,12 +552,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def empty_trash
-    ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
-     st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
-       set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
-       where t.deleted=1 and t.account_id=#{current_account.id}")
-    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id} )
-    flash[:notice] = t(:'flash.tickets.empty_trash.success')
+    # ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
+    #  st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
+    #    set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
+    #    where t.deleted=1 and t.account_id=#{current_account.id}")
+    set_tickets_redis_key(empty_trash_key, true, 1.day)
+    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id, :empty_trash => true} )
+    flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete')
     redirect_to :back
   end
 
@@ -1118,6 +1120,10 @@ class Helpdesk::TicketsController < ApplicationController
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
       :ticket_id => @ticket.id}
+  end
+
+  def empty_trash_key
+    EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id}
   end
   
   def set_selected_tab
