@@ -108,6 +108,12 @@ class TicketsController < ApiApplicationController
         company_id: {
           conditions: { users: { customer_id: @company.try(:id), deleted: false } },
           joins: :requester
+        },
+        created_since: {
+          conditions: ['created_at > ?', @created_since]
+        },
+        updated_since: {
+          conditions: ['updated_at > ?', @updated_since]
         }
       }
     end
@@ -130,6 +136,17 @@ class TicketsController < ApiApplicationController
       @errors << ['filter', 'is not included in the list'] unless filter
     end
 
+    def check_date
+      [:created_since, :updated_since].each do |date|
+        if params[date]
+          @value << date
+          instance_variable_set("@#{date}", params[date])
+          valid = DateTimeValidator.parse_time params[date]
+          @errors << [date, "can't be blank"] unless valid
+        end
+      end
+    end
+
     def check_sort_params
       @errors << ['order_type', 'is not included in the list'] if
         params[:order_type] && ApiConstants::TICKET_ORDER_TYPE.exclude?(params[:order_type])
@@ -144,6 +161,7 @@ class TicketsController < ApiApplicationController
       check_filter if params[:filter]
       check_company if params[:company_id]
       check_requester if params[:requester_id]
+      check_date if params[:created_since] || params[:updated_since]
       check_sort_params if params[:order_by] || params[:order_type]
       render_error @errors if @errors.present?
     end

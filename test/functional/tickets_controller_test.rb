@@ -1015,6 +1015,31 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_dates
+    get :index, controller_params(created_since: Time.now.to_s, updated_since: Time.now.to_s)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.size
+
+    tkt = Helpdesk::Ticket.first
+    tkt.update_column(:created_at, 1.days.from_now)
+    get :index, controller_params(created_since: Time.now.to_s, updated_since: Time.now.to_s)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.size
+
+    get :index, controller_params(created_since: Time.now.to_s)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.size
+
+    tkt.update_column(:updated_at, 1.days.from_now)
+    get :index, controller_params(created_since: Time.now.to_s, updated_since: Time.now.to_s)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
   def test_notes
     t = ticket
     get :notes, controller_params(id: t.id)
@@ -1070,4 +1095,5 @@ class TicketsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
+
 end
