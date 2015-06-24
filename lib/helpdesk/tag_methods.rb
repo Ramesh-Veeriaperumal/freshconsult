@@ -34,4 +34,16 @@ module Helpdesk::TagMethods
     end
   end
 
+  def api_add_ticket_tags(tags_to_be_added, item)
+    # add tags to the item which already exists
+    existing_tags = current_account.tags_from_cache.select {|x| Array.wrap(tags_to_be_added).include?(x.name)}
+    item.tags.push(*existing_tags)
+    # Collect new tags to be added
+    new_tags = tags_to_be_added.select{|x| !(existing_tags.collect{|y| y.name}.flatten.include? (x))}
+    new_tags.each do |tag_string|
+      # create new tag and add to the item
+      item.tags << current_account.tags.new(:name => tag_string)
+    end
+  end
+
 end

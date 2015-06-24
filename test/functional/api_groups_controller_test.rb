@@ -77,7 +77,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_handle_show_request_for_invalid_group_id
-    get :show, construct_params(id: Faker::Lorem.characters(5))
+    get :show, construct_params(id: Faker::Name.name)
     assert_response :missing
     assert_equal ' ', response.body
   end

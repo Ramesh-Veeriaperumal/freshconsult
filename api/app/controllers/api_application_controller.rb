@@ -244,7 +244,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def build_object
-      @item = instance_variable_set('@' + cname, scoper.new(params[cname]))
+      # assign already loaded account object so that it will not be queried repeatedly in model
+      build_params = scoper.attribute_names.include?("account_id") ? {account: current_account} : {}
+      @item = instance_variable_set('@' + cname, scoper.new(build_params.merge(params[cname])))
     end
 
     def load_objects(items = scoper)
