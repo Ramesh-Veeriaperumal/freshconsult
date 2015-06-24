@@ -3,6 +3,7 @@ class Freshfone::Account < ActiveRecord::Base
   self.primary_key = :id
 	
 	belongs_to_account
+	serialize :triggers, Hash
 	has_many :freshfone_usage_triggers, :class_name => "Freshfone::UsageTrigger", 
 						:dependent => :delete_all, :foreign_key => :freshfone_account_id
   has_many :freshfone_addresses, :class_name => "Freshfone::Address",
@@ -11,6 +12,13 @@ class Freshfone::Account < ActiveRecord::Base
 	alias_attribute :app_id, :twilio_application_id
 	attr_protected :account_id
 	attr_accessor :suspend_with_expiry
+
+	TRIGGER_LEVELS = [
+			[:first_level, 75],
+			[:second_level, 200]
+	]
+	TRIGGER_LEVELS_HASH = Hash[*TRIGGER_LEVELS.map { |i| [i[0], i[1]] }.flatten]
+	TRIGGER_LEVELS_REVERSE_HASH = Hash[*TRIGGER_LEVELS.map { |i| [i[1], i[0]] }.flatten]
 
 	STATE = [
 		[ :active, "active", 1 ],
@@ -81,6 +89,29 @@ class Freshfone::Account < ActiveRecord::Base
       	NewRelic::Agent.notice_error(e, {:description => desc})
 			end
 		end
+	end
+
+	def undo_security_whitelist
+		return 'notice' unless security_whitelist
+		return 'suspended' if suspended?
+		return 'error' unless active?
+  	update_attributes!(:security_whitelist => false)
+  	'success'
+	end
+
+	def do_security_whitelist
+		return 'notice' if security_whitelist
+		return 'suspended' if suspended?
+		return 'error' unless active?
+		update_attributes!(:security_whitelist => true)
+		'success'
+	end
+
+	def update_triggers(params)
+		update_attributes!(:triggers =>
+			{ :first_level => params[:trigger_first].to_i,
+				:second_level => params[:trigger_second].to_i
+			})
 	end
 
 	def suspended?

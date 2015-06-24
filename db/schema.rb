@@ -1162,6 +1162,8 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
+    t.boolean  "security_whitelist",                         :default => false
+    t.text     "triggers"
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"

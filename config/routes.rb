@@ -2074,9 +2074,14 @@ Helpkit::Application.routes.draw do
           put :account_closure
           put :get_country_list
           put :country_restriction
+          put :trigger_whitelist
           get :get_country_list
+          get :fetch_usage_triggers
+          put :update_usage_triggers
+          put :restore_freshfone_account
           post :country_restriction
           post :new_freshfone_account
+          put :undo_security_whitelist
         end
       end
 
