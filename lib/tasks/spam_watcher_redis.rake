@@ -29,7 +29,7 @@ namespace :spam_watcher_redis do
   def spam_url(account,user,table)
     shard_name = ShardMapping.lookup_with_account_id(account.id).shard_name
     type = table.split("_").last
-    "admin.freshdesk.com/#{shard_name}/spam_watch/#{user.id}/#{type}"
+    "freshopsadmin.freshdesk.com/#{shard_name}/spam_watch/#{user.id}/#{type}"
   end
 
   def spam_alert(account,user,table_name,operation)
