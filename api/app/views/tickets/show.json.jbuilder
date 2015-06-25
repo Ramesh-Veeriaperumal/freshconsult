@@ -32,7 +32,7 @@ json.set! :attachments do
 end
 
 json.set! :notes do
-  json.array! @ticket.notes.includes(:note_old_body, :schema_less_note) do |note|
+  json.array! @notes do |note|
     json.cache! note do # note caching
       json.(note, :id, :body, :body_html, :private, :incoming, :deleted, :source, :user_id, :support_email)
       json.partial! 'shared/utc_date_format', item: note

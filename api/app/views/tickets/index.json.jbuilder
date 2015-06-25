@@ -1,8 +1,8 @@
-json.array! @tickets.includes(:ticket_old_body, :ticket_status, :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries }) do |tkt|
+json.array! @tickets do |tkt|
   json.cache! tkt do
-    json.set! :cc_emails, tkt.cc_email[:cc_emails]
-    json.set! :fwd_emails, tkt.cc_email[:fwd_emails]
-    json.set! :reply_cc_emails, tkt.cc_email[:reply_cc]
+    json.set! :cc_emails, tkt.cc_email.try(:[], :cc_emails)
+    json.set! :fwd_emails, tkt.cc_email.try(:[], :fwd_emails)
+    json.set! :reply_cc_emails, tkt.cc_email.try(:[], :reply_cc)
 
     json.set! :deleted, tkt.deleted if tkt.deleted
 

@@ -1,10 +1,15 @@
 json.array! @api_ticket_fields do |tf|
   json.cache! tf do
-    json.(tf, :id, :default, :description, :editable_in_portal, :label, :label_in_portal, :name, :position, :required, :required_for_closure, :required_in_portal, :visible_in_portal)
+    json.(tf, :id, :default, :description, :label, :name, :position, :required_for_closure)
     json.set! :portal_cc, tf.field_options.try(:[], 'portalcc') if tf.field_type == 'default_requester'
     json.set! :portal_cc_to, tf.field_options.try(:[], 'portalcc_to') if tf.field_type == 'default_requester'
 
     json.set! :type, tf.field_type
+    json.set! :required_for_agents, tf.required
+    json.set! :required_for_customers, tf.required_in_portal
+    json.set! :label_for_customers, tf.label_in_portal
+    json.set! :customers_can_edit, tf.editable_in_portal
+    json.set! :displayed_to_customers, tf.visible_in_portal
 
     json.partial! 'shared/utc_date_format', item: tf
   end

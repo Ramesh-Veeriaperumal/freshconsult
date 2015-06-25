@@ -5,7 +5,6 @@ class DateTimeValidator < ActiveModel::Validator
     end
   end
 
-
   def self.parse_time(value)
     Time.zone.parse(value) # This will raise exception only if value is not a string, for values it cannot parse it returns nil.
     rescue

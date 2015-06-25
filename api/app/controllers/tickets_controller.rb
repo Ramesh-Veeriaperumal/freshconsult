@@ -13,7 +13,8 @@ class TicketsController < ApiApplicationController
   before_filter :validate_filter_params, only: [:index]
 
   def index
-    load_objects tickets_filter(scoper)
+    load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,
+                                                 :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
   end
 
   def create
@@ -64,6 +65,10 @@ class TicketsController < ApiApplicationController
 
   private
 
+    def load_association
+      @notes = @ticket.notes.includes(:note_old_body, :schema_less_note)
+    end
+
     def paginate_options
       options = super
       # this being used by notes action also. Hence order options based on action.
@@ -79,11 +84,11 @@ class TicketsController < ApiApplicationController
 
     def tickets_filter(tickets)
       tickets = tickets.where(deleted: false, spam: false).api_permissible(current_user)
-      @value.each do |key|
+      @ticket_filter.value.each do |key|
         clause = filter_conditions[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
       end
-      tickets
+      tickets.uniq
     end
 
     def filter_conditions
@@ -103,67 +108,25 @@ class TicketsController < ApiApplicationController
           joins: :subscriptions
         },
         requester_id: {
-          conditions: { requester_id: @requester.try(:id) }
+          conditions: { requester_id: @ticket_filter.try(:requester_id) }
         },
         company_id: {
-          conditions: { users: { customer_id: @company.try(:id), deleted: false } },
+          conditions: { users: { customer_id: @ticket_filter.try(:company_id) } },
           joins: :requester
         },
         created_since: {
-          conditions: ['created_at > ?', @created_since]
+          conditions: ['helpdesk_tickets.created_at > ?', @ticket_filter.try(:created_since)]
         },
         updated_since: {
-          conditions: ['updated_at > ?', @updated_since]
+          conditions: ['helpdesk_tickets.updated_at > ?', @ticket_filter.try(:updated_since)]
         }
       }
     end
 
-    def check_requester
-      @value << :requester_id
-      @requester = current_account.users.where(id: params[:requester_id]).first
-      @errors << [:requester_id, "can't be blank"] unless @requester
-    end
-
-    def check_company
-      @value << :company_id
-      @company = current_account.companies.find_by_id(params[:company_id])
-      @errors << [:company_id, "can't be blank"] unless @company
-    end
-
-    def check_filter
-      filter = (Array.wrap(params[:filter]) & ApiConstants::TICKET_FILTER).first
-      @value << filter
-      @errors << ['filter', 'is not included in the list'] unless filter
-    end
-
-    def check_date
-      [:created_since, :updated_since].each do |date|
-        if params[date]
-          @value << date
-          instance_variable_set("@#{date}", params[date])
-          valid = DateTimeValidator.parse_time params[date]
-          @errors << [date, "can't be blank"] unless valid
-        end
-      end
-    end
-
-    def check_sort_params
-      @errors << ['order_type', 'is not included in the list'] if
-        params[:order_type] && ApiConstants::TICKET_ORDER_TYPE.exclude?(params[:order_type])
-      @errors << ['order_by', 'is not included in the list'] if
-        params[:order_by] && ApiConstants::TICKET_ORDER_BY.exclude?(params[:order_by])
-    end
-
     def validate_filter_params
       params.permit(*ApiConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
-      @errors = []
-      @value = []
-      check_filter if params[:filter]
-      check_company if params[:company_id]
-      check_requester if params[:requester_id]
-      check_date if params[:created_since] || params[:updated_since]
-      check_sort_params if params[:order_by] || params[:order_type]
-      render_error @errors if @errors.present?
+      @ticket_filter = TicketFilterValidation.new(params, current_account)
+      render_error(@ticket_filter.errors) unless @ticket_filter.valid?
     end
 
     def scoper

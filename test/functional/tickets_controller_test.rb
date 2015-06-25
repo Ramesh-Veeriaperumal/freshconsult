@@ -1095,5 +1095,4 @@ class TicketsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
-
 end

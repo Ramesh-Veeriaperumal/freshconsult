@@ -1,7 +1,7 @@
 class ApiValidation
   include ActiveModel::Validations
 
-  def initialize(request_params, item)
+  def initialize(request_params, item = nil)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
     if item
       item.attributes.each_pair do |field, value|
