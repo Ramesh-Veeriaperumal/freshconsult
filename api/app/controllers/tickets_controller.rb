@@ -18,7 +18,7 @@ class TicketsController < ApiApplicationController
   end
 
   def create
-    add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
+    api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     build_normal_attachments(@item, params[cname][:attachments])
     if @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201

@@ -223,9 +223,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def cname
-      singularized_cname = controller_name.singularize
-      c_name = ApiConstants::CONTROLLER_NAMES_MAP[singularized_cname.to_sym]
-      c_name.blank? ? singularized_cname : c_name
+      controller_name.singularize
     end
 
     def access_denied
@@ -244,7 +242,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def build_object
-      @item = instance_variable_set('@' + cname, scoper.new(params[cname]))
+      # assign already loaded account object so that it will not be queried repeatedly in model
+      build_params = scoper.attribute_names.include?('account_id') ? { account: current_account } : {}
+      @item = instance_variable_set('@' + cname, scoper.new(build_params.merge(params[cname])))
     end
 
     def load_objects(items = scoper)

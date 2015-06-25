@@ -17,7 +17,7 @@ class Group < ActiveRecord::Base
   after_destroy :remove_group_from_chat_routing
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
-  
+
    has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id", :dependent => :destroy
    
    has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
@@ -28,6 +28,8 @@ class Group < ActiveRecord::Base
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    belongs_to :business_calendar
    
+   validates :escalate, presence: true, if: -> {escalate_to.present?}
+
    has_and_belongs_to_many :accesses, 
     :class_name => 'Helpdesk::Access',
     :join_table => 'group_accesses',
@@ -232,5 +234,4 @@ class Group < ActiveRecord::Base
       Resque.enqueue(Workers::Livechat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
     end
   end
-
 end
