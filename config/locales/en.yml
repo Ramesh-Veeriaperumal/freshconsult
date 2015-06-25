@@ -6242,6 +6242,8 @@ en:
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
     ff_number: "Phone Number"
+    via_browser: "via Browser / App"
+    via_phone: "via Phone"
     subscription:
       auto_recharge_text: "We'll only charge your account when the balance falls below $5"
       current_balance: "Your current balance"
