@@ -49,7 +49,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   def agent_status
     load_ticket_assignment if current_account.features?(:round_robin)
-    load_freshfone if current_account.features?(:phone_agent_availability) 
+    load_freshfone if view_context.freshfone_active?
     respond_to do |format|
       format.html # index.html.erb
       format.js do 

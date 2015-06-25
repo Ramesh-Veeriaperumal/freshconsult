@@ -297,4 +297,79 @@ RSpec.describe Support::Solutions::ArticlesController do
     @public_article1.reload
     @public_article1.hits.should be_eql(hit_count + 1)
   end
+
+  describe "Hits and likes should reflect in meta" do
+    before(:all) do
+      @test_article_for_hits = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      @test_article_for_hits.build_meta.save if @test_article_for_hits.reload.solution_article_meta.blank?
+      @user1 = create_dummy_customer
+      @user2 = create_dummy_customer
+      @meta_object = @test_article_for_hits.solution_article_meta
+    end
+
+    it "should increment hits in meta object" do
+      log_in(@user1)
+      hit_count = @test_article_for_hits.reload.hits
+      meta_hit_count = @meta_object.reload.hits
+      get :hit, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload
+      @meta_object.reload
+      @test_article_for_hits.hits.should be_eql(hit_count + 1)
+      @meta_object.hits.should be_eql(meta_hit_count + 1)
+    end
+
+    it "hits should sync for meta_object when meta threshold is reached" do
+      log_in(@user1)
+      $redis_others.set("SOLUTION:HITS:%{#{@account.id}}:%{#{@test_article_for_hits.id}}", Solution::Article::HITS_CACHE_THRESHOLD - 1)
+      $redis_others.set("SOLUTION_META:HITS:%{#{@account.id}}:%{#{@meta_object.id}}", Solution::ArticleMeta::HITS_CACHE_THRESHOLD - 1)
+      hit_count = @test_article_for_hits.reload.hits
+      meta_hit_count = @meta_object.reload.hits
+      get :hit, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload
+      @meta_object.reload
+      @test_article_for_hits.hits.should be_eql(hit_count + 1)
+      @meta_object.hits.should be_eql(meta_hit_count + 1)
+    end
+
+    it "should increment thumbs up in meta" do
+      log_in(@user1)
+      likes = @test_article_for_hits.reload.thumbs_up
+      meta_likes = @meta_object.reload.thumbs_up
+      put :thumbs_up, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload.thumbs_up.should eql(likes+1)
+      @meta_object.reload.thumbs_up.should eql(meta_likes+1)
+      response.code.should be_eql("200")
+    end
+
+    it "should increment thumbs down in meta" do
+      log_in(@user2)
+      dislikes = @test_article_for_hits.reload.thumbs_down
+      meta_dislikes = @meta_object.reload.thumbs_down
+      put :thumbs_down, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload.thumbs_down.should eql(dislikes+1)
+      @meta_object.reload.thumbs_down.should eql(meta_dislikes+1)
+      response.code.should be_eql("200")
+    end
+
+    it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
+      log_in(@user1)
+      test_article_for_decr = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      meta_object = test_article_for_decr.reload.solution_article_meta
+      put :thumbs_up, :id => test_article_for_decr.id
+      likes = test_article_for_decr.reload.thumbs_up
+      meta_likes = meta_object.reload.thumbs_up
+      dislikes = test_article_for_decr.thumbs_down
+      meta_dislikes = meta_object.thumbs_down
+      put :thumbs_down, :id => test_article_for_decr.id
+      test_article_for_decr.reload
+      meta_object.reload
+      test_article_for_decr.thumbs_up.should eql(likes - 1)
+      meta_object.thumbs_up.should eql(meta_likes - 1)
+      test_article_for_decr.thumbs_down.should eql(dislikes + 1)
+      meta_object.thumbs_down.should eql(meta_dislikes + 1)
+    end
+
+  end
 end

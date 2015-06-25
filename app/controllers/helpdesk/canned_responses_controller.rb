@@ -7,19 +7,22 @@ class Helpdesk::CannedResponsesController < ApplicationController
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
-    ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, {:size => 300}, default_visiblity)
-    process_ca_data(ca_facets)
     
     respond_to do |format|
       format.html { 
+         ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, {:size => 300}, default_visiblity)
+         process_ca_data(ca_facets)
         #render :partial => "helpdesk/tickets/components/canned_responses"
         render :partial => "helpdesk/tickets/components/ticket_canned_responses"
       }
       format.nmobile {
+        @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 300}, default_visiblity, "raw_title")
+        @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder])) if @ca_responses.nil?
         canned_responses = @ca_responses.map{ |canned_response| canned_response.to_mob_json }
         render :json => canned_responses
       }
     end
+
   end
 
   def show

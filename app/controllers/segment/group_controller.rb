@@ -40,7 +40,7 @@ class Segment::GroupController < ApplicationController
    end
 
     def verify_segment_api_type
-      api_error_responder({:message => t('contacts.segment_api.invalid_type')}, 501) unless params[:type] == 'group'
+      api_json_responder({:message => t('contacts.segment_api.invalid_type')}, 501) unless params[:type] == 'group'
     end
 
     def strip_params

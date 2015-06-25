@@ -1,7 +1,8 @@
 module Community::MailerHelper
 
-  def notify_new_follower(object, user, portal, monitorship)
-    mail_config = portal.primary_email_config || user.account.primary_email_config
+  def notify_new_follower(object, user, monitorship)
+    @portal = monitorship.get_portal
+    mail_config = @portal.primary_email_config || user.account.primary_email_config
     self.class.set_mailbox mail_config.smtp_mailbox
     sender = monitorship.sender_and_host[0]
     headers = {
@@ -15,7 +16,6 @@ module Community::MailerHelper
     @user   = user
     @account = object.account
     @monitorship = monitorship
-    @portal = portal
 
     mail(headers) do |part|
       part.text { render "mailer/#{o_type}/new_follower.text.plain" }

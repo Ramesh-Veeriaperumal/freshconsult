@@ -557,19 +557,28 @@ module ApplicationHelper
     #Remove once found the cause.
     user = User.new if user.nil?
     if user.avatar
-      img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
-      avatar_content = MemcacheKeys.fetch(["v14","avatar",profile_size,user],30.days.to_i) do
-        avatar_url = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-        img_tag_options[:"data-src"] = avatar_url
-        img_tag_options[:"data-src-retina"] = avatar_url
-        img_tag_options[:class] = profile_size
-        ActionController::Base.helpers.content_tag(:div,
-        ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
-        :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
-      end
-       avatar_content
+      img_url = avatar_cached_url(user, profile_size)
+      img_tag_options = {
+          :onerror => "imgerror(this)", 
+          :alt => user.name, 
+          :size_type => profile_size,
+          :data => {
+            :src => img_url,
+            :"src-retina" => img_url
+            },
+          :class => profile_size
+        }
+      ActionController::Base.helpers.content_tag(:div,
+          ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
+          :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
     else
       avatar_generator(user.name, profile_size, profile_class, options)
+    end
+  end
+
+  def avatar_cached_url(user, profile_size)
+    MemcacheKeys.fetch(["v16","avatar",profile_size ,user],30.days.to_i) do
+      user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
     end
   end
   
