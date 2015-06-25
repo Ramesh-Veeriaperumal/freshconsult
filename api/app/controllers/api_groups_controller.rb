@@ -28,10 +28,6 @@ class ApiGroupsController < ApiApplicationController
       @agents = Array.wrap params[cname][:agents] if params[cname].key?(:agents)
     end
 
-    def auto_ticket_assign
-      params[cname][:auto_ticket_assign]
-    end
-
     def manipulate_params
       params[cname][:unassigned_for] = ApiConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       assign_and_clean_params(unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type)
