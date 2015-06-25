@@ -5,9 +5,9 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 10,
+      create: 9,
       show: 2,
-      update: 7,
+      update: 8,
       index: 1,
       destroy: 12
     }

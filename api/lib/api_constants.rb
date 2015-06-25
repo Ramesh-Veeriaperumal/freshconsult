@@ -67,6 +67,10 @@ module ApiConstants
     'notes' => false
   }
 
+  #GroupConstants
+
+  UNASSIGNED_FOR_MAP = { "30m" => 1800, "1h" => 3600, "2h" => 7200, "4h"=> 14400 , "8h" => 28800, "12h" => 43200, "1d" => 86400, "2d" => 172800, "3d" => 259200, nil => 1800 }
+
   # *********************************-- TicketFieldConstants --*********************************************
 
   TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
@@ -91,7 +95,9 @@ module ApiConstants
     incoming: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
     order_type: TICKET_ORDER_TYPE.join(','),
     order_by: TICKET_ORDER_BY.join(','),
-    filter: TICKET_FILTER.join(',')
+    filter: TICKET_FILTER.join(','),
+    auto_ticket_assign: BOOLEAN_VALUES.map(&:to_s).uniq.join(','),
+    unassigned_for: UNASSIGNED_FOR_MAP.keys.join(',')
   }
 
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
@@ -122,9 +128,5 @@ module ApiConstants
   API_ERROR_CODES_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |code, errors| errors.flat_map { |error| [error, code] } }]
 
   DEFAULT_CUSTOM_CODE = 'invalid_value'
-  DEFAULT_HTTP_CODE = 400
-
-  #GroupConstants
-  AUTO_TICKET_ASSIGN_MAP = { true => 1, false => 0 }
-  UNASSIGNED_FOR_MAP = { "30m" => 1800, "1h" => 3600, "2h" => 7200, "4h"=> 14400 , "8h" => 28800, "12h" => 43200, "1d" => 86400, "2d" => 172800, "3d" => 259200 }
+  DEFAULT_HTTP_CODE = 400  
 end

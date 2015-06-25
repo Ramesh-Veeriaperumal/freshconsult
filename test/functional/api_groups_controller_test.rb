@@ -41,8 +41,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        auto_ticket_assign: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
-                bad_request_error_pattern('unassigned_for', "can't be blank"),
-                bad_request_error_pattern('auto_ticket_assign', "can't be blank")])
+                bad_request_error_pattern('unassigned_for', 'is not included in the list', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('auto_ticket_assign', 'is not included in the list', list: '0,false,1,true')])
   end
 
   def test_create_group_with_invalid_agent_list
@@ -119,8 +119,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
-                bad_request_error_pattern('unassigned_for', "can't be blank"),
-                bad_request_error_pattern('auto_ticket_assign', "can't be blank")])
+                bad_request_error_pattern('unassigned_for', 'is not included in the list', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('auto_ticket_assign', 'is not included in the list', list: '0,false,1,true')])
   end
 
   def test_update_group_with_invalid_id
