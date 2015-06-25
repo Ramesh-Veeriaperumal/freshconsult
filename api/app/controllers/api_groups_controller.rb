@@ -34,7 +34,6 @@ class ApiGroupsController < ApiApplicationController
 
     def manipulate_params
       params[cname][:unassigned_for] = ApiConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
-      params[cname][:auto_ticket_assign] = 1 if auto_ticket_assign == true
       assign_and_clean_params(unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type)
     end
 
