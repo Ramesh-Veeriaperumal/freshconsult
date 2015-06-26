@@ -48,7 +48,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_group_with_invalid_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agents: ['asd', 'asd1'])
-    match_json([bad_request_error_pattern('agents', 'list is invalid', meta: 'asd, asd1')])
+    match_json([bad_request_error_pattern('agents', 'is not a number')])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
@@ -138,7 +138,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agents: [''])
-    match_json([bad_request_error_pattern('agents', 'list is invalid', meta: '')])
+    match_json([bad_request_error_pattern('agents', 'is not a number')])
   end
 
   def test_delete_existing_agents_while_update

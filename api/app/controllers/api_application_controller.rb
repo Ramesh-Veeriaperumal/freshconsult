@@ -194,7 +194,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
-      invalid_fields = Hash[exception.params.collect { |v| [v, 'invalid_field'] }]
+      invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
       render_error invalid_fields
     end
 
@@ -209,9 +209,8 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_custom_errors(item, options)
-      errors = item.errors
-      errors = item.errors.reject { |k, v| k == options[:remove] } if options[:remove]
-      render_error errors, options[:meta]
+      item.errors[options[:remove]].clear
+      render_error item.errors, options[:meta]
     end
 
     def paginate_options

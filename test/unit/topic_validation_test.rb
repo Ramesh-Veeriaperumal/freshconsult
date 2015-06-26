@@ -26,8 +26,8 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    assert error.include?('Locked is not included in the list')
-    refute error.include?('Sticky is not included in the list')
+    assert error.include?('Locked Should be a value in the list 0,false,1,true')
+    refute error.include?('Sticky Should be a value in the list 0,false,1,true')
   end
 
   def test_date_params_invalid
@@ -74,8 +74,8 @@ class TopicValidationsTest < ActionView::TestCase
     item = Topic.new('sticky' => '1', 'locked' => false)
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     error = topic.errors.full_messages
-    refute error.include?('Locked is not included in the list')
-    refute error.include?('Sticky is not included in the list')
+    refute error.include?('Locked Should be a value in the list 0,false,1,true')
+    refute error.include?('Sticky Should be a value in the list 0,false,1,true')
   end
 
   def test_topic_validation_valid_params

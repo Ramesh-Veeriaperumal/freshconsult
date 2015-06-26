@@ -154,7 +154,7 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_params
-      allowed_custom_fields = TicketsValidationHelper.ticket_custom_field_keys(current_account)
+      allowed_custom_fields = Helpers::TicketsValidation.ticket_custom_field_keys(current_account)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = "ApiConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]

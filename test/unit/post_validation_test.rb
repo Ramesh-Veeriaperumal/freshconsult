@@ -25,7 +25,7 @@ class PostValidationTest < ActionView::TestCase
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     refute post.valid?
     error = post.errors.full_messages
-    assert error.include?('Answer is not included in the list')
+    assert error.include?('Answer Should be a value in the list 0,false,1,true')
   end
 
   def test_date_params_invalid
@@ -70,7 +70,7 @@ class PostValidationTest < ActionView::TestCase
     item = Post.new('answer' => '1')
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
     error = topic.errors.full_messages
-    refute error.include?('Answer is not included in the list')
+    refute error.include?('Answer Should be a value in the list 0,false,1,true')
   end
 
   def test_post_validation_valid_params

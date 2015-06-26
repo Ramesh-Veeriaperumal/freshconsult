@@ -13,8 +13,8 @@ class ApiApplicationControllerTest < ActionController::TestCase
   end
 
   def test_invalid_field_handler
-    error_array = { 'name' => 'invalid_field', 'test' => 'invalid_field' }
-    @controller.stubs(:render_error).with(error_array).returns(true).once
+    error_array = { 'name' => ['invalid_field'], 'test' => ['invalid_field'] }
+    @controller.expects(:render_error).with(error_array).once
     @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(['name', 'test']))
   end
 

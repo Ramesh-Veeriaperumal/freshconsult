@@ -40,7 +40,7 @@ module ApiDiscussions
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('answer', 'is not included in the list', list: '0,false,1,true')])
+      match_json([bad_request_error_pattern('answer', 'Should be a value in the list 0,false,1,true')])
     end
 
     def test_update_with_user_id

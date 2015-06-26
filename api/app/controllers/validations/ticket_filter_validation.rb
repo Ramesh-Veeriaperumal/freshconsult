@@ -4,10 +4,10 @@ class TicketFilterValidation < ApiValidation
 
   validate :check_requester, if: -> { requester_id }
   validate :check_company, if: -> { company_id }
-  validates :filter, inclusion: { in: ApiConstants::TICKET_FILTER }, allow_nil: true
-  validates_with DateTimeValidator, fields: [:created_since, :updated_since], allow_nil: true
-  validates :order_by, inclusion: { in: ApiConstants::TICKET_ORDER_BY }, allow_nil: true
-  validates :order_type, inclusion: { in: ApiConstants::TICKET_ORDER_TYPE }, allow_nil: true
+  validates :filter, included: { in: ApiConstants::TICKET_FILTER }, allow_nil: true
+  validates :created_since, :updated_since, date_time: { allow_nil: true }
+  validates :order_by, included: { in: ApiConstants::TICKET_ORDER_BY }, allow_nil: true
+  validates :order_type, included: { in: ApiConstants::TICKET_ORDER_TYPE }, allow_nil: true
 
   def initialize(request_params, account)
     @value = request_params.keys - [:filter] + [request_params[:filter]].compact

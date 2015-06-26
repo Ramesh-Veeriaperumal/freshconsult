@@ -7227,7 +7227,7 @@ en:
     error_messages:
       has already been taken: "Should be a unique value"
       already exists in the selected category: "Should be a unique value within a category"
-      is not included in the list: "Should be a value in the list %{list}"
+      is not included in the list: "Should be a value in the list"
       can't be blank: "Should not be invalid_value/blank"
       invalid_field: "Unexpected/invalid field in request"
       missing_field: "Mandatory attribute missing"
@@ -7247,3 +7247,5 @@ en:
       is not a number: "Should be a valid number."
       list is invalid: "List has invalid values - %{meta}"
       is not a valid email: "Should be a valid email address"
+      is not a/an Hash: Should be a key/value pair
+      "is not a/an ActionDispatch::Http::UploadedFile": 'invalid_format'

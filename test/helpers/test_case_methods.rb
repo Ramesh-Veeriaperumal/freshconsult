@@ -110,14 +110,14 @@ module TestCaseMethods
     { name: Faker::Name.name,  description: Faker::Lorem.paragraph }
   end
 
-  def forum_params
-    fc = ForumCategory.first || create_test_category
+  def forum_params(fc = nil)
+    fc = fc || ForumCategory.first || create_test_category
     { description: Faker::Lorem.paragraph, forum_category_id: fc.id,
       forum_type: 2, forum_visibility: 1, name: Faker::Name.name }
   end
 
-  def topic_params
-    f = Forum.first
+  def topic_params(f = nil)
+    f ||= Forum.first
     { forum_id: f.id, title: Faker::Name.name }
   end
 
@@ -149,8 +149,8 @@ module TestCaseMethods
     { forum_category: category_params }.to_json
   end
 
-  def v2_forum_payload
-    forum_params.to_json
+  def v2_forum_payload(fc = nil)
+    forum_params(fc).to_json
   end
 
   def v1_forum_payload
@@ -161,8 +161,8 @@ module TestCaseMethods
     { topic: topic_params.merge(sticky: 0, locked: 0, body_html: Faker::Lorem.paragraph) }.to_json
   end
 
-  def v2_topics_payload
-    topic_params.merge(message_html: Faker::Lorem.paragraph).to_json
+  def v2_topics_payload(f = nil)
+    topic_params(f).merge(message_html: Faker::Lorem.paragraph).to_json
   end
 
   def v1_post_payload(t)

@@ -139,8 +139,8 @@ module ApiDiscussions
     def test_create_validate_inclusion
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content',  sticky: 'junk', locked: 'junk2')
-      match_json([bad_request_error_pattern('locked', 'is not included in the list', list: '0,false,1,true'),
-                  bad_request_error_pattern('sticky', 'is not included in the list', list: '0,false,1,true')])
+      match_json([bad_request_error_pattern('locked', 'Should be a value in the list 0,false,1,true'),
+                  bad_request_error_pattern('sticky', 'Should be a value in the list 0,false,1,true')])
       assert_response :bad_request
     end
 

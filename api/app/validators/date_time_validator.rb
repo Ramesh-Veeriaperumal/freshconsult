@@ -1,7 +1,7 @@
-class DateTimeValidator < ActiveModel::Validator
-  def validate(record)
-    options[:fields].each do |field|
-      record.errors[field.to_sym] << 'is not a date' unless allow_nil(record.send(field)) || self.class.parse_time(record.send(field))
+class DateTimeValidator < ActiveModel::EachValidator
+  def validate_each(record, attribute, values)
+    unless allow_nil(values) || self.class.parse_time(values)
+      record.errors[attribute] << 'is not a date'
     end
   end
 

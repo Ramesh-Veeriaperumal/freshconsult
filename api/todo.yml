@@ -8,7 +8,8 @@ Todo:
  - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
  - tests for checking privileges for a action.
  - Handle global unpermitted params for wrong datatype errors.
- - Fix miniprofiler, mobile actions, oj, ticket fields, review tkts, review groups
+ - Fix miniprofiler, mobile actions, oj, ticket fields, review tkts
+ - handle xss, customer_forum numericality, ticket scopes
 
 Breaking changes in existing APIs:
  - day pass required

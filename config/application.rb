@@ -132,6 +132,7 @@ module Helpkit
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
     config.autoload_paths += Dir["#{config.root}/api/**/*"]
+    config.autoload_paths += %W(#{config.root}/api/app/validators/)
     # config.eager_load_paths += Dir["#{config.root}/lib/"]
 
 

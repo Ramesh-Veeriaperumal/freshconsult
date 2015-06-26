@@ -85,8 +85,8 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { private: 'x', incoming: 'x', ticket_id: ticket.id }
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('incoming', 'is not included in the list', list: '0,false,1,true'),
-                bad_request_error_pattern('private', 'is not included in the list', list: '0,false,1,true')])
+    match_json([bad_request_error_pattern('incoming', 'Should be a value in the list 0,false,1,true'),
+                bad_request_error_pattern('private', 'Should be a value in the list 0,false,1,true')])
   end
 
   def test_create_datatype_invalid
@@ -146,9 +146,9 @@ class NotesControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = create_note_params_hash.merge('attachments' => [file, file2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      post :create, construct_params({}, params)
-    end
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({}, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :created
     response_params = params.except(:attachments)
     match_json(note_pattern(params, Helpdesk::Note.last))
@@ -157,11 +157,8 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_attachment_params_format
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = create_note_params_hash.merge('attachments' => [1, 2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      post :create, construct_params({}, params)
-    end
+    post :create, construct_params({}, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
@@ -334,9 +331,9 @@ class NotesControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = reply_note_params_hash.merge('attachments' => [file, file2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      post :reply, construct_params({ ticket_id: ticket.display_id }, params)
-    end
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :created
     response_params = params.except(:attachments)
     match_json(reply_note_pattern(params, Helpdesk::Note.last))
@@ -345,11 +342,8 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_invalid_attachment_params_format
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = reply_note_params_hash.merge('attachments' => [1, 2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      post :reply, construct_params({ ticket_id: ticket.display_id }, params)
-    end
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
@@ -400,9 +394,9 @@ class NotesControllerTest < ActionController::TestCase
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = update_note_params_hash.merge('attachments' => [file, file2])
     n =  note
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      put :update, construct_params({ id: n.id }, params)
-    end
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    put :update, construct_params({ id: n.id }, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :success
     response_params = params.except(:attachments)
     match_json(note_pattern(params, n.reload))
@@ -411,11 +405,8 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_invalid_attachment_params_format
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = update_note_params_hash.merge('attachments' => [1, 2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      put :update, construct_params({ id: note.id }, params)
-    end
+    put :update, construct_params({ id: note.id }, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end

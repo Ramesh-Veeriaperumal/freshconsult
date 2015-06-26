@@ -78,10 +78,10 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('priority', 'is not included in the list', list: '1,2,3,4'),
-                bad_request_error_pattern('status', 'is not included in the list', list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', 'Should be a value in the list 1,2,3,4'),
+                bad_request_error_pattern('status', 'Should be a value in the list 2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'Should be a value in the list Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'Should be a value in the list 1,2,3,7,8,9')])
   end
 
   def test_create_presence_requester_id_invalid
@@ -113,7 +113,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :bad_request
     match_json([bad_request_error_pattern('cc_emails', 'is not a/an Array'),
                 bad_request_error_pattern('tags', 'is not a/an Array'),
-                bad_request_error_pattern('custom_fields', 'is not a/an Hash')])
+                bad_request_error_pattern('custom_fields', 'Should be a key/value pair')])
   end
 
   def test_create_date_time_invalid
@@ -247,9 +247,9 @@ class TicketsControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = ticket_params_hash.merge('attachments' => [file, file2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      post :create, construct_params({}, params)
-    end
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({}, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :created
     response_params = params.except(:tags, :attachments)
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
@@ -258,11 +258,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_attachment_params_format
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = ticket_params_hash.merge('attachments' => [1, 2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      post :create, construct_params({}, params)
-    end
+    post :create, construct_params({}, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
@@ -310,9 +307,9 @@ class TicketsControllerTest < ActionController::TestCase
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = update_ticket_params_hash.merge('attachments' => [file, file2])
     t = ticket
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      put :update, construct_params({ id: t.display_id }, params)
-    end
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    put :update, construct_params({ id: t.display_id }, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :success
     response_params = params.except(:tags, :attachments)
     match_json(ticket_pattern(params, t.reload))
@@ -321,11 +318,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_invalid_attachment_params_format
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = update_ticket_params_hash.merge('attachments' => [1, 2])
-    stub_const(ApiConstants, 'UPLOADED_FILE_TYPE', Rack::Test::UploadedFile) do
-      put :update, construct_params({ id: ticket.display_id }, params)
-    end
+    put :update, construct_params({ id: ticket.display_id }, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
@@ -456,10 +450,10 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('priority', 'is not included in the list', list: '1,2,3,4'),
-                bad_request_error_pattern('status', 'is not included in the list', list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', 'is not included in the list', list: 'Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'is not included in the list', list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', 'Should be a value in the list 1,2,3,4'),
+                bad_request_error_pattern('status', 'Should be a value in the list 2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'Should be a value in the list Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'Should be a value in the list 1,2,3,7,8,9')])
   end
 
   def test_update_presence_requester_id_invalid
@@ -493,7 +487,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('tags', 'is not a/an Array'),
-                bad_request_error_pattern('custom_fields', 'is not a/an Hash')])
+                bad_request_error_pattern('custom_fields', 'Should be a key/value pair')])
   end
 
   def test_update_date_time_invalid
@@ -863,9 +857,8 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_sort_params
     get :index, controller_params(order_type: 'test', order_by: 'test')
     assert_response :bad_request
-    pattern = [bad_request_error_pattern('order_type', 'is not included in the list', list: 'asc,desc')]
-    pattern << bad_request_error_pattern('order_by', 'is not included in the list',
-                                         list: 'due_by,created_at,updated_at,priority,status')
+    pattern = [bad_request_error_pattern('order_type', 'Should be a value in the list asc,desc')]
+    pattern << bad_request_error_pattern('order_by', 'Should be a value in the list due_by,created_at,updated_at,priority,status')
     match_json(pattern)
   end
 
@@ -880,7 +873,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 999, requester_id: 999, filter: 'x')
-    pattern = [bad_request_error_pattern('filter', 'is not included in the list', list: 'new_and_my_open,monitored_by,spam,deleted')]
+    pattern = [bad_request_error_pattern('filter', 'Should be a value in the list new_and_my_open,monitored_by,spam,deleted')]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     pattern << bad_request_error_pattern('requester_id', "can't be blank")
     assert_response :bad_request
