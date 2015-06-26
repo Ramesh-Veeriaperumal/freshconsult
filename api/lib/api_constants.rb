@@ -68,6 +68,10 @@ module ApiConstants
     'notes' => false
   }
 
+  # *********************************-- GroupConstants --**************************************************
+
+  UNASSIGNED_FOR_MAP = { "30m" => 1800, "1h" => 3600, "2h" => 7200, "4h"=> 14400 , "8h" => 28800, "12h" => 43200, "1d" => 86400, "2d" => 172800, "3d" => 259200, nil => 1800 }
+
   # *********************************-- TicketFieldConstants --*********************************************
 
   TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
@@ -109,7 +113,4 @@ module ApiConstants
   DEFAULT_CUSTOM_CODE = 'invalid_value'
   DEFAULT_HTTP_CODE = 400
 
-  # GroupConstants
-  AUTO_TICKET_ASSIGN_MAP = { true => 1, false => 0 }
-  UNASSIGNED_FOR_MAP = { '30m' => 1800, '1h' => 3600, '2h' => 7200, '4h' => 14_400, '8h' => 28_800, '12h' => 43_200, '1d' => 86_400, '2d' => 172_800, '3d' => 259_200 }
 end

@@ -1,7 +1,7 @@
 class ApiGroupsController < ApiApplicationController
   wrap_parameters :api_group, exclude: [], format: [:json]
   before_filter :initialize_agents, only: [:create, :update]
-  before_filter :drop_existing_agents, only: [:update]
+  before_filter :drop_existing_agents, only: [:update], if: -> { @agents }
   before_filter :build_agents, only: [:create, :update]
 
   private
@@ -25,29 +25,11 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def initialize_agents
-      @agents = params[cname][:agents]
-      @agents = [] if @agents.nil? && params[cname].key?(:agents)
-    end
-
-    def api_group_url(id)
-      (url_for controller: 'api_groups') + '.' + id.to_s
-    end
-
-    def unassigned_for
-      if params[cname][:unassigned_for].blank?
-        params[cname][:unassigned_for] = '30m'
-      else
-        params[cname][:unassigned_for]
-      end
-    end
-
-    def auto_ticket_assign
-      params[cname][:auto_ticket_assign]
+      @agents = Array.wrap params[cname][:agents] if params[cname].key?(:agents)
     end
 
     def manipulate_params
-      params[cname][:unassigned_for] = ApiConstants::UNASSIGNED_FOR_MAP[unassigned_for]
-      params[cname][:auto_ticket_assign] = 1 if auto_ticket_assign == true
+      params[cname][:unassigned_for] = ApiConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       assign_and_clean_params(unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type)
     end
 
@@ -56,15 +38,12 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def drop_existing_agents
-      unless @agents.nil?
-        @api_group.agent_groups.each do |agent|
-          if @agents.include? agent.user_id
-            @agents.delete(agent.user_id)
-          else
-            @api_group.agent_groups.delete(agent)
-          end
-        end
+      if @agents.blank?
+        @api_group.agent_groups.destroy_all
+      else
+        @api_group.agent_groups.where('user_id not in (?)', @agents).destroy_all
       end
+      @agents -= @api_group.agent_groups.map(&:user_id)
     end
 
     def set_custom_errors
