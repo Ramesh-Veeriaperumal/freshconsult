@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 class DateTimeValidatorTest < ActionView::TestCase
   def test_valid_date_time
-    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], options: { allow_nil: true })
+    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], allow_nil: true)
     topic = ApiDiscussions::TopicValidation.new({}, nil)
     topic.created_at = Time.zone.now.to_s
     topic.updated_at = Time.zone.now.to_s
@@ -12,7 +12,7 @@ class DateTimeValidatorTest < ActionView::TestCase
   end
 
   def test_invalid_date_time
-    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], options: { allow_nil: true })
+    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], allow_nil: true)
     topic = ApiDiscussions::TopicValidation.new({}, nil)
     topic.created_at = 'test'
     topic.updated_at = Time.zone.now.to_s
@@ -24,7 +24,7 @@ class DateTimeValidatorTest < ActionView::TestCase
   end
 
   def test_valid_allow_nil
-    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], options: { allow_nil: true })
+    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], allow_nil: true)
     topic = ApiDiscussions::TopicValidation.new({}, nil)
     topic.created_at = nil
     date_time_validator.validate_each(topic, :created_at, nil)
@@ -32,7 +32,7 @@ class DateTimeValidatorTest < ActionView::TestCase
   end
 
   def test_invalid_empty_string_for_allow_nil
-    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], options: { allow_nil: true })
+    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], allow_nil: true)
     topic = ApiDiscussions::TopicValidation.new({}, nil)
     topic.created_at = ''
     date_time_validator.validate_each(topic, :created_at, '')
@@ -41,7 +41,7 @@ class DateTimeValidatorTest < ActionView::TestCase
   end
 
   def test_invalid_allow_nil
-    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], options: { allow_nil: false })
+    date_time_validator = DateTimeValidator.new(attributes: [:created_at, :updated_at], allow_nil: false)
     topic = ApiDiscussions::TopicValidation.new({}, nil)
     date_time_validator.validate_each(topic, :created_at, nil)
     date_time_validator.validate_each(topic, :updated_at, nil)

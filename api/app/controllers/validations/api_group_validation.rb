@@ -5,5 +5,5 @@ class ApiGroupValidation < ApiValidation
   validates :unassigned_for, included: { in: ApiConstants::UNASSIGNED_FOR_MAP.keys }, allow_nil: true
   validates :auto_ticket_assign, included: { in: ApiConstants::BOOLEAN_VALUES }, allow_nil: true
   validates :agents, data_type: { rules: Array, allow_nil: true }, array: { numericality: { allow_nil: true } }
-  validates data_type: { rules: { String => %w(name description) } }
+  validates :name, :description, data_type: { rules: String, allow_nil: true }
 end
