@@ -8,7 +8,7 @@ module Integrations::SurveyMonkey
   def self.survey specific_include, ticket, user
     return nil unless enabled?
     s_while = specific_include ? Survey::SPECIFIC_EMAIL_RESPONSE : Survey::ANY_EMAIL_RESPONSE
-    installed_app = sm_installed_app
+    installed_app = sm_installed_app(ticket.account)
     send_while = installed_app.configs[:inputs]['send_while'].to_i if installed_app
     url = survey_url(installed_app, ticket, user) unless send_while.blank?
 
@@ -19,7 +19,7 @@ module Integrations::SurveyMonkey
   # CALLED: When survey is sent for ticket status change.
   def self.survey_for_notification notification_type, ticket
     return nil unless enabled?
-    installed_app = sm_installed_app
+    installed_app = sm_installed_app(ticket.account)
     agent = ticket.responder
     if !agent and notification_type!=Survey::PLACE_HOLDER
       last_note = ticket.notes.visible.agent_public_responses.last
@@ -97,8 +97,8 @@ module Integrations::SurveyMonkey
     url
   end
 
-  def self.sm_installed_app
-    Account.current.installed_applications.with_name("#{Integrations::Constants::APP_NAMES[:surveymonkey]}").first
+  def self.sm_installed_app account=Account.current
+    account.installed_applications.with_name("#{Integrations::Constants::APP_NAMES[:surveymonkey]}").first
   end
 
 end
