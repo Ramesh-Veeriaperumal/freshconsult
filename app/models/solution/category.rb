@@ -16,6 +16,8 @@ class Solution::Category < ActiveRecord::Base
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+
+  after_create :assign_portal
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
@@ -54,6 +56,12 @@ class Solution::Category < ActiveRecord::Base
   
   def to_liquid
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
+  end
+
+  def assign_portal
+    portal_solution_category = self.portal_solution_categories.build(:solution_category_id => self.id)
+    portal_solution_category.portal_id = account.main_portal.id
+    portal_solution_category.save
   end
    
   private 

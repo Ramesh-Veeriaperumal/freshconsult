@@ -58,8 +58,8 @@
       <div class="control-group">
         <label class="control-label"><%= t(".solution_categories").html_safe %></label>
         <div class="controls">
-          <input type="hidden" name="product[portal_attributes][solution_category_metum_ids][]" value="" />
-          <%= portal.collection_select :solution_category_metum_ids, @solution_categories.reject(&:is_default?), 
+          <input type="hidden" name="product[portal_attributes][solution_category_ids][]" value="" />
+          <%= portal.collection_select :solution_category_ids, @solution_categories.reject(&:is_default?), 
                     :id, :name, {} , :class => "select2 input-xlarge", :multiple => true, 
                     :placeholder => t(".select_solution_category").html_safe %>
           <%= content_tag(:div, t('.solution_categories_info').html_safe, :class => "info-data") %>

@@ -10,6 +10,6 @@ class Solution::MappingTablesObserver < ActiveRecord::Observer
 	}
 
 	def before_save(obj)
-		obj.send("#{PARENT_KEYS[obj.class.name].last}=", obj.send(PARENT_KEYS[obj.class.name].first))
+		obj.send("#{PARENT_KEYS[obj.class.name].first}=", obj.send(PARENT_KEYS[obj.class.name].last))
 	end
 end

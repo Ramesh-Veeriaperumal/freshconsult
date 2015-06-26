@@ -1,7 +1,6 @@
 # encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
-  include Solution::MetaControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
@@ -51,13 +50,12 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def create
-    @category_meta.portal_ids = params[nscname].delete("portal_ids")
-    @category = @category_meta.solution_categories.build(params[nscname])
+    @category = current_account.solution_categories.build(params[nscname])
     redirect_to_url = solution_categories_url
     redirect_to_url = new_solution_category_path unless params[:save_and_create].nil?
     
     respond_to do |format|
-      if @category_meta.save
+      if @category.save
         format.html { redirect_to redirect_to_url }
         format.xml  { render :xml => @category, :status => :created, :location => @category }
         format.json { render :json => @category, :status => :created, :location => @category }
@@ -129,10 +127,6 @@ class Solution::CategoriesController < ApplicationController
     
     def set_selected_tab
       @selected_tab = :solutions
-    end
-
-    def meta_parent
-      "solution_category_meta"
     end
     
     def folder_scope

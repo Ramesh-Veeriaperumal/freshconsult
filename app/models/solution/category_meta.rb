@@ -5,8 +5,6 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	belongs_to_account
 
-	acts_as_list :scope => :account
-
 	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id
 
 	has_many :solution_folders, :through => :solution_folder_meta
@@ -23,11 +21,4 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "account_id"]
-
-	after_create :assign_portal
-
-	def assign_portal
-		portal_solution_category = self.portal_solution_categories.build(:portal_id => account.main_portal.id)
-		portal_solution_category.save
-	end
 end

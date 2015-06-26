@@ -9,8 +9,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
 
-  acts_as_list :scope => :account
-
 	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true
 
 	has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy

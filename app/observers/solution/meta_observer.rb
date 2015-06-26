@@ -7,7 +7,6 @@ class Solution::MetaObserver < ActiveRecord::Observer
 	def after_commit(meta_obj)
 		return unless meta_obj.send(:"transaction_include_action?", :create)
 		klass = meta_obj.class.model_name.chomp("Meta").constantize
-		# binding.pry
 		klass.where({
 				:id => meta_obj.id, 
 				:account_id => meta_obj.account_id

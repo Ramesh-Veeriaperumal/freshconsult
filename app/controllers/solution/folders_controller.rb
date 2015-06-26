@@ -7,11 +7,8 @@ class Solution::FoldersController < ApplicationController
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:show, :edit, :update, :destroy, :create]
-  before_filter :load_category_meta, :only => [:create]
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
-
-  include Solution::MetaControllerMethods
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -31,7 +28,7 @@ class Solution::FoldersController < ApplicationController
 
   def new    
     current_category = current_account.solution_categories.find(params[:category_id])
-    @folder = current_category.folders_without_meta.new
+    @folder = current_category.folders.new
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @folder }
@@ -53,14 +50,17 @@ class Solution::FoldersController < ApplicationController
   end
 
   def create
-    @folder = @folder_meta.solution_folders.build(params[nscname])
+    current_category = current_account.solution_categories.find(params[:category_id])    
+    @folder = current_category.folders.new(params[nscname]) 
+    @folder.category_id = @new_category.id
+
     redirect_to_url = solution_category_path(@new_category.id)
     redirect_to_url = new_solution_category_folder_path(@new_category.id) unless
       params[:save_and_create].nil?
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
-      if @folder_meta.save
+      if @folder.save
         format.html { redirect_to redirect_to_url }
         format.xml  { render :xml => @folder, :status => :created }
         format.json  { render :json => @folder, :status => :created }     
@@ -155,14 +155,6 @@ class Solution::FoldersController < ApplicationController
 
     def load_category
       @category = portal_scoper.find_by_id!(params[:category_id])
-    end
-
-    def load_category_meta
-      @category_meta = @category.solution_category_meta
-    end
-
-    def meta_parent
-      "solution_folder_meta"
     end
 
     def fetch_new_category
