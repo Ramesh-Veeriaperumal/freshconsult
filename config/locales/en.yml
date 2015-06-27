@@ -849,6 +849,7 @@ en:
           app_key: App Key
           app_secret: App Secret
           integration_details: Integration Details
+          saving: Saving...
         index:
           title: Mobihelp Apps
           new_app: New App
@@ -3092,6 +3093,11 @@ en:
     applicable_info: Select at least one trigger condition.
     disabled_old_policy: Set a trigger condition to enable this SLA policy.
     default_policy: Default SLA Policy cannot be turned off.
+    update_company_sla_api:
+      update_failed: SLA policy update failed.
+      invalid_arguments_for_update: Invalid arguments.
+      invalid_data_type: Company ids should be a comma separated value.
+      default_policy_update: Cannot update default SLA policy.
   left: Left
   subscription:
     error:
@@ -6236,6 +6242,8 @@ en:
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
     ff_number: "Phone Number"
+    via_browser: "via Browser / App"
+    via_phone: "via Phone"
     subscription:
       auto_recharge_text: "We'll only charge your account when the balance falls below $5"
       current_balance: "Your current balance"
@@ -7059,8 +7067,8 @@ en:
             other: "%{count} people like this Idea"
             zero: "None"
           announce:
-            one: "%{count} Person likes this Annoucement"
-            other: "%{count} people like this Annoucement"
+            one: "%{count} Person likes this Announcement"
+            other: "%{count} people like this Announcement"
             zero: "None"
           problem:
             one: "%{count} Person has this Problem"
@@ -7238,3 +7246,5 @@ en:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: This shorthand is already in use.
   new_label: "NEW"
+  api:
+    record_not_found: Resource not found.

@@ -271,6 +271,7 @@ var FreshfoneEndCall;
 			return countryForE164Number(this.number);
 		},
 		hideEndCallForm: function () {
+			App.Phone.Metrics.push_event();
 			if (!$('#end_call').data('modal')) { $.freshdialog(this.freshdialogOption); }
 			$('#end_call').modal('hide');
 		},

@@ -59,6 +59,7 @@ Spork.prefork do
   Dir[File.expand_path(File.join(File.dirname(__FILE__),'support',  '*.rb'))].each {|f| require f}
 
  ['spec/support/controller_data_fetcher.rb',
+  'spec/support/upload_images.rb',
   'spec/support/va/operator_helper/dispatcher.rb',
   'spec/support/va/operator_helper/supervisor.rb',
   'spec/support/va/random_case/action.rb',

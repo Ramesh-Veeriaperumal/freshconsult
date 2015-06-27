@@ -26,6 +26,7 @@ RSpec.describe Integrations::LogmeinController do
 	    @installed_application.application = @installing_application
 	    @installed_application.account = @account
 	    app_param = {:title => "LogMeIn Rescue", :company_id => "sample@freshdesk.com", :password => "test"}
+	    @installed_application.application_id = 10
 	    @installed_application.set_configs app_param
 	    @installed_application.save(validate: false)
 		end

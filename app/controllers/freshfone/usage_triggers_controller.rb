@@ -1,10 +1,16 @@
 class Freshfone::UsageTriggersController < FreshfoneBaseController
 
   before_filter :check_freshfone_account_state
+  before_filter :check_second_level_for_whitelist
   before_filter :load_trigger
   before_filter :check_duplicate
 
   attr_accessor :trigger
+
+  TRIGGERS = {
+    :first_level => %w(alert_call),
+    :second_level => %w(alert_call suspend_freshfone)
+  }
 
   def notify
     begin
@@ -32,7 +38,17 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
     end
 
     def daily_credit_threshold
-      @ops_notifier.alert_call
+      triggers = freshfone_account.triggers.invert
+      level = triggers[trigger.trigger_value]
+      actions = TRIGGERS[level] if level.present?
+      second_level_message if level.present? && level == :second_level
+      actions.each do |action|
+        begin
+          send action if respond_to?(action, true)
+        rescue Exception => e
+          Rails.logger.error "Error while performing #{action} for Account id #{freshfone_account.account.id} \n The Exception is #{e.message}\n"
+        end
+      end
     end
 
     def overdraft?
@@ -73,8 +89,27 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
       end
     end
 
+    def alert_call
+      @ops_notifier.alert_call
+    end
+
+    def suspend_freshfone
+      freshfone_account.suspend
+    end
+
+    def second_level_message
+      @ops_notifier.message = "Freshfone #{trigger.trigger_type} alert for Account #{current_account.id}.\n 
+      The Trigger Value is #{trigger.trigger_value} & The Current Value of the account is #{params[:CurrentValue]}"
+    end
+
     def check_freshfone_account_state
       head :ok unless freshfone_account# || freshfone_account.suspended?
     end
     
+    def check_second_level_for_whitelist
+    	if freshfone_account.security_whitelist &&
+    		freshfone_account.triggers[:second_level] == params[:TriggerValue].to_i
+    		head :ok
+    	end
+    end
 end
