@@ -137,6 +137,10 @@ Authority::Authorization::PrivilegeList.build do
 
   view_time_entries do
     resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
+
+    # Used for API V2
+    resource :"time_sheet", :only => [:index, :create, :toggle_timer]
+    resource :"ticket", :only => [:time_sheets]
   end
 
   edit_time_entries do

@@ -63,6 +63,11 @@ class TicketsController < ApiApplicationController
     render '/notes/index'
   end
 
+  def time_sheets
+    @time_sheets = paginate_items(@ticket.time_sheets).preload(:workable)
+    render '/time_sheets/index'
+  end
+
   private
 
     def load_association

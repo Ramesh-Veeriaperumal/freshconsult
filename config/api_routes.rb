@@ -5,11 +5,14 @@ Helpkit::Application.routes.draw do
         put :assign
         put :restore
         get :notes
+        get :time_sheets
       end
     end
     resources :notes, :except => [:new, :edit, :show, :index]
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
+
+    resources :time_sheets, :except => [:new, :edit, :show]
 
     match 'tickets/:ticket_id/reply' => 'notes#reply', :via => :post
 

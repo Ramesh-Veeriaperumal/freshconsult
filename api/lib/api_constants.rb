@@ -30,6 +30,7 @@ module ApiConstants
     page: 1
   }
   DEFAULT_PARAMS = [:version, :format, :k].map(&:to_s)
+  DEFAULT_INDEX_FIELDS = [:per_page, :page]
   UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 
   # *********************************-- DiscussionConstants --*********************************************
@@ -72,6 +73,10 @@ module ApiConstants
 
   UNASSIGNED_FOR_MAP = { '30m' => 1800, '1h' => 3600, '2h' => 7200, '4h' => 14_400, '8h' => 28_800, '12h' => 43_200, '1d' => 86_400, '2d' => 172_800, '3d' => 259_200, nil => 1800 }
 
+  # *********************************-- TimeSheetConstants --*********************************************
+
+  INDEX_TIMESHEET_FIELDS = %w(company_id user_id executed_after executed_before billable group_id pp)
+
   # *********************************-- TicketFieldConstants --*********************************************
 
   TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
@@ -83,7 +88,7 @@ module ApiConstants
 
   # *********************************-- ValidationConstants --*********************************************
 
-  BOOLEAN_VALUES = ['0', 0, false, '1', 1, true] # for boolean fields all these values are accepted.
+  BOOLEAN_VALUES = ['0', 0, false, '1', 1, true, 'true', 'false'] # for boolean fields all these values are accepted.
 
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
 

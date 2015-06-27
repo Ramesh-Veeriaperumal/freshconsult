@@ -142,14 +142,14 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_delete_existing_agents_while_update
-    group = create_group_with_agents(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, [1, 2, 3])
+    group = create_group_with_agents(@account, agent_list: [1, 2, 3], name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, agents: [1])
     assert_response :success
     match_json(group_pattern({ agents: [1] }, group.reload))
   end
 
   def test_update_auto_ticket_assign_with_round_robin_disabled
-    group = create_group_with_agents(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, [1, 2, 3])
+    group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_list: [1, 2, 3])
     @account.class.any_instance.stubs(:features_included?).returns(false)
     put :update, construct_params({ id: group.id }, auto_ticket_assign: true)
     @account.class.any_instance.unstub(:features_included?)
@@ -157,7 +157,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_destroy_all_agents_in_a_group
-    group = create_group_with_agents(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, [1, 2, 3])
+    group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_list: [1, 2, 3])
     put :update, construct_params({ id: group.id }, agents: [])
     assert_response :success
     match_json(group_pattern({ agents: [] }, group.reload))
