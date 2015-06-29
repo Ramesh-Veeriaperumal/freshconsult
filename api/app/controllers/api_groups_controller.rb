@@ -7,7 +7,7 @@ class ApiGroupsController < ApiApplicationController
   private
 
     def validate_params
-      group_params = ApiConstants::GROUP_FIELDS.dup
+      group_params = GroupConstants::GROUP_FIELDS.dup
       group_params.delete('auto_ticket_assign') unless current_account.features_included?(:round_robin)
       params[cname].permit(*(group_params))
       group = ApiGroupValidation.new(params[cname], @item)
@@ -29,7 +29,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def manipulate_params
-      params[cname][:unassigned_for] = ApiConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
+      params[cname][:unassigned_for] = GroupConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       assign_and_clean_params(unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type)
     end
 

@@ -12,6 +12,7 @@ Todo:
  - handle xss, customer_forum numericality, ticket scopes
  - revisit cc_email in v2 api tickets create.
  - boolean values in validation should be converted to mysql readable format.
+ - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
 
 Breaking changes in existing APIs:
  - day pass required

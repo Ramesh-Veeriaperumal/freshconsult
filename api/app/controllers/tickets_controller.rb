@@ -77,7 +77,7 @@ class TicketsController < ApiApplicationController
     def paginate_options
       options = super
       # this being used by notes action also. Hence order options based on action.
-      options[:order] = order_clause if ApiConstants::ORDER_BY_SCOPE["#{action_name}"]
+      options[:order] = order_clause if TicketConstants::ORDER_BY_SCOPE["#{action_name}"]
       options
     end
 
@@ -130,7 +130,7 @@ class TicketsController < ApiApplicationController
 
     def validate_filter_params
       # Should allow per page & page params also. Use *ApiConstants::DEFAULT_INDEX_FIELDS
-      params.permit(*ApiConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      params.permit(*TicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       @ticket_filter = TicketFilterValidation.new(params, current_account)
       render_error(@ticket_filter.errors) unless @ticket_filter.valid?
     end
@@ -140,7 +140,7 @@ class TicketsController < ApiApplicationController
     end
 
     def restrict_params
-      params[cname].permit(*("ApiConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
+      params[cname].permit(*("TicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
     end
 
     def manipulate_params
@@ -163,7 +163,7 @@ class TicketsController < ApiApplicationController
       allowed_custom_fields = Helpers::TicketsValidation.ticket_custom_field_keys(current_account)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = "ApiConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]
+      field = "TicketConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ticket = TicketValidation.new(params[cname], @item, current_account)
       render_error ticket.errors unless ticket.valid?

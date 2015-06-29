@@ -302,7 +302,7 @@ module JsonPattern
       escalate_to: expected_output[:escalate_to] || group.escalate_to,
       auto_ticket_assign: expected_output[:auto_ticket_assign] || (group.ticket_assign_type == 1 ? true : false),
       agents: group.agent_groups.map(&:user_id),
-      unassigned_for: expected_output[:unassigned_for] || (ApiConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
+      unassigned_for: expected_output[:unassigned_for] || (GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

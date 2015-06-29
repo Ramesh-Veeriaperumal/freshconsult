@@ -12,12 +12,12 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def time_sheet_filter
-      time_sheet_filter_params = params.slice(*ApiConstants::INDEX_TIMESHEET_FIELDS)
+      time_sheet_filter_params = params.slice(*TimeSheetConstants::INDEX_TIMESHEET_FIELDS)
       scoper.filter(time_sheet_filter_params)
     end
 
     def validate_filter_params
-      params.permit(*ApiConstants::INDEX_TIMESHEET_FIELDS, *ApiConstants::DEFAULT_PARAMS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      params.permit(*TimeSheetConstants::INDEX_TIMESHEET_FIELDS, *ApiConstants::DEFAULT_PARAMS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       timesheet_filter = TimeSheetFilterValidation.new(params, nil)
       render_error timesheet_filter.errors unless timesheet_filter.valid?
     end

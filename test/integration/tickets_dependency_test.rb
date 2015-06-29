@@ -15,7 +15,7 @@ class TicketsDependencyTest < ActionDispatch::IntegrationTest
                          :select_shard, :set_adjacent_list, :set_affiliate_cookie, :set_cache_buster, :set_current_account,
                          :set_date_filter, :set_default_filter, :set_default_locale, :set_locale, :set_mobile,
                          :set_native_mobile, :set_selected_tab, :set_time_zone, :unset_current_account, :unset_current_portal,
-                         :validate_manual_dueby, :verify_authenticity_token, :verify_permission]
+                         :validate_manual_dueby, :verify_authenticity_token, :verify_permission, :load_note_reply_cc]
     actual_filters = Helpdesk::TicketsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

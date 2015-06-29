@@ -79,14 +79,14 @@ class NotesController < ApiApplicationController
     def validate_params
       return false if @item && !can_update_note? # dont update note if it is of type email (i.e., reply)
       params[cname][:ticket_id] = params[:ticket_id] if params[:ticket_id] # manually wrap params if it part of url
-      field = "ApiConstants::#{action_name.upcase}_NOTE_FIELDS".constantize
+      field = "NoteConstants::#{action_name.upcase}_NOTE_FIELDS".constantize
       params[cname].permit(*(field))
       note = NoteValidation.new(params[cname], @item)
       render_error note.errors unless note.valid?
     end
 
     def manipulate_params
-      params[cname][:source] = ApiConstants::NOTE_TYPE_FOR_ACTION[action_name] unless @item
+      params[cname][:source] = NoteConstants::NOTE_TYPE_FOR_ACTION[action_name] unless @item
       # only note can have choices for private field.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
       assign_and_clean_params(notify_emails: :to_emails, ticket_id: :notable_id)
