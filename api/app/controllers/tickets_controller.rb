@@ -77,7 +77,7 @@ class TicketsController < ApiApplicationController
     def paginate_options
       options = super
       # this being used by notes action also. Hence order options based on action.
-      options[:order] = order_clause if TicketConstants::ORDER_BY_SCOPE["#{action_name}"]
+      options[:order] = order_clause if ApiTicketConstants::ORDER_BY_SCOPE["#{action_name}"]
       options
     end
 
@@ -90,47 +90,15 @@ class TicketsController < ApiApplicationController
     def tickets_filter(tickets)
       tickets = tickets.where(deleted: false, spam: false).api_permissible(current_user)
       @ticket_filter.value.each do |key|
-        clause = filter_conditions[key.to_sym] || {}
+        clause = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
       end
       tickets.uniq
     end
 
-    def filter_conditions
-      {
-        spam: {
-          conditions: { spam: true }
-        },
-        deleted: {
-          conditions: { deleted: true, helpdesk_schema_less_tickets: { boolean_tc02: false } },
-          joins: :schema_less_ticket
-        },
-        new_and_my_open: {
-          conditions: { status: 2,  responder_id: [nil, current_user.id] }
-        },
-        monitored_by: {
-          conditions: { helpdesk_subscriptions: { user_id: current_user.id } },
-          joins: :subscriptions
-        },
-        requester_id: {
-          conditions: { requester_id: @ticket_filter.try(:requester_id) }
-        },
-        company_id: {
-          conditions: { users: { customer_id: @ticket_filter.try(:company_id) } },
-          joins: :requester
-        },
-        created_since: {
-          conditions: ['helpdesk_tickets.created_at > ?', @ticket_filter.try(:created_since)]
-        },
-        updated_since: {
-          conditions: ['helpdesk_tickets.updated_at > ?', @ticket_filter.try(:updated_since)]
-        }
-      }
-    end
-
     def validate_filter_params
       # Should allow per page & page params also. Use *ApiConstants::DEFAULT_INDEX_FIELDS
-      params.permit(*TicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       @ticket_filter = TicketFilterValidation.new(params, current_account)
       render_error(@ticket_filter.errors) unless @ticket_filter.valid?
     end
@@ -140,7 +108,7 @@ class TicketsController < ApiApplicationController
     end
 
     def restrict_params
-      params[cname].permit(*("TicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
+      params[cname].permit(*("ApiTicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
     end
 
     def manipulate_params
@@ -163,7 +131,7 @@ class TicketsController < ApiApplicationController
       allowed_custom_fields = Helpers::TicketsValidation.ticket_custom_field_keys(current_account)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = "TicketConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]
+      field = "ApiTicketConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ticket = TicketValidation.new(params[cname], @item, current_account)
       render_error ticket.errors unless ticket.valid?

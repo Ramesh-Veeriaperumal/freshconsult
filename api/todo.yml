@@ -14,6 +14,7 @@ Todo:
  - boolean values in validation should be converted to mysql readable format.
  - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
 
+ - Content type for get ticket index.
 Breaking changes in existing APIs:
  - day pass required
  - Post validation

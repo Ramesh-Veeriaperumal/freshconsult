@@ -812,6 +812,38 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
+  def self.api_filter(ticket_filter = nil, current_user = nil)
+    {
+      spam: {
+        conditions: { spam: true }
+      },
+      deleted: {
+        conditions: { deleted: true, helpdesk_schema_less_tickets: { boolean_tc02: false } },
+        joins: :schema_less_ticket
+      },
+      new_and_my_open: {
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
+      },
+      monitored_by: {
+        conditions: { helpdesk_subscriptions: { user_id: current_user.try(:id) } },
+        joins: :subscriptions
+      },
+      requester_id: {
+        conditions: { requester_id: ticket_filter.try(:requester_id) }
+      },
+      company_id: { 
+        conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
+        joins: :requester
+      },
+      created_since: {
+        conditions: ['helpdesk_tickets.created_at > ?', ticket_filter.try(:created_since)]
+      },
+      updated_since: {
+        conditions: ['helpdesk_tickets.updated_at > ?', ticket_filter.try(:updated_since)]
+      }
+    }
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

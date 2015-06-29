@@ -1,4 +1,4 @@
-module TicketConstants
+module ApiTicketConstants
   # *********************************-- ControllerConstants --*********************************************
 
   TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }, { 'attachments' => [] }]
@@ -10,7 +10,7 @@ module TicketConstants
   TICKET_ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s)
   TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 2, 3, 4)
   TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
-  INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type created_since updated_since)
+  INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type created_since updated_since per_page page)
   ORDER_BY_SCOPE = {
     'index' => true,
     'notes' => false
