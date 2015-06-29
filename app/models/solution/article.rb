@@ -112,12 +112,13 @@ class Solution::Article < ActiveRecord::Base
     search_key = "#{tags.map(&:name).join(' ')} #{title}"
     return [] if search_key.blank? || (search_key = search_key.gsub(/[\^\$]/, '')).blank?
     begin
+      @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.features_included?(:es_multilang_solutions)
       Search::EsIndexDefinition.es_cluster(account_id)
       options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id, @search_lang), options do |search|
         search.query do |query|
           query.filtered do |f|
-            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => "include_stop" }
+            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
             f.filter :term, { :account_id => account_id }
             f.filter :not, { :ids => { :values => [self.id] } }
             f.filter :or, { :not => { :exists => { :field => :status } } },

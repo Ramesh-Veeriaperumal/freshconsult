@@ -23,7 +23,7 @@ class Va::Handlers::ObjectId < Va::RuleHandler
 
     def filter_query_is_not
       if proper_value
-        [ "#{condition.db_column} is NULL OR #{condition.db_column} != ?", proper_value ]
+        [ "(#{condition.db_column} is NULL OR #{condition.db_column} != ?)", proper_value ]
       else
         construct_query('is not')
       end
