@@ -158,6 +158,16 @@ class ApiApplicationController < MetalApiController
       end
     end
 
+    # couldn't use dynamic forms/I18n for AR attributes translation as it may have an effect on web too.
+    def rename_error_fields(fields={})
+      if @item.errors
+        fields_to_be_renamed = fields.slice(*@item.errors.to_h.keys)
+        fields_to_be_renamed.each_pair do |model_field, api_field|
+          @item.errors.messages[api_field] = @item.errors.messages.delete(model_field)
+        end
+      end
+    end
+
     def set_custom_errors
       # This is used to manipulate the model errors to a format that is acceptable.
     end
@@ -209,7 +219,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_custom_errors(item, options)
-      item.errors[options[:remove]].clear
+      Array.wrap(options[:remove]).each { |field| item.errors[field].clear }
       render_error item.errors, options[:meta]
     end
 

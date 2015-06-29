@@ -7,4 +7,9 @@ module NoteConstants
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
     'reply'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
   }
+
+  NOTE_SOURCE_SCOPE = {
+    'update' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN.slice("email", "note").values,
+    'destroy' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN.slice("email", "note").values
+  }
 end
