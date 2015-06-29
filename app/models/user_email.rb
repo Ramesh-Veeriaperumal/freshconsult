@@ -20,14 +20,16 @@ class UserEmail < ActiveRecord::Base
   validates_uniqueness_of :email, :scope => [:account_id]
 
   before_validation :downcase_email
+  # Make the verified as false if the email is changed
   before_update :change_email_status, :if => [:email_changed?, :multiple_email_feature]
+  # Set new perishable token for activation after email is changed
   before_update :set_token, :if => [:email_changed?, :contact_merge_ui_feature]
   before_update :save_model_changes
 
   before_create :set_token, :set_verified
   # after_commit :send_activation_on_create, on: :create, :if => :multiple_email_feature  
 
-
+  # Drop all authorizations, if the email is changed
   after_update :drop_authorization, :if => [:email_changed?, :multiple_email_feature]
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?, :multiple_email_feature]
 
