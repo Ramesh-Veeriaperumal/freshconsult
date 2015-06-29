@@ -23,7 +23,7 @@ module APIHelperMethods
     value.match(COLUMNS_REGEX[column])[0]
   end
 
-  def api_error_responder response,status_code
+  def api_json_responder response,status_code
     respond_to do |format|
       format.json { render :json => response , :status => status_code }
       format.any { head status_code }

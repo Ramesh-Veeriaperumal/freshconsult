@@ -4031,6 +4031,7 @@ div.avatar-text{
 	text-transform: uppercase;
 	@include user-select(none);
 	cursor: default;
+	text-align: center;
 }
 div.thumb{
 	border-radius: 10%;

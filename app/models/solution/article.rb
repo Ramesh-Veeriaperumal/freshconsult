@@ -52,6 +52,7 @@ class Solution::Article < ActiveRecord::Base
   include Mobile::Actions::Article
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  include Community::HitMethods
 
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
@@ -132,32 +133,18 @@ class Solution::Article < ActiveRecord::Base
   def to_s
     nickname
   end
-
-  def hit!
-    new_count = increment_others_redis(hit_key)
-    if new_count >= HITS_CACHE_THRESHOLD
-      total_hits = read_attribute(:hits) + HITS_CACHE_THRESHOLD
-      self.update_column(:hits, total_hits)
-      solution_article_meta.update_column(:hits, total_hits) if solution_article_meta
-      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
-    end
-    true
-  end
-
-  def hits
-    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
-  end
   
   def related(current_portal, size = 10)
     search_key = "#{tags.map(&:name).join(' ')} #{title}"
     return [] if search_key.blank? || (search_key = search_key.gsub(/[\^\$]/, '')).blank?
     begin
+      @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.features_included?(:es_multilang_solutions)
       Search::EsIndexDefinition.es_cluster(account_id)
       options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id, @search_lang), options do |search|
         search.query do |query|
           query.filtered do |f|
-            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => "include_stop" }
+            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
             f.filter :term, { :account_id => account_id }
             f.filter :not, { :ids => { :values => [self.id] } }
             f.filter :or, { :not => { :exists => { :field => :status } } },

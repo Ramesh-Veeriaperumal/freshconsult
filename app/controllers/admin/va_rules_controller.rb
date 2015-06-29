@@ -263,7 +263,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => -1, :value => t('click_to_select_filter') },
         { :name => "name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text" },
-        { :name => "domain", :value => t('company_domain'), :domtype => "text", 
+        { :name => "domains", :value => t('company_domain'), :domtype => "text", 
           :operatortype => "text" }
       ]
       add_customer_custom_fields filter_hash['company'], "company"

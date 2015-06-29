@@ -7,7 +7,8 @@ class ArticleObserver < ActiveRecord::Observer
 	def before_save(article)
 		remove_script_tags(article)
 		set_un_html_content(article)
-		modified_date(article) if (article.description_changed? or article.title_changed?)
+		modified_date(article) if (article.article_body.changed? or article.title_changed?)
+		handle_meta_likes(article) if (article.thumbs_up_changed? or article.thumbs_down_changed?)
 		article.article_changes
 		article.seo_data ||= {}
 	end
@@ -53,4 +54,11 @@ private
       article.modified_at = Time.now.utc
     end
 
+    def handle_meta_likes(article)
+		changed_attribs = article.changes.slice(*Solution::Article::VOTE_TYPES)
+		article_meta = article.solution_article_meta
+		changed_attribs.each do |attrib, changes|
+			article_meta.increment(attrib, changes[1] - changes[0])
+		end
+    end
 end

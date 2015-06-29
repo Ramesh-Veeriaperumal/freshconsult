@@ -2,8 +2,7 @@ module SolutionsHelper
 
   def create_category(params = {})
     test_category = FactoryGirl.build(:solution_categories, :name => params[:name] || Faker::Name.name,
-              :description => params[:description], :is_default => params[:is_default], 
-              :portal_ids => params[:portal_ids] || [] )
+              :description => params[:description], :is_default => params[:is_default])
     test_category.account_id = @account.id
     test_category.save(validate: false)
     test_category
@@ -64,7 +63,6 @@ module SolutionsHelper
     article_body.desc_un_html.strip.should be_eql(art_description_text)
     article_body[:desc_un_html].strip.should be_eql(art_description_text)
   end
-
   def create_portal(params = {})
     test_portal = FactoryGirl.build(:portal, 
                       :name=> params[:portal_name] || Faker::Name.name, 
@@ -129,5 +127,21 @@ module SolutionsHelper
 
   def check_cache_invalidation
     $memcache.get(@cache_key).should be_nil
+  end
+  def check_meta_integrity(object)
+    meta_obj = object.reload.meta_object
+    meta_obj.should be_an_instance_of(object.meta_class)
+    object.common_meta_attributes.each do |attrib|
+      meta_obj.send(attrib).should be_eql(object.send(attrib))
+    end
+    parent_keys = object.assign_keys
+    meta_obj.send(parent_keys.first).should be_eql(object.send(parent_keys.last))
+  end
+
+  def check_position(parent, assoc_name)
+    parent.reload.send(assoc_name).each do |obj|
+      meta_assoc = obj.meta_association
+      obj.position.should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
+    end
   end
 end

@@ -2,6 +2,9 @@ class Search::EsIndexDefinition
 
   CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3", "fd_es_index_4"]
 
+  # Need this to route to only supported locale-based indices
+  SUPPORTED_INDEX_LOCALES = %w(ja-JP ko ru-RU zh-CN)
+
 	class << self
 		include ErrorHandle
 
@@ -314,16 +317,29 @@ class Search::EsIndexDefinition
 
   # Will return an array of alias names for the classes provided
   # parameters: search_in (Array of class objects not just names) and account_id
-  def searchable_aliases(search_in, account_id)
+  def searchable_aliases(search_in, account_id, opts={})
     res_aliases = []
     search_in.each do |klass|
-      if klass == ScenarioAutomation
+      if klass == Solution::Article
+        res_aliases << solution_alias(klass.table_name, account_id, opts)
+      elsif klass == ScenarioAutomation
         res_aliases << "scenario_automations_#{account_id}"
       else
         res_aliases << "#{klass.table_name}_#{account_id}"
       end
     end
     res_aliases
+  end
+
+  # Hack for multilingual solutions
+  # Alias: solution_articles_it_1/solution_articles_zh_cn_1
+  def solution_alias(table_name, account_id, opts={})
+    locale = opts.try(:[], :language).to_s
+    if locale.present? and SUPPORTED_INDEX_LOCALES.include?(locale)
+      return "#{table_name}_#{locale.underscore.downcase}_#{account_id}"
+    else
+      return "#{table_name}_#{account_id}"
+    end
   end
 
   def create_aliases(account_id, is_additional_model=false)
@@ -377,10 +393,11 @@ class Search::EsIndexDefinition
 
   def es_cluster(account_id)
     index = case account_id
-            when 1..55000      then 0
-            when 55001..180000 then 1
-            when 180000..238931 then 2
-            else                    3
+            when 110962           then 3 #Pinnacle sports is in Cluster-4
+            when 1..55000         then 0
+            when 55001..180000    then 1
+            when 180000..238931   then 2
+            else                       3
             end
     # index = (account_id <= 55000) ? 0 : 1
     Tire.configure { url Es_aws_urls[index] }

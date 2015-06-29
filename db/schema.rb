@@ -10,7 +10,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20150520073012) do
+ActiveRecord::Schema.define(:version => 20150619065247) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -806,6 +806,8 @@ ActiveRecord::Schema.define(:version => 20150520073012) do
     t.datetime "updated_at"
   end
 
+  add_index "day_pass_usages", ["account_id", "user_id"], :name => "index_day_pass_usages_on_account_id_and_user_id"
+
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
     t.integer  "attempts",   :default => 0
@@ -1163,6 +1165,8 @@ ActiveRecord::Schema.define(:version => 20150520073012) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
+    t.boolean  "security_whitelist",                         :default => false
+    t.text     "triggers"
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"

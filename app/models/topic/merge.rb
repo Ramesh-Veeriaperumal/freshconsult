@@ -22,7 +22,7 @@ class Topic < ActiveRecord::Base
 	private
 
 		def possible_portal(target)
-			target.account.portals.find(:first, :conditions => { :forum_category_id => target.forum.forum_category_id })
+			(target.forum.forum_category.portals || []).first
 		end
 
 		def find_or_initialize_monitorship(user_id, topic)

@@ -60,7 +60,7 @@ describe Solution::FoldersController do
     category.folders.each do |current_folder|
       current_folder.position.should be_eql(reorder_hash[current_folder.id])
     end    
-  end  
+  end 
   
   it "should render edit if folder update fails" do 
     put :update, :id => @test_folder.id, :category_id => @test_category.id,
@@ -250,4 +250,95 @@ describe Solution::FoldersController do
   end
   # END : Folder Bulk Actions
 
+  describe "Solution Folder meta" do
+    before(:all) do
+      time = Time.now.to_i
+      @test_folder_for_meta = create_folder( {:name => "#{time} test_folder_for_meta #{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+     :category_id => @test_category.id } )
+      @test_folder_for_meta.build_meta.save if @test_folder_for_meta.reload.solution_folder_meta.blank?
+    end
+
+    it "should create a new meta solution folder on solution folder create" do
+      now = (Time.now.to_f*1000).to_i
+      name = Faker::Name.name
+      company = create_company
+      post :create, {:solution_folder => {:name => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 4},
+          :category_id => @test_category.id, :customers => company.id }
+      folder = @account.folders.find_by_name(name)
+      folder.should be_an_instance_of(Solution::Folder) 
+      check_meta_integrity(folder)
+      customer_folder = @account.solution_customer_folders.find_by_folder_id(folder.id)
+      customer_folder.should be_an_instance_of(Solution::CustomerFolder)
+      customer_folder.folder_id.should be_eql(customer_folder.folder_meta_id)
+    end
+
+    it "should edit a solution folder meta on solution folder edit" do
+      name = Faker::Name.name
+      put :update, :id => @test_folder_for_meta.id, 
+        :solution_folder => { :name => "#{name}",
+                                :description => "#{Faker::Lorem.sentence(3)}",
+                                :is_default => true,
+                                :visibility => 2
+                              },
+        :category_id => @test_category.id
+      check_meta_integrity(@test_folder_for_meta)
+      response.should redirect_to(solution_category_folder_path(@test_category.id, @test_folder_for_meta.id))
+    end
+
+    it "should destroy meta on folder destroy" do
+      test_destroy_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+     :category_id => @test_category.id } )
+      test_destroy_folder.build_meta.save if test_destroy_folder.reload.solution_folder_meta.blank?
+      delete :destroy, :id => test_destroy_folder.id, :category_id => @test_category.id
+      @account.solution_folders.find_by_id(test_destroy_folder.id).should be_nil
+      @account.solution_folder_meta.find_by_id(test_destroy_folder.id).should be_nil
+    end
+
+    it "should render folder index even if all meta objects are destroyed" do 
+      @account.solution_folder_meta.reload.each {|sfm| sfm.destroy}
+      get :index, :category_id => @test_category.id
+      response.should redirect_to(solution_category_url(@test_category.id))
+    end
+
+    it "should render a show page of a folder if corresponding meta is destroyed" do
+      get :show, :id => @test_folder_for_meta.id, :category_id => @test_category.id
+      response.body.should =~ /#{@test_folder_for_meta.name}/
+      response.should render_template("solution/folders/show")
+    end
+  end
+
+  describe "Reorder folder meta" do
+    it "should reorder folders and position changes must reflect in meta both on create and reorder" do
+      category = create_category( {:name => "new category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )   
+      position_arr = (1..4).to_a.shuffle
+      reorder_hash = {}
+      for i in 0..3
+        folder = create_folder( {:name => "new folder #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+                    :category_id => category.id } )
+        reorder_hash[folder.id] = position_arr[i] 
+        folder.reload.solution_folder_meta.position.should be_eql(folder.position)
+      end
+      put :reorder, :category_id => category.id, :reorderlist => reorder_hash.to_json
+      category.folders.each do |current_folder|
+        current_folder.position.should be_eql(reorder_hash[current_folder.id])
+        current_folder.solution_folder_meta.position.should be_eql(reorder_hash[current_folder.id])
+      end    
+    end  
+
+    it "should create meta on reorder of folders if meta is not present and position must be preserved on destroy" do
+      category = create_category( {:name => "new category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )   
+      position_arr = (1..4).to_a.shuffle
+      reorder_hash = {}
+      for i in 0..3
+        folder = create_folder( {:name => "new folder #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+                    :category_id => category.id } )
+        folder.reload.solution_folder_meta.destroy
+        reorder_hash[folder.id] = position_arr[i] 
+      end
+      put :reorder, :category_id => category.id, :reorderlist => reorder_hash.to_json
+      check_position(category, "folders")
+      category.folders.first.destroy
+      check_position(category, "folders")
+    end
+  end
 end

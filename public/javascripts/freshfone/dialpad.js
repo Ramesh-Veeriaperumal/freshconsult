@@ -122,7 +122,8 @@
 
         });
 
-
+		
+        
         $(document).ready(function(){
             var $outgoing_numbers_list = $('.outgoing_numbers_list');
             if (! $.isEmptyObject(freshfone.numbersHash)) {
@@ -166,6 +167,7 @@
 				}
 			}
 			if(classValue.hasClass('keypad-special')){
+				App.Phone.Metrics.resetCallDirection();
 				App.Phone.Metrics.push_event();
 			}
 	}
@@ -173,6 +175,7 @@
 	function freshfoneMetricsOnKeyPress(){
 		jQuery(".user_phone").keypress(function(ev){
 				if(ev.keyCode===13){
+					App.Phone.Metrics.resetCallDirection();
 					App.Phone.Metrics.push_event();
 				}
 				else{

@@ -23,6 +23,10 @@ module Redis::TicketsRedis
 		newrelic_begin_rescue { $redis_tickets.del(key) }
 	end
 
+	def key_exists? key
+		newrelic_begin_rescue { $redis_tickets.exists(key) }
+	end
+
   def increment_tickets_redis_key key, value = 1
     newrelic_begin_rescue { $redis_tickets.INCRBY(key, value) }
   end

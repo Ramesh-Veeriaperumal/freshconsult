@@ -91,7 +91,7 @@
           <% if @current_view == "deleted" %>
             <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, 
                 :method => 'delete', :class => 'padding6 tooltip', :title => t('ticket.empty_trash'), 
-                :id => 'empty_trash' if privilege?(:delete_ticket) %>
+                :id => 'empty_trash' if privilege?(:delete_ticket) and !trash_in_progress? %>
           <% elsif @current_view != "spam" %>
             <a href="/helpdesk/tickets/configure_export" data-target="#export"  rel="freshdialog"  
                 class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>" 

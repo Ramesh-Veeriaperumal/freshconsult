@@ -2,7 +2,7 @@ class DayPassUsage < ActiveRecord::Base
   self.primary_key = :id
   serialize :usage_info, Hash
   
-  belongs_to :account
+  belongs_to_account
   belongs_to :user
   
   scope :on_the_day, lambda { |start_time| 

@@ -4,8 +4,10 @@ window.App.Phone = window.App.Phone || {};
     "use strict";
     App.Phone.Metrics = {
 		start: function (eventHash) {
+			this.eventsTriggered();
 			this.sourceHashKey=[];
-			this.sourceHash = eventHash; 			
+			this.sourceHash = eventHash;
+			this.direction = undefined;			
 		},
 		push_event: function () {
 			if(this.sourceHashKey!== undefined ){
@@ -31,6 +33,33 @@ window.App.Phone = window.App.Phone || {};
 			if(this.sourceHashKey!== undefined ){
 				this.sourceHashKey.push(evCode);
 			}
+		},
+		setCallDirection: function(value){
+			this.direction = value;
+		},
+		resetCallDirection: function(){
+			this.direction = null;
+		},
+		eventsTriggered: function(){
+			var self=this;
+			$('.call_notes').keypress(function(ev){
+				var mini_notes= self.isIncoming() ? "IN_NOTES_ON_CALL" : "OUT_NOTES_ON_CALL";
+					self.recordSource(mini_notes);
+			});
+			$('.final_call_notes').keypress(function(ev){
+				self.resetSourceHashKeys();
+				if( $('.call_notes').val() != ""){
+					var common_notes= self.isIncoming() ? "IN_NOTES_ALL" : "OUT_NOTES_ALL";
+					self.recordSource(common_notes);
+				}
+				else{
+					var end_call_form_notes= self.isIncoming() ? "IN_NOTES_AFTER_CALL" : "OUT_NOTES_AFTER_CALL";
+					self.recordSource(end_call_form_notes);
+				}
+			});
+		},
+		isIncoming : function() {
+			return this.direction == "incoming";
 		}
 		
 	};
