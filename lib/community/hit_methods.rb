@@ -10,7 +10,8 @@ module Community::HitMethods
 			self.update_column(:hits, total_hits)
 			decrement_others_redis(hit_key, current_klass::HITS_CACHE_THRESHOLD)
 		end
-		self.meta_object.hit! if self.respond_to?(:meta_association)
+		return true unless self.respond_to?(:meta_association)
+		self.meta_object.hit! unless self.meta_object.new_record?
 		true
 	end
 
