@@ -59,6 +59,13 @@ GIT
     lhm (1.2.0)
 
 GIT
+  remote: git://github.com/freshdesk/rack.git
+  revision: f4e5e03704ab47c46ca42f9e5535513f38579522
+  branch: rack_1.4.5
+  specs:
+    rack (1.4.5)
+
+GIT
   remote: git://github.com/freshdesk/rate-limiting.git
   revision: d5c5c60d09e3ff1d9881dbea5dc737dbebbd2a6c
   specs:
@@ -662,7 +669,6 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rack (1.4.5)
     rack-cache (1.2)
       rack
       rack (>= 0.4)
@@ -985,7 +991,7 @@ DEPENDENCIES
   prototype-rails (~> 3.2.0)
   prototype_legacy_helper (= 0.0.0)!
   pry
-  rack (~> 1.4.5)
+  rack!
   rack-cors (~> 0.3.1)
   rack-openid!
   rack-ssl!
