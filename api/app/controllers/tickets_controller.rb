@@ -59,12 +59,12 @@ class TicketsController < ApiApplicationController
   end
 
   def notes
-    @notes = paginate_items(@ticket.notes).preload(:note_old_body, :schema_less_note, :attachments)
+    @notes = paginate_items(@ticket.notes.includes(:note_old_body, :schema_less_note, :attachments))
     render '/notes/index'
   end
 
   def time_sheets
-    @time_sheets = paginate_items(@ticket.time_sheets).preload(:workable)
+    @time_sheets = paginate_items(@ticket.time_sheets.includes(:workable))
     render '/time_sheets/index'
   end
 
@@ -129,6 +129,7 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_filter_params
+      # Should allow per page & page params also. Use *ApiConstants::DEFAULT_INDEX_FIELDS
       params.permit(*ApiConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       @ticket_filter = TicketFilterValidation.new(params, current_account)
       render_error(@ticket_filter.errors) unless @ticket_filter.valid?

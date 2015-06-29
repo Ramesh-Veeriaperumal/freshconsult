@@ -60,7 +60,8 @@ module ApiConstants
     'update' => false,
     'assign' => false,
     'restore' => true,
-    'destroy' => false
+    'destroy' => false,
+    'time_sheets' => false
   }
 
   INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type created_since updated_since)

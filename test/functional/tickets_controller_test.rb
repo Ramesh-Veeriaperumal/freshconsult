@@ -1101,6 +1101,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(result_pattern)
   end
 
+  def test_time_sheets_with_ticket_deleted
+    ticket.update_column(:deleted, true)
+    get :time_sheets, construct_params(id: ticket.display_id)
+    assert_response :not_found
+    ticket.update_column(:deleted, false)
+  end
+
   def test_time_sheets_without_privilege
     t = ticket
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once

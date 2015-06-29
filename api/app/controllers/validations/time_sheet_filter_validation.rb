@@ -1,4 +1,4 @@
-class TimeSheetFiltersValidation < ApiValidation
+class TimeSheetFilterValidation < ApiValidation
   attr_accessor :company_id, :user_id, :billable, :executed_after, :executed_before, :group_id
 
   validates :billable, included: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
