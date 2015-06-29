@@ -25,7 +25,7 @@ module JsonPattern
     {
       field: "#{field}",
       message: I18n.t("api.error_messages.#{value}", params_hash.merge(default: value)),
-      code: ApiConstants::API_ERROR_CODES_BY_VALUE[value] || ApiConstants::DEFAULT_CUSTOM_CODE
+      code: BaseError::API_ERROR_CODES_BY_VALUE[value] || BaseError::DEFAULT_CUSTOM_CODE
     }
   end
 

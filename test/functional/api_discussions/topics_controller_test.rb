@@ -57,16 +57,6 @@ module ApiDiscussions
       assert_response :created
     end
 
-    def test_create_with_created_at
-      created_at = 2.days.ago.to_s
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', created_at: created_at)
-      match_json(topic_pattern(last_topic))
-      match_json(topic_pattern({ forum_id: forum_obj.id, title: 'test title', posts_count: 1,
-                                 created_at: created_at, ignore_created_at: false }, last_topic))
-      assert_response :created
-    end
-
     def test_create_with_stamp_type
       forum = forum_obj
       forum.update_column(:forum_type, 2)
@@ -110,20 +100,6 @@ module ApiDiscussions
       post :create, construct_params({}, title: 'test title',
                                          message_html: 'test content', forum_id: (1000 + Random.rand(11)))
       match_json([bad_request_error_pattern('forum', "can't be blank")])
-      assert_response :bad_request
-    end
-
-    def test_create_invalid_created_at
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', created_at: '2018-78-90T89:88:90')
-      match_json([bad_request_error_pattern('created_at', 'is not a date')])
-      assert_response :bad_request
-    end
-
-    def test_create_invalid_updated_at
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', updated_at: '2018-78-90T89:88:90')
-      match_json([bad_request_error_pattern('updated_at', 'is not a date')])
       assert_response :bad_request
     end
 
@@ -309,23 +285,10 @@ module ApiDiscussions
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 
-    def test_create_without_view_admin_privilege
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:view_admin).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(true).once
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', created_at: Time.zone.now)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('created_at', 'invalid_field')])
-    end
-
     def test_create_without_manage_users_privilege
       user = other_user
       controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:view_admin).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(false).once
       post :create, construct_params({}, forum_id: forum_obj.id,
@@ -338,7 +301,6 @@ module ApiDiscussions
       user = other_user
       controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:view_admin).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(true).once
       post :create, construct_params({}, forum_id: forum_obj.id,
@@ -351,7 +313,6 @@ module ApiDiscussions
       topic = first_topic
       controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:view_admin).never
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
       assert_response :bad_request

@@ -209,3 +209,14 @@ input[type="text"].loading, .ui-autocomplete-loading{
 .report-page .loading-center{
 	padding-top:50%;
 }*/
+/* Chargebee credit card form loader overlay */
+.cb-process-request{
+	position:absolute;
+	text-align: center;
+	top:162px;
+	left:0;
+	@include size(100%, 800px);
+	background-color: #fff;
+	opacity:0.8;
+	.sloading{padding-top: 200px}
+}

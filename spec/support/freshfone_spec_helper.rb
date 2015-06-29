@@ -10,7 +10,8 @@ module FreshfoneSpecHelper
       :twilio_subaccount_token => "58aacda85de70e5cf4f0ba4ea50d78ab", 
       :twilio_application_id => "AP932260611f4e4830af04e4e3fed66276", 
       :queue => "QU81f8b9ad56f44a62a3f6ef69adc4d7c7",
-                          :account_id => @account.id, 
+      :account_id => @account.id,
+      :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone,
       :friendly_name => "RSpec Test" )
     freshfone_account.sneaky_save
     @account.freshfone_account = freshfone_account
@@ -177,10 +178,10 @@ module FreshfoneSpecHelper
     twiml.deep_symbolize_keys if twiml.present?
   end
 
-  def create_ff_address
+  def create_ff_address(post_code = Faker::Address.postcode)
     name = Faker::Name.name
     address_params = { :friendly_name => name, :business_name => name, :address => Faker::Address.street_address,
-        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => Faker::Address.postcode,
+        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => post_code,
         :country => 'DE'
     }
     @account.freshfone_account.freshfone_addresses.new(address_params).save

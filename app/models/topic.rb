@@ -7,6 +7,8 @@ class Topic < ActiveRecord::Base
   include Redis::OthersRedis
   
   HITS_CACHE_THRESHOLD = 100
+
+  include Community::HitMethods
   
   acts_as_voteable
   validates :forum, :user, :title, :presence => true
@@ -29,6 +31,11 @@ class Topic < ActiveRecord::Base
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
+  has_many :merged_monitorships,
+           :as => :monitorable,
+           :class_name => "Monitorship", 
+           :through => :merged_topics,
+           :source => :monitorships
   has_many :monitors, :through => :monitorships, :source => :user, 
                       :conditions => ["#{Monitorship.table_name}.active = ?", true],
                       :order => "#{Monitorship.table_name}.id DESC"
@@ -293,19 +300,6 @@ class Topic < ActiveRecord::Base
 
   def stamp_key
     IDEAS_STAMPS_TOKEN_BY_KEY[stamp_type].to_s
-  end
-  
-  def hit!
-    new_count = increment_others_redis(hit_key)
-    if new_count >= HITS_CACHE_THRESHOLD
-      self.update_column(:hits, read_attribute(:hits) + HITS_CACHE_THRESHOLD)
-      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
-    end
-    true
-  end
-  
-  def hits
-    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
   end
 
   def stamp?

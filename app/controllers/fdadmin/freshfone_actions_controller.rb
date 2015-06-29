@@ -1,10 +1,13 @@
 class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
-
+  include Freshfone::AccountUtil
 	around_filter :select_master_shard , :except => :get_country_list
 	around_filter :select_slave_shard , :only => :get_country_list
 	before_filter :load_account
+	before_filter :validate_triggers, :only => [:update_usage_triggers]
 	before_filter :validate_credits, :only => [:add_credits]
-	before_filter :notify_freshfone_ops , :except => :get_country_list
+	before_filter :notify_freshfone_ops , :except => [:get_country_list, :fetch_usage_triggers]
+
+	TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
 
 	def add_credits
 		@freshfone_credit = @account.freshfone_credit
@@ -101,9 +104,9 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		result = {:account_id => @account.id , :account_name => @account.name}
 		if !@account.freshfone_account.blank?
 			@account.freshfone_account.suspend
-			result[:status] = "success"
+			result[:status] = 'success'
 		else
-			result[:status] = "error"
+			result[:status] = 'error'
 		end
 		respond_to do |format|
 			format.json do
@@ -124,9 +127,9 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 				number.deleted = true
 				number.send(:update_without_callbacks)
 			end
-			result[:status] = "success"
+			result[:status] = 'success'
 		else
-			result[:status] = "notice"
+			result[:status] = 'notice'
 		end
 		respond_to do |format|
 			format.json do
@@ -135,6 +138,114 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		end
 	end
 
+  def new_freshfone_account
+    result = []
+    freshfone_account = create_freshfone_account(@account)
+    if freshfone_account.present?
+      result = { 
+        :twilio_subaccount_id => freshfone_account.twilio_subaccount_id,
+        :friendly_name => freshfone_account.friendly_name
+      }
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+  
+  def trigger_whitelist
+		result = { :account_id => @account.id, :account_name => @account.name }
+		begin
+			ff_acc = @account.freshfone_account
+			result[:status] = ff_acc.do_security_whitelist
+		rescue Exception => e
+			Rails.logger.debug "Error while doing freshfone security whitelist for Account: #{@account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
+			result[:status] = 'error'
+		ensure
+			respond_to do |format|
+				format.json do
+			  	render :json => result
+				end
+			end
+		end
+	end
+
+	def undo_security_whitelist
+		result = { :account_id => @account.id, :account_name => @account.name }
+		begin
+			ff_acc = @account.freshfone_account
+			result[:status] = ff_acc.undo_security_whitelist
+		rescue Exception => e
+			Rails.logger.debug "Error while undo freshfone security whitelist for Account: #{@account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
+			result[:status] = 'error'
+		ensure
+			respond_to do |format|
+				format.json do
+					render :json => result
+				end
+			end
+		end
+	end
+
+  def fetch_usage_triggers
+    result = {:account_id => @account.id, :account_name => @account.name}
+    result[:triggers] = @account.freshfone_account.triggers if @account.freshfone_account.triggers.present?
+    result[:status] = result.has_key?(:triggers) ? "success" : "error"
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def update_usage_triggers
+  	result = { :account_id => @account.id, :account_name => @account.name }
+		ff_acc = @account.freshfone_account
+		begin
+			trigger_params = [params[:trigger_first].to_i, params[:trigger_second].to_i]
+			if ff_acc.suspended?
+				result[:status] = 'suspended'
+			elsif ff_acc.security_whitelist
+				result[:status] = 'whitelisted'
+			elsif existing_triggers?(ff_acc, trigger_params)
+				result[:status] = 'notice' 
+			elsif ff_acc.active?
+				Freshfone::UsageTrigger.update_triggers(ff_acc, params)
+				result[:status] = 'success'
+			end
+		rescue Exception => e
+			Rails.logger.debug "Error while updating freshfone security whitelist for Account: #{@account.id}.\n Params: #{params}\n #{e.message}\n#{e.backtrace.join("\n\t")}"
+			result[:status] = 'error'
+		ensure
+			respond_to do |format|
+				format.json do
+					render :json => result
+				end
+			end
+		end
+	end
+
+	def restore_freshfone_account
+		result = { :account_id => @account.id, :account_name => @account.name }
+			begin
+				if @account.freshfone_account.active?
+					result[:status] = 'notice'
+				else
+					@account.freshfone_account.restore
+					result[:status] = 'success'
+				end
+			rescue => e
+				Rails.logger.error "Error while restoring the Freshfone Account for account #{@account.id}\n The Exception is #{e.message}\n"
+				result[:status] = 'error'
+			end
+			respond_to do |format|
+				format.json do
+					render :json => result
+			end
+		end
+	end
+	
 	private
 
 	def get_country_name_list
@@ -198,4 +309,17 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		@account = Account.find(params[:account_id])
 	end
 
+	def existing_triggers?(ff_acc, trigger_values)
+		trigger_values.all? do |i|
+			i == ff_acc.triggers[:first_level] || i == ff_acc.triggers[:second_level]
+		end
+	end
+
+	def validate_triggers
+		params[:old_trigger_values] = @account.freshfone_account.triggers
+		head :no_content unless
+			params[:trigger_first].present? &&
+			params[:trigger_second].present? &&
+			params[:trigger_first].to_i < params[:trigger_second].to_i
+	end
 end

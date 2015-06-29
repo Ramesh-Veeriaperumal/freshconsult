@@ -6,6 +6,8 @@ require 'net/http/post/multipart'
 
 class Integrations::JiraIssue
   include Integrations::Jira::Api
+  include Redis::RedisKeys
+  include Redis::IntegrationsRedis
 
   def initialize(installed_app)
     @http_request_proxy = HttpRequestProxy.new
@@ -145,6 +147,19 @@ class Integrations::JiraIssue
         Rails.logger.debug "Timeout::Error: #{params}\n and Attachment Response body: #{res.body}"
       rescue
         Rails.logger.debug "  Attachment Response body: #{res.body}"
+      end
+    end
+  end
+
+  def push_existing_notes_to_jira(issue_id, tkt_obj)
+    obj_mapper = Integrations::ObjectMapper.new
+    tkt_obj.notes.each do |note| 
+      unless note.meta?
+        mapped_data = obj_mapper.map_it(Account.current.id, "add_comment_in_jira" , note, :ours_to_theirs, [:map])
+        jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> Account.current.id, :local_integratable_id=> tkt_obj.id, :remote_integratable_id=> issue_id, :comment => Digest::SHA512.hexdigest(mapped_data) }
+        set_integ_redis_key(jira_key, "true", 240)
+        add_comment(issue_id, mapped_data)
+        construct_attachment_params(issue_id, note) 
       end
     end
   end

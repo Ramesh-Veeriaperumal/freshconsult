@@ -121,10 +121,9 @@ module ApiDiscussions
     def test_create_customer_user
       topic_obj.update_column(:locked, false)
       user = customer
-      created_at = 2.days.ago.to_s
       updated_at = 1.days.ago.to_s
       params = { :body_html => 'test', 'topic_id' => topic_obj.id,
-                 'user_id' => user.id, :answer => 1, :created_at => created_at, :updated_at => updated_at }
+                 'user_id' => user.id, :answer => 1 }
       post :create, construct_params({}, params)
       assert_response :created
       match_json(post_pattern(Post.last))
@@ -169,19 +168,8 @@ module ApiDiscussions
       match_json([bad_request_error_pattern('user', "can't be blank")])
     end
 
-    def test_create_without_view_admin_privilege
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:view_admin).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(true).once
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'created_at' => Time.zone.now)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('created_at', 'invalid_field')])
-    end
-
     def test_create_without_manage_users_privilege
       controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:view_admin).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(false).once
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => 999)

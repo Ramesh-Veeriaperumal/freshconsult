@@ -4,7 +4,7 @@ module ApiDiscussions
     skip_before_filter :verify_authenticity_token, only: [:show]
 
     def forums
-      @forums = paginate_items(@category.forums)
+      @forums = paginate_items(load_association)
       render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
     end
 
@@ -15,7 +15,7 @@ module ApiDiscussions
       end
 
       def validate_params
-        params[cname].permit(*(ApiConstants::CATEGORY_FIELDS))
+        params[cname].permit(*(DiscussionConstants::CATEGORY_FIELDS))
         category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
         render_error category.errors unless category.valid?
       end

@@ -16,7 +16,11 @@
 		</div>
 		<div class="freshfone_dashboard_cells">
 			<h4> <span class="live-available-agents">0</span></h4>
-			<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %></span>
+			<% if (freshfone_active?) %>
+				<a class="dash-lbl" href="/helpdesk/agent_status#phone"><%= t('freshfone.dashboard.available_agents') %> </a>
+			<% else %>
+				<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %></span>
+			<% end %>
 		</div>
 	</div>
 	<!-- <div class="freshfone_dashboard_cells">

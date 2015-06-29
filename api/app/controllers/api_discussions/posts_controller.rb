@@ -28,7 +28,7 @@ module ApiDiscussions
       end
 
       def validate_params
-        fields = get_fields("ApiConstants::#{action_name.upcase}_POST_FIELDS")
+        fields = get_fields("DiscussionConstants::#{action_name.upcase}_POST_FIELDS")
         params[cname].permit(*(fields))
         post = ApiDiscussions::PostValidation.new(params[cname], @post)
         render_error post.errors unless post.valid?

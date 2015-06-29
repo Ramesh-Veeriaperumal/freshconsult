@@ -153,7 +153,7 @@
 							<% users.each do |user| %>
 							  	<li class='user-item'>
 							  		<a href='<%= contact_path(user) %>' class='clearfix' data-pjax='#body-container'>
-							      		<%= user_avatar(user, :thumb) %>
+							      		<%= user_avatar(user, :thumb, 'preview_pic small circle') %>
 							      		<div class='vertical-alignment'>
 							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
 							      			<p class='email ellipsis'> <%= h(user.email) %> </p>

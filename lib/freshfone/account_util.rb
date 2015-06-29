@@ -1,7 +1,7 @@
 module Freshfone::AccountUtil
 
   def create_freshfone_account(account = nil)
-    account = current_account if defined? current_account && account.blank?
+    account = current_account if defined?(current_account) && account.blank?
     Freshfone::SubAccount.new(account).create 
   end
 
@@ -43,7 +43,8 @@ module Freshfone::AccountUtil
           :twilio_subaccount_token => sub_account.auth_token,
           :twilio_application_id => twilio_app.sid,
           :queue => queue.sid,
-          :friendly_name => sub_account.friendly_name
+          :friendly_name => sub_account.friendly_name,
+          :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone
         })
       end
 

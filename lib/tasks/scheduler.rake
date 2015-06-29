@@ -60,7 +60,7 @@ namespace :scheduler do
   }
 
 
-  PREMIUM_ACCOUNT_IDS = {:staging => [390], :production => [18685,39190,19063,86336,34388,126077,220561]}
+  PREMIUM_ACCOUNT_IDS = {:staging => [390], :production => [39190,19063,86336,34388,126077,220561,166928]}
   
 
 

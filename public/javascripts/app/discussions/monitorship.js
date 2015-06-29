@@ -26,6 +26,7 @@ window.App.Discussions = window.App.Discussions || {};
       if ($("#new_follower_page").is(':visible')) {
         $('.follower_input .select2-search-field').focus();
       };
+      jQuery("#followerlist").find('img').trigger( "unveil" );
     },
     clickedOutside: function (e) {
       var container =  $('#follower-container');

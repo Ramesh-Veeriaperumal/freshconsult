@@ -37,7 +37,7 @@ class Monitorship < ActiveRecord::Base
 
   def notify_new_follower
     return if mail_unnecessary?
-    "#{monitorable.class.name}Mailer".constantize.send_later(:notify_new_follower,monitorable,User.current,portal,self)
+    "#{monitorable.class.name}Mailer".constantize.send_later(:notify_new_follower,monitorable,User.current,self)
   end
 
   protected
@@ -47,8 +47,15 @@ class Monitorship < ActiveRecord::Base
       (User.current.blank? || User.current.id != user_id),
       self.active?,
       ADD_FOLLOWER_MAILERS_FOR.include?(monitorable.class.to_s.downcase.to_sym),
-      self.user.privilege?(:view_forums)
+      self.user.privilege?(:view_forums),
+      !merging_topic_followers?
     ].include?(false)
+  end
+
+  def merging_topic_followers?
+    return false unless monitorable.is_a?(Topic)
+    ((monitorable.merged_topics.exists?) and
+      monitorable.merged_monitorships.all(:select => "monitorships.user_id").map(&:user_id).include?(self.user_id))
   end
 
   def user_has_email

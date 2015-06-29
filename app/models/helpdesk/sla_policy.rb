@@ -80,6 +80,9 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     [:assigned_agent, -1]
   ]
 
+  API_OPTIONS = {
+    :except => [:account_id]
+  }
   acts_as_list :scope => 'account_id = #{account_id}'
 
   def matches?(evaluate_on)
@@ -145,12 +148,22 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     CUSTOM_USERS.inject({}) {|hash, item| hash[item[0].to_sym] = I18n.t("sla_policy.#{item[0]}.text"); hash}
   end
 
+  def as_json(options={})
+    options.merge!(API_OPTIONS)
+    super options.merge(:root => 'helpdesk_sla_policy')
+  end
+
   def self.custom_users_id_by_type
     CUSTOM_USERS.inject({}) {|hash, item| hash[item[0].to_sym] = item[1]; hash}
   end
 
   def self.custom_users_desc_by_type
     CUSTOM_USERS.inject({}) {|hash, item| hash[item[0].to_sym] = I18n.t("sla_policy.#{item[0]}.description"); hash}
+  end
+  
+  def to_xml(options={})
+    options.merge!(API_OPTIONS)
+    super options.merge(:root => 'helpdesk_sla_policy')
   end
 
   private
@@ -163,7 +176,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       to_return = []
       conditions.each_pair do |k, v| #each_pair
         to_return << (Va::Condition.new({:name => k, :value => v, 
-                        :operator => "in"} , account))
+                        :operator => "in"} , Account.current))
       end if conditions
       to_return
     end

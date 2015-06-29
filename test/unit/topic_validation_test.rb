@@ -30,22 +30,6 @@ class TopicValidationsTest < ActionView::TestCase
     refute error.include?('Sticky Should be a value in the list 0,false,1,true')
   end
 
-  def test_date_params_invalid
-    controller_params = { 'created_at' => '0' }
-    item = nil
-    topic = ApiDiscussions::TopicValidation.new(controller_params, item)
-    refute topic.valid?
-    assert topic.errors.full_messages.include?('Created at is not a date')
-  end
-
-  def test_date_params_empty_string
-    controller_params = { 'created_at' => '' }
-    item = nil
-    topic = ApiDiscussions::TopicValidation.new(controller_params, item)
-    refute topic.valid?
-    assert topic.errors.full_messages.include?('Created at is not a date')
-  end
-
   def test_presence_item_valid
     item = Topic.new(title: 'test')
     post = mock('post')
