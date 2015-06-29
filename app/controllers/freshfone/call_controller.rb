@@ -63,9 +63,11 @@ class Freshfone::CallController < FreshfoneBaseController
 		def call_meta
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
-	    call = current_account.freshfone_calls.first(:joins => [:caller], 
-	            :include => [:freshfone_number], 
-	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]}, :order => "freshfone_calls.id DESC")
+	    caller = current_account.freshfone_callers.find_by_number(params[:PhoneNumber])
+	    return if caller.blank?
+	    call = current_account.freshfone_calls.first( :include => [:freshfone_number], 
+              :conditions => {:caller_number_id => caller.id}, :order => "freshfone_calls.id DESC") 
+ 
 	    if call.present?
 		    { :number => call.freshfone_number.number_name,
 		    	:group 	=> (call.group.present?) ? call.group.name : ""

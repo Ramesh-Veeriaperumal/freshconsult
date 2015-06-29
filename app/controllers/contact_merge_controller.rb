@@ -35,7 +35,6 @@ class ContactMergeController < ApplicationController
       end
       @source_user.save
       
-      # Resque.enqueue(Workers::MergeContacts, {:source => params[:parent_user], :targets => params[:target]})
       MergeContacts.perform_async({:parent => params[:parent_user], :children => params[:target]})
       flash[:notice] = t('merge_contacts.merge_progress')
     else

@@ -26,27 +26,10 @@
 
 
 <h3 class="lead"><%= t("credit_card_info") %></h3>
-<%= form_for @creditcard, :as => :creditcard, :url => { :action => 'billing' }, :html => {
-		:id => "credit-card-form", :class => "form-horizontal" } do |f| %>
 
 	<%= render :partial => 'shared/credit_card_form' %>
 	<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
 	<span class="seperator"></span>
-	<div class="button-container">
-		<% if @subscription.trial? or @subscription.trial_expired? %>
-			<%= link_to( "&larr; #{t('select_another_plan')}".html_safe, subscription_url, :class => "btn floatl" ) %>
-			<%= submit_tag t('accounts.billing.begin_subscription'), 
-													:class => "btn btn-primary", 
-													:id => "begin_subscription", 
-													:"data-loading-text" => t('please_wait') %>	
-		<% else %>
-			<%= link_to( "&larr; #{t("cancel_and_back")}".html_safe, subscription_url, :class => "btn floatl" ) %>
-			<%= submit_tag t('accounts.billing.update_billing_info'), 
-													:class => "btn btn-primary", 
-													:"data-loading-text" => t('please_wait') %>
-		<% end %>
-	</div>
-<% end %>
 <% content_for :pagefixed do %>
 	<%= javascript_tag do %>
 		jQuery("#begin_subscription")

@@ -9,6 +9,7 @@ module Redis::RedisKeys
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}:%{comment}"
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"account_id\":%{account_id},\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
+	EMPTY_TRASH_TICKETS = "EMPTY_TRASH_TICKETS:%{account_id}"
 
 	EMAIL_TICKET_ID = "EMAIL_TICKET_ID:%{account_id}:%{message_id}"
 	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
@@ -45,6 +46,7 @@ module Redis::RedisKeys
 	FRESHFONE_DISABLED_WIDGET_ACCOUNTS = "FRESHFONE:DISABLED_WIDGET_ACCOUNTS"
 	FRESHFONE_LOW_CREDITS_NOTIFIY = "FRESHFONE:LOW_CREDITS_NOTIFIY"
 	FRESHFONE_AUTORECHARGE_TIRGGER = "FRESHFONE:AUTORECHARGE_TRGGER:%{account_id}"
+	ADMIN_FRESHFONE_FILTER = "ADMIN_FRESHFONE_FILTER:%{account_id}:%{user_id}"
 	
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
@@ -73,6 +75,7 @@ module Redis::RedisKeys
 	USER_EMAIL_MIGRATED = "user_email_migrated"
 	
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
+	SOLUTION_META_HIT_TRACKER = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
 
 	def newrelic_begin_rescue

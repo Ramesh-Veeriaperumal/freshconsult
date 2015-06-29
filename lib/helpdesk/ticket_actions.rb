@@ -221,9 +221,21 @@ module Helpdesk::TicketActions
   end
 
   def forward_conv
-    render :partial => "/helpdesk/tickets/show/forward_form",
-           :locals => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
-           :note => [@ticket, Helpdesk::Note.new(:private => true)] }
+    render :partial=> "/helpdesk/tickets/show/form_layout",
+            :locals => {:params => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
+                                :note => [@ticket, Helpdesk::Note.new(:private => true)] }, 
+                        :page => "forward_form"
+                        }
+  end
+
+  def reply_to_forward
+    render(  :partial => '/helpdesk/tickets/show/form_layout', 
+                :locals => {:params => {  :id => 'send-email', 
+                              :cntid => "cnt-reply-fwd-#{@conv_id}", 
+                              :note => [@ticket, Helpdesk::Note.new(:private => true)], 
+                              :conv_id => @conv_id}, 
+                            :page => "reply_to_forward"}
+                            )
   end
   
   def add_requester

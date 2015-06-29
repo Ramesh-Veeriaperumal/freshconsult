@@ -569,8 +569,8 @@ ul.user_list{
 			.preview_pic {
 				@include margin(0 10px 0 0);
 				img {
+					@include margin(0);
 					@include border-radius(50%);
-					border: 1px solid $common-border-color;
 					width: 30px;
 					height: 30px;
 				}
@@ -613,6 +613,13 @@ ul.user_list{
 					color: $linkColor;
 				}
 			}	
+			.avatar-text{
+				text-align: center;
+				border-radius: 10%;
+				width: 30px;
+				height: 30px;
+				line-height: 30px;
+			}
 		}
 		.username{
 			display:block;

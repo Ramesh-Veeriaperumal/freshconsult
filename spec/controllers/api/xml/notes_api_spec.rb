@@ -14,7 +14,6 @@ RSpec.describe Helpdesk::ConversationsController do
   it "should create a note" do
     post :note, note_params.merge!({:format => 'xml', :ticket_id => Helpdesk::Ticket.first.display_id}),:content_type => 'application/xml'
     result =  parse_xml(response)
-    byebug
     expected = (response.status == 201) && compare(result['helpdesk_note'].keys.sort, APIHelper::NOTE_ATTRIBS.sort,{}).empty?
     expected.should be(true)
   end

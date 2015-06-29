@@ -7,28 +7,22 @@ class Helpdesk::CannedResponsesController < ApplicationController
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
-    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 300}, default_visiblity, :title)
-    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder])) if @ca_responses.nil?
-    @ca_resp_folders = @ca_responses.group_by(&:folder_id)
-    folders = @ca_responses.map(&:folder)
-    @ca_folders = folders.uniq.sort_by{|folder | [folder.folder_type,folder.name]}
-    @ca_folders.each do |folder|
-      folder.visible_responses_count = folders.count(folder)
-    end
-    unless params[:recent_ids].blank?
-      recent_ids = params[:recent_ids].split(",")
-      @recents = @ca_responses.select {|ca_resp| recent_ids.include?(ca_resp.id.to_s)}
-    end
+    
     respond_to do |format|
       format.html { 
+         ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, {:size => 300}, default_visiblity)
+         process_ca_data(ca_facets)
         #render :partial => "helpdesk/tickets/components/canned_responses"
         render :partial => "helpdesk/tickets/components/ticket_canned_responses"
       }
       format.nmobile {
+        @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 300}, default_visiblity, "raw_title")
+        @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder])) if @ca_responses.nil?
         canned_responses = @ca_responses.map{ |canned_response| canned_response.to_mob_json }
         render :json => canned_responses
       }
     end
+
   end
 
   def show
@@ -43,7 +37,8 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def recent
     @id_data = ActiveSupport::JSON.decode params[:ids] || []
     @ticket = current_account.tickets.find(params[:ticket_id].to_i) unless params[:ticket_id].blank?
-    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id IN (?)",@id_data]))
+    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity,"raw_title", nil, @id_data)
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id IN (?)",@id_data])) if @ca_responses.nil?
     respond_to do |format|
       format.html
       format.js {
@@ -54,7 +49,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def search
     @ticket = current_account.tickets.find(params[:ticket].to_i) unless params[:ticket].blank?
-    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity)
+    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity,"raw_title")
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"])) if @ca_responses.nil?
     respond_to do |format|
       format.html
@@ -88,8 +83,34 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def ticket_present?
     !params[:id].blank?
   end
-  
-  def default_visiblity
-    {:global_type => true, :user_type => true, :group_type => true}
+
+  def process_ca_data(ca_facets)
+    begin
+      if ca_facets.try(:[], "ca_folders")
+        #Response available in ES
+        terms = ca_facets["ca_folders"]["terms"]
+        folder_ids = terms.map{ |x| x["term"] }
+        @ca_folders = current_account.canned_response_folders.find_all_by_id(folder_ids) unless folder_ids.blank?
+        terms.each do |folder|
+          @ca_folders.select { |ca_folder| ca_folder.id == folder["term"]}.first.visible_responses_count = folder["count"]
+        end
+      else
+        fetch_ca_folders_from_db
+      end
+    rescue Exception => e
+      #Any ES execption fallback to db
+      fetch_ca_folders_from_db
+    end
   end
+
+  def fetch_ca_folders_from_db
+    #when ES is down or when it throws exception - fallback to DB
+    @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder]))
+    folders = @ca_responses.map(&:folder)
+    @ca_folders = folders.uniq.sort_by{|folder | [folder.folder_type,folder.name]}
+    @ca_folders.each do |folder|
+      folder.visible_responses_count = folders.count(folder)
+    end
+  end
+  
 end

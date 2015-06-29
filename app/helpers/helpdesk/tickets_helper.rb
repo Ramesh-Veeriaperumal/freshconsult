@@ -16,7 +16,7 @@ module Helpdesk::TicketsHelper
   include HelpdeskAccessMethods
   
   def scn_accessible_elements
-    visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, :name)
+    visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, "raw_name")
     visible_scn = accessible_elements(current_account.scn_automations, query_hash('VARule', 'va_rules', '')) if visible_scn.nil?
     visible_scn
   end
@@ -96,6 +96,10 @@ module Helpdesk::TicketsHelper
     SELECTOR_NAMES[current_selector]
   end
 
+  def trash_in_progress?
+    key_exists?(EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id})
+  end
+
   def context_check_box(text, checked_context, unchecked_context, selector = nil)
 
     checked_url = url_for(:filters => [checked_context] + (selector || current_selector))
@@ -161,7 +165,8 @@ module Helpdesk::TicketsHelper
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+<div>#{signature}</div>"
     quoted_text = ""
 
     if quoted or forward
@@ -322,6 +327,14 @@ module Helpdesk::TicketsHelper
     end
     content << "</div>" if full_pagination
     content
+  end
+
+  def remote_note_forward_form options
+    content_tag(:div, "", 
+                :id => options[:id], 
+                :class => "request_panel note-forward-form hide", 
+                :rel => "remote", 
+                "data-remote-url" => options[:path]).html_safe
   end
 
   def faye_auth_params

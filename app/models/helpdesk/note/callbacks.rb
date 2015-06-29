@@ -44,8 +44,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   	def validate_schema_less_note
       return unless human_note_for_ticket?
-      
-      if email_conversation?
+      emails = [schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails]
+      if email_conversation? 
         if schema_less_note.to_emails.blank?
           schema_less_note.to_emails = notable.from_email 
           schema_less_note.from_email ||= account.primary_email_config.reply_email
@@ -53,6 +53,8 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
         schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
         schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
+      elsif reply_to_forward?
+        schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails = reset_emails(emails)
       elsif note?
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
@@ -78,7 +80,7 @@ class Helpdesk::Note < ActiveRecord::Base
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
-      add_cc_email  if email_conversation? and !user.customer?
+      add_cc_email  if (email_conversation? and !user.customer?) || reply_to_forward?
       notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.save
     end
@@ -92,8 +94,12 @@ class Helpdesk::Note < ActiveRecord::Base
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         #notify the agents only for notes
-        if note? && !self.to_emails.blank? && !incoming
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank?
+        if note? && !self.to_emails.blank? && !incoming 
+          if reply_to_forward?
+            Helpdesk::TicketNotifier.send_later(:deliver_reply_to_forward, notable, self)
+          else
+            Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank?
+          end
         end
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
@@ -142,6 +148,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_category
+      return if schema_less_note.category
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
 
@@ -160,6 +167,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def fire_create_event
       fire_event(:create) unless disable_observer
+    end
+
+    def reset_emails(emails_array)
+      emails_array.map{|emails| fetch_valid_emails(emails)}
     end
 
     def update_ticket_states

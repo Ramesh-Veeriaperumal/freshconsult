@@ -25,15 +25,7 @@ describe Segment::IdentifyController do
 		expected = (response.status == 200) && response.body.blank?
 		expect(expected).to eq(true)
 	end
-
-	it "should return 501 if type does not match" do
-        fake_a_contact
-		post :create, @params.merge!(:format => 'json'), :content_type => 'application/json'
-		result = parse_json(response)
-		expected = (response.status == 501) && result["message"].should == I18n.t('contacts.segment_api.invalid_type')
-		expect(expected).to eq(true)
-	end
-
+  
 	it "should update address field as string" do
         fake_a_contact
         user_address_params
@@ -49,7 +41,6 @@ describe Segment::IdentifyController do
         @params[:user].delete(:email)
 		post :create, @params.merge!(:format => 'json', :type => 'identify'), :content_type => 'application/json'
 		result = parse_json(response)
-		debugger
 		expected = (response.status == 400) && result["message"] == "Email can't be blank"
 		expect(expected).to eq(true)
 	end

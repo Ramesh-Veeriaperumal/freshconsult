@@ -4029,6 +4029,9 @@ $i: 9;
 div.avatar-text{
 	color: #fff;
 	text-transform: uppercase;
+	@include user-select(none);
+	cursor: default;
+	text-align: center;
 }
 div.thumb{
 	border-radius: 10%;
@@ -4062,6 +4065,9 @@ div.small{
 }
 .circle{
 	@include border-radius(50% !important);
+	img{
+		@include border-radius(50% !important);
+	}
 }
 img.preview_pic{
 	margin-left: 0;

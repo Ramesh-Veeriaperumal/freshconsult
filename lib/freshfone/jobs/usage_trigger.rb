@@ -6,6 +6,7 @@ class Freshfone::Jobs::UsageTrigger
   def self.perform(args)
     return unless freshfone_account_active?
 
+    return delete_usage_trigger(args) if args[:delete]
     @trigger_type = args[:trigger_type] 
     action = "ut_#{trigger_type}"
     send(action, args) if respond_to?(action)
@@ -78,6 +79,12 @@ class Freshfone::Jobs::UsageTrigger
       end
 
       previous_balance
+    end
+
+    def self.delete_usage_trigger(args)
+      return if args[:trigger_sid].blank?
+      usage_trigger = get_trigger(args[:trigger_sid])
+      usage_trigger.delete if usage_trigger.present?
     end
 
 end

@@ -44,7 +44,7 @@ class Segment::IdentifyController < ApplicationController
    end
  
    def contact_exists
-      api_error_responder({:message => t('contacts.segment_api.email_blank')}, 400) if params[:user][:email].blank?
+      api_json_responder({:message => t('contacts.segment_api.email_blank')}, 400) if params[:user][:email].blank?
       @user = current_account.user_emails.user_for_email(params[:user][:email]) 
    end
 

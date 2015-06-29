@@ -139,6 +139,16 @@
 		}
 		.preview_pic {
 			margin:0;
+			width: 25px;
+			height: 25px;
+			@include border-radius(50%);
+			font-size: 14px;
+			line-height: 25px;
+			img{
+			width: 25px;
+			height: 25px;
+			@include border-radius(50%);
+			}
 		}
 	}
 	.available_agents_list, .available_numbers_list, .search-number-label {

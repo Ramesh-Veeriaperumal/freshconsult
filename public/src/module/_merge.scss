@@ -331,7 +331,7 @@
 		vertical-align: middle;
 		border: 1px solid #eeeeee;
 		@include border-radius(4px);
-		@include margin(0 0 0 2px);
+		@include margin(2px 0 0 0);
 		#resp-icon{
 			margin-top: 20px;
 		}

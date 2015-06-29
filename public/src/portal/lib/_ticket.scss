@@ -45,7 +45,7 @@
 .agent-details{
 	border-bottom: $content-border;
 	background-color: #fafafa;	
-	padding: $content-padding;
+	@include padding (20px 2em 35px);
 	margin-top: -$content-padding-top;
 	@include margin-left(-$content-padding-side);
 	@include margin-right(-$content-padding-side);

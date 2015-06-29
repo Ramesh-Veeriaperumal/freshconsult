@@ -18,23 +18,16 @@ class Mobile::SettingsController < ApplicationController
       unless request.headers['Request-Id'].nil?
         request_data = JSON.parse(request.headers['Request-Id'])
 
-        mobile_app_detail = MobileAppVersion.mobile_app(request_data['app_version'],request_data['mobile_type']).first
-
-        unless mobile_app_detail.nil?
           sha_generated = OpenSSL::HMAC.hexdigest('sha512',MobileConfig['secret_key'],request_data['times'])
 
-          if sha_generated == request_data['id']  && mobile_app_detail.supported
+          if sha_generated == request_data['id'] 
             full_domain = DomainMapping.full_domain(params[:cname]).first
             full_domain = full_domain.domain unless full_domain.nil?
             result_code = MOBILE_API_RESULT_SUCCESS  #Success
-          elsif !mobile_app_detail.supported
-            #Failure case 1 : version needs upgrade
-            result_code = MOBILE_API_RESULT_UNSUPPORTED
           else
             #Failure case 2 : sha mismatch
             result_code = MOBILE_API_RESULT_SHA_FAIL 
           end
-        end
       end 
 
     render :json => {full_domain: full_domain,result_code: result_code}
@@ -54,7 +47,7 @@ class Mobile::SettingsController < ApplicationController
   end  
    
   def configurations
-    render :json => {:user => current_user.as_config_json, :account => current_account.as_config_json }
+    render :json => current_user.as_config_json.merge(current_account.as_config_json)
   end	
 
 end

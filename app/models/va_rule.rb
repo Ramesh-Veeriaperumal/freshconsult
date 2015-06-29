@@ -115,13 +115,16 @@ class VaRule < ActiveRecord::Base
     to_ret = false
     conditions.each do |c|
       current_evaluate_on = custom_eval(evaluate_on, c.evaluate_on_type)
-      to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : false
-      
+      to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : negation_operator?(c.operator)
       return true if to_ret && (s_match == :any)
       return false if !to_ret && (s_match == :all) #by Shan temp
     end
     
     return to_ret
+  end
+
+  def negation_operator?(operator)
+    Va::Constants::NOT_OPERATORS.include?(operator)
   end
 
   def custom_eval(evaluate_on, key)
