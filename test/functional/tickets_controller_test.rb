@@ -1037,14 +1037,13 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_without_permitted_tickets
-    Helpdesk::Ticket.update_all(responder_id: User.last.id)
+    Helpdesk::Ticket.update_all(responder_id: nil)
     get :index, controller_params
     assert_response :success
     response = parse_response @response.body
-    assert_equal 21, response.size
+    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
-    Helpdesk::Ticket.update_all(responder_id: nil)
     get :index, controller_params
     assert_response :success
     response = parse_response @response.body
@@ -1129,6 +1128,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_requester
+    Helpdesk::Ticket.update_all(requester_id: User.first.id)
+    create_ticket(requester_id: User.last.id)
     get :index, controller_params(requester_id: User.last.id)
     assert_response :success
     response = parse_response @response.body
@@ -1149,6 +1150,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_filter_and_requester
+    user = add_new_user(@account)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user.id)
     get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
     assert_response :success
     response = parse_response @response.body
@@ -1195,6 +1198,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_requester_filter_company
     remove_wrap_params
     company = Company.first
+    new_company = create_company
+    add_new_user(@account, customer_id: new_company.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: new_company.users.map(&:id).first)
     get :index, controller_params(company_id: company.id,
                                   requester_id: User.first.id, filter: 'new_and_my_open')
     assert_response :success
