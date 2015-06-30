@@ -1,4 +1,4 @@
-module TicketConstants
+module ApiTicketConstants
   # *********************************-- ControllerConstants --*********************************************
 
   TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }, { 'attachments' => [] }]

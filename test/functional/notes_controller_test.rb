@@ -478,7 +478,6 @@ class NotesControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
-
   def test_delete_without_privilege
     User.any_instance.stubs(:privilege?).with(:edit_conversation).returns(false).at_most_once
     delete :destroy, construct_params(id: Helpdesk::Note.first.id)

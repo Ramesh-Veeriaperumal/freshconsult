@@ -10,7 +10,7 @@ class NotesController < ApiApplicationController
   before_filter :find_parent, only: [:reply]
   before_filter :validate_params, :manipulate_params, only: [:update, :create, :reply]
   before_filter :can_send_user?, :find_ticket, :build_object, only: [:create, :reply]
-  before_filter -> { kbase_email_included? params[cname] }, only: [:reply]
+  before_filter -> { kbase_email_included? params[cname] }, only: [:reply] # kbase_email_included? present in Email module
 
   def create
     render_response(create_note)
@@ -70,16 +70,16 @@ class NotesController < ApiApplicationController
     end
 
     def find_parent
-      load_ticket(params[:ticket_id])
+      @ticket = load_ticket(params[:ticket_id])
       if @ticket
-        params[cname][:ticket_id] = @ticket.id 
+        params[cname][:ticket_id] = @ticket.id
       else
         head 404
       end
     end
 
     def load_ticket(display_id) # Needed here in controller to find the item by display_id
-      @ticket ||= current_account.tickets.find_by_param(display_id, current_account)
+      current_account.tickets.find_by_param(display_id, current_account)
     end
 
     def scoper
@@ -104,16 +104,16 @@ class NotesController < ApiApplicationController
     end
 
     def find_ticket
-      load_ticket(params[cname][:notable_id])
+      @ticket ||= load_ticket(params[cname][:notable_id])
       params[cname][:notable_id] = @ticket.id if @ticket
     end
 
     def load_object
-      condition = 'id = ? ' 
+      condition = 'id = ? '
       # Conditions to inlcude deleted record based on action
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
-      # Conditions to include records with email or note as source type based on action
-      condition += " and source in (?)" if NoteConstants::NOTE_SOURCE_SCOPE.keys.include?(action_name)
+      # Conditions to include records with email or note as source based on action
+      condition += ' and source in (?)' if NoteConstants::NOTE_SOURCE_SCOPE.keys.include?(action_name)
       item = scoper.where(condition, params[:id], NoteConstants::NOTE_SOURCE_SCOPE[action_name]).first
       @item = instance_variable_set('@' + cname, item)
       head :not_found unless @item

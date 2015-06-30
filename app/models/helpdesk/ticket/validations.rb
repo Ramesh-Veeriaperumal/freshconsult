@@ -8,10 +8,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_uniqueness_of :display_id, :scope => :account_id
   validate :due_by_validation, :if => :due_by
   #validate :frDueBy_validation, :if => :frDueBy
-  validates :group, presence: true, if: -> {group_id.present?}
-  validates :responder, presence: true, if: -> {responder_id.present?}
-  validates :email_config, presence: true, if: -> {email_config_id.present?}
-  validates :product, presence: true, if: -> {product_id.present? && email_config_id.blank?}
+  validates :group, presence: true, if: -> { group_id }
+  validates :responder, presence: true, if: -> { responder_id }
+  validates :email_config, presence: true, if: -> { email_config_id }
+  validates :product, presence: true, if: -> { product_id  && email_config_id.blank? }
 
   validate on: :create do |ticket|
     req = ticket.requester

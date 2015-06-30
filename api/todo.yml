@@ -13,6 +13,7 @@ Todo:
  - boolean values in validation should be converted to mysql readable format.
  - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
  - Default content_type should be application/json in request header if not set?
+ - base as attribute name in model errors for multiple attributes. - should change that
 
 Breaking changes in existing APIs:
  - day pass required

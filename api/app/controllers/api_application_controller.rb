@@ -159,7 +159,7 @@ class ApiApplicationController < MetalApiController
     end
 
     # couldn't use dynamic forms/I18n for AR attributes translation as it may have an effect on web too.
-    def rename_error_fields(fields={})
+    def rename_error_fields(fields = {})
       if @item.errors
         fields_to_be_renamed = fields.slice(*@item.errors.to_h.keys)
         fields_to_be_renamed.each_pair do |model_field, api_field|
