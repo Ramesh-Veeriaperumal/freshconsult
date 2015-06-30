@@ -1,8 +1,8 @@
 class ApiGroupsController < ApiApplicationController
-  wrap_parameters :api_group, exclude: [], format: [:json]
   before_filter :initialize_agents, only: [:create, :update]
   before_filter :drop_existing_agents, only: [:update], if: -> { @agents }
   before_filter :build_agents, only: [:create, :update]
+  before_filter :set_round_robin_enbled
 
   private
 
@@ -11,17 +11,15 @@ class ApiGroupsController < ApiApplicationController
       group_params.delete('auto_ticket_assign') unless current_account.features_included?(:round_robin)
       params[cname].permit(*(group_params))
       group = ApiGroupValidation.new(params[cname], @item)
-      unless group.valid?
-        if group.error_options.blank?
-          render_error group.errors
-        else
-          render_custom_errors(group, group.error_options)
-        end
-      end
+      render_error group.errors unless group.valid?
     end
 
     def scoper
       current_account.groups
+    end
+
+    def set_round_robin_enbled
+      @round_robin_enabled = current_account.features_included? (:round_robin)
     end
 
     def initialize_agents

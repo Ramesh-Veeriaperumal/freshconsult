@@ -101,7 +101,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
                                                     auto_ticket_assign: true, agents: [1, 2])
     assert_response :success
-    match_json(group_pattern({ escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true,
+    match_json(group_pattern({ escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: 1,
                                agents: [1, 2] }, group.reload))
   end
 
@@ -146,6 +146,15 @@ class ApiGroupsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: group.id }, agents: [1])
     assert_response :success
     match_json(group_pattern({ agents: [1] }, group.reload))
+  end
+
+  def test_show_group_with_round_robin_disabled
+    group = create_group(@account)
+    @account.class.any_instance.stubs(:features_included?).returns(false)
+    get :show, construct_params(id: group.id)
+    @account.class.any_instance.unstub(:features_included?)
+    assert_response :success
+    match_json(group_pattern_without_assingn_type(Group.find(group.id)))
   end
 
   def test_update_auto_ticket_assign_with_round_robin_disabled

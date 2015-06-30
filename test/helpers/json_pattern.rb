@@ -292,6 +292,17 @@ module JsonPattern
   end
 
   def group_pattern(expected_output = {}, group)
+    group_json = group_json(expected_output, group)
+    group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type)
+    return group_json
+  end
+
+  def group_pattern_without_assingn_type(expected_output = {}, group)
+    group_json = group_json(expected_output, group)
+    return group_json
+  end
+
+  def group_json(expected_output, group)
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
     {
@@ -300,7 +311,6 @@ module JsonPattern
       description: expected_output[:description] || group.description,
       business_calendar_id: expected_output[:business_calendar_id] || group.business_calendar_id,
       escalate_to: expected_output[:escalate_to] || group.escalate_to,
-      auto_ticket_assign: expected_output[:auto_ticket_assign] || (group.ticket_assign_type == 1 ? true : false),
       agents: group.agent_groups.map(&:user_id),
       unassigned_for: expected_output[:unassigned_for] || (GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
