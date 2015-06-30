@@ -115,7 +115,7 @@ describe Solution::ArticlesController do
 
   it "should edit a solution article" do
     get :edit, :id => @test_article.id, :folder_id => @test_folder.id, :category_id => @test_category.id
-    response.body.should =~ /solution\/articles\/(.+)#edit/ 
+    response.should  redirect_to("/solution/articles/#{@test_article.id}-#{@test_article.title[0..100].downcase.gsub(/[^a-z0-9]+/i, '-')}#edit")
     name = Faker::Name.name   
     put :update, { :id => @test_article.id, 
                    :solution_article => {:title => "#{name}",
