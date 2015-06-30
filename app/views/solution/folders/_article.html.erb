@@ -25,7 +25,7 @@
 				</span>
 			</div>
 			<div class="span2 pull-right mt6 text-center article-info">
-				<% if article.draft.present? %>
+				<% if article.draft.present? || article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
 					<span class="label">
 						<%= t('solutions.status.draft')%> 
 					</span>

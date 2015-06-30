@@ -39,7 +39,7 @@ window.App.Solutions = window.App.Solutions || {};
 
     setCurrentPage: function () {
       var folder_id, category_id;
-      $('#community-solutions-sidebar li').removeClass('active');
+      $('#community-solutions-sidebar li').removeClass('active toggle-open');
       switch (App.namespace) {
       case 'solution/categories/index':
         $('#community-solutions-sidebar [data-page-name=home]').parent().addClass('active');
@@ -67,7 +67,7 @@ window.App.Solutions = window.App.Solutions || {};
           
       default:
         if (this.activeFolder !== null) {
-          $('#sb-discussions-forum-' + this.activeFolder).parent().addClass('active');
+          $('#sb-solutions-folder-' + this.activeFolder).parent().addClass('active');
         }
         break;
       }

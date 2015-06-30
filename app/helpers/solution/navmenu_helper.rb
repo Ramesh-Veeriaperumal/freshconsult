@@ -12,7 +12,7 @@ module Solution::NavmenuHelper
       op << %(<i class="forum_expand"></i>) unless category[:folders].blank?
       op << pjax_link_to(category[:name], solution_category_path(:id => category[:id]), {
                   :"data-category-id" => category[:id],
-                  :id => "solution_category_#{category[:id]}"
+                  :id => "sb-solutions-category-#{category[:id]}"
                 })
       op << folder_list(category[:folders], category[:id])
       op << %(</li>)
@@ -30,7 +30,7 @@ module Solution::NavmenuHelper
                           solution_folder_path(:id => folder[:id]), {
                             :"data-folder-id" => folder[:id],
                             :"data-category-id" => category_id,
-                            :id => "solution_folder_#{folder[:id]}"
+                            :id => "sb-solutions-folder-#{folder[:id]}"
                         })
       op << %( </li> )
     end
