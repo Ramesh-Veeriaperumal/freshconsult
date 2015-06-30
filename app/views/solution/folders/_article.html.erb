@@ -10,7 +10,7 @@
 					<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				</div>
 			<% end %>	
-			<div class="span3 pull-right text-right mt6 pr15 article-details">
+			<div class="span3 pull-right text-right mt6 pr15">
 				<span class="span4 align-left meta-component <%= 'faded' if article.hits == 0 %>">
 					<%= font_icon "file-visible" %>
 					<%= article.hits %>
@@ -35,7 +35,7 @@
 				<div class="comm-item-title">
 					<%= pjax_link_to(h(article.title), solution_article_path(article.id)) %>
 				</div>
-				<div class="comm-item-details article-details muted">
+				<div class="comm-item-details muted">
 					<%= t('solution.details',
 					:user_name => article.user,
 					:created_time => article.created_at.to_i,

@@ -14,11 +14,11 @@
 			<div class="comm-item-main span8 clear-left-margin">
 				<div class="comm-item-title">
 					<%= pjax_link_to(h(folder.name), solution_folder_path(folder.id)) %>
-					<span class="muted folder-details">
+					<span class="muted">
 						(<%= folder.articles.size %>)
 					</span>
 				</div>
-				<div class="comm-item-details muted folder-details">
+				<div class="comm-item-details muted">
 					<span class="visibilty-label"><%= t('solution.folders.folder_form.visible_to').html_safe %>:</span>
 					<%= company_visibility_tooltip(folder) %>
 				</div>
