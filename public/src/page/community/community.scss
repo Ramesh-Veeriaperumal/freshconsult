@@ -383,27 +383,6 @@ body.community.moderation.cs-always-show {
 			cursor: pointer;
 		}
 	}
-	.success{
-		background-color: #fffee9;
-		color: #333;
-		.preview-draft-link, .discard-draft, .publish-draft {
-			display:inherit;
-		}
-
-	}
-	.error{
-		background-color: #C6656F;
-		color: white;
-		.btn-small{
-			background: #F8EFF0;
-		}
-		.draft-btn {
-			display:none;
-		}
-		.preview-draft-link {
-			color: white;
-		}
-	}
 	.disabled {
 		color: grey;
 	}

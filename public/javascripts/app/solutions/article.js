@@ -124,6 +124,7 @@ window.App = window.App || {};
       this.bindPropertiesToggle();
       this.formatSeoMeta();
       this.select2Tags();
+      this.formValidate();
     },
     
     bindPropertiesToggle: function () {
@@ -148,6 +149,12 @@ window.App = window.App || {};
         $('#solution_article_seo_data_meta_description').val(
           $('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim()
         );
+      });
+    },
+
+    formValidate: function () {
+      $('body').on('submit.articles', '#article-form', function (ev) {
+        return $('#article-form').valid();
       });
     },
 

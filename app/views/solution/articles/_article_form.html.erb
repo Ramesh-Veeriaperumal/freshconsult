@@ -20,7 +20,7 @@
     <div class="row-fluid">
       <div class="editor-body">
         <%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", 
-              :class => "redactor_required", 
+              :class => "required_redactor", 
               :value => (@article.draft || @article).description,
               :data => {
                 :"remove-cursor" => true
