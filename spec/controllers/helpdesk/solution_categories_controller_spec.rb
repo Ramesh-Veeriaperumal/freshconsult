@@ -172,7 +172,7 @@ describe Solution::CategoriesController do
                                 :is_default => true
                               }
       check_meta_integrity(@test_category_for_meta)
-      response.should redirect_to(solution_categories_url)
+      response.should redirect_to(solution_category_path( @test_category_for_meta))
     end
 
     it "should destroy meta on category destroy" do

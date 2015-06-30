@@ -282,7 +282,7 @@ describe Solution::FoldersController do
                               },
         :category_id => @test_category.id
       check_meta_integrity(@test_folder_for_meta)
-      response.should redirect_to(solution_category_folder_path(@test_category.id, @test_folder_for_meta.id))
+      response.should redirect_to(solution_folder_path(@test_folder_for_meta.id))
     end
 
     it "should destroy meta on folder destroy" do
@@ -301,10 +301,18 @@ describe Solution::FoldersController do
     end
 
     it "should render a show page of a folder if corresponding meta is destroyed" do
+      @test_folder_for_meta.update_attributes(:is_default => false)
       get :show, :id => @test_folder_for_meta.id, :category_id => @test_category.id
       response.body.should =~ /#{@test_folder_for_meta.name}/
       response.should render_template("solution/folders/show")
     end
+
+    it "should redirect to drafts page for default folder" do
+      @test_folder_for_meta.update_attributes(:is_default => true)
+      get :show, :id => @test_folder_for_meta.id, :category_id => @test_category.id
+      response.should redirect_to(solution_my_drafts_path('all'))
+    end
+
   end
 
   describe "Reorder folder meta" do

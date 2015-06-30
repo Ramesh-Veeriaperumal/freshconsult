@@ -265,7 +265,7 @@ window.App = window.App || {};
 
     show_hide_customers: function () {
       var visiblity = $('#solution_folder_visibility').val();
-      if (visiblity === 4) {
+      if (parseInt(visiblity,10) === 4) {
         $('.company_folders').show();
       } else {
         $('#customers_filter').val("");
