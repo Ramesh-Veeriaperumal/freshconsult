@@ -5,13 +5,11 @@
 <% end %>
 <%= form_for (@category), :html => {:multipart => true, :id => "folder-form", :class => "validate_form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
-	<% unless @modal %>
-		<div class="button-container align-right itil-hide">
-			<div class="pull-left">
-				<%= confirm_delete(@category, solution_category_path(@category)) %>
-			</div>
-			<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
-		    <%= submit_tag t('save'), :class => "btn btn-primary" %>	   
+	<div class="button-container align-right itil-hide">
+		<div class="pull-left">
+			<%= confirm_delete(@category, solution_category_path(@category)) %>
 		</div>
-	<% end %>
+		<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
+	    <%= submit_tag t('save'), :class => "btn btn-primary" %>	   
+	</div>
 <% end %>
