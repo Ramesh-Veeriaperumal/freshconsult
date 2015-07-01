@@ -279,7 +279,11 @@ module ApiDiscussions
     def test_posts_with_pagination_exceeds_limit
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      get :posts, construct_params(id: first_topic.id, per_page: 4)
+      t = first_topic
+      4.times do
+        create_test_post(t, User.first)
+      end
+      get :posts, construct_params(id: t.id, per_page: 4)
       assert_response :success
       assert JSON.parse(response.body).count == 3
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])

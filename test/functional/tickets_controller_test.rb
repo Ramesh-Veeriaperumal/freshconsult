@@ -124,14 +124,61 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('fr_due_by', 'is not a date')])
   end
 
-  def test_create_invalid_model
-    params = ticket_params_hash.except(:email).merge(group_id: 89_089, product_id: 9090, email_config_id: 89_789, requester_id: 8989, responder_id: 8987)
+  def test_create_with_due_by_without_fr_due_by
+    params = ticket_params_hash.except(:due_by, :fr_due_by).merge(due_by: 12.days.since.to_s)
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', 'should be a valid email address'),
-                bad_request_error_pattern('group', "can't be blank"),
-                bad_request_error_pattern('responder', "can't be blank"),
-                bad_request_error_pattern('email_config', "can't be blank")])
+    match_json([bad_request_error_pattern('fr_due_by', 'Should not be blank if due_by is given')])
+  end
+
+  def test_create_without_due_by_with_fr_due_by
+    params = ticket_params_hash.except(:due_by, :fr_due_by).merge(fr_due_by: 12.days.since.to_s)
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('due_by', 'Should not be blank if fr_due_by is given')])
+  end
+
+  def test_create_with_due_by_and_fr_due_by
+    params = ticket_params_hash
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).never
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
+  def test_create_without_due_by_and_fr_due_by
+    params = ticket_params_hash.except(:fr_due_by, :due_by)
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    post :create, construct_params({}, params)
+    assert_response :created
+  end
+
+  # Should check with core to rename the attribute from being base to corresponding names while adding to the errors
+  # def test_create_invalid_model
+  #   user = add_new_user(@account)
+  #   user.update_attribute(:blocked, true)
+  #   cc_emails = []
+  #   51.times do
+  #     cc_emails << Faker::Internet.email
+  #   end
+  #   params = ticket_params_hash.except(:email).merge(group_id: 89_089, product_id: 9090, email_config_id: 89_789, requester_id: 8989, responder_id: 8987,
+  #     due_by: 30.days.ago.to_s, requester_id: user.id, cc_emails: cc_emails)
+  #   post :create, construct_params({}, params)
+  #   assert_response :bad_request
+  #   match_json([bad_request_error_pattern('group', "can't be blank"),
+  #               bad_request_error_pattern('responder', "can't be blank"),
+  #               bad_request_error_pattern('email_config', "can't be blank"),
+  #               bad_request_error_pattern('base', "User blocked! No more tickets allowed for this user"),
+  #               bad_request_error_pattern('base', "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket"),
+  #               bad_request_error_pattern('base', "Please give a date & time that is newer than the ticket's created date & time")])
+  # end
+
+  def test_create_invalid_user_id
+    params = ticket_params_hash.except(:email)
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('requester_id', 'should be a valid email address')])
   end
 
   def test_create_extra_params_invalid
@@ -333,6 +380,122 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, t.reload))
   end
 
+  def test_update_with_low_priority
+    params_hash = { priority: 1 }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.priority == 1
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_type
+    params_hash = { type: 'Incident' }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.ticket_type == 'Incident'
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_subject
+    subject = Faker::Lorem.words(10).join(' ')
+    params_hash = { subject: subject }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.subject == subject
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_description
+    description =  Faker::Lorem.paragraph
+    params_hash = { description: description }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.description == description
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_responder_id
+    responder_id = add_test_agent(@account).id
+    params_hash = { responder_id: responder_id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.responder_id == responder_id
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_requester_id
+    requester_id = add_new_user(@account).id
+    params_hash = { requester_id: requester_id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.requester_id == requester_id
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_group_id
+    group_id = create_group_with_agents(@account).id
+    params_hash = { group_id: group_id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.group_id == group_id
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_source
+    params_hash = { source: 2 }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.source == 2
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_tags
+    tags = [Faker::Name.name, Faker::Name.name]
+    params_hash = { tags: tags }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.tag_names == tags
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_closed_status
+    params_hash = { status: 5 }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.status == 5
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_resolved_status
+    params_hash = { status: 4 }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.status == 4
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
   def test_update_with_new_email_without_nil_requester_id
     params_hash = update_ticket_params_hash.merge(email:  Faker::Internet.email)
     count = User.count
@@ -405,6 +568,44 @@ class TicketsControllerTest < ActionController::TestCase
     assert User.count == (count + 1)
     assert User.find(t.reload.requester_id).phone == phone
     assert User.find(t.reload.requester_id).name == name
+  end
+
+  def test_update_with_due_by_and_fr_due_by
+    t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
+    previous_fr_due_by = t.frDueBy
+    previous_due_by = t.due_by
+    params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 100.days.since.to_s }
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.due_by != previous_due_by
+    assert t.reload.frDueBy != previous_fr_due_by
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_due_by
+    t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
+    previous_due_by = t.due_by
+    params_hash = { due_by: 100.days.since.to_s }
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.due_by != previous_due_by
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_fr_due_by
+    t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
+    previous_fr_due_by = t.frDueBy
+    params_hash = { fr_due_by: 2.hours.since.to_s }
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.frDueBy != previous_fr_due_by
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
   end
 
   def test_update_with_new_fb_id
@@ -501,13 +702,15 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_invalid_model
     t = ticket
-    params_hash = update_ticket_params_hash.except(:email).merge(group_id: 89_089, product_id: 9090, email_config_id: 89_789, requester_id: 8989, responder_id: 8987)
+    params_hash = update_ticket_params_hash.except(:email).merge(group_id: 89_089, product_id: 9090,
+                                                                 email_config_id: 89_789, requester_id: 8989, responder_id: 8987, due_by: 45.days.ago.to_s)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('requester_id', 'should be a valid email address'),
                 bad_request_error_pattern('group', "can't be blank"),
                 bad_request_error_pattern('responder', "can't be blank"),
-                bad_request_error_pattern('email_config', "can't be blank")])
+                bad_request_error_pattern('email_config', "can't be blank"),
+                bad_request_error_pattern('base', "Please give a date & time that is newer than the ticket's created date & time")])
   end
 
   def test_update_extra_params_invalid
@@ -834,14 +1037,13 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_without_permitted_tickets
-    Helpdesk::Ticket.update_all(responder_id: User.last.id)
+    Helpdesk::Ticket.update_all(responder_id: nil)
     get :index, controller_params
     assert_response :success
     response = parse_response @response.body
-    assert_equal 21, response.size
+    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
-    Helpdesk::Ticket.update_all(responder_id: nil)
     get :index, controller_params
     assert_response :success
     response = parse_response @response.body
@@ -926,6 +1128,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_requester
+    Helpdesk::Ticket.update_all(requester_id: User.first.id)
+    create_ticket(requester_id: User.last.id)
     get :index, controller_params(requester_id: User.last.id)
     assert_response :success
     response = parse_response @response.body
@@ -946,6 +1150,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_filter_and_requester
+    user = add_new_user(@account)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user.id)
     get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
     assert_response :success
     response = parse_response @response.body
@@ -992,6 +1198,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_requester_filter_company
     remove_wrap_params
     company = Company.first
+    new_company = create_company
+    add_new_user(@account, customer_id: new_company.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: new_company.users.map(&:id).first)
     get :index, controller_params(company_id: company.id,
                                   requester_id: User.first.id, filter: 'new_and_my_open')
     assert_response :success

@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :responder_id, :source, :status, :subject, :type,
-                :product_id, :tags, :custom_fields, :account, :attachments
+                :product_id, :tags, :custom_fields, :account, :attachments, :request_params
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
@@ -21,10 +21,14 @@ class TicketValidation < ApiValidation
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
 
+  validates :due_by, presence: { message: 'Should not be blank if fr_due_by is given' }, if: -> { fr_due_by }
+  validates :fr_due_by, presence: { message: 'Should not be blank if due_by is given' }, if: -> { due_by }
+
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'is not a valid email' }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'is not a valid email' } }
 
   def initialize(request_params, item, account)
+    @request_params = request_params
     @account = account
     @cc_emails = item.cc_email[:cc_emails] if item
     @fr_due_by = item.try(:frDueBy).try(:to_s) if item
@@ -47,7 +51,9 @@ class TicketValidation < ApiValidation
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
   def disallow_due_by?
-    Helpdesk::TicketStatus.status_keys_by_name(@account).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
+    if [:due_by, :fr_due_by].any? { |c| request_params.key?(c) }
+      Helpdesk::TicketStatus.status_keys_by_name(@account).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
+    end
   end
 
   # def allowed_picklist_values?

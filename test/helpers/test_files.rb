@@ -7,6 +7,7 @@ require 'authlogic/test_case'
 require 'minitest/pride'
 require 'minitest/reporters'
 require 'json_expressions/minitest'
+include ActiveSupport::Rescuable
 
 Dir["#{Rails.root}/test/helpers/*.rb"].each { |file| require file }
 Dir["#{Rails.root}/spec/support/*.rb"].each { |file| require file }

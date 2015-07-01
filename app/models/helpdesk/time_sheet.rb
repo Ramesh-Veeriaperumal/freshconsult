@@ -104,8 +104,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     relation = scoped
     filter_options.each_pair do |key, value|
       clause = filter_conditions(filter_options)[key.to_sym] || {}
-      # where & join chaining
-      relation = relation.where(clause[:conditions]).joins(clause[:joins])
+      relation = relation.where(clause[:conditions]).joins(clause[:joins]) # where & join chaining
     end
     relation
   end

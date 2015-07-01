@@ -116,7 +116,7 @@ class TicketsController < ApiApplicationController
       cc_emails =  params[cname][:cc_emails] || []
       params[cname][:cc_email] = { cc_emails: cc_emails, fwd_emails: [], reply_cc: cc_emails } unless @item
       # Set manual due by to override sla worker triggerd updates.
-      params[cname][:manual_dueby] = true if params[cname][:due_by] && params[cname][:fr_due_by]
+      params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
       # Collect tags in instance variable as it should not be part of params before build item.
       @tags = params[cname][:tags] if params[cname][:tags]
       # Assign original fields from api params and clean api params.

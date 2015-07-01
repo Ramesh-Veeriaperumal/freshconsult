@@ -1,6 +1,5 @@
 Todo:
  - API Layer middleware Removal using YAML settings file.
- - "Application controller before filters(controller logger, cache buster) to be added"
  - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
  - "Expose email config and product index"
  - Tickets? phone source?
@@ -13,6 +12,8 @@ Todo:
  - revisit cc_email in v2 api tickets create.
  - boolean values in validation should be converted to mysql readable format.
  - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
+ - Default content_type should be application/json in request header if not set?
+ - base as attribute name in model errors for multiple attributes. - should change that
 
  - Content type for get ticket index.
 Breaking changes in existing APIs:
@@ -36,6 +37,7 @@ Deferred:
  - "Validate picklist values for custom drop down & dependent fields in ticket"
 
 Completed:
+ - "Application controller before filters(controller logger, cache buster) to be added"
  - ticket custom fields test
  - multipart form data handle
  - Investigate rails-api

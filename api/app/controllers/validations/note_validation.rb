@@ -9,7 +9,6 @@ class NoteValidation < ApiValidation
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true, message: 'invalid_format' } }
 
   def initialize(request_params, item)
-    @notify_emails = item.try(:to_emails)
     @ticket_id = item.try(:notable_id)
     super(request_params, item)
   end

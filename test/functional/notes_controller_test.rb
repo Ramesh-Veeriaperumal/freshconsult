@@ -273,10 +273,9 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_numericality_invalid
     params_hash = { user_id: 'x' }
-    post :reply, construct_params({ ticket_id: 'x' }, params_hash)
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('user_id', 'is not a number'),
-                bad_request_error_pattern('ticket_id', 'is not a number')])
+    match_json([bad_request_error_pattern('user_id', 'is not a number')])
   end
 
   def test_reply_datatype_invalid
@@ -439,8 +438,22 @@ class NotesControllerTest < ActionController::TestCase
     match_json(base_error_pattern('method_not_allowed', methods: 'DELETE'))
   end
 
+  def test_update_not_note_or_rpely
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 1)
+    params = update_note_params_hash
+    put :update, construct_params({ id: n.id }, params)
+    assert_response :not_found
+  end
+
   def test_destroy
     n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    delete :destroy, construct_params(id: n.id)
+    assert_response :no_content
+    assert Helpdesk::Note.find(n.id).deleted == true
+  end
+
+  def test_destroy_reply
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 0)
     delete :destroy, construct_params(id: n.id)
     assert_response :no_content
     assert Helpdesk::Note.find(n.id).deleted == true
@@ -457,6 +470,12 @@ class NotesControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: n.id)
     assert_response :not_found
     n.update_column(:deleted, false)
+  end
+
+  def test_delete_not_note_or_reply
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 1)
+    delete :destroy, construct_params(id: n.id)
+    assert_response :not_found
   end
 
   def test_delete_without_privilege
