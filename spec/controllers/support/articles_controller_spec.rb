@@ -298,6 +298,104 @@ RSpec.describe Support::Solutions::ArticlesController do
     @public_article1.hits.should be_eql(hit_count + 1)
   end
 
+  describe "draft preview" do
+
+    before(:all) do
+      @published_article = create_article( {
+                            :title => "Test article",
+                            :description => "This article is published.",
+                            :folder_id => @test_folder1.id,
+                            :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published],
+                            :art_type => 1,
+                            :user_id => "#{@agent.id}" } )
+      @published_article.create_draft_from_article({
+                          :title => "Random draft",
+                          :description => "I am the draft version.",
+                          :user_id => "#{@agent.id}"} )
+      @published_article_1 = create_article( {
+                              :title => "Test article",
+                              :description => "This article is published.",
+                              :folder_id => @test_folder1.id,
+                              :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published],
+                              :art_type => 1,
+                              :user_id => "#{@agent.id}"} )
+      @draft_article = create_article( {
+                        :title => "Test article",
+                        :description => "This article is not published.",
+                        :folder_id => @public_folder.id,
+                        :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft],
+                        :art_type => 1,
+                        :user_id => "#{@agent.id}" } )
+      @draft_article_1 = create_article( {
+                        :title => "Test article",
+                        :description => "This article is not published.",
+                        :folder_id => @test_folder1.id,
+                        :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft],
+                        :art_type => 1,
+                        :user_id => "#{@agent.id}" } )
+      @test_role = create_role({
+                    :name => "New role test #{@now}", 
+                    :privilege_list => ["manage_tickets", "edit_ticket_properties", 
+                            "view_forums", "manage_forums", "view_contacts", "view_reports", "manage_users", 
+                            "", "0", "0", "0", "view_admin"]} )
+      @new_user = add_test_agent(@account, {:role => @test_role.id})
+    end
+
+    it "should redirect to login page when not logged in and article is published" do
+      get 'show', :id => @published_article, :status => "preview"
+      UserSession.find.should be_nil
+      response.should redirect_to '/login'
+    end
+
+    it "should redirect to login page when not logged in, article is a draft and its folder is not visible to all" do
+      get 'show', :id => @draft_article_1, :status => "preview"
+      UserSession.find.should be_nil
+      response.should redirect_to '/login'
+    end
+
+    it "should render 404 when not logged in, article is a draft and its folder is visible to all" do
+      get 'show', :id => @draft_article, :status => "preview"
+      UserSession.find.should be_nil
+      response.should render_template(:file => "#{Rails.root}/public/404.html")
+      expect(response.status).to eql(404)
+    end
+
+    it "should render 404 when logged in as an end user" do
+      log_in(@user)
+      get 'show', :id => @published_article, :status => "preview"
+      response.should render_template(:file => "#{Rails.root}/public/404.html")
+      expect(response.status).to eql(404)
+    end
+
+    it "should render 404 when logged in as an agent but no privilege to view solutions" do
+      log_in(@new_user)
+      get 'show', :id => @published_article_1, :status => "preview"
+      response.should render_template(:file => "#{Rails.root}/public/404.html")
+      expect(response.status).to eql(404)
+    end
+
+    it "should render 404 when logged in as an agent, article is published and doesn't have a draft version" do
+      log_in(@agent)
+      get 'show', :id => @published_article_1, :status => "preview"
+      response.should render_template(:file => "#{Rails.root}/public/404.html")
+      expect(response.status).to eql(404)
+    end
+
+    it "should render the draft version of the article when logged in as an agent, article is published and has a draft version" do
+      log_in(@agent)
+      get 'show', :id => @published_article, :status => "preview"
+      response.body.should =~ /#{@published_article.draft.title}/
+      response.body.should =~ /#{@published_article.draft.description}/
+    end
+
+    it "should render the article when logged in as an agent and article is a draft" do
+      log_in(@agent)
+      get 'show', :id => @draft_article, :status => "preview"
+      response.body.should =~ /#{@draft_article.title}/
+      response.body.should =~ /#{@draft_article.description}/
+    end
+  end
+
   describe "Hits and likes should reflect in meta" do
     before(:all) do
       @test_article_for_hits = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
