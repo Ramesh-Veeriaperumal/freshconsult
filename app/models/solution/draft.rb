@@ -24,8 +24,6 @@ class Solution::Draft < ActiveRecord::Base
 
 	alias_attribute :modified_by, :user_id
 
-	xss_sanitize :only => [:description],  :article_sanitizer => [:description]
-
 	STATUSES = [
 		[ :editing,     "solutions.draft.status.editing",        0 ], 
 		[ :work_in_progress, "solutions.draft.status.work_in_progress",    1 ]

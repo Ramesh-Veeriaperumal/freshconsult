@@ -256,5 +256,3 @@ end
   gem "fontcustom",           	"1.3.3"  
 
 # end
-
-gem 'rollout', '2.1.0'
