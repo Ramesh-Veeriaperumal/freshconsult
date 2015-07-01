@@ -34,6 +34,7 @@ class Solution::FoldersController < ApplicationController
   
 
   def new
+    @page_title = t("header.tabs.new_folder")
     @folder = current_account.folders.new
     @folder.category = @category if params[:category_id]
     respond_to do |format|

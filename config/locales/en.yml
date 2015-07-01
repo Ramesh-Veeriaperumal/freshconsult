@@ -3613,6 +3613,9 @@ en:
       admin: Admin
       checkstatus: Check your ticket status
       solutions: Solutions
+      new_solution: New Solution
+      new_folder: New Folder
+      new_solution_category: New Category
       forums: Forums
       tickets: Tickets
       home: Home

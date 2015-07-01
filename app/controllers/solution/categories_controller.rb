@@ -39,6 +39,7 @@ class Solution::CategoriesController < ApplicationController
   end
   
   def new
+    @page_title = t("header.tabs.new_solution_category")
     @category = current_account.solution_categories.new
 
     respond_to do |format|

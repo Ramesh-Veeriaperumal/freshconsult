@@ -37,6 +37,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def new
+    @page_title = t("header.tabs.new_solution")
     current_folder = Solution::Folder.first
     current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
     @article = current_folder.articles.new    
