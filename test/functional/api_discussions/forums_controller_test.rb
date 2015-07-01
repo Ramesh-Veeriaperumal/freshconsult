@@ -397,8 +397,8 @@ module ApiDiscussions
     def test_permit_toggle_params_invalid
       monitor_forum(f_obj, @agent, 1)
       delete :unfollow, construct_params({ id: f_obj.id }, user_id: @agent.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_follow_user_id_invalid
@@ -439,7 +439,8 @@ module ApiDiscussions
       user = user_without_monitorships
       monitor_forum(f_obj, user, 1)
       get :is_following, construct_params(user_id: user.id, id: f_obj.id)
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: user.id))
     end
 
     def test_is_following_without_privilege_valid

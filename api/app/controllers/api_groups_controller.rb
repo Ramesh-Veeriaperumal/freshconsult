@@ -19,7 +19,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def set_round_robin_enbled
-      @round_robin_enabled = current_account.features_included? (:round_robin)
+      @round_robin_enabled = current_account.features_included? :round_robin
     end
 
     def initialize_agents

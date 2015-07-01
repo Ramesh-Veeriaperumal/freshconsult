@@ -7,7 +7,8 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
     v2_expected = {
       create: 1,
       reply: 1,
-      update: 3
+      update: 4,
+      destroy: 7
     }
 
     ticket_id = Helpdesk::Ticket.first.display_id
@@ -22,6 +23,11 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
     v2[:update], v2[:api_update] = count_api_queries { put("/api/notes/#{id1}", v2_note_update_payload, @write_headers) }
     # No public API to update a note in v1. Hence using a private one.
     v1[:update] = count_queries { put("/helpdesk/tickets/#{ticket_id}/notes/#{id2}.json", v1_note_payload, @write_headers) }
+
+    # delete
+    v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/notes/#{id1}", nil, @headers) }
+    # No public API to update a note in v1. Hence using a private one.
+    v1[:destroy] = count_queries { delete("/helpdesk/tickets/#{ticket_id}/notes/#{id2}.json", nil, @headers) }
 
     # reply
     v2[:reply], v2[:api_reply] = count_api_queries { post("/api/tickets/#{ticket_id}/reply", v2_reply_payload, @write_headers) }

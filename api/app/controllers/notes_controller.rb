@@ -5,11 +5,11 @@ class NotesController < ApiApplicationController
   include CloudFilesHelper
   include Conversations::Email
 
-  before_filter :load_object, only: [:update, :destroy]
+  before_filter :load_object, :check_agent_note, only: [:update, :destroy]
   before_filter :can_update?, only: [:update]
-  before_filter :find_parent, only: [:reply]
+  before_filter :load_ticket, only: [:reply]
   before_filter :validate_params, :manipulate_params, only: [:update, :create, :reply]
-  before_filter :can_send_user?, :find_ticket, :build_object, only: [:create, :reply]
+  before_filter :can_send_user?, :build_object, only: [:create, :reply]
   before_filter -> { kbase_email_included? params[cname] }, only: [:reply] # kbase_email_included? present in Email module
 
   def create
@@ -69,17 +69,9 @@ class NotesController < ApiApplicationController
       end
     end
 
-    def find_parent
-      @ticket = load_ticket(params[:ticket_id])
-      if @ticket
-        params[cname][:ticket_id] = @ticket.id
-      else
-        head 404
-      end
-    end
-
-    def load_ticket(display_id) # Needed here in controller to find the item by display_id
-      current_account.tickets.find_by_param(display_id, current_account)
+    def load_ticket # Needed here in controller to find the item by display_id
+      @ticket = current_account.tickets.find_by_param(params[:ticket_id], current_account)
+      head 404 unless @ticket
     end
 
     def scoper
@@ -89,8 +81,8 @@ class NotesController < ApiApplicationController
     def validate_params
       field = "NoteConstants::#{action_name.upcase}_NOTE_FIELDS".constantize
       params[cname].permit(*(field))
-      note = NoteValidation.new(params[cname], @item)
-      render_error note.errors unless note.valid?
+      @note_validation = NoteValidation.new(params[cname], @item, can_validate_ticket)
+      render_error @note_validation.errors unless @note_validation.valid?
     end
 
     def manipulate_params
@@ -98,24 +90,31 @@ class NotesController < ApiApplicationController
       params[cname][:source] = NoteConstants::NOTE_TYPE_FOR_ACTION[action_name] unless @item
       # only note can have choices for private field.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      # Set ticket id from already assigned ticket only for create/reply action not for update action.
+      @ticket ||= @note_validation.ticket
+      params[cname][:ticket_id] = @ticket.id if @ticket
+
       assign_and_clean_params(notify_emails: :to_emails, ticket_id: :notable_id)
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
 
-    def find_ticket
-      @ticket ||= load_ticket(params[cname][:notable_id])
-      params[cname][:notable_id] = @ticket.id if @ticket
+    def check_agent_note
+      render_request_error(:access_denied, 403) if @item.user && @item.user.customer?
     end
 
     def load_object
       condition = 'id = ? '
       # Conditions to inlcude deleted record based on action
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
-      # Conditions to include records with email or note as source based on action
+      # Conditions to include records with email or note as a source based on action
       condition += ' and source in (?)' if NoteConstants::NOTE_SOURCE_SCOPE.keys.include?(action_name)
       item = scoper.where(condition, params[:id], NoteConstants::NOTE_SOURCE_SCOPE[action_name]).first
       @item = instance_variable_set('@' + cname, item)
       head :not_found unless @item
+    end
+
+    def can_validate_ticket
+      action_name.to_s == 'create'
     end
 end
