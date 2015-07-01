@@ -17,8 +17,9 @@ module CommunityHelper
     end
   end
 
-  def active_attachments(att_type, draft, article)
-    return article.send(att_type) unless article.draft.present?
+  def active_attachments(att_type, article)
+    draft = article.draft
+    return article.send(att_type) unless draft.present?
 
     (article.send(att_type).reject do |a|
       (draft.deleted_attachments(att_type) || []).include?(a.id)

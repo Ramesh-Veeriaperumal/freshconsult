@@ -43,8 +43,8 @@
     <%= render	:partial => "/solution/shared/attachment_form",
         :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
           :original_attachments => { 
-            :cloud_files => active_attachments(:cloud_files, @article.draft, @article), 
-            :regular => active_attachments(:attachments, @article.draft, @article) }
+            :cloud_files => active_attachments(:cloud_files, @article), 
+            :regular => active_attachments(:attachments, @article) }
         } %>
     <% if is_application_installed?("screenr") %>
       <div class="control-group">

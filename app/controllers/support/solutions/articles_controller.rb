@@ -105,7 +105,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def draft_preview_agent_filter?
-      return (current_user && current_user.agent? && (@article.draft.present? || !@article.published?)) if draft_preview?
+      return (current_user && current_user.agent? && (@article.draft.present? || !@article.published?) && privilege?(:view_solutions)) if draft_preview?
       true
     end
 
