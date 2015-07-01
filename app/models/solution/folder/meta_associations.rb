@@ -21,7 +21,8 @@ class Solution::Folder < ActiveRecord::Base
     :through => :solution_article_meta, 
     :source => :solution_articles,
 		:readonly => false,
-    :conditions => proc { "solution_articles.language_id = '#{Solution::Article.current_language_id}'" }
+    :conditions => proc { "solution_articles.language_id = '#{Solution::Article.current_language_id}'" },
+    :extend => Solution::MultipleThroughSetters
 
   has_many :published_articles_with_meta, 
     :class_name => 'Solution::Article', 
@@ -30,8 +31,11 @@ class Solution::Folder < ActiveRecord::Base
 		:readonly => false,
     :conditions => proc { "solution_articles.language_id = '#{Solution::Article.current_language_id}' and solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}" }
 
-  FEATURE_BASED_METHODS.each do |method|
-    alias_method_chain method, :meta
-  end
-
+  has_many :customer_folders_with_meta, 
+    :class_name => 'Solution::CustomerFolder', 
+    :through => :solution_folder_meta,
+    :source => :customer_folders, 
+    :readonly => false, 
+    :dependent => :destroy,
+    :extend => Solution::MultipleThroughSetters
 end

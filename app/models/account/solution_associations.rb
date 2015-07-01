@@ -66,7 +66,4 @@ class Account < ActiveRecord::Base
 
   alias_method :folders, :solution_folders_with_meta
 
-  FEATURE_BASED_METHODS.each do |method|
-    alias_method_chain method, :meta
-  end
 end

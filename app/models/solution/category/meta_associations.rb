@@ -11,7 +11,8 @@ class Solution::Category < ActiveRecord::Base
 		:dependent => :destroy, 
 		:order => "position",
 		:readonly => false,
-		:conditions => proc { "solution_folders.language_id = '#{Solution::Folder.current_language_id}'" }
+		:conditions => proc { "solution_folders.language_id = '#{Solution::Folder.current_language_id}'" },
+		:extend => Solution::MultipleThroughSetters
 
   has_many :public_folders_with_meta, 
   	:class_name =>'Solution::Folder' ,  
@@ -57,9 +58,4 @@ class Solution::Category < ActiveRecord::Base
     :through => :mobihelp_app_solutions_with_meta
 
   alias_method :solution_folders, :folders_with_meta
-
-  FEATURE_BASED_METHODS.each do |method|
-  	alias_method_chain method, :meta
-  end
-
 end

@@ -29,6 +29,7 @@ class Solution::Folder < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
+  include Solution::MetaAssociationSwitcher
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    

@@ -25,6 +25,7 @@ class Solution::Article < ActiveRecord::Base
   include Mobile::Actions::Article
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  include Solution::MetaAssociationSwitcher
 
   attr_accessor :highlight_title, :highlight_desc_un_html
 
@@ -212,7 +213,7 @@ class Solution::Article < ActiveRecord::Base
   private
 
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.folder.category_id)
+      update_mh_solutions_category_time(self.solution_folder.category_id)
     end
 
     def content_changed?

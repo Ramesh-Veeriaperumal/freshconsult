@@ -30,6 +30,7 @@ class Solution::Category < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
+  include Solution::MetaAssociationSwitcher
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'

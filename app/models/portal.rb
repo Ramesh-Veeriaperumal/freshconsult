@@ -43,23 +43,6 @@ class Portal < ActiveRecord::Base
 
   has_one :template, :class_name => 'Portal::Template'
 
-  has_many :portal_solution_categories,
-    :class_name => 'PortalSolutionCategory',
-    :foreign_key => :portal_id,
-    :order => "position",
-    :dependent => :delete_all
-
-  has_many :solution_category_meta,
-    :class_name => 'Solution::CategoryMeta',
-    :through => :portal_solution_categories,
-    :order => "portal_solution_categories.position"
-
-  has_many :solution_categories,
-    :class_name => 'Solution::Category',
-    :through => :solution_category_meta,
-    :order => "solution_category_meta.position",
-    :conditions => proc { "solution_categories.language_id = '#{Solution::Category.current_language_id}'" }
-
   has_many :portal_forum_categories,
     :class_name => 'PortalForumCategory',
     :foreign_key => :portal_id,
@@ -77,6 +60,8 @@ class Portal < ActiveRecord::Base
 
   belongs_to_account
   belongs_to :product
+
+  concerned_with :solution_associations
 
   APP_CACHE_VERSION = "FD72"
 

@@ -20,6 +20,7 @@ class Account < ActiveRecord::Base
   
   concerned_with :associations, :constants, :validations, :callbacks, :solution_associations
   include CustomerDeprecationMethods
+  include Solution::MetaAssociationSwitcher
   
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
   
