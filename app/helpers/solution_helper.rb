@@ -113,9 +113,8 @@ module SolutionHelper
 		_op.html_safe
 	end
 	
-	def helpcard_content(notes, title, info_base)
+	def helpcard_content(notes, info_base)
 		output = []
-		output << %(<h3 class="lead">#{t(title).html_safe}</h3>)
 		notes.each do |num|
 			output << %(<p> #{t(info_base + num.to_s).html_safe} </p>)
 		end
