@@ -151,12 +151,12 @@ window.App.Solutions = window.App.Solutions || {};
       if (!this.categoriesLoaded) {
         $('#cm-sb-solution-list').trigger('afterShow');
       }
-      $('body').addClass('cs-show');
+      $('body').addClass('cs-show cs-solutions-show');
       this.sidebarActive = true;
     },
 
     hide: function () {
-      $('body').removeClass('cs-show');
+      $('body').removeClass('cs-show cs-solutions-show');
 			this.sidebarActive = false;
     },
     

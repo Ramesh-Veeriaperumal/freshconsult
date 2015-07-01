@@ -75,6 +75,7 @@ $sidebar-width: 284px;
 		
 	}
 }
+
 .cm-sb-list{
 	overflow:auto;
 	.disabled a {
@@ -220,7 +221,6 @@ body .community-sidebar {
 }
 body.community.cs-show{
 	.community-sidebar {
-		display: block;
 		-webkit-animation-duration: 0.20s;
 	  animation-duration: 0.20s;
 	  -webkit-animation-fill-mode: both;
@@ -228,8 +228,22 @@ body.community.cs-show{
 		-webkit-animation-name: fadeInLeft;
 		animation-name: fadeInLeft;
 	}
+	
+	#community-sidebar {
+		display: block;
+	}
 }
-body.community.cs-always-show .community-sidebar {
+
+body.community.cs-solutions-show {
+	#community-solutions-sidebar {
+		display: block;
+	}
+	
+	#community-sidebar {
+		display: none;
+	}
+}
+body.community.cs-always-show #community-sidebar {
 	display: block;
 	animation: none;
 	-webkit-animation: none;
