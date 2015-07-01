@@ -18,7 +18,9 @@
 	<!-- Solution page content -->
 	<div class="solution-content">
 		<%= render :partial => "view" %>
-		<%= render :partial => "article_form" %>
+		<% unless @article.draft.present? && @article.draft.locked? %>
+			<%= render :partial => "article_form" %>
+		<% end %>
 	</div>
 
 </div>

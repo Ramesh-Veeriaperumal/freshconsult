@@ -3,10 +3,12 @@
   <div class="span10">
     <h3 class="lead" id="current-article-title"><%= @current_item.title %></h3>
   </div>
-    <% unless !privilege?(:publish_solution) && @article.draft.present? && @article.draft.locked? %>
-  	  <div class="span2 pull-right pagination-right header_buttons align-right">
-  	    <a href="javascript:void(0)" class="btn article-edit-btn"><%= t('edit') %></a>
-  	  </div>
+    <% if privilege?(:publish_solution) %>
+      <% unless @article.draft.present? && @article.draft.locked? %>
+    	  <div class="span2 pull-right pagination-right header_buttons align-right">
+    	    <a href="javascript:void(0)" class="btn article-edit-btn"><%= t('edit') %></a>
+    	  </div>
+      <% end %>
     <% end %>
   </div>
   <div class="article-content" id="current-article-description"><%= @current_item.description.html_safe %></div>

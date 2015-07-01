@@ -96,8 +96,8 @@ class Solution::DraftsController < ApplicationController
 		end
 
 		def autosave_save_draft
+			@draft.lock_for_editing! unless @draft.locked?
 			if @draft.update_attributes(params.slice(*["description", "title"]))
-				@draft.lock_for_editing! unless @draft.locked?
 				return autosave_response(:save_success, {}, true).merge({:timestamp => @draft.updation_timestamp})
 			end
 			autosave_response(:other_problem)
