@@ -57,7 +57,8 @@
 				<div class="vertical-alignment">
 					<%= user_avatar(call.agent) unless call.agent.blank? %>
 				</div>
-				<div class="vertical-alignment"><b class="ellipsis"><%= link_to_user(call.agent) %></b><br/>
+				<% caller_name = trimmed_user_name(h(call.agent.display_name)) %>
+				<div class="vertical-alignment"><b class="ellipsis"><%= link_to_caller(call.agent,caller_name) %></b><br/>
 					<div class="helpdesk_number ff-user-location muted">
 						<%= current_number %>
 					</div>
