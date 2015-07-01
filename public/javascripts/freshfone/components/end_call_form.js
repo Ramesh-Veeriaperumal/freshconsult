@@ -150,11 +150,13 @@ var FreshfoneEndCall;
 			this.freshfonewidget = freshfonewidget;
 		},
 		saveNewTicket: function () {
+			trigger_event('saveticket');
 			this.saveTicket(false);
 			this.hideEndCallForm();
 		},
 		
 		saveToExisting: function () {
+			trigger_event('saveticket');
 			this.saveTicket(true);
 			this.hideEndCallForm();
 		},
@@ -216,7 +218,7 @@ var FreshfoneEndCall;
 					'call_history': !this.inCall
 				}
 			});
-		},
+		},	
 		custom_requester_id: function () {
 			return this.$requesterName.data('requester_id');
 		},
