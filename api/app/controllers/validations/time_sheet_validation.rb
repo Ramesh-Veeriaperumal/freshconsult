@@ -1,13 +1,17 @@
 class TimeSheetValidation < ApiValidation
   attr_accessor :billable, :executed_at, :time_spent, :ticket_id, :user_id, :note, :ticket, :timer_running, :start_time
 
+  # do not change validation order
   validates :ticket_id, :user_id, numericality: true
+  # if ticket_id is not a number, to avoid query, below if condition is used.
   validates :ticket, presence: true, if: -> { errors[:ticket_id].blank? } 
   validates :executed_at, :start_time, date_time: { allow_nil: true }
   validates :billable, :timer_running, included: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
   validates :time_spent, format: { with: /^(?:\d|[01]\d|2[0-3]):[0-5]\d$/, message: 'is not a valid time_spent', allow_nil: true }
+  # start_time param has no meaning when timer is off 
   validates :start_time, inclusion: {in: [nil], 
           message: 'Should be blank if timer_running is false'}, if: -> { !timer_running }
+  # start_time should be lesser than current_time to avoid negative time_spent values.
   validate :start_time_value, if: -> { start_time && errors[:start_time].blank?}
 
   def initialize(request_params, item, account, timer_running)

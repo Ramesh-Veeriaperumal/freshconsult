@@ -37,7 +37,7 @@ class TimeSheetValidationsTest < ActionView::TestCase
     tkt = Helpdesk::Ticket.first
     controller_params = {'ticket_id' => tkt.id, 'timer_running' => false, 'start_time' => "test"}
     item = nil
-    time_sheet = TimeSheetValidation.new(controller_params, item, Account.first, true)
+    time_sheet = TimeSheetValidation.new(controller_params, item, Account.first, false)
     time_sheet.valid?
     error = time_sheet.errors.full_messages
     assert error.include?("Start_time Should be blank if timer_running is false")
