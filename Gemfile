@@ -242,6 +242,7 @@ group :test do
   gem "minitest-rails", "~> 1.0" # Used by API
   gem "minitest-reporters" # Used by API
   gem 'json_expressions' # Used by API
+  gem "timecop" # Used by API
 end
 
 # group :development, :assets do

@@ -272,8 +272,7 @@ module JsonPattern
 
   def ticket_field_nested_pattern(tf, hash = {})
     ticket_field_pattern(tf).merge(
-      nested_ticket_fields: Array,
-      nested_choices: hash['nested_choices'] || Array
+      nested_ticket_fields: Array
     )
   end
 

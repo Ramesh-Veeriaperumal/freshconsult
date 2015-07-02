@@ -10,6 +10,29 @@ class TimeSheetsControllerTest < ActionController::TestCase
     { time_sheet: params }
   end
 
+  def ticket
+    Helpdesk::Ticket.first
+  end
+
+  def params_hash
+    {ticket_id: ticket.id, user_id: @agent.id}
+  end
+
+  def freeze_time(&block)
+    time = Time.now
+    Timecop.freeze(time)
+    yield
+    Timecop.return
+  end
+
+  def utc_time(time = Time.now)
+    time.utc.as_json
+  end
+
+  def time_sheet(id)
+    Helpdesk::TimeSheet.find_by_id(id)
+  end
+
   def test_index
     agent = add_test_agent(@account)
     group = create_group_with_agents(@account, agent_list: [agent.id])
@@ -275,4 +298,114 @@ class TimeSheetsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 1, response.size
   end
+
+  def test_create_arbitrary_params
+    post :create, construct_params({}, {:test => 'junk'})
+    assert_response :bad_request
+    match_json [bad_request_error_pattern('test', 'invalid_field')]
+  end
+
+  def test_create_unpermitted_params
+    @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    @controller.stubs(:privilege?).with(:all).returns(true)
+    post :create, construct_params({}, {:user_id => User.first.id})
+    assert_response :bad_request
+    match_json [bad_request_error_pattern('user_id', 'invalid_field')]
+    @controller.unstub(:privilege?)
+  end
+
+  def test_create_start_time_and_timer_not_running
+    post :create, construct_params({}, {:start_time => (Time.now + 10.minutes).as_json, 
+      :timer_running => false}.merge(params_hash))
+    assert_response :bad_request
+    match_json [bad_request_error_pattern('start_time', 
+      'Should be blank if timer_running is false')]
+  end
+
+  def test_create_with_no_params
+    freeze_time do
+      post :create, construct_params({}, params_hash)
+      assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+      match_json time_sheet_pattern({timer_running: true, start_time: utc_time,
+        executed_at: utc_time, time_spent: 0}, 
+        ts)
+      match_json time_sheet_pattern(ts)
+    end
+  end
+
+  def test_create_with_start_time_only
+    freeze_time do
+      start_time = (Time.now + 10.minutes).as_json
+      post :create, construct_params({}, {:start_time => start_time}.merge(params_hash))
+      assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+      match_json time_sheet_pattern(ts) 
+      match_json time_sheet_pattern({timer_running: true, start_time: utc_time(start_time.to_time),
+      executed_at: utc_time, time_spent: 0}, 
+      ts)
+    end
+  end
+
+  def test_create_with_start_time_and_time_spent
+    start_time = (Time.now + 10.minutes).as_json
+    freeze_time do
+      post :create, construct_params({}, {:start_time => start_time,
+        :time_spent => '03:00'}.merge(params_hash))
+      assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+      match_json time_sheet_pattern(ts)
+      match_json time_sheet_pattern({start_time: utc_time(start_time.to_time), time_spent: 3,
+        timer_running: true, executed_at: utc_time}, ts)
+    end
+  end
+
+  def test_create_time_spent_only
+    freeze_time do
+      post :create, construct_params({}, {:time_spent => '03:00'}.merge(params_hash))
+      assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+      match_json time_sheet_pattern({}, ts)
+      match_json time_sheet_pattern({timer_running: false, time_spent: 3, start_time: utc_time,
+        executed_at: utc_time}, ts)
+    end
+  end
+
+  def test_create_with_timer_running_and_time_spent
+    freeze_time do
+      post :create, construct_params({}, {:time_spent => '03:00',
+      :timer_running => false}.merge(params_hash))
+      assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+      match_json time_sheet_pattern(ts)
+      match_json time_sheet_pattern({time_spent: 3, timer_running: false, start_time: utc_time,
+        executed_at: utc_time}, ts)
+    end
+  end
+
+  def test_create_with_other_timer_running
+    other_ts = Helpdesk::TimeSheet.find_by_user_id_and_timer_running(@agent.id, true)
+    post :create, construct_params({}, params_hash)
+    assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+    match_json time_sheet_pattern(ts)
+    refute = other_ts.timer_running
+  end
+
+  def test_create_with_all_params
+    start_time = (Time.now + 10.minutes).as_json
+    executed_at = (Time.now + 20.minutes).as_json
+    freeze_time do
+      post :create, construct_params({}, {:time_spent => '03:00', :start_time => start_time,
+        :timer_running => true, :executed_at => executed_at,
+        :note => "test note", :billable => true, user_id: @agent.id}.merge(params_hash))
+      assert_response :created
+      ts = time_sheet(parse_response(response.body)['id'])
+      match_json time_sheet_pattern(ts)
+      match_json time_sheet_pattern({:time_spent => 3, :start_time => utc_time(start_time.to_time),
+        :timer_running => false, :executed_at => utc_time(executed_at.to_time),
+        :note => "test note", :billable => true}.merge(params_hash), ts)
+    end
+  end
+
 end

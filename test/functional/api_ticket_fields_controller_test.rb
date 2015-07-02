@@ -162,7 +162,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     assert_equal @account.ticket_fields.count, response.count
     field = @account.ticket_fields.where(field_type: 'nested_field').first
     relevant_response = response.find { |x| x['id'] == field.id }
-    match_custom_json(relevant_response.to_json, ticket_field_nested_pattern(field, nested_choices: [
+    match_custom_json(relevant_response.to_json, ticket_field_nested_pattern(field, choices: [
       { 'Australia' => [{ 'New South Wales' => ['Sydney'] }, { 'Queensland' => ['Brisbane'] }] },
       { 'USA' => [{ 'California' => ['Burlingame', 'Los Angeles'] },
                   { 'Texas' => ['Houston', 'Dallas'] }] }]))

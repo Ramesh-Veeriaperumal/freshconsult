@@ -146,6 +146,8 @@ Authority::Authorization::PrivilegeList.build do
   edit_time_entries do
     resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by =>
       { :scoper => :time_sheets }
+    resource :"time_sheet", :only => [:update, :destroy], :owned_by =>
+      { :scoper => :time_sheets }
   end
 
   delete_ticket do

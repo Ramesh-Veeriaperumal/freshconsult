@@ -13,11 +13,9 @@ json.array! @api_ticket_fields do |tf|
 
     json.partial! 'shared/utc_date_format', item: tf
   end
-
-  json.set! :choices, tf.api_choices(@account)
-
+  
   if tf.field_type == 'nested_field'
-    json.set! :nested_choices, tf.api_nested_choices
+    json.set! :choices, tf.api_nested_choices
 
     json.set! :nested_ticket_fields do
       json.array! tf.nested_ticket_fields do |tf_nested_field|
@@ -28,5 +26,7 @@ json.array! @api_ticket_fields do |tf|
         end
       end
     end
+  else
+    json.set! :choices, tf.api_choices(@account)
   end
 end

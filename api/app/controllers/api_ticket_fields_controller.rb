@@ -18,6 +18,18 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def scoper
       filter = params[:type] ? { field_type: params[:type] } : {}
-      current_account.ticket_fields.where(filter).includes(:nested_ticket_fields)
+      filter_on_products(current_account.ticket_fields).where(filter).includes(:nested_ticket_fields)      
+    end
+
+    def filter_on_products(tkt_fields)
+      if exclude_products
+        tkt_fields.where(['helpdesk_ticket_fields.field_type != ?', 'default_product'])
+      else
+        tkt_fields
+      end
+    end
+
+    def exclude_products
+      (!current_portal.main_portal || current_account.products_from_cache.empty?)
     end
 end
