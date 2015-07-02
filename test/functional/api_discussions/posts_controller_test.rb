@@ -180,8 +180,8 @@ module ApiDiscussions
     def test_create_with_email_without_assume_privilege
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'email' => @agent.email)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_create_with_invalid_email
@@ -194,8 +194,8 @@ module ApiDiscussions
     def test_create_with_user_without_assume_privilege
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => @agent.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_create_with_invalid_user_id

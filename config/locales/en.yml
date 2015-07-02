@@ -7255,7 +7255,7 @@ en:
       can't be blank: "Should not be invalid_value/blank"
       invalid_field: "Unexpected/invalid field in request"
       missing_field: "Mandatory attribute missing"
-      invalid_user: "User specified does not have permission."
+      invalid_user: "You are not authorized to perform this action on behalf of this user. id:%{id}, name:%{name}"
       should be a valid email address: "Should not be invalid_value/blank"
       access_denied: You are not authorized to perform this action.
       require_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.

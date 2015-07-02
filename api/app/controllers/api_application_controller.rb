@@ -177,7 +177,7 @@ class ApiApplicationController < MetalApiController
       if user_id || @email
         @user = current_account.all_users.find_by_email(@email) if @email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
-        render_invalid_user_error if @user && !is_allowed_to_assume?(@user)
+        render_request_error(:access_denied, 403, id: @user.id, name: @user.name) if @user && !is_allowed_to_assume?(@user)
       end
     end
 
@@ -213,8 +213,8 @@ class ApiApplicationController < MetalApiController
       render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
     end
 
-    def render_request_error(code, status)
-      @error = RequestError.new(code)
+    def render_request_error(code, status, params_hash = {})
+      @error = RequestError.new(code, params_hash)
       render '/request_error', status: status
     end
 

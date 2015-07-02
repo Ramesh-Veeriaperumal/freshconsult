@@ -293,12 +293,12 @@ module JsonPattern
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type)
-    return group_json
+    group_json
   end
 
   def group_pattern_without_assingn_type(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    return group_json
+    group_json
   end
 
   def group_json(expected_output, group)

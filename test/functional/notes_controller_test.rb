@@ -68,8 +68,8 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = create_note_params_hash.merge(user_id: user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
     post :create, construct_params({}, params_hash)
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
   end
 
@@ -78,7 +78,7 @@ class NotesControllerTest < ActionController::TestCase
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('user_id', 'is not a number'),
-                bad_request_error_pattern('ticket_id', 'is not a number')])
+                bad_request_error_pattern('ticket_id', "can't be blank")])
   end
 
   def test_create_inclusion_invalid
@@ -128,7 +128,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({}, {})
     assert_response :bad_request
-    match_json([bad_request_error_pattern('ticket_id', 'is not a number')])
+    match_json([bad_request_error_pattern('ticket_id', "can't be blank")])
   end
 
   def test_create_returns_location_header
@@ -266,8 +266,8 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(user_id: user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
     post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
   end
 
@@ -445,6 +445,15 @@ class NotesControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
+  def test_update_user_note
+    user = add_new_user(@account)
+    n = create_note(user_id: user.id, ticket_id: ticket.id, source: 2)
+    params = update_note_params_hash
+    put :update, construct_params({ id: n.id }, params)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_destroy
     n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     delete :destroy, construct_params(id: n.id)
@@ -472,10 +481,20 @@ class NotesControllerTest < ActionController::TestCase
     n.update_column(:deleted, false)
   end
 
-  def test_delete_not_note_or_reply
-    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 1)
+  def test_delete_user_reply
+    user = add_new_user(@account)
+    n = create_note(user_id: user.id, ticket_id: ticket.id, source: 0)
     delete :destroy, construct_params(id: n.id)
-    assert_response :not_found
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_delete_user_note
+    user = add_new_user(@account)
+    n = create_note(user_id: user.id, ticket_id: ticket.id, source: 2)
+    delete :destroy, construct_params(id: n.id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
   end
 
   def test_delete_without_privilege

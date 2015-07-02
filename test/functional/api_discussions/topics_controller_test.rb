@@ -191,8 +191,8 @@ module ApiDiscussions
     def test_permit_toggle_params_invalid
       monitor_topic(first_topic, @agent, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: @agent.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_follow_user_id_invalid
@@ -402,8 +402,8 @@ module ApiDiscussions
     def test_create_with_email_without_assume_privilege
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', email: @agent.email)
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
-      assert_response :bad_request
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_create_with_invalid_email
@@ -416,8 +416,8 @@ module ApiDiscussions
     def test_create_with_user_without_assume_privilege
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', user_id: @agent.id)
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
-      assert_response :bad_request
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_create_with_invalid_user_id
@@ -470,8 +470,8 @@ module ApiDiscussions
       user = user_without_monitorships
       monitor_topic(first_topic, user, 1)
       get :followed_by, construct_params(user_id: user.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: user.id))
     end
 
     def test_followed_by_without_privilege_valid
@@ -506,7 +506,8 @@ module ApiDiscussions
       monitor_topic(first_topic, user, 1)
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       get :is_following, construct_params(user_id: user.id, id: first_topic.id)
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: user.id))
       @controller.unstub(:privilege?)
     end
 

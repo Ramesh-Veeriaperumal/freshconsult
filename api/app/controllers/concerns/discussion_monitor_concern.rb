@@ -75,6 +75,6 @@ module DiscussionMonitorConcern
     end
 
     def allow_monitor?
-      render_invalid_user_error unless params[:user_id] == current_user.id || privilege?(:manage_forums)
+      render_request_error(:access_denied, 403, id: params[:user_id]) unless params[:user_id] == current_user.id || privilege?(:manage_forums)
     end
 end
