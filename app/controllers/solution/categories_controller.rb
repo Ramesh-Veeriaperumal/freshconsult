@@ -63,13 +63,11 @@ class Solution::CategoriesController < ApplicationController
 
   def create
     @category = current_account.solution_categories.new(params[nscname]) 
-     
-    redirect_to_url = solution_categories_url
     redirect_to_url = new_solution_category_path unless params[:save_and_create].nil?
     
     respond_to do |format|
       if @category.save
-        format.html { redirect_to redirect_to_url }
+        format.html { redirect_to redirect_to_url || solution_category_path(@category) }
         format.xml  { render :xml => @category, :status => :created, :location => @category }
         format.json { render :json => @category, :status => :created, :location => @category }
       else
