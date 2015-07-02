@@ -50,8 +50,6 @@ function insertLink(url, title){
 								target: '_blank',
 								style: 'font:inherit;'}).text(selectedText);
 
-		$redactor.restoreSelection();
-
 		$redactor.execCommand('inserthtml', link.get(0).outerHTML);
 
 		$redactor.syncCode();
