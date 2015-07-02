@@ -255,6 +255,13 @@ PATH
       railties (>= 3.1)
 
 PATH
+  remote: vendor/gems/launchparty
+  specs:
+    launchparty (0.0.0)
+      launchparty
+      redis
+
+PATH
   remote: vendor/gems/liquid
   specs:
     liquid (2.4.1)
@@ -918,6 +925,7 @@ DEPENDENCIES
   json-compare (= 0.1.8)
   jwt (= 1.0.0)
   koala (= 1.10.1)
+  launchparty!
   lhm!
   liquid!
   lockfile (= 1.4.3)

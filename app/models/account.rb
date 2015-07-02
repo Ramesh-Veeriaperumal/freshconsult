@@ -18,6 +18,8 @@ class Account < ActiveRecord::Base
 
   pod_filter "id"
   
+  is_a_launch_target
+  
   concerned_with :associations, :constants, :validations, :callbacks, :solution_associations
   include CustomerDeprecationMethods
   include Solution::MetaAssociationSwitcher
