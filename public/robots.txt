@@ -5,9 +5,10 @@
 # Disallow: /
 
 User-agent: *
-Disallow: /support/search/
+Disallow: /support/search
 Disallow: /support/tickets/
 Disallow: /support/login/
 Disallow: /login/normal/
+Allow: /helpdesk/attachments
 Disallow: /helpdesk/
 Disallow: /public/tickets/
