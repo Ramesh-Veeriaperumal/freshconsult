@@ -103,8 +103,8 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def sidebar
-    @drafts = current_account.solution_articles.drafts_by_user(current_user)
-    @feedbacks = current_account.tickets.article_tickets_by_user(current_user)
+    @drafts = current_account.solution_articles.all_drafts
+    @feedbacks = current_account.tickets.all_article_tickets.unresolved
     @orphan_categories = orphan_categories
     render :partial => "/solution/categories/sidebar"
   end

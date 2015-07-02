@@ -107,7 +107,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ?", duration ] } }
  
   scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
+  scope :unresolved, :conditions => ["helpdesk_tickets.status not in (#{RESOLVED}, #{CLOSED})"]
   scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
