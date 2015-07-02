@@ -9,7 +9,6 @@
 		          options_for_select(current_account.solution_categories.reject { |sc| sc.is_default? || sc.id == @category.id }.collect{|c|[c.name, c.id]}), {
 		              :class => "disabled bulk-action-btns select2",
 		              :id => "move_to",
-		              :'data-dropdown-auto-width' => true,
 		              :'data-dropdown-css-class' => 'bulk-action-menu',
 		              :'data-container-css-class' => 'bulk-action-button',
 		              :include_blank => true,

@@ -2513,10 +2513,8 @@ en:
     types:
       permanent: Permanent
       workaround: Workaround
-    search_all:
-      placeholder: Search All Solutions
-    search:
-      placeholder: Search %{name}
+    search_all: Search All Solutions
+    search_in: "Search in %{search_scope}"
     drafts:
       empty: There are no drafts here.
       discard: Discard

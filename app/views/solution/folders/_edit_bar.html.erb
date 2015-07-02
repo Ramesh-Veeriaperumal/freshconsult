@@ -9,7 +9,6 @@
 	          option_groups_from_collection_for_select(current_account.solution_categories.reject(&:is_default?), :folders ,:name, :id, :name), {
 	          		:class => "disabled bulk-action-btns select2",
 	              :id => "move_to",
-	              :'data-dropdown-auto-width' => true,
 	              :'data-dropdown-css-class' => 'bulk-action-menu',
 		          	:'data-container-css-class' => 'bulk-action-button',
 	              :include_blank => true,
@@ -23,7 +22,6 @@
 		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
 		          		:class => "disabled bulk-action-btns select2",
 		              :id => "change_author",
-		              :'data-dropdown-auto-width' => true,
 		              :'data-dropdown-css-class' => 'bulk-action-menu',
 			          	:'data-container-css-class' => 'bulk-action-button',
 		              :include_blank => true,
