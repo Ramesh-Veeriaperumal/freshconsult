@@ -475,6 +475,12 @@
   border-radius: 5px;
 }
 
+.bulk-action-button {
+  .select2-chosen {
+    color: #666666;
+  }
+}
+
 .bulk-action-button.select2-dropdown-open {
   border-bottom: solid 1px #0080FF;
   border-radius: 3px;

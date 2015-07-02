@@ -31,11 +31,11 @@
 				<ul>
 					<% @article.tickets[0..2].each do |ticket| %>
 						<li>
-							<p class="feed-title">
-								<%= pjax_link_to ticket.subject.truncate(80), helpdesk_ticket_path(ticket) %>
+							<p class="feed-title pb2">
+								<%= pjax_link_to ticket.encode_display_id, helpdesk_ticket_path(ticket) %>
 							</p>
-							<p class="shortnote"><%= ticket.description.truncate(75) %></p>
-							<p class="feed-time"><%= ticket.requester.name %> <%= t('portal.reported') %> <span data-livestamp="<%= ticket.created_at.to_i %>">
+							<span><%=ticket.status_name%></span>							
+							<p class="feed-time pt2"><%= ticket.requester.name %> <%= t('portal.reported') %> <span data-livestamp="<%= ticket.created_at.to_i %>">
 						</li>	
 					<% end %>
 				</ul>

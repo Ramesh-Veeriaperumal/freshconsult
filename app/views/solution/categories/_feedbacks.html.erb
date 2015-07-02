@@ -42,14 +42,13 @@
       <ul>
       <% my_feedbacks.first(3).each do |f| %>
         <li >
-           <div>
-              <span>
-                <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27),
-                                 helpdesk_ticket_path(f)) %>
-              </span>
-              <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
-                                         :time => time_ago_in_words(f.updated_at)).html_safe%> </div>
-            </div>
+          <div>
+            <%= pjax_link_to("#{f.encode_display_id} - #{f.article.title.truncate(20)}",
+                               helpdesk_ticket_path(f)) %>
+          </div>
+          <span class="feedback-status"><%=f.status_name%></span>
+          <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
+                                     :time => time_ago_in_words(f.updated_at)).html_safe%> </div>
         </li>
       <% end %>
     <% if my_feedbacks_count > 3 %>
@@ -64,14 +63,13 @@
       <ul >
       <% @feedbacks.first(3).each do |f| %>
         <li>
-           <div>
-              <span>
-                <%= pjax_link_to(f.subject.split('Article Feedback - ')[1].truncate(27), 
-                                  helpdesk_ticket_path(f)) %>
-              </span>
-              <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
-                                         :time => time_ago_in_words(f.updated_at)).html_safe%>  </div>
+            <div>
+              <%= pjax_link_to("#{f.encode_display_id} - #{f.article.title.truncate(20)}",
+                                 helpdesk_ticket_path(f)) %>
             </div>
+            <span class="feedback-status"><%=f.status_name%></span>
+            <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
+                                       :time => time_ago_in_words(f.updated_at)).html_safe%>  </div>
         </li>
       <% end %>
     <% if @feedbacks.size > 3 %>

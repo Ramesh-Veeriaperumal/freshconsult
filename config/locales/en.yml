@@ -3320,9 +3320,9 @@ en:
         all: "All Drafts"
         details: "Edited by %{name}, %{time}" 
       feedbacks:
-        title: "Article Feedbacks"
+        title: "Article Feedback"
         me: "Your Feedback"
-        all: "All Feedbacks"
+        all: "All Feedback"
         details: "%{name} reported %{time}" 
     home: Solutions Home
     add_category: New Category
