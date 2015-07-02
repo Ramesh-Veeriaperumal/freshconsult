@@ -858,3 +858,9 @@ body.community #sticky_header.category-sticky.is_stuck {
     }
   }
 }
+
+.draft-notif {
+  .autosave-notif, .article-view-edit {
+    box-shadow: none;
+  }
+} 

@@ -13,7 +13,8 @@
 	<% content_for :sticky_right do %>
 	  <%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
 	<% end %>
-	<%= render :partial => '/solution/shared/sticky', :locals => { :page => :article} %>
+	<%= render :partial => '/solution/shared/sticky', 
+						 :locals => { :page => :article, :sticky_class => 'article-sticky'} %>
 
 	<!-- Solution page content -->
 	<div class="solution-content">

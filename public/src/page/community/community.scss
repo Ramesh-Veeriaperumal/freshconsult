@@ -402,6 +402,13 @@ body.community.moderation.cs-always-show {
 	margin-left: 10px;
 }
 
+.article-sticky {
+	@include margin-left(-20px);
+	@include margin-right(-20px);
+	@include padding-left(20px);
+	@include padding-right(20px);
+}
+
 /* Animations used in Confirm Delete */
 
 .btnFadeIn{
