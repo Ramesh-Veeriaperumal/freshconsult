@@ -40,6 +40,7 @@ class TimeSheetValidationsTest < ActionView::TestCase
     time_sheet = TimeSheetValidation.new(controller_params, item, Account.first, false)
     time_sheet.valid?
     error = time_sheet.errors.full_messages
-    assert error.include?("Start_time Should be blank if timer_running is false")
+    assert error.include?("Start time Should be blank if timer_running is false")
+    refute error.include?('User is not a number')
   end
 end

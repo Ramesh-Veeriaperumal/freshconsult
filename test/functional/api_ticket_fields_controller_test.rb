@@ -159,7 +159,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     get :index, construct_params({}, {})
     assert_response :success
     response = parse_response @response.body
-    assert_equal @account.ticket_fields.count, response.count
+    assert_equal @account.main_portal.ticket_fields.count, response.count
     field = @account.ticket_fields.where(field_type: 'nested_field').first
     relevant_response = response.find { |x| x['id'] == field.id }
     match_custom_json(relevant_response.to_json, ticket_field_nested_pattern(field, choices: [

@@ -33,6 +33,12 @@ class TimeSheetsControllerTest < ActionController::TestCase
     Helpdesk::TimeSheet.find_by_id(id)
   end
 
+  def other_agent
+    Agent.where("user_id != ?", @agent.id).first.try(:user) || add_agent(@account, 
+      name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1,
+      agent: 1, role_ids: [@account.roles.find_by_name('Agent').id.to_s], ticket_permission: 1)
+  end
+
   def test_index
     agent = add_test_agent(@account)
     group = create_group_with_agents(@account, agent_list: [agent.id])
@@ -308,9 +314,9 @@ class TimeSheetsControllerTest < ActionController::TestCase
   def test_create_unpermitted_params
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
-    post :create, construct_params({}, {:user_id => User.first.id})
-    assert_response :bad_request
-    match_json [bad_request_error_pattern('user_id', 'invalid_field')]
+    post :create, construct_params({}, params_hash.merge({:user_id => 99}))
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
     @controller.unstub(:privilege?)
   end
 
@@ -328,7 +334,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern({timer_running: true, start_time: utc_time,
-        executed_at: utc_time, time_spent: 0}, 
+        executed_at: utc_time, time_spent: '00:00'}, 
         ts)
       match_json time_sheet_pattern(ts)
     end
@@ -342,7 +348,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern(ts) 
       match_json time_sheet_pattern({timer_running: true, start_time: utc_time(start_time.to_time),
-      executed_at: utc_time, time_spent: 0}, 
+      executed_at: utc_time, time_spent: '00:00'}, 
       ts)
     end
   end
@@ -355,7 +361,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern(ts)
-      match_json time_sheet_pattern({start_time: utc_time(start_time.to_time), time_spent: 3,
+      match_json time_sheet_pattern({start_time: utc_time(start_time.to_time), time_spent: '03:00',
         timer_running: true, executed_at: utc_time}, ts)
     end
   end
@@ -366,7 +372,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern({}, ts)
-      match_json time_sheet_pattern({timer_running: false, time_spent: 3, start_time: utc_time,
+      match_json time_sheet_pattern({timer_running: false, time_spent: '03:00', start_time: utc_time,
         executed_at: utc_time}, ts)
     end
   end
@@ -378,7 +384,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern(ts)
-      match_json time_sheet_pattern({time_spent: 3, timer_running: false, start_time: utc_time,
+      match_json time_sheet_pattern({time_spent: '03:00', timer_running: false, start_time: utc_time,
         executed_at: utc_time}, ts)
     end
   end
@@ -402,10 +408,65 @@ class TimeSheetsControllerTest < ActionController::TestCase
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern(ts)
-      match_json time_sheet_pattern({:time_spent => 3, :start_time => utc_time(start_time.to_time),
+      match_json time_sheet_pattern({:time_spent => '03:00', :start_time => utc_time(start_time.to_time),
         :timer_running => false, :executed_at => utc_time(executed_at.to_time),
         :note => "test note", :billable => true}.merge(params_hash), ts)
     end
+  end
+
+  def test_create_without_permission_but_ownership
+    @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    @controller.stubs(:privilege?).with(:all).returns(true)
+    post :create, construct_params({}, params_hash)
+    assert_response :created
+    @controller.unstub(:privilege?)
+  end
+
+  def test_create_with_other_user
+    agent = other_agent
+    post :create, construct_params({}, params_hash.merge({:user_id => agent.id}))
+    assert_response :created
+    match_json time_sheet_pattern(Helpdesk::TimeSheet.where(user_id: agent.id).first)
+  end
+
+  def toggle_with_invalid_id
+    put :toggle_timer, construct_params({:id => 99}, {:test => 'junk'})
+  end
+
+  def test_toggle_with_params
+    put :toggle_timer, construct_params({:id => Helpdesk::TimeSheet.first}, {:test => 'junk'})
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('test', 'invalid_field')])
+  end
+
+  def test_toggle_off_timer
+    timer = Helpdesk::TimeSheet.where(:timer_running => true).first
+    freeze_time do
+      time = Time.now - 1.hour - 23.minutes
+      timer.update_column(:start_time, time)
+      put :toggle_timer, construct_params({id: timer.id}, {})
+      assert_response :success
+      match_json(time_sheet_pattern({timer_running: false, time_spent: '01:23'},timer.reload))
+    end
+  end
+
+  def test_toggle_on_timer_with_other_timer_on
+    timer_on = Helpdesk::TimeSheet.where(:timer_running => true).first
+    timer_off = Helpdesk::TimeSheet.where(:timer_running => false).first
+    Helpdesk::TimeSheet.update_all("user_id = #{@agent.id}", :id => [timer_on.id, timer_off.id])
+    put :toggle_timer, construct_params({id: timer_off.id}, {})
+    assert_response :success
+    refute timer_on.reload.timer_running
+    assert timer_off.reload.timer_running
+  end
+
+  def test_toggle_invalid_record
+    ts = Helpdesk::TimeSheet.first
+    Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
+    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', "can't be blank"]])
+    put :toggle_timer, construct_params({id: ts.id}, {})
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('user', "can't be blank")])
   end
 
 end

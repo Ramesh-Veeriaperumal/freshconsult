@@ -12,7 +12,11 @@ Helpkit::Application.routes.draw do
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
 
-    resources :time_sheets, :except => [:new, :edit, :show]
+    resources :time_sheets, :except => [:new, :edit, :show] do 
+      member do 
+        put :toggle_timer
+      end
+    end
 
     match 'tickets/:ticket_id/reply' => 'notes#reply', :via => :post
 

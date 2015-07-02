@@ -2,7 +2,8 @@ class TimeSheetValidation < ApiValidation
   attr_accessor :billable, :executed_at, :time_spent, :ticket_id, :user_id, :note, :ticket, :timer_running, :start_time
 
   # do not change validation order
-  validates :ticket_id, :user_id, numericality: true
+  validates :user_id, numericality: true, allow_nil: true
+  validates :ticket_id, numericality: true
   # if ticket_id is not a number, to avoid query, below if condition is used.
   validates :ticket, presence: true, if: -> { errors[:ticket_id].blank? } 
   validates :executed_at, :start_time, date_time: { allow_nil: true }

@@ -217,7 +217,7 @@ module JsonPattern
       user_id: expected_output[:user_id] || time_sheet.user_id,
       billable: expected_output[:billable] || time_sheet.billable,
       timer_running: expected_output[:timer_running] || time_sheet.timer_running,
-      time_spent: expected_output[:time_spent] || time_sheet.time_spent,
+      time_spent: expected_output[:time_spent] || time_spent(time_sheet.time_spent),
       executed_at: expected_output[:executed_at] || time_sheet.executed_at,
       start_time: expected_output[:start_time] || time_sheet.start_time,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -315,6 +315,10 @@ module JsonPattern
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+  end
+
+  def time_spent(time)
+    TimeSheetsController.new.send(:view_duration, time)
   end
 end
 

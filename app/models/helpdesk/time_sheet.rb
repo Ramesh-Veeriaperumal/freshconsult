@@ -229,6 +229,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       xml.tag!(:contact_email,workable.requester.email)
     end
   end
+
+  def api_time_spent
+    if time_spent.is_a? Numeric
+      time = (time_spent.to_f/3600)
+      hours = sprintf("%0.02d", time)
+      minutes = sprintf("%0.02d", (time.modulo(1) * 60))
+      "#{hours}:#{minutes}"
+    end
+  end
   
   private
   
