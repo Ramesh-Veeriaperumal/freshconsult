@@ -280,13 +280,19 @@ window.App = window.App || {};
           });
           $('.confirm-delete').attr('disabled', !$flag);
         },
+        previewDrafts: function (){
+          var data = $('#article-form').data();
+          return $('<span />').attr('class','pull-right')
+                  .html($('<a>').attr('href', data.previewPath)
+                  .text(data.previewText));
+        },
         manipulate: function (response, success) {
           var content = "";
           response = response || { msg: "Something went wrong!"};
           if (response.msg) {
             content = this.htmlToStr(this.message(response.msg, success));
             content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton());
-
+            content += this.htmlToStr(this.previewDrafts());
             // this.msgElement.html(content).show();
             this.msgElement.html(content).filter(':hidden').show();
             $('.article-view-edit:visible').hide();
