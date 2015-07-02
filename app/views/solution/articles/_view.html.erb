@@ -14,7 +14,7 @@
   <div class="article-content" id="current-article-description"><%= @current_item.description.html_safe %></div>
 
   <div class="attachment_wrapper">
-    <ul class="attachment_listing">
+    <ul class="attachment_list">
       <% (active_attachments(:attachments, @article) || []).each do |attached| %>
         <%= attachment_list(attached, false, "article", nil) %>
       <% end %>

@@ -8,7 +8,7 @@
 		<div class="pull-left">
 			<%= confirm_delete(@folder, solution_category_folder_path(@folder.category, @folder)) %>
 		</div>
-		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "btn" ) %> 
+		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "btn", :"data-dismiss" => "modal" ) %> 
 	  <%= submit_tag t('save'), :class => "btn btn-primary" %>	  
 	</div>
 <% end %>

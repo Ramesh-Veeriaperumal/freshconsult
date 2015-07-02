@@ -76,11 +76,7 @@ window.App = window.App || {};
       } else {
         window.articleDraftAutosave = this.autosaveInitialize();
       }
-      
-      if ($("#article-form").data().defaultFolder) {
-        this.defaultFolderValidate();
-      }
-
+      this.editArticleEventBindings();
       this.editUrlChange(true);
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
@@ -223,11 +219,16 @@ window.App = window.App || {};
       };
 
       this.articleDraftAutosave  = $.autoSaveContent(draft_options);
+      return this.articleDraftAutosave;
+    },
+
+    editArticleEventBindings: function () {
       this.bindForCancel();
-      // Move these somewhere else
       this.unsavedContentNotif();
       this.attachmentAutosaveTrigger();
-      return this.articleDraftAutosave;
+      if (this.data.defaultFolder) {
+        this.defaultFolderValidate();
+      }
     },
 
     attachmentAutosaveTrigger: function () {

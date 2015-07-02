@@ -9,7 +9,7 @@
 		<div class="pull-left">
 			<%= confirm_delete(@category, solution_category_path(@category)) %>
 		</div>
-		<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
+		<%= link_to(t('cancel'), solution_categories_url, :class => "btn", :"data-dismiss" => "modal" ) %>
 	    <%= submit_tag t('save'), :class => "btn btn-primary" %>	   
 	</div>
 <% end %>
