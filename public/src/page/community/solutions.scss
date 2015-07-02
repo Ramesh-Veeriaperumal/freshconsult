@@ -469,9 +469,10 @@
 	  width: 95%
 	}
 
+  width: 200px !important;
+  border-top: 1px solid #0080FF;
   margin-top: 3px;
   border-radius: 5px;
-  border-color: #0080FF;
 }
 
 .bulk-action-button.select2-dropdown-open {

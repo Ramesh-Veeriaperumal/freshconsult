@@ -22,6 +22,17 @@ module SolutionHelper
 		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join("")}</div>".html_safe
 	end
 
+	def search_placeholder(page)
+		case page
+			when :category
+				t('solutions.search_in', :search_scope => @category.name)
+			when :folder
+				t('solutions.search_in', :search_scope => @folder.name)
+			else
+				t('solutions.search_all')
+		end
+	end
+
 	def default_category?
 		((@category || (@folder.respond_to?(:category) ? @folder.category : @article.folder.category)) || {})[:is_default]
 	end
