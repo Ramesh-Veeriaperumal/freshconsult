@@ -25,6 +25,9 @@ window.App = window.App || {};
     
     onLeave: function (data) {
       $('body').off('.articles');
+      if (window.articleDraftAutosave) {
+        this.articleDraftAutosave.stopSaving();
+      }
       App.Solutions.SearchConfig.onLeave();
     },
 

@@ -94,7 +94,7 @@ class Solution::Draft < ActiveRecord::Base
 	end
 
 	def updation_timestamp
-		draft_body.present? ? [updated_at, draft_body.updated_at].max.to_i : 0
+		draft_body.present? ? [updated_at, draft_body.updated_at].max.to_i : (updated_at || 0).to_i
 	end
 
 	def deleted_attachments type

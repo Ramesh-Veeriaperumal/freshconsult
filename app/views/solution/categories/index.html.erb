@@ -85,7 +85,7 @@
 <% if privilege?(:manage_solutions) -%>	
 	<%= render :partial => "/shared/reorder_list", 
 							:locals => { 
-									:items => current_portal.portal_solution_categories.includes(:solution_category),
+									:items => current_portal.portal_solution_categories.includes(:solution_category).reject { |pc| pc.solution_category.is_default?},
 									:action_url => reorder_solution_categories_path, 
 									:title => :name, 
 									:container_id => "categories_sort", 
