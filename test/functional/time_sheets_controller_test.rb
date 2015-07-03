@@ -62,7 +62,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_destroy_without_privilege
     ts_id = create_time_sheet.id
-    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
