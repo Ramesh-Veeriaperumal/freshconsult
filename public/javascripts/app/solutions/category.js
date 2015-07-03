@@ -27,6 +27,7 @@ window.App.Solutions = window.App.Solutions || {};
       $("body").on('click.solutionCategory', '.show-more-cat', function () {
         $('.other-portal-cat').show();
         $('.view-more-cat').hide();
+        return false;
       });
       $("body").on('click.solutionCategory', '#categories_reorder_button', function () {
         $('#search-show').hide();
