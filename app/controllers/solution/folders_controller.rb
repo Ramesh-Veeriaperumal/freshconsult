@@ -252,6 +252,7 @@ class Solution::FoldersController < ApplicationController
 
     def old_category
       @category_id = current_account.folders.find(params[:items].first).category_id
+      @number_of_folders = current_account.solution_categories.find(@category_id).folders.size
     end
 
     def moved_flash_msg

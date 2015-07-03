@@ -371,6 +371,7 @@ class Solution::ArticlesController < ApplicationController
 
     def old_folder
       @folder_id = current_account.solution_articles.find(params[:items].first).folder_id
+      @number_of_articles = current_account.folders.find(@folder_id).articles.size
     end
 
     def moved_flash_msg

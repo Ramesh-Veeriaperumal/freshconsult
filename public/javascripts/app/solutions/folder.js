@@ -250,7 +250,7 @@ window.App = window.App || {};
     },
 
     removeElementsAfterMoveTo: function () {
-      $('li:has(input[type=checkbox]:checked)').remove();
+      $('li:has(input[type=checkbox]:checked)').not('.lf-item').remove();
     },
     
     hideSelectAll: function () {
