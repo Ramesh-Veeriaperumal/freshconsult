@@ -32,6 +32,7 @@
 				<% end %>
 			</div>
 			<div class="span6 comm-item-main clear-left-margin">
+				<%= font_icon "file", :size => 16, :class => "solution-icon" %>
 				<div class="comm-item-title">
 					<%= pjax_link_to(h(article.title), solution_article_path(article.id)) %>
 				</div>
