@@ -167,11 +167,6 @@ window.App = window.App || {};
     eventsForCompanySelect: function () {
       var $this = this;
       $('body').off('.select_company');
-      
-      $('body').on('click.folders_articles.select_company', '#company-cancel', function () {
-        $this.hideFdMenu(false);
-      });
-
 
       $('body').on('click.folders_articles.select_company', '#company-submit', function () {
         event.preventDefault();
