@@ -20,7 +20,7 @@
   def attachment_list(attached, show_delete, page, note_id, custom_delete_link = nil)
     unless attached.new_record?
       output = ""
-      output << %(<li class="attachment list_element" id="#{ dom_id(attached) }">)
+      output << %(<li class="attachment list_element" id="#{ dom_id(attached) }" rel="original_attachment">)
       output << %(<div>)
 
       if show_delete

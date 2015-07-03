@@ -229,21 +229,9 @@ window.App = window.App || {};
     editArticleEventBindings: function () {
       this.bindForCancel();
       this.unsavedContentNotif();
-      this.attachmentAutosaveTrigger();
       if (this.data.defaultFolder) {
         this.defaultFolderValidate();
       }
-    },
-
-    attachmentAutosaveTrigger: function () {
-      var $this = this;
-      $(".hidden_upload").on('change.articles', function () {
-        if ($this.articleDraftAutosave.successCount > 0) {
-          $(".hidden_upload").unbind('change.articles');
-        } else {
-          $this.articleDraftAutosave.saveContent();
-        }
-      });
     },
 
     autosaveDomManipulate: function (response) {
@@ -288,7 +276,7 @@ window.App = window.App || {};
         previewDrafts: function (){
           var data = $('#article-form').data();
           return $('<span />').attr('class','pull-right')
-                  .html($('<a>').attr('href', data.previewPath)
+                  .html($('<a>').attr('href', data.previewPath).attr('target', "_blank")
                   .text(data.previewText));
         },
         manipulate: function (response, success) {
