@@ -218,6 +218,7 @@ window.App = window.App || {};
         },
         extraParams: {timestamp: data.timestamp},
         minContentLength: 3,
+        retryIfError: false,
         responseCallback: $.proxy(this.autosaveDomManipulate, this)
       };
 
@@ -240,7 +241,7 @@ window.App = window.App || {};
         if ($this.articleDraftAutosave.successCount > 0) {
           $(".hidden_upload").unbind('change.articles');
         } else {
-          $this.articleDraftAutosave.getContent();
+          $this.articleDraftAutosave.saveContent();
         }
       });
     },
@@ -314,6 +315,7 @@ window.App = window.App || {};
         this.articleDraftAutosave.lastSaveStatus = false;
         changeDom.manipulate(response, false);
       }
+      this.articleDraftAutosave.contentChanged = !response.success;
     },
 
     articleProperties: function () {

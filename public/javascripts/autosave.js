@@ -3,11 +3,12 @@
 Quick Documentation Details
 -----------------------------------------------------------------------------------------------------------------------
 Dependency : jQuery
+Author : Sony Mathew
 Starts with intialization of Options
 Options are 
 1. autoSaveInterval
 		This expects time  interval in milliseconds. Each autosave action will be performed in this time interval
-		if the content of any of the elements specified in ;monitorChengesOf' changes.
+		if the content of any of the elements specified in 'monitorChangesOf' changes.
 2. autosaveUrl
 		The data will submitted as POST to the url specified here.
 3. monitorChangesOf
@@ -15,11 +16,10 @@ Options are
 		the value of the hash expects the DOM element ID or class[which has to be unique] to be monitored for changes.
 		eg: { description: "#my_article_description", title: ".my_article_title" }
 				This means it will send the below object
-					{ "draft_data" => { 
-															"description" => content of "my_article_description"[id] element
-															"title" => content of "my_article_title"[class] element
-														}
-					} 
+					 { 
+							"description" => content of "my_article_description"[id] element
+							"title" => content of "my_article_title"[class] element
+						} 
 				as POST in autosave action in the specified time interval only if the content of either one of them changes.
 4. extraParams
 		This expects a hash. If you want some other extra params to be send to backend along with the data in the 
@@ -29,6 +29,14 @@ Options are
 5. responseCallback
 		This expects a function with a single parameter. This will be called after each autosave action with the response
 		recieved from the server.
+6. minContentLength
+    This is an integer value. This is used to check the content length of the elements monitored before submitting 
+    in autosave. So autosave happens only if the monitored elements content is greater than minContentLength. You 
+    have to enable minContentLengthCheck for this. It is enabled by default actually. Only if you pass minContentLength
+    param as option will this work.
+7. retryIfError
+    This is a flag. If an autosave encounters a failure, by default it will stop. But if you enable this flag,
+    autosave will keep on trying submiting the data in specific intervals as specified.
 
 
 Along with the above options, few flags and counters are available which are listed as follows.
@@ -42,6 +50,9 @@ Along with the above options, few flags and counters are available which are lis
     This is a counter. This kepps tracks of failed autosave attempts.
 5. lastSaveStatus
     This is flag. This will be true if the last autosave attempt was succesfull or else false.
+6. minContentLengthCheck
+    This is a flag. This has to be enabled so that each input which is monitored will be checked for a min 
+    content length. You have to pass an argument minContentLength in the opts if you enable this check.
     
 */
 /*jslint browser: true, devel: true */
@@ -76,6 +87,7 @@ Along with the above options, few flags and counters are available which are lis
       },
       extraParams: {},
       minContentLength: 0,
+      retryIfError: false,
       responseCallback: function () {}
     },
 
@@ -105,12 +117,6 @@ Along with the above options, few flags and counters are available which are lis
 
       this.getMainContent();
       this.getExtraParams();
-
-      this.contentChanged = false;
-      this.savingContentFlag = true;
-      if (this.minContentLengthCheck) {
-        this.saveContent();
-      }
     },
     
     getMainContent: function () {
@@ -143,12 +149,22 @@ Along with the above options, few flags and counters are available which are lis
       var $this = this;
       this.timer = setInterval(function () {
         if ($this.contentChanged) {
-          $this.getContent();
+          if ($this.lastSaveStatus || (!$this.lastSaveStatus && $this.opts.retryIfError)) {
+            $this.saveContent();
+          }
         }
       }, this.opts.autosaveInterval);
     },
 
     saveContent: function () {
+      this.getContent();
+
+      this.savingContentFlag = true;
+
+      if (!this.minContentLengthCheck) {
+        return;
+      }
+
       $.ajax({
         url: this.opts.autosaveUrl,
         type: 'POST',
@@ -159,7 +175,7 @@ Along with the above options, few flags and counters are available which are lis
     },
     
     onSaveSuccess: function (response) {
-      this.contentChanged = !response.success;
+      this.contentChanged = false;
       this.updateExtraParams(response);
       this.savingContentFlag = false;
       this.lastSaveStatus = true;
@@ -169,6 +185,7 @@ Along with the above options, few flags and counters are available which are lis
     
     onSaveError: function (xhr, ajaxOptions, thrownError) {
       this.savingContentFlag = false;
+      this.contentChanged = true;
       this.lastSaveStatus = false;
       this.failureCount += 1;
       this.opts.responseCallback(xhr.status);
