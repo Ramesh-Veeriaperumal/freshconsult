@@ -58,6 +58,7 @@ window.App = window.App || {};
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
       });
+      this.editArticleEventBindings();
       $('body').on('click.articles', '.article-history .ellipsis', function () {
         $('.created-history').toggleClass('hide');
         $('.article-history .ellipsis').toggleClass('hide');
@@ -79,7 +80,6 @@ window.App = window.App || {};
       } else {
         window.articleDraftAutosave = this.autosaveInitialize();
       }
-      this.editArticleEventBindings();
       this.editUrlChange(true);
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
@@ -332,7 +332,7 @@ window.App = window.App || {};
 
     unsavedContent: function () {
       // Check if there is an error, in that case return false.
-      if (!this.articleDraftAutosave.lastSaveStatus) {
+      if (this.articleDraftAutosave && !this.articleDraftAutosave.lastSaveStatus) {
         return false;
       }
       // return (this.articleDraftAutosave.contentChanged || ($(".hidden_upload input").length > 1));

@@ -35,6 +35,13 @@
       }
     }
   }
+  .article-view {
+    #current-article-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      padding-top: 5px;
+    }
+  }
 }
 .solution-header{
   /*padding-top: 10px;*/
@@ -290,7 +297,7 @@
   overflow: hidden;
   padding-top: 16px;
   .article-content{
-    margin-top: 8px;
+    margin-top: 15px;
   }
 }
 /*Solution overlay tab customization*/
@@ -717,6 +724,7 @@
   .article-edit {
     .article-title {
       padding-left: 0px;
+      padding-bottom: 10px;
     }
   }
 }
