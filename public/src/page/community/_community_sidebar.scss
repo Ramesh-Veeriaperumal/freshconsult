@@ -329,6 +329,10 @@ body.community.cs-always-show #community-sidebar {
   margin-left: 22px;
 }
 
+.sidebar-dropdown .dropdown-menu {
+  min-width: 120px;
+}
+
 @-webkit-keyframes fadeInLeft {
   0% {
     opacity: 0;
