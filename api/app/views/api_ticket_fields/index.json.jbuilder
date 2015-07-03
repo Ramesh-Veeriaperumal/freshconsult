@@ -13,7 +13,7 @@ json.array! @api_ticket_fields do |tf|
 
     json.partial! 'shared/utc_date_format', item: tf
   end
-  
+
   if tf.field_type == 'nested_field'
     json.set! :choices, tf.api_nested_choices
 

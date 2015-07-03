@@ -296,4 +296,12 @@ class ApiApplicationController < MetalApiController
     def check_account_state
       render_request_error(:account_suspended, 403) unless current_account.active?
     end
+
+    def update?
+      action_name.to_s == 'update'
+    end
+
+    def create?
+      action_name.to_s == 'create'
+    end
 end

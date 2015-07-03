@@ -16,6 +16,7 @@ module ApiConstants
     'destroy' => false,
     'time_sheets' => false
   }
+  TIME_UNITS = %w(hours minutes seconds) # do not change the order.
 
   # *********************************-- ValidationConstants --*********************************************
 

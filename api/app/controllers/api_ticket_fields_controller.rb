@@ -18,7 +18,7 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def scoper
       filter = params[:type] ? { field_type: params[:type] } : {}
-      filter_on_products(current_account.ticket_fields).where(filter).includes(:nested_ticket_fields)      
+      filter_on_products(current_account.ticket_fields).where(filter).includes(:nested_ticket_fields)
     end
 
     def filter_on_products(tkt_fields)

@@ -139,14 +139,16 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
 
     # Used for API V2
-    resource :"time_sheet", :only => [:index, :create, :toggle_timer]
+    resource :"time_sheet", :only => [:index, :create]
     resource :"ticket", :only => [:time_sheets]
   end
 
   edit_time_entries do
     resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by =>
       { :scoper => :time_sheets }
-    resource :"time_sheet", :only => [:update, :destroy], :owned_by =>
+    
+    # Used for API V2
+    resource :"time_sheet", :only => [:update, :destroy, :toggle_timer], :owned_by =>
       { :scoper => :time_sheets }
   end
 

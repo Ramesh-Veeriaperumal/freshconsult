@@ -232,10 +232,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def api_time_spent
     if time_spent.is_a? Numeric
-      time = (time_spent.to_f/3600)
-      hours = sprintf("%0.02d", time)
-      minutes = sprintf("%0.02d", (time.modulo(1) * 60))
-      "#{hours}:#{minutes}"
+      # converts seconds to hh:mm format say 120 seconds to 00:02 
+      hours, minutes = time_spent.divmod(60).first.divmod(60)
+      "#{sprintf("%0.02d", hours)}:#{sprintf("%0.02d", minutes)}"
     end
   end
   
