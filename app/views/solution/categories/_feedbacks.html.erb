@@ -41,15 +41,7 @@
   <div class='tab-pane sidebar-list <%= active %>' id="feedbacks-me" >
       <ul>
       <% my_feedbacks.first(3).each do |f| %>
-        <li >
-          <div>
-            <%= pjax_link_to("#{f.encode_display_id} - #{f.article.title.truncate(20)}",
-                               helpdesk_ticket_path(f)) %>
-          </div>
-          <span class="feedback-status"><%=f.status_name%></span>
-          <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
-                                     :time => time_ago_in_words(f.updated_at)).html_safe%> </div>
-        </li>
+        <%= article_feedback(f) %>
       <% end %>
     <% if my_feedbacks_count > 3 %>
       <span>
@@ -62,15 +54,7 @@
   <div class='tab-pane sidebar-list <%= 'active' if active.empty? %>' id="feedbacks-all">
       <ul >
       <% @feedbacks.first(3).each do |f| %>
-        <li>
-            <div>
-              <%= pjax_link_to("#{f.encode_display_id} - #{f.article.title.truncate(20)}",
-                                 helpdesk_ticket_path(f)) %>
-            </div>
-            <span class="feedback-status"><%=f.status_name%></span>
-            <div class="muted list-desc"> <%=t('solution.sidebar.feedbacks.details', :name => f.requester.name,
-                                       :time => time_ago_in_words(f.updated_at)).html_safe%>  </div>
-        </li>
+        <%= article_feedback(f) %>
       <% end %>
     <% if @feedbacks.size > 3 %>
       <span>

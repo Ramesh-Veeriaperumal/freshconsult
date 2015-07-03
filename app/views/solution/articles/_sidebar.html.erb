@@ -31,12 +31,14 @@
 				<ul>
 					<% @article.tickets[0..2].each do |ticket| %>
 						<li>
-							<p class="feed-title pb2">
-								<%= pjax_link_to ticket.encode_display_id, helpdesk_ticket_path(ticket) %>
-							</p>
-							<span><%=ticket.status_name%></span>							
-							<p class="feed-time pt2"><%= ticket.requester.name %> <%= t('portal.reported') %> <span data-livestamp="<%= ticket.created_at.to_i %>">
-						</li>	
+			        <div>
+			          <%= pjax_link_to(t('solution.sidebar.feedbacks.details', 
+			                        :name => ticket.requester.name,
+			                        :time => ticket.created_at,
+			                        :time_string => time_ago_in_words(ticket.created_at)).html_safe, helpdesk_ticket_path(ticket)) %>
+			        </div>
+			        <div class="muted"><%= t('solution.sidebar.feedbacks.status', :status => ticket.status_name) %></div>
+			      </li>
 					<% end %>
 				</ul>
 			</div>

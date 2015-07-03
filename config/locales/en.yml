@@ -3308,6 +3308,7 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
+    on: 'on'
     orphan_category_info: "This category is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
@@ -3318,12 +3319,13 @@ en:
         title: "Drafts"
         me: "Your Drafts" 
         all: "All Drafts"
-        details: "Edited by %{name}, %{time}" 
+        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>" 
       feedbacks:
         title: "Article Feedback"
         me: "Your Feedback"
         all: "All Feedback"
-        details: "%{name} reported %{time}" 
+        details: "%{name}'s feedback, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+        status: 'Status : %{status}'
     home: Solutions Home
     add_category: New Category
     orphan: Orphan

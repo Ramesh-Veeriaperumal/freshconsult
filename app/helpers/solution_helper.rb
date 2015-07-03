@@ -161,5 +161,41 @@ module SolutionHelper
 			content.html_safe
 		end
 	end
+
+	def article_feedback f
+		%{<li>
+        <div>
+          #{pjax_link_to(t('solution.sidebar.feedbacks.details', 
+                        :name => f.requester.name,
+                        :time => f.created_at,
+                        :time_string => time_ago_in_words(f.created_at)).html_safe, helpdesk_ticket_path(f))}
+        </div>
+        <span class="feedback-article">
+          #{t('solution.on')}
+          <span title="#{ f.article.title if f.article.title.length > 22 }">#{ f.article.title.truncate(25) }</span>
+        </span>
+        <div class="muted list-desc">#{ t('solution.sidebar.feedbacks.status', :status => f.status_name) }</div>
+      </li>}.html_safe
+	end
+
+	def sidebar_drafts a
+		%{
+			<li>
+	      <div>
+          <span>
+            #{pjax_link_to(a.title.truncate(27),
+                            solution_article_path(a.id)
+                           )}
+          </span>
+          <div class="muted list-desc"> 
+            #{t('solution.sidebar.drafts.details',
+                              :name => a.user.name, 
+                              :time => a.modified_at,
+                              :time_string => time_ago_in_words(a.modified_at)).html_safe}
+					</div>
+	      </div>
+	    </li>
+		}.html_safe
+	end
 	
 end

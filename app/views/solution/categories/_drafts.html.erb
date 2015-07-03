@@ -38,19 +38,7 @@
   <div class='tab-pane sidebar-list <%= active %>' id="drafts-me" > 
       <ul>
       <% my_drafts.first(3).each do |a| %>
-        <li>
-           <div>
-              <span>
-                <%= pjax_link_to(a.title.truncate(27),
-                                solution_article_path(a.id)
-                               ) %>
-              </span> 
-              <div class="muted list-desc"> 
-                <%=t('solution.sidebar.drafts.details',
-                                  :name => a.user.name, 
-                                  :time => time_ago_in_words(a.modified_at)).html_safe%> </div>
-            </div>
-        </li>
+        <%= sidebar_drafts(a) %>
       <% end %>
     <% if my_drafts_count > 3 %>
       <span>
@@ -62,17 +50,7 @@
   <div class='tab-pane sidebar-list <%= 'active' if active.empty? %>' id="drafts-all"> 
       <ul >
       <% @drafts.first(3).each do |a| %>
-        <li>
-           <div>
-              <span>
-                <%= pjax_link_to(a.title.truncate(27),
-                                solution_article_path(a.id)
-                              ) %>
-              </span> 
-              <div class="muted list-desc"> <%=t('solution.sidebar.drafts.details', :name => a.user.name,
-                                           :time => time_ago_in_words(a.modified_at)).html_safe %> </div>
-            </div>
-        </li>
+        <%= sidebar_drafts(a) %>
       <% end %>
     <% if @drafts.size > 3 %>
       <span>
