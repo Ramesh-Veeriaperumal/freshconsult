@@ -12,6 +12,7 @@
       <div class="span12">
         <%= f.text_field :title, 
                 :class => "text required article-title", 
+                :autocomplete => "off",
                 :placeholder => t('solution.solution_title'),
                 :value => (@article.draft || @article).title %>
     

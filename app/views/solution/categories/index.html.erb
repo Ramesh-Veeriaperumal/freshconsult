@@ -42,8 +42,22 @@
 										:class => "more-cat"  %>
 					  </li>
 				<% end %>
+				<% if (category[:folders].size == 0) %>
+					<%= content_tag(:span, t('solution_category.info2').html_safe, :class => "empty-category no_info_text") %>
+					<% if privilege?(:manage_solutions) %>
+						<span class="no_info_text">-</span>
+						<%= link_to(
+									t("solution.folders.new.new_folder"),
+									new_solution_folder_path(:category_id => category[:id]),
+									:class => "add-folder-link",
+									:rel => "freshdialog",
+									:title => t("solution.add_folder"),
+									"data-target" => "#folder-new",
+									"data-close-label" => t('cancel'),
+									"data-submit-label" => t('save'))  %>
+					<% end %>
+				<% end %>
 				</ul>
-				<%= content_tag(:span, t('solution_category.info2').html_safe, :class => "no_info_text") if (category[:folders].size == 0)  %>
 			</div>
 		<% end %>
 	<%end%>
