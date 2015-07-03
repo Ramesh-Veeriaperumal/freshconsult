@@ -5,8 +5,13 @@ module SolutionHelper
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		_output << h(t('solution.add_article')) if default_category?
-		unless default_category?
+		if default_category?
+			if @article.present? && @article.new_record?
+				_output << h(t('solution.add_article'))
+			else
+				_output << pjax_link_to(t('solution.draft.name'), solution_drafts_path)
+			end
+		else
 			case page
 				when :category
 					_output << truncate(h(@category.name), :length => 120)
