@@ -61,12 +61,22 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_destroy_without_privilege
-    ts_id = create_time_sheet.id
+    ts_id = create_time_sheet(user_id: other_agent.id).id
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
+  
+  def test_destroy_with_ownership
+    ts_id = create_time_sheet.id
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
+    delete :destroy, controller_params(id: ts_id)
+    assert_response :no_content
+    assert Helpdesk::TimeSheet.find_by_id(ts_id).nil?
+    assert_equal ' ', @response.body
+  end
+
 
   def test_index_without_feature
     controller.class.any_instance.stubs(:feature?).returns(false).once
