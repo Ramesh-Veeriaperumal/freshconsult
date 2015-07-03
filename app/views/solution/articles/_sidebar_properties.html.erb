@@ -38,7 +38,7 @@
 		</div>
 		<div class="tags-wrapper section">
 			<h5 class="leads"><%= t('filter_options.tags') %></h5>
-			<div class="tags">
+			<div class="tags <%='muted' if @article.tags.blank? %>">
 				<%= t('no_tags') if @article.tags.blank? %>
 				<% @article.tags.each do |t| %>
 					<span>
