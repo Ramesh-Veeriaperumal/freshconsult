@@ -55,7 +55,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
   def test_destroy_without_feature
     ts_id = create_time_sheet.id
     controller.class.any_instance.stubs(:feature?).returns(false).once
-    delete :destroy, controller_params(id: ts.id)
+    delete :destroy, controller_params(id: ts_id)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response :forbidden
   end
@@ -63,7 +63,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
   def test_destroy_without_privilege
     ts_id = create_time_sheet.id
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
-    delete :destroy, controller_params(id: ts.id)
+    delete :destroy, controller_params(id: ts_id)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
