@@ -47,7 +47,7 @@
 					<% if privilege?(:manage_solutions) %>
 						<span class="no_info_text">-</span>
 						<%= link_to(
-									t("solution.folders.new.new_folder"),
+									t("solution.add_folder"),
 									new_solution_folder_path(:category_id => category[:id]),
 									:class => "add-folder-link",
 									:rel => "freshdialog",
