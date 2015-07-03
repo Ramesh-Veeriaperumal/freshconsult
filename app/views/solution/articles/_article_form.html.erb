@@ -88,7 +88,7 @@
       </div>
     <% end %>
        
-    <div class="row-fluid">
+    <div class="row-fluid action-btns-container">
       <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
         <div class="pull-left itil-hide">
           <%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>

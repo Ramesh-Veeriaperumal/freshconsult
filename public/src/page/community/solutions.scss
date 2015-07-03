@@ -411,6 +411,20 @@
       display: inline;
     }
   }
+  .attachments-wrap {
+    .attachments-container {
+      span {
+        &.info-data {
+          position: relative;
+          top: 6px;
+          left: -15px;
+        }
+      }
+    }
+  }
+  .action-btns-container {
+    margin-top: 15px;
+  }
 }
 
 /* For likes and dislikes voted popups */

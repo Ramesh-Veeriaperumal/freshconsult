@@ -39,6 +39,7 @@
                 fileList="<%=attach_id%>-attachments"
                 sendFocusTo="<%=attach_id%>-body"/>
       </div>
+      <span class="info-data"> ( <%= t('total') %> <%=t('attachment_help_info')%> ) </span>
     <% end %>
     <div class="clear"> </div>
     <label class="hide"><i class="a-count">0 </i> <%= t('attachments')%>: </label>
@@ -52,9 +53,6 @@
         <% end %>
         </ul>
     </div>
-  </div>
-  <div class="info-data">
-    <%=t('attachment_help_info')%>
   </div>
 </div>
 <script id="file-list-template" type="text/x-jquery-tmpl">
