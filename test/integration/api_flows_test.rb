@@ -73,6 +73,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_not_acceptable_valid_custom_header
+    get '/api/discussions/categories', nil, @headers.merge('HTTP_ACCEPT' => 'application/vnd.freshdesk.v2')
+    assert_response :success
+  end
+
   def test_not_acceptable_valid_json_type
     get '/api/discussions/categories', nil,  @headers.merge('HTTP_ACCEPT' => 'application/json')
     assert_response :success

@@ -8,12 +8,23 @@ class ApiValidation
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
     if item
       item.attributes.each_pair do |field, value|
-        instance_variable_set('@' + field, format_value(value)) if self.class.instance_methods.include?(field.to_sym)
+        instance_variable_set('@' + field, format_value(value))
       end
     end
     # Set instance variables of validation class from the request params.
     request_params.each_pair do |key, value|
       instance_variable_set('@' + key, value)
+    end
+  end
+
+  def check_params_set(request_params, item)
+    if item
+      item.attributes.each_pair do |field, value|
+        instance_variable_set('@' + field + '_set', false)
+      end
+    end
+    request_params.each_pair do |key, value|
+      instance_variable_set('@' + key + '_set', true)
     end
   end
 

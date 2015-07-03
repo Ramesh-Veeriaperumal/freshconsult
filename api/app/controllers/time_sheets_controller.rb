@@ -15,7 +15,6 @@ class TimeSheetsController < ApiApplicationController
     # update_running_timer and @item.save should be wrapped in a transaction.
     update_running_timer params[cname][:user_id] if @timer_running
     @item.workable = @time_sheet_val.ticket
-    @time_spent = view_duration(@time_sheet.time_spent)
     super
   end
 
@@ -37,9 +36,7 @@ class TimeSheetsController < ApiApplicationController
                 { start_time: Time.zone.now }
               end
     changed.merge!(timer_running: !timer_running)
-    if @time_sheet.update_attributes(changed)
-      @time_spent = view_duration(@time_sheet.time_spent)
-    else
+    unless @time_sheet.update_attributes(changed)
       render_error @time_sheet.errors
     end
   end
@@ -66,7 +63,7 @@ class TimeSheetsController < ApiApplicationController
       fields = get_fields("TimeSheetConstants::#{action_name.upcase}_TIME_SHEET_FIELDS")
       params[cname].permit(*fields)
       @time_sheet_val = TimeSheetValidation.new(params[cname], @item, current_account, @timer_running)
-      render_error @time_sheet_val.errors unless @time_sheet_val.valid?
+      render_error @time_sheet_val.errors unless @time_sheet_val.valid?(action_name.to_sym)
     end
 
     def validate_toggle_params
@@ -103,15 +100,6 @@ class TimeSheetsController < ApiApplicationController
       timer_running
     end
 
-    def view_duration(time)
-      if time.is_a? Numeric
-        time = (time.to_f / 3600)
-        hours = sprintf('%0.02d', time)
-        minutes = sprintf('%0.02d', (time.modulo(1) * 60))
-        "#{hours}:#{minutes}"
-      end
-    end
-
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
       return true if params[cname][:timer_running].to_s.to_bool == true && @item.timer_running.to_s.to_bool == false
@@ -121,7 +109,7 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def total_running_time
-      @item.time_spent.to_i + (Time.zone.now - @item.start_time).abs.round
+      @item.time_spent.to_i + (Time.now - @item.start_time).abs.round
     end
 
     def convert_duration(time_spent)

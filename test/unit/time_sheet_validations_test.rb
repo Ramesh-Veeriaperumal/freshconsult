@@ -5,7 +5,7 @@ class TimeSheetValidationsTest < ActionView::TestCase
     controller_params = { 'ticket_id' => 'x', 'user_id' => 'x' }
     item = nil
     time_sheet = TimeSheetValidation.new(controller_params, item, Account.first, true)
-    time_sheet.valid?
+    time_sheet.valid?(:create)
     error = time_sheet.errors.full_messages
     assert error.include?('Ticket is not a number')
     assert error.include?('User is not a number')
@@ -16,7 +16,7 @@ class TimeSheetValidationsTest < ActionView::TestCase
     controller_params = { 'ticket_id' => 999, 'user_id' => 'x' }
     item = nil
     time_sheet = TimeSheetValidation.new(controller_params, item, Account.first, true)
-    time_sheet.valid?
+    time_sheet.valid?(:create)
     error = time_sheet.errors.full_messages
     refute error.include?('Ticket is not a number')
     assert error.include?("Ticket can't be blank")
@@ -27,7 +27,7 @@ class TimeSheetValidationsTest < ActionView::TestCase
     controller_params = { 'ticket_id' => tkt.display_id, 'user_id' => 'x' }
     item = nil
     time_sheet = TimeSheetValidation.new(controller_params, item, Account.first, true)
-    time_sheet.valid?
+    time_sheet.valid?(:create)
     error = time_sheet.errors.full_messages
     refute error.include?("Ticket can't be blank")
     assert_equal tkt, time_sheet.ticket

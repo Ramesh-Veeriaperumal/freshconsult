@@ -67,7 +67,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
-  
+
   def test_destroy_with_ownership
     ts_id = create_time_sheet.id
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
@@ -76,7 +76,6 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert Helpdesk::TimeSheet.find_by_id(ts_id).nil?
     assert_equal ' ', @response.body
   end
-
 
   def test_index_without_feature
     controller.class.any_instance.stubs(:feature?).returns(false).once
@@ -557,24 +556,28 @@ class TimeSheetsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('start_time', 'Has to be lesser than current time')])
   end
 
-  def test_update_timer_running_true_again
+  def test_update_timer_running_false_again
     executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 20.hours).to_s
     ts = create_time_sheet(timer_running: false)
-    put :update, construct_params({ id: ts.id },  time_spent: '09:00',
+    put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: false, executed_at: executed_at,
                                                   note: 'test note', billable: true, user_id: @agent.id)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before")])
+    match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before"),
+                bad_request_error_pattern('start_time', 'Should be blank if timer_running is false')])
   end
 
-  def test_update_timer_running_false_again
+  def test_update_timer_running_true_again
     executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 20.hours).to_s
     ts = create_time_sheet(timer_running: true)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00',
-                                                  timer_running: true, executed_at: executed_at,
+                                                  timer_running: true, executed_at: executed_at, start_time: start_time,
                                                   note: 'test note', billable: true, user_id: @agent.id)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before")])
+    match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before"),
+                bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
   end
 
   def test_update_user_id_when_timer_running
@@ -698,7 +701,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
       time_spent = (Time.zone.now - ts.start_time).abs.round
       if time_spent.is_a? Numeric
         hours, minutes = time_spent.divmod(60).first.divmod(60)
-        time_spent = "#{sprintf('%0.02d', hours)}:#{sprintf('%0.02d', minutes)}"
+        time_spent = format('%02d:%02d', hours, minutes)
       end
       put :update, construct_params({ id: ts.id }, timer_running: false,
                                                    executed_at: executed_at, note: 'test note', billable: true)

@@ -149,6 +149,18 @@ private
   def get_time_in_second time_hour
     s = time_hour.to_f * 60 * 60 
   end
+
+  def convert_duration(duration)
+    if duration =~ /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+      time_pieces = duration.split(":")
+      hours = time_pieces[0].to_i
+      minutes = (time_pieces[1].to_f/60.0)
+
+      duration = hours + minutes
+    end
+
+    (duration.to_f * 60 * 60).to_i
+  end
   
   def load_time_entry
     @time_entry = scoper.find(params[:id])
