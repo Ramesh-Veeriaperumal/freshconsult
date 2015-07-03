@@ -542,7 +542,7 @@ module ApplicationHelper
                       ] if current_account.features?(:surveys, :survey_links)
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
-                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?
     place_holders
   end
 

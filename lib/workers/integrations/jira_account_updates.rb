@@ -18,14 +18,14 @@ class Workers::Integrations::JiraAccountUpdates
 				tkt_obj = Account.current.tickets.find(options[:local_integratable_id])
 				Timeout.timeout(JIRA_TIMEOUT) {
 					jiraIssue.update(options,false)
-					jiraIssue.push_existing_notes_to_jira(options[:integrated_resource]["remote_integratable_id"], tkt_obj)
+					jiraIssue.push_existing_notes_to_jira(options[:integrated_resource]["remote_integratable_id"], tkt_obj) unless installed_app.configs[:inputs]["fd_comment_sync"] == "none"
 					jiraIssue.construct_attachment_params(options[:integrated_resource]["remote_integratable_id"],tkt_obj )
 				}
 			elsif(operation == "link_issue")
 				jiraIssue = Integrations::JiraIssue.new(installed_app)
 				tkt_obj = Account.current.tickets.find(options[:local_integratable_id])
 				Timeout.timeout(JIRA_TIMEOUT) {
-					jiraIssue.push_existing_notes_to_jira(options[:integrated_resource]["remote_integratable_id"], tkt_obj)
+					jiraIssue.push_existing_notes_to_jira(options[:integrated_resource]["remote_integratable_id"], tkt_obj) unless installed_app.configs[:inputs]["fd_comment_sync"] == "none"
 					jiraIssue.construct_attachment_params(options[:integrated_resource]["remote_integratable_id"],tkt_obj )
 				}
 			else
