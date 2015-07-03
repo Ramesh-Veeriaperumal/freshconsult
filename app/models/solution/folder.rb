@@ -31,14 +31,6 @@ class Solution::Folder < ActiveRecord::Base
   include Solution::LanguageMethods
   include Solution::MetaAssociationSwitcher
 
-  def self.folders_for_category category_id    
-    self.find_by_category_id(category_id)    
-  end
-
-  def self.find_all_folders(account)   
-    self.find(:all).select { |a| a.account_id.eql?(account) }
-  end
-
   def visible?(user)    
     return true if (user and user.privilege?(:manage_tickets) )
     return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
@@ -57,13 +49,37 @@ class Solution::Folder < ActiveRecord::Base
     end
   end
   
-  scope :visible, lambda {|user| {
-                    :order => "position" ,
-                    # :joins => "LEFT JOIN `solution_customer_folders` ON 
-                                # solution_customer_folders.folder_id = solution_folders.id and  
-                                # solution_customer_folders.account_id = solution_folders.account_id",
-                    :conditions => visiblity_condition(user) } }
+  scope :visible, lambda {|user| visibility_condition_hash(user) }
 
+  # scope :visible, lambda {|user| {
+  #                   :order => "position" ,
+  #                   # :joins => "LEFT JOIN `solution_customer_folders` ON 
+  #                               # solution_customer_folders.folder_id = solution_folders.id and  
+  #                               # solution_customer_folders.account_id = solution_folders.account_id",
+  #                   :conditions => visiblity_condition(user) } }
+
+  def self.visibility_condition_hash(user)
+    if Account.current.launched?(:meta_read)
+      visibility_hash_through_meta(user)
+    else
+      visibility_hash(user)
+    end
+  end
+
+  def self.visibility_hash(user)
+    {
+      :order => "position",
+      :conditions => visiblity_condition(user)
+    }
+  end
+
+  def self.visibility_hash_through_meta(user)
+    {
+      :joins => :solution_folder_meta,
+      :order => "solution_folder_meta.position",
+      :conditions => visiblity_condition(user).gsub("solution_folders", "solution_folder_meta").gsub("folder_id", "folder_meta_id")
+    }
+  end
 
   def self.visiblity_condition(user)
     condition = "solution_folders.visibility IN (#{ self.get_visibility_array(user).join(',') })"

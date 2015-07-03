@@ -34,7 +34,7 @@ module Solution::MetaMethods
 	def save_meta
 		obj = meta_object
 		changed_attribs(obj).each do |attrib|
-			obj.send("#{attrib}=", self.send(attrib))
+			obj.send("#{attrib}=", self.read_attribute(attrib))
 		end
 		assign_defaults(obj)
 		obj.save

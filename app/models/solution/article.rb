@@ -49,15 +49,22 @@ class Solution::Article < ActiveRecord::Base
       { :conditions => ["user_id = ?", user.id ] }
   }
 
-  scope :articles_for_portal, lambda { |portal|
-    {
-      :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
-          portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
-      :joins => :folder
-    }
-  }
+  scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+
+  def self.articles_for_portal_conditions(portal)
+    if Account.current.launched?(:meta_read)
+      { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
+          portal.portal_solution_categories.map(&:solution_category_meta_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
+        :joins => :folder_with_meta
+      }
+    else
+      { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
+          portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
+        :joins => :folder }
+    end
+  end
 
   def type_name
     TYPE_NAMES_BY_KEY[art_type]

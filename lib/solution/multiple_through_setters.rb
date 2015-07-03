@@ -16,6 +16,10 @@ module Solution::MultipleThroughSetters
 		association_without_meta.build(attributes)
 	end
 
+	def destroy_all
+		association_without_meta.destroy_all
+	end
+
 	protected
 
 	def association_name
