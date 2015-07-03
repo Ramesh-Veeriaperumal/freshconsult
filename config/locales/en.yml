@@ -3381,7 +3381,7 @@ en:
       draft_published_label: There is also a published version.
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
-      published_success: This article was published succesfully.
+      published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
       published_failure: This article could not be published. Try again.
       view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."
