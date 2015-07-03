@@ -271,7 +271,8 @@ class Solution::ArticlesController < ApplicationController
       @draft = @article.draft
       if @draft.present? 
         if update_draft_attributes and @draft.publish!
-          flash[:notice] = t('solution.articles.published_success')
+          flash[:notice] = t('solution.articles.published_success',
+                               :url => support_solutions_article_path(@article)).html_safe
         else
           flash[:error] = t('solution.articles.published_failure')
         end
@@ -330,7 +331,8 @@ class Solution::ArticlesController < ApplicationController
       respond_to do |format|    
         if @article.update_attributes(update_params)
           format.html { 
-            flash[:notice] = t('solution.articles.published_success') if publish?
+            flash[:notice] = t('solution.articles.published_success', 
+              :url => support_solutions_article_path(@article)).html_safe if publish?
             redirect_to :action => "show" 
           }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
