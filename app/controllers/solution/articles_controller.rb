@@ -70,7 +70,8 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       if @article.save
         format.html { 
-          flash[:notice] = t('solution.articles.published_success') if publish?
+          flash[:notice] = t('solution.articles.published_success',
+                            :url => support_solutions_article_path(@article)).html_safe if publish?
           redirect_to creation_redirect_url 
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
