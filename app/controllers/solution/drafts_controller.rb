@@ -29,7 +29,8 @@ class Solution::DraftsController < ApplicationController
 	def publish
 		redirect_to :back and return if @article.draft.present? && @article.draft.locked?
 		@article.draft.present? ? @article.draft.publish! : @article.publish!
-		flash[:notice] = t('solution.articles.published_success')
+		flash[:notice] = t('solution.articles.published_success',
+		                     :url => support_solutions_article_path(@article)).html_safe
 		redirect_to :back
 	end
 

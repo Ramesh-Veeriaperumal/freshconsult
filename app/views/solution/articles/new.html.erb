@@ -1,5 +1,6 @@
 <% content_for :layoutType do %>community solutions<% end %>
-<%= render :partial => '/solution/shared/sticky', :locals => { :page => :article} %>
+<%= render :partial => '/solution/shared/sticky', 
+           :locals => { :page => :article, :sticky_class => 'article-sticky'} %>
 
 <%= render :partial => 'article_form' %>
 		
