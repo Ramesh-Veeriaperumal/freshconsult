@@ -71,7 +71,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     params[:ticket][:remoteId]="" if params[:ticket][:remoteId]==0
     rec = params[:ticket][:recordingUrl]
     ticket_desc = "#{params[:ticket][:description]}<br/><audio controls><source src=\'#{rec}\' class=\"cti_recording\" type=\"audio/ogg\"/></source></audio><br/>#{params[:ticket][:remoteId]}"
-    user = current_account.users.find_by_email(params[:ticket][:email])
+    user = current_account.users.with_contact_number(params[:ticket][:number]).first if user.blank?
     if user.blank?
       user  = current_account.users.new
       user.name = params[:ticket][:requester_name].blank? ? params[:ticket][:number] : params[:ticket][:requester_name]

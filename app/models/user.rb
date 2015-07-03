@@ -318,6 +318,8 @@ class User < ActiveRecord::Base
     true
   end
 
+  #This scope is currently used only for failure searches through ES for contact_merge search
+
   scope :matching_users_from, lambda { |search|
     {
       :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
@@ -754,6 +756,8 @@ class User < ActiveRecord::Base
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
     end
+
+    #This is the current login method. It is fed to authlogic in user_sessions.rb
 
     def self.find_by_user_emails(login)
       if !Account.current.features_included?(:multiple_user_emails)

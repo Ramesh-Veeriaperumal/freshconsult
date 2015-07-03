@@ -37,6 +37,7 @@ HTML
     output.html_safe
     end
 
+    # Extension of dom element for user emails display in form
     def display_user_emails
       output = []
       count = 0

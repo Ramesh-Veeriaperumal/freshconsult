@@ -25,7 +25,7 @@
       <label class="control-label"><%=t('reports.freshfone.call_type')%></label>
       <%= select_tag :call_type, options_for_select(call_types,@call_type.to_i), 
               { :multiple => false, 
-                :class => "select2 filter_item",
+                :class => "select2 filter_item report-metric",
                       "data-placeholder".to_sym() => t('reports.freshfone.select_call_type')} %>
   </li> 
     <li>

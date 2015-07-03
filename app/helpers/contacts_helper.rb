@@ -54,6 +54,9 @@ module ContactsHelper
     (icon_wrapper + text_wrapper + time_div)
   end
 
+  #This is for user emails display in show page
+  #The one for the form is in user_emails_helper
+
   def render_user_email_field field
     output = []
     output << %(<ul class="user-email-bullet">)
