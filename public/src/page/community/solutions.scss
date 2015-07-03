@@ -886,3 +886,12 @@ body.community #sticky_header.category-sticky.is_stuck {
 .add-folder-link {
   font-size: 12px;
 }
+
+.article-view .article-title {
+  border-bottom: 1px solid #eee;
+  border-radius: 0;
+}
+
+.article-edit textarea {
+  z-index: 5;
+}
