@@ -1,7 +1,11 @@
 <div class="solution-header draft-notif">
 		<% if @article.draft or !@article.published? %>
 		<div class="sub-content article-view-edit <%= 'error' if @article.draft.present? && @article.draft.locked? %>">
-			<p class="pull-left"><%= draft_info_text %> &nbsp;&nbsp; <%= discard_link %> </p>
+			<p class="pull-left"><%= draft_info_text %> 
+				<% if privilege?(:publish_solution) %>
+					&nbsp;&nbsp; <%= discard_link %> &nbsp;&nbsp; <%= publish_link %>
+				<% end %>
+			</p>
 			<p class="pull-right">
 				<%= link_to( t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"), :class => "pull-right preview-draft-link", :target => "_blank") %>
 			</p>

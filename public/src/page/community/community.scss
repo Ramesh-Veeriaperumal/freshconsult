@@ -361,28 +361,7 @@ body.community.moderation.cs-always-show {
 	}
 }
 
-.artical_section, .pagearea {
-	.article-title-input {
-		margin-right: -10px;
-	}
-	.draft-info-box {
-		background-color: #fffee9;
-		padding: 12px 0px;
-		margin: -10px -20px 20px -20px;
-		float: none;
-		overflow: hidden;
-		.btn-small {
-		  background: #fffff5;
-		  font-weight: 500;
-		}
-		.preview-draft-link{
-			margin-right: 20px;
-		}
-		.draft-btn, .reload-btn {
-			margin-left: 6px;
-			cursor: pointer;
-		}
-	}
+.pagearea {
 	.disabled {
 		color: grey;
 	}
@@ -393,11 +372,7 @@ body.community.moderation.cs-always-show {
 		}
 	}
 }
-.artical_section {
-	.draft-info-box {
-		padding: 12px 0px 12px 20px;
-	}
-}
+
 .portal-preview-icon {
 	margin-left: 10px;
 }

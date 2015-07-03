@@ -40,7 +40,13 @@ module Solution::ArticlesHelper
               :method => 'delete',
               :confirm => t('solution.articles.draft.discard_confirm'),
               :class => 'draft-btn'
-            ) if ( @article.published? && @article.draft.present? )
+            ) if (@article.published? && @article.draft.present?)
+  end
+
+  def publish_link
+    link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
+              :method => 'post', 
+              :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
   end
   
   def form_data_attrs
