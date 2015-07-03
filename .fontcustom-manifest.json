@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "0f9827d399e2341168a6f1323f0160accd44eed0668e49c8587c58e6ef3aafcf",
-    "current": "0f9827d399e2341168a6f1323f0160accd44eed0668e49c8587c58e6ef3aafcf"
+    "previous": "68a889f3a3e5e19af8e248fb27baac36cd6c73ccb5e1066e06fec9ba405486af",
+    "current": "68a889f3a3e5e19af8e248fb27baac36cd6c73ccb5e1066e06fec9ba405486af"
   },
   "fonts": [
-    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.ttf",
-    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.svg",
-    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.woff",
-    "public/assets/glyphs_0f9827d399e2341168a6f1323f0160ac.eot"
+    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.ttf",
+    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.svg",
+    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.woff",
+    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.eot"
   ],
   "glyphs": {
     "account": {
@@ -357,6 +357,10 @@
     "firefox": {
       "codepoint": 61772,
       "source": "public/glyphs/vectors/firefox.svg"
+    },
+    "folder": {
+      "codepoint": 61882,
+      "source": "public/glyphs/vectors/folder.svg"
     },
     "folder-o": {
       "codepoint": 61773,
@@ -748,6 +752,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
