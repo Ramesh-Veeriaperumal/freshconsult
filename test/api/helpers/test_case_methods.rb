@@ -46,7 +46,7 @@ module TestCaseMethods
   end
 
   def other_user
-    User.select{|x| @agent.can_assume?(x)}.first || create_dummy_customer
+    User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
   end
 
   def user_without_monitorships

@@ -5,7 +5,7 @@ class TopicsIntegrationest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 7,
+      create: 8,
       show: 4,
       update: 12,
       destroy: 12,
