@@ -28,14 +28,14 @@ class TimeSheetsController < ApiApplicationController
   def toggle_timer
     timer_running = @time_sheet.timer_running
     changed = if timer_running
-                { time_spent: calculate_time_spent(@time_sheet) }
-              else
-                # If any validation is introduced in the TimeSheet model,
-                # update_running_timer and @item.update_attributes should be wrapped in a transaction.
-                update_running_timer @time_sheet.user_id
-                { start_time: Time.zone.now }
-              end
-    changed.merge!(timer_running: !timer_running)
+      {time_spent: calculate_time_spent(@time_sheet)}
+    else
+      # If any validation is introduced in the TimeSheet model, 
+      # update_running_timer and @item.update_attributes should be wrapped in a transaction.
+      update_running_timer @time_sheet.user_id
+      {start_time: Time.zone.now }
+    end
+    changed.merge!({:timer_running => !timer_running})
     unless @time_sheet.update_attributes(changed)
       render_error @time_sheet.errors
     end

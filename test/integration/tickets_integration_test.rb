@@ -6,7 +6,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
     v1 = {}
     v2_expected = {
       create: 1,
-      show: 5,
+      show: 2,
       update: 2,
       index: 7,
       destroy: 5,

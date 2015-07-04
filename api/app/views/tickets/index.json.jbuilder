@@ -6,7 +6,7 @@ json.array! @tickets do |tkt|
 
     json.set! :deleted, tkt.deleted if tkt.deleted
 
-    json.(tkt, :description, :description_html, :fr_escalated, :spam, :urgent, :requester_status_name, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email, :to_emails, :product_id)
+    json.(tkt, :description, :description_html, :fr_escalated, :spam, :urgent, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email, :to_emails, :product_id)
 
     json.set! :ticket_id, tkt.display_id
     json.set! :type, tkt.ticket_type

@@ -311,6 +311,30 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('attachments', 'invalid_format')])
   end
 
+  def test_attachment_invalid_size_create
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20000000)
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = ticket_params_hash.merge('attachments' => [file])
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({}, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_size')])
+  end
+
+  def test_attachments_invalid_size_update
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = update_ticket_params_hash.merge('attachments' => [file])
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    attachments = [mock("attachment")]
+    attachments.stubs(:sum).returns(20000000)
+    Helpdesk::Ticket.any_instance.stubs(:attachments).returns(attachments)
+    put :update, construct_params({:id => Helpdesk::Ticket.first.id}, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_size')])
+  end
+
   def test_create_with_nested_custom_fields
     # create_dependent_custom_field(%w(Country State City))
     params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
@@ -1157,7 +1181,7 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.count
 
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: User.first.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: User.first.id, status: 2)
     get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
     assert_response :success
     response = parse_response @response.body

@@ -11,6 +11,7 @@ class TicketsController < ApiApplicationController
   before_filter :restrict_params, only: [:assign, :restore]
   skip_before_filter :load_objects, only: [:index]
   before_filter :validate_filter_params, only: [:index]
+  skip_before_filter :load_association, only: [:show]
 
   def index
     load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,

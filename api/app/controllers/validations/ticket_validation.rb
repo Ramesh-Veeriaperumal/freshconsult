@@ -20,7 +20,7 @@ class TicketValidation < ApiValidation
   validates :tags, :cc_emails, :attachments, data_type: { rules: Array }, allow_nil: true
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
-
+  validate :attachment_size, if: -> {attachments && errors[:attachments].blank?}
   validates :due_by, presence: { message: 'Should not be blank if fr_due_by is given' }, if: -> { fr_due_by }
   validates :fr_due_by, presence: { message: 'Should not be blank if due_by is given' }, if: -> { due_by }
 
@@ -34,7 +34,14 @@ class TicketValidation < ApiValidation
     @fr_due_by = item.try(:frDueBy).try(:to_s) if item
     @custom_fields = item.try(:custom_field) if item
     @type = item.try(:ticket_type) if item
+    @item = item
     super(request_params, item)
+  end
+
+  def attachment_size
+    old_size = @item ? @item.attachments.sum(:content_file_size) : 0
+    new_size = @attachments.map {|a| a.size}.inject(:+)
+    errors.add(:attachments, 'invalid_size') if (old_size + new_size) > 15 * 1024 * 1024
   end
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
