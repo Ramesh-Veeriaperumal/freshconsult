@@ -38,6 +38,20 @@
 				</div>
 			</div>
 
+			<% if privilege?(:admin_tasks) %>
+				<div class="control-group row-fluid">
+					<%= f.label :name, t('solution.change_author'),:class =>"control-label" %>
+					<div class="controls">
+						<%= f.select :user_id,
+		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}, @article.user_id), 
+		          { :id => "change_author",
+		            :include_blank => true },
+		          :class => "select2"
+		           %>
+					</div>
+				</div>
+			<% end %>
+
 		<% end %>
 
 

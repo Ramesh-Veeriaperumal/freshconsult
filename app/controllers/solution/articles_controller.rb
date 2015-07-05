@@ -327,7 +327,7 @@ class Solution::ArticlesController < ApplicationController
     def update_article
       build_attachments unless update_properties?
       @article.tags_changed = set_solution_tags
-      update_params = update_properties? ? params[nscname].except(:title, :description, :folder_id) : params[nscname]
+      update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
       respond_to do |format|    
         if @article.update_attributes(update_params)
           format.html { 
