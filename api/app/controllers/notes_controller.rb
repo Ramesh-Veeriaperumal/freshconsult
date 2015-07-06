@@ -87,7 +87,7 @@ class NotesController < ApiApplicationController
 
     def manipulate_params
       # set source only for create/reply action not for update action. Hence @item is checked.
-      params[cname][:source] = NoteConstants::NOTE_TYPE_FOR_ACTION[action_name] unless @item
+      params[cname][:source] = NoteConstants::NOTE_TYPE_FOR_ACTION[action_name] if NoteConstants::NOTE_TYPE_FOR_ACTION.keys.include?(action_name)
       # only note can have choices for private field.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
       # Set ticket id from already assigned ticket only for create/reply action not for update action.
@@ -115,6 +115,6 @@ class NotesController < ApiApplicationController
     end
 
     def can_validate_ticket
-      action_name.to_s == 'create'
+      create?
     end
 end

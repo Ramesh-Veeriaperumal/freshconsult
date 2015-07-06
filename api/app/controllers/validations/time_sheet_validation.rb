@@ -13,7 +13,7 @@ class TimeSheetValidation < ApiValidation
   # start_time param has no meaning timer is already on in case of update.
   validates :start_time, inclusion: { in: [nil], message: 'Should be blank if timer_running was true already' }, if: -> { item.timer_running }, on: :update
   # start_time param has no meaning when timer is off.
-  validates :start_time, inclusion: { in: [nil], message: 'Should be blank if timer_running is false' }, 
+  validates :start_time, inclusion: { in: [nil], message: 'Should be blank if timer_running is false' },
                          unless: -> { errors[:start_time].any? || errors[:timer_running].any? || timer_running }
   validates :start_time, date_time: { allow_nil: true }, if: -> { errors[:start_time].blank? }
   # start_time should be lesser than current_time to avoid negative time_spent values.

@@ -152,12 +152,22 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_params
-    get :index, controller_params(company_id: 't', user_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
+    get :index, controller_params(company_id: 't', user_id: 'er', group_id: 'ui', billable: '78', executed_after: '78/34', executed_before: '90/12')
     pattern = [bad_request_error_pattern('billable', 'Should be a value in the list 0,false,1,true')]
-    pattern << bad_request_error_pattern('user_id', "can't be blank")
-    pattern << bad_request_error_pattern('company_id', "can't be blank")
+    pattern << bad_request_error_pattern('user_id', 'is not a number')
+    pattern << bad_request_error_pattern('company_id', 'is not a number')
+    pattern << bad_request_error_pattern('group_id', 'is not a number')
     pattern << bad_request_error_pattern('executed_after', 'is not a date')
     pattern << bad_request_error_pattern('executed_before', 'is not a date')
+    assert_response :bad_request
+    match_json pattern
+  end
+
+  def test_index_with_invalid_model_params
+    get :index, controller_params(company_id: 8989, user_id: 678_567_567, group_id: 7868, billable: true, executed_after: 23.days.ago.to_s, executed_before: 2.days.ago.to_s)
+    pattern = [bad_request_error_pattern('user', "can't be blank")]
+    pattern << bad_request_error_pattern('company', "can't be blank")
+    pattern << bad_request_error_pattern('group', "can't be blank")
     assert_response :bad_request
     match_json pattern
   end

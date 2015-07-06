@@ -26,10 +26,11 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def update_ticket_params_hash
+    cc_emails = [Faker::Internet.email, Faker::Internet.email]
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
-    params_hash = { description: description, subject: subject, priority: 4, status: 3, type: 'Lead',
+    params_hash = { description: description, cc_emails: cc_emails, subject: subject, priority: 4, status: 3, type: 'Lead',
                     responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
                     due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s, group_id: Group.last.id }
     params_hash
@@ -485,6 +486,18 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
     assert t.reload.source == 2
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_cc_emails
+    cc_emails = [Faker::Internet.email, Faker::Internet.email]
+    params_hash = { cc_emails: cc_emails }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    assert t.reload.cc_email[:cc_emails] == cc_emails
+    assert t.reload.cc_email[:reply_cc] == cc_emails
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end

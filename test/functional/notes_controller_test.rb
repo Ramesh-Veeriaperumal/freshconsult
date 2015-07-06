@@ -78,7 +78,7 @@ class NotesControllerTest < ActionController::TestCase
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('user_id', 'is not a number'),
-                bad_request_error_pattern('ticket_id', "can't be blank")])
+                bad_request_error_pattern('ticket_id', 'is not a number')])
   end
 
   def test_create_inclusion_invalid
@@ -108,7 +108,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { body_html: 'test', ticket_id: 789_789_789 }
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('ticket_id', "can't be blank")])
+    match_json([bad_request_error_pattern('ticket', "can't be blank")])
   end
 
   def test_create_invalid_model
@@ -128,7 +128,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({}, {})
     assert_response :bad_request
-    match_json([bad_request_error_pattern('ticket_id', "can't be blank")])
+    match_json([bad_request_error_pattern('ticket', "can't be blank")])
   end
 
   def test_create_returns_location_header
