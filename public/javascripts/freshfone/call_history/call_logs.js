@@ -86,6 +86,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$freshfoneCallHistory.on('click.freshfonecallhistory.calllogs', '.create_freshfone_ticket',
        function (ev) {
         ev.preventDefault();
+        App.Phone.Metrics.setConvertedToTicket();
         if (freshfoneendcall === undefined) { return false; }
         freshfoneendcall.id = $(this).data("id");
         freshfoneendcall.inCall = false;

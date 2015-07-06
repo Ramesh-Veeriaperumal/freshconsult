@@ -168,6 +168,7 @@
 			}
 			if(classValue.hasClass('keypad-special')){
 				App.Phone.Metrics.resetCallDirection();
+				App.Phone.Metrics.resetConvertedToTicket();
 				App.Phone.Metrics.push_event();
 			}
 	}
@@ -176,6 +177,7 @@
 		jQuery(".user_phone").keypress(function(ev){
 				if(ev.keyCode===13){
 					App.Phone.Metrics.resetCallDirection();
+					App.Phone.Metrics.resetConvertedToTicket();
 					App.Phone.Metrics.push_event();
 				}
 				else{

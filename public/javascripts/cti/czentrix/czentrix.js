@@ -60,7 +60,7 @@ CZentrixWidget.prototype = {
           parser=new DOMParser();
           xmlDoc=parser.parseFromString(data['responseJSON'],"text/xml");
           var status = xmlDoc.getElementsByTagName("status")[0].childNodes[0].nodeValue;
-          if(status==1) freshdeskHandleEndCall("http://"+cti_user.host_ip+"/logger/"+path+"/"+fileName);
+          if(status==1) freshdeskHandleEndCall(location.protocol + "//" + cti_user.host_ip + "/logger/" + path + "/" + fileName);
         },
         on_failure: function(data) {
           

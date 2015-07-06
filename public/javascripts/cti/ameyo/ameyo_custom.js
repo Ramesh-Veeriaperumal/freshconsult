@@ -25,7 +25,7 @@ function handleOnLoad() {
 }
 
 function handleHangup(reason) {
-	var recordingUrl = 'http://'+cti_user.host_ip+'/ameyowebaccess/command?command=downloadVoiceLog&data={"crtObjectId":"'+crtObjectId+'"}';
+	var recordingUrl = location.protocol + "//" +cti_user.host_ip+'/ameyowebaccess/command?command=downloadVoiceLog&data={"crtObjectId":"'+crtObjectId+'"}';
 	freshdeskHandleEndCall(recordingUrl);
 }
 

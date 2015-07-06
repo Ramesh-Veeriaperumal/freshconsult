@@ -251,21 +251,41 @@ describe Solution::ArticlesController do
       @article.reload
       @article.updated_at.should_not eql @article.modified_at
     end
+  end
 
-    it "should reset thumbs_up and thumbs_down & destroy the votes for that article when reset ratings is done" do
-      @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-                                       :user_id => @agent.id, :status => "2", :art_type => "1" } )
-      @test_article.thumbs_up = rand(5..10)
-      @test_article.thumbs_down = rand(5..10)
-      @test_article.votes.build(:vote => 1, :user_id => @user.id)
-      @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
-      @test_article.reload.save
-      put :reset_ratings, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
-      @test_article.reload
-      @test_article.thumbs_up.should eql 0
-      @test_article.thumbs_down.should eql 0
-      @test_article.votes.should eql []
-    end
+  it "should reset thumbs_up and thumbs_down & destroy the votes for that article when reset ratings is done" do
+    @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+                                     :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    @test_article.reload
+    @test_article.thumbs_up = rand(5..10)
+    @test_article.thumbs_down = rand(5..10)
+    @test_article.votes.build(:vote => 1, :user_id => @user.id)
+    @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
+    @test_article.save
+    put :reset_ratings, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
+    @test_article.reload
+    @test_article.thumbs_up.should eql 0
+    @test_article.thumbs_down.should eql 0
+    @test_article.votes.should eql []
+  end
+
+  it "should reset thumbs_up and thumbs_down & destroy the votes for that article if meta is not present" do
+    test_article_without_meta = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+                                     :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    test_article_without_meta.reload
+    test_article_without_meta.thumbs_up = rand(5..10)
+    test_article_without_meta.thumbs_down = rand(5..10)
+    test_article_without_meta.votes.build(:vote => 1, :user_id => @user.id)
+    test_article_without_meta.votes.build(:vote => 0, :user_id => @user_1.id)
+    test_article_without_meta.save
+    test_article_without_meta.reload.solution_article_meta.destroy
+    test_article_without_meta.reload.solution_article_meta.should be_nil
+    put :reset_ratings, :id => test_article_without_meta.id, :category_id => @test_category.id, :folder_id => @test_folder.id, :format => 'json'
+    test_article_without_meta.reload
+    test_article_without_meta.thumbs_up.should eql 0
+    test_article_without_meta.thumbs_down.should eql 0
+    test_article_without_meta.votes.should eql []
+    response.code.should be_eql("200")
   end
 
   describe "Solution article meta" do
@@ -314,7 +334,7 @@ describe Solution::ArticlesController do
     end
 
     it "should render article index even if all meta objects are destroyed" do 
-      @account.solution_articles.each {|sa| sa.solution_article_meta.destroy}
+      @account.solution_articles.each {|sa| sa.solution_article_meta ? sa.solution_article_meta.destroy : next}
       get :index, :category_id => @test_category.id, :folder_id => @test_folder.id
       response.should redirect_to(solution_category_folder_url(@test_category.id,@test_folder.id))
     end
