@@ -46,9 +46,9 @@ RSpec.describe SsoController do
     response.should redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{@account.id}%26portal_id%3D#{current_portal.id}&state="
   end
 
-  it "should redirect to google auth url" do
+  it "should redirect to login page if no user found" do
     get :google_login
-    response.should redirect_to "http://" + @account.host
+    response.should redirect_to "http://" + @account.host + '/login'
   end
 
   it "should create new user session if user hasn't logged in" do
