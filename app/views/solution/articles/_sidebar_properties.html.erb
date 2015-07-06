@@ -1,3 +1,23 @@
+	<div class="article-history sidebar-section">
+		
+		<div class="created-history <%= 'hide' if created_at_ellipsis? %>">		
+			<p><%= t('solution.general.created_by') %></p>
+			<p><%= @article.user.name %></p>
+			<p><%= formated_date(@article.created_at) %></p>
+		</div>
+
+		<% if created_at_ellipsis?  %>	
+			<div class="ellipsis">...</div>
+
+			<div class="edited-history">
+					<p><%= t('solution.general.last_published') %></p>
+					<p><%= @article.modified_by.present? ? @article.recent_author.name : @article.user.name %></p>
+					<p><%= formated_date(@article.modified_at) %></p>
+			</div>
+		<% end %>
+	</div>
+
+	<div class="sidebar-section">
 		<div class="title-wrapper">
 			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
 			<p class="edit span1 pull-right">
@@ -51,4 +71,5 @@
 		<!-- <div class="section content-status red">
 			Out dated content
 		</div> -->
+	</div>
 	

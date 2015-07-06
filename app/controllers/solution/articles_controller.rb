@@ -13,9 +13,10 @@ class Solution::ArticlesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
   before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
-  before_filter :old_folder, :cleanup, :only => [:move_to]
+  before_filter :old_folder, :only => [:move_to]
   before_filter :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
+  before_filter :change_author_verify, :only => [:update]
   
 
   def index
@@ -154,14 +155,13 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def change_author
-    @updated_items = []
-    params[:items].each do |a|
-      item = current_account.solution_articles.find(a)
-      item.user_id = params[:parent_id]
-      item.save
-      @updated_items << item.id
+    @articles = current_account.solution_articles.where(:id => params[:items])
+    @articles.each do |article|
+      article.user_id = params[:parent_id]
+      article.save
     end
-    @articles = current_account.solution_articles.find_all_by_id(params[:items])
+    @updated_items = @articles.map(&:id)
+
     flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
     respond_to do |format|
       format.js { render 'solution/articles/change_author.rjs' }
@@ -169,11 +169,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   protected
-
-    def cleanup
-      params[:items] = params[:items].map(&:to_i)
-      params[:parent_id] = params[:parent_id].to_i
-    end
 
     def load_article
       @article = current_account.solution_articles.find(params[:id], :include =>[:draft])
@@ -347,6 +342,15 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
+    def change_author_verify
+      return unless update_properties?
+      new_author_id = params[:solution_article][:user_id]
+      if new_author_id.present? && @article.user_id != new_author_id
+        new_author = current_account.users.find_by_id(new_author_id)
+        params[:solution_article] = params[:solution_article].except(:user_id) unless new_author && new_author.agent?
+      end
+    end
+
     def creation_redirect_url    
       return @article if params[:save_and_create].nil?
       new_solution_category_folder_article_path(params[:category_id], params[:folder_id])
@@ -358,15 +362,12 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def bulk_update_folder
-      @updated_items = []
-      params[:items].each do |a|
-        item = current_account.solution_articles.find(a)
-        if item
-          item.folder_id = params[:parent_id]
-          item.save
-          @updated_items << item.id
-        end
+      @articles = current_account.solution_articles.where(:id => params[:items])
+      @articles.each do |article|
+        article.folder_id = params[:parent_id]
+        article.save
       end
+      @updated_items = @articles.map(&:id)
     end
 
     def old_folder

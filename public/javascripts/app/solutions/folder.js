@@ -215,6 +215,7 @@ window.App = window.App || {};
     },
 
     onSaveSuccess: function () {
+      this.initialData();
       console.log("success");
     },
 
@@ -227,6 +228,7 @@ window.App = window.App || {};
     },
 
     bulk_action: function (obj, list_name, action_name, parentId) {
+      var $this = this;
       $.ajax({
         url: "/solution/" + list_name + "/" + action_name,
         type: 'PUT',
@@ -236,6 +238,7 @@ window.App = window.App || {};
           items: obj.data.selectedElementIds
         },
         success: function () {
+          $this.initialData();
           console.log('success');
         }
       });

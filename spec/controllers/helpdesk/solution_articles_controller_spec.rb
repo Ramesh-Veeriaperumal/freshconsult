@@ -456,4 +456,61 @@ describe Solution::ArticlesController do
     test_language_article.language_code.should be_eql(lang)
     test_language_article.language.should be_eql(lang)
   end
+
+  describe "Change Author[Prop Update]" do
+    before(:each) do
+      @test_article_3 = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" })
+      @agent1  = add_test_agent
+    end
+    
+    it "should not change author even if new author is agent but logged in is a user not agent" do
+      log_in(@user)
+      @test_article_3.user_id.should_not be_eql(@agent1.id)
+      post :update, { 
+                      :id => @test_article_3.id,
+                      :solution_article => {
+                        :user_id => @agent1.id, 
+                        :status => "2", 
+                        :art_type => "1"
+                      }, 
+                      :update_properties => 1 
+                    }
+      @test_article_3.reload
+      @test_article_3.user_id.should_not be_eql(@agent1.id)
+    end
+
+    it "should not change author even if admin but new author is not agent" do
+      log_in(@agent)
+      @test_article_3.user_id.should_not be_eql(@user.id)
+      post :update, { 
+                      :id => @test_article_3.id,
+                      :solution_article => {
+                        :user_id => @user.id, 
+                        :status => "2", 
+                        :art_type => "1"
+                      }, 
+                      :update_properties => 1 
+                    }
+      @test_article_3.reload
+      @test_article_3.user_id.should_not be_eql(@user.id)
+    end
+    
+    it "should change author of the article if admin and new author is agent" do
+      log_in(@agent)
+      @test_article_3.user_id.should_not be_eql(@agent1.id)
+      post :update, { 
+                      :id => @test_article_3.id,
+                      :solution_article => {
+                        :user_id => @agent1.id, 
+                        :status => "2", 
+                        :art_type => "1"
+                      }, 
+                      :update_properties => 1 
+                    }
+      @test_article_3.reload
+      @test_article_3.user_id.should be_eql(@agent1.id)
+    end
+
+  end
 end

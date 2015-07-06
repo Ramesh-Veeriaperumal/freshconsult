@@ -12,7 +12,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :fetch_new_category, :only => [:update, :create]
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
   before_filter :set_modal, :only => [:new, :edit]
-  before_filter :old_category, :cleanup, :only => [:move_to]
+  before_filter :old_category, :only => [:move_to]
   before_filter :bulk_update_category, :only => [:move_to, :move_back]
   
   def index
@@ -134,11 +134,6 @@ class Solution::FoldersController < ApplicationController
 
  protected
 
-  def cleanup
-    params[:items] = params[:items].map(&:to_i)
-    params[:parent_id] = params[:parent_id].to_i
-  end
-
   def scoper #possible dead code
     eval "Solution::#{cname.classify}"
   end
@@ -241,13 +236,12 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      @updated_items = []
-      params[:items].each do |f|
-        item = current_account.folders.find(f)
-        item.category_id = params[:parent_id]
-        item.save
-        @updated_items << item.id
+      @folders = current_account.folders.where(:id => params[:items])
+      @folders.each do |folder|
+        folder.category_id = params[:parent_id]
+        folder.save
       end
+      @updated_items = @folders.map(&:id)
     end
 
     def old_category
