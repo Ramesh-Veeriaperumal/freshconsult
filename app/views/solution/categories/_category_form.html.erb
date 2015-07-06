@@ -3,7 +3,9 @@
 	<div class="control-group">
 		<%= f.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
 		<div class="controls">
-			<%= f.text_field :name, :class => "text required" %>
+			<%= f.text_field :name, 
+											:class => "text required",
+											:autofocus => true %>
 		</div>
 	</div>
 	<div class="control-group">

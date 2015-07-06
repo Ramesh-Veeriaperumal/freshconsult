@@ -1043,3 +1043,11 @@ function getKeyFromValue(object,value){
   }
   return key;
 }
+
+function focusFirstModalElement(namescope) {
+  var namescope = namescope || "default";
+  var target = ['shown', namescope].join('.');
+  jQuery('body').on(target, '.modal', function () {
+    jQuery(this).find('input:text:visible:first').focus();
+  });
+}

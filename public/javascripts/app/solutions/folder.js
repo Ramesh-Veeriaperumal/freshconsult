@@ -120,6 +120,8 @@ window.App = window.App || {};
           }
         }
       });
+
+      focusFirstModalElement('folders_articles');
     },
 
     selectVisibleTo: function () {
@@ -154,6 +156,7 @@ window.App = window.App || {};
       if (data.visibility === 4) {
         this.toggleCompanyClass(true);
         this.eventsForCompanySelect();
+        $('.company_folders .select2-search-field').focus();
       } else {
         this.visibleToSubmit();
         this.toggleCompanyClass(false);

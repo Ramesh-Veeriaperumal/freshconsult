@@ -47,6 +47,8 @@ window.App.Solutions = window.App.Solutions || {};
         $('.orphan-view-all').show();
         $('.orphan-view-less').hide();
       });
+
+      focusFirstModalElement('solutionCategory');
     },
 
     onLeave: function () {
