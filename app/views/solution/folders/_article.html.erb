@@ -11,15 +11,15 @@
 				</div>
 			<% end %>	
 			<div class="span3 pull-right text-right mt6 pr15">
-				<span class="span4 align-left meta-component <%= 'faded' if article.hits == 0 %>">
+				<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
 					<%= font_icon "file-visible" %>
 					<%= article.hits %>
 				</span>
-				<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
+				<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
 					<%= font_icon "like", :size => 18 %>
 					<%= article.thumbs_up %>
 				</span>
-				<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
+				<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
 					<%= font_icon "dislike", :size => 18 %>
 					<%= article.thumbs_down %>
 				</span>
