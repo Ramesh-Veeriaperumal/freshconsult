@@ -16,6 +16,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:subscription_payments] = account.subscription_payments.sum(:amount)
     account_summary[:email] = fetch_email_details(account)
     account_summary[:invoice_emails] = fetch_invoice_emails(account)
+    credit = account.freshfone_credit
+    account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     respond_to do |format|
       format.json do
         render :json => account_summary
