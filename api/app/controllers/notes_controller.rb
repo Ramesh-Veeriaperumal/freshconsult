@@ -13,14 +13,15 @@ class NotesController < ApiApplicationController
   before_filter -> { kbase_email_included? params[cname] }, only: [:reply] # kbase_email_included? present in Email module
 
   def create
-    render_response(create_note)
+    is_success = create_note
+    render_response(is_success)
   end
 
   def reply
-    success = create_note
-    render_response(success)
+    is_success = create_note
+    render_response(is_success)
     # publish solution is being set in kbase_email_included based on privilege and email params
-    create_solution_article if success && @publish_solution
+    create_solution_article if is_success && @publish_solution
   end
 
   def update
@@ -62,8 +63,8 @@ class NotesController < ApiApplicationController
     end
 
     def can_update?
-      # note with source as email(i.e., reply) should not be allowed to update
-      if @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+      # note without source type as 'note' should not be allowed to update
+      unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
         @error = BaseError.new(:method_not_allowed, methods: 'DELETE')
         render '/base_error', status: 405
       end
@@ -104,12 +105,7 @@ class NotesController < ApiApplicationController
     end
 
     def load_object
-      condition = 'id = ? '
-      # Conditions to inlcude deleted record based on action
-      condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
-      # Conditions to include records with email or note as a source based on action
-      condition += ' and source in (?)' if NoteConstants::NOTE_SOURCE_SCOPE.keys.include?(action_name)
-      item = scoper.where(condition, params[:id], NoteConstants::NOTE_SOURCE_SCOPE[action_name]).first
+      item = scoper.visible.find_by_id(params[:id])
       @item = instance_variable_set('@' + cname, item)
       head :not_found unless @item
     end

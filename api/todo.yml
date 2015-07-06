@@ -9,13 +9,12 @@ Todo:
  - Handle global unpermitted params for wrong datatype errors.
  - Fix miniprofiler, mobile actions, oj, ticket fields, review tkts
  - handle xss, customer_forum numericality, ticket scopes
- - revisit cc_email in v2 api tickets create.
  - boolean values in validation should be converted to mysql readable format.
  - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
- - Default content_type should be application/json in request header if not set?
  - base as attribute name in model errors for multiple attributes. - should change that
  - Content type for get ticket index.
- - introduce spam, unspam &  delete_forever via api
+ - introduce spam, unspam &  delete_forever for ticket via api
+ - include meta info( created_by ) of a ticket in response on demand and needly basis
 
 Breaking changes in existing APIs:
  - day pass required
@@ -26,6 +25,7 @@ Breaking changes in existing APIs:
  - validate presence of user in Agent Groups
 
 Deferred:
+ - Default content_type should be application/json in request header if not set?
  - caching(db also)
  - update (override or incremental) -  override
  - Should we need to use existing gem for date validations in model?
@@ -82,6 +82,7 @@ Completed:
  - Middlewares which is not needed for API
 
 Not_necessary:
+ - revisit cc_email in v2 api tickets create.
  - AMS for ticket repsonse
  - Clean up old discussions controller *****
  - Forum is not a number

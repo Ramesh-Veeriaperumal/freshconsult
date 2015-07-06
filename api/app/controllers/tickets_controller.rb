@@ -60,7 +60,8 @@ class TicketsController < ApiApplicationController
   end
 
   def notes
-    @notes = paginate_items(@ticket.notes.includes(:note_old_body, :schema_less_note, :attachments))
+    # show only non deleted notes.
+    @notes = paginate_items(@ticket.notes.visible.exclude_source('meta').includes(:note_old_body, :schema_less_note, :attachments))
     render '/notes/index'
   end
 

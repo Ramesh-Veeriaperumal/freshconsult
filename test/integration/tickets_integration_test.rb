@@ -26,6 +26,8 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
     v2[:show], v2[:api_show] = count_api_queries { get("/api/tickets/#{id1}", nil, @headers) }
     v1[:show] = count_queries { get("/helpdesk/tickets/#{id2}.json", nil, @headers) }
 
+    create_note(user_id: @agent.id, ticket_id: id1, source: 2)
+    create_note(user_id: @agent.id, ticket_id: id2, source: 2)
     # notes
     v2[:notes], v2[:api_notes] = count_api_queries { get("/api/tickets/#{id1}/notes", nil, @headers) }
     v1[:notes] = count_queries { get("/helpdesk/tickets/#{id2}.json", nil, @headers) }
@@ -35,7 +37,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
     v2[:update], v2[:api_update] = count_api_queries { put("/api/tickets/#{id1}", v2_ticket_update_payload, @write_headers) }
     v1[:update] = count_queries { put("/helpdesk/tickets/#{id2}.json", v1_update_ticket_payload, @write_headers) }
     # 12 queries that will be avoided while caching. Hence subtracting it.
-    v2[:update] -= 12 
+    v2[:update] -= 12
 
     # assign
     v2[:assign], v2[:api_assign] = count_api_queries { put("/api/tickets/#{id1}/assign", { user_id: @agent.id }.to_json, @write_headers) }

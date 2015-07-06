@@ -313,7 +313,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_attachment_invalid_size_create
-    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20000000)
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = ticket_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
@@ -327,10 +327,10 @@ class TicketsControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = update_ticket_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    attachments = [mock("attachment")]
-    attachments.stubs(:sum).returns(20000000)
+    attachments = [mock('attachment')]
+    attachments.stubs(:sum).returns(20_000_000)
     Helpdesk::Ticket.any_instance.stubs(:attachments).returns(attachments)
-    put :update, construct_params({:id => Helpdesk::Ticket.first.id}, params)
+    put :update, construct_params({ id: Helpdesk::Ticket.first.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_size')])
@@ -1284,9 +1284,33 @@ class TicketsControllerTest < ActionController::TestCase
     get :notes, controller_params(id: t.id)
     assert_response :success
     result_pattern = []
-    t.notes.each do |n|
+    t.notes.visible.exclude_source('meta').each do |n|
       result_pattern << note_pattern(n)
     end
+    match_json(result_pattern)
+  end
+
+  def test_notes_return_only_non_deleted_notes
+    t = ticket
+    create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+
+    get :notes, controller_params(id: t.id)
+    assert_response :success
+    result_pattern = []
+    t.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << note_pattern(n)
+    end
+    assert JSON.parse(response.body).count == t.notes.visible.exclude_source('meta').count
+    match_json(result_pattern)
+
+    Helpdesk::Note.where(source: 2, notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
+    get :notes, controller_params(id: t.id)
+    assert_response :success
+    result_pattern = []
+    t.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << note_pattern(n)
+    end
+    assert JSON.parse(response.body).count == 0
     match_json(result_pattern)
   end
 

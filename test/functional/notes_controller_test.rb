@@ -438,11 +438,19 @@ class NotesControllerTest < ActionController::TestCase
     match_json(base_error_pattern('method_not_allowed', methods: 'DELETE'))
   end
 
-  def test_update_not_note_or_rpely
+  def test_update_not_note_or_reply
     n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 1)
     params = update_note_params_hash
     put :update, construct_params({ id: n.id }, params)
-    assert_response :not_found
+    assert_response :method_not_allowed
+    match_json(base_error_pattern('method_not_allowed', methods: 'DELETE'))
+  end
+
+  def test_delete_not_note_or_reply
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 1)
+    delete :destroy, construct_params(id: n.id)
+    assert_response :no_content
+    assert Helpdesk::Note.find(n.id).deleted == true
   end
 
   def test_update_user_note

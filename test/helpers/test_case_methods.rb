@@ -179,7 +179,7 @@ module TestCaseMethods
   end
 
   def v1_update_ticket_payload
-    { helpdesk_ticket: v1_ticket_params.merge(cc_email: {cc_emails: [Faker::Internet.email, Faker::Internet.email], reply_cc: [Faker::Internet.email, Faker::Internet.email], fwd_emails: []}), 
+    { helpdesk_ticket: v1_ticket_params.merge(cc_email: { cc_emails: [Faker::Internet.email, Faker::Internet.email], reply_cc: [Faker::Internet.email, Faker::Internet.email], fwd_emails: [] }),
       helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" } }.to_json
   end
 
