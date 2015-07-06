@@ -35,7 +35,7 @@
 	<tr>
 		<td><label for="configs_exclude_attachment_sync" ><%= t("integrations.jira_settings.add_attachments_in_jira") %></label></td>
 		<td>
-			<%= check_box("configs", "exclude_attachment_sync", { :checked=>installed_app.configs_fd_attachment_sync =="1", 
+			<%= check_box("configs", "exclude_attachment_sync", { :checked=>installed_app.configs_exclude_attachment_sync =="1", 
 			"rel" => "toggle", "data-checked-label" => "Yes", "data-unchecked-label" => "No"  }, "1", "0") %>
 		</td>
 	</tr>
