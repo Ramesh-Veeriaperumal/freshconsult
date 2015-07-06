@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "68a889f3a3e5e19af8e248fb27baac36cd6c73ccb5e1066e06fec9ba405486af",
-    "current": "68a889f3a3e5e19af8e248fb27baac36cd6c73ccb5e1066e06fec9ba405486af"
+    "previous": "eefd18b8d95083cba4cbe43b50d2cf66a58cea6b702c2e0edd74cfb2dd594f55",
+    "current": "eefd18b8d95083cba4cbe43b50d2cf66a58cea6b702c2e0edd74cfb2dd594f55"
   },
   "fonts": [
-    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.ttf",
-    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.svg",
-    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.woff",
-    "public/assets/glyphs_68a889f3a3e5e19af8e248fb27baac36.eot"
+    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.ttf",
+    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.svg",
+    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.woff",
+    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.eot"
   ],
   "glyphs": {
     "account": {
@@ -201,6 +201,10 @@
     "crown": {
       "codepoint": 61738,
       "source": "public/glyphs/vectors/crown.svg"
+    },
+    "cube": {
+      "codepoint": 61883,
+      "source": "public/glyphs/vectors/cube.svg"
     },
     "customer-fields": {
       "codepoint": 61739,
