@@ -103,6 +103,11 @@ window.App = window.App || {};
         $this.undo_bulk_action($(this), "articles");
       });
 
+      $('#move_to').on('select2-open', function() {
+         $this.unSelectVisibleTo(); 
+         hideActiveMenu();
+      });
+
       $("body").on('click.folders_articles', function (e) {
         var container =  $('.visible-to-btn');
         if (!container.is(e.target) && container.has(e.target).length === 0) {
