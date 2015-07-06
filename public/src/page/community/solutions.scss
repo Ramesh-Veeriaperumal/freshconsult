@@ -473,7 +473,7 @@
   }
 
   .solution-list-checkbox {
-    padding: 0px 17px 7px 17px;
+    padding: 10px 17px 7px 17px;
   }
 }
 
@@ -919,4 +919,19 @@ body.community #sticky_header.category-sticky.is_stuck {
 
 .solution-home-header .dropdown-menu {
   min-width: 140px;  
+}
+
+.solution-list .solution-icon {
+  padding: 7px;
+  border-radius: 5px;
+  color: #FFFFFF;
+  margin-top: 2px;
+}
+
+#folders_list .ficon-folder {
+  background-color: #B5C8EB;
+}
+
+#articles_list .ficon-file {
+  background-color: #D8DBDF;
 }
