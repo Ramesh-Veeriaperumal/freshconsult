@@ -178,8 +178,17 @@ module TestCaseMethods
       cc_emails: "#{Faker::Internet.email}, #{Faker::Internet.email}" }.to_json
   end
 
+  def v1_update_ticket_payload
+    { helpdesk_ticket: v1_ticket_params.merge(cc_email: {cc_emails: [Faker::Internet.email, Faker::Internet.email], reply_cc: [Faker::Internet.email, Faker::Internet.email], fwd_emails: []}), 
+      helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" } }.to_json
+  end
+
   def v2_ticket_payload
     v2_ticket_params.to_json
+  end
+
+  def v2_ticket_update_payload
+    v2_ticket_params.except(:due_by, :fr_due_by).to_json
   end
 
   def v1_note_payload

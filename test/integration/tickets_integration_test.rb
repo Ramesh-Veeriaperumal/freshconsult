@@ -32,8 +32,10 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
     # there is no notes method in v1
 
     # update
-    v2[:update], v2[:api_update] = count_api_queries { put("/api/tickets/#{id1}", v2_ticket_payload, @write_headers) }
-    v1[:update] = count_queries { put("/helpdesk/tickets/#{id2}.json", v1_ticket_payload, @write_headers) }
+    v2[:update], v2[:api_update] = count_api_queries { put("/api/tickets/#{id1}", v2_ticket_update_payload, @write_headers) }
+    v1[:update] = count_queries { put("/helpdesk/tickets/#{id2}.json", v1_update_ticket_payload, @write_headers) }
+    # 12 queries that will be avoided while caching. Hence subtracting it.
+    v2[:update] -= 12 
 
     # assign
     v2[:assign], v2[:api_assign] = count_api_queries { put("/api/tickets/#{id1}/assign", { user_id: @agent.id }.to_json, @write_headers) }
