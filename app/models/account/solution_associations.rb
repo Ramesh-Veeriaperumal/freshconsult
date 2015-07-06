@@ -22,9 +22,9 @@ class Account < ActiveRecord::Base
 
   has_many :solution_articles, :class_name =>'Solution::Article'
 
-  has_many :solution_folders, :class_name =>'Solution::Folder', :through => :solution_categories
+  has_many :solution_folders, :class_name =>'Solution::Folder', :through => :solution_categories, :order => "category_id, position"
 
-  has_many :public_folders, :through => :solution_categories
+  has_many :public_folders, :through => :solution_categories, :order => "category_id, position"
 
   has_many :published_articles, :through => :public_folders,
     :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
     :source => :solution_folders,
   	:conditions => proc { "solution_folders.language_id = '#{Solution::Folder.current_language_id}'" }
 
-  has_many :public_folders_with_meta, :through => :solution_categories
+  has_many :public_folders_with_meta, :through => :solution_categories_with_meta
 
   has_many :published_articles_with_meta, 
   	:through => :public_folders,
@@ -64,6 +64,6 @@ class Account < ActiveRecord::Base
 
   # Alias
 
-  alias_method :folders, :solution_folders_with_meta
+  alias_method :folders, :solution_folders
 
 end
