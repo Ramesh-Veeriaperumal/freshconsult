@@ -494,11 +494,15 @@
   .select2-chosen {
     color: #666666;
   }
-}
 
-.bulk-action-button.select2-dropdown-open {
-  border-bottom: solid 1px #0080FF;
-  border-radius: 3px;
+  &.select2-dropdown-open {
+    border-bottom: solid 1px #0080FF;
+    border-radius: 3px;
+  }
+
+  &:not(.disabled):not(.select2-dropdown-open) a{
+    border: 1px solid #666666;
+  }
 }
 
 .sol-visibility {
@@ -538,6 +542,10 @@
       }
     }
 	}
+
+  &:not(.faded) .visible-to-btn {
+    border: 1px solid #666666;
+  }
 
 	.right-btn {
 		@include margin-left(10px);
