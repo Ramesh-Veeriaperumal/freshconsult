@@ -1,35 +1,37 @@
-<%= fields_for :tags  do |tag| %>
-	<div class="control-group row-fluid">
-		<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
-		<div class="controls">
-			<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 span12",
-			 "data-tags" => "#{escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe)}" %>
+<div class="control-group row-fluid pt2">
+	<div class="controls span12">
+		<div class="span4">
+			<%= fields_for :tags  do |tag| %>
+				<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
+				<%= tag.text_field :name ,
+													 :value => @article.tags.collect{|tag| tag.name}.join(','),
+													 :class => "select2 span12",
+				 									 "data-tags" => "#{escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe)}" %>
+
+
+			<% end %>
 		</div>
-	</div>
-<%end%>
-
-<div class="control-group row-fluid">
-	<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
-	<div class="controls">
-		<%= f.select :folder_id , 
-					option_groups_from_collection_for_select(
-							current_account.solution_categories.reject(&:is_default), 
-							:folders, :name, :id, :name, 
-							(@article.folder.is_default? ? nil : @article.folder_id )
-					), 
-					{:include_blank => t('solution.folders.choose_folder')},
-					:class => "select2 span4 required"
-		%>
-	</div>
-</div>
-
-<div class="control-group row-fluid">
-	<%= f.label :name, t('solution.type'),:class =>"control-label" %>
-	<div class="controls">
-		<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
-			<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
-			<%= f.label :art_type, t(type), :value => val %>
-		<% end %>
+		<div class="span4">
+			<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
+			<%= f.select :folder_id , 
+						option_groups_from_collection_for_select(
+								current_account.solution_categories.reject(&:is_default), 
+								:folders, :name, :id, :name, 
+								(@article.folder.is_default? ? nil : @article.folder_id )
+						), 
+						{:include_blank => t('solution.folders.choose_folder')},
+						:class => "select2 span12 required"
+			%>
+		</div>
+		<div class="span4">
+			<%= f.label :name, t('solution.type'),:class =>"control-label" %>
+			<div class="span12 pt3">
+				<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
+					<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
+					<%= f.label :art_type, t(type), :value => val %>
+				<% end %>
+			</div>
+		</div>
 	</div>
 </div>
 

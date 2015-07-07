@@ -355,11 +355,11 @@
     /*margin: 0px -15px;*/
     width:95%;
     float: left;
-    min-height: 400px;
+    min-height: 220px;
     .redactor_box{
       border: 0;
       .redactor_editor {
-        min-height: 380px;
+        min-height: 200px;
         padding: 15px 0px !important;
       }
       .redactor_toolbar {
@@ -947,3 +947,8 @@ body.community #sticky_header.category-sticky.is_stuck {
 .category-sticky .sticky_title {
   margin-top: 3px;
 }
+
+#solution-properties {
+  border-top: 1px solid #CCC;
+}
+

@@ -3442,7 +3442,7 @@ en:
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
     no_solutions_info: No solutions in this folder
     info4: Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
-    type: Solution Type
+    type: Article Type
     info5: Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions
     info6: A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed
     visibility: Visibility

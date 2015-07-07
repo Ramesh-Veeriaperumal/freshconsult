@@ -79,10 +79,6 @@
 
     <% if @article.new_record? %>
       <div id="solution-properties-container">
-          <div class="solution-properties-title solution-seo sub-lead">
-          	<span><%= t('solution.properties') %></span>
-          </div>
-          <br/>
           <div id="solution-properties">
   	        <%= render :partial => "article_properties", :locals => { :f => f} %>
           </div>
