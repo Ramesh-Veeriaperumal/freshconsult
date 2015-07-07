@@ -100,12 +100,9 @@ class Solution::FoldersController < ApplicationController
   end
 
   def destroy
-    @folder = @category.folders.find(params[:id])
-    
+    @folder = (@category.present? ? @category.folders : current_account.solution_folders).find(params[:id])
+    redirect_to_url = solution_category_url(@folder.category_id)
     @folder.destroy unless @folder.is_default?
-    
-    redirect_to_url = solution_category_url(params[:category_id])
-    
     respond_to do |format|
       format.html { redirect_to redirect_to_url }
       format.xml  { head :ok }

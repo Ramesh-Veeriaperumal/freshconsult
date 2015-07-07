@@ -1,16 +1,7 @@
 <div class="list-panel-main">
 	<div class="sol-details-left">
-		<ul class="list-actions-left">
-			<% if privilege?(:manage_solutions) -%>
-				<li class="folder-edit">
-					<%= link_to( font_icon(:edit, {:size => 23}), 
-							edit_solution_folder_path(@folder),
-							:rel => "freshdialog",
-							:title => t('folder.edit'),
-							"data-target" => "#folder-edit",
-							"data-template-footer" => '' ) %>
-				</li>
-			<% end %>
+		<ul class="list-actions-left folder-edit-icon">
+			<li> <%= font_icon(:folder, {:size => 26}) %> </li>
 		</ul>
 	</div>
 	<div class="sol-details-right">
@@ -26,10 +17,22 @@
 			    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
 			  </li>
 			</ul>
+			<div class="action-btns-bar span1">
+				<%= link_to( font_icon(:edit, {:size => 23}), 
+							edit_solution_folder_path(@folder),
+							:rel => "freshdialog",
+							:title => t('folder.edit'),
+							"data-target" => "#folder-edit",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save') ) %>
+				<%= confirm_delete(@folder, solution_folder_path(@folder), {:class => 'ficon-trash-o fsize-23 delete-icon', :text => ''}) %>
+			</div>
 		<% end %>
-		<h2 class="list-title ellipsis" folder-id="<%= @folder.id %>"><%= h(@folder.name) %></h2>
-		<div class="sol-visibility muted">
-			<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder) %>
+		<div class="category-details span7">
+			<h2 class="list-title ellipsis" folder-id="<%= @folder.id %>"><%= h(@folder.name) %></h2>
+			<div class="sol-visibility muted">
+				<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder) %>
+			</div>
 		</div>
 	</div>
 </div>

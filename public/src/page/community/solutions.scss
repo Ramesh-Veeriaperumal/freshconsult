@@ -505,23 +505,49 @@
   }
 }
 
-.sol-visibility {
-  margin: -8px 0px 8px 15px;
-  font-size: 100%;
-}
-
 .sol-visibility-label {
   font-weight: 500;
 }
 
 .sol-details-left {
   float: left;
+  .list-actions-left {
+    margin-left: 0px;
+    padding: 6px 5px 10px 0px;
+    color: white;
+    &.folder-edit-icon {
+      background-color: #B5C8EB;
+    }
+    &.category-edit-icon {
+      background-color: #3E74CF;
+    }
+  }
 }
 
 .sol-details-right {
   float: left;
   width: 95%;
   border-left: 1px solid white;
+  .action-btns-bar {
+    padding: 20px 0px;
+    .delete-icon {
+      padding-left: 20px;
+      color: #777;
+    }
+    a [class*="ficon-"] {
+      color: #777;
+    }
+  }
+  .category-details {
+    margin-top: 5px;
+    border-left: 1px solid #ddd;
+    .list-title {
+      line-height: 1.4;
+    }
+    .sol-visibility {
+      margin:3px 0px 0px 15px;
+    }
+  }
 }
 
 .orphan-cat-info {

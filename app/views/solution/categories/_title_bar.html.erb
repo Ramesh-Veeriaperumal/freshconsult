@@ -1,15 +1,8 @@
 <div class="list-panel-main">
 	<% if privilege?(:manage_solutions) && !@category.is_default? -%>
 	<div class="sol-details-left">
-		<ul class="list-actions-left">
-			<li class="category-edit">
-				<%= link_to( font_icon(:edit, {:size => 23}), 
-							edit_solution_category_path(@category),
-							:rel => "freshdialog",
-							:title => t('solution_category.edit'),
-							"data-target" => "#category-edit",
-							"data-template-footer" => '' ) unless @category.is_default? %>
-			</li>
+		<ul class="list-actions-left category-edit-icon">
+			<li> <%= font_icon(:cube, {:size => 26}) %> </li>
 		</ul>
 	</div>
 	<% end %>
@@ -25,10 +18,22 @@
 			    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
 			  </li>
 			</ul>
+			<div class="action-btns-bar span1">
+				<%= link_to( font_icon(:edit, {:size => 23}), 
+							edit_solution_category_path(@category),
+							:rel => "freshdialog",
+							:title => t('solution_category.edit'),
+							"data-target" => "#category-edit",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save') ) %>
+				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o fsize-23 delete-icon', :text => ''}) %>
+			</div>
 		<% end %>
-		<h2 class="list-title ellipsis"><%= h(@category.name) %></h2>
-		<div class="sol-visibility muted">
-			<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category) %>
+		<div class="category-details span7">
+			<h2 class="list-title ellipsis"><%= h(@category.name) %></h2>
+			<div class="sol-visibility muted">
+				<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category) %>
+			</div>
 		</div>
 	</div>
 </div>
