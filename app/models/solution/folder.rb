@@ -25,7 +25,8 @@ class Solution::Folder < ActiveRecord::Base
   
   acts_as_list :scope => :category
   
-  validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
+  validates_inclusion_of :visibility, 
+      :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
