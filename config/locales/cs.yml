@@ -1,6 +1,5 @@
 cs: 
   meta:
-    language_id: 3
     language_name: 'Czech'
   top: Nahoře
   integrations:

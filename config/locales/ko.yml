@@ -1,6 +1,5 @@
 ko: 
     meta:
-        language_id: 16 
         language_name: "Korean"
     confirm_delete_message: "%{human_name}을(를) 정말로 삭제하시겠습니까?"
     any: "모든(어떠한)"

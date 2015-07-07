@@ -12,7 +12,7 @@ class Solution::Category < ActiveRecord::Base
 		:order => "position",
 		:readonly => false,
   	:order => :"solution_folder_meta.position",
-		:conditions => proc { "solution_folders.language_id = '#{Solution::Folder.current_language_id}'" },
+		:conditions => proc { "solution_folders.language_id = '#{Language.current.id}'" },
 		:extend => Solution::MultipleThroughSetters
 
   has_many :public_folders_with_meta, 
@@ -21,7 +21,7 @@ class Solution::Category < ActiveRecord::Base
 		:source => :solution_folders,
     :order => :"solution_folder_meta.position",
 		:readonly => false,
-    :conditions => proc { ["solution_folders.language_id = '#{Solution::Category.current_language_id}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
+    :conditions => proc { ["solution_folders.language_id = '#{Language.current.id}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
 
   has_many :portal_solution_categories_with_meta, 
     :class_name => 'PortalSolutionCategory',

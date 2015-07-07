@@ -1,6 +1,5 @@
 zh-CN:
     meta:
-        language_id: 28
         language_name: 'Chinese'
     confirm_delete_message: "确定删除%{human_name}吗？"
     any: "任何"
