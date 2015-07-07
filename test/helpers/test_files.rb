@@ -22,3 +22,5 @@ include UsersHelper
 include TicketHelper
 include GroupHelper
 include NoteHelper
+include ProductsHelper
+include EmailConfigsHelper
