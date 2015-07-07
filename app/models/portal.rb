@@ -168,6 +168,10 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
+  def solution_category_ids
+    account.launched?(:meta_read) ? solution_categories_with_metum_ids : super
+  end
+
   private
 
     def update_users_language
