@@ -37,12 +37,13 @@ window.App.Solutions = window.App.Solutions || {};
 
     showSearch: function () {
       $('#sticky_search_wrap').addClass('search-ani');
-      $('.sticky_title').hide();
+      $('#sticky_header').addClass('search-open');
       $('.community-search').focus();
     },
 
     hideSearch: function () {
       $('#sticky_search_wrap').removeClass('search-ani');
+      $('#sticky_header').removeClass('search-open');
       $('#page_search_results').hide().empty();
       $('.community-search').val('');
       $('.solution-list').show();

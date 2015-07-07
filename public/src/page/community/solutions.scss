@@ -939,3 +939,12 @@ body.community #sticky_header.category-sticky.is_stuck {
 #articles_list .ficon-file {
   background-color: #D8DBDF;
 }
+
+.category-sticky.is_stuck.search-open {
+  .sticky_title {
+    margin-top: 23px;
+  }
+} 
+.category-sticky .sticky_title {
+  margin-top: 3px;
+}
