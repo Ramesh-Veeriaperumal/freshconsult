@@ -356,10 +356,10 @@ window.App = window.App || {};
     },
 
     defaultFolderValidate: function () {
-      $('body').on('click.articles', '#article-publish-btn', function () {
+      $('body').on('click.articles', '#article-publish-btn, #save-as-draft-btn', function () {
         if ($("#article-form").data().defaultFolder) {
           if ($('#solution_article_folder_id').val() === "") {
-            $('.select-folder').show();
+            $('.folder-warning-msg').show();
             return false;
           }
         }
