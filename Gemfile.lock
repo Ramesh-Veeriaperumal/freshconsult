@@ -176,6 +176,15 @@ GIT
     rails-dev-boost (0.3.0)
       railties (>= 3.0)
 
+GIT
+  remote: git@github.com:freshdesk/launch-party.git
+  revision: 9b884e22f31af95f68b016c7ce203c70658fa90a
+  branch: master
+  specs:
+    launchparty (0.0.0)
+      launchparty
+      redis
+
 PATH
   remote: vendor/gems/acts_as_voteable
   specs:
@@ -253,13 +262,6 @@ PATH
   specs:
     highcharts-rails (3.0.1)
       railties (>= 3.1)
-
-PATH
-  remote: vendor/gems/launchparty
-  specs:
-    launchparty (0.0.0)
-      launchparty
-      redis
 
 PATH
   remote: vendor/gems/liquid

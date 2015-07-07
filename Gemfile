@@ -152,6 +152,8 @@ gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
+gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
+
 
 gem "bunny", "1.2.1"
 
@@ -194,7 +196,6 @@ gem "will_paginate-liquidized", :path => "#{File.expand_path(__FILE__)}/../vendo
 gem "will_filter", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/will_filter"
 gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-openid"
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
-gem "launchparty", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/launchparty"
 
 
 group :development, :test do
