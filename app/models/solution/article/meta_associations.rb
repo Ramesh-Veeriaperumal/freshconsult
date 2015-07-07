@@ -8,6 +8,6 @@ class Solution::Article < ActiveRecord::Base
     :source => :solution_folders,
     :class_name => 'Solution::Folder',
     :through => :solution_folder_meta,
-	:readonly => false,
+  	:readonly => false,
     :conditions => proc { "solution_folders.language_id = '#{Solution::Folder.current_language_id}'" }
 end

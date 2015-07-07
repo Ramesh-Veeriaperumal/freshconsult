@@ -21,6 +21,7 @@ class Solution::Folder < ActiveRecord::Base
     :through => :solution_article_meta, 
     :source => :solution_articles,
 		:readonly => false,
+    :order => :"solution_article_meta.position",
     :conditions => proc { "solution_articles.language_id = '#{Solution::Article.current_language_id}'" },
     :extend => Solution::MultipleThroughSetters
 
@@ -29,6 +30,7 @@ class Solution::Folder < ActiveRecord::Base
     :through => :solution_article_meta, 
     :source => :solution_articles,
 		:readonly => false,
+    :order => :"solution_article_meta.position",
     :conditions => proc { "solution_articles.language_id = '#{Solution::Article.current_language_id}' and solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}" }
 
   has_many :customer_folders_with_meta, 

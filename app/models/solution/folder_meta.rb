@@ -15,9 +15,12 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	has_many :customers, :through => :customer_folders, :class_name => 'Solution::CustomerFolder'
 
-	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => :solution_folder_meta_id
+	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => :solution_folder_meta_id, :order => :position
 
-	has_many :solution_articles, :class_name => "Solution::Article", :through => :solution_article_meta
+	has_many :solution_articles, 
+		:class_name => "Solution::Article", 
+		:through => :solution_article_meta,
+		:order => :"solution_article_meta.position"
 
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "account_id"]
 
