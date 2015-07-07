@@ -214,7 +214,7 @@ include GoogleLoginHelper
   def destroy
     remove_old_filters if current_user && current_user.agent?
 
-    mark_agent_unavailable if current_account.features?(:round_robin) && current_user && current_user.agent? && current_user.agent.available?
+    mark_agent_unavailable if can_turn_off_round_robin?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
@@ -412,6 +412,10 @@ include GoogleLoginHelper
 
     def get_time_in_utc
       Time.now.getutc.to_i
+    end
+
+    def can_turn_off_round_robin?
+      current_user && current_user.agent? && current_user.agent.available? && current_account.features?(:round_robin) && !current_account.features?(:disable_rr_toggle) 
     end
     
     def note_failed_login

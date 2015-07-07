@@ -302,7 +302,12 @@ Helpkit::Application.routes.draw do
   end
 
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
-  resources :groups
+  resources :groups do
+    collection do
+      get :index
+      post :toggle_roundrobin
+    end
+  end
 
   resources :user_emails do
     member do
