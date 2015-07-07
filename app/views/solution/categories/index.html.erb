@@ -25,7 +25,7 @@
 		<% if !category[:is_default] %>
 			<div class="<%= cycle('odd', 'even') %>">
 				<h4 class="cat-title-border">
-					<i class="ficon-categories cat-title-icon"></i>
+					<div class="ficon-cube cat-title-icon"></div>
 					<%= pjax_link_to  "#{h(category[:name])}".html_safe, solution_category_path(:id =>category[:id]) %>				
 				</h4>  
 				<ul>			

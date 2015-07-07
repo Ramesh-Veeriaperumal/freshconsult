@@ -774,7 +774,11 @@
       }
       .cat-title-icon {
         margin-right: 6px;
-        font-size: 17px;
+        font-size: 20px;
+        color: #3E74CF;
+        display: inline;
+        position: relative;
+        top: 2px;
       }
       a:hover {
         color: #06c;
@@ -787,7 +791,7 @@
         list-style-position: inside;
         color: #ddd;
         a {
-          margin-left: -21px;
+          margin-left: -18px;
         }
       }
       li {
