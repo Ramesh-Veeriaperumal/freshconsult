@@ -13,7 +13,7 @@
     <input type="hidden" name="jsonData" id="field_values" value="" />
     <div class="row-fluid">
       <div class='profile-pic-placeholder avatar-pic span3'>
-        <img src="/assets/misc/profile_blank_medium.gif" class="hide" />
+        <img alt="Profile_blank_medium" src="/assets/misc/profile_blank_medium.jpg">
       </div>
       <div class='span9'>
         <ul id="custom-field-form" class="form-horizontal custom-field-form"></ul>
@@ -43,7 +43,7 @@
       formTitle:     '<%= t("admin.contact_fields.formfield_props.form_title") %>',
       deleteField:     '<%= t("admin.contact_fields.formfield_props.delete_field") %>',
       regExp:     '<%= t("admin.contact_fields.formfield_props.regexp") %>',
-      regExpExample:     '<%= t("admin.contact_fields.formfield_props.regexp_example_html", regex: "/^fresh\w/") %>',
+      regExpExample:     '<%= escape_javascript t("admin.contact_fields.formfield_props.regexp_example_html", regex: "/^fresh\w/")%>',
       dropdownChoice:     '<%= t("admin.contact_fields.formfield_props.dropdown_choices") %>',
       addNewChoice:     '<%= t("admin.contact_fields.formfield_props.add_new_choice") %>',
       label:     '<%= t("admin.contact_fields.formfield_props.label") %>',

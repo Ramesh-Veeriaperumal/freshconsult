@@ -11,7 +11,10 @@ helpdesk:
     - akismet_config
     - asset_sync
     - aws_s3
-    - aws_social
+    - aws/dynamo
+    - aws/sns
+    - aws/sqs
+    - aws_forums
     - belongs_to_account
     - chat_config
     - compass
@@ -36,6 +39,7 @@ helpdesk:
     - query_trace
     - rabbit_mq
     - redis
+    - resource_rate_limit
     - redshift
     - resque
     - riak
@@ -56,5 +60,6 @@ helpdesk:
     - wrap_parameters
     - statsd_config
     - big_brother
+    - integrations
 
 

@@ -1,5 +1,6 @@
 vi:
   meta:
+    language_id: 27
     language_name: "Vietnamese"
   helpdesk:
     tickets:
@@ -2112,7 +2113,7 @@ vi:
     delete_multiple: "câu trả lời mẫu được chọn đã xóa"
     no_delete: "Thư mục mặc định không thể bị xóa!"
     create_new: "tạo mới"
-    no_response_admin: "Không có hồi đáp trong thư mục này <a href={{link}} id='new_resp'> tạo mới</a>"
+    no_response_admin: "Không có hồi đáp trong thư mục này <a href=%{link} id='new_resp'> tạo mới</a>"
     select_folder: "chọn thư mục"
   portalcss:
     reset_all_changes: "Thiết lập lại tất cả những thay đổi"

@@ -104,12 +104,12 @@ describe Discussions::MergeTopicController do
 			vote = @user1.votes.last
 			vote.voteable_id.should eql @target.id
 			vote.voteable_type.should eql 'Topic'
-			vote.vote.should be true
+			vote.vote?.should be true
 
 			vote = @user2.votes.last
 			vote.voteable_id.should eql @target.id
 			vote.voteable_type.should eql 'Topic'
-			vote.vote.should be true
+			vote.vote?.should be true
 		end
 
 		it 'should send merge email notification to target topic followers' do

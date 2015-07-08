@@ -10,9 +10,10 @@
 				data-title="<%= t('freshfone.call_history.block_number_title') %>"
 				data-width="340"></button>
 			<div id="blacklist-confirmation" class="hide">
-				<%= form_for(:blacklist_number, :url => url_for(:controller => 'freshfone/blacklist_number', 
-							 :action => 'create'), :method => 'post', :remote => true) do |f| %>
+				<%= form_for(:caller, :url => url_for(:controller => 'freshfone/caller', 
+							 :action => 'block'), :method => 'post', :remote => true) do |f| %>
 					<%= f.hidden_field :number %>
+					<%= f.hidden_field :id %>
 				<% end %>
 				<%= t('freshfone.call_history.blacklist_confirmation') %> <span class="number"></span>?
 			</div>
@@ -49,8 +50,8 @@
 					<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="export_options">
 						<% export_options.each do |option| %>
 							<li>
-								<a href="#" class="export_option" data-format="<%=option.downcase%>">
-									<%=option%>
+								<a href="#" class="export_option" data-format="<%=option[:en].downcase%>">
+									<%=option[:i18n]%>
 								</a>
 							</li>
 						<% end %>
@@ -62,7 +63,7 @@
 						</div>
 						<div class="filter-subheader">
 							<div class="vertical-alignment" >
-								<a class="btn btn-primary" href="#call-history-edit" data-parent="#call-history-page" id="sliding">Edit</a>
+								<a class="btn btn-primary call-history-metrics" href="#call-history-edit" data-parent="#call-history-page" id="sliding">Edit</a>
 							</div>
 							<div class="filter-container">
 								<ul class='inline' id="filterdetails"></ul>	
@@ -118,7 +119,7 @@
 	<input type="hidden" name="wf_order_type" value="<%= params[:wf_order_type] || 'desc' %>" />    
 	<input type="hidden" name="page" value="1" />
 	<input type="hidden" name="data_hash" value="" />
-	<input type="hidden" name="number_id" value="<%= @current_number.id %>" />
+	<input type="hidden" name="number_id" value="" />
 	<div rel='filter'>
 	</div>
 </form>

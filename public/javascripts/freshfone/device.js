@@ -14,20 +14,21 @@
 		});
 
 		Twilio.Device.error(function (error) {
-			ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
-			freshfonetimer.resetCallTimer();
-			freshfoneNotification.resetJsonFix();
-			freshfoneNotification.popAllNotification();
-			freshfonecalls.resetRecordingState();
-			freshfonewidget.resetPreviewButton();
-			if ($.inArray(error.code, [400, 401, 31205]) > -1) {
-				freshfoneuser.getCapabilityToken(undefined, true);
-			}
 			freshfonecalls.error = error;
 			freshfonecalls.errorcode = error.code;
-			// error.code 400 --->> invalid access token
-			// error.code 401 --->> This AccessToken is no longer valid
-			
+			if(freshfonecalls.errorcode == 31003){ //for ICE Liveness Check
+				freshfoneNetworkError.endCallDueToNetworkError();
+			}
+			else{
+				ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
+				freshfoneNotification.resetJsonFix();
+				freshfoneNotification.popAllNotification();
+				freshfonecalls.resetRecordingState();
+				freshfonewidget.resetPreviewButton();
+				if ($.inArray(error.code, [400, 401, 31205]) > -1) {
+					freshfoneuser.getCapabilityToken(undefined, true);
+				}
+			}
 		});
 
 		Twilio.Device.connect(function (conn) {
@@ -53,7 +54,6 @@
 			}
 			var dontUpdateCallCount = previewMode() || recordingMode();
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
-			freshfonesocket.bindTransfer();
 			freshfonecalls.onCallStopSound();
 		});
 

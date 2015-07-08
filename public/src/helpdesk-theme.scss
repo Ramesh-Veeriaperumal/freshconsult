@@ -60,7 +60,7 @@ body { background: $background; }
 /* ------------------------------------------------------------------------------------------- 	*/	
 
 .header { background-color: $header_color; }
-.brand .logo_text, .header_links, .header_links a, .header_links a:hover, .ui-widget-header { 
+.fd-branding .logo_text, .header_links, .header_links a, .header_links a:hover, .ui-widget-header { 
 	color: $header_ctxt_color; 
 }
 .header_links a.nav-trigger:before { border-top-color: $header_ctxt_color; }
@@ -68,13 +68,13 @@ body { background: $background; }
 	border-color: $header_ctxt_color;
 		border-color: rgba($header_ctxt_color, .2);
 }
-.header-link-wrapper a img.header-spinner{
+.header-link-wrapper a .header-spinner{
 	background: linear-gradient(rgba($header_ctxt_color,0.3) 50%, rgba($header_ctxt_color,0.5) 50%), linear-gradient(rgba($header_ctxt_color,0.5) 50%, rgba($header_ctxt_color,0.3) 50%);
 	background-position: 0 0,100% 0;
-    background-size: 53% 101%;
+    background-size: 50% 100%;
     background-repeat: no-repeat;
 }
-//.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
+//.fd-branding .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
 .nav_search div.search_bar { border-color:darken($tab_color, 8%); } 
 .header-notification-wrapper .ficon-help{ 
 	color: rgba($header_ctxt_color, 0.4);

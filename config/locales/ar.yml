@@ -1,5 +1,6 @@
 ar:
   meta:
+   language_id: 1
    language_name: Arabic
   date:
     ago: مضت
@@ -23,10 +24,7 @@ ar:
     abbr_day_names: [أحد, اثنين, ثلاثاء, أربعاء, خميس, جمعة, سبت]
     month_names: [~, يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر]
     abbr_month_names: [~, يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر]
-    order: 
-      - :سنة،
-      - :شهر، 
-      - :يوم
+    order: [ :سنة، :شهر، :يوم ]
   datetime:
     distance_in_words:
       about_x_hours:
@@ -586,10 +584,15 @@ ar:
           description: وصف التطبيق
           platform: النظام الأساسي
           configurations: تكوينات حزمة أدوات تطوير البرامج
+          bread_crumbs: مسارات التنقل
+          bread_crumbs_info: ستساعدك مسارات التنقل في إعادة تتبع خطوات المستخدم
+          debug_log_count: تصحيح أخطاء أعداد السجلات
+          debug_log_count_info: يتضمن تصحيح أخطاء السجلات معلومات السجل من logcat للتطبيق الخاص بك
           solutions: فئة الحل
           solutions_info: ستظهر فئة الحل التي تحددها في دعم التطبيق 
           app_store_id: معرف App Store
           app_store_id_info: سيتم استخدام معرف App Store لإعادة توجيه المستخدمين إلى App Store لحصول على التعليقات
+          not_included: غير مضمن في القائمة
           should_be_unique: يجب أن يكون فريدًا
           select_a_platform: تحديد نظام أساسي
           select_a_solution_category: تحديد فئة حل
@@ -598,6 +601,10 @@ ar:
           app_key: مفتاح واجهة برمجة التطبيقات
           app_secret: المفتاح السري للتطبيق
           integration_details: تفاصيل التكامل
+          app_review: مطالبة بمراجعة التطبيق
+          app_review_info: يعمل ذلك على تشغيل مطالبة المراجعة تلقائيًا بعد عدد عمليات التشغيل المكوّن
+          app_review_launch_count: "بعد %{count} عملية تشغيل"
+          app_review_launch_never: مطلقًا
         index:
           title: تطبيقات Mobihelp
           new_app: تطبيق جديد
@@ -3274,7 +3281,6 @@ ar:
     ticket_updated_icon: تم تحديث البطاقة
     reported_on: "من %{username}، أخر تحديث: في %{date}"
     scenarios: وحدات السيناريو
-    ticket_from: "من: %{username}"
     ticket_list_status_closed_at: "من: %{username}، تم إغلاقها: <span class='emphasize'>منذ %{time_ago}</span>"
     ticket_list_status_resolved_at: "من: %{username}، تم حلها: <span class='emphasize'>منذ %{time_ago}</span>"
     ticket_list_status_agent_responded_at: "من: %{username}، استجاب الوكيل: <span class='emphasize'>منذ %{time_ago}</span>"
@@ -5033,7 +5039,7 @@ ar:
     delete_multiple: تم حذف الاستجابات الجاهزة التي تم تحديدها!!
     no_delete: يتعذر حذف المجلد الافتراضي!!
     create_new: إنشاء جديد
-    no_response_admin: "لا توجد استجابات في هذا المجلد <a href={{link}} id='new_resp'>إنشاء جديد</a>"
+    no_response_admin: "لا توجد استجابات في هذا المجلد <a href=%{link} id='new_resp'>إنشاء جديد</a>"
     select_folder: تحددي مجلد
   merge_contacts:
     header: "هام:<br />أنت على وشك دمج جهات اتصال %{number} مع %{name}."

@@ -11,3 +11,8 @@ consumer_secret:
 callback_url:
   production: http://twitterintegration.heroku.com/twitter/auth
   development: http://localhost:3000/twitter/authdone
+twitter_timeout:
+  production: 2
+  staging: 2
+  development: 10
+  test: 10

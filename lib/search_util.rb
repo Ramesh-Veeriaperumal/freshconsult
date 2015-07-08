@@ -56,6 +56,10 @@ module SearchUtil
     result
   end
 
+  def self.analyzer(language)
+    language ? nil : "include_stop"
+  end
+
   private
 
   	def contact_solution_visibility

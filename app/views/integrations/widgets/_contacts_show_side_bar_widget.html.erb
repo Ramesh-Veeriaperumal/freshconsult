@@ -5,7 +5,7 @@
       unless widget.blank?
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('contacts_show_page_side_bar')
-        liquid_objects = {"requester" => user}
+        liquid_objects = {"requester" => user, "widget_type" => "_contacts"}
         widget_code = widget_script(installed_app, widget, liquid_objects) %>
         <div id="<%=app.name%>" class="sidepanel <%=widget.clazz_option%>">
           <%=widget_code%>

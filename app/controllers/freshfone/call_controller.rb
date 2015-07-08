@@ -7,6 +7,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
 	
+	include Freshfone::CallerLookup
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
@@ -29,7 +30,7 @@ class Freshfone::CallController < FreshfoneBaseController
 				render :json => {
      		  :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
                           :locals => { :user => @user }),
-		      :user_name => (@user || {})[:name],
+		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
           :call_meta => call_meta
     		}
@@ -44,7 +45,7 @@ class Freshfone::CallController < FreshfoneBaseController
 			notify_error({:ErrorUrl => e.message})
 			return empty_twiml
 		ensure
-			add_cost_job unless call_transferred?
+			add_cost_job
 		end
 	end
 
@@ -62,9 +63,11 @@ class Freshfone::CallController < FreshfoneBaseController
 		def call_meta
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
-	    call = current_account.freshfone_calls.first(:joins => [:caller], 
-	            :include => [:freshfone_number], 
-	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]}, :order => "freshfone_calls.created_at DESC")
+	    caller = current_account.freshfone_callers.find_by_number(params[:PhoneNumber])
+	    return if caller.blank?
+	    call = current_account.freshfone_calls.first( :include => [:freshfone_number], 
+              :conditions => {:caller_number_id => caller.id}, :order => "freshfone_calls.id DESC") 
+ 
 	    if call.present?
 		    { :number => call.freshfone_number.number_name,
 		    	:group 	=> (call.group.present?) ? call.group.name : ""

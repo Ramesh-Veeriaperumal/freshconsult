@@ -91,11 +91,6 @@
 		margin-top:10px;
 		margin-bottom:5px;
 	}
-	.profile_pic{
-		img{
-			width:160px;
-		}
-	}
 	.seperator{
 		padding-top:40px;
 		@include margin-left(0);
@@ -258,14 +253,6 @@ $iconColorList: "ticket" $bg_color_ticket,
 		width: 240px;
 		vertical-align: top;
 	}
-	.company-btns {
-		display: none;
-	}
-	&.is_stuck {
-		.company-btns {
-			display: block;
-		}
-	}
 }
 
 .contact-sidebar {
@@ -330,6 +317,12 @@ $iconColorList: "ticket" $bg_color_ticket,
 	.profile_pic {
 		text-align: center;
 		margin-top: 20px;
+	}
+	.avatar-text{
+		text-align: right;
+		margin-left: 60px;
+ 		@include box-shadow(rgba(0, 0, 0, 0.3) 0 7px 14px -8px);
+ 		border-radius: 6px;
 	}
 	.user-info {
 		text-align: center;
@@ -576,8 +569,8 @@ ul.user_list{
 			.preview_pic {
 				@include margin(0 10px 0 0);
 				img {
+					@include margin(0);
 					@include border-radius(50%);
-					border: 1px solid $common-border-color;
 					width: 30px;
 					height: 30px;
 				}
@@ -620,6 +613,13 @@ ul.user_list{
 					color: $linkColor;
 				}
 			}	
+			.avatar-text{
+				text-align: center;
+				border-radius: 10%;
+				width: 30px;
+				height: 30px;
+				line-height: 30px;
+			}
 		}
 		.username{
 			display:block;

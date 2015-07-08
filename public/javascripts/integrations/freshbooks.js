@@ -232,7 +232,6 @@ FreshbooksWidget.prototype = {
 	},
 
 	taskChanged:function(task_id) {
-		task_id = $("freshbooks-timeentry-tasks").value;
 		Cookie.update("fb_task_id", task_id);
 	},
 
@@ -263,7 +262,9 @@ FreshbooksWidget.prototype = {
 		}
 	},
 
-	createTimeEntry:function(resultCallback) {
+	createTimeEntry:function(integratable_id,resultCallback) {
+		if(integratable_id)
+			this.freshdeskWidget.local_integratable_id = integratable_id;
 		if (freshbooksWidget.validateInput()) {
 			var body = this.CREATE_TIMEENTRY_REQ.evaluate({
 				staff_id: $("freshbooks-timeentry-staff").value,
@@ -322,26 +323,38 @@ FreshbooksWidget.prototype = {
 		this.freshdeskWidget.local_integratable_id = local_integratable_id
 		this.freshdeskWidget.remote_integratable_id = remote_integratable_id
 		if (!is_delete_request)
-	   		if (freshbooksBundle.remote_integratable_id)
+	   		if (freshbooksBundle.remote_integratable_id){
+	   			jQuery('.freshbooks_timetracking_widget .app-logo input:checkbox').attr('checked',true);
+                jQuery('.freshbooks_timetracking_widget .integration_container').toggle(jQuery('.freshbooks_timetracking_widget .app-logo input:checkbox').prop('checked'));
 	   			this.retrieveTimeEntry();
-	   		else
+	   		}
+	   		else{
+	   			jQuery('.freshbooks_timetracking_widget .app-logo input:checkbox').attr('checked',false);			 
+                jQuery('.freshbooks_timetracking_widget .integration_container').toggle(jQuery('.freshbooks_timetracking_widget .app-logo input:checkbox').prop('checked'));
 	   			this.resetTimeEntryForm();
+	   		}
 	},
 
 	resetTimeEntryForm: function(){
 		if(this.timeEntryXml) {
+
+			  
 			// Editing the existing entry. Select already associated entry in the drop-downs that are already loaded.
 			time_entry_node = XmlUtil.extractEntities(this.timeEntryXml, "time_entry")
 			if (time_entry_node.length > 0) {
 				staff_id = XmlUtil.getNodeValueStr(time_entry_node[0], "staff_id");
+				UIUtil.chooseDropdownEntry("freshbooks-timeentry-staff", staff_id);
 				project_id = XmlUtil.getNodeValueStr(time_entry_node[0], "project_id");
 				client_id = this.get_client_id(this.projectData, project_id);
-				UIUtil.chooseDropdownEntry("freshbooks-timeentry-staff", staff_id);
-				UIUtil.chooseDropdownEntry("freshbooks-timeentry-clients", client_id);
+				task_id = XmlUtil.getNodeValueStr(time_entry_node[0], "task_id");
+				this.taskChanged(task_id);
 				this.clientChanged(client_id);
+				UIUtil.chooseDropdownEntry("freshbooks-timeentry-clients", client_id);
+				UIUtil.chooseDropdownEntry("freshbooks-timeentry-tasks", task_id);
 			}
 			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
 		} else {
+			   
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
 		$("freshbooks-timeentry-hours").value = "";
@@ -508,7 +521,7 @@ FreshbooksWidget.prototype = {
 		time_entry_node = XmlUtil.extractEntities(timeEntryXml, "time_entry")
 		if (time_entry_node.length > 0) 
 			return XmlUtil.getNodeValueStr(time_entry_node[0], fetchEntity);
-	}
+	},	
 }
 
 freshbooksWidget = new FreshbooksWidget(freshbooksBundle, freshbooksinline);

@@ -246,7 +246,7 @@ describe Solution::ArticlesController do
       @article.updated_at.should eql @article.modified_at
     end
 
-    it "should be modified when description changes" do
+    it "should be modified when article body changes" do
       sleep(2)
       put :update, { :id => @article.id, 
                     :solution_article => { :description => Faker::Lorem.sentence(2) },
@@ -255,7 +255,7 @@ describe Solution::ArticlesController do
                     :folder_id => @test_folder.id 
                   }
       @article.reload
-      @article.updated_at.should eql @article.modified_at
+      @article.article_body.updated_at.should eql @article.modified_at
     end
 
     it "should not change when other column values changes" do
@@ -269,21 +269,148 @@ describe Solution::ArticlesController do
       @article.reload
       @article.updated_at.should_not eql @article.modified_at
     end
+  end
 
-    it "should reset thumbs_up and thumbs_down & destroy the votes for that article when reset ratings is done" do
-      @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-                                       :user_id => @agent.id, :status => "2", :art_type => "1" } )
-      @test_article.thumbs_up = rand(5..10)
-      @test_article.thumbs_down = rand(5..10)
-      @test_article.votes.build(:vote => 1, :user_id => @user.id)
-      @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
-      @test_article.save
-      put :reset_ratings, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
-      @test_article.reload
-      @test_article.thumbs_up.should eql 0
-      @test_article.thumbs_down.should eql 0
-      @test_article.votes.should eql []
+  it "should reset thumbs_up and thumbs_down & destroy the votes for that article when reset ratings is done" do
+    @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+                                     :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    @test_article.reload
+    @test_article.thumbs_up = rand(5..10)
+    @test_article.thumbs_down = rand(5..10)
+    @test_article.votes.build(:vote => 1, :user_id => @user.id)
+    @test_article.votes.build(:vote => 0, :user_id => @user_1.id)
+    @test_article.save
+    put :reset_ratings, :id => @test_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
+    @test_article.reload
+    @test_article.thumbs_up.should eql 0
+    @test_article.thumbs_down.should eql 0
+    @test_article.votes.should eql []
+  end
+
+  it "should reset thumbs_up and thumbs_down & destroy the votes for that article if meta is not present" do
+    test_article_without_meta = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+                                     :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    test_article_without_meta.reload
+    test_article_without_meta.thumbs_up = rand(5..10)
+    test_article_without_meta.thumbs_down = rand(5..10)
+    test_article_without_meta.votes.build(:vote => 1, :user_id => @user.id)
+    test_article_without_meta.votes.build(:vote => 0, :user_id => @user_1.id)
+    test_article_without_meta.save
+    test_article_without_meta.reload.solution_article_meta.destroy
+    test_article_without_meta.reload.solution_article_meta.should be_nil
+    put :reset_ratings, :id => test_article_without_meta.id, :category_id => @test_category.id, :folder_id => @test_folder.id, :format => 'json'
+    test_article_without_meta.reload
+    test_article_without_meta.thumbs_up.should eql 0
+    test_article_without_meta.thumbs_down.should eql 0
+    test_article_without_meta.votes.should eql []
+    response.code.should be_eql("200")
+  end
+
+  describe "Solution article meta" do
+    before(:all) do
+      time = Time.now.to_i
+      @test_article_for_meta = create_article( {:title => "#{time} test_article_for_meta #{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
+      @test_article_for_meta.reload.solution_article_meta.destroy
+      @test_article_for_meta.build_meta.save if @test_article_for_meta.reload.solution_article_meta.blank?
+    end
+
+    it "should create a new meta solution article on solution article create" do
+      now = (Time.now.to_f*1000).to_i
+      name = Faker::Name.name
+      post :create, { :solution_article => {:title => "#{name}",
+        :description => "#{Faker::Lorem.sentence(3)}" ,:folder_id => @test_folder.id, :status => 2, :art_type => 1},
+        :tags => {:name => "new"}
+      }
+      article = @account.solution_articles.find_by_title(name)
+      article.should be_an_instance_of(Solution::Article)
+      check_meta_integrity(article)
+    end
+
+    it "should edit a solution article meta on solution article edit" do
+      name = Faker::Name.name
+      put :update, { :id => @test_article_for_meta.id, 
+                   :solution_article => {:title => @test_article_for_meta.title,
+                                          :description => @test_article_for_meta.description,
+                                          :folder_id => @test_folder.id,
+                                          :status => "1",
+                                          :art_type => "2"
+                                          },
+                    :category_id => @test_category.id,
+                    :folder_id => @test_folder.id
+                  }
+      check_meta_integrity(@test_article_for_meta)
+    end
+
+    it "should destroy article_meta on article destroy" do
+      test_destroy_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
+      test_destroy_article.build_meta.save if test_destroy_article.reload.solution_article_meta.blank?
+      delete :destroy, :id => test_destroy_article.id, :category_id => @test_category.id, :folder_id => @test_folder.id
+      @account.solution_articles.find_by_id(test_destroy_article.id).should be_nil
+      @account.solution_article_meta.find_by_id(test_destroy_article.id).should be_nil
+    end
+
+    it "should render article index even if all meta objects are destroyed" do 
+      @account.solution_articles.each {|sa| sa.solution_article_meta ? sa.solution_article_meta.destroy : next}
+      get :index, :category_id => @test_category.id, :folder_id => @test_folder.id
+      response.should redirect_to(solution_category_folder_url(@test_category.id,@test_folder.id))
+    end
+
+    it "should render a show page of an article even if corresponding meta is destroyed" do
+      get :show, :id => @test_article_for_meta.id, :folder_id => @test_folder.id, :category_id => @test_category.id
+      response.body.should =~ /#{@test_article_for_meta.title}/
+      response.should render_template("solution/articles/show")
     end
   end
 
+  describe "Reorder article meta" do
+    it "should reorder articles and position changes must reflect in meta both on create and reorder" do
+      folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+        :category_id => @test_category.id } )
+      position_arr = (1..4).to_a.shuffle
+      reorder_hash = {}
+      for i in 0..3
+        article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id,
+          :user_id => @agent.id, :status => "2", :art_type => "1" } )
+        reorder_hash[article.id] = position_arr[i] 
+        article.reload.solution_article_meta.position.should be_eql(article.position)
+      end
+      put :reorder, :category_id => @test_category.id, :folder_id => folder.id, :reorderlist => reorder_hash.to_json
+      folder.articles.each do |current_article|
+        current_article.position.should be_eql(reorder_hash[current_article.id])
+        current_article.solution_article_meta.position.should be_eql(reorder_hash[current_folder.id])
+      end    
+    end  
+
+    it "should create meta on reorder of articles if meta is not present and position must be preserved on destroy" do
+      folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+        :category_id => @test_category.id } )
+      position_arr = (1..4).to_a.shuffle
+      reorder_hash = {}
+      for i in 0..3
+        article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id,
+          :user_id => @agent.id, :status => "2", :art_type => "1" } )
+        article.reload.solution_article_meta.destroy
+        reorder_hash[article.id] = position_arr[i] 
+      end
+      put :reorder, :category_id => @test_category.id, :folder_id => folder.id, :reorderlist => reorder_hash.to_json
+      check_position(folder, "articles")
+      folder.articles.first.destroy
+      check_position(folder, "articles")
+    end
+  end 
+
+  it "should check the language utility methods" do
+    test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    lang = "fr"
+    test_language_article.reload
+    test_language_article.language = lang
+    test_language_article.save
+    test_language_article.language_id.should be_eql(Solution::Article::LANGUAGE_MAPPING[lang][:language_id])
+    test_language_article.language_name.should be_eql("French")
+    test_language_article.language_code.should be_eql(lang)
+    test_language_article.language.should be_eql(lang)
+  end
 end

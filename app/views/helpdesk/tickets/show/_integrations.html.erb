@@ -20,8 +20,12 @@
 <div class="hide" id="jira_widget_dialog">
 	<textarea style="display:none" rel="lazyload">
 	  <div class="content"><div class="negtive-margin">
-	    <%
-	    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
+      <% cloud_files = [] 
+        @ticket.cloud_files.each do |file|
+          cloud_files.push(file.url)
+        end
+      %>
+      <% @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource , "cloud_files" => cloud_files.to_json } %>
 	    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) 
 	    widget_code = widget_code.gsub("}}", " | encode_html}}")
 	    %>
@@ -39,13 +43,18 @@
       unless widget.blank?
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
-        liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
+      	liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
+      	if app.name == Integrations::Constants::APP_NAMES[:xero]       	
+        	liquid_objects["timesheet"] = @ticket.time_sheets.to_json 
+      	end
+        
         widget_code = widget_script(installed_app, widget, liquid_objects) %>
         <div id="<%=app.name%>" class="widget ">
         	<!-- <h3 class="title"><%= h(installed_app.configs_title || t(app.display_name) )%></h3> -->
 			<div class="content">
+        
 			<!-- <textarea style="display:none"> -->
-				<%=widget_code%>
+				<%= widget_code %>
 			<!-- </textarea> -->
 			</div>
         </div>

@@ -36,6 +36,7 @@ class Va::Action
       Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
+      
       return send(action_key, act_on) if respond_to?(action_key)
       if act_on.respond_to?("#{action_key}=")
         act_on.send("#{action_key}=", value)
@@ -165,12 +166,18 @@ class Va::Action
   end
 
   def add_a_cc(act_on)
-    unless value.blank?
+    unless value.blank? and act_on.cc_email.blank?
+      
       ticket_cc_emails = act_on.cc_email[:cc_emails].collect { |email| (parse_email_text email.downcase)[:email] }
-      cc_email_value = value.downcase.strip
-      return if ticket_cc_emails.include?(cc_email_value)
-      act_on.cc_email[:cc_emails] << cc_email_value
-      Helpdesk::TicketNotifier.send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
+      reply_cc_emails  = act_on.cc_email[:reply_cc].collect { |email| (parse_email_text email.downcase)[:email] }
+      cc_email_value   = value.downcase.strip
+      
+      act_on.cc_email[:reply_cc]  << cc_email_value unless reply_cc_emails.include?(cc_email_value)
+      
+      unless ticket_cc_emails.include?(cc_email_value)
+        act_on.cc_email[:cc_emails] << cc_email_value 
+        Helpdesk::TicketNotifier.send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
+      end
     end
   end
 

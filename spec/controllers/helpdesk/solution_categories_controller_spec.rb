@@ -43,7 +43,7 @@ describe Solution::CategoriesController do
   end
 
   it "should reorder categories" do
-    categories = @account.solution_categories
+    categories = @account.main_portal.portal_solution_categories
     count = categories.count
     position_arr = (1..count).to_a.shuffle
     reorder_hash = {}
@@ -51,8 +51,9 @@ describe Solution::CategoriesController do
       reorder_hash[c.id] = position_arr[i] 
     end    
     put :reorder, :reorderlist => reorder_hash.to_json
+    categories.reload
     categories.each do |c|
-      c.portal_solution_categories.first.position.should be_eql(reorder_hash[c.id])
+      c.position.should be_eql(reorder_hash[c.id])
     end          
   end  
 
@@ -118,9 +119,84 @@ describe Solution::CategoriesController do
   end
 
   it "should delete a solution category" do
+    mobihelp_app = create_mobihelp_app
+    mobihelp_app_solution = create_mobihelp_app_solutions({:app_id => mobihelp_app.id, 
+                              :category_id => @test_category.id, :position => 1, 
+                              :account_id => @account.id})
+
     delete :destroy, :id => @test_category.id
     @account.solution_categories.find_by_name(@test_category.name).should be_nil
     response.should redirect_to(solution_categories_url)
+  end
+
+  describe "Category meta objects" do
+    before(:all) do
+      time = Time.now.to_i
+      @test_category_for_meta = create_category( {:name => "#{time} test_category_for_meta #{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+      @test_category_for_meta.build_meta.save if @test_category_for_meta.reload.solution_category_meta.blank?
+    end
+
+    it "should create a new meta solution category on solution category create" do
+      name = Faker::Name.name
+      post :create, :solution_category => {:name => "#{name}",
+                                         :description => "#{Faker::Lorem.sentence(3)}"
+                                        }
+
+      category = @account.solution_categories.find_by_name("#{name}")
+      category.should be_an_instance_of(Solution::Category)
+      check_meta_integrity(category)
+      portal_solution_category = @account.main_portal.portal_solution_categories.find_by_solution_category_id(category.id)
+      portal_solution_category.should be_an_instance_of(PortalSolutionCategory)
+      portal_solution_category.solution_category_meta_id.should be_eql(portal_solution_category.solution_category_id)
+      response.should redirect_to(solution_categories_url)
+    end
+
+    it "should create a mobihelp_app_solution with the correct value set for solution_category_meta_id" do
+      mobihelp_app = create_mobihelp_app
+      mobihelp_app_solution = create_mobihelp_app_solutions({:app_id => mobihelp_app.id, 
+                                :category_id => @test_category_for_meta.id, :position => 1, 
+                                :account_id => @account.id})
+      mobihelp_app_solution.category_id.should be_eql(mobihelp_app_solution.solution_category_meta_id)
+    end
+
+    it "should edit a solution category meta on solution category edit" do
+      name = Faker::Name.name
+      put :update, :id => @test_category_for_meta.id, 
+        :solution_category => { :name => "#{name}",
+                                :description => "#{Faker::Lorem.sentence(3)}",
+                                :is_default => true
+                              }
+      check_meta_integrity(@test_category_for_meta)
+      response.should redirect_to(solution_categories_url)
+    end
+
+    it "should destroy meta on category destroy" do
+      test_destroy_category = create_category( {:name => "test_destroy_category #{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+      test_destroy_category.build_meta.save if test_destroy_category.reload.solution_category_meta.blank?
+      delete :destroy, :id => test_destroy_category.id
+      @account.solution_categories.reload.find_by_id(test_destroy_category.id).should be_nil
+      @account.solution_category_meta.find_by_id(test_destroy_category.id).should be_nil
+      @account.main_portal.portal_solution_categories.find_by_solution_category_id(test_destroy_category.id).should be_nil
+    end
+
+    it "should render category index even if all meta objects are destroyed" do 
+      @account.solution_categories.each {|sc| sc.solution_category_meta.destroy}
+      get :index
+      response.should render_template("solution/categories/index")
+    end
+
+    it "should render a show page of a category if corresponding meta is destroyed" do
+      get :show, :id => @test_category_for_meta.id
+      response.body.should =~ /#{@test_category_for_meta.name}/
+    end
+  end
+
+  it "should change the position in meta table when category is destroyed" do
+    test_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    test_category2 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    test_category3 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+    test_category.destroy
+    check_position(@account, "solution_categories")
   end
 
 end

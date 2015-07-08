@@ -1,5 +1,7 @@
 module DiscussionsHelper
 	include Helpdesk::TicketsHelperMethods
+	include Community::MonitorshipHelper
+
 
 	def discussions_breadcrumb(page = :home)
 		_output = []
@@ -78,11 +80,13 @@ module DiscussionsHelper
 	end
 
 	def moderation_count(counts)
-		if (counts[:waiting] || counts[:unpublished]) > 0
-			return pjax_link_to t('discussions.moderation.index.waiting') + " (#{counts[:waiting] || counts[:unpublished]}) ", moderation_index_path(:waiting), :class => 'mini-link mr20'
-		elsif counts[:spam] > 0
-			return pjax_link_to t('discussions.moderation.index.title') + " (#{@counts[:spam]}) ", moderation_index_path(:spam), :class => 'mini-link mr20'
-		end
+		return moderation_link(:unpublished, counts[:unpublished]) if counts[:unpublished] > 0
+		return moderation_link(:spam, counts[:spam]) if counts[:spam] > 0
+		""
+	end
+
+	def moderation_link(type, count)
+		pjax_link_to t("discussions.unpublished.index.#{type}") + " (#{count}) ", discussions_unpublished_filter_path(type), :class => 'mini-link mr20'
 	end
 
 	def moderation_enabled?
@@ -249,16 +253,6 @@ module DiscussionsHelper
 		op
 	end
 
-	def mark_as_spam_path(post)
-		current_account.features_included?(:spam_dynamo) ? 
-			mark_as_spam_discussions_unpublished_path(post) : mark_as_spam_discussions_moderation_path(post)
-	end
-
-	def moderation_index_path(filter)
-		current_account.features_included?(:spam_dynamo) ? 
-			discussions_unpublished_filter_path(filter.eql?(:spam) ? :spam : :unpublished) : discussions_moderation_filter_path(filter)
-	end
-
   def display_topic_icons(topic)
 		output = ""
   	output << content_tag(:span, font_icon('lock-2', :class => 'widget-icon-list').html_safe, {
@@ -290,4 +284,14 @@ module DiscussionsHelper
   def display_count(count)
   	"(#{count})" if count > 0
   end
+  
+  def populate_vote_list_content object
+    return "" unless User.current.present?
+    output = object.voters.all(:limit => 5).collect(&:name).map do |name|
+    					h(name.size > 20 ? name.truncate(20) : name)
+    				 end
+    output << "..." if object.user_votes > 5
+    output.join("<br>").html_safe
+  end
+  
 end

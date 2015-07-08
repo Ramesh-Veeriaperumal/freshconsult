@@ -10,7 +10,7 @@ module Solution::MetaMethods
 	def self.included(base)
 		base.class_eval do 
 			after_save :save_meta
-			after_destroy :destroy_meta
+			after_destroy :destroy_meta,:decrement_positions_on_lower_meta_items
 		end
 	end
 
@@ -41,7 +41,9 @@ module Solution::MetaMethods
 	end
 
 	def destroy_meta
-		meta_object.destroy
+		obj = meta_object
+		return if obj.new_record?
+		obj.destroy
 	end
 
 	def changed_attribs(meta_obj = nil)

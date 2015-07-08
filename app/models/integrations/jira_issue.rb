@@ -1,9 +1,13 @@
 require 'rubygems'
 require 'jira4r'
 require 'json'
+require 'open-uri'
+require 'net/http/post/multipart'
 
 class Integrations::JiraIssue
   include Integrations::Jira::Api
+  include Redis::RedisKeys
+  include Redis::IntegrationsRedis
 
   def initialize(installed_app)
     @http_request_proxy = HttpRequestProxy.new
@@ -54,6 +58,9 @@ class Integrations::JiraIssue
       params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
       newIntegratedResource = Integrations::IntegratedResource.createResource(params)
       newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
+      params[:operation] = "link_issue"
+      params[:app_id] = @installed_app.id
+      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
       return newIntegratedResource
     else
       res_data
@@ -85,7 +92,10 @@ class Integrations::JiraIssue
           }]
         }
       }
-      
+      if params[:cloud_attachment]
+       req_data[:fields] = {}
+       req_data[:fields][:description] = params[:cloud_attachment]
+      end
       http_parameter = construct_params_for_http(:update,params[:remote_key])
       http_parameter[:body] = req_data.to_json
       res_data = make_rest_call(http_parameter)
@@ -101,6 +111,57 @@ class Integrations::JiraIssue
       end
     end
     res_data
+  end
+
+  def construct_attachment_params(issue_id, obj)
+    unless obj.attachments.empty?
+      request_params = construct_params_for_http(:add_attachment, issue_id)
+      url = URI.parse("#{request_params[:domain]}/#{request_params[:rest_url]}")
+      add_attachment(request_params, url, obj.attachments) 
+    end
+  end
+
+  def add_attachment(request_params, url, attachments)
+    attachments.each do |attachment|
+      attachment_url = AwsWrapper::S3Object.url_for(attachment.content.path,attachment.content.bucket_name,:expires => 300.seconds, :secure => true, :response_content_type => attachment.content_content_type)
+      begin
+      web_contents = open(attachment_url)
+      rescue Timeout::Error
+        Rails.logger.debug "Timeout::Error: #{params}\n"
+        next
+      rescue
+        Rails.logger.debug "Connection failed: #{params}\n"
+        next
+      end
+      req = Net::HTTP::Post::Multipart.new url.path, "file" => UploadIO.new(web_contents, attachment.content_content_type, attachment.content_file_name)
+      
+      req["X-Atlassian-Token"] = 'nocheck'
+      
+      req.basic_auth request_params[:username], request_params[:password]
+      http = Net::HTTP.new(url.host, url.port)
+      begin
+      res = Net::HTTP.start(url.host, url.port,:use_ssl => url.scheme == 'https') do |http|
+         http.request(req)
+      end
+      rescue Timeout::Error
+        Rails.logger.debug "Timeout::Error: #{params}\n and Attachment Response body: #{res.body}"
+      rescue
+        Rails.logger.debug "  Attachment Response body: #{res.body}"
+      end
+    end
+  end
+
+  def push_existing_notes_to_jira(issue_id, tkt_obj)
+    obj_mapper = Integrations::ObjectMapper.new
+    tkt_obj.notes.each do |note| 
+      unless note.meta?
+        mapped_data = obj_mapper.map_it(Account.current.id, "add_comment_in_jira" , note, :ours_to_theirs, [:map])
+        jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> Account.current.id, :local_integratable_id=> tkt_obj.id, :remote_integratable_id=> issue_id, :comment => Digest::SHA512.hexdigest(mapped_data) }
+        set_integ_redis_key(jira_key, "true", 240)
+        add_comment(issue_id, mapped_data)
+        construct_attachment_params(issue_id, note) 
+      end
+    end
   end
 
   def add_comment(issueId, ticketData)

@@ -15,7 +15,9 @@ class Flexifield < ActiveRecord::Base
   self.primary_key = :id
 
   
-  delegate :to_ff_alias, :to_ff_field, :ff_aliases, :ff_fields, :to => :flexifield_def
+  delegate :to_ff_alias, :to_ff_field,
+           :ff_aliases, :non_text_ff_aliases,
+           :ff_fields, :non_text_ff_fields, :to => :flexifield_def
   
   def self.flexiblefield_names
     columns.map(&:name).grep(/ff.+_/)

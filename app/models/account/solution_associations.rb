@@ -61,6 +61,8 @@ class Account < ActiveRecord::Base
     :through => :solution_article_meta,
     :source => :solution_articles,
   	:conditions => proc { "solution_articles.language_id = '#{Language.current.id}'" }
+    
+  has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'
 
   # Alias
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150316144216) do
+ActiveRecord::Schema.define(:version => 20150619065247) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.integer  "api_limit",                         :default => 1000
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
+    t.text     "resource_rlimit_conf"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -803,6 +804,8 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.datetime "updated_at"
   end
 
+  add_index "day_pass_usages", ["account_id", "user_id"], :name => "index_day_pass_usages_on_account_id_and_user_id"
+
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
     t.integer  "attempts",   :default => 0
@@ -1160,10 +1163,12 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
+    t.boolean  "security_whitelist",                         :default => false
+    t.text     "triggers"
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
-  add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id"
+  add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id", :unique => true
 
   create_table "freshfone_blacklist_numbers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1182,8 +1187,10 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.string   "city"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "caller_type", :limit => 1,  :default => 0
   end
 
+  add_index "freshfone_callers", ["id", "account_id"], :name => "index_freshfone_callers_on_id_and_account_id", :unique => true
   add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
 
   create_table "freshfone_calls", :id => false, :force => true do |t|
@@ -1209,10 +1216,13 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.datetime "updated_at"
     t.string   "direct_dial_number"
     t.integer  "group_id",            :limit => 8
+    t.boolean  "recording_deleted",                     :default => false
+    t.text     "recording_deleted_info"
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "freshfone_calls", ["account_id", "created_at"], :name => "index_freshfone_calls_on_account_id_and_created_at"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
   add_index "freshfone_calls", ["account_id", "customer_id", "created_at"], :name => "index_ff_calls_on_account_id_customer_id_created_at"
   add_index "freshfone_calls", ["account_id", "dial_call_sid"], :name => "index_freshfone_calls_on_account_id_and_dial_call_sid"
@@ -1221,6 +1231,7 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
   add_index "freshfone_calls", ["account_id", "updated_at"], :name => "index_freshfone_calls_on_account_id_and_updated_at"
   add_index "freshfone_calls", ["account_id", "user_id", "created_at", "ancestry"], :name => "index_ff_calls_on_account_user_ancestry_and_created_at"
   add_index "freshfone_calls", ["id", "account_id"], :name => "index_freshfone_calls_on_id_and_account_id", :unique => true
+  add_index "freshfone_calls", ["id"], :name => "index_ff_calls_on_id"
 
   create_table "freshfone_credits", :force => true do |t|
     t.integer  "account_id",              :limit => 8
@@ -1249,21 +1260,6 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
 
   add_index "freshfone_ivrs", ["account_id", "freshfone_number_id"], :name => "index_freshfone_ivrs_on_account_id_and_freshfone_number_id"
 
-  create_table "freshfone_number_address", :force => true do |t|
-    t.integer  "account_id",           :limit => 8
-    t.integer  "freshfone_account_id", :limit => 8
-    t.string   "address_sid"
-    t.string   "friendly_name"
-    t.string   "business_name"
-    t.string   "address"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "country",              :limit => 5
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "freshfone_number_addresses", :force => true do |t|
     t.integer  "id",                   :limit => 8, :null => false
     t.integer  "account_id",           :limit => 8
@@ -1282,6 +1278,17 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
 
   add_index "freshfone_number_addresses", ["account_id", "country"], :name => "index_freshfone_number_address_on_account_id_and_country"
   add_index "freshfone_number_addresses", ["id", "account_id"], :name => "index_freshfone_number_address_on_id_and_account_id", :unique => true
+
+  create_table "freshfone_number_groups", :force => true do |t|
+    t.integer  "account_id",          :limit => 8
+    t.integer  "freshfone_number_id", :limit => 8
+    t.integer  "group_id",            :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_number_groups", ["id", "account_id"], :name => "index_freshfone_number_groups_on_id_and_account_id", :unique => true
+
   create_table "freshfone_numbers", :force => true do |t|
     t.integer  "account_id",               :limit => 8
     t.string   "number",                   :limit => 50
@@ -1379,11 +1386,20 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.datetime "updated_at"
     t.text     "meta_info"
     t.integer  "device_type"
+    t.integer  "transfer_by_agent", :limit => 8
   end
 
   add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_calls_meta_on_account_id_call_id"
   add_index "freshfone_calls_meta", ["account_id", "device_type"], :name => "index_ff_calls_meta_on_account_id_device_type"
   add_index "freshfone_calls_meta", ["id", "account_id"], :name => "index_freshfone_calls_meta_on_id_and_account_id", :unique => true
+
+ create_table "freshfone_whitelist_countries", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string  "country",    :limit => 50
+ end
+
+ add_index "freshfone_whitelist_countries", ["account_id", "country"], :name => "index_ff_whitelist_countries_on_account_id_and_country"
+ 
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
@@ -2081,6 +2097,14 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
   add_index "mobihelp_app_solutions", ["account_id", "category_id"], :name => "index_mobihelp_app_solutions_on_account_id_and_category_id"
   add_index "mobihelp_app_solutions", ["account_id", "solution_category_meta_id"], :name => "index_app_solutions_on_account_id_solution_category_meta_id"
 
+  create_table "mobile_app_versions", :force => true do |t|
+    t.integer  "mobile_type"
+    t.string   "app_version"
+    t.boolean  "supported"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -2097,6 +2121,7 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.integer "portal_id",        :limit => 8
   end
 
+  add_index "monitorships", ["account_id", "monitorable_id", "monitorable_type"], :name => "index_on_monitorships_acc_mon_id_and_type", :length => {"account_id"=>nil, "monitorable_id"=>nil, "monitorable_type"=>5}
   add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
   add_index "monitorships", ["user_id", "account_id"], :name => "index_for_monitorships_on_user_id_account_id"
 
@@ -2199,6 +2224,7 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.boolean  "published",               :default => false
     t.boolean  "spam"
     t.boolean  "trash",                   :default => false
+    t.integer  "user_votes",              :default => 0
   end
 
   add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
@@ -2331,6 +2357,16 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
   end
 
   add_index "smtp_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"
+
+   create_table "service_api_keys", :force => true do |t|
+    t.string   "service_name", :null => false
+    t.string   "api_key",      :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+   end
+
+  add_index "service_api_keys", ["api_key"], :name => "index_service_api_keys_on_api_key", :unique => true
+  add_index "service_api_keys", ["service_name"], :name => "index_service_api_keys_on_service_name", :unique => true
 
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",            :limit => 8
@@ -3100,7 +3136,6 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
     t.text     "text_tc02"
   end
 
-  add_index "topics", ["account_id", "published", "replied_at"], :name => "account_id"
   add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
   add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
@@ -3231,11 +3266,11 @@ ActiveRecord::Schema.define(:version => 20150316144216) do
   add_index "va_rules", ["account_id", "rule_type"], :name => "index_va_rules_on_account_id_and_rule_type"
 
   create_table "votes", :force => true do |t|
-    t.boolean  "vote",                        :default => false
-    t.datetime "created_at",                                     :null => false
+    t.integer  "vote",          :limit => 1,  :default => 1
+    t.datetime "created_at",                                 :null => false
     t.string   "voteable_type", :limit => 30
-    t.integer  "voteable_id",   :limit => 8,  :default => 0,     :null => false
-    t.integer  "user_id",       :limit => 8,  :default => 0,     :null => false
+    t.integer  "voteable_id",   :limit => 8,  :default => 0, :null => false
+    t.integer  "user_id",       :limit => 8,  :default => 0, :null => false
     t.integer  "account_id",    :limit => 8
   end
 

@@ -204,6 +204,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :email_notification_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+
   # contacts and companies import
   resources :customers_import do
     collection do
@@ -279,19 +285,18 @@ Helpkit::Application.routes.draw do
       put :update_contact
       put :update_description_and_tags
     end
-    resources :contact_merge do
-      collection do
-        get :search
-      end
-    end
   end
+
+  # segment/group controller will handle all different types in request params # content based routing
+  match '/integrations/segment' => 'segment/identify#create', :constraints => lambda{|req| req.request_parameters["type"] == "identify"}
+  match '/integrations/segment' => 'segment/group#create', :constraints => lambda{|req| req.request_parameters["type"] != "identify"}
+
 
   resources :contact_merge do
     collection do
       get :search
       post :new
       post :confirm
-      post :complete
       post :merge
     end
   end
@@ -371,6 +376,7 @@ Helpkit::Application.routes.draw do
         post :direct_dial_success
         get :inspect_call
         get :caller_data
+        post :external_transfer_success
         post :call_transfer_success
       end
     end
@@ -400,7 +406,10 @@ Helpkit::Application.routes.draw do
         post :transfer_outgoing_call
         post :transfer_incoming_to_group
         post :transfer_outgoing_to_group
+        post :transfer_incoming_to_external
+        post :transfer_outgoing_to_external
         get :available_agents
+        get :available_external_numbers
       end
     end
 
@@ -411,21 +420,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :call_history do
+    resources :caller do
       collection do
-        get :custom_search
-        get :children
-        get :recent_calls
-        get :export
-      end
-    end
-
-    resources :blacklist_number do
-      collection do
-        post :create
-      end
-      member do
-        delete :destroy
+        post :block
+        post :unblock
       end
     end
 
@@ -484,6 +482,23 @@ Helpkit::Application.routes.draw do
   end
 
   match '/freshfone/preview_ivr/:id' => 'freshfone#preview_ivr', :via => :post
+  
+  namespace :freshfone, :path => "phone" do
+    resources :call_history do
+      member do 
+        delete :destroy_recording
+      end
+      collection do
+        get :custom_search
+        get :children
+        get :recent_calls
+        get :export
+      end
+    end
+  end
+
+  match '/freshfone/call_history/custom_search' => 'freshfone/call_history#custom_search'
+  match '/freshfone/call_history/children' => 'freshfone/call_history#children'
 
   resources :users do
     collection do
@@ -538,8 +553,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :remote_configurations
-
+    resources :remote_configurations do
+      get :open_id_complete, on: :collection
+      get :open_id, on: :collection
+    end
+    
     resources :applications do
       member do
         post :custom_widget_preview
@@ -645,6 +663,30 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '/quickbooks/refresh_access_token' => 'quickbooks#refresh_access_token', :as => :oauth_action
+    resources :dynamics_crm do
+      collection do
+        post :settings_update
+        get :edit
+        post :fields_update
+        post :widget_data
+        get :settings
+      end
+    end
+
+    namespace :xero do 
+      get :authorize 
+      get :fetch 
+      get :render_accounts
+      get :render_currency
+      get :fetch_create_contacts
+      get :get_invoice
+      delete :delete_invoice
+      get :authdone
+      get :install
+      post :create_invoices
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
@@ -723,6 +765,7 @@ Helpkit::Application.routes.draw do
         get :existing_email
         post :personalized_email_enable
         post :personalized_email_disable
+        post :toggle_agent_forward_feature
         post :reply_to_email_enable
         post :reply_to_email_disable
         post :id_less_tickets_enable
@@ -849,7 +892,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :freshfone, :only => [:index] do
+    resources :freshfone, :only => [:index], :path => 'phone' do
       collection do
         get :search
         put :toggle_freshfone
@@ -858,7 +901,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    namespace :freshfone do
+    namespace :freshfone, :path => 'phone' do
       resources :numbers do
         collection do
           post :purchase
@@ -878,7 +921,11 @@ Helpkit::Application.routes.draw do
 
     resources :roles
     namespace :social do
-      resources :streams, :only => :index
+      resources :streams, :only => :index do
+        collection do
+          get :authorize_url
+        end
+      end
       resources :twitter_streams do
         collection do
           post :preview
@@ -1060,7 +1107,7 @@ Helpkit::Application.routes.draw do
     end
 
 
-    namespace :freshfone do
+    namespace :freshfone, :path => "phone" do
       resources :summary_reports, :controller => 'summary_reports' do
         collection do
           post :generate
@@ -1223,7 +1270,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-
+  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
     resources :tags do
@@ -1268,6 +1315,7 @@ Helpkit::Application.routes.draw do
       member do
         get :reply_to_conv
         get :forward_conv
+        get :reply_to_forward
         get :view_ticket
         put :assign
         put :restore
@@ -1305,8 +1353,10 @@ Helpkit::Application.routes.draw do
           post :forward
           post :note
           post :twitter
+          post :reply_to_forward
           post :facebook
           post :mobihelp
+          get :traffic_cop
           get :full_text
         end
       end
@@ -1413,7 +1463,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'canned_responses/show/:id'  => 'canned_responses#show'
-    match 'canned_responses/index/:id' => 'canned_responses#index'
+    match 'canned_responses/index/:id' => 'canned_responses#index', :as => :canned_responses_index
     match 'canned_responses/show'      => 'canned_responses#show'
 
     resources :reminders do
@@ -1454,7 +1504,6 @@ Helpkit::Application.routes.draw do
 
 
     match '/sales_manager' => 'dashboard#sales_manager'
-    match '/agent-status' => 'dashboard#agent_status'
     
     resources :articles do
       collection do
@@ -1482,6 +1531,7 @@ Helpkit::Application.routes.draw do
       end
       member do
         put :activate
+        put :company_sla
       end
     end
 
@@ -1556,9 +1606,15 @@ Helpkit::Application.routes.draw do
 
   namespace :discussions do
     resources :forums, :except => :index do
+
       collection do
         put :reorder
       end
+
+      member do
+        get :followers
+      end
+      
     end
 
     match '/topics/:id/page/:page' => 'topics#show'
@@ -1576,11 +1632,13 @@ Helpkit::Application.routes.draw do
         put :vote
         delete :destroy_vote
         get :reply
+        get :users_voted
       end
 
       resources :posts, :except => :new do
         member do
           put :toggle_answer
+          get :users_voted
         end
       end
 
@@ -1706,6 +1764,10 @@ Helpkit::Application.routes.draw do
 
   get 'discussions/:object/:id/subscriptions/is_following(.:format)', 
     :controller => 'monitorships', :action => 'is_following', 
+    :as => :get_monitorship
+
+  get 'discussions/:object/:id/subscriptions', 
+    :controller => 'monitorships', :action => 'followers', 
     :as => :view_monitorship
 
   match 'discussions/:object/:id/subscriptions/:type(.:format)',
@@ -1769,11 +1831,15 @@ Helpkit::Application.routes.draw do
           get :users_voted
           put :toggle_solution
           get :reply
+          put :toggle_vote
         end
 
         resources :posts, :except => [:index, :new, :show] do
           member do
             put :toggle_answer
+            put :like
+            get :users_voted
+            put :toggle_vote
           end
           collection do
             get :show
@@ -1856,6 +1922,8 @@ Helpkit::Application.routes.draw do
         get :get_portal
         get :ticket_properties
         get :load_reply_emails
+        get :get_filtered_tickets
+        get :mobile_filter_count
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end
@@ -1868,8 +1936,10 @@ Helpkit::Application.routes.draw do
     end
     resources :settings,  :only => [:index] do
       collection do
+        get :mobile_login
         get :mobile_pre_loader
         get :deliver_activation_instructions
+        get :configurations
       end
     end
     resources :freshfone do 
@@ -1891,6 +1961,13 @@ Helpkit::Application.routes.draw do
     resources :solutions do
       collection do
         get :articles
+      end
+    end
+
+    resources :articles do 
+      member do
+        put :thumbs_up
+        put :thumbs_down
       end
     end
   end
@@ -1929,6 +2006,8 @@ Helpkit::Application.routes.draw do
         get :fetch_reseller_account_info
         get :fetch_account_activity
         post :remove_reseller_subscription
+        post :fetch_affiliates
+        post :edit_affiliate
       end
     end
   end
@@ -1952,11 +2031,20 @@ Helpkit::Application.routes.draw do
       resources :subscriptions, :only => [:none] do
         collection do
           get :display_subscribers
+          get :customers
+          get :customer_summary
+          get :deleted_customers
         end
       end
-
-      resources :accounts, :only => :show do
+      
+      get  "/accounts/show", to: 'accounts#show'
+      resources :accounts, :only => :none do
         collection do
+          get :tickets
+          get :agents
+          get :portal
+          get :features
+          get :email_config
           put :add_day_passes
           put :add_feature
           put :change_url
@@ -1992,8 +2080,14 @@ Helpkit::Application.routes.draw do
           put :account_closure
           put :get_country_list
           put :country_restriction
+          put :trigger_whitelist
           get :get_country_list
+          get :fetch_usage_triggers
+          put :update_usage_triggers
+          put :restore_freshfone_account
           post :country_restriction
+          post :new_freshfone_account
+          put :undo_security_whitelist
         end
       end
 
@@ -2008,6 +2102,46 @@ Helpkit::Application.routes.draw do
           get :index
         end
       end
+
+      resources :spam_watch, :only => :none do 
+        collection do 
+          get :spam_details   
+          put :block_user   
+          put :hard_block   
+          put :spam_user   
+          put :internal_whitelist
+        end
+      end
+
+      resources :subscription_events, :only => :none do 
+        collection do 
+          get :current_month_summary
+          get :custom_month
+          get :export_to_csv
+        end
+      end
+
+      resources :users, :only => :none do 
+        collection do 
+          get 'get_user'
+        end
+      end
+      
+      resources :subscription_announcements, :only => [:create,:index] do 
+        collection do 
+          put 'update'
+          delete 'destroy'
+        end
+      end
+
+      resources :manage_users, :only => :none do
+        collection do
+          get :get_whitelisted_users
+          post :add_whitelisted_user_id
+          delete :remove_whitelisted_user_id
+        end
+      end
+      
     end
   end
 

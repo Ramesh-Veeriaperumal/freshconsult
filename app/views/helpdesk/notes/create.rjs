@@ -6,7 +6,8 @@ if params[:showing] == 'activities'
 
     page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)
 else
-	@notes = @parent.conversation_since(params[:since_id])
+	@notes = @parent.conversation_since(params[:since_id]).reverse
+	public_notes = @notes.select{ |note| note.private == false || note.incoming == true }
 	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
 	page << "trigger_event('note_created', #{to_event_data(@item)} );"
   
@@ -14,6 +15,12 @@ else
     page << "jQuery('#parent_post_id').val('')" 
     page << "jQuery('#fb_form_title').html('#{@parent.requester.name}')"
   end
+
+	# Traffic cop related changes starts here
+	page << "jQuery('#response_added_alert').remove()"
+	page << "jQuery('.last_note_id').val(#{public_notes.last.id})" unless public_notes.empty? # Assigning the last public note id when added
+	# Traffic cop related changes ends here
+
 end
 
 # Replacing the new quoted text back into the reply quoted textarea

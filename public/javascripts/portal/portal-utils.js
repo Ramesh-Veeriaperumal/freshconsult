@@ -97,6 +97,9 @@ function layoutResize(layoutClass1, layoutClass2){
         $j(layoutClass1 + ", " + layoutClass2)
             .css("minHeight", Math.max($j(mainbar).outerHeight(true), $j(sidebar).outerHeight(true)))
     }
+
+    // To resize images based on aspect-ratio
+    $j(window).trigger('resize')
 }
 
 Number.prototype.toTime = function(format) {

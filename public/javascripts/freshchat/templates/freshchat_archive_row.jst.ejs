@@ -1,5 +1,5 @@
 <td class="user-profile span3">
-	<div ><img src="<%=(modelJson.type === "visitor")? "/images/fillers/profile_blank_thumb.gif" : "/users/"+modelJson.participant_id+"/profile_image"%>"></div> 
+	<div ><img src="<%=(modelJson.type === "visitor")? "/images/fillers/profile_blank_thumb.jpg" : "/users/"+modelJson.participant_id+"/profile_image"%>"></div> 
 	<strong class="text-wrap <%=(modelJson.title.length > 15) ? 'tooltip': ''%>" data-original-title="<%=modelJson.title%>"><%=modelJson.title%></strong>
 </td>
 <td class="connection span1">
@@ -14,7 +14,7 @@
 	</span>
 </td>
 <td class="user-profile span3">
-	<div ><img src="<%=(window._.isEmpty(modelJson.agent_id) )? "/images/fillers/profile_blank_thumb.gif" : "/users/"+modelJson.agent_id+"/profile_image"%>"></div>
+	<div ><img src="<%=(window._.isEmpty(modelJson.agent_id) )? "/images/fillers/profile_blank_thumb.jpg" : "/users/"+modelJson.agent_id+"/profile_image"%>"></div>
 	<%if(modelJson.missed === true ) { %>
 		<strong class="text-wrap tooltip" data-original-title="<%=window.CURRENT_ACCOUNT.name%>"><%=window.CURRENT_ACCOUNT.name%></strong>
 	<% } else {%> 

@@ -7,7 +7,8 @@ module Helpdesk::TicketActions
   include Helpdesk::ToggleEmailNotification
   include CloudFilesHelper
   include Facebook::Constants
-  
+  include Redis::RedisKeys
+
   def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
     cc_emails = fetch_valid_emails(params[:cc_emails])
@@ -85,6 +86,8 @@ module Helpdesk::TicketActions
     #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
     # if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
       # params[:later] = true
+      remove_tickets_redis_key(export_redis_key)
+      create_ticket_export_fields_list(params[:export_fields].keys)
       params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.ticket_export.info")
@@ -218,9 +221,21 @@ module Helpdesk::TicketActions
   end
 
   def forward_conv
-    render :partial => "/helpdesk/tickets/show/forward_form",
-           :locals => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
-           :note => [@ticket, Helpdesk::Note.new(:private => true)] }
+    render :partial=> "/helpdesk/tickets/show/form_layout",
+            :locals => {:params => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
+                                :note => [@ticket, Helpdesk::Note.new(:private => true)] }, 
+                        :page => "forward_form"
+                        }
+  end
+
+  def reply_to_forward
+    render(  :partial => '/helpdesk/tickets/show/form_layout', 
+                :locals => {:params => {  :id => 'send-email', 
+                              :cntid => "cnt-reply-fwd-#{@conv_id}", 
+                              :note => [@ticket, Helpdesk::Note.new(:private => true)], 
+                              :conv_id => @conv_id}, 
+                            :page => "reply_to_forward"}
+                            )
   end
   
   def add_requester
@@ -230,24 +245,29 @@ module Helpdesk::TicketActions
   end
 
   def full_paginate
-    total_entries = params[:total_entries]
-    if(total_entries.blank? || total_entries.to_i == 0)
-      load_cached_ticket_filters
-      load_ticket_filter
-      db_type = (params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) ? :run_on_slave : :run_on_master
-      Sharding.send(db_type) do
-        @ticket_filter.deserialize_from_params(params)
-        joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-        joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-        options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-        if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-          options[:distinct] = true 
-          options[:select] = :id
+    unless current_account.features_included?(:no_list_view_count_query)
+      total_entries = params[:total_entries]
+      if(total_entries.blank? || total_entries.to_i == 0)
+        load_cached_ticket_filters
+        load_ticket_filter
+        db_type = (params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) ? :run_on_slave : :run_on_master
+        Sharding.send(db_type) do
+          @ticket_filter.deserialize_from_params(params)
+          joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+          joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+          options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+          if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+            options[:distinct] = true 
+            options[:select] = :id
+          end
+          total_entries = current_account.tickets.permissible(current_user).count(options)
         end
-        total_entries = current_account.tickets.permissible(current_user).count(options)
       end
+      @ticket_count = total_entries.to_i
+    else
+      load_cached_ticket_filters
+      render 'no_paginate' 
     end
-    @ticket_count = total_entries.to_i
   end
 
   def get_tag_name
@@ -283,5 +303,15 @@ module Helpdesk::TicketActions
                                     "value"=> params[:company_id] }]
       cache_filter_params
     end
+  end
+
+  private
+
+  def create_ticket_export_fields_list(list)
+    set_tickets_redis_lpush(export_redis_key, list) if list.any?
+  end
+
+  def export_redis_key
+    EXPORT_TICKET_FIELDS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]}
   end
 end

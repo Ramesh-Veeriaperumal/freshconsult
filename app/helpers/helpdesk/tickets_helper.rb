@@ -16,7 +16,7 @@ module Helpdesk::TicketsHelper
   include HelpdeskAccessMethods
   
   def scn_accessible_elements
-    visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, :name)
+    visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, "raw_name")
     visible_scn = accessible_elements(current_account.scn_automations, query_hash('VARule', 'va_rules', '')) if visible_scn.nil?
     visible_scn
   end
@@ -96,6 +96,10 @@ module Helpdesk::TicketsHelper
     SELECTOR_NAMES[current_selector]
   end
 
+  def trash_in_progress?
+    key_exists?(EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id})
+  end
+
   def context_check_box(text, checked_context, unchecked_context, selector = nil)
 
     checked_url = url_for(:filters => [checked_context] + (selector || current_selector))
@@ -161,7 +165,8 @@ module Helpdesk::TicketsHelper
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+    default_reply = (signature.blank?)? "<p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+<div>#{signature}</div>"
     quoted_text = ""
 
     if quoted or forward
@@ -277,10 +282,17 @@ module Helpdesk::TicketsHelper
 
   def ticket_pagination_html(options,full_pagination=false)
     prev = 0
+    tickets_in_current_page = options[:tickets_in_current_page]
     current_page = options[:current_page]
     per_page = params[:per_page]
     no_of_pages = options[:total_pages]
-    visible_pages = full_pagination ? visible_page_numbers(options,current_page,no_of_pages) : []
+    no_count_query = no_of_pages.nil? #no_of_pages can be nil, when no_list_view_count_query feature is enabled
+    if no_count_query
+      last_page = tickets_in_current_page==30 ? current_page+1 : current_page
+    else
+      last_page = no_of_pages
+    end
+    visible_pages = (full_pagination && !no_count_query) ? visible_page_numbers(options,current_page,no_of_pages) : []
     tooltip = 'tooltip' if !full_pagination
 
     content = ""
@@ -292,17 +304,21 @@ module Helpdesk::TicketsHelper
                       title='Previous' 
                       #{shortcut_options('previous') unless full_pagination} >#{options[:previous_label]}</a>"
     end
-    visible_pages.each do |index|
-      # detect gaps:
-      content << '<span class="gap">&hellip;</span>' if prev and index > prev + 1
-      prev = index
-      if( index == current_page )
-        content << "<span class='current'>#{index}</span>"
-      else
-        content << "<a href='/helpdesk/tickets?page=#{index}' rel='next'>#{index}</a>"
+
+    unless no_count_query
+      visible_pages.each do |index|
+        # detect gaps:
+        content << '<span class="gap">&hellip;</span>' if prev and index > prev + 1
+        prev = index
+        if( index == current_page )
+          content << "<span class='current'>#{index}</span>"
+        else
+          content << "<a href='/helpdesk/tickets?page=#{index}' rel='next'>#{index}</a>"
+        end
       end
     end
-    if current_page == no_of_pages
+
+    if current_page == last_page
       content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
     else
       content << "<a class='next_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page+1)}' 
@@ -311,6 +327,14 @@ module Helpdesk::TicketsHelper
     end
     content << "</div>" if full_pagination
     content
+  end
+
+  def remote_note_forward_form options
+    content_tag(:div, "", 
+                :id => options[:id], 
+                :class => "request_panel note-forward-form hide", 
+                :rel => "remote", 
+                "data-remote-url" => options[:path]).html_safe
   end
 
   def faye_auth_params
@@ -324,11 +348,11 @@ module Helpdesk::TicketsHelper
     }.to_json.html_safe
   end
 
-  def socket_auth_params
+  def socket_auth_params(connection)
     aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     aes.encrypt
-    aes.key = Digest::SHA256.digest(NodeConfig["key"]) 
-    aes.iv  = NodeConfig["iv"]
+    aes.key = Digest::SHA256.digest(NodeConfig[connection]["key"]) 
+    aes.iv  = NodeConfig[connection]["iv"]
 
     account_data = {
       :account_id => current_user.account_id, 
@@ -340,6 +364,10 @@ module Helpdesk::TicketsHelper
 
   def agentcollision_socket_host
     "#{request.protocol}#{NodeConfig["socket_host"]}"
+  end
+
+  def autorefresh_socket_host
+    "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
   end
 
   def auto_refresh_channel

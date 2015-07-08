@@ -25,7 +25,7 @@
       <label class="control-label"><%=t('reports.freshfone.call_type')%></label>
       <%= select_tag :call_type, options_for_select(call_types,@call_type.to_i), 
               { :multiple => false, 
-                :class => "select2 filter_item",
+                :class => "select2 filter_item report-metric",
                       "data-placeholder".to_sym() => t('reports.freshfone.select_call_type')} %>
   </li> 
     <li>
@@ -41,6 +41,8 @@ jQuery(document).ready(function() {
  jQuery("#date_range").daterangepicker({
     latestDate: new Date(),
     presetRanges: [
+      {text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
+      {text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
       {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
       {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
       {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}

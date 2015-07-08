@@ -62,10 +62,19 @@ class Search::SolutionsController < Search::SearchController
 			if ["search_solutions", "related_solutions"].include?(action_name)
 				@suggest = true
 			end
+			detect_multilingual_search
 		end
 
 		def load_ticket
 			@ticket = current_account.tickets.find_by_id(params[:ticket])
 			@ticket = current_account.tickets.find_by_display_id(params[:ticket]) if is_native_mobile?
+		end
+
+		# Hack for getting language and hitting corresponding alias
+		# Probably will be moved to search/search_controller when dynamic solutions goes live
+		def detect_multilingual_search
+			if params[:language].present? and current_account.features_included?(:es_multilang_solutions)
+				@search_lang = ({ :language => params[:language] })
+			end
 		end
 end

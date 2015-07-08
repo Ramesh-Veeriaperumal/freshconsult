@@ -26,30 +26,23 @@ class Discussions::TopicsController < ApplicationController
 	end
 
 	def create
-		topic_saved, post_saved = false, false
 		# this is icky - move the topic/first post workings into the topic model?
-		Topic.transaction do
-			forum = current_account.forums.find(params[:topic][:forum_id])
-			@topic  = forum.topics.build(topic_param)
-			assign_protected
-			@topic.forum_id = params[:topic][:forum_id]
-			@post       = @topic.posts.build(post_param)
-			@post.topic = @topic
-			if privilege?(:view_admin)
-				@post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
-			end
-			@post.user  ||= current_user
-			@topic.user ||= current_user
-			@post.account_id = current_account.id
-			@post.portal = current_portal.id
-			# only save topic if post is valid so in the view topic will be a new record if there was an error
-			@topic.body_html = @post.body_html # incase save fails and we go back to the form
-			build_attachments
-			topic_saved = @topic.save if @post.valid?
-			post_saved = @post.save if topic_saved
+		forum = current_account.forums.find(params[:topic][:forum_id])
+		@topic  = forum.topics.build(topic_param)
+		assign_protected
+		@post       = @topic.posts.build(post_param)
+		@post.topic = @topic
+		if privilege?(:view_admin)
+			@post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
 		end
+		@post.user  ||= current_user
+		@post.account_id = current_account.id
+		@post.portal = current_portal.id
+		# only save topic if post is valid so in the view topic will be a new record if there was an error
+		@topic.body_html = @post.body_html # incase save fails and we go back to the form
+		build_attachments
 
-		if topic_saved && post_saved
+		if @topic.save
 			respond_to do |format|
 				format.html { redirect_to discussions_topic_path(@topic) }
 				format.xml  { render  :xml => @topic }
@@ -74,19 +67,14 @@ class Discussions::TopicsController < ApplicationController
 	end
 
 	def update
-		topic_saved, post_saved = false, false
-		Topic.transaction do
-			@topic.attributes = topic_param
-			assign_protected
-			@post = @topic.posts.first
-			@post.attributes = post_param
-			@topic.body_html = @post.body_html
-			build_attachments
-			topic_saved = @topic.save
-			post_saved = @post.save
-		end
-
-		if topic_saved && post_saved
+		@topic.attributes = topic_param
+		assign_protected
+		@post = @topic.first_post
+		@post.attributes = post_param
+		@topic.body_html = @post.body_html
+		build_attachments
+		
+		if @topic.save
 			respond_to do |format|
 				format.html { redirect_to discussions_topic_path(@topic) }
 				format.xml  {head :ok}
@@ -192,31 +180,11 @@ class Discussions::TopicsController < ApplicationController
 		render :layout => false
 	end
 
-	def vote
-		unless @topic.voted_by_user?(current_user)
-			@vote = Vote.new(:vote => params[:vote] == "for")
-			@vote.user_id = current_user.id
-			@topic.votes << @vote
-			@topic.reload
-		end
-		respond_to do |format|
-			format.js
-			format.html { redirect_to discussions_topic_path(@topic) }
-			format.xml  { head 200 }
-		end
+	def users_voted
+		@object = @topic
+		render :partial => 'discussions/shared/users_voted'
 	end
-
-	def destroy_vote
-		@votes = @topic.votes.find(:all, :conditions => ["user_id = ?", current_user.id] )
-		@votes.first.destroy
-		@topic.reload
-		respond_to do |format|
-			format.js { render "vote.rjs" }
-			format.html { redirect_to discussions_topic_path(@topic) }
-			format.xml  { head 200 }
-		end
-	end
-
+	
 	def reply
 		if current_user.agent?
 			path = discussions_topic_path(params[:id])
@@ -230,11 +198,7 @@ class Discussions::TopicsController < ApplicationController
 	private
 
 		def load_posts
-			if current_account.features_included?(:spam_dynamo)
-				@posts = @topic.posts.published.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
-			else
-				@posts = @topic.posts.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
-			end
+			@posts = @topic.posts.published.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
 		end
 
 		def assign_protected

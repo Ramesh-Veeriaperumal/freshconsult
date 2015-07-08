@@ -32,6 +32,14 @@ class Solution::Folder < ActiveRecord::Base
   include Solution::LanguageMethods
   include Solution::MetaAssociationSwitcher
 
+  def self.folders_for_category category_id    
+    self.find_by_category_id(category_id)    
+  end
+
+  def self.find_all_folders(account)   
+    self.find(:all).select { |a| a.account_id.eql?(account) }
+  end
+
   def visible?(user)    
     return true if (user and user.privilege?(:manage_tickets) )
     return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]

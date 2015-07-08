@@ -3,6 +3,15 @@ module Redis::TicketsRedis
 		newrelic_begin_rescue { $redis_tickets.get(key) }
 	end
 
+	def tickets_redis_list(key, start = 0, stop = -1)
+		newrelic_begin_rescue { $redis_tickets.lrange(key,start,stop) }
+	end
+
+	def set_tickets_redis_lpush(key, value)
+		newrelic_begin_rescue { $redis_tickets.lpush(key,value) }
+	end
+
+
 	def set_tickets_redis_key(key, value, expires = 86400)
 		newrelic_begin_rescue do
 			$redis_tickets.set(key, value)
@@ -12,6 +21,10 @@ module Redis::TicketsRedis
 
 	def remove_tickets_redis_key key
 		newrelic_begin_rescue { $redis_tickets.del(key) }
+	end
+
+	def key_exists? key
+		newrelic_begin_rescue { $redis_tickets.exists(key) }
 	end
 
   def increment_tickets_redis_key key, value = 1

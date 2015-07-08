@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c",
-    "current": "d3ed7bdf4663f685a293bdca495956e71b44f5f042f76ee6dad0943eaaed072c"
+    "previous": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48",
+    "current": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48"
   },
   "fonts": [
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.ttf",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.svg",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.woff",
-    "public/assets/glyphs_d3ed7bdf4663f685a293bdca495956e7.eot"
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.ttf",
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg",
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.woff",
+    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot"
   ],
   "glyphs": {
     "account": {
@@ -17,6 +17,14 @@
     "agent": {
       "codepoint": 61697,
       "source": "public/glyphs/vectors/agent.svg"
+    },
+    "agent-fchat-off": {
+      "codepoint": 61872,
+      "source": "public/glyphs/vectors/agent-fchat-off.svg"
+    },
+    "agent-fchat-on": {
+      "codepoint": 61873,
+      "source": "public/glyphs/vectors/agent-fchat-on.svg"
     },
     "all-streams": {
       "codepoint": 61698,
@@ -69,6 +77,10 @@
     "arrow-up-2": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
+    "available-on-mobile": {
+      "codepoint": 61878,
+      "source": "public/glyphs/vectors/available-on-mobile.svg"
     },
     "bell": {
       "codepoint": 61711,
@@ -198,6 +210,10 @@
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
     },
+    "deleted": {
+      "codepoint": 61875,
+      "source": "public/glyphs/vectors/deleted.svg"
+    },
     "disconnected": {
       "codepoint": 61743,
       "source": "public/glyphs/vectors/disconnected.svg"
@@ -282,6 +298,10 @@
       "codepoint": 61763,
       "source": "public/glyphs/vectors/ff-dialpad.svg"
     },
+    "ff-group": {
+      "codepoint": 61874,
+      "source": "public/glyphs/vectors/ff-group.svg"
+    },
     "ff-mic": {
       "codepoint": 61764,
       "source": "public/glyphs/vectors/ff-mic.svg"
@@ -298,9 +318,21 @@
       "codepoint": 61767,
       "source": "public/glyphs/vectors/ff-on-call.svg"
     },
+    "ff-on-mobile": {
+      "codepoint": 61871,
+      "source": "public/glyphs/vectors/ff-on-mobile.svg"
+    },
     "ff-phone": {
       "codepoint": 61768,
       "source": "public/glyphs/vectors/ff-phone.svg"
+    },
+    "ff-via-browser": {
+      "codepoint": 61869,
+      "source": "public/glyphs/vectors/ff-via-browser.svg"
+    },
+    "ff-via-phone": {
+      "codepoint": 61870,
+      "source": "public/glyphs/vectors/ff-via-phone.svg"
     },
     "file": {
       "codepoint": 61769,
@@ -470,6 +502,10 @@
       "codepoint": 61809,
       "source": "public/glyphs/vectors/no-arrow-right.svg"
     },
+    "no-network": {
+      "codepoint": 61876,
+      "source": "public/glyphs/vectors/no-network.svg"
+    },
     "notice": {
       "codepoint": 61810,
       "source": "public/glyphs/vectors/notice.svg"
@@ -517,6 +553,10 @@
     "phone-disable": {
       "codepoint": 61821,
       "source": "public/glyphs/vectors/phone-disable.svg"
+    },
+    "phone-disable-thin": {
+      "codepoint": 61877,
+      "source": "public/glyphs/vectors/phone-disable-thin.svg"
     },
     "plus": {
       "codepoint": 61822,
@@ -699,7 +739,11 @@
     "autowidth": true,
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
-    "debug": true,
+    "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -714,6 +758,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

@@ -1,5 +1,7 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
+  # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
+
 	before_validation :populate_requester, :set_default_values
 
 	before_validation :set_token, on: :create
@@ -28,16 +30,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :filter_observer_events, on: :update, :if => :user_present?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :push_update_notification,
-  :publish_updated_ticket_properties_to_rabbitmq, on: :update 
+  :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
   after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
   after_commit :publish_new_ticket_properties, on: :create, :if => :auto_refresh_allowed?
   after_commit :publish_updated_ticket_properties, on: :update, :if => :model_changes?
-  after_commit :publish_new_ticket_properties_to_rabbitmq, :push_create_notification, on: :create
+  after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
+
+  include RabbitMq::Publisher
 
   def construct_ticket_old_body_hash
     {
@@ -240,17 +243,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.account.make_current
     Time.zone = self.account.time_zone    
   end
- 
-  def set_user_time_zone 
-    Time.zone = User.current.time_zone  
-  end
 
+  def set_user_time_zone
+    begin
+      Time.zone = User.current.time_zone 
+    rescue ArgumentError => e 
+      Rails.logger.info  "User timezone is invalid:: userid:: #{User.current.id}, Timezone :: #{User.current.time_zone}"
+      set_account_time_zone
+    end
+  end
+ 
   def publish_new_ticket_properties
      publish_ticket_properties("new")
   end
 
+  #Remove this function once we move all accounts to socket.io based AutoRefresh
   def publish_updated_ticket_properties
-    return unless auto_refresh_allowed?
+    return if !auto_refresh_allowed? or autorefresh_node_allowed?
     publish_ticket_properties("update")
   end
 
@@ -355,6 +364,10 @@ private
 
   def auto_refresh_allowed?
     account.features?(:auto_refresh)
+  end
+
+  def autorefresh_node_allowed?
+    account.features?(:autorefresh_node)
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 

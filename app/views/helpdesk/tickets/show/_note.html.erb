@@ -2,6 +2,7 @@
 note_view_id = dom_id(note)
 notedetails  = "note_details_#{note.id.to_s()}"
 forward_note_id = "cnt-fwd-#{note.id.to_s()}" 
+reply_to_fwd_id = "cnt-reply-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
@@ -12,19 +13,13 @@ minimizable ||= false
 			data-timestamp="<%= note.created_at.to_i%>" 
 			class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user) %></div>
+	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
-					<%= 'private-note' if note.private_note? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
-		<% if note.private_note? %>
-			<%= content_tag(:span, "", :class => "comment-lock") %>
-		<% elsif is_twitter_dm?(note) %>
-			<%= content_tag(:span, "", :class => "ficon-twitter-lock fsize-21 muted") %>
-		<% elsif is_facebook_message?(note) %>
-			<%= content_tag(:span, "", :class => "ficon-facebook-lock fsize-21 muted") %>
-		<% end %>
-		
+					<%= 'private-note' if note.private_note? || note.fwd_email? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
+
+		<%= note_lock_icon(note) %>
 		
 		<% if note.fb_post and note.fb_post.post_type_present? %>
 			<% if note.fb_post.comment? %>
@@ -70,10 +65,15 @@ minimizable ||= false
 								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
 								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private %>
         <% end %>
+        <% if privilege?(:forward_ticket) %>
+					<%= link_to_function('', 
+								"jQuery('##{reply_to_fwd_id}').show().trigger('afterShow'); invokeRedactor('#{reply_to_fwd_id}-body') " ,
+								:class => "conv-action-icon ficon-reply forward-reply tooltip", :title => t('reply_to_fwd'))  if note.third_party_response? || note.fwd_email? || note.reply_to_forward?  %>
+        <% end %>
         <% if privilege?(:edit_note, note) %>
 					<%= link_to_function('', 
 								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
-								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent?) %>
+								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
         <% end %>
 		    </div>
 		    <% end %>
@@ -97,17 +97,14 @@ minimizable ||= false
 
 
 			<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 
-									"data-remote-url" => edit_helpdesk_ticket_note_path(notable_object.display_id, note.id) %>
-		    <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
-							"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
-														:id => notable_object.display_id, 
-														:note_id => note.id }) %>
+					"data-remote-url" => edit_helpdesk_ticket_note_path(notable_object.display_id, note.id) %>
+
 			<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
 				<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>
 				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
 					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>			
 					<%= note.body_html.html_safe %>
-					<% if note.fwd_email? %>
+					<% if note.fwd_email? || note.reply_to_forward? %>
 						<div class="freshdesk_quote" data-remote-quote=true></div>
 					<% end %>
 				</div>
@@ -119,6 +116,18 @@ minimizable ||= false
 				<% end %>
 			</div>
 		</div>
+		<%= remote_note_forward_form({  :id => forward_note_id,
+									:path => forward_conv_helpdesk_ticket_path({
+									:id => notable_object.display_id, 
+				                    :note_id => note.id })
+													}) %>
+
+
+		<%= remote_note_forward_form({  :id => reply_to_fwd_id,
+									:path => reply_to_forward_helpdesk_ticket_path({ 
+				                    :id => notable_object.display_id, 
+				                    :note_id => note.id })
+				                    				}) %>
 	</div>
 
     
@@ -129,5 +138,8 @@ minimizable ||= false
 			TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;	
 		
 	</script>
+
 	
 </div>
+
+

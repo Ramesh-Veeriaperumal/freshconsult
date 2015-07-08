@@ -1,0 +1,47 @@
+<%= form_tag :action => :merge, :controller => 'contact_merge', :method => :post do |f| %>
+  <%= hidden_field_tag 'parent_user',  @source_user.id %>
+  <div class="m-contact-special">
+ 	  <br>
+    <div class="primary-contact">
+      <div class="user-contact" data-uid="<%= h(@source_user.id) %>">
+        <%= user_avatar(@source_user) %>
+        <a class="contact_item_info"><b><%= h(@source_user.name) %></b></a>
+        <div class="contact_data">
+          <span><%= h(@source_user.company.name) unless @source_user.company.nil?%></span>
+          <span><%= h(@source_user.email) %></span>
+        </div>
+      </div>
+    </div>
+    <div class="merge-ready">
+      <% @target_users.each do |target| %>
+        <div class="one-contact">
+          <% if target == @target_users.last %>
+            <span class="line last-line"></span>
+          <% else %>
+            <span class="line"></span>
+          <% end %>
+          <div class="contact-area">
+            <div class="user-contact" data-uid="<%= h(target.id) %>">
+              <%= user_avatar(target) %>
+              <a class="contact_item_info"><b><%= h(target.name) %></b></a>
+              <%= hidden_field_tag 'target[]', target.id %>
+              <div class="contact_data">
+                <span><%= h(target.company.name) unless target.company.nil?%></span>
+                <span><%= h(target.email) %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="info-text">
+    <h3><%= t("merge_contacts.header",{:number => @target_users.size, :name => @source_user.name}).html_safe %></h3><br />
+    <%= t("merge_contacts.new_info", {:name => @source_user.name}).html_safe %>
+  </div>
+  <div class="button-container">
+    <%= link_to_function(t("back"), "jQuery('#confirm_merge_box').hide(); jQuery('.mergebox').show();", :class => "btn", :id  => "back-user-merge") %> 
+    <a class="btn" id="cancel-user-merge" data-dismiss="modal"><%= t('cancel') %></a>
+      <%= submit_tag t('merge_contacts.confirm_and_merge'), :class => "btn btn-primary", :id => "merge_completion", "data-loading-text" => t('merge_contacts.please_wait') %>
+  </div>
+<%end%>

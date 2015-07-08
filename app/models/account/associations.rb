@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   delegate :supported_languages, :to => :account_additional_settings
   has_one  :whitelisted_ip
   has_many :dynamic_notification_templates
+  has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
@@ -97,6 +98,8 @@ class Account < ActiveRecord::Base
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy'
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
+  has_many :google_contacts, :class_name => 'GoogleContact'
+  has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
@@ -142,6 +145,8 @@ class Account < ActiveRecord::Base
 
   has_many :topics
   has_many :posts
+  has_many :monitorships
+  has_many :votes
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
@@ -238,9 +243,9 @@ class Account < ActiveRecord::Base
   has_many :chat_widgets
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
-  has_many :ecommerce_accounts, :class_name => 'Ecommerce::Account'
-  has_many :ebay_accounts, :class_name => 'Ecommerce::Ebay'
-  has_many :ebay_items, :class_name => "Ecommerce::EbayItem", :through => :ebay_accounts
+  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
 
   has_many :forum_moderators
+
+  has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
 end

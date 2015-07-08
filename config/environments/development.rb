@@ -47,6 +47,11 @@ Helpkit::Application.configure do
   config.reload_plugins = true
   config.after_initialize do
     ActiveMerchant::Billing::Base.gateway_mode = :test
+    Bullet.enable         = true
+    Bullet.rails_logger   = true
+    Bullet.bullet_logger  = true
+    Bullet.console        = true
+    # Other options can be found here: https://github.com/flyerhzm/bullet#configuration
   end
 end
 

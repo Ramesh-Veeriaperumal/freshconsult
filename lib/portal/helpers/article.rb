@@ -46,6 +46,7 @@ module Portal::Helpers::Article
 	end
 
 	def related_articles article, limit=10, container='related_articles'
+		return "" unless Account.current.active?
 		output = []
 		output << %(<div id="#{container}">)
 		output << %(<div class="cs-g-c">)

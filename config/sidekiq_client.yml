@@ -1,9 +1,10 @@
 defaults: &defaults
   :verbose: true
   :require: ./config/environment.rb
-  :concurrency: 25
+  :concurrency: 5
   :logfile: ./log/sidekiq.log
   :queues:
+    - [merge_contacts]
     - [sla]
     - [premium_supervisor]
     - [supervisor]
@@ -15,12 +16,10 @@ defaults: &defaults
     - [twitter]
     - [premium_twitter]
     - [sla_scheduler]
-    - [supervisor_scheduler]
-    - [facebook_scheduler]
-    - [premium_facebook_scheduler]
-    - [facebook_comments_scheduler]
-    - [twitter_scheduler]
-    - [premium_twitter_scheduler]
+    - [trial_facebook]
+    - [trial_twitter]
+    - [custom_twitter]
+    - [rabbitmq_publish]
     - [default]
 
 development:
@@ -29,8 +28,12 @@ development:
 staging:
   <<: *defaults
 
+production:
+  <<: *defaults
+
 slave:
   <<: *defaults
 
 test:
   <<: *defaults
+

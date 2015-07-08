@@ -55,7 +55,7 @@ module Facebook::Core::Util
   end
 
   def convert_args(koala_feed, force = false)    
-    convert = koala_feed.visitor_post? ? @fan_page.import_visitor_posts :  @fan_page.import_company_posts
+    convert =  koala_feed.visitor_post? ? @fan_page.import_visitor_posts : false
     convert_feed = (force or convert)
     convert_args = {
       :group_id   => @fan_page.group_id,
@@ -94,8 +94,9 @@ module Facebook::Core::Util
     parent_post = parent_post_id.blank? ? @parent : @parent.notes.find(parent_post_id)
     if fb_page
       if @parent.is_fb_message?
-        unless Facebook::Core::Message.new(fb_page).send_reply(@parent, @item)
-          return flash[:notice] = t(:'facebook.error_on_reply_fb')
+        unless Facebook::Graph::Message.new(fb_page).send_reply(@parent, @item)
+          flash[:notice] = fb_page.reauth_required ? t(:'facebook.error_on_reply_fb') : t(:'facebook.user_blocked')
+          return 
         end
       else
         unless Facebook::Core::Comment.new(fb_page, nil).send_reply(parent_post, @item)
@@ -118,8 +119,11 @@ module Facebook::Core::Util
         <p>#{desc}</p></div></div>"
     elsif "photo".eql?(feed[:type])
       html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
+    elsif "link".eql?(feed[:type])
+      link_story = "<a href=\"#{feed[:link]}\">#{feed[:story]}</a>" if feed[:story]
+      html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><#{link_story}</p></div>"
     end
-
+    
     return html_content
   end
   

@@ -1,13 +1,6 @@
-class Fdadmin::DevopsMainController < ApplicationController
-
-  skip_before_filter :check_privilege
-  skip_before_filter :set_time_zone
-  skip_before_filter :set_current_account
-  skip_before_filter :set_locale
-  skip_before_filter :check_account_state
-  skip_before_filter :ensure_proper_protocol
-  skip_before_filter :check_day_pass_usage
-  skip_around_filter :select_shard
+class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
+  
+  before_filter :set_time_zone
   before_filter :verify_signature
   before_filter :check_freshops_subdomain
 
@@ -17,12 +10,21 @@ class Fdadmin::DevopsMainController < ApplicationController
       request.query_parameters.each do |key , value |
         payload << "#{key}#{value.to_s}" unless key.to_s == "digest"
       end
-      sha_signature = Digest::SHA256.hexdigest("#{payload}#{AdminApiConfig['secret_key']}")
+      sha_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'), determine_api_key, payload)
       if sha_signature != params[:digest]
          Rails.logger.debug(": : : SIGNATURE VERIFICATION FAILED : : :")
-        render :nothing => true, :status => 401
+        render :json => {:message => "Authorization failed"}, :status => 401 and return
       end
       Rails.logger.debug(": : : -> SHA SIGNATURE VERIFIED <- : : :")
+    end
+
+    def set_time_zone
+      Time.zone = 'Pacific Time (US & Canada)'
+    end
+
+    def determine_api_key
+      app_name = params[:app_name] || "freshopsadmin"
+      return ServiceApiKey.find_by_service_name(app_name).api_key 
     end
 
     def check_freshops_subdomain

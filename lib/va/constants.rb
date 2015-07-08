@@ -51,6 +51,8 @@ module Va
       :during            =>  I18n.t('during')
     }
 
+    NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected']
+    
     AUTOMATIONS_MAIL_NAME = "automations rule"
 
     AVAILABLE_LOCALES = I18n.available_locales_with_name.map{ |a| a.reverse }

@@ -13,7 +13,7 @@ module FacebookHelper
     Koala::Facebook::API.any_instance.stubs(:fql_query).returns(facebook_fql_feed)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
     
-    fb_posts = Facebook::Fql::Posts.new(@fb_page)
+    fb_posts = Facebook::Graph::Posts.new(@fb_page)
     fb_posts.fetch
     
     post = @account.facebook_posts.find_by_post_id(feed_id)
@@ -201,7 +201,7 @@ module FacebookHelper
     }
   end
   
-  def sample_realtime_comment_feed(feed_id, parent = false, parent_id = nil)
+  def sample_realtime_comment_feed(post_id, feed_id, parent = false, parent_id = nil)
     realtime_feed = {
       "entry" => {
           "id" => "#{@fb_page.page_id}",
@@ -211,7 +211,8 @@ module FacebookHelper
               "value" => { 
                     "item" => "comment", 
                     "verb" => "add", 
-                    "comment_id" => "#{feed_id}"
+                    "comment_id" => "#{feed_id}",
+                    "post_id" => "#{post_id}"
                   }
                 }]
         }
@@ -317,7 +318,7 @@ module FacebookHelper
       "from" => {
         "category" => "Community", 
         "name" => "Helloworld", 
-        "id" => "#{page_id}"
+        "id" => "#{get_social_id}"
       }, 
       "message" => "#{message}", 
       "can_remove" => true, 
@@ -426,6 +427,10 @@ module FacebookHelper
       :parent_id => "#{post_id}",
       :can_comment => false
     } ]
+  end
+  
+  def get_social_id
+    (Time.now.utc.to_f*1000000).to_i
   end
   
 end

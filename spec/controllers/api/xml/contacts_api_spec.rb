@@ -187,6 +187,7 @@ RSpec.describe ContactsController do
 				params = cf_params(field)
 				create_contact_field params 
 			end
+			clear_contact_field_cache
 			@text = Faker::Lorem.words(4).join(" ")
 		end
 
@@ -332,6 +333,11 @@ RSpec.describe ContactsController do
 			# Only if the account doesn't have custom_fields, ContactfieldData will not build.
 			user.flexifield_without_safe_access.should_not be_nil
 			user.name.should eql(name)
+		end
+
+		def clear_contact_field_cache
+			key = MemcacheKeys::CONTACT_FORM_FIELDS % {:account_id => @account.id,:contact_form_id => @account.contact_form.id}
+			MemcacheKeys.delete_from_cache key
 		end
 	end
 end

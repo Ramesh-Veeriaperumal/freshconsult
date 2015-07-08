@@ -41,9 +41,11 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$filterFreshfoneNumberLabel = this.$freshfoneCallHistory.find(".filter_freshfone_number");
       this.$export_div = $('.call_history_export_div');
       this.filterString = '';
+      this.allNumbersId = 0 ;
       this.filteredAgents = [];
       this.filteredAgents_Name = [];
       this.data_hash = [];
+      this.isShowingAllNumbers=false;
     },
     bindAllSelect2: function () {
       this.bindFreshfoneNumberSelect2();
@@ -61,6 +63,11 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           results: freshfone.freshfone_number_list},
         formatResult: function (result) {
           var formatedResult = "", ff_number = result.value;
+          
+          if(result.id==self.allNumbersId){
+          return formatedResult +="<b>" + result.value+ "</b></br>";
+          } 
+          
           if (result.name) {
             formatedResult += "<b>" + result.name + "</b><br>" + ff_number;
           } else {
@@ -76,7 +83,14 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.$fNumberSelect2.attr('fnumber',result.value);
           self.$fNumberSelect2.data('ff_name',result.name || "");
           self.$currentNumber.val(result.id);
-          return result.value;
+         if(result.id==self.allNumbersId){
+          self.isShowingAllNumbers=true;
+           return result.value;
+          }
+         else{
+          self.isShowingAllNumbers=false;
+           return result.name+" ("+result.value+")";
+          } 
         }
       });
     },
@@ -136,6 +150,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.$groupName.attr('value',result.id);
           self.$groupName.data('value', result.value);
           return result.value;
+
         }
       });
     },
@@ -162,6 +177,18 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       var self = this;
       this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter", ".wf_order_type, .wf_order", 
         function (ev) {
+          if(this.className=== 'wf_order'){
+             App.Phone.Metrics.order_type=$(this).attr("wf_order");                     
+             var order_type = App.Phone.Metrics.order_sort_type==""? "desc": App.Phone.Metrics.order_sort_type;
+             App.Phone.Metrics.recordSource($(this).attr("wf_order")+order_type);
+             App.Phone.Metrics.push_event();
+          }
+          if(this.className=== 'wf_order_type'){
+             App.Phone.Metrics.order_sort_type=$(this).attr("wf_order_type");
+             var order = App.Phone.Metrics.order_type==""? "created_at": App.Phone.Metrics.order_type;
+             App.Phone.Metrics.recordSource(order+$(this).attr("wf_order_type"));
+             App.Phone.Metrics.push_event();
+          }
           ev.preventDefault();
           self.$filterSortForm.find("input[name=" + this.className + "]")
             .val(this.getAttribute(this.className))
@@ -188,6 +215,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       var self= this;
       this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter","#submitfilter",
         function(ev) {
+          App.Phone.Metrics.recordCallHistoryFilterState();
         ev.preventDefault();
         self.getFilterData();
         $("#sliding").trigger("click");
@@ -199,11 +227,13 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       var self = this;
       this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter",".export_option",
         function(ev) {
+          App.Phone.Metrics.recordSource($(ev.target).attr('data-format'));
+          App.Phone.Metrics.push_event();
           ev.preventDefault();
           self.setFilterData();
           self.showProgress();
           $.ajax({
-            url : '/freshfone/call_history/export',
+            url : '/phone/call_history/export',
             data : $(self.$filterSortForm).serialize() + '&export_to=' + $(ev.target).attr('data-format'),
             success : function() {
               self.cleanupLoader();
@@ -391,6 +421,9 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
     },
     getDisplayNumber: function () {
       var ff_display_number = "<span class='ff_display_name'>";
+      if(this.isShowingAllNumbers){
+       return ff_display_number +=freshfone.allNumberText+"</span>"
+      }
       ff_display_number += this.$fNumberSelect2.data('ff_name').blank() ? 
         this.$fNumberSelect2.attr('fnumber') + "</span>" : 
         this.$fNumberSelect2.data('ff_name') + "</span><span class='ff_display_number'> (" +

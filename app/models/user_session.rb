@@ -2,6 +2,7 @@ class UserSession < Authlogic::Session::Base
 
 
   @@sign_cookie = true
+  #Custom login method in user.rb
 	find_by_login_method :find_by_user_emails
   params_key :k
   single_access_allowed_request_types :any

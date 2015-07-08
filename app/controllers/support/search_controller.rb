@@ -88,15 +88,16 @@ class Support::SearchController < SupportController
 
     def es_search_portal(search_in)
       begin
+        @search_lang = ({ :language => current_portal.language }) if current_portal and current_account.features_included?(:es_multilang_solutions)
         Search::EsIndexDefinition.es_cluster(current_account.id)
         options = { :load => true, :page => (params[:page] || 1), :size => (params[:max_matches] || 20), :preference => :_primary_first }
-        @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
+        @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id, @search_lang), options do |search|
           search.query do |query|
             query.filtered do |f|
               if SearchUtil.es_exact_match?(params[:term])
                 f.query { |q| q.match :_all, SearchUtil.es_filter_exact(params[:term]), :type => :phrase }
               else
-                f.query { |q| q.string SearchUtil.es_filter_key(params[:term]), :analyzer => "include_stop" }
+                f.query { |q| q.match :_all, SearchUtil.es_filter_key(params[:term], false), :analyzer => SearchUtil.analyzer(@search_lang) }
               end
               f.filter :term, { :account_id => current_account.id }
               f.filter :or, { :not => { :exists => { :field => :status } } },

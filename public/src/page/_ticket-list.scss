@@ -1,4 +1,4 @@
-.view_filters{
+	.view_filters{
 	display:inline-block;
 	span.unsaved_star {
 		vertical-align: baseline;
@@ -255,9 +255,9 @@
 	.preview_pic {
 		display:inline-block;
 		img{
-			width: 30px;
-			height:30px;	
-			border: 1px solid #9a9a9a;
+			height: 25px;
+			width: 25px;
+			border-radius: 10%;	
 		}
 		@include margin-right(5px);
 	}
@@ -362,11 +362,23 @@
 	}
 	.check{
 		width:25px;
-		@include padding(8px 16px 0 5px); 
+		@include padding(22px 5px); 
 		@include text-align(right);
 		vertical-align: top;
 	}
-
+	.userpic{
+		width: 40px;
+		vertical-align: top;
+		padding-top: 10px;
+			img{
+			width: 40px;
+			height: 40px;
+			@include border-radius(50%);
+			}
+			.hideForList{
+				opacity: 0.8;
+			}
+	}
 	.td-ticket-status {
 		@include text-align(right);
 		@include padding-right(0);
@@ -523,7 +535,6 @@
 	
 	.name, .name-user{
       width:auto;
-      @include padding-left(58px);
       line-height:  16px;
       &.user-page {
       	@include padding-left(5px);
@@ -533,12 +544,12 @@
 			margin:0px;
 			margin-top:3px;
 			@include margin-left(-55px);         
-			@include border-radius(5px);
-			border:1px solid #CCC;
 			height:45px;
 			img{ 
 				width:45px; height:45px;
-				@include border-radius(4px);
+				opacity: 0.8 !important;
+				box-shadow: 1px 1px 5px #ccc; 
+				@include border-radius(50%);
 			}
 		}
 		.new_ticket {

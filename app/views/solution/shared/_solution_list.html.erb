@@ -12,7 +12,11 @@
 
 <h3 class="lead"><%= h(folder.name) %></h3> 
 <p class="lead-desc">
-	<%= h(folder.description) %>	
+	<% unless folder.is_default? %>
+		<%= h(folder.description) %>
+	<% else %>
+		<%= t('solution.folders.draft', :domain_name => current_account.full_domain) %>
+	<% end %>
 </p> 
 <div class="intro">
 	<%=t('solution.folders.folder_form.visible_to').html_safe%>:

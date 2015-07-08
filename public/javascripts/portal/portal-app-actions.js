@@ -179,6 +179,9 @@
 
 	    // Page specific script invocations
 	    switch(portal['current_page_name']){
+	    	case 'submit_ticket':
+	    		$("#meta_user_agent").val(window.navigator.userAgent);
+	    		break;
 	    	case 'ticket_view':
 			    // Tickets quoted text auto adjust
 			    $.each($('.p-desc'), function(i, item){
@@ -205,6 +208,10 @@
 			case 'topic_view':
 				highlight_code();
 				$('.p-desc *').css('position', '');
+			case 'portal_home':
+				hideEmptyCategory('#solutions-index-home .cs-s');
+			case 'solution_home':
+				hideEmptyCategory('#solutions-home .cs-s');
 			break;
 	    }
 
@@ -216,6 +223,21 @@
 	    $('input[data-suggestions]').livequery(function(){
 	    	$(this).fresh_suggestion();
 	    })
-	})
 
+	    function hideEmptyCategory(categorySelector){
+	    	$(categorySelector).each (function (index,category){
+	    	  category = $(category);
+	    	  if (parseInt(category.find('.article-list .item-count').text()) == 0) {
+	    	    category.remove();
+	    	  }else {
+					  category.find('.article-list').each(function(index,folder){
+					    folder = $(folder); 
+					    if(folder.find('.item-count').text() == "0"){
+					      folder.remove();
+					    }
+					  });
+					}
+	    	 });
+	    }
+	})
 }(window.jQuery);

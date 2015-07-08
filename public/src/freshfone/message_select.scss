@@ -11,9 +11,9 @@
 	}
 	.message-input {
 		padding: 5px;
-		height:28px !important;
+		height:28px;
 		max-height: 80px;
-		width:470px;
+		max-width:470px;
 		@include box-sizing(border-box);		
 		display: block;
 	}

@@ -1,9 +1,11 @@
 class Freshfone::Call < ActiveRecord::Base
 	include ApplicationHelper
 	include Mobile::Actions::Freshfone
+	include Freshfone::CallerLookup
 	self.table_name =  :freshfone_calls
     self.primary_key = :id
 
+	serialize :recording_deleted_info, Hash  
   belongs_to :agent, :class_name => '::User', :foreign_key => 'user_id'
   belongs_to_account
   belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
@@ -147,10 +149,19 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 	end
 
-	[ :number, :city, :state, :country ].each do |type|
+	[ :number, :city, :state, :country, :id].each do |type|
 		define_method("caller_#{type}") do
 			(caller || {})[type]
 		end
+	end
+
+	def recording_deleted_by
+		user_id = recording_deleted_info[:deleted_by]
+		account.users.where({:id => user_id}).pluck(:name).first if user_id.present?
+	end
+
+	def recording_deleted_at
+		recording_deleted_info[:deleted_at]
 	end
 
 	def update_call(params)
@@ -169,12 +180,28 @@ class Freshfone::Call < ActiveRecord::Base
 	end
 
 	def update_status(params)
+		self.params = params
 		if params[:DialCallStatus]
 			self.call_status = CALL_STATUS_STR_HASH[params[:DialCallStatus]]
+			self.call_status = CALL_STATUS_HASH[:voicemail] if voicemail_ticket?
 		elsif default? and params[:force_termination]
 			self.call_status = CALL_STATUS_HASH[:'no-answer']
 		end
 		self
+	end
+
+	def delete_recording(user_id)
+		return false if self.recording_url.blank?
+		begin
+			self.recording_audio.destroy if self.recording_audio.present?
+			delete_twilio_recording(user_id)
+			self.update_attributes!(build_recording_delete_params(user_id))
+		rescue Exception => e
+			Rails.logger.debug "Error Deleting the Call Recording for call id:#{self.id}, account id: #{account.id} User Id: #{user_id}
+			.\n #{e.message}\n #{e.backtrace.join("\n\t")}"
+			raise e
+		end
+		self.recording_deleted
 	end
 	
 	def location
@@ -328,7 +355,8 @@ class Freshfone::Call < ActiveRecord::Base
 		end
 		
 		def params_requester_name
-			params[:requester_name] unless params[:requester_name].blank?
+			params[:requester_name] = caller_lookup(caller_number) if params[:requester_name].blank? || params[:requester_name] == caller_number
+			params[:requester_name] 
 		end
 		
 		def params_ticket_subject
@@ -364,7 +392,7 @@ class Freshfone::Call < ActiveRecord::Base
 				:call_id => id,
 				:call_duration => call_duration
 			}
-			record_params.merge!({:voicemail => true}) if (call_status === CALL_STATUS_HASH[:'no-answer'] )
+			record_params.merge!({:voicemail => true}) if ([ CALL_STATUS_HASH[:'no-answer'], CALL_STATUS_HASH[:voicemail]].include?(call_status))
 			record_params.merge!({:agent => user_id}) if ( record_params[:voicemail] && !user_id.nil?)
 			Resque::enqueue_at(30.seconds.from_now, Freshfone::Jobs::CallRecordingAttachment, record_params) if recording_url
 		end
@@ -375,5 +403,36 @@ class Freshfone::Call < ActiveRecord::Base
 
 		def private_recording_note?
 			freshfone_number.private_recording? && freshfone_number.record?
+		end
+
+		def build_recording_delete_params(user_id)
+			{
+				:recording_deleted => true,
+				:recording_url => nil,
+				:recording_deleted_info =>{
+					:deleted_by => user_id,
+					:deleted_at => Time.now.utc
+				}
+			}
+		end
+
+		def delete_twilio_recording(user_id)
+			begin
+				recording_sid = File.basename(self.recording_url)
+				recording = account.freshfone_subaccount.recordings.get(recording_sid)
+				recording.delete if recording.present?
+			rescue Exception => e
+				date = (Time.now.utc.ago 7.days)
+				if self.updated_at >= date.beginning_of_day
+					FreshfoneNotifier.call_recording_deletion_failure(
+					  :account_id => account.id,
+					  :call_id => self.id,
+					  :exception => e,
+					  :recording_url => recording_url,
+					  :user_id => user_id,
+					  :updated_at => updated_at)
+				end
+				Rails.logger.debug "Error deleting the recording from twilio for call id :#{self.id}, account id: #{account.id}, recording_sid: #{recording_sid}, User Id: #{user_id}.\n Message: #{e.message}"
+			end
 		end
 end

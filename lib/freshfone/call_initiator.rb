@@ -47,7 +47,7 @@ class Freshfone::CallInitiator
 				    :timeLimit => 1800,
 				    :timeout => current_number.ringing_time,
 				 	:action => direct_dial_url(number) do |d|
-				  	d.Number number, :url => direct_dial_success(number)
+				  	d.Number number, :url => params[:transfer_external].blank? ? direct_dial_success(number) : external_transfer_success(number)
 				  end
 			end
 		end
@@ -159,11 +159,19 @@ class Freshfone::CallInitiator
 		end
 		
 		def direct_dial_url(number)
-			"#{host}/freshfone/call/status?direct_dial_number=#{CGI.escape(format_number(number))}"
+			"#{host}/freshfone/call/status?direct_dial_number=#{CGI.escape(format_number(number))}&#{transfer_external}"
 		end
 		
 		def direct_dial_success(number)
 			"#{host}/freshfone/call/direct_dial_success?direct_dial_number=#{CGI.escape(format_number(number))}"
+		end
+
+		def external_transfer_success(number)
+			"#{host}/freshfone/call/external_transfer_success?direct_dial_number=#{CGI.escape(format_number(number))}&#{transfer_external}"
+		end
+
+		def transfer_external
+			"source_agent=#{params[:source_agent]}&call_back=false&outgoing=#{params[:outgoing]}" if params[:transfer_external]
 		end
 
 		def update_user_presence_url(agent = nil)
@@ -192,7 +200,7 @@ class Freshfone::CallInitiator
 		end
 
 		def quit_voicemail_url
-			"#{host}/freshfone/voicemail/quit_voicemail"
+			"#{host}/freshfone/voicemail/quit_voicemail?cost_added=#{params[:cost_added]}"
 		end
 
 		def transfer_call_status_url(call_back)

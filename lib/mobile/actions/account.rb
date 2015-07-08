@@ -12,6 +12,11 @@ module Mobile::Actions::Account
     }
   }
 
+  CONFIG_JSON_INCLUDE = {
+      only: [:id], 
+      :methods => [:portal_name, :full_domain, :social_feature, :timesheets_feature, :freshfone_feature, :freshfone_activated]
+  }
+
 	def to_mob_json(deep=false)
     json_include = JSON_INCLUDE
     options = {
@@ -38,8 +43,24 @@ module Mobile::Actions::Account
     as_json options
   end
 
+  def as_config_json
+    as_json(CONFIG_JSON_INCLUDE)
+  end
+
   def timesheets_feature
     features?(:timesheets)
   end
+
+  def freshfone_feature
+    freshfone_enabled?
+  end
+
+  def freshfone_activated
+    freshfone_numbers.present?
+  end
   
+  def social_feature
+    (features?(:twitter) && User.current.privilege?(:manage_tickets)) && !twitter_handles_from_cache.blank?
+  end
+
 end

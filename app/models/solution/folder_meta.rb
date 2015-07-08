@@ -4,7 +4,6 @@ class Solution::FolderMeta < ActiveRecord::Base
   
 	self.table_name = "solution_folder_meta"
   include Solution::Constants
-
 	belongs_to_account
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'

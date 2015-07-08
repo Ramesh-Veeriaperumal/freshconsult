@@ -29,6 +29,8 @@ var FreshfoneConnection;
 				self.reject();
 			});
 			this.$userInfoContainer.one('click','#accept_call', function () {
+				App.Phone.Metrics.setCallDirection("incoming");
+				App.Phone.Metrics.resetConvertedToTicket();
 				$("#accept_call").text("Accepting...");
 				self.$userInfoContainer.off('click','#reject_call');
 				self.accept();

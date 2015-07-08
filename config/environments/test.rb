@@ -36,6 +36,13 @@ Helpkit::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+  config.after_initialize do
+    Bullet.enable         = true
+    Bullet.bullet_logger  = true
+    Bullet.rails_logger   = true
+    Bullet.raise          = true # raise an error if n+1 query occurs
+    # Other options can be found here: https://github.com/flyerhzm/bullet#configuration
+  end
 end
 
 if defined?(PhusionPassenger)

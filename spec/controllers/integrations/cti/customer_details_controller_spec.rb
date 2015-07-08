@@ -19,6 +19,7 @@ describe Integrations::Cti::CustomerDetailsController do
 		post :create_ticket , {:ticket => {
 			:subject => "test subject",
 			:email => @customer.email,
+			:number => @cust_mob,
 			:description => "test description",
 			:recordingUrl => @recUrl
 		}}
@@ -30,6 +31,7 @@ describe Integrations::Cti::CustomerDetailsController do
 		post :create_ticket , {:ticket => {
 			:subject => "test subject",
 			:number => new_user_mob,
+			:email => "test@email.com",
 			:description => "test description",
 			:recordingUrl => @recUrl,
 		}}
@@ -45,26 +47,47 @@ describe Integrations::Cti::CustomerDetailsController do
 		@test_ticket.notes.nil?.should be_falsey
 	end
 
+	it "should display error when adding notes to a non-existing ticket" do
+		post :create_note , {
+			:ticketId => 111111,
+			:msg => "test notes",
+			:recordingUrl => @recUrl
+		}
+		flash[:notice].should eql "Unable to save note"
+	end
+
 	it "should fetch user details and tickets of existing users" do
 		get :fetch , {
 			:user => {:mobile => @cust_mob},
-			:agent => {:email => @agent.email}
+			:agent => {:email => @agent.email},
+			:format => 'json'
+		}
+		resp=JSON.parse(response.body)
+		resp["data"]["mobile"].should eql @cust_mob
+	end
+
+	it "should add agent as contact if it doesnt exist as agent" do
+		get :fetch , {
+			:user => {:mobile => @cust_mob},
+			:agent => {:email => "newagent@email.com"},
+			:format => 'json'
 		}
 		resp=JSON.parse(response.body)
 		resp["data"]["mobile"].should eql @cust_mob
 	end
 
 	it "should create agent as contact if it does not exist" do
+		new_email = "test@email.com"
 		get :fetch , {
 			:user => {:mobile => @cust_mob},
-			:agent => {:email => "test@email.com"}
+			:agent => {:email => new_email}
 		}
-		usr = User.find(:first,:conditions => {:email => "test@email.com"})
+		usr = User.find(:first,:conditions => {:email => new_email})
 		usr.nil?.should be_falsey
 	end
-=begin
+
 	it "auth success for valid session" do
-		get :get_session , {
+		get :ameyo_session , {
 			:email => @agent.email,
 			:format => "json"
 		}
@@ -85,5 +108,4 @@ describe Integrations::Cti::CustomerDetailsController do
 		a=Hash.from_xml(response.body)
 		a["response"]["status"].should eql "failed"
 	end
-=end
 end

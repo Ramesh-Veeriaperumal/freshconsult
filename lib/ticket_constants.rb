@@ -118,7 +118,9 @@ module TicketConstants
     [ :today,            'today',             "today" ],
     [ :yesterday,        'yesterday',     "yesterday" ],
     [ :this_week,        'seven_days',         "week" ],
+    [ :last_week,        'last_week',     "last_week" ],
     [ :this_month,       'thirty_days',       "month" ],
+    [ :last_month,       'last_month',    "last_month"],
     [ :two_months,       'two_months',   "two_months" ], 
     [ :six_months,       'six_months',   "six_months" ],
     [ :set_date,         'set_date',       "set_date" ]
@@ -140,7 +142,8 @@ module TicketConstants
     :deleted          => "create_deleted_activity",
     :responder_id     => "create_assigned_activity",
     :product_id       => "create_product_activity",
-    :ticket_type      => "create_ticket_type_activity"
+    :ticket_type      => "create_ticket_type_activity",
+    :due_by           => "create_due_by_activity"
   }
 
   REPORT_TYPE_HASH = {

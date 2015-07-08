@@ -13,7 +13,7 @@
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
 	<div class='sticky-header-wrapper'>
 		<h3 class='lead pull-left'> 
-			<%= link_to t('contacts.title'), '/contacts' %> 
+			<%= link_to t('contacts.title'), '/contacts', :'data-pjax' => "#body-container" %> 
 			<span class='contact-name ellipsis'> / <%= h(@user.display_name) %></span>
 		</h3>
 		<% unless @user.deleted? %>
@@ -28,7 +28,8 @@
 										} if privilege?(:manage_users) and @user.has_email? and !@user.blocked? and !@user.helpdesk_agent? %>
 
 				<%= link_to(t('edit'), edit_contact_path(@user),{
-											:class => "btn"
+											:class => "btn", 
+											:'data-pjax' => "#body-container"
 										}) if privilege?(:manage_contacts) and !@user.deleted? and !@user.spam? and !@user.blocked? %>
 
 
@@ -45,6 +46,9 @@
 						</ul>
 					<% end %>
 				<% end %>
+
+				<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features?(:contact_merge_ui) %>
+
 				<% if privilege?(:delete_contact) and @user != current_user and 
 											!@user.deleted? and !@user.spam? and !@user.blocked? %>
 					<%= link_to("<i class='icon-trash'></i>".html_safe, "/contacts/#{@user.id}", 
@@ -56,8 +60,8 @@
 						data-target="#customer-delete-confirmation" 
 							rel="freshdialog" 
 							title="<%= t('contacts.delete_contact')%>"
-							data-submit-label="<%= t('delete_permanently') %>"
-							data-submit-class="btn"
+							data-submit-label="<%= t('confirm') %>"
+							data-submit-class="btn btn-primary"
 							data-width="500px"
 							data-close-label="<%= t('cancel') %>">
 							<i class='icon-trash'></i>
@@ -71,7 +75,7 @@
 	<div class='contact-show'>
 		<div class='contact-info-fields'>
 			<div class='contact-info-fields-content'>
-				<%= user_avatar(@user, :medium, "profile_pic avatar-pic") %>
+				<%= user_avatar(@user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
 				<div class='user-info'>
 					<h1 class='lead break-word'><%= h(@user.display_name) %></h1>
 					<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
@@ -98,6 +102,7 @@
 		  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :get ) }".html_safe) if @user.blocked? || @user.spam? %>
 		  		</div>
 			<% end %>
+			<% unless @user.parent.present? %>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
 				<%= form_for @user,
 					:url => {:controller => 'contacts', :action => 'update_description_and_tags'},
@@ -126,7 +131,9 @@
 					<% end %>
 				<% end %>	
 			</div>
+			<% end %>
 			<div class='contact-edit-padding'>
+			<% if current_account.features?(:forums) %>
 					<% list = [
 						[
 							t('contacts.conversations.all'), '#conv_all', false, {:id => 'conv_all-tab', :'data-hash-url' => false}
@@ -150,9 +157,17 @@
 							</li>
 						</ul>
 					</div>
+				<% else %>
+          <h1 class='conv-title'>
+            <span class='sub-info'><%= t('contacts.conversations.recent_tickets') %></span>
+          </h1>
+       <% end %>
+
 				<div class="tab-content">
 					<div class='tab-pane active' id='conv_all'> 
-						<p class='muted'> <%= t("contacts.conversations.contact_all") %> </p>
+						<% if current_account.features?(:forums) %>
+							<p class='muted'> <%= t("contacts.conversations.contact_all") %> </p>
+						<% end %>
 						<div class='timeline' id='timeline'>
 							<ul class='timeline-list'>
 								

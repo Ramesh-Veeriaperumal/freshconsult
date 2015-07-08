@@ -18,7 +18,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		@freshfone_users = freshfone_user_scoper.online_agents_with_avatar.map do |freshfone_user|
 			{ :available_agents_name => freshfone_user.name, 
 				:sortname => "A_#{freshfone_user.name}",#to order agents,groups correspondingly
-				:available_agents_avatar => user_avatar(freshfone_user.user),
+				:available_agents_avatar => view_context.user_avatar(freshfone_user.user, :thumb, "preview_pic small circle"),
 				:id => freshfone_user.user_id
 			}
 		end 
@@ -51,6 +51,13 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		end
 	end
 
+	def available_external_numbers
+		@external_numbers = external_numbers.map do |number|
+			{	:id => number, :external_number => number }
+		end
+		render :json => @external_numbers
+	end
+
 	def transfer_incoming_call
 		render :xml => current_call_flow.transfer(params[:agent], params[:source_agent])
 	end
@@ -75,13 +82,24 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 	end
 	#=== CONSTRUCT TWILIO XML =======
 
+	def transfer_incoming_to_external
+		params[:transfer_external] = true
+		render :xml => current_call_flow.transfer_to_external(params[:number],false)
+	end
+
+	def transfer_outgoing_to_external
+		params[:transfer_external] = true
+		params[:outgoing] = true
+		render :xml => current_call_flow.transfer_to_external(params[:number],true)
+	end
+
 	private
 		def freshfone_user_scoper
 			current_account.freshfone_users
 		end
 		
 		def validate_agent
-			return empty_twiml if called_agent.blank?
+			return empty_twiml if called_agent.blank? && !params[:external_transfer]
 			params.merge!({ :agent => called_agent })
 		end
 
@@ -103,7 +121,23 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		end
 
 		def validate_twilio_request
-			@callback_params = params.except(*[:id, :source_agent, :target_agent, :outgoing, :call_back, :group_id])
+			@callback_params = params.except(*[:id, :source_agent, :target_agent, :outgoing, :call_back, :group_id, :external_transfer, :number])
 			super
 		end
+
+    def external_numbers
+    	external_caller_scoper.map { |call|
+    		call.meta.meta_info
+    	}.uniq
+    end
+
+
+    def external_caller_scoper
+    	current_account.freshfone_calls.find(:all, 
+    		:joins => "inner join freshfone_calls_meta on freshfone_calls.id = freshfone_calls_meta.call_id",
+    		:conditions => ["freshfone_calls_meta.created_at > ? and freshfone_calls_meta.device_type = ? and freshfone_calls_meta.transfer_by_agent = ?", 
+    			2.months.ago, Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer], current_user.id],
+    		:include=>[:meta], 
+    		:order => "freshfone_calls_meta.created_at desc")
+    end
 end

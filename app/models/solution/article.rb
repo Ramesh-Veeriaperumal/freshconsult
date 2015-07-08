@@ -2,32 +2,33 @@
 class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   self.table_name =  "solution_articles"
-
+  belongs_to_account
+  
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include Mobihelp::AppSolutionsUtils
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
-  include Redis::RedisKeys
-  include Redis::OthersRedis	
-
-  concerned_with :associations, :meta_associations
+  include Solution::MetaAssociationSwitcher
   
-  serialize :seo_data, Hash
-
-  concerned_with :body_methods
-
-  acts_as_voteable
-  
-  spam_watcher_callbacks 
-
   include Mobile::Actions::Article
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
-  include Solution::MetaAssociationSwitcher
+  
+  include Community::HitMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
-  attr_accessor :highlight_title, :highlight_desc_un_html
+  spam_watcher_callbacks
+  rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
+  
+  acts_as_voteable
+  concerned_with :associations, :meta_associations, :body_methods
+  
+  serialize :seo_data, Hash
+  
+  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
     :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position
@@ -89,32 +90,18 @@ class Solution::Article < ActiveRecord::Base
   def to_s
     nickname
   end
-
-  def hit!
-    new_count = increment_others_redis(hit_key)
-    if new_count >= HITS_CACHE_THRESHOLD
-      total_hits = read_attribute(:hits) + HITS_CACHE_THRESHOLD
-      self.update_column(:hits, total_hits)
-      solution_article_meta.update_column(:hits, total_hits) if solution_article_meta
-      decrement_others_redis(hit_key, HITS_CACHE_THRESHOLD)
-    end
-    true
-  end
-
-  def hits
-    get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
-  end
   
   def related(current_portal, size = 10)
     search_key = "#{tags.map(&:name).join(' ')} #{title}"
     return [] if search_key.blank? || (search_key = search_key.gsub(/[\^\$]/, '')).blank?
     begin
+      @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.features_included?(:es_multilang_solutions)
       Search::EsIndexDefinition.es_cluster(account_id)
       options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id), options do |search|
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id, @search_lang), options do |search|
         search.query do |query|
           query.filtered do |f|
-            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => "include_stop" }
+            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
             f.filter :term, { :account_id => account_id }
             f.filter :not, { :ids => { :values => [self.id] } }
             f.filter :or, { :not => { :exists => { :field => :status } } },
@@ -216,6 +203,11 @@ class Solution::Article < ActiveRecord::Base
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
+  
+  # Instance level spam watcher condition
+  def rl_enabled?
+    self.account.features?(:resource_rate_limit)
+  end
 
   private
 
@@ -226,11 +218,17 @@ class Solution::Article < ActiveRecord::Base
     def content_changed?
       all_fields = [:title, :description, :status, :position]
       changed_fields = self.changes.symbolize_keys.keys
-      (changed_fields & all_fields).any?
+      (changed_fields & all_fields).any? or tags_changed
     end
     
     def hit_key
       SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
+    end
+
+    def rl_exceeded_operation
+      key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
+            :user_id => self.user_id }
+      $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
     end
     
 end

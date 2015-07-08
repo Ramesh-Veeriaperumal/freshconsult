@@ -80,6 +80,7 @@ module Helpkit
     # middleware for statsd
     config.middleware.use "Statsd::Rack::Middleware", statsd
 
+    config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
@@ -106,6 +107,7 @@ module Helpkit
     config.time_zone = 'Chennai'
     # ActiveSupport::JSON.backend = "JSONGem"
     ActiveSupport::JSON.backend = :json_gem
+    ActiveSupport::XmlMini.backend = 'Nokogiri'
     # Your secret key for verifying cookie session data integrity.
     # If you change this key, all old sessions will become invalid!
     # Make sure the secret is at least 30 characters and all random,

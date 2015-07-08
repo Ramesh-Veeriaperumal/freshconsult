@@ -2,7 +2,7 @@
 <div class="header">
   <div class="wrapper">
   	<div class="wrapper-shadow">
-		<div class="brand">
+		<div class="fd-branding">
 			<%= link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
 				<span class="vertical-align logo-image">
 					<i></i>
@@ -22,8 +22,9 @@
 			  		<% if current_account.freshfone_active? %>
 							<a href="#" id="freshfone-presence-toggle" class="tooltip"
 								data-placement="below"  
+								rel = "ff-hover-popover"
 							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
-							 	<img alt="" height="35px" src="/images/spacer.gif" class="<%="header-icons-agent-ffone-" + (case current_user.freshfone_user.presence when 0 then "off" when 1 then "on" when 2 then "busy" else current_user.freshfone_user.presence.to_s end)%>">
+							 	<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
 			  			</a>
 			  		<% end %>
 			  		<% if feature?(:round_robin) && current_user.in_round_robin? %>
@@ -93,7 +94,17 @@
 				<% if current_user.agent? %>
 					<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
 			    		data-url="/notification/product_notification">
-			    	</div>
+			    </div>
+			    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
+  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
+  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
+  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
+  					</div>
+  					<div class="availabilityOnPhone" data-to_phone='true' id="availableOnPhone">
+  						<i class="ficon-ff-on-mobile fsize-20  <%= 'active' if current_user.available_on_phone? %>"></i>
+  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_phone')%></span>
+  					</div>
+  				</div>
 		    	<% end %>
 			<% end %>
 		</div>
@@ -129,7 +140,8 @@
 									:class => "new_ticket tooltip" ,
 									:title => t("header.new_ticket_tip").html_safe,
 									'data-placement' => "below",
-									"data-keybinding" => shortcut('app_nav.ticket_new') ) %>
+									"data-keybinding" => shortcut('app_nav.ticket_new'),
+									"data-pjax" => "#body-container" ) %>
 						<% else %>
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>

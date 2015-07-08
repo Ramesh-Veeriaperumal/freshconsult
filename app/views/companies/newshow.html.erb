@@ -3,12 +3,12 @@
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
 	<div class='sticky-header-wrapper'>
 		<h3 class='lead pull-left'>
-			<%= link_to t('company.title'), '/companies'%>  
+			<%= link_to t('company.title'), '/companies', :'data-pjax' => "#body-container" %>  
 			<span class='contact-name ellipsis'> / <%= h(@company.name) %></span>
 		</h3>
 		<div class='btn-group pull-right'>
 			<% if privilege?(:manage_contacts) %>
-				<%= link_to t('edit'), edit_company_path(@company), :class => "btn" %>
+				<%= link_to t('edit'), edit_company_path(@company), :class => "btn", :'data-pjax' => "#body-container" %>
 			<% end %>
 			<% if privilege?(:delete_contact) %>
 				<%= link_to("<i class='icon-trash'></i>".html_safe, @company, :method => :delete, :class => "btn hide", :id => 'delete_customer' ) %>
@@ -37,12 +37,12 @@
 				</div>
 				<div class='user-info'>
 					<h1 class='lead break-word'><%= h(@company.name) %></h1>
-					<div class='break-word user-job-title'><%= h(@company.description).gsub(/\n/, '<br />') %></div>
+					<div class='break-word user-job-title'><%= company_description(h(@company.description)) %></div>
 					<% if @company_users_size > 0 %>
 						<div class='no-contacts'>
 							<div class='border-wrap left'></div>
 							<div class='no-contacts-msg'>
-								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s) %>
+								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s), :'data-pjax' => "#body-container" %>
 							</div>
 							<div class='border-wrap right'></div>
 						</div>
@@ -152,8 +152,8 @@
 							<% users = @company_users.take(5) %>
 							<% users.each do |user| %>
 							  	<li class='user-item'>
-							  		<a href='<%= contact_path(user) %>' class='clearfix'>
-							      		<%= user_avatar(user, :thumb) %>
+							  		<a href='<%= contact_path(user) %>' class='clearfix' data-pjax='#body-container'>
+							      		<%= user_avatar(user, :thumb, 'preview_pic small circle') %>
 							      		<div class='vertical-alignment'>
 							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
 							      			<p class='email ellipsis'> <%= h(user.email) %> </p>

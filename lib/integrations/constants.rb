@@ -23,7 +23,10 @@ module Integrations::Constants
     :shopify => "shopify",
     :seoshop => "seoshop",
     :box => 'box',
-    :slack => "slack"
+    :slack => "slack",
+    :quickbooks => "quickbooks",
+    :dynamicscrm => "dynamicscrm",
+    :xero => "xero"
   }
 
   APP_CATEGORY_ID_TO_NAME = {
@@ -36,4 +39,11 @@ module Integrations::Constants
 
   SYSTEM_ACCOUNT_ID = 0
 
+  CRM_MODULE_TYPES = ["account", "contact", "lead"]
+
+  CRM_INSTANCE_TYPES = { "on_demand" => "On-Demand", "on_premise" => "On-Premise" }
+
+  DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
+
+  GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
 end

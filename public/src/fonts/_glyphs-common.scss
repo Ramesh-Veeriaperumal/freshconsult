@@ -10,7 +10,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
   color:#333;
 }
 
-.#{$font-class}freshfone,.#{$font-class}phone-enable{
+.#{$font-class}freshfone,.#{$font-class}phone-enable,.#{$font-class}phone-channel{
 	@extend .#{$font-class}ff-phone;	
 }
 // -----------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 		background: #fff;
 		border-radius: 100%;
 		line-height: 30px;
-		border: 2px solid #fff;
+		@include box-shadow(0px -1px 0px 2px rgba(255, 255, 255, 1))
 	}
 }
 // Font icons in ticket pages
@@ -359,7 +359,53 @@ span.fb_add
 .phone-icons,.user_phone{@extend .#{$font-class}ff-phone; font-size:14px;}
 .mobile-icons { @extend .#{$font-class}mobile; }
 .phone-icons, .mobile-icons { &:before{@include padding-right(10px); color:$default_txt_color;}}
+.recent_calls_call_user .can-call, .fresfone-call-history .call_user .can-make-calls{
+		@extend .#{$font-class}phone;
+}
 
+.recent_calls_call_user, .call_user {
+	.restrict-call{
+		@extend .#{$font-class}phone-disable-thin;
+		
+		color:#eee;
+		&:hover{
+			color:#eee;
+		}
+	}
+}
+
+.recent_call_entry:hover .recent_calls_call_user .can-call,
+.fresfone-call-history .call_user .can-make-calls:hover {
+		@extend .#{$font-class}ff-phone;
+		&:before{
+			color:#196019;
+		} 
+}
+
+
+.recording_deleted{
+	&:before{
+		@extend .#{$font-class-name}deleted;
+	}
+}
+
+.fone_icon_connection{
+	@extend .#{$font-class-name}ff-phone;
+	font-size:17px;
+}
+
+.freshfone_connection_error,.freshfone_error_info{
+	.fone_error_wrap{
+		@extend .#{$font-class-name}no-network;
+		font-size:22px;
+	}
+}
+.freshfone_connection_success{
+	.fone_error_wrap{
+		@extend .#{$font-class-name}checkmark-thick;
+		font-size:16px;
+	}
+}
 // -----------------------------------------------------------------------------------------------
 // 										Ticket Details Page
 // -----------------------------------------------------------------------------------------------
@@ -478,6 +524,11 @@ span.fb_add
 		border-radius: 50%;
 		font-size: 12px;
 	}
+  .forward-reply{
+    border: none;
+    border-radius: 0;
+    text-align: inherit;
+  }
 	.commentbox {
 		.conv-actions-reply{
 			text-indent: inherit;

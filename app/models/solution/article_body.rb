@@ -1,7 +1,7 @@
 class Solution::ArticleBody < ActiveRecord::Base
 
 	self.table_name = "solution_article_bodies"
-	self.primary_key= :id
+	self.primary_key = :id
 
 	belongs_to_account
 	

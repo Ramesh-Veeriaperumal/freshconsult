@@ -1,0 +1,13 @@
+ <div class="tab-pane active" id="ticket-assignment">
+        <div class="list-page agent-status">
+            <div class="list-page-header clearfix">
+               <ul class="">
+                     <%= render :partial => "ticket_filter" %>
+               </ul>
+               
+            </div>
+            <div id="agents-list" class="agents-list agents-list-round-robin" data-text-since="<%= t('helpdesk.dashboard.round_robin.since_now') %>">
+              <%= render :partial => "ticket_agents_list", :locals => {:available_agents => @available_agents, :non_available_agents => @unavailable_agents} %>
+            </div>
+        </div>
+      </div>

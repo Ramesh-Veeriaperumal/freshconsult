@@ -1,0 +1,64 @@
+DIAL_BY_KEY: Calling through dialpad(Using Keys)
+DIAL_BY_NUM_PAD: Calling through dialpad(Using Number Pad)
+DIAL_BY_NUM_PASTE: Calling through dialpad(Number was pasted)
+CLICK_CALL_BTN: Calling through call history page
+CLICK_NUM: Calling by clicking number
+CLICK_IVR: Clicked keypad key while on call:trying to use IVR
+KEY_IVR: Typed key while on call:trying to use IVR
+RECENT_CALL_BTN: Calling through recent calls
+IN_NOTES_ON_CALL: Caller notes used while on call:Incoimng 
+IN_NOTES_AFTER_CALL: Caller notes used after call:Incoming
+IN_NOTES_ALL: Caller notes used during and after call:Incoming
+OUT_NOTES_ON_CALL: Caller notes used while on call:Outgoing
+OUT_NOTES_AFTER_CALL: Caller notes used after call:Outgoing
+OUT_NOTES_ALL: Caller notes used during and after call:Outgoing
+CALL_HISTORY_EDIT: Edit button clicked in call history page
+REPORTS_EDIT: Edit button clicked in reports page
+CALL_HISTORY_LOAD: Call history page loaded
+REPORTS_LOAD: Reports page loaded
+CALL_TO_TICKET: Call has been converted to ticket 
+REPORTS_CSV: Export to csv clicked on reports page
+RECORDING: Recording is being played
+csv: Export to csv clicked on call history page
+excel: Export to excel clicked on call history page
+call_durationasc: Ascending Sort done when duration selected
+call_durationdesc: Descending Sort done when duration selected
+created_atasc: Ascending Sort done when date selected
+created_atdesc: Descending Sort done when date selected
+call_costasc: Ascending Sort done when cost selected
+call_costdesc: Descending Sort done when cost selected
+AllCalls: Call Type All calls selected(Call History)
+callhistoryIncoming: Call Type Incoming was selected(Call History)
+callhistoryOutgoing: Call Type Outgoing was selected(Call History)
+callhistoryMissed: Call Type Missed was selected(Call History)
+callhistoryVoicemail: Call Type Voicemail was selected(Call History)
+callhistoryBlocked: Call Type Blocked was selected(Call History)
+CALL_HISTORY_ALL_NUMBER: Number type All Number selected(Call History)
+CALL_HISTORY_SINGLE_NUMBER: Number type Particular Number selected(Call History)
+ALL_AGENTS: All agents were selected (Call History)
+PARTICULAR_AGENT: Particular agents were selected (Call History)
+ALL_CALLERS: All requesters selected (Call Histroy)
+SINGLE_CALLER: Single caller selected (Call History)
+CALL_HISTORY_ALL_GROUPS: Group Type All Groups selected (Call History)
+CALL_HISTORY_SINGLE_GROUP: Group Type Single Group selected (Call History)
+REPORTS_ALL_NUMBER: Number type All Number selected(Reports)
+REPORTS_SINGLE_NUMBER: Number type Particular Number selected(Reports)
+REPORTS_ALL_GROUPS: Group Type All Groups selected (Reports)
+REPORTS_SINGLE_GROUP: Group Type Single Group selected (Reports)
+reportsIncoming: Call Type Incoming was selected(Reports)
+reportsOutgoing: Call Type Outgoing was selected(Reports)
+callhistory_DATE_TODAY: Date Type Today was selected (Call History)
+callhistory_DATE_YESTERDAY: Date Type Yesterday was selected (Call History)
+callhistory_DATE_7DAYS: Date Type Last 7 Days was selected (Call History)
+callhistory_DATE_30DAYS: Date Type Last 30 Days was selected (Call History)
+callhistory_DATE_90DAYS: Date Type Last 90 Days was selected (Call History)
+callhistory_DATE_RANGE: Date Type Specific Date Range was selected (Call History)
+reports_DATE_TODAY: Date Type Today was selected (Call History)
+reports_DATE_YESTERDAY: Date Type Yesterday was selected (Reports)
+reports_DATE_7DAYS: Date Type Last 7 Days was selected (Reports)
+reports_DATE_30DAYS: Date Type Last 30 Days was selected (Reports)
+reports_DATE_90DAYS: Date Type Last 90 Days was selected (Reports)
+reports_DATE_RANGE: Date Type Specific Date Range was selected (Reports)
+
+
+

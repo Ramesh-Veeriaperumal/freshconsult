@@ -25,7 +25,7 @@ describe Admin::Freshfone::NumbersController do
                :region => "Texas", :country => "US", :type => 'local', :number_sid => "PNUMBER" }
     post :purchase, params
     assigns[:purchased_number].number.should be_eql(@num)
-    flash[:notice].should be_eql("Number successfully added to your Freshfone account")
+    flash[:notice].should be_eql("Successfully purchased phone number.")
   end
 
   it 'should create a new address required number on purchase' do
@@ -37,18 +37,31 @@ describe Admin::Freshfone::NumbersController do
     ff_address_inspect(params[:country])
     post :purchase, params 
     assigns[:purchased_number].number.should be_eql(@num)
-    flash[:notice].should be_eql("Number successfully added to your Freshfone account")
+    flash[:notice].should be_eql("Successfully purchased phone number.")
+  end
+
+  it 'should not create a new address required number on purchase if the provided address has incorrect postal code' do
+    @num = Faker::PhoneNumber.phone_number
+    @account.freshfone_account.freshfone_addresses.destroy_all
+    create_ff_address('Post_ABCD')
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
+    params = { :phone_number => @num, :formatted_number => @num, 
+               :region => "Texas", :country => "AU", :type => 'local', :number_sid => "PNUMBER", :address_required => 'true' }
+    ff_address_inspect(params[:country])
+    post :purchase, params
+    json[:errors].first.should be_eql("Unable to purchase number. Kindly make sure the address is a valid local address in Australia.")
   end
 
   it 'should not create a new address required number on purchase if freshfone_address not exist' do
     @num = Faker::PhoneNumber.phone_number
-    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio).raises(StandardError.new("Number requied address"))
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio).raises(StandardError.new("PhoneNumber Requires a Local Address"))
     params = { :phone_number => @num, :formatted_number => @num, 
                :region => "Texas", :country => "AU", :type => 'local', :number_sid => "PNUMBER", :address_required => true }
     ff_address_inspect(params[:country])
+    Admin::Freshfone::NumbersController.any_instance.stubs(:verify_address)
     post :purchase, params
     assigns[:purchased_number].should be_new_record
-    flash[:notice].should be_eql("Error purchasing number for your Freshfone account.")
+    flash[:notice].should be_eql("Error purchasing phone number.")
   end
 
   it 'should not create a number on validation failure, passing nil to number' do
@@ -66,12 +79,12 @@ describe Admin::Freshfone::NumbersController do
                :region => "Texas", :country => "US", :type => 'local', :number_sid => "PNUMBER" }
     post :purchase, params
     assigns[:purchased_number].should be_new_record
-    flash[:notice].should be_eql("Error purchasing number for your Freshfone account.")
+    flash[:notice].should be_eql("Error purchasing phone number.")
   end  
 
   it 'should load number and redirect to number on show' do
     get :show, {:id => @number.id}
-    response.should redirect_to("/admin/freshfone/numbers/#{@number.id}/edit")
+    response.should redirect_to("/admin/phone/numbers/#{@number.id}/edit")
   end
 
   it 'should update name for the number' do
@@ -85,9 +98,29 @@ describe Admin::Freshfone::NumbersController do
       "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
       "message"=>"not working"}, "voicemail_active"=>"true", 
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
-      "non_business_hour_calls"=>"true", "business_calendar"=>"1", "id"=>@number.id}
+      "non_business_hour_calls"=>"true", "business_calendar"=>"1",  "access_groups_added_list"=>"2,3",
+       "access_groups_removed_list"=>"1", "id"=>@number.id}
     put :update, params
     @account.freshfone_numbers.find(@number).name.should be_eql(name)
+  end
+
+  it 'should update groups for the number' do
+    name = Faker::Name.name
+    # controller.stubs(:unused_attachments).returns(true)
+    Freshfone::Number.any_instance.stubs(:unused_attachments).returns(@account.freshfone_numbers)
+    params = {"admin_freshfone_number"=>{"name"=>name, "record"=>"true", "voice"=>"0", 
+      "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"unavailable"}, "max_queue_length"=>"3", "queue_wait_time"=>"2", 
+      "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
+      "message"=>"not working"}, "voicemail_active"=>"true", 
+      "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
+      "non_business_hour_calls"=>"true", "business_calendar"=>"1", "access_groups_added_list"=>"1",
+       "access_groups_removed_list"=>"2,3", "id"=>@number.id}
+    put :update, params
+    accessible_numbers = accessible_groups(@account.freshfone_numbers.find(@number))
+    p "accessible_numbers => #{accessible_numbers}"
+    accessible_numbers.should be_eql([1])
   end
 
   it 'should not update number for invalid queue length' do#TODO-RAILS3 possible dead code
@@ -147,15 +180,15 @@ describe Admin::Freshfone::NumbersController do
   it 'should display low balance message for zero credits on edit action' do
     @credit.update_attributes(:available_credit => 0)
     get :edit
-    flash[:notice].should be_eql("Your Freshfone account is currently suspended. Please recharge to activate your account")
-    response.should redirect_to("/admin/freshfone/numbers")
+    flash[:notice].should be_eql("Your phone channel has been suspended due to low balance. Please recharge to activate.")
+    response.should redirect_to("/admin/phone/numbers")
   end
 
   it 'should display suspended message and not allow edit when suspended' do
     Freshfone::Account.any_instance.stubs(:suspended?).returns(true)
     get :edit
-    flash[:notice].should be_eql("Your Freshfone account is currently suspended. Please enable Freshfone to make and receive calls")
-    response.should redirect_to("/admin/freshfone/numbers")
+    flash[:notice].should be_eql("Your phone channel is currently suspended. Please enable phone to make and receive calls.")
+    response.should redirect_to("/admin/phone/numbers")
   end
 
 end

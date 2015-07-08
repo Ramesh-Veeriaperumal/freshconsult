@@ -9,8 +9,12 @@ module Social::Twitter::ErrorHandler
     
     include Social::Util
 
-    def twt_sandbox(handle)
+    def twt_sandbox(handle, timeout = TwitterConfig::TWITTER_TIMEOUT)
+      
+      #overide timeout according the the env timeout values
+      timeout = TwitterConfig::TWITTER_TIMEOUT if TwitterConfig::TWITTER_TIMEOUT > timeout
       exception = nil
+      
       @social_error_msg = nil      
       begin
         @sandbox_handle = handle
@@ -22,7 +26,10 @@ module Social::Twitter::ErrorHandler
           @social_error_msg = "#{I18n.t('social.streams.twitter.handle_auth_error')}"
         end
 
-        return_value = yield unless @social_error_msg
+        Timeout.timeout(timeout) do
+          return_value = yield unless @social_error_msg
+        end
+
       rescue Twitter::Error::Unauthorized => exception
         @sandbox_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
         @sandbox_handle.last_error = exception.to_s
@@ -43,7 +50,8 @@ module Social::Twitter::ErrorHandler
         notify_error(exception)
 
       rescue Twitter::Error::Forbidden => exception
-        @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
+        @social_error_msg =  exception.message.include?("not following") ? 
+                              "#{I18n.t('social.streams.twitter.not_following')}" : "#{I18n.t('social.streams.twitter.client_error')}"
         notify_error(exception)
 
       rescue Twitter::Error::GatewayTimeout => exception
@@ -57,22 +65,26 @@ module Social::Twitter::ErrorHandler
       rescue Twitter::Error => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
         notify_error(exception)
-
-      #ensure
-        #notify_error(exception) if @social_error_msg and exception
-      end
       
+      rescue Timeout::Error => exception
+        @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
+        error = caller[0..11]
+        notify_error(error, "Twitter Timeout Exception")      
+      end
+
       return [@social_error_msg, return_value]
     end
 
-    def notify_error(error)
+    def notify_error(error, subject = nil)
+      subject = "Twitter REST API Exception" if subject.nil?
       if @sandbox_handle
-        error_params = { :account_id => @sandbox_handle.account_id , 
-                          :handle_id => @sandbox_handle.id, 
-                          :exception_type => error 
-        }
-        notify_social_dev("Twitter REST API Exception", error_params)
+        error_params = { :account_id => @sandbox_handle.account_id ,
+                         :handle_id => @sandbox_handle.id,
+                         :exception_type => error
+                         }
+        notify_social_dev(subject, error_params)
       end
     end
+
   end
 end

@@ -18,6 +18,7 @@
     <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
     <%= f.hidden_field :private , :value => "false" %>
+    <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
 
     <ul class="ui-form dont-validate">
       <li class="inline-field field">

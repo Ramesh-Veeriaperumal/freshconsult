@@ -11,6 +11,7 @@ class SQSPost < ActiveRecord::Base
 	column :domain, :string
 	column :attachments, :string
 	column :cloud_file_attachments, :string
+	column :portal, :string
 
 	validates_presence_of :body_html
 

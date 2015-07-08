@@ -46,10 +46,11 @@ module Reports
         query_str = " select #{select_aggregate_columns}, #{def_columns} from #{join_query(ff_cols)} "\
                     " where #{conditions(account.id)} group by #{def_columns}"
         reporting_data = ActiveRecord::Base.connection.select_all(query_str)
+        
         # write data into csv
         temp_file = ARCHIVE_DATA_FILE % {:date => stats_date_time.strftime("%Y-%m-%d"), :account_id => account.id}
         csv_file_path = File.join(FileUtils.mkdir_p(CSV_FILE_DIR),%(#{temp_file}.csv))
-        csv_string = CSVBridge.open(csv_file_path, "w", {:col_sep => "|"}) do |csv|
+        csv_string = CSVBridge.generate({:col_sep => "|"}) do |csv|
           csv << (REPORT_COLUMNS + %w(created_at))
           reporting_data.each do |hash| 
             val_array = REPORT_COLUMNS.inject([]) do |values, col_name|
@@ -60,6 +61,8 @@ module Reports
             csv << val_array
           end
         end
+        compressed_content = Helpdesk::Text::Compression.compress(csv_string)
+        File.open(csv_file_path, "w") {|f| f.write(compressed_content) }
         # reporting_data.free
 
         utc_time = Time.now.utc
@@ -70,7 +73,7 @@ module Reports
         file_name = "#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv"
 
         begin
-          AwsWrapper::S3Object.store(file_name, File.read(csv_file_path), S3_CONFIG[:reports_bucket])
+          AwsWrapper::S3.upload(S3_CONFIG[:reports_bucket], file_name, csv_file_path)
         rescue Exception => e
           subject = "Error occured while loading daily archive data to s3 for account =#{account.id}"
           message =  e.message << "\n" << e.backtrace.join("\n")
@@ -83,8 +86,7 @@ module Reports
         # adding notification for special accounts..
         if(REPORT_NOTIFICATION_ACCOUNTS.include?(account.id))
           #if file exists
-          bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
-          file = bucket.objects[file_name]
+          file = AwsWrapper::S3.fetch(S3_CONFIG[:reports_bucket], file_name)
           file_exists, file_size = file.exists?, 0 
           file_size = file.content_length if file_exists
           subject = "Done daily archive data upload to s3 for account #{account.id}"

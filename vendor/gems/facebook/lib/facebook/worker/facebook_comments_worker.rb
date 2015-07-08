@@ -25,7 +25,7 @@ class Facebook::Worker::FacebookCommentsWorker
   def self.fetch_fb_comments fan_page
     sandbox(true) do
       @fan_page = fan_page
-      fb_posts = Facebook::Fql::Posts.new(fan_page)
+      fb_posts = Facebook::Graph::Posts.new(fan_page)
       fb_posts.get_comment_updates((Time.zone.now.ago 30.minutes).to_i)
     end
   end

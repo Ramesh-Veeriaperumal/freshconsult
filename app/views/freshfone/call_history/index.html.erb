@@ -1,10 +1,32 @@
 <%= render :partial => "freshfone_admin_calls" %>
+<button class="hide" id="open-delete-recording-confirmation"
+				rel="freshdialog"
+				data-submit-label="<%= t('freshfone.call_history.recording_delete.confirmation_btn') %>"
+				data-close-label="<%= t('freshfone.call_history.cancel') %>"
+				data-target="#recording-deletion-confirmation"
+				data-title="<%= t('freshfone.call_history.recording_delete.confirmation_heading') %>"
+				data-width="500px"
+				data-close-on-submit="true"
+				data-keyboard="true">
+	</button>
+	<div id="recording-deletion-confirmation" class="hide recording_delete_confirm delete-confirm-warning">
+		<div class="delete-confirm-warning-icon delete-notice">
+		</div>
+		<div class="delete-confirm-warning-message">
+			<p>
+				<b><%= t('freshfone.call_history.recording_delete.confirmation_warning')%></b><br/>
+				<%= t('freshfone.call_history.recording_delete.confirmation_notification') %>
+			</p>	
+		</div>
+		<input type="hidden" id="deletion_call_id" />
+	</div>
 <%= javascript_tag do %>
 	if (typeof freshfone === "undefined") { freshfone = {}; }
 	freshfone.CALL_HISTORY_CUSTOM_SEARCH_PATH = '<%= custom_search_freshfone_call_history_index_path %>';
 	freshfone.CALL_HISTORY_CHILDREN_PATH = '<%= children_freshfone_call_history_index_path %>';
 	freshfone.blockNumberText = '<%= t('freshfone.call_history.block_number') %>';
 	freshfone.unblockNumberText = '<%= t('freshfone.call_history.unblock_number') %>';
+	freshfone.allNumberText ='<%= t('reports.freshfone.all_numbers') %>';
 	Fjax.Assets.plugin('360player');
 
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
@@ -13,6 +35,10 @@
 	freshfone.date_picker_labels = <%= date_picker_labels.html_safe %>;
 	freshfone.group_list = <%= groups_options.html_safe %>;
 	freshfone.customer_autocomplete_path = '<%= customer_phone_number_freshfone_autocomplete_index_path %>';
+	jQuery(window).on("load", function () {
+		App.Phone.Metrics.recordSource("CALL_HISTORY_LOAD");
+    App.Phone.Metrics.push_event();
+	});
 <% end %>
 
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 

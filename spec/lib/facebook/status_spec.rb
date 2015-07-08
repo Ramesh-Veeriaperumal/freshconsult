@@ -20,66 +20,8 @@ RSpec.describe Facebook::Core::Status do
     end
   end
   
-  it "should create a ticket when a post/status(without comments) arrives and import company post is enabled" do   
+  it "should not create a ticket when a status arrives and import company post is enabled" do   
     unless @account.features?(:social_revamp)
-      feed_id = "#{@fb_page.page_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_feed(feed_id, "post")
-      facebook_feed = sample_facebook_feed(false, feed_id)
-      
-      #stub the api call for koala
-      Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
-      
-      feed_id = facebook_feed[:id]
-          
-      Facebook::Core::Parser.new(realtime_feed).parse
-      
-      post = @account.facebook_posts.find_by_post_id(feed_id)
-      post.should_not be_nil
-      post.is_ticket?.should be true
-      
-      ticket = post.postable
-      user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
-      ticket.description.should eql facebook_feed[:message]
-      ticket.subject.should eql truncate_subject(facebook_feed[:message], 100)
-      ticket.requester_id.should eql user_id
-    end
-  end
-  
-  it "should create a ticket and notes to the ticket when a company post has comments and import company post is enabled" do    
-    unless @account.features?(:social_revamp)
-      feed_id = "#{@fb_page.page_id}_#{get_social_id}"
-    
-      realtime_feed = sample_realtime_feed(feed_id, "post")
-      
-      facebook_feed = sample_facebook_feed(false, feed_id, true)
-      
-      Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
-      
-      Facebook::Core::Parser.new(realtime_feed).parse
-      
-      post = @account.facebook_posts.find_by_post_id(feed_id)
-      post.should_not be_nil
-      post.is_ticket?.should be true
-      
-      ticket = post.postable
-      user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
-      ticket.description.should eql facebook_feed[:message]
-      ticket.requester_id.should eql user_id
-
-      comment_feed = facebook_feed[:comments]["data"]
-      post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
-      post_comment.should_not be_nil
-      post_comment.is_note?.should be true
-      
-      note = post_comment.postable
-      note.notable.should eql ticket
-      note.body.should eql comment_feed.first[:message]
-    end
-  end
- 
-  it "should not create a ticket when a post/status(without comments) arrives and import visitor post is not enabled" do 
-    unless @account.features?(:social_revamp)
-      Social::FacebookPage.update_all("import_company_posts = false", "page_id = #{@fb_page.page_id}")  
       feed_id = "#{@fb_page.page_id}_#{get_social_id}"
       realtime_feed = sample_realtime_feed(feed_id, "post")
       facebook_feed = sample_facebook_feed(false, feed_id)

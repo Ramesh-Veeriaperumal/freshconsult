@@ -10,7 +10,10 @@
 //= require freshfone/components/timer.js
 //= require freshfone/components/socket.js
 //= require freshfone/components/end_call_form.js
+//= require freshfone/components/network_error.js
 //= require freshfone/components/components_main.js
+//= require app/kissmetrics.js
+//= require freshfone/freshfone_metrics.js
 //= require freshfone/intlTelInput.js
 //= require freshfone/device.js
 //= require freshfone/client.js

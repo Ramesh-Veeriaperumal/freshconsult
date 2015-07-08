@@ -174,7 +174,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     headers = {
       :subject                                => fwd_formatted_subject(ticket),
-      :to                                     => note.to_emails,
+      :to                                     => note.to_emails - [note.account.kbase_email],
       :cc                                     => note.cc_emails,
       :bcc                                    => note.bcc_emails,
       :from                                   => note.from_email,
@@ -206,6 +206,47 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     mail(headers) do |part|
       part.text { render "forward.text.plain" }
       part.html { render "forward.text.html" }
+    end.deliver
+  end
+
+  def reply_to_forward(ticket, note, options={})
+    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+    
+    headers = {
+      :subject                                => formatted_subject(ticket),
+      :to                                     => note.to_emails,
+      :cc                                     => note.cc_emails,
+      :bcc                                    => note.bcc_emails,
+      :from                                   => note.from_email,
+      :sent_on                                => Time.now,
+      "Reply-to"                              => "#{note.from_email}", 
+      "Auto-Submitted"                        => "auto-generated", 
+      "X-Auto-Response-Suppress"              => "DR, RN, OOF, AutoReply", 
+      "References"                            => generate_email_references(ticket)
+    }
+
+    inline_attachments = []
+    @ticket = ticket
+    @body = note.full_text
+    @cloud_files= note.cloud_files
+    @body_html = generate_body_html(note.full_text_html)
+    @account = note.account
+
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, note.full_text_html, note.account)
+    end
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      note.all_attachments.each do |a|
+        attachments[a.content_file_name] = {
+          :mime_type => a.content_content_type, 
+          :content => File.read(a.content.to_file.path, :mode => "rb")
+        }
+      end
+    end
+    mail(headers) do |part|
+      part.text { render "reply_to_forward.text.plain" }
+      part.html { render "reply_to_forward.text.html" }
     end.deliver
   end
 
@@ -306,15 +347,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
     @account = ticket.account
+    @ticket = ticket
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)
     end
 
     mail(headers) do |part|
-      part.text { @body }
-      part.html { @body_html }
+      part.text { render "email_to_requester.text.plain" }
+      part.html { render "email_to_requester.text.html" }
     end.deliver
+
   end
   
   def internal_email(ticket, receips, content, sub=nil)
@@ -334,15 +377,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
     @account = ticket.account
+    @ticket = ticket
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, content, ticket.account)
     end
 
     mail(headers) do |part|
-      part.text { @body }
-      part.html { @body_html }
+      part.text { render "internal_email.text.plain" }
+      part.html { render "internal_email.text.html" }
     end.deliver
+
   end
 
   private

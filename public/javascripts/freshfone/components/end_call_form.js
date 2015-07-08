@@ -150,11 +150,13 @@ var FreshfoneEndCall;
 			this.freshfonewidget = freshfonewidget;
 		},
 		saveNewTicket: function () {
+			trigger_event('saveticket');
 			this.saveTicket(false);
 			this.hideEndCallForm();
 		},
 		
 		saveToExisting: function () {
+			trigger_event('saveticket');
 			this.saveTicket(true);
 			this.hideEndCallForm();
 		},
@@ -216,7 +218,7 @@ var FreshfoneEndCall;
 					'call_history': !this.inCall
 				}
 			});
-		},
+		},	
 		custom_requester_id: function () {
 			return this.$requesterName.data('requester_id');
 		},
@@ -271,10 +273,12 @@ var FreshfoneEndCall;
 			return countryForE164Number(this.number);
 		},
 		hideEndCallForm: function () {
+			App.Phone.Metrics.push_event();
 			if (!$('#end_call').data('modal')) { $.freshdialog(this.freshdialogOption); }
 			$('#end_call').modal('hide');
 		},
 		initRequesterValue: function () {
+			this.$requesterName.removeData('requester_id');
 			var initData = this.$requesterName.val(),self = this;
 				if(initData.blank()) { return;}
 				$.ajax({

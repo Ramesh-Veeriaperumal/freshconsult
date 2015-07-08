@@ -160,7 +160,6 @@ module FreshdeskCore::Model
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
     remove_card_info(account)
-    $redis_others.srem(USER_EMAIL_MIGRATED, account.id) #for contact merge delta
     
     delete_data_from_tables(account.id)
     account.destroy

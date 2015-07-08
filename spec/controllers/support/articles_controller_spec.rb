@@ -95,7 +95,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql true
+    vote.vote?.should eql true
     response.code.should be_eql("200")
   end
 
@@ -122,7 +122,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql true
+    vote.vote?.should eql true
     @public_article2.thumbs_up.should eql(likes + 1)
     @public_article2.thumbs_down.should eql(dislikes - 1)
   end
@@ -155,7 +155,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql false
+    vote.vote?.should eql false
     response.code.should be_eql("200")
   end
 
@@ -182,7 +182,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
     vote.voteable_type.should eql "Solution::Article" 
-    vote.vote.should eql false
+    vote.vote?.should eql false
     @public_article3.thumbs_up.should eql(likes - 1)
     @public_article3.thumbs_down.should eql(dislikes + 1)
   end
@@ -244,7 +244,7 @@ RSpec.describe Support::Solutions::ArticlesController do
 
 		random_message = rand(4) + 1
     post :create_ticket, :id => test_article.id,
-      :helpdesk_ticket => { :email => "example@example.com" },
+      :helpdesk_ticket => { :email => Faker::Internet.email },
       :helpdesk_ticket_description => description,
       :message => [1]
    
@@ -254,6 +254,24 @@ RSpec.describe Support::Solutions::ArticlesController do
     ArticleTicket.find(:all, :conditions => { :article_id => test_article.id }).map(&:ticket_id).should include ticket.id
     ArticleTicket.find_by_ticket_id(ticket).article_id.should eql test_article.id
     ticket.subscriptions.find_by_user_id(test_article.user_id).should be_nil
+  end
+
+  it "should not create ticket while submitting feedback form for non logged in users with invalid email" do
+		agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
+		test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
+		 :status => "2", :art_type => "1" , :user_id => "#{agent.id}"} )
+		
+		user_count = @account.users.count
+    ticket_count = test_article.article_ticket.count
+
+    post :create_ticket, :id => test_article.id,
+      :helpdesk_ticket => { :email => 'example@example' },
+      :helpdesk_ticket_description => Faker::Lorem.paragraph,
+      :message => [1]
+   
+    response.code.should be_eql("200")
+    @account.users.count.should eql user_count
+    test_article.article_ticket.count.should eql ticket_count
   end
 
   it "should show a published article to user" do
@@ -278,5 +296,125 @@ RSpec.describe Support::Solutions::ArticlesController do
     get :hit, :id => @public_article1.id
     @public_article1.reload
     @public_article1.hits.should be_eql(hit_count + 1)
+  end
+
+  describe "Hits and likes should reflect in meta" do
+    before(:all) do
+      @test_article_for_hits = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      @test_article_for_hits.build_meta.save if @test_article_for_hits.reload.solution_article_meta.blank?
+      @user1 = create_dummy_customer
+      @user2 = create_dummy_customer
+      @meta_object = @test_article_for_hits.solution_article_meta
+      @test_article_without_meta = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      @test_article_without_meta.reload.solution_article_meta.destroy
+    end
+
+    it "should increment hits in meta object" do
+      log_in(@user1)
+      hit_count = @test_article_for_hits.reload.hits
+      meta_hit_count = @meta_object.reload.hits
+      get :hit, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload
+      @meta_object.reload
+      @test_article_for_hits.hits.should be_eql(hit_count + 1)
+      @meta_object.hits.should be_eql(meta_hit_count + 1)
+    end
+
+    it "hits should sync for meta_object when meta threshold is reached" do
+      log_in(@user1)
+      $redis_others.set("SOLUTION:HITS:%{#{@account.id}}:%{#{@test_article_for_hits.id}}", Solution::Article::HITS_CACHE_THRESHOLD - 1)
+      $redis_others.set("SOLUTION_META:HITS:%{#{@account.id}}:%{#{@meta_object.id}}", Solution::ArticleMeta::HITS_CACHE_THRESHOLD - 1)
+      hit_count = @test_article_for_hits.reload.hits
+      meta_hit_count = @meta_object.reload.hits
+      get :hit, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload
+      @meta_object.reload
+      @test_article_for_hits.hits.should be_eql(hit_count + 1)
+      @meta_object.hits.should be_eql(meta_hit_count + 1)
+    end
+
+    it "should increment thumbs up in meta" do
+      log_in(@user1)
+      likes = @test_article_for_hits.reload.thumbs_up
+      meta_likes = @meta_object.reload.thumbs_up
+      put :thumbs_up, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload.thumbs_up.should eql(likes+1)
+      @meta_object.reload.thumbs_up.should eql(meta_likes+1)
+      response.code.should be_eql("200")
+    end
+
+    it "should increment thumbs down in meta" do
+      log_in(@user2)
+      dislikes = @test_article_for_hits.reload.thumbs_down
+      meta_dislikes = @meta_object.reload.thumbs_down
+      put :thumbs_down, :id => @test_article_for_hits.id
+      @test_article_for_hits.reload.thumbs_down.should eql(dislikes+1)
+      @meta_object.reload.thumbs_down.should eql(meta_dislikes+1)
+      response.code.should be_eql("200")
+    end
+
+    it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
+      log_in(@user1)
+      test_article_for_decr = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      meta_object = test_article_for_decr.reload.solution_article_meta
+      put :thumbs_up, :id => test_article_for_decr.id
+      likes = test_article_for_decr.reload.thumbs_up
+      meta_likes = meta_object.reload.thumbs_up
+      dislikes = test_article_for_decr.thumbs_down
+      meta_dislikes = meta_object.thumbs_down
+      put :thumbs_down, :id => test_article_for_decr.id
+      test_article_for_decr.reload
+      meta_object.reload
+      test_article_for_decr.thumbs_up.should eql(likes - 1)
+      meta_object.thumbs_up.should eql(meta_likes - 1)
+      test_article_for_decr.thumbs_down.should eql(dislikes + 1)
+      meta_object.thumbs_down.should eql(meta_dislikes + 1)
+    end
+  end
+
+  describe "hits and likes should reflect in article if meta_object is not present" do
+    before(:all) do
+      @test_article_without_meta = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      @user1 = create_dummy_customer
+      @user2 = create_dummy_customer
+    end
+
+    before(:each) do
+      @test_article_without_meta.reload
+      @test_article_without_meta.solution_article_meta.present? ? @test_article_without_meta.solution_article_meta.destroy : true
+    end
+
+    it "hits should sync for article object when threshold is reached if meta is not present" do
+      log_in(@user1)
+      $redis_others.set("SOLUTION:HITS:%{#{@account.id}}:%{#{@test_article_without_meta.id}}", Solution::Article::HITS_CACHE_THRESHOLD - 1)
+      hit_count = @test_article_without_meta.reload.hits
+      @test_article_without_meta.solution_article_meta.should be_nil
+      get :hit, :id => @test_article_without_meta.id
+      @test_article_without_meta.reload
+      @test_article_without_meta.hits.should be_eql(hit_count + 1)
+      response.code.should be_eql("200")
+    end
+
+    it "should increment thumbs up for article if meta is not present" do
+      log_in(@user1)
+      likes = @test_article_without_meta.reload.thumbs_up
+      @test_article_without_meta.solution_article_meta.should be_nil
+      put :thumbs_up, :id => @test_article_without_meta.id
+      @test_article_without_meta.reload.thumbs_up.should eql(likes+1)
+      response.code.should be_eql("200")
+    end
+
+    it "should increment thumbs down for article if meta is not present" do
+      log_in(@user2)
+      dislikes = @test_article_without_meta.reload.thumbs_down
+      @test_article_without_meta.solution_article_meta.should be_nil
+      put :thumbs_down, :id => @test_article_without_meta.id
+      @test_article_without_meta.reload.thumbs_down.should eql(dislikes+1)
+      response.code.should be_eql("200")
+    end
   end
 end

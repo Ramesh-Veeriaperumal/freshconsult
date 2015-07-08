@@ -51,6 +51,9 @@
 			@include margin-left(0);
 		}
 	}
+.access_groups_control {
+			height: 30px;
+		}
 }
 .freshfone-title{
 	font-size: 18px;
@@ -93,4 +96,24 @@
 }
 .freshfone-disabled-alert{
 	margin-bottom: 25px;
+}
+.selectGroupAccess{
+	cursor: pointer;
+}
+.freshfone_video {
+  margin: 20px 50px 20px 60px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0px 10px 10px 10px;
+  background: #eee;
+  .title {
+    padding: 10px 10px 10px 2px;
+	  display: block;
+	  line-height: 1;
+  }
+}
+.ff_seperator {
+  margin: 20px 0 10px 0;
+  border-bottom: 1px solid #ccc;
 }

@@ -1,5 +1,5 @@
 class Helpdesk::DashboardController < ApplicationController
-
+  include Freshfone::FreshfoneHelper
   helper  Helpdesk::TicketsHelper #by Shan temp
   include Reports::GamificationReport
   include Cache::Memcache::Account
@@ -14,7 +14,7 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :load_items, :only => [:activity_list]
   before_filter :set_selected_tab
   before_filter :round_robin_filter, :only => [:agent_status]
-
+  before_filter :load_ffone_agents_by_group, :only => [:agent_status]
   def index
     if request.xhr? and !request.headers['X-PJAX']
       load_items
@@ -48,26 +48,37 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def agent_status
-    all_agents = {}
-
-    if @current_group_filter
-      available_agents_list = @group.round_robin_queue.reverse
-
-      unavailable_agents_list = @group.agents.all(:select => "users.id").map(&:id).map(&:to_s) - available_agents_list
-      agent_ids = available_agents_list + unavailable_agents_list
-      all_agents = current_account.agents.where(user_id: agent_ids).includes([{:user => :avatar}]).reorder("field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
-    end
-
-    @available_agents   = all_agents[true] || []
-    @unavailable_agents = all_agents[false] || []
-
+    load_ticket_assignment if current_account.features?(:round_robin)
+    load_freshfone if view_context.freshfone_active?
     respond_to do |format|
       format.html # index.html.erb
-      format.js do
+      format.js do 
         render :agent_status, :formats => [:rjs]
       end
     end
   end
+
+  def load_ffone_agents_by_group 
+    if params[:freshfone_group_id].present?
+      if (params[:freshfone_group_id]==Freshfone::Number::ALL_NUMBERS) 
+        set_others_redis_key(freshfone_filter_key,params[:freshfone_group_id], 86400 * 7)
+        render :json => { :id => Freshfone::Number::ALL_NUMBERS }
+      else  
+        @freshfone_group = current_account.groups.find_by_id(params[:freshfone_group_id])
+        @agent_ids = @freshfone_group.agents.inject([]){ |result, agent| result << agent.id }
+        render :json => { :id => @agent_ids }
+        if @freshfone_group
+           set_others_redis_key(freshfone_filter_key,params[:freshfone_group_id], 86400 * 7)
+        end
+      end  
+    else
+        @freshfone_group_current= get_others_redis_key(freshfone_filter_key) 
+        if @freshfone_group_current
+          @freshfone_group = current_account.groups.find_by_id(@freshfone_group_current)  
+        end  
+
+    end   
+  end 
 
   protected
     def recent_activities(activity_id)
@@ -79,6 +90,25 @@ class Helpdesk::DashboardController < ApplicationController
     end
 
   private
+    def load_ticket_assignment
+      all_agents = {}
+
+      if @current_group_filter
+        available_agents_list = @group.round_robin_queue.reverse
+
+        unavailable_agents_list = @group.agents.all(:select => "users.id").map(&:id).map(&:to_s) - available_agents_list
+        agent_ids = available_agents_list + unavailable_agents_list
+        all_agents = current_account.agents.where(user_id: agent_ids).includes([{:user => :avatar}]).reorder("field(user_id, #{agent_ids.join(',')})").group_by(&:available) if agent_ids.any?
+      end
+
+      @available_agents   = all_agents[true] || []
+      @unavailable_agents = all_agents[false] || []
+    end
+
+    def load_freshfone
+       @freshfone_agents = current_account.freshfone_users.agents_with_avatar
+    end
+
     def load_items
       @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10, :total_entries => 1000)
     end
@@ -121,6 +151,10 @@ class Helpdesk::DashboardController < ApplicationController
 
     def round_robin_filter_key
       ADMIN_ROUND_ROBIN_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
+    end
+    
+    def freshfone_filter_key
+      ADMIN_FRESHFONE_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
     end
 
 end

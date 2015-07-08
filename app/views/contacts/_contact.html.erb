@@ -6,16 +6,16 @@
     <% end %>
 	</td>
 	<td >
-		<a href="#" class="cust-list-avatar">
+		<div class="cust-list-avatar">
 			<%= user_avatar(contact)%> <!-- class="img-circle" have to add in img tag for circle-->
-		</a>
+		</div>
 		<div class="text-info">
-			<strong><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name") %></strong>
+			<strong><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name", :'data-pjax' => "#body-container") %></strong>
 			<% unless contact.job_title.blank? %>
 				<p class="muted mb0"><%= h contact.job_title %></p>
 			<% end %>
 			<% unless contact.company.blank? %>
-			  	<p class="muted mb0"><%= link_to(h(contact.company.name), contact.company) %></p>
+			  	<p class="muted mb0"><%= link_to(h(contact.company.name), contact.company, :'data-pjax' => "#body-container") %></p>
 			<% end %> 
 		</div>
 	</td>
@@ -45,7 +45,8 @@
 					:"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
       <% end %>
       <% if privilege?(:manage_contacts) %>
-			   <%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? and !contact.spam? and !contact.blocked? %>
+			   <%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini", 
+			   	:'data-pjax' => "#body-container") if !contact.deleted? and !contact.spam? and !contact.blocked? %>
       <% end %>
       <% if privilege?(:delete_contact) %>
       			<% if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>

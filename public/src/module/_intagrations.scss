@@ -122,6 +122,20 @@
 }
 
 //-------------------------------------------------------------------------------------------
+//									QuickBooks
+//-------------------------------------------------------------------------------------------
+span.beta {
+	font-size: 10px;
+	text-transform: uppercase;
+	background-color: transparent;
+	padding: 2px 5px;
+	font-weight: 500;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	margin-left: 14px;
+}
+
+//-------------------------------------------------------------------------------------------
 //									Integration Widget
 //-------------------------------------------------------------------------------------------
 
@@ -272,7 +286,8 @@
 		}
 		div > span {
 			@include float(left);
-			width: 193px;
+			width: 180px;
+			word-wrap: break-word;
 
 			#contact-address{
 				display: table;
@@ -667,6 +682,9 @@
 	}
 	.add_menu_wrapper{
 		display: table-footer-group;
+		.list-data{
+			border-bottom: 0;
+		}
 	}
 
 	.delete-btn, .list-data{
@@ -724,5 +742,204 @@
 		&.inline{
 			display: table-cell;
 		}
+	}
+}
+
+
+// --------------------------------------------------------------------------------------------------
+//												Xero
+// --------------------------------------------------------------------------------------------------
+
+.xeroFormBlock{
+	#lineitems{
+	fieldset{
+		padding: 10px;
+		.controls{
+			margin-left: 0;
+
+		}
+		.xero_delete{
+			width: 35px;
+			padding: 5px;
+		}
+		.xero_s{
+			
+		}
+		.xero_line{
+			display: inline-block;
+			float: none;
+			height: 30px;
+			width: 1px;
+			vertical-align: middle;
+			margin: 0 5px;
+			background: #DAD9D9;
+		}
+	}
+	}
+	.inl{
+		display: inline-block;
+		padding: 5px;
+		div{
+			width: 100%;
+		}
+	}
+	.xero_due_date {
+		width: 35%;
+	}
+	.thirty-percent{
+		width: 30%;
+	}
+	.xero_footer{
+		margin-top: 25px;
+		padding: 10px;
+	}
+
+	.rules_wrapper{ 
+		.tabel-thead {
+			background: none;
+			.list-data{
+				&:first-child{
+					width:35px;
+				}
+				p{					
+					margin-top: 0;
+				}
+				.input{
+					padding-left: 5px;
+				}
+				.header-txt{
+					margin: 7px 9px;
+					  margin-right: 0;
+				}
+				border-bottom: 1px solid #d8d8d8;
+			}
+		}
+		.overlay{
+			background-color: none;
+		}
+		input {
+		  width: 90% !important;
+		}
+
+	}
+
+	.rules_list_wrapper{
+	 .list{
+		&:last-child{
+			.list-data{
+				border-bottom: 1px solid #ddd;
+			}
+		}
+	}
+	}
+	.add_menu_wrapper{
+		.list-data{
+			.add_list{
+				color: #06c;
+	  			font-weight: 500;
+			}
+		}
+	}
+	.list .list-data:nth-child(3){
+		width: 20% !important;
+	}
+	.modal-body > .spinner{
+		top: 0px !important;
+		display: block;
+	}
+	.modal-body .form-horizontal {
+		width: 100%;
+		display: block;
+	}
+
+
+}
+
+
+#xero{
+	.xero_ul_sidebar{
+		list-style: none;
+		border-top: 1px solid #ddd;
+		margin-left: 0;
+		li{
+			padding: 10px 5px;
+			border-bottom: 1px solid #ddd;
+		}		
+	}
+	
+	.errormsg{
+	position: absolute;
+	top: 5px;
+	right: 0px;
+	color: #9B9B9B;
+	}
+	
+	#add_invoice{
+		padding: 7px;
+		text-align: right;
+  		float: right;
+  		position: absolute;
+  		right: 0px;
+  		TOP: 6px;
+	}	
+	.xero_li_hover{
+		display: none;
+		padding-right: 15px;
+		cursor: pointer;
+	}
+	.xero_li_hover_delete{
+		float: left;
+		position: absolute;
+		cursor: pointer;
+		display: none;
+		left: 155px;
+	}
+	.xero_scroll {    
+    	.each_invoice{
+    		a{
+    			&:first-child{
+    				font-weight: 500;
+    				padding-right: 5px;
+    			}
+
+    		}
+    		&.cur_ticket{
+    			i{
+    				color: #06c;
+    				padding-right: 5px;
+    				font-size: 15px;
+    				vertical-align: middle; 
+    			}
+    		}
+    		.date-item{
+    			padding: 1px 0px 3px;
+    		}
+    	}
+	}
+	
+	.date-item{
+		display: block;
+	}
+	
+	.modal-body{
+		.loading-fb {
+		background-position: 49% 0% !important;
+	  	padding-bottom: 10px;
+		}
+
+}
+
+}
+
+#inv_status{
+ 
+	ul{
+	margin-top: 7px;
+	}
+ 
+	li{
+	list-style: disc;
+	margin-left: 17px;
+	margin-bottom: 2px;
 	}
 }

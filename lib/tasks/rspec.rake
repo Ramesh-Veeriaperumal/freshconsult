@@ -22,7 +22,6 @@ if Rails.env.test?
     "spec/lib/facebook/status_spec.rb",
     "spec/controllers/social/facebook_pages_controller_spec.rb",
     "spec/lib/facebook/facebook_core_message_spec.rb",
-    "spec/lib/facebook/faceboook_fql_post_spec.rb",
     "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb",
     "spec/lib/facebook/reply_to_comment_spec.rb"
   ]
@@ -64,7 +63,8 @@ if Rails.env.test?
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
     "spec/models/mobihelp/app_spec.rb",
-    "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb"
+    "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb",
+    "spec/controllers/mobihelp/articles_controller_spec.rb"
   ]
 
   IntegrationTests = [ 
@@ -88,7 +88,8 @@ if Rails.env.test?
     "spec/controllers/integrations/slack_controller_spec.rb",
     "spec/controllers/integrations/remote_configurations_controller_spec.rb",
     "spec/lib/integrations/survey_monkey_spec.rb",
-    "spec/controllers/integrations/cti/customer_details_controller_spec.rb"
+    "spec/controllers/integrations/cti/customer_details_controller_spec.rb",
+    "spec/controllers/integrations/dynamics_crm_controller_spec.rb"
   ]
 
   FreshfoneTests = [
@@ -114,7 +115,10 @@ if Rails.env.test?
     "spec/controllers/topics_controller_spec.rb",
     "spec/models/monitorship_spec.rb",
     "spec/controllers/support/discussions/*_spec.rb",
-    "spec/controllers/support/discussions_controller_spec.rb"
+    "spec/controllers/support/discussions_controller_spec.rb",
+    "spec/controllers/monitorships_controller_spec.rb",
+    "spec/mailers/forum_mailer_spec.rb",
+    "spec/mailers/topic_mailer_spec.rb"
   ]
 
   ForumDynamoTests = [
@@ -209,7 +213,7 @@ if Rails.env.test?
     
   UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
                 GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests]
+                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests, IntegrationTests]
 
   UnitTests.flatten!.uniq!
 

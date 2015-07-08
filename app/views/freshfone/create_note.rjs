@@ -4,7 +4,9 @@ if @current_call.present? && !@current_call.note.nil?
 	parent = "#freshfone_call_#{@current_call.id}"
 
 	page << "jQuery('#{parent} .assigned_ticket')
-						.html('#{link_to "##{ticket.display_id}", helpdesk_ticket_path(ticket),
-											:target => "_blank", :class => "converted_ticket tooltip",
-											:title => ticket.subject}');"
+                        .html('#{link_to '<span class="ficon-ticket fsize-14"></span>'.html_safe, 
+                                        helpdesk_ticket_path(ticket),
+                                        :target => "_blank"}')
+                        .addClass('converted_ticket')
+                        .prop('title', 'View Ticket ##{ticket.display_id}');"
 end

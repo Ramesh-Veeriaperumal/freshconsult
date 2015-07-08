@@ -24,13 +24,13 @@ module ContactsHelper
   def view_contact_fields 
     reject_fields = [:default_name, :default_job_title, :default_company_name, :default_description, :default_tag_names]
     view_contact_fields = contact_fields.reject do |item|
-      field_value = (field_value = @user.send(item.name)).blank? ? item.default_value : field_value
-      (reject_fields.include? item.field_type) || !field_value.present?
+      (reject_fields.include? item.field_type) || !(@user.send(item.name).present?)
     end
   end
 
   def user_activities
-    activities = @user_tickets + @user.recent_posts
+    activities = @user_tickets
+    activities += @user.recent_posts if current_account.features?(:forums)
     activities = activities.sort_by {|item| -item.created_at.to_i}
     activities = activities.take(10)
   end
@@ -53,6 +53,9 @@ module ContactsHelper
 
     (icon_wrapper + text_wrapper + time_div)
   end
+
+  #This is for user emails display in show page
+  #The one for the form is in user_emails_helper
 
   def render_user_email_field field
     output = []

@@ -77,8 +77,16 @@ class Helpdesk::BulkReplyTickets
 
     def add_reply ticket
       note = ticket.notes.build note_params(ticket)
+      note.from_email = get_from_email if params[:email_config] and params[:email_config]["reply_email"]
+      # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
+      note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note
       send("#{note.source_name}_reply", ticket, note) if note.save_note
+    end
+
+    def get_from_email
+      email_config = Account.current.email_configs.find_by_reply_email(params[:email_config]["reply_email"])
+      params[:email_config]["reply_email"] if email_config
     end
 
     def note_params ticket
@@ -129,7 +137,7 @@ class Helpdesk::BulkReplyTickets
       fb_page = ticket.fb_post.facebook_page
       if fb_page
         if ticket.is_fb_message?
-          Facebook::Core::Message.new(fb_page).send_reply(ticket, note)
+          Facebook::Graph::Message.new(fb_page).send_reply(ticket, note)
         else
           Facebook::Core::Comment.new(fb_page, nil).send_reply(ticket, note)
         end
@@ -139,6 +147,10 @@ class Helpdesk::BulkReplyTickets
     def twitter_reply ticket, note
       twt_type = ticket.tweet.tweet_type || :mention.to_s
       send("send_tweet_as_#{twt_type}", ticket, note, note.body.strip)
+    end
+
+    def mobihelp_reply ticket, note
+      #Do nothing
     end
 
 end

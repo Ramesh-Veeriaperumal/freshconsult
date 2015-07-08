@@ -10,7 +10,8 @@ module FreshfoneSpecHelper
       :twilio_subaccount_token => "58aacda85de70e5cf4f0ba4ea50d78ab", 
       :twilio_application_id => "AP932260611f4e4830af04e4e3fed66276", 
       :queue => "QU81f8b9ad56f44a62a3f6ef69adc4d7c7",
-                          :account_id => @account.id, 
+      :account_id => @account.id,
+      :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone,
       :friendly_name => "RSpec Test" )
     freshfone_account.sneaky_save
     @account.freshfone_account = freshfone_account
@@ -52,6 +53,11 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid })
   end
 
+  def create_freshfone_call_meta(call,external_number)
+    @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+              :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+  end
+
   def create_freshfone_customer_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
     user = create_customer
     @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
@@ -59,12 +65,11 @@ module FreshfoneSpecHelper
                                       :params => { :CallSid => call_sid }, :customer => user)
   end
 
-  def build_freshfone_caller
-    number = "+12345678900"
+  def build_freshfone_caller(number = "+12345678900")
     account = @freshfone_call.account
     caller  = @account.freshfone_callers.find_or_initialize_by_number(number)
     caller.update_attributes({:number => number})
-      @freshfone_call.update_attributes(:caller => caller)
+    @freshfone_call.update_attributes(:caller => caller)
   end
 
   def create_freshfone_user(presence = 0)
@@ -90,12 +95,12 @@ module FreshfoneSpecHelper
     @parent_call.root.increment(:children_count).save
   end
 
-  def create_dummy_freshfone_users(n=3)
+  def create_dummy_freshfone_users(n=3,presence=nil)
     @dummy_users = []; @dummy_freshfone_users = []
     n.times do 
       new_agent = add_agent_to_account(@account, {:available => 1, :name => Faker::Name.name, :email => Faker::Internet.email, :role => 3, :active => 1})
       user = new_agent.user
-      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => 1 })
+      freshfone_user = user.build_freshfone_user({ :account => @account, :presence => presence || 1})
       user.save!
       user.reload
       @dummy_freshfone_users << freshfone_user
@@ -173,10 +178,10 @@ module FreshfoneSpecHelper
     twiml.deep_symbolize_keys if twiml.present?
   end
 
-  def create_ff_address
+  def create_ff_address(post_code = Faker::Address.postcode)
     name = Faker::Name.name
     address_params = { :friendly_name => name, :business_name => name, :address => Faker::Address.street_address,
-        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => Faker::Address.postcode,
+        :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => post_code,
         :country => 'DE'
     }
     @account.freshfone_account.freshfone_addresses.new(address_params).save
@@ -184,5 +189,16 @@ module FreshfoneSpecHelper
 
   def ff_address_inspect(country)
     @account.freshfone_account.freshfone_addresses.find_by_country(country).present?
+  end
+  
+  def accessible_groups(number)
+    groups = []
+    selected_number_group = number.freshfone_number_groups
+    if selected_number_group
+      selected_number_group.each do |number_group|
+        groups << number_group.group_id
+      end
+    end
+    groups
   end
 end

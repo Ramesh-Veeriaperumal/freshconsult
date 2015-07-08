@@ -37,7 +37,7 @@
 				<div class="conversation_wrap">
 					<% for(var i = 0,length = messages.length;i<length;i++){ %>
 					<div class="rsltmsg chat_tkt_details clearfix <%=(messages[i].userId.match(/visitor/gi) === null)? "fc_self_expanded" : "fc_guest_expanded"%>">
-						<div class="rsltavatar "><img src="<%=(messages[i].photo == null)? "/images/fillers/profile_blank_thumb.gif" : messages[i].photo%>"></div>	
+						<div class="rsltavatar "><img src="<%=(messages[i].photo == null)? "/images/fillers/profile_blank_thumb.jpg" : messages[i].photo%>"></div>	
 						<div class="rsltmsg_wrap">
 							<div class="rsltuser"><%=messages[i].name%></div>
 							<div class="time">

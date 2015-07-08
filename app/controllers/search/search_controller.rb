@@ -30,7 +30,7 @@ class Search::SearchController < ApplicationController
 		begin
 			if privilege?(:manage_tickets)
 				Search::EsIndexDefinition.es_cluster(current_account.id)
-				items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
+				items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id, @search_lang), options do |search|
 					search.query do |query|
 						query.filtered do |f|
 							search_query f
@@ -74,8 +74,9 @@ class Search::SearchController < ApplicationController
 				#_Note_: Text query deprecated and renamed to match query.
 				b_query.must { match :_all, query, :type => :phrase }
 			else
-				query = SearchUtil.es_filter_key(@search_key) #Initializing into a variable as inaccessible inside block
-				b_query.must { string query, :analyzer => "include_stop" }
+				query = SearchUtil.es_filter_key(@search_key, !@search_lang.present?) #Initializing into a variable as inaccessible inside block
+				analyzer = SearchUtil.analyzer(@search_lang) #Initializing into a variable as inaccessible inside block
+				b_query.must { string query, :analyzer => analyzer }
 			end
 		end
 

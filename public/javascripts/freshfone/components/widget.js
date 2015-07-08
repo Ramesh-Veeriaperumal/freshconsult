@@ -139,6 +139,9 @@ var FreshfoneWidget;
 		hideTransfer: function () {
 			$('#freshfone_available_agents .transfering_call').hide();
 		},
+		resetTransferMenuList: function(){
+			$('#transfer-menu-items li').first().trigger('click');
+		},
 		resetPreviewMode: function () {
 			this.previewMode(true);
 		},
@@ -185,6 +188,16 @@ var FreshfoneWidget;
 				} else {
 					this.desktopNotifierWidget.hide();
 				}
+		},
+		checkForStrangeNumbers: function(num){
+			if(num){
+				var numHelper = num.replace(/\D/g, '');
+				numHelper = (numHelper.charAt(0) == '1') ? numHelper.substring(1,numHelper.length) : numHelper;
+				return (parseInt(numHelper) in freshfone.strangeNumbers);
+			}
+		},
+		classForStrangeNumbers: function(num) {
+			return (freshfonewidget.checkForStrangeNumbers(num) ? "strikethrough" : "");
 		}
 	};
 	

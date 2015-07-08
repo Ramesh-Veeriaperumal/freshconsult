@@ -15,13 +15,16 @@ class Helpdesk::ConversationsController < ApplicationController
   include Social::Util
   helper Helpdesk::NotesHelper
   
-  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
-  before_filter :validate_fwd_to_email, :only => [:forward]
-  before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
+  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
+  before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
+  before_filter :check_for_kbase_email, :only => [:reply, :forward]
+  before_filter :set_quoted_text, :only => :reply
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
-    :fetch_item_attachments, :set_native_mobile, :except => [:full_text]
-  before_filter :set_ticket_status, :except => :forward
+    :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
+  before_filter :set_ticket_status, :except => [:forward, :reply_to_forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
+  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp]
+  before_filter :check_for_public_notes, :only => [:note]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -34,11 +37,7 @@ class Helpdesk::ConversationsController < ApplicationController
     if @item.save_note
       clear_saved_draft
       add_forum_post if params[:post_forums]
-      begin
-        create_article if @publish_solution
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      end
+      note_to_kbase
       flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
     else
@@ -51,12 +50,26 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save_note
       add_forum_post if params[:post_forums]
+      note_to_kbase
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
       flash[:error] = @item.errors.full_messages.to_sentence 
       create_error(:fwd)
     end
+  end
+
+  def reply_to_forward
+    build_attachments @item, :helpdesk_note
+    if @item.save_note
+      add_forum_post if params[:post_forums]
+      flash[:notice] = t(:'fwd_success_msg')
+      process_and_redirect
+    else
+      flash[:error] = @item.errors.full_messages.to_sentence 
+      create_error(:fwd)
+    end
+
   end
 
   def note
@@ -73,8 +86,9 @@ class Helpdesk::ConversationsController < ApplicationController
   def twitter
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
+    
     if twt_type.eql?"mention"
-      error_message, @tweet_body = validate_tweet(tweet_text, "@#{@parent.requester.twitter_id}") 
+      error_message, @tweet_body = validate_tweet(tweet_text, "#{@parent.latest_twitter_comment_user}") 
     else
       error_message, @tweet_body = validate_tweet(tweet_text, nil, false) 
     end
@@ -115,6 +129,15 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def full_text
     render :text => @item.full_text_html.to_s.html_safe
+  end
+
+  def traffic_cop
+    return if traffic_cop_warning
+    respond_to do |format|
+      format.js {
+        render  :nothing => true
+      }
+    end
   end
 
   protected
@@ -201,6 +224,7 @@ class Helpdesk::ConversationsController < ApplicationController
         format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type} }
         format.html { redirect_to @parent }
         format.nmobile { render :json => { :server_response => false } }
+        format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
       end
     end
     
@@ -249,5 +273,33 @@ class Helpdesk::ConversationsController < ApplicationController
         else
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)
         end
+      end
+
+      def note_to_kbase
+        begin
+          create_article if @publish_solution
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
+        end
+      end
+
+      def has_unseen_notes?
+        return false if params["last_note_id"].nil?
+        last_public_note    = @parent.notes.visible.last_traffic_cop_note.first
+        late_public_note_id = last_public_note.blank? ? -1 : last_public_note.id
+        return late_public_note_id > params["last_note_id"].to_i
+      end
+
+      def traffic_cop_warning
+        return unless has_unseen_notes?
+        respond_to do |format|
+          format.js {
+            render :file => "helpdesk/notes/traffic_cop.rjs" and return true
+          }
+        end
+      end
+
+      def check_for_public_notes
+        traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
       end
 end

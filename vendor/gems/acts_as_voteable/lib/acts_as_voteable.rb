@@ -11,7 +11,8 @@ module Juixe
 
       module ClassMethods
         def acts_as_voteable
-          has_many :votes, :as => :voteable, :dependent => :destroy
+          has_many :votes, :as => :voteable, :dependent => :destroy, :order => "id DESC"
+          has_many :voters, :through => :votes, :source => :user, :order => "#{Vote.table_name}.id DESC"
           include Juixe::Acts::Voteable::InstanceMethods
           extend Juixe::Acts::Voteable::SingletonMethods
         end

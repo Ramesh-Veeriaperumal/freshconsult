@@ -48,8 +48,8 @@ class User < ActiveRecord::Base
     c.validate_login_field(false)
     c.validate_email_field(false)
     c.validations_scope = :account_id
-    c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
-    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
+    c.validates_length_of_password_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials? }
+    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
     c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_VALIDATOR
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
   end
 
   def max_user_emails
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.length > MAX_USER_EMAILS)
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.reject(&:marked_for_destruction?).length > MAX_USER_EMAILS)
   end
 
   def has_no_emails_with_ui_feature?
@@ -91,12 +91,29 @@ class User < ActiveRecord::Base
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
-                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
+                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04
 
   def time_zone
     tz = self.read_attribute(:time_zone)
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
+  end
+
+  def avatar_url(profile_size = :thumb)
+    (avatar ? avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(profile_size)) if present?
+  end
+
+  def is_user_social(profile_size)
+    if fb_profile_id
+      profile_size = (profile_size == :medium) ? "large" : "square"
+      facebook_avatar(fb_profile_id, profile_size)
+    else
+      "/assets/misc/profile_blank_#{profile_size}.gif"
+    end
+  end
+
+  def facebook_avatar( facebook_id, profile_size = "square")
+    "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
   
   class << self # Class Methods
@@ -199,8 +216,16 @@ class User < ActiveRecord::Base
     string_uc04.to_i
   end
 
+  def parent_id?
+    !parent_id.zero?
+  end
+
   def parent_id=(p_id)
     self.string_uc04 = p_id.to_s
+  end
+
+  def emails
+    self.user_emails.map(&:email)
   end
 
   def tag_names= updated_tag_names
@@ -293,9 +318,11 @@ class User < ActiveRecord::Base
     true
   end
 
+  #This scope is currently used only for failure searches through ES for contact_merge search
+
   scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, users.account_id, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
@@ -632,7 +659,7 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by) } 
+              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by), :type => :phrase } 
             else
               f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email', 'user_emails.email'], :analyzer => "include_stop" }
             end
@@ -729,6 +756,8 @@ class User < ActiveRecord::Base
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
     end
+
+    #This is the current login method. It is fed to authlogic in user_sessions.rb
 
     def self.find_by_user_emails(login)
       if !Account.current.features_included?(:multiple_user_emails)

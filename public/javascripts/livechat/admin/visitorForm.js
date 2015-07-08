@@ -199,20 +199,6 @@ window.liveChat.visitorFormSettings = function($){
 								self.dropdownIsChanged = false;
 								window.liveChat.preferenceSettings.renderRoutingSettings(newRouting, "new");
 							}
-							if(params.prechat_fields){
-								var oldPrechatFields = (typeof _widget.prechat_fields == 'string') 
-																						? JSON.parse(_widget.prechat_fields) 
-																						: _widget.prechat_fields;
-								var old_dropdown_value = parseInt(oldPrechatFields.dropdown.show);
-								var new_dropdown_value = parseInt(params.prechat_fields.dropdown.show);
-								if(!(old_dropdown_value == new_dropdown_value && old_dropdown_value && new_dropdown_value && chat_pusher)){
-									var availableChannel = chat_pusher.channel('presence-Available-'+SITE_ID);
-									var status = new_dropdown_value ? true : false;
-									if(availableChannel){
-										availableChannel.trigger('client-channel-routing', {status: status});
-									}
-								}
-							}
 						}
 					}
 				}

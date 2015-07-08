@@ -32,7 +32,7 @@
 			longpress = false;
 		},
 		onMousedown: function (keypad, inst) {
-
+			freshfoneMetricsOnClick($(this));
 			freshfonecalls.hideText();
 			if($(this).attr('class').indexOf("keypad-call") == -1){
 				freshfonecalls.exceptionalNumber = false;
@@ -96,6 +96,8 @@
 	// Dialpad show
 	$('.ongoingDialpad, .showDialpad')
 		.on('shown', function (e) {
+			freshfoneMetricsOnKeyPress();
+			freshfoneMetricsOnPaste();
 			$number.keypad('show');
 			$number.intlTelInput("setPreferredCountries");
 			freshfonecalls.hideText();
@@ -120,32 +122,80 @@
 
         });
 
-
+		
+        
         $(document).ready(function(){
             var $outgoing_numbers_list = $('.outgoing_numbers_list');
-            
-            $outgoing_numbers_list.select2({
-            	dropdownCssClass: "outgoing_numbers_list_dropdown",
-            	minimumResultsForSearch: 5,
-            	attachtoContainerClass: ".popupbox-content",
+            if (! $.isEmptyObject(freshfone.numbersHash)) {
+            	freshfonewidget.outgoingCallWidget.toggle(true);
+	            $outgoing_numbers_list.select2({
+	            	dropdownCssClass: "outgoing_numbers_list_dropdown",
+	            	minimumResultsForSearch: 5,
+	            	attachtoContainerClass: ".popupbox-content",
 
-	            formatResult: function(result, container,query){
-                    var name = freshfone.namesHash[result.id],
-	            	    number = freshfone.numbersHash[result.id];
-	                if(name == ""|| name.trim == "" ){
-	            	    return  "<span>" +number + "</span>" ;
-                    }else{
-	            		return "<span><b>" + name + "</b></span><br/><span>" + number + " </span>" ;    
-	            	}
-	            },
-	            
-	            formatSelection: function(data, container) {
-	            	var result = data.text;
-	            	var lastindex = result.lastIndexOf(" ");
-	            	result = (lastindex > -1) ?  result.substring(0, lastindex) : data.text;
-                    return result;
-                }
-            });
+		            formatResult: function(result, container,query){
+	                    var name = freshfone.namesHash[result.id],
+		            	    number = freshfone.numbersHash[result.id];
+		                if(name == ""|| name.trim == "" ){
+		            	    return  "<span>" +number + "</span>" ;
+	                    }else{
+		            		return "<span><b>" + name + "</b></span><br/><span>" + number + " </span>" ;    
+		            	}
+		            },
+		            
+		            formatSelection: function(data, container) {
+		            	var result = data.text;
+		            	var lastindex = result.lastIndexOf(" ");
+		            	result = (lastindex > -1) ?  result.substring(0, lastindex) : data.text;
+	                    return result;
+	                }
+	            });
+	           } else { 
+	           	freshfonewidget.outgoingCallWidget.toggle(false);
+	           }
             
        });
+	
+	function freshfoneMetricsOnClick(classValue){
+		if(classValue.hasClass('keypad-key')){
+				if(freshfonecalls.isOngoingCall()){
+					App.Phone.Metrics.recordSource("CLICK_IVR");
+					App.Phone.Metrics.push_event();
+				}
+				else{
+					App.Phone.Metrics.recordSource("DIAL_BY_NUM_PAD");
+				}
+			}
+			if(classValue.hasClass('keypad-special')){
+				App.Phone.Metrics.resetCallDirection();
+				App.Phone.Metrics.resetConvertedToTicket();
+				App.Phone.Metrics.push_event();
+			}
+	}
+
+	function freshfoneMetricsOnKeyPress(){
+		jQuery(".user_phone").keypress(function(ev){
+				if(ev.keyCode===13){
+					App.Phone.Metrics.resetCallDirection();
+					App.Phone.Metrics.resetConvertedToTicket();
+					App.Phone.Metrics.push_event();
+				}
+				else{
+					if(freshfonecalls.isOngoingCall()){
+						App.Phone.Metrics.recordSource("KEY_IVR");
+						App.Phone.Metrics.push_event();
+					}
+					else{
+						App.Phone.Metrics.recordSource("DIAL_BY_KEY");
+					}
+				}
+			});
+	}
+
+	function freshfoneMetricsOnPaste(){
+		$(".user_phone").bind('paste', function() {
+   			App.Phone.Metrics.recordSource("DIAL_BY_NUM_PASTE");
+		});
+	}
+
 }(jQuery));

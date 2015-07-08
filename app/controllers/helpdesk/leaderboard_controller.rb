@@ -1,6 +1,7 @@
 class Helpdesk::LeaderboardController < ApplicationController
   before_filter :set_selected_tab
   before_filter { |c| c.requires_feature :gamification }
+  around_filter :run_on_slave
 
   helper Helpdesk::LeaderboardHelper
 
@@ -84,4 +85,7 @@ class Helpdesk::LeaderboardController < ApplicationController
       { :conditions => ["support_scores.group_id = ?", @group.id] }
     end
 
+    def run_on_slave(&block)
+      Sharding.run_on_slave(&block)
+    end
 end

@@ -18,9 +18,9 @@ class Vote < ActiveRecord::Base
   end
 
   def update_user_votes_count
-  	return unless voteable.is_a? Topic
-  	voteable.user_votes = voteable.votes_count
-  	voteable.save
+    return unless (voteable.is_a?(Topic) || voteable.is_a?(Post))
+    voteable.user_votes = voteable.votes_count
+    voteable.save
   end
 
   private

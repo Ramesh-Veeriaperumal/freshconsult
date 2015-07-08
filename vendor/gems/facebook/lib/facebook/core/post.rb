@@ -21,18 +21,18 @@ class Facebook::Core::Post
       #hack because facebook doesn't differenciate between status and post
       #Posts give the post id as pageid_postid at most times. Hack is still valid when the result is otherwise
       post_id = feed.page_id + "_" + post_id unless post_id.include?("_")
-      return if @account.facebook_posts.find_by_post_id(feed.post_id)
-      process(nil, realtime_subscription)
+      return if @account.facebook_posts.find_by_post_id(post_id)
+      process
     end
   end
 
-  def process(koala_post = nil, real_time_update = true, convert = false)
+  def process(koala_post = nil, convert = false)
     @koala_post = koala_post if koala_post.present?
     return if feed_converted?(@koala_post.feed_id)
     
     convert_post, convert_args = convert_args(@koala_post, convert)
     if convert_post
-      ticket = add_as_ticket(@fan_page, @koala_post, real_time_update, convert_args) 
+      ticket = add_as_ticket(@fan_page, @koala_post, convert_args) 
       process_comments if ticket
     end
   end
@@ -56,7 +56,7 @@ class Facebook::Core::Post
     #Along with the post, create notes for all the available comments
     @koala_post.comments.each do |c|
       comment = koala_comment(c)
-      Facebook::Core::Comment.new(@fan_page, comment).process(nil, realtime_subscription)
+      Facebook::Core::Comment.new(@fan_page, comment).process
     end
   end
 
@@ -66,9 +66,5 @@ class Facebook::Core::Post
     koala_comment.parse
     koala_comment    
   end
-
-  def realtime_subscription
-    fan_page.realtime_subscription
-  end 
     
 end

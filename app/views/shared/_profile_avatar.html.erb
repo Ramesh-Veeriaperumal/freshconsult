@@ -7,9 +7,8 @@
 <% end %>
 <%= javascript_include_tag 'cdn/profile_avatar' %>  
 <div class='avatar-pic'>
-  <%= image_tag user.avatar ? user.avatar.expiring_url(:medium) : '', 
-                :alt => user.name,
-                :onerror => "imgerror(this)" %>
+  <img src="/assets/misc/profile_blank_medium.jpg" class="hide profile_pic medium" />
+  <%= user_avatar(user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
   <p class='ie9-file-change-msg break-word'> </p>
 </div>
 <div class='avatar-options'>

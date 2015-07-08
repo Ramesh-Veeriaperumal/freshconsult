@@ -2,17 +2,20 @@
 class Helpdesk::SlaPoliciesController < Admin::AdminController
  
   include Helpdesk::ReorderUtility
+  include APIHelperMethods
+  
   before_filter :only => [:new, :create] do |c|
     c.requires_feature :customer_slas
   end
   before_filter :load_sla_policy, :only => [ :update, :destroy, :activate ]
+  before_filter :load_item, :validate_params, :only => [:company_sla]
   before_filter :initialize_escalation_level_details, :only => [:edit]
    
   def index
     @sla_policies = scoper
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @sla_policies }
+      format.any(:json, :xml) { render request.format.to_sym => @sla_policies.paginate(:per_page => 30, :page => (params[:page] || 1) )}
     end    
   end
 
@@ -94,6 +97,20 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
       # format.json {render :json => {:status => :unprocessable_entity}}
     end
   end
+
+  #Method to add company's SLA policy via API
+  def company_sla
+    @new_company_ids = @new_company_ids.split(',').map { |x| x.to_i } 
+    @new_company_ids = current_account.companies.find_all_by_id(@new_company_ids,:select => "id").map(&:id)
+    conditions = @sla_policy.conditions
+    conditions ||= {}
+    conditions[:company_id] = @new_company_ids
+    if @sla_policy.save
+      api_json_responder @sla_policy.reload, 200
+    else
+      api_json_responder @sla_policy.errors, 400
+    end
+  end
   
   protected
 
@@ -119,6 +136,15 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
 
     def load_sla_policy
       @sla_policy = scoper.find(params[:id])
+    end
+
+    # separate load_item for API update company sla as 404 should be handled in API
+    def load_item
+      @sla_policy = scoper.find_by_id(params[:id])
+      unless @sla_policy
+        error = {:errors => {:message=> t('api.record_not_found'), :error => t('sla_policy.update_company_sla_api.update_failed') }}
+        api_json_responder error, :not_found
+      end
     end
 
     def initialize_escalation_level_details
@@ -152,12 +178,29 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
 
     def fetch_agents
       unless @agents_id.blank? 
+        assigned_agent_id = Helpdesk::SlaPolicy::custom_users_id_by_type[:assigned_agent]
         @agents_cache = {}
         @agents_id.uniq!
         current_account.users.technicians.visible.find(:all, :conditions => ["id in (?)", @agents_id], 
                         :select => "id, name, email").each{|agent| 
                         @agents_cache[agent.id] = {:name => agent.name, :email => agent.email}}
+        @agents_cache[assigned_agent_id] = {:name => Helpdesk::SlaPolicy::custom_users_value_by_type[:assigned_agent], :email => ""} if @agents_id.include? assigned_agent_id
       end
+    end
+
+    def validate_params
+      errors = {:errors => []}
+      @new_company_ids = params[:helpdesk_sla_policy][:conditions][:company_id] if params[:helpdesk_sla_policy].is_a?(Hash) && params[:helpdesk_sla_policy][:conditions].is_a?(Hash)  # -- will have company_ids array from params.
+      if @sla_policy.is_default
+        errors[:errors] << {:message=> t('sla_policy.update_company_sla_api.default_policy_update'), :error => t('sla_policy.update_company_sla_api.update_failed') }
+      elsif params[:helpdesk_sla_policy].is_a?(Hash) && params[:helpdesk_sla_policy][:conditions].is_a?(Hash) && (params[:helpdesk_sla_policy][:conditions].keys - ['company_id']).any?
+        errors[:errors] << {:message=> t('sla_policy.update_company_sla_api.invalid_arguments_for_update'), :error => t('sla_policy.update_company_sla_api.update_failed') } 
+      elsif @new_company_ids.blank? 
+        errors[:errors] << {:message=> t('sla_policy.update_company_sla_api.invalid_arguments_for_update'), :error => t('sla_policy.update_company_sla_api.update_failed') } 
+      elsif @new_company_ids.present? && !@new_company_ids.is_a?(String)
+        errors[:errors] << {:message=> t('sla_policy.update_company_sla_api.invalid_data_type'), :error => t('sla_policy.update_company_sla_api.update_failed') }
+      end 
+      api_json_responder(errors, 400) if errors[:errors].any? 
     end
   
 end

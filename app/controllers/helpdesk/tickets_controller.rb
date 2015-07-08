@@ -15,6 +15,7 @@ class Helpdesk::TicketsController < ApplicationController
   include CustomerDeprecationMethods::NormalizeParams
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
+  helper Helpdesk::TicketsExportHelper
   include Helpdesk::TagMethods
 
   before_filter :redirect_to_mobile_url  
@@ -59,9 +60,10 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
-  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
-  before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
+  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
+  before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
+  before_filter :load_note_reply_cc, :only => [:reply_to_forward]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
@@ -98,7 +100,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
-        if @items.empty? && !params[:page].nil? && params[:page] != '1'
+        if (@items.length < 1) && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'  
           @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         end
@@ -109,6 +111,7 @@ class Helpdesk::TicketsController < ApplicationController
           @show_options = show_options
         end
         @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
+        flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
@@ -260,17 +263,18 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-          @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
-
+        @ticket_notes       = @ticket_notes.reverse
+        @ticket_notes_total = @ticket.conversation_count
+        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
       }
-	  format.json {
-		render :json => @item.to_json
-	  }
+	    format.json {
+		    render :json => @item.to_json
+	    }
       format.js
       format.nmobile {
         hash = {}
@@ -282,7 +286,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
-        hash.merge!({:reply_template => parsed_reply_template(@ticket,@signature)})
+        hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.is_twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.is_twitter?
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
@@ -548,12 +552,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def empty_trash
-    ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
-     st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
-       set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
-       where t.deleted=1 and t.account_id=#{current_account.id}")
-    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id} )
-    flash[:notice] = t(:'flash.tickets.empty_trash.success')
+    # ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
+    #  st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
+    #    set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
+    #    where t.deleted=1 and t.account_id=#{current_account.id}")
+    set_tickets_redis_key(empty_trash_key, true, 1.day)
+    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id, :empty_trash => true} )
+    flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete')
     redirect_to :back
   end
 
@@ -818,10 +823,6 @@ class Helpdesk::TicketsController < ApplicationController
       helpdesk_tickets_path
     end
     
-    def scoper_user_filters
-      current_account.ticket_filters.my_ticket_filters(current_user)
-    end
-
     def process_item
        @item.spam = false
        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/save_and_close_notice') if save_and_close?
@@ -875,11 +876,14 @@ class Helpdesk::TicketsController < ApplicationController
     reply_to_all_emails
   end
 
+  def load_note_reply_cc
+    @to_cc_emails, @to_email = @note.load_note_reply_cc
+  end
+
   def load_by_param(id)
     current_account.tickets.find_by_param(id,current_account)
   end
 
-  
   private
 
     def find_topic
@@ -1116,6 +1120,10 @@ class Helpdesk::TicketsController < ApplicationController
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
       :ticket_id => @ticket.id}
+  end
+
+  def empty_trash_key
+    EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id}
   end
   
   def set_selected_tab

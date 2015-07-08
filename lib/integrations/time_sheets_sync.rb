@@ -1,7 +1,7 @@
 class Integrations::TimeSheetsSync 
 
   def self.applications
-    [Integrations::Constants::APP_NAMES[:freshbooks], Integrations::Constants::APP_NAMES[:workflow_max], Integrations::Constants::APP_NAMES[:harvest]]
+    [Integrations::Constants::APP_NAMES[:freshbooks], Integrations::Constants::APP_NAMES[:workflow_max], Integrations::Constants::APP_NAMES[:harvest], Integrations::Constants::APP_NAMES[:quickbooks]]
   end
 
   def self.update(time_entry, user)
@@ -47,6 +47,18 @@ class Integrations::TimeSheetsSync
     response = hrp_request(params,"post","HARVEST_UPDATE_REQ")
   end
 
+  def self.quickbooks(inst_app, timeentry, user)
+    integrated_resource = timeentry.integrated_resources.find_by_installed_application_id(inst_app)
+    return if integrated_resource.blank?
+    params = quickbooks_params('post', "v3/company/" + inst_app.configs[:inputs]['company_id'] + "/timeactivity")
+    quickbooks_timeentry = quickbooks_fetch_timeentry(inst_app, integrated_resource.remote_integratable_id)
+    quickbooks_timeentry["hours"] = timeentry.hours.to_f.floor
+    quickbooks_timeentry["minutes"] = ((timeentry.hours.to_f * 60) % 60).round
+    quickbooks_timeentry["notes"] = quickbooks_timeentry["Description"].to_json
+    params[:body] = QUICKBOOKS_UPDATE_REQ.render(quickbooks_timeentry)
+    response = hrp_request(params, "post", "QUICKBOOKS_UPDATE_REQ")
+  end
+
   private
 
     def self.hrp_request(params,method,oper)
@@ -84,10 +96,33 @@ class Integrations::TimeSheetsSync
       wfm_time_entry = {'staff_id'=>xml.css("Time Staff ID").text,'task_id' => xml.css("Time Task ID").text,'job_id' => xml.css("Time Job ID").text,'date'=>date}
     end
 
+    def self.quickbooks_fetch_timeentry(installed_app, remote_integratable_id)
+      rest_url = "v3/company/" + installed_app.configs[:inputs]['company_id'] + "/timeactivity/" + remote_integratable_id
+      params = quickbooks_params('get', rest_url)
+      response = hrp_request(params, "get", "QUICKBOOKS_UPDATE_REQ")
+      parse_quickbooks_response(response)
+    end
+
+    def self.parse_quickbooks_response(response)
+      JSON.parse(response[:text])["IntuitResponse"]["TimeActivity"]
+    end
+
     def self.harvest_params(credential,timeentry,rest_url)
       password = Base64.decode64(credential.auth_info[:password])
       params = {:ssl_enabled => "true", :rest_url=>rest_url, :content_type => "application/xml", :accept_type => "application/xml", :username => credential.auth_info[:username], :password => password }
       params[:body] = HARVEST_UPDATE_REQ.render('hours'=>timeentry.hours)
+      params
+    end
+
+    def self.quickbooks_params(method, rest_url)
+      params = {
+        :ssl_enabled => true,
+        :rest_url => rest_url,
+        :auth_type => "OAuth1",
+        :domain => "https://quickbooks.api.intuit.com",
+        :method => method,
+        :app_name => "quickbooks"
+      }
       params
     end
 
@@ -97,5 +132,7 @@ class Integrations::TimeSheetsSync
     WFM_UPDATE_REQ = Liquid::Template.parse('<Timesheet><ID>{{time_entry_id}}</ID><Job>{{job_id}}</Job><Task>{{task_id}}</Task><Staff>{{staff_id}}</Staff><Date>{{date}}</Date><Minutes>{{hours}}</Minutes><Note><![CDATA[{{notes}}]]></Note></Timesheet>')
 
     HARVEST_UPDATE_REQ = Liquid::Template.parse('<request><hours>{{hours}}</hours></request>')
+
+    QUICKBOOKS_UPDATE_REQ = Liquid::Template.parse('{"TxnDate" : "{{TxnDate}}", "NameOf" : "Employee", "EmployeeRef" : {"value" : {{EmployeeRef}}}, "CustomerRef" : {"value" : {{CustomerRef}}}, "BillableStatus" : "Billable", "HourlyRate" : "0", "Hours" : {{hours}}, "Minutes" : {{minutes}}, "Id" : {{Id}}, "SyncToken" : {{SyncToken}}, "Description" : {{notes}}}')
 
 end

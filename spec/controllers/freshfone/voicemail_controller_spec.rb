@@ -17,7 +17,8 @@ describe Freshfone::VoicemailController do
     current_call = controller.current_call
     xml.should have_key(:Response)
     current_call.recording_url.should_not be_blank
-    current_call.should be_noanswer
+    current_call.reload
+    current_call.should be_voicemail
   end
 
 end

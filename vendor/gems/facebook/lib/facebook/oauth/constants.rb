@@ -16,6 +16,8 @@ module Facebook
       ]
 
       URL = "https://www.facebook.com/dialog/oauth"
+      
+      PAGE_TAB_URL = "https://www.facebook.com/dialog/pagetab"
 
       REALTIME = "realtime"
 

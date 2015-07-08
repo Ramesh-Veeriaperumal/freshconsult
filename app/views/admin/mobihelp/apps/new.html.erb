@@ -8,7 +8,7 @@
 
 <%= content_tag :h3, @page_title, :class => "lead" %>
 <div class="row-fluid">
-	<%= form_for( @app  , :html => {:class => "form-horizontal" }, :url => admin_mobihelp_apps_path, :action => "create" ) do |f| %>
+	<%= form_for( @app  , :html => {:class => "form-horizontal", :rel => "validate"}, :url => admin_mobihelp_apps_path, :action => "create" ) do |f| %>
 		<%= render :partial => "form", :locals => {:f => f, :page => "new"} %>
 	<% end %>
 </div>

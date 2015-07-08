@@ -6,3 +6,10 @@ AWS.config(
     :access_key_id => S3_CONFIG[:access_key_id],
     :secret_access_key => S3_CONFIG[:secret_access_key],
     :region => S3_CONFIG[:region])
+
+Aws.config.update({
+  region: S3_CONFIG[:region],
+  credentials: Aws::Credentials.new(S3_CONFIG[:access_key_id],  S3_CONFIG[:secret_access_key])
+})
+
+$s3_client = Aws::S3::Client.new

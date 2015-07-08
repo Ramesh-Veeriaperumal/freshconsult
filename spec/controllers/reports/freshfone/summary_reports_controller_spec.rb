@@ -60,7 +60,7 @@ describe Reports::Freshfone::SummaryReportsController do
    it "should generate the summary for the incoming calls for all numbers" do
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
-    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Reports::FreshfoneReport::ALL_NUMBERS, 
+    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Freshfone::Number::ALL_NUMBERS, 
           :call_type => 1,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
     assigns[:calls].should_not be_empty
     response.should render_template("reports/freshfone/summary_reports/generate")
@@ -69,7 +69,7 @@ describe Reports::Freshfone::SummaryReportsController do
    it "should generate the summary for the outgoing calls for all numbers" do
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
-    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Reports::FreshfoneReport::ALL_NUMBERS, 
+    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Freshfone::Number::ALL_NUMBERS, 
           :call_type => 2,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
     assigns[:calls].should be_empty
     response.should render_template("reports/freshfone/summary_reports/generate")

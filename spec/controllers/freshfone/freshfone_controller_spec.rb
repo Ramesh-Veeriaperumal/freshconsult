@@ -93,7 +93,7 @@ RSpec.describe FreshfoneController do
 
   it 'should respond with ok status' do
     log_in(@agent)
-    get :dial_check, { :phone_number => "+918754693849" }
+    get :dial_check, { :phone_number => "+918754693849", :is_country => "true" }
     result = JSON.parse(response.body).symbolize_keys
     result.should include(:status => "ok") 
   end
@@ -108,17 +108,17 @@ RSpec.describe FreshfoneController do
 
   it 'should respond with dial restricted country status' do
     log_in(@agent)
-    get :dial_check, { :phone_number => "+8558754693849" } 
+    get :dial_check, { :phone_number => "+8558754693849" , :is_country => "true"} 
     result = JSON.parse(response.body).symbolize_keys
     result.should include(:status => "dial_restricted_country") 
   end
 
   it "must throw exception if country is not present" do
     log_in(@agent)
-    get :dial_check, { :phone_number => "+2478754693849" } 
+    get :dial_check, { :phone_number => "+2478754693849" , :is_country => "true"} 
     begin
       expect(response).to raise_error
-    rescue
+    rescue Exception => e
     end
   end
 
@@ -191,4 +191,17 @@ RSpec.describe FreshfoneController do
     Freshfone::Call.find(freshfone_call.id).ticket.should be_nil
   end
 
+  it 'should create a new call ticket with new customer name accordingly when the call is from Strange Number' do
+    strange_number = "+17378742833"  
+    log_in(@agent)
+    freshfone_call = create_freshfone_call
+    build_freshfone_caller(strange_number)
+    create_freshfone_user if @agent.freshfone_user.blank?
+    params = { :CallSid => freshfone_call.call_sid, :call_log => "Sample Freshfone Ticket", 
+               :requester_name => strange_number, :ticket_subject => "Call with Oberyn", :call_history => "false"}
+    post :create_ticket, params    
+    assigns[:current_call].ticket.requester_name.should be_eql("RESTRICTED")
+    User.last.name.should be_eql("RESTRICTED")
+  end
+  
 end
