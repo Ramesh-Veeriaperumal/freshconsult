@@ -6,7 +6,7 @@
     <div data-tabs='tabs'>
       <ul role="tablist">
         <li class="dropdown">
-          <h5 class="dropdown-toggle" data-toggle="dropdown">
+          <h5 class="dropdown-toggle" data-toggle="<%='dropdown' if  my_drafts_count > 1 %>">
             <% title = my_drafts_count < 1 ? t('solution.sidebar.drafts.all') : t('solution.sidebar.drafts.me') %> 
             <span class="widget-filter drafts-filter-title"><%= title %></span>
             <% unless my_drafts_count < 1 %>

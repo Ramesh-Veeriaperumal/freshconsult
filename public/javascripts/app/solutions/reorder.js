@@ -27,7 +27,7 @@ window.App.Solutions = window.App.Solutions || {};
 				ev.preventDefault();
 				$this.bindSortable();
 				$this.classToggle();
-				$this.hideSearchIcon();
+				$this.hideSearch();
 			});
 		},
 
@@ -67,7 +67,7 @@ window.App.Solutions = window.App.Solutions || {};
 					},
 					success: function () {
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
-						$this.showSearchIcon();
+						$this.showSearch();
 						// App.Discussions.Sidebar.reload();
 						$('body').trigger('afterReorder');
 					}
@@ -85,7 +85,7 @@ window.App.Solutions = window.App.Solutions || {};
 				$('.comm-items ul').html($('.comm-items ul').data('list_item'));
 				$('.comm-items ul').sortable("destroy");
 				$this.classToggle();
-				$this.showSearchIcon();
+				$this.showSearch();
 			});
 		},
 
@@ -97,12 +97,13 @@ window.App.Solutions = window.App.Solutions || {};
 			return positionHash.toJSON();
 		},
 
-		showSearchIcon: function () {
+		showSearch: function () {
 			$('#search-show').show();
 		},
 
-		hideSearchIcon: function () {
+		hideSearch: function () {
 			$('#search-show').hide();
+			App.Solutions.SearchConfig.hideSearch();
 		},
 
 		leave: function () {

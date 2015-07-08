@@ -8,7 +8,7 @@
       <div data-tabs='tabs'>
           <ul role="tablist">
             <li class="dropdown">
-              <h5 class="dropdown-toggle" data-toggle="dropdown">
+              <h5 class="dropdown-toggle" data-toggle="<%='dropdown' if  my_feedbacks_count > 1 %>">
                 <% title = my_feedbacks_count < 1 ? t('solution.sidebar.feedbacks.all') : t('solution.sidebar.feedbacks.me') %> 
                 <span class="widget-filter feedbacks-filter-title"><%= title %></span>
                 <% unless my_feedbacks_count < 1 %>
