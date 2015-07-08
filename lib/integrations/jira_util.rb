@@ -73,7 +73,7 @@ class Integrations::JiraUtil
             end 
             set_integ_redis_key(jira_key, "true", 240) # The key will expire within 4 mins.
             jira_obj.send(invoke_action, issue_id, mapped_data)
-            jira_obj.construct_attachment_params(issue_id, data) if invoke_action == "add_comment" && data.class == Helpdesk::Note && (installed_jira_app.configs[:inputs]["exclude_attachment_sync"] == "0" || installed_app.configs[:inputs]["exclude_attachment_sync"].nil?)
+            jira_obj.construct_attachment_params(issue_id, data) if invoke_action == "add_comment" && data.class == Helpdesk::Note 
           }
         end  
       rescue Exception => e
