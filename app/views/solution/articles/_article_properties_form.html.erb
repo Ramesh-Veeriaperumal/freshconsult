@@ -30,7 +30,7 @@
 
 			<div class="control-group row-fluid">
 				<%= f.label :name, t('solution.type'),:class =>"control-label" %>
-				<div class="controls">
+				<div class="controls mt7">
 					<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
 						<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
 						<%= f.label :art_type, t(type), :value => val %>

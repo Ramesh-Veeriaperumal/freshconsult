@@ -974,7 +974,10 @@ body.community #sticky_header.category-sticky.is_stuck {
   margin-top: 3px;
 }
 
-#solution-properties {
-  border-top: 1px solid #CCC;
+.article-properties-edit {
+ border-top: 1px solid #CCC;
 }
 
+#solution_article_art_type_1, #solution_article_art_type_2 {
+  margin-top:-2px;
+}
