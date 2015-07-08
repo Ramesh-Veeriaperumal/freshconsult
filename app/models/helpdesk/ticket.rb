@@ -166,14 +166,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
-  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
-    :conditions => ["display_id > (?)",display_id],
-    :limit => limit,
-    :order => order_param
-    }
-  }
-  
   class << self # Class Methods
+
+    def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
+      if display_id != 0 
+        where(query_string,display_id).order(order_param).limit(limit_val)
+      else
+        order(order_param).limit(limit_val)
+      end
+    end
 
     def agent_permission user
       permissions = {:all_tickets => [] , 
