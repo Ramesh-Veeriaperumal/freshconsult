@@ -1,5 +1,5 @@
 module ApiTicketConstants
-  # *********************************-- ControllerConstants --*********************************************
+  # ControllerConstants
 
   TICKET_ARRAY_FIELDS = [{ 'tags' => [String] }, { 'cc_emails' => [String] }, { 'attachments' => [] }]
   CREATE_TICKET_FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags) | TICKET_ARRAY_FIELDS

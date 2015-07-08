@@ -35,7 +35,7 @@ module ApiDiscussions
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_POST_FIELDS")
         params[cname].permit(*(fields))
         post = ApiDiscussions::PostValidation.new(params[cname], @post)
-        render_error post.errors unless post.valid?
+        render_error post.errors, post.error_options unless post.valid?
       end
 
       def scoper
@@ -47,7 +47,7 @@ module ApiDiscussions
           locked = @post.topic.try(:locked?)
           if locked # if topic is locked, a customer cannot post.
             customer = @user.try(:is_customer)
-            render_invalid_user_error if customer
+            render_request_error(:access_denied, 403, id: @user.id, name: @user.name) if customer
           end
         end
       end

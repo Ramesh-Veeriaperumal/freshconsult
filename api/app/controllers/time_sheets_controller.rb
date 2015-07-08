@@ -3,7 +3,6 @@ class TimeSheetsController < ApiApplicationController
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :validate_filter_params, only: [:index]
-  before_filter :build_object, only: [:create]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
   def index
@@ -34,7 +33,7 @@ class TimeSheetsController < ApiApplicationController
                 # update_running_timer and @item.update_attributes should be wrapped in a transaction.
                 update_running_timer @time_sheet.user_id
                 { start_time: Time.zone.now }
-    end
+              end
     changed.merge!(timer_running: !timer_running)
     unless @time_sheet.update_attributes(changed)
       render_error @time_sheet.errors
@@ -55,7 +54,7 @@ class TimeSheetsController < ApiApplicationController
     def validate_filter_params
       params.permit(*TimeSheetConstants::INDEX_TIMESHEET_FIELDS, *ApiConstants::DEFAULT_PARAMS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       timesheet_filter = TimeSheetFilterValidation.new(params, nil)
-      render_error timesheet_filter.errors unless timesheet_filter.valid?
+      render_error timesheet_filter.errors, timesheet_filter.error_options unless timesheet_filter.valid?
     end
 
     def validate_params
@@ -63,7 +62,7 @@ class TimeSheetsController < ApiApplicationController
       fields = get_fields("TimeSheetConstants::#{action_name.upcase}_TIME_SHEET_FIELDS")
       params[cname].permit(*fields)
       @time_sheet_val = TimeSheetValidation.new(params[cname], @item, current_account, @timer_running)
-      render_error @time_sheet_val.errors unless @time_sheet_val.valid?(action_name.to_sym)
+      render_error @time_sheet_val.errors, @time_sheet_val.error_options unless @time_sheet_val.valid?(action_name.to_sym)
     end
 
     def validate_toggle_params
@@ -103,6 +102,7 @@ class TimeSheetsController < ApiApplicationController
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
       return true if params[cname][:timer_running].to_s.to_bool == true && @item.timer_running.to_s.to_bool == false
+
       # Should stop timer for the new user if different user_id is set as part of this update call
       return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && @timer_running.to_s.to_bool == false
       false

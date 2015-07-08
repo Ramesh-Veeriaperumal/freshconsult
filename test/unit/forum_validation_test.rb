@@ -6,8 +6,8 @@ class ForumValidationsTest < ActionView::TestCase
     item = nil
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?
-    assert_equal ["Name can't be blank", 'Forum category is not a number', 'Forum visibility Should be a value in the list 1,2,3,4',
-                  'Forum type Should be a value in the list 1,2,3,4'], forum.errors.full_messages
+    assert_equal ["Name can't be blank", 'Forum category is not a number', 'Forum visibility not_included',
+                  'Forum type not_included'], forum.errors.full_messages
   end
 
   def test_numericality_params_invalid
@@ -24,8 +24,8 @@ class ForumValidationsTest < ActionView::TestCase
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?
     error = forum.errors.full_messages
-    assert error.include?('Forum visibility Should be a value in the list 1,2,3,4')
-    assert error.include?('Forum type Should be a value in the list 1,2,3,4')
+    assert error.include?('Forum visibility not_included')
+    assert error.include?('Forum type not_included')
   end
 
   def test_presence_item_valid

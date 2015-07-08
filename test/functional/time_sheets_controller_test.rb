@@ -153,12 +153,12 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', user_id: 'er', group_id: 'ui', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', 'Should be a value in the list true,false')]
+    pattern = [bad_request_error_pattern('billable', 'not_included', list: 'true,false')]
     pattern << bad_request_error_pattern('user_id', 'is not a number')
     pattern << bad_request_error_pattern('company_id', 'is not a number')
     pattern << bad_request_error_pattern('group_id', 'is not a number')
-    pattern << bad_request_error_pattern('executed_after', 'is not a date')
-    pattern << bad_request_error_pattern('executed_before', 'is not a date')
+    pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
+    pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date')
     assert_response :bad_request
     match_json pattern
   end
@@ -528,8 +528,8 @@ class TimeSheetsControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('start_time', 'is not a date'),
-                bad_request_error_pattern('executed_at', 'is not a date')])
+    match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date'),
+                bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date')])
   end
 
   def test_update_inclusion_invalid
@@ -540,8 +540,8 @@ class TimeSheetsControllerTest < ActionController::TestCase
                                                   timer_running: '89', executed_at: executed_at,
                                                   note: 'test note', billable: '12')
     assert_response :bad_request
-    match_json([bad_request_error_pattern('timer_running', 'Should be a value in the list true,false'),
-                bad_request_error_pattern('billable', 'Should be a value in the list true,false')])
+    match_json([bad_request_error_pattern('timer_running', 'not_included', list: 'true,false'),
+                bad_request_error_pattern('billable', 'not_included', list: 'true,false')])
   end
 
   def test_update_format_invalid

@@ -11,7 +11,6 @@ class TicketsController < ApiApplicationController
   before_filter :restrict_params, only: [:assign, :restore]
   skip_before_filter :load_objects, only: [:index]
   before_filter :validate_filter_params, only: [:index]
-  skip_before_filter :load_association, only: [:show]
 
   def index
     load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,
@@ -26,7 +25,7 @@ class TicketsController < ApiApplicationController
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
       rename_error_fields(group: :group_id, responder: :user_id, email_config: :email_config_id,
-        product: :product_id)
+                          product: :product_id)
       render_error(@item.errors)
     end
   end
@@ -74,13 +73,10 @@ class TicketsController < ApiApplicationController
 
   private
 
-    def load_association
-      @notes = @ticket.notes.includes(:note_old_body, :schema_less_note)
-    end
-
     def paginate_options
       options = super
-      # this being used by notes action also. Hence order options based on action.
+
+      # this being used by notes/time_sheets action also. Hence order options based on action.
       options[:order] = order_clause if ApiTicketConstants::ORDER_BY_SCOPE["#{action_name}"]
       options
     end
@@ -104,7 +100,7 @@ class TicketsController < ApiApplicationController
       # Should allow per page & page params also. Use *ApiConstants::DEFAULT_INDEX_FIELDS
       params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       @ticket_filter = TicketFilterValidation.new(params, current_account)
-      render_error(@ticket_filter.errors) unless @ticket_filter.valid?
+      render_error(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
@@ -119,26 +115,31 @@ class TicketsController < ApiApplicationController
       # Assign cc_emails serialized hash
       cc_emails =  params[cname][:cc_emails] || []
       params[cname][:cc_email] = { cc_emails: cc_emails, fwd_emails: [], reply_cc: cc_emails }
+
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
+
       # Collect tags in instance variable as it should not be part of params before build item.
       @tags = params[cname][:tags] if params[cname][:tags]
+
       # Assign original fields from api params and clean api params.
       assign_and_clean_params(custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type)
       clean_params([:cc_emails, :tags])
+
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
 
     def validate_params
-      allowed_custom_fields = Helpers::TicketsValidation.ticket_custom_field_keys(current_account)
+      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(current_account)
+
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = "ApiTicketConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ticket = TicketValidation.new(params[cname], @item, current_account)
-      render_error ticket.errors unless ticket.valid?
+      render_error ticket.errors, ticket.error_options unless ticket.valid?
     end
 
     def assign_protected

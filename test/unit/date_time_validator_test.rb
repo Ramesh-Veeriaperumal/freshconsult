@@ -4,7 +4,7 @@ class DateTimeValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :fr_due_by, :due_by
+    attr_accessor :fr_due_by, :due_by, :error_options
     validates :due_by, :fr_due_by, date_time: { allow_nil: true }
   end
 
@@ -26,8 +26,8 @@ class DateTimeValidatorTest < ActionView::TestCase
     date_time_validator.validate_each(test, :due_by, 'test')
     date_time_validator.validate_each(test, :fr_due_by, Time.zone.now.to_s)
     refute test.errors.empty?
-    refute test.errors.full_messages.include?('Fr due by is not a date')
-    assert test.errors.full_messages.include?('Due by is not a date')
+    refute test.errors.full_messages.include?('Fr due by data_type_mismatch')
+    assert test.errors.full_messages.include?('Due by data_type_mismatch')
   end
 
   def test_valid_allow_nil
@@ -44,7 +44,7 @@ class DateTimeValidatorTest < ActionView::TestCase
     test.due_by = ''
     date_time_validator.validate_each(test, :due_by, '')
     refute test.errors.empty?
-    assert test.errors.full_messages.include?('Due by is not a date')
+    assert test.errors.full_messages.include?('Due by data_type_mismatch')
   end
 
   def test_invalid_allow_nil
@@ -53,6 +53,6 @@ class DateTimeValidatorTest < ActionView::TestCase
     date_time_validator.validate_each(test, :fr_due_by, nil)
     date_time_validator.validate_each(test, :due_by, nil)
     refute test.errors.empty?
-    assert_equal ['Fr due by is not a date', 'Due by is not a date'], test.errors.full_messages
+    assert_equal ['Fr due by data_type_mismatch', 'Due by data_type_mismatch'], test.errors.full_messages
   end
 end

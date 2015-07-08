@@ -5,15 +5,15 @@ Todo:
  - display_id and ticket states to be supported in bulk import / bulk create
  - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
  - tests for checking privileges for a action.
- - Handle global unpermitted params for wrong datatype errors.
  - Fix miniprofiler, mobile actions, oj, ticket fields, review tkts
  - handle xss, customer_forum numericality, ticket scopes
- - boolean values in validation should be converted to mysql readable format.
- - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
  - base as attribute name in model errors for multiple attributes. - should change that
  - Content type for get ticket index.
  - introduce spam, unspam &  delete_forever for ticket via api
  - include meta info( created_by ) of a ticket in response on demand and needly basis
+ - Allow attachments as part of discussions/post API call? Not supported in V1 - not now
+ - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
+ - move error messages from en.yml file. Should not involve internatinalization.
 
 Breaking changes in existing APIs:
  - day pass required
@@ -24,6 +24,8 @@ Breaking changes in existing APIs:
  - validate presence of user in Agent Groups
 
 Deferred:
+ - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
+ - Handle global unpermitted params for wrong datatype errors.
  - Default content_type should be application/json in request header if not set?
  - caching(db also)
  - update (override or incremental) -  override
@@ -37,6 +39,9 @@ Deferred:
  - "Validate picklist values for custom drop down & dependent fields in ticket"
 
 Completed:
+ - Rack::MethodOverride middleware should be allowed as PHP has this kind of implementation to fire PUT require request.
+ - Content type for get ticket index.
+ - handle xss, customer_forum numericality, ticket scopes
  - "Application controller before filters(controller logger, cache buster) to be added"
  - ticket custom fields test
  - multipart form data handle
@@ -82,6 +87,7 @@ Completed:
  - "Expose email config and product index"
 
 Not_necessary:
+ - boolean values in validation should be converted to mysql readable format.
  - revisit cc_email in v2 api tickets create.
  - AMS for ticket repsonse
  - Clean up old discussions controller *****

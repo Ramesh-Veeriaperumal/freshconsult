@@ -41,8 +41,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        auto_ticket_assign: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
-                bad_request_error_pattern('unassigned_for', 'Should be a value in the list 30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
-                bad_request_error_pattern('auto_ticket_assign', 'Should be a value in the list true,false')])
+                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
   end
 
   def test_create_group_with_invalid_agent_list
@@ -55,7 +55,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     agent_id = Faker::Number.between(5000, 10_000)
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agents: [agent_id])
-    match_json([bad_request_error_pattern('agents', 'list is invalid', meta: agent_id.to_s)])
+    match_json([bad_request_error_pattern('agents', 'list is invalid', list: agent_id.to_s)])
   end
 
   def test_index_groups
@@ -119,8 +119,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
-                bad_request_error_pattern('unassigned_for', 'Should be a value in the list 30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
-                bad_request_error_pattern('auto_ticket_assign', 'Should be a value in the list true,false')])
+                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
   end
 
   def test_update_group_with_invalid_id

@@ -79,24 +79,24 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('priority', 'Should be a value in the list 1,2,3,4'),
-                bad_request_error_pattern('status', 'Should be a value in the list 2,3,4,5,6,7'),
-                bad_request_error_pattern('type', 'Should be a value in the list Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'Should be a value in the list 1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', 'not_included', list: '1,2,3,4'),
+                bad_request_error_pattern('status', 'not_included', list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'not_included', list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'not_included', list: '1,2,3,7,8,9')])
   end
 
   def test_create_presence_requester_id_invalid
     params = ticket_params_hash.except(:email)
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory')])
   end
 
   def test_create_presence_name_invalid
     params = ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number)
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('name', "can't be blank")])
+    match_json([bad_request_error_pattern('name', 'phone_mandatory')])
   end
 
   def test_create_email_format_invalid
@@ -112,9 +112,9 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(cc_emails: cc_emails, tags: 'tag1,tag2', custom_fields: [])
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cc_emails', 'is not a/an Array'),
-                bad_request_error_pattern('tags', 'is not a/an Array'),
-                bad_request_error_pattern('custom_fields', 'Should be a key/value pair')])
+    match_json([bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('custom_fields', 'data_type_mismatch', data_type: 'key/value pair')])
   end
 
   def test_create_date_time_invalid
@@ -176,7 +176,7 @@ class TicketsControllerTest < ActionController::TestCase
   # end
 
   def test_create_invalid_user_id
-    params = ticket_params_hash.except(:email)
+    params = ticket_params_hash.except(:email).merge(requester_id: 898_999)
     post :create, construct_params({}, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('requester_id', 'should be a valid email address')])
@@ -193,7 +193,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = {}
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory')])
   end
 
   def test_create_returns_location_header
@@ -309,7 +309,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
   end
 
   def test_attachment_invalid_size_create
@@ -323,7 +323,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('attachments', 'invalid_size')])
   end
 
-  def test_attachments_invalid_size_update
+  def test_attachment_invalid_size_update
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = update_ticket_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
@@ -393,7 +393,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
   end
 
   def test_update
@@ -688,10 +688,10 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('priority', 'Should be a value in the list 1,2,3,4'),
-                bad_request_error_pattern('status', 'Should be a value in the list 2,3,4,5,6,7'),
-                bad_request_error_pattern('type', 'Should be a value in the list Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', 'Should be a value in the list 1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', 'not_included', list: '1,2,3,4'),
+                bad_request_error_pattern('status', 'not_included', list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'not_included', list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'not_included', list: '1,2,3,7,8,9')])
   end
 
   def test_update_presence_requester_id_invalid
@@ -699,7 +699,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
+    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory')])
   end
 
   def test_update_presence_name_invalid
@@ -707,7 +707,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number, requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('name', "can't be blank")])
+    match_json([bad_request_error_pattern('name', 'phone_mandatory')])
   end
 
   def test_update_email_format_invalid
@@ -724,8 +724,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [])
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('tags', 'is not a/an Array'),
-                bad_request_error_pattern('custom_fields', 'Should be a key/value pair')])
+    match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('custom_fields', 'data_type_mismatch', data_type: 'key/value pair')])
   end
 
   def test_update_date_time_invalid
@@ -1096,8 +1096,8 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_sort_params
     get :index, controller_params(order_type: 'test', order_by: 'test')
     assert_response :bad_request
-    pattern = [bad_request_error_pattern('order_type', 'Should be a value in the list asc,desc')]
-    pattern << bad_request_error_pattern('order_by', 'Should be a value in the list due_by,created_at,updated_at,priority,status')
+    pattern = [bad_request_error_pattern('order_type', 'not_included', list: 'asc,desc')]
+    pattern << bad_request_error_pattern('order_by', 'not_included', list: 'due_by,created_at,updated_at,priority,status')
     match_json(pattern)
   end
 
@@ -1112,7 +1112,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 999, requester_id: 999, filter: 'x')
-    pattern = [bad_request_error_pattern('filter', 'Should be a value in the list new_and_my_open,monitored_by,spam,deleted')]
+    pattern = [bad_request_error_pattern('filter', 'not_included', list: 'new_and_my_open,monitored_by,spam,deleted')]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     pattern << bad_request_error_pattern('requester_id', "can't be blank")
     assert_response :bad_request

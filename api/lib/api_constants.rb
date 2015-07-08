@@ -22,4 +22,5 @@ module ApiConstants
 
   BOOLEAN_VALUES = [true, false] # for boolean fields all these values are accepted.
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
+  ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
 end

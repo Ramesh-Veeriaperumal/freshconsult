@@ -55,7 +55,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_type: 7897)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('forum_type', 'Should be a value in the list 1,2,3,4')])
+      match_json([bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')])
     end
 
     def test_update_invalid_forum_visibility
@@ -63,7 +63,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_visibility: 7897)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('forum_visibility', 'Should be a value in the list 1,2,3,4')])
+      match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4')])
     end
 
     def test_update_duplicate_name
@@ -106,7 +106,7 @@ module ApiDiscussions
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id, 67, 78])
       assert_response :bad_request
-      match_json([bad_request_error_pattern('customers', 'list is invalid', meta: '67, 78')])
+      match_json([bad_request_error_pattern('customers', 'list is invalid', list: '67, 78')])
     end
 
     def test_update_with_customer_id
@@ -128,8 +128,8 @@ module ApiDiscussions
 
     def test_create_validate_inclusion
       post :create, construct_params({}, name: 'test', forum_category_id: 1)
-      match_json([bad_request_error_pattern('forum_visibility', 'Should be a value in the list 1,2,3,4'),
-                  bad_request_error_pattern('forum_type', 'Should be a value in the list 1,2,3,4')])
+      match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')])
       assert_response :bad_request
     end
 
@@ -157,8 +157,8 @@ module ApiDiscussions
       post :create, construct_params({}, {})
       pattern = [bad_request_error_pattern('name', "can't be blank"),
                  bad_request_error_pattern('forum_category_id', 'is not a number'),
-                 bad_request_error_pattern('forum_visibility', 'Should be a value in the list 1,2,3,4'),
-                 bad_request_error_pattern('forum_type', 'Should be a value in the list 1,2,3,4')]
+                 bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
+                 bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')]
       match_json(pattern)
       assert_response :bad_request
     end
@@ -169,7 +169,7 @@ module ApiDiscussions
       post :create, construct_params({}, description: 'desc', forum_visibility: '4', forum_type: 1,
                                          name: 'customer test', forum_category_id: fc.id, customers: [customer.id, 67, 78])
       assert_response :bad_request
-      match_json([bad_request_error_pattern('customers', 'list is invalid', meta: '67, 78')])
+      match_json([bad_request_error_pattern('customers', 'list is invalid', list: '67, 78')])
     end
 
     def test_create_with_customer_id
@@ -206,7 +206,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 'x', forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, customers: [customer.id] }
       post :create, construct_params({}, params)
-      match_json([bad_request_error_pattern('forum_visibility', 'Should be a value in the list 1,2,3,4'),
+      match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                   bad_request_error_pattern('customers', 'invalid_field')])
       assert_response :bad_request
     end
@@ -216,7 +216,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 'x', customers: "#{customer.id}")
-      match_json([bad_request_error_pattern('forum_visibility', 'Should be a value in the list 1,2,3,4'),
+      match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                   bad_request_error_pattern('customers', 'invalid_field')])
       assert_response :bad_request
     end
@@ -226,7 +226,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, customers: "#{customer.id}" }
       post :create, construct_params({}, params)
-      match_json([bad_request_error_pattern('customers', 'is not a/an Array')])
+      match_json([bad_request_error_pattern('customers', 'data_type_mismatch', data_type: 'Array')])
       assert_response :bad_request
     end
 
@@ -235,7 +235,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: "#{customer.id}")
-      match_json([bad_request_error_pattern('customers', 'is not a/an Array')])
+      match_json([bad_request_error_pattern('customers', 'data_type_mismatch', data_type: 'Array')])
       assert_response :bad_request
     end
 
@@ -266,8 +266,8 @@ module ApiDiscussions
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
       pattern = [bad_request_error_pattern('name', "can't be blank"),
                  bad_request_error_pattern('forum_category_id', 'is not a number'),
-                 bad_request_error_pattern('forum_visibility', 'Should be a value in the list 1,2,3,4'),
-                 bad_request_error_pattern('forum_type', 'Should be a value in the list 1,2,3,4')]
+                 bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
+                 bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')]
       match_json(pattern)
       assert_response :bad_request
     end

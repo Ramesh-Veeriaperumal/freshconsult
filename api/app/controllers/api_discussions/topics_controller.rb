@@ -75,7 +75,7 @@ module ApiDiscussions
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
         params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
-        render_error topic.errors unless topic.valid?
+        render_error topic.errors, topic.error_options unless topic.valid?
       end
 
       def scoper

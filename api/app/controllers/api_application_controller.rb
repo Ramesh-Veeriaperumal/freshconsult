@@ -187,11 +187,6 @@ class ApiApplicationController < MetalApiController
       response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
     end
 
-    def render_invalid_user_error
-      @errors = [BadRequestError.new('user_id/email', 'invalid_user')]
-      render '/bad_request_error', status: 400
-    end
-
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
@@ -220,7 +215,7 @@ class ApiApplicationController < MetalApiController
 
     def render_custom_errors(item, options)
       Array.wrap(options[:remove]).each { |field| item.errors[field].clear }
-      render_error item.errors, options[:meta]
+      render_error item.errors, (options || {}).except(:remove)
     end
 
     def paginate_options

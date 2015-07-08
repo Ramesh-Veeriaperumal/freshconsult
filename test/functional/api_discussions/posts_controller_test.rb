@@ -40,7 +40,7 @@ module ApiDiscussions
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('answer', 'Should be a value in the list true,false')])
+      match_json([bad_request_error_pattern('answer', 'not_included', list: 'true,false')])
     end
 
     def test_update_with_user_id
@@ -135,8 +135,8 @@ module ApiDiscussions
       topic_obj.update_column(:locked, true)
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => user.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
       topic_obj.update_column(:locked, false)
     end
 

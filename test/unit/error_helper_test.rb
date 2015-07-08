@@ -9,7 +9,7 @@ class ErrorHelperTest < ActionView::TestCase
       code = BaseError::API_ERROR_CODES_BY_VALUE[error_array.values[i]] || 'invalid_value'
       assert_equal error_array.keys[i], error.field
       assert_equal (BaseError::API_HTTP_ERROR_STATUS_BY_CODE[code] || 400), error.http_code
-      assert_equal I18n.t("api.error_messages.#{error_array.values[i]}"), error.message
+      assert_equal BaseError::ERROR_MESSAGES[error_array.values[i]], error.message
       assert_equal code, error.code
     end
   end

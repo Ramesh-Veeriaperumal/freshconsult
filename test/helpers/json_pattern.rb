@@ -22,9 +22,10 @@ module JsonPattern
   end
 
   def bad_request_error_pattern(field, value, params_hash = {})
+    message = BaseError::ERROR_MESSAGES.key?(value.to_s) ? BaseError::ERROR_MESSAGES[value.to_s].to_s : value.to_s
     {
       field: "#{field}",
-      message: I18n.t("api.error_messages.#{value}", params_hash.merge(default: value)),
+      message: message % params_hash,
       code: BaseError::API_ERROR_CODES_BY_VALUE[value] || BaseError::DEFAULT_CUSTOM_CODE
     }
   end
@@ -57,15 +58,17 @@ module JsonPattern
   end
 
   def request_error_pattern(code, params_hash = {})
+    message = BaseError::ERROR_MESSAGES.key?(code.to_s) ? BaseError::ERROR_MESSAGES[code.to_s].to_s : code.to_s
     {
       code: code,
-      message: I18n.t("api.error_messages.#{code}", params_hash.merge(default: code))
+      message: message % params_hash
     }
   end
 
   def base_error_pattern(code, params_hash = {})
+    message = BaseError::ERROR_MESSAGES.key?(code.to_s) ? BaseError::ERROR_MESSAGES[code.to_s].to_s : code.to_s
     {
-      message: I18n.t("api.error_messages.#{code}", params_hash.merge(default: code))
+      message: message % params_hash
     }
   end
 

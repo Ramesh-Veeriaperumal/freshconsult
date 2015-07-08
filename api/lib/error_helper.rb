@@ -12,12 +12,8 @@ class ErrorHelper
       errors.collect(&:http_code).group_by { |i| i }.max { |x, y| x[1].length <=> y[1].length }[0]
     end
 
-    def get_translation_params(meta)
-      { meta: meta } # this is being set in set_custom_errors
-    end
-
     def bad_request_error(att, val, meta)
-      BadRequestError.new(att, val, get_translation_params(meta))
+      BadRequestError.new(att, val, meta)
     end
   end
 end

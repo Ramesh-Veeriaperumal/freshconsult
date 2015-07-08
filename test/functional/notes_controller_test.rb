@@ -85,16 +85,16 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { private: 'x', incoming: 'x', ticket_id: ticket.id }
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('incoming', 'Should be a value in the list true,false'),
-                bad_request_error_pattern('private', 'Should be a value in the list true,false')])
+    match_json([bad_request_error_pattern('incoming', 'not_included', list: 'true,false'),
+                bad_request_error_pattern('private', 'not_included', list: 'true,false')])
   end
 
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x', ticket_id: ticket.id }
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('notify_emails', 'is not a/an Array'),
-                bad_request_error_pattern('attachments', 'is not a/an Array')])
+    match_json([bad_request_error_pattern('notify_emails', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
   end
 
   def test_create_email_format_invalid
@@ -160,7 +160,18 @@ class NotesControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+  end
+
+  def test_attachment_invalid_size_create
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = create_note_params_hash.merge('attachments' => [file])
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({}, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_size')])
   end
 
   def test_create_without_privilege
@@ -282,9 +293,9 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x' }
     post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cc_emails', 'is not a/an Array'),
-                bad_request_error_pattern('attachments', 'is not a/an Array'),
-                bad_request_error_pattern('bcc_emails', 'is not a/an Array')])
+    match_json([bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('bcc_emails', 'data_type_mismatch', data_type: 'Array')])
   end
 
   def test_reply_email_format_invalid
@@ -340,11 +351,22 @@ class NotesControllerTest < ActionController::TestCase
     assert Helpdesk::Note.last.attachments.count == 2
   end
 
+  def test_attachments_invalid_size_reply
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = reply_note_params_hash.merge('attachments' => [file])
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_size')])
+  end
+
   def test_reply_with_invalid_attachment_params_format
     params = reply_note_params_hash.merge('attachments' => [1, 2])
     post :reply, construct_params({ ticket_id: ticket.display_id }, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
   end
 
   def test_reply_without_privilege
@@ -403,11 +425,25 @@ class NotesControllerTest < ActionController::TestCase
     assert n.attachments.count == 2
   end
 
+  def test_attachments_invalid_size_update
+    n = note
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = update_note_params_hash.merge('attachments' => [file])
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    attachments = [mock('attachment')]
+    attachments.stubs(:sum).returns(20_000_000)
+    Helpdesk::Note.any_instance.stubs(:attachments).returns(attachments)
+    put :update, construct_params({ id: n.id }, params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('attachments', 'invalid_size')])
+  end
+
   def test_update_with_invalid_attachment_params_format
     params = update_note_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: note.id }, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('attachments', 'invalid_format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
   end
 
   def test_update_without_privilege

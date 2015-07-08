@@ -1,31 +1,37 @@
 class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :responder_id, :source, :status, :subject, :type,
-                :product_id, :tags, :custom_fields, :account, :attachments, :request_params
+                :product_id, :tags, :custom_fields, :account, :attachments, :request_params, :item
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
   validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, numericality: { allow_nil: true }
 
-  validates :requester_id, presence: true, if: :requester_id_mandatory?
-  validates :name, presence: true, if: :name_required?
+  validates :requester_id, presence: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
+  validates :name, presence: { allow_nil: false, message: 'phone_mandatory' }, if: :name_required?
 
   validates :priority, included: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
+
   # proc is used as inclusion array is not constant
-  validates :status, included: { in: proc { Helpers::TicketsValidation.ticket_status_values(Account.current) } }, allow_nil: true
+  validates :status, included: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values(Account.current) } }, allow_nil: true
   validates :source, included: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
-  validates :type, included: { in: proc { Helpers::TicketsValidation.ticket_type_values(Account.current) } }, allow_nil: true
+  validates :type, included: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values(Account.current) } }, allow_nil: true
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
 
   validates :tags, :cc_emails, :attachments, data_type: { rules: Array }, allow_nil: true
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
-  validate :attachment_size, if: -> { attachments && errors[:attachments].blank? }
-  validates :due_by, presence: { message: 'Should not be blank if fr_due_by is given' }, if: -> { fr_due_by }
-  validates :fr_due_by, presence: { message: 'Should not be blank if due_by is given' }, if: -> { due_by }
+  validates :due_by, presence: { message: 'due_by_validation' }, if: -> { fr_due_by }
+  validates :fr_due_by, presence: { message: 'fr_due_by_validation' }, if: -> { due_by }
 
-  validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'is not a valid email' }, if: :email_required?
-  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'is not a valid email' } }
+  validates :attachments, file_size:  {
+    min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+    base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
+  },
+                          if: -> { attachments && errors[:attachments].blank? }
+
+  validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
+  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
 
   def initialize(request_params, item, account)
     @request_params = request_params
@@ -34,14 +40,8 @@ class TicketValidation < ApiValidation
     @fr_due_by = item.try(:frDueBy).try(:to_s) if item
     @custom_fields = item.try(:custom_field) if item
     @type = item.try(:ticket_type) if item
-    @item = item
     super(request_params, item)
-  end
-
-  def attachment_size
-    old_size = @item ? @item.attachments.sum(:content_file_size) : 0
-    new_size = @attachments.map(&:size).inject(:+)
-    errors.add(:attachments, 'invalid_size') if (old_size + new_size) > 15 * 1024 * 1024
+    @item = item
   end
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.

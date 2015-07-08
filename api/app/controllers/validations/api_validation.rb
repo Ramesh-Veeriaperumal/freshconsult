@@ -1,5 +1,6 @@
 class ApiValidation
   include ActiveModel::Validations
+  attr_accessor :error_options
 
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
 
@@ -11,6 +12,7 @@ class ApiValidation
         instance_variable_set('@' + field, format_value(value))
       end
     end
+
     # Set instance variables of validation class from the request params.
     request_params.each_pair do |key, value|
       instance_variable_set('@' + key, value)

@@ -8,7 +8,7 @@ class ApiGroupsController < ApiApplicationController
       group_params = current_account.features_included?(:round_robin) ? GroupConstants::GROUP_FIELDS : GroupConstants::GROUP_FIELDS_WITHOUT_TICKET_ASSIGN
       params[cname].permit(*(group_params))
       group = ApiGroupValidation.new(params[cname], @item)
-      render_error group.errors unless group.valid?
+      render_error group.errors, group.error_options unless group.valid?
     end
 
     def scoper
@@ -49,7 +49,7 @@ class ApiGroupsController < ApiApplicationController
 
     def set_custom_errors
       bad_agent_ids = @item.agent_groups.select { |x| x.errors.present? }.collect(&:user_id)
-      @item.errors.add('agents', 'list is invalid') if bad_agent_ids.present?
-      @error_options = { remove: :'agent_groups.user', meta: "#{bad_agent_ids.join(', ')}" }
+      @item.errors.add(:agents, 'list is invalid') if bad_agent_ids.present?
+      @error_options = { remove: :'agent_groups.user', agents: { list: "#{bad_agent_ids.join(', ')}" } }
     end
 end
