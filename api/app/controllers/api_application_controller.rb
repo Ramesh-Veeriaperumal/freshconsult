@@ -304,4 +304,8 @@ class ApiApplicationController < MetalApiController
     def create?
       action_name.to_s == 'create'
     end
+
+    def get_user_param
+      @email ? :email : :user_id
+    end
 end

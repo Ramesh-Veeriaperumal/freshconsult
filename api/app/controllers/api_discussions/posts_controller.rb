@@ -17,6 +17,10 @@ module ApiDiscussions
 
     private
 
+      def set_custom_errors
+        rename_error_fields(topic: :topic_id, user: get_user_param)
+      end
+
       def manipulate_params
         @email = params[cname].delete(:email) if params[cname][:email]
       end

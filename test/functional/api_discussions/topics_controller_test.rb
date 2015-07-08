@@ -92,14 +92,14 @@ module ApiDiscussions
     def test_create_invalid_user_id
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', user_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', "can't be blank")])
       assert_response :bad_request
     end
 
     def test_create_invalid_forum_id
       post :create, construct_params({}, title: 'test title',
                                          message_html: 'test content', forum_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('forum', "can't be blank")])
+      match_json([bad_request_error_pattern('forum_id', "can't be blank")])
       assert_response :bad_request
     end
 
@@ -385,7 +385,7 @@ module ApiDiscussions
 
     def test_update_invalid_forum_id
       put :update, construct_params({ id: first_topic.id }, forum_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('forum', "can't be blank")])
+      match_json([bad_request_error_pattern('forum_id', "can't be blank")])
       assert_response :bad_request
     end
 
@@ -410,7 +410,7 @@ module ApiDiscussions
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', email: 'random')
       assert_response :bad_request
-      match_json [bad_request_error_pattern('user', "can't be blank")]
+      match_json [bad_request_error_pattern('email', "can't be blank")]
     end
 
     def test_create_with_user_without_assume_privilege
@@ -424,7 +424,7 @@ module ApiDiscussions
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', user_id: '999')
       assert_response :bad_request
-      match_json [bad_request_error_pattern('user', "can't be blank")]
+      match_json [bad_request_error_pattern('user_id', "can't be blank")]
     end
 
     def test_followed_by

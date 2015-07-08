@@ -115,7 +115,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { body_html: 'test', user_id: 789_789_789, ticket_id: ticket.id }
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('user', "can't be blank")])
+    match_json([bad_request_error_pattern('user_id', "can't be blank")])
   end
 
   def test_create_extra_params
@@ -305,7 +305,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { body_html: 'test', user_id: 789_789_789 }
     post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('user', "can't be blank")])
+    match_json([bad_request_error_pattern('user_id', "can't be blank")])
   end
 
   def test_reply_extra_params

@@ -57,7 +57,7 @@ class NotesController < ApiApplicationController
       if success
         render "/notes/#{action_name}", location: send("#{nscname}_url", @item.id), status: 201
       else
-        rename_error_fields(notable_id: :ticket_id)
+        rename_error_fields(notable_id: :ticket_id, user: :user_id)
         render_error(@item.errors)
       end
     end

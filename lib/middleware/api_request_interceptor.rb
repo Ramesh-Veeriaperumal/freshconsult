@@ -1,5 +1,5 @@
 class Middleware::ApiRequestInterceptor
-  CONTENT_TYPE_REQUIRED_METHODS = ['POST', 'PUT']
+  CONTENT_TYPE_REQUIRED_METHODS = ['POST', 'PUT', 'DELETE']
   RESPONSE_HEADERS = { 'Content-Type' => 'application/json' }
 
   # https://robots.thoughtbot.com/catching-json-parse-errors-with-custom-middleware
@@ -14,7 +14,11 @@ class Middleware::ApiRequestInterceptor
     else
       valid_content_type = valid_accept_header = true
       extract_request_attributes(env)
-      valid_content_type = validate_content_type if content_type_required? 
+      if content_type_required_method?
+        valid_content_type = validate_content_type if content_type_required_length?
+      else
+        env["CONTENT_TYPE"] = env["Content-Type"] = nil
+      end
       valid_accept_header = validate_accept_header if @accept_header 
       begin
         @status, @headers, @response = @app.call(env) if valid_content_type && valid_accept_header
@@ -60,7 +64,11 @@ class Middleware::ApiRequestInterceptor
     @status, @headers, @response = [status, headers, [message.to_json]]
   end
 
-  def content_type_required?
-    CONTENT_TYPE_REQUIRED_METHODS.include?(@method) && @content_length.to_i > 0
+  def content_type_required_length?
+    @content_length.to_i > 0
+  end
+
+  def content_type_required_method?
+    CONTENT_TYPE_REQUIRED_METHODS.include?(@method)
   end
 end

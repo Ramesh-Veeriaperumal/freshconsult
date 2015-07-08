@@ -47,6 +47,7 @@ module ApiDiscussions
         bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
         @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
         @error_options = { remove: :customer_forums, meta: "#{bad_customer_ids.join(', ')}" }
+        rename_error_fields(forum_category: :forum_category_id)
       end
   end
 end

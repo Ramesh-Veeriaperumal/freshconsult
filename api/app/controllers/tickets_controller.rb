@@ -25,6 +25,8 @@ class TicketsController < ApiApplicationController
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
+      rename_error_fields(group: :group_id, responder: :user_id, email_config: :email_config_id,
+        product: :product_id)
       render_error(@item.errors)
     end
   end

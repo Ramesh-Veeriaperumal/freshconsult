@@ -158,14 +158,14 @@ module ApiDiscussions
       topic_obj.update_column(:locked, true)
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => 999)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('topic', "can't be blank")])
+      match_json([bad_request_error_pattern('topic_id', "can't be blank")])
     end
 
     def test_create_invalid_user
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => 999)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', "can't be blank")])
     end
 
     def test_create_without_manage_users_privilege
@@ -188,7 +188,7 @@ module ApiDiscussions
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'email' => 'random')
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('email', "can't be blank")])
     end
 
     def test_create_with_user_without_assume_privilege
@@ -202,7 +202,7 @@ module ApiDiscussions
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => '999')
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', "can't be blank")])
     end
   end
 end

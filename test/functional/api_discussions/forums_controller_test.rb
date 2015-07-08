@@ -97,7 +97,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_category_id: 89)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('forum_category', "can't be blank")])
+      match_json([bad_request_error_pattern('forum_category_id', "can't be blank")])
     end
 
     def test_update_invalid_customer_id
