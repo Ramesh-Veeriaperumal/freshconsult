@@ -75,6 +75,12 @@ window.App = window.App || {};
         $this.visibleToSelection($(this).data());
       });
 
+      $('body').on('click.folders_articles', '.visible-to-btn', function () {
+        if($this.submitData.visibility == 4) {
+          $('.company_folders .select2-search-field input').focus();
+        }
+      });
+
       $('body').on('afterReorder.folders_articles', function () {
         App.Solutions.NavMenu.reload();
       });
@@ -156,7 +162,7 @@ window.App = window.App || {};
       if (data.visibility === 4) {
         this.toggleCompanyClass(true);
         this.eventsForCompanySelect();
-        $('.company_folders .select2-search-field').focus();
+        $('.company_folders .select2-search-field input').focus();
       } else {
         this.visibleToSubmit();
         this.toggleCompanyClass(false);

@@ -5,6 +5,7 @@
     	<div class="controls">
     		<%= f.text_field :name,
                          :class => "required",
+                         :autocomplete => "off",
                          :autofocus => true %>
     	</div>
 	</li>
@@ -17,14 +18,14 @@
 	<li class="control-group">
 		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
-	 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
+	 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-large" } %>
 	 	</div>
 	</li>
 	<li class="companies_select control-group">
   	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
   	<div class="controls">
   		<div class="row-fluid">
-	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select select2" %>
+	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large" } %>
     	</div>
     	<br>
     	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
