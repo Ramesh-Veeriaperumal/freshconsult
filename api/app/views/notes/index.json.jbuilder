@@ -1,9 +1,10 @@
 json.array! @notes do |note|
   json.cache! note do
-    json.(note, :body, :body_html, :id, :incoming, :private, :user_id, :support_email)
+    json.(note, :body, :body_html, :id, :user_id, :support_email)
 
     json.set! :ticket_id, note.notable_id
 
+    json.partial! 'shared/boolean_format', boolean_fields: { incoming: note.incoming, private: note.private }
     json.partial! 'shared/utc_date_format', item: note
 
     json.set! :notified_to, note.to_emails

@@ -25,7 +25,7 @@ class PostValidationTest < ActionView::TestCase
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     refute post.valid?
     error = post.errors.full_messages
-    assert error.include?('Answer Should be a value in the list 0,false,1,true')
+    assert error.include?('Answer Should be a value in the list true,false')
   end
 
   def test_presence_item_valid

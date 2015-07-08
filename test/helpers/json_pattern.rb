@@ -107,9 +107,9 @@ module JsonPattern
       title: expected_output[:title] || topic.title,
       forum_id: expected_output[:forum_id] || topic.forum_id,
       user_id: expected_output[:user_id] || topic.user_id,
-      locked: expected_output[:locked] || topic.locked,
-      sticky: expected_output[:sticky] || topic.sticky,
-      published: expected_output[:published] || topic.published,
+      locked: (expected_output[:locked] || topic.locked).to_s.to_bool,
+      sticky: (expected_output[:sticky] || topic.sticky).to_s.to_bool,
+      published: (expected_output[:published] || topic.published).to_s.to_bool,
       stamp_type: expected_output[:stamp_type] || topic.stamp_type,
       replied_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       replied_by: expected_output[:replied_by] || topic.replied_by,
@@ -132,17 +132,17 @@ module JsonPattern
       topic_id: expected_output[:topic_id] || post.topic_id,
       forum_id: expected_output[:forum_id] || post.forum_id,
       user_id: expected_output[:user_id] || post.user_id,
-      answer: expected_output[:output] || post.answer,
-      published: post.published,
-      spam: post.spam,
-      trash: post.trash,
+      answer: (expected_output[:output] || post.answer).to_s.to_bool,
+      published: post.published.to_s.to_bool,
+      spam: post.spam.nil? ? post.spam : post.spam.to_s.to_bool,
+      trash: post.trash.to_s.to_bool,
       created_at: expected_output[:ignore_created_at] ? %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$} : expected_output[:created_at],
       updated_at: expected_output[:ignore_updated_at] ? %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$} : expected_output[:updated_at]
     }
   end
 
   def deleted_ticket_pattern(expected_output = {}, ticket)
-    ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted))
+    ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
   end
 
   def index_ticket_pattern(ticket)
@@ -150,7 +150,7 @@ module JsonPattern
   end
 
   def index_deleted_ticket_pattern(ticket)
-    index_ticket_pattern(ticket).merge(deleted: ticket.deleted)
+    index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
@@ -164,10 +164,10 @@ module JsonPattern
       description:  expected_output[:description] || ticket.description,
       description_html: expected_output[:description_html] || ticket.description_html,
       ticket_id: expected_output[:display_id] || ticket.display_id,
-      fr_escalated:  expected_output[:fr_escalated] || ticket.fr_escalated,
-      is_escalated:  expected_output[:is_escalated] || ticket.isescalated,
-      spam:  expected_output[:spam] || ticket.spam,
-      urgent:  expected_output[:urgent] || ticket.urgent,
+      fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
+      is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
+      spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
+      urgent:  (expected_output[:urgent] || ticket.urgent).to_s.to_bool,
       email_config_id:  expected_output[:email_config_id] || ticket.email_config_id,
       group_id:  expected_output[:group_id] || ticket.group_id,
       priority:  expected_output[:priority] || ticket.priority,
@@ -195,8 +195,8 @@ module JsonPattern
       body: expected_output[:body] || note.body,
       body_html: expected_output[:body_html] || note.body_html,
       id: Fixnum,
-      incoming: expected_output[:incoming] || note.incoming,
-      private: expected_output[:private] || note.private,
+      incoming: (expected_output[:incoming] || note.incoming).to_s.to_bool,
+      private: (expected_output[:private] || note.private).to_s.to_bool,
       user_id: expected_output[:user_id] || note.user_id,
       support_email: note.support_email,
       ticket_id: expected_output[:ticket_id] || note.notable_id,
@@ -213,8 +213,8 @@ module JsonPattern
       ticket_id: expected_output[:ticket_id] || time_sheet.workable.display_id,
       id: Fixnum,
       user_id: expected_output[:user_id] || time_sheet.user_id,
-      billable: expected_output[:billable] || time_sheet.billable,
-      timer_running: expected_output[:timer_running] || time_sheet.timer_running,
+      billable: (expected_output[:billable] || time_sheet.billable).to_s.to_bool,
+      timer_running: (expected_output[:timer_running] || time_sheet.timer_running).to_s.to_bool,
       time_spent: expected_output[:time_spent] || time_sheet.api_time_spent,
       executed_at: expected_output[:executed_at] || time_sheet.executed_at,
       start_time: expected_output[:start_time] || time_sheet.start_time,
@@ -243,18 +243,18 @@ module JsonPattern
   def ticket_field_pattern(tf, hash = {})
     {
       id: tf.id,
-      default: tf.default,
+      default: tf.default.to_s.to_bool,
       description: tf.description,
       type: tf.field_type,
-      customers_can_edit: tf.editable_in_portal,
+      customers_can_edit: tf.editable_in_portal.to_s.to_bool,
       label: tf.label,
       label_for_customers: tf.label_in_portal,
       name: tf.name,
       position: tf.position,
-      required_for_agents: tf.required,
-      required_for_closure: tf.required_for_closure,
-      required_for_customers: tf.required_in_portal,
-      displayed_to_customers: tf.visible_in_portal,
+      required_for_agents: tf.required.to_s.to_bool,
+      required_for_closure: tf.required_for_closure.to_s.to_bool,
+      required_for_customers: tf.required_in_portal.to_s.to_bool,
+      displayed_to_customers: tf.visible_in_portal.to_s.to_bool,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       choices: hash[:choices] || Array
@@ -290,7 +290,7 @@ module JsonPattern
 
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type)
+    group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
     group_json
   end
 
@@ -335,8 +335,8 @@ module JsonPattern
       name: expected_output[:name] || email_config.name,
       to_email: email_config.to_email,
       reply_email: email_config.reply_email,
-      primary_role: email_config.primary_role,
-      active: email_config.active,
+      primary_role: email_config.primary_role.to_s.to_bool,
+      active: email_config.active.to_s.to_bool,
       product_id: email_config.product_id,
       group_id: email_config.group_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

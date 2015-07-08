@@ -7,7 +7,10 @@ module ApiDiscussions
     end
 
     def first_topic
-      Topic.first || create_test_topic(forum_obj)
+      topic = Topic.first || create_test_topic(forum_obj)
+      topic.locked = topic.locked.to_s.to_bool
+      topic.published = topic.published.to_s.to_bool
+      topic
     end
 
     def last_topic
@@ -115,8 +118,8 @@ module ApiDiscussions
     def test_create_validate_inclusion
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content',  sticky: 'junk', locked: 'junk2')
-      match_json([bad_request_error_pattern('locked', 'Should be a value in the list 0,false,1,true'),
-                  bad_request_error_pattern('sticky', 'Should be a value in the list 0,false,1,true')])
+      match_json([bad_request_error_pattern('locked', 'Should be a value in the list true,false'),
+                  bad_request_error_pattern('sticky', 'Should be a value in the list true,false')])
       assert_response :bad_request
     end
 
@@ -308,7 +311,7 @@ module ApiDiscussions
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(true).once
       post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', sticky: 1)
+                                         title: 'test title', message_html: 'test content', sticky: true)
       assert_response :bad_request
       match_json([bad_request_error_pattern('sticky', 'invalid_field')])
     end

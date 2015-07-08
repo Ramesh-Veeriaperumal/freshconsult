@@ -20,6 +20,6 @@ module ApiConstants
 
   # *********************************-- ValidationConstants --*********************************************
 
-  BOOLEAN_VALUES = ['0', 0, false, '1', 1, true, 'true', 'false'] # for boolean fields all these values are accepted.
+  BOOLEAN_VALUES = [true, false] # for boolean fields all these values are accepted.
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
 end

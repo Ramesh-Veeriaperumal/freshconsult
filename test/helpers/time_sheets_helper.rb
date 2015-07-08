@@ -7,7 +7,7 @@ module TimeSheetsHelper
                                                 timer_running: options.key?(:timer_running) ? options[:timer_running] : options[:time_spent].blank?,
                                                 time_spent: options[:time_spent] || nil,
                                                 executed_at: options[:executed_at] || Time.zone.now.to_s,
-                                                billable: options.key?(:billable) ? options[:billable] : 1,
+                                                billable: options.key?(:billable) ? options[:billable] : true,
                                                 note: Faker::Lorem.sentence)
     time_sheet.save
     time_sheet.reload

@@ -1,7 +1,6 @@
 Todo:
  - API Layer middleware Removal using YAML settings file.
  - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
- - "Expose email config and product index"
  - Tickets? phone source?
  - display_id and ticket states to be supported in bulk import / bulk create
  - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
@@ -80,6 +79,7 @@ Completed:
  - revisit concerns. Avoid using concerns.
  - array should be datatype for list
  - Middlewares which is not needed for API
+ - "Expose email config and product index"
 
 Not_necessary:
  - revisit cc_email in v2 api tickets create.

@@ -21,13 +21,13 @@ class TopicValidationsTest < ActionView::TestCase
   end
 
   def test_inclusion_params_invalid
-    controller_params = { 'sticky' => '0', 'locked' => 'x' }
+    controller_params = { 'sticky' => false, 'locked' => 'x' }
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    assert error.include?('Locked Should be a value in the list 0,false,1,true')
-    refute error.include?('Sticky Should be a value in the list 0,false,1,true')
+    assert error.include?('Locked Should be a value in the list true,false')
+    refute error.include?('Sticky Should be a value in the list true,false')
   end
 
   def test_presence_item_valid
@@ -55,7 +55,7 @@ class TopicValidationsTest < ActionView::TestCase
 
   def test_inclusion_item_valid
     controller_params = {}
-    item = Topic.new('sticky' => '1', 'locked' => false)
+    item = Topic.new('sticky' => 'true', 'locked' => false)
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     error = topic.errors.full_messages
     refute error.include?('Locked Should be a value in the list 0,false,1,true')
@@ -64,13 +64,14 @@ class TopicValidationsTest < ActionView::TestCase
 
   def test_topic_validation_valid_params
     item = Topic.new({})
-    params = { 'title' => 'test', 'message_html' => 'test', 'forum_id' => 1, 'user_id' => 1 }
+    params = { 'title' => 'test', 'message_html' => 'test', 'forum_id' => 1, 'user_id' => 1, 'locked' => false,
+               'published' => false, 'sticky' => false }
     topic = ApiDiscussions::TopicValidation.new(params, item)
     assert topic.valid?
   end
 
   def test_topic_validation_valid_item
-    item = Topic.new(title: 'test', user_id: 1)
+    item = Topic.new(title: 'test', user_id: 1, locked: false, published: false, sticky: false)
     item.forum_id = 1
     post = mock('post')
     post.stubs(:body_html).returns('test')

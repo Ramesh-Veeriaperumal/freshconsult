@@ -24,7 +24,7 @@ module ApiDiscussions
 
     def test_update
       post = quick_create_post
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 1)
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
       assert_response :success
       match_json(post_pattern({ body_html: 'test reply 2', answer: true }, post.reload))
     end
@@ -40,7 +40,7 @@ module ApiDiscussions
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('answer', 'Should be a value in the list 0,false,1,true')])
+      match_json([bad_request_error_pattern('answer', 'Should be a value in the list true,false')])
     end
 
     def test_update_with_user_id
@@ -123,7 +123,7 @@ module ApiDiscussions
       user = customer
       updated_at = 1.days.ago.to_s
       params = { :body_html => 'test', 'topic_id' => topic_obj.id,
-                 'user_id' => user.id, :answer => 1 }
+                 'user_id' => user.id, :answer => true }
       post :create, construct_params({}, params)
       assert_response :created
       match_json(post_pattern(Post.last))

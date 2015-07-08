@@ -10,6 +10,7 @@ module ApiDiscussions
     def initialize(request_params, item)
       @message_html = item.try(:first_post).try(:body_html) if item
       super(request_params, item)
+      @sticky = item.sticky.to_s.to_bool if item && request_params['sticky'].nil?
     end
   end
 end

@@ -85,8 +85,8 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { private: 'x', incoming: 'x', ticket_id: ticket.id }
     post :create, construct_params({}, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('incoming', 'Should be a value in the list 0,false,1,true'),
-                bad_request_error_pattern('private', 'Should be a value in the list 0,false,1,true')])
+    match_json([bad_request_error_pattern('incoming', 'Should be a value in the list true,false'),
+                bad_request_error_pattern('private', 'Should be a value in the list true,false')])
   end
 
   def test_create_datatype_invalid
