@@ -20,6 +20,24 @@ module Freshfone::CallHistoryHelper
 	
 	end
 
+	def link_to_caller(user, user_name, options = {})
+	   return if user.blank?
+	   if privilege?(:view_contacts)
+	   		default_opts = { :class => "username",
+	                       :rel => "contact-hover",
+	                       "data-contact-id" => user.id,
+	                       "data-contact-url" => hover_card_contact_path(user)  
+	                     }
+	      pjax_link_to(user_name, user, default_opts.merge(options))
+	    else
+	      content_tag(:strong, user_name , options)
+	    end
+  end
+
+  def trimmed_user_name(username)
+  	username.length < 20 ? username : "#{username[0..16]}.."
+  end
+  	
 	def freshfone_numbers_options
 		numbers_options = []
 		numbers_options = @all_freshfone_numbers.map{|c|
@@ -116,11 +134,14 @@ module Freshfone::CallHistoryHelper
 			:range_limit_message => t('export_data.call_history.range_limit_message', range: Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS )
 		}
 	end
+
   def recording_deleted_title(call)
   	if call.present? && call.recording_deleted_info.present?
   		"#{t("freshfone.call_history.recording_delete.done_by")} #{call.recording_deleted_by}, on #{formated_date(Time.zone.parse(call.recording_deleted_at.to_s))}"
   	end
   end
+
+
    def cannot_make_calls(classname = nil)
     content_tag :span, nil, {:class => "restrict-call #{classname}"}
   end

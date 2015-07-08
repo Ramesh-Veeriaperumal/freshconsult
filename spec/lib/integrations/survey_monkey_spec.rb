@@ -77,12 +77,12 @@ RSpec.describe Integrations::SurveyMonkey do
   it "should show send survey check box when the configured option is allow agent to select " do
     @input_options[:inputs]["send_while"] = 4
     @installed_application.update_attributes(:configs => @input_options)
-    result = Integrations::SurveyMonkey.show_surveymonkey_checkbox?(@account)
+    result = Integrations::SurveyMonkey.show_surveymonkey_checkbox?
     result.should eql(true)
   end
 
   it "should show place holder canned response when all group option is enabled " do
-    result = Integrations::SurveyMonkey::placeholder_allowed?(@account)
+    result = Integrations::SurveyMonkey::placeholder_allowed?
     result.should eql(true)
   end
 

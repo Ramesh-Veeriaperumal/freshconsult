@@ -150,6 +150,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.$groupName.attr('value',result.id);
           self.$groupName.data('value', result.value);
           return result.value;
+
         }
       });
     },
@@ -176,6 +177,18 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       var self = this;
       this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter", ".wf_order_type, .wf_order", 
         function (ev) {
+          if(this.className=== 'wf_order'){
+             App.Phone.Metrics.order_type=$(this).attr("wf_order");                     
+             var order_type = App.Phone.Metrics.order_sort_type==""? "desc": App.Phone.Metrics.order_sort_type;
+             App.Phone.Metrics.recordSource($(this).attr("wf_order")+order_type);
+             App.Phone.Metrics.push_event();
+          }
+          if(this.className=== 'wf_order_type'){
+             App.Phone.Metrics.order_sort_type=$(this).attr("wf_order_type");
+             var order = App.Phone.Metrics.order_type==""? "created_at": App.Phone.Metrics.order_type;
+             App.Phone.Metrics.recordSource(order+$(this).attr("wf_order_type"));
+             App.Phone.Metrics.push_event();
+          }
           ev.preventDefault();
           self.$filterSortForm.find("input[name=" + this.className + "]")
             .val(this.getAttribute(this.className))
@@ -202,6 +215,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       var self= this;
       this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter","#submitfilter",
         function(ev) {
+          App.Phone.Metrics.recordCallHistoryFilterState();
         ev.preventDefault();
         self.getFilterData();
         $("#sliding").trigger("click");
@@ -213,6 +227,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       var self = this;
       this.$freshfoneCallHistory.on("click.freshfonecallhistory.callFilter",".export_option",
         function(ev) {
+          App.Phone.Metrics.recordSource($(ev.target).attr('data-format'));
+          App.Phone.Metrics.push_event();
           ev.preventDefault();
           self.setFilterData();
           self.showProgress();

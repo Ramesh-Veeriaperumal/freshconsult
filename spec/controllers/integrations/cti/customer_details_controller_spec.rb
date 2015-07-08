@@ -19,6 +19,7 @@ describe Integrations::Cti::CustomerDetailsController do
 		post :create_ticket , {:ticket => {
 			:subject => "test subject",
 			:email => @customer.email,
+			:number => @cust_mob,
 			:description => "test description",
 			:recordingUrl => @recUrl
 		}}

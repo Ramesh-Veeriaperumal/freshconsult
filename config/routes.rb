@@ -2082,9 +2082,15 @@ Helpkit::Application.routes.draw do
           get :deleted_customers
         end
       end
-
-      resources :accounts, :only => :show do
+      
+      get  "/accounts/show", to: 'accounts#show'
+      resources :accounts, :only => :none do
         collection do
+          get :tickets
+          get :agents
+          get :portal
+          get :features
+          get :email_config
           put :add_day_passes
           put :add_feature
           put :change_url

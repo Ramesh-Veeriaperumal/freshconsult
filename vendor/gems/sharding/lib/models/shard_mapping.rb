@@ -5,7 +5,7 @@ class ShardMapping < ActiveRecord::Base
   not_sharded
 
 
-  STATUS_CODE = {:partial => 206, :ok => 200, :not_found => 404}
+  STATUS_CODE = {:partial => 206, :ok => 200, :not_found => 404, :blocked => 403}
 
   has_many :domains,:class_name => 'DomainMapping',:dependent => :destroy,:foreign_key => :account_id
   has_many :facebook_pages, :class_name => 'FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
@@ -47,6 +47,10 @@ class ShardMapping < ActiveRecord::Base
 
  def ok?
   status == 200
+ end
+
+ def blocked?
+  status == STATUS_CODE[:blocked]
  end
 
  def clear_cache

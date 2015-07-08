@@ -49,6 +49,7 @@
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
+  freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {
           'id'        : '<%=current_user.id%>',
           'username'  : '<%=current_user.name%>',
