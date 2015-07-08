@@ -303,6 +303,7 @@ class Solution::ArticlesController < ApplicationController
       if (@draft.blank? || (@draft.user == current_user))
         @draft = @article.build_draft_from_article if @draft.blank?
         unless update_draft_attributes
+          binding.pry
           flash[:error], action = t('solution.articles.draft.save_error'), "edit"
         end    
       end
@@ -316,8 +317,8 @@ class Solution::ArticlesController < ApplicationController
     def update_draft_attributes
       attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
       @draft.unlock
-      @draft.update_attributes(params[:solution_article].slice(:title, :description))
       @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id]
+      @draft.update_attributes(params[:solution_article].slice(:title, :description))
     end
 
     def update_article
