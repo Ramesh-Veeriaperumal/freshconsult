@@ -40,7 +40,7 @@ module ApiDiscussions
 
       def set_custom_errors
         @error_options = { remove: :posts }
-        rename_error_fields(forum: :forum_id, user: get_user_param)
+        ErrorHelper.rename_error_fields({ forum: :forum_id, user: get_user_param }, @item)
       end
 
       def manipulate_params

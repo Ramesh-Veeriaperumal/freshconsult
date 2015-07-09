@@ -14,7 +14,6 @@ class MetalApiController < ActionController::Metal
     ActionController::ImplicitRender,
     ActionController::StrongParameters,
     ActionController::Cookies,
-    ActionController::RequestForgeryProtection,
     ActionController::HttpAuthentication::Basic::ControllerMethods,
     AbstractController::Callbacks,
     ActionController::Rescue,

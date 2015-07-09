@@ -14,6 +14,7 @@ Todo:
  - Allow attachments as part of discussions/post API call? Not supported in V1 - not now
  - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
  - move error messages from en.yml file. Should not involve internatinalization.
+ - Differentiate between missing and invalid value - improve specificity of codes.
 
 Breaking changes in existing APIs:
  - day pass required

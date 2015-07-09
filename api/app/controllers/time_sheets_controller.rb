@@ -61,7 +61,7 @@ class TimeSheetsController < ApiApplicationController
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
       fields = get_fields("TimeSheetConstants::#{action_name.upcase}_TIME_SHEET_FIELDS")
       params[cname].permit(*fields)
-      @time_sheet_val = TimeSheetValidation.new(params[cname], @item, current_account, @timer_running)
+      @time_sheet_val = TimeSheetValidation.new(params[cname], @item, @timer_running)
       render_error @time_sheet_val.errors, @time_sheet_val.error_options unless @time_sheet_val.valid?(action_name.to_sym)
     end
 

@@ -24,6 +24,6 @@ json.array! @api_ticket_fields do |tf|
       end
     end
   else
-    json.set! :choices, tf.api_choices(@account)
+    json.set! :choices, tf.api_choices(Account.current)
   end
 end
