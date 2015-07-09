@@ -3,6 +3,7 @@ class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   self.table_name =  "solution_articles"
   belongs_to_account
+  concerned_with :associations, :meta_associations, :body_methods
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
@@ -24,7 +25,7 @@ class Solution::Article < ActiveRecord::Base
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
   
   acts_as_voteable
-  concerned_with :associations, :meta_associations, :body_methods
+  
   
   serialize :seo_data, Hash
   
