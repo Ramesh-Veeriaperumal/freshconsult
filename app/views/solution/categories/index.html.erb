@@ -71,7 +71,7 @@
 				<% if !category[:is_default] %>
 					<div class="<%= cycle('odd', 'even') %> <%= 'orphaned-category' unless category.respond_to?(:portal_solution_categories) %>">
 						<h4 class="cat-title-border tooltip">
-								<i class="<%= category.respond_to?(:portal_solution_categories) ? 'ficon-categories' : 'ficon-categories-orphan tooltip' %> cat-title-icon" data-original-title="<%= t('solution.orphan') unless category.respond_to?(:portal_solution_categories) %>"></i>
+								<i class="<%= category.respond_to?(:portal_solution_categories) ? 'ficon-cube' : 'ficon-categories-orphan tooltip' %> cat-title-icon" data-original-title="<%= t('solution.orphan') unless category.respond_to?(:portal_solution_categories) %>"></i>
 								<%= pjax_link_to  "#{h(category[:name])}".html_safe, solution_category_path(:id => category[:id]) %>
 						</h4>  
 						<ul>			
