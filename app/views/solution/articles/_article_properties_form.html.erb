@@ -42,12 +42,13 @@
 				<div class="control-group row-fluid">
 					<%= f.label :name, t('solution.change_author'),:class =>"control-label" %>
 					<div class="controls">
-						<%= f.select :user_id,
+						<%= f.select_tag "solution_article[user_id]",
 		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}, @article.user_id), 
 		          { :id => "change_author",
-		            :include_blank => true },
-		          :class => "select2"
-		           %>
+		            :include_blank => true,
+		          	:class => "select2",
+		          	:'data-container-css-class' => 'author-dropdown',
+		          	:'data-dropdown-css-class' => 'author-dropdown' }%>
 					</div>
 				</div>
 			<% end %>
