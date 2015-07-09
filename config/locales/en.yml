@@ -2783,6 +2783,9 @@ en:
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
     learn_more: Learn more
+    settings_saved: Your setting is successfully saved.
+    disable_round_robin_info1: Allow agents the ability to turn on/off automatic ticket assignment
+    disable_round_robin_info2: If disabled, agents will always be set as “available”. Admins can change the agent availability from the dashboard, if necessary.
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes

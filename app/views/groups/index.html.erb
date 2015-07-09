@@ -24,3 +24,37 @@
       </table>
   </div>
 </div>
+<br/><br/>
+<% if  current_account.groups_from_cache.any?{|grp| grp.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin]} %>
+  <div class="row-fluid">
+    <div class="span10">
+      <h5 class="lead small-lead"><%= t('group.disable_round_robin_info1') %></h5>   
+      <p class="muted lead-desc"> 
+        <%=t('group.disable_round_robin_info2').html_safe%>
+      </p> 
+    </div>
+    <div class="span2 align-right">
+      <input rel="toggle" type="checkbox" id="disable_rr_agent" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%unless current_account.features?(:disable_rr_toggle)%>checked="true"<%end%> />
+    </div>
+  </div>
+
+
+
+  <%= javascript_tag do %>
+      function update_status(status_url){
+        jQuery.ajax({
+          url: status_url,
+          type: "post",
+          success: function(data) {
+            window.location.reload();
+          }
+        });
+      }
+      
+      jQuery("#disable_rr_agent").on('change', function(){
+          update_status("<%= toggle_roundrobin_groups_path %>");
+      });
+
+  <%end%>
+
+<% end %>

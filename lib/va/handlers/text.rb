@@ -38,11 +38,7 @@ class Va::Handlers::Text < Va::RuleHandler
     end
     
     def filter_query_is_not
-      if query_value
-        [ "(#{condition.db_column} is NULL OR #{condition.db_column} != ?)", query_value ]
-      else
-        construct_query('is not')
-      end
+      construct_query (query_value ? '!=' : 'is not')
     end
 
     def construct_query(query_operator)
