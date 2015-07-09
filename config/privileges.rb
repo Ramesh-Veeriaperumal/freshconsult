@@ -369,6 +369,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/survey"
     resource :group
     resource :"api_email_config"
+    resource :"api_business_calendar"
     resource :"api_group"
     resource :"api_product"
     resource :ticket_field
