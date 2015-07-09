@@ -1,7 +1,7 @@
 class TimeSheetFilterValidation < ApiValidation
   attr_accessor :company_id, :user_id, :billable, :executed_after, :executed_before, :company, :user, :group_id, :group
 
-  validates :billable, included: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
+  validates :billable, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
   validates :executed_after, :executed_before, date_time: { allow_nil: true }
   validates :user_id, :company_id, :group_id, numericality: { allow_nil: true }
   validates :company, presence: true, if: -> { company_id && errors[:company_id].blank? }

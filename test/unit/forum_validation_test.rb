@@ -6,7 +6,7 @@ class ForumValidationsTest < ActionView::TestCase
     item = nil
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?
-    assert_equal ["Name can't be blank", 'Forum category is not a number', 'Forum visibility not_included',
+    assert_equal ['Name missing', 'Forum category is not a number', 'Forum visibility not_included',
                   'Forum type not_included'], forum.errors.full_messages
   end
 

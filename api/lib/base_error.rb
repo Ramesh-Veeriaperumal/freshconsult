@@ -2,6 +2,7 @@ class BaseError
   attr_accessor :message
 
   API_ERROR_CODES = {
+    missing_field: ['missing_field', 'Mandatory attribute missing', 'missing', 'requester_id_mandatory', 'phone_mandatory'],
     already_exists: ['has already been taken', 'already exists in the selected category'],
     invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
     datatype_mismatch: ['is not a date', 'is not a number', 'data_type_mismatch'],

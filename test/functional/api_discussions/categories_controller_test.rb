@@ -167,7 +167,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', "can't be blank")
+        bad_request_error_pattern('name', 'missing_field')
       ]
       assert_response :bad_request
       match_json(pattern)

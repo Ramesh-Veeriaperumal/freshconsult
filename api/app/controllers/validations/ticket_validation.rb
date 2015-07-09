@@ -7,22 +7,22 @@ class TicketValidation < ApiValidation
 
   validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, numericality: { allow_nil: true }
 
-  validates :requester_id, presence: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
-  validates :name, presence: { allow_nil: false, message: 'phone_mandatory' }, if: :name_required?
+  validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
+  validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, if: :name_required?
 
-  validates :priority, included: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
+  validates :priority, custom_inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
 
   # proc is used as inclusion array is not constant
-  validates :status, included: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values(Account.current) } }, allow_nil: true
-  validates :source, included: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
-  validates :type, included: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values(Account.current) } }, allow_nil: true
+  validates :status, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values(Account.current) } }, allow_nil: true
+  validates :source, custom_inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
+  validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values(Account.current) } }, allow_nil: true
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
 
   validates :tags, :cc_emails, :attachments, data_type: { rules: Array }, allow_nil: true
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
-  validates :due_by, presence: { message: 'due_by_validation' }, if: -> { fr_due_by }
-  validates :fr_due_by, presence: { message: 'fr_due_by_validation' }, if: -> { due_by }
+  validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by }
+  validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by }
 
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,

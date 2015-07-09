@@ -5,6 +5,8 @@ can't be blank: Should not be invalid_value/blank
 invalid_field: Unexpected/invalid field in request
 invalid_size: Total attachments size should not exceed 15 MB
 missing_field: Mandatory attribute missing
+is required: Mandatory attribute missing
+missing: Mandatory attribute missing
 invalid_user: You are not authorized to perform this action on behalf of this user. id:%{id}, name:%{name}
 should be a valid email address: Should not be invalid_value/blank
 access_denied: You are not authorized to perform this action.

@@ -2646,6 +2646,7 @@ en:
         confirmation: doesn't match confirmation
         not_an_integer: must be an integer
         blank: can't be blank
+        missing: is required
         invalid: is invalid
         exclusion: is reserved
         odd: must be odd

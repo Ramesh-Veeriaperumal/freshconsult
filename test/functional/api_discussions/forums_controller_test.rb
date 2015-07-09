@@ -121,7 +121,7 @@ module ApiDiscussions
 
     def test_create_validate_presence
       post :create, construct_params({}, forum_visibility: '1', forum_type: 1)
-      match_json([bad_request_error_pattern('name', "can't be blank"),
+      match_json([bad_request_error_pattern('name', 'missing_field'),
                   bad_request_error_pattern('forum_category_id', 'is not a number')])
       assert_response :bad_request
     end
@@ -155,7 +155,7 @@ module ApiDiscussions
 
     def test_create_no_params
       post :create, construct_params({}, {})
-      pattern = [bad_request_error_pattern('name', "can't be blank"),
+      pattern = [bad_request_error_pattern('name', 'missing_field'),
                  bad_request_error_pattern('forum_category_id', 'is not a number'),
                  bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')]

@@ -74,14 +74,14 @@ module ApiDiscussions
     def test_create_without_title
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          message_html: 'test content')
-      match_json([bad_request_error_pattern('title', "can't be blank")])
+      match_json([bad_request_error_pattern('title', 'missing_field')])
       assert_response :bad_request
     end
 
     def test_create_without_message
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title')
-      match_json([bad_request_error_pattern('message_html', "can't be blank")])
+      match_json([bad_request_error_pattern('message_html', 'missing_field')])
       assert_response :bad_request
     end
 
