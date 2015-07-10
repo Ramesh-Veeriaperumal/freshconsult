@@ -82,7 +82,7 @@ class ApiApplicationController < MetalApiController
 
   protected
 
-    def requires_feature(f)
+    def requires_feature(f) # Should be from cache. Need to revisit.
       return if feature?(f)
       @error = RequestError.new(:require_feature, feature: f.to_s.titleize)
       render '/request_error', status: 403
