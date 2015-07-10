@@ -1,0 +1,58 @@
+<% return unless customer_survey_required? %>
+<section class="widget" id="survey-sidebar-details">
+    <h3 class="lead"><%= t('support.tickets.ticket_survey.title') %></h3>
+    <div class="survey-form">
+            <% 
+                    form_display = ""
+                    choices = current_account.custom_surveys.active.first.choices
+                    unless @ticket.custom_survey_results.blank?
+                        form_display = "hide"
+                        sresult = @ticket.custom_survey_results.last
+                        feedback = ""
+                        feedback =  sresult.survey_remark.feedback.body unless sresult.survey_remark.blank?
+                        rating_class = sresult.get_small_img_class
+                        rating_msg = current_account.custom_surveys.active.first.rating_text(sresult.rating)
+                %>
+                <div id="survey-information">   
+                    <span class="lead-small">
+                        <%= t("support.tickets.ticket_survey.rating_sub_title") %>
+                        <i class="<%=rating_class%>"></i>
+                        <span class='rating-msg'><%= rating_msg %></span>
+                    </span>
+                    <div class="help-text">
+                        <%= t('support.tickets.ticket_survey.rated_on', :rated_on => formated_date(sresult.created_at, {:format => :short_day_with_week}))%>
+                    </div>
+                    <div class="help-text">
+                        <%= t('support.tickets.ticket_survey.change_of_mind') %>
+                        <b><a href="#" data-toggle-dom="#survey-feedback, #survey-information" ><%= t('support.tickets.ticket_survey.rate_again') %></a></b>
+                    </div>
+                </div>
+                <% end %>
+
+            <div id="survey-feedback" class="<%= form_display %>"> 
+                        <% unless @ticket.custom_survey_results.blank? %>
+                            <a href="#" class='feedback-text' data-toggle-dom="#survey-information, #survey-feedback">
+                            <%=t('support.tickets.ticket_survey.back') %></a>
+                        <% end %>
+                        <p><%=h(t('support.tickets.ticket_survey.survey_question_title').html_safe)%></p>
+                        <div class="survey-buttons">
+                            <% !JSON.parse(choices).blank? && JSON.parse(choices).each_with_index do |option, index|%>
+                            <%= link_to "<span class=\"survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option["survey_question_choice"]["face_value"]]}\"></span>&nbsp;#{h(option["survey_question_choice"]["value"])}".html_safe , support_portal_custom_survey_path(@ticket,option["survey_question_choice"]["face_value"]), :class => "survey-tabs" , :onclick => 'javascript:SurveyLink.activateTab(this)' , :target => "_blank" %>
+                            <%end%>
+                        </div>
+            </div>
+    </div>
+</section>
+<hr class="content-divider" />
+
+<script type="text/javascript">
+var SurveyLink = {
+    activateTab: function(obj){
+        if(jQuery(obj).hasClass("active")){
+            jQuery(obj).removeClass("active");
+        }else{
+            jQuery(obj).addClass("active").siblings().removeClass("active");
+        }
+    }
+}
+</script>

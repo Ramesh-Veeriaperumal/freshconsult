@@ -786,6 +786,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.fb_profile_id
   end
   
+
+  def can_send_survey?(s_while)
+     survey = account.survey
+     (!survey.nil? && survey.can_send?(self,s_while))
+  end
+
   # Instance level spam watcher condition
   # def rl_enabled?
   #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?

@@ -1,0 +1,16 @@
+<%= javascript_include_tag :'cdn/survey_admin'  %>  
+
+<%= javascript_tag do %>
+	survey_list = <%=@surveys.to_json.html_safe%>;
+<%end%>
+<%= render :partial => 'i18n'%>
+<%= render :partial => 'constants' %>
+<%= render :partial => 'new_layout' , :locals => {:layout_params => @layout_params}%>
+
+<script type="text/javascript">
+
+ jQuery(document).ready(function(){
+ 	SurveyAdmin.new.show();
+ });
+ 
+</script>

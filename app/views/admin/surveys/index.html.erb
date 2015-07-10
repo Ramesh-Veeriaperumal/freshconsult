@@ -3,16 +3,14 @@
 	jQuery('input#account_features_survey_links').click( function(event) {						
 		    var form = jQuery('form#survey_enable');
 		    form.submit();
-	});	
+	});
   });
-
 <% end %>
- 
 <h3 class="lead"><%=t('.title')%></h3>
   
 <%= render :partial => "satisfaction_settings" %>
 
-<% content_for :helpcard do %>
+<%= content_for :helpcard do %>
 <div class="helpcard">
 	<p>	<%= t('admin.surveys.helptext').html_safe %> </p>
 </div>

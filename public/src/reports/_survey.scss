@@ -1,0 +1,395 @@
+$survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
+$survey-response-color: extremely-satisfied #4e8d00,
+						satisfied #6cb537,
+						moderately-satisfied #aad340,
+						netural #f1db16,
+						moderately-dissatisfied #ffc400,
+						dissatisfied #ff8c00,
+						extremely-dissatisfied #e7340f;
+
+@each $survey-type in $survey-types {
+	.ficon-survey-#{nth($survey-type, 1)}, a .ficon-survey-#{nth($survey-type, 1)}{
+		color: #{nth($survey-type, 2)};
+	}
+}
+
+@each $survey-color in $survey-response-color {
+	.survey-#{nth($survey-color, 1)}{
+		background-color: nth($survey-color, 2);
+	}
+}
+
+.survey-indicator{
+	display: inline-block;
+	border-radius: 100%;
+	width: 12px;
+	height: 12px;
+	padding: 0;
+	line-height: 0;
+	position: relative;
+}
+.survey-response-percent{
+	float: left;
+	font-size: 24px;
+	font-weight: 300;
+}
+.survey-response-percent .survey-indicator{
+	width: 24px;
+	height: 24px;
+	margin-right: 8px;
+	top: 4px;
+}
+
+.survey-response-row .survey-indicator{
+	top: 1px;
+	margin-left: 6px;
+}
+
+.survey-summary{
+	margin-top: 5px;
+}
+
+.survey-summary .survey-icon{
+	font-size: 34px;
+	@include float(left);
+	@include margin-left(-43px);
+}
+
+.survey-summary .rating-percentage{
+	line-height:33px;
+	font-size:20px;
+}
+
+.survey-info{
+	@include padding-left(43px);
+}
+
+.survey-percent{
+    font-size: 20px;
+    font-weight: 300;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.survey-type{
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #888888;
+}
+
+.survey-answers{
+	@include border-left(1px solid #d9d9d9);
+	@include padding-left(15px);
+	display: table;
+	& > li {
+		display: table-row;
+		line-height: 1.5;
+		& > span {
+			display: table-cell;
+		}
+		& > span:last-child {
+			padding-left: 5px;
+			width: 100%;
+		}
+	}
+}
+
+// Survey panel hero element
+.well-survey{
+	border: 0;
+	@include box-shadow(none);
+	@include padding(16px 20px);
+	background-color: #f8f8f8;
+	border-radius: 0;
+}
+
+// Survey report specific styles
+.tabs-survey{
+	@include pie-clearfix;
+	overflow: visible;
+	margin-top: 50px;
+
+	.nav-survey-rating{
+		margin-bottom: 5px;
+		&.inactive{ opacity: 1;}
+		&:first-child{
+			margin-bottom: 20px;
+		}
+		a{
+			padding: 15px 8px;
+  		line-height: 38px;
+		}
+	}
+
+	& > .nav-tabs .active > a,
+	& > .nav-tabs .active > a:hover,
+	.nav-tabs > li > a,
+	.nav-tabs > li > a:hover{
+		border-color: #eee transparent #eee #eee;
+		color: #333;
+	}
+	& > .nav-tabs .active > a{
+		margin-right: -2p	x;
+		@include box-shadow(3px 0px 0px rgba(255, 255, 255, 1), 0px 0px 3px rgba(0, 0, 0, 0.1));
+		background-color: #fff;
+
+	}
+	.nav-tabs > li > a{
+		min-height: 45px;
+		background-color: #f9f9f9;
+		border: 1px dedede solid;
+	}
+	.nav-tabs{
+		width: 100%;
+		margin-left: -1px;
+		border-right-color: transparent;
+	}
+
+	#summary-content{
+		display:none;
+		position:absolute;
+	}
+
+	.survey-nav-lead{
+		display: inline-block;
+		width: 43px;
+		font-size: 14px;
+		font-weight: 500;
+	}
+	.survey-nav-summary{
+		// display: block;
+		margin-top: 5px;
+		font-size: 15px;
+		font-weight: 200;
+	}
+	.survey-icon{
+		font-size: 22px;
+		position: relative;
+		top: 2px;
+		left: -1px;
+	}
+}
+
+// Survey reponses
+.survey-responses{
+	margin-left: 18px;
+	margin-right: 18px;
+}
+
+.survey-date{
+	font-size: 12px;
+	color: #333;
+}
+
+.survey-details{
+	color: #999;
+	font-weight: 500;
+	.muted{
+		font-weight: 400;
+	}
+}
+
+.survey-response-row{
+	border-bottom: 1px solid #efefef;
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+	blockquote{
+		border-left: 1px solid #ddd;
+		line-height: 1.3;
+		padding-left: 10px;
+		padding-bottom: 0;
+		margin-bottom: 5px;
+	}
+}
+
+.user-profile-rounded{
+	border-radius: 100%;
+	@include size(32px, 32px);
+	padding: 0;
+	float: left;
+	display: inline;
+	margin-right: 10px;
+	position: relative;
+	img{
+		@include size(32px, 32px);
+		border-radius: 100%;
+	}
+}
+
+
+.custom-survey-tooltip{
+	min-width:350px;
+	.ui-tooltip-content{
+		padding: 5px;
+		background-color:#fefef0;
+		h5{ padding: 0px; margin: 0px;}
+		.well-survey{
+			padding: 2px 10px;
+			margin: 0;
+			background-color:transparent;
+			box-shadow: none;
+			border-radius: 0;
+			.lead{
+				font-size: 12px;
+			}
+			// .survey-icon{ width: 40px;}
+			.survey-summary{
+				.span2{
+					width: 80px;
+				}
+				.survey-icon{
+					font-size:25px;
+					width: 10px;
+				}
+			}
+		}
+	}
+}
+.report-panel-content{
+	.empty-chart{
+		left: 0;
+	    line-height: 200px;
+	    margin-top: -100px;
+	    position: absolute;
+	    text-align: center;
+	    top: 50%;
+	    width: 100%;
+	    font-weight: 500;
+	    font-size:18px;
+	}
+	.survey-report{
+		.column{
+			float: right;
+		}
+		.btn-default{
+			background-image: none;
+			background-color: #fff;
+			.caret{
+				border-top-color: #999;
+  			border-bottom-color: #999;
+				right: -5px;
+				position: relative;
+				top: 2px;
+			}
+		}
+	}
+	.response-filter{
+		text-align: left;
+		a{
+			padding: 7px 3px 7px 15px;
+			.survey-indicator{
+				top: 1px;
+				left: -2px;
+			}
+			&:hover{
+				box-shadow: none;
+				background-image: none;
+			  background-color: #eee;
+			  border-radius: 4px;
+			  color: #333;
+			}
+		}
+	}
+}
+
+.dataTables_wrapper{
+	.dataTables_paginate{
+		.paginate_button {
+			  box-sizing: border-box;
+			  display: inline-block;
+			  min-width: 1.5em;
+			  padding: 0.5em 1em;
+			  margin-left: 2px;
+			  text-align: center;
+			  text-decoration: none !important;
+			  cursor: pointer;
+			  *cursor: hand;
+			  color: #333333 !important;
+			  border: 1px solid transparent;
+		}
+		.paginate_button.current , .paginate_button.current:hover{
+			color: #333333 !important;
+			border: 1px solid #cacaca;
+			background-color: white;
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white));
+		}
+	}
+}
+
+.survey-header-child{
+	height: 60px;
+}
+
+.dataTable{
+	tr{
+		cursor:pointer;
+		*cursor: hand;
+	}
+	tr:hover td{
+		background-color:#f1f1f1 !important;
+	}
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+	border-radius: 5px !important;
+}
+.survey_main_layout{
+	.select2-container{
+		position: relative;
+		top: -5px;
+	}
+	.agent-select{
+		width: 180px;
+	}
+	.group-select{ width: 95%;}
+	.survey-list-select{ width: 130px;}
+	.select2-container .select2-choice{
+		background-image: none;
+		background-color: transparent;
+		box-shadow: none;
+	}
+	.select2-chosen{ font-weight: 700;}
+	.select2-drop{ width: 240px !important;}
+	.select2-drop-active{
+		border-radius: 5px !important;
+		border: 1px #ccc solid;
+		border-top: 1px #ccc solid !important;
+	}
+
+	a.dropdown-toggle{
+		cursor: pointer;
+		h5{font-weight: 700;}
+	}
+	.dropdown-menu{
+		.ficon-save{ display: none;}
+	}
+	.reports-active{
+		.ficon-save{
+			display: inline-block;
+			left: 9px;
+  		position: absolute;
+		}
+	}
+}
+#survey_report_agent_list{
+	ul.dropdown-menu{
+		max-height: 220px;
+		overflow: auto;
+	}
+}
+.survey_date_range{
+	padding-bottom: 38px;
+	&.opensright .calendar{
+		&.left, .right{
+			float: left;
+		}
+	}
+	.ranges{
+		width: 110px;
+	  position: absolute;
+	  bottom: 6px;
+	  right: 0px;
+	  margin-top: 114px;
+	}
+	.daterangepicker_start_input, .daterangepicker_end_input{ display: none;	}
+}
