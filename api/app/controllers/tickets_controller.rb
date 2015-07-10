@@ -19,7 +19,7 @@ class TicketsController < ApiApplicationController
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
-    build_normal_attachments(@item, params[cname][:attachments])
+    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     if @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
@@ -123,8 +123,9 @@ class TicketsController < ApiApplicationController
       @tags = params[cname][:tags] if params[cname][:tags]
 
       # Assign original fields from api params and clean api params.
-      assign_and_clean_params(custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type)
-      clean_params([:cc_emails, :tags])
+      ParamsHelper.assign_and_clean_params({custom_fields: :custom_field, fr_due_by: :frDueBy,
+       type: :ticket_type}, params[cname])
+      ParamsHelper.clean_params([:cc_emails, :tags], params[cname])
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes

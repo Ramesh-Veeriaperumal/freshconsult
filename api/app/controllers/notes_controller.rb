@@ -97,7 +97,7 @@ class NotesController < ApiApplicationController
       @ticket ||= @note_validation.ticket
       params[cname][:ticket_id] = @ticket.id if @ticket
 
-      assign_and_clean_params(notify_emails: :to_emails, ticket_id: :notable_id)
+      ParamsHelper.assign_and_clean_params({notify_emails: :to_emails, ticket_id: :notable_id}, params[cname])
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end

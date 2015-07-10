@@ -25,7 +25,8 @@ class ApiGroupsController < ApiApplicationController
 
     def manipulate_params
       params[cname][:unassigned_for] = GroupConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
-      assign_and_clean_params(unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type)
+      ParamsHelper.assign_and_clean_params({unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type},
+        params[cname])
     end
 
     def manipulate_agents

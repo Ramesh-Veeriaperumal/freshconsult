@@ -110,21 +110,6 @@ class ApiApplicationController < MetalApiController
       @current_user
     end
 
-    def assign_and_clean_params(params_hash)
-      # Assign original fields with api params
-      params_hash.each_pair do |api_field, attr_field|
-        params[cname][attr_field] = params[cname][api_field] if params[cname][api_field]
-      end
-      clean_params(params_hash.keys)
-    end
-
-    def clean_params(params_to_be_deleted)
-      # Delete the fields from params before calling build or save or update_attributes
-      params_to_be_deleted.each do |field|
-        params[cname].delete(field)
-      end
-    end
-
     def set_custom_errors
       # This is used to manipulate the model errors to a format that is acceptable.
     end
@@ -255,9 +240,5 @@ class ApiApplicationController < MetalApiController
 
     def create?
       action_name.to_s == 'create'
-    end
-
-    def get_user_param
-      @email ? :email : :user_id
     end
 end

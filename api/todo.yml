@@ -15,7 +15,8 @@ Todo:
  - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
  - move error messages from en.yml file. Should not involve internatinalization.
  - Differentiate between missing and invalid value - improve specificity of codes.
-
+ - followed_by restrict params
+ - Compare all UI functionality with API(Eg. forum type)
 Breaking changes in existing APIs:
  - day pass required
  - Post validation
