@@ -20,6 +20,7 @@ window.App = window.App || {};
       this.bindHandlers();
       this.handleEdit();
       highlight_code();
+      this.setTagSelector();
       App.Solutions.SearchConfig.onVisit();
     },
     
@@ -122,7 +123,6 @@ window.App = window.App || {};
     eventsForNewPage: function () {
       this.bindPropertiesToggle();
       this.formatSeoMeta();
-      this.select2Tags();
       this.formValidate();
     },
     
@@ -133,13 +133,6 @@ window.App = window.App || {};
           .toggleClass("arrow-right", visiblility)
           .toggleClass("arrow-down", !visiblility);
         $('#solution-properties-seo').toggle('fast', function () {});
-      });
-    },
-
-    select2Tags: function () {
-      $("#tags_name").select2({
-        tags: $("#tags_name").data('tags').split(","),
-        tokenSeparators: [',']
       });
     },
 
@@ -310,7 +303,6 @@ window.App = window.App || {};
       var $this = this;
       setTimeout(function () {
         $this.formatSeoMeta();
-        $this.select2Tags();
         $("#article-prop-cancel").bind("click", function () {
           $('#article-prop-content #article-form').resetForm();
           $('#article-prop-content #article-form .select2').trigger('change');
@@ -365,7 +357,43 @@ window.App = window.App || {};
         }
         return true;
       });
-    }
+    },
+    setTagSelector: function () {
+      var hashval = [];
+      $('.article-tags').select2({
+        multiple: true,
+        maximumInputLength: 32,
+        data: hashval,
+        quietMillis: 500,
+        tags: true,
+        tokenSeparators: [','],
+        ajax: { 
+          url: '/search/autocomplete/tags',
+          dataType: 'json',
+          data: function (term) {
+              return { q: term };
+          },
+          results: function (data) {
+            var results = [];
+            $.each(data.results, function(i, item){
+              var result = escapeHtml(item.value);
+              results.push({ id: result, text: result });
+              window.results = results;
+            });
+            return { results: results }
 
+          }
+        },
+        initSelection : function (element, callback) {
+          callback(hashval);
+        },
+        formatInputTooLong: function () { 
+          return 'Maximum key length'; },
+        createSearchChoice:function(term, data) { 
+          if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
+            return { id: term, text: term };
+        }
+      });
+    }
   };
 }(window.jQuery));
