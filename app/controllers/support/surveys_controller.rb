@@ -57,7 +57,7 @@ class Support::SurveysController < ApplicationController
     end
     
     def send_error
-      flash[:warning] = I18n.t('support.surveys.feedback_already_done')
+      flash[:notice] = I18n.t('support.surveys.feedback_already_done')
       redirect_to root_path
     end
     
