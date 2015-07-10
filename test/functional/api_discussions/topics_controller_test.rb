@@ -169,11 +169,11 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_valid
-      monitor_topic(first_topic, other_user, 1)
+      monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: other_user.id,
+        monitorable_id: first_topic.id).first || monitor_topic(first_topic, other_user, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: other_user.id)
       assert_response :no_content
-      monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: other_user.id,
-                                      monitorable_id: first_topic.id).first
+      monitorship.reload
       refute monitorship.active
     end
 

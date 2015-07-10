@@ -55,18 +55,21 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def test_change_forum_of_topic
-    topic = t
     forum = f
-    other_forum = Forum.first
-    assert_equal 0, other_forum.posts_count + other_forum.topics_count
-    assert_not_equal forum, other_forum
-    put "/api/discussions/topics/#{topic.id}", { forum_id: other_forum.id }.to_json, @write_headers
-    assert_response :success
+    other_forum = create_test_forum(fc)
+    other_forum.update_column(:forum_type, 2)
+    posts_count = forum.posts_count
+    topics_count = forum.topics_count
+    forum.topics.each do |topic|
+      put "/api/discussions/topics/#{topic.id}", { forum_id: other_forum.id }.to_json, @write_headers
+      assert_response :success
+    end
     forum.reload
     other_forum.reload
     assert_equal 0, forum.posts_count + forum.topics_count
-    assert_not_equal 0, other_forum.posts_count
-    assert_not_equal 0, other_forum.topics_count
+    assert_equal posts_count, other_forum.posts_count
+    assert_equal topics_count, other_forum.topics_count
+    assert_equal [], other_forum.topics.collect(&:stamp_type).compact
   end
 
   def test_monitorships
