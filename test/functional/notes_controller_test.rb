@@ -81,6 +81,12 @@ class NotesControllerTest < ActionController::TestCase
                 bad_request_error_pattern('ticket_id', 'is not a number')])
   end
 
+  def test_create_presence_invalid
+    post :create, construct_params({}, {})
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('ticket_id', 'required_and_numericality')])
+  end
+
   def test_create_inclusion_invalid
     params_hash = { private: 'x', incoming: 'x', ticket_id: ticket.id }
     post :create, construct_params({}, params_hash)

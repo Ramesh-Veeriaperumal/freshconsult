@@ -6,7 +6,7 @@ class PostValidationTest < ActionView::TestCase
     item = nil
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     refute post.valid?
-    assert_equal ['Body html missing', 'Topic is not a number'], post.errors.full_messages
+    assert_equal ['Body html missing', 'Topic required_and_numericality'], post.errors.full_messages
   end
 
   def test_numericality_params_invalid

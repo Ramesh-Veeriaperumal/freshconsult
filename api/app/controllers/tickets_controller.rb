@@ -123,8 +123,8 @@ class TicketsController < ApiApplicationController
       @tags = params[cname][:tags] if params[cname][:tags]
 
       # Assign original fields from api params and clean api params.
-      ParamsHelper.assign_and_clean_params({custom_fields: :custom_field, fr_due_by: :frDueBy,
-       type: :ticket_type}, params[cname])
+      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
+                                             type: :ticket_type }, params[cname])
       ParamsHelper.clean_params([:cc_emails, :tags], params[cname])
 
       # build ticket body attributes from description and description_html

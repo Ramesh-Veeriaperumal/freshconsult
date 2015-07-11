@@ -3,7 +3,8 @@ class NoteValidation < ApiValidation
                 :ticket_id, :ticket, :attachments, :cc_emails, :bcc_emails, :can_validate_ticket, :item
 
   validates :user_id, numericality: { allow_nil: true }
-  validates :ticket_id, numericality: true, if: -> { can_validate_ticket }
+  validates :ticket_id, required: { allow_nil: false, message: 'required_and_numericality' }, if: -> { can_validate_ticket }
+  validates :ticket_id, numericality: true, allow_nil: true, if: -> { can_validate_ticket }
   validates :private, :incoming, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
   validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }, allow_nil: true
   validates :notify_emails, :cc_emails, :bcc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }

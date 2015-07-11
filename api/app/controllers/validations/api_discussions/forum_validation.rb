@@ -3,12 +3,13 @@ module ApiDiscussions
     attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility, :customers,
                   :description_html, :topics_count
     validates :name, required: true
-    validates :forum_category_id, numericality: true
-    validates :forum_visibility, custom_inclusion: { in: DiscussionConstants::FORUM_VISIBILITY_KEYS_BY_TOKEN }
+    validates :forum_category_id, required: { allow_nil: false, message: 'required_and_numericality' }
+    validates :forum_category_id, numericality: true, allow_nil: true
+    validates :forum_visibility, custom_inclusion: { in: DiscussionConstants::FORUM_VISIBILITY_KEYS_BY_TOKEN, required: true }
 
     # Forum type can't be updated if the forum has any topics. Can be updated only if no topics found for forum.
     validates :forum_type, inclusion: { in: [nil], message: 'invalid_field' }, if: -> { @topics_count.to_i > 0 && @forum_type_set }
-    validates :forum_type, custom_inclusion: { in: DiscussionConstants::FORUM_TYPE_KEYS_BY_TOKEN }, if: -> { @topics_count.to_i == 0 }
+    validates :forum_type, custom_inclusion: { in: DiscussionConstants::FORUM_TYPE_KEYS_BY_TOKEN, required: true }, if: -> { @topics_count.to_i == 0 }
     validates :customers, inclusion: { in: [nil], message: 'invalid_field' }, if: proc { |x| x.forum_visibility.to_i != Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] }
 
     # customers should be nil if forum has visibility other than 4.
@@ -20,7 +21,7 @@ module ApiDiscussions
       super(request_params, item)
       check_params_set(request_params, item)
       @topics_count = item.topics_count.to_i if item
-      @forum_type = request_params.key?('forum_type') ? request_params['forum_type'] : item.try('forum_type')
+      @forum_type = request_params['forum_type'] if request_params.key?('forum_type')
     end
   end
 end

@@ -93,7 +93,7 @@ module ApiDiscussions
     def test_create_without_forum_id
       post :create, construct_params({}, title: 'test title',
                                          message_html: 'test content')
-      match_json([bad_request_error_pattern('forum_id', 'is not a number')])
+      match_json([bad_request_error_pattern('forum_id', 'required_and_numericality')])
       assert_response :bad_request
     end
 
@@ -175,7 +175,7 @@ module ApiDiscussions
 
     def test_permit_toggle_params_valid
       monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: other_user.id,
-        monitorable_id: first_topic.id).first || monitor_topic(first_topic, other_user, 1)
+                                      monitorable_id: first_topic.id).first || monitor_topic(first_topic, other_user, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: other_user.id)
       assert_response :no_content
       monitorship.reload

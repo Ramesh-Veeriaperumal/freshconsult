@@ -7,14 +7,14 @@ class ParamsHelper
       end
       clean_params(params_hash.keys, controller_params)
     end
-    
+
     def clean_params(params_to_be_deleted, controller_params)
       # Delete the fields from params before calling build or save or update_attributes
       params_to_be_deleted.each do |field|
         controller_params.delete(field)
       end
     end
-    
+
     def get_user_param(email)
       email ? :email : :user_id
     end

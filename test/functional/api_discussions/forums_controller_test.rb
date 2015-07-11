@@ -134,14 +134,16 @@ module ApiDiscussions
     end
 
     def test_create_validate_presence
-      post :create, construct_params({}, forum_visibility: '1', forum_type: 1)
+      post :create, construct_params({}, description: 'test')
       match_json([bad_request_error_pattern('name', 'missing_field'),
-                  bad_request_error_pattern('forum_category_id', 'is not a number')])
+                  bad_request_error_pattern('forum_category_id', 'required_and_numericality'),
+                  bad_request_error_pattern('forum_visibility', 'required_and_inclusion', list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', 'required_and_inclusion', list: '1,2,3,4')])
       assert_response :bad_request
     end
 
     def test_create_validate_inclusion
-      post :create, construct_params({}, name: 'test', forum_category_id: 1)
+      post :create, construct_params({}, name: 'test', forum_category_id: 1, forum_visibility: '9', forum_type: '89')
       match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')])
       assert_response :bad_request
@@ -153,6 +155,15 @@ module ApiDiscussions
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: 'test', forum_category_id: ForumCategory.first.id)
       assert_response :created
+    end
+
+    def test_create_no_params
+      post :create, construct_params({})
+      match_json([bad_request_error_pattern('name', 'missing_field'),
+                  bad_request_error_pattern('forum_category_id', 'required_and_numericality'),
+                  bad_request_error_pattern('forum_visibility', 'required_and_inclusion', list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', 'required_and_inclusion', list: '1,2,3,4')])
+      assert_response :bad_request
     end
 
     def test_create_with_visibility_company_users
@@ -174,16 +185,6 @@ module ApiDiscussions
       result = parse_response(@response.body)
       assert_equal true, response.headers.include?('Location')
       assert_equal "http://#{@request.host}/api/v2/discussions/forums/#{result['id']}", response.headers['Location']
-    end
-
-    def test_create_no_params
-      post :create, construct_params({}, {})
-      pattern = [bad_request_error_pattern('name', 'missing_field'),
-                 bad_request_error_pattern('forum_category_id', 'is not a number'),
-                 bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
-                 bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')]
-      match_json(pattern)
-      assert_response :bad_request
     end
 
     def test_create_invalid_customer_id

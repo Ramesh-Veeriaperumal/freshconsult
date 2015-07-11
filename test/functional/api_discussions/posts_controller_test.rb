@@ -94,7 +94,7 @@ module ApiDiscussions
       post :create, construct_params({}, {})
       assert_response :bad_request
       match_json [bad_request_error_pattern('body_html', 'missing_field'),
-                  bad_request_error_pattern('topic_id', 'is not a number')]
+                  bad_request_error_pattern('topic_id', 'required_and_numericality')]
     end
 
     def test_create_mandatory_params

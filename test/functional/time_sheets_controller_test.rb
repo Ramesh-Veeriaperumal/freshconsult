@@ -366,6 +366,12 @@ class TimeSheetsControllerTest < ActionController::TestCase
     match_json [bad_request_error_pattern('test', 'invalid_field')]
   end
 
+  def test_create_presence_invalid
+    post :create, construct_params({})
+    assert_response :bad_request
+    match_json [bad_request_error_pattern('ticket_id', 'required_and_numericality')]
+  end
+
   def test_create_unpermitted_params
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)

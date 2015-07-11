@@ -1121,8 +1121,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_new_and_my_open
     Helpdesk::Ticket.update_all(status: 3)
-    Helpdesk::Ticket.first.update_attributes(status: 2, responder_id: @agent.id, 
-      deleted: false, spam: false)
+    Helpdesk::Ticket.first.update_attributes(status: 2, responder_id: @agent.id,
+                                             deleted: false, spam: false)
     get :index, controller_params(filter: 'new_and_my_open')
     assert_response :success
     response = parse_response @response.body

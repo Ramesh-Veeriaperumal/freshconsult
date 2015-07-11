@@ -6,7 +6,7 @@ class TopicValidationsTest < ActionView::TestCase
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
-    assert_equal ['Title missing', 'Message html missing', 'Forum is not a number'], topic.errors.full_messages
+    assert_equal ['Title missing', 'Message html missing', 'Forum required_and_numericality'], topic.errors.full_messages
   end
 
   def test_numericality_params_invalid

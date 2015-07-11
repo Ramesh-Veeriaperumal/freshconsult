@@ -77,19 +77,18 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     user = user_without_monitorships
     get "/api/discussions/topics/followed_by?user_id=#{user.id}", nil, @headers
     assert_response :success
-    assert_equal "[]", response.body
-    post "/api/discussions/topics/#{topic.id}/follow", {user_id: user.id}.to_json, @write_headers
+    assert_equal '[]', response.body
+    post "/api/discussions/topics/#{topic.id}/follow", { user_id: user.id }.to_json, @write_headers
     assert_response :no_content
     get "/api/discussions/topics/followed_by?user_id=#{user.id}", nil, @headers
     assert_response :success
     match_json [topic_pattern(topic)]
     get "/api/discussions/topics/#{topic.id}/follow?user_id=#{user.id}", nil, @headers
     assert_response :no_content
-    delete "/api/discussions/topics/#{topic.id}/follow", {user_id: user.id}.to_json, @write_headers
+    delete "/api/discussions/topics/#{topic.id}/follow", { user_id: user.id }.to_json, @write_headers
     assert_response :no_content
     get "/api/discussions/topics/followed_by?user_id=#{user.id}", nil, @headers
     assert_response :success
-    assert_equal "[]", response.body
+    assert_equal '[]', response.body
   end
-
 end

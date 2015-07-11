@@ -24,7 +24,8 @@ class TimeSheetValidation < ApiValidation
   validate :disallow_reset_timer_value, if: -> { @timer_running_set && errors[:timer_running].blank? }, on: :update
 
   # Ticket specific validations
-  validates :ticket_id, numericality: true, on: :create
+  validates :ticket_id, required: { allow_nil: false, message: 'required_and_numericality' }, on: :create
+  validates :ticket_id, numericality: true, allow_nil: true,  on: :create
 
   # if ticket_id is not a number, to avoid query, below if condition is used.
   validate :valid_ticket?, if: -> { errors[:ticket_id].blank? }, on: :create
