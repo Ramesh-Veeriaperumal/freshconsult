@@ -28,7 +28,7 @@ module Solution::MetaAssociationSwitcher
 				end
 
 				define_method(%{#{attrib}_with_association}) do
-					if Account.current.launched?(:meta_read) || !send("#{attrib}_changed?") 
+					if Account.current.launched?(:meta_read) && !send("#{attrib}_changed?") 
 						send(%{#{attrib}_through_meta})
 					else
 						send(%{#{attrib}_without_association})

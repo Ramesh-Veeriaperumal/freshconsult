@@ -14,7 +14,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	has_one :solution_folder, :class_name => "Solution::Folder", :through => :solution_folder_meta
 
-	COMMON_ATTRIBUTES = ["account_id", "art_type", "thumbs_up", "thumbs_down", "position", "hits"]
+	COMMON_ATTRIBUTES = ["account_id", "art_type", "position", "created_at"]
 	
 	HITS_CACHE_THRESHOLD = 100
 	def hit_key

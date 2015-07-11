@@ -186,8 +186,10 @@ describe Solution::CategoriesController do
     end
 
     it "should render a show page of a category if corresponding meta is destroyed" do
-      get :show, :id => @test_category_for_meta.id
-      response.body.should =~ /#{@test_category_for_meta.name}/
+      test_meta_destroy_category = create_category( {:name => "test_meta_destroy_category #{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+      test_meta_destroy_category.reload.solution_category_meta.destroy
+      get :show, :id => test_meta_destroy_category.id
+      response.body.should =~ /#{test_meta_destroy_category.name}/
     end
   end
 

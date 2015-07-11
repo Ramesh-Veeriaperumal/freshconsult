@@ -21,7 +21,7 @@ class Solution::Category < ActiveRecord::Base
 		:source => :solution_folders,
     :order => :"solution_folder_meta.position",
 		:readonly => false,
-    :conditions => proc { ["solution_folders.language_id = '#{Language.current.id}' and solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
+    :conditions => proc { ["solution_folders.language_id = '#{Language.current.id}' and solution_folder_meta.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
 
   has_many :portal_solution_categories_with_meta, 
     :class_name => 'PortalSolutionCategory',
@@ -31,9 +31,13 @@ class Solution::Category < ActiveRecord::Base
 		:readonly => false,
     :dependent => :delete_all
 
-  has_many :published_articles_with_meta, :through => :public_folders_with_meta
+  has_many :published_articles_with_meta, 
+    :through => :public_folders_with_meta,
+    :order => ["solution_folder_meta.id", "solution_article_meta.position"]
 
-  has_many :articles_with_meta, :through => :folders_with_meta
+  has_many :articles_with_meta, 
+    :through => :folders_with_meta,
+    :order => ["solution_folder_meta.id", "solution_article_meta.position"]
 
   has_many :portals_with_meta, :through => :portal_solution_categories_with_meta, :source => :portal
 

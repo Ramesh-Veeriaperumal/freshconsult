@@ -58,7 +58,7 @@ class Solution::Folder < ActiveRecord::Base
     end
   end
   
-  scope :visible, lambda {|user| visibility_condition_hash(user) }
+  scope :visible, lambda {|user| visibility_hash(user) }
 
   # scope :visible, lambda {|user| {
   #                   :order => "position" ,
@@ -66,14 +66,6 @@ class Solution::Folder < ActiveRecord::Base
   #                               # solution_customer_folders.folder_id = solution_folders.id and  
   #                               # solution_customer_folders.account_id = solution_folders.account_id",
   #                   :conditions => visiblity_condition(user) } }
-
-  def self.visibility_condition_hash(user)
-    if Account.current.launched?(:meta_read)
-      visibility_hash_through_meta(user)
-    else
-      visibility_hash(user)
-    end
-  end
 
   def self.visibility_hash(user)
     {
@@ -88,6 +80,18 @@ class Solution::Folder < ActiveRecord::Base
       :order => "solution_folder_meta.position",
       :conditions => visiblity_condition(user).gsub("solution_folders", "solution_folder_meta").gsub("folder_id", "folder_meta_id")
     }
+  end
+
+  def self.visibility_hash_with_association(user)
+    if Account.current.launched?(:meta_read)
+      visibility_hash_through_meta(user)
+    else
+      visibility_hash_without_association(user)
+    end
+  end
+
+  class << self
+    alias_method_chain :visibility_hash, :association
   end
 
   def self.visiblity_condition(user)

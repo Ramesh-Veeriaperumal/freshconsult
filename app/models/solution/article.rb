@@ -56,16 +56,30 @@ class Solution::Article < ActiveRecord::Base
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
 
   def self.articles_for_portal_conditions(portal)
-    if Account.current.launched?(:meta_read)
-      { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
+    { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
+        portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
+      :joins => :folder,
+      :order => ['solution_folders.id', "solution_articles.position"] }
+  end
+
+  def self.articles_for_portal_conditions_with_meta(portal)
+    { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
           portal.portal_solution_categories.map(&:solution_category_meta_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
-        :joins => :folder_with_meta
+        :joins => :folder_with_meta,
+        :order => ["solution_folder_meta.id", "solution_article_meta.position"]
       }
+  end
+
+  def self.articles_for_portal_conditions_with_association(portal)
+    if Account.current.launched?(:meta_read)
+      self.articles_for_portal_conditions_with_meta(portal)
     else
-      { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
-          portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
-        :joins => :folder }
+      self.articles_for_portal_conditions_without_association(portal)
     end
+  end
+
+  class << self
+    alias_method_chain :articles_for_portal_conditions, :association
   end
 
   def type_name

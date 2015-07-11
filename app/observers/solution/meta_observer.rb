@@ -12,7 +12,7 @@ class Solution::MetaObserver < ActiveRecord::Observer
 				:account_id => meta_obj.account_id
 			}).update_all({
 				:parent_id => meta_obj.id, 
-				:language_id => Solution::Category::LANGUAGE_MAPPING[Account.current.language][:language_id]	
+				:language_id => Language.find_by_code(Account.current.language).id
 			})
 	end
 end

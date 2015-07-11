@@ -19,8 +19,8 @@ module MobihelpHelper
     @mh_user
   end
 
-  def create_mobihelp_app
-    mh_app = FactoryGirl.build(:mobihelp_app, :name => "Fresh App #{Time.now.nsec}")
+  def create_mobihelp_app(params = {})
+    mh_app = FactoryGirl.build(:mobihelp_app, :name => (params[:name] || "Fresh App #{Time.now.nsec}"), :category_ids => params[:category_ids])
     mh_app.save
     Rails.logger.debug("Created mobihelp_app #{mh_app.inspect}");
     mh_app

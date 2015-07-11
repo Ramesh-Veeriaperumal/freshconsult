@@ -68,4 +68,13 @@ module Solution::MetaMethods
 	def assign_keys
 		DEFAULT_ASSIGNS[self.class.name]
 	end
+
+	def decrement_positions_on_lower_meta_items
+		scope_condition = meta_class.send(:sanitize_sql_hash_for_conditions, 
+				{ assign_keys.first => self.send(assign_keys.last)})
+		meta_class.update_all(
+			"#{position_column} = (#{position_column} - 1)", 
+			"#{scope_condition} AND position > #{send(:position).to_i}"
+		)
+	end
 end

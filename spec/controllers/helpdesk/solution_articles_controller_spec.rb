@@ -38,24 +38,6 @@ describe Solution::ArticlesController do
     response.should render_template("solution/articles/show")    
   end
 
-
-  describe "should render the show page of an article even if article_body is not proper" do
-    before(:each) do
-      @sample_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
-        :user_id => @agent.id, :status => "2", :art_type => "1" } )
-    end
-
-    it "should render show page even if the article body is not present" do
-      @sample_article.article_body.destroy
-      show_page_rendered_properly?(@sample_article)
-    end
-
-    it "should render show page if the content is not present in the article body record" do
-      @sample_article.article_body.update_attributes({:description => nil, :desc_un_html => nil})
-      show_page_rendered_properly?(@sample_article)
-    end
-  end
-
   it "should redirect user with no privilege to login" do 
     session = UserSession.find
     session.destroy
@@ -379,7 +361,7 @@ describe Solution::ArticlesController do
       put :reorder, :category_id => @test_category.id, :folder_id => folder.id, :reorderlist => reorder_hash.to_json
       folder.articles.each do |current_article|
         current_article.position.should be_eql(reorder_hash[current_article.id])
-        current_article.solution_article_meta.position.should be_eql(reorder_hash[current_folder.id])
+        current_article.solution_article_meta.position.should be_eql(reorder_hash[current_article.id])
       end    
     end  
 
@@ -404,13 +386,13 @@ describe Solution::ArticlesController do
   it "should check the language utility methods" do
     test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
-    lang = "fr"
     test_language_article.reload
-    test_language_article.language = lang
+    test_language_article.language = "fr"
     test_language_article.save
-    test_language_article.language_id.should be_eql(Solution::Article::LANGUAGE_MAPPING[lang][:language_id])
-    test_language_article.language_name.should be_eql("French")
-    test_language_article.language_code.should be_eql(lang)
-    test_language_article.language.should be_eql(lang)
+    lang = Language.find_by_code("fr")
+    test_language_article.language_id.should be_eql(lang.id)
+    test_language_article.language_name.should be_eql(lang.name)
+    test_language_article.language_code.should be_eql(lang.code)
+    test_language_article.language.should be_eql(lang.code)
   end
 end

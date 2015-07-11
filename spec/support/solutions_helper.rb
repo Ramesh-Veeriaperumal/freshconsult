@@ -30,6 +30,13 @@ module SolutionsHelper
     test_article
   end
 
+  def create_customer_folders(folder)
+    3.times do
+      company = create_company
+      folder.customer_folders.create(:customer_id => company.id)
+    end
+  end
+
   def quick_create_artilce
     create_article(:folder_id => create_folder(:category_id => create_category.id).id)
   end
@@ -80,4 +87,18 @@ module SolutionsHelper
       obj.position.should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
     end
   end
+
+  def check_meta_assoc_equality(obj)
+    obj.reload
+    obj.class::FEATURE_BASED_METHODS.each do |meth|
+      obj.send("#{meth}_without_association").should == obj.send("#{meth}_with_meta")
+    end
+  end
+
+  def check_meta_delegates(obj)
+    obj.reload
+    obj.meta_class::COMMON_ATTRIBUTES.each do |attrib|
+      obj.send("#{attrib}_without_association").should == obj.send("#{attrib}_through_meta")
+    end
+  end 
 end

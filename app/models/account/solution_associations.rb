@@ -27,7 +27,8 @@ class Account < ActiveRecord::Base
   has_many :public_folders, :through => :solution_categories, :order => "category_id, position"
 
   has_many :published_articles, :through => :public_folders,
-    :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+    :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]],
+    :order => ["solution_folders.id", "solution_articles.position"]
 
   has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
 
@@ -37,7 +38,7 @@ class Account < ActiveRecord::Base
 
 	has_many :solution_categories_with_meta, 
 		:class_name =>'Solution::Category', 
-		:order => "solution_categories.position",
+		:order => "solution_category_meta.position",
     :through => :solution_category_meta,
     :source => :solution_categories,
 		:conditions => proc { "solution_categories.language_id = '#{Language.current.id}'" }
@@ -46,16 +47,20 @@ class Account < ActiveRecord::Base
   	:class_name =>'Solution::Folder', 
   	:through => :solution_folder_meta,
     :source => :solution_folders,
-  	:conditions => proc { "solution_folders.language_id = '#{Language.current.id}'" }
+  	:conditions => proc { "solution_folders.language_id = '#{Language.current.id}'" },
+    :order => ["solution_folder_meta.solution_category_meta_id", "solution_folder_meta.position"]
 
-  has_many :public_folders_with_meta, :through => :solution_categories_with_meta
+  has_many :public_folders_with_meta, 
+    :through => :solution_categories_with_meta,
+    :order => ["solution_folder_meta.solution_category_meta_id", "solution_folder_meta.position"]
 
   has_many :published_articles_with_meta, 
-  	:through => :public_folders,
-    :conditions => proc { [" solution_folders.visibility = ? and 
+  	:through => :public_folders_with_meta,
+    :conditions => proc { [" solution_folder_meta.visibility = ? and 
       solution_articles.language_id = '#{Language.current.id}'", 
-      Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]}
-  
+      Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]},
+    :order => ["solution_folder_meta.id", "solution_article_meta.position"]
+
   has_many :solution_articles_with_meta, 
   	:class_name =>'Solution::Article',
     :through => :solution_article_meta,

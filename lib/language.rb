@@ -10,12 +10,14 @@ class Language
 		end
 	end
 
+	LANGUAGES = (AVAILABLE_LOCALES_WITH_ID.each_pair.inject([]) do |arr, lang| 
+					arr << self.new(:code => lang.first, :id => lang.last, 
+									:name => I18n.t('meta', locale: lang.first)[:language_name]) 
+					arr
+				end)
+
 	def self.all
-		languages = []
-		AVAILABLE_LOCALES_WITH_ID.each do |lang, id|
-			languages << self.new(:code => lang, :id => id, :name => I18n.t('meta', locale: lang)[:language_name])
-		end
-		languages
+		LANGUAGES
 	end
 
 	def self.find(id)

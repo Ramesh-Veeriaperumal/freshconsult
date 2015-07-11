@@ -14,9 +14,9 @@ class Solution::Category < ActiveRecord::Base
   	:order => "position", 
 		:conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
 
-  has_many :published_articles, :through => :public_folders
+  has_many :published_articles, :through => :public_folders, :order => ["solution_folders.id", "solution_articles.position"]
 
-  has_many :articles, :through => :folders
+  has_many :articles, :through => :folders, :order => ["solution_folders.id", "solution_articles.position"]
 
   has_many :portal_solution_categories, 
     :class_name => 'PortalSolutionCategory', 
