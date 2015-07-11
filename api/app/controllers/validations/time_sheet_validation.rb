@@ -31,7 +31,7 @@ class TimeSheetValidation < ApiValidation
   validates :ticket_id, numericality: true, on: :create
 
   # if ticket_id is not a number, to avoid query, below if condition is used.
-  validates :ticket, presence: true, if: -> { errors[:ticket_id].blank? }, on: :create
+  validate :valid_ticket?, if: -> { errors[:ticket_id].blank? }, on: :create
 
   # ************************************** User specific validations **********************************************
 
@@ -56,6 +56,10 @@ class TimeSheetValidation < ApiValidation
   end
 
   private
+
+    def valid_ticket?
+      errors.add(:ticket_id, :blank) unless @ticket
+    end
 
     def disallow_reset_timer_value
       errors.add(:timer_running, 'timer_running_duplicate') if request_params[:timer_running].to_s.to_bool == item.timer_running.to_s.to_bool

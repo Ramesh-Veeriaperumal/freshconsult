@@ -1,4 +1,4 @@
-Todo:
+	Todo:
  - API Layer middleware Removal using YAML settings file.
  - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
  - Tickets? phone source?
@@ -11,9 +11,8 @@ Todo:
  - Content type for get ticket index.
  - introduce spam, unspam &  delete_forever for ticket via api
  - include meta info( created_by ) of a ticket in response on demand and needly basis
- - Allow attachments as part of discussions/post API call? Not supported in V1 - not now
+ - Allow attachments as part of discussions/post API call? Not supported in V1 
  - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
- - move error messages from en.yml file. Should not involve internatinalization.
 
 Breaking changes in existing APIs:
  - day pass required
@@ -39,6 +38,7 @@ Deferred:
  - "Validate picklist values for custom drop down & dependent fields in ticket"
 
 Completed:
+ - move error messages from en.yml file. Should not involve internatinalization.
  - Rack::MethodOverride middleware should be allowed as PHP has this kind of implementation to fire PUT require request.
  - Content type for get ticket index.
  - handle xss, customer_forum numericality, ticket scopes

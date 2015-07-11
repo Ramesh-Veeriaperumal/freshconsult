@@ -2,6 +2,11 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class ForumsControllerTest < ActionController::TestCase
+    def controller_params(params = {})
+      remove_wrap_params
+      request_params.merge(params)
+    end
+
     def f_obj
       Forum.first || create_test_forum(fc)
     end
@@ -35,7 +40,7 @@ module ApiDiscussions
 
     def test_update
       fc = fc_obj
-      forum = f_obj
+      forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_type: 2)
       assert_response :success
       match_json(forum_pattern(forum.reload))
@@ -52,7 +57,7 @@ module ApiDiscussions
 
     def test_update_invalid_forum_type
       fc = fc_obj
-      forum = f_obj
+      forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_type: 7897)
       assert_response :bad_request
       match_json([bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')])
@@ -119,6 +124,15 @@ module ApiDiscussions
       match_json(forum_response_pattern(forum, forum_visibility: 4, customers: [customer.id]))
     end
 
+    def test_update_with_forum_visibility_company_users
+      fc = fc_obj
+      forum = create_test_forum(fc)
+      put :update, construct_params({ id: forum.id }, forum_visibility: 4)
+      assert_response :success
+      match_json(forum_pattern(forum.reload))
+      match_json(forum_response_pattern(forum, forum_visibility: 4))
+    end
+
     def test_create_validate_presence
       post :create, construct_params({}, forum_visibility: '1', forum_type: 1)
       match_json([bad_request_error_pattern('name', 'missing_field'),
@@ -138,6 +152,15 @@ module ApiDiscussions
                                          forum_type: 1, name: 'test', forum_category_id: ForumCategory.first.id)
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: 'test', forum_category_id: ForumCategory.first.id)
+      assert_response :created
+    end
+
+    def test_create_with_visibility_company_users
+      name = Faker::Name.name
+      post :create, construct_params({}, description: 'desc', forum_visibility: '4',
+                                         forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      match_json(forum_pattern Forum.last)
+      match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 4, forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
       assert_response :created
     end
 
@@ -261,13 +284,23 @@ module ApiDiscussions
 
     def test_update_with_nil_values
       fc = fc_obj
-      forum = f_obj
+      forum = create_test_forum(fc_obj)
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
       pattern = [bad_request_error_pattern('name', "can't be blank"),
                  bad_request_error_pattern('forum_category_id', 'is not a number'),
                  bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')]
+      match_json(pattern)
+      assert_response :bad_request
+    end
+
+    def test_update_with_forum_type_with_more_topics
+      fc = fc_obj
+      forum = create_test_forum(fc)
+      topic = create_test_topic(forum)
+      put :update, construct_params({ id: forum.id }, forum_type: 2)
+      pattern = [bad_request_error_pattern('forum_type', 'invalid_field')]
       match_json(pattern)
       assert_response :bad_request
     end
@@ -374,7 +407,7 @@ module ApiDiscussions
     def test_before_filters_is_following_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      get :is_following, construct_params({ id: f_obj.id }, {})
+      get :is_following, controller_params(id: f_obj.id)
     end
 
     def test_follow_invalid_forum_id
@@ -423,14 +456,14 @@ module ApiDiscussions
 
     def test_is_following_without_user_id
       monitor_topic(f_obj, @agent, 1)
-      get :is_following, construct_params(id: f_obj.id)
+      get :is_following, controller_params(id: f_obj.id)
       assert_response :no_content
     end
 
     def test_is_following_with_user_id
       user = user_without_monitorships
       monitor_forum(f_obj, user, 1)
-      get :is_following, construct_params(user_id: user.id, id: f_obj.id)
+      get :is_following, controller_params(user_id: user.id, id: f_obj.id)
       assert_response :no_content
     end
 
@@ -438,7 +471,7 @@ module ApiDiscussions
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       user = user_without_monitorships
       monitor_forum(f_obj, user, 1)
-      get :is_following, construct_params(user_id: user.id, id: f_obj.id)
+      get :is_following, controller_params(user_id: user.id, id: f_obj.id)
       assert_response :forbidden
       match_json(request_error_pattern('access_denied', id: user.id))
     end
@@ -446,23 +479,29 @@ module ApiDiscussions
     def test_is_following_without_privilege_valid
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       monitor_forum(f_obj, @agent, 1)
-      get :is_following, construct_params(user_id: @agent.id, id: f_obj.id)
+      get :is_following, controller_params(user_id: @agent.id, id: f_obj.id)
       assert_response :no_content
     end
 
     def test_is_following_non_numeric_user_id
-      get :is_following, construct_params(user_id: 'test', id: f_obj.id)
+      get :is_following, controller_params(user_id: 'test', id: f_obj.id)
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id', 'is not a number')])
     end
 
     def test_is_following_invalid_topic_id
-      get :is_following, construct_params(user_id: @agent.id, id: 8_908_908)
+      get :is_following, controller_params(user_id: @agent.id, id: 8_908_908)
       assert_response :not_found
     end
 
+    def test_is_following_unexpected_fields
+      get :is_following, controller_params(junk: 'test', id: f_obj.id)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern('junk', 'invalid_field')])
+    end
+
     def test_is_following_invalid_user_id
-      get :is_following, construct_params(user_id: user_without_monitorships.id, id: f_obj.id)
+      get :is_following, controller_params(user_id: user_without_monitorships.id, id: f_obj.id)
       assert_response :not_found
     end
   end

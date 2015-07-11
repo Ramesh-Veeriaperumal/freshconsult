@@ -2,6 +2,11 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class TopicsControllerTest < ActionController::TestCase
+    def controller_params(params = {})
+      remove_wrap_params
+      request_params.merge(params)
+    end
+
     def forum_obj
       Forum.first
     end
@@ -164,7 +169,7 @@ module ApiDiscussions
     end
 
     def test_is_following_invalid_topic_id
-      post :is_following, construct_params({ id: 999 }, {})
+      post :is_following, controller_params(id: 999)
       assert_response :not_found
     end
 
@@ -434,7 +439,7 @@ module ApiDiscussions
       user = user_without_monitorships
       monitor_topic(create_test_topic(forum_obj), user, 1)
       @controller.stubs(:privilege?).with(:manage_forums).returns(true)
-      get :followed_by, construct_params(user_id: user.id)
+      get :followed_by, controller_params(user_id: user.id)
       assert_response :success
       result_pattern = []
       Topic.followed_by(user.id).each do |t|
@@ -445,21 +450,21 @@ module ApiDiscussions
     end
 
     def test_followed_by_invalid_id
-      get :followed_by, construct_params(user_id: (1000 + Random.rand(11)))
+      get :followed_by, controller_params(user_id: (1000 + Random.rand(11)))
       assert_response :success
       result_pattern = []
       match_json result_pattern
     end
 
     def test_followed_by_non_numeric_id
-      get :followed_by, construct_params(user_id: 'test')
+      get :followed_by, controller_params(user_id: 'test')
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id', 'is not a number')])
     end
 
     def test_followed_by_without_user_id
       monitor_topic(create_test_topic(forum_obj), @agent, 1)
-      get :followed_by, request_params
+      get :followed_by, controller_params
       assert_response :success
       result_pattern = []
       Topic.followed_by(@agent.id).each do |t|
@@ -472,7 +477,7 @@ module ApiDiscussions
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       user = user_without_monitorships
       monitor_topic(first_topic, user, 1)
-      get :followed_by, construct_params(user_id: user.id)
+      get :followed_by, controller_params(user_id: user.id)
       assert_response :forbidden
       match_json(request_error_pattern('access_denied', id: user.id))
     end
@@ -480,7 +485,7 @@ module ApiDiscussions
     def test_followed_by_without_privilege_valid
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       monitor_topic(create_test_topic(forum_obj), @agent, 1)
-      get :followed_by, request_params
+      get :followed_by, controller_params
       assert_response :success
       result_pattern = []
       Topic.followed_by(@agent.id).each do |t|
@@ -492,7 +497,7 @@ module ApiDiscussions
     def test_is_following_without_user_id
       topic = create_test_topic(forum_obj)
       monitor_topic(topic, @agent, 1)
-      get :is_following, construct_params(id: topic.id)
+      get :is_following, controller_params(id: topic.id)
       assert_response :no_content
     end
 
@@ -500,7 +505,7 @@ module ApiDiscussions
       topic = create_test_topic(forum_obj)
       user = user_without_monitorships
       monitor_topic(topic, user, 1)
-      get :is_following, construct_params(user_id: user.id, id: topic.id)
+      get :is_following, controller_params(user_id: user.id, id: topic.id)
       assert_response :no_content
     end
 
@@ -508,7 +513,7 @@ module ApiDiscussions
       user = user_without_monitorships
       monitor_topic(first_topic, user, 1)
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
-      get :is_following, construct_params(user_id: user.id, id: first_topic.id)
+      get :is_following, controller_params(user_id: user.id, id: first_topic.id)
       assert_response :forbidden
       match_json(request_error_pattern('access_denied', id: user.id))
       @controller.unstub(:privilege?)
@@ -518,19 +523,25 @@ module ApiDiscussions
       topic = create_test_topic(forum_obj)
       monitor_topic(topic, @agent, 1)
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
-      get :is_following, construct_params(user_id: @agent.id, id: topic.id)
+      get :is_following, controller_params(user_id: @agent.id, id: topic.id)
       assert_response :no_content
       @controller.unstub(:privilege?)
     end
 
     def test_is_following_non_numeric_user_id
-      get :is_following, construct_params(user_id: 'test', id: first_topic.id)
+      get :is_following, controller_params(user_id: 'test', id: first_topic.id)
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id', 'is not a number')])
     end
 
+    def test_is_following_unexpected_fields
+      get :is_following, controller_params(junk: 'test', id: first_topic.id)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern('junk', 'invalid_field')])
+    end
+
     def test_is_following_invalid_user_id
-      get :is_following, construct_params(user_id: user_without_monitorships.id, id: first_topic.id)
+      get :is_following, controller_params(user_id: user_without_monitorships.id, id: first_topic.id)
       assert_response :not_found
     end
   end

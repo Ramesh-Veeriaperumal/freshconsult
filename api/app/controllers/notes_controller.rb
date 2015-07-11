@@ -49,7 +49,9 @@ class NotesController < ApiApplicationController
     def create_note
       @item.user ||= current_user if @item.user_id.blank? # assign user instead of id as the object is already loaded.
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
-      build_normal_attachments(@item, params[cname][:attachments])
+      @item.notable.account = current_account
+      attachments = build_normal_attachments(@item, params[cname][:attachments])
+      @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
       @item.save_note
     end
 

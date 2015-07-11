@@ -3,7 +3,7 @@ module DiscussionMonitorConcern
   included do
     before_filter :permit_toggle_params, only: [:follow, :unfollow]
     before_filter :fetch_monitorship, only: [:follow]
-    before_filter :validate_user_id, :allow_monitor?, only: [:followed_by, :is_following]
+    before_filter :allow_monitor?, :validate_user_id, only: [:followed_by, :is_following]
     before_filter :fetch_active_monitorship_for_user, only: [:is_following]
     before_filter :find_monitorship, only: [:unfollow]
   end
@@ -65,6 +65,8 @@ module DiscussionMonitorConcern
     end
 
     def validate_user_id
+      fields = "DiscussionConstants::#{action_name.upcase}_FIELDS".constantize
+      params.permit(*fields, *ApiConstants::DEFAULT_PARAMS)
       validate params
       params[:user_id] ||= current_user.id
     end
@@ -75,6 +77,6 @@ module DiscussionMonitorConcern
     end
 
     def allow_monitor?
-      render_request_error(:access_denied, 403, id: params[:user_id]) unless params[:user_id] == current_user.id || privilege?(:manage_forums)
+      render_request_error(:access_denied, 403, id: params[:user_id]) unless params[:user_id].blank? || params[:user_id] == current_user.id || privilege?(:manage_forums)
     end
 end
