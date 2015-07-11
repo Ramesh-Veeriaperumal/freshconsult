@@ -1,6 +1,5 @@
 module DiscussionConstants
   # ControllerConstants
-
   CATEGORY_FIELDS = ['name', 'description']
   FORUM_FIELDS = ['name', 'description', 'forum_category_id', 'forum_type', 'forum_visibility', 'customers', 'customers' => []]
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'], manage_forums: ['forum_id'] }
@@ -11,7 +10,6 @@ module DiscussionConstants
   FOLLOWED_BY_FIELDS = ['user_id']
 
   # ValidationConstants
-
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN.values | Forum::VISIBILITY_KEYS_BY_TOKEN.values.map(&:to_s)
   FORUM_TYPE_KEYS_BY_TOKEN = Forum::TYPE_KEYS_BY_TOKEN.values | Forum::TYPE_KEYS_BY_TOKEN.values.map(&:to_s)
 end

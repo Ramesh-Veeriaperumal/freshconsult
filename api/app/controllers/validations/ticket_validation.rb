@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :responder_id, :source, :status, :subject, :type,
-                :product_id, :tags, :custom_fields, :account, :attachments, :request_params, :item
+                :product_id, :tags, :custom_fields, :attachments, :request_params, :item
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
@@ -13,9 +13,9 @@ class TicketValidation < ApiValidation
   validates :priority, custom_inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
 
   # proc is used as inclusion array is not constant
-  validates :status, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values(Account.current) } }, allow_nil: true
+  validates :status, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values } }, allow_nil: true
   validates :source, custom_inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
-  validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values(Account.current) } }, allow_nil: true
+  validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
 
   validates :tags, :cc_emails, :attachments, data_type: { rules: Array }, allow_nil: true
@@ -33,9 +33,8 @@ class TicketValidation < ApiValidation
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
 
-  def initialize(request_params, item, account)
+  def initialize(request_params, item)
     @request_params = request_params
-    @account = account
     @cc_emails = item.cc_email[:cc_emails] if item
     @fr_due_by = item.try(:frDueBy).try(:to_s) if item
     @custom_fields = item.try(:custom_field) if item
@@ -59,16 +58,7 @@ class TicketValidation < ApiValidation
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
   def disallow_due_by?
     if [:due_by, :fr_due_by].any? { |c| request_params.key?(c) }
-      Helpdesk::TicketStatus.status_keys_by_name(@account).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
+      Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
     end
   end
-
-  # def allowed_picklist_values?
-  #   allowed_values = TicketsValidationHelper.ticket_drop_down_field_choices_by_key(@account)
-  #   (custom_fields || {}).each_pair do |key, value|
-  #     if allowed_values[key] && !(allowed_values[key].include?(value))
-  #       errors.add(key.to_sym, "Should be a value in the list #{allowed_values[key].join(',')}")
-  #     end
-  #   end
-  # end
 end

@@ -15,5 +15,15 @@ class ErrorHelper
     def bad_request_error(att, val, meta)
       BadRequestError.new(att, val, meta)
     end
+
+    # couldn't use dynamic forms/I18n for AR attributes translation as it may have an effect on web too.
+    def rename_error_fields(fields = {}, item)
+      if item.errors
+        fields_to_be_renamed = fields.slice(*item.errors.to_h.keys)
+        fields_to_be_renamed.each_pair do |model_field, api_field|
+          item.errors.messages[api_field] = item.errors.messages.delete(model_field)
+        end
+      end
+    end
   end
 end

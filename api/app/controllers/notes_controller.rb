@@ -59,7 +59,7 @@ class NotesController < ApiApplicationController
       if success
         render "/notes/#{action_name}", location: send("#{nscname}_url", @item.id), status: 201
       else
-        rename_error_fields(notable_id: :ticket_id, user: :user_id)
+        ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, @item)
         render_error(@item.errors)
       end
     end
@@ -99,7 +99,7 @@ class NotesController < ApiApplicationController
       @ticket ||= @note_validation.ticket
       params[cname][:ticket_id] = @ticket.id if @ticket
 
-      assign_and_clean_params(notify_emails: :to_emails, ticket_id: :notable_id)
+      ParamsHelper.assign_and_clean_params({notify_emails: :to_emails, ticket_id: :notable_id}, params[cname])
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end

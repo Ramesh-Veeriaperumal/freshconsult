@@ -2,14 +2,12 @@ class TimeSheetValidation < ApiValidation
   attr_accessor :billable, :executed_at, :time_spent, :ticket_id, :user_id, :user, :note, :ticket, :item, :request_params, :timer_running, :start_time
 
   # do not change validation order
-  # ************************************** Common validations ****************************************************
-
+  # Common validations
   validates :billable, :timer_running, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
   validates :executed_at, date_time: { allow_nil: true }
   validates :time_spent, format: { with: /^(\d+):(\d+)$/, message: 'invalid_time_spent', allow_nil: true }
 
-  # ************************************** Start time specific validations ***************************************
-
+  # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
   validates :start_time, inclusion: { in: [nil], message: 'timer_running_true' }, if: -> { item.timer_running }, on: :update
 
@@ -21,20 +19,17 @@ class TimeSheetValidation < ApiValidation
   # start_time should be lesser than current_time to avoid negative time_spent values.
   validate :start_time_value, if: -> { start_time && errors[:start_time].blank? }
 
-  # ************************************** Timer running validations *********************************************
-
+  # Timer running validations
   # Should not set the timer running to the same value as before in update as it may introduce ambiguity regarding start_time
   validate :disallow_reset_timer_value, if: -> { @timer_running_set && errors[:timer_running].blank? }, on: :update
 
-  # ************************************** Ticket specific validations ********************************************
-
+  # Ticket specific validations
   validates :ticket_id, numericality: true, on: :create
 
   # if ticket_id is not a number, to avoid query, below if condition is used.
   validate :valid_ticket?, if: -> { errors[:ticket_id].blank? }, on: :create
 
-  # ************************************** User specific validations **********************************************
-
+  # User specific validations
   # user_id can't be changed in update if timer is running for the user.
   validates :user_id, inclusion: { in: [nil], message: 'cant_update_user' },
                       if: -> { item.timer_running && @user_id_set && item.user_id != user_id }, on: :update
@@ -43,7 +38,7 @@ class TimeSheetValidation < ApiValidation
   # if user_id is not a number or not set in update, to avoid query, below if condition is used.
   validates :user, presence: true,  if: -> { errors[:user_id].blank? && @user_id_set }
 
-  def initialize(request_params, item, account, timer_running)
+  def initialize(request_params, item, timer_running)
     super(request_params, item)
     check_params_set(request_params, item)
     @request_params = request_params
@@ -51,8 +46,8 @@ class TimeSheetValidation < ApiValidation
     @time_spent = request_params['time_spent']
     @start_time = request_params['start_time']
     @timer_running = timer_running
-    @user = account.agents_from_cache.find { |x| x.user_id == user_id } if @user_id_set
-    @ticket = account.tickets.find_by_param(request_params['ticket_id'], account) if @ticket_id_set
+    @user = Account.current.agents_from_cache.find { |x| x.user_id == user_id } if @user_id_set
+    @ticket = Account.current.tickets.find_by_param(request_params['ticket_id'], Account.current) if @ticket_id_set
   end
 
   private

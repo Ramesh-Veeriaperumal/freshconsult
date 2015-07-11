@@ -9,7 +9,7 @@ class ApiApplicationController < MetalApiController
 
   include Concerns::ApplicationConcern
 
-  # ************************ App specific Before filters Starts ******************************#
+  # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
   prepend_before_filter :determine_pod
@@ -25,7 +25,7 @@ class ApiApplicationController < MetalApiController
   include HelpdeskSystem
   include ControllerLogger
   include SubscriptionSystem
-  # ************************ App specific Before filters Ends ******************************#
+  # App specific Before filters Ends
 
   skip_before_filter :check_privilege, only: [:route_not_found]
   before_filter :load_object, except: [:create, :index, :route_not_found]
@@ -82,7 +82,7 @@ class ApiApplicationController < MetalApiController
 
   protected
 
-    def requires_feature(f)
+    def requires_feature(f) # Should be from cache. Need to revisit.
       return if feature?(f)
       @error = RequestError.new(:require_feature, feature: f.to_s.titleize)
       render '/request_error', status: 403
@@ -94,78 +94,20 @@ class ApiApplicationController < MetalApiController
       @not_get_request ||= !request.get?
     end
 
-    def get_email_user(username, pwd)
-      user = User.find_by_user_emails(username) # existing method used by authlogic to find user
-      if user && !user.deleted
-        valid_password = user.valid_password?(pwd) # valid_password - AuthLogic method
-        if valid_password
-          # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
-          update_failed_login_count(user, true) if user.failed_login_count != 0
-          user
-        else
-          update_failed_login_count(user)
-          nil
-        end
-      end
-    end
-
-    # This increases for each consecutive failed login.
-    # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
-    def update_failed_login_count(user, reset = false)
-      if reset
-        user.failed_login_count = 0
-      else
-        user.failed_login_count ||= 0
-        user.failed_login_count += 1
-      end
-      user.save
-    end
-
-    # Authlogic does not change the column values if logged in by a session, cookie, or basic http auth
-    def get_token_user(username)
-      user = User.find_by_single_access_token(username)
-      return user if user && !user.deleted && !user.blocked && user.active?
-    end
-
     def current_user
       return @current_user if defined?(@current_user)
       if not_get_request?
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
-          @current_user = get_token_user(username) || get_email_user(username, password)
+          @current_user = AuthHelper.get_token_user(username) || AuthHelper.get_email_user(username, password)
         end
       elsif current_user_session # fall back to old session based auth
         @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
         if @current_user && @current_user.failed_login_count != 0
-          update_failed_login_count(@current_user, true)
+          AuthHelper.update_failed_login_count(@current_user, true)
         end
       end
       @current_user
-    end
-
-    def assign_and_clean_params(params_hash)
-      # Assign original fields with api params
-      params_hash.each_pair do |api_field, attr_field|
-        params[cname][attr_field] = params[cname][api_field] if params[cname][api_field]
-      end
-      clean_params(params_hash.keys)
-    end
-
-    def clean_params(params_to_be_deleted)
-      # Delete the fields from params before calling build or save or update_attributes
-      params_to_be_deleted.each do |field|
-        params[cname].delete(field)
-      end
-    end
-
-    # couldn't use dynamic forms/I18n for AR attributes translation as it may have an effect on web too.
-    def rename_error_fields(fields = {})
-      if @item.errors
-        fields_to_be_renamed = fields.slice(*@item.errors.to_h.keys)
-        fields_to_be_renamed.each_pair do |model_field, api_field|
-          @item.errors.messages[api_field] = @item.errors.messages.delete(model_field)
-        end
-      end
     end
 
     def set_custom_errors
@@ -298,9 +240,5 @@ class ApiApplicationController < MetalApiController
 
     def create?
       action_name.to_s == 'create'
-    end
-
-    def get_user_param
-      @email ? :email : :user_id
     end
 end

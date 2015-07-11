@@ -13,6 +13,7 @@
  - include meta info( created_by ) of a ticket in response on demand and needly basis
  - Allow attachments as part of discussions/post API call? Not supported in V1 
  - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
+ - Compare all UI functionality with API(Eg. forum type)
 
 Breaking changes in existing APIs:
  - day pass required
@@ -38,6 +39,8 @@ Deferred:
  - "Validate picklist values for custom drop down & dependent fields in ticket"
 
 Completed:
+ - Differentiate between missing and invalid value - improve specificity of codes.
+ - followed_by restrict params
  - move error messages from en.yml file. Should not involve internatinalization.
  - Rack::MethodOverride middleware should be allowed as PHP has this kind of implementation to fire PUT require request.
  - Content type for get ticket index.

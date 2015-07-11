@@ -19,13 +19,13 @@ class TicketsController < ApiApplicationController
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
-    build_normal_attachments(@item, params[cname][:attachments])
+    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     if @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
-      rename_error_fields(group: :group_id, responder: :user_id, email_config: :email_config_id,
-                          product: :product_id)
+      ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
+                                        product: :product_id }, @item)
       render_error(@item.errors)
     end
   end
@@ -89,17 +89,17 @@ class TicketsController < ApiApplicationController
 
     def tickets_filter(tickets)
       tickets = tickets.where(deleted: false, spam: false).api_permissible(current_user)
-      @ticket_filter.value.each do |key|
+      @ticket_filter.conditions.each do |key|
         clause = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
       end
-      tickets.uniq
+      tickets
     end
 
     def validate_filter_params
-      # Should allow per page & page params also. Use *ApiConstants::DEFAULT_INDEX_FIELDS
-      params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
-      @ticket_filter = TicketFilterValidation.new(params, current_account)
+      params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS,
+                    *ApiConstants::DEFAULT_INDEX_FIELDS)
+      @ticket_filter = TicketFilterValidation.new(params)
       render_error(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
@@ -123,8 +123,9 @@ class TicketsController < ApiApplicationController
       @tags = params[cname][:tags] if params[cname][:tags]
 
       # Assign original fields from api params and clean api params.
-      assign_and_clean_params(custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type)
-      clean_params([:cc_emails, :tags])
+      ParamsHelper.assign_and_clean_params({custom_fields: :custom_field, fr_due_by: :frDueBy,
+       type: :ticket_type}, params[cname])
+      ParamsHelper.clean_params([:cc_emails, :tags], params[cname])
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
@@ -132,13 +133,12 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_params
-      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(current_account)
-
+      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = "ApiTicketConstants::#{action_name.upcase}_TICKET_FIELDS".constantize | ['custom_fields' => custom_fields]
+      field = ApiTicketConstants::TICKET_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ticket = TicketValidation.new(params[cname], @item, current_account)
+      ticket = TicketValidation.new(params[cname], @item)
       render_error ticket.errors, ticket.error_options unless ticket.valid?
     end
 
