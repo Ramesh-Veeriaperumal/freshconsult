@@ -101,4 +101,20 @@ module SolutionsHelper
       obj.send("#{attrib}_without_association").should == obj.send("#{attrib}_through_meta")
     end
   end 
+
+  def check_language_equality
+    lang_obj = Language.find_by_code(@account.language)
+    @account.make_current
+    ["solution_categories", "solution_folders", "solution_articles"].each do |solution_assoc|
+      check_language_by_assoc(solution_assoc, lang_obj)
+    end
+    Account.reset_current_account
+  end
+
+  def check_language_by_assoc sol_assoc, lang_obj
+    @account.send(sol_assoc).each do |obj|
+      obj.language.should be_eql(lang_obj.code)
+      obj.language_id.should be_eql(lang_obj.id)
+    end
+  end
 end

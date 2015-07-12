@@ -15,7 +15,7 @@ class Portal < ActiveRecord::Base
   :allow_nil => true, :allow_blank => true
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit :update_users_language, on: :update, :if => :main_portal_language_changes?
+  after_commit :update_users_language, :update_solutions_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
@@ -176,6 +176,10 @@ class Portal < ActiveRecord::Base
 
     def update_users_language
       account.all_users.update_all(:language => account.language) unless account.features.multi_language?
+    end
+
+    def update_solutions_language
+      Resque.enqueue(Workers::Community::HandleLanguageChange, { :account_id => account.id })
     end
 
     def main_portal_language_changes?
