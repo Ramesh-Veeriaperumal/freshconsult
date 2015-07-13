@@ -14,7 +14,7 @@ class Solution::Folder < ActiveRecord::Base
 		:readonly => false,
     :class_name => 'Solution::Category',
     :through => :solution_category_meta,
-    :conditions => proc { "solution_categories.language_id = '#{Language.current.id}'" }
+    :conditions => proc { "solution_categories.language_id = '#{Language.for_current_account.id}'" }
   
   has_many :articles_with_meta, 
     :class_name => 'Solution::Article', 
@@ -22,7 +22,7 @@ class Solution::Folder < ActiveRecord::Base
     :source => :solution_articles,
 		:readonly => false,
     :order => :"solution_article_meta.position",
-    :conditions => proc { "solution_articles.language_id = '#{Language.current.id}'" },
+    :conditions => proc { "solution_articles.language_id = '#{Language.for_current_account.id}'" },
     :extend => Solution::MultipleThroughSetters
 
   has_many :published_articles_with_meta, 
@@ -31,7 +31,7 @@ class Solution::Folder < ActiveRecord::Base
     :source => :solution_articles,
 		:readonly => false,
     :order => :"solution_article_meta.position",
-    :conditions => proc { "solution_articles.language_id = '#{Language.current.id}' and solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}" }
+    :conditions => proc { "solution_articles.language_id = '#{Language.for_current_account.id}' and solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}" }
 
   has_many :customer_folders_with_meta, 
     :class_name => 'Solution::CustomerFolder', 

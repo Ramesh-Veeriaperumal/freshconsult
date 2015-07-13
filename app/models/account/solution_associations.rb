@@ -41,13 +41,13 @@ class Account < ActiveRecord::Base
 		:order => "solution_category_meta.position",
     :through => :solution_category_meta,
     :source => :solution_categories,
-		:conditions => proc { "solution_categories.language_id = '#{Language.current.id}'" }
+		:conditions => proc { "solution_categories.language_id = '#{Language.for_current_account.id}'" }
 
   has_many :solution_folders_with_meta, 
   	:class_name =>'Solution::Folder', 
   	:through => :solution_folder_meta,
     :source => :solution_folders,
-  	:conditions => proc { "solution_folders.language_id = '#{Language.current.id}'" },
+  	:conditions => proc { "solution_folders.language_id = '#{Language.for_current_account.id}'" },
     :order => ["solution_folder_meta.solution_category_meta_id", "solution_folder_meta.position"]
 
   has_many :public_folders_with_meta, 
@@ -57,7 +57,7 @@ class Account < ActiveRecord::Base
   has_many :published_articles_with_meta, 
   	:through => :public_folders_with_meta,
     :conditions => proc { [" solution_folder_meta.visibility = ? and 
-      solution_articles.language_id = '#{Language.current.id}'", 
+      solution_articles.language_id = '#{Language.for_current_account.id}'", 
       Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]},
     :order => ["solution_folder_meta.id", "solution_article_meta.position"]
 
@@ -65,7 +65,7 @@ class Account < ActiveRecord::Base
   	:class_name =>'Solution::Article',
     :through => :solution_article_meta,
     :source => :solution_articles,
-  	:conditions => proc { "solution_articles.language_id = '#{Language.current.id}'" }
+  	:conditions => proc { "solution_articles.language_id = '#{Language.for_current_account.id}'" }
     
   has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'
 

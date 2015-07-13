@@ -9,5 +9,5 @@ class Solution::Article < ActiveRecord::Base
     :class_name => 'Solution::Folder',
     :through => :solution_folder_meta,
 	:readonly => false,
-    :conditions => proc { "solution_folders.language_id = '#{Language.current.id}'" }
+    :conditions => proc { "solution_folders.language_id = '#{Language.for_current_account.id}'" }
 end

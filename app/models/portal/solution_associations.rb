@@ -23,7 +23,7 @@ class Portal < ActiveRecord::Base
 		:through => :solution_category_meta,
 		:source => :solution_categories,
 		:order => "portal_solution_categories.position",
-		:conditions => proc { "solution_categories.language_id = '#{Language.current.id}'" }
+		:conditions => proc { "solution_categories.language_id = '#{Language.for_current_account.id}'" }
 
 	include Solution::MetaAssociationSwitcher
 end
