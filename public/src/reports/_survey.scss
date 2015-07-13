@@ -391,5 +391,9 @@ $survey-response-color: extremely-satisfied #4e8d00,
 	  right: 0px;
 	  margin-top: 114px;
 	}
+	.cancelBtn, .applyBtn{
+		padding: 3px 9px;
+	}
+	.icon-arrow-left:before, .icon-arrow-right:before{ display: none;}
 	.daterangepicker_start_input, .daterangepicker_end_input{ display: none;	}
 }
