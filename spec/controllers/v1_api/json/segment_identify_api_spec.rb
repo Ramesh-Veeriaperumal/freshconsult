@@ -19,7 +19,7 @@ describe Segment::IdentifyController do
 	end
 
 	it "should update a contact if email exists" do
-        existing_contact = get_default_user
+        existing_contact = add_new_user(@account)
         @params = {:user => {:name =>  Faker::Name.name, :email => existing_contact.email}}
 		post :create, @params.merge!(:format => 'json', :type => 'identify'), :content_type => 'application/json'
 		expected = (response.status == 200) && response.body.blank?

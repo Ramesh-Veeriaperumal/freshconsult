@@ -90,7 +90,7 @@ class Topic < ActiveRecord::Base
                   and topics.account_id = monitorships.account_id),
       :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
     }
-  }
+  } # Used by monitorship APIs
 
   scope :following, lambda { |ids|
     {
@@ -453,6 +453,8 @@ class Topic < ActiveRecord::Base
   end
   
   def assign_default_stamps
-    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type] if forum
+    if forum && !stamp_type_changed?
+      self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
+    end
   end
 end

@@ -55,4 +55,4 @@ public/assets/*.yml
 public/generated
 
 #Ignore test reports
-test/reports
+test/api/reports

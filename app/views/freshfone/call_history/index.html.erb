@@ -35,6 +35,10 @@
 	freshfone.date_picker_labels = <%= date_picker_labels.html_safe %>;
 	freshfone.group_list = <%= groups_options.html_safe %>;
 	freshfone.customer_autocomplete_path = '<%= customer_phone_number_freshfone_autocomplete_index_path %>';
+	jQuery(window).on("load", function () {
+		App.Phone.Metrics.recordSource("CALL_HISTORY_LOAD");
+    App.Phone.Metrics.push_event();
+	});
 <% end %>
 
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 

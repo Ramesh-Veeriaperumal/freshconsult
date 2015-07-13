@@ -2,32 +2,75 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
 
-  around_filter :select_slave_shard , :only => [:show]
+  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal]
   around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name]
-
+  
   def show
     account_summary = {}
     account = Account.find(params[:account_id])
-    account_summary[:account_info] = fetch_account_info(account)
-    account_summary[:main_portal] = account.main_portal.ssl_enabled
+    account_summary[:account_info] = fetch_account_info(account) 
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
     account_summary[:currency_details] = fetch_currency_details(account)
     account_summary[:subscription] = fetch_subscription_account_details(account)
-    account_summary[:agents] = fetch_agents_details(account)
     account_summary[:subscription_payments] = account.subscription_payments.sum(:amount)
-    account_summary[:tickets] = fetch_ticket_details(account)
-    account_summary[:social] = fetch_social_info(account)
-    account_summary[:multi_product] = account.portals.count > 1
-    account_summary[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
     account_summary[:email] = fetch_email_details(account)
-    account_summary[:portals] = fetch_portal_details(account)
+    account_summary[:invoice_emails] = fetch_invoice_emails(account)
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
-    account_summary[:invoice_emails] = fetch_invoice_emails(account)
     respond_to do |format|
       format.json do
         render :json => account_summary
+      end
+    end
+  end
+
+  def features
+    feature_info = {}
+    account = Account.find(params[:account_id])
+    feature_info[:social] = fetch_social_info(account)
+    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
+    feature_info[:mailbox] = account.features?(:mailbox)
+    respond_to do |format|
+      format.json do
+        render :json => feature_info
+      end
+    end
+  end
+
+
+  def tickets
+    account_tickets = {}
+    account = Account.find(params[:account_id])
+    account_tickets[:tickets] = fetch_ticket_details(account)
+    respond_to do |format|
+      format.json do
+        render :json => account_tickets
+      end
+    end
+  end
+
+  def agents
+    agents_info = {}
+    account = Account.find(params[:account_id])
+    agents_info[:agents] = fetch_agents_details(account)
+    respond_to do |format|
+      format.json do
+        render :json => agents_info
+      end
+    end
+
+  end
+
+  def portal
+    portal_info = {}
+    account = Account.find(params[:account_id])
+    portal_info[:portals] = fetch_portal_details(account)
+    portal_info[:multi_product] = account.portals.count > 1
+    portal_info[:main_portal] = account.main_portal.ssl_enabled
+    respond_to do |format|
+      format.json do
+        render :json => portal_info
       end
     end
   end
@@ -214,5 +257,4 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         end
       end
   end
-
-  end
+end

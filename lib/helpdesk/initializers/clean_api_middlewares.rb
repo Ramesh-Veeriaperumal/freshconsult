@@ -1,4 +1,5 @@
 Helpkit::Application.configure do
+
   # This middleware will attempt to return the contents of a file's body from disk in the response. 
   # If a file is not found on disk, the request will be delegated to the application stack. 
   # This middleware is commonly initialized to serve assets from a server's `public/` directory.

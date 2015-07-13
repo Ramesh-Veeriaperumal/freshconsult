@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'http://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rack", "~> 1.4.5"
+gem "rack", :git =>"git://github.com/freshdesk/rack.git", :branch => 'rack_1.4.5'
 gem "rails","3.2.18"
 gem "byebug"
 
@@ -43,6 +43,7 @@ group :development, :test do
   gem 'pry'
   gem 'binding_of_caller'
   gem 'meta_request'
+  gem "bullet"
 end
 
 group :development do

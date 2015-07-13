@@ -23,6 +23,7 @@ window.App.Freshfone = window.App.Freshfone || {};
       jQuery('#loading-box').hide();
 
       $('body').on('click.freshfone_reports',"#submit",function(ev){
+        App.Phone.Metrics.recordReportsFilterState();
         if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
           jQuery('#sliding').click();
         }

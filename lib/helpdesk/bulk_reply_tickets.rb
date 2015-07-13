@@ -149,4 +149,8 @@ class Helpdesk::BulkReplyTickets
       send("send_tweet_as_#{twt_type}", ticket, note, note.body.strip)
     end
 
+    def mobihelp_reply ticket, note
+      #Do nothing
+    end
+
 end
