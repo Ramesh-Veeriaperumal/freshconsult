@@ -98,7 +98,7 @@ var SurveyQuestion = {
 			this.add(view.questions.list[i],view.isSurveyResult);
 		}
 		if(view.action=="edit"){
-			jQuery("input[name=jsonData]").val(JSON.parse(JSON.stringify(view.questions.list)));
+			jQuery("input[name=jsonData]").val(SurveyJSON.stringify(view.questions.list));
 		}
 		jQuery("div#feedback-thanks").show();
 	

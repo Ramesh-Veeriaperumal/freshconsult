@@ -77,8 +77,8 @@ var SurveyDetail = {
 				survey_questions.push(question_format);
 		}
 
-		jQuery(obj).find("input[name=survey]").val(JSON.stringify(survey));
-		jQuery(obj).find("input[name=jsonData]").val(JSON.parse(JSON.stringify(survey_questions)));
+		jQuery(obj).find("input[name=survey]").val(SurveyJSON.stringify(survey));
+		jQuery(obj).find("input[name=jsonData]").val(SurveyJSON.stringify(survey_questions));
 		jQuery(obj).find("input[name=deleted]").val(SurveyQuestion.items);
     		return survey_question_fields;
 	},

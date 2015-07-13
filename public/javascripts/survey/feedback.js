@@ -56,7 +56,8 @@ var Feedback = {
 		jQuery(".question").remove();
 		Feedback.hideOverlay();
 		var msgObj = jQuery(".highlighter").find("h2");
-		var msg = data.thanks_message && data.thanks_message.length > 0 ? data.thanks_message : surveyFeedbackI18n.thanksFeedback;
+		var msg = data && data.thanks_message.length > 0 ? 
+				  data.thanks_message : surveyFeedbackI18n.thanksFeedback;
 		msgObj.text(msg);
 	},
 	refreshTab: function(){		
