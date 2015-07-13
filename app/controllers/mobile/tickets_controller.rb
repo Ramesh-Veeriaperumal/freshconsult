@@ -138,7 +138,7 @@ class Mobile::TicketsController < ApplicationController
   def filter_tickets(selector, agent_filter)
     filter_scope = current_account.tickets.permissible(current_user)
     filter_scope = filter_scope.where(:responder_id => current_user.id) if agent_filter
-    filter_tickets = TicketsFilter.filter(filter(selector), current_user, filter_scope)
+    filter_tickets = filter_scope.filter(:params => params , :filter => "Helpdesk::Filters::CustomTicketFilter")
     filter_tickets
   end
 

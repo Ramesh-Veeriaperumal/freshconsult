@@ -34,7 +34,7 @@ module Mobile::Actions::Note
     }
     options = {
       :include => json_include,
-      :methods => [ :formatted_created_at, :call_details ]
+      :methods => [ :formatted_created_at, :call_details , :all_attachments]
     }
     as_json(options)
   end
