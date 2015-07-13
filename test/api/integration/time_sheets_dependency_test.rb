@@ -11,7 +11,7 @@ class TimeSheetsDependencyTest < ActionDispatch::IntegrationTest
                          :timer_permission, :check_agents_in_account, :set_mobile, :set_native_mobile]
     actual_filters = Helpdesk::TimeSheetsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
- end
+  end
 
   def test_validations_time_sheet
     actual = Helpdesk::TimeSheet.validators.collect { |x| [x.class, x.attributes, x.options] }

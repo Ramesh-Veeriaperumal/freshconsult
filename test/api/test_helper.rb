@@ -16,6 +16,10 @@ class ActionController::TestCase
     set_request_params
   end
 
+  def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
+    path
+  end
+
   self.use_transactional_fixtures = false
   fixtures :all
 end

@@ -61,7 +61,9 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     posts_count = forum.posts_count
     topics_count = forum.topics_count
     forum.topics.each do |topic|
-      put "/api/discussions/topics/#{topic.id}", { forum_id: other_forum.id }.to_json, @write_headers
+      skip_bullet do
+        put "/api/discussions/topics/#{topic.id}", { forum_id: other_forum.id }.to_json, @write_headers
+      end
       assert_response :success
     end
     forum.reload

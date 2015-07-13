@@ -6,6 +6,14 @@ module TestCaseMethods
     rescue
   end
 
+  def skip_bullet
+    original_value = Bullet.enable?
+    Bullet.enable = false
+    yield
+  ensure
+    Bullet.enable = original_value
+  end
+
   def remove_wrap_params
     @old_wrap_params = @controller._wrapper_options
     @controller._wrapper_options = { format: [] }
@@ -116,7 +124,7 @@ module TestCaseMethods
 
   def v1_time_sheet_update_payload
     {
-      time_entry: {executed_at: 2.days.ago.to_s, billable: false, note: Faker::Lorem.paragraph}
+      time_entry: { executed_at: 2.days.ago.to_s, billable: false, note: Faker::Lorem.paragraph }
     }.to_json
   end
 

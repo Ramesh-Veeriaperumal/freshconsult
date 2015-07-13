@@ -45,7 +45,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_multipart_valid_content_type
-    post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'subject' => 'Test Subject' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
+    skip_bullet do
+      post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'subject' => 'Test Subject' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
+    end
     assert_response :created
     assert_equal Hash, parse_response(@response.body).class
   end

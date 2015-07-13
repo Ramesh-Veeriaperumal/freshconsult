@@ -149,7 +149,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_attachment
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file = fixture_file_upload('files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = create_note_params_hash.merge('attachments' => [file, file2])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
@@ -344,7 +344,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_attachment
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file = fixture_file_upload('files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = reply_note_params_hash.merge('attachments' => [file, file2])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
