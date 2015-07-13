@@ -389,7 +389,7 @@ en:
   support:
     tickets:
       ticket_survey:
-        subject: Testing for %{title} survey
+        subject: Test mail for survey - %{title} 
         survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
         rating_sub_title: "You have rated us"
