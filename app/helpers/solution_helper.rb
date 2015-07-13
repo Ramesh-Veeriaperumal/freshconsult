@@ -166,7 +166,7 @@ module SolutionHelper
 		%{<li>
         <div>
           #{pjax_link_to(t('solution.sidebar.feedbacks.details', 
-                        :name => f.requester.name,
+                        :name => f.requester.name.size > 9 ? f.requester.name.truncate(9) : f.requester.name,
                         :time => f.created_at,
                         :time_string => time_ago_in_words(f.created_at)).html_safe, helpdesk_ticket_path(f))}
         </div>
