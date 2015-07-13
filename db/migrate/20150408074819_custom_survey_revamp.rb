@@ -177,10 +177,10 @@ class CustomSurveyRevamp < ActiveRecord::Migration
     def add_columns_to_surveys
       Lhm.change_table :surveys, :atomic_switch => true do |m|
         m.add_column :title_text, "varchar(255)"
-        m.add_column :active, "tinyint"
+        m.add_column :active, "tinyint DEFAULT 0"
         m.add_column :thanks_text, "text"
         m.add_column :feedback_response_text, "text"
-        m.add_column :can_comment, "tinyint"
+        m.add_column :can_comment, "tinyint DEFAULT 0"
         m.add_column :default, "tinyint(1) DEFAULT 0"
         m.add_column :comments_text, "text"
       end
