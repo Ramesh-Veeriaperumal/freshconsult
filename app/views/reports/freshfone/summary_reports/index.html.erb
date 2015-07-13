@@ -38,7 +38,7 @@
       <div class="row-fluid">
         <div class="report-filter span12" id="report-filter-details">
           <div class="vertical-alignment report-filter-slide-btn">
-              <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+              <a class="btn btn-primary reports-metrics" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
           </div>
           <div class="filter-container" id="filter_container">
             <%= render :partial => 'filter_header' %>
@@ -62,9 +62,13 @@
 <!--end report content-->
 </div>
 <%= javascript_tag do %> 
+  jQuery(window).on("load", function () {
+      App.Phone.Metrics.recordSource("REPORTS_LOAD");
+      App.Phone.Metrics.push_event();
+  });
   jQuery('body').on('assetLoaded.fjax', function() {
     App.Freshfonereports.summaryReports('<%=generate_reports_freshfone_summary_reports_url%>');
     App.Freshfonereports.groupOptions(<%= filter_group_options.html_safe %>,'<%=t("reports.freshfone.options.all_groups")%>');
     App.Freshfonereports.numberOptions(<%= filter_number_options.html_safe %> , <%=filter_default_number.html_safe %>);
-  });
+   });
 <%end%>

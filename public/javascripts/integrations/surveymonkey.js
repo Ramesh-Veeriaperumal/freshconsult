@@ -70,15 +70,6 @@ SurveyMonkey.prototype = {
 			})
 		]
 
-		jQuery("body").on('click.surveymonkey', 'select.group_list', function () {
-			if (jQuery(this).val() != "") {
-				jQuery("select.group_list").not(this).find("option[value=" + jQuery(this).val() + "]").attr('disabled', 'disabled').addClass("disabled");
-				jQuery("select.group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
-			} else {
-				jQuery(".group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
-			}
-		}).focus(function () { previous = jQuery(this).val(); });
-
 		jQuery('body').on('change.surveymonkey', '.survey_list', function() {
 			// change the hidden group_id based on the values selected group
 			var selected_survey_id = jQuery(this).val();
@@ -121,6 +112,8 @@ SurveyMonkey.prototype = {
 			if(jQuery(".m-survey-row").length == 1) {
 				alert("Atleast one group should be associated with a survey. In case if not needed then please disable the integration.");
 			} else {
+				curr_value = jQuery(this).parents(".m-survey-row").find("select.group_list").val();
+				jQuery(".group_list").find("option[value="+curr_value+"]").removeAttr('disabled').removeClass("disabled");
 				jQuery(this).parents(".m-survey-row").remove();
 			}
 			sm.show_or_hide_add_group_button();
@@ -142,7 +135,10 @@ SurveyMonkey.prototype = {
 		});
 
 		jQuery('body').on('change.surveymonkey', '.group_list', function() {
+			sm.validate_group();
 			var group_id = jQuery(this).val();
+			var previous_group_val = jQuery(this).parents(".m-survey-row").find(".group_id").val();
+			jQuery(".group_list").find("option[value="+previous_group_val+"]").removeAttr('disabled').removeClass("disabled");
 			jQuery(this).parents(".m-survey-row").find(".group_id").val(group_id);
 			jQuery(this).parents(".m-survey-row").find(".survey_id").attr('name', 'configs[groups]['+group_id+'][survey_id]').val("");
 			jQuery(this).parents(".m-survey-row").find(".collector_id").attr('name', 'configs[groups]['+group_id+'][collector_id]').val("");
@@ -337,11 +333,10 @@ SurveyMonkey.prototype = {
 		jQuery("select.group_list").map( function() {
 			if (jQuery(this).val() != "") {
 				jQuery("select.group_list").not(this).find("option[value=" + jQuery(this).val() + "]").attr('disabled', 'disabled').addClass("disabled");
-				jQuery("select.group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
 			} else {
-				jQuery(".group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
+				jQuery(this).val(null);
 			}
-		}).focus(function () { previous = jQuery(this).val(); });
+		});
 	},
 
 	validate_the_form: function() {

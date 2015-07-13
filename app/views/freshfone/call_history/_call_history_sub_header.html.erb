@@ -28,7 +28,7 @@
 	<label><%= t('freshfone.call_history.filter_by_agent')%></label>
 </div>
 <div class="filter_tool_select2">
-	<%= select_tag "responder", options_for_select(agents_list), { :multiple => true, :class => "select2",:size => 5, :placeholder => t('freshfone.call_history.filter_option_all_agents')} %> 
+	<%= select_tag "responder", options_for_select(agents_list), { :multiple => true, :class => "select2 call-history-metric",:size => 5, :placeholder => t('freshfone.call_history.filter_option_all_agents')} %> 
  <div id="requesterName_choices" class="autocomplete ff_item" condition="user_id" 
 				 		operator="is_in" value=""	 data-filtername="<%= t('freshfone.call_history.filter_by_agent') %>" data-value=""></div>
 </div>

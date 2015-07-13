@@ -15,7 +15,8 @@ class Integrations::LogmeinController < ApplicationController
       ticket_id = redis_val[2]
       account_id = redis_val[1]
       Rails.logger.debug "Adding logging session. Redis Key #{redis_key}"
-      acc_ticket = JSON.parse(get_integ_redis_key(redis_key))
+      redis_key_string = get_integ_redis_key(redis_key)
+      acc_ticket = JSON.parse(redis_key_string) unless redis_key_string.nil?
       unless acc_ticket.blank?
         if (acc_ticket["md5secret"] == secret)
           note_head = '<b>' + t("integrations.logmein.note.header") + ' </b> <br />'

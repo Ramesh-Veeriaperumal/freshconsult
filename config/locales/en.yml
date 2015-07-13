@@ -3310,6 +3310,7 @@ en:
       folder_form:
         category: Category
         visible_to: Visible to
+      draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
       where: Where
       search_articles: Search Articles
