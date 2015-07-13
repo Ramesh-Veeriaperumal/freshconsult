@@ -20,7 +20,6 @@ window.App = window.App || {};
       this.bindHandlers();
       this.handleEdit();
       highlight_code();
-      this.setTagSelector();
       App.Solutions.SearchConfig.onVisit();
     },
     
@@ -63,6 +62,9 @@ window.App = window.App || {};
       $('body').on('click.articles', '.article-history .ellipsis', function () {
         $('.created-history').toggleClass('hide');
         $('.article-history .ellipsis').toggleClass('hide');
+      });
+      $('body').on('modal_loaded.articles', function () {
+        $this.setTagSelector();
       });
     },
 		
@@ -124,6 +126,7 @@ window.App = window.App || {};
       this.bindPropertiesToggle();
       this.formatSeoMeta();
       this.formValidate();
+      this.setTagSelector();
     },
     
     bindPropertiesToggle: function () {
@@ -266,9 +269,9 @@ window.App = window.App || {};
           });
           $('.confirm-delete').attr('disabled', !$flag);
         },
-        previewDrafts: function (){
+        previewDrafts: function () {
           var data = $('#article-form').data();
-          return $('<span />').attr('class','pull-right')
+          return $('<span />').attr('class', 'pull-right')
                   .html($('<a>').attr('href', data.previewPath).attr('target', "_blank")
                   .text(data.previewText));
         },
@@ -359,39 +362,41 @@ window.App = window.App || {};
       });
     },
     setTagSelector: function () {
-      var hashval = [];
+      var previouslyselectedTags = [];
+      $('.article-tags').val().split(',').each(function (item, i) { previouslyselectedTags.push({ id: item, text: item }); });
       $('.article-tags').select2({
         multiple: true,
         maximumInputLength: 32,
-        data: hashval,
+        data: previouslyselectedTags,
         quietMillis: 500,
         tags: true,
         tokenSeparators: [','],
-        ajax: { 
+        ajax: {
           url: '/search/autocomplete/tags',
           dataType: 'json',
           data: function (term) {
-              return { q: term };
+            return { q: term };
           },
           results: function (data) {
             var results = [];
-            $.each(data.results, function(i, item){
+            $.each(data.results, function (i, item) {
               var result = escapeHtml(item.value);
               results.push({ id: result, text: result });
               window.results = results;
             });
-            return { results: results }
+            return { results: results };
 
           }
         },
         initSelection : function (element, callback) {
-          callback(hashval);
+          callback(previouslyselectedTags);
         },
-        formatInputTooLong: function () { 
-          return 'Maximum key length'; },
-        createSearchChoice:function(term, data) { 
-          if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-            return { id: term, text: term };
+        formatInputTooLong: function () {
+          return 'Maximum key length';
+        },
+        createSearchChoice: function (term, data) {
+          if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0)
+          return { id: term, text: term };
         }
       });
     }

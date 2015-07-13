@@ -54,7 +54,7 @@ window.App = window.App || {};
 
     setCompanyVisibility: function () {
       var visiblity = $('#solution_folder_visibility').val();
-      if (parseInt(visiblity,10) === 4) {
+      if (parseInt(visiblity, 10) === 4) {
         $('.company_folders').show();
       } else {
         $('#customers_filter').val("");

@@ -4,8 +4,9 @@
 			<%= fields_for :tags  do |tag| %>
 				<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 				<%= tag.text_field :name, 
-													 :class => "article-tags span12 select2",
-													 :value => @article.tags.collect{|tag| tag.name}.join(',') %>
+													 :class => "article-tags span12",
+													 :value => @article.tags.collect{|tag| tag.name}.join(',')
+													  %>
 			<% end %>
 		</div>
 		<div class="span4">

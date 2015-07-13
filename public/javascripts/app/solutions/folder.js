@@ -76,7 +76,7 @@ window.App = window.App || {};
       });
 
       $('body').on('click.folders_articles', '.visible-to-btn', function () {
-        if($this.submitData.visibility == 4) {
+        if ($this.submitData.visibility === 4) {
           $('.company_folders .select2-search-field input').focus();
         }
       });
@@ -109,9 +109,9 @@ window.App = window.App || {};
         $this.undo_bulk_action($(this), "articles");
       });
 
-      $('#move_to').on('select2-open', function() {
-         $this.unSelectVisibleTo(); 
-         hideActiveMenu();
+      $('#move_to').on('select2-open', function () {
+        $this.unSelectVisibleTo();
+        hideActiveMenu();
       });
 
       $("body").on('click.folders_articles', function (e) {

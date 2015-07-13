@@ -9,7 +9,7 @@
 					<div class="controls">
 						<%= tag.text_field :name , 
 															 :value => @article.tags.collect{|tag| tag.name}.join(','), 
-															 :class => "select2 span12 article-tags " %>
+															 :class => "span12 article-tags " %>
 					</div>
 				</div>
 			<%end%>
@@ -102,3 +102,6 @@
 
 	<% end %>
 </div>
+<script type="text/javascript">
+	jQuery('body').trigger('modal_loaded');
+</script>
