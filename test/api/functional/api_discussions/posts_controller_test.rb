@@ -24,7 +24,7 @@ module ApiDiscussions
 
     def test_update
       post = quick_create_post
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 1)
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
       assert_response :success
       match_json(post_pattern({ body_html: 'test reply 2', answer: true }, post.reload))
     end
@@ -40,7 +40,7 @@ module ApiDiscussions
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('answer', 'is not included in the list', list: '0,false,1,true')])
+      match_json([bad_request_error_pattern('answer', 'not_included', list: 'true,false')])
     end
 
     def test_update_with_user_id
@@ -93,8 +93,8 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({}, {})
       assert_response :bad_request
-      match_json [bad_request_error_pattern('body_html', "can't be blank"),
-                  bad_request_error_pattern('topic_id', 'is not a number')]
+      match_json [bad_request_error_pattern('body_html', 'missing_field'),
+                  bad_request_error_pattern('topic_id', 'required_and_numericality')]
     end
 
     def test_create_mandatory_params
@@ -107,10 +107,11 @@ module ApiDiscussions
     end
 
     def test_create_returns_location_header
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id)
+      topic = topic_obj
+      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic.id)
       assert_response :created
       match_json(post_pattern(Post.last))
-      match_json(post_pattern({ body_html: 'test', topic_id: topic_obj.id,
+      match_json(post_pattern({ body_html: 'test', topic_id: topic.id,
                                 user_id: @agent.id }, Post.last))
       result = parse_response(@response.body)
       assert_equal true, response.headers.include?('Location')
@@ -122,7 +123,7 @@ module ApiDiscussions
       user = customer
       updated_at = 1.days.ago.to_s
       params = { :body_html => 'test', 'topic_id' => topic_obj.id,
-                 'user_id' => user.id, :answer => 1 }
+                 'user_id' => user.id, :answer => true }
       post :create, construct_params({}, params)
       assert_response :created
       match_json(post_pattern(Post.last))
@@ -134,8 +135,8 @@ module ApiDiscussions
       topic_obj.update_column(:locked, true)
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => user.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
       topic_obj.update_column(:locked, false)
     end
 
@@ -157,14 +158,14 @@ module ApiDiscussions
       topic_obj.update_column(:locked, true)
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => 999)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('topic', "can't be blank")])
+      match_json([bad_request_error_pattern('topic_id', "can't be blank")])
     end
 
     def test_create_invalid_user
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => 999)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', "can't be blank")])
     end
 
     def test_create_without_manage_users_privilege
@@ -179,29 +180,29 @@ module ApiDiscussions
     def test_create_with_email_without_assume_privilege
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'email' => @agent.email)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_create_with_invalid_email
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'email' => 'random')
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('email', "can't be blank")])
     end
 
     def test_create_with_user_without_assume_privilege
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => @agent.id)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id/email', 'invalid_user')])
+      assert_response :forbidden
+      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
     end
 
     def test_create_with_invalid_user_id
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => '999')
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', "can't be blank")])
     end
   end
 end

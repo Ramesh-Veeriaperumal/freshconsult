@@ -8,9 +8,6 @@ Helpkit::Application.configure do
   # Adds response time header to response.
   config.middleware.delete Rack::Runtime
 
-  # Allows the method to be overridden if params[:_method] is set, ie.e from POST to PUT.
-  config.middleware.delete Rack::MethodOverride
-
   # Callbacks for each request.
   config.middleware.delete ActionDispatch::Callbacks
 

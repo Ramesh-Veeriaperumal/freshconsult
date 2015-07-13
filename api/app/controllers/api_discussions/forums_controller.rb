@@ -1,7 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    before_filter { |c| c.requires_feature :forums } # should not be moved to concern as it disrupts the web controller
-    skip_before_filter :check_privilege, :verify_authenticity_token, only: [:follow, :unfollow, :is_following]
+    before_filter { |c| c.requires_feature :forums }
     skip_before_filter :load_object, only: [:create, :is_following]
     include DiscussionMonitorConcern
     before_filter :set_account_and_category_id, only: [:create, :update]
@@ -12,7 +11,7 @@ module ApiDiscussions
       render '/api_discussions/topics/topic_list'
     end
 
-    def delete
+    def destroy
       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
       @forum.backup_forum_topic_ids
       super
@@ -41,13 +40,14 @@ module ApiDiscussions
       def validate_params
         params[cname].permit(*(DiscussionConstants::FORUM_FIELDS))
         forum = ApiDiscussions::ForumValidation.new(params[cname], @item)
-        render_error forum.errors unless forum.valid?
+        render_error forum.errors, forum.error_options unless forum.valid?
       end
 
       def set_custom_errors
         bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
         @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
-        @error_options = { remove: :customer_forums, meta: "#{bad_customer_ids.join(', ')}" }
+        @error_options = { remove: :customer_forums, customers: { list: "#{bad_customer_ids.join(', ')}" } }
+        ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @item)
       end
   end
 end

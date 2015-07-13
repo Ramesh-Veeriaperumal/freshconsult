@@ -117,6 +117,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       user.id ] } }
       
   scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
+  scope :api_permissible, lambda { |user| {:conditions => api_agent_permission(user)}}
 
   scope :assigned_tickets_permission , lambda { |user,ids| { 
     :select => "helpdesk_tickets.display_id",
@@ -182,6 +183,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
                    :assigned_tickets =>["responder_id=?", user.id]}
                    
       return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    end
+
+    def api_agent_permission(user) # group_tickets query is conditionally executed
+      case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+      when :assigned_tickets
+        ["responder_id=?", user.id]
+      when :group_tickets
+        ["group_id in (?) OR responder_id=? OR requester_id=?", 
+                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
+      else
+        []
+      end
     end
 
     def find_by_param(token, account)
@@ -797,6 +810,38 @@ class Helpdesk::Ticket < ActiveRecord::Base
     include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields
     (@model_changes.keys.map(&:to_s) & all_fields).any?
+  end
+
+  def self.api_filter(ticket_filter = nil, current_user = nil)
+    {
+      spam: {
+        conditions: { spam: true }
+      },
+      deleted: {
+        conditions: { deleted: true, helpdesk_schema_less_tickets: { boolean_tc02: false } },
+        joins: :schema_less_ticket
+      },
+      new_and_my_open: {
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
+      },
+      monitored_by: {
+        conditions: { helpdesk_subscriptions: { user_id: current_user.try(:id) } },
+        joins: :subscriptions
+      },
+      requester_id: {
+        conditions: { requester_id: ticket_filter.try(:requester_id) }
+      },
+      company_id: { 
+        conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
+        joins: :requester
+      },
+      created_since: {
+        conditions: ['helpdesk_tickets.created_at > ?', ticket_filter.try(:created_since)]
+      },
+      updated_since: {
+        conditions: ['helpdesk_tickets.updated_at > ?', ticket_filter.try(:updated_since)]
+      }
+    }
   end
 
   private

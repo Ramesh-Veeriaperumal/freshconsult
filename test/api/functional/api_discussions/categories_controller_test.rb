@@ -48,15 +48,6 @@ module ApiDiscussions
 
     # verify_authenticity_token will not get called for get requests. So All GET actions here in exclude array.
     actions.select { |a| %w(index show forums).exclude?(a) }.each do |action|
-      define_method("test_#{action}_without_token") do
-        with_forgery_protection do
-          @request.cookies['_helpkit_session'] = true
-          send(methods[action], action, construct_params(id: fc.id, authenticity_token: 'foo'))
-        end
-        assert_response :unauthorized
-        match_json(request_error_pattern('unverified_request'))
-      end
-
       define_method("test_#{action}_check_account_state_and_response_headers") do
         subscription = @account.subscription
         subscription.update_column(:state, 'suspended')
@@ -176,7 +167,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', "can't be blank")
+        bad_request_error_pattern('name', 'missing_field')
       ]
       assert_response :bad_request
       match_json(pattern)
@@ -288,12 +279,12 @@ module ApiDiscussions
     end
 
     def test_forums_with_pagination_exceeds_limit
-      40.times do
-        create_test_forum(fc)
-      end
-      get :forums, construct_params(id: fc.id, per_page: 40)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      get :forums, construct_params(id: fc.id, per_page: 4)
       assert_response :success
-      assert JSON.parse(response.body).count == 30
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
   end
 end

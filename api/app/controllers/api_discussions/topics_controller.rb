@@ -2,7 +2,7 @@ module ApiDiscussions
   class TopicsController < ApiApplicationController
     before_filter { |c| c.requires_feature :forums }
     skip_before_filter :check_privilege, :verify_authenticity_token,
-                       only: [:show, :follow, :unfollow, :is_following, :followed_by]
+                       only: [:show]
     skip_before_filter :load_object, only: [:followed_by, :create, :index, :is_following]
     include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
     before_filter :portal_check, only: [:show]
@@ -40,6 +40,7 @@ module ApiDiscussions
 
       def set_custom_errors
         @error_options = { remove: :posts }
+        ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @item)
       end
 
       def manipulate_params
@@ -74,7 +75,7 @@ module ApiDiscussions
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
         params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
-        render_error topic.errors unless topic.valid?
+        render_error topic.errors, topic.error_options unless topic.valid?
       end
 
       def scoper

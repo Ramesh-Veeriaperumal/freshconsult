@@ -1,0 +1,24 @@
+require_relative '../test_helper'
+
+class ApiProductsIntegrationTest < ActionDispatch::IntegrationTest
+  def test_query_count
+    v2 = {}
+    v2_expected = {
+      show: 1,
+      index: 1
+    }
+
+    product = create_product
+    id = product.id
+    # show
+    v2[:show], v2[:api_show] = count_api_queries { get("/api/v2/products/#{id}", nil, @headers) }
+
+    # index
+    v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/products', nil, @headers) }
+
+    v2.keys.each do |key|
+      api_key = "api_#{key}".to_sym
+      assert_equal v2_expected[key], v2[api_key]
+    end
+  end
+end

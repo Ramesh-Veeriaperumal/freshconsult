@@ -1,5 +1,25 @@
 Helpkit::Application.routes.draw do
   api_routes = Proc.new do
+    resources :tickets, :except => [:new, :edit] do
+      member do
+        put :assign
+        put :restore
+        get :notes
+        get :time_sheets
+      end
+    end
+    resources :notes, :except => [:new, :edit, :show, :index]
+
+    resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
+
+    resources :time_sheets, :except => [:new, :edit, :show] do 
+      member do 
+        put :toggle_timer
+      end
+    end
+
+    match 'tickets/:ticket_id/reply' => 'notes#reply', :via => :post
+
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit] do
         member do
@@ -27,6 +47,13 @@ Helpkit::Application.routes.draw do
       end
       resources :posts, :except => [:new, :edit, :index, :show]
     end
+    resources :groups, as: "api_groups", :controller => "api_groups", :except => [:new, :edit]
+
+    resources :products, :controller => "api_products", :only => [:index, :show]
+
+    resources :email_configs, :controller => "api_email_configs", :only => [:index, :show]
+
+    resources :business_calendars, :controller => "api_business_calendars", :only => [:index, :show]
   end
     
   scope "/api", defaults: {version: "v2", format: "json"}, :constraints => {:format => /(json|$^)/} do

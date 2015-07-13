@@ -1,16 +1,15 @@
 module DiscussionMonitorConcern
   extend ActiveSupport::Concern
   included do
-    before_filter :access_denied, only: [:follow, :unfollow, :followed_by, :is_following], unless: :logged_in?
     before_filter :permit_toggle_params, only: [:follow, :unfollow]
     before_filter :fetch_monitorship, only: [:follow]
-    before_filter :validate_user_id, :allow_monitor?, only: [:followed_by, :is_following]
+    before_filter :allow_monitor?, :validate_user_id, only: [:followed_by, :is_following]
     before_filter :fetch_active_monitorship_for_user, only: [:is_following]
     before_filter :find_monitorship, only: [:unfollow]
   end
 
   def follow
-    if @monitorship.update_attributes(active: true, portal_id: current_portal.id)
+    if skip_update || @monitorship.update_attributes(active: true, portal_id: current_portal.id)
       head 204
     else
       render_error(@monitorship.errors)
@@ -18,7 +17,7 @@ module DiscussionMonitorConcern
   end
 
   def unfollow
-    if @monitorship.update_attributes(active: false)
+    if !@monitorship.active? || @monitorship.update_attributes(active: false)
       head 204
     else
       render_error(@monitorship.errors)
@@ -35,17 +34,23 @@ module DiscussionMonitorConcern
 
   private
 
+    def skip_update
+      @monitorship.active? && @monitorship.portal_id == current_portal.id
+    end
+
     def fetch_monitorship
-      user_id = params[cname][:user_id] || current_user.id
-      @monitorship = Monitorship.find_or_initialize_by_user_id_and_monitorable_id_and_monitorable_type(
-        user_id, @item.id, @item.class.to_s)
+      @monitorship = get_monitorship(params).first_or_initialize
     end
 
     def find_monitorship
-      user_id = params[cname][:user_id] || current_user.id
-      @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type(
-        user_id, @item.id, @item.class.to_s)
+      @monitorship = get_monitorship(params).first
       head 404 unless @monitorship
+    end
+
+    def get_monitorship(params)
+      user_id = params[cname][:user_id] || current_user.id
+      monitorship = Monitorship.where(user_id: user_id,
+                                      monitorable_id: @item.id, monitorable_type: @item.class.to_s)
     end
 
     def fetch_active_monitorship_for_user
@@ -60,6 +65,8 @@ module DiscussionMonitorConcern
     end
 
     def validate_user_id
+      fields = "DiscussionConstants::#{action_name.upcase}_FIELDS".constantize
+      params.permit(*fields, *ApiConstants::DEFAULT_PARAMS)
       validate params
       params[:user_id] ||= current_user.id
     end
@@ -70,6 +77,6 @@ module DiscussionMonitorConcern
     end
 
     def allow_monitor?
-      render_invalid_user_error unless params[:user_id] == current_user.id || privilege?(:manage_forums)
+      render_request_error(:access_denied, 403, id: params[:user_id]) unless params[:user_id].blank? || params[:user_id] == current_user.id || privilege?(:manage_forums)
     end
 end

@@ -1,6 +1,8 @@
 require File.expand_path('../boot', __FILE__)
 
-require 'rails/all'
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
 
 require 'rack/throttle'
 require 'gapps_openid'
@@ -131,6 +133,7 @@ module Helpkit
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
     config.autoload_paths += Dir["#{config.root}/api/**/*"]
+    config.autoload_paths += %W(#{config.root}/api/app/validators/)
     # config.eager_load_paths += Dir["#{config.root}/lib/"]
 
 
