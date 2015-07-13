@@ -12,6 +12,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
   before_filter :set_modal, :only => [:new, :edit]
+  before_filter :set_default_order, :only => :reorder
 
   def index
     @categories = current_portal.solution_categories
@@ -169,5 +170,15 @@ class Solution::CategoriesController < ApplicationController
 
     def orphan_categories
       current_account.solution_categories_from_cache.select { |cat| cat['portal_solution_categories'].empty?}
+    end
+
+    def set_default_order
+      reorder_params_in_json = ActiveSupport::JSON.decode(params[:reorderlist])
+      reorder_params_in_json[default_category.id.to_s] = reorder_params_in_json.length + 1
+      params[:reorderlist] = reorder_params_in_json.to_json
+    end
+
+    def default_category
+      current_account.solution_categories.all(:conditions => {:is_default => true}).first
     end
 end
