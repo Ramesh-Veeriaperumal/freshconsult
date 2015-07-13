@@ -92,6 +92,34 @@ module TestCaseMethods
     User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
   end
 
+  def v2_time_sheet_payload
+    {
+      start_time: 4.days.ago.to_s, executed_at: 89.days.ago.to_s, time_spent: '89:09', ticket_id: 1,
+      user_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
+    }.to_json
+  end
+
+  def v1_time_sheet_payload
+    {
+      time_entry: {
+        start_time: 4.days.ago.to_s, executed_at: 23.days.ago.to_s, hhmm: '89:09',
+        user_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
+      }
+    }.to_json
+  end
+
+  def v2_time_sheet_update_payload
+    {
+      executed_at: 1.days.ago.to_s, billable: false, note: Faker::Lorem.paragraph
+    }.to_json
+  end
+
+  def v1_time_sheet_update_payload
+    {
+      time_entry: {executed_at: 2.days.ago.to_s, billable: false, note: Faker::Lorem.paragraph}
+    }.to_json
+  end
+
   def v2_ticket_params
     { email: Faker::Internet.email, cc_emails: [Faker::Internet.email, Faker::Internet.email], description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
       priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: [Faker::Name.name, Faker::Name.name],
