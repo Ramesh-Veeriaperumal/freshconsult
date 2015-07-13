@@ -64,7 +64,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
     self.comments_text = survey["comments_text"].blank? ?
                                        I18n.t('admin.surveys.new_thanks.comments_feedback') :
                                        survey["comments_text"]
-    @choices = JSON.parse(survey["choices"])
+    @choices = survey["choices"]
     save!
     
     default_choices = []

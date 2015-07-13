@@ -6,7 +6,7 @@
 			<!-- re-order icon commented. will be taken for phase2 -->
 			<li><!-- <i class="ficon-rearrange"></i> --></li>
 			<li>
-				<input type="text" onblur="javascript:SurveyValidate.removeError(this);" maxlength="<%=SurveyConstants.limit.thanks_text%>" class="input-survy-ques" data-name="<%=question.name%>" name="survey_question[<%=question.name%>]" value='<%=question.label%>' id="<%=question.id%>" data-choiceMap=<%=JSON.stringify(question.choiceMap)%>/>
+				<input type="text" onblur="javascript:SurveyValidate.removeError(this);" maxlength="<%=SurveyConstants.limit.thanks_text%>" class="input-survy-ques" data-name="<%=question.name%>" name="survey_question[<%=question.name%>]" value='<%=question.label%>' id="<%=question.id%>" data-choiceMap=<%if(question.choiceMap){%><%=SurveyJSON.stringify(question.choiceMap)%><%}%>/>
 			</li>
 			<li class="question-rating-option" id="question-rating-option-<%=count%>" data-question-id="<%=count%>">
 					<label id="rating-label-<%=count%>" data-selected-value="&nbsp;" data-selected-id="none" class="pb0">&nbsp;</label>
