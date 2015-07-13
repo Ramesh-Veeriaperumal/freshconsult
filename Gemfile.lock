@@ -179,6 +179,13 @@ GIT
       railties (>= 3.0)
 
 GIT
+  remote: git@github.com:freshdesk/fd_rate_limiter.git
+  revision: 30a7b6deb34c992e84498facdec397527c551b47
+  branch: dynamic_rules
+  specs:
+    fd_rate_limiter (0.0.1)
+
+GIT
   remote: git@github.com:freshdesk/launch-party.git
   revision: 9b884e22f31af95f68b016c7ce203c70658fa90a
   branch: master
@@ -186,12 +193,6 @@ GIT
     launchparty (0.0.0)
       launchparty
       redis
-GIT
-  remote: git@github.com:freshdesk/fd_rate_limiter.git
-  revision: 30a7b6deb34c992e84498facdec397527c551b47
-  branch: dynamic_rules
-  specs:
-    fd_rate_limiter (0.0.1)
 
 PATH
   remote: vendor/gems/acts_as_voteable
@@ -655,6 +656,8 @@ GEM
     omniauth-openid (1.0.1)
       omniauth (~> 1.0)
       rack-openid (~> 1.3.1)
+    omniauth-quickbooks (0.0.2)
+      omniauth-oauth (~> 1.0)
     omniauth-shopify-oauth2 (1.0.0)
       omniauth-oauth2 (~> 1.0.0)
     omniauth-surveymonkey (1.0.0)
@@ -887,6 +890,10 @@ GEM
     wicked_pdf (0.9.10)
       rails
     will_paginate (3.0.6)
+    xero_gateway (2.1.0)
+      activesupport
+      builder (>= 2.1.2)
+      oauth (>= 0.3.6)
     xml-simple (1.1.4)
 
 PLATFORMS
@@ -988,6 +995,7 @@ DEPENDENCIES
   omniauth-oauth
   omniauth-oauth2 (= 1.0)
   omniauth-openid
+  omniauth-quickbooks
   omniauth-salesforce!
   omniauth-shopify-oauth2 (= 1.0.0)
   omniauth-surveymonkey (= 1.0.0)
@@ -1065,6 +1073,7 @@ DEPENDENCIES
   will_paginate (~> 3.0)
   will_paginate-liquidized!
   wkhtmltopdf-binary!
+  xero_gateway (~> 2.1.0)
   xml-simple (= 1.1.4)
   xss!
   yui-compressor!

@@ -39,4 +39,13 @@ class Language
 		current_language = supported_languages.include?(I18n.locale.to_s) ? I18n.locale : portal.language 
 		find_by_code(current_language)
 	end
+	
+	def self.for_current_account
+		return nil if Account.current.blank?
+		(find_by_code(Account.current.language) || default)
+	end
+	
+	def self.default
+		find_by_code(:en)
+	end
 end
