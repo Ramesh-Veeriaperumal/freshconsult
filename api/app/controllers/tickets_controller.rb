@@ -18,29 +18,29 @@ class TicketsController < ApiApplicationController
   end
 
   def create
-    api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
-    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    if @item.save_ticket
-      render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
+    api_add_ticket_tags(@tags, @ticket) if @tags # Tags need to be built if not already available for the account.
+    build_normal_attachments(@ticket, params[cname][:attachments]) if params[cname][:attachments]
+    if @ticket.save_ticket
+      render '/tickets/create', location: send("#{nscname}_url", @ticket.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
-                                        product: :product_id }, @item)
-      render_error(@item.errors)
+                                        product: :product_id }, @ticket)
+      render_error(@ticket.errors)
     end
   end
 
   def update
-    build_normal_attachments(@item, params[cname][:attachments])
-    if @item.update_ticket_attributes(params[cname])
-      update_tags(@tags, true, @item) if @tags # add tags if update is successful.
+    build_normal_attachments(@ticket, params[cname][:attachments])
+    if @ticket.update_ticket_attributes(params[cname])
+      update_tags(@tags, true, @ticket) if @tags # add tags if update is successful.
     else
-      render_error(@item.errors)
+      render_error(@ticket.errors)
     end
   end
 
   def destroy
-    @item.update_attribute(:deleted, true)
+    @ticket.update_attribute(:deleted, true)
     head 204
   end
 
@@ -48,7 +48,7 @@ class TicketsController < ApiApplicationController
     user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
     if user
       @ticket.responder = user
-      @ticket.save ? (head 204) : render_error(@item.errors)
+      @ticket.save ? (head 204) : render_error(@ticket.errors)
     else
       @errors = [BadRequestError.new('responder', "can't be blank")]
       render '/bad_request_error', status: 400
@@ -138,17 +138,17 @@ class TicketsController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::TICKET_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ticket = TicketValidation.new(params[cname], @item)
+      ticket = TicketValidation.new(params[cname], @ticket)
       render_error ticket.errors, ticket.error_options unless ticket.valid?
     end
 
     def assign_protected
-      @item.product ||= current_portal.product
+      @ticket.product ||= current_portal.product
     end
 
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
-      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.trashed
+      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@ticket) && !@ticket.trashed
     end
 
     def ticket_permission?
@@ -186,6 +186,6 @@ class TicketsController < ApiApplicationController
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
       item = scoper.where(condition, params[:id]).first
       @item = instance_variable_set('@' + cname, item)
-      head :not_found unless @item
+      head :not_found unless @ticket
     end
 end

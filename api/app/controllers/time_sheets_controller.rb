@@ -11,9 +11,9 @@ class TimeSheetsController < ApiApplicationController
 
   def create
     # If any validation is introduced in the TimeSheet model,
-    # update_running_timer and @item.save should be wrapped in a transaction.
+    # update_running_timer and @time_sheet.save should be wrapped in a transaction.
     update_running_timer params[cname][:user_id] if @timer_running
-    @item.workable = @time_sheet_val.ticket
+    @time_sheet.workable = @time_sheet_val.ticket
     super
   end
 
@@ -30,7 +30,7 @@ class TimeSheetsController < ApiApplicationController
                 { time_spent: calculate_time_spent(@time_sheet) }
               else
                 # If any validation is introduced in the TimeSheet model,
-                # update_running_timer and @item.update_attributes should be wrapped in a transaction.
+                # update_running_timer and @time_sheet.update_attributes should be wrapped in a transaction.
                 update_running_timer @time_sheet.user_id
                 { start_time: Time.zone.now }
               end
@@ -61,7 +61,7 @@ class TimeSheetsController < ApiApplicationController
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
       fields = get_fields("TimeSheetConstants::#{action_name.upcase}_TIME_SHEET_FIELDS")
       params[cname].permit(*fields)
-      @time_sheet_val = TimeSheetValidation.new(params[cname], @item, @timer_running)
+      @time_sheet_val = TimeSheetValidation.new(params[cname], @time_sheet, @timer_running)
       render_error @time_sheet_val.errors, @time_sheet_val.error_options unless @time_sheet_val.valid?(action_name.to_sym)
     end
 
@@ -86,7 +86,7 @@ class TimeSheetsController < ApiApplicationController
 
     def handle_existing_timer_running
       # Needed in validation to validate start_time based on timer_running attribute in update action.
-      timer_running = params[cname].key?(:timer_running) ? params[cname][:timer_running] : @item.timer_running
+      timer_running = params[cname].key?(:timer_running) ? params[cname][:timer_running] : @time_sheet.timer_running
       timer_running
     end
 
@@ -101,15 +101,15 @@ class TimeSheetsController < ApiApplicationController
 
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
-      return true if params[cname][:timer_running].to_s.to_bool == true && @item.timer_running.to_s.to_bool == false
+      return true if params[cname][:timer_running].to_s.to_bool == true && @time_sheet.timer_running.to_s.to_bool == false
 
       # Should stop timer for the new user if different user_id is set as part of this update call
-      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && @timer_running.to_s.to_bool == false
+      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @time_sheet.user_id && @timer_running.to_s.to_bool == false
       false
     end
 
     def total_running_time
-      @item.time_spent.to_i + (Time.now - @item.start_time).abs.round
+      @time_sheet.time_spent.to_i + (Time.now - @time_sheet.start_time).abs.round
     end
 
     def convert_duration(time_spent)

@@ -25,48 +25,48 @@ class NotesController < ApiApplicationController
   end
 
   def update
-    build_normal_attachments(@item, params[cname][:attachments])
-    unless @item.update_note_attributes(params[cname])
-      render_error(@item.errors)
+    build_normal_attachments(@note, params[cname][:attachments])
+    unless @note.update_note_attributes(params[cname])
+      render_error(@note.errors)
     end
   end
 
   def destroy
-    @item.update_attribute(:deleted, true)
+    @note.update_attribute(:deleted, true)
     head 204
   end
 
   private
 
     def create_solution_article
-      body_html = @item.body_html
+      body_html = @note.body_html
       # title is set only for API if the ticket subject length is lesser than 3. from UI, it fails silently.
       title = @ticket.subject.length < 3 ? "Ticket:#{@ticket.display_id} subject is too short to be an article title" : @ticket.subject
       attachments = params[cname][:attachments]
-      Helpdesk::KbaseArticles.create_article_from_note(current_account, @item.user, title, body_html, attachments)
+      Helpdesk::KbaseArticles.create_article_from_note(current_account, @note.user, title, body_html, attachments)
     end
 
     def create_note
-      @item.user ||= current_user if @item.user_id.blank? # assign user instead of id as the object is already loaded.
-      @item.notable = @ticket # assign notable instead of id as the object is already loaded.
-      @item.notable.account = current_account
-      attachments = build_normal_attachments(@item, params[cname][:attachments])
-      @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
-      @item.save_note
+      @note.user ||= current_user if @note.user_id.blank? # assign user instead of id as the object is already loaded.
+      @note.notable = @ticket # assign notable instead of id as the object is already loaded.
+      @note.notable.account = current_account
+      attachments = build_normal_attachments(@note, params[cname][:attachments])
+      @note.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
+      @note.save_note
     end
 
     def render_response(success)
       if success
-        render "/notes/#{action_name}", location: send("#{nscname}_url", @item.id), status: 201
+        render "/notes/#{action_name}", location: send("#{nscname}_url", @note.id), status: 201
       else
-        ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, @item)
-        render_error(@item.errors)
+        ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, @note)
+        render_error(@note.errors)
       end
     end
 
     def can_update?
       # note without source type as 'note' should not be allowed to update
-      unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      unless @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
         @error = BaseError.new(:method_not_allowed, methods: 'DELETE')
         render '/base_error', status: 405
       end
@@ -84,7 +84,7 @@ class NotesController < ApiApplicationController
     def validate_params
       field = "NoteConstants::#{action_name.upcase}_NOTE_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item, can_validate_ticket)
+      @note_validation = NoteValidation.new(params[cname], @note, can_validate_ticket)
       render_error @note_validation.errors, @note_validation.error_options unless @note_validation.valid?
     end
 
@@ -105,13 +105,13 @@ class NotesController < ApiApplicationController
     end
 
     def check_agent_note
-      render_request_error(:access_denied, 403) if @item.user && @item.user.customer?
+      render_request_error(:access_denied, 403) if @note.user && @note.user.customer?
     end
 
     def load_object
       item = scoper.visible.find_by_id(params[:id])
       @item = instance_variable_set('@' + cname, item)
-      head :not_found unless @item
+      head :not_found unless @note
     end
 
     def can_validate_ticket
