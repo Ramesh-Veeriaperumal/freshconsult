@@ -40,7 +40,7 @@ describe Solution::Cache do
         @category_collection = nil
         portal.solution_categories.count.should eql category_collection(portal)[:current].count
         others_count = @current_account.solution_categories.count - category_collection(portal)[:current].count 
-        category_collection(portal)[:others].count.should eql others_count
+        category_collection(portal)[:others].count.should eql others_count-1
       end
     end
   end
