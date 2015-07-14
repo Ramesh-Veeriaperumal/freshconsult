@@ -1,4 +1,6 @@
 class DataTypeValidator < ActiveModel::EachValidator
+
+  # Introduced this as the error message should show layman terms.
   DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'format' }
 
   def validate_each(record, attribute, values)

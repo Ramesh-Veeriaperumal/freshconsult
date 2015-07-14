@@ -162,7 +162,7 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options
       options = {}
-      options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
+      options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
       options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
       options[:total_entries] = options[:page] * options[:per_page]
       options

@@ -12,6 +12,7 @@ class Helpers::TicketsValidationHelper
       Account.current ? Account.current.flexifields_with_ticket_fields_from_cache.collect(&:flexifield_alias) : []
     end
 
+    # compute the size of attachments associated with the record.
     def attachment_size(item)
       item.try(:attachments).try(:sum, &:content_file_size).to_i
     end

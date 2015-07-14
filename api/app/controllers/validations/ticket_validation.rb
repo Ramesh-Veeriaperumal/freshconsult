@@ -27,8 +27,7 @@ class TicketValidation < ApiValidation
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
-  },
-                          if: -> { attachments && errors[:attachments].blank? }
+  }, if: -> { attachments && errors[:attachments].blank? }
 
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
