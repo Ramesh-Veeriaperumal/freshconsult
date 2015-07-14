@@ -38,6 +38,27 @@ RSpec.describe Solution::MetaAssociationSwitcher do
 		end	
 	end
 
+	it "should fetch attributes from meta accordingly for to_indexed_json if meta_read feature is launched" do
+		folder = @account.public_folders.find { |x| x.articles.length > 1}
+		folder_meta = folder.solution_folder_meta
+		article = folder.articles.sample
+		article_meta = article.solution_article_meta		
+		article_meta.update_attribute(:created_at, Time.now.utc)
+		folder_meta.update_attribute(:visibility, 3)
+		@account.reload
+		@account.takeback(:meta_read)
+		indexed_json = JSON.parse(article.to_indexed_json)
+		Time.parse(indexed_json["solution/article"]["created_at"]).to_s.should == article.read_attribute(:created_at).to_s
+		indexed_json["solution/article"]["folder"]["visibility"].should be_eql(folder.read_attribute(:visibility))	
+		@account.launch(:meta_read)
+		@account.reload
+		@account.make_current
+		indexed_json = JSON.parse(Solution::Article.find(article.id).to_indexed_json)	
+		Time.parse(indexed_json["solution/article"]["created_at"]).to_s.should == article_meta.read_attribute(:created_at).to_s
+		indexed_json["solution/article"]["folder"]["visibility"].should be_eql(folder_meta.read_attribute(:visibility))
+		folder_meta.update_attribute(:visibility, folder.read_attribute(:visibility))
+	end
+
 	describe "it should return the same result for the altered scopes with/without meta_read feature" do
 
 		it "should return the same results for articles_for_portal scope in Solution::Article model" do
