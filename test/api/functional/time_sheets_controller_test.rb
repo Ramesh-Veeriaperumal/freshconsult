@@ -140,14 +140,15 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_time_sheets_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
     4.times do
       create_time_sheet(billable: false)
     end
     get :index, controller_params(billable: false, per_page: 4)
     assert_response :success
-    assert JSON.parse(response.body).count == 3
+    assert JSON.parse(response.body).count == 2
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 

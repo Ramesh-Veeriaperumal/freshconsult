@@ -1354,11 +1354,12 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_notes_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
     get :notes, construct_params(id: ticket.display_id, per_page: 4)
     assert_response :success
-    assert JSON.parse(response.body).count == 3
+    assert JSON.parse(response.body).count == 2
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 
@@ -1416,7 +1417,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_time_sheets_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
     t = ticket
     4.times do
@@ -1424,7 +1426,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     get :time_sheets, construct_params(id: ticket.display_id, per_page: 4)
     assert_response :success
-    assert JSON.parse(response.body).count == 3
+    assert JSON.parse(response.body).count == 2
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 end
