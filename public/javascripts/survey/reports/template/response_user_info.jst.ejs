@@ -1,5 +1,5 @@
-<div class="user-profile-rounded image-lazy-load" size_type="thumb">
-	<img alt="<%=user.name%>" class="img-circle" data-src="<%=user.avatar%>" onerror="imgerror(this)" size_type="thumb" src="<%=user.avatar%>">
+<div class="user-profile-rounded image-lazy-load" size_type="thumb">	
+	<img alt="<%=user.name%>" class="img-circle" onerror="imgerror(this)" size_type="thumb" <%if(user.avatar){%>src="<%=user.avatar%>"<%}else{%>src="javascript:imgerror(this);"<%}%>>
 </div>
 <div class="name"><%=user.name%></div>
 <div class="survey-date"><%=SurveyUtil.getDateString(user.createdAt)%></div>
