@@ -294,11 +294,19 @@ module JsonPattern
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
+    group_json[:agents] = group.agent_groups.map(&:user_id)
     group_json
   end
 
   def group_pattern_without_assingn_type(expected_output = {}, group)
     group_json = group_json(expected_output, group)
+    group_json[:agents] = group.agent_groups.map(&:user_id)
+    group_json
+  end
+
+  def group_pattern_for_index(expected_output = {}, group)
+    group_json = group_json(expected_output, group)
+    group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
     group_json
   end
 
@@ -311,7 +319,6 @@ module JsonPattern
       description: expected_output[:description] || group.description,
       business_calendar_id: expected_output[:business_calendar_id] || group.business_calendar_id,
       escalate_to: expected_output[:escalate_to] || group.escalate_to,
-      agents: group.agent_groups.map(&:user_id),
       unassigned_for: expected_output[:unassigned_for] || (GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
@@ -348,14 +355,24 @@ module JsonPattern
   end
 
   def business_calendar_pattern(expected_output = {}, business_calendar)
+    bc_json = businesss_calendar_default_pattern(expected_output, business_calendar)
+    bc_json[:time_zone] = business_calendar.time_zone
+    bc_json[:is_default] = business_calendar.is_default.to_s.to_bool
+    bc_json
+  end
+
+  def business_calendar_index_pattern(expected_output = {}, business_calendar)
+    bc_json = businesss_calendar_default_pattern(expected_output, business_calendar)
+    bc_json
+  end
+
+  def businesss_calendar_default_pattern(expected_output, business_calendar)
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
     {
       id: Fixnum,
       name: expected_output[:name] || business_calendar.name,
       description: business_calendar.description,
-      time_zone: business_calendar.time_zone,
-      is_default: business_calendar.is_default.to_s.to_bool,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

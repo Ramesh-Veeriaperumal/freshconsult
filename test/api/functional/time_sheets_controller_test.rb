@@ -54,10 +54,10 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_destroy_without_feature
     ts_id = create_time_sheet.id
-    controller.class.any_instance.stubs(:feature?).returns(false).once
+    @account.class.any_instance.stubs(:features_included?).returns(false).once
     delete :destroy, controller_params(id: ts_id)
-    match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response :forbidden
+    match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
   end
 
   def test_destroy_without_privilege
@@ -78,7 +78,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_index_without_feature
-    controller.class.any_instance.stubs(:feature?).returns(false).once
+    @account.class.any_instance.stubs(:features_included?).returns(false)
     get :index, controller_params(billable: 0)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response :forbidden
@@ -768,7 +768,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_update_without_feature
     ts = create_time_sheet(timer_running: true)
-    controller.class.any_instance.stubs(:feature?).returns(false).once
+    @account.class.any_instance.stubs(:features_included?).returns(false).once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response :forbidden

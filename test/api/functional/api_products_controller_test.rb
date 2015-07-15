@@ -4,10 +4,20 @@ class ApiProductsControllerTest < ActionController::TestCase
     { api_product: params }
   end
 
-  def test_index_products
+  def test_index_load_products
     get :index, request_params
     assert_equal Product.all, assigns(:items)
     assert_equal Product.all, assigns(:api_products)
+  end
+
+  def test_index
+    get :index, request_params
+    pattern = []
+    Account.current.products.all.each do |product|
+      pattern << product_pattern(Product.find(product.id))
+    end
+    assert_response :success
+    match_json(pattern)
   end
 
   def test_show_product

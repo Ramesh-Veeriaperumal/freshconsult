@@ -11,8 +11,15 @@ class ApiGroupsController < ApiApplicationController
       render_error group.errors, group.error_options unless group.valid?
     end
 
+    def load_object
+      @item = instance_variable_set('@' + cname,  scoper.detect { |group| group.id == params[:id].to_i })
+      unless @item
+        head :not_found # Do we need to put message inside response body for 404?
+      end
+    end
+
     def scoper
-      current_account.groups
+      create? ? current_account.groups : current_account.groups_from_cache
     end
 
     def set_round_robin_enbled

@@ -4,10 +4,20 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     { api_email_config: params }
   end
 
-  def test_index_email_configs
+  def test_index_load_email_configs
     get :index, request_params
     assert_equal EmailConfig.all, assigns(:items)
     assert_equal EmailConfig.all, assigns(:api_email_configs)
+  end
+
+  def test_index
+    get :index, request_params
+    pattern = []
+    Account.current.all_email_configs.all.each do |ec|
+      pattern << email_config_pattern(EmailConfig.find(ec.id))
+    end
+    assert_response :success
+    match_json(pattern)
   end
 
   def test_show_email_config

@@ -39,7 +39,7 @@ module ApiDiscussions
       end
 
       define_method("test_#{action}_requires_feature_disabled") do
-        controller.class.any_instance.stubs(:feature?).returns(false).once
+        @account.class.any_instance.stubs(:features_included?).returns(false).once
         send(methods[action], action, construct_params(id: fc.id))
         match_json(request_error_pattern('require_feature', feature: 'Forums'))
         assert_response :forbidden

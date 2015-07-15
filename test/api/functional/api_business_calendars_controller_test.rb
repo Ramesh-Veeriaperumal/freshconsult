@@ -4,10 +4,20 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     { api_business_calendar: params }
   end
 
-  def test_index_business_calendars
+  def test_index_load_business_calendars
     get :index, request_params
     assert_equal BusinessCalendar.all, assigns(:items)
     assert_equal BusinessCalendar.all, assigns(:api_business_calendars)
+  end
+
+  def test_index
+    get :index, request_params
+    pattern = []
+    Account.current.business_calendar.all.each do |bc|
+      pattern << business_calendar_index_pattern(BusinessCalendar.find(bc.id))
+    end
+    assert_response :success
+    match_json(pattern)
   end
 
   def test_show_business_calendar
@@ -31,9 +41,9 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
 
   def test_show_business_calendar_with_feature_disabled
     business_calendar = create_business_calendar
-    @account.class.any_instance.stubs(:features?).returns(false)
+    @account.class.any_instance.stubs(:features_included?).returns(false)
     get :show, construct_params(id: business_calendar.id)
-    @account.class.any_instance.unstub(:features?)
+    @account.class.any_instance.unstub(:features_included?)
     assert_response :forbidden
   end
 end

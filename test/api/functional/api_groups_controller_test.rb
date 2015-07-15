@@ -58,10 +58,20 @@ class ApiGroupsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('agents', 'list is invalid', list: agent_id.to_s)])
   end
 
-  def test_index_groups
+  def test_index_load_groups
     get :index, request_params
-    assert_equal Group.all, assigns(:items)
-    assert_equal Group.all, assigns(:api_groups)
+    assert_equal Group.all, assigns(:items).sort
+    assert_equal Group.all, assigns(:api_groups).sort
+  end
+
+  def test_index
+    get :index, request_params
+    pattern = []
+    Account.current.groups.all.each do |group|
+      pattern << group_pattern_for_index(Group.find(group.id))
+    end
+    assert_response :success
+    match_json(pattern)
   end
 
   def test_show_group
