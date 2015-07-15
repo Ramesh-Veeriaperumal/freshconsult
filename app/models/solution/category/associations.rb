@@ -10,11 +10,14 @@ class Solution::Category < ActiveRecord::Base
   has_many :solution_folders, :class_name =>'Solution::Folder', :dependent => :destroy, :order => "position"
 
   has_many :public_folders, 
-  	:class_name =>'Solution::Folder' ,  
-  	:order => "position", 
+  	:class_name =>'Solution::Folder',  
+  	:order => "solution_folders.position", 
 		:conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
 
-  has_many :published_articles, :through => :public_folders, :order => ["solution_folders.id", "solution_articles.position"]
+  has_many :published_articles, 
+    :class_name => "Solution::Article",
+    :order => "solution_folders.id, solution_articles.position",
+    :through => :public_folders 
 
   has_many :articles, :through => :folders, :order => ["solution_folders.id", "solution_articles.position"]
 
@@ -25,7 +28,7 @@ class Solution::Category < ActiveRecord::Base
 
   has_many :portals, :through => :portal_solution_categories
 
-  has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
+  has_many :user_folders, :class_name =>'Solution::Folder' , :order => "solution_folders.position", 
           :conditions => [" solution_folders.visibility in (?,?) ",
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
 

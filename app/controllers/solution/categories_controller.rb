@@ -142,6 +142,6 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category_with_folders
-      @item = portal_scoper.find_by_id!(params[:id], :include => :folders)
+      @item = portal_scoper.find_by_id!(params[:id])
     end
 end

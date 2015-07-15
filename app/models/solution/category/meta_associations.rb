@@ -9,9 +9,8 @@ class Solution::Category < ActiveRecord::Base
 		:through => :solution_folder_meta,
 		:source => :solution_folders,
 		:dependent => :destroy, 
-		:order => "position",
 		:readonly => false,
-  	:order => :"solution_folder_meta.position",
+		:order => :"solution_folder_meta.position",
 		:conditions => proc { "solution_folders.language_id = '#{Language.for_current_account.id}'" },
 		:extend => Solution::MultipleThroughSetters
 
@@ -19,7 +18,7 @@ class Solution::Category < ActiveRecord::Base
   	:class_name =>'Solution::Folder' ,  
   	:through => :solution_folder_meta,
 		:source => :solution_folders,
-    :order => :"solution_folder_meta.position",
+		:order => :"solution_folder_meta.position",
 		:readonly => false,
     :conditions => proc { ["solution_folders.language_id = '#{Language.for_current_account.id}' and solution_folder_meta.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]] }
 

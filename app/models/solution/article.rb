@@ -43,6 +43,10 @@ class Solution::Article < ActiveRecord::Base
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
+
+  default_scope proc {
+    Account.current.launched?(:meta_read) ? joins(:solution_article_meta) : unscoped
+  }
  
   scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
   scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}

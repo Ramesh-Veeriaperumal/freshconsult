@@ -48,8 +48,11 @@ module Cache::Memcache::Mobihelp::Solution
     def solutions(category_id)
       MemcacheKeys.fetch(mobihelp_solutions_key(category_id)) {
 
-        category = Solution::Category.includes(:public_folders => 
-          {:published_articles => [:tags]}).find_by_id_and_account_id(category_id, account_id)
+        include_hash = (Account.current.launched?(:meta_read) ? 
+                        {:public_folders_with_meta => {:published_articles_with_meta => [:tags]}} : 
+                        {:public_folders => {:published_articles => [:tags]}}) 
+
+        category = Solution::Category.includes(include_hash).find_by_id_and_account_id(category_id, account_id)
 
         category.to_json(:except => :account_id, :include => {:public_folders => 
           {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 

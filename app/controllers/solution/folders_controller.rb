@@ -15,7 +15,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = @category.folders.find(params[:id], :include => :articles)
+    @item = @category.folders.find(params[:id])
     #META-READ-CHECK
     
     respond_to do |format|

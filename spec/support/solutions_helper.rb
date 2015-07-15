@@ -89,16 +89,34 @@ module SolutionsHelper
   end
 
   def check_meta_assoc_equality(obj)
-    obj.reload
     obj.class::FEATURE_BASED_METHODS.each do |meth|
-      obj.send("#{meth}_without_association").should == obj.send("#{meth}_with_meta")
+      @account.takeback(:meta_read)
+      @account.reload
+      @account.make_current
+      obj.reload
+      result1 = obj.send("#{meth}")
+      @account.launch(:meta_read)
+      @account.reload
+      @account.make_current
+      obj.reload
+      result2 = obj.send("#{meth}")
+      result1.should == result2
     end
   end
 
   def check_meta_delegates(obj)
-    obj.reload
     obj.meta_class::COMMON_ATTRIBUTES.each do |attrib|
-      obj.send("#{attrib}_without_association").should == obj.send("#{attrib}_through_meta")
+      @account.takeback(:meta_read)
+      @account.reload
+      @account.make_current
+      obj.reload
+      result1 = obj.send("#{attrib}")
+      @account.launch(:meta_read)
+      @account.reload
+      @account.make_current
+      obj.reload
+      result2 = obj.send("#{attrib}")
+      result1.should == result2
     end
   end 
 
