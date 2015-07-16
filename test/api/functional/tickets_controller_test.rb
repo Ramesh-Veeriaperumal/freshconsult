@@ -1076,14 +1076,14 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response :bad_request
-    match_json(bad_request_error_pattern('include', "can't be blank"))
+    match_json([bad_request_error_pattern('include', "can't be blank")])
   end
 
   def test_show_with_invalid_params
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, includ: 'test')
     assert_response :bad_request
-    match_json(bad_request_error_pattern('includ', "invalid_field"))
+    match_json([bad_request_error_pattern('includ', "invalid_field")])
   end
 
   def test_show_deleted

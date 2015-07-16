@@ -157,7 +157,7 @@ module JsonPattern
   end
 
   def ticket_pattern_with_notes(expected_output = {}, ticket)
-    ticket_pattern.merge(notes: Array)
+    ticket_pattern(ticket).merge(notes: Array)
   end
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
