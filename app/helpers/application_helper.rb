@@ -731,8 +731,7 @@ module ApplicationHelper
   end
 
   def is_application_installed?(app_name)
-    installed_app = get_app_details(app_name)
-    return !(installed_app.blank?)
+    get_app_details(app_name).present?
   end
 
   def get_app_details(app_name)

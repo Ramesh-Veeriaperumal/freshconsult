@@ -8,6 +8,7 @@ class Integrations::JiraIssue
   include Integrations::Jira::Api
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
+  include Integrations::Jira::Helper
 
   def initialize(installed_app)
     @http_request_proxy = HttpRequestProxy.new
@@ -159,7 +160,7 @@ class Integrations::JiraIssue
         jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> Account.current.id, :local_integratable_id=> tkt_obj.id, :remote_integratable_id=> issue_id, :comment => Digest::SHA512.hexdigest(mapped_data) }
         set_integ_redis_key(jira_key, "true", 240)
         add_comment(issue_id, mapped_data)
-        construct_attachment_params(issue_id, note) 
+        construct_attachment_params(issue_id, note) unless exclude_attachment?(@installed_app)
       end
     end
   end
