@@ -18,29 +18,29 @@ class TicketsController < ApiApplicationController
   end
 
   def create
-    api_add_ticket_tags(@tags, @ticket) if @tags # Tags need to be built if not already available for the account.
-    build_normal_attachments(@ticket, params[cname][:attachments]) if params[cname][:attachments]
-    if @ticket.save_ticket
-      render '/tickets/create', location: send("#{nscname}_url", @ticket.id), status: 201
+    api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
+    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+    if @item.save_ticket
+      render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 200
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
-                                        product: :product_id }, @ticket)
-      render_error(@ticket.errors)
+                                        product: :product_id }, @item)
+      render_error(@item.errors)
     end
   end
 
   def update
-    build_normal_attachments(@ticket, params[cname][:attachments])
-    if @ticket.update_ticket_attributes(params[cname])
-      update_tags(@tags, true, @ticket) if @tags # add tags if update is successful.
+    build_normal_attachments(@item, params[cname][:attachments])
+    if @item.update_ticket_attributes(params[cname])
+      update_tags(@tags, true, @item) if @tags # add tags if update is successful.
     else
-      render_error(@ticket.errors)
+      render_error(@item.errors)
     end
   end
 
   def destroy
-    @ticket.update_attribute(:deleted, true)
+    @item.update_attribute(:deleted, true)
     head 204
   end
 
@@ -62,12 +62,13 @@ class TicketsController < ApiApplicationController
 
   def notes
     # show only non deleted notes.
-    @notes = paginate_items(@item.notes.visible.exclude_source('meta').includes(:note_old_body, :schema_less_note, :attachments))
+    @items = paginate_items(ticket_notes)
     render '/notes/index'
   end
 
   def time_sheets
-    @time_sheets = paginate_items(@item.time_sheets.includes(:workable))
+    # as same template is used here and in time_sheet index time_sheets are named as items here.
+    @items = paginate_items(@item.time_sheets.includes(:workable))
     render '/time_sheets/index'
   end
 
@@ -138,17 +139,17 @@ class TicketsController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::TICKET_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ticket = TicketValidation.new(params[cname], @ticket)
+      ticket = TicketValidation.new(params[cname], @item)
       render_error ticket.errors, ticket.error_options unless ticket.valid?
     end
 
     def assign_protected
-      @ticket.product ||= current_portal.product
+      @item.product ||= current_portal.product
     end
 
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
-      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@ticket) && !@ticket.trashed
+      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.trashed
     end
 
     def ticket_permission?
@@ -184,6 +185,6 @@ class TicketsController < ApiApplicationController
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
       item = scoper.where(condition, params[:id]).first
       @item = instance_variable_set('@' + cname, item)
-      head :not_found unless @ticket
+      head :not_found unless @item
     end
 end

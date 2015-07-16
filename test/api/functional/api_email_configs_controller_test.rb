@@ -7,7 +7,6 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
   def test_index_load_email_configs
     get :index, request_params
     assert_equal EmailConfig.all, assigns(:items)
-    assert_equal EmailConfig.all, assigns(:api_email_configs)
   end
 
   def test_index

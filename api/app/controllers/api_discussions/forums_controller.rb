@@ -39,15 +39,15 @@ module ApiDiscussions
 
       def validate_params
         params[cname].permit(*(DiscussionConstants::FORUM_FIELDS))
-        forum_val = ApiDiscussions::ForumValidation.new(params[cname], @forum)
+        forum_val = ApiDiscussions::ForumValidation.new(params[cname], @item)
         render_error forum_val.errors, forum_val.error_options unless forum_val.valid?
       end
 
       def set_custom_errors
-        bad_customer_ids = @forum.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
-        @forum.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
+        bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
+        @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
         @error_options = { remove: :customer_forums, customers: { list: "#{bad_customer_ids.join(', ')}" } }
-        ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @forum)
+        ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @item)
       end
   end
 end

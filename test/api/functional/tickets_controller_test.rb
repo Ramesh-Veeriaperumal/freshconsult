@@ -1340,9 +1340,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     get :notes, controller_params(id: t.display_id)
     assert_response :success
-    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:attachments).loaded? }
-    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:note_old_body).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
   end
 
   def test_notes_with_pagination
@@ -1405,7 +1405,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     get :time_sheets, controller_params(id: t.display_id)
     assert_response :success
-    assert controller.instance_variable_get(:@time_sheets).all? { |x| x.association(:workable).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
   end
 
   def test_time_sheets_with_pagination

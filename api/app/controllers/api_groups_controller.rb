@@ -7,12 +7,12 @@ class ApiGroupsController < ApiApplicationController
     def validate_params
       group_params = current_account.features_included?(:round_robin) ? GroupConstants::GROUP_FIELDS : GroupConstants::GROUP_FIELDS_WITHOUT_TICKET_ASSIGN
       params[cname].permit(*(group_params))
-      group = ApiGroupValidation.new(params[cname], @api_group)
+      group = ApiGroupValidation.new(params[cname], @item)
       render_error group.errors, group.error_options unless group.valid?
     end
 
     def load_object
-      @item = instance_variable_set('@' + cname,  scoper.detect { |group| group.id == params[:id].to_i })
+      @item = scoper.detect { |group| group.id == params[:id].to_i }
       unless @item
         head :not_found # Do we need to put message inside response body for 404?
       end
@@ -56,8 +56,8 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def set_custom_errors
-      bad_agent_ids = @api_group.agent_groups.select { |x| x.errors.present? }.collect(&:user_id)
-      @api_group.errors.add(:agents, 'list is invalid') if bad_agent_ids.present?
+      bad_agent_ids = @item.agent_groups.select { |x| x.errors.present? }.collect(&:user_id)
+      @item.errors.add(:agents, 'list is invalid') if bad_agent_ids.present?
       @error_options = { remove: :'agent_groups.user', agents: { list: "#{bad_agent_ids.join(', ')}" } }
     end
 end

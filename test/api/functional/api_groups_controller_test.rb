@@ -61,7 +61,6 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_index_load_groups
     get :index, request_params
     assert_equal Group.all, assigns(:items).sort
-    assert_equal Group.all, assigns(:api_groups).sort
   end
 
   def test_index

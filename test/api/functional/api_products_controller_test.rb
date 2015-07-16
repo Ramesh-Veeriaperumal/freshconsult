@@ -7,7 +7,6 @@ class ApiProductsControllerTest < ActionController::TestCase
   def test_index_load_products
     get :index, request_params
     assert_equal Product.all, assigns(:items)
-    assert_equal Product.all, assigns(:api_products)
   end
 
   def test_index

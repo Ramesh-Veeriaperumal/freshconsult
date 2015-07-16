@@ -40,7 +40,7 @@ module ApiDiscussions
 
       def set_custom_errors
         @error_options = { remove: :posts }
-        ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @topic)
+        ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @item)
       end
 
       def manipulate_params
@@ -74,7 +74,7 @@ module ApiDiscussions
       def validate_params
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
         params[cname].permit(*(fields))
-        topic = ApiDiscussions::TopicValidation.new(params[cname], @topic)
+        topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
         render_error topic.errors, topic.error_options unless topic.valid?
       end
 

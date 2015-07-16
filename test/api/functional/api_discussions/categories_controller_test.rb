@@ -63,7 +63,6 @@ module ApiDiscussions
       define_method("test_#{action}_load_object_present") do
         ForumCategory.any_instance.stubs(:destroy).returns(true)
         send(methods[action], action, construct_params({ id: fc.id }, name: 'new'))
-        assert_equal fc, assigns(:category)
         assert_equal fc, assigns(:item)
       end
 
@@ -77,7 +76,6 @@ module ApiDiscussions
     def test_index_load_objects
       get :index, request_params
       assert_equal ForumCategory.all, assigns(:items)
-      assert_equal ForumCategory.all, assigns(:categories)
     end
 
     def test_update_with_extra_params

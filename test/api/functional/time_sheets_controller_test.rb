@@ -108,7 +108,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
-    assert controller.instance_variable_get(:@time_sheets).all? { |x| x.association(:workable).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
   end
 
   def test_index_with_invalid_privileges

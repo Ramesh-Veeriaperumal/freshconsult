@@ -57,10 +57,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
     params = { 'category' => { 'name' => 'test' } }
     @controller.params = params
     @controller.send(:build_object)
-    actual = @controller.instance_variable_get(:@category)
-    assert_equal actual, @controller.instance_variable_get(:@item)
-    assert_not_nil actual
     assert_not_nil @controller.instance_variable_get(:@item)
-    assert_equal 'test', actual.name
+    assert_equal 'test', @controller.instance_variable_get(:@item).name
   end
 end

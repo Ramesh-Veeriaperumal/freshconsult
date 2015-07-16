@@ -7,7 +7,6 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
   def test_index_load_business_calendars
     get :index, request_params
     assert_equal BusinessCalendar.all, assigns(:items)
-    assert_equal BusinessCalendar.all, assigns(:api_business_calendars)
   end
 
   def test_index

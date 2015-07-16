@@ -10,18 +10,25 @@ module ApiDiscussions
 
     private
 
+      def load_object
+        @item = scoper.detect { |category| category.id == params[:id].to_i }
+        unless @item
+          head :not_found # Do we need to put message inside response body for 404?
+        end
+      end
+
       def load_association
         @forums = @item.forums
       end
 
       def validate_params
         params[cname].permit(*(DiscussionConstants::CATEGORY_FIELDS))
-        category = ApiDiscussions::CategoryValidation.new(params[cname], @category)
+        category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
         render_error category.errors unless category.valid?
       end
 
       def scoper
-        current_account.forum_categories
+        create? ? current_account.forum_categories : current_account.forum_categories_from_cache
       end
   end
 end

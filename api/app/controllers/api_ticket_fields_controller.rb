@@ -25,6 +25,6 @@ class ApiTicketFieldsController < ApiApplicationController
     end
 
     def exclude_products
-      (!current_portal.main_portal_from_cache || current_account.products_from_cache.empty?)
+      (!current_portal.main_portal || current_account.products_from_cache.empty?)
     end
 end
