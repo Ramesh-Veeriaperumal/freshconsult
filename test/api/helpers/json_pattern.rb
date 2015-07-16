@@ -156,6 +156,10 @@ module JsonPattern
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
+  def ticket_pattern_with_notes(expected_output = {}, ticket)
+    ticket_pattern.merge(notes: Array)
+  end
+
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.ignore_extra_keys! : ticket.custom_field

@@ -18,6 +18,8 @@ json.set! :custom_fields, @item.custom_field # revisit caching.
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching
 
+json.partial! 'notes' if @notes
+
 json.set! :attachments do
   json.array! @item.attachments do |att|
     json.cache! att do # attachment caching

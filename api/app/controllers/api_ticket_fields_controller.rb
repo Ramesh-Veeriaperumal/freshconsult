@@ -6,8 +6,7 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def validate_params
       params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
-      errors = [[:type, ["can't be blank"]]] if
-        params[:type] && ApiTicketConstants::TICKET_FIELD_TYPES.exclude?(params[:type])
+      errors = [[:type, ["can't be blank"]]] if ApiTicketConstants::TICKET_FIELD_TYPES.exclude?(params[:type])
       render_error errors if errors
     end
 

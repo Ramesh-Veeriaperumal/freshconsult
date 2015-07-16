@@ -1019,14 +1019,14 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_show_object_not_present
-    get :show, construct_params(id: 999)
+    get :show, controller_params(id: 999)
     assert_response :not_found
     assert_equal ' ', @response.body
   end
 
   def test_show_without_permission
     User.any_instance.stubs(:has_ticket_permission?).returns(false).at_most_once
-    get :show, construct_params(id: Helpdesk::Ticket.first.display_id)
+    get :show, controller_params(id: Helpdesk::Ticket.first.display_id)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
@@ -1060,14 +1060,35 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_show
     ticket.update_column(:deleted, false)
-    get :show, construct_params(id: ticket.display_id)
+    get :show, controller_params(id: ticket.display_id)
     assert_response :success
     match_json(ticket_pattern({}, ticket))
   end
 
+  def test_show_with_notes
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: 'notes')
+    assert_response :success
+    match_json(ticket_pattern_with_notes({}, ticket))
+  end
+
+  def test_show_with_invalid_param_value
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: 'test')
+    assert_response :bad_request
+    match_json(bad_request_error_pattern('include', "can't be blank"))
+  end
+
+  def test_show_with_invalid_params
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, includ: 'test')
+    assert_response :bad_request
+    match_json(bad_request_error_pattern('includ', "invalid_field"))
+  end
+
   def test_show_deleted
     ticket.update_column(:deleted, true)
-    get :show, construct_params(id: ticket.display_id)
+    get :show, controller_params(id: ticket.display_id)
     assert_response :success
     match_json(deleted_ticket_pattern({}, ticket))
     ticket.update_column(:deleted, false)

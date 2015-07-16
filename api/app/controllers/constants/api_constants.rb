@@ -8,7 +8,7 @@ module ApiConstants
     page: 1
   }
 
-  DEFAULT_PARAMS = [:version, :format, :k].map(&:to_s)
+  DEFAULT_PARAMS = [:version, :format, :k, :id].map(&:to_s)
   DEFAULT_INDEX_FIELDS = [:per_page, :page]
   UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 

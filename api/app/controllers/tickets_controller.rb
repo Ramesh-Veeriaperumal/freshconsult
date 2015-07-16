@@ -5,6 +5,7 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
+  before_filter :validate_show_params, only: [:show]
   before_filter :assign_protected, only: [:create, :update]
   before_filter :verify_ticket_permission, only: [:update, :show]
   before_filter :ticket_permission?, only: [:destroy, :assign]
@@ -21,7 +22,7 @@ class TicketsController < ApiApplicationController
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     if @item.save_ticket
-      render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 200
+      render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
@@ -72,7 +73,16 @@ class TicketsController < ApiApplicationController
     render '/time_sheets/index'
   end
 
+  def show
+    @notes = ticket_notes if params[:include] == 'notes'
+    super
+  end
+
   private
+
+    def ticket_notes
+      @item.notes.visible.exclude_source('meta').includes(:note_old_body, :schema_less_note, :attachments)
+    end
 
     def paginate_options
       options = super
@@ -110,6 +120,14 @@ class TicketsController < ApiApplicationController
 
     def restrict_params
       params[cname].permit(*("ApiTicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
+    end
+
+    def validate_show_params
+      params.permit(*ApiTicketConstants::SHOW_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
+        errors = [[:include, ["can't be blank"]]]
+        render_error errors
+      end
     end
 
     def manipulate_params
