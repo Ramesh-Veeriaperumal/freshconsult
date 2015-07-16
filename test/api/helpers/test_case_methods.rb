@@ -96,6 +96,12 @@ module TestCaseMethods
     User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
   end
 
+  def deleted_user
+    user = User.find {|x| x.id != @agent.id} || create_dummy_customer
+    user.update_column(:deleted, true)
+    user.reload
+  end
+
   def user_without_monitorships
     User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
   end

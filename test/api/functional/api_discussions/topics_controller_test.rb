@@ -197,10 +197,11 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_invalid
-      monitor_topic(first_topic, @agent, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: @agent.id)
+      monitor_topic(first_topic, deleted_user, 1)
+      delete :unfollow, construct_params({ id: first_topic.id }, user_id: deleted_user.id)
       assert_response :forbidden
-      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
+      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
+      deleted_user.update_column(:deleted, false)
     end
 
     def test_follow_user_id_invalid
@@ -410,9 +411,10 @@ module ApiDiscussions
 
     def test_create_with_email_without_assume_privilege
       post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', email: @agent.email)
+                                         title: 'test title', message_html: 'test content', email: deleted_user.email)
       assert_response :forbidden
-      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
+      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
+      deleted_user.update_column(:deleted, false)
     end
 
     def test_create_with_invalid_email
@@ -424,9 +426,10 @@ module ApiDiscussions
 
     def test_create_with_user_without_assume_privilege
       post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', user_id: @agent.id)
+                                         title: 'test title', message_html: 'test content', user_id: deleted_user.id)
       assert_response :forbidden
-      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
+      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
+      deleted_user.update_column(:deleted, false)
     end
 
     def test_create_with_invalid_user_id

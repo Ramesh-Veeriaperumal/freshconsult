@@ -54,7 +54,7 @@ class TopicObserver < ActiveRecord::Observer
   end
 
   def send_stamp_change_notification(topic, forum_type, current_stamp, current_user_id)
-    topic.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+    topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitor|
       next if monitor.user.email.blank? or (current_user_id == monitor.user_id)
       TopicMailer.stamp_change_email(monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
     end

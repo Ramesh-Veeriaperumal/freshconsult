@@ -65,11 +65,11 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_user_id_invalid_privilege
-    params_hash = create_note_params_hash.merge(user_id: user.id)
+    params_hash = create_note_params_hash.merge(user_id: other_user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
     post :create, construct_params({}, params_hash)
     assert_response :forbidden
-    match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
+    match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
   end
 
@@ -280,11 +280,11 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_user_id_invalid_privilege
-    params_hash = reply_note_params_hash.merge(user_id: user.id)
+    params_hash = reply_note_params_hash.merge(user_id: other_user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
     post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
     assert_response :forbidden
-    match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
+    match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
   end
 

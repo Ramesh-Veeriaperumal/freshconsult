@@ -1191,7 +1191,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_filter_and_requester
     user = add_new_user(@account)
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user.id)
+    Helpdesk::Ticket.update_all(requester_id: user.id)
     get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
     assert_response :success
     response = parse_response @response.body
@@ -1222,14 +1222,19 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_company_and_requester
     company = Company.first
-    users = User.first(2)
-    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: users.first.id).count
-    get :index, controller_params(company_id: company.id, requester_id: users.first.id)
+    user1 = User.first
+    user2 = User.first(2).last
+    user1.update_column(:customer_id, company.id)
+    user1.reload
+
+    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id).count
+    get :index, controller_params(company_id: company.id, requester_id: user1.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal expected_size, response.size
 
-    get :index, controller_params(company_id: company.id, requester_id: users.last.id)
+    user2.update_column(:customer_id, nil)
+    get :index, controller_params(company_id: company.id, requester_id: user2.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 0, response.size

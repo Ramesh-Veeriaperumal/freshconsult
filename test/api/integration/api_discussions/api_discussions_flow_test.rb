@@ -18,27 +18,29 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def test_create_post_in_a_new_category
-    assert_difference 'ForumCategory.count', 1 do
-      post '/api/discussions/categories', v2_category_payload, @write_headers
-      assert_response :created
-    end
-    assert_difference 'Forum.count', 1 do
-      post '/api/discussions/forums', v2_forum_payload(fc), @write_headers
-      assert_response :created
-    end
+    skip_bullet do
+      assert_difference 'ForumCategory.count', 1 do
+        post '/api/discussions/categories', v2_category_payload, @write_headers
+        assert_response :created
+      end
+      assert_difference 'Forum.count', 1 do
+        post '/api/discussions/forums', v2_forum_payload(fc), @write_headers
+        assert_response :created
+      end
 
-    assert_equal fc.id, f.forum_category_id
-    assert_difference 'Topic.count', 1 do
-      post '/api/discussions/topics', v2_topics_payload(f), @write_headers
-      assert_response :created
-    end
+      assert_equal fc.id, f.forum_category_id
+      assert_difference 'Topic.count', 1 do
+        post '/api/discussions/topics', v2_topics_payload(f), @write_headers
+        assert_response :created
+      end
 
-    assert_equal f.id, t.forum_id
-    assert_difference 'Post.count', 1 do
-      post '/api/discussions/posts', v2_post_payload(t), @write_headers
-      assert_response :created
+      assert_equal f.id, t.forum_id
+      assert_difference 'Post.count', 1 do
+        post '/api/discussions/posts', v2_post_payload(t), @write_headers
+        assert_response :created
+      end
+      assert_equal t.id, p.topic_id
     end
-    assert_equal t.id, p.topic_id
   end
 
   def test_delete_category_deletes_dependents

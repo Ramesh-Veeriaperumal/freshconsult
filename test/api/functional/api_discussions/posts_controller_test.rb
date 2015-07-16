@@ -179,9 +179,10 @@ module ApiDiscussions
 
     def test_create_with_email_without_assume_privilege
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'email' => @agent.email)
+                                         'email' => deleted_user.email)
       assert_response :forbidden
-      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
+      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
+      deleted_user.update_column(:deleted, false)
     end
 
     def test_create_with_invalid_email
@@ -193,9 +194,10 @@ module ApiDiscussions
 
     def test_create_with_user_without_assume_privilege
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'user_id' => @agent.id)
+                                         'user_id' => deleted_user.id)
       assert_response :forbidden
-      match_json(request_error_pattern('access_denied', id: @agent.id, name: @agent.name))
+      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
+      deleted_user.update_column(:deleted, false)
     end
 
     def test_create_with_invalid_user_id
