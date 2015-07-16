@@ -43,16 +43,16 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def build_agents
-      @agents.each { |agent| @api_group.agent_groups.build(user_id: agent) } unless @agents.blank?
+      @agents.each { |agent| @item.agent_groups.build(user_id: agent) } unless @agents.blank?
     end
 
     def drop_existing_agents
       if @agents.empty?
-        @api_group.agent_groups.destroy_all
+        @item.agent_groups.destroy_all
       else
-        @api_group.agent_groups.where('user_id not in (?)', @agents).destroy_all
+        @item.agent_groups.where('user_id not in (?)', @agents).destroy_all
       end
-      @agents -= @api_group.agent_groups.map(&:user_id)
+      @agents -= @item.agent_groups.map(&:user_id)
     end
 
     def set_custom_errors

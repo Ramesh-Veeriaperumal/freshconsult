@@ -13,7 +13,7 @@ module ApiDiscussions
 
     def destroy
       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
-      @forum.backup_forum_topic_ids
+      @item.backup_forum_topic_ids
       super
     end
 
@@ -24,7 +24,7 @@ module ApiDiscussions
       end
 
       def load_association
-        @topics = @forum.topics
+        @topics = @item.topics
       end
 
       def manipulate_params
@@ -33,8 +33,8 @@ module ApiDiscussions
       end
 
       def set_account_and_category_id
-        @forum.account_id ||= current_account.id
-        @forum.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']
+        @item.account_id ||= current_account.id
+        @item.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']
       end
 
       def validate_params

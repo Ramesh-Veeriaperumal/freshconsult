@@ -6,11 +6,11 @@ module ApiDiscussions
 
     def create
       if @email.present?
-        @post.user = @user
+        @item.user = @user
       elsif params[cname][:user_id]
-        @post.user_id ||= params[cname][:user_id]
+        @item.user_id ||= params[cname][:user_id]
       else
-        @post.user = current_user
+        @item.user = current_user
       end
       super
     end
@@ -26,15 +26,15 @@ module ApiDiscussions
       end
 
       def set_user_and_topic_id
-        @post.topic_id = params[cname]['topic_id']
-        @post.user_id ||= current_user.id
-        @post.portal = current_portal
+        @item.topic_id = params[cname]['topic_id']
+        @item.user_id ||= current_user.id
+        @item.portal = current_portal
       end
 
       def validate_params
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_POST_FIELDS")
         params[cname].permit(*(fields))
-        post = ApiDiscussions::PostValidation.new(params[cname], @post)
+        post = ApiDiscussions::PostValidation.new(params[cname], @item)
         render_error post.errors, post.error_options unless post.valid?
       end
 
@@ -44,7 +44,7 @@ module ApiDiscussions
 
       def check_lock
         if params[cname][:user_id] || @email # email is removed from params, as it is not a model attr.
-          locked = @post.topic.try(:locked?)
+          locked = @item.topic.try(:locked?)
           if locked # if topic is locked, a customer cannot post.
             customer = @user.try(:is_customer)
             render_request_error(:access_denied, 403, id: @user.id, name: @user.name) if customer

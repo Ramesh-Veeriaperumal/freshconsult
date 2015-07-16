@@ -1,6 +1,6 @@
-json.cache! @category do
-  json.(@category, :id, :name, :description, :position)
-  json.partial! 'shared/utc_date_format', item: @category
+json.cache! @item do
+  json.(@item, :id, :name, :description, :position)
+  json.partial! 'shared/utc_date_format', item: @item
 end
 
 json.set! :forums do

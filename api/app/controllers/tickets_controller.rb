@@ -47,8 +47,8 @@ class TicketsController < ApiApplicationController
   def assign
     user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
     if user
-      @ticket.responder = user
-      @ticket.save ? (head 204) : render_error(@ticket.errors)
+      @item.responder = user
+      @item.save ? (head 204) : render_error(@item.errors)
     else
       @errors = [BadRequestError.new('responder', "can't be blank")]
       render '/bad_request_error', status: 400
@@ -56,18 +56,18 @@ class TicketsController < ApiApplicationController
   end
 
   def restore
-    @ticket.update_attribute(:deleted, false)
+    @item.update_attribute(:deleted, false)
     head 204
   end
 
   def notes
     # show only non deleted notes.
-    @notes = paginate_items(@ticket.notes.visible.exclude_source('meta').includes(:note_old_body, :schema_less_note, :attachments))
+    @notes = paginate_items(@item.notes.visible.exclude_source('meta').includes(:note_old_body, :schema_less_note, :attachments))
     render '/notes/index'
   end
 
   def time_sheets
-    @time_sheets = paginate_items(@ticket.time_sheets.includes(:workable))
+    @time_sheets = paginate_items(@item.time_sheets.includes(:workable))
     render '/time_sheets/index'
   end
 

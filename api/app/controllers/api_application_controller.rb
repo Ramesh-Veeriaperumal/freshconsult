@@ -183,7 +183,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def load_object
-      @item = instance_variable_set('@' + cname,  scoper.find_by_id(params[:id]))
+      @item = scoper.find_by_id(params[:id])
       unless @item
         head :not_found # Do we need to put message inside response body for 404?
       end
@@ -192,12 +192,11 @@ class ApiApplicationController < MetalApiController
     def build_object
       # assign already loaded account object so that it will not be queried repeatedly in model
       build_params = scoper.attribute_names.include?('account_id') ? { account: current_account } : {}
-      @item = instance_variable_set('@' + cname, scoper.new(build_params.merge(params[cname])))
+      @item = scoper.new(build_params.merge(params[cname]))
     end
 
     def load_objects(items = scoper)
       @items = items.paginate(paginate_options)
-      instance_variable_set('@' + cname.pluralize, @items)
     end
 
     def nscname # namespaced controller name

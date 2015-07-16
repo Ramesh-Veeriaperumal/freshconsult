@@ -6,9 +6,9 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def validate_params
       params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
-      @errors = [[:type, ["can't be blank"]]] if
+      errors = [[:type, ["can't be blank"]]] if
         params[:type] && ApiTicketConstants::TICKET_FIELD_TYPES.exclude?(params[:type])
-      render_error @errors if @errors
+      render_error errors if errors
     end
 
     def scoper
@@ -25,6 +25,6 @@ class ApiTicketFieldsController < ApiApplicationController
     end
 
     def exclude_products
-      (!current_portal.main_portal || current_account.products_from_cache.empty?)
+      (!current_portal.main_portal_from_cache || current_account.products_from_cache.empty?)
     end
 end

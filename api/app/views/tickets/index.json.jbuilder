@@ -1,4 +1,4 @@
-json.array! @tickets do |tkt|
+json.array! @items do |tkt|
   json.cache! tkt do
     json.set! :cc_emails, tkt.cc_email.try(:[], :cc_emails)
     json.set! :fwd_emails, tkt.cc_email.try(:[], :fwd_emails)

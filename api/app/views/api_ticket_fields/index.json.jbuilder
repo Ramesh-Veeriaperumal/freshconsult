@@ -1,4 +1,4 @@
-json.array! @api_ticket_fields do |tf|
+json.array! @items do |tf|
   json.cache! tf do
     json.(tf, :id, :description, :label, :name, :position)
     json.set! :portal_cc, tf.field_options.try(:[], 'portalcc') if tf.field_type == 'default_requester'

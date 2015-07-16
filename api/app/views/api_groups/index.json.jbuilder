@@ -1,4 +1,4 @@
-json.array! @api_groups do |group|
+json.array! @items do |group|
   json.cache! group do
     json.(group, :id, :name, :description, :business_calendar_id, :escalate_to)
     json.unassigned_for GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)

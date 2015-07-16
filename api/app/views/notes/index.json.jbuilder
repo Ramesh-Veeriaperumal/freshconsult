@@ -1,4 +1,4 @@
-json.array! @notes do |note|
+json.array! @items do |note|
   json.cache! note do
     json.(note, :body, :body_html, :id, :user_id, :support_email)
 

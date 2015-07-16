@@ -10,14 +10,14 @@ module ApiDiscussions
     before_filter :set_forum_id, only: [:create, :update]
 
     def create
-      post = @topic.posts.build(params[cname].delete_if { |x| !(DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
-      assign_user_and_parent post, :topic, @topic
+      post = @item.posts.build(params[cname].delete_if { |x| !(DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
+      assign_user_and_parent post, :topic, @item
       super
     end
 
     def update
-      post = @topic.first_post
-      post.attributes = @topic.attributes.extract!(:created_at, :updated_at)
+      post = @item.first_post
+      post.attributes = @item.attributes.extract!(:created_at, :updated_at)
       post.body_html = params[cname][:body_html] if params[cname].key?(:body_html)
       super
     end
@@ -35,7 +35,7 @@ module ApiDiscussions
     private
 
       def load_association
-        @posts = @topic.posts
+        @posts = @item.posts
       end
 
       def set_custom_errors
@@ -68,7 +68,7 @@ module ApiDiscussions
       end
 
       def set_forum_id
-        assign_user_and_parent @topic, :forum_id, params[cname]
+        assign_user_and_parent @item, :forum_id, params[cname]
       end
 
       def validate_params

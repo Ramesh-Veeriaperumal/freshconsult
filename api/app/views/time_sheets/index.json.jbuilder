@@ -1,4 +1,4 @@
-json.array! @time_sheets do |ts|
+json.array! @items do |ts|
   json.cache! ts do
     json.(ts, :note, :user_id, :id)
     json.set! :ticket_id, ts.workable.display_id

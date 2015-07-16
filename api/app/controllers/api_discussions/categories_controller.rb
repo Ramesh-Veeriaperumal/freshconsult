@@ -11,7 +11,7 @@ module ApiDiscussions
     private
 
       def load_association
-        @forums = @category.forums
+        @forums = @item.forums
       end
 
       def validate_params
