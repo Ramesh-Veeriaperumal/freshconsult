@@ -34,14 +34,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was ||= resolved_at
   end
   
-  def set_resolved_at_state
-    self.resolved_at=Time.zone.now
+  def set_resolved_at_state(time=Time.zone.now)
+    self.resolved_at = time 
     set_resolution_time_by_bhrs
   end
   
-  def set_closed_at_state
+  def set_closed_at_state(time=Time.zone.now)
     set_resolved_at_state if resolved_at.nil?
-    self.closed_at=Time.zone.now
+    self.closed_at = time
   end
   
   def need_attention
