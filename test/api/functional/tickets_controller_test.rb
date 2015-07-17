@@ -863,7 +863,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_verify_permission_ticket_trashed
-    Helpdesk::Ticket.any_instance.stubs(:trashed).returns(true).at_most_once
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true).at_most_once
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))

@@ -109,9 +109,8 @@ class NotesController < ApiApplicationController
     end
 
     def load_object
-      item = scoper.visible.find_by_id(params[:id])
-      @item = instance_variable_set('@' + cname, item)
-      head :not_found unless @item
+      @item = scoper.visible.find_by_id(params[:id])
+      @item ? @item.send(:load_schema_less_note) : head(:not_found)
     end
 
     def can_validate_ticket

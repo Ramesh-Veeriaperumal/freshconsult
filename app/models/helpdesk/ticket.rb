@@ -566,6 +566,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
+  def api_load_schema_less_ticket
+    build_schema_less_ticket unless schema_less_ticket
+    schema_less_ticket
+  end
+
   def method_missing(method, *args, &block)
     begin
       super

@@ -1,19 +1,9 @@
 	Todo:
  - API Layer middleware Removal using YAML settings file.
- - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
- - Tickets? phone source?
- - display_id and ticket states to be supported in bulk import / bulk create
- - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
  - tests for checking privileges for a action.
- - Fix miniprofiler, mobile actions, oj, ticket fields, review tkts
- - handle xss, customer_forum numericality, ticket scopes
- - base as attribute name in model errors for multiple attributes. - should change that
- - Content type for get ticket index.
- - introduce spam, unspam &  delete_forever for ticket via api
- - include meta info( created_by ) of a ticket in response on demand and needly basis
- - Allow attachments as part of discussions/post API call? Not supported in V1 
- - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
  - Compare all UI functionality with API(Eg. forum type)
+ - Integration tests
+ - 3 documentations(Breaking from V!, Changes from V1, Internal Beta)
 
 Breaking changes in existing APIs:
  - day pass required
@@ -24,6 +14,13 @@ Breaking changes in existing APIs:
  - validate presence of user in Agent Groups
 
 Deferred:
+ - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
+ - include meta info( created_by ) of a ticket in response on demand and needly basis
+ - Allow attachments as part of discussions/post API call? Not supported in V1 
+ - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
+ - introduce spam, unspam &  delete_forever for ticket via api
+ - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
+ - display_id and ticket states to be supported in bulk import / bulk create
  - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
  - Handle global unpermitted params for wrong datatype errors.
  - Default content_type should be application/json in request header if not set?
@@ -88,6 +85,12 @@ Completed:
  - array should be datatype for list
  - Middlewares which is not needed for API
  - "Expose email config and product index"
+ - handle xss, customer_forum numericality, ticket scopes
+ - Content type for get ticket index.
+ - base as attribute name in model errors for multiple attributes. - should change that
+ - remove @cname from controller.
+ - Embed notes in Tickets
+ - Groups, companies, categories index and update from cache.
 
 Not_necessary:
  - boolean values in validation should be converted to mysql readable format.

@@ -16,6 +16,7 @@ class TicketsController < ApiApplicationController
   def index
     load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,
                                                  :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
+    @items.each(&:api_load_schema_less_ticket)
   end
 
   def create
@@ -64,6 +65,7 @@ class TicketsController < ApiApplicationController
   def notes
     # show only non deleted notes.
     @items = paginate_items(ticket_notes)
+    @items.each{|i| i.send(:load_schema_less_note)}
     render '/notes/index'
   end
 
@@ -75,13 +77,16 @@ class TicketsController < ApiApplicationController
 
   def show
     @notes = ticket_notes if params[:include] == 'notes'
+    @notes.each{|i| i.send(:load_schema_less_note)}
     super
   end
 
   private
 
     def ticket_notes
-      @item.notes.visible.exclude_source('meta').includes(:note_old_body, :schema_less_note, :attachments)
+      # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
+      # There is no best solution for this
+      notes = @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
     end
 
     def paginate_options
@@ -167,7 +172,7 @@ class TicketsController < ApiApplicationController
 
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
-      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.trashed
+      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.trashed
     end
 
     def ticket_permission?
@@ -201,8 +206,7 @@ class TicketsController < ApiApplicationController
     def load_object
       condition = 'display_id = ? '
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
-      item = scoper.where(condition, params[:id]).first
-      @item = instance_variable_set('@' + cname, item)
-      head :not_found unless @item
+      @item = scoper.where(condition, params[:id]).first
+      @item ? @item.api_load_schema_less_ticket : head(:not_found)
     end
 end
