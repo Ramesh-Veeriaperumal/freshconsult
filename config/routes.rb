@@ -2064,6 +2064,7 @@ Helpkit::Application.routes.draw do
           get :features
           get :email_config
           put :add_day_passes
+          put :change_api_limit
           put :add_feature
           put :change_url
           get :single_sign_on

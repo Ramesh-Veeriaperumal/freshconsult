@@ -3,7 +3,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Fdadmin::AccountsControllerMethods
 
   around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal]
-  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name]
+  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name, :change_api_limit]
+  before_filter :validate_params, :only => [ :change_api_limit ]
   
   def show
     account_summary = {}
@@ -16,6 +17,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:subscription_payments] = account.subscription_payments.sum(:amount)
     account_summary[:email] = fetch_email_details(account)
     account_summary[:invoice_emails] = fetch_invoice_emails(account)
+    account_summary[:api_limit] = account.api_limit
+    account_summary[:phone_enabled] = !account.freshfone_account.blank? # find out if the account has freshfone(phone) enabled or not ?
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     respond_to do |format|
@@ -88,6 +91,24 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result[:account_id] = account.id 
     result[:account_name] = account.name
     result[:status] = "success"
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+
+  def change_api_limit
+    result = {}
+    account = Account.find(params[:account_id])
+    if account.account_additional_settings.update_attributes(:api_limit => params[:new_limit].to_i)
+      result[:status] = "success"
+    else
+      result[:status] = "notice"
+    end
+    result[:account_id] = account.id 
+    result[:account_name] = account.name
     respond_to do |format|
       format.json do
         render :json => result
@@ -257,4 +278,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         end
       end
   end
+
+  private 
+    def validate_params
+      render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
+    end
+
 end
