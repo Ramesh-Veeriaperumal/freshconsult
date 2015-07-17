@@ -44,7 +44,10 @@ module Mobile::Actions::Push_Notifier
         notification_types = {NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]}
       elsif group_id
         begin
-          user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+          # OPTIMIZE
+          # query from cache.
+          # user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+          user_ids = self.account.groups_from_cache.select{ |x| x.id == group_id }.first.agent_groups.map(&:user_id)
           user_ids.delete(current_user_id)
           notification_types = {NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids} unless user_ids.empty?
         rescue Exception => e

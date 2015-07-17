@@ -444,10 +444,12 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def url_protocol
-    if account.main_portal.portal_url.blank? 
+    # OPTIMIZE
+    # main_portal_from_cache
+    if account.main_portal_from_cache.portal_url.blank? 
       return account.ssl_enabled? ? 'https' : 'http'
     else 
-      return account.main_portal.ssl_enabled? ? 'https' : 'http'
+      return account.main_portal_from_cache.ssl_enabled? ? 'https' : 'http'
     end
   end
   

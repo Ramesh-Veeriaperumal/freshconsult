@@ -68,6 +68,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def save_ticket_states
     self.ticket_states = self.ticket_states || Helpdesk::TicketState.new
+    # OPTIMIZE
+    # assign already loaded ticket.
+    ticket_states.tickets = self
     ticket_states.account_id = account_id
     ticket_states.assigned_at=Time.zone.now if responder_id
     ticket_states.first_assigned_at = Time.zone.now if responder_id
@@ -122,10 +125,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
         meta_note = self.notes.build(
           :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
           :private => true,
+          # OPTIMIZE
+          # load already loaded user & ticket 
+          :notable => self,
+          :user => self.requester,
           :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
           :account_id => self.account.id,
           :user_id => self.requester.id
         ) 
+        # OPTIMIZE
+        # assign attachments as update_content_ids counting attachments
+        meta_note.attachments = []
         meta_note.save_note
       end
   end
@@ -295,7 +305,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_display_id?
-    account.features?(:redis_display_id)
+    # OPTIMIZE
+    # features_included?(*) can be used instead of features?
+    account.features_included?(:redis_display_id)
   end
 
   def assign_display_id
@@ -363,11 +375,15 @@ private
   end
 
   def auto_refresh_allowed?
-    account.features?(:auto_refresh)
+    # OPTIMIZE
+    # features_included?(*) can be used instead of features?
+    account.features_included?(:auto_refresh)
   end
 
   def autorefresh_node_allowed?
-    account.features?(:autorefresh_node)
+    # OPTIMIZE
+    # features_included?(*) can be used instead of features?
+    account.features_included?(:autorefresh_node)
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 
@@ -416,7 +432,11 @@ private
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language }}, 
+        :phone => phone, :language => language, 
+        # OPTIMIZE
+        # load already loaded account 
+        :account => account 
+        }}, 
         portal) # check @requester_name and active
       
       self.requester = requester

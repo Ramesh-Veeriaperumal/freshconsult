@@ -8,7 +8,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         create: 1,
         reply: 1,
-        update: 4,
+        update: 6,
         destroy: 7
       }
 

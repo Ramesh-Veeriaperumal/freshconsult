@@ -59,8 +59,10 @@ class ContactForm < ActiveRecord::Base
     end
 
     def contact_field_conditions
-      { 'time_zone' => account.features?(:multi_timezone), 
-        'language' => account.features?(:multi_language) }
+      # OPTIMIZE
+      # features_included?(*) can be used instead of features?
+      { 'time_zone' => account.features_included?(:multi_timezone), 
+        'language' => account.features_included?(:multi_language) }
     end
     
 end

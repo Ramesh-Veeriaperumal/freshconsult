@@ -17,7 +17,9 @@ module BusinessCalendarExt::Association
 
   module ClassMethods
     def default_business_calendar(caller=nil)
-      if caller && caller.account.features?(:multiple_business_hours)
+      # OPTIMIZE
+      # features_included?(*) can be used instead of features?
+      if caller && caller.account.features_included?(:multiple_business_hours)
         caller.current_business_calendar
       elsif ::Account.current
         key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => ::Account.current.id}

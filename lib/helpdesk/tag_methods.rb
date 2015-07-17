@@ -36,7 +36,8 @@ module Helpdesk::TagMethods
 
   def api_add_ticket_tags(tags_to_be_added, item)
     # add tags to the item which already exists
-    existing_tags = current_account.tags_from_cache.select {|x| Array.wrap(tags_to_be_added).include?(x.name)}
+    # not using cache as the tags can be added more often. Hence using cache will result in full array. 
+    existing_tags = current_account.tags.where(:name => tags_to_be_added)
     item.tags.push(*existing_tags)
     # Collect new tags to be added
     new_tags = tags_to_be_added.select{|x| !(existing_tags.collect{|y| y.name}.flatten.include? (x))}
