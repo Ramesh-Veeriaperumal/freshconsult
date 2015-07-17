@@ -97,7 +97,7 @@ module TestCaseMethods
   end
 
   def deleted_user
-    user = User.find {|x| x.id != @agent.id} || create_dummy_customer
+    user = User.find { |x| x.id != @agent.id } || create_dummy_customer
     user.update_column(:deleted, true)
     user.reload
   end
@@ -173,6 +173,18 @@ module TestCaseMethods
 
   def v2_group_params
     { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agents: [1, 3] }
+  end
+
+  def api_company_params
+    { name: Faker::Lorem.characters(10),  description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
+  end
+
+  def company_payload
+    { customer: api_company_params }.to_json
+  end
+
+  def v2_company_payload
+    api_company_params.to_json
   end
 
   def group_payload

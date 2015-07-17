@@ -54,6 +54,10 @@ Helpkit::Application.routes.draw do
     resources :email_configs, :controller => "api_email_configs", :only => [:index, :show]
 
     resources :business_calendars, :controller => "api_business_calendars", :only => [:index, :show]
+
+    resources :companies, as: "api_companies", :controller => "api_companies", :except => [:new, :edit]
+
+    resources :company_fields, as: "api_company_fields", :controller => "api_company_fields", :only => [:index]
   end
     
   scope "/api", defaults: {version: "v2", format: "json"}, :constraints => {:format => /(json|$^)/} do

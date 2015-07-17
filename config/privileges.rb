@@ -368,6 +368,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"social/facebook_tab"
     resource :"admin/survey"
     resource :group
+    resource :"api_company"
+    resource :"api_company_field"
     resource :"api_email_config"
     resource :"api_business_calendar"
     resource :"api_group"

@@ -25,3 +25,4 @@ include NoteHelper
 include ProductsHelper
 include EmailConfigsHelper
 include BusinessCalendarsHelper
+include ContactFieldsHelper

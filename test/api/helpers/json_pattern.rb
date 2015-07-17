@@ -381,6 +381,41 @@ module JsonPattern
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
+
+  def company_pattern(expected_output = {}, company)
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    {
+      id: Fixnum,
+      name: expected_output[:name] || company.name,
+      description: company.description,
+      domains: company.domains,
+      note: company.note,
+      custom_fields: company.custom_field,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def company_field_pattern(expected_output = {}, company_field)
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    {
+      id: Fixnum,
+      account_id: company_field.account_id,
+      company_form_id: company_field.company_form_id,
+      name: company_field.name,
+      column_name: company_field.column_name,
+      label: company_field.label,
+      field_type: company_field.field_type,
+      position: company_field.position,
+      deleted: company_field.deleted,
+      required_for_agent: company_field.required_for_agent,
+      field_options: company_field.field_options,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
 end
 
 include JsonPattern
