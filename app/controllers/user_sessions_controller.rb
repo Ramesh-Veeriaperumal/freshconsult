@@ -214,7 +214,7 @@ include GoogleLoginHelper
   def destroy
     remove_old_filters if current_user && current_user.agent?
 
-    mark_agent_unavailable if current_account.features?(:round_robin) && current_user && current_user.agent? && current_user.agent.available?
+    mark_agent_unavailable if can_turn_off_round_robin?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
@@ -222,13 +222,9 @@ include GoogleLoginHelper
     flash.clear if mobile?
    remove_logged_out_user_mobile_registrations if is_native_mobile?
 
-    current_user_session.destroy unless current_user_session.nil? 
+    current_user_session.destroy unless current_user_session.nil?
     if current_account.sso_enabled? and current_account.sso_logout_url.present?
-      if current_account.sso_options[:sso_type] == SAML
-        sso_redirect_url = generate_saml_logout_url
-      else
-        sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
-      end
+      sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end
     
@@ -416,6 +412,10 @@ include GoogleLoginHelper
 
     def get_time_in_utc
       Time.now.getutc.to_i
+    end
+
+    def can_turn_off_round_robin?
+      current_user && current_user.agent? && current_user.agent.available? && current_account.features?(:round_robin) && !current_account.features?(:disable_rr_toggle) 
     end
     
     def note_failed_login

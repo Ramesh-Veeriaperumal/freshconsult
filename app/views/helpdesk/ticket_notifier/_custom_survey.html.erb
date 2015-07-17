@@ -1,0 +1,33 @@
+<% require 'sanitize' %>
+<% if survey_handle %>
+  <div  style="width: 100%;font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <hr style="height:0;border:0;margin-top:20px;border-top:1px solid #ccc;">
+    <div class="freshdesk_satisfaction_survey">
+      <span style="font-family: Arial, sans-serif; color: #333;font-weight:bold;">
+        <%= simple_format(survey_handle.survey.default_question.label) %>
+      </span>
+    </div>    
+      <table  cellspacing="0" cellpadding="0" style="table-layout:fixed; margin-top:10px;">
+      <tr>
+        <% JSON.parse(survey_handle.survey.choices).each do |option| %>
+            <td style="width: 14.28%; border-right: 2px #fff solid; padding:0; height:8px; background-color:<%=CustomSurvey::Survey::CUSTOMER_RATINGS_COLOR[option["survey_question_choice"]["face_value"]]%>;"></td>
+        <% end %>
+      </tr>
+      <tr>
+        <% JSON.parse(survey_handle.survey.choices).each do |option| %>
+            <td style="width: 14.28%;  border-right: 2px #fff solid; padding: 16px 0px; background-color:<%=CustomSurvey::Survey::CUSTOMER_RATINGS_TEXT_BGCOLOR[option['survey_question_choice']['face_value']]%>;">
+                <a href="<%=survey_handle.survey_url(ticket, option["survey_question_choice"]['face_value'])%>" style="padding:5px;text-align:center; text-decoration:none;display:block;"><%= option["survey_question_choice"]["value"] %></a>
+            </td>
+        <% end %>
+      </tr>
+    </table>
+  </div>
+<% end %>
+<% if surveymonkey_survey %>
+  <p>
+    <%= "<br>------------------------<br>".html_safe unless in_placeholder %>
+    <%= Sanitize.clean(surveymonkey_survey[:text]).html_safe %>
+    <br>
+    <%= "<a href=\"#{surveymonkey_survey[:link]}\">#{h(surveymonkey_survey[:link])}</a>".html_safe %>
+  </p>
+<% end %>

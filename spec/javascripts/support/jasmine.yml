@@ -1,0 +1,133 @@
+# src_files
+#
+# Return an array of filepaths relative to src_dir to include before jasmine specs.
+# Default: []
+#
+# EXAMPLE:
+#
+# src_files:
+#   - lib/source1.js
+#   - lib/source2.js
+#   - dist/**/*.js
+#
+src_files:
+    - public/javascripts/jquery-1.7.2.js
+    - public/javascripts/jquery.pjax.js
+    - public/javascripts/sinon.js
+    - public/javascripts/utils.js
+    - public/javascripts/frameworks/sprintf.js
+    - public/javascripts/frameworks/plugins/jquery.cookie.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.noblecount.js
+    - public/javascripts/frameworks/plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/plugins/jquery.autosize.js
+    - public/javascripts/frameworks/plugins/jquery.pageless.js
+    - public/javascripts/frameworks/plugins/loadmore.js
+    - public/javascripts/frameworks/plugins/jquery.qtip.js
+    - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
+    - public/javascripts/frameworks/plugins/jquery.tmpl.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/frameworks/plugins/jquery.ba-bbq.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/jquery.gritter.js
+    - public/javascripts/jquery.keypad.js
+    - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/moment/*
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
+    - public/javascripts/frameworks/underscore-min.js
+    - public/javascripts/hackz.js
+    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/socket.io.js
+    - public/javascripts/frameworks/faye.js
+    - public/javascripts/helpdesk/freshdesk_node.js
+    - public/javascripts/ticket_list.js
+    - public/javascripts/AsyncJSLoader.js
+    - public/javascripts/lib/detectmobilebrowsers.js
+    - public/javascripts/frameworks/plugins/jquery.ui.timepicker.addon.js
+    - public/javascripts/app/ticket_details.js
+    - public/javascripts/frameworks/plugins/jquery.tabby.js
+    - public/javascripts/base64.js
+    - public/javascripts/frameworks/plugins/nprogress.js
+    - public/javascripts/frameworks/plugins/jquery.unveil.js
+    - public/javascripts/lookup.js
+    - public/javascripts/base64.js
+    - public/javascripts/frameworks/plugins/daterangepicker.js
+    - public/javascripts/frameworks/plugins/menuselector.js
+    - public/javascripts/frameworks/plugins/jquery.autosuggester.js
+# stylesheets
+#
+# Return an array of stylesheet filepaths relative to src_dir to include before jasmine specs.
+# Default: []
+#
+# EXAMPLE:
+#
+# stylesheets:
+#   - css/style.css
+#   - stylesheets/*.css
+#
+stylesheets:
+
+# helpers
+#
+# Return an array of filepaths relative to spec_dir to include before jasmine specs.
+# Default: ["helpers/**/*.js"]
+#
+# EXAMPLE:
+#
+# helpers:
+#   - helpers/**/*.js
+#
+helpers:
+  - 'helpers/**/*.js'
+# spec_files
+#
+#  Return an array of filepaths relative to spec_dir to include.
+# Default: ["**/*[sS]pec.js"]
+#
+# EXAMPLE:
+#
+# spec_files:
+#   - **/*[sS]pec.js
+#
+spec_files:
+  - '**/*[sS]pec.js'
+
+# src_dir
+#
+# Source directory path. Your src_files must be returned relative to this path. Will use root if left blank.
+# Default: project root
+#
+# EXAMPLE:
+#
+# src_dir: public
+#
+src_dir:
+
+# spec_dir
+#
+# Spec directory path. Your spec_files must be returned relative to this path.
+# Default: spec/javascripts
+#
+# EXAMPLE:
+#
+# spec_dir: spec/javascripts
+#
+spec_dir:
+    - 'spec/javascripts/survey/reports'
+# spec_helper
+#
+# Ruby file that Jasmine server will require before starting.
+# Returned relative to your root path
+# Default spec/support/jasmine_helper.rb
+#
+# EXAMPLE:
+#
+# spec_helper: spec/support/jasmine_helper.rb
+#
+spec_helper: spec/support/jasmine_helper.rb
+
+

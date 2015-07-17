@@ -27,7 +27,7 @@
 							 	<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
 			  			</a>
 			  		<% end %>
-			  		<% if feature?(:round_robin) && current_user.in_round_robin? %>
+			  		<% if feature?(:round_robin) && !feature?(:disable_rr_toggle) && current_user.in_round_robin? %>
 			  		<%
 			  			availabilty_tooltip = ""
 			  			if current_user.available?

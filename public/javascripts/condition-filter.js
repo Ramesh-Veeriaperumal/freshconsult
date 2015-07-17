@@ -329,11 +329,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var serialArray	= jQuery(c_form).serializeArray(),
 					serialHash		= $H(),
 				 	setValue		= [],
-				    tempConstruct	= $H(),
+				  tempConstruct	= $H(),
 					type			   = _type || "object";
-				  	flag			   = false;
-
-				serialArray.each(function(item){				   
+				  flag			   = false;
+				serialArray.each(function(item){	
 					if(item.name == name || flag){
 						if(!serialHash.get(name)) 
 							serialHash.set(name, $A());	
@@ -348,9 +347,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 							flag = false;
 						}
-						else if(item.value != -1){ 
+						//st_survey_rating and customer_feedback => check for surveys with disagree(-1) condition
+						else if(item.value != -1 || tempConstruct.get('name') == 'st_survey_rating' ||
+								tempConstruct.get('name') == 'customer_feedback'){
 							split_words = item.name.match(/(.*)\[(.*)\]/m)
-
 							if(split_words!=null){
 								hash_name = split_words[1]
 								hash_key = split_words[2]

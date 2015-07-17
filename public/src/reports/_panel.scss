@@ -1,0 +1,30 @@
+// Panel settings
+$border-color: #eee;
+$report-panel-width: 130px;
+
+// Report content panel styles
+.report-divider{
+	margin:0 -20px 15px;
+}
+.report-panel-wrapper{
+	@include padding-left($report-panel-width);
+	@include pie-clearfix;
+	.report-panel-left{
+		width: $report-panel-width;
+		@include margin-left(-($report-panel-width));
+		@include float(left);
+		position: relative;
+		left: -1px;
+	}
+	.report-panel-content{
+		@include float(right);
+		width: 97%;
+		@include padding-left(3%);
+		@include min-height(600px);
+		@include border-left(1px solid $border-color);
+		margin-top: -15px;
+		padding-top: 20px;
+		margin-bottom: -35px;
+		padding-bottom: 35px;
+	}
+}
