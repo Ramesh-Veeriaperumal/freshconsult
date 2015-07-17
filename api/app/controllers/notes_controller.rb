@@ -25,7 +25,8 @@ class NotesController < ApiApplicationController
   end
 
   def update
-    build_normal_attachments(@item, params[cname][:attachments])
+    attachments = build_normal_attachments(@item, params[cname][:attachments])
+    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
     unless @item.update_note_attributes(params[cname])
       render_error(@item.errors)
     end

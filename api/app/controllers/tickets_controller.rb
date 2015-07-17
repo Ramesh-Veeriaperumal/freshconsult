@@ -21,9 +21,10 @@ class TicketsController < ApiApplicationController
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
-    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+    attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
     if @item.save_ticket
-      render '/tickets/create', location: send("#{nscname}_url", @item.id), status: 201
+      render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
       notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
     else
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
@@ -33,7 +34,8 @@ class TicketsController < ApiApplicationController
   end
 
   def update
-    build_normal_attachments(@item, params[cname][:attachments])
+    attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
     if @item.update_ticket_attributes(params[cname])
       update_tags(@tags, true, @item) if @tags # add tags if update is successful.
     else
@@ -168,6 +170,7 @@ class TicketsController < ApiApplicationController
 
     def assign_protected
       @item.product ||= current_portal.product
+      @item.account = current_account
     end
 
     def verify_ticket_permission

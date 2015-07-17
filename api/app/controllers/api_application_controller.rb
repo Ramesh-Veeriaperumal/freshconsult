@@ -99,7 +99,8 @@ class ApiApplicationController < MetalApiController
       if not_get_request?
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
-          @current_user = AuthHelper.get_token_user(username) || AuthHelper.get_email_user(username, password)
+          # string check for @ is used to avoid a query.
+          @current_user = username.include?('@') ? AuthHelper.get_email_user(username, password) : AuthHelper.get_token_user(username)
         end
       elsif current_user_session # fall back to old session based auth
         @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
