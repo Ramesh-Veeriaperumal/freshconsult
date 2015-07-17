@@ -6,11 +6,11 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
     v1 = {}
     v2_expected = {
       create: 6,
-      show: 2,
-      update: 6,
-      index: 1,
-      destroy: 8,
-      forums: 2
+      show: 0,
+      update: 5,
+      index: 0,
+      destroy: 6,
+      forums: 1
     }
 
     # create
@@ -43,6 +43,7 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
 
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
+      Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       assert v2[key] <= v1[key]
       assert_equal v2_expected[key], v2[api_key]
     end
