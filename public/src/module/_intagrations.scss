@@ -24,13 +24,22 @@
 //-------------------------------------------------------------------------------------------
 //										Jira styles
 //-------------------------------------------------------------------------------------------
-#jira_sync_settings {
+.jira_sync_settings {
 	td {
-		vertical-align:middle
+		vertical-align:middle;
+		padding-bottom: 10px;	
+		display:inline-block;
+		width:47%;
 	}
-
+	td.align_width{
+		width:100%;
+	}
 	select {
-		margin: 0
+		margin: 0;
+
+	}
+	.toggle-button{
+		margin: 0;
 	}
 }
 #jira_widget {

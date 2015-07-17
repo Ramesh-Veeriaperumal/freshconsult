@@ -18,6 +18,7 @@
 	.preview_pic{
 		@include margin(0 auto);
 		@include float(none);
+		display: block;
 		img{
 			border-radius: 100%;
 			@include box-shadow(0px 0px 10px rgba(0,0,0,0.3));

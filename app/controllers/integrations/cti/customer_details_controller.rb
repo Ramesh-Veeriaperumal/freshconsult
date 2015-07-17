@@ -9,9 +9,9 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     user = current_account.users.with_contact_number(mobile_number).first
     href = ""
     if user.blank?
-      user_hash = {:mobile => mobile_number,:avatar => view_context.user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })}
+      user_hash = {:mobile => mobile_number,:avatar => view_context.user_avatar(user, :thumb, "preview_pic circle", {:width => "30px", :height => "30px" })}
     else
-      avatar = view_context.user_avatar(user, :thumb, "preview_pic", {:width => "30px", :height => "30px" })
+      avatar = view_context.user_avatar(user, :thumb, "preview_pic circle", {:width => "30px", :height => "30px" })
       user_tickets = current_account.tickets.permissible(user).requester_active(user).newest(2)
       tickets_json = user_tickets.to_json
       href = "/contacts/" + (user.id).to_s
