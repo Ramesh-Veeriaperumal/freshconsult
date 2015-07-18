@@ -180,7 +180,7 @@ module TestCaseMethods
   end
 
   def company_payload
-    { customer: api_company_params }.to_json
+    { company: api_company_params }.to_json
   end
 
   def v2_company_payload
