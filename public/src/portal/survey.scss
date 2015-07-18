@@ -151,9 +151,10 @@ label{display: block;}
 }
 input[type='text'].input-comment{
     width: 100%;
-    padding: 16px;
+    padding: 10px 16px;
     box-sizing: border-box;
     margin: 10px 0;
+    height: 40px;
 }
 .additional-comment-wrap{ margin-top: 40px;}
 .btn-comment-wrap{ margin-top: 20px;}
