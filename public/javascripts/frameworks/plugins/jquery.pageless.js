@@ -81,7 +81,7 @@
       pagination: '.pagination',
       params: {},
       url: location.href,
-      loaderImage: "/images/load.gif",
+      loaderImage: "/images/animated/ajax-loader.gif",
       method: 'get'
     };
 
@@ -93,9 +93,12 @@
     }
 
       // if there is a afterStopListener callback we call it
-    if (settings.end) {
-      settings.end.call();
-    }
+      if (settings.end) {
+            if(typeof settings.end == "string")
+              eval(settings.end);
+            else
+                settings.end.call();
+      }
   };
 
   $.pagelessCurrentPage = function () {
@@ -154,12 +157,13 @@
 
   //
   function loading(bool) {
+    $(document.body).trigger('sticky_kit:recalc');
     isLoading = bool;
     if (loader) {
       if (isLoading) {
         loader.fadeIn('normal');
       } else {
-        loader.fadeOut('normal');
+        loader.css('display', "none")
       }
     }
   }
@@ -204,8 +208,12 @@
         stopListener();
         // if there is a afterStopListener callback we call it
         if (settings.end) {
-          settings.end.call();
+          if(typeof settings.end == "string")
+            eval(settings.end);
+          else
+              settings.end.call();
         }
+
       }
       return;
     }
@@ -241,6 +249,7 @@
           }
           loading(false);
           // if there is a complete callback we call it
+          $(document.body).trigger('sticky_kit:recalc');
           if (settings.complete) {
             settings.complete.call();
           }

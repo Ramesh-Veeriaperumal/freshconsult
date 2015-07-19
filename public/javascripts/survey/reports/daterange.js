@@ -44,20 +44,20 @@ var SurveyDateRange = {
     },
     convertDateToTimestamp:function(date){
         var dateArray = date.split("-");
-        var fromTimestamp = new Date(dateArray[0]).getTime() /1000;
-        var toTimestamp   = new Date(dateArray[1]).getTime() /1000;
+        var fromTimestamp = (("0" + (new Date(dateArray[0]).getDate())).slice(-2))  + "" + (("0" + (new Date(dateArray[0]).getMonth()+1)).slice(-2)) + "" +
+                            (new Date(dateArray[0]).getYear()+1900);
+        var toTimestamp   = (("0" + (new Date(dateArray[1]).getDate())).slice(-2)) + "" + (("0" + (new Date(dateArray[1]).getMonth()+1)).slice(-2)) + "" +
+                            (new Date(dateArray[1]).getYear()+1900);
         var timestamp = fromTimestamp + "-" + toTimestamp;
         return timestamp;
     },
     convertTimestampToDate: function(timestamp){
         var formatDate = function(date){
-            return date.getDate()+ " " + SurveyI18N.month_names[(date.getMonth()+1)]+", "+(date.getYear()+1900);
+            return date.substring(0,2)+ " " + SurveyI18N.month_names[(parseInt(date.substring(2,4)))]+", "+(date.substring(4,8));
         }
-        var dateArray = timestamp.split("-");
-        var fromDate  = new Date(parseInt(dateArray[0])*1000);
-        var toDate    = new Date(parseInt(dateArray[1])*1000);
-        fromDate  = formatDate(fromDate);
-        toDate    = formatDate(toDate);
+        var dateArray = timestamp.split("-");        
+        fromDate  = formatDate(dateArray[0]);
+        toDate    = formatDate(dateArray[1]);
         var dateRange = fromDate + "-" + toDate;
         return dateRange;
     }
