@@ -1,0 +1,35 @@
+<%if(table && table.length>1){%>
+	<table class="table table-striped table-bordered table-condensed" id="report_tabular_data" style="display:none;">
+		<thead>
+			<tr>
+			<%	 
+					var header = table[0];
+					for(var i=0;i<header.length;i++){
+			%>
+						<th><%=header[i]%></th>		
+			<%
+					}
+			%>
+			</tr>
+		</thead>
+		<tbody>
+			<%
+				for(var i=1;i<table.length;i++){
+			%>	
+			<tr>
+				<%
+				 	var groupInfo = table[i];
+					for(var j=0;j<groupInfo.length;j++){				
+				%>
+					<td><%=groupInfo[j]%></td>
+				<%
+					}
+				%>
+			</tr>
+			<%
+				}
+			%>		
+		</tbody>
+	</table>
+	<% setTimeout(function(){ SurveyTable.draw(); }, 0);%>
+<%}else{ SurveyTable.type.hide(); }%>

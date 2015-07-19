@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48",
-    "current": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48"
+    "previous": "3b86257db5b1252bd6a28d1abec9a45d689ac5c952729903e41b6d5fffec69d7",
+    "current": "3b86257db5b1252bd6a28d1abec9a45d689ac5c952729903e41b6d5fffec69d7"
   },
   "fonts": [
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.ttf",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.woff",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot"
+    "public/assets/glyphs_3b86257db5b1252bd6a28d1abec9a45d.ttf",
+    "public/assets/glyphs_3b86257db5b1252bd6a28d1abec9a45d.svg",
+    "public/assets/glyphs_3b86257db5b1252bd6a28d1abec9a45d.woff",
+    "public/assets/glyphs_3b86257db5b1252bd6a28d1abec9a45d.eot"
   ],
   "glyphs": {
     "account": {
@@ -45,6 +45,10 @@
     "apple": {
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
+    },
+    "arrow-click": {
+      "codepoint": 61879,
+      "source": "public/glyphs/vectors/arrow-click.svg"
     },
     "arrow-down": {
       "codepoint": 61703,
@@ -654,6 +658,18 @@
       "codepoint": 61845,
       "source": "public/glyphs/vectors/supervisor.svg"
     },
+    "survey-happy": {
+      "codepoint": 61880,
+      "source": "public/glyphs/vectors/survey-happy.svg"
+    },
+    "survey-neutral": {
+      "codepoint": 61881,
+      "source": "public/glyphs/vectors/survey-neutral.svg"
+    },
+    "survey-sad": {
+      "codepoint": 61882,
+      "source": "public/glyphs/vectors/survey-sad.svg"
+    },
     "survey-settings": {
       "codepoint": 61846,
       "source": "public/glyphs/vectors/survey-settings.svg"
@@ -740,10 +756,6 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
-    "font_ascent": 448,
-    "font_descent": 64,
-    "font_design_size": 16,
-    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {

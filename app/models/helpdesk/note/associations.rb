@@ -22,6 +22,8 @@ class Helpdesk::Note < ActiveRecord::Base
     
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
+  has_one :custom_survey_remark, :foreign_key =>'note_id', :class_name => 'CustomSurvey::SurveyRemark', :dependent => :destroy
+
   has_one :note_old_body, :class_name => 'Helpdesk::NoteOldBody', :dependent => :destroy, :autosave => false
 
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',

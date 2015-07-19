@@ -102,6 +102,7 @@
         <li class="inline-field field">
           <div class="attachment-options fields" id="attachment-options-reply">
             <div class="floatr fields">
+
               <% show_satisfaction_survey_checkbox = @ticket.account.survey.can_send?(@ticket,
                                                       Survey::SPECIFIC_EMAIL_RESPONSE) 
                  show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox?

@@ -328,10 +328,6 @@ var getFilterDef = function(name,quest_type){
     }
     jQuery('#quest_data_value').live('keyup',fnPopulateQuestDes);
     jQuery('#quest_data_date,#quest_data_mode').live('change',fnPopulateQuestDes);
-
     jQuery('#quest_description').live('keyup',function(){_is_Desc_edited = true;})
-  <% end %>
-  <% unless @quest.id.nil?%>
-    _is_Desc_edited = true;
   <% end %>
 <% end %>

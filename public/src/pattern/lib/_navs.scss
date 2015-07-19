@@ -105,6 +105,10 @@
   display: block; // from App-bootstrap have to check later
 }
 
+.nav-pills > li > a {
+  @include margin-right(8px);
+}
+
 // TABS
 // ----
 
@@ -149,18 +153,21 @@
 
 // Links rendered as pills
 .nav-pills > li > a {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   margin-top: 2px;
-  margin-bottom: 2px;
-  @include border-radius(5px);
+  margin-bottom: 2px;  
+  border:1px solid #e4e4e4;
+  @include border-radius(2em);
+  color: #333333;
 }
 
 // Active state
 .nav-pills > .active > a,
 .nav-pills > .active > a:hover {
   color: $white;
-  background-color: $linkColor;
+  background-color: #555;
+  border-color: #555;
 }
 
 

@@ -1,7 +1,5 @@
 class RemoveSocialRevampFeature < ActiveRecord::Migration 
-  
   shard :none
-  
   def self.up
     ShardMapping.find_in_batches(:batch_size => 300) do |shards|
       shards.each do |shard|

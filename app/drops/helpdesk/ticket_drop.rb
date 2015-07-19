@@ -148,8 +148,12 @@ class Helpdesk::TicketDrop < BaseDrop
 		@formatted_time ||= @source.time_tracked_hours
 	end
 
-	def satisfaction_survey		
-		Survey.satisfaction_survey_html(@source)
+	def satisfaction_survey	
+		if @source.account.custom_survey_enabled
+			CustomSurvey::Survey.satisfaction_survey_html(@source)
+		else
+			Survey.satisfaction_survey_html(@source)
+		end
 	end
 
 	def surveymonkey_survey

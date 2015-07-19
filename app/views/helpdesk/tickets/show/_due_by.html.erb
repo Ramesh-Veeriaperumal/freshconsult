@@ -8,9 +8,9 @@ due_by_content_text = (due_by_content_text.gsub("\n" , " ")).html_safe if params
 <% end %>
 on <%= formated_date(due_by) %>
 <% if privilege?(:edit_ticket_properties) && params[:format] != 'widget' %>
-<a id="edit-dueby-time" 
-			data-placement="topRight" 
-			href="#" 
+<a id="edit-dueby-time"
+			data-placement="topRight"
+			href="#"
 			data-widget-container="due-date-dialog-container">
 	<%= t('change').html_safe %>
 </a>

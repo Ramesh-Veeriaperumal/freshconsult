@@ -3,9 +3,18 @@
 
 <%=render :partial => 'cloud_files_template',:locals => {:cloud_files => @cloud_files} %>
 
-<%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket,
-	:survey_handle => @survey_handle, :surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false }%>
-<br/>
+<%if @account.custom_survey_enabled %>
+	<%=render :partial => "custom_survey", :locals => {:ticket => @ticket,
+		:survey_handle => @survey_handle, :surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false,
+		:survey_feedback_preview => @survey_feedback_preview }%>
+	<br/>
+<%else%>
+	<%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket,
+		:survey_handle => @survey_handle, :surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false,
+		:survey_feedback_preview => @survey_feedback_preview }%>
+	<br/>
+<%end%>
+
 <%= render :partial => '/shared/free_plan_message' %>
 
 <%= hidden_ticket_identifier(@ticket) %>
