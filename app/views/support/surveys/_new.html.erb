@@ -2,17 +2,17 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= stylesheet_link_tag_with_rtl :'cdn/rating' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/old_rating' %>
 	<%= javascript_include_tag :'cdn/survey'  %>
 </head>
 <body>	
 	<div class="top-strip">
 		<div class="wrapper">
 		<div class="wrapper-shadow">
-			<div class="fd-branding">
-		    	<%= link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
+			<div class="brand">
+		    	<% link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
 			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
-		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/assets/misc/logo.png?721013" : @survey_handle.portal.logo.content.url(:logo)) %>
+		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/images/logo.png?722013" : @survey_handle.portal.logo.content.url(:logo)) %>
 
 		        <% end %>
 		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>

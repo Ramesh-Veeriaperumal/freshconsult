@@ -1,6 +1,6 @@
 class GamificationQuestsObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, Solution::Article, Topic, Post, SurveyResult
+	observe Helpdesk::Ticket, Solution::Article, Topic, Post, SurveyResult, CustomSurvey::SurveyResult
 
 	include Gamification::GamificationUtil
 
@@ -24,14 +24,12 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 	end
 
 	def commit_on_update(model)
-		return unless (!([:Post,:SurveyResult].include? model.class.name.to_sym) and gamification_feature?(model.account))
+		return unless (!([:Post,:SurveyResult,:"CustomSurvey::SurveyResult"].include? model.class.name.to_sym) and gamification_feature?(model.account))
 		process_quests(model)
 	end
 
 	def process_quests(model)
-		model_name = (:"Helpdesk::Ticket".eql? model.class.name.to_sym)  ? "ticket" : (
-			(:"Solution::Article".eql? model.class.name.to_sym)  ? "article" : model.class.name.downcase)
-		send("process_#{model_name}_quests", model)
+		send("process_#{model_name(model)}_quests", model)
 		rollback_achieved_quests(model) if :"Helpdesk::Ticket".eql? model.class.name.to_sym
 		
 	end
@@ -78,4 +76,18 @@ class GamificationQuestsObserver < ActiveRecord::Observer
                 :account_id => sr.account_id })
   end
 
+  private 
+
+  def model_name(name)
+    case name.class.name.to_sym
+      when :"Helpdesk::Ticket"
+         return "ticket"
+      when :"CustomSurvey::SurveyResult"
+          return "surveyresult"
+      when :"Solution::Article"
+          return "article"
+      else
+          return name.class.name.downcase
+      end
+  end
 end

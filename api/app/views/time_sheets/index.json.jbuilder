@@ -1,5 +1,5 @@
 json.array! @items do |ts|
-  json.cache! ts do
+  json.cache! [controller_name, action_name, ts] do
     json.(ts, :note, :user_id, :id)
     json.set! :ticket_id, ts.workable.display_id
     json.set! :time_spent, ts.api_time_spent

@@ -39,8 +39,15 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   scope :limit, lambda { |num| { :limit => num } }
 
-  scope :newest_first, :order => "helpdesk_activities.id DESC"
+  scope :status, lambda { |name| {
+    :conditions => ["helpdesk_activities.activity_data like ?", "%status_name: #{name}%"],
+    :select => "DISTINCT helpdesk_activities.user_id",
+    :order => "helpdesk_activities.id DESC",
+    :limit => 1
+    }
+  }
 
+  scope :newest_first, :order => "helpdesk_activities.id DESC"
   
  scope :permissible , lambda {|user| { 
  :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND helpdesk_activities.account_id = helpdesk_tickets.account_id AND notable_type = 'Helpdesk::Ticket'"  ,

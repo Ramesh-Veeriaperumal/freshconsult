@@ -52,8 +52,16 @@ class Mobile::TicketsController < ApplicationController
     selector = params[:filter_name].to_sym 
     from_display_id = params[:display_id].to_i
     limit = params[:limit].to_i > MAX_TICKET_LIMIT ? MAX_TICKET_LIMIT : params[:limit].to_i
-    order_type = ["DESC","ASC"].include?(params[:order_type]) ? params[:order_type] : "ASC" 
-    ticket_set = filter_tickets(selector, agent_filter).mobile_filtered_tickets(from_display_id,limit,"created_at #{order_type}") 
+    
+    if params[:order_type] == "ASC"
+      order_type   = "ASC"
+      query_string = "display_id > #{from_display_id}"
+    else
+      order_type   = "DESC"
+      query_string = "display_id < #{from_display_id}"
+    end
+    
+    ticket_set = filter_tickets(selector, agent_filter).mobile_filtered_tickets(query_string,from_display_id,"created_at #{order_type}",limit) 
     tickets_json = ticket_set.map(&:to_mob_json_index)
     render :json => { :tickets => tickets_json, :top_view => top_view }
   end
@@ -130,7 +138,7 @@ class Mobile::TicketsController < ApplicationController
   def filter_tickets(selector, agent_filter)
     filter_scope = current_account.tickets.permissible(current_user)
     filter_scope = filter_scope.where(:responder_id => current_user.id) if agent_filter
-    filter_tickets = TicketsFilter.filter(filter(selector), current_user, filter_scope)
+    filter_tickets = filter_scope.filter(:params => params , :filter => "Helpdesk::Filters::CustomTicketFilter")
     filter_tickets
   end
 

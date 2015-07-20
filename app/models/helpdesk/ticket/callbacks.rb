@@ -56,28 +56,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def set_default_values
-    self.status = OPEN if (!Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
-    self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type = nil if self.ticket_type.blank?
-    self.subject ||= ''
-    self.group_id ||= email_config.group_id unless email_config.nil?
-    self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
+    self.status       = OPEN if (!Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
+    self.source       = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
+    self.ticket_type  = nil if self.ticket_type.blank?
+
+    self.subject    ||= ''
+    self.group_id   ||= email_config.group_id unless email_config.nil?
+    self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
+    self.created_at ||= Time.zone.now
+    
     build_ticket_body(:description_html => self.description_html,
-      :description => self.description) unless ticket_body
+      :description => self.description) unless ticket_body    
   end
 
   def save_ticket_states
-    self.ticket_states = self.ticket_states || Helpdesk::TicketState.new
+    self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
     # OPTIMIZE
     # assign already loaded ticket.
     ticket_states.tickets = self
-    ticket_states.account_id = account_id
-    ticket_states.assigned_at=Time.zone.now if responder_id
-    ticket_states.first_assigned_at = Time.zone.now if responder_id
-    ticket_states.pending_since=Time.zone.now if (status == PENDING)
-    ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
-    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
-    ticket_states.status_updated_at = Time.zone.now
+    ticket_states.created_at          = ticket_states.created_at || created_at
+    ticket_states.account_id          = account_id
+    ticket_states.assigned_at         = Time.zone.now if responder_id
+    ticket_states.first_assigned_at   = Time.zone.now if responder_id
+    ticket_states.pending_since       = Time.zone.now if (status == PENDING)
+
+    ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
+    ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
+
+    ticket_states.status_updated_at    = created_at || Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
   end
 

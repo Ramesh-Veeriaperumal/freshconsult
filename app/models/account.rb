@@ -75,6 +75,22 @@ class Account < ActiveRecord::Base
     tz
   end
   
+  def survey
+    if custom_survey_enabled
+      custom_survey_from_cache || custom_surveys.first
+    else
+      surveys.first unless surveys.blank?
+    end
+  end
+
+  def survey_enabled
+      features?(:surveys)
+  end
+  
+  def custom_survey_enabled
+      features?(:custom_survey)
+  end
+
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
   end

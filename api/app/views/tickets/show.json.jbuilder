@@ -1,4 +1,4 @@
-json.cache! @item do # ticket caching
+json.cache! [controller_name, action_name, @item] do # ticket caching
   json.set! :cc_emails, @item.cc_email[:cc_emails]
   json.set! :fwd_emails, @item.cc_email[:fwd_emails]
   json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
@@ -24,7 +24,7 @@ json.partial! 'notes' if @notes
 
 json.set! :attachments do
   json.array! @item.attachments do |att|
-    json.cache! att do # attachment caching
+    json.cache! [controller_name, action_name, att] do # attachment caching
       json.set! :id, att.id
       json.set! :content_type, att.content_content_type
       json.set! :size, att.content_file_size

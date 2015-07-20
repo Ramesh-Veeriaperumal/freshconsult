@@ -1,5 +1,5 @@
 # Email settings for pop/imap fetching
-incoming: 
+incoming:
     defaults: &defaults
       type: imap
       server: imap.gmail.com
@@ -20,14 +20,14 @@ incoming:
       <<: *defaults
 
 # Email settings for sending mail
-outgoing: 
+outgoing:
     defaults: &defaults
       address: smtp.sendgrid.net
       port: 587
       domain: freshpo.com
       authentication: :plain
-      user_name: admin@freshpo.com
-      password: opmanager123
+      user_name: fdstage
+      password: 45533keFi3c924T
     development:
       <<: *defaults
     test:

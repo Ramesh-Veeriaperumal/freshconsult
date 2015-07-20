@@ -40,6 +40,7 @@ class EmailNotification < ActiveRecord::Base
   RESOLUTION_TIME_SLA_VIOLATION = 13
   PASSWORD_RESET = 14
   ADDITIONAL_EMAIL_VERIFICATION = 17
+  PREVIEW_EMAIL_VERIFICATION = 18
 
   DEFAULT_REPLY_TEMPLATE = 15
   
@@ -94,7 +95,8 @@ class EmailNotification < ActiveRecord::Base
     [:agent_solves_tkt,       TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]        ],
     [:agent_closes_tkt,       TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]        ],
     [:default_reply_template, DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]        ],
-    [:additional_email_verification, ADDITIONAL_EMAIL_VERIFICATION, VISIBILITY[:REQUESTER_ONLY]  ]
+    [:additional_email_verification, ADDITIONAL_EMAIL_VERIFICATION, VISIBILITY[:REQUESTER_ONLY]  ],
+    [:preview_email_verification, PREVIEW_EMAIL_VERIFICATION,  VISIBILITY[:AGENT_ONLY]           ]
   ]
   
   # List of notfications to agents which cannot be turned off

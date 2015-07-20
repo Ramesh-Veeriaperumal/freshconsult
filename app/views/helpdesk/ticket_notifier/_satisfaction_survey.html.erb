@@ -8,15 +8,15 @@
       <tbody>
         <tr>
           <td bgcolor="#e7f8dc" style="border-radius: 50px; box-shadow:0px 0px 3px #ccc; margin-right: 10px;">
-           <a href="<%=survey_url(ticket, Survey::HAPPY, survey_handle.id_token)%>" style="display:inline-table; padding: 0px 10px; font-family: Arial, sans-serif;color: #377ce4; font-size: 16px; text-decoration: underline;">
+           <a href="<%=survey_url(ticket, Survey::HAPPY, survey_handle.id_token)%>" style="display:inline-table; word-break: inherit; padding: 0px 10px; font-family: Arial, sans-serif;color: #377ce4; font-size: 16px; text-decoration: underline;">
             <img src="http://<%=ticket.portal_host%>/images/happy-smily-tab.png"align="absmiddle" style="padding-right: 5px;" alt="Happy"/><%= survey_handle.survey.happy_text %></a></td>
 
            <td bgcolor="#fbf7e0" style="border-radius: 50px; box-shadow:0px 0px 3px #ccc; margin-right: 10px;">
-            <a href="<%=survey_url(ticket, Survey::NEUTRAL, survey_handle.id_token)%>" style="display:inline-table; padding: 0px 10px; font-family: Arial, sans-serif;color: #377ce4; font-size: 16px; text-decoration: underline;">
+            <a href="<%=survey_url(ticket, Survey::NEUTRAL, survey_handle.id_token)%>" style="display:inline-table; word-break: inherit; padding: 0px 10px; font-family: Arial, sans-serif;color: #377ce4; font-size: 16px; text-decoration: underline;">
              <img src="http://<%=ticket.portal_host%>/images/neutral-smily-tab.png"align="absmiddle" style="padding-right: 5px;" alt="Neutral"/><%= survey_handle.survey.neutral_text %></a></td>
 
             <td bgcolor="#fae4e2" style="border-radius: 50px;box-shadow: 0px 0px 3px #ccc; margin-right:10px;">
-             <a href="<%=survey_url(ticket, Survey::UNHAPPY, survey_handle.id_token)%>"style="display: inline-table;padding: 0px 10px; font-family: Arial,sans-serif; color: #377ce4; font-size: 16px; text-decoration:underline;">
+             <a href="<%=survey_url(ticket, Survey::UNHAPPY, survey_handle.id_token)%>"style="display: inline-table; word-break: inherit; padding: 0px 10px; font-family: Arial,sans-serif; color: #377ce4; font-size: 16px; text-decoration:underline;">
               <img src="http://<%=ticket.portal_host%>/images/unhappy-smily-tab.png" align="absmiddle" style="padding-right: 5px;" alt="Unhappy"/><%= survey_handle.survey.unhappy_text %></a></td>
         </tr>
       </tbody>

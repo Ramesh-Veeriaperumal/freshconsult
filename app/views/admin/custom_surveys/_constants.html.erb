@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<%= javascript_tag do %>
+var SurveyConstants = {
+  LIMIT: <%=CustomSurvey::Survey::SURVEYS_LIMIT%>,
+  rating:{
+    "EXTREMELY_UNHAPPY":<%= CustomSurvey::Survey::EXTREMELY_UNHAPPY %>,
+    "VERY_HAPPY":<%= CustomSurvey::Survey::VERY_HAPPY %>,
+    "HAPPY":<%= CustomSurvey::Survey::HAPPY %>,
+    "NEUTRAL":<%= CustomSurvey::Survey::NEUTRAL %>,
+    "UNHAPPY":<%= CustomSurvey::Survey::UNHAPPY %>,
+    "VERY_UNHAPPY":<%= CustomSurvey::Survey::VERY_UNHAPPY %>,
+    "EXTREMELY_HAPPY":<%= CustomSurvey::Survey::EXTREMELY_HAPPY %>
+  },
+  notification:{
+    "CLOSED_NOTIFICATION":<%= CustomSurvey::Survey::CLOSED_NOTIFICATION %>,
+    "RESOLVED_NOTIFICATION":<%= CustomSurvey::Survey::RESOLVED_NOTIFICATION %>,
+    "ANY_EMAIL_RESPONSE":<%= CustomSurvey::Survey::ANY_EMAIL_RESPONSE %>,
+    "SPECIFIC_EMAIL_RESPONSE":<%= CustomSurvey::Survey::SPECIFIC_EMAIL_RESPONSE %>
+  },
+  iconClass:{
+    "<%= CustomSurvey::Survey::EXTREMELY_UNHAPPY %>" : "strongly-disagree",
+    "<%= CustomSurvey::Survey::VERY_UNHAPPY %>" : "some-what-disagree",
+    "<%= CustomSurvey::Survey::UNHAPPY %>" : "disagree",
+    "<%= CustomSurvey::Survey::NEUTRAL %>" : "satisfaction-neutral",
+    "<%= CustomSurvey::Survey::HAPPY %>" : "agree",
+    "<%= CustomSurvey::Survey::VERY_HAPPY %>" : "some-what-agree",
+    "<%= CustomSurvey::Survey::EXTREMELY_HAPPY %>" : "strongly-agree"
+  },
+  questions:{
+    "LIMIT" : <%=CustomSurvey::Survey::QUESTIONS_LIMIT%>
+  },
+  limit:{
+    "thanks_text" : <%= CustomSurvey::Survey::LINK_TEXT_LIMIT %>,
+    "scale":30,
+    "title_text": <%= CustomSurvey::Survey::TITLE_TEXT_LIMIT %>
+  }
+}
+
+<% end %>
+</html>
