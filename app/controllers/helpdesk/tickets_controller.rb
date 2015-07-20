@@ -282,7 +282,10 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
                                                         :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]}, true))
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))                            
-        hash.merge!({:subscription => !@subscription.nil?})                                          
+        hash.merge!({:subscription => !@subscription.nil?})      
+        hash.merge!({:reply_emails => @reply_emails})      
+        hash.merge!({:to_cc_emails => @to_cc_emails})      
+        hash.merge!({:bcc_drop_box_email => bcc_drop_box_email})                         
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
