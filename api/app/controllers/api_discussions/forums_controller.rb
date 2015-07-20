@@ -1,9 +1,15 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    skip_before_filter :load_object, only: [:create, :is_following]
-    include DiscussionMonitorConcern
-    before_filter :set_account_and_category_id, only: [:create, :update]
+
     before_filter :can_send_user?, only: [:follow, :unfollow]
+    before_filter :load_object, except: [:create, :route_not_found, :is_following]
+    before_filter :check_params, only: :update
+    before_filter :validate_params, only: [:create, :update]
+    include DiscussionMonitorConcern
+    before_filter :manipulate_params, only: [:create, :update]
+    before_filter :build_object, only: [:create]
+    before_filter :load_association, only: [:show]
+    before_filter :set_account_and_category_id, only: [:create, :update]
 
     def topics
       @topics = paginate_items(load_association)

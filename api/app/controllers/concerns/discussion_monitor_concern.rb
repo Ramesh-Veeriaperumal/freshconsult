@@ -2,8 +2,8 @@ module DiscussionMonitorConcern
   extend ActiveSupport::Concern
   included do
     before_filter :permit_toggle_params, only: [:follow, :unfollow]
-    before_filter :fetch_monitorship, only: [:follow]
     before_filter :allow_monitor?, :validate_user_id, only: [:followed_by, :is_following]
+    before_filter :fetch_monitorship, only: [:follow]
     before_filter :fetch_active_monitorship_for_user, only: [:is_following]
     before_filter :find_monitorship, only: [:unfollow]
   end
