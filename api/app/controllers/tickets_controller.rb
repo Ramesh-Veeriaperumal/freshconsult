@@ -21,11 +21,9 @@ class TicketsController < ApiApplicationController
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
-    attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
     if @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
-      notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
+      notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
                                         product: :product_id }, @item)
@@ -34,10 +32,9 @@ class TicketsController < ApiApplicationController
   end
 
   def update
-    attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
     if @item.update_ticket_attributes(params[cname])
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
+      notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
       render_error(@item.errors)
     end
@@ -138,9 +135,11 @@ class TicketsController < ApiApplicationController
     end
 
     def manipulate_params
-      # Assign cc_emails serialized hash
-      cc_emails =  params[cname][:cc_emails] || []
-      params[cname][:cc_email] = { cc_emails: cc_emails, fwd_emails: [], reply_cc: cc_emails }
+      # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
+      cc_emails =  (params[cname][:cc_emails] || [])
+
+      #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup }
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
@@ -171,6 +170,10 @@ class TicketsController < ApiApplicationController
     def assign_protected
       @item.product ||= current_portal.product
       @item.account = current_account
+      @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
+      @item.cc_email = @cc_emails
+      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      @item.attachments << (attachments || [])  # assign attachments so that it will not be queried again in model callbacks
     end
 
     def verify_ticket_permission

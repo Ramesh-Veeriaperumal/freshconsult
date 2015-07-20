@@ -36,7 +36,6 @@ class TicketValidation < ApiValidation
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item
     @fr_due_by = item.try(:frDueBy).try(:to_s) if item
-    @custom_fields = item.try(:custom_field) if item
     @type = item.try(:ticket_type) if item
     super(request_params, item)
     @item = item
