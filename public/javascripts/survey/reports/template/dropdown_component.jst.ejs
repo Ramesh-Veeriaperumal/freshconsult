@@ -1,0 +1,17 @@
+<div class="dropdown btn btn-default" id="<%=name%>">
+  <a class="dropdown-toggle" id="rating_list" role="button" data-toggle="dropdown" data-target="#">
+      <h5><i class="survey-indicator"></i>
+      	<span id="r" class="reports"><%=SurveyI18N.allResponse%></span><b class="caret"></b></h5>
+  </a>
+  <ul class="dropdown-menu p10 response-filter" role="menu" aria-labelledby="dLabel">
+  	<li><a class='rating_list' id="r" value="<%=SurveyI18N.allResponse%>" onclick="<%=handler%>">
+		<%=SurveyI18N.allResponse%></a></li>
+		<%for(var i=0;i<options.length;i++){%>
+			<%= JST["survey/reports/template/dropdown_rating_component"]({
+				name: options[i][0].type,
+				choices: options[i],
+				handler: "SurveyUtil.rating.filter(this);"
+			})%>
+		<%}%>
+   </ul>
+</div>

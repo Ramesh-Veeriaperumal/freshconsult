@@ -16,6 +16,10 @@
         @include clear(both);
     }
 
+    .survey-pull-left{
+        width: 60% ;
+    }
+
     .survey-form-left{
         width: 260px;
         @include float(left);

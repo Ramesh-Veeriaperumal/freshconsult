@@ -185,6 +185,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   class << self # Class Methods
 
+    def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
+      if display_id != 0 
+        where(query_string,display_id).order(order_param).limit(limit_val)
+      else
+        order(order_param).limit(limit_val)
+      end
+    end
+
     def agent_permission user
       permissions = {:all_tickets => [] , 
                    :group_tickets => ["group_id in (?) OR responder_id=? OR requester_id=?", 
@@ -795,6 +803,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.fb_profile_id
   end
   
+
+  def can_send_survey?(s_while)
+     survey = account.survey
+     (!survey.nil? && survey.can_send?(self,s_while))
+  end
+
   # Instance level spam watcher condition
   # def rl_enabled?
   #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?

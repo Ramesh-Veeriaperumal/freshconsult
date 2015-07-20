@@ -173,6 +173,7 @@ $community-types: problem #e65e63,
 			@include padding(0px 20px 7px 15px);
 		}
 		.avatar-text{
+			border-radius: 6px;
 			width: 30px;
 			height: 30px;
 			line-height: 30px;

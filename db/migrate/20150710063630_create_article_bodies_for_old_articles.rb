@@ -1,3 +1,4 @@
+# This migration is ONLY FOR LOCAL DEVELOPMENT ENVIRONMENT
 class CreateArticleBodiesForOldArticles < ActiveRecord::Migration
   shard :all
 

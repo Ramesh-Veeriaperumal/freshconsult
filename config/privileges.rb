@@ -270,6 +270,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/helpdesk_performance_analysi"
       resource :"reports/helpdesk_report"
       resource :"reports/survey_report"
+      resource :"reports/custom_survey_report"
       resource :"reports/freshfone/summary_report"
       resource :"reports/freshchat/summary_report"
    	resource :"reports/timesheet_report"
@@ -325,6 +326,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"social/facebook_page"
     resource :"social/facebook_tab"
     resource :"admin/survey"
+    resource :"admin/custom_survey"
     resource :group
     resource :ticket_field
     resource :"admin/contact_field"

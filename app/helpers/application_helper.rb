@@ -570,12 +570,28 @@ module ApplicationHelper
             },
           :class => profile_size
         }
+      avatar_image_generator(img_tag_options, profile_size, profile_class)
+    elsif is_user_social(user, profile_size).present?
+        img_tag_options = {
+          :onerror => "imgerror(this)", 
+          :alt => user.name, 
+          :size_type => profile_size,
+          :data => {
+            :src => is_user_social(user, profile_size),
+            :"src-retina" => is_user_social(user, profile_size)
+            },
+          :class => profile_size
+        }
+      avatar_image_generator(img_tag_options, profile_size, profile_class)
+    else
+        avatar_generator(user.name, profile_size, profile_class, options)
+    end
+  end
+
+  def avatar_image_generator(img_tag_options, profile_size, profile_class)
       ActionController::Base.helpers.content_tag(:div,
           ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
           :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
-    else
-      avatar_generator(user.name, profile_size, profile_class, options)
-    end
   end
 
   def avatar_cached_url(user, profile_size)
@@ -717,8 +733,7 @@ module ApplicationHelper
   end
 
   def is_application_installed?(app_name)
-    installed_app = get_app_details(app_name)
-    return !(installed_app.blank?)
+    get_app_details(app_name).present?
   end
 
   def get_app_details(app_name)

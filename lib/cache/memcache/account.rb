@@ -31,6 +31,13 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.main_portal }
   end
 
+  def custom_survey_from_cache
+    key = ACCOUNT_CUSTOM_SURVEY % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      custom_surveys.active.first
+    end
+  end
+
   def ticket_types_from_cache
     key = ticket_types_memcache_key
     MemcacheKeys.fetch(key) { ticket_type_values.all }
@@ -84,7 +91,6 @@ module Cache::Memcache::Account
     key = FB_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
-
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
