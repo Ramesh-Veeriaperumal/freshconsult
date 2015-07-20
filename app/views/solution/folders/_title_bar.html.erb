@@ -29,7 +29,7 @@
 			</div>
 		<% end %>
 		<div class="category-details span7">
-			<h2 class="list-title ellipsis" folder-id="<%= @folder.id %>"><%= h(@folder.name) %></h2>
+			<h2 class="list-title ellipsis tooltip" folder-id="<%= @folder.id %>" title="<%= @folder.name if @folder.name.length > 55 %>"><%= h(@folder.name) %></h2>
 			<div class="sol-visibility muted">
 				<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder) %>
 			</div>

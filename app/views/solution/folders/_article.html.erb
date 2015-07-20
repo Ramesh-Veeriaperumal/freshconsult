@@ -33,7 +33,7 @@
 			</div>
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "file", :size => 16, :class => "solution-icon" %>
-				<div class="comm-item-title">
+				<div class="comm-item-title ellipsis tooltip" title="<%= article.title if article.title.length > 75 %>">
 					<%= pjax_link_to(h(article.title), solution_article_path(article.id)) %>
 				</div>
 				<div class="comm-item-details muted">

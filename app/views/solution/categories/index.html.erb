@@ -26,12 +26,16 @@
 			<div class="<%= cycle('odd', 'even') %>">
 				<h4 class="cat-title-border">
 					<div class="ficon-cube cat-title-icon"></div>
-					<%= pjax_link_to  "#{h(category[:name])}".html_safe, solution_category_path(:id =>category[:id]) %>				
+					<%= pjax_link_to  "#{h(category[:name]).truncate(50)}".html_safe, 
+														solution_category_path(:id =>category[:id]), 
+														:class => 'tooltip', 
+														:title => (h(category[:name]) if category[:name].length > 50) %>				
 				</h4>  
 				<ul>			
 		  		<% category[:folders].first(5).each do |folder| %>
 	  				<li>
-	  					<%= pjax_link_to h(folder[:name]), solution_folder_path(folder[:id]) %>
+	  					<%= pjax_link_to h(folder[:name].truncate(55)), solution_folder_path(folder[:id]),
+	  							:class => 'tooltip', :title => (h(folder[:name]) if folder[:name].length > 55) %>
 	  				  <span class="muted">
 	  					  (<%= folder[:article_count] %>)
 	  			    </span> 
@@ -72,12 +76,16 @@
 					<div class="<%= cycle('odd', 'even') %> <%= 'orphaned-category' if category['portal_solution_categories'].empty? %>">
 						<h4 class="cat-title-border tooltip">
 								<i class="<%= category['portal_solution_categories'].empty? ? 'ficon-categories-orphan tooltip' : 'ficon-cube'%> cat-title-icon" data-original-title="<%= t('solution.orphan') if  category['portal_solution_categories'].empty? %>"></i>
-								<%= pjax_link_to  "#{h(category[:name])}".html_safe, solution_category_path(:id => category[:id]) %>
+								<%= pjax_link_to  "#{h(category[:name]).truncate(50)}".html_safe, 
+																	solution_category_path(:id => category[:id]),
+																	:class => 'tooltip', 
+																	:title => (h(category[:name]) if category[:name].length > 50) %>
 						</h4>  
 						<ul>			
 				  		<% category[:folders].first(5).each do |folder| %>
 			  				<li>
-			  					<%= pjax_link_to h(folder[:name]), solution_folder_path(folder[:id]) %>
+			  					<%= pjax_link_to h(folder[:name]).truncate(55), solution_folder_path(folder[:id]),
+			  					 		:class => 'tooltip', :title => (h(folder[:name]) if folder[:name].length > 55) %>
 			  				  <span class="muted">
 			  					  (<%= folder[:article_count] %>)
 			  			    </span> 

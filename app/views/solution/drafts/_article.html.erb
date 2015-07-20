@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="span8">
-		<%= pjax_link_to h(current_item.title).truncate(35), "#{solution_article_path(article)}#edit", { :class => "draft-title"} %>
+		<%= pjax_link_to h(current_item.title).truncate(85), "#{solution_article_path(article)}#edit", { :class => "draft-title ellipsis", :title => (h(current_item.title) if current_item.title.length > 85) } %>
 		<br/>
 		<div class="muted">
 			<% if article.folder.is_default %>
