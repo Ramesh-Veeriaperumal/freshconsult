@@ -66,17 +66,17 @@ class Solution::Article < ActiveRecord::Base
       :order => ['solution_folders.id', "solution_articles.position"] }
   end
 
-  def self.articles_for_portal_conditions_with_meta(portal)
+  def self.articles_for_portal_conditions_through_meta(portal)
     { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
           portal.portal_solution_categories.map(&:solution_category_meta_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
-        :joins => :folder_with_meta,
+        :joins => :folder_through_meta,
         :order => ["solution_folder_meta.id", "solution_article_meta.position"]
       }
   end
 
   def self.articles_for_portal_conditions_with_association(portal)
     if Account.current.launched?(:meta_read)
-      self.articles_for_portal_conditions_with_meta(portal)
+      self.articles_for_portal_conditions_through_meta(portal)
     else
       self.articles_for_portal_conditions_without_association(portal)
     end

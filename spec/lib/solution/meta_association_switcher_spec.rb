@@ -39,10 +39,10 @@ RSpec.describe Solution::MetaAssociationSwitcher do
 	end
 
 	it "should fetch attributes from meta accordingly for to_indexed_json if meta_read feature is launched" do
-		folder = @account.public_folders.find { |x| x.articles.length > 1}
-		folder_meta = folder.solution_folder_meta
-		article = folder.articles.sample
-		article_meta = article.solution_article_meta		
+		folder = create_folder({:visibility => 1, :category_id => @account.solution_categories.sample.id})
+		folder_meta = folder.reload.solution_folder_meta
+		article = create_article({:folder_id => folder.id, :status => [1,2].sample})
+		article_meta = article.reload.solution_article_meta		
 		article_meta.update_attribute(:created_at, Time.now.utc)
 		folder_meta.update_attribute(:visibility, 3)
 		@account.reload

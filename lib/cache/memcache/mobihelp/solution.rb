@@ -49,7 +49,7 @@ module Cache::Memcache::Mobihelp::Solution
       MemcacheKeys.fetch(mobihelp_solutions_key(category_id)) {
 
         include_hash = (Account.current.launched?(:meta_read) ? 
-                        {:public_folders_with_meta => {:published_articles_with_meta => [:tags]}} : 
+                        {:public_folders_through_meta => {:published_articles_through_meta => [:tags]}} : 
                         {:public_folders => {:published_articles => [:tags]}}) 
 
         category = Solution::Category.includes(include_hash).find_by_id_and_account_id(category_id, account_id)

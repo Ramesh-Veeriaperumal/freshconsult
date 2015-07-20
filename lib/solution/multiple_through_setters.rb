@@ -16,8 +16,20 @@ module Solution::MultipleThroughSetters
 		association_without_meta.build(attributes)
 	end
 
+	def create(attributes={})
+		association_without_meta.build(attributes)
+	end
+
 	def destroy_all
 		association_without_meta.destroy_all
+	end
+
+	def delete_all
+		association_without_meta.destroy_all
+	end
+
+	def clear
+		association_without_meta.clear
 	end
 
 	protected
@@ -27,7 +39,7 @@ module Solution::MultipleThroughSetters
 	end
 
 	def association_name_without_meta
-		association_name.to_s.sub("with_meta", "without_association")
+		association_name.to_s.sub("through_meta", "without_association")
 	end
 
 	def association_without_meta

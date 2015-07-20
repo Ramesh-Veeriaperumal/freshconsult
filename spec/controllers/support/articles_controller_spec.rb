@@ -375,46 +375,4 @@ RSpec.describe Support::Solutions::ArticlesController do
     end
   end
 
-  describe "hits and likes should reflect in article if meta_object is not present" do
-    before(:all) do
-      @test_article_without_meta = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
-      @user1 = create_dummy_customer
-      @user2 = create_dummy_customer
-    end
-
-    before(:each) do
-      @test_article_without_meta.reload
-      @test_article_without_meta.solution_article_meta.present? ? @test_article_without_meta.solution_article_meta.destroy : true
-    end
-
-    it "hits should sync for article object when threshold is reached if meta is not present" do
-      log_in(@user1)
-      $redis_others.set("SOLUTION:HITS:%{#{@account.id}}:%{#{@test_article_without_meta.id}}", Solution::Article::HITS_CACHE_THRESHOLD - 1)
-      hit_count = @test_article_without_meta.reload.hits
-      @test_article_without_meta.solution_article_meta.should be_nil
-      get :hit, :id => @test_article_without_meta.id
-      @test_article_without_meta.reload
-      @test_article_without_meta.hits.should be_eql(hit_count + 1)
-      response.code.should be_eql("200")
-    end
-
-    it "should increment thumbs up for article if meta is not present" do
-      log_in(@user1)
-      likes = @test_article_without_meta.reload.thumbs_up
-      @test_article_without_meta.solution_article_meta.should be_nil
-      put :thumbs_up, :id => @test_article_without_meta.id
-      @test_article_without_meta.reload.thumbs_up.should eql(likes+1)
-      response.code.should be_eql("200")
-    end
-
-    it "should increment thumbs down for article if meta is not present" do
-      log_in(@user2)
-      dislikes = @test_article_without_meta.reload.thumbs_down
-      @test_article_without_meta.solution_article_meta.should be_nil
-      put :thumbs_down, :id => @test_article_without_meta.id
-      @test_article_without_meta.reload.thumbs_down.should eql(dislikes+1)
-      response.code.should be_eql("200")
-    end
-  end
 end

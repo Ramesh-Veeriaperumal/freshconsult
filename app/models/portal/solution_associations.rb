@@ -18,7 +18,7 @@ class Portal < ActiveRecord::Base
 		:through => :portal_solution_categories,
 		:order => "portal_solution_categories.position"
 
-	has_many :solution_categories_with_meta,
+	has_many :solution_categories_through_meta,
 		:class_name => 'Solution::Category',
 		:through => :solution_category_meta,
 		:source => :solution_categories,

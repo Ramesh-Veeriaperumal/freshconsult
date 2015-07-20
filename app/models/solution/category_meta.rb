@@ -12,11 +12,15 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true
 
 	has_many :portal_solution_categories, :class_name => 'PortalSolutionCategory', 
-		:foreign_key => :solution_category_meta_id
+		:foreign_key => :solution_category_meta_id,
+		:dependent => :delete_all
 
 	has_many :portals, :class_name => "Portal", :through => :portal_solution_categories
 
-	has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :foreign_key => :solution_category_meta_id
+	has_many :mobihelp_app_solutions, 
+		:class_name => 'Mobihelp::AppSolution', 
+		:foreign_key => :solution_category_meta_id,
+		:dependent => :destroy
 		
 	has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
 

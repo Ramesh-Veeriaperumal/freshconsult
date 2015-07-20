@@ -8,7 +8,7 @@ class Mobihelp::App < ActiveRecord::Base
 	
 	has_many :solution_category_meta, :class_name => 'Solution::CategoryMeta', :through => :app_solutions
 
-	has_many :solution_categories_with_meta, 
+	has_many :solution_categories_through_meta, 
 		:class_name => 'Solution::Category', 
 		:through => :solution_category_meta,
 		:source => :solution_categories

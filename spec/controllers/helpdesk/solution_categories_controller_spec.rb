@@ -178,26 +178,13 @@ describe Solution::CategoriesController do
       @account.solution_category_meta.find_by_id(test_destroy_category.id).should be_nil
       @account.main_portal.portal_solution_categories.find_by_solution_category_id(test_destroy_category.id).should be_nil
     end
-
-    it "should render category index even if all meta objects are destroyed" do 
-      @account.solution_categories.each {|sc| sc.solution_category_meta.destroy}
-      get :index
-      response.should render_template("solution/categories/index")
-    end
-
-    it "should render a show page of a category if corresponding meta is destroyed" do
-      test_meta_destroy_category = create_category( {:name => "test_meta_destroy_category #{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-      test_meta_destroy_category.reload.solution_category_meta.destroy
-      get :show, :id => test_meta_destroy_category.id
-      response.body.should =~ /#{test_meta_destroy_category.name}/
-    end
   end
 
   it "should change the position in meta table when category is destroyed" do
     test_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     test_category2 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     test_category3 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    test_category.destroy
+    test_category.reload.destroy
     check_position(@account, "solution_categories")
   end
 
