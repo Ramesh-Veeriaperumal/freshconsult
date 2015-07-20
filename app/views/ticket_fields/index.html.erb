@@ -7,7 +7,7 @@
       <%= content_tag(:h3, t(".title"), :class => "lead pull-left") %> 
       <div class="pull-right mb20">
         <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
-        <%= submit_tag t(".save").html_safe, :class => "btn btn-primary save-custom-form", "data-commit" => t('.save').html_safe %>
+        <%= submit_tag t(".save_ticket_fields").html_safe, :class => "btn btn-primary save-custom-form", "data-commit" => t('.save_ticket_fields').html_safe %>
       </div>
     </div>
 
@@ -54,7 +54,7 @@
       firstChoice:                "<%= t("ticket_fields.first_choice") %>",
       secondChoice:               "<%= t("ticket_fields.second_choice") %>", 
       noChoiceMessage:            "<%= t("ticket_fields.no_choice_message") %>",
-      confirmDelete:              '<%= t("ticket_fields.confirm_delete") %>',
+      confirmDelete:              '<%= t("ticket_fields.confirm_deletion") %>',
       displayCCField:             '<%= t("ticket_fields.formfield_props.display_cc_field") %>',
       ccCompanyContacts:          '<%= t("ticket_fields.formfield_props.cc_company_contacts") %>',
       ccAnyEmail:                 '<%= t("ticket_fields.formfield_props.cc_any_email") %>',
@@ -62,10 +62,10 @@
       field_delete_disabled:      '<%= t("ticket_fields.formfield_props.field_delete_disabled") %>',
       section_type_change:        '<%= t("ticket_fields.formfield_props.section_type_change") %>',
       dropdown_choice_disabled:   '<%= t("ticket_fields.formfield_props.dropdown_choice_disabled") %>',
-      dropdown_items_edit:        '<%= t("ticket_fields.formfield_props.dropdown_items_edit") %>',
+      dropdown_items_edit:        '<%= t("ticket_fields.formfield_props.drop_down_items_edit") %>',
       dropdown_items_preview:     '<%= t("ticket_fields.formfield_props.dropdown_items_preview") %>',
       nestedfield_helptext_preview: '<%= escape_javascript t("ticket_fields.formfield_props.nestedfield_helptext_preview") %>',
-      nestedfield_helptext:       '<%= escape_javascript t("ticket_fields.formfield_props.nestedfield_helptext") %>',
+      nestedfield_helptext:       '<%= escape_javascript t("ticket_fields.formfield_props.nested_field_helptext") %>',
       confirm_delete:             '<%= t("ticket_fields.formfield2_props.confirm_delete") %>',
       agent_mandatory_closure:    '<%= t("ticket_fields.formfield_props.agent_mandatory_closure") %>',
       remove_type:                '<%= t("ticket_fields.section.remove_type") %>',
