@@ -327,7 +327,7 @@ var FreshfoneSocket;
       else{
         this.selectedElement = null;
         number = "+"+number;
-        if(number.length == 13){
+        if(self.freshfonecalls.exceptionalNumberValidation(number)){
           if(!jQuery('#external-number').hasClass('transfer-external-selected')){
             jQuery('#external-number').addClass('transfer-external-selected');
           }
@@ -449,13 +449,13 @@ var FreshfoneSocket;
        $(document).on('keypress.freshfonetransfer','.ffone_available_agents #search-external',function(event){
         var keyVal = String.fromCharCode(event.which);
         var typedVal = $(this).val();
-        if(typedVal.length < 12){
+        if(typedVal.length < 15){
           if ((event.which > 47 &&  event.which < 58) || (event.which == 8 || event.which == 46 || event.which == 37 || event.which == 39)
             || (event.ctrlKey && event.which == 86)){
            return true;
           }
         } 
-        else if(typedVal.length == 12 && (event.which == 8 || event.which == 46 || event.which == 37 || event.which == 39)){
+        else if(typedVal.length == 15 && (event.which == 8 || event.which == 46 || event.which == 37 || event.which == 39)){
            return true;
         }
         event.preventDefault();
@@ -586,7 +586,7 @@ var FreshfoneSocket;
 
       $('#freshfone_available_agents').on('click.freshfonetransfer','#new_external_number',function(){
         var external_number = jQuery('#external_number_label').html();
-        if(external_number.length == 13){
+        if(self.freshfonecalls.exceptionalNumberValidation(external_number)){
           self.addToNumberList(external_number);
           self.$noAvailableNumbers.hide();
           self.freshfonecalls.transferCall(external_number, null, external_number);
