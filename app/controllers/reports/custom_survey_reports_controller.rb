@@ -68,10 +68,11 @@ class Reports::CustomSurveyReportsController < ApplicationController
 private
 
   def unanswered
-    survey_id = which_survey
-    requests = current_account.custom_surveys.find(survey_id).survey_handles.unrated
-    requests = filter requests
-    requests.count
+    survey_id = which_survey    
+    date_range = {:start_date => start_date , :end_date => end_date}
+    handles = current_account.custom_surveys.find(survey_id).survey_handles.unrated(date_range)
+    handles = filter handles
+    handles.count
   end
   
   def load_survey
