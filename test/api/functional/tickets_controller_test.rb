@@ -354,6 +354,15 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
+  def test_create_notify_cc_emails
+    params = ticket_params_hash
+    controller.class.any_instance.expects(:notify_cc_people).once
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
   CUSTOM_FIELDS.each do |custom_field|
     define_method("test_create_with_custom_#{custom_field}") do
       create_custom_field("test_custom_#{custom_field}", custom_field)
@@ -403,6 +412,23 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :success
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_notifying_cc_email
+    params_hash = update_ticket_params_hash
+    t =  Helpdesk::Ticket.select do |ticket|
+      ticket.cc_email && ticket.cc_email[:cc_emails].present?
+    end.first
+    if t.nil?
+      t = ticket
+      cc_emails = [Faker::Internet.email, Faker::Internet.email]
+      t.cc_email = {cc_emails: cc_emails, reply_cc: cc_emails, fwd_emails: []}
+      t.save
+      t.reload
+    end
+    controller.class.any_instance.expects(:notify_cc_people).once
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
   end
 
   def test_update_with_low_priority
