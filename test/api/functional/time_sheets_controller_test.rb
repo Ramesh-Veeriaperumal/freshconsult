@@ -148,7 +148,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
     end
     get :index, controller_params(billable: false, per_page: 4)
     assert_response :success
-    assert JSON.parse(response.body).count == 2
+    assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 

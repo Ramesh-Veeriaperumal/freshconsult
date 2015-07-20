@@ -150,7 +150,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_without_due_by_and_fr_due_by
     params = ticket_params_hash.except(:fr_due_by, :due_by)
-    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).once 
     post :create, construct_params({}, params)
     assert_response :created
   end
@@ -1385,7 +1385,7 @@ class TicketsControllerTest < ActionController::TestCase
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
     get :notes, construct_params(id: ticket.display_id, per_page: 4)
     assert_response :success
-    assert JSON.parse(response.body).count == 2
+    assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 
@@ -1452,7 +1452,21 @@ class TicketsControllerTest < ActionController::TestCase
     end
     get :time_sheets, construct_params(id: ticket.display_id, per_page: 4)
     assert_response :success
-    assert JSON.parse(response.body).count == 2
+    assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
+
+  def test_show_with_notes_exceeding_limit
+    ticket.update_column(:deleted, false)
+    (11 - ticket.notes.size).times do 
+      create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    end
+    get :show, controller_params(id: ticket.display_id, include: 'notes')
+    assert_response :success
+    match_json(ticket_pattern_with_notes({}, ticket))
+    response = parse_response @response.body
+    assert_equal 10, response["notes"].size
+    assert ticket.reload.notes.size > 10
+  end
+
 end

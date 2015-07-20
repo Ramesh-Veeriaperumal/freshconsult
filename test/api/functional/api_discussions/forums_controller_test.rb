@@ -390,7 +390,7 @@ module ApiDiscussions
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
       get :topics, construct_params(id: f_obj.id, per_page: 4)
       assert_response :success
-      assert JSON.parse(response.body).count == 2
+      assert JSON.parse(response.body).count == 3
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 

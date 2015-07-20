@@ -37,7 +37,7 @@ class TicketsController < ApiApplicationController
     attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
     if @item.update_ticket_attributes(params[cname])
-      update_tags(@tags, true, @item) if @tags # add tags if update is successful.
+      api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
     else
       render_error(@item.errors)
     end
@@ -78,7 +78,7 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    @notes = ticket_notes if params[:include] == 'notes'
+    @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE) if params[:include] == 'notes'
     @notes.each{|i| i.send(:load_schema_less_note)}
     super
   end
@@ -88,7 +88,7 @@ class TicketsController < ApiApplicationController
     def ticket_notes
       # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
       # There is no best solution for this
-      notes = @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
+      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
     end
 
     def paginate_options
@@ -146,7 +146,7 @@ class TicketsController < ApiApplicationController
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
 
       # Collect tags in instance variable as it should not be part of params before build item.
-      @tags = params[cname][:tags] if params[cname][:tags]
+      @tags = Array.wrap(params[cname][:tags]).map!{|x| x.to_s.strip} if params[cname].key?(:tags)
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,

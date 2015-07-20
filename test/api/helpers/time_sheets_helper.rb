@@ -5,7 +5,7 @@ module TimeSheetsHelper
                                                 workable_id: options[:ticket_id] || ticket_id,
                                                 account_id: @account.id,
                                                 timer_running: options.key?(:timer_running) ? options[:timer_running] : options[:time_spent].blank?,
-                                                time_spent: options[:time_spent] || nil,
+                                                time_spent: options[:time_spent] || 0,
                                                 executed_at: options[:executed_at] || Time.zone.now.to_s,
                                                 billable: options.key?(:billable) ? options[:billable] : true,
                                                 note: Faker::Lorem.sentence)
