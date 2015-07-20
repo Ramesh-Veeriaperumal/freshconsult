@@ -1,6 +1,5 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-    before_filter { |c| c.requires_feature :forums }
     skip_before_filter :load_object, only: [:create, :is_following]
     include DiscussionMonitorConcern
     before_filter :set_account_and_category_id, only: [:create, :update]
@@ -18,6 +17,10 @@ module ApiDiscussions
     end
 
     private
+
+      def feature_name
+        DiscussionConstants::FEATURE_NAME
+      end
 
       def scoper
         current_account.forums

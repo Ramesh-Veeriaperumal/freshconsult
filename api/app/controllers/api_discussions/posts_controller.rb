@@ -1,6 +1,5 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
-    before_filter { |c| c.requires_feature :forums }
     before_filter :set_user_and_topic_id, only: [:create]
     before_filter :can_send_user?, :check_lock, only: :create
 
@@ -16,6 +15,10 @@ module ApiDiscussions
     end
 
     private
+
+      def feature_name
+        DiscussionConstants::FEATURE_NAME
+      end
 
       def set_custom_errors
         ErrorHelper.rename_error_fields({ topic: :topic_id, user: ParamsHelper.get_user_param(@email) }, @item)

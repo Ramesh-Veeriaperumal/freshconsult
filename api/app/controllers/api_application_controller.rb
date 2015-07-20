@@ -27,6 +27,7 @@ class ApiApplicationController < MetalApiController
   include SubscriptionSystem
   # App specific Before filters Ends
 
+  before_filter { |c| c.requires_feature feature_name }, :if => :feature_name
   skip_before_filter :check_privilege, only: [:route_not_found]
   before_filter :load_object, except: [:create, :index, :route_not_found]
   before_filter :check_params, only: :update
@@ -89,6 +90,9 @@ class ApiApplicationController < MetalApiController
     end
 
   private
+
+    def feature_name
+    end
 
     def not_get_request?
       @not_get_request ||= !request.get?

@@ -1,7 +1,5 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    prepend_before_filter { |c| c.requires_feature :forums }
-    skip_before_filter :verify_authenticity_token, only: [:show]
 
     def forums
       @forums = paginate_items(load_association)
@@ -9,6 +7,10 @@ module ApiDiscussions
     end
 
     private
+
+      def feature_name
+        DiscussionConstants::FEATURE_NAME
+      end
 
       def load_object
         @item = scoper.detect { |category| category.id == params[:id].to_i }

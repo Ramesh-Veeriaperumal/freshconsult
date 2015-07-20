@@ -1,7 +1,6 @@
 class TimeSheetsController < ApiApplicationController
   include TimeSheetConcern
 
-  before_filter { |c| c.requires_feature :timesheets }
   before_filter :validate_filter_params, only: [:index]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
@@ -41,6 +40,10 @@ class TimeSheetsController < ApiApplicationController
   end
 
   private
+
+    def feature_name
+      TimeSheetConstants::FEATURE_NAME
+    end
 
     def scoper
       current_account.time_sheets
