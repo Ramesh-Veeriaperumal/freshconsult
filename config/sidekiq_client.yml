@@ -20,6 +20,8 @@ defaults: &defaults
     - [trial_twitter]
     - [custom_twitter]
     - [rabbitmq_publish]
+    - [update_tickets_company]
+    - [reports_no_activity]
     - [default]
 
 development:

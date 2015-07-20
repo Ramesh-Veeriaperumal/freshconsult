@@ -24,10 +24,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
+  include BusinessHoursCalculation
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
+                            "reports_hash"]
   OBSERVER_ATTR = []
 
   self.table_name =  "helpdesk_tickets"

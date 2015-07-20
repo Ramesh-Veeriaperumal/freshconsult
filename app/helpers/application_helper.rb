@@ -627,10 +627,10 @@ module ApplicationHelper
   def avatar_generator( username, profile_size = :thumb, profile_class, opt )
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class] }
     username = username.lstrip
-    if username.present? && isalpha(username[0])
-       content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
+    if username.present? && isalpha(username[0]).present?
+       ActionController::Base.helpers.content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
     else
-       content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
+       ActionController::Base.helpers.content_tag( :div, (ActionController::Base.helpers.image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
   end
 

@@ -6225,6 +6225,31 @@ en:
   activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
+  helpdesk_reports:
+    time_period: Select Time Period
+    filter_by: Filter by
+    ticket_volume: 
+      title: Ticket Volume
+      time_trends:
+        day: Day
+        week: Week
+        month: Month
+        qtr: Quarter
+        year: Year
+        title: Tickets Received and Resolution Trend
+      day_trend:
+        title: Day of the Week Trend of Tickets Received and Resolved
+        subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly.
+    glance:
+      title: Helpdesk At A Glance
+    performance:
+      title: Performance Distribution
+    group_summary:
+      title: Group Summary
+    agent_summary:
+      title: Agent Summary
+    customer_report:
+      title:  Customer Report
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"

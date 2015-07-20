@@ -163,6 +163,18 @@ class Helpdesk::TicketField < ActiveRecord::Base
       ]
     }
   end
+  
+  def dropdown_choices_with_id
+    picklist_values.collect { |c| [c.id, c.value] }
+  end
+  
+  def nested_choices_with_id
+    self.picklist_values.collect { |c| 
+      [c.id, c.value, c.sub_picklist_values.collect { |sub_c|
+            [sub_c.id, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.id,i_c.value] } ] }
+      ]
+    }
+  end
 
   def nested_choices_with_special_case special_cases = []
     special_cases = special_cases.collect{ |default| 
