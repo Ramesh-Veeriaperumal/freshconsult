@@ -1,5 +1,5 @@
 json.array! @items do |tkt|
-  json.cache! tkt do
+  json.cache! [controller_name, action_name, tkt] do
     json.set! :cc_emails, tkt.cc_email.try(:[], :cc_emails)
     json.set! :fwd_emails, tkt.cc_email.try(:[], :fwd_emails)
     json.set! :reply_cc_emails, tkt.cc_email.try(:[], :reply_cc)

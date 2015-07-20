@@ -1,5 +1,5 @@
 json.array! @items do |note|
-  json.cache! note do
+  json.cache! [controller_name, action_name, note] do
     json.(note, :body, :body_html, :id, :user_id)
 
     json.set! :support_email, note.api_support_email
@@ -13,7 +13,7 @@ json.array! @items do |note|
   end
   json.set! :attachments do
     json.array! note.attachments do |att|
-      json.cache! att do
+      json.cache! [controller_name, action_name, att] do
         json.set! :id, att.id
         json.set! :content_type, att.content_content_type
         json.set! :size, att.content_file_size
