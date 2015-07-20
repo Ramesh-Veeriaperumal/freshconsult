@@ -1,8 +1,15 @@
 class TimeSheetsController < ApiApplicationController
   include TimeSheetConcern
 
+  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :check_params, only: :update
+  before_filter :validate_params, only: [:create, :update]
   before_filter :validate_filter_params, only: [:index]
   before_filter :validate_toggle_params, only: [:toggle_timer]
+  before_filter :manipulate_params, only: [:create, :update]
+  before_filter :build_object, only: [:create]
+  before_filter :load_objects, only: [:index]
+
 
   def index
     load_objects(time_sheet_filter.includes(:workable))
