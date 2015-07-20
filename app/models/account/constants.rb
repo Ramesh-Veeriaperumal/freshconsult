@@ -75,7 +75,7 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
-    :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
+    :anonymous_tickets =>true, :survey_links => true, :custom_survey => false, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
@@ -85,7 +85,8 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
     :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
     :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => true, 
-    :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false, :es_multilang_solutions => false }
+    :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false, :es_multilang_solutions => false,
+    :disable_rr_toggle => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

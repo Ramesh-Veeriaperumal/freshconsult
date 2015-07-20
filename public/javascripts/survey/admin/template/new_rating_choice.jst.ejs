@@ -1,0 +1,8 @@
+<div class="inline-radio">
+	<%_.each(scale.keys,function(key){%>
+		<label class="radio">
+		  <input type="radio" name="<%=name%>" value="<%=key%>" <%if(key==defaultScale){%>checked<%}%> onclick="<%=scale.click%>" />
+		  <%=key%>
+		</label>
+	<%})%>
+</div>

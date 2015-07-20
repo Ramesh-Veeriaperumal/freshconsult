@@ -1,28 +1,27 @@
-//Repository URL https://github.com/jney/jquery.pageless/tree/master/lib
-
 // =======================================================================
 // PageLess - endless page
 //
 // Pageless is a jQuery plugin.
 // As you scroll down you see more results coming back at you automatically.
-// It provides an automatic pagination in an accessible way : if javascript 
+// It provides an automatic pagination in an accessible way : if javascript
 // is disabled your standard pagination is supposed to work.
 //
 // Licensed under the MIT:
 // http://www.opensource.org/licenses/mit-license.php
 //
 // Parameters:
-//    currentPage: current page (params[:page])
+//    currentPage: current page (string or function; e.g. <%= params[:page] %>)
 //    distance: distance to the end of page in px when ajax query is fired
 //    loader: selector of the loader div (ajax activity indicator)
 //    loaderHtml: html code of the div if loader not used
 //    loaderImage: image inside the loader
 //    loaderMsg: displayed ajax message
-//    pagination: selector of the paginator divs. 
+//    pagination: selector of the paginator divs.
 //                if javascript is disabled paginator is provided
-//    params: paramaters for the ajax query, you can pass auth_token here
-//    totalPages: total number of pages
-//    url: URL used to request more data
+//    params: paramaters for the ajax query (hash or function), you can pass auth_token here
+//    totalPages: total number of pages (integer or function)
+//    url: URL used to request more data (string or function)
+//    method: HTML method for call URL, default - get
 //
 // Callback Parameters:
 //    scrape: A function to modify the incoming data.
@@ -42,6 +41,7 @@
 // Contributors:
 //   Alexander Lang (https://github.com/langalex)
 //   Lukas Rieder (https://github.com/Overbryd)
+//   Kathryn Reeve (https://github.com/BinaryKitten)
 //
 // Thanks to:
 //  * codemonky.com/post/34940898
@@ -49,65 +49,99 @@
 //  * famspam.com/facebox
 // =======================================================================
 
-(function($) {
-  
-  var FALSE = !1
-    , TRUE = !FALSE
-    , element
-    , isLoading = FALSE
-    , loader
-    , namespace = '.pageless'
-    , SCROLL = 'scroll' + namespace
-    , RESIZE = 'resize' + namespace
-    , settings = { container: window
-                 , currentPage: 1
-                 , distance: 100
-                 , pagination: '.pagination'
-                 , params: {}
-                 , url: location.href
-                 , loaderImage: "/images/animated/ajax-loader.gif"
-                 , dataType: "html"
-                 }
-    , container
-    , $container;
-    
-  $.pageless = function(opts) {
-    $.isFunction(opts) ? settings.call() : init(opts);
+/*global document:true, jQuery:true, location:true, window:true*/
+
+(function ($, window) {
+
+  var element;
+  var isLoading = false;
+  var loader;
+  var namespace = '.pageless';
+  var SCROLL = 'scroll' + namespace;
+  var RESIZE = 'resize' + namespace;
+  var settings = {};
+  var container;
+  var $container;
+
+  $.pageless = function (opts) {
+    if ($.isFunction(opts)) {
+      opts.call();
+    } else {
+      init(opts);
+    }
   };
-  
-  var loaderHtml = function () {
-    return settings.loaderHtml || '\
-<div id="pageless-loader" style="display:none;text-align:center;width:100%;">\
-  <div class="msg" style="color:#e9e9e9;font-size:2em"></div>\
-  <img src="' + settings.loaderImage + '" alt="loading more results" style="margin:10px auto" />\
-</div>';
-  };
- 
-  // settings params: totalPages
-  var init = function (opts) {
-    //if (settings.inited) return;
-    //settings.inited = TRUE;
-    
-    if (opts) $.extend(settings, opts);
-    
+
+  $.pagelessReset = function () {
+    var inited = settings.inited;
+
+    settings = {
+      container: window,
+      currentPage: 1,
+      distance: 100,
+      pagination: '.pagination',
+      params: {},
+      url: location.href,
+      loaderImage: "/images/animated/ajax-loader.gif",
+      method: 'get'
+    };
+
     container = settings.container;
     $container = $(container);
-    
+
+    if (inited) {
+      stopListener();
+    }
+
+      // if there is a afterStopListener callback we call it
+      if (settings.end) {
+            if(typeof settings.end == "string")
+              eval(settings.end);
+            else
+                settings.end.call();
+      }
+  };
+
+  $.pagelessCurrentPage = function () {
+    return settingOrFunc('currentPage');
+  };
+
+  var loaderHtml = function () {
+    return settings.loaderHtml ||
+      '<div id="pageless-loader" style="display:none;text-align:center;width:100%;">' +
+      '<div class="msg" style="color:#e9e9e9;font-size:2em"></div>' +
+      '<img src="' + settings.loaderImage + '" alt="loading more results" style="margin:10px auto" />' +
+      '</div>';
+  };
+
+  // settings params: totalPages
+  function init(opts) {
+    $.pagelessReset();
+
+    if (!settings.inited) {
+      settings.inited = true;
+    }
+
+    if (opts) {
+      $.extend(settings, opts);
+    }
+
     // for accessibility we can keep pagination links
-    // but since we have javascript enabled we remove pagination links 
-    if(settings.pagination) $(settings.pagination).remove();
-    
+    // but since we have javascript enabled we remove pagination links
+    if (settings.pagination) {
+      $(settings.pagination).remove();
+    }
+
     // start the listener
     startListener();
-  };
-  
+  }
+
   $.fn.pageless = function (opts) {
-    var $el = $(this)
-      , $loader = $(opts.loader, $el);
-      
+    var $el = $(this);
+    var $loader = $(opts.loader, $el);
+
     init(opts);
     element = $el;
-    
+
     // loader element
     if (opts.loader && $loader.length) {
       loader = $loader;
@@ -116,82 +150,111 @@
       $el.append(loader);
       // if we use the default loader, set the message
       if (!opts.loaderHtml) {
-        $('#pageless-loader .msg').html(opts.loaderMsg);
+        $('#pageless-loader .msg').html(opts.loaderMsg).css(opts.msgStyles || {});
       }
     }
   };
-  
-  //
-  var loading = function (bool) {
-    $(document.body).trigger('sticky_kit:recalc');
-    (isLoading = bool)
-    ? (loader && loader.fadeIn('normal'))
-    : (loader && loader.css('display', "none"));
-  };
-  
-  // distance to end of the container
-  var distanceToBottom = function () {
-    return (container === window)
-         ? $(document).height() 
-         - $container.scrollTop() 
-         - $container.height()
-         : $container[0].scrollHeight 
-         - $container.scrollTop() 
-         - $container.height();
-  };
 
-  var stopListener = function() {
-    $container.unbind(namespace);
-  };
-  
+  //
+  function loading(bool) {
+    $(document.body).trigger('sticky_kit:recalc');
+    isLoading = bool;
+    if (loader) {
+      if (isLoading) {
+        loader.fadeIn('normal');
+      } else {
+        loader.css('display', "none")
+      }
+    }
+  }
+
+  // distance to end of the container
+  function distanceToBottom() {
+    return (container === window)
+         ? $(document).height()
+         - $container.scrollTop()
+         - $container.height()
+         : $container[0].scrollHeight
+         - $container.scrollTop()
+         - $container.height();
+  }
+
+  function settingOrFunc(name) {
+    var ret = settings[name];
+    return $.isFunction(settings[name]) ? ret() : ret;
+  }
+
+  function stopListener() {
+    if ($container) {
+      $container.unbind(namespace);
+    }
+  }
+
   // * bind a scroll event
   // * trigger is once in case of reload
-  var startListener = function() {
-    $container.bind(SCROLL+' '+RESIZE, watch)
-              .trigger(SCROLL);
-  };
-  
-  var watch = function() {
+  function startListener() {
+    $container
+      .bind(SCROLL + ' ' + RESIZE, watch)
+      .trigger(SCROLL);
+  }
+
+  function watch() {
+    var currentPage = settingOrFunc('currentPage');
+    var totalPages = settingOrFunc('totalPages');
+
     // listener was stopped or we've run out of pages
-    if (settings.totalPages <= settings.currentPage) {
-      stopListener();
-      // if there is a afterStopListener callback we call it
-	  if (settings.end) {
-	  	if(typeof settings.end == "string")
-			eval(settings.end);
-		else
-	  		settings.end.call();
-	  }
+    if (totalPages <= currentPage) {
+      if (!$.isFunction(settings.currentPage) && !$.isFunction(settings.totalPages)) {
+        stopListener();
+        // if there is a afterStopListener callback we call it
+        if (settings.end) {
+          if(typeof settings.end == "string")
+            eval(settings.end);
+          else
+              settings.end.call();
+        }
+
+      }
       return;
     }
-    
+
     // if slider past our scroll offset, then fire a request for more data
-    if(!isLoading && (distanceToBottom() < settings.distance)) {
-      loading(TRUE);
+    if (!isLoading && (distanceToBottom() < settings.distance)) {
+      var url = settingOrFunc('url');
+      var requestParams = settingOrFunc('params');
+
+      loading(true);
       // move to next page
-      settings.currentPage++;
+      currentPage++;
+      if (!$.isFunction(settings.currentPage)) {
+        settings.currentPage = currentPage;
+      }
+
       // set up ajax query params
-      $.extend( settings.params
-              , { page: settings.currentPage });
+      $.extend(requestParams, { page: currentPage });
       // finally ajax query
       $.ajax({
-          url: settings.url,
-          data: settings.params,
-          success: function (data) {
-            $.isFunction(settings.scrape) ? settings.scrape(data) : data;
-               loader ? loader.before(data) : element.append(data);
-               loading(FALSE);
-               // if there is a complete callback we call it
-            $(document.body).trigger('sticky_kit:recalc');
-            if (settings.complete){
-              if(typeof settings.complete == "string")
-                eval(settings.complete);
-              else
-                settings.complete.call();
-            }
-          },
-          dataType: settings.dataType
+        data: requestParams,
+        dataType: 'html',
+        url: url,
+        method: settings.method,
+        success: function (data) {
+          if ($.isFunction(settings.scrape)) {
+            data = settings.scrape(data);
+          }
+          if (loader) {
+            loader.before(data);
+          } else {
+            element.append(data);
+          }
+          loading(false);
+          // if there is a complete callback we call it
+          $(document.body).trigger('sticky_kit:recalc');
+          if (settings.complete) {
+            settings.complete.call();
+          }
+        }
       });
     }
-  };
-})(jQuery);
+  }
+})(jQuery, window);

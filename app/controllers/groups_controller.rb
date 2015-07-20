@@ -128,6 +128,16 @@ class GroupsController < Admin::AdminController
     end
     
   end
+
+  def toggle_roundrobin
+    if current_account.features?(:disable_rr_toggle)
+      current_account.features.disable_rr_toggle.destroy
+    else
+      current_account.features.disable_rr_toggle.create
+    end
+    flash[:notice] = t('group.settings_saved')
+    render :action => 'index'
+  end
   
 protected
 

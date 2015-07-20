@@ -1,5 +1,6 @@
 class Admin::QuestsController < Admin::AdminController
   include ModelControllerMethods
+  include SurveyRuleHelperMethods
 	include Va::Constants
 	include Gamification::Quests::Constants
 	include Gamification::Quests::Badges
@@ -7,6 +8,7 @@ class Admin::QuestsController < Admin::AdminController
   before_filter { |c| c.requires_feature :gamification }
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :load_config, :only => [:new, :edit]
+  before_filter :require_survey_rule, :only => [:edit]
 
   def index
     redirect_back_or_default '/admin/gamification#quests'
@@ -89,7 +91,7 @@ class Admin::QuestsController < Admin::AdminController
     end
     
     def ticket_filters
-      [
+      ticket_filter = [
         { :name => -1, :value => "#{I18n.t('click_to_select_filter')}" },
         { :name => "priority", :value => I18n.t('ticket.priority'), :domtype => "dropdown", 
           :choices => TicketConstants.priority_list.sort, :operatortype => "choicelist" },
@@ -98,12 +100,22 @@ class Admin::QuestsController < Admin::AdminController
           :operatortype => "choicelist" },
         { :name => "source", :value => I18n.t('ticket.source'), :domtype => "dropdown", 
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
-        { :name => "inbound_count", :value => I18n.t('quests.fcr'), :domtype => "blank_boolen" },
-        { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
-          :choices => Survey.survey_names(current_account).collect { |c| 
-            [c[0],CGI.escapeHTML(c[1])]
-          }, :operatortype => "choicelist" },
+        { :name => "inbound_count", :value => I18n.t('quests.fcr'), :domtype => "blank_boolen" }
       ]
+      if current_account.custom_survey_enabled
+        ticket_filter.push(
+              { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
+                :choices => current_account.custom_surveys.active.first.choice_names.collect { |c| 
+                [c[0],CGI.escapeHTML(c[1])]}, :operatortype => "choicelist" 
+              }) unless current_account.custom_surveys.active.blank?
+      else
+        ticket_filter.push(
+          { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
+            :choices => Survey.survey_names(current_account).collect { |c| 
+            [c[0],CGI.escapeHTML(c[1])]}, :operatortype => "choicelist" 
+          })
+      end
+      ticket_filter
     end
 
     def add_custom_filters filter_hash
@@ -162,5 +174,16 @@ class Admin::QuestsController < Admin::AdminController
         { :name => "user_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
           :operatortype => 'greater' }
       ]
+    end
+
+    private
+    
+    def survey_data
+      {
+        :rules => JSON.parse(ActiveSupport::JSON.encode @quest.actual_filter_data),
+        :name => 'st_survey_rating',
+        :survey_modified_msg => I18n.t('admin.survey_modified'),
+        :survey_disabled_msg => I18n.t('quests.survey_disabled_event')
+      }
     end
 end

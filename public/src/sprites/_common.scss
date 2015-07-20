@@ -43,5 +43,5 @@ $ticket-view-layout:smart;
 @include all-mailbox-sprites(true);
 
 
-/* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
+/* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss"
 * These sprites are moved there so that they can be imported only if the feature is enabled */

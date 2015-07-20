@@ -20,7 +20,6 @@ describe Helpdesk::SlaPoliciesController do
   end
 
   after(:all) do
-    @sla_policy_1.destroy
     @new_company_1.destroy
     @new_company_2.destroy
   end

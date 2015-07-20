@@ -331,8 +331,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       # Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
       google_users = []
       begin
-        doc = REXML::Document.new(updated_contact_xml)
-        doc.elements.each('feed/entry') { |contact_entry_element|
+        doc = Nokogiri::XML(updated_contact_xml)
+        doc.xpath('//xmlns:feed/xmlns:entry').each do |contact_entry_element|
           begin
             converted_user = convert_to_user(contact_entry_element, new_company_list)
             google_users.push(converted_user)
@@ -340,7 +340,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
             google_users.push(nil) # In case any exception occurs just store nil value for giving the correct number contacts fetched.
             Rails.logger.error "Error in processing a contact. contact_entry_element #{contact_entry_element.inspect}:  #{e.inspect}\n#{e.backtrace.join("\n\t")}"
           end
-        }
+        end
       rescue => e
         Rails.logger.error "Error in parsing the xml: #{updated_contact_xml}.  #{e.inspect}\n#{e.backtrace.join("\n\t")}"
       end
@@ -485,7 +485,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
     def find_user_by_google_id(google_id)
       self.account.all_users.first(:include=>[:tags], :joins=>"INNER JOIN google_contacts ON google_contacts.user_id=users.id", 
-                                  :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id]) unless google_id.blank?
+                                  :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id], :readonly => false) unless google_id.blank?
     end
 
     def fetch_current_account_contact(db_contact) #possible dead code
