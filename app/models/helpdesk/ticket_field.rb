@@ -15,14 +15,36 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :required_for_closure, :flexifield_def_entry_id, :field_options, :default, 
     :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes, 
     :ticket_statuses_attributes
+
+  CUSTOM_FIELD_PROPS = {  
+    :custom_text            => { :type => :custom, :dom_type => :text},
+    :custom_paragraph       => { :type => :custom, :dom_type => :paragraph},
+    :custom_checkbox        => { :type => :custom, :dom_type => :checkbox},
+    :custom_number          => { :type => :custom, :dom_type => :number},
+    :custom_dropdown        => { :type => :custom, :dom_type => :dropdown_blank},
+    # :custom_date            => { :type => :custom, :dom_type => :date},
+    :custom_decimal         => { :type => :custom, :dom_type => :decimal},
+    :nested_field           => { :type => :custom, :dom_type => :nested_field}
+  }
   
   belongs_to :account
   belongs_to :flexifield_def_entry, :dependent => :destroy
-  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',:include => :sub_picklist_values,
-    :dependent => :destroy, :order => "position"
-  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
+  has_many :picklist_values, :as => :pickable, 
+                             :class_name => 'Helpdesk::PicklistValue',
+                             :include => :sub_picklist_values,
+                             :dependent => :destroy, 
+                             :order => "position"
+  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', 
+                                  :dependent => :destroy, 
+                                  :order => "level"
     
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
+
+  has_many :section_fields, :dependent => :destroy
+  has_many :dynamic_section_fields, :class_name => 'Helpdesk::SectionField', 
+                                    :foreign_key => :parent_ticket_field_id
+
+
   validates_associated :ticket_statuses, :if => :status_field?
   accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true
   accepts_nested_attributes_for :picklist_values, :allow_destroy => true
@@ -82,28 +104,28 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
 
   # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
+  FIELD_CLASS = { :default_subject              => { :type => :default, :dom_type => "text",
                                               :form_field => "subject", :visible_in_view_form => false },
-                  :default_requester    => { :type => :default, :dom_type => "requester",
+                  :default_requester            => { :type => :default, :dom_type => "requester",
                                               :form_field => "email"  , :visible_in_view_form => false },
-                  :default_ticket_type  => { :type => :default, :dom_type => "dropdown_blank"},
-                  :default_status       => { :type => :default, :dom_type => "dropdown_blank"}, 
-                  :default_priority     => { :type => :default, :dom_type => "dropdown"},
-                  :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
-                  :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
-                  :default_source       => { :type => :default, :dom_type => "hidden"},
-                  :default_description  => { :type => :default, :dom_type => "html_paragraph", 
+                  :default_ticket_type          => { :type => :default, :dom_type => "dropdown_blank"},
+                  :default_status               => { :type => :default, :dom_type => "dropdown_blank"}, 
+                  :default_priority             => { :type => :default, :dom_type => "dropdown"},
+                  :default_group                => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
+                  :default_agent                => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
+                  :default_source               => { :type => :default, :dom_type => "hidden"},
+                  :default_description          => { :type => :default, :dom_type => "html_paragraph", 
                                               :form_field => "description_html", :visible_in_view_form => false },
-                  :default_product      => { :type => :default, :dom_type => "dropdown_blank",
+                  :default_product              => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "product_id" },
-
-                  :custom_text          => { :type => :custom, :dom_type => "text"},
-                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
-                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox"},
-                  :custom_number        => { :type => :custom, :dom_type => "number"},
-                  :custom_decimal        => { :type => :custom, :dom_type => "decimal"},
-                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown_blank"},
-                  :nested_field         => { :type => :custom, :dom_type => "dropdown_blank"}
+                  :custom_text                  => { :type => :custom, :dom_type => "text"},
+                  :custom_paragraph             => { :type => :custom, :dom_type => "paragraph"},
+                  :custom_checkbox              => { :type => :custom, :dom_type => "checkbox"},
+                  :custom_number                => { :type => :custom, :dom_type => "number"},
+                  :custom_date                  => { :type => :custom, :dom_type => "date"},
+                  :custom_decimal               => { :type => :custom, :dom_type => "decimal"},
+                  :custom_dropdown              => { :type => :custom, :dom_type => "dropdown_blank"},
+                  :nested_field                 => { :type => :custom, :dom_type => "nested_field"}
                 }
 
   def dom_type
@@ -214,7 +236,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_status" then
          Helpdesk::TicketStatus.statuses_from_cache(account).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
        when "default_ticket_type" then
-         account.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+         account.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value), 
+                                                        c.value, 
+                                                        {"data-id" => c.id}] }
        when "default_agent" then
         return group_agents(ticket)
        when "default_group" then
@@ -339,6 +363,20 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def portal_cc_field?
     field_options.fetch("portalcc")
+  end
+
+  def section_field?
+    field_options.blank? ? false : field_options.symbolize_keys.fetch(:section, false)
+  end
+
+  def has_section?
+    return true if account.features_included?(:dynamic_sections) && field_type == "default_ticket_type"
+    # if field_type == "custom_dropdown"
+    #   return false if section_field?
+    #   !dynamic_section_fields.blank?
+    # else
+    #   return false
+    # end
   end
   
   protected

@@ -1937,6 +1937,9 @@ ol, ul, li{
 			border: none;
 		}
 		overflow:hidden;
+		.ticket_section{
+			@include margin-left(-2%);
+		}
 		li.field{
 			width: 100%;
 			@include float(left);

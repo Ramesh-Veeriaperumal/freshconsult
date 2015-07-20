@@ -1,0 +1,20 @@
+<div class="section colsets">
+	<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
+	<% if(obj.has_section && obj.admin_choices.length != picklistIds.length){ %>
+	<div class="alert m0 mb10" > <%= translate.get('section_type_change') %></div>
+	<% } %>
+	<div name="custom-choices" class="custom-choices" id="custom_choices">
+		<% if(obj.field_type == 'default_status'){%>
+			<div class="status_dropdown">
+				<span><%= translate.get('forAgent') %></span>
+				<span><%= translate.get('forCustomer') %></span>
+				<span><%= translate.get('sla_timer') %></span>
+			</div>
+		<% }%>
+		<% _.each(obj.admin_choices, function(item){  %>
+			<%= JST['custom-form/template/custom_dropdown_choice']({
+				item: _.extend(item, {field_type : obj.field_type, has_section: obj.has_section}), picklistIds: picklistIds})%>
+		<% }) %>
+	</div>
+	<input type="text" name="choicelist" value="" />
+</div> 

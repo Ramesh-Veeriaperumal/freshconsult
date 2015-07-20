@@ -7,9 +7,16 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   
   belongs_to :pickable, :polymorphic => true
 
-  has_many :sub_picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue', :include => :sub_picklist_values,
-    :dependent => :destroy, :order => "position"
-  
+  has_many :sub_picklist_values, :as => :pickable, 
+                                 :class_name => 'Helpdesk::PicklistValue', 
+                                 :include => :sub_picklist_values,
+                                 :dependent => :destroy,
+                                 :order => "position"
+
+  has_one :section_picklist_mapping, :class_name => 'Helpdesk::SectionPicklistValueMapping', 
+                                     :dependent => :destroy
+  has_one :section, :class_name => 'Helpdesk::Section', :through => :section_picklist_mapping
+
   attr_accessible :value, :choices, :position
 
   accepts_nested_attributes_for :sub_picklist_values, :allow_destroy => true
@@ -31,6 +38,17 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
         sub_picklist_values.build({:value => c[0], :position => index+1})
       end
     end  
+  end
+
+  def section_ticket_fields
+    section_tkt_fields = []
+    unless section.blank?
+      picklist_section_fields = section.section_fields
+      picklist_section_fields.each do |section_field|
+        section_tkt_fields.push(section_field.ticket_field)
+      end
+    end
+    section_tkt_fields
   end
 
   def choices

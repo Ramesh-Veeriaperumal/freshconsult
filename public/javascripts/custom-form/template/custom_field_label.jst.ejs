@@ -1,0 +1,23 @@
+<h3 class="title"><%= translate.get('label') %></h3>
+<div class="row-fluid">
+	<% isDisabled = (isDefault) ? 'disabled' : '' %>
+	<fieldset class="<%= spanClass %>">
+		<input type="text" 
+						placeholder="<%= translate.get('labelAgent') %>" 
+						rel="companion" 
+						data-companion="#customlabelportal" 
+						name="custom-label" 
+						value="<%= label.replace(/"/g, '&quot;') %>"
+						class="<%= isDisabled %>" 
+						<%= isDisabled %> />
+	</fieldset>
+	<% if (!isContactEmail && custom_form_type != 'company') { %>
+		<fieldset class="span6">
+			<input type="text" 
+							placeholder="<%= translate.get('labelCustomer') %>" 
+							name="custom-label-in-portal" 
+							id="customlabelportal" 
+							value="<%= label_in_portal.replace(/"/g, '&quot;') %>" />
+		</fieldset>
+	<% } %>
+</div>

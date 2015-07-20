@@ -1,68 +1,148 @@
-<% content_for :head do %>
-  <style> html {  height:auto; overflow-y:visible; } </style>
-<% end %>
 <% content_for :helpcard do %>
 <%= render :partial => "helpnote" %>
 <% end %>
-<%= content_tag(:h3, t(".title"), :class => "lead") %> 
-
-<%= form_for @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
-  <div class="admin_form">
-    <ul id="custom_fields" class="ui-custom-fields"> 
-      <%= content_tag(:h4, t(".add_custom_field"), :class => "title") %>
-        <div class="info-data"><%= t('.drag_drop_intro') %></div>
-            <li data-type="text" data-field-type="custom_text" data-fresh="true"> 
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".single_line") %> </a>
-            </li>
-            <li data-type="number" data-field-type="custom_number" data-fresh="true">
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".number") %> </a>
-            </li>
-            <li data-type="decimal" data-field-type="custom_decimal" data-fresh="true">
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".decimal") %> </a>
-            </li>
-            <li data-type="paragraph" data-field-type="custom_paragraph" data-fresh="true">
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".paragraph") %> </a>
-            </li>
-            <li data-type="checkbox" data-field-type="custom_checkbox" data-fresh="true">
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".checkbox") %> </a>
-            </li>
-            <li data-type="dropdown" data-field-type="custom_dropdown" data-fresh="true">
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".dropdown") %> </a>
-            </li>
-            <li data-type="dropdown" data-field-type="nested_field" data-fresh="true">
-                <a href="javascript:void(0)" class="btn btn-bold"> <%= t(".nestedfield") %> </a>
-            </li>
-        </ul> 
-
-    <span class="seperator"></span> 
-    <div class="custom_form_outer">
-      <%= content_tag(:h5, t(".customize_form"), :class => "lead") %>
-      <input type="hidden" name="jsonData" id="field_values" value="" />
-      <div class="ui-custom-form">
-        <ul id="custom_form" class="ui-form"></ul>
+<div class="ticket_fields">
+  <div class='page-header-sticky custom-field-header' rel='sticky'>
+    <div class='sticky-header-wrapper'>
+      <%= content_tag(:h3, t(".title"), :class => "lead pull-left") %> 
+      <div class="pull-right mb20">
+        <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
+        <%= submit_tag t(".save").html_safe, :class => "btn btn-primary save-custom-form", "data-commit" => t('.save').html_safe %>
       </div>
     </div>
-  </div> 
-	<div class="button-container" id="button_panel">
-		<%= link_to "#{ t('cancel_and_back') }".html_safe, "/admin/home", :class => "btn" %>
-		<%= submit_tag t(".save"), :class => "btn btn-primary", :id => "SaveForm", "data-commit" => t('ticket_fields.saving_ticket') %>
-	</div>
-<%end%>
-<% content_for :dialogs do %>
-	<%= render :partial => "formfield_props" %>
-<% end %>
+
+    <%#= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => ContactField } %>
+    <div class="field-picker">
+      <div class='field-info-wrapper'>
+        <%= content_tag(:h3, t("drag_and_drop_field"), :class => "title") %> 
+        <ul id="custom-fields" class="custom-fields"> 
+          <% Helpdesk::TicketField::CUSTOM_FIELD_PROPS.each do |field, details| %>
+            <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" 
+                data-field-type="<%="#{field}"%>" data-fresh="true" 
+                data-drag-info="<%=t("custom_fields.#{details[:dom_type]}").html_safe %>"> 
+                <%= content_tag(:span, '', :class => font_class(details[:dom_type],nil,'dom-icon tooltip'), :title => t("custom_fields.#{details[:dom_type]}")) %> 
+            </li>
+          <% end %>
+        </ul> 
+      </div>
+    </div>
+  </div>
+  <%= form_for @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+    <div class="custom_form_outer">
+      <input type="hidden" name="jsonData" id="field_values" value="" />
+      <input type="hidden" name="jsonSectionData" id="section_field_values" value="" />
+      <div>
+        <ul id="custom-field-form" class="form-horizontal custom-field-form" data-item-class='.custom-field'></ul>
+      </div>
+    </div>
+  <%end%>
+
+  <% content_for :dialogs do %>
+    <div id="CustomFieldsPropsDialog"></div>
+  <% end %>
+</div>
+
 <% content_for :pagefixed do %>
+  <%= javascript_include_tag :'cdn/ticket_fields' %>
   <%= javascript_tag do %>
     // Localizing ticket fields js elements
-    tf_settings = <%= @ticket_field_json.to_json.html_safe %>;
+    customFields = <%= @ticket_field_json.to_json.html_safe %>;
+    customSection = <%= @section_data_json.to_json.html_safe %>;
+
     tf_lang = {
-      untitled:           '<%= t("ticket_fields.untitled") %>',
-      first_choice:       '<%= t("ticket_fields.first_choice") %>',
-      second_choice:      '<%= t("ticket_fields.second_choice") %>', 
-      no_choice_message:  '<%= t("ticket_fields.no_choice_message") %>',
-      confirm_delete:     '<%= t("ticket_fields.confirm_delete") %>'
+     untitled:                    "<%= t("ticket_fields.untitled") %>",
+      firstChoice:                "<%= t("ticket_fields.first_choice") %>",
+      secondChoice:               "<%= t("ticket_fields.second_choice") %>", 
+      noChoiceMessage:            "<%= t("ticket_fields.no_choice_message") %>",
+      confirmDelete:              '<%= t("ticket_fields.confirm_delete") %>',
+      displayCCField:             '<%= t("ticket_fields.formfield_props.display_cc_field") %>',
+      ccCompanyContacts:          '<%= t("ticket_fields.formfield_props.cc_company_contacts") %>',
+      ccAnyEmail:                 '<%= t("ticket_fields.formfield_props.cc_any_email") %>',
+      sla_timer:                  '<%= t("ticket_fields.formfield_props.sla_timer") %>',
+      field_delete_disabled:      '<%= t("ticket_fields.formfield_props.field_delete_disabled") %>',
+      section_type_change:        '<%= t("ticket_fields.formfield_props.section_type_change") %>',
+      dropdown_choice_disabled:   '<%= t("ticket_fields.formfield_props.dropdown_choice_disabled") %>',
+      dropdown_items_edit:        '<%= t("ticket_fields.formfield_props.dropdown_items_edit") %>',
+      dropdown_items_preview:     '<%= t("ticket_fields.formfield_props.dropdown_items_preview") %>',
+      nestedfield_helptext_preview: '<%= escape_javascript t("ticket_fields.formfield_props.nestedfield_helptext_preview") %>',
+      nestedfield_helptext:       '<%= escape_javascript t("ticket_fields.formfield_props.nestedfield_helptext") %>',
+      confirm_delete:             '<%= t("ticket_fields.formfield2_props.confirm_delete") %>',
+      agent_mandatory_closure:    '<%= t("ticket_fields.formfield_props.agent_mandatory_closure") %>',
+      remove_type:                '<%= t("ticket_fields.section.remove_type") %>',
+      new_section:                '<%= t("ticket_fields.section.new_section") %>',
+      confirm_text:               '<%= t("ticket_fields.section.confirm_text") %>',
+      would_you_like_to:          '<%= t("ticket_fields.section.would_you_like_to") %>',
+      move_keep_copy:             '<%= t("ticket_fields.section.move_keep_copy") %>',
+      delete_field_section:       '<%= t("ticket_fields.section.delete_field_section") %>',
+      move_field_remove_section:  '<%= t("ticket_fields.section.move_field_remove_section") %>',
+      delete_permanent:           '<%= t("ticket_fields.section.delete_permanent") %>',
+      delete_from_section:        '<%= t("ticket_fields.section.delete_from_section") %>',
+      field_remove_all_section:   '<%= t("ticket_fields.section.field_remove_all_section") %>',
+      delete_section:             '<%= t("ticket_fields.section.delete_section") %>',
+      section_has_fields:         '<%= t("ticket_fields.section.section_has_fields") %>',
+      section_delete_disabled:    '<%= t("ticket_fields.section.section_delete_disabled") %>',
+      field_available:            '<%= t("ticket_fields.section.field_available") %>',
+      delete_section_btn:         '<%= t("ticket_fields.section.section_delete_btn") %>',
+      ok_btn:                     '<%= t("ticket_fields.section.ok_btn") %>',
+      confirm_btn:                '<%= t("ticket_fields.section.confirm_btn") %>',
+      oops_btn:                   '<%= t("ticket_fields.section.oops_btn") %>',
+      delete_btn:                 '<%= t("ticket_fields.section.delete_btn") %>',
+      continue_btn:               '<%= t("ticket_fields.section.continue_btn") %>',
+      section_prop:               '<%= t("ticket_fields.section.section_prop") %>',
+      sectino_label:              '<%= t("ticket_fields.section.sectino_label") %>',
+      section_type_is:            '<%= t("ticket_fields.section.section_type_is") %>',  
+      unique_section_name:        '<%= t("ticket_fields.section.section_name_unique") %>',  
+      formTitle:                  '<%= t("admin.contact_fields.formfield_props.form_title") %>',
+      deleteField:                '<%= t("admin.contact_fields.formfield_props.delete_field") %>',
+      regExp:                     '<%= t("admin.contact_fields.formfield_props.regexp") %>',
+      regExpExample:              '<%= escape_javascript t("admin.contact_fields.formfield_props.regexp_example_html",regex: "/^fresh\w/")%>',
+      dropdownChoice:             '<%= t("admin.contact_fields.formfield_props.dropdown_choices") %>',
+      addNewChoice:               '<%= t("admin.contact_fields.formfield_props.add_new_choice") %>',
+      label:                      '<%= t("admin.contact_fields.formfield_props.label") %>',
+      labelAgent:                 '<%= t("admin.contact_fields.formfield_props.field_label_agents") %>',
+      labelCustomer:              '<%= t("admin.contact_fields.formfield_props.field_label_customer") %>',
+      labelAgentLevel2:           '<%= t("admin.contact_fields.formfield_props.field_label_agents_level2") %>',
+      labelCustomerLevel2:        '<%= t("admin.contact_fields.formfield_props.field_label_customer_level2") %>',
+      behavior:                   '<%= t("admin.contact_fields.formfield_props.behavior") %>',
+      forAgent:                   '<%= t("admin.contact_fields.formfield_props.for_agents") %>',
+      agentMandatory:             '<%= t("admin.contact_fields.formfield_props.agent_mandatory_submission") %>',
+      forCustomer:                '<%= t("admin.contact_fields.formfield_props.for_customer") %>',
+      customerVisible:            '<%= t("admin.contact_fields.formfield_props.customer_visible") %>',
+      customerEditable:           '<%= t("admin.contact_fields.formfield_props.customer_edit") %>',
+      customerMandatory:          '<%= t("admin.contact_fields.formfield_props.customer_mandatory") %>',
+      customerEditSignup:         '<%= t("admin.contact_fields.formfield_props.customer_edit_signup") %>',
+      validateRegex:              '<%= t("admin.contact_fields.formfield_props.validate_regexp") %>',
+      nested_tree_validation:     '<%= t("ticket_fields.formfield_props.nested_tree_validation") %>',
+      nested_unique_names:        '<%= t("ticket_fields.formfield_props.nested_unique_names") %>',
+      nested_3rd_level:           '<%= t("ticket_fields.formfield_props.nested_3rd_level") %>',
+
+      default:            '<%= t("admin.contact_fields.formfield_props.default") %>',
+      number:             '<%= t("custom_fields.number") %>',
+      text:               '<%= t("custom_fields.text") %>',
+      paragraph:          '<%= t("custom_fields.paragraph") %>',
+      checkbox:           '<%= t("custom_fields.checkbox") %>',
+      dropdown:           '<%= t("custom_fields.dropdown") %>',
+      dropdown_blank:     '<%= t("custom_fields.dropdown_blank") %>',
+      nested_field:       '<%= t("custom_fields.nested_field") %>',
+      phone_number:       '<%= t("custom_fields.phone_number") %>',
+      url:                '<%= t("custom_fields.url") %>',
+      date:               '<%= t("custom_fields.date") %>',
+      email:              '<%= t("custom_fields.email") %>',
+      decimal:            '<%= t("custom_fields.decimal") %>',
+      learnMore:          '<%= t("group.learn_more") %>',
+      cancel:             '<%= t("cancel") %>',
+      done:               '<%= t("done") %>',
+      preview:            '<%= t("preview") %>',
+      edit:               '<%= t("edit") %>',
+      nestedFieldLabel:   '<%= t("ticket_fields.formfield_props.nested_label") %>',
+      level:              '<%= t("ticket_fields.formfield_props.level") %>',
+      maxItemsReached:    '<%= t("admin.contact_fields.formfield_props.max_choices") %>'
+    };
+
+    window['translate'] = {}; 
+    translate.get = function(name){
+      return tf_lang[name] || "";
     };
   <% end %>
-  <%= javascript_include_tag :'cdn/ticket_fields' %>
 <% end %> 
 <% content_for :layoutType do -%>antipattern<%- end %>

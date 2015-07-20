@@ -266,12 +266,15 @@ en:
     paragraph: Multi Line Text
     checkbox: Checkbox
     dropdown: Dropdown
+    decimal: Decimal
     dropdown_blank: Dropdown
     phone_number: Phone Number
     url: URL
+    decimal: Decimal
     date: Date
     regex: Regex
     email: Email
+    nested_field: Nested Fields
   ticket_fields:
     fields:
       source: Source
@@ -290,7 +293,7 @@ en:
     untitled: Untitled
     first_choice: First Choice
     second_choice: Second Choice
-    confirm_delete: Are you sure you want to delete this field?
+    confirm_delete: This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?
     no_choice_message: "At least one valid choice has to be present"
     index:
       number: Number
@@ -301,24 +304,27 @@ en:
       title: Ticket Fields
       paragraph: Paragraph Text
       checkbox: Checkbox
-      save: Save Ticket fields
+      save: Save
       drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       dropdown: Dropdown
       nestedfield: "Dependent field"
+      drag_and_drop_field: Drag & Drop Field
     formfield_props:
       form_title: "Field properties"
       behavior: "Behavior"
       label: "Field Label"
       nested_label: "Nested field labels"
+      level: "Level"
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
-      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
-      dropdown_items_edit: "Dropdown items - edit view"
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
+      dropdown_items_edit: "Dropdown items - Edit"
       dropdown_items_preview: "Dropdown items - Preview"
       status_choices: "Status choices"
       display_to_customer: "Display message for customer"
       sla_timer: "SLA timer"
+      section_type_change: Please save the ticket form to see the latest changes that you have made to type field.
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
       delete_field: "Delete field"
       field_label_agents: "Field label for agents"
@@ -342,6 +348,36 @@ en:
       display_cc_field: Display CC Field
       cc_company_contacts: Can CC only company contacts
       cc_any_email: Can CC any email address
+      field_delete_disabled: You cant delete default fields
+      dropdown_choice_disabled: Default choice cant be deleted 
+      nested_tree_validation: You need atleast one category & sub-category
+      nested_unique_names: Agent label should not be same as other two levels
+      nested_3rd_level: Label required for 3rd level items
+    section:
+      remove_type: Section is associated with this type
+      new_section: New Section
+      confirm_text: Please Confirm...
+      oops_btn: Oops!
+      move_keep_copy: Copy field to target section
+      delete_field_section: Delete field from this section
+      would_you_like_to: Would you like to
+      move_field_remove_section: Move field to target section
+      delete_permanent: Delete field from all sections
+      delete_from_section: Are you sure you want to delete this field from this section?
+      field_remove_all_section: Moving the field outside will remove the field from all sections
+      delete_section: Are you sure you want to delete this section?
+      section_has_fields: Section has fields
+      field_available: The field already exists in target section.
+      section_delete_btn: Delete Section
+      ok_btn: OK
+      confirm_btn: Confirm
+      delete_btn: Delete
+      continue_btn: Continue
+      section_prop: Section Properties
+      sectino_label: Section Title
+      section_type_is: Show section when type is
+      section_name_unique: Section name already used
+
   folder:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
@@ -693,7 +729,9 @@ en:
         nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
         delete_field: "Delete field"
         field_label_agents: "Field label for agents"
+        field_label_agents_level2: "Level 2 label for agents"
         field_label_customer: "Field label for customers"
+        field_label_customer_level2: "Level 2 label for customers"
         add_new_choice: Add Item
         customer_mandatory: Required when submitting the form
         customer_edit_signup: Customer can see this when they Sign up
@@ -762,8 +800,11 @@ en:
         sla_timer: "SLA timer"
         nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
         delete_field: "Delete field"
+        delete_section: "Delete Section"
         field_label_agents: "Field label for agents"
         field_label_customer: "Field label for customers"
+        field_label_agents_level2: "Level 2 label for agents"
+        field_label_customer_level2: "Level 2 label for customers"
         add_new_choice: Add Item
         customer_mandatory: Required when submitting the form
         customer_edit_signup: Customer can see this when they Sign up
@@ -5871,8 +5912,10 @@ en:
       tour: "Help me understand ticket fields"
       title1: "Ticket Fields"
       title2: "Dependent Fields"
-      info1: "The ticket form is the easiest way to capture all the data you need from the customer, even as they submit a ticket. For example, having the customer’s order ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Ticket Form in Freshdesk to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want."
-      info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
+      title3: "Dynamic Fields"
+      info1: "The ticket form helps capture the data you need from the customer when they submit a ticket. You can customize your Ticket Form to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want. For example, in an e-commerce company, getting a customer's order ID in the ticket form would be very helpful to the agent solving the ticket."
+      info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support. With dependent fields you can organize tickets hierarchically into categories, subcategories and item affected."
+      info3: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/210807'>Read more about dynamic fields</a>."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
