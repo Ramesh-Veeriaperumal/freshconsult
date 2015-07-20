@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "eefd18b8d95083cba4cbe43b50d2cf66a58cea6b702c2e0edd74cfb2dd594f55",
-    "current": "eefd18b8d95083cba4cbe43b50d2cf66a58cea6b702c2e0edd74cfb2dd594f55"
+    "previous": "63d58942c94c6b50de2387ec7ab54877c0b9e64f0a8b5b845d1fcd4f02b1532a",
+    "current": "63d58942c94c6b50de2387ec7ab54877c0b9e64f0a8b5b845d1fcd4f02b1532a"
   },
   "fonts": [
-    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.ttf",
-    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.svg",
-    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.woff",
-    "public/assets/glyphs_eefd18b8d95083cba4cbe43b50d2cf66.eot"
+    "public/assets/glyphs_63d58942c94c6b50de2387ec7ab54877.ttf",
+    "public/assets/glyphs_63d58942c94c6b50de2387ec7ab54877.svg",
+    "public/assets/glyphs_63d58942c94c6b50de2387ec7ab54877.woff",
+    "public/assets/glyphs_63d58942c94c6b50de2387ec7ab54877.eot"
   ],
   "glyphs": {
     "account": {
@@ -45,6 +45,10 @@
     "apple": {
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
+    },
+    "arrow-click": {
+      "codepoint": 61884,
+      "source": "public/glyphs/vectors/arrow-click.svg"
     },
     "arrow-down": {
       "codepoint": 61703,
@@ -669,6 +673,18 @@
     "supervisor": {
       "codepoint": 61845,
       "source": "public/glyphs/vectors/supervisor.svg"
+    },
+    "survey-happy": {
+      "codepoint": 61885,
+      "source": "public/glyphs/vectors/survey-happy.svg"
+    },
+    "survey-neutral": {
+      "codepoint": 61886,
+      "source": "public/glyphs/vectors/survey-neutral.svg"
+    },
+    "survey-sad": {
+      "codepoint": 61887,
+      "source": "public/glyphs/vectors/survey-sad.svg"
     },
     "survey-settings": {
       "codepoint": 61846,

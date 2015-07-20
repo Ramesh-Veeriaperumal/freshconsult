@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: url("glyphs_eefd18b8d95083cba4cbe43b50d2cf66.eot");
-  src: url("glyphs_eefd18b8d95083cba4cbe43b50d2cf66.eot?#iefix") format("embedded-opentype"),
-       url("glyphs_eefd18b8d95083cba4cbe43b50d2cf66.woff") format("woff"),
-       url("glyphs_eefd18b8d95083cba4cbe43b50d2cf66.ttf") format("truetype"),
-       url("glyphs_eefd18b8d95083cba4cbe43b50d2cf66.svg#glyphs") format("svg");
+  src: url("glyphs_63d58942c94c6b50de2387ec7ab54877.eot");
+  src: url("glyphs_63d58942c94c6b50de2387ec7ab54877.eot?#iefix") format("embedded-opentype"),
+       url("glyphs_63d58942c94c6b50de2387ec7ab54877.woff") format("woff"),
+       url("glyphs_63d58942c94c6b50de2387ec7ab54877.ttf") format("truetype"),
+       url("glyphs_63d58942c94c6b50de2387ec7ab54877.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("glyphs_eefd18b8d95083cba4cbe43b50d2cf66.svg#glyphs") format("svg");
+    src: url("glyphs_63d58942c94c6b50de2387ec7ab54877.svg#glyphs") format("svg");
   }
 }
 
@@ -32,6 +32,7 @@
 .ficon-answer-checked:before,
 .ficon-answer-unchecked:before,
 .ficon-apple:before,
+.ficon-arrow-click:before,
 .ficon-arrow-down:before,
 .ficon-arrow-down-2:before,
 .ficon-arrow-left:before,
@@ -188,6 +189,9 @@
 .ficon-star:before,
 .ficon-star-o:before,
 .ficon-supervisor:before,
+.ficon-survey-happy:before,
+.ficon-survey-neutral:before,
+.ficon-survey-sad:before,
 .ficon-survey-settings:before,
 .ficon-tags:before,
 .ficon-text:before,
@@ -231,6 +235,7 @@
 .ficon-answer-checked:before { content: "\f104"; }
 .ficon-answer-unchecked:before { content: "\f105"; }
 .ficon-apple:before { content: "\f106"; }
+.ficon-arrow-click:before { content: "\f1bc"; }
 .ficon-arrow-down:before { content: "\f107"; }
 .ficon-arrow-down-2:before { content: "\f108"; }
 .ficon-arrow-left:before { content: "\f109"; }
@@ -387,6 +392,9 @@
 .ficon-star:before { content: "\f193"; }
 .ficon-star-o:before { content: "\f194"; }
 .ficon-supervisor:before { content: "\f195"; }
+.ficon-survey-happy:before { content: "\f1bd"; }
+.ficon-survey-neutral:before { content: "\f1be"; }
+.ficon-survey-sad:before { content: "\f1bf"; }
 .ficon-survey-settings:before { content: "\f196"; }
 .ficon-tags:before { content: "\f197"; }
 .ficon-text:before { content: "\f198"; }
@@ -417,6 +425,7 @@ $font-glyphs-android: "\f103";
 $font-glyphs-answer-checked: "\f104";
 $font-glyphs-answer-unchecked: "\f105";
 $font-glyphs-apple: "\f106";
+$font-glyphs-arrow-click: "\f1bc";
 $font-glyphs-arrow-down: "\f107";
 $font-glyphs-arrow-down-2: "\f108";
 $font-glyphs-arrow-left: "\f109";
@@ -573,6 +582,9 @@ $font-glyphs-split: "\f192";
 $font-glyphs-star: "\f193";
 $font-glyphs-star-o: "\f194";
 $font-glyphs-supervisor: "\f195";
+$font-glyphs-survey-happy: "\f1bd";
+$font-glyphs-survey-neutral: "\f1be";
+$font-glyphs-survey-sad: "\f1bf";
 $font-glyphs-survey-settings: "\f196";
 $font-glyphs-tags: "\f197";
 $font-glyphs-text: "\f198";
