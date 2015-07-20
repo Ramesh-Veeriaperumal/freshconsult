@@ -49,7 +49,7 @@ class TimeSheetsController < ApiApplicationController
   private
 
     def feature_name
-      TimeSheetConstants::FEATURE_NAME
+      FeatureConstants::TIMESHEET
     end
 
     def scoper
