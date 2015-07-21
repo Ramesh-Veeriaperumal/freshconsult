@@ -37,7 +37,7 @@ module ApiDiscussions
       end
 
       def scoper
-        create? ? current_account.forum_categories : current_account.forum_categories_from_cache
+        current_account.forum_categories
       end
   end
 end
