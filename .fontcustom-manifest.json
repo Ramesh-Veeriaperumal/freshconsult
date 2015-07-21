@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "353697a099ba9572af00f326cbcb04ade2e3f92f110c48a0e37302eb4fec2fc0",
-    "current": "353697a099ba9572af00f326cbcb04ade2e3f92f110c48a0e37302eb4fec2fc0"
+    "previous": "181a8976bb3e6797d713029d78dbb01202556f0369449922340c021e733f31d1",
+    "current": "181a8976bb3e6797d713029d78dbb01202556f0369449922340c021e733f31d1"
   },
   "fonts": [
-    "public/assets/glyphs_353697a099ba9572af00f326cbcb04ad.ttf",
-    "public/assets/glyphs_353697a099ba9572af00f326cbcb04ad.svg",
-    "public/assets/glyphs_353697a099ba9572af00f326cbcb04ad.woff",
-    "public/assets/glyphs_353697a099ba9572af00f326cbcb04ad.eot"
+    "public/assets/glyphs_181a8976bb3e6797d713029d78dbb012.ttf",
+    "public/assets/glyphs_181a8976bb3e6797d713029d78dbb012.svg",
+    "public/assets/glyphs_181a8976bb3e6797d713029d78dbb012.woff",
+    "public/assets/glyphs_181a8976bb3e6797d713029d78dbb012.eot"
   ],
   "glyphs": {
     "account": {
@@ -233,6 +233,10 @@
     "day_pass": {
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "decimal": {
+      "codepoint": 61893,
+      "source": "public/glyphs/vectors/decimal.svg"
     },
     "deleted": {
       "codepoint": 61875,
@@ -530,6 +534,10 @@
       "codepoint": 61807,
       "source": "public/glyphs/vectors/multi-product.svg"
     },
+    "nested_field": {
+      "codepoint": 61894,
+      "source": "public/glyphs/vectors/nested_field.svg"
+    },
     "no-arrow-left": {
       "codepoint": 61808,
       "source": "public/glyphs/vectors/no-arrow-left.svg"
@@ -796,6 +804,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
