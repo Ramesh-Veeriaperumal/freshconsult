@@ -4,8 +4,6 @@ Helpkit::Application.routes.draw do
       member do
         put :assign
         put :restore
-        get :notes
-        get :time_sheets
       end
     end
     resources :notes, :except => [:new, :edit, :show, :index]
@@ -19,6 +17,8 @@ Helpkit::Application.routes.draw do
     end
 
     match 'tickets/:ticket_id/reply' => 'notes#reply', :via => :post
+    match 'tickets/:ticket_id/notes' => 'notes#ticket_notes', :via => :get
+    match 'tickets/:ticket_id/time_sheets' => 'time_sheets#ticket_time_sheets', :via => :get
 
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit] do

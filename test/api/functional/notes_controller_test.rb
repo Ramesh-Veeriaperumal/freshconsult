@@ -553,4 +553,85 @@ class NotesControllerTest < ActionController::TestCase
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
+
+  def test_notes
+    t = ticket
+    get :ticket_notes, construct_params(ticket_id: t.id)
+    assert_response :success
+    result_pattern = []
+    t.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << note_pattern(n)
+    end
+    match_json(result_pattern)
+  end
+
+  def test_notes_return_only_non_deleted_notes
+    t = ticket
+    create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+
+    get :ticket_notes, construct_params(ticket_id: t.id)
+    assert_response :success
+    result_pattern = []
+    t.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << note_pattern(n)
+    end
+    assert JSON.parse(response.body).count == t.notes.visible.exclude_source('meta').count
+    match_json(result_pattern)
+
+    Helpdesk::Note.where(notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
+    get :ticket_notes, construct_params(ticket_id: t.id)
+    assert_response :success
+    result_pattern = []
+    t.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << note_pattern(n)
+    end
+    assert JSON.parse(response.body).count == 0
+    match_json(result_pattern)
+  end
+
+  def test_notes_without_privilege
+    t = ticket
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
+    get :ticket_notes, construct_params(ticket_id: t.display_id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_notes_invalid_id
+    get :ticket_notes, construct_params(ticket_id: 56_756_767)
+    assert_response :not_found
+    assert_equal ' ', @response.body
+  end
+
+  def test_notes_eager_loaded_association
+    t = ticket
+    get :ticket_notes, construct_params(ticket_id: t.display_id)
+    assert_response :success
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
+  end
+
+  def test_notes_with_pagination
+    t = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2).notable
+    3.times do
+      create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+    end
+    get :ticket_notes, construct_params(ticket_id: t.display_id, per_page: 1)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    get :ticket_notes, construct_params(ticket_id: t.display_id, per_page: 1, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+  end
+
+  def test_notes_with_pagination_exceeds_limit
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+    get :ticket_notes, construct_params(ticket_id: ticket.display_id, per_page: 4)
+    assert_response :success
+    assert JSON.parse(response.body).count == 3
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+  end
 end

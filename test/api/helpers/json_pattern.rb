@@ -156,7 +156,7 @@ module JsonPattern
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
-  def ticket_pattern_with_notes(expected_output = {}, ticket)
+  def ticket_pattern_with_notes(_expected_output = {}, ticket)
     ticket_pattern(ticket).merge(notes: Array)
   end
 

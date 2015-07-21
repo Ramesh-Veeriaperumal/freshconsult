@@ -97,7 +97,7 @@ module TestCaseMethods
   end
 
   def deleted_user
-    user = User.find {|x| x.id != @agent.id} || create_dummy_customer
+    user = User.find { |x| x.id != @agent.id } || create_dummy_customer
     user.update_column(:deleted, true)
     user.reload
   end

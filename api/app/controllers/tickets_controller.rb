@@ -5,17 +5,15 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
-  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :load_object, only: [:update, :restore, :assign, :destroy, :show]
   before_filter :check_params, only: :update
   before_filter :verify_ticket_permission, only: [:update, :show]
   before_filter :ticket_permission?, only: [:destroy, :assign]
   before_filter :restrict_params, only: [:assign, :restore]
-  before_filter :validate_params, only: [:create, :update]
-  before_filter :validate_show_params, only: [:show]
+  before_filter :validate_params, :manipulate_params, only: [:create, :update]
+  before_filter :validate_show_params, :load_association, only: [:show]
   before_filter :validate_filter_params, only: [:index]
-  before_filter :manipulate_params, only: [:create, :update]
   before_filter :build_object, only: [:create]
-  before_filter :load_association, only: [:show]
   before_filter :assign_protected, only: [:create, :update]
 
   def index
@@ -66,22 +64,9 @@ class TicketsController < ApiApplicationController
     head 204
   end
 
-  def notes
-    # show only non deleted notes.
-    @items = paginate_items(ticket_notes)
-    @items.each{|i| i.send(:load_schema_less_note)}
-    render '/notes/index'
-  end
-
-  def time_sheets
-    # as same template is used here and in time_sheet index time_sheets are named as items here.
-    @items = paginate_items(@item.time_sheets.includes(:workable))
-    render '/time_sheets/index'
-  end
-
   def show
     @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE) if params[:include] == 'notes'
-    @notes.each{|i| i.send(:load_schema_less_note)}
+    @notes.each { |i| i.send(:load_schema_less_note) }
     super
   end
 
@@ -143,14 +128,14 @@ class TicketsController < ApiApplicationController
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  (params[cname][:cc_emails] || [])
 
-      #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+      # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
       @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup }
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
 
       # Collect tags in instance variable as it should not be part of params before build item.
-      @tags = Array.wrap(params[cname][:tags]).map!{|x| x.to_s.strip} if params[cname].key?(:tags)
+      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,

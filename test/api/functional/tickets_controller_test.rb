@@ -150,7 +150,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_without_due_by_and_fr_due_by
     params = ticket_params_hash.except(:fr_due_by, :due_by)
-    Helpdesk::Ticket.any_instance.expects(:update_dueby).once 
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).once
     post :create, construct_params({}, params)
     assert_response :created
   end
@@ -416,13 +416,13 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_notifying_cc_email
     params_hash = update_ticket_params_hash
-    t =  Helpdesk::Ticket.select do |ticket|
+    t =  Helpdesk::Ticket.find do |ticket|
       ticket.cc_email && ticket.cc_email[:cc_emails].present?
-    end.first
+    end
     if t.nil?
       t = ticket
       cc_emails = [Faker::Internet.email, Faker::Internet.email]
-      t.cc_email = {cc_emails: cc_emails, reply_cc: cc_emails, fwd_emails: []}
+      t.cc_email = { cc_emails: cc_emails, reply_cc: cc_emails, fwd_emails: [] }
       t.save
       t.reload
     end
@@ -1109,7 +1109,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, includ: 'test')
     assert_response :bad_request
-    match_json([bad_request_error_pattern('includ', "invalid_field")])
+    match_json([bad_request_error_pattern('includ', 'invalid_field')])
   end
 
   def test_show_deleted
@@ -1334,165 +1334,16 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
-  def test_notes
-    t = ticket
-    get :notes, controller_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
-    end
-    match_json(result_pattern)
-  end
-
-  def test_notes_return_only_non_deleted_notes
-    t = ticket
-    create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
-
-    get :notes, controller_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
-    end
-    assert JSON.parse(response.body).count == t.notes.visible.exclude_source('meta').count
-    match_json(result_pattern)
-
-    Helpdesk::Note.where(source: 2, notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
-    get :notes, controller_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
-    end
-    assert JSON.parse(response.body).count == 0
-    match_json(result_pattern)
-  end
-
-  def test_notes_without_privilege
-    t = ticket
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    get :notes, controller_params(id: t.display_id)
-    assert_response :forbidden
-    match_json(request_error_pattern('access_denied'))
-  end
-
-  def test_notes_invalid_id
-    get :notes, controller_params(id: 56_756_767)
-    assert_response :not_found
-    assert_equal ' ', @response.body
-  end
-
-  def test_notes_eager_loaded_association
-    t = ticket
-    get :notes, controller_params(id: t.display_id)
-    assert_response :success
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
-  end
-
-  def test_notes_with_pagination
-    t = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2).notable
-    3.times do
-      create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
-    end
-    get :notes, construct_params(id: t.display_id, per_page: 1)
-    assert_response :success
-    assert JSON.parse(response.body).count == 1
-    get :notes, construct_params(id: t.display_id, per_page: 1, page: 2)
-    assert_response :success
-    assert JSON.parse(response.body).count == 1
-  end
-
-  def test_notes_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-    get :notes, construct_params(id: ticket.display_id, per_page: 4)
-    assert_response :success
-    assert JSON.parse(response.body).count == 3
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
-  end
-
-  def test_time_sheets
-    t = ticket
-    create_time_sheet(ticket_id: t.id)
-    get :time_sheets, controller_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.time_sheets.each do |n|
-      result_pattern << time_sheet_pattern(n)
-    end
-    match_json(result_pattern)
-  end
-
-  def test_time_sheets_with_ticket_deleted
-    ticket.update_column(:deleted, true)
-    get :time_sheets, construct_params(id: ticket.display_id)
-    assert_response :not_found
-    ticket.update_column(:deleted, false)
-  end
-
-  def test_time_sheets_without_privilege
-    t = ticket
-    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
-    get :time_sheets, controller_params(id: t.display_id)
-    assert_response :forbidden
-    match_json(request_error_pattern('access_denied'))
-  end
-
-  def test_time_sheets_invalid_id
-    get :time_sheets, controller_params(id: 56_756_767)
-    assert_response :not_found
-    assert_equal ' ', @response.body
-  end
-
-  def test_time_sheets_eager_loaded_association
-    t = ticket
-    get :time_sheets, controller_params(id: t.display_id)
-    assert_response :success
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
-  end
-
-  def test_time_sheets_with_pagination
-    t = ticket
-    3.times do
-      create_time_sheet(ticket_id: t.id)
-    end
-    get :time_sheets, construct_params(id: t.display_id, per_page: 1)
-    assert_response :success
-    assert JSON.parse(response.body).count == 1
-    get :time_sheets, construct_params(id: t.display_id, per_page: 1, page: 2)
-    assert_response :success
-    assert JSON.parse(response.body).count == 1
-  end
-
-  def test_time_sheets_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-    t = ticket
-    4.times do
-      create_time_sheet(ticket_id: t.id)
-    end
-    get :time_sheets, construct_params(id: ticket.display_id, per_page: 4)
-    assert_response :success
-    assert JSON.parse(response.body).count == 3
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
-  end
-
   def test_show_with_notes_exceeding_limit
     ticket.update_column(:deleted, false)
-    (11 - ticket.notes.size).times do 
+    (11 - ticket.notes.size).times do
       create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     end
     get :show, controller_params(id: ticket.display_id, include: 'notes')
     assert_response :success
     match_json(ticket_pattern_with_notes({}, ticket))
     response = parse_response @response.body
-    assert_equal 10, response["notes"].size
+    assert_equal 10, response['notes'].size
     assert ticket.reload.notes.size > 10
   end
-
 end

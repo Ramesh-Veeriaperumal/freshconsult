@@ -118,7 +118,7 @@ class ApiApplicationController < MetalApiController
         @user = current_account.all_users.find_by_email(@email) if @email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
         if @user && @user != current_user && !is_allowed_to_assume?(@user)
-          render_request_error(:invalid_user, 403, id: @user.id, name: @user.name) 
+          render_request_error(:invalid_user, 403, id: @user.id, name: @user.name)
         end
       end
     end
@@ -163,10 +163,10 @@ class ApiApplicationController < MetalApiController
     def paginate_options
       options = {}
       options[:per_page] = if params[:per_page].blank?
-        ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
-      else
-       [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
-      end
+                             ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+                           else
+                             [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
+                           end
       options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
       options[:total_entries] = options[:page] * options[:per_page] # To prevent paginate from firing count query
       options

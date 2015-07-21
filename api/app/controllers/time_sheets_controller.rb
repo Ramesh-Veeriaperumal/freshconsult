@@ -1,7 +1,8 @@
 class TimeSheetsController < ApiApplicationController
   include TimeSheetConcern
 
-  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :load_object, only: [:destroy, :update, :toggle_timer]
+  before_filter :load_ticket, only: [:ticket_time_sheets]
   before_filter :check_params, only: :update
   before_filter :validate_params, only: [:create, :update]
   before_filter :validate_filter_params, only: [:index]
@@ -9,7 +10,6 @@ class TimeSheetsController < ApiApplicationController
   before_filter :manipulate_params, only: [:create, :update]
   before_filter :build_object, only: [:create]
   before_filter :load_objects, only: [:index]
-
 
   def index
     load_objects(time_sheet_filter.includes(:workable))
@@ -41,15 +41,24 @@ class TimeSheetsController < ApiApplicationController
                 { start_time: Time.zone.now }
               end
     changed.merge!(timer_running: !timer_running)
-    unless @item.update_attributes(changed)
-      render_error @item.errors
-    end
+    render_error @item.errors unless @item.update_attributes(changed)
+  end
+
+  def ticket_time_sheets
+    @items = paginate_items(@ticket.time_sheets.includes(:workable))
+    render '/time_sheets/index'
   end
 
   private
 
     def feature_name
       FeatureConstants::TIMESHEET
+    end
+
+    def load_ticket
+      # Load only non deleted ticket.
+      @ticket = current_account.tickets.find_by_display_id_and_deleted(params[:ticket_id], false)
+      head 404 unless @ticket
     end
 
     def scoper

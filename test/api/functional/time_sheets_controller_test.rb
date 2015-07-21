@@ -139,7 +139,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
   end
 
-  def test_time_sheets_with_pagination_exceeds_limit
+  def test_index_with_pagination_exceeds_limit
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
@@ -813,5 +813,72 @@ class TimeSheetsControllerTest < ActionController::TestCase
     put :toggle_timer, construct_params({ id: ts.id }, {})
     assert_response :bad_request
     match_json([bad_request_error_pattern('user', "can't be blank")])
+  end
+
+  def test_time_sheets
+    t = ticket
+    create_time_sheet(ticket_id: t.id)
+    get :ticket_time_sheets, construct_params(ticket_id: t.id)
+    assert_response :success
+    result_pattern = []
+    t.time_sheets.each do |n|
+      result_pattern << time_sheet_pattern(n)
+    end
+    match_json(result_pattern)
+  end
+
+  def test_time_sheets_with_ticket_deleted
+    ticket.update_column(:deleted, true)
+    get :ticket_time_sheets, construct_params(ticket_id: ticket.display_id)
+    assert_response :not_found
+    ticket.update_column(:deleted, false)
+  end
+
+  def test_time_sheets_without_privilege
+    t = ticket
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
+    get :ticket_time_sheets, construct_params(ticket_id: t.display_id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_time_sheets_invalid_id
+    get :ticket_time_sheets, construct_params(ticket_id: 56_756_767)
+    assert_response :not_found
+    assert_equal ' ', @response.body
+  end
+
+  def test_time_sheets_eager_loaded_association
+    t = ticket
+    get :ticket_time_sheets, construct_params(ticket_id: t.display_id)
+    assert_response :success
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
+  end
+
+  def test_time_sheets_with_pagination
+    t = ticket
+    3.times do
+      create_time_sheet(ticket_id: t.id)
+    end
+    get :ticket_time_sheets, construct_params(ticket_id: t.display_id, per_page: 1)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    get :ticket_time_sheets, construct_params(ticket_id: t.display_id, per_page: 1, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+  end
+
+  def test_time_sheets_with_pagination_exceeds_limit
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+    t = ticket
+    4.times do
+      create_time_sheet(ticket_id: t.id)
+    end
+    get :ticket_time_sheets, construct_params(ticket_id: ticket.display_id, per_page: 4)
+    assert_response :success
+    assert JSON.parse(response.body).count == 3
+    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 end

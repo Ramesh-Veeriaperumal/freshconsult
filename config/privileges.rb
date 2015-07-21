@@ -82,8 +82,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index, :notes]
-    resource :"note", only: [:create]
+    resource :"ticket", :only => [:show, :create, :index]
+    resource :"note", only: [:create, :ticket_notes]
 	end
 
   reply_ticket do
@@ -139,8 +139,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
 
     # Used for API V2
-    resource :"time_sheet", :only => [:index, :create]
-    resource :"ticket", :only => [:time_sheets]
+    resource :"time_sheet", :only => [:index, :create, :ticket_time_sheets]
   end
 
   edit_time_entries do
