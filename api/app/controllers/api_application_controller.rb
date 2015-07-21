@@ -162,14 +162,18 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options
       options = {}
-      options[:per_page] = if params[:per_page].blank?
+      options[:per_page] = get_per_page
+      options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
+      options[:total_entries] = options[:page] * options[:per_page] # To prevent paginate from firing count query
+      options
+    end
+
+    def get_per_page
+      if params[:per_page].blank?
         ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
       else
        [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
       end
-      options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
-      options[:total_entries] = options[:page] * options[:per_page] # To prevent paginate from firing count query
-      options
     end
 
     def cname
@@ -238,10 +242,10 @@ class ApiApplicationController < MetalApiController
     end
 
     def update?
-      action_name.to_s == 'update'
+      @update ||= action_name.to_s == 'update'
     end
 
     def create?
-      action_name.to_s == 'create'
+      @create ||= action_name.to_s == 'create'
     end
 end

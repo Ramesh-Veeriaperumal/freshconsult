@@ -32,14 +32,7 @@ class TimeSheetsController < ApiApplicationController
 
   def toggle_timer
     timer_running = @item.timer_running
-    changed = if timer_running
-                { time_spent: calculate_time_spent(@item) }
-              else
-                # If any validation is introduced in the TimeSheet model,
-                # update_running_timer and @item.update_attributes should be wrapped in a transaction.
-                update_running_timer @item.user_id
-                { start_time: Time.zone.now }
-              end
+    changed = fetch_changed_attributes(timer_running)
     changed.merge!(timer_running: !timer_running)
     unless @item.update_attributes(changed)
       render_error @item.errors
@@ -47,6 +40,17 @@ class TimeSheetsController < ApiApplicationController
   end
 
   private
+
+    def fetch_changed_attributes(timer_running)
+      if timer_running
+        { time_spent: calculate_time_spent(@item) }
+      else
+        # If any validation is introduced in the TimeSheet model,
+        # update_running_timer and @item.update_attributes should be wrapped in a transaction.
+        update_running_timer @item.user_id
+        { start_time: Time.zone.now }
+      end
+    end
 
     def feature_name
       FeatureConstants::TIMESHEET
@@ -83,8 +87,9 @@ class TimeSheetsController < ApiApplicationController
       params[cname][:timer_running] = @timer_running
       params[cname][:time_spent] = time_spent
       params[cname][:user_id] ||= current_user.id if create?
-      params[cname][:executed_at] ||= Time.zone.now if create?
-      params[cname][:start_time] ||= Time.zone.now if create? || params[cname][:timer_running].to_s.to_bool == true
+      current_time = Time.zone.now
+      params[cname][:executed_at] ||= current_time if create?
+      params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool == true
       params[cname].delete(:ticket_id)
     end
 
