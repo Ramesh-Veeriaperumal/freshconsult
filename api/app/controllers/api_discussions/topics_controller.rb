@@ -2,12 +2,12 @@ module ApiDiscussions
   class TopicsController < ApiApplicationController
     skip_before_filter :check_privilege, only: [:show]
     before_filter :portal_check, only: [:show]
+    before_filter :can_send_user?, only: [:create, :follow, :unfollow]
     before_filter :load_object, except: [:create, :route_not_found, :followed_by, :is_following]
     before_filter :check_params, only: :update
     before_filter :validate_params, only: [:create, :update]
     include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
     before_filter :manipulate_params, only: [:create, :update]
-    before_filter :can_send_user?, only: [:create, :follow, :unfollow]
     before_filter :build_object, only: [:create]
     before_filter :load_association, only: [:show]
     before_filter :set_forum_id, only: [:create, :update]
@@ -38,7 +38,7 @@ module ApiDiscussions
     private
 
       def feature_name
-        FeatureConstants::DISCUSSION
+        DiscussionConstants::FEATURE_NAME
       end
 
       def load_association

@@ -56,7 +56,7 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def feature_name
-      FeatureConstants::TIMESHEET
+      TimeSheetConstants::FEATURE_NAME
     end
 
     def load_ticket

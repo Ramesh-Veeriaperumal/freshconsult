@@ -1,6 +1,7 @@
 class ApiTicketFieldsController < ApiApplicationController
+  
+  before_filter :load_object, except: [:index, :route_not_found]
   before_filter :validate_params, only: [:index]
-  before_filter :load_objects, only: [:index]
 
   private
 

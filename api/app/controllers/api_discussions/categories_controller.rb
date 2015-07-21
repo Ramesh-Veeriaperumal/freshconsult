@@ -16,7 +16,7 @@ module ApiDiscussions
     private
 
       def feature_name
-        FeatureConstants::DISCUSSION
+        DiscussionConstants::FEATURE_NAME
       end
 
       def load_object
