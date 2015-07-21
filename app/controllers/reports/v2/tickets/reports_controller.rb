@@ -70,9 +70,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
   end
 
+  # TODO: Need to check if the below method is necessary
   def normalize_params
-    @query_params = JSON.parse(params[:_json])
-    @query_params.each {|p| p.symbolize_keys!}
+    @query_params = params[:_json]
   end
 
   def parse_result
