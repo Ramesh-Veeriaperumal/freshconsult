@@ -1,6 +1,7 @@
 class TimeSheetsController < ApiApplicationController
-  include TimeSheetConcern
+  include Concerns::TimeSheetConcern
 
+  skip_before_filter :load_object, only: :ticket_time_sheets
   before_filter :load_ticket, only: [:ticket_time_sheets]
   before_filter :validate_filter_params, only: [:index]
   before_filter :validate_toggle_params, only: [:toggle_timer]
@@ -50,7 +51,7 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def feature_name
-      TimeSheetConstants::FEATURE_NAME
+      FeatureConstants::TIMESHEET
     end
 
     def load_ticket

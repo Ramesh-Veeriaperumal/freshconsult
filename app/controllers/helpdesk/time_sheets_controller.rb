@@ -2,7 +2,7 @@
 class Helpdesk::TimeSheetsController < ApplicationController
 
   include CustomerDeprecationMethods::NormalizeParams
-  include TimeSheetConcern
+  include Concerns::TimeSheetConcern
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 

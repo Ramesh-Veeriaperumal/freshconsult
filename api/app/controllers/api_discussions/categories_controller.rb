@@ -9,14 +9,7 @@ module ApiDiscussions
     private
 
       def feature_name
-        DiscussionConstants::FEATURE_NAME
-      end
-
-      def load_object
-        @item = scoper.detect { |category| category.id == params[:id].to_i }
-        unless @item
-          head :not_found # Do we need to put message inside response body for 404?
-        end
+        FeatureConstants::DISCUSSION
       end
 
       def load_association
