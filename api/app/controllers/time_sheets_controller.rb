@@ -98,13 +98,13 @@ class TimeSheetsController < ApiApplicationController
       params[cname][:user_id] ||= current_user.id if create?
       current_time = Time.zone.now
       params[cname][:executed_at] ||= current_time if create?
-      params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool == true
+      params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool
       params[cname].delete(:ticket_id)
     end
 
     def time_spent
       time_spent = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
-      time_spent ||= total_running_time if update? && params[cname][:timer_running].to_s.to_bool == false
+      time_spent ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
       time_spent
     end
 
@@ -125,10 +125,10 @@ class TimeSheetsController < ApiApplicationController
 
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
-      return true if params[cname][:timer_running].to_s.to_bool == true && @item.timer_running.to_s.to_bool == false
+      return true if params[cname][:timer_running].to_s.to_bool && !@item.timer_running
 
       # Should stop timer for the new user if different user_id is set as part of this update call
-      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && @timer_running.to_s.to_bool == false
+      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && !@timer_running
       false
     end
 
