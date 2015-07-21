@@ -109,7 +109,7 @@ module SolutionHelper
 			when :folder
 				{ :category_id => @category.id } if @category.present?
 			when :article
-				{ :folder_id => @folder.id } if @folder.present?
+				@folder.present? ? ({ :folder_id => @folder.id }) : (@category.present? ? { :category_id => @category.id } : nil)
 		end
 	end
 

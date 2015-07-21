@@ -9,6 +9,8 @@ window.App = window.App || {};
     
     data: {},
 
+    autoSave: null,
+
     onVisit: function (data) {
       
       if (App.namespace === "solution/articles/new") {
@@ -25,8 +27,9 @@ window.App = window.App || {};
     
     onLeave: function (data) {
       $('body').off('.articles');
-      if (window.articleDraftAutosave) {
-        this.articleDraftAutosave.stopSaving();
+      if (this.autoSave) {
+        this.autoSave.stopSaving();
+        this.autoSave = null;
       }
       App.Solutions.SearchConfig.onLeave();
     },
@@ -78,10 +81,10 @@ window.App = window.App || {};
       this.toggleViews();
 
       //initilaizing autosave
-      if (window.articleDraftAutosave) {
-        window.articleDraftAutosave.startSaving();
+      if (this.autoSave) {
+        this.autoSave.startSaving();
       } else {
-        window.articleDraftAutosave = this.autosaveInitialize();
+        this.autosaveInitialize();
       }
       this.editUrlChange(true);
       //Disbale the input for cancel draft changes by default
@@ -157,11 +160,11 @@ window.App = window.App || {};
       var $this = this;
       $("body").on('click.article', "#edit-cancel-button", function (ev) {
         ev.preventDefault();
-				$this.articleDraftAutosave.stopSaving();
+				$this.autoSave.stopSaving();
         $(".article-edit-form")[0].reset();
         $this.setFormValues();
 				$this.resetDraftRequest();
-        $this.articleDraftAutosave.contentChanged = false;
+        $this.autoSave.contentChanged = false;
 				$this.cancel_UI_toggle();
         $this.editUrlChange(false);
       });
@@ -192,7 +195,7 @@ window.App = window.App || {};
 				},
 				request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit));
       //Only if a single autosave is success should we reverse the changes done
-      if (this.articleDraftAutosave.successCount > 0) {
+      if (this.autoSave.successCount > 0) {
         $.ajax(request);
       }
     },
@@ -218,12 +221,13 @@ window.App = window.App || {};
         responseCallback: $.proxy(this.autosaveDomManipulate, this)
       };
 
-      this.articleDraftAutosave  = $.autoSaveContent(draft_options);
-      return this.articleDraftAutosave;
+      this.autoSave = $.autoSaveContent(draft_options);
     },
 
     editArticleEventBindings: function () {
-      this.bindForCancel();
+      if (App.namespace != "solution/articles/new") {
+        this.bindForCancel();
+      }
       this.unsavedContentNotif();
       if (this.data.defaultFolder) {
         this.defaultFolderValidate();
@@ -296,10 +300,10 @@ window.App = window.App || {};
       if (typeof (response) === 'object' && response.success) {
         changeDom.manipulate(response, true);
       } else {
-        this.articleDraftAutosave.lastSaveStatus = false;
+        this.autoSave.lastSaveStatus = false;
         changeDom.manipulate(response, false);
       }
-      this.articleDraftAutosave.contentChanged = !response.success;
+      this.autoSave.contentChanged = !response.success;
     },
 
     articleProperties: function () {
@@ -315,10 +319,10 @@ window.App = window.App || {};
 
     unsavedContent: function () {
       // Check if there is an error, in that case return false.
-      if (this.articleDraftAutosave && !this.articleDraftAutosave.lastSaveStatus) {
+      if (this.autoSave && !this.autoSave.lastSaveStatus) {
         return false;
       }
-      // return (this.articleDraftAutosave.contentChanged || ($(".hidden_upload input").length > 1));
+      // return (this.autoSave.contentChanged || ($(".hidden_upload input").length > 1));
       return ($(".hidden_upload input").length > 1);
     },
 

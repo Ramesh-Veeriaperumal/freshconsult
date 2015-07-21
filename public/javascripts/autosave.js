@@ -125,7 +125,7 @@ Along with the above options, few flags and counters are available which are lis
       $.each(this.opts.monitorChangesOf, function (key, value) {
         var $el = $(value);
         $this.content[key] = $el.val();
-        if ('minContentLength' in $this.opts) {
+        if ('minContentLength' in $this.opts && $this.content[key] != null) {
           $this.minContentLengthCheck = ($this.content[key].length > $this.opts.minContentLength);
           if ($this.minContentLengthCheck == false) {
             return;

@@ -88,5 +88,15 @@ module Solution::ArticlesHelper
   def created_at_ellipsis?
     @article.published? && (@article.created_at != @article.modified_at) && @article.modified_at.present?
   end
+
+  def cancel_btn_link
+    if params[:folder_id].present?
+      solution_folder_path(params[:folder_id])
+    elsif params[:category_id].present?
+      solution_category_path(params[:category_id])
+    else
+      solution_categories_path
+    end
+  end
   
 end
