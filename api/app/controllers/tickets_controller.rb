@@ -5,16 +5,13 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
-  before_filter :load_object, only: [:update, :restore, :assign, :destroy, :show]
-  before_filter :check_params, only: :update
+  before_filter :validate_show_params, only: [:show]
+  before_filter :assign_protected, only: [:create, :update]
   before_filter :verify_ticket_permission, only: [:update, :show]
   before_filter :ticket_permission?, only: [:destroy, :assign]
   before_filter :restrict_params, only: [:assign, :restore]
-  before_filter :validate_params, :manipulate_params, only: [:create, :update]
-  before_filter :validate_show_params, :load_association, only: [:show]
+  skip_before_filter :load_objects, only: [:index]
   before_filter :validate_filter_params, only: [:index]
-  before_filter :build_object, only: [:create]
-  before_filter :assign_protected, only: [:create, :update]
 
   def index
     load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,

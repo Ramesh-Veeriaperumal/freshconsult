@@ -5,13 +5,11 @@ class NotesController < ApiApplicationController
   include CloudFilesHelper
   include Conversations::Email
 
-  before_filter :can_send_user?, only: [:create, :reply]
   before_filter :load_object, :check_agent_note, only: [:update, :destroy]
-  before_filter :load_ticket, only: [:reply, :ticket_notes]
   before_filter :can_update?, only: [:update]
-  before_filter :check_params, only: :update
+  before_filter :load_ticket, only: [:reply, :ticket_notes]
   before_filter :validate_params, :manipulate_params, only: [:update, :create, :reply]
-  before_filter :build_object, only: [:create, :reply]
+  before_filter :can_send_user?, :build_object, only: [:create, :reply]
   before_filter -> { kbase_email_included? params[cname] }, only: [:reply] # kbase_email_included? present in Email module
 
   def create
