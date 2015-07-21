@@ -1,12 +1,5 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    before_filter :load_object, except: [:create, :index, :route_not_found]
-    before_filter :check_params, only: :update
-    before_filter :validate_params, only: [:create, :update]
-    before_filter :manipulate_params, only: [:create, :update]
-    before_filter :build_object, only: [:create]
-    before_filter :load_objects, only: [:index]
-    before_filter :load_association, only: [:show]
 
     def forums
       @forums = paginate_items(load_association)

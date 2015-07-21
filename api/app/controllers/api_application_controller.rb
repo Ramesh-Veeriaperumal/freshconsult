@@ -29,6 +29,13 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name }, :if => :feature_name
   skip_before_filter :check_privilege, only: [:route_not_found]
+  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :check_params, only: :update
+  before_filter :validate_params, only: [:create, :update]
+  before_filter :manipulate_params, only: [:create, :update]
+  before_filter :build_object, only: [:create]
+  before_filter :load_objects, only: [:index]
+  before_filter :load_association, only: [:show]
 
   def index
     # load_objects will load all objects and index.json.jbuilder will render the result.

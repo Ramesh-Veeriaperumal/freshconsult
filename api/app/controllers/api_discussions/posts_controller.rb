@@ -1,13 +1,7 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
-
-    before_filter :can_send_user?, :check_lock, only: :create
-    before_filter :load_object, except: [:create, :route_not_found]
-    before_filter :check_params, only: :update
-    before_filter :validate_params, only: [:create, :update]
-    before_filter :manipulate_params, only: [:create, :update]
-    before_filter :build_object, only: [:create]
     before_filter :set_user_and_topic_id, only: [:create]
+    before_filter :can_send_user?, :check_lock, only: :create
 
     def create
       if @email.present?
