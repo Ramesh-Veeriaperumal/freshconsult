@@ -1,8 +1,5 @@
 <div class="section colsets">
 	<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
-	<% if(obj.has_section && obj.admin_choices.length != picklistIds.length){ %>
-	<div class="alert m0 mb10" > <%= translate.get('section_type_change') %></div>
-	<% } %>
 	<div name="custom-choices" class="custom-choices" id="custom_choices">
 		<% if(obj.field_type == 'default_status'){%>
 			<div class="status_dropdown">
