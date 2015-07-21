@@ -145,7 +145,7 @@ window.App = window.App || {};
     removeCurrentFolder: function () {
       $('#article-bulk-action #move_to option').each(function (i, x) {
 				if (x.value === $('h2').attr('folder-id')) {
-					x.remove();
+					$(x).remove();
 				}
 			});
     },
