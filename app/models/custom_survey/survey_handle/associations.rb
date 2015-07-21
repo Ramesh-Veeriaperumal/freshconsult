@@ -10,11 +10,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
 
   delegate :portal, :to => :surveyable
 
-  scope :unrated, lambda { |condition| { :conditions => ["rated=false and  
-                                          preview=false and 
-                                          created_at between '#{condition[:start_date]}' and
-                                          '#{condition[:end_date]}'"] } }
-
+  scope :unrated, :conditions => { :rated => false, :preview => false }
   
   scope :agent_filter, lambda { |value| { :conditions => { :agent_id => value } } }
   
