@@ -110,7 +110,9 @@ module TicketFieldsHelper
                          ]
                         ]
 
-    picklist_vals_l1, picklist_vals_l2, picklist_vals_l3 = [], [], []
+    picklist_vals_l1 = []
+    picklist_vals_l2 = []
+    picklist_vals_l3 = []
     field_choices.map(&:first).each_with_index do |l1_val, index1|
       picklist_vals_l1 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                              pickable_type: 'Helpdesk::TicketField',

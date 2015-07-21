@@ -9,8 +9,9 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
         create: 8,
         update: 5,
         index: 2,
-        toggle_timer: 9,
-        destroy: 5
+        toggle_timer: 5,
+        destroy: 5,
+        ticket_time_sheets: 3
       }
 
       ticket = create_ticket
@@ -22,6 +23,10 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
 
       id1 = Helpdesk::TimeSheet.where(workable_id: 1).first.id
       id2 = Helpdesk::TimeSheet.where(workable_id: ticket.display_id).first.id
+
+      # ticket_time_sheets
+      v2[:ticket_time_sheets], v2[:api_ticket_time_sheets] = count_api_queries { get("/api/tickets/#{ticket_id}/time_sheets", nil, @headers) }
+      v1[:ticket_time_sheets] = count_queries { get("/helpdesk/tickets/#{ticket_id}/time_sheets.json", nil, @headers) }
 
       # update
       v2[:update], v2[:api_update] = count_api_queries { put("/api/time_sheets/#{id1}", v2_time_sheet_update_payload, @write_headers) }

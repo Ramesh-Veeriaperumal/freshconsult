@@ -8,12 +8,11 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         create: 1,
         show: 2,
-        update: 5,
+        update: 3,
         index: 7,
         destroy: 5,
         restore: 5,
-        assign: 8,
-        notes: 5
+        assign: 8
       }
 
       # create
@@ -29,10 +28,6 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
 
       create_note(user_id: @agent.id, ticket_id: id1, source: 2)
       create_note(user_id: @agent.id, ticket_id: id2, source: 2)
-      # notes
-      v2[:notes], v2[:api_notes] = count_api_queries { get("/api/tickets/#{id1}/notes", nil, @headers) }
-      v1[:notes] = count_queries { get("/helpdesk/tickets/#{id2}.json", nil, @headers) }
-      # there is no notes method in v1
 
       # update
       v2[:update], v2[:api_update] = count_api_queries { put("/api/tickets/#{id1}", v2_ticket_update_payload, @write_headers) }

@@ -9,7 +9,8 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
         create: 1,
         reply: 1,
         update: 6,
-        destroy: 7
+        destroy: 7,
+        ticket_notes: 4
       }
 
       ticket_id = Helpdesk::Ticket.first.display_id
@@ -19,6 +20,11 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
       id1 = Helpdesk::Note.last(2).first.id
       id2 = Helpdesk::Note.last.id
+
+      # notes
+      v2[:ticket_notes], v2[:api_ticket_notes] = count_api_queries { get("/api/tickets/#{ticket_id}/notes", nil, @headers) }
+      v1[:ticket_notes] = count_queries { get("/helpdesk/tickets/#{ticket_id}.json", nil, @headers) }
+      # there is no notes method in v1
 
       # update
       v2[:update], v2[:api_update] = count_api_queries { put("/api/notes/#{id1}", v2_note_update_payload, @write_headers) }

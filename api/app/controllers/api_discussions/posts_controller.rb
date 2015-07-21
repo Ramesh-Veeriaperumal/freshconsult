@@ -1,6 +1,5 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
-
     before_filter :manipulate_params, only: [:create]
     before_filter :can_send_user?, only: :create
     before_filter :load_object, except: [:create, :route_not_found]

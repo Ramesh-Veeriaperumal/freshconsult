@@ -430,8 +430,8 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_invalid
-      Monitorship.where(monitorable_type: 'Forum', user_id: deleted_user.id, 
-        monitorable_id: f_obj.id).first || monitor_forum(f_obj, deleted_user, 1)
+      Monitorship.where(monitorable_type: 'Forum', user_id: deleted_user.id,
+                        monitorable_id: f_obj.id).first || monitor_forum(f_obj, deleted_user, 1)
       delete :unfollow, construct_params({ id: f_obj.id }, user_id: deleted_user.id)
       assert_response :forbidden
       match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))

@@ -1,6 +1,5 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-
     before_filter :load_object, except: [:create, :index, :route_not_found]
     before_filter :check_params, only: :update
     before_filter :validate_params, only: [:create, :update]

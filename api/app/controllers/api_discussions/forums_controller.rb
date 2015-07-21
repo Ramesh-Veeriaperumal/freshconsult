@@ -1,6 +1,5 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-
     before_filter :can_send_user?, only: [:follow, :unfollow]
     before_filter :load_object, except: [:create, :route_not_found, :is_following]
     before_filter :check_params, only: :update

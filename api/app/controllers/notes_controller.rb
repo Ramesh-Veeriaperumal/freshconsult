@@ -7,7 +7,7 @@ class NotesController < ApiApplicationController
 
   before_filter :can_send_user?, only: [:create, :reply]
   before_filter :load_object, :check_agent_note, only: [:update, :destroy]
-  before_filter :load_ticket, only: [:reply]
+  before_filter :load_ticket, only: [:reply, :ticket_notes]
   before_filter :can_update?, only: [:update]
   before_filter :check_params, only: :update
   before_filter :validate_params, :manipulate_params, only: [:update, :create, :reply]
@@ -37,6 +37,13 @@ class NotesController < ApiApplicationController
   def destroy
     @item.update_attribute(:deleted, true)
     head 204
+  end
+
+  def ticket_notes
+    notes = @ticket.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
+    @items = paginate_items(notes)
+    @items.each { |i| i.send(:load_schema_less_note) }
+    render '/notes/index'
   end
 
   private
