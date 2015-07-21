@@ -86,7 +86,6 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_index
     agent = add_test_agent(@account)
-    group = create_group_with_agents(@account, agent_list: [agent.id])
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(billable: false, company_id: user.customer_id, user_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
     assert_response :success
@@ -95,7 +94,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
     t = create_ticket(requester_id: user.id)
     create_time_sheet(billable: false, ticket_id: t.id, user_id: agent.id, executed_at: 19.days.ago.to_s)
-    get :index, controller_params(billable: false, company_id: user.customer_id, user_id: agent.id, group_id: group.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
+    get :index, controller_params(billable: false, company_id: user.customer_id, user_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -153,11 +152,10 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_params
-    get :index, controller_params(company_id: 't', user_id: 'er', group_id: 'ui', billable: '78', executed_after: '78/34', executed_before: '90/12')
+    get :index, controller_params(company_id: 't', user_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
     pattern = [bad_request_error_pattern('billable', 'not_included', list: 'true,false')]
     pattern << bad_request_error_pattern('user_id', 'is not a number')
     pattern << bad_request_error_pattern('company_id', 'is not a number')
-    pattern << bad_request_error_pattern('group_id', 'is not a number')
     pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
     pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date')
     assert_response :bad_request
@@ -165,10 +163,9 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_model_params
-    get :index, controller_params(company_id: 8989, user_id: 678_567_567, group_id: 7868, billable: true, executed_after: 23.days.ago.to_s, executed_before: 2.days.ago.to_s)
-    pattern = [bad_request_error_pattern('user', "can't be blank")]
-    pattern << bad_request_error_pattern('company', "can't be blank")
-    pattern << bad_request_error_pattern('group', "can't be blank")
+    get :index, controller_params(company_id: 8989, user_id: 678_567_567, billable: true, executed_after: 23.days.ago.to_s, executed_before: 2.days.ago.to_s)
+    pattern = [bad_request_error_pattern('user_id', "can't be blank")]
+    pattern << bad_request_error_pattern('company_id', "can't be blank")
     assert_response :bad_request
     match_json pattern
   end
@@ -182,21 +179,6 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
     create_time_sheet(billable: false)
     get :index, controller_params(billable: false)
-    assert_response :success
-    response = parse_response @response.body
-    assert_equal 1, response.size
-  end
-
-  def test_index_with_group_id
-    user = add_test_agent(@account)
-    group = create_group_with_agents(@account, agent_list: [user.id])
-    get :index, controller_params(group_id: group.id)
-    assert_response :success
-    response = parse_response @response.body
-    assert_equal 0, response.size
-
-    create_time_sheet(user_id: user.id)
-    get :index, controller_params(group_id: group.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -526,7 +508,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, user_id: '7878')
     assert_response :bad_request
-    match_json([bad_request_error_pattern('user', "can't be blank")])
+    match_json([bad_request_error_pattern('user_id', "can't be blank")])
   end
 
   def test_update_date_time_invalid

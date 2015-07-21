@@ -28,7 +28,7 @@ class TimeSheetValidation < ApiValidation
   validates :ticket_id, numericality: true, allow_nil: true,  on: :create
 
   # if ticket_id is not a number, to avoid query, below if condition is used.
-  validate :valid_ticket?, if: -> { errors[:ticket_id].blank? }, on: :create
+  validate :valid_ticket?, if: -> { errors[:ticket_id].blank? && @ticket_id_set }, on: :create
 
   # User specific validations
   # user_id can't be changed in update if timer is running for the user.
@@ -37,7 +37,7 @@ class TimeSheetValidation < ApiValidation
   validates :user_id, numericality: true, allow_nil: true, if: -> { errors[:user_id].blank? }
 
   # if user_id is not a number or not set in update, to avoid query, below if condition is used.
-  validates :user, presence: true,  if: -> { errors[:user_id].blank? && @user_id_set }
+  validate :valid_user?,  if: -> { errors[:user_id].blank? && @user_id_set }
 
   def initialize(request_params, item, timer_running)
     super(request_params, item)
@@ -47,14 +47,18 @@ class TimeSheetValidation < ApiValidation
     @time_spent = request_params['time_spent']
     @start_time = request_params['start_time']
     @timer_running = timer_running
-    @user = Account.current.agents_from_cache.find { |x| x.user_id == user_id } if @user_id_set
-    @ticket = Account.current.tickets.find_by_param(request_params['ticket_id'], Account.current) if @ticket_id_set
   end
 
   private
 
     def valid_ticket?
+      @ticket = Account.current.tickets.find_by_param(request_params['ticket_id'], Account.current)
       errors.add(:ticket_id, :blank) unless @ticket
+    end
+
+    def valid_user?
+      user = Account.current.agents_from_cache.find { |x| x.user_id == @user_id } if @user_id_set
+      errors.add(:user_id, :blank) unless user
     end
 
     def disallow_reset_timer_value
