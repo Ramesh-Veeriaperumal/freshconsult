@@ -6,10 +6,10 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 8,
+        create: 5,
         update: 5,
         index: 2,
-        toggle_timer: 9,
+        toggle_timer: 5,
         destroy: 5
       }
 

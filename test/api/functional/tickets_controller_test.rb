@@ -1292,7 +1292,7 @@ class TicketsControllerTest < ActionController::TestCase
     company = Company.first
     new_company = create_company
     add_new_user(@account, customer_id: new_company.id)
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: new_company.users.map(&:id).first)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(requester_id: new_company.users.map(&:id).first)
     get :index, controller_params(company_id: company.id,
                                   requester_id: User.first.id, filter: 'new_and_my_open')
     assert_response :success
