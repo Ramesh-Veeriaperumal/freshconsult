@@ -64,6 +64,34 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
+  def test_create_with_email_config_id
+    email_config = create_email_config
+    params = { requester_id: requester.id, email_config_id: email_config.id }
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
+  def test_create_with_product_id
+    product = create_product
+    params = { requester_id: requester.id, product_id: product.id }
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params.merge(email_config_id: product.primary_email_config.id), Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
+  def test_create_with_product_id_and_email_config_id
+    product = create_product
+    product_1 = create_product
+    params = { requester_id: requester.id, product_id: product.id, email_config_id: product_1.primary_email_config.id }
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params.merge(product_id: product_1.id), Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
   def test_create_numericality_invalid
     params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     post :create, construct_params({}, params)
@@ -413,6 +441,49 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
+
+   def test_update_with_email_config_id
+    email_config = create_email_config
+    params_hash = { email_config_id: email_config.id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_product_id
+    product = create_product
+    params_hash = { product_id: product.id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.merge(email_config_id: product.primary_email_config.id), t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_product_id_and_diff_email_config_id
+    product = create_product
+    product_1 = create_product
+    params_hash = { product_id: product.id, email_config_id: product_1.primary_email_config.id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.merge(email_config_id: product.primary_email_config.id), t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_product_id_and_same_email_config_id
+    product = create_product
+    email_config = create_email_config(product_id: product.id)
+    params_hash = { product_id: product.id, email_config_id: email_config.id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
 
   def test_update_with_notifying_cc_email
     params_hash = update_ticket_params_hash
@@ -773,6 +844,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('group', "can't be blank"),
                 bad_request_error_pattern('responder', "can't be blank"),
                 bad_request_error_pattern('email_config', "can't be blank"),
+                bad_request_error_pattern('product', "can't be blank"),
                 bad_request_error_pattern('base', "Please give a date & time that is newer than the ticket's created date & time")])
   end
 

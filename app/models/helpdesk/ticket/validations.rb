@@ -11,7 +11,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates :group, presence: true, if: -> { group_id }
   validates :responder, presence: true, if: -> { responder_id }
   validates :email_config, presence: true, if: -> { email_config_id }
-  validates :product, presence: true, if: -> { product_id  && email_config_id.blank? }
+  validates :product, presence: true, if: -> { product_id  && email_config_id.blank? }, on: :create
+  validates :product, presence: true, if: -> { product_id }, on: :update
 
   validate on: :create do |ticket|
     req = ticket.requester
