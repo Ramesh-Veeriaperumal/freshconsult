@@ -6,7 +6,7 @@
 		<b>The draft version of the article
 		<%= link_to "\"#{@draft[:title]}\"", 
 					solution_article_url(@article.id, :host => @host)%>
-		 was discarded by <%= link_to(@user.name, contact_url(@user.id, :host => @host)) %> on <%= formated_date(Time.now.utc) %> .
+		 was discarded by <%= link_to(@user.name, contact_url(@user.id, :host => @host)) %> on <%= Time.zone.now.strftime("%a, %d %b %Y at %H:%M %p") %> .
 	</div>
 
 	<div class="forum_content">
