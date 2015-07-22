@@ -7,7 +7,8 @@ REPORT_COLORS = {
     'alternateBG'   : "#F4FBFF",
     'miniActive'    : "#333333",
     'miniAlt'       : "#555555",
-    'series_colors' : ['#1387C2', '#80B447']
+    'series_colors' : ['#1387C2', '#80B447'],
+    'borderColor'   : 'rgba(0,0,0,0)'
 }
 
 COLUMN_SERIES = {
@@ -115,7 +116,7 @@ function columnChart(opts) {
         chart: {
             renderTo: opts['renderTo'],
             type: 'column',
-            borderColor: 'rgba(0,0,0,0)',
+            borderColor: REPORT_COLORS['borderColor'],
             plotBackgroundColor: REPORT_COLORS['plotBG'],
             backgroundColor: REPORT_COLORS['plotBG'],
             height: 350,
@@ -148,7 +149,8 @@ function columnChart(opts) {
                 style: {
                     fontSize: '12px',
                     color: REPORT_COLORS['title']
-                }
+                },
+                margin: 15
             },
             labels: {
                 overflow: 'justify',
@@ -213,7 +215,7 @@ function columnChart(opts) {
         series: opts['chartData'],
         legend: {
             borderWidth: 0,
-            style: {
+            itemStyle: {
                 bottom: 0,
                 top: 'auto',
                 fontWeight: 'normal'
@@ -238,7 +240,7 @@ function lineChart(opts) {
         chart: {
             renderTo: opts['renderTo'],
             type: 'line',
-            borderColor: 'rgba(0,0,0,0)',
+            borderColor: REPORT_COLORS['borderColor'],
             plotBackgroundColor: REPORT_COLORS['plotBG'],
             backgroundColor: REPORT_COLORS['plotBG'],
             height: 300,
@@ -265,7 +267,8 @@ function lineChart(opts) {
                 style: {
                     fontSize: '13px',
                     color: REPORT_COLORS['title']
-                }
+                },
+                margin: 15
             },
             tickLength: 0,
             minorTickLength: 0,
@@ -287,7 +290,8 @@ function lineChart(opts) {
                 style: {
                     fontSize: '13px',
                     color: REPORT_COLORS['title']
-                }
+                },
+                margin: 15
             },
             labels: {
                 overflow: 'justify',
@@ -349,13 +353,14 @@ function lineChart(opts) {
         series: opts['chartData'],
         legend: {
             borderWidth: 0,
-            style: {
+            itemStyle: {
                 bottom: 0,
                 top: 'auto',
                 fontWeight: 'normal'
             },
             verticalAlign: 'bottom',
-            floating: false
+            floating: false,
+            itemDistance: 50
         }
     });
 }

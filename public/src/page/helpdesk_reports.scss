@@ -136,7 +136,7 @@
 	}
 	.comparision-chart-subtitle{
 		padding: 10px 0;
-		color: #333;
+		color: #999;
 		font-size: 13px;
 	}
 	.chart-title{
@@ -387,21 +387,23 @@
 .charts_container{
 	margin: 25px 0 40px;
 	min-height: 300px;
-	text-align: center;
 	.mini-chart{
-		display: inline-block;
-		width: 11em;
+		@include float(left);
+		width: 13.3%;
+		width: calc(100%/7);
 		cursor: pointer;
-		border-bottom: solid 1px #ebebeb;
-		border-top: solid 1px #ebebeb;
-		border-left: solid 1px #ebebeb;
-		:last-child{
-			border-right: solid 1px #ebebeb;
-		}
+		border: 1px solid #ebebeb;
+	  	@include border-right-width(0);
+	  	@include box-sizing(border-box);
+	  	&:last-child{
+			@include border-right-width(1px);
+	  	}
 	}
 	.mini-chart-wrapper{
-		@include margin-left(65px); 
-  		width: 79.4em;
+		@include padding-left(77px);
+		@include padding-right(10px);
+		@include box-sizing(border-box);
+  		width: 100%;
 	}
 }
 
