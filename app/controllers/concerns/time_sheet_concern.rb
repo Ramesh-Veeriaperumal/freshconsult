@@ -1,4 +1,4 @@
-module TimeSheetConcern
+module Concerns::TimeSheetConcern
   extend ActiveSupport::Concern
 
   private

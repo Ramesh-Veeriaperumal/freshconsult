@@ -1,6 +1,7 @@
 class ApiTicketFieldsController < ApiApplicationController
-  before_filter :validate_params, only: [:index]
-  before_filter :load_objects, only: [:index]
+
+  skip_before_filter :load_objects
+  before_filter :validate_params, :load_objects, only: [:index]
 
   private
 

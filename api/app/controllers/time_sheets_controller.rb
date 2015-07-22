@@ -1,15 +1,10 @@
 class TimeSheetsController < ApiApplicationController
-  include TimeSheetConcern
+  include Concerns::TimeSheetConcern
 
-  before_filter :load_object, only: [:destroy, :update, :toggle_timer]
+  skip_before_filter :load_object, only: :ticket_time_sheets
   before_filter :load_ticket, only: [:ticket_time_sheets]
-  before_filter :check_params, only: :update
-  before_filter :validate_params, only: [:create, :update]
   before_filter :validate_filter_params, only: [:index]
   before_filter :validate_toggle_params, only: [:toggle_timer]
-  before_filter :manipulate_params, only: [:create, :update]
-  before_filter :build_object, only: [:create]
-  before_filter :load_objects, only: [:index]
 
   def index
     load_objects(time_sheet_filter.includes(:workable))
