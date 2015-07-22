@@ -16,3 +16,5 @@ AssetSync.configure do |config|
   # config.fail_silently = true
   config.run_on_precompile = false
 end
+
+assetSyncConfig = YAML::load_file(File.join(Rails.root, 'config', 'asset_sync.yml'))[Rails.env]
