@@ -73,8 +73,8 @@ Helpkit::Application.configure do
 
   # Need to set records for assets1..10.freshdesk.com
   config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
-    asset_host_url = "https://d1k77w8c6z6pel.cloudfront.net"
-    asset_host_url = "http://assets%d.freshdesk.com" % (rand(9)+1) if request && !request.ssl?
+    asset_host_url = assetSyncConfig['asset_host_url_https']
+    asset_host_url = assetSyncConfig['asset_host_url_http'] % (rand(9)+1) if request && !request.ssl?
     asset_host_url
   }
 
