@@ -10,7 +10,7 @@ module Solution::NavmenuHelper
       next if category[:is_default]
       op << %(<li class="cm-sb-cat-item">)
       op << %(<i class="forum_expand"></i>) unless category[:folders].blank?
-      op << pjax_link_to(category[:name], solution_category_path(:id => category[:id]), {
+      op << pjax_link_to(category[:name].truncate(35), solution_category_path(:id => category[:id]), {
                   :"data-category-id" => category[:id],
                   :id => "sb-solutions-category-#{category[:id]}"
                 })
@@ -26,7 +26,7 @@ module Solution::NavmenuHelper
     folders.each do |folder|
       next if folder[:is_default]
       op << %( <li class="forum_list_item" id="#{folder[:id]}_folder"> )
-      op << pjax_link_to( "#{folder[:name]} (#{folder[:article_count]})",
+      op << pjax_link_to( "#{folder[:name].truncate(30)} (#{folder[:article_count]})",
                           solution_folder_path(:id => folder[:id]), {
                             :"data-folder-id" => folder[:id],
                             :"data-category-id" => category_id,
