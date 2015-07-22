@@ -16,3 +16,8 @@ AssetSync.configure do |config|
   # config.fail_silently = true
   config.run_on_precompile = false
 end
+
+assetSyncConfig = YAML::load_file(File.join(Rails.root, 'config', 'asset_sync.yml'))[Rails.env]
+
+$asset_sync_http_url = assetSyncConfig['asset_host_url_http']
+$asset_sync_https_url = assetSyncConfig['asset_host_url_https'] 

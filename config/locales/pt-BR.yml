@@ -4505,7 +4505,7 @@ pt-BR:
           private_note: "%{user_name} adicionou uma anotação privada <abbr data-livestamp='%{timestamp}'></abbr>(%{note_date})"
           public_note: "%{user_name} adicionou uma anotação pública <abbr data-livestamp='%{timestamp}'></abbr>(%{note_date})"
           phone_note: "%{user_name} adicionou uma conversa telefônica <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
-          reply: "%{user_name} respondeu <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} respondeu a <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} encaminhou <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} avaliou este ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: "Editar anotação"

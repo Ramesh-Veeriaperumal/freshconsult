@@ -377,7 +377,7 @@ HelpdeskReports.CoreUtil = {
             type: 'POST',
             dataType: 'html',
             contentType: 'application/json',
-            data: JSON.stringify(params),
+            data: Browser.stringify(params),
             success: function (data) {
                 jQuery('.reports-container').html(data);
                 jQuery('#loading-box').hide();
@@ -396,7 +396,7 @@ HelpdeskReports.CoreUtil = {
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify(params),
+            data: Browser.stringify(params),
             success: function (data) {
                 _this.appendTicketList(data);
             },
