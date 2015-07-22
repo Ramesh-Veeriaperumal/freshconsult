@@ -9,7 +9,8 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category_with_folders, :only => [:show]
 
   def index
-    @categories = current_portal.solution_categories
+    include_assoc = (current_account.launched?(:meta_read) ? :folders_through_meta : :folders)
+    @categories = current_portal.solution_categories.includes(include_assoc)
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb

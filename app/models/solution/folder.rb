@@ -20,7 +20,7 @@ class Solution::Folder < ActiveRecord::Base
   after_commit :set_mobihelp_solution_updated_time
 
   default_scope proc {
-    Account.current.launched?(:meta_read) ? joins(:solution_folder_meta) : unscoped
+    Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped
   }
   
   scope :alphabetical, :order => 'name ASC'

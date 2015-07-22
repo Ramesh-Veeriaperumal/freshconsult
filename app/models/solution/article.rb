@@ -45,7 +45,7 @@ class Solution::Article < ActiveRecord::Base
   validates_numericality_of :user_id
 
   default_scope proc {
-    Account.current.launched?(:meta_read) ? joins(:solution_article_meta) : unscoped
+    Account.current.launched?(:meta_read) ? joins(:solution_article_meta).preload(:solution_article_meta) : unscoped
   }
  
   scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
