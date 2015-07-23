@@ -25,5 +25,5 @@ class Portal < ActiveRecord::Base
 		:order => "portal_solution_categories.position",
 		:conditions => proc { "solution_categories.language_id = '#{Language.for_current_account.id}'" }
 
-	include Solution::MetaAssociationSwitcher
+	include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 end

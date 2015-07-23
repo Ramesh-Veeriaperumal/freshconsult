@@ -168,8 +168,9 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def solution_category_ids
-    account.launched?(:meta_read) ? solution_categories_with_metum_ids : super
+    account.launched?(:meta_read) ? solution_categories_through_metum_ids : super
   end
 
   private
@@ -178,6 +179,7 @@ class Portal < ActiveRecord::Base
       account.all_users.update_all(:language => account.language) unless account.features.multi_language?
     end
 
+    ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
       Resque.enqueue(Workers::Community::HandleLanguageChange, { :account_id => account.id })
     end

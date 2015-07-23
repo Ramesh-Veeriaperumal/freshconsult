@@ -13,5 +13,5 @@ class Mobihelp::App < ActiveRecord::Base
 		:through => :solution_category_meta,
 		:source => :solution_categories
 
-	include Solution::MetaAssociationSwitcher
+	include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 end

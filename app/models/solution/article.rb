@@ -11,7 +11,7 @@ class Solution::Article < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
-  include Solution::MetaAssociationSwitcher
+  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
   include Mobile::Actions::Article
   include Solution::Constants
@@ -44,6 +44,7 @@ class Solution::Article < ActiveRecord::Base
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_article_meta).preload(:solution_article_meta) : unscoped
   }
@@ -59,6 +60,8 @@ class Solution::Article < ActiveRecord::Base
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
 
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.articles_for_portal_conditions(portal)
     { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
         portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
@@ -66,6 +69,7 @@ class Solution::Article < ActiveRecord::Base
       :order => ['solution_folders.id', "solution_articles.position"] }
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.articles_for_portal_conditions_through_meta(portal)
     { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
           portal.portal_solution_categories.map(&:solution_category_meta_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
@@ -74,6 +78,7 @@ class Solution::Article < ActiveRecord::Base
       }
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.articles_for_portal_conditions_with_association(portal)
     if Account.current.launched?(:meta_read)
       self.articles_for_portal_conditions_through_meta(portal)
@@ -82,6 +87,7 @@ class Solution::Article < ActiveRecord::Base
     end
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   class << self
     alias_method_chain :articles_for_portal_conditions, :association
   end

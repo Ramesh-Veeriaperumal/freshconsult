@@ -30,7 +30,7 @@ class Solution::Category < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
-  include Solution::MetaAssociationSwitcher
+  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'
@@ -60,9 +60,15 @@ class Solution::Category < ActiveRecord::Base
   end
 
   def assign_portal
+    ### MULTILINGUAL SOLUTIONS - META READ HACK!! - Need to verify once
     portal_solution_category = self.portal_solution_categories.build(:solution_category_id => self.id)
     portal_solution_category.portal_id = account.main_portal.id
     portal_solution_category.save
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def portal_ids
+    account.launched?(:meta_read) ? portals_through_metum_ids : super
   end
    
   private 

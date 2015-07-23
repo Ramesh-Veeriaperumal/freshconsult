@@ -9,6 +9,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category_with_folders, :only => [:show]
 
   def index
+    ### MULTILINGUAL SOLUTIONS - META READ HACK!!
     include_assoc = (current_account.launched?(:meta_read) ? :folders_through_meta : :folders)
     @categories = current_portal.solution_categories.includes(include_assoc)
 

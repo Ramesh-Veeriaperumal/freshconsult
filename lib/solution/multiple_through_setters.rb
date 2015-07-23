@@ -1,3 +1,4 @@
+### MULTILINGUAL SOLUTIONS - META READ HACK!!
 module Solution::MultipleThroughSetters
 
 	def new(attributes={})

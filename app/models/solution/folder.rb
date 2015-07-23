@@ -19,6 +19,7 @@ class Solution::Folder < ActiveRecord::Base
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped
   }
@@ -34,7 +35,7 @@ class Solution::Folder < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
-  include Solution::MetaAssociationSwitcher
+  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    
@@ -62,6 +63,7 @@ class Solution::Folder < ActiveRecord::Base
     end
   end
   
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   scope :visible, lambda {|user| visibility_hash(user) }
 
   # scope :visible, lambda {|user| {
@@ -71,6 +73,7 @@ class Solution::Folder < ActiveRecord::Base
   #                               # solution_customer_folders.account_id = solution_folders.account_id",
   #                   :conditions => visiblity_condition(user) } }
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.visibility_hash(user)
     {
       :order => "position",
@@ -78,6 +81,7 @@ class Solution::Folder < ActiveRecord::Base
     }
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.visibility_hash_through_meta(user)
     {
       :joins => :solution_folder_meta,
@@ -86,6 +90,7 @@ class Solution::Folder < ActiveRecord::Base
     }
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.visibility_hash_with_association(user)
     if Account.current.launched?(:meta_read)
       visibility_hash_through_meta(user)
@@ -94,6 +99,7 @@ class Solution::Folder < ActiveRecord::Base
     end
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   class << self
     alias_method_chain :visibility_hash, :association
   end

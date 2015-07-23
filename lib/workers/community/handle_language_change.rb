@@ -1,3 +1,4 @@
+### MULTILINGUAL SOLUTIONS - META READ HACK!!
 class Workers::Community::HandleLanguageChange
 	extend Resque::AroundPerform
 
