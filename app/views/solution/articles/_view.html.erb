@@ -1,15 +1,8 @@
 <div class="article-view">
   <div class="row-fluid article-title">
-  <div class="span10">
-    <h3 class="lead" id="current-article-title"><%= @current_item.title %></h3>
-  </div>
-    <% if privilege?(:publish_solution) %>
-      <% unless @article.draft.present? && @article.draft.locked? %>
-    	  <div class="span2 pull-right pagination-right header_buttons align-right">
-    	    <a href="javascript:void(0)" class="btn btn-primary article-edit-btn"><%= t('edit') %></a>
-    	  </div>
-      <% end %>
-    <% end %>
+    <div class="span10">
+      <h3 class="lead" id="current-article-title"><%= @current_item.title %></h3>
+    </div>
   </div>
   <div class="article-content" id="current-article-description"><%= @current_item.description.html_safe %></div>
 

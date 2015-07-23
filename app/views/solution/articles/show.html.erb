@@ -12,6 +12,13 @@
 	<% end %>
 	<% content_for :sticky_right do %>
 	  <%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
+	  <% if privilege?(:publish_solution) %>
+      <% unless @article.draft.present? && @article.draft.locked? %>
+    	  <div class="span2 pull-right pagination-right header_buttons align-right">
+    	    <a href="javascript:void(0)" class="btn btn-primary article-edit-btn"><%= t('edit') %></a>
+    	  </div>
+      <% end %>
+    <% end %>
 	<% end %>
 	<%= render :partial => '/solution/shared/sticky', 
 						 :locals => { :page => :article, :sticky_class => 'article-sticky'} %>

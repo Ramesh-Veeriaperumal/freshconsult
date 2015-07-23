@@ -73,6 +73,7 @@ window.App = window.App || {};
 		
 		toggleViews: function () {
 			$('.article-edit, .article-view').toggleClass('hide');
+      $('.article-edit-btn').toggleClass('hide');
 		},
     
     startEditing: function () {
