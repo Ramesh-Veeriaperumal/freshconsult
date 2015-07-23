@@ -15,7 +15,7 @@
 			<%= f.text_area :description, :rows => 7 %>
 		</div>
 	</div>
-	<% if @category.new_record? && current_account.portals.count>1 %>
+	<% if current_account.portals.count>1 %>
 		<div class="control-group">
 			<label class="control-label"><%= t("solution_category.product_portal_visibility").html_safe %></label>
 			<div class="controls">

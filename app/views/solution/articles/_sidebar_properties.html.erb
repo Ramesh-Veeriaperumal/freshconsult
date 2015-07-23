@@ -40,7 +40,7 @@
 		</div>
 		<div class="folder-name section">
 			<h5 class="leads"><%= t('solution.folders.folder_form.category') %>:</h5>
-			<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id), {:title => "#{t('solution.folders.folder_form.category')} - #{@article.folder.category.name}" } %>
+			<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id) %>
 			<p class="muted">
 				<% if @article.folder.category.portals.present? %>
 					<%= t('solution_category.product_portal_visibility') %> <%= @article.folder.category.portals.map(&:name).join(", ") %>
@@ -51,7 +51,7 @@
 		</div>
 		<div class="folder-name section">
 			<h5 class="leads"><%= t('solution.folder') %>:</h5>
-			<%= pjax_link_to @article.folder.name, solution_folder_path(@article.folder_id), {:title => "#{t('solution.folder')} - #{@article.folder.name}" } %>
+			<%= pjax_link_to @article.folder.name, solution_folder_path(@article.folder_id) %>
 			<p class="muted">
 				<%= t('forum.visible_to') %> <%= company_visibility_tooltip(@article.folder) %>
 			</p>

@@ -28,6 +28,7 @@ window.App.Solutions = window.App.Solutions || {};
 				$this.bindSortable();
 				$this.classToggle();
 				$this.hideSearch();
+				$this.disableBulkAction();
 			});
 		},
 
@@ -68,6 +69,7 @@ window.App.Solutions = window.App.Solutions || {};
 					success: function () {
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
 						$this.showSearch();
+						$this.enableBulkAction();
 						// App.Discussions.Sidebar.reload();
 						$('body').trigger('afterReorder');
 					}
@@ -86,6 +88,7 @@ window.App.Solutions = window.App.Solutions || {};
 				$('.comm-items ul').sortable("destroy");
 				$this.classToggle();
 				$this.showSearch();
+				$this.enableBulkAction();
 			});
 		},
 
@@ -104,6 +107,14 @@ window.App.Solutions = window.App.Solutions || {};
 		hideSearch: function () {
 			$('#search-show').hide();
 			App.Solutions.SearchConfig.hideSearch();
+		},
+
+		disableBulkAction: function () {
+			$('#fa_item-select-all').prop('disabled', true);
+		},
+
+		enableBulkAction: function () {
+			$('#fa_item-select-all').prop('disabled', false);
 		},
 
 		leave: function () {

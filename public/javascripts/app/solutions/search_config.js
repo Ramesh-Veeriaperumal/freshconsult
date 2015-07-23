@@ -39,6 +39,8 @@ window.App.Solutions = window.App.Solutions || {};
       $('#sticky_search_wrap').addClass('search-ani');
       $('#sticky_header').addClass('search-open');
       $('.community-search').focus();
+      $('#cm-sb-solutions-toggle').hide()
+      $('#fa_item-select-all').prop('disabled', true);
     },
 
     hideSearch: function () {
@@ -48,6 +50,8 @@ window.App.Solutions = window.App.Solutions || {};
       $('.community-search').val('');
       $('.solution-list').show();
       $('.sticky_title').show();
+      $('#cm-sb-solutions-toggle').show()
+      $('#fa_item-select-all').prop('disabled', false);
     },
 
     searchCallback: function (data) {

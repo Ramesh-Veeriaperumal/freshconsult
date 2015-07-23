@@ -290,6 +290,7 @@
   padding-top: 16px;
   .article-content{
     margin-top: 15px;
+    margin-bottom: 15px;
   }
 }
 /*Solution overlay tab customization*/
@@ -353,7 +354,8 @@
 .article-edit{
   .editor-body{
     /*margin: 0px -15px;*/
-    width:95%;
+    width:100%;
+    box-sizing: border-box;
     float: left;
     min-height: 220px;
     .redactor_box{
@@ -485,7 +487,7 @@
 	}
 
   width: 200px !important;
-  border-top: 1px solid #0080FF;
+  border: 1px solid rgba(0,0,0,0.3);
   margin-top: 3px;
   border-radius: 5px;
 }
@@ -502,6 +504,7 @@
 
   &:not(.disabled):not(.select2-dropdown-open) a{
     border: 1px solid #666666;
+    border-color: rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -547,6 +550,10 @@
     .sol-visibility {
       margin:3px 0px 0px 15px;
     }
+  }
+
+  .list-default-btns, .list-reorder-btns {
+    margin-top : 10px;
   }
 }
 
@@ -789,7 +796,7 @@
     .cat-title-border {
       font-size: 15px;
       border-top: 1px solid #DDDCDC;
-      padding-top: 25px;
+      padding-top: 15px;
       margin-top: 0px;
       margin-bottom: 5px;
       font-weight: 500;
@@ -936,6 +943,9 @@ body.community #sticky_header.category-sticky.is_stuck {
 
 .article-edit textarea {
   z-index: 5;
+  box-sizing: border-box;
+  padding: 10px;
+  border: solid 1px #EEE;
 }
 
 .solution-icon {
@@ -986,4 +996,8 @@ body.community #sticky_header.category-sticky.is_stuck {
 
 .author-dropdown {
   width: 200px;
+}
+
+.article-view .attachment_wrapper {
+  border-top: 1px solid #eee;
 }

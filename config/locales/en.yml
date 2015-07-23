@@ -2631,7 +2631,7 @@ en:
     types:
       permanent: Permanent
       workaround: Workaround
-    search_all: Search All Solutions
+    search_all: Search Articles
     search_in: "Search in %{search_scope}"
     drafts:
       empty: There are no drafts here.
@@ -7336,7 +7336,8 @@ en:
         hits:
           one: "1 view"
           other: "%{count} views"
-          zero: "None"
+          zero: "No Views"
+        no_votes: "No Votes"
         vote_info:
           ideas:
             one: "%{count} Person likes this Idea"

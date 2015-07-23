@@ -35,13 +35,11 @@
 			<p class="leads span2"><%= t('solution.general.analytics') %></p>
 		</div>
 		<div class="section">
-			<% if @article.hits > 0 %>
-				<h5 class="leads"><%= t('solution.articles.views') %></h5>
-				<p>
-					<%= font_icon :"file-visible" %> 
-					<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
-				</p>
-			<% end %>
+			<h5 class="leads"><%= t('solution.articles.views') %></h5>
+			<div class="<%= 'muted' unless @article.hits > 0 %>">
+				<%= font_icon :"file-visible" if @article.hits > 0 %>
+				<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
+			</div>
 
 			<br/>
 			<h5 class="leads"><%= t('solution.articles.votes') %></h5>
