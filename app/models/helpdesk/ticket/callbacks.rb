@@ -89,7 +89,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_sender_email
     assign_sender_email
-    schema_less_ticket.save
+    
+    # save only if there are any changes. unnecessary transaction is avoided.
+    schema_less_ticket.save if schema_less_ticket.changed?
   end
 
   def update_ticket_states 
@@ -98,6 +100,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_states.first_assigned_at = Time.zone.now
     end
     if @model_changes.key?(:status)
+      # OPTIMIZE
+      # assign already loaded object.
+      ticket_states.tickets = self
       if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
@@ -118,7 +123,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
         ticket_states.sla_timer_stopped_at = nil
       end
     end    
-    ticket_states.save
+
+    # save only if there are any changes. unnecessary transaction is avoided.
+    ticket_states.save if ticket_states.changed?
   end
 
   def refresh_display_id #by Shan temp
@@ -404,7 +411,9 @@ private
 
   def load_ticket_status
     if !self.new_record? && status_changed?
-      self.ticket_status = account.ticket_status_values.find_by_status_id(status)
+      # OPTIMIZE
+      # read it from cache
+      self.ticket_status = Helpdesk::TicketStatus.all_statuses_from_cache(account).find {|x| x.status_id == status }
     end
   end
 
@@ -511,7 +520,9 @@ private
   end
 
   def publish_to_update_channel
-    return unless account.features?(:agent_collision)
+    # OPTIMIZE
+    # features_included?(*) can be used instead of features?
+    return unless account.features_included?(:agent_collision)
     agent_name = User.current ? User.current.name : ""
     message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id, 
                                                   :ticket_id => self.id, 
@@ -559,7 +570,9 @@ private
   end
 
   def previous_state_was_sla_stop_state?
-    account.ticket_statuses.find_by_status_id(@model_changes[:status][0]).stop_sla_timer? 
+    # OPTIMIZE
+    # read it from cache
+    Helpdesk::TicketStatus.all_statuses_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer? 
   end
 
   def update_ticket_state_sla_timer
@@ -582,7 +595,9 @@ private
 
   def report_regenerate_fields
     regenerate_fields = [:deleted, :spam,:responder_id]
-    if account.features?(:report_field_regenerate)
+    # OPTIMIZE
+    # features_included?(*) can be used instead of features?
+    if account.features_included?(:report_field_regenerate)
       regenerate_fields.concat([:source, :ticket_type, :group_id, :priority])
       #account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
     end
