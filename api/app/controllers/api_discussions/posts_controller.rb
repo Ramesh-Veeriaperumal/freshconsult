@@ -1,7 +1,5 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
-    before_filter :set_user_and_topic_id, only: [:create]
-    before_filter :can_send_user?, :check_lock, only: :create
 
     def create
       if @email.present?
@@ -15,6 +13,16 @@ module ApiDiscussions
     end
 
     private
+
+      def before_validation
+        can_send_user?
+      end
+
+      def build_object
+        super
+        set_user_and_topic_id
+        check_lock 
+      end
 
       def feature_name
         FeatureConstants::DISCUSSION
@@ -46,7 +54,7 @@ module ApiDiscussions
       end
 
       def check_lock
-        if params[cname][:user_id] || @email # email is removed from params, as it is not a model attr.
+        if params[cname][:user_id] || params[cname][:email] # email is removed from params, as it is not a model attr.
           locked = @item.topic.try(:locked?)
           if locked # if topic is locked, a customer cannot post.
             customer = @user.try(:is_customer)

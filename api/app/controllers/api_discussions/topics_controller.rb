@@ -1,14 +1,9 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
-    skip_before_filter :check_privilege, only: [:show]
-    skip_before_filter :load_object, only: [:followed_by, :create, :index, :is_following]
-    include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
-    before_filter :portal_check, only: [:show]
-    before_filter :can_send_user?, only: [:create, :follow, :unfollow]
-    before_filter :set_forum_id, only: [:create, :update]
+    include DiscussionMonitorConcern
 
     def create
-      post = @item.posts.build(params[cname].delete_if { |x| !(DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x) })
       assign_user_and_parent post, :topic, @item
       super
     end
@@ -31,6 +26,19 @@ module ApiDiscussions
     end
 
     private
+
+      def load_object
+        return if is_following? || followed_by?
+        super
+      end
+
+      def check_privilege
+        show? ? portal_check : super
+      end
+
+      def before_validation
+        can_send_user? 
+      end
 
       def feature_name
         FeatureConstants::DISCUSSION
@@ -69,7 +77,7 @@ module ApiDiscussions
         access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
       end
 
-      def set_forum_id
+      def assign_protected
         assign_user_and_parent @item, :forum_id, params[cname]
       end
 

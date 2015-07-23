@@ -7,8 +7,8 @@ json.cache! [controller_name, action_name, @item] do # ticket caching
 
   json.set! :ticket_id, @item.display_id
   json.set! :type, @item.ticket_type
-  json.set! :to_emails, @item.schema_less_ticket.to_emails
-  json.set! :product_id, @item.schema_less_ticket.product_id
+  json.set! :to_emails, @item.schema_less_ticket.try(:to_emails)
+  json.set! :product_id, @item.schema_less_ticket.try(:product_id)
 
   json.set! :deleted, @item.deleted.to_s.to_bool if @item.deleted
 

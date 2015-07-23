@@ -1,14 +1,14 @@
 module DiscussionMonitorConcern
   extend ActiveSupport::Concern
   included do
-    before_filter :permit_toggle_params, only: [:follow, :unfollow]
-    before_filter :fetch_monitorship, only: [:follow]
-    before_filter :allow_monitor?, :validate_user_id, only: [:followed_by, :is_following]
-    before_filter :fetch_active_monitorship_for_user, only: [:is_following]
+    before_filter :validate_toggle_params, only: [:follow, :unfollow]
+    before_filter :can_send_user?, only: [:followed_by, :is_following, :follow, :unfollow]
+    before_filter :validate_follow_params, only: [:followed_by, :is_following]
     before_filter :find_monitorship, only: [:unfollow]
   end
 
   def follow
+    fetch_monitorship
     if skip_update || @monitorship.update_attributes(active: true, portal_id: current_portal.id)
       head 204
     else
@@ -25,6 +25,7 @@ module DiscussionMonitorConcern
   end
 
   def is_following
+    fetch_active_monitorship_for_user
     if @monitorship
       head 204
     else
@@ -33,6 +34,10 @@ module DiscussionMonitorConcern
   end
 
   private
+
+    def before_load_object
+      can_send_user? if follow? || unfollow?
+    end
 
     def skip_update
       @monitorship.active? && @monitorship.portal_id == current_portal.id
@@ -58,13 +63,13 @@ module DiscussionMonitorConcern
         params[:user_id], params[:id], cname.capitalize, true)
     end
 
-    def permit_toggle_params
+    def validate_toggle_params
       toggle_params = [(:user_id if privilege?(:manage_users))]
       params[cname].permit(*toggle_params)
       validate params[cname]
     end
 
-    def validate_user_id
+    def validate_follow_params
       fields = "DiscussionConstants::#{action_name.upcase}_FIELDS".constantize
       params.permit(*fields, *ApiConstants::DEFAULT_PARAMS)
       validate params
@@ -76,7 +81,29 @@ module DiscussionMonitorConcern
       render_error monitor.errors unless monitor.valid?
     end
 
-    def allow_monitor?
-      render_request_error(:access_denied, 403, id: params[:user_id]) unless params[:user_id].blank? || params[:user_id] == current_user.id || privilege?(:manage_forums)
+    def can_send_user?
+      if followed_by? || is_following?
+        if params[:user_id].present? && params[:user_id] != current_user.id && !privilege?(:manage_forums)
+          render_request_error(:access_denied, 403, id: params[:user_id])
+        end
+      else
+        super
+      end
+    end
+
+    def is_following?
+      @is_following ||= action_name == 'is_following'
+    end
+
+    def follow?
+      @follow ||= action_name == 'follow'
+    end
+
+    def unfollow?
+      @unfollow ||= action_name == 'unfollow'
+    end
+
+    def followed_by?
+      @followed_by ||= action_name == 'followed_by'
     end
 end

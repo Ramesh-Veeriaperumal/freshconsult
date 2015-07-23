@@ -1,10 +1,6 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
-
-    skip_before_filter :load_object, only: [:create, :is_following]
     include DiscussionMonitorConcern
-    before_filter :set_account_and_category_id, only: [:create, :update]
-    before_filter :can_send_user?, only: [:follow, :unfollow]
 
     def topics
       @topics = paginate_items(load_association)
@@ -18,6 +14,11 @@ module ApiDiscussions
     end
 
     private
+
+      def load_object
+        return if is_following?
+        super
+      end
 
       def feature_name
         FeatureConstants::DISCUSSION
@@ -36,7 +37,7 @@ module ApiDiscussions
         params[cname][:customer_forums_attributes] = { customer_id: customers }
       end
 
-      def set_account_and_category_id
+      def assign_protected
         @item.account_id ||= current_account.id
         @item.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']
       end

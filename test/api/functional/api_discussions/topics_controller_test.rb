@@ -129,7 +129,6 @@ module ApiDiscussions
     end
 
     def test_before_filters_show
-      @controller.expects(:check_privilege).never
       @controller.expects(:portal_check).once
       get :show, construct_params(id: 1)
     end
@@ -301,14 +300,11 @@ module ApiDiscussions
 
     def test_create_without_manage_users_privilege
       user = other_user
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(false).once
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', email: user.email)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('email', 'invalid_field')])
+      assert_response :forbidden
+      match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
     end
 
     def test_create_without_edit_topic_privilege
@@ -316,7 +312,6 @@ module ApiDiscussions
       controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(true).once
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', sticky: true)
       assert_response :bad_request

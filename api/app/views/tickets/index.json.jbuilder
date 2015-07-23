@@ -8,8 +8,8 @@ json.array! @items do |tkt|
 
     json.(tkt, :description, :description_html, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email)
 
-    json.set! :to_emails, tkt.schema_less_ticket.to_emails
-    json.set! :product_id, tkt.schema_less_ticket.product_id
+    json.set! :to_emails, tkt.schema_less_ticket.try(:to_emails)
+    json.set! :product_id, tkt.schema_less_ticket.try(:product_id)
     json.set! :ticket_id, tkt.display_id
     json.set! :type, tkt.ticket_type
 

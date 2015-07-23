@@ -5,22 +5,12 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
-  before_filter :validate_show_params, only: [:show]
-  before_filter :assign_protected, only: [:create, :update]
-  before_filter :verify_ticket_permission, only: [:update, :show]
   before_filter :ticket_permission?, only: [:destroy, :assign]
-  before_filter :restrict_params, only: [:assign, :restore]
-  skip_before_filter :load_objects, only: [:index]
-  before_filter :validate_filter_params, only: [:index]
-
-  def index
-    load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,
-                                                 :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
-    @items.each(&:api_load_schema_less_ticket)
-  end
+  before_filter :validate_action_params, only: [:assign, :restore]
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
+    assign_protected
     if @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
@@ -32,6 +22,7 @@ class TicketsController < ApiApplicationController
   end
 
   def update
+    assign_protected
     if @item.update_ticket_attributes(params[cname])
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
@@ -63,11 +54,19 @@ class TicketsController < ApiApplicationController
 
   def show
     @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE) if params[:include] == 'notes'
-    @notes.each { |i| i.send(:load_schema_less_note) }
     super
   end
 
   private
+
+    def load_objects
+      super tickets_filter(scoper).includes(:ticket_old_body,
+                                                   :schema_less_ticket, { flexifield: :flexifield_def })
+    end
+
+    def after_load_object
+      verify_ticket_permission if show? || update?
+    end
 
     def ticket_notes
       # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
@@ -109,11 +108,11 @@ class TicketsController < ApiApplicationController
       current_account.tickets
     end
 
-    def restrict_params
+    def validate_action_params
       params[cname].permit(*("ApiTicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
     end
 
-    def validate_show_params
+    def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
         errors = [[:include, ["can't be blank"]]]
@@ -165,7 +164,7 @@ class TicketsController < ApiApplicationController
 
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
-      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.trashed
+      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.try(:trashed)
     end
 
     def ticket_permission?
@@ -200,6 +199,6 @@ class TicketsController < ApiApplicationController
       condition = 'display_id = ? '
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
       @item = scoper.where(condition, params[:id]).first
-      @item ? @item.api_load_schema_less_ticket : head(:not_found)
+      head(:not_found) unless @item
     end
 end

@@ -29,19 +29,22 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name if feature_name}
   skip_before_filter :check_privilege, only: [:route_not_found]
-  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :before_load_object, :load_object, :after_load_object, except: [:create, :index, :route_not_found]
   before_filter :check_params, only: :update
+  before_filter :before_validation, only: [:create]
   before_filter :validate_params, only: [:create, :update]
   before_filter :manipulate_params, only: [:create, :update]
   before_filter :build_object, only: [:create]
-  before_filter :load_objects, only: [:index]
   before_filter :load_association, only: [:show]
+  before_filter :validate_filter_params, only: [:index]
+  before_filter :validate_url_params, only: [:show]
 
   def index
-    # load_objects will load all objects and index.json.jbuilder will render the result.
+    load_objects
   end
 
   def create
+    assign_protected
     if @item.save
       render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
@@ -55,6 +58,7 @@ class ApiApplicationController < MetalApiController
   end
 
   def update
+    assign_protected
     unless @item.update_attributes(params[cname])
       set_custom_errors # this will set @error_options if necessary.
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
@@ -91,6 +95,18 @@ class ApiApplicationController < MetalApiController
 
   private
 
+    def before_validation
+    end
+
+    def assign_protected
+    end
+
+    def validate_filter_params
+    end
+
+    def validate_url_params
+    end
+
     def feature_name
     end
 
@@ -121,13 +137,16 @@ class ApiApplicationController < MetalApiController
 
     def can_send_user? # if user_id or email of a user, is included in params, the current_user should have ability to assume that user.
       user_id = params[cname][:user_id]
-      if user_id || @email
-        @user = current_account.all_users.find_by_email(@email) if @email # should use user_for_email instead of find_by_email
+      email = params[cname][:email]
+      if user_id || email
+        @user = current_account.all_users.find_by_email(email) if email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
         if @user && @user != current_user && !is_allowed_to_assume?(@user)
           render_request_error(:invalid_user, 403, id: @user.id, name: @user.name)
+          return false
         end
       end
+      return true          
     end
 
     def set_cache_buster
@@ -195,11 +214,17 @@ class ApiApplicationController < MetalApiController
       end
     end
 
-    def load_object
-      @item = scoper.find_by_id(params[:id])
+    def load_object(items = scoper)
+      @item = items.find_by_id(params[:id])
       unless @item
         head :not_found # Do we need to put message inside response body for 404?
       end
+    end
+
+    def before_load_object
+    end
+
+    def after_load_object
     end
 
     def build_object
@@ -249,10 +274,18 @@ class ApiApplicationController < MetalApiController
     end
 
     def update?
-      @update ||= action_name.to_s == 'update'
+      @update ||= action_name == 'update'
     end
 
     def create?
-      @create ||= action_name.to_s == 'create'
+      @create ||= action_name == 'create'
+    end
+
+    def show?
+      @show ||= action_name == 'show'
+    end
+
+    def destroy?
+      @destroy ||= action_name == 'destroy'
     end
 end

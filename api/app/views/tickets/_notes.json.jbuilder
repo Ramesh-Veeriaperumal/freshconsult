@@ -9,7 +9,7 @@ json.set! :notes, @notes do |note|
     json.partial! 'shared/boolean_format', boolean_fields: { incoming: note.incoming, private: note.private }
     json.partial! 'shared/utc_date_format', item: note
 
-    json.set! :notified_to, note.schema_less_note.to_emails
+    json.set! :notified_to, note.schema_less_note.try(:to_emails)
   end
   json.set! :attachments do
     json.array! note.attachments do |att|
