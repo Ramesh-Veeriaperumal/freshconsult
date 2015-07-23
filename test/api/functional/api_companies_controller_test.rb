@@ -18,16 +18,20 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     destroy_custom_fields
   end
 
+  def domain_array
+    [Faker::Lorem.characters(6), Faker::Lorem.characters(5)]
+  end
+
   def test_create_company
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                       domains: Faker::Lorem.characters(6) + ',' + Faker::Lorem.characters(5), note: Faker::Lorem.characters(10))
+                                       domains: domain_array, note: Faker::Lorem.characters(10))
     assert_response :created
     match_json(company_pattern(Company.last))
   end
 
   def test_create_company_with_custom_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                       domains: Faker::Lorem.characters(6) + ',' + Faker::Lorem.characters(5), note: Faker::Lorem.characters(10),
+                                       domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'cf_linetext' => 'test123' })
     assert_response :created
     match_json(company_pattern(Company.last))
@@ -41,23 +45,22 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_create_company_without_name
     post :create, construct_params({}, description: Faker::Lorem.paragraph,
-                                       domains: Faker::Lorem.characters(6) + ',' + Faker::Lorem.characters(5))
+                                       domains: domain_array)
     assert_response :bad_request
     match_json([bad_request_error_pattern('name', 'missing_field')])
   end
 
   def test_create_company_with_wrong_format
     post :create, construct_params({}, name: Faker::Number.number(10).to_i, description: Faker::Number.number(10).to_i,
-                                       domains: Faker::Number.number(10).to_i)
+                                       domains: domain_array)
     assert_response :bad_request
     match_json([bad_request_error_pattern('name', 'data_type_mismatch', data_type: 'String'),
-                bad_request_error_pattern('description', 'data_type_mismatch', data_type: 'String'),
-                bad_request_error_pattern('domains', 'data_type_mismatch', data_type: 'String')])
+                bad_request_error_pattern('description', 'data_type_mismatch', data_type: 'String')])
   end
 
   def test_create_company_with_invalid_custom_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                       domains: Faker::Lorem.characters(6) + ',' + Faker::Lorem.characters(5), note: Faker::Lorem.characters(10),
+                                       domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'cf_invalid' => Faker::Lorem.characters(10) })
     assert_response :bad_request
     match_json([bad_request_error_pattern('cf_invalid', 'invalid_field')])
@@ -67,7 +70,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)
     put :update, construct_params({ id: company.id }, name: name, description: Faker::Lorem.paragraph,
-                                                      note: Faker::Lorem.characters(5), domains: Faker::Lorem.characters(8),
+                                                      note: Faker::Lorem.characters(5), domains: domain_array,
                                                       custom_fields: { 'cf_linetext' => Faker::Lorem.characters(10) })
     assert_response :success
     match_json(company_pattern({ name => name }, company.reload))
@@ -76,7 +79,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_update_company_with_blank_name
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, name: '', description: Faker::Lorem.paragraph,
-                                                      note: Faker::Lorem.characters(10), domains: Faker::Lorem.characters(10),
+                                                      note: Faker::Lorem.characters(10), domains: domain_array,
                                                       custom_fields: { 'cf_linetext' => Faker::Lorem.characters(10) })
     assert_response :bad_request
     match_json([bad_request_error_pattern('name', "can't be blank")])
@@ -84,7 +87,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_company_with_invalid_id
     put :update, construct_params({ id: Faker::Number.number(7).to_i }, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                                                        note: Faker::Lorem.characters(10), domains: Faker::Lorem.characters(10),
+                                                                        note: Faker::Lorem.characters(10), domains: domain_array,
                                                                         custom_fields: { 'cf_linetext' => Faker::Lorem.characters(10) })
     assert_equal ' ', @response.body
     assert_response :missing
@@ -93,17 +96,16 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_update_company_with_invalid_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id:  company.id }, name: Faker::Number.number(10).to_i, description: Faker::Number.number(10).to_i,
-                                                       domains: Faker::Number.number(10).to_i)
+                                                       domains: domain_array)
     assert_response :bad_request
     match_json([bad_request_error_pattern('name', 'data_type_mismatch', data_type: 'String'),
-                bad_request_error_pattern('description', 'data_type_mismatch', data_type: 'String'),
-                bad_request_error_pattern('domains', 'data_type_mismatch', data_type: 'String')])
+                bad_request_error_pattern('description', 'data_type_mismatch', data_type: 'String')])
   end
 
   def test_update_company_with_invalid_custom_field
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, name: Faker::Lorem.characters(10),
-                                                      note: Faker::Lorem.characters(10), domains: Faker::Lorem.characters(10),
+                                                      note: Faker::Lorem.characters(10), domains: domain_array,
                                                       custom_fields: { 'cf_invalid' => Faker::Lorem.characters(10) })
     assert_response :bad_request
     match_json([bad_request_error_pattern('cf_invalid', 'invalid_field')])
@@ -165,7 +167,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
   end
 
-  def test_forums_with_pagination_exceeds_limit
+  def test_company_with_pagination_exceeds_limit
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
@@ -173,6 +175,27 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     assert_response :success
     assert JSON.parse(response.body).count == 2
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+  end
+
+  def test_create_companies_with_invalid_domains
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: Faker::Lorem.characters(10).to_i, note: Faker::Lorem.characters(10))
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('domains', 'data_type_mismatch', data_type: 'Array')])
+  end
+
+  def test_create_companies_with_empty_domains
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: [], note: Faker::Lorem.characters(10))
+    assert_response :created
+    match_json(company_pattern(Company.last))
+  end
+
+  def test_update_companies_with_invalid_domains_value
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: [Faker::Lorem.characters(10).to_i, Faker::Lorem.characters(10)], note: Faker::Lorem.characters(10))
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('domains', 'data_type_mismatch', data_type: 'String')])
   end
 
   def clear_contact_field_cache

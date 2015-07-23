@@ -196,7 +196,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
   end
 
-  def test_forums_with_pagination_exceeds_limit
+  def test_groups_with_pagination_exceeds_limit
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)

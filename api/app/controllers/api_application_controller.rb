@@ -236,11 +236,15 @@ class ApiApplicationController < MetalApiController
       render_request_error(:account_suspended, 403) unless current_account.active?
     end
 
+    def current_action?(action)
+      action_name.to_s == action
+    end
+
     def update?
-      action_name.to_s == 'update'
+      current_action?('update')
     end
 
     def create?
-      action_name.to_s == 'create'
+      current_action?('create')
     end
 end

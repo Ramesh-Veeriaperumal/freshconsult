@@ -1,16 +1,11 @@
 class ApiCompaniesController < ApiApplicationController
   before_filter :set_required_fields, only: [:create, :update]
   before_filter :set_validatable_custom_fields, only: [:create, :update]
-  skip_before_filter :load_objects, only: [:index]
-
-  def index
-    load_objects scoper.includes(:flexifield)
-  end
 
   private
 
     def scoper
-      current_account.companies
+      current_action?('index') ? current_account.companies.includes(:flexifield) : current_account.companies
     end
 
     def validate_params
@@ -23,6 +18,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def manipulate_params
+      params[cname][:domains] = params[cname][:domains].join(',') unless params[cname][:domains].nil?
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
 

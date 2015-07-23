@@ -156,7 +156,7 @@ module JsonPattern
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
-  def ticket_pattern_with_notes(expected_output = {}, ticket)
+  def ticket_pattern_with_notes(_expected_output = {}, ticket)
     ticket_pattern(ticket).merge(notes: Array)
   end
 
@@ -383,13 +383,14 @@ module JsonPattern
   end
 
   def company_pattern(expected_output = {}, company)
+    domains = company.domains.nil? ? nil : company.domains.split(',')
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
     {
       id: Fixnum,
       name: expected_output[:name] || company.name,
       description: company.description,
-      domains: company.domains,
+      domains: domains,
       note: company.note,
       custom_fields: company.custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -402,16 +403,12 @@ module JsonPattern
     expected_output[:ignore_updated_at] ||= true
     {
       id: Fixnum,
-      account_id: company_field.account_id,
-      company_form_id: company_field.company_form_id,
       name: company_field.name,
-      column_name: company_field.column_name,
+      default: company_field.default_field?,
       label: company_field.label,
       field_type: company_field.field_type,
       position: company_field.position,
-      deleted: company_field.deleted,
       required_for_agent: company_field.required_for_agent,
-      field_options: company_field.field_options,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

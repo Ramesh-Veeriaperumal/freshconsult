@@ -177,6 +177,10 @@ class Company < ActiveRecord::Base
     @custom_field_aliases ||= custom_form.custom_company_fields.map(&:name)
   end
 
+  def api_domains
+    domains.split(',') unless domains.nil?
+  end
+
   private
     def map_contacts_on_update
       domain_changes = self.changes["domains"].compact
