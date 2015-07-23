@@ -60,6 +60,6 @@ module RabbitMq::Constants
     "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag"
   ]
 
-  REPORTS_NOTE_KEYS = ["id", "source", "user_id", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
+  REPORTS_NOTE_KEYS = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
   
 end
