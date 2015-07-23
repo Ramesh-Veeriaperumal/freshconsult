@@ -556,6 +556,7 @@
 	.section-delete, .section-disabled-delete{
 		position:relative;
 		@include border-left(1px solid #eee);
+		@include border-top-left-radius(0);
 	}
 	.section-title	{	 
 		vertical-align: middle;
@@ -594,15 +595,14 @@
 		font-size: $default-font-size;
 	}
 	.section-body{
-		min-height:50px;
-		padding:10px;
+		min-height:82px;
+		padding:20px 10px;
 		display: inline-block;
 		width:100%;
 		@include box-sizing(border-box); 
 		margin-top: 10px;
-		box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-		// padding-top: 45px;
-		border-radius: 3px;
+		@include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.1));
+		border-radius: 0 0 3px 3px;
 		background-color: #fff;
 		.custom-field{
 			padding-right: 5px;
@@ -618,18 +618,19 @@
   			}
 		}
 		.section-empty{
-			font-size: 20px;
+			font-size: 13px;
+			display:none;
 			text-align: center;
-			color: peru;
+			color: #aaa;
 			margin: 0 auto;
 			@include float(left);
 			width:100%;
-			padding:10px;
 			@include box-sizing(border-box); 
 			i{
-				font-size: 42px;
 				vertical-align: middle;
 				@include margin-right(10px);
+				display:block;
+				padding-bottom:5px;
 			}
 		}
 	}

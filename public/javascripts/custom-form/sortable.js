@@ -18,6 +18,13 @@
       if(typeof customStart == "function") {
         customStart(e, ui);
       }
+      //Have to change as soon as possible
+      jQuery('#custom-field-form .section-body').each(function (e) {
+          if ($(this).children(':visible').length == 0) {
+            jQuery(this).find('.section-empty').show();
+          }
+      });
+
       $(e.target).closest('ul').addClass('sort-started');
     }
 
@@ -50,6 +57,7 @@
         customStop(e, ui);
       }
 
+      $('.section-empty').hide();
       copyHelper && copyHelper.remove();
       $(e.target).closest('ul').removeClass('sort-started');
     }

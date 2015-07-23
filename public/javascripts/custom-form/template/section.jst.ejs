@@ -2,5 +2,8 @@
 	<%=JST['custom-form/template/section_header']({obj : obj, types : types}) %>
 </div>
 <ul class="section-body">
-	<!-- <div class="section-empty"><i class="ficon-notice-o fsize-20"></i>Drop Something Here.</div> -->
+	<div class="section-empty">
+		<i class="ficon-arrow-down-2 fsize-20"></i>
+		<%= translate.get('empty_section_info') %>
+	</div>
 </ul>

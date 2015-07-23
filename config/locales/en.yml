@@ -262,6 +262,7 @@ en:
     insert_field: Drag & Drop Field
     drag_drop_field_intro: Drag and drop any field type into the "%{name}" form below to add a new custom field
     number: Number
+    empty_section_info: Drop field here
     text: Single Line Text
     paragraph: Multi Line Text
     checkbox: Checkbox

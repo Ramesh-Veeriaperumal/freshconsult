@@ -410,6 +410,7 @@
 
             revert: true,
 
+            distance: 5,
             start: $.proxy(function(ev, ui) {    
                 this.sortSender = ui.item.parents().first();
             }, this),
