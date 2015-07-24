@@ -1,7 +1,5 @@
 # Used for updating the company for tickets in reports
-class Workers::Reports::UpdateTicketsCompany
-  
-  include Sidekiq::Worker
+class Reports::UpdateTicketsCompany < BaseWorker
   
   sidekiq_options :queue => :update_tickets_company, :retry => 0, :backtrace => true, :failures => :exhausted
 

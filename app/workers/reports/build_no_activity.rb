@@ -1,11 +1,8 @@
-class Workers::Reports::BuildNoActivity
-  
-  include Sidekiq::Worker
+class Reports::BuildNoActivity < BaseWorker
   
   sidekiq_options :queue => :reports_no_activity, :retry => 0, :backtrace => true, :failures => :exhausted
   
   include Helpdesk::Ticketfields::TicketStatus
-  
   
   def perform(args)
     args.symbolize_keys!

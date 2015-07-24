@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
         "company_id" => @all_changes[:customer_id] 
       }
     }
-    Workers::Reports::UpdateTicketsCompany.perform_async(args)
+    Reports::UpdateTicketsCompany.perform_async(args)
   end
 
   protected
