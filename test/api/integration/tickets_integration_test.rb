@@ -15,13 +15,17 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         assign: 7
       }
 
+      # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
+      create_v2_payload = v2_ticket_payload
+      create_v1_payload = v1_ticket_payload
+
       # create
       v2[:create], v2[:api_create] = count_api_queries do
-        post('/api/tickets', v2_ticket_payload, @write_headers)
+        post('/api/tickets', create_v2_payload, @write_headers)
         assert_response :created
       end
       v1[:create] = count_queries do
-        post('/helpdesk/tickets.json', v1_ticket_payload, @write_headers)
+        post('/helpdesk/tickets.json', create_v1_payload, @write_headers)
         assert_response :success
       end
 
