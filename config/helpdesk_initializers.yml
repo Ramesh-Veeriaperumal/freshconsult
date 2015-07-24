@@ -63,5 +63,6 @@ helpdesk:
     - statsd_config
     - big_brother
     - integrations
+    - autopilot_config
 
 
