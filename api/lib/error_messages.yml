@@ -27,6 +27,9 @@ list is invalid: List has invalid values '%{list}'
 is not a valid email: Should be a valid email address
 not_a_valid_email: Should be a valid email address
 Should be a valid Hash: Should be a key/value pair
+not_part_of_group: Should be part of a given group
+max_count_exceeded: List has execeeded maximum count of %{max_count}
+user_blocked: has been blocked. No more tickets are allowed to be created for this user
 "Should be a valid ActionDispatch::Http::UploadedFile": invalid_format
 requester_id_mandatory: One of requester_id or phone or email or twitter_id or facebook_id is mandatory
 phone_mandatory: Should not be blank if phone is only given

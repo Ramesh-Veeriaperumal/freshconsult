@@ -1,6 +1,5 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
-
     def create
       if @email.present?
         @item.user = @user
@@ -21,14 +20,14 @@ module ApiDiscussions
       def build_object
         super
         set_user_and_topic_id
-        check_lock 
+        check_lock
       end
 
       def feature_name
         FeatureConstants::DISCUSSION
       end
 
-      def set_custom_errors
+      def set_custom_errors(_item = @item)
         ErrorHelper.rename_error_fields({ topic: :topic_id, user: ParamsHelper.get_user_param(@email) }, @item)
       end
 

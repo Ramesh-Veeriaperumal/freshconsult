@@ -1,5 +1,4 @@
 class ApiBusinessCalendarsController < ApiApplicationController
-
   private
 
     def feature_name

@@ -6,50 +6,102 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 1,
+        create: 4,
         show: 3,
-        update: 4,
+        update: 8,
         index: 6,
         destroy: 5,
         restore: 5,
-        assign: 8
+        assign: 7
       }
 
       # create
-      v2[:create], v2[:api_create] = count_api_queries { post('/api/tickets', v2_ticket_payload, @write_headers) }
-      v1[:create] = count_queries { post('/helpdesk/tickets.json', v1_ticket_payload, @write_headers) }
+      v2[:create], v2[:api_create] = count_api_queries do
+        post('/api/tickets', v2_ticket_payload, @write_headers)
+        assert_response :created
+      end
+      v1[:create] = count_queries do
+        post('/helpdesk/tickets.json', v1_ticket_payload, @write_headers)
+        assert_response :success
+      end
+
+      # 3 queries that will be part of new validations added to ticket validator for api. Hence substracting it.
+      v2[:create] -= 3
 
       id1 = Helpdesk::Ticket.last(2).first.display_id
       id2 = Helpdesk::Ticket.last.display_id
 
       # show
-      v2[:show], v2[:api_show] = count_api_queries { get("/api/tickets/#{id1}", nil, @headers) }
-      v1[:show] = count_queries { get("/helpdesk/tickets/#{id2}.json", nil, @headers) }
+      v2[:show], v2[:api_show] = count_api_queries do
+        get("/api/tickets/#{id1}", nil, @headers)
+        assert_response :success
+      end
+      v1[:show] = count_queries do
+        get("/helpdesk/tickets/#{id2}.json", nil, @headers)
+        assert_response :success
+      end
 
       create_note(user_id: @agent.id, ticket_id: id1, source: 2)
       create_note(user_id: @agent.id, ticket_id: id2, source: 2)
 
       # update
-      v2[:update], v2[:api_update] = count_api_queries { put("/api/tickets/#{id1}", v2_ticket_update_payload, @write_headers) }
-      v1[:update] = count_queries { put("/helpdesk/tickets/#{id2}.json", v1_update_ticket_payload, @write_headers) }
+      v2[:update], v2[:api_update] = count_api_queries do
+        put("/api/tickets/#{id1}", v2_ticket_update_payload, @write_headers)
+        assert_response :success
+      end
+      v1[:update] = count_queries do
+        put("/helpdesk/tickets/#{id2}.json", v1_update_ticket_payload, @write_headers)
+        assert_response :success
+      end
       # 12 queries that will be avoided while caching. Hence subtracting it.
       v2[:update] -= 12
+      # 3 queries that will be part of new validations added to ticket validator for api. Hence substracting it.
+      v2[:update] -= 3
 
       # assign
-      v2[:assign], v2[:api_assign] = count_api_queries { put("/api/tickets/#{id1}/assign", { user_id: @agent.id }.to_json, @write_headers) }
-      v1[:assign] = count_queries { put("/helpdesk/tickets/#{id2}/assign.json", { 'responder_id' => @agent.id }.to_json, @write_headers) }
+      v2[:assign], v2[:api_assign] = count_api_queries do
+        put("/api/tickets/#{id1}/assign", { user_id: @agent.id }.to_json, @write_headers)
+        assert_response :success
+      end
+      v1[:assign] = count_queries do
+        put("/helpdesk/tickets/#{id2}/assign.json", { 'responder_id' => @agent.id }.to_json, @write_headers)
+        assert_response :success
+      end
 
       # index
-      v2[:index], v2[:api_index] = count_api_queries { get('/api/tickets', nil, @headers) }
-      v1[:index] = count_queries { get('/helpdesk/tickets.json', nil, @headers) }
+      v2[:index], v2[:api_index] = count_api_queries do
+        get('/api/tickets', nil, @headers)
+        assert_response :success
+      end
+      v1[:index] = count_queries do
+        get('/helpdesk/tickets.json', nil, @headers)
+        assert_response :success
+      end
 
       # destroy
-      v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/tickets/#{id1}", nil, @headers) }
-      v1[:destroy] = count_queries { delete("/helpdesk/tickets/#{id2}.json", nil, @headers) }
+      v2[:destroy], v2[:api_destroy] = count_api_queries do
+        delete("/api/tickets/#{id1}", nil, @headers)
+        assert_response :success
+      end
+      v1[:destroy] = count_queries do
+        delete("/helpdesk/tickets/#{id2}.json", nil, @headers)
+        assert_response :success
+      end
 
       # restore
-      v2[:restore], v2[:api_restore] = count_api_queries { put("/api/tickets/#{id1}/restore", {}.to_json, @write_headers) }
-      v1[:restore] = count_queries { put("/helpdesk/tickets/#{id2}/restore.json", {}.to_json, @write_headers) }
+      v2[:restore], v2[:api_restore] = count_api_queries do
+        put("/api/tickets/#{id1}/restore", {}.to_json, @write_headers)
+        assert_response :success
+      end
+      v1[:restore] = count_queries do
+        put("/helpdesk/tickets/#{id2}/restore.json", {}.to_json, @write_headers)
+        assert_response :success
+      end
+
+      v1.keys.each do |key|
+        api_key = "api_#{key}".to_sym
+        Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
+      end
 
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym

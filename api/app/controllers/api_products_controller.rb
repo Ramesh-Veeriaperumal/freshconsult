@@ -1,5 +1,4 @@
 class ApiProductsController < ApiApplicationController
-
   private
 
     def scoper

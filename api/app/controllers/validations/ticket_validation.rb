@@ -31,6 +31,8 @@ class TicketValidation < ApiValidation
 
   validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
+  validate :due_by_validation, if: -> { due_by && errors[:due_by].blank? }
+  validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
   def initialize(request_params, item)
     @request_params = request_params
@@ -51,6 +53,17 @@ class TicketValidation < ApiValidation
 
   def email_required? # Email required if twitter_id/fb_profile_id/phone/requester_id is blank.
     email.present? && twitter_id.blank? && facebook_id.blank? && phone.blank? && requester_id.blank?
+  end
+
+  def due_by_validation
+    errors.add(:due_by, 'start_time_lt_now') if due_by < (@item.try(:created_at) || Time.zone.now)
+  end
+
+  def cc_emails_max_count
+    if cc_emails.count > TicketConstants::MAX_EMAIL_COUNT
+      errors.add(:cc_emails, 'max_count_exceeded')
+      (error_options ||= {}).merge!(cc_emails: { max_count: "#{TicketConstants::MAX_EMAIL_COUNT}" })
+    end
   end
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.

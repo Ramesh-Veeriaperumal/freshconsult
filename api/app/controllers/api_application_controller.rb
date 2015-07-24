@@ -27,7 +27,7 @@ class ApiApplicationController < MetalApiController
   include SubscriptionSystem
   # App specific Before filters Ends
 
-  before_filter { |c| c.requires_feature feature_name if feature_name}
+  before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
   before_filter :before_load_object, :load_object, :after_load_object, except: [:create, :index, :route_not_found]
   before_filter :check_params, only: :update
@@ -131,7 +131,7 @@ class ApiApplicationController < MetalApiController
       @current_user
     end
 
-    def set_custom_errors
+    def set_custom_errors(_item = @item)
       # This is used to manipulate the model errors to a format that is acceptable.
     end
 
@@ -146,7 +146,7 @@ class ApiApplicationController < MetalApiController
           return false
         end
       end
-      return true          
+      true
     end
 
     def set_cache_buster
@@ -198,7 +198,7 @@ class ApiApplicationController < MetalApiController
       if params[:per_page].blank?
         ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
       else
-       [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
+        [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
       end
     end
 

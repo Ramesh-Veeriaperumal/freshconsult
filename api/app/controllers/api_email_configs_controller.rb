@@ -1,5 +1,4 @@
 class ApiEmailConfigsController < ApiApplicationController
-
   private
 
     def scoper

@@ -1,5 +1,4 @@
 class ApiTicketFieldsController < ApiApplicationController
-
   private
 
     def validate_filter_params

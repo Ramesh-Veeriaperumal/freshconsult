@@ -48,7 +48,7 @@ module ApiDiscussions
         render_error forum_val.errors, forum_val.error_options unless forum_val.valid?
       end
 
-      def set_custom_errors
+      def set_custom_errors(_item = @item)
         bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
         @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
         @error_options = { remove: :customer_forums, customers: { list: "#{bad_customer_ids.join(', ')}" } }

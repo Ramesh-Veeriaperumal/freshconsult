@@ -11,22 +11,30 @@ class TicketsController < ApiApplicationController
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     assign_protected
-    if @item.save_ticket
+    validator = TicketValidator.new(@item)
+    if !validator.valid?
+      render_error(validator.errors)
+    elsif @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
-                                        product: :product_id }, @item)
+      set_custom_errors
       render_error(@item.errors)
     end
   end
 
   def update
     assign_protected
-    if @item.update_ticket_attributes(params[cname])
+    @item.assign_attributes(params[cname])
+    validator = TicketValidator.new(@item)
+    if !validator.valid?
+      set_custom_errors(validator)
+      render_error(validator.errors)
+    elsif @item.update_ticket_attributes(params[cname])
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
+      set_custom_errors
       render_error(@item.errors)
     end
   end
@@ -59,9 +67,14 @@ class TicketsController < ApiApplicationController
 
   private
 
+    def set_custom_erros(item = @item)
+      ErrorHelper.rename_error_fields({ group: :group_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
+                                        product: :product_id }, item)
+    end
+
     def load_objects
       super tickets_filter(scoper).includes(:ticket_old_body,
-                                                   :schema_less_ticket, { flexifield: :flexifield_def })
+                                            :schema_less_ticket, flexifield: :flexifield_def)
     end
 
     def after_load_object

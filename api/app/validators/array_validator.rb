@@ -18,6 +18,7 @@ class ArrayValidator < ActiveModel::EachValidator
   end
 
   private
+
     def get_validator_class(validator_class_name)
       validator_class_name.constantize
     rescue NameError

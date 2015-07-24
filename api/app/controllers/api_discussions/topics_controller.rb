@@ -37,7 +37,7 @@ module ApiDiscussions
       end
 
       def before_validation
-        can_send_user? 
+        can_send_user?
       end
 
       def feature_name
@@ -48,7 +48,7 @@ module ApiDiscussions
         @posts = @item.posts
       end
 
-      def set_custom_errors
+      def set_custom_errors(_item = @item)
         @error_options = { remove: :posts }
         ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @item)
       end

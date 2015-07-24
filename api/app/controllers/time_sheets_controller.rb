@@ -53,7 +53,7 @@ class TimeSheetsController < ApiApplicationController
 
     def load_object
       if ticket_time_sheets?
-      # Load only non deleted ticket.
+        # Load only non deleted ticket.
         @ticket = current_account.tickets.find_by_display_id_and_deleted(params[:ticket_id], false)
         head 404 unless @ticket
       else

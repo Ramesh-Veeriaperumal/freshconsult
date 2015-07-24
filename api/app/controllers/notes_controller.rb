@@ -13,7 +13,7 @@ class NotesController < ApiApplicationController
   end
 
   def reply
-    return unless validate_params 
+    return unless validate_params
     manipulate_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
@@ -46,7 +46,7 @@ class NotesController < ApiApplicationController
 
     def after_load_object
       check_agent_note if update? || destroy?
-      can_update? if update? 
+      can_update? if update?
     end
 
     def create_solution_article
@@ -130,10 +130,10 @@ class NotesController < ApiApplicationController
     end
 
     def reply?
-      @reply ||= action_name == "reply"
+      @reply ||= action_name == 'reply'
     end
 
     def ticket_notes?
-      @ticket_notes ||= action_name == "ticket_notes"
+      @ticket_notes ||= action_name == 'ticket_notes'
     end
 end
