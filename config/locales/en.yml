@@ -276,6 +276,7 @@ en:
     regex: Regex
     email: Email
     nested_field: Nested Fields
+    drag_and_drop_field: Drag & Drop Field
   ticket_fields:
     fields:
       source: Source

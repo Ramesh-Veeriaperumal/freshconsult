@@ -14,7 +14,7 @@
     <%#= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => ContactField } %>
     <div class="field-picker">
       <div class='field-info-wrapper'>
-        <%= content_tag(:h3, t("drag_and_drop_field"), :class => "title") %> 
+        <%= content_tag(:h3, t("custom_fields.drag_and_drop_field"), :class => "title") %> 
         <ul id="custom-fields" class="custom-fields"> 
           <% Helpdesk::TicketField::CUSTOM_FIELD_PROPS.each do |field, details| %>
             <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" 
