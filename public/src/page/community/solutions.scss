@@ -534,11 +534,17 @@
   .action-btns-bar {
     padding: 20px 0px;
     .delete-icon {
-      padding-left: 20px;
-      color: #777;
+      margin-left: 20px;
+      color: #444;
+      &:hover {
+        color: #000;
+      }
     }
     a [class*="ficon-"] {
-      color: #777;
+      color: #444;
+      &:hover {
+        color: #000;
+      }
     }
   }
   .category-details {

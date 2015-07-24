@@ -22,11 +22,12 @@
 				<%= link_to( font_icon(:edit, {:size => 23}), 
 							edit_solution_category_path(@category),
 							:rel => "freshdialog",
-							:title => t('solution_category.edit'),
+							:class => "tooltip",
+							:title => t('solutions.edit'),
 							"data-target" => "#category-edit",
 							"data-close-label" => t('cancel'),
 							"data-submit-label" => t('save') ) %>
-				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o fsize-23 delete-icon', :text => ''}) %>
+				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '', :title => t('solutions.delete') }) %>
 			</div>
 		<% end %>
 		<div class="category-details span7">

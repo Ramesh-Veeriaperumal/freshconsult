@@ -2637,6 +2637,8 @@ en:
       empty: There are no drafts here.
       discard: Discard
       publish: Publish
+    delete: "Delete"
+    edit: "Edit"
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
