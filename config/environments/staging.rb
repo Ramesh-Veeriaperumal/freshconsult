@@ -56,8 +56,8 @@ Helpkit::Application.configure do
   end
   if defined?(PhusionPassenger)
     config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
-      asset_host_url = assetSyncConfig['asset_host_url_https'] 
-      asset_host_url = assetSyncConfig['asset_host_url_http'] % (rand(9)+1) if request && !request.ssl?
+      asset_host_url = $asset_sync_https_url
+      asset_host_url = $asset_sync_http_url % (rand(9)+1) if request && !request.ssl?
       asset_host_url
     }
   end

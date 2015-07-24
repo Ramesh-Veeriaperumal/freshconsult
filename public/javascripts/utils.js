@@ -982,10 +982,10 @@ function hashTabSelect(){
   if(window.location.hash != '') {
     hash = window.location.hash.split('/');
     jQuery.each(hash, function(index, value){
-      setTimeout(function(){
+      setTimeout(function(){ 
         catchException(function(){
-          jQuery(value + "-tab").trigger('click')
-        }, "Error in File globalinit.js");
+          jQuery('#Pagearea').find(value + "-tab").trigger('click')
+        }, "Error in method hashTabSelect");
       }, ((index+1)*10) )
     })
   }

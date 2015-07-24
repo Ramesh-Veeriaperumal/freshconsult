@@ -14,6 +14,7 @@ helpdesk:
     - aws/dynamo
     - aws/sns
     - aws/sqs
+    - aws/swf
     - aws_forums
     - belongs_to_account
     - chat_config
@@ -25,6 +26,7 @@ helpdesk:
     - facebook_config
     - global_phone
     - gnip_config
+    - helpdesk_reports/reports_app_config
     - i18n
     - inflections
     - klout_config

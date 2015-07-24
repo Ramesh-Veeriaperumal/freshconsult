@@ -9,9 +9,11 @@ module Mobile::Controllers::Ticket
     fields = []
     all_fields = current_portal.ticket_fields if current_user.agent?
     all_fields.each do |field|
+      next if field.section_field?
       if field.visible_in_view_form? || is_new
         field_value = item.send(field.field_name) unless item.nil?
         dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+        dom_type = "dropdown_blank" if field.field_type == "nested_field"
         if(field.field_type == "nested_field" && !item.nil?)
           field_value = {}
           field.nested_levels.each do |ff|

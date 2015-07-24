@@ -23,7 +23,7 @@
             (_tree.getSubcategoryList(_category.val())).each(function(pair){
               _items_present = true;
               $("<option />")
-                .html(pair.key)
+                .html(pair.value.id)
                 .val(pair.key)
                 .appendTo(_subcategory);
             });
@@ -65,7 +65,7 @@
               (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
                 _items_present = true;
                 $("<option />")
-                  .html(pair.key)
+                  .html(pair.value.id)
                   .val(pair.key)
                   .appendTo(_item);
               });

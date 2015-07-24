@@ -114,11 +114,12 @@ RSpec.describe Freshfone::CallController do
     set_twilio_signature('freshfone/call/status', status_params)
     set_active_call_in_redis({:answered_on_mobile => true})
     status_call = create_call_for_status
-    
+    stub_twilio_queues
     post :status, status_params
     freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
     xml.should be_eql({:Response => nil})
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
 
   it 'should populate call details for normal end call' do  
@@ -148,7 +149,7 @@ RSpec.describe Freshfone::CallController do
     setup_batch
     post :status, status_params.merge({:batch_call => true, :outgoing => "false", "DialCallStatus" => 'busy'}) 
     tear_down BATCH_KEY
-    xml[:Response][:Dial][:Client].should be_eql(@dummy_users.map{|u| u.id.to_s}.reverse)
+    (xml[:Response][:Dial][:Client].sort).should be_eql(@dummy_users.map{|u| u.id.to_s}.sort)
   end
 
   it 'should clear any batch key for non batched calls' do

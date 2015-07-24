@@ -460,6 +460,12 @@ span.fb_add
 	}
 }
 
+// Fonticons used in Custom Form
+
+.#{$font-class}phone_number{ @extend .#{$font-class}freshfone; }
+
+.#{$font-class}url{ @extend .#{$font-class}link; }
+
 /* ====== Admin Font Settings ======== */
 .font-setting-wrapper {
 	.#{$font-class-name}save,
@@ -550,4 +556,20 @@ span.fb_add
 			@extend .ficon-disconnected; 
 		}
 	}
+}
+
+//Custom Fields
+.custom-choices .#{$font-class-name}rearrange{
+	position: relative;
+	left: 0px;
+  top: 5px;  
+  float: left;
+  font-size: 14px;
+  cursor: move;
+}
+.#{$font-class-name}dropdown{
+	@extend .#{$font-class-name}dropdown_blank;
+}
+.#{$font-class-name}html_paragraph{
+	@extend .#{$font-class-name}paragraph;
 }

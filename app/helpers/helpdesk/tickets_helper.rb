@@ -69,6 +69,52 @@ module Helpdesk::TicketsHelper
   def timesheets_size
     @ticket.time_sheets.size
   end
+
+  def nested_ticket_field_value(item, field)
+    field_value = {}
+    field.nested_levels.each do |ff|
+      field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
+    end
+    field_value.merge!({:category_val => item.send(field.field_name)})
+  end
+
+  def ticket_field_element(field, dom_type, attributes, pl_value_id=nil)
+    if field.visible_in_view_form? && ((dom_type == "dropdown") || 
+                                       (dom_type == "dropdown_blank") || 
+                                       (dom_type == "nested_field"))
+      object_name = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+      checkbox = check_box_tag object_name+"_"+field.field_name+"_label", 
+                               "", 
+                               false,
+                               :class => "update-check-for-fields"
+      label = label_tag(object_name+"_"+field.field_name+"_label", 
+                        (checkbox + field.label),
+                        :rel => "inputcheckbox")
+      if field.field_type == "nested_field"
+        element = label + nested_field_tag(object_name, 
+                                 field.field_name, 
+                                 field, 
+                                 {:include_blank => t('select'), 
+                                  :selected => {},
+                                  :pl_value_id => pl_value_id},
+                                 {:class => "#{dom_type} select2", 
+                                  :rel => "inputselectbox"}, 
+                                 {}, 
+                                 false)
+      else
+        element = label + select(object_name,
+                      field.field_name, 
+                      field.html_unescaped_choices, 
+                      {:include_blank => t('select'), 
+                        :selected => t('select')},
+                      {:class => "#{dom_type} select2" , 
+                        :rel => "inputselectbox"})
+      end
+      content_tag :div, element.html_safe, attributes
+    else
+      ""
+    end
+  end
   
   def sort_by_text(sort_key, order)
     help_text = [

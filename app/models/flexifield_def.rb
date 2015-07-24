@@ -17,7 +17,7 @@ class FlexifieldDef < ActiveRecord::Base
   validates_presence_of :name
   
   # after_update :save_entries
-
+  
   TEXT_COL_TYPES  = ["text",    "paragraph"]
   NUM_COL_TYPES   = ["number",  "decimal"]
 
