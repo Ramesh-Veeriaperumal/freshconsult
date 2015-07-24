@@ -1,6 +1,7 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
     include DiscussionMonitorConcern
+    before_filter :load_forum, only: [:forum_topics]
 
     def create
       post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x) })
@@ -15,9 +16,9 @@ module ApiDiscussions
       super
     end
 
-    def posts
-      @posts = paginate_items(load_association)
-      render '/api_discussions/posts/post_list'
+    def forum_topics
+      @topics = paginate_items(@item.topics)
+      render '/api_discussions/topics/topic_list'
     end
 
     def followed_by
@@ -27,9 +28,8 @@ module ApiDiscussions
 
     private
 
-      def load_object
-        return if is_following? || followed_by?
-        super
+      def load_forum
+        load_object current_account.forums
       end
 
       def check_privilege

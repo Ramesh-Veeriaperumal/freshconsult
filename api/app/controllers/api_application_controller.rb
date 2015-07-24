@@ -29,7 +29,7 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
-  before_filter :before_load_object, :load_object, :after_load_object, except: [:create, :index, :route_not_found]
+  before_filter :before_load_object, :load_object, :after_load_object, except: ApiConstants::LOAD_OBJECT_EXCEPT
   before_filter :check_params, only: :update
   before_filter :before_validation, only: [:create]
   before_filter :validate_params, only: [:create, :update]

@@ -6,7 +6,7 @@ json.array! @items do |tkt|
 
     json.set! :deleted, tkt.deleted.to_s.to_bool if tkt.deleted
 
-    json.(tkt, :description, :description_html, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email)
+    json.(tkt, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email)
 
     json.set! :to_emails, tkt.schema_less_ticket.try(:to_emails)
     json.set! :product_id, tkt.schema_less_ticket.try(:product_id)
@@ -15,6 +15,11 @@ json.array! @items do |tkt|
 
     json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: tkt.fr_escalated, spam: tkt.spam, urgent: tkt.urgent, is_escalated: tkt.isescalated }
     json.partial! 'shared/utc_date_format', item: tkt, add: { due_by: :due_by, frDueBy: :fr_due_by }
+  end
+
+  json.cache! tkt.ticket_body do |tbody| # changing desc does not modify ticket's updated_at
+    json.set! :description, tkt.description
+    json.set! :description_html, tkt.description_html
   end
 
   json.set! :custom_fields, tkt.custom_field

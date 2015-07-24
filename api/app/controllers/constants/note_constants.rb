@@ -8,4 +8,5 @@ module NoteConstants
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
     'reply'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
   }
+  LOAD_OBJECT_EXCEPT = [:ticket_notes, :reply]
 end

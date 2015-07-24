@@ -244,46 +244,5 @@ module ApiDiscussions
       assert_equal true, response.headers.include?('Location')
       assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result['id']}", response.headers['Location']
     end
-
-    def test_forums
-      get :forums, construct_params(id: fc.id)
-      assert_response :success
-      result_pattern = []
-      fc.forums.each do |f|
-        result_pattern << forum_pattern(f)
-      end
-      match_json(result_pattern)
-    end
-
-    def test_forums_invalid_id
-      get :forums, construct_params(id: 'x')
-      assert_response :not_found
-      assert_equal ' ', @response.body
-    end
-
-    def test_forums_with_pagination
-      3.times do
-        create_test_forum(fc)
-      end
-      get :forums, construct_params(id: fc.id, per_page: 1)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-      get :forums, construct_params(id: fc.id, per_page: 1, page: 2)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-      get :forums, construct_params(id: fc.id, per_page: 1, page: 3)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-    end
-
-    def test_forums_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      get :forums, construct_params(id: fc.id, per_page: 4)
-      assert_response :success
-      assert JSON.parse(response.body).count == 3
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
-    end
   end
 end

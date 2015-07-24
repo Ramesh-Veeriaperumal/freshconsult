@@ -6,6 +6,7 @@ class NotesController < ApiApplicationController
   include Conversations::Email
 
   before_filter :can_send_user?, only: [:create, :reply]
+  before_filter :load_ticket, only: [:reply, :ticket_notes]
 
   def create
     is_success = create_note
@@ -60,7 +61,6 @@ class NotesController < ApiApplicationController
     def create_note
       @item.user ||= current_user if @item.user_id.blank? # assign user instead of id as the object is already loaded.
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
-      @item.notable.account = current_account
       attachments = build_normal_attachments(@item, params[cname][:attachments])
       @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
       @item.save_note
@@ -83,13 +83,13 @@ class NotesController < ApiApplicationController
       end
     end
 
-    def load_object # Needed here in controller to find the item by display_id
-      if reply? || ticket_notes?
-        @ticket = current_account.tickets.find_by_param(params[:ticket_id], current_account)
-        head 404 unless @ticket
-      else
-        super scoper.visible
-      end
+    def load_ticket # Needed here in controller to find the item by display_id
+      @ticket = current_account.tickets.find_by_param(params[:id], current_account)
+      head 404 unless @ticket
+    end
+
+    def load_object
+      super scoper.visible
     end
 
     def scoper
@@ -127,13 +127,5 @@ class NotesController < ApiApplicationController
 
     def can_validate_ticket
       create?
-    end
-
-    def reply?
-      @reply ||= action_name == 'reply'
-    end
-
-    def ticket_notes?
-      @ticket_notes ||= action_name == 'ticket_notes'
     end
 end

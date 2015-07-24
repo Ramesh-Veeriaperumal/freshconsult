@@ -1,11 +1,7 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
     include DiscussionMonitorConcern
-
-    def topics
-      @topics = paginate_items(load_association)
-      render '/api_discussions/topics/topic_list'
-    end
+    before_filter :load_category, only: [:category_forums]
 
     def destroy
       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
@@ -13,11 +9,15 @@ module ApiDiscussions
       super
     end
 
+    def category_forums
+      @forums = paginate_items(@item.forums)
+      render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
+    end
+
     private
 
-      def load_object
-        return if is_following?
-        super
+      def load_category
+        load_object current_account.forum_categories
       end
 
       def feature_name

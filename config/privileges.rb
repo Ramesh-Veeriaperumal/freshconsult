@@ -205,10 +205,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :monitorship, :only => [:followers]
 
     # Used for API V2
-    resource :"api_discussions/category", :only => [:index, :show, :forums]
-    resource :"api_discussions/forum", :only => [:show, :topics, :follow, :unfollow, :is_following]
-    resource :"api_discussions/topic", :only => [:show, :posts, :follow, :unfollow, :is_following, :followed_by]
-    resource :"api_discussions/post", :only => [:create]
+    resource :"api_discussions/category", :only => [:index, :show]
+    resource :"api_discussions/forum", :only => [:show, :category_forums, :follow, :unfollow, :is_following]
+    resource :"api_discussions/topic", :only => [:show, :forum_topics, :follow, :unfollow, :is_following, :followed_by]
+    resource :"api_discussions/post", :only => [:create, :topic_posts]
   end
 
   # create_edit_forum_category

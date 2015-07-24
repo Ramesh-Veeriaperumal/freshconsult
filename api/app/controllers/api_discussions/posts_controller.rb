@@ -1,5 +1,7 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
+    before_filter :load_topic, only: [:topic_posts]
+
     def create
       if @email.present?
         @item.user = @user
@@ -11,7 +13,16 @@ module ApiDiscussions
       super
     end
 
+    def topic_posts
+      @posts = paginate_items(@item.posts)
+      render '/api_discussions/posts/post_list'
+    end
+
     private
+
+      def load_topic
+        load_object current_account.topics
+      end
 
       def before_validation
         can_send_user?

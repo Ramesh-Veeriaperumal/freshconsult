@@ -1,6 +1,7 @@
 class TimeSheetsController < ApiApplicationController
   include Concerns::TimeSheetConcern
 
+  before_filter :load_ticket, only: [:ticket_time_sheets]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
   def index
@@ -51,14 +52,10 @@ class TimeSheetsController < ApiApplicationController
       FeatureConstants::TIMESHEET
     end
 
-    def load_object
-      if ticket_time_sheets?
-        # Load only non deleted ticket.
-        @ticket = current_account.tickets.find_by_display_id_and_deleted(params[:ticket_id], false)
-        head 404 unless @ticket
-      else
-        super
-      end
+    def load_ticket
+      # Load only non deleted ticket.
+      @ticket = current_account.tickets.find_by_display_id_and_deleted(params[:id], false)
+      head 404 unless @ticket
     end
 
     def scoper
@@ -136,9 +133,5 @@ class TimeSheetsController < ApiApplicationController
       # Convert hh:mm string to seconds. Say 00:02 string to 120 seconds.
       time = time_spent.to_s.split(':').map.with_index { |x, i| x.to_i.send(ApiConstants::TIME_UNITS[i]) }.reduce(:+).to_i
       time
-    end
-
-    def ticket_time_sheets?
-      @ticket_time_sheets ||= action_name == 'ticket_time_sheets'
     end
 end

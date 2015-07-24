@@ -190,7 +190,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply
     params_hash = reply_note_params_hash
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -199,7 +199,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_reply_without_kbase_email
     params_hash = reply_note_params_hash
     article_count = Solution::Article.count
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -209,7 +209,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_reply_with_cc_kbase_mail
     article_count = Solution::Article.count
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -222,7 +222,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_reply_with_bcc_kbase_mail
     article_count = Solution::Article.count
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -237,7 +237,7 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -249,7 +249,7 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -260,7 +260,7 @@ class NotesControllerTest < ActionController::TestCase
     article_count = Solution::Article.count
     t = create_ticket(subject: 'ui')
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
-    post :reply, construct_params({ ticket_id: t.display_id }, params_hash)
+    post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -273,7 +273,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_user_id_valid
     params_hash = reply_note_params_hash.merge(user_id: user.id)
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -282,7 +282,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_reply_with_user_id_invalid_privilege
     params_hash = reply_note_params_hash.merge(user_id: other_user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :forbidden
     match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
@@ -290,14 +290,14 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_numericality_invalid
     params_hash = { user_id: 'x' }
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('user_id', 'is not a number')])
   end
 
   def test_reply_datatype_invalid
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x' }
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array'),
                 bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array'),
@@ -306,35 +306,35 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_email_format_invalid
     params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'] }
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('cc_emails', 'is not a valid email'),
                 bad_request_error_pattern('bcc_emails', 'is not a valid email')])
   end
 
-  def test_reply_invalid_ticket_id
+  def test_reply_invalid_id
     params_hash = { body_html: 'test' }
-    post :reply, construct_params({ ticket_id: '6786878' }, params_hash)
+    post :reply, construct_params({ id: '6786878' }, params_hash)
     assert_response :not_found
   end
 
   def test_reply_invalid_model
     params_hash = { body_html: 'test', user_id: 789_789_789 }
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('user_id', "can't be blank")])
   end
 
   def test_reply_extra_params
     params_hash = { body_html: 'test', junk: 'test' }
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('junk', 'invalid_field')])
   end
 
   def test_reply_returns_location_header
     params_hash = reply_note_params_hash
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -348,7 +348,7 @@ class NotesControllerTest < ActionController::TestCase
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = reply_note_params_hash.merge('attachments' => [file, file2])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    post :reply, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :created
     response_params = params.except(:attachments)
@@ -362,7 +362,7 @@ class NotesControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = reply_note_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    post :reply, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_size')])
@@ -370,7 +370,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_invalid_attachment_params_format
     params = reply_note_params_hash.merge('attachments' => [1, 2])
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params)
+    post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
   end
@@ -378,7 +378,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_reply_without_privilege
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(false).at_most_once
     params_hash = reply_note_params_hash
-    post :reply, construct_params({ ticket_id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
@@ -556,7 +556,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_notes
     t = ticket
-    get :ticket_notes, construct_params(ticket_id: t.id)
+    get :ticket_notes, construct_params(id: t.id)
     assert_response :success
     result_pattern = []
     t.notes.visible.exclude_source('meta').each do |n|
@@ -569,7 +569,7 @@ class NotesControllerTest < ActionController::TestCase
     t = ticket
     create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
 
-    get :ticket_notes, construct_params(ticket_id: t.id)
+    get :ticket_notes, construct_params(id: t.id)
     assert_response :success
     result_pattern = []
     t.notes.visible.exclude_source('meta').each do |n|
@@ -579,7 +579,7 @@ class NotesControllerTest < ActionController::TestCase
     match_json(result_pattern)
 
     Helpdesk::Note.where(notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
-    get :ticket_notes, construct_params(ticket_id: t.id)
+    get :ticket_notes, construct_params(id: t.id)
     assert_response :success
     result_pattern = []
     t.notes.visible.exclude_source('meta').each do |n|
@@ -592,20 +592,20 @@ class NotesControllerTest < ActionController::TestCase
   def test_notes_without_privilege
     t = ticket
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    get :ticket_notes, construct_params(ticket_id: t.display_id)
+    get :ticket_notes, construct_params(id: t.display_id)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_notes_invalid_id
-    get :ticket_notes, construct_params(ticket_id: 56_756_767)
+    get :ticket_notes, construct_params(id: 56_756_767)
     assert_response :not_found
     assert_equal ' ', @response.body
   end
 
   def test_notes_eager_loaded_association
     t = ticket
-    get :ticket_notes, construct_params(ticket_id: t.display_id)
+    get :ticket_notes, construct_params(id: t.display_id)
     assert_response :success
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
@@ -617,10 +617,10 @@ class NotesControllerTest < ActionController::TestCase
     3.times do
       create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
     end
-    get :ticket_notes, construct_params(ticket_id: t.display_id, per_page: 1)
+    get :ticket_notes, construct_params(id: t.display_id, per_page: 1)
     assert_response :success
     assert JSON.parse(response.body).count == 1
-    get :ticket_notes, construct_params(ticket_id: t.display_id, per_page: 1, page: 2)
+    get :ticket_notes, construct_params(id: t.display_id, per_page: 1, page: 2)
     assert_response :success
     assert JSON.parse(response.body).count == 1
   end
@@ -629,7 +629,7 @@ class NotesControllerTest < ActionController::TestCase
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-    get :ticket_notes, construct_params(ticket_id: ticket.display_id, per_page: 4)
+    get :ticket_notes, construct_params(id: ticket.display_id, per_page: 4)
     assert_response :success
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])

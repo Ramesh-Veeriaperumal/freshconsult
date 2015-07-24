@@ -1,10 +1,5 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    def forums
-      @forums = paginate_items(load_association)
-      render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
-    end
-
     private
 
       def feature_name
