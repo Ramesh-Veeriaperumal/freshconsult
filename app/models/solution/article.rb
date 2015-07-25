@@ -7,7 +7,6 @@ class Solution::Article < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  include Mobihelp::AppSolutionsUtils
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
@@ -237,7 +236,7 @@ class Solution::Article < ActiveRecord::Base
   private
 
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.solution_folder.category_id)
+      self.solution_folder.category.update_mh_solutions_category_time
     end
 
     def content_changed?

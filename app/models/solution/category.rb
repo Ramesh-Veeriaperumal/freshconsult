@@ -74,11 +74,11 @@ class Solution::Category < ActiveRecord::Base
   private 
 
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.id)
+      update_mh_solutions_category_time
     end
 
     def set_mobihelp_app_updated_time
-      update_mh_app_time(self.id)
+      update_mh_app_time
     end
 
 end

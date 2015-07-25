@@ -3,7 +3,6 @@ class Solution::Folder < ActiveRecord::Base
   self.primary_key = :id
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
-  include Mobihelp::AppSolutionsUtils
 
   concerned_with :associations, :meta_associations
 
@@ -170,7 +169,7 @@ class Solution::Folder < ActiveRecord::Base
     end
     
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.category_id)
+      category.update_mh_solutions_category_time
     end
 
 end

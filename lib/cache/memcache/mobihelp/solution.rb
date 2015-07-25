@@ -2,8 +2,8 @@ module Cache::Memcache::Mobihelp::Solution
   
   include MemcacheKeys
 
-  def clear_solutions_cache(category_id)
-    MemcacheKeys.delete_from_cache(mobihelp_solutions_key(category_id))
+  def clear_solutions_cache
+    MemcacheKeys.delete_from_cache(mobihelp_solutions_key)
   end
 
   def clear_last_updated_time(app_id)
@@ -37,8 +37,8 @@ module Cache::Memcache::Mobihelp::Solution
   end
 
   private
-    def mobihelp_solutions_key(category_id)
-      MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => category_id }
+    def mobihelp_solutions_key
+      MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => self.id }
     end
 
     def mobihelp_solution_updated_time_key(app_id)
