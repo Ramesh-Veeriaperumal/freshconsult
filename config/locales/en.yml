@@ -6286,10 +6286,10 @@ en:
         month: Month
         qtr: Quarter
         year: Year
-        title: Tickets Received and Resolution Trend
+        title: Trend of Tickets Received and Resolved
       day_trend:
         title: Day of the Week Trend of Tickets Received and Resolved
-        subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly.
+        subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
     performance:
