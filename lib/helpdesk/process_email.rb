@@ -27,6 +27,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      TimeZone.set_time_zone
       encode_stuffs
       from_email = parse_from_email(account)
       return if from_email.nil?

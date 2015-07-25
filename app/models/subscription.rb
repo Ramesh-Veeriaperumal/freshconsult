@@ -352,7 +352,10 @@ class Subscription < ActiveRecord::Base
     subscription_estimate(addons, coupon_code)
     @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
   end
-    
+  
+  def plan_name
+    subscription_plan.name
+  end
   protected
   
     def non_social_plans
@@ -463,6 +466,10 @@ class Subscription < ActiveRecord::Base
         Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
       elsif free_customer?
         Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+      end
+
+      if state_changed?
+        Resque.enqueue(CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
       end
     end
 

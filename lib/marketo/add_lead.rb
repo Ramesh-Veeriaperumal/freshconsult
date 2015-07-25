@@ -6,10 +6,6 @@ class Marketo::AddLead
 	def self.perform(args)
 	 crm = ThirdCRM.new
 	 account = Account.current
-	 cookie_info = args[:cookie].blank? ? {} : args[:cookie].symbolize_keys!
-
-	 crm.add_signup_data(account, { :marketo_cookie => cookie_info[:marketo], 
-	 	:analytics_cookie => cookie_info[:analytics],
-	 	:signup_id => args[:signup_id] }) if Rails.env.production?
+	 crm.add_signup_data(account, {:signup_id => args[:signup_id] })
 	end 
 end

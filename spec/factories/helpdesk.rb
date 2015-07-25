@@ -70,6 +70,9 @@ if Rails.env.test?
     factory :picklist_value, :class => Helpdesk::PicklistValue do |f|
     end
 
+    factory :section, :class => Helpdesk::Section do |s|
+    end
+
     factory :sla_policies, :class => Helpdesk::SlaPolicy do |f|
       name "Test Sla Policy"
       conditions HashWithIndifferentAccess.new({ :source =>["3"],:company_id =>"" })

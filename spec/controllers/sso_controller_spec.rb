@@ -47,7 +47,14 @@ RSpec.describe SsoController do
   end
 
   it "should redirect to login page if no user found" do
-    get :google_login
+
+    key_options = {:domain => @account.full_domain,:uid => "12345678"}
+    @google_oauth_key = Redis::KeySpec.new(Redis::RedisKeys::GOOGLE_OAUTH_SSO, key_options)
+    Redis::KeyValueStore.new(@google_oauth_key, "testnoemail@email.com", {:group => :integration, :expire => 300}).set_key
+    get :google_login, {:domain => @account.full_domain, :uid => "12345678"}
+    kv_store = Redis::KeyValueStore.new(@google_oauth_key)
+    kv_store.group = :integration
+    kv_store.get_key.should be_nil
     response.should redirect_to "http://" + @account.host + '/login'
   end
 

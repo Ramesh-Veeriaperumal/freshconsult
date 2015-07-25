@@ -52,6 +52,17 @@ describe Admin::Freshfone::NumbersController do
     json[:errors].first.should be_eql("Unable to purchase number. Kindly make sure the address is a valid local address in Australia.")
   end
 
+  it 'should not create a new address required number on purchase if the provided address has incorrect postal code' do
+    @num = Faker::PhoneNumber.phone_number
+    create_ff_address
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
+    params = { :phone_number => @num, :formatted_number => @num, 
+               :region => "Texas", :country => "AU", :type => 'local', :number_sid => "PNUMBER", :address_required => true }
+    ff_address_inspect(params[:country])
+    post :purchase, params
+    json.should be_eql({:success => false, :errors => ["Invalid Postal code"]})
+  end
+
   it 'should not create a new address required number on purchase if freshfone_address not exist' do
     @num = Faker::PhoneNumber.phone_number
     Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio).raises(StandardError.new("PhoneNumber Requires a Local Address"))

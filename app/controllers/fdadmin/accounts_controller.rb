@@ -18,7 +18,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:email] = fetch_email_details(account)
     account_summary[:invoice_emails] = fetch_invoice_emails(account)
     account_summary[:api_limit] = account.api_limit
-    account_summary[:phone_enabled] = !account.freshfone_account.blank? # find out if the account has freshfone(phone) enabled or not ?
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     respond_to do |format|
@@ -34,6 +33,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:social] = fetch_social_info(account)
     feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
+    feature_info[:freshfone] = account.features?(:freshfone)
     respond_to do |format|
       format.json do
         render :json => feature_info

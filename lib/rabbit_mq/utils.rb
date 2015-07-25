@@ -32,7 +32,7 @@ module RabbitMq::Utils
         "subscriber_properties" =>  {}        
       }
       key = ""
-      RabbitMq::Keys.const_get("#{model.upcase}_SUBSCRIBERS").each { |f|
+      RabbitMq::Keys.const_get("#{exchange.upcase}_SUBSCRIBERS").each { |f|
         valid = construct_message_for_subscriber(f, message, model, action)
         key = generate_routing_key(key, valid)
       }
@@ -46,7 +46,7 @@ module RabbitMq::Utils
   end
 
   def construct_message_for_subscriber(s, message, model, action)
-    valid = send("mq_#{s}_valid", action)
+    valid = send("mq_#{s}_valid", action, model)
     if valid  
       message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
@@ -83,6 +83,19 @@ module RabbitMq::Utils
       :routing_key => key,
       :persistant => true
     )
+  end
+  
+  
+  def manual_publish_to_xchg(exchange, message, key, sidekiq = false)
+    # Decide we gonna publish message to exchange via sidekiq or diretly
+    # Currently we directly push to exchange
+    # If there is any performance, then we can push via sidekiq
+    return unless Account.current.features_included?(:bi_reports)
+    if sidekiq
+      RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    else
+      send_message(exchange, message, key)
+    end
   end
 
 end

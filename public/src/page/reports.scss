@@ -808,6 +808,18 @@ $animation_timing: .1s;
 						padding:1px 3px;
 						position:relative;
 					}
+					div.beta-tag{
+						color: #fff;
+						background-color: #ef6962;
+						font-size: 10px;
+						font-weight: 600;
+						padding: 0 8px;
+						border: solid 4px #fff;
+						border-radius: 15px;
+						position: absolute;
+						top: 12px;
+						right: -8px;
+					}
 				}
 			}
 		}	
@@ -978,4 +990,11 @@ $animation_timing: .1s;
 
 .select2-results .select2-result-label{
 	margin: 5px;
+}
+
+// Livechat date picker text field margin fix
+#freshchat_summary_report {
+	#date_range {
+		margin-bottom : 0px;
+	}
 }

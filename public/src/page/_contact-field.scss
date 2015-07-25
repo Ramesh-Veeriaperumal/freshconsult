@@ -1,0 +1,340 @@
+// CREATE CONTACTS STYLES
+.contact-form {
+	.select2-container-multi {
+		width: 100%;
+	}
+	label {
+		display: inline;
+	}
+}
+.contact_fields{
+	.custom-field-form {
+		@include pie-clearfix;
+		.custom-form-label {
+			@include padding(0px);
+			cursor: move;
+		}
+		&.form-horizontal {
+			.control-group {
+				margin-bottom: 0px; 
+			}
+			.custom-field.checkbox-wrap{
+				@include padding-left(10px);
+			}
+		}
+		.select2-container {
+			.select2-choice {
+				height: 24px;
+			}
+		}
+		&:hover {
+			.custom-field {
+				@include opacity(0.6);
+				&:hover, &.hover {
+					@extend .li-hover-active;
+				}
+			}
+		}
+		.options-wrapper {
+			position: absolute;
+			@include opacity(0);
+			@include left(-75px);
+			top: -1px;
+			@include padding(0 0 0 6px);
+			.opt-inner-wrap {
+				@include pie-clearfix;
+			}
+		}
+		.private-symbol {
+			font-size: 13px;
+			@include margin(0 7px 0 2px);
+			display: none;
+			@include left(-8px);
+			position: absolute;
+		}
+		.ui-sortable-placeholder {
+			z-index: 1;
+			background-color: #ddd !important;
+			border: 1px solid #999;	
+			width: 100%;
+			min-height: 35px;
+			@include pie-clearfix;
+			@include float(left);
+			@include box-shadow(inset 0px 3px 10px -4px rgba(0,0,0,0.8));
+			@include border-radius(4px);
+		}
+		.ui-sortable-helper {
+			@include box-shadow(-20px 30px 50px -10px rgba(0,0,0,0.3));
+		}
+	}
+
+	.custom-field {
+		@include padding(5px 10px 6px);
+		cursor: move;
+		border: 1px solid transparent;
+		@include float(left);
+		width: 98%;
+		position: relative;
+		@include transition(opacity 0.2s ease-in-out, background 0.2s ease-in-out);
+		margin-bottom: 12px;
+		@include pie-clearfix;
+		&.checkbox {
+			overflow: visible;
+			padding-top: 10px;
+			padding-bottom: 9px;
+		}
+		input[disabled], textarea[disabled], select[disabled] {
+			background-color: #FFF;
+			cursor: move;
+		}
+		&.dropdown, &.custom-dropdown, &.dropdown_blank {
+			position: relative;
+			.overlay-field {
+				z-index: 2;
+			}
+			.select2-container {
+				z-index: 1;
+				&.select2-container-disabled .select2-choice, &.select2-container-disabled .select2-choice div {
+					background-color: #FFF;
+					cursor: move;
+					border-color: #c6c6c6;
+				}
+			}
+		}
+		.options {
+			font-size: 21px;
+			@include padding(8px);
+			@include float(left);
+			cursor: pointer;
+			&.edit-field {
+				@include float(right);
+				@include padding-left(10px);
+				@include padding-right(10px);
+			}
+			&.delete-field {
+				border-right: 1px solid #eee;
+				@include border-radius(5px 0 0 5px);
+			}
+			&[class*='-strike-thru'] {
+				color: #ccc;
+				cursor: default;
+			}
+			&:hover:not([class*='-strike-thru']), &.hover:not([class*='-strike-thru']) {
+				background-color: #ebebc3;
+				color: #000;
+			}
+		}
+		&.active {
+			@extend .li-hover-active;
+		}
+		&.date {
+			.#{$font-class-name}date {
+				position: absolute;
+				@include left(4px);
+				top: 4px;
+				font-size: 16px;
+				color: #999;
+			}
+		}
+	}
+	.cloned-custom-fields {
+		.custom-field {
+			visibility: hidden;
+			position: absolute;
+			&.in-movement {
+				visibility: visible;
+				@include opacity(0.6);
+			}
+		}
+	}
+
+	.page-header-sticky {
+		&.custom-field-header {
+			padding-bottom: 0px;
+			&.is_stuck {
+				.field-picker {
+					@include margin-right(-19px);
+				}
+			}
+		}
+	}
+
+	.field-picker {
+		background-color: #f5f5f5;
+		@include margin(0 -20px);
+		border-top: 1px solid #ccc;
+		.field {
+			cursor: move;
+			@include float(left);
+			border-right: 1px solid #eee;
+		}
+		.field-name {
+			@include margin-left(5px);
+			font-size: 14px;
+		}
+		.custom-fields {
+			@include float(left);
+		}
+		.dom-icon {
+			color: #555;
+			font-size: 16px;
+			@include padding(10px 20px);
+			display: inline-block;
+			&:hover {
+				background-color: #FFF;
+			}
+		}
+		.field-info-wrapper {
+			@include pie-clearfix;
+			.title {
+				@include padding(6px 20px);
+				color: #aaa;
+				font-size: 14px;
+				@include float(left);
+			}
+		}
+	}
+
+
+	.li-hover-active {
+		background-color: #F7F7DC;
+		border: 1px dotted;
+		@include opacity(1);
+		@include border-radius(0 5px 5px 0);
+		&.paragraph {
+			@include border-radius(0 5px 5px 5px);
+		}
+		.options-wrapper{
+			@include opacity(1);
+			.opt-inner-wrap {
+				background-color: #F7F7DC;
+				border: 1px dotted;
+				border-right: 1px solid #eee;
+				@include border-radius(5px 0 0 5px);
+			}
+		}
+		.private-symbol {
+			display: none !important;
+		}
+	}
+
+	.custom-field-form {
+		&:not(.form-horizontal) {
+			.options-wrapper {
+				width: 33px;
+				@include left(-39px);
+			}
+			.control-group {
+				margin-bottom: 7px;
+			}
+			.custom-field {
+				margin-bottom: 0px;
+				@include margin-left(-10px);
+			}
+			.edit-field {
+				@include border-radius(5px 0 0 0px);
+				border-bottom: 1px solid #eee;
+				@include padding(8px);
+				@include float(left);
+			}
+			.delete-field {
+				@include border-radius(0 0 0 5px);
+				border-right: none;
+				@include padding-left(9px);
+			}
+			.dropdown, .custom-dropdown, .dropdown_blank {
+				padding-bottom: 14px;
+				display: inline-block;
+				width: 48.4%;
+			}
+			.checkbox {
+				padding-top: 7px;
+				padding-bottom: 7px;
+				.options-wrapper {
+					width: auto;
+					@include left(-71px);
+				}
+			}
+		}
+	}
+
+	.nav-tabs-underlined {
+		margin-top: 5px;
+		clear: both;
+		font-size: 16px;
+		.tab {
+			@include margin(0 15px 0 0);
+			@include float(left);
+			&.active {
+				border-bottom: 5px solid #CCC;
+				padding-bottom: 14px;
+				color: #000;
+			}
+		}
+	}
+	.avatar-pic {
+		position: relative;
+		img{
+			max-width: 130px;
+			min-width: 90px;
+			max-height: 160px;
+			@include box-shadow(#dfdfdf 0 1px 3px);
+			@include border-radius(6px);
+		}
+		.ie9-file-change-msg {
+			position: absolute;
+			@include padding(5px);
+			max-width: 110px;
+			display: block;
+			background-color: rgba(255, 209, 109, 0.3);
+			@include border-radius(5px);
+			@include margin-left(5px);
+			bottom: -1px;
+			display: none;
+			font-size: 12px;
+			line-height: 17px;
+		}
+		.avatar-text{
+			@include box-shadow(rgba(0, 0, 0, 0.3) 0 7px 14px -8px);
+			border-radius: 6px;
+		}
+	}
+
+	.avatar-options {
+		margin-top: 10px;
+		.option {
+			width: 44%;
+			@include padding(2.5%);
+			&.uplink {
+				cursor: default;
+			}
+		}
+		.opt {
+			position: relative;
+			overflow: hidden;
+			display: inline-block;
+			line-height: 20px;
+		}
+		input[type=file] {
+			position: absolute;
+			@include opacity(0);
+			top: 0;
+			width: 100%;
+			left: 0;
+			height: 100%;
+			font-size: 10000px;
+		}
+	}
+
+	.ui-draggable-dragging {
+		&.field {
+			list-style-type: none;
+			&:hover {
+				color: #FFF;
+			}
+		}
+		.dom-icon {
+			font-size: 16px;
+		}
+	}
+}

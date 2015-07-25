@@ -44,9 +44,11 @@ RSpec.describe Freshfone::CallInitiator do
   end
 
   it 'should render twiml that adds a caller to queue' do
+    stub_twilio_queues
     call_initiator = Freshfone::CallInitiator.new({}, @account, @number, nil)
     twiml = call_initiator.add_caller_to_queue({:type => :agent, :performer => @agent.id})
     twiml.should match(/hunt_type=agent&amp;hunt_id=#{@agent.id}/)
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
 
   it 'should render twiml for blocking incoming call' do
@@ -63,8 +65,10 @@ RSpec.describe Freshfone::CallInitiator do
   end
 
   it 'should return false for empty queue' do
+    stub_twilio_queues(true)
     call_initiator = Freshfone::CallInitiator.new({}, @account, @number, nil)
     call_initiator.send(:queue_overloaded?).should be_falsey
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
   
 

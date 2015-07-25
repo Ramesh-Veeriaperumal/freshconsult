@@ -4,10 +4,18 @@ describe Freshfone::AddressController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
+  before(:all) do
+    Freshfone::Address.any_instance.stubs(:create_address_in_twilio).returns(true)
+  end
+
   before(:each) do
     create_test_freshfone_account
     @request.host = @account.full_domain
     log_in(@agent)
+  end
+
+  after(:all) do
+    Freshfone::Address.any_instance.unstub(:create_address_in_twilio)
   end
 
   it 'should create a new address for new country' do

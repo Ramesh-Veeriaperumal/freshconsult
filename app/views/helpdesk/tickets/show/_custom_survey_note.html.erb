@@ -7,13 +7,13 @@
       <%= content_tag(:div, "", :class => "survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[ticket_info[:value]]}")%>&nbsp;&nbsp;
       <b><%= ticket_info[:text] %></b>
     <%end %>
-    <div class='note-text muted'>
       <% if note.survey_remark.blank? %>
         <%= note.body_html.html_safe %>
       <%else%>
-        "<%= note.body_html.html_safe %>"
+        <div class="note-text muted">
+          "<%= note.body_html.html_safe %>"
+        </div>
       <%end%>
-    </div>
   </div>
   <div class='question'>
     <ul class="survey-response-question">
