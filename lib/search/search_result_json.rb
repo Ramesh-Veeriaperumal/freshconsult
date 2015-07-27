@@ -123,7 +123,10 @@ module Search::SearchResultJson
 			:description => article.es_highlight('desc_un_html'),
 			:user_name => h(article.user.name),
 			:user_path => user_path(article.user),
-			:info => %{#{time_ago_in_words(article.created_at)} #{t('search.ago')}}
+			:info => %{#{time_ago_in_words(article.created_at)} #{t('search.ago')}},
+			:views => article.hits,
+			:up_votes => article.thumbs_up,
+			:down_votes =>article.thumbs_down
 		}
 	end
 

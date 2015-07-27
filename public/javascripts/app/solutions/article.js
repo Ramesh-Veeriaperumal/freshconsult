@@ -77,6 +77,7 @@ window.App = window.App || {};
 		},
     
     startEditing: function () {
+      $('#solution_article_title').focus();
       $('.sub-content.article-edit').html($('.sub-content.article-view').html());
       this.setFormValues();
       this.toggleViews();

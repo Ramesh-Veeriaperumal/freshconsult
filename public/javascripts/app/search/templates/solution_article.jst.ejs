@@ -1,27 +1,37 @@
-<li>
-	<div class="search-list-wrap">
-		<span class="search-result-image pull-left ml4">
-			<div class="search-result-article"></div>
-		</span>
-		<div class="search-result-text row-fluid">
-			<div class="ticket_subject search-result-content">
-				<a href="<%= path %>" class="search-title" data-pjax="#body-container"><%= title %></a>
-				<div class="info-data">
-					<%= SEARCH_RESULT_LANG["in"] %> 
-					<a class="emphasize" href="<%= folder_path %>" data-pjax="#body-container"><%= folder_name %></a>
-				</div>
-			</div>
-			<div class="search-result-info pull-right info-data">
-				<div>
-					<span class="muted align-top"><%= SEARCH_RESULT_LANG["by"] %></span>
-					<span class="emphasize ellipsis result-info">
-						<%= user_name %> 
-					</span>,
-				</div>
-				<div>
-					<%= info %>
-				</div>
-			</div>	
-		</div>
-	</div>			
+<li class="comm-item">
+  <div class="vertical-alignment reorder-content row-fluid">
+    <div class="row-fluid clear-left-margin">
+      <div class="span3 pull-right text-right mt6 pr15">
+        <span class="span3 align-left meta-component  <%= views == 0 ? 'faded' : '' %> ">
+          <i class="ficon-file-visible fsize-18 " size="18"></i>
+          <%= views %>
+        </span>
+        <span class="span3 align-left meta-component <%= up_votes == 0 ? 'faded' : '' %> ">
+          <i class="ficon-like fsize-18 " size="18"></i>
+          <%= up_votes %>
+        </span>
+        <span class="span3 align-left meta-component <%= down_votes == 0 ? 'faded' : '' %>">
+          <i class="ficon-dislike fsize-18 " size="18"></i>
+          <%= down_votes %>
+        </span>
+      </div>
+  
+      <div class="span6 comm-item-main clear-left-margin">
+      	<i class="ficon-file fsize-16 article-icon" size="16"></i>
+        <div class="comm-item-title ellipsis tooltip">
+        	<a href="<%= path %>" data-pjax="#body-container"><%= title %></a>
+        </div>
+        <div class="comm-item-details muted">
+        	<%if (ARTICLE_SEARCH_FROM_FOLDER) { %>
+          	<%= SEARCH_RESULT_LANG["by"] %> 
+          	<%= user_name %> , 
+          <% } else { %>
+          	<%= SEARCH_RESULT_LANG["in"] %> 
+          	<%= folder_name %> , 
+          <% }%>
+          <%= info %>
+        </div>
+      </div>
+    </div>
+  </div>
 </li>
