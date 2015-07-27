@@ -60,6 +60,7 @@ window.App = window.App || {};
       this.bindForMasterVersion();
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
+        $('.info-data').remove();
       });
       this.editArticleEventBindings();
       $('body').on('click.articles', '.article-history .ellipsis', function () {
@@ -72,8 +73,7 @@ window.App = window.App || {};
     },
 		
 		toggleViews: function () {
-			$('.article-edit, .article-view').toggleClass('hide');
-      $('.article-edit-btn').toggleClass('hide');
+			$('.article-edit, .article-view, .article-edit-btn, .breadcrumb-btns').toggleClass('hide');
 		},
     
     startEditing: function () {
@@ -89,6 +89,8 @@ window.App = window.App || {};
         this.autosaveInitialize();
       }
       this.editUrlChange(true);
+      //Disable save and publish buttons until we start editing
+      $('#save-as-draft-btn, #article-publish-btn').addClass('disabled');
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
     },
@@ -160,7 +162,7 @@ window.App = window.App || {};
 
     bindForCancel: function () {
       var $this = this;
-      $("body").on('click.article', "#edit-cancel-button", function (ev) {
+      $("body").on('click.articles', "#edit-cancel-button", function (ev) {
         ev.preventDefault();
 				$this.autoSave.stopSaving();
         $(".article-edit-form")[0].reset();
@@ -233,6 +235,26 @@ window.App = window.App || {};
       this.unsavedContentNotif();
       if (this.data.defaultFolder) {
         this.defaultFolderValidate();
+      }
+      var $this = this;
+
+      $('body').on('redactor:sync.articles.btnsEnable', '#solution_article_description', $this.enableBtnsCheck.bind(this));
+      $('body').on('keyup.articles.btnsEnable', '#solution_article_title', $this.enableBtnsCheck.bind(this));
+
+      $('body').on('change.articles.btnsEnable', '.hidden_upload, .list_element', function () {
+        $this.enableBtnsOnContentChange();
+      });
+    },
+
+    enableBtnsOnContentChange: function () {
+      $('#save-as-draft-btn, #article-publish-btn').removeClass('disabled');
+      $('body').off('articles.btnsEnable');
+    },
+
+    enableBtnsCheck: function (e) {
+      var el = $(e.target)
+      if(el.data().previousSavedData && el.val() != el.data().previousSavedData) {
+        this.enableBtnsOnContentChange();
       }
     },
 

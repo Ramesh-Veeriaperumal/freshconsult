@@ -98,5 +98,17 @@ module Solution::ArticlesHelper
       solution_categories_path
     end
   end
+
+  def article_btns
+    output = []
+    if @article.new_record?
+      output << pjax_link_to(t('cancel'), cancel_btn_link, :class => "btn cancel-button", :id => "edit-cancel-button")
+    else
+      output << submit_tag(t('cancel'), :class => "btn cancel-button", :id => "edit-cancel-button")
+    end
+    output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn")
+    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn")
+    output.join(' ').html_safe
+  end
   
 end
