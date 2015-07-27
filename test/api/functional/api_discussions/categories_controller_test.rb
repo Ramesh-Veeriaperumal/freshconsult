@@ -124,20 +124,6 @@ module ApiDiscussions
       get :show, construct_params(id: fc.id)
       assert_response :success
       result_pattern = forum_category_response_pattern(fc.name, fc.description)
-      result_pattern[:forums] = Array
-      assert_response :success
-      match_json(result_pattern)
-    end
-
-    def test_show_with_forums
-      fc = Forum.first.forum_category
-      get :show, construct_params(id: fc.id)
-      assert_response :success
-      result_pattern = forum_category_response_pattern(fc.name, fc.description)
-      result_pattern[:forums] = []
-      fc.forums.each do |f|
-        result_pattern[:forums] << forum_pattern(f)
-      end
       assert_response :success
       match_json(result_pattern)
     end

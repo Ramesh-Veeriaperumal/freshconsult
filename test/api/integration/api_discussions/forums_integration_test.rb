@@ -6,7 +6,7 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
     v1 = {}
     v2_expected = {
       create: 7,
-      show: 2,
+      show: 1,
       update: 7,
       destroy: 12,
       follow: 8,

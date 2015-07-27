@@ -336,42 +336,8 @@ module ApiDiscussions
       f = Forum.first
       get :show, construct_params(id: f.id)
       pattern = forum_pattern(f)
-      pattern[:topics] = Array
       assert_response :success
       match_json(pattern)
-    end
-
-    def test_show_with_topics
-      forum = Forum.first
-      create_test_topic(forum, User.first)
-      forum.reload
-      get :show, construct_params(id: forum.id)
-      result_pattern = forum_pattern(forum)
-      result_pattern[:topics] = []
-      forum.topics.each do |t|
-        result_pattern[:topics] << topic_pattern(t)
-      end
-      match_json(result_pattern)
-      assert_response :success
-    end
-
-    def test_show_with_customers
-      forum = Forum.first
-      forum_visibility = forum.forum_visibility
-      forum.update_column(:forum_visibility, 4)
-      get :show, construct_params(id: forum.id)
-      result_pattern = forum_pattern(forum.reload)
-      result_pattern[:topics] = []
-      forum.topics.each do |t|
-        result_pattern[:topics] << topic_pattern(t)
-      end
-      result_pattern[:customers] = []
-      forum.customer_forums.each do |cf|
-        result_pattern[:customers] << cf.customer_id
-      end
-      match_json(result_pattern)
-      assert_response :success
-      forum.update_column(:forum_visibility, forum_visibility)
     end
 
     def test_update_with_customers

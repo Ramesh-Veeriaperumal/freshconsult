@@ -44,10 +44,6 @@ module ApiDiscussions
         FeatureConstants::DISCUSSION
       end
 
-      def load_association
-        @posts = @item.posts
-      end
-
       def set_custom_errors(_item = @item)
         @error_options = { remove: :posts }
         ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @item)

@@ -6,10 +6,6 @@ module ApiDiscussions
         FeatureConstants::DISCUSSION
       end
 
-      def load_association
-        @forums = @item.forums
-      end
-
       def validate_params
         params[cname].permit(*(DiscussionConstants::CATEGORY_FIELDS))
         category = ApiDiscussions::CategoryValidation.new(params[cname], @item)

@@ -231,7 +231,6 @@ module ApiDiscussions
       topic = create_test_topic(forum_obj)
       get :show, construct_params(id: topic.id)
       result_pattern = topic_pattern(topic)
-      result_pattern[:posts] = Array
       match_json(result_pattern)
       assert_response :success
     end
@@ -240,18 +239,6 @@ module ApiDiscussions
       get :show, construct_params(id: (1000 + Random.rand(11)))
       assert_response :not_found
       assert_equal ' ', @response.body
-    end
-
-    def test_show_with_posts
-      t = create_test_topic(forum_obj)
-      get :show, construct_params(id: t.id)
-      result_pattern = topic_pattern(t)
-      result_pattern[:posts] = []
-      t.posts.each do |p|
-        result_pattern[:posts] << post_pattern(p)
-      end
-      assert_response :success
-      match_json(result_pattern)
     end
 
     def test_create_without_manage_users_privilege

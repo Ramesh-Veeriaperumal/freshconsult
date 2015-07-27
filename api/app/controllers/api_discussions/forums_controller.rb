@@ -28,10 +28,6 @@ module ApiDiscussions
         current_account.forums
       end
 
-      def load_association
-        @topics = @item.topics
-      end
-
       def manipulate_params
         customers = params[cname]['customers'] || []
         params[cname][:customer_forums_attributes] = { customer_id: customers }
