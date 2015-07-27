@@ -464,7 +464,7 @@ $community-types: problem #e65e63,
 .reorder-icon{
 	@include float(left);
 	@include margin(0px 0px -10px -80px);
-	padding: 8px;
+	padding: 10px 8px 8px 10px;
 	height: 15px;
 	width: 15px;
 	background-color: #999;

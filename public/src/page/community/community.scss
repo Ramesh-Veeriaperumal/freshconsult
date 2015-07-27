@@ -146,9 +146,8 @@ div.follower_label {
 
 .list-actions-right{
 	@include float(right);
-	@include margin-right(12px);
+	margin: 13px;
 	margin-top: 10px;
-	@include margin-left(15px);
 }
 
 .list-inline {
