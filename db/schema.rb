@@ -1766,6 +1766,30 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>10, "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
+  create_table "helpdesk_section_fields", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.integer  "section_id",             :limit => 8
+    t.integer  "ticket_field_id",        :limit => 8
+    t.integer  "parent_ticket_field_id", :limit => 8
+    t.integer  "position",               :limit => 8
+    t.text     "options"
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+  end
+
+  add_index "helpdesk_section_fields", ["account_id", "section_id"], :name => "index_helpdesk_section_fields_on_account_id_and_section_id"
+
+  create_table "helpdesk_sections", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "form_id",    :limit => 8
+    t.string   "label"
+    t.text     "options"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "helpdesk_sections", ["account_id", "label"], :name => "index_helpdesk_section_fields_on_account_id_and_label"
+
   create_table "helpdesk_shared_attachments", :force => true do |t|
     t.string   "shared_attachable_type"
     t.integer  "shared_attachable_id",   :limit => 8
@@ -2301,6 +2325,16 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "section_picklist_value_mappings", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "section_id",        :limit => 8
+    t.integer  "picklist_value_id", :limit => 8
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  add_index "section_picklist_value_mappings", ["account_id", "section_id"], :name => "index_sec_picklist_mappings_on_account_id_and_section_id"
 
   create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
     t.string  "shard_name",                           :null => false

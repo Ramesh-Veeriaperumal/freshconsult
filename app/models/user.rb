@@ -1,6 +1,5 @@
 # encoding: utf-8
-class User < ActiveRecord::Base
-
+class User < ActiveRecord::Base  
   self.primary_key= :id
 
   belongs_to_account
@@ -20,7 +19,7 @@ class User < ActiveRecord::Base
   include Social::Ext::UserMethods
   include AccountConstants
   
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true

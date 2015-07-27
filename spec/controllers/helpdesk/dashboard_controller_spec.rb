@@ -15,6 +15,7 @@ describe Helpdesk::DashboardController do
   before(:each) do
     login_admin
     @agent.make_current
+    create_test_freshfone_account
   end
 
   after(:each) do

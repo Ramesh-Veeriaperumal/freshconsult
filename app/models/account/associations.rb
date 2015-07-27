@@ -271,4 +271,7 @@ class Account < ActiveRecord::Base
   has_many :forum_moderators
 
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
+
+  has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
+  has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 end

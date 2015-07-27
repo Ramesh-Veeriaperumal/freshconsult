@@ -16,16 +16,19 @@ RSpec.describe Freshfone::CallTransferController do
   it 'should fail on invalid call transfer by sending a completed call sid' do
     request.env["HTTP_ACCEPT"] = "application/json"
     log_in(@agent)
+    stub_twilio_call_with_parent(false)
     post :initiate, initiate_params
     json.should be_eql({:call => "failure"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
   end
 
   it 'should render valid transfer twiml on correct inputs' do
     request.env["HTTP_ACCEPT"] = "application/json"
     log_in(@agent)
-    Twilio::REST::Call.any_instance.stubs(:update).returns(true)
+    stub_twilio_call_with_parent
     post :initiate, initiate_params
     json.should be_eql({:call => "success"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
   end
 
   it 'should return all available agents for transfer' do
@@ -48,8 +51,11 @@ RSpec.describe Freshfone::CallTransferController do
     log_in(@agent)
     Twilio::REST::Call.any_instance.stubs(:update).returns(true)
     outgoing = "false"
+    stub_twilio_call_with_parent
     post :initiate, initiate_external_params(outgoing)
     json.should be_eql({:call => "success"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
+    Twilio::REST::Call.any_instance.unstub(:update)
   end
 
   it 'should return empty for available external numbers for transfer' do

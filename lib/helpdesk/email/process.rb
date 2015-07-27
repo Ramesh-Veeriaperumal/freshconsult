@@ -39,6 +39,7 @@ class Helpdesk::Email::Process
 
   def accept_email
     account.make_current
+    TimeZone.set_time_zone
     self.common_email_data = email_metadata #In parse_email_data
     return if mail_from_email_config?
     # encode_stuffs

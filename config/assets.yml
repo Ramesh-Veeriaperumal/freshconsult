@@ -461,15 +461,38 @@ javascripts:
   ticket_fields:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/lib/nestedtree.js
-    - public/javascripts/frameworks/tf_customizer.js
+    # - public/javascripts/custom-form/*.js
+    - public/javascripts/custom-form/custom-field.js
+    - public/javascripts/custom-form/custom-form-builder.js
+    - public/javascripts/custom-form/custom_field_dialog.js
+    - public/javascripts/custom-form/dropdown.js
+    - public/javascripts/custom-form/sortable.js
+    - public/javascripts/custom-form/ticket_fields.js
+    - public/javascripts/custom-form/nested-field.js
+    - public/javascripts/custom-form/custom-sections.js
+    - public/javascripts/custom-form/template/*.jst
+    #- public/javascripts/frameworks/tf_customizer.js
 
   contact_fields:
     - public/javascripts/app/admin/contact_fields/cf_customizer.js
     - public/javascripts/app/admin/contact_fields/formfield_props.jst
+    - public/javascripts/app/admin/contact_fields/dom_field.jst
+    # - public/javascripts/custom-form/custom-field.js
+    # - public/javascripts/custom-form/custom-form-builder.js
+    # - public/javascripts/custom-form/custom_field_dialog.js
+    # - public/javascripts/custom-form/dropdown.js
+    # - public/javascripts/custom-form/sortable.js
+    # - public/javascripts/custom-form/contact_fields.js
+    # - public/javascripts/custom-form/template/*.jst
 
   company_fields:
-    - public/javascripts/app/admin/contact_fields/cf_customizer.js
-    - public/javascripts/app/admin/company_fields/formfield_props.jst
+    - public/javascripts/custom-form/custom-field.js
+    - public/javascripts/custom-form/custom-form-builder.js
+    - public/javascripts/custom-form/custom_field_dialog.js
+    - public/javascripts/custom-form/dropdown.js
+    - public/javascripts/custom-form/sortable.js
+    - public/javascripts/custom-form/company_fields.js
+    - public/javascripts/custom-form/template/*.jst
 
   survey:
     - public/javascripts/frameworks/jquery.js

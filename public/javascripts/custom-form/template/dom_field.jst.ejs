@@ -1,0 +1,85 @@
+<% 
+var isDefault = /^default/.test(field_type),
+		delete_icon = isDefault ? 'ficon-trash-strike-thru' : 'ficon-trash-o',
+		edit_icon = is_editable ? 'ficon-edit' : 'ficon-edit-strike-thru',
+		delete_tooltip = isDefault ? translate.get("field_delete_disabled") : translate.get("delete")%>
+		
+<div class='control-group date'>
+	<div class='control-label'>
+		<% if(custom_form_type != 'company' && field_type != 'default_requester' && !visible_in_portal) { %>
+			<span class='ficon-security private-symbol muted'></span>
+		<% } %>
+		<% if (dom_type != 'checkbox') { %>
+			<label class='custom-form-label'><%= label %></label>
+		<% } %>
+	</div>
+	<div class='options-wrapper'>
+		<div class='opt-inner-wrap'>
+			<div class = "edit-field options <%=edit_icon%> tooltip" title="<%= translate.get('edit') %>"></div>
+			<div class = "delete-field options <%=delete_icon%> tooltip" title="<%=delete_tooltip%>" data-placement= "topRight"></div>
+		</div>
+	</div>
+	<div class='controls <%= dom_type %>'>
+		<span class='overlay-field'></span>
+		<% switch(dom_type) {
+			case 'text':
+			case 'phone_number':
+			case 'url':
+			case 'number':
+			case 'decimal':
+			case 'email': %>
+				<input type='text' disabled>
+				<% break;
+			case 'requester': %>
+				<input type='text' disabled class='addcc'>
+				<span>&nbsp;<a href="#" class="underline">Add cc</a></span>
+				<% break;
+			case 'date': %>
+				<input type='text' disabled>
+				<span class='ficon-date'></span>
+				<% break;
+			case 'checkbox': %>
+				<input type='checkbox' disabled>
+				<span><%= label %></span>
+				<% break;
+			case 'time_zone_dropdown':
+			case 'dropdown':
+			case 'dropdown_blank': %>
+				<select class='select2 input-xlarge' disabled>
+					<% _.each(admin_choices, function(choice, index) { %>
+						<option value="<%= choice['value'] %>" > <%= choice['name'] %> </option>
+ 					<% }) %>
+				</select>
+				<% break;
+			case 'paragraph':
+			case 'html_paragraph':
+			case 'description': %>
+				<textarea rows="5" disabled></textarea>
+				<% break;
+			case 'nested_field':  %> 
+				<select class='select2 input-xlarge' disabled>
+					<% nestedTree = new NestedField(admin_choices);
+						var choice = nestedTree.getCategory() ;
+						choice = choice.split(",");
+					%>
+					<% _.each(choice, function(option, index) { %>
+						<%= option %>
+ 					<% }) %>
+					
+				</select>
+				<% break;
+			default:%>
+				<input type='text' disabled>
+				<% break;
+		} %>
+	</div>
+</div>
+<% if ("has_section" in obj && has_section) { %>
+	<div class="section-wrapper" id="section-wrapper">
+		<a href="#" id="new-section" class="new-section">
+			<i class="rounded-add-icon fsize-12"></i>
+			<%= translate.get('new_section') %>
+		</a>
+		<ul id="section-container" class="section-container"></ul>
+	</div>
+<% } %>

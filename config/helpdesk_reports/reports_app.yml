@@ -1,0 +1,13 @@
+defaults: &defaults
+  host: "http://localhost:3001"
+  ticket_reports: "/enterprise_reports/execute/"
+  timesheet_reports: "/example/execute"
+
+development:
+ <<: *defaults
+staging:
+  host: "http://10.170.148.112:80"
+  ticket_reports: "/enterprise_reports/execute/"
+  timesheet_reports: "/example/execute"
+test:
+ <<: *defaults
