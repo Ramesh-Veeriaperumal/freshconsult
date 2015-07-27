@@ -607,9 +607,9 @@ class NotesControllerTest < ActionController::TestCase
     t = ticket
     get :ticket_notes, construct_params(id: t.display_id)
     assert_response :success
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
+    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:attachments).loaded? }
+    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:schema_less_note).loaded? }
+    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:note_old_body).loaded? }
   end
 
   def test_notes_with_pagination

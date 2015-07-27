@@ -31,7 +31,7 @@ class TimeSheetsController < ApiApplicationController
   end
 
   def ticket_time_sheets
-    @items = paginate_items(@ticket.time_sheets.includes(:workable))
+    @items = paginate_items(scoper.where(workable_id: @id))
     render '/time_sheets/index'
   end
 
@@ -54,8 +54,9 @@ class TimeSheetsController < ApiApplicationController
 
     def load_ticket
       # Load only non deleted ticket.
-      @ticket = current_account.tickets.find_by_display_id_and_deleted(params[:id], false)
-      head 404 unless @ticket
+      @display_id = params[:id].to_i
+      @id = current_account.tickets.select(:id).where(display_id: @display_id, deleted: false).limit(1).first
+      head 404 unless @id
     end
 
     def scoper

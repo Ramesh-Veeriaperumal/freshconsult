@@ -172,7 +172,7 @@ class TicketsController < ApiApplicationController
       @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
       @item.cc_email = @cc_emails
       attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-      @item.attachments << (attachments || []) if create? # assign attachments so that it will not be queried again in model callbacks
+      @item.attachments += (attachments || []) if create? # assign attachments so that it will not be queried again in model callbacks
     end
 
     def verify_ticket_permission

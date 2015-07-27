@@ -11,7 +11,7 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
         index: 2,
         toggle_timer: 5,
         destroy: 5,
-        ticket_time_sheets: 3
+        ticket_time_sheets: 2
       }
 
       ticket = create_ticket

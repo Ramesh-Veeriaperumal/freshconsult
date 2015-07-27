@@ -6,7 +6,8 @@ class NotesController < ApiApplicationController
   include Conversations::Email
 
   before_filter :can_send_user?, only: [:create, :reply]
-  before_filter :load_ticket, only: [:reply, :ticket_notes]
+  before_filter :load_ticket, only: [:reply]
+  before_filter :ticket_exists?, only: [:ticket_notes]
 
   def create
     is_success = create_note
@@ -25,8 +26,7 @@ class NotesController < ApiApplicationController
   end
 
   def update
-    attachments = build_normal_attachments(@item, params[cname][:attachments])
-    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
+    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     unless @item.update_note_attributes(params[cname])
       render_error(@item.errors)
     end
@@ -38,9 +38,8 @@ class NotesController < ApiApplicationController
   end
 
   def ticket_notes
-    notes = @ticket.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
-    @items = paginate_items(notes)
-    render '/notes/index'
+    notes = scoper.visible.exclude_source('meta').where(notable_id: @id).includes(:schema_less_note, :note_old_body, :attachments)
+    @notes = paginate_items(notes)
   end
 
   private
@@ -59,9 +58,14 @@ class NotesController < ApiApplicationController
     end
 
     def create_note
-      @item.user ||= current_user if @item.user_id.blank? # assign user instead of id as the object is already loaded.
+      if @item.user_id
+        @item.user = @user if @user 
+      else
+        @item.user = current_user
+      end # assign user instead of id as the object is already loaded.
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
-      attachments = build_normal_attachments(@item, params[cname][:attachments])
+      @item.notable.account = current_account
+      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
       @item.save_note
     end
@@ -86,6 +90,12 @@ class NotesController < ApiApplicationController
     def load_ticket # Needed here in controller to find the item by display_id
       @ticket = current_account.tickets.find_by_param(params[:id], current_account)
       head 404 unless @ticket
+    end
+
+    def ticket_exists?
+      @display_id = params[:id].to_i
+      @id = current_account.tickets.where(display_id: @display_id).limit(1).select(:id).first
+      head 404 unless @id
     end
 
     def load_object

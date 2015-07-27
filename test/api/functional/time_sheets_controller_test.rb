@@ -830,13 +830,6 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert_equal ' ', @response.body
   end
 
-  def test_time_sheets_eager_loaded_association
-    t = ticket
-    get :ticket_time_sheets, construct_params(id: t.display_id)
-    assert_response :success
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
-  end
-
   def test_time_sheets_with_pagination
     t = ticket
     3.times do
