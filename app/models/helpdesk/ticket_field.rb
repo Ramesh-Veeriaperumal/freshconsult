@@ -132,7 +132,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
     when "default_source"
       Hash[TicketConstants.source_names]
     when "default_status"
-      Hash[Helpdesk::TicketStatus.statuses_from_cache_for_api(current_account)]
+      api_statuses = Helpdesk::TicketStatus.all_statuses_from_cache(current_account).map{|status| 
+                  [ 
+                    status.status_id, [Helpdesk::TicketStatus.translate_status_name(status, 'name'), 
+                    Helpdesk::TicketStatus.translate_status_name(status, 'customer_display_name') ]
+                  ]
+                }
+      Hash[api_statuses]
     when "default_ticket_type"
       current_account.ticket_types_from_cache.collect { |c| c.value }
     when "default_agent"
