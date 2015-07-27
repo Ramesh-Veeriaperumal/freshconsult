@@ -10,7 +10,7 @@
 					<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				</div>
 			<% end %>	
-			<div class="span3 pull-right text-right mt6 pr15">
+			<div class="span3 pull-right text-right article-list-meta">
 				<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
 					<%= font_icon "file-visible" %>
 					<%= article.hits %>

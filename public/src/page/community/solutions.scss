@@ -1024,3 +1024,17 @@ body.community #sticky_header.category-sticky.is_stuck {
   color: #FFFFFF;
   background-color: #D8DBDF;  
 }
+
+.article-search-meta {
+  padding-top: 5px;
+  margin-bottom: -5px;
+  margin-top: 6px;
+  @include padding-right(15px); 
+}
+
+.article-list-meta {
+  padding-top: 7px;
+  margin-bottom: -7px;
+  margin-top: 6px;
+  @include padding-right(15px); 
+}
