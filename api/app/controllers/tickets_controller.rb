@@ -11,9 +11,9 @@ class TicketsController < ApiApplicationController
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     assign_protected
-    validator = TicketValidator.new(@item)
-    if !validator.valid?
-      render_error(validator.errors)
+    tckt_dlgtr = TicketDelegator.new(@item)
+    if !tckt_dlgtr.valid?
+      render_error(tckt_dlgtr.errors)
     elsif @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
@@ -26,10 +26,10 @@ class TicketsController < ApiApplicationController
   def update
     assign_protected
     @item.assign_attributes(params[cname])
-    validator = TicketValidator.new(@item)
-    if !validator.valid?
-      set_custom_errors(validator)
-      render_error(validator.errors)
+    tckt_dlgtr = TicketDelegator.new(@item)
+    if !tckt_dlgtr.valid?
+      set_custom_errors(tckt_dlgtr)
+      render_error(tckt_dlgtr.errors)
     elsif @item.update_ticket_attributes(params[cname])
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?

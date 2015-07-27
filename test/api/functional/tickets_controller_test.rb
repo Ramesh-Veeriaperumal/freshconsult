@@ -507,7 +507,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :success
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
- end
+  end
 
   def test_update_with_product_id
     product = create_product

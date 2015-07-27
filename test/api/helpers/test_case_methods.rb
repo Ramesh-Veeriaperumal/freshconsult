@@ -14,6 +14,23 @@ module TestCaseMethods
     Bullet.enable = original_value
   end
 
+  def stub_current_account
+    Account.stubs(:current).returns(@account)
+    yield
+  ensure
+    Account.unstub(:current)
+  end
+
+  def without_proper_fd_domain
+    domain = DomainMapping.create(account_id: @account.id, domain: 'support.junk.com')
+    original_value = host
+    host!('support.junk.com')
+    yield
+  ensure
+    host!(original_value)
+    domain.destroy
+  end
+
   def remove_wrap_params
     @old_wrap_params = @controller._wrapper_options
     @controller._wrapper_options = { format: [] }

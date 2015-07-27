@@ -45,8 +45,8 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response :success
       end
 
-      create_note(user_id: @agent.id, ticket_id: id1, source: 2)
-      create_note(user_id: @agent.id, ticket_id: id2, source: 2)
+      stub_current_account { create_note(user_id: @agent.id, ticket_id: id1, source: 2) }
+      stub_current_account { create_note(user_id: @agent.id, ticket_id: id2, source: 2) }
 
       # update
       v2[:update], v2[:api_update] = count_api_queries do

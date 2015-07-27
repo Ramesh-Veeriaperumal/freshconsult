@@ -1,5 +1,5 @@
 # A big thanks to http://blog.arkency.com/2014/05/mastering-rails-validations-objectify/ !!!!
-class TicketValidator < SimpleDelegator
+class TicketDelegator < SimpleDelegator
   include ActiveModel::Validations
 
   validates :group, presence: true, if: -> { group_id  }

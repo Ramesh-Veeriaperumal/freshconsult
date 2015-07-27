@@ -14,7 +14,7 @@ class ApiApplicationController < MetalApiController
   around_filter :select_shard
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
-  before_filter :ensure_proper_protocol
+  before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state, except: [:show, :index]
   before_filter :set_time_zone, :check_day_pass_usage
@@ -263,6 +263,11 @@ class ApiApplicationController < MetalApiController
     def ensure_proper_protocol
       return true if Rails.env.test? || Rails.env.development?
       render_request_error(:ssl_required, 403) unless request.ssl?
+    end
+
+    def ensure_proper_fd_domain
+      return true if Rails.env.development?
+      render_request_error(:fd_domain_required, 403) unless ApiConstants::ALLOWED_DOMAIN == request.domain
     end
 
     def manipulate_params

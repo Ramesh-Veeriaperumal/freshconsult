@@ -31,4 +31,6 @@ module ApiConstants
                        TimeSheetConstants::LOAD_OBJECT_EXCEPT +
                        NoteConstants::LOAD_OBJECT_EXCEPT +
                        DiscussionConstants::LOAD_OBJECT_EXCEPT
+
+  ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
 end

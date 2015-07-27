@@ -33,6 +33,7 @@ class ActionDispatch::IntegrationTest
   def setup
     get_agent
     set_request_headers
+    host!('localhost.freshpo.com')
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
   end

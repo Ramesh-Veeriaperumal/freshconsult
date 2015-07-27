@@ -17,6 +17,7 @@ account_suspended: Your account has been suspended.
 method_not_allowed: Allowed methods are %{methods}
 internal_error: We're sorry, but something went wrong.
 ssl_required: SSL certificate verification failed.
+fd_domain_required: All APIs should call <your_domain>.freshdesk.com
 invalid_content_type: Content-Type header should have application/json
 missing_params: Your update call does not have any parameter.
 data_type_mismatch: Should be a valid %{data_type}
