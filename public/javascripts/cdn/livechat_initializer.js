@@ -8,7 +8,6 @@
 //=require livechat/templates/dashboard/miniDashboard.jst.ejs
 
 //=require livechat/templates/tickets/ticketDescription.jst.ejs
-//=require livechat/templates/tickets/ticketSearchList.jst.ejs
 //=require livechat/templates/tickets/ticketOptions.jst.ejs
 
 //=require livechat/templates/availability.jst.ejs

@@ -156,7 +156,7 @@ RSpec.describe TicketFieldsController do
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              :flexifield_def_id => @account.flexi_field_defs.find_by_module("Ticket").id,
                                              :flexifield_alias => "#{labels[0].downcase}_#{@account.id}",
-                                             :flexifield_name => "ffs_04}",
+                                             :flexifield_name => "ffs_04",
                                              :flexifield_order => 5,
                                              :flexifield_coltype => "dropdown",
                                              :account_id => @account.id)
@@ -523,5 +523,166 @@ RSpec.describe TicketFieldsController do
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
     @default_fields.detect{ |field| field[:field_type] == 'default_status'}[:choices].last[:stop_sla_timer].should be false
+  end
+
+  # Enter Section Fields
+
+  it "should create a new section with section fields" do
+    parent_ticket_field = @account.ticket_fields.find_by_field_type("default_ticket_type")
+    pl_value_id = parent_ticket_field.picklist_values.create(:value => Faker::Lorem.characters(6)).id
+    put :update, :jsonData => @default_fields.push({:type => "paragraph",
+                                                    :field_type => "custom_paragraph",
+                                                    :label => "Section Field 1",
+                                                    :label_in_portal => "Section Field 1",
+                                                    :description => "",
+                                                    :active => true,
+                                                    :required => false,
+                                                    :required_for_closure => false,
+                                                    :visible_in_portal => true,
+                                                    :editable_in_portal => true,
+                                                    :required_in_portal => false,
+                                                    :id => nil,
+                                                    :field_options => {:section => true},
+                                                    :choices => [],
+                                                    :levels => [],
+                                                    :action => "create"}).to_json,
+                :jsonSectionData => [{
+                                        :label => "Section 1", 
+                                        :picklist_ids => [{ "picklist_value_id" => pl_value_id }], 
+                                        :action => "save", 
+                                        :section_fields => [{
+                                            :ticket_field_name => "Section Field 1", 
+                                            :parent_ticket_field_id => parent_ticket_field.id, 
+                                            :position => 1
+                                        }]
+                                    }].to_json
+    new_field = @account.ticket_fields.find_by_label("Section Field 1")
+    new_field.should be_an_instance_of(Helpdesk::TicketField)
+    @account.sections.find_by_label("Section 1").should be_an_instance_of(Helpdesk::Section)
+    @account.section_fields.find_by_ticket_field_id(new_field.id).should be_an_instance_of(Helpdesk::SectionField)
+  end
+
+  it "should delete a section along with its section fields" do    
+    flexifield_def_id = @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id
+    ff_def_entry = FactoryGirl.build(:flexifield_def_entry, 
+                                     :flexifield_def_id => flexifield_def_id,
+                                     :flexifield_alias => "section_field_2_#{@account.id}",
+                                     :flexifield_name => "ff_text09",
+                                     :account_id => @account.id)
+    ff_def_entry.save
+    new_field = FactoryGirl.build(:ticket_field, :account_id => @account.id,
+                                     :name => "section_field_2_#{@account.id}",
+                                     :label => "Section Field 2",
+                                     :label_in_portal => "Section Field 2",
+                                     :field_options => {:section => true},
+                                     :flexifield_def_entry_id => ff_def_entry.id)
+    new_field.save
+
+    parent_ticket_field = @account.ticket_fields.find_by_field_type("default_ticket_type")
+    pl_value_id = parent_ticket_field.picklist_values.create(:value => Faker::Lorem.characters(6)).id
+    section = FactoryGirl.build(:section, :label => "Section 2", :account_id => @account.id)
+    section.section_picklist_mappings.build(:picklist_value_id => pl_value_id)
+    section.section_fields.build(:ticket_field_id => new_field.id,
+                                 :parent_ticket_field_id => parent_ticket_field.id, 
+                                 :position => 1)
+    section.save
+
+    put :update, :jsonData => @default_fields.push({:id => new_field.id,
+                                                    :type => "paragraph",
+                                                    :field_type => "custom_paragraph",
+                                                    :label => "Section Field 2",
+                                                    :label_in_portal => "Section Field 2",
+                                                    :description => "",
+                                                    :active => true,
+                                                    :required => false,
+                                                    :required_for_closure => false,
+                                                    :visible_in_portal => true,
+                                                    :editable_in_portal => true,
+                                                    :required_in_portal => false,
+                                                    :field_options => {:section => true},
+                                                    :choices => [],
+                                                    :levels => [],
+                                                    :action => "delete"}).to_json,
+                :jsonSectionData => [{
+                                        :id => section.id,
+                                        :label => "Section 2", 
+                                        :picklist_ids => [{ "picklist_value_id" => pl_value_id }], 
+                                        :action => "delete"
+                                    }].to_json
+    @account.ticket_fields.find_by_label("Section Field 2").should be_nil
+    @account.sections.find_by_label("Section 2").should be_nil
+    @account.section_fields.find_by_ticket_field_id(new_field.id).should be_nil
+  end
+
+  it "should move a section field from one section to another section" do
+    flexifield_def_id = @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id
+    ff_def_entry = FactoryGirl.build(:flexifield_def_entry, 
+                                     :flexifield_def_id => flexifield_def_id,
+                                     :flexifield_alias => "section_field_2_#{@account.id}",
+                                     :flexifield_name => "ff_text09",
+                                     :account_id => @account.id)
+    ff_def_entry.save
+    new_field = FactoryGirl.build(:ticket_field, :account_id => @account.id,
+                                     :name => "section_field_2_#{@account.id}",
+                                     :label => "Section Field 2",
+                                     :label_in_portal => "Section Field 2",
+                                     :field_options => {:section => true},
+                                     :flexifield_def_entry_id => ff_def_entry.id)
+    new_field.save
+
+    parent_ticket_field = @account.ticket_fields.find_by_field_type("default_ticket_type")
+    pl_value_id = parent_ticket_field.picklist_values.create(:value => Faker::Lorem.characters(6)).id
+    new_pl_value_id = parent_ticket_field.picklist_values.create(:value => Faker::Lorem.characters(6)).id
+    section = FactoryGirl.build(:section, :label => "Section 3", :account_id => @account.id)
+    section.section_picklist_mappings.build(:picklist_value_id => pl_value_id)
+    section.section_fields.build(:ticket_field_id => new_field.id,
+                                 :parent_ticket_field_id => parent_ticket_field.id, 
+                                 :position => 1)
+    section.save
+    section_field = section.section_fields.first
+    section_pl_mapping = section.section_picklist_mappings.first
+
+    put :update, :jsonData => @default_fields.push({:id => new_field.id,
+                                                    :type => "paragraph",
+                                                    :field_type => "custom_paragraph",
+                                                    :label => "Section Field 2",
+                                                    :label_in_portal => "Section Field 2",
+                                                    :description => "",
+                                                    :active => true,
+                                                    :required => false,
+                                                    :required_for_closure => false,
+                                                    :visible_in_portal => true,
+                                                    :editable_in_portal => true,
+                                                    :required_in_portal => false,
+                                                    :field_options => {:section => true},
+                                                    :choices => [],
+                                                    :levels => [],
+                                                    :action => "edit"}).to_json,
+                :jsonSectionData => [{:id => section.id, 
+                                      :label => "Section 3", 
+                                      :section_fields => [{
+                                        :id => section_field.id, 
+                                        :position => 1, 
+                                        :ticket_field_id => new_field.id, 
+                                        :parent_ticket_field_id => parent_ticket_field.id, 
+                                        :action => "delete"}], 
+                                      :picklist_ids => [{
+                                        :picklist_value_id => pl_value_id}], 
+                                      :action => "save"
+                                        }, 
+
+                                      {
+                                        :label => "Section 4", 
+                                        :picklist_ids => [{
+                                          :picklist_value_id => new_pl_value_id }], 
+                                        :action => "save", 
+                                        :section_fields => [{
+                                          :position => 1, 
+                                          :ticket_field_id => new_field.id, 
+                                          :parent_ticket_field_id => parent_ticket_field.id }]
+                                      }].to_json
+    new_section = @account.sections.find_by_label("Section 4")
+    new_section.should be_an_instance_of(Helpdesk::Section)
+    new_section.section_fields.first.ticket_field_id.should be_eql(new_field.id)
   end
 end

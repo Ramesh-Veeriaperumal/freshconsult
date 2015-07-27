@@ -70,4 +70,12 @@ class CRM::AddToCRM
     end
   end
 
- end
+  class UpdateCustomerStatus
+    extend Resque::AroundPerform
+    @queue = QUEUE
+    def self.perform(args)
+      CRM::Salesforce.new.update_customer_status if Rails.env.production?
+    end
+  end
+
+end

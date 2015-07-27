@@ -41,7 +41,8 @@ module FreshfoneSpecHelper
         :voicemail_active => true,
         :number_type => 1,
         :state => 1,
-        :deleted => false )
+        :deleted => false,
+        :skip_in_twilio => true )
     else
       @number ||= @account.freshfone_numbers.first
     end
@@ -201,4 +202,19 @@ module FreshfoneSpecHelper
     end
     groups
   end
+
+  def stub_twilio_queues(empty_queue = false)
+    queues = mock
+    members = mock
+    member = mock
+    member.stubs(:dequeue)
+    member.stubs(:update)
+    current_size = empty_queue ? 0 : 1
+    queues.stubs(:current_size).returns(current_size)
+    members.stubs(:get).returns(member)
+    members.stubs(:list).returns([member])
+    queues.stubs(:members).returns(members)
+    Twilio::REST::Queues.any_instance.stubs(:get).returns(queues)
+  end
+
 end

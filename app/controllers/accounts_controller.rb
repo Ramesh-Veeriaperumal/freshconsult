@@ -462,9 +462,9 @@ class AccountsController < ApplicationController
     end
 
     def add_to_crm
-      Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, 
-                            :cookie => ThirdCRM.fetch_cookie_info(request.cookies),
-                            :signup_id => params[:signup_id] })
+      Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
+        :signup_id => params[:signup_id] })
+      
     end  
 
     def perform_account_cancel(feedback)

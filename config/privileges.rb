@@ -314,8 +314,9 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/custom_survey_report"
       resource :"reports/freshfone/summary_report"
       resource :"reports/freshchat/summary_report"
-   	resource :"reports/timesheet_report"
-    resource :"reports/report_filter"
+   	  resource :"reports/timesheet_report"
+      resource :"reports/report_filter"
+      resource :"reports/v2/tickets/report"
   end
 
   # ************** ADMIN **************************

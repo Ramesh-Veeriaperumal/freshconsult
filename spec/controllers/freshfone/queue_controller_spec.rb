@@ -44,8 +44,10 @@ RSpec.describe Freshfone::QueueController do
 
   it 'should success json when queue list is empty' do
     log_in(@agent)
+    stub_twilio_queues
     post :bridge
     json.should be_eql({:status => "success"})
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
 
   it 'should dequeue twiml on call dequeue' do

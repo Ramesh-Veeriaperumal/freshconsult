@@ -627,10 +627,10 @@ module ApplicationHelper
   def avatar_generator( username, profile_size = :thumb, profile_class, opt )
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class] }
     username = username.lstrip
-    if username.present? && isalpha(username[0])
-       content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
+    if username.present? && isalpha(username[0]).present?
+       ActionController::Base.helpers.content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
     else
-       content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
+       ActionController::Base.helpers.content_tag( :div, (ActionController::Base.helpers.image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
   end
 
@@ -815,15 +815,18 @@ module ApplicationHelper
     element.html_safe
   end
 
-  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
+    element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
-    label = label_tag object_name+"_"+field.field_name, field_label.html_safe
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
+                                     object_name+"_"+field.field_name), 
+                      field_label.html_safe
     choices = field.choices
     case dom_type
       when "requester" then
@@ -854,19 +857,78 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value},
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal, required)
+        element = label + nested_field_tag(object_name, 
+                                            field_name, 
+                                            field, 
+                                            { :include_blank => "...", 
+                                              :selected => field_value, 
+                                              :pl_value_id => pl_value_id}, 
+                                            {:class => element_class}, 
+                                            field_value, 
+                                            in_portal, 
+                                            required)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } )) :
-                                                                   ( check_box(object_name, field_name, :class => element_class, :checked => field_value ) ) )
+        check_box_html = { :class => element_class }
+        if pl_value_id
+          id = gsub_id object_name+"_"+field_name+"_"+pl_value_id
+          check_box_html.merge!({:id => id})
+        end
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?,  check_box_html)) :
+                                          ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
+      when "date" then
+        date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
+        if field_value
+          time_format = Account.current.date_type(:short_day_separated)
+          field_value = (Time.parse(field_value.to_s)).strftime(time_format)
+        end 
+        element = label + text_field_tag("#{object_name}[#{field_name}]", field_value, 
+                    {:class => "#{element_class} datepicker_popover", 
+                     :'data-show-image' => "true",
+                     :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
+        
     end
-    content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field"
+  end
+
+  def construct_section_fields(f, field, is_edit, item, required)
+    section_container = ""
+    field.picklist_values.each do |picklist|
+      next if picklist.section.blank?
+      section_elements = ""
+      picklist.section_ticket_fields.each do |section_tkt_field|
+        if is_edit || required
+          section_field_value = item.send(section_tkt_field.field_name)
+          section_field_value = nested_ticket_field_value(item, 
+                                  section_tkt_field) if section_tkt_field.field_type == "nested_field"
+        elsif !params[:topic_id].blank?
+          section_field_value = item[section_tkt_field.field_name]
+        end
+        field_label = (section_tkt_field.label).html_safe
+        section_elements += construct_ticket_element(f, :helpdesk_ticket, 
+                                                        section_tkt_field, 
+                                                        field_label,
+                                                        section_tkt_field.dom_type, 
+                                                        section_tkt_field.required, 
+                                                        section_field_value, 
+                                                        "", 
+                                                        false, 
+                                                        is_edit,
+                                                        picklist.id.to_s)
+      end
+      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"), 
+                                                               :class => "ticket_section"),
+                                            :id => "picklist_section_#{picklist.id}",
+                                            :disabled => true,
+                                            :class => "hide"
+    end
+    section_container
   end
 
   def add_cc_field_tag element , field
@@ -892,22 +954,36 @@ module ApplicationHelper
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
   def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
-    _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
-    _javascript_opts = {
+  _javascript_opts = {
       :data_tree => _field.nested_choices,
       :initValues => _field_values,
       :disable_children => false
     }.merge!(_opt)
-    _field.nested_levels.each do |l|
-      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-      _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required))) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
-    end
-    (_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+    if _opt[:pl_value_id].present?
+      _htmlopts.merge!({:id => gsub_id("#{_name}_#{_fieldname}_#{_opt[:pl_value_id]}")})
+      _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _field.nested_levels.each do |l|
+        _htmlopts.merge!({:id => gsub_id("#{_name}_#{l[:name]}_#{_opt[:pl_value_id]}")})
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name]+"_"+_opt[:pl_value_id])
+        _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required)).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname+"_"+_opt[:pl_value_id])}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+    else
+      _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _field.nested_levels.each do |l|
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name])
+        _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required)).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+      end
+  end
 
+  def gsub_id(text)
+    text.gsub('[','_').gsub(']','')
   end
 
   def nested_field_label(label, required)
-    field_label = label.html_safe
+    field_label = label
     field_label += '<span class="required_star">*</span>'.html_safe if required
     return field_label
   end

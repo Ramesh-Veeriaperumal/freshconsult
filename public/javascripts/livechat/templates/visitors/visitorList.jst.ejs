@@ -4,7 +4,7 @@
     	<span data-livestamp=<%= visitor.time %> ></span>
     <%}%>
   </td>
-  <%if(visitor.sclass=="chat-visitor" ){ 
+  <%if(visitor.sclass=="chat-visitor" && userCollection.get(visitor.agent) ){ 
     var userDetails=visitor.name+ " "+CHAT_I18n.chatting_with + " "+userCollection.get(visitor.agent).get( 'name');%> 
     <td class="<%=visitor.sclass%> <%=(userDetails > 17) ? 'tooltip': ''%>" data-original-title="<%=userDetails%>"><i class="ficon-user" title="<%=visitor.tip%>"></i>
     <span class="<%=(userDetails > 17) ? 'tooltip': ''%>">

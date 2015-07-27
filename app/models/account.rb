@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
 
   pod_filter "id"
   
-  concerned_with :associations, :constants, :validations, :callbacks
+  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq
   include CustomerDeprecationMethods
   
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
@@ -346,14 +346,6 @@ class Account < ActiveRecord::Base
 
   def reset_sso_options
     self.sso_options = set_sso_options_hash
-  end
-
-  def rabbit_mq_exchange(model_name)
-    $rabbitmq_model_exchange[rabbit_mq_exchange_key(model_name)]
-  end
-
-  def rabbit_mq_exchange_key(model_name)
-    "#{model_name.pluralize}_#{id%($rabbitmq_shards)}"
   end
 
   protected

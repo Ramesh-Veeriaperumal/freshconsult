@@ -1,0 +1,9 @@
+<div id="div_ff_<%=condition%>" class="ff_item filter-field" condition="<%=condition%>" operator="<%=operator%>" container="<%=container%>" type="<%=field_type%>" data-label="<%=name%>">
+	<label class="control-label"><%=name%></label>
+	<select multiple="multiple" class="filter_item" id="<%=condition%>" name="<%=condition%>[]">
+		<% for (i=0; i<	options.length; i++) {  %>
+	    	<option value="<%=options[i][0]%>"><%=options[i][1]%></option>
+	 	<% } %>
+	</select>
+	<i class="ficon-cross fsize-14 " size="14"></i>
+</div>

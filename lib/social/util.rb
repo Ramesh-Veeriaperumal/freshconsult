@@ -62,5 +62,17 @@ module Social::Util
       :fd_user => user
     }
   end
+  
+  def remove_utf8mb4_char(ticket_content)
+    "".tap do |out_str|
+      for i in (0...ticket_content.length)
+        char = ticket_content[i]
+        char = " " if char.ord > 65535
+        out_str << char
+      end
+      out_str.squeeze!(" ")
+      out_str << "Not given" if (!ticket_content.blank? and out_str.blank?)
+    end
+  end
 
 end

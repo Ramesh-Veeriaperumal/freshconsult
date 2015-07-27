@@ -1,0 +1,44 @@
+<!-- temporary fix with shabby footer, will be moved to Pjax subsequently  -->
+<script type="text/javascript">
+	jQuery(document).on('pjax:popstate', function(event) { 
+		if (window.location.pathname.indexOf('/reports/v2') > -1) {
+			window.location.reload();
+		}
+	});
+</script>
+
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>
+<%= stylesheet_link_tag_with_rtl :'cdn/helpdesk_reports' %>
+<%= javascript_include_tag :'cdn/helpdesk_reports'  %>
+
+<div class="loading-box" id="loading-box"> 
+	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports">Generating Report...</div> 
+</div>
+
+<div class="reports-wrapper">
+ 	<div class="reports-header row-fluid">
+	 	<%= render :partial => "reports/v2/tickets/reports/shared/reports_header" %>	
+	</div>
+	<div class="reports-container"></div>	
+</div>
+
+<%= render :partial => "reports/v2/tickets/reports/shared/filter" %>
+<% content_for :pagefixed do  %>
+<div class="ticket-list-wrapper">
+	<div class="list-title">
+		List of Tickets
+		<div class="cross"><%= font_icon "cross", :size => 20 %></div>
+	</div>
+	<div id="ticket_list"></div>
+</div>
+<% end %>
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+	    HelpdeskReports.CoreUtil.ticket_field_hash = <%= @show_options.to_json.html_safe %> ;
+	    HelpdeskReports.CoreUtil.bindEvents();
+	});
+</script>
+
+<!--Temporary, need to find alternate way -->
+<%= render :partial => "reports/v2/tickets/reports/#{request.path.split('/').last}/initialize" %>

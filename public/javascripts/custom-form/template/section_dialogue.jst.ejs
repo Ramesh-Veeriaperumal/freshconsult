@@ -1,0 +1,51 @@
+<div class="section-dialog custom-fields-props-dialog modal hide fade" id='CustomPropsModal'>
+	<div class='modal-header clearfix'>
+		<h3 class="ellipsis modal-title pull-left">
+			<%= translate.get('section_prop') %> 
+			<span class='field-label'></span>
+		</h3>
+	</div>
+	<div class='modal-body'>
+		<form id="sectionProperties" action="#" class = "form-horizontal sections-dialog-wrapper">
+			<div class="section">
+					<fieldset class="control-group">
+						<label class="control-label">
+							<%= translate.get('sectino_label') %><span class="required_star">*</span>
+						</label>
+						<div class="controls">
+							<input type="hidden" name="section-id" class="hide" value="<%= obj.id %>" />
+							<input type="text" 
+									placeholder="" 
+									name="section-label" class="dialog-input-size required" value= "<%= obj.label.replace(/"/g, '&quot;') %>" />
+						</div>
+					</fieldset>
+					<fieldset class="control-group">
+						<label class="control-label">
+							<%= translate.get('section_type_is') %><span class="required_star">*</span>
+						</label>
+						<div class="controls">
+							<select class="required dialog-input-size select2" id="section-type" name="section-type" multiple>
+								<% _.each(types, function(item){  %>
+									<option value="<%= item.id %>" 
+										<% 
+										for (var i=0; i < obj.picklist_ids.length; i++){
+											if(item.id == obj.picklist_ids[i].picklist_value_id) {
+												%>selected<% 
+											} 
+										} %> >
+										<%= item.name %>
+									</option>
+								<% }) %>
+						    </select>
+						    <div class="muted"> <%= translate.get('section_type_change') %></div>
+					    </div>
+					</fieldset>					
+			</div>
+		</form>
+	</div>
+	<span class="seperator"></span> 
+	<div class="alignright modal-footer">
+		<a class="btn" id="sectionCancelBtn"><%= translate.get('cancel') %></a> 
+		<input type="submit" value="<%= translate.get('done') %>" class="btn btn-primary" id='sectionSubmitBtn' /> 
+	</div>
+</div>
