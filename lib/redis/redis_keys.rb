@@ -79,6 +79,8 @@ module Redis::RedisKeys
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
 	BI_REPORTS_UI_ENABLED = "BI_REPORTS_UI"
 
+	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield
