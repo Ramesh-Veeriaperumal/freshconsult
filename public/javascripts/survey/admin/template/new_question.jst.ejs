@@ -1,0 +1,19 @@
+<div class="question" id="<%=surveyQuestionId%>">
+	<ul class="survey-question">
+			<li>
+				<a class="delete-question" href="javascript:SurveyQuestion.delete('<%=surveyQuestionId%>','<%=question.id%>');"> <i class="ficon-minus"></i> </a>
+			</li>
+			<!-- re-order icon commented. will be taken for phase2 -->
+			<li><!-- <i class="ficon-rearrange"></i> --></li>
+			<li>
+				<input type="text" onblur="javascript:SurveyValidate.removeError(this);" maxlength="<%=SurveyConstants.limit.thanks_text%>" class="input-survy-ques" data-name="<%=question.name%>" name="survey_question[<%=question.name%>]" value='<%=question.label%>' id="<%=question.id%>" data-choiceMap=<%if(question.choiceMap){%><%=SurveyJSON.stringify(question.choiceMap)%><%}%>/>
+			</li>
+			<li class="question-rating-option" id="question-rating-option-<%=count%>" data-question-id="<%=count%>">
+					<label id="rating-label-<%=count%>" data-selected-value="&nbsp;" data-selected-id="none" class="pb0">&nbsp;</label>
+					<% for(var i=0;i<choices.length;i++){%>
+						<span class="survey-rating none question-rating-<%=count%>" id="rating_<%=i%>" data-class="<%=choices[i].className%>" data-id="<%=choices[i].id%>" data-question-id="<%=count%>" data-name="<%=choices[i].value || choices[i].text%>" onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this,true);"></span>
+					<%}%>          
+			</li>
+	</ul>
+	<label id="question-text-error" class="question-msg error" style="display:none;"><%= surveysI18n.question_error_text %></label>
+</div>

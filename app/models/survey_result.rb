@@ -1,5 +1,5 @@
 class SurveyResult < ActiveRecord::Base
-
+  
   self.primary_key = :id
 
   include Va::Observer::Util
@@ -16,12 +16,11 @@ class SurveyResult < ActiveRecord::Base
   after_create :update_ticket_rating
   before_create :update_observer_events
   after_commit :filter_observer_events, on: :create, :if => :user_present?
-
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
       :user_id => customer_id,
-      :note_body_attributes => {:body => feedback},
+      :note_body_attributes => {:body => Helpdesk::HTMLSanitizer.plain(feedback)},
       :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"],
       :incoming => true,
       :private => false

@@ -129,7 +129,6 @@ module ApiDiscussions
     end
 
     def test_before_filters_show
-      @controller.expects(:check_privilege).never
       @controller.expects(:portal_check).once
       get :show, construct_params(id: 1)
     end
@@ -232,7 +231,6 @@ module ApiDiscussions
       topic = create_test_topic(forum_obj)
       get :show, construct_params(id: topic.id)
       result_pattern = topic_pattern(topic)
-      result_pattern[:posts] = Array
       match_json(result_pattern)
       assert_response :success
     end
@@ -243,72 +241,13 @@ module ApiDiscussions
       assert_equal ' ', @response.body
     end
 
-    def test_show_with_posts
-      t = create_test_topic(forum_obj)
-      get :show, construct_params(id: t.id)
-      result_pattern = topic_pattern(t)
-      result_pattern[:posts] = []
-      t.posts.each do |p|
-        result_pattern[:posts] << post_pattern(p)
-      end
-      assert_response :success
-      match_json(result_pattern)
-    end
-
-    def test_posts_invalid_id
-      get :posts, construct_params(id: (1000 + Random.rand(11)))
-      assert_response :not_found
-      assert_equal ' ', @response.body
-    end
-
-    def test_posts
-      t = Topic.where('posts_count > ?', 1).first || create_test_post(Topic.first, User.first).topic
-      get :posts, construct_params(id: t.id)
-      result_pattern = []
-      t.posts.each do |p|
-        result_pattern << post_pattern(p)
-      end
-      assert_response :success
-      match_json(result_pattern)
-    end
-
-    def test_posts_with_pagination
-      t = Topic.where('posts_count > ?', 1).first || create_test_post(first_topic, User.first).topic
-      3.times do
-        create_test_post(t, User.first)
-      end
-      get :posts, construct_params(id: t.id, per_page: 1)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-      get :posts, construct_params(id: t.id, per_page: 1, page: 2)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-    end
-
-    def test_posts_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      t = first_topic
-      4.times do
-        create_test_post(t, User.first)
-      end
-      get :posts, construct_params(id: t.id, per_page: 4)
-      assert_response :success
-      assert JSON.parse(response.body).count == 2
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
-    end
-
     def test_create_without_manage_users_privilege
       user = other_user
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(false).once
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', email: user.email)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('email', 'invalid_field')])
+      assert_response :forbidden
+      match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
     end
 
     def test_create_without_edit_topic_privilege
@@ -316,7 +255,6 @@ module ApiDiscussions
       controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(true).once
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', sticky: true)
       assert_response :bad_request
@@ -547,6 +485,48 @@ module ApiDiscussions
     def test_is_following_invalid_user_id
       get :is_following, controller_params(user_id: user_without_monitorships.id, id: first_topic.id)
       assert_response :not_found
+    end
+
+    def test_topics_invalid_id
+      get :forum_topics, construct_params(id: 'x')
+      assert_response :not_found
+      assert_equal ' ', @response.body
+    end
+
+    def test_topics
+      f = Forum.where('topics_count >= ?', 1).first || create_test_topic(Forum.first, User.first).forum
+      get :forum_topics, construct_params(id: f.id)
+      result_pattern = []
+      f.topics.each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      assert_response :success
+      match_json(result_pattern)
+    end
+
+    def test_topics_with_pagination
+      3.times do
+        create_test_topic(forum_obj, User.first)
+      end
+      get :forum_topics, construct_params(id: forum_obj.id, per_page: 1)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :forum_topics, construct_params(id: forum_obj.id, per_page: 1, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :forum_topics, construct_params(id: forum_obj.id, per_page: 1, page: 3)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_topics_with_pagination_exceeds_limit
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      get :forum_topics, construct_params(id: forum_obj.id, per_page: 4)
+      assert_response :success
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
   end
 end

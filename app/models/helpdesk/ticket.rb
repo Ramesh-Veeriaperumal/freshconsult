@@ -24,10 +24,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
+  include BusinessHoursCalculation
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
+                            "reports_hash"]
   OBSERVER_ATTR = []
 
   self.table_name =  "helpdesk_tickets"
@@ -167,14 +169,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
-  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
-    :conditions => ["display_id > (?)",display_id],
-    :limit => limit,
-    :order => order_param
-    }
-  }
-  
   class << self # Class Methods
+
+    def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
+      if display_id != 0 
+        where(query_string,display_id).order(order_param).limit(limit_val)
+      else
+        order(order_param).limit(limit_val)
+      end
+    end
 
     def agent_permission user
       permissions = {:all_tickets => [] , 
@@ -555,6 +558,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
+    
+    # Should include methods like to_a, created_on, updated_on as record_time_stamps is calling these mthds before any write operation
+    # .blank? will call respond_to?(:empty)
+    return super(attribute, include_private) if [:to_a, :created_on, :updated_on, :empty?].include?(attribute)
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
       ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
@@ -564,11 +571,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
-  end
-
-  def api_load_schema_less_ticket
-    build_schema_less_ticket unless schema_less_ticket
-    schema_less_ticket
   end
 
   def method_missing(method, *args, &block)
@@ -803,6 +805,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.fb_profile_id
   end
   
+
+  def can_send_survey?(s_while)
+     survey = account.survey
+     (!survey.nil? && survey.can_send?(self,s_while))
+  end
+
   # Instance level spam watcher condition
   # def rl_enabled?
   #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?

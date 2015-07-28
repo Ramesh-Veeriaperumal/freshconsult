@@ -4,8 +4,9 @@ Helpkit::Application.routes.draw do
       member do
         put :assign
         put :restore
-        get :notes
-        get :time_sheets
+        get :time_sheets, to: 'time_sheets#ticket_time_sheets'
+        get :notes, to: 'notes#ticket_notes'
+        post :reply, to: 'notes#reply'
       end
     end
     resources :notes, :except => [:new, :edit, :show, :index]
@@ -18,17 +19,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'tickets/:ticket_id/reply' => 'notes#reply', :via => :post
-
     namespace :api_discussions, :path => "discussions" do
       resources :categories, :except => [:new, :edit] do
         member do
-          get :forums
+          get :forums, to: 'forums#category_forums'
         end
       end
       resources :forums, :except => [:new, :edit, :index] do
         member do
-          get :topics
+          get :topics, to: 'topics#forum_topics'
           post :follow, to: :follow
           delete :follow, to: :unfollow
           get :follow, to: :is_following
@@ -36,7 +35,7 @@ Helpkit::Application.routes.draw do
       end
       resources :topics, :except => [:new, :edit, :index]do
         member do
-          get :posts
+          get :posts, to: 'posts#topic_posts'
           post :follow, to: :follow
           delete :follow, to: :unfollow
           get :follow, to: :is_following

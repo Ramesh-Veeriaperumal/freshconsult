@@ -14,7 +14,7 @@ class ApiApplicationController < MetalApiController
   around_filter :select_shard
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
-  before_filter :ensure_proper_protocol
+  before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state, except: [:show, :index]
   before_filter :set_time_zone, :check_day_pass_usage
@@ -27,20 +27,24 @@ class ApiApplicationController < MetalApiController
   include SubscriptionSystem
   # App specific Before filters Ends
 
+  before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
-  before_filter :load_object, except: [:create, :index, :route_not_found]
+  before_filter :before_load_object, :load_object, :after_load_object, except: ApiConstants::LOAD_OBJECT_EXCEPT
   before_filter :check_params, only: :update
+  before_filter :before_validation, only: [:create]
   before_filter :validate_params, only: [:create, :update]
   before_filter :manipulate_params, only: [:create, :update]
   before_filter :build_object, only: [:create]
-  before_filter :load_objects, only: [:index]
   before_filter :load_association, only: [:show]
+  before_filter :validate_filter_params, only: [:index]
+  before_filter :validate_url_params, only: [:show]
 
   def index
-    # load_objects will load all objects and index.json.jbuilder will render the result.
+    load_objects
   end
 
   def create
+    assign_protected
     if @item.save
       render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
@@ -54,6 +58,7 @@ class ApiApplicationController < MetalApiController
   end
 
   def update
+    assign_protected
     unless @item.update_attributes(params[cname])
       set_custom_errors # this will set @error_options if necessary.
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
@@ -90,6 +95,21 @@ class ApiApplicationController < MetalApiController
 
   private
 
+    def before_validation
+    end
+
+    def assign_protected
+    end
+
+    def validate_filter_params
+    end
+
+    def validate_url_params
+    end
+
+    def feature_name
+    end
+
     def not_get_request?
       @not_get_request ||= !request.get?
     end
@@ -111,19 +131,22 @@ class ApiApplicationController < MetalApiController
       @current_user
     end
 
-    def set_custom_errors
+    def set_custom_errors(_item = @item)
       # This is used to manipulate the model errors to a format that is acceptable.
     end
 
     def can_send_user? # if user_id or email of a user, is included in params, the current_user should have ability to assume that user.
       user_id = params[cname][:user_id]
-      if user_id || @email
-        @user = current_account.all_users.find_by_email(@email) if @email # should use user_for_email instead of find_by_email
+      email = params[cname][:email]
+      if user_id || email
+        @user = current_account.all_users.find_by_email(email) if email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
         if @user && @user != current_user && !is_allowed_to_assume?(@user)
-          render_request_error(:invalid_user, 403, id: @user.id, name: @user.name) 
+          render_request_error(:invalid_user, 403, id: @user.id, name: @user.name)
+          return false
         end
       end
+      true
     end
 
     def set_cache_buster
@@ -165,10 +188,18 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options
       options = {}
-      options[:per_page] = params[:per_page].blank? || params[:per_page].to_i > ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] : params[:per_page]
+      options[:per_page] = get_per_page
       options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
-      options[:total_entries] = options[:page] * options[:per_page]
+      options[:total_entries] = options[:page] * options[:per_page] # To prevent paginate from firing count query
       options
+    end
+
+    def get_per_page
+      if params[:per_page].blank?
+        ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+      else
+        [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
+      end
     end
 
     def cname
@@ -183,11 +214,17 @@ class ApiApplicationController < MetalApiController
       end
     end
 
-    def load_object
-      @item = scoper.find_by_id(params[:id])
+    def load_object(items = scoper)
+      @item = items.find_by_id(params[:id])
       unless @item
         head :not_found # Do we need to put message inside response body for 404?
       end
+    end
+
+    def before_load_object
+    end
+
+    def after_load_object
     end
 
     def build_object
@@ -228,6 +265,11 @@ class ApiApplicationController < MetalApiController
       render_request_error(:ssl_required, 403) unless request.ssl?
     end
 
+    def ensure_proper_fd_domain
+      return true if Rails.env.development?
+      render_request_error(:fd_domain_required, 403) unless ApiConstants::ALLOWED_DOMAIN == request.domain
+    end
+
     def manipulate_params
       # This will be used to map incoming parameters to parameters that the model would understand
     end
@@ -246,5 +288,13 @@ class ApiApplicationController < MetalApiController
 
     def create?
       current_action?('create')
+    end
+
+    def show?
+      current_action?('show')
+    end
+
+    def destroy?
+      current_action?('destroy')
     end
 end

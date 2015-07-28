@@ -1,0 +1,16 @@
+<div class="tabbable tabs-left tabs-survey">
+	<ul class="nav nav-tabs">
+		<%
+			var tabs = SurveyTab.data();
+			if(tabs){
+				for(var i=0;i<tabs.length;i++){
+		%>	
+			<li id="<%=tabs[i].id%>_<%=tabs[i].type%>" class="nav-survey-rating <%=tabs[i].state%>" data-id="<%=tabs[i].id%>" data-type="<%=tabs[i].type%>">
+				<%= JST["survey/reports/template/stats_tab"]({tab:tabs[i]})%>
+			</li>
+		<%
+				}
+			}
+		%>
+	</ul>
+</div>

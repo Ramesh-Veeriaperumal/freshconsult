@@ -5,7 +5,7 @@ module Helpdesk::DashboardHelper
 	                            "data-loading-box" => "#agents-list" }
 	def find_activity_url(activity)
 		activity_data = activity.activity_data
-	 	(activity_data.empty? || activity_data[:path].nil? ) ? activity.notable : activity_data[:path]
+	 	(activity.activity_data_blank? || activity_data[:path].nil? ) ? activity.notable : activity_data[:path]
 	end
 
 	def sidebar_content

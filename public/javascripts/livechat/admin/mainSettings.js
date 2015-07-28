@@ -216,7 +216,7 @@ window.liveChat.mainSettings = function($){
 
       $("#chat_settings_notice").text(msg).show();
       closeableFlash('#chat_settings_notice');
-      $('html,body').animate({scrollTop: 220}, 800);
+      $('html,body').animate({scrollTop: 0});
     },
 
     bindMaxChatEvents: function(){

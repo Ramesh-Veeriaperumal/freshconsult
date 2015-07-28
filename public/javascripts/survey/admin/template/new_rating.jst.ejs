@@ -1,0 +1,34 @@
+		<div class="lead">
+				<%=title%>
+		</div>
+		<p class="pb10">
+			<%= surveysI18n.content_text%>
+		</p>
+		<%if(question_id){%><input type="hidden" name="question_id" value="<%=question_id%>"><%}%>
+		<div class="control-group">
+			<label class="control-label"><%= surveysI18n.survey_question %></label>
+			<div>
+				<input type="text" maxlength="<%=SurveyConstants.limit.thanks_text%>" placeholder="<%= surveysI18n.link_text_input_label %>" name="link_text" value='<%=link_text%>' />
+				<label id="link_text-error" class="error" style="display:none;"> <%= surveysI18n.error_text%> </label>
+			</div>
+		</div>
+		<div class="control-group row-fluid">
+			<div class="span5">
+				<label class="span4 pt5" id="survey_point_scale"> <%= surveysI18n.points_scale %></label>
+				<div class="span7" id="survey_rating_choice"></div>
+			</div>
+			<div class="span7">
+					<div id="survey_rating_options"></div>
+			</div>
+		</div>
+		<div>
+			<label id="send_while_title" class="survey-label"><%=send_while.title%></label>
+			<div id="survey_send_while">
+				<%_.each(send_while.elements,function(element){%>
+					<label class="radio">
+					  <input type="radio" name="send_while" value="<%=element.value%>" <%if(element.value == send_while.defaultValue){%>checked<%}%>>
+					  	<%=element.text%>
+					</label>
+				<%});%>
+			</div>
+		</div>

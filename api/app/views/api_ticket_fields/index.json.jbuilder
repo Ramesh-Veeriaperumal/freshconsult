@@ -1,5 +1,5 @@
 json.array! @items do |tf|
-  json.cache! tf do
+  json.cache! [controller_name, action_name, tf] do
     json.(tf, :id, :description, :label, :name, :position)
     json.set! :portal_cc, tf.field_options.try(:[], 'portalcc') if tf.field_type == 'default_requester'
     json.set! :portal_cc_to, tf.field_options.try(:[], 'portalcc_to') if tf.field_type == 'default_requester'
@@ -16,7 +16,7 @@ json.array! @items do |tf|
 
     json.set! :nested_ticket_fields do
       json.array! tf.nested_ticket_fields do |tf_nested_field|
-        json.cache! tf_nested_field do
+        json.cache! [controller_name, action_name, tf_nested_field] do
           json.(tf_nested_field, :description, :id, :label, :label_in_portal, :level, :name, :ticket_field_id)
 
           json.partial! 'shared/utc_date_format', item: tf_nested_field

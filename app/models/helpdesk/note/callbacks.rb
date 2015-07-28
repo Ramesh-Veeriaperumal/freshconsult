@@ -1,11 +1,14 @@
 class Helpdesk::Note < ActiveRecord::Base
-
+  
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
-	before_create :validate_schema_less_note, :update_observer_events
+  before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
+  # Doing update note count before pushing to ticket_states queue 
+  # So that note count will be reflected if the rmq publish happens via ticket states queue
+  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :human_note_for_ticket? 
   after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
@@ -13,8 +16,15 @@ class Helpdesk::Note < ActiveRecord::Base
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
   after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
+  
+  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :human_note_for_ticket? 
+
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
   after_commit :remove_es_document, on: :destroy
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher 
 
   def construct_note_old_body_hash
     {
@@ -30,7 +40,7 @@ class Helpdesk::Note < ActiveRecord::Base
       :note_id => self.id
     }
   end
-
+  
   def load_full_text
     self.note_body.full_text ||= note_body.body unless note_body.body.blank? 
     self.note_body.full_text_html ||= note_body.body_html unless note_body.body_html.blank?
@@ -139,14 +149,14 @@ class Helpdesk::Note < ActiveRecord::Base
       end
     end
 
-
   private
-
+    
     def load_schema_less_note
       build_schema_less_note unless schema_less_note
       schema_less_note
     end
 
+    # IMP: Whenever new category is added, it must be handled in reports
     def update_category
       return if schema_less_note.category
       schema_less_note.category = CATEGORIES[:meta_response]
@@ -216,5 +226,47 @@ class Helpdesk::Note < ActiveRecord::Base
     def api_webhook_note_check
       (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook?
     end
+    
+    ##### ****** Methods related to reports starts here ******* #####
+    def update_note_count_for_reports
+      return unless notable
+      action = model_transaction_action
+      return if action == "update" # We dont reduce the count when the note is deleted from UI (Soft delete)
+      # @ARCHIVE - Add this check when archive tickets feature is rolled out. Commenting it now.
+      # return if action == "destroy" && self.notable.archive
+      note_category = reports_note_category
+      if note_category && Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(note_category)
+        notable.schema_less_ticket.send("update_#{note_category}_count", action)
+        notable.schema_less_ticket.save
+      end
+    end
+    
+    # This can be put in a separate module and can be included wherever needed.
+    # This remains common for all active record transactions
+    def model_transaction_action
+      if self.send(:transaction_include_action?, :create)
+        action = "create"
+      elsif self.send(:transaction_include_action?, :update)
+        action = "update"
+      elsif self.send(:transaction_include_action?, :destroy)
+        action = "destroy"
+      end 
+    end
+    
+    def reports_note_category
+      case schema_less_note.category
+      when CATEGORIES[:customer_response]
+        "customer_reply"
+      # Only agent added pvt notes, fwds and reply to fwd will be counted as pvt note
+      when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward]
+        "private_note"
+      when CATEGORIES[:agent_public_response]
+        (note? ? "public_note" : "agent_reply")
+      else
+        Rails.logger.debug "Undefined note category #{schema_less_note.category}"
+      end
+    end
+    ######## ****** Methods related to reports ends here ******** #####
+    
 
 end

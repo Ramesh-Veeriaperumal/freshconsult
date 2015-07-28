@@ -1,0 +1,77 @@
+<% 
+	var isContactEmail = (obj.field_type=='default_email' && obj.custom_form_type == 'contact'),
+		isCompany = (obj.custom_form_type == 'company'),
+		jstDefaults = { 
+			isDefault: 	/^default/.test(obj.field_type) ? true : false,
+			isContactEmail: 	isContactEmail,
+			spanClass: 	(isContactEmail || isCompany) ? 'span12' : 'span6',
+			hideIfEmail: isContactEmail ? 'hide' : ''
+		};
+	var obj = _.extend({}, obj, jstDefaults);
+%>
+<div class="custom-fields-props-dialog modal hide fade <%= (obj.isContactEmail || obj.custom_form_type == 'company') ? 'single-column' : '' %>" id='CustomPropsModal'>
+	<div class='modal-header clearfix'>
+		<%=JST['custom-form/template/custom_modal_header'](obj)%>
+	</div>
+	<div class='modal-body custom-ticket-modal'>
+		<form id="CustomProperties" action="#" class = "ticket-fields">
+			<input type="hidden" 
+					name="custom-type" 
+					value="<%= obj.field_type %>" />
+			<% if (obj.field_type == 'nested_field') { %>
+			<%=JST['custom-form/template/nested_field_edit'](obj)%>
+			<% } %>
+
+			<div class='sections-wrapper'>
+				<div class="section">
+					<h3 class="title"><%= translate.get('behavior') %></h3>
+					<div class="row-fluid"> 
+						<% if(!obj.isContactEmail) { %>
+							<div class="<%= obj.spanClass %>">
+							<%=JST['custom-form/template/agent_behavior'](obj)%>
+							</div>
+						<% } %>
+						<% if(obj.field_type == 'default_requester') { %>
+							<div class='<%= obj.spanClass %>'>
+							<%=JST['custom-form/template/customer_behavior_requester'](obj)%>
+							</div>
+						<% } else if(obj.custom_form_type != 'company') { %>
+							<div class='<%= obj.spanClass %>'>
+							<%=JST['custom-form/template/customer_behavior'](obj)%>
+							</div>
+						<% } %>
+					</div>
+				</div> 
+				<div class="section">
+					<% if (obj.field_type == 'nested_field') { %>
+						<%=JST['custom-form/template/nested_field_label'](obj)%>
+				    <% } else { %>
+				    	<%=JST['custom-form/template/custom_field_label'](obj)%>
+					<% } %>
+				</div>
+
+				<%/* if (obj.field_type == 'custom_text') { %>
+					<%=JST['custom-form/template/custom_text'](obj)%>
+				<% } */ %>
+
+				<% if (obj.field_type == 'custom_dropdown' || obj.field_type == 'default_status' || obj.field_type == 'default_ticket_type') { %>
+					<%=JST['custom-form/template/custom_dropdown']({obj:obj, picklistIds:picklistIds})%>
+				<% } %>
+				<% if (obj.field_type == 'nested_field') { %>
+					<%=JST['custom-form/template/nested_field'](obj)%>
+				<% } %>
+			</div>
+		</form>
+	</div>
+	<span class="seperator"></span> 
+	<div class="alignright modal-footer">
+		<% if (obj.field_type == 'custom_dropdown' || obj.field_type == 'default_status' || obj.field_type == 'default_ticket_type') { %>
+			<a class="add-choice" id="addchoice" href="#"> 
+				<span class='ficon-plus'></span> 
+				<%= translate.get('addNewChoice') %> 
+			</a> 
+		<% } %>
+		<a class="btn" id="cancel-btn"><%= translate.get('cancel') %></a> 
+		<input type="submit" value="<%= translate.get('done') %>" class="btn btn-primary" id='PropsSubmitBtn' /> 
+	</div>
+</div>

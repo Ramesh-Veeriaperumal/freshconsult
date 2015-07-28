@@ -5,12 +5,9 @@ class NotesController < ApiApplicationController
   include CloudFilesHelper
   include Conversations::Email
 
-  before_filter :load_object, :check_agent_note, only: [:update, :destroy]
-  before_filter :can_update?, only: [:update]
+  before_filter :can_send_user?, only: [:create, :reply]
   before_filter :load_ticket, only: [:reply]
-  before_filter :validate_params, :manipulate_params, only: [:update, :create, :reply]
-  before_filter :can_send_user?, :build_object, only: [:create, :reply]
-  before_filter -> { kbase_email_included? params[cname] }, only: [:reply] # kbase_email_included? present in Email module
+  before_filter :ticket_exists?, only: [:ticket_notes]
 
   def create
     is_success = create_note
@@ -18,6 +15,10 @@ class NotesController < ApiApplicationController
   end
 
   def reply
+    return unless validate_params
+    manipulate_params
+    build_object
+    kbase_email_included? params[cname] # kbase_email_included? present in Email module
     is_success = create_note
     render_response(is_success)
     # publish solution is being set in kbase_email_included based on privilege and email params
@@ -25,8 +26,7 @@ class NotesController < ApiApplicationController
   end
 
   def update
-    attachments = build_normal_attachments(@item, params[cname][:attachments])
-    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
+    build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     unless @item.update_note_attributes(params[cname])
       render_error(@item.errors)
     end
@@ -37,7 +37,17 @@ class NotesController < ApiApplicationController
     head 204
   end
 
+  def ticket_notes
+    notes = scoper.visible.exclude_source('meta').where(notable_id: @id).includes(:schema_less_note, :note_old_body, :attachments)
+    @notes = paginate_items(notes)
+  end
+
   private
+
+    def after_load_object
+      check_agent_note if update? || destroy?
+      can_update? if update?
+    end
 
     def create_solution_article
       body_html = @item.body_html
@@ -48,10 +58,14 @@ class NotesController < ApiApplicationController
     end
 
     def create_note
-      @item.user ||= current_user if @item.user_id.blank? # assign user instead of id as the object is already loaded.
+      if @item.user_id
+        @item.user = @user if @user 
+      else
+        @item.user = current_user
+      end # assign user instead of id as the object is already loaded.
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
       @item.notable.account = current_account
-      attachments = build_normal_attachments(@item, params[cname][:attachments])
+      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
       @item.save_note
     end
@@ -74,8 +88,18 @@ class NotesController < ApiApplicationController
     end
 
     def load_ticket # Needed here in controller to find the item by display_id
-      @ticket = current_account.tickets.find_by_param(params[:ticket_id], current_account)
+      @ticket = current_account.tickets.find_by_param(params[:id], current_account)
       head 404 unless @ticket
+    end
+
+    def ticket_exists?
+      @display_id = params[:id].to_i
+      @id = current_account.tickets.where(display_id: @display_id).limit(1).select(:id).first
+      head 404 unless @id
+    end
+
+    def load_object
+      super scoper.visible
     end
 
     def scoper
@@ -86,7 +110,9 @@ class NotesController < ApiApplicationController
       field = "NoteConstants::#{action_name.upcase}_NOTE_FIELDS".constantize
       params[cname].permit(*(field))
       @note_validation = NoteValidation.new(params[cname], @item, can_validate_ticket)
-      render_error @note_validation.errors, @note_validation.error_options unless @note_validation.valid?
+      valid = @note_validation.valid?
+      render_error @note_validation.errors, @note_validation.error_options unless valid
+      valid
     end
 
     def manipulate_params
@@ -107,11 +133,6 @@ class NotesController < ApiApplicationController
 
     def check_agent_note
       render_request_error(:access_denied, 403) if @item.user && @item.user.customer?
-    end
-
-    def load_object
-      @item = scoper.visible.find_by_id(params[:id])
-      @item ? @item.send(:load_schema_less_note) : head(:not_found)
     end
 
     def can_validate_ticket

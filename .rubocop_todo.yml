@@ -285,7 +285,7 @@ Style/WordArray:
   MinSize: 2
 
 Style/RegexpLiteral:
-  Enabled:false
+  Enabled: false
 
 Metrics/CyclomaticComplexity:
   Exclude:

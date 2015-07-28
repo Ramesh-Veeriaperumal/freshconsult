@@ -26,4 +26,11 @@ module ApiConstants
   BOOLEAN_VALUES = [true, false, 'true', 'false'] # for boolean fields all these values are accepted.
   EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
+
+  LOAD_OBJECT_EXCEPT = [:create, :index, :route_not_found, :filtered_index] +
+                       TimeSheetConstants::LOAD_OBJECT_EXCEPT +
+                       NoteConstants::LOAD_OBJECT_EXCEPT +
+                       DiscussionConstants::LOAD_OBJECT_EXCEPT
+
+  ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
 end

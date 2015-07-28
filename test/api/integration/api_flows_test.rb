@@ -85,6 +85,14 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_not_valid_fd_domain
+    without_proper_fd_domain do
+      get '/api/discussions/categories', nil, headers
+      assert_response :forbidden
+      match_json(request_error_pattern('fd_domain_required'))
+    end
+  end
+
   def test_account_suspended_json
     subscription = @account.subscription
     subscription.update_column(:state, 'suspended')

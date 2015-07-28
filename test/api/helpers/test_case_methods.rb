@@ -14,6 +14,23 @@ module TestCaseMethods
     Bullet.enable = original_value
   end
 
+  def stub_current_account
+    Account.stubs(:current).returns(@account)
+    yield
+  ensure
+    Account.unstub(:current)
+  end
+
+  def without_proper_fd_domain
+    domain = DomainMapping.create(account_id: @account.id, domain: 'support.junk.com')
+    original_value = host
+    host!('support.junk.com')
+    yield
+  ensure
+    host!(original_value)
+    domain.destroy
+  end
+
   def remove_wrap_params
     @old_wrap_params = @controller._wrapper_options
     @controller._wrapper_options = { format: [] }
@@ -135,9 +152,10 @@ module TestCaseMethods
   end
 
   def v2_ticket_params
+    @integrate_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     { email: Faker::Internet.email, cc_emails: [Faker::Internet.email, Faker::Internet.email], description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
       priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: [Faker::Name.name, Faker::Name.name],
-      due_by: 14.days.since.to_s, fr_due_by: 1.days.since.to_s, group_id: Group.find(1).id
+      due_by: 14.days.since.to_s, fr_due_by: 1.days.since.to_s, group_id: @integrate_group.id
     }
   end
 

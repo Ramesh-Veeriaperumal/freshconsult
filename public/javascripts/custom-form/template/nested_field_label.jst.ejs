@@ -1,0 +1,58 @@
+
+<h3 class="title"><%= translate.get('nestedFieldLabel') %> </h3>
+	<div class="row-fluid">
+    <fieldset class="span4">
+    	<label class="title"><%= translate.get('level') %> - 1</label>
+      <input type="text" 
+      				placeholder="<%= translate.get('labelAgent') %> *" 
+      				rel="companion" 
+      				data-companion="#customerslabel" 
+      				name="custom-label" 
+      				value="<%= label.replace(/"/g, '&quot;') %>"  
+      				class="<%= isDisabled %>" 
+      				id="agentlevel1label" 
+      				class="<%= isDisabled %>" 
+      				data-level="1" />
+      <input type="text" placeholder="<%= translate.get('labelCustomer') %> *" 
+              id="customerslabel" name="custom-label-in-portal" 
+              value="<%= label_in_portal.replace(/"/g, '&quot;') %>" class="<%= isDisabled %>" />
+    </fieldset>
+
+    <fieldset class="span4">
+      <label class="title"><%= translate.get('level') %> - 2</label>
+      <input type="text" 
+      				placeholder="<%= translate.get('labelAgentLevel2') %> *" 
+      				data-companion="#customerslevel2label" 
+      				id="agentlevel2label" 
+      				rel="companion" 
+      				name="agentlevel2label" 
+      				class="<%= isDisabled %>" 
+      				value="<%= levels[0].label.replace(/"/g, '&quot;') %>" 
+      				data-level="2" />
+
+    	<input type="text" 
+              placeholder="<%= translate.get('labelCustomerLevel2') %> *" 
+              id="customerslevel2label" 
+              name="customerslevel2label" 
+              value="<%= levels[0].label_in_portal.replace(/"/g, '&quot;') %>"  
+              class="<%= isDisabled %>" />
+    </fieldset>
+
+    <fieldset class="span4">
+      <label class="title"><%= translate.get('level') %> - 3</label>
+      <input type="text" 
+      				placeholder="<%= translate.get('labelAgent') %>" 
+      				data-companion="#customerslevel3label" 
+      				rel="companion" 
+      				id="agentlevel3label" 
+      				name="agentlevel3label" 
+      				value="<%= (levels[1] && levels[1].label) ? levels[1].label.replace(/"/g, '&quot;') : "" %>" 
+      				class="<%= isDisabled %>" 
+      				data-level="3" />
+      <input type="text" 
+              placeholder="<%= translate.get('labelCustomer') %>" 
+              id="customerslevel3label" name="customerslevel3label" 
+              value="<%=(levels[1] && levels[1].label_in_portal) ? levels[1].label_in_portal.replace(/"/g, '&quot;') : "" %>"  
+              class="<%= isDisabled %>" />
+    </fieldset>
+</div>

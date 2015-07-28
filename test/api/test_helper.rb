@@ -29,12 +29,13 @@ class ActionDispatch::IntegrationTest
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if  Rails.env.test?
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if  Rails.env.test?
   end
-  
+
   def setup
     get_agent
     set_request_headers
-    Bullet.add_whitelist :type => :unused_eager_loading, :class_name => "ForumCategory", :association => :forums
-    Bullet.add_whitelist :type => :n_plus_one_query, :class_name => "ForumCategory", :association => :account
+    host!('localhost.freshpo.com')
+    Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
+    Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
   end
 
   self.use_transactional_fixtures = false

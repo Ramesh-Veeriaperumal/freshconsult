@@ -1,24 +1,9 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
-    prepend_before_filter { |c| c.requires_feature :forums }
-    skip_before_filter :verify_authenticity_token, only: [:show]
-
-    def forums
-      @forums = paginate_items(load_association)
-      render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
-    end
-
     private
 
-      def load_object
-        @item = scoper.detect { |category| category.id == params[:id].to_i }
-        unless @item
-          head :not_found # Do we need to put message inside response body for 404?
-        end
-      end
-
-      def load_association
-        @forums = @item.forums
+      def feature_name
+        FeatureConstants::DISCUSSION
       end
 
       def validate_params
@@ -28,7 +13,7 @@ module ApiDiscussions
       end
 
       def scoper
-        create? ? current_account.forum_categories : current_account.forum_categories_from_cache
+        current_account.forum_categories
       end
   end
 end

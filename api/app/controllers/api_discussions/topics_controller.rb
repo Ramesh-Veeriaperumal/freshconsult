@@ -1,16 +1,10 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
-    before_filter { |c| c.requires_feature :forums }
-    skip_before_filter :check_privilege, :verify_authenticity_token,
-                       only: [:show]
-    skip_before_filter :load_object, only: [:followed_by, :create, :index, :is_following]
-    include DiscussionMonitorConcern # Order of including concern should not be changed as there are before filters included in this concern
-    before_filter :portal_check, only: [:show]
-    before_filter :can_send_user?, only: [:create, :follow, :unfollow]
-    before_filter :set_forum_id, only: [:create, :update]
+    include DiscussionMonitorConcern
+    before_filter :load_forum, only: [:forum_topics]
 
     def create
-      post = @item.posts.build(params[cname].delete_if { |x| !(DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x)) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_POST_FIELDS.values.flatten.include?(x) })
       assign_user_and_parent post, :topic, @item
       super
     end
@@ -22,9 +16,9 @@ module ApiDiscussions
       super
     end
 
-    def posts
-      @posts = paginate_items(load_association)
-      render '/api_discussions/posts/post_list'
+    def forum_topics
+      @topics = paginate_items(@item.topics)
+      render '/api_discussions/topics/topic_list'
     end
 
     def followed_by
@@ -34,11 +28,23 @@ module ApiDiscussions
 
     private
 
-      def load_association
-        @posts = @item.posts
+      def load_forum
+        load_object current_account.forums
       end
 
-      def set_custom_errors
+      def check_privilege
+        show? ? portal_check : super
+      end
+
+      def before_validation
+        can_send_user?
+      end
+
+      def feature_name
+        FeatureConstants::DISCUSSION
+      end
+
+      def set_custom_errors(_item = @item)
         @error_options = { remove: :posts }
         ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @item)
       end
@@ -67,7 +73,7 @@ module ApiDiscussions
         access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
       end
 
-      def set_forum_id
+      def assign_protected
         assign_user_and_parent @item, :forum_id, params[cname]
       end
 

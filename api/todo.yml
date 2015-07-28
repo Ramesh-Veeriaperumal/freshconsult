@@ -4,6 +4,7 @@
  - Compare all UI functionality with API(Eg. forum type)
  - Integration tests
  - 3 documentations(Breaking from V!, Changes from V1, Internal Beta)
+ - customers in forum response
 
 Breaking changes in existing APIs:
  - day pass required
@@ -36,6 +37,7 @@ Deferred:
  - "Validate picklist values for custom drop down & dependent fields in ticket"
 
 Completed:
+ - ticket_field status should make use of all_statuses_from_cache.
  - Differentiate between missing and invalid value - improve specificity of codes.
  - followed_by restrict params
  - move error messages from en.yml file. Should not involve internatinalization.

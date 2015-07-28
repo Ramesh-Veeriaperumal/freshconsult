@@ -17,23 +17,7 @@ class Company < ActiveRecord::Base
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains
   
-  belongs_to_account
-
-  has_custom_fields :class_name => 'CompanyFieldData', :discard_blank => false # coz of schema_less_company_columns
-  
-  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify,
-           :order => :name, :foreign_key => 'customer_id'
-  
-  has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name,
-           :foreign_key => 'customer_id'
-  
-  has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
-
-  has_many :all_tickets ,:class_name => 'Helpdesk::Ticket', :through => :all_users , 
-           :source => :tickets
-
-  has_many :customer_folders, :class_name => 'Solution::CustomerFolder', :dependent => :destroy,
-           :foreign_key => 'customer_id'
+  concerned_with :associations, :callbacks, :es_methods, :rabbitmq
 
   scope :domains_like, lambda { |domain|
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
@@ -43,17 +27,7 @@ class Company < ActiveRecord::Base
     { :conditions => ["name like ?" ,"%#{search_string}%"],
       :select => "name, id, account_id",
       :limit => 1000  }
-  }
-
-  after_commit :map_contacts_to_company, on: :create
-  after_commit :clear_cache
-  after_update :map_contacts_on_update, :if => :domains_changed?
-  
-  before_create :check_sla_policy
-  before_update :check_sla_policy, :backup_company_changes
-  
-  
-  has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
+  }  
   
   CUST_TYPES = [
     [ :customer,    "Customer",      1 ], 
@@ -96,14 +70,6 @@ class Company < ActiveRecord::Base
     search_results
   end
 
-
-  #setting default sla
-  def check_sla_policy    
-    if self.sla_policy_id.nil?            
-      self.sla_policy_id = account.sla_policies.find_by_is_default(true).id      
-    end    
-  end
-
   def to_s
     self.name
   end
@@ -130,37 +96,6 @@ class Company < ActiveRecord::Base
     super options
   end
 
-  # Elasticsearch related methods starts
-
-  def to_indexed_json
-    as_json( 
-              :root => "customer",
-              :tailored_json => true,
-              :only => [ :name, :note, :description, :account_id, :created_at, :updated_at ],
-              :include => { :flexifield => { :only => es_company_field_data_columns } }
-           ).to_json
-  end
-
-  def es_company_field_data_columns
-    @@es_company_field_data_columns ||= CompanyFieldData.column_names.select{ |column_name| 
-                                      column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
-  end
-
-  def es_columns
-    @@es_columns ||= [:name, :description, :note].concat(es_company_field_data_columns)
-  end
-  
-  # May not need this after ES re-indexing
-  def self.document_type # Required to override the model name
-    'customer'
-  end
-
-  def document_type # Required to override the model name
-    'customer'
-  end
-
-  # Elasticsearch related methods ends
-
   def to_liquid
     @company_drop ||= CompanyDrop.new self
   end
@@ -181,28 +116,4 @@ class Company < ActiveRecord::Base
     domains.split(',') unless domains.nil?
   end
 
-  private
-    def map_contacts_on_update
-      domain_changes = self.changes["domains"].compact
-      domain_changes[0].split(",").map { |domain| 
-                    domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') } if domain_changes[1]
-      map_contacts_to_company(domain_changes[1].blank? ? domain_changes[0] : domain_changes[1])
-    end
-
-    def map_contacts_to_company(domains = self.domains)
-      User.update_all("customer_id = #{self.id}", 
-        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and account_id = ?', 
-        get_domain(domains), self.account_id]) unless domains.blank?
-    end
-
-    def get_domain(domains)
-      domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
-    end
-
-    def backup_company_changes
-      @model_changes = self.changes.clone.to_hash
-      @model_changes.merge!(flexifield.changes)
-      @model_changes.symbolize_keys!
-    end
-  
 end

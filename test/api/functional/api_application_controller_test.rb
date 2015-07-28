@@ -37,7 +37,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
       page: Random.rand(11))
     controller.params = params
     actual = controller.send(:paginate_options)
-    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], actual[:per_page]
+    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page], actual[:per_page]
     assert_equal params[:page], actual[:page]
   end
 

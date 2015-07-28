@@ -126,12 +126,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       user_id: {
         conditions: {user_id: filter_options[:user_id]}
       },
-
-      group_id: {
-        joins: {user: :agent_groups},
-        conditions: {agent_groups: {group_id: filter_options[:group_id]}}
-      },
-
+      
       company_id: {
         joins: ["INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"],
         conditions: {:users => {:customer_id => filter_options[:company_id]}}

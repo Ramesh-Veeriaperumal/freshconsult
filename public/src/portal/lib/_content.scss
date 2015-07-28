@@ -1,3 +1,6 @@
+@import "../src/fonts/_glyphs.scss";
+@import "../src/portal/rating.scss";
+
 .c-wrapper, .cs-g-c{ @include pie-clearfix; }
 
 .content, .content-form, .content-light{
@@ -5,6 +8,13 @@
 	margin-top: 10px;
 	@include box-shadow(rgba(255, 255, 255, 0.7) 0 1px inset);
 	position: relative;
+}
+
+.content{ 
+	background-color: $page-background;
+	.lead{
+		font-weight: 500;
+	}
 }
 
 .cs-s{

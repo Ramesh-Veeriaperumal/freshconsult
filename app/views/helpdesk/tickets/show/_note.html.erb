@@ -6,7 +6,20 @@ reply_to_fwd_id = "cnt-reply-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
-
+kind = note.survey_remark.nil? ? note.kind : 'survey'
+if current_account.custom_survey_enabled
+kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
+unless note.custom_survey_remark.blank?
+    ticket_info = note.custom_survey_remark.survey_result.ticket_info
+    details = note.custom_survey_remark.survey_result.note_details 
+    unless details.blank?
+      agent_name = details[:agent]
+      survey_name = details[:survey]
+      question_values = details[:question_values]
+      rating = details[:rating]
+    end
+  end
+end
 %>
 
 <div id="<%= note_view_id %>" 
@@ -78,12 +91,16 @@ minimizable ||= false
 		    </div>
 		    <% end %>
 			<div class="author-mail-detail cc_bcc_info">
-				<% kind = note.survey_remark.nil? ? note.kind : 'survey' %>
+				<% kind %>
 				<%= t("helpdesk.tickets.note.created_on_live.#{kind}", 
 						:user_name => link_to_user(note.user), 
 						:note_date => formated_date(note.created_at), 
 						:timestamp => note.created_at.to_i 
-					).html_safe %>
+					).html_safe %><br>
+				<%unless survey_name.blank? %>
+					<b><%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
+						<%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%></b>
+				<%end%>
 			</div>
 			<%  if privilege?(:manage_tickets)
 				conv_info = conversation_info(note) %>
@@ -97,18 +114,19 @@ minimizable ||= false
 
 
 			<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 
-					"data-remote-url" => edit_helpdesk_ticket_note_path(notable_object.display_id, note.id) %>
+									"data-remote-url" => edit_helpdesk_ticket_note_path(notable_object.display_id, note.id) %>
+		    <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
+							"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
+														:id => notable_object.display_id, 
+														:note_id => note.id }) %>
+			<% if current_account.features?(:custom_survey) %>
+	          <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :locals => {:note => note , 
+                :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
+	        <% else %>
+            <%= render :partial => '/helpdesk/tickets/show/survey_note' , :locals => {:note => note , 
+                :notedetails => notedetails} %>
+			<%end%>
 
-			<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
-				<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>
-				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
-					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>			
-					<%= note.body_html.html_safe %>
-					<% if note.fwd_email? || note.reply_to_forward? %>
-						<div class="freshdesk_quote" data-remote-quote=true></div>
-					<% end %>
-				</div>
-			</div>
 			<%= freshfone_audio_dom(note) %>
 			<div id="note_attachments_container_<%= note.id%>">
 				<% unless note.all_attachments.empty? and note.cloud_files.empty? %>				
@@ -130,7 +148,6 @@ minimizable ||= false
 				                    				}) %>
 	</div>
 
-    
 	<script type="text/javascript">
 		if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' ||	TICKET_DETAILS_DATA['last_note_id']  == null || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
 			TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;

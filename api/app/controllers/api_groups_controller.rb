@@ -55,7 +55,7 @@ class ApiGroupsController < ApiApplicationController
       @agents -= @item.agent_groups.map(&:user_id)
     end
 
-    def set_custom_errors
+    def set_custom_errors(_item = @item)
       bad_agent_ids = @item.agent_groups.select { |x| x.errors.present? }.collect(&:user_id)
       @item.errors.add(:agents, 'list is invalid') if bad_agent_ids.present?
       @error_options = { remove: :'agent_groups.user', agents: { list: "#{bad_agent_ids.join(', ')}" } }

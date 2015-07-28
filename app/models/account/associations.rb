@@ -31,9 +31,6 @@ class Account < ActiveRecord::Base
   accepts_nested_attributes_for :account_additional_settings
   accepts_nested_attributes_for :whitelisted_ip
 
-  has_many :survey_results
-  has_many :survey_remarks
-
   has_one  :subscription_plan, :through => :subscription
 
   has_one :conversion_metric
@@ -189,8 +186,16 @@ class Account < ActiveRecord::Base
   has_many :social_streams, :class_name => 'Social::Stream'
   has_many :twitter_streams, :class_name => 'Social::TwitterStream'
 
-  has_one :survey
-  has_many :survey_handles, :through => :survey
+  has_many :surveys
+  has_many :survey_handles, :through => :surveys
+  has_many :survey_results
+  has_many :survey_remarks
+
+  has_many :custom_surveys, :class_name => 'CustomSurvey::Survey'
+  has_many :custom_survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :through => :custom_surveys, :source => :account
+  has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :through => :custom_surveys
+  has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :through => :custom_surveys
+  has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark', :through => :custom_surveys
 
   has_many :scoreboard_ratings
   has_many :scoreboard_levels
@@ -261,4 +266,7 @@ class Account < ActiveRecord::Base
   has_many :forum_moderators
 
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
+
+  has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
+  has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 end

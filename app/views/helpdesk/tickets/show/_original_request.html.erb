@@ -33,11 +33,12 @@
 		<% end %>
 
 		<%
-            customer_opinion = ""                                
-            unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
-              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join.html_safe
+            customer_opinion = "" 
+            survey_association = @ticket.account.features_included?(:custom_survey) ? "custom_survey_results" : "survey_results"
+            unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil?
+              customer_opinion = ["<div class='customer-opinion ", @ticket.send(survey_association).last.get_small_img_class ,"'></div>"].join.html_safe
             end  
-	    %>				
+	    %>
 	    <%=customer_opinion%>									
 
 		<%= h(@ticket.subject) %>

@@ -206,5 +206,49 @@ module ApiDiscussions
       assert_response :bad_request
       match_json([bad_request_error_pattern('user_id', "can't be blank")])
     end
+
+    def test_posts_invalid_id
+      get :topic_posts, construct_params(id: (1000 + Random.rand(11)))
+      assert_response :not_found
+      assert_equal ' ', @response.body
+    end
+
+    def test_posts
+      t = Topic.where('posts_count > ?', 1).first || create_test_post(Topic.first, User.first).topic
+      get :topic_posts, construct_params(id: t.id)
+      result_pattern = []
+      t.posts.each do |p|
+        result_pattern << post_pattern(p)
+      end
+      assert_response :success
+      match_json(result_pattern)
+    end
+
+    def test_posts_with_pagination
+      t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
+      3.times do
+        create_test_post(t, User.first)
+      end
+      get :topic_posts, construct_params(id: t.id, per_page: 1)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :topic_posts, construct_params(id: t.id, per_page: 1, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_posts_with_pagination_exceeds_limit
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      t = topic_obj
+      4.times do
+        create_test_post(t, User.first)
+      end
+      get :topic_posts, construct_params(id: t.id, per_page: 4)
+      assert_response :success
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+    end
   end
 end

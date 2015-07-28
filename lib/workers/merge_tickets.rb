@@ -1,5 +1,6 @@
 class Workers::MergeTickets
   extend Resque::AroundPerform 
+  
   @queue = 'merge_ticket_worker'
   STATES_TO_BE_MOVED = ["first_response_time", "requester_responded_at", "agent_responded_at"]
   TICKET_STATE_COLLECTION = {}
@@ -10,9 +11,11 @@ class Workers::MergeTickets
     user.make_current
     source_tickets = current_account.tickets.find(:all, :conditions => { :display_id => args[:source_ticket_ids] })
     target_ticket = current_account.tickets.find(args[:target_ticket_id])
+    source_ticket_note_ids = []
     
     activities_to_be_discarded = ["activities.tickets.new_ticket.long", "activities.tickets.status_change.long"]
     source_tickets.each do |source_ticket|
+      source_ticket_note_ids << source_ticket.notes.map(&:id)
       source_ticket.notes.update_all( "notable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
                                                                                 args[:account_id] ] )
       source_ticket.activities.update_all("notable_id = #{args[:target_ticket_id]}", [ "account_id = ? and description NOT IN (?)", 
@@ -26,6 +29,9 @@ class Workers::MergeTickets
       update_merge_activity(source_ticket,target_ticket)
     end
     update_target_ticket_states(target_ticket)
+    # notes are added to the target ticket via update_all. This wont trigger callback
+    # So sending it manually
+    update_target_ticket_notes_to_reports(target_ticket, source_ticket_note_ids.flatten)
   end
 
   def self.add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
@@ -62,10 +68,33 @@ class Workers::MergeTickets
   end
 
   def self.update_merge_activity(source_ticket,target_ticket)
-      source_ticket.create_activity(User.current, 'activities.tickets.ticket_merge.long',
-            {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
-            {'ticket_id' => target_ticket.display_id, 'subject' => target_ticket.subject}]}}, 
-                                  'activities.tickets.ticket_merge.short') 
+    source_ticket.create_activity(User.current, 'activities.tickets.ticket_merge.long',
+          {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
+          {'ticket_id' => target_ticket.display_id, 'subject' => target_ticket.subject}]}}, 
+                                'activities.tickets.ticket_merge.short') 
+  end
+    
+  
+  ##  **  Methods related to reports starts here **  ##
+  # Here we are sending the target ticket notes to RMQ for reporting purpose
+  # We are not sending the source ticket updates to RMQ because source ticket(which is closed) should 
+  # not be included in any of the reporting metrics. So not sending any updates for the source ticket.
+  def self.update_target_ticket_notes_to_reports(target_ticket, note_ids)
+    # TODO Must send only one push for all the subscribers(reports, search, activities)
+    # Currently only reports is handled.
+    # Need to handle it in a generic way for all the subscribers
+    target_ticket_notes = target_ticket.notes.where({:id => note_ids})
+    target_ticket_notes.each do |note|
+      next unless note.send(:human_note_for_ticket?)
+      category = note.send(:reports_note_category)
+      next unless Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(category)
+      note.notable.schema_less_ticket.send("update_#{category}_count", "create")
+      note.notable.schema_less_ticket.save
+      note.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY)
     end
-
+    # while doing manual publish of note it will take note's created at and hence it will not be
+    # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
+    # have all the customer reply and agent reply count updated.
+    target_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:manual_publish => true})
+  end
 end

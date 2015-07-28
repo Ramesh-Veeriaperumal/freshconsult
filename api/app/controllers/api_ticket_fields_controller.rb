@@ -1,10 +1,7 @@
 class ApiTicketFieldsController < ApiApplicationController
-  skip_before_filter :load_objects
-  before_filter :validate_params, :load_objects, only: [:index]
-
   private
 
-    def validate_params
+    def validate_filter_params
       params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
       errors = [[:type, ["can't be blank"]]] if ApiTicketConstants::TICKET_FIELD_TYPES.exclude?(params[:type])
       render_error errors if errors

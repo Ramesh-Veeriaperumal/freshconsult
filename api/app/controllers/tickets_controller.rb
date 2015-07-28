@@ -5,40 +5,36 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
-  before_filter :validate_show_params, only: [:show]
-  before_filter :assign_protected, only: [:create, :update]
-  before_filter :verify_ticket_permission, only: [:update, :show]
   before_filter :ticket_permission?, only: [:destroy, :assign]
-  before_filter :restrict_params, only: [:assign, :restore]
-  skip_before_filter :load_objects, only: [:index]
-  before_filter :validate_filter_params, only: [:index]
-
-  def index
-    load_objects tickets_filter(scoper).includes(:ticket_old_body, :ticket_status,
-                                                 :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
-    @items.each(&:api_load_schema_less_ticket)
-  end
+  before_filter :validate_action_params, only: [:assign, :restore]
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
-    attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
-    if @item.save_ticket
+    assign_protected
+    tckt_dlgtr = TicketDelegator.new(@item)
+    if !tckt_dlgtr.valid?
+      render_error(tckt_dlgtr.errors)
+    elsif @item.save_ticket
       render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
-      notify_cc_people params[cname][:cc_email] unless params[cname][:cc_email].blank?
+      notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      ErrorHelper.rename_error_fields({ group: :group_id, responder: :user_id, email_config: :email_config_id,
-                                        product: :product_id }, @item)
+      set_custom_errors
       render_error(@item.errors)
     end
   end
 
   def update
-    attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
-    if @item.update_ticket_attributes(params[cname])
-      update_tags(@tags, true, @item) if @tags # add tags if update is successful.
+    assign_protected
+    @item.assign_attributes(params[cname])
+    tckt_dlgtr = TicketDelegator.new(@item)
+    if !tckt_dlgtr.valid?
+      set_custom_errors(tckt_dlgtr)
+      render_error(tckt_dlgtr.errors)
+    elsif @item.update_ticket_attributes(params[cname])
+      api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
+      notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
+      set_custom_errors
       render_error(@item.errors)
     end
   end
@@ -64,31 +60,31 @@ class TicketsController < ApiApplicationController
     head 204
   end
 
-  def notes
-    # show only non deleted notes.
-    @items = paginate_items(ticket_notes)
-    @items.each{|i| i.send(:load_schema_less_note)}
-    render '/notes/index'
-  end
-
-  def time_sheets
-    # as same template is used here and in time_sheet index time_sheets are named as items here.
-    @items = paginate_items(@item.time_sheets.includes(:workable))
-    render '/time_sheets/index'
-  end
-
   def show
-    @notes = ticket_notes if params[:include] == 'notes'
-    @notes.each{|i| i.send(:load_schema_less_note)}
+    @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE) if params[:include] == 'notes'
     super
   end
 
   private
 
+    def set_custom_erros(item = @item)
+      ErrorHelper.rename_error_fields({ group: :group_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
+                                        product: :product_id }, item)
+    end
+
+    def load_objects
+      super tickets_filter(scoper).includes(:ticket_old_body,
+                                            :schema_less_ticket, flexifield: :flexifield_def)
+    end
+
+    def after_load_object
+      verify_ticket_permission if show? || update?
+    end
+
     def ticket_notes
       # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
       # There is no best solution for this
-      notes = @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
+      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
     end
 
     def paginate_options
@@ -125,11 +121,11 @@ class TicketsController < ApiApplicationController
       current_account.tickets
     end
 
-    def restrict_params
+    def validate_action_params
       params[cname].permit(*("ApiTicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
     end
 
-    def validate_show_params
+    def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
         errors = [[:include, ["can't be blank"]]]
@@ -138,15 +134,17 @@ class TicketsController < ApiApplicationController
     end
 
     def manipulate_params
-      # Assign cc_emails serialized hash
-      cc_emails =  params[cname][:cc_emails] || []
-      params[cname][:cc_email] = { cc_emails: cc_emails, fwd_emails: [], reply_cc: cc_emails }
+      # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
+      cc_emails =  (params[cname][:cc_emails] || [])
+
+      # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup }
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
 
       # Collect tags in instance variable as it should not be part of params before build item.
-      @tags = params[cname][:tags] if params[cname][:tags]
+      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
@@ -171,11 +169,15 @@ class TicketsController < ApiApplicationController
     def assign_protected
       @item.product ||= current_portal.product
       @item.account = current_account
+      @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
+      @item.cc_email = @cc_emails
+      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      @item.attachments += (attachments || []) if create? # assign attachments so that it will not be queried again in model callbacks
     end
 
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
-      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.trashed
+      render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.try(:trashed)
     end
 
     def ticket_permission?
@@ -210,6 +212,6 @@ class TicketsController < ApiApplicationController
       condition = 'display_id = ? '
       condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
       @item = scoper.where(condition, params[:id]).first
-      @item ? @item.api_load_schema_less_ticket : head(:not_found)
+      head(:not_found) unless @item
     end
 end

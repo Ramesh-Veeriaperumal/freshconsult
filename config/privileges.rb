@@ -82,8 +82,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index, :notes]
-    resource :"note", only: [:create]
+    resource :"ticket", :only => [:show, :create, :index]
+    resource :"note", only: [:create, :ticket_notes]
 	end
 
   reply_ticket do
@@ -139,8 +139,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
 
     # Used for API V2
-    resource :"time_sheet", :only => [:index, :create]
-    resource :"ticket", :only => [:time_sheets]
+    resource :"time_sheet", :only => [:index, :create, :ticket_time_sheets]
   end
 
   edit_time_entries do
@@ -206,10 +205,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :monitorship, :only => [:followers]
 
     # Used for API V2
-    resource :"api_discussions/category", :only => [:index, :show, :forums]
-    resource :"api_discussions/forum", :only => [:show, :topics, :follow, :unfollow, :is_following]
-    resource :"api_discussions/topic", :only => [:show, :posts, :follow, :unfollow, :is_following, :followed_by]
-    resource :"api_discussions/post", :only => [:create]
+    resource :"api_discussions/category", :only => [:index, :show]
+    resource :"api_discussions/forum", :only => [:show, :category_forums, :follow, :unfollow, :is_following]
+    resource :"api_discussions/topic", :only => [:show, :forum_topics, :follow, :unfollow, :is_following, :followed_by]
+    resource :"api_discussions/post", :only => [:create, :topic_posts]
   end
 
   # create_edit_forum_category
@@ -312,10 +311,12 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/helpdesk_performance_analysi"
       resource :"reports/helpdesk_report"
       resource :"reports/survey_report"
+      resource :"reports/custom_survey_report"
       resource :"reports/freshfone/summary_report"
       resource :"reports/freshchat/summary_report"
-   	resource :"reports/timesheet_report"
-    resource :"reports/report_filter"
+   	  resource :"reports/timesheet_report"
+      resource :"reports/report_filter"
+      resource :"reports/v2/tickets/report"
   end
 
   # ************** ADMIN **************************
@@ -367,6 +368,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"social/facebook_page"
     resource :"social/facebook_tab"
     resource :"admin/survey"
+    resource :"admin/custom_survey"
     resource :group
     resource :"api_company"
     resource :"api_company_field"

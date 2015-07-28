@@ -120,8 +120,10 @@ module ApiDiscussions
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id])
       assert_response :success
-      match_json(forum_pattern(forum.reload))
-      match_json(forum_response_pattern(forum, forum_visibility: 4, customers: [customer.id]))
+      pattern = forum_pattern(forum.reload).merge(customers: [customer.id])
+      match_json(pattern)
+      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(customers: [customer.id])
+      match_json(pattern)
     end
 
     def test_update_with_forum_visibility_company_users
@@ -129,8 +131,10 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_visibility: 4)
       assert_response :success
-      match_json(forum_pattern(forum.reload))
-      match_json(forum_response_pattern(forum, forum_visibility: 4))
+      pattern = forum_pattern(forum.reload).merge(customers: [])
+      match_json(pattern)
+      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(customers: [])
+      match_json(pattern)
     end
 
     def test_create_validate_presence
@@ -170,8 +174,11 @@ module ApiDiscussions
       name = Faker::Name.name
       post :create, construct_params({}, description: 'desc', forum_visibility: '4',
                                          forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
-      match_json(forum_pattern Forum.last)
-      match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 4, forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      pattern = forum_pattern(Forum.last).merge(customers: [])
+      match_json(pattern)
+      pattern = forum_response_pattern(Forum.last, description: 'desc', forum_visibility: 4,
+                                                   forum_type: 1, name: name, forum_category_id: ForumCategory.first.id).merge(customers: [])
+      match_json(pattern)
       assert_response :created
     end
 
@@ -202,8 +209,12 @@ module ApiDiscussions
       params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, customers: [customer.id] }
       post :create, construct_params({}, params)
       assert_response :success
-      match_json(forum_pattern(Forum.last.reload))
-      match_json(forum_response_pattern(Forum.last, params))
+      pattern = forum_pattern(Forum.last.reload)
+      pattern[:customers] = [customer.id]
+      match_json(pattern)
+      pattern = forum_response_pattern(Forum.last, params)
+      pattern[:customers] = [customer.id]
+      match_json(pattern)
       assert_equal Forum.last.customer_forums.collect(&:customer_id), [customer.id]
     end
 
@@ -268,18 +279,10 @@ module ApiDiscussions
       forum = create_test_forum(fc_obj, 1, 1)
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id])
       assert_response :success
-      match_json(forum_pattern(forum.reload))
-      match_json(forum_response_pattern(forum, forum_visibility: 4))
-      assert_equal forum.customer_forums.collect(&:customer_id), [customer.id]
-    end
-
-    def test_update_with_customer_id_invalid
-      customer = company
-      forum = create_test_forum(fc_obj, 1, 4)
-      put :update, construct_params({ id: forum.id }, customers: [customer.id])
-      assert_response :success
-      match_json(forum_pattern(forum.reload))
-      match_json(forum_response_pattern(forum))
+      pattern = forum_pattern(forum.reload).merge(customers: [customer.id])
+      match_json(pattern)
+      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(customers: [customer.id])
+      match_json(pattern)
       assert_equal forum.customer_forums.collect(&:customer_id), [customer.id]
     end
 
@@ -333,65 +336,36 @@ module ApiDiscussions
       f = Forum.first
       get :show, construct_params(id: f.id)
       pattern = forum_pattern(f)
-      pattern[:topics] = Array
       assert_response :success
       match_json(pattern)
     end
 
-    def test_show_with_topics
+    def test_update_with_customers
       forum = Forum.first
-      create_test_topic(forum, User.first)
-      forum.reload
-      get :show, construct_params(id: forum.id)
+      forum_visibility = forum.forum_visibility
+      forum.update_column(:forum_visibility, 4)
+      put :update, construct_params({ id: forum.id }, description: 'new description')
+      assert_response :success
+      result_pattern = forum_pattern(forum.reload)
+      result_pattern[:customers] = []
+      forum.customer_forums.each do |cf|
+        result_pattern[:customers] << cf.customer_id
+      end
+      match_json(result_pattern)
+      forum.update_column(:forum_visibility, forum_visibility)
+    end
+
+    def test_create_with_customers
+      post :create, construct_params({}, description: 'desc', forum_visibility: '4',
+                                         forum_type: 1, name: 'test new name', forum_category_id: ForumCategory.first.id)
+      forum = Forum.last
       result_pattern = forum_pattern(forum)
-      result_pattern[:topics] = []
-      forum.topics.each do |t|
-        result_pattern[:topics] << topic_pattern(t)
+      result_pattern[:customers] = []
+      forum.customer_forums.each do |cf|
+        result_pattern[:customers] << cf.customer_id
       end
       match_json(result_pattern)
       assert_response :success
-    end
-
-    def test_topics_invalid_id
-      get :topics, construct_params(id: 'x')
-      assert_response :not_found
-      assert_equal ' ', @response.body
-    end
-
-    def test_topics
-      f = Forum.where('topics_count >= ?', 1).first || create_test_topic(Forum.first, User.first).forum
-      get :topics, construct_params(id: f.id)
-      result_pattern = []
-      f.topics.each do |t|
-        result_pattern << topic_pattern(t)
-      end
-      assert_response :success
-      match_json(result_pattern)
-    end
-
-    def test_topics_with_pagination
-      3.times do
-        create_test_topic(f_obj, User.first)
-      end
-      get :topics, construct_params(id: f_obj.id, per_page: 1)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-      get :topics, construct_params(id: f_obj.id, per_page: 1, page: 2)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-      get :topics, construct_params(id: f_obj.id, per_page: 1, page: 3)
-      assert_response :success
-      assert JSON.parse(response.body).count == 1
-    end
-
-    def test_topics_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      get :topics, construct_params(id: f_obj.id, per_page: 4)
-      assert_response :success
-      assert JSON.parse(response.body).count == 2
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 
     def test_before_filters_follow_logged_in
@@ -430,8 +404,8 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_invalid
-      Monitorship.where(monitorable_type: 'Forum', user_id: deleted_user.id, 
-        monitorable_id: f_obj.id).first || monitor_forum(f_obj, deleted_user, 1)
+      Monitorship.where(monitorable_type: 'Forum', user_id: deleted_user.id,
+                        monitorable_id: f_obj.id).first || monitor_forum(f_obj, deleted_user, 1)
       delete :unfollow, construct_params({ id: f_obj.id }, user_id: deleted_user.id)
       assert_response :forbidden
       match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
@@ -507,6 +481,47 @@ module ApiDiscussions
     def test_is_following_invalid_user_id
       get :is_following, controller_params(user_id: user_without_monitorships.id, id: f_obj.id)
       assert_response :not_found
+    end
+
+    def test_category_forums
+      get :category_forums, construct_params(id: fc_obj.id)
+      assert_response :success
+      result_pattern = []
+      fc_obj.forums.each do |f|
+        result_pattern << forum_pattern(f)
+      end
+      match_json(result_pattern)
+    end
+
+    def test_category_forums_invalid_id
+      get :category_forums, construct_params(id: 'x')
+      assert_response :not_found
+      assert_equal ' ', @response.body
+    end
+
+    def test_category_forums_with_pagination
+      3.times do
+        create_test_forum(fc_obj)
+      end
+      get :category_forums, construct_params(id: fc_obj.id, per_page: 1)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :category_forums, construct_params(id: fc_obj.id, per_page: 1, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :category_forums, construct_params(id: fc_obj.id, per_page: 1, page: 3)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_category_forums_with_pagination_exceeds_limit
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      get :category_forums, construct_params(id: fc_obj.id, per_page: 4)
+      assert_response :success
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
   end
 end

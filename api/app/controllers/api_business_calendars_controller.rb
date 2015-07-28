@@ -1,7 +1,9 @@
 class ApiBusinessCalendarsController < ApiApplicationController
-  prepend_before_filter { |c| c.requires_feature :multiple_business_hours }
-
   private
+
+    def feature_name
+      FeatureConstants::BUSINESS_CALENDAR
+    end
 
     def scoper
       current_account.business_calendar

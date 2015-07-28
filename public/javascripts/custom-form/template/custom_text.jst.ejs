@@ -1,0 +1,33 @@
+<div class='section'>
+	<% regexValidation = (field_options != null 
+								&& typeof(field_options) === "object" 
+								&& field_options['regex']) ?
+									'checked' : ''; %>
+	<% regexValue = (regexValidation == 'checked') ? 
+								new RegExp(unescapeHtml(field_options['regex']['pattern']).replace(/"/g, '&quot;'), field_options['regex']['modifier']).toString() : 
+								''; %>
+	<fieldset> 
+		<label class="checkbox<%= isDisabled %>">
+			<input type="checkbox" 
+							name="custom-regex-required" 
+							<%= regexValidation %> />
+			<%= translate.get('validateRegex') %> 
+		</label>
+	</fieldset>
+	<% 	isVisible = 'hide';
+		if (regexValidation == 'checked') { 
+			isVisible = 'show';
+	 	} 
+	%>
+	<div class="row-fluid <%= isVisible %>">
+		<fieldset class="span12">
+			<input type="text" 
+							placeholder="<%= translate.get('regExp') %>"  
+							name="custom-reg-exp" 
+							value="<%= regexValue %>" />
+			<p> <%= translate.get('regExpExample') %>
+				<a href='http://rubular.com/' target='_blank'><%= translate.get('learnMore') %> </a>
+			</p>
+		</fieldset>
+	</div>
+</div>

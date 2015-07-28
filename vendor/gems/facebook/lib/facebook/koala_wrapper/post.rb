@@ -2,6 +2,7 @@ class Facebook::KoalaWrapper::Post
   
   include Facebook::Core::Util
   include Facebook::Constants
+  include Social::Util
 
   attr_accessor :post, :post_id, :feed_type, :requester, :description, :description_html, :subject,
                  :created_at, :comments, :can_comment, :post_type
@@ -24,6 +25,7 @@ class Facebook::KoalaWrapper::Post
 
   def parse
     @post             =   @post.symbolize_keys!
+    @post[:message]   =   remove_utf8mb4_char(@post[:message])
     @post_id          =   @post[:id]
     @feed_type        =   @post[:type]
     @requester        =   @post[:from] 

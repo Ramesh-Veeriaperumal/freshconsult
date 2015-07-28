@@ -1,8 +1,7 @@
 class TimeSheetsController < ApiApplicationController
-  include TimeSheetConcern
+  include Concerns::TimeSheetConcern
 
-  before_filter { |c| c.requires_feature :timesheets }
-  before_filter :validate_filter_params, only: [:index]
+  before_filter :load_ticket, only: [:ticket_time_sheets]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
   def index
@@ -26,21 +25,39 @@ class TimeSheetsController < ApiApplicationController
 
   def toggle_timer
     timer_running = @item.timer_running
-    changed = if timer_running
-                { time_spent: calculate_time_spent(@item) }
-              else
-                # If any validation is introduced in the TimeSheet model,
-                # update_running_timer and @item.update_attributes should be wrapped in a transaction.
-                update_running_timer @item.user_id
-                { start_time: Time.zone.now }
-              end
+    changed = fetch_changed_attributes(timer_running)
     changed.merge!(timer_running: !timer_running)
-    unless @item.update_attributes(changed)
-      render_error @item.errors
-    end
+    render_error @item.errors unless @item.update_attributes(changed)
+  end
+
+  def ticket_time_sheets
+    @items = paginate_items(scoper.where(workable_id: @id))
+    render '/time_sheets/index'
   end
 
   private
+
+    def fetch_changed_attributes(timer_running)
+      if timer_running
+        { time_spent: calculate_time_spent(@item) }
+      else
+        # If any validation is introduced in the TimeSheet model,
+        # update_running_timer and @item.update_attributes should be wrapped in a transaction.
+        update_running_timer @item.user_id
+        { start_time: Time.zone.now }
+      end
+    end
+
+    def feature_name
+      FeatureConstants::TIMESHEET
+    end
+
+    def load_ticket
+      # Load only non deleted ticket.
+      @display_id = params[:id].to_i
+      @id = current_account.tickets.select(:id).where(display_id: @display_id, deleted: false).limit(1).first
+      head 404 unless @id
+    end
 
     def scoper
       current_account.time_sheets
@@ -73,14 +90,15 @@ class TimeSheetsController < ApiApplicationController
       params[cname][:timer_running] = @timer_running
       params[cname][:time_spent] = time_spent
       params[cname][:user_id] ||= current_user.id if create?
-      params[cname][:executed_at] ||= Time.zone.now if create?
-      params[cname][:start_time] ||= Time.zone.now if create? || params[cname][:timer_running].to_s.to_bool == true
+      current_time = Time.zone.now
+      params[cname][:executed_at] ||= current_time if create?
+      params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool
       params[cname].delete(:ticket_id)
     end
 
     def time_spent
       time_spent = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
-      time_spent ||= total_running_time if update? && params[cname][:timer_running].to_s.to_bool == false
+      time_spent ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
       time_spent
     end
 
@@ -101,10 +119,10 @@ class TimeSheetsController < ApiApplicationController
 
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
-      return true if params[cname][:timer_running].to_s.to_bool == true && @item.timer_running.to_s.to_bool == false
+      return true if params[cname][:timer_running].to_s.to_bool && !@item.timer_running
 
       # Should stop timer for the new user if different user_id is set as part of this update call
-      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && @timer_running.to_s.to_bool == false
+      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && !@timer_running
       false
     end
 

@@ -147,7 +147,7 @@ Spork.prefork do
       @account = Account.first
       @agent = get_admin
       RSpec.configuration.timings = []
-      
+      Sidekiq::Testing.disable!
       #begin_gc_defragment
     end
 
@@ -186,6 +186,7 @@ Spork.prefork do
                             timing[:name], timing[:duration]))
       end
       file.close
+      Sidekiq::Testing.disable!
     end
 
     config.before(:suite) do

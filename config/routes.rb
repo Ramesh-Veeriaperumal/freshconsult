@@ -302,7 +302,12 @@ Helpkit::Application.routes.draw do
   end
 
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
-  resources :groups
+  resources :groups do
+    collection do
+      get :index
+      post :toggle_roundrobin
+    end
+  end
 
   resources :user_emails do
     member do
@@ -844,14 +849,18 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :surveys do
-      collection do
-        post :enable
-        post :disable
-        get :index
-        put :update
+    resources :surveys
+    resources :custom_surveys do   
+      member do
+        post :test_survey
       end
     end
+    match '/surveys/update' => 'surveys#update' , :via => :put
+    match '/surveys/enable/' => 'surveys#enable' , :via => :post
+    match '/surveys/disable/' => 'surveys#disable' , :via => :post
+
+    match '/custom_surveys/enable/:id' => 'custom_surveys#enable' , :via => :post
+    match '/custom_surveys/disable/:id' => 'custom_surveys#disable' , :via => :post
 
     resources :gamification do
       collection do
@@ -996,7 +1005,19 @@ Helpkit::Application.routes.draw do
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
+  
 
+  namespace :reports do
+    namespace :v2 do
+      resources :ticket_volume, :controller => 'tickets/reports' do
+        collection do
+          post :fetch_metrics
+          post :fetch_ticket_list
+        end
+      end
+    end
+  end
+  
   namespace :reports do
     resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
       collection do
@@ -1007,6 +1028,8 @@ Helpkit::Application.routes.draw do
         post :fetch_metrics
       end
     end
+
+  
 
     resources :analysis_reports, :controller => 'helpdesk_load_analysis' do
       collection do
@@ -1150,6 +1173,11 @@ Helpkit::Application.routes.draw do
   match '/survey/overall_report/:category' => 'reports/survey_reports#report_details', :as => :survey_overall_report
   match '/reports/survey_reports/feedbacks' => 'reports/survey_reports#feedbacks', :as => :survey_feedbacks
   match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
+  match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports
+  match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks
+  match '/custom_survey/reports' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
+  match '/custom_survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#reports', :as => :custom_survey_reports
+  match '/custom_survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
 
   namespace :social do
 
@@ -1888,6 +1916,10 @@ Helpkit::Application.routes.draw do
     match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
 
+    match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
+    match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new' ,:as => :customer_custom_survey
+    match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#create_for_portal', :as => :portal_custom_survey
+
     namespace :mobihelp do
       resources :tickets do
         member do
@@ -2046,6 +2078,7 @@ Helpkit::Application.routes.draw do
           get :features
           get :email_config
           put :add_day_passes
+          put :change_api_limit
           put :add_feature
           put :change_url
           get :single_sign_on

@@ -224,7 +224,7 @@ class Portal < ActiveRecord::Base
     def ticket_field_conditions
       { 'product' => (main_portal && !account.products.empty?) }
     end
-    
+
     def filter_fields(f_list, conditions)
       to_ret = []
 

@@ -908,6 +908,8 @@
          ev.preventDefault();
          var jsonData = getCustomFieldJson();
          $("#field_values").val(jsonData.toJSON());
+         // var section_data = [{ "label" : "section name", "action": "save", "picklist_ids" : [{"picklist_value_id" : 31}], "section_fields" : [{"position" : 1, "ticket_field_id" : 15, "parent_ticket_field_id" : 3, "ticket_field_name" : "sample"},{"position" : 2, "parent_ticket_field_id" : 3, "ticket_field_id" : 16 , "ticket_field_name" : "sample 2"}]},{"label" : "section name2", "action" : "save", "picklist_ids" : [{"picklist_value_id" : 4},{"picklist_value_id" : 5}], "section_fields" : [{"position" : 1, "ticket_field_id" : 15, "parent_ticket_field_id" : 3, "ticket_field_name" : "sample"}]}]
+         // $("#section_data").val(section_data.toJSON());
          this.value = $(this).data("commit")
          $(this).prop("disabled", true);
          $("#Updateform").trigger("submit");

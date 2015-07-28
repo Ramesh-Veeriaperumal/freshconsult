@@ -1,6 +1,7 @@
 class Facebook::Graph::Message
   include Facebook::Core::Util
   include Facebook::KoalaWrapper::ExceptionHandler
+  include Social::Util
 
   def initialize(fan_page)
     @account = fan_page.account
@@ -71,6 +72,8 @@ class Facebook::Graph::Message
       message.symbolize_keys!
       next if @account.facebook_posts.find_by_post_id(message[:id])
       user = facebook_user(message[:from])
+      message[:message] =  remove_utf8mb4_char(message[:message])
+      
       @note = ticket.notes.build(
         :note_body_attributes => {
           :body_html => html_content_from_message(message)
@@ -110,6 +113,7 @@ class Facebook::Graph::Message
 
     message.symbolize_keys!
     requester = facebook_user(message[:from])
+    message[:message] =  remove_utf8mb4_char(message[:message])
 
     @ticket = @account.tickets.build(
       :subject => truncate_subject(message[:message], 100),
