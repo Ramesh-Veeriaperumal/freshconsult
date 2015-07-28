@@ -38,14 +38,10 @@ module Solution::NavmenuHelper
     op.join('').html_safe
   end
   
-  def cportal
-    current_portal
-  end
-  
   def cache_key
     MemcacheKeys::SOLUTION_NAVMENU % {
       :account_id => current_account.id,
-      :portal_id => cportal.id
+      :portal_id => current_portal.id
     }
   end
 end

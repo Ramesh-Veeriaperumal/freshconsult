@@ -3586,8 +3586,7 @@ en:
         dialog_title: "Reset likes and dislikes"
         dialog_submit: "Reset"
         resetting: "Resetting"
-        dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
-        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
+        dialog_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
     draft:
       name: Drafts
       all_drafts: All Drafts

@@ -70,6 +70,12 @@ window.App = window.App || {};
       $('body').on('modal_loaded.articles', function () {
         $this.setTagSelector();
       });
+      $('body').on('click.articles', '#save-btn', function () {
+        $('#save-as-draft-btn').trigger('click');
+      });
+      $('body').on('click.articles', '#publish-btn', function () {
+        $('#article-publish-btn').trigger('click');
+      });
     },
 		
 		toggleViews: function () {
@@ -90,7 +96,7 @@ window.App = window.App || {};
       }
       this.editUrlChange(true);
       //Disable save and publish buttons until we start editing
-      $('#save-as-draft-btn, #article-publish-btn').addClass('disabled');
+      $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').addClass('disabled');
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
     },
@@ -247,7 +253,7 @@ window.App = window.App || {};
     },
 
     enableBtnsOnContentChange: function () {
-      $('#save-as-draft-btn, #article-publish-btn').removeClass('disabled');
+      $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').removeClass('disabled');
       $('body').off('articles.btnsEnable');
     },
 

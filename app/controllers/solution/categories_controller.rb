@@ -179,6 +179,6 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def default_category
-      current_account.solution_categories.all(:conditions => {:is_default => true}).first
+      current_account.solution_categories.where(:is_default => true).first
     end
 end

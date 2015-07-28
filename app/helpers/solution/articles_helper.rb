@@ -66,7 +66,7 @@ module Solution::ArticlesHelper
     t_type = (type ==  1) ? 'likes' : 'dislikes'
     return t(t_type) if count < 1
     link_to( t(t_type), 
-            voted_users_solution_category_folder_article_path(@article.folder.category, @article.folder, @article, {:vote => type}),
+            voted_users_solution_article_path(@article, {:vote => type}),
             :rel => "freshdialog",
             :class => "article-#{t_type}",
             :title => t(t_type), 
@@ -86,7 +86,7 @@ module Solution::ArticlesHelper
   end
 
   def created_at_ellipsis?
-    @article.published? && (@article.created_at != @article.modified_at) && @article.modified_at.present?
+    @article.published? && @article.modified_at.present? && (@article.created_at != @article.modified_at)
   end
 
   def cancel_btn_link
@@ -99,15 +99,15 @@ module Solution::ArticlesHelper
     end
   end
 
-  def article_btns
+  def article_btns(save_btn = nil, publish_btn = nil)
     output = []
     if @article.new_record?
       output << pjax_link_to(t('cancel'), cancel_btn_link, :class => "btn cancel-button", :id => "edit-cancel-button")
     else
       output << submit_tag(t('cancel'), :class => "btn cancel-button", :id => "edit-cancel-button")
     end
-    output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => "save-as-draft-btn")
-    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => "article-publish-btn")
+    output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => save_btn || "save-as-draft-btn")
+    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn")
     output.join(' ').html_safe
   end
   

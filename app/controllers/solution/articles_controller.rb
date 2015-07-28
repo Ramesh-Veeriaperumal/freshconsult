@@ -16,7 +16,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :old_folder, :only => [:move_to]
   before_filter :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
-  before_filter :change_author_verify, :only => [:update]
+  before_filter :validate_author, :only => [:update]
   
 
   def index
@@ -303,7 +303,6 @@ class Solution::ArticlesController < ApplicationController
       if (@draft.blank? || (@draft.user == current_user))
         @draft = @article.build_draft_from_article if @draft.blank?
         unless update_draft_attributes
-          binding.pry
           flash[:error], action = t('solution.articles.draft.save_error'), "edit"
         end    
       end
@@ -344,7 +343,7 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def change_author_verify
+    def validate_author
       return unless update_properties?
       new_author_id = params[:solution_article][:user_id]
       if new_author_id.present? && @article.user_id != new_author_id
