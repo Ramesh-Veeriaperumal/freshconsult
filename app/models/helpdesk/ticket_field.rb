@@ -145,6 +145,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
+  def nested_field?
+    field_type == "nested_field"
+  end
+
   def choices(ticket = nil, admin_pg = false)
      case field_type
        when "custom_dropdown" then

@@ -6,7 +6,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include Helpdesk::TagMethods
 
   before_filter :filter_params_ids, :only => :update_multiple
-  before_filter :load_multiple_items, :only => :update_multiple
+  before_filter :load_items, :only => :update_multiple
 
   def update_multiple             
     failed_tickets = []
