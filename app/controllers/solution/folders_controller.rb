@@ -116,17 +116,10 @@ class Solution::FoldersController < ApplicationController
 
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items
-
-    respond_to do |format|
-      format.js { render 'solution/folders/move_to.rjs' }
-    end
   end
 
   def move_back
     @category = current_account.solution_categories.find(params[:parent_id])
-    respond_to do |format|
-      format.js { render 'solution/folders/move_back.rjs' }
-    end
   end
 
  protected
@@ -234,10 +227,7 @@ class Solution::FoldersController < ApplicationController
 
     def bulk_update_category
       @folders = current_account.folders.where(:id => params[:items])
-      @folders.each do |folder|
-        folder.category_id = params[:parent_id]
-        folder.save
-      end
+      @folders.update_all(:category_id => params[:parent_id])
       @updated_items = @folders.map(&:id)
     end
 

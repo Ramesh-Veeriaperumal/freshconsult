@@ -141,31 +141,18 @@ class Solution::ArticlesController < ApplicationController
 
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items
-
-    respond_to do |format|
-      format.js { render 'solution/articles/move_to.rjs' }
-    end
   end
 
   def move_back
     @folder = current_account.folders.find(params[:parent_id])
-    respond_to do |format|
-      format.js { render 'solution/articles/move_back.rjs' }
-    end
   end
 
   def change_author
     @articles = current_account.solution_articles.where(:id => params[:items])
-    @articles.each do |article|
-      article.user_id = params[:parent_id]
-      article.save
-    end
+    @articles.update_all(:user_id => params[:parent_id])
     @updated_items = @articles.map(&:id)
 
     flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
-    respond_to do |format|
-      format.js { render 'solution/articles/change_author.rjs' }
-    end
   end
 
   protected
@@ -359,15 +346,12 @@ class Solution::ArticlesController < ApplicationController
 
     def render_edit
       return if !load_draft
-      redirect_to "#{solution_article_path(@article)}#edit"
+      redirect_to solution_article_path(@article, :anchor => "#edit")
     end
 
     def bulk_update_folder
       @articles = current_account.solution_articles.where(:id => params[:items])
-      @articles.each do |article|
-        article.folder_id = params[:parent_id]
-        article.save
-      end
+      @articles.update_all(:folder_id => params[:parent_id])
       @updated_items = @articles.map(&:id)
     end
 
