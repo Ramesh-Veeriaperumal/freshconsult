@@ -323,7 +323,7 @@ en:
       level2: "Level 2"
       level3: "Level 3"
       nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
-      nested_field_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
+      nested_field_helptext: "Use the below textarea to add or edit items in your dropdown. Indent items by pressing the tab key once or twice. We will convert it to dropdown items based on the indentation. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       drop_down_items_edit: "Dropdown items - Edit"
       dropdown_items_preview: "Dropdown items - Preview"
@@ -332,6 +332,7 @@ en:
       sla_timer: "SLA timer"
       section_type_change: Please save the ticket form to see the latest changes that you have made to type field.
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+      nested_field_helptext_preview: "This is the preview of sample dropdown items. Click \"Edit\" to change the values for each drop down."
       delete_field: "Delete field"
       field_label_agents: "Field label for agents"
       field_label_customer: "Field label for customers"
@@ -355,6 +356,7 @@ en:
       cc_company_contacts: Can CC only company contacts
       cc_any_email: Can CC any email address
       field_delete_disabled: You cant delete default fields
+      default_field_delete_disabled: Default fields cannot be deleted
       dropdown_choice_disabled: Default choice cant be deleted 
       nested_tree_validation: You need atleast one category & sub-category
       nested_unique_names: Agent label should not be same as other two levels
