@@ -59,7 +59,7 @@ class NotesController < ApiApplicationController
 
     def create_note
       if @item.user_id
-        @item.user = @user if @user 
+        @item.user = @user if @user
       else
         @item.user = current_user
       end # assign user instead of id as the object is already loaded.
@@ -72,7 +72,7 @@ class NotesController < ApiApplicationController
 
     def render_response(success)
       if success
-        render "/notes/#{action_name}", location: send("#{nscname}_url", @item.id), status: 201
+        render_201_with_location
       else
         ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, @item)
         render_error(@item.errors)

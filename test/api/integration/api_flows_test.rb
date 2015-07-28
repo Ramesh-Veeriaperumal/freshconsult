@@ -88,8 +88,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_not_valid_fd_domain
     without_proper_fd_domain do
       get '/api/discussions/categories', nil, headers
-      assert_response :forbidden
-      match_json(request_error_pattern('fd_domain_required'))
+      assert_response :not_found
     end
   end
 

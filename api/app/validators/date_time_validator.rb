@@ -7,8 +7,11 @@ class DateTimeValidator < ActiveModel::EachValidator
   end
 
   def self.parse_time(value)
-    Time.zone.parse(value) # This will raise exception only if value is not a string, for values it cannot parse it returns nil.
-    rescue
+    # Time.zone.parse will raise exception if value is not a string or out of range,
+    # For values it cannot parse, it returns nil.
+    Time.zone.parse(value)
+    rescue Exception => e
+      Rails.logger.error("API Parse Time Error Value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
       return false
   end
 

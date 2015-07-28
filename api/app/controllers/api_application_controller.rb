@@ -62,7 +62,7 @@ class ApiApplicationController < MetalApiController
   def create
     assign_protected
     if @item.save
-      render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
+      render_201_with_location
     else
       set_custom_errors
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
@@ -88,6 +88,7 @@ class ApiApplicationController < MetalApiController
 
   def route_not_found
     path = env['PATH_INFO']
+    Rails.logger.error("API 404 Error. Path: #{path} Params: #{params.inspect}")
     allows = ActionDispatch::Routing::HTTP_METHODS.select do |verb|
       match = Rails.application.routes.recognize_path(path, method: verb)
       match[:action] != 'route_not_found'
@@ -190,8 +191,14 @@ class ApiApplicationController < MetalApiController
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
+      Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
       render_error invalid_fields
+    end
+
+    # Using optional parameters for extensibility
+    def render_201_with_location(template_name: "#{controller_path}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+      render template_name, location: send(location_url, item_id), status: 201
     end
 
     def render_error(errors, meta = nil)
@@ -284,9 +291,9 @@ class ApiApplicationController < MetalApiController
       render_request_error(:ssl_required, 403) unless request.ssl?
     end
 
-    def ensure_proper_fd_domain
+    def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      render_request_error(:fd_domain_required, 403) unless ApiConstants::ALLOWED_DOMAIN == request.domain
+      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain
     end
 
     def manipulate_params
