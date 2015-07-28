@@ -29,14 +29,30 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
+
+  # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
+  # Modify ApiConstants::LOAD_OBJECT_EXCEPT to include any new methods introduced in the controller that does not require load_object.
   before_filter :before_load_object, :load_object, :after_load_object, except: ApiConstants::LOAD_OBJECT_EXCEPT
+  
+  # Used to check if update contains no parameters.
   before_filter :check_params, only: :update
+
+  # Used to stop execution of create before validating the params.
   before_filter :before_validation, only: [:create]
+
+  # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
   before_filter :validate_params, only: [:create, :update]
+
+  # Manipulating the parameters similar to the attributes that the model understands.
   before_filter :manipulate_params, only: [:create, :update]
+
+  # This is not moved inside create because, controlelrs redefining create needn't call build_object again.
   before_filter :build_object, only: [:create]
-  before_filter :load_association, only: [:show]
+
+  # Validating the filter params sent in the url for filtering collection of objects.
   before_filter :validate_filter_params, only: [:index]
+
+
   before_filter :validate_url_params, only: [:show]
 
   def index
@@ -96,18 +112,25 @@ class ApiApplicationController < MetalApiController
   private
 
     def before_validation
+      # Template method - can be used to limit the parameters sent based on the permissions of the user before creating.
     end
 
     def assign_protected
+      # Template method - Assign attributes that cannot be mass assigned.
     end
 
     def validate_filter_params
+      # Template method - If filtering is present in index action, this can be used to validate 
+      # each filter and its value using strong params and custom validation classes.
     end
 
     def validate_url_params
+      # Template method - If embedding is present in show action, this can be used to validate 
+      # the imput sent using strong params and custom validations.
     end
 
     def feature_name
+      # Template method - Redefine if the controller needs requires_feature before_filter
     end
 
     def not_get_request?
@@ -246,10 +269,6 @@ class ApiApplicationController < MetalApiController
       fields = constant[:all]
       constant.keys.each { |key| fields += constant[key] if privilege?(key) }
       fields
-    end
-
-    def load_association
-      # This is used to load the association before the show method.
     end
 
     def paginate_items(item)
