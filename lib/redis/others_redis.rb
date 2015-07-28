@@ -71,4 +71,8 @@ module Redis::OthersRedis
 	def get_others_redis_lrem(key, value, all=0)
 		newrelic_begin_rescue { $redis_others.lrem(key,all,value) }
 	end
+	
+	def ismember?(key, value)
+		newrelic_begin_rescue { $redis_others.sismember(key, value) }
+	end
 end
