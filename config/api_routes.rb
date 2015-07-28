@@ -57,6 +57,8 @@ Helpkit::Application.routes.draw do
     resources :companies, as: "api_companies", :controller => "api_companies", :except => [:new, :edit]
 
     resources :company_fields, as: "api_company_fields", :controller => "api_company_fields", :only => [:index]
+
+    resources :sla_policies, :controller => "api_sla_policies", :only => [:index]    
   end
     
   scope "/api", defaults: {version: "v2", format: "json"}, :constraints => {:format => /(json|$^)/} do

@@ -198,6 +198,15 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('domains', 'data_type_mismatch', data_type: 'String')])
   end
 
+  def test_create_company_with_invalid_customer_field_values
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: domain_array, note: Faker::Lorem.characters(10),
+                                       custom_fields: { 'cf_linetext' => 'test123', 'cf_testimony' => 123,
+                                                        'cf_agt_count' => '67', 'cf_date' => Faker::Lorem.characters(10),
+                                                        'cf_show_all_ticket' => Faker::Number.number(5) })
+    assert_response :created
+  end
+
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }
     MemcacheKeys.delete_from_cache key

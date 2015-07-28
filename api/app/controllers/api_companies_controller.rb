@@ -4,12 +4,17 @@ class ApiCompaniesController < ApiApplicationController
 
   private
 
+    def load_objects
+      super current_account.companies.includes(:flexifield)
+    end
+
     def scoper
-      current_action?('index') ? current_account.companies.includes(:flexifield) : current_account.companies
+      current_account.companies
     end
 
     def validate_params
-      allowed_custom_fields = Helpers::CompaniesValidationHelper.companies_custom_field_keys
+      @company_fields = current_account.company_form.custom_company_fields
+      allowed_custom_fields = @company_fields.collect(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       fields = CompanyConstants::COMPANY_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))
@@ -23,7 +28,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_validatable_custom_fields
-      @item.validatable_custom_fields = { fields: current_account.company_form.custom_company_fields,
+      @item.validatable_custom_fields = { fields: @company_fields,
                                           error_label: :label }
     end
 

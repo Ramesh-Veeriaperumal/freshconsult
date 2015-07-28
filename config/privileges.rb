@@ -356,6 +356,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/dynamic_notification_template"
     resource :"admin/email_commands_setting"
     resource :"admin/account_additional_setting"
+    resource :"api_email_config", :only => [:index, :show]
   end
 
   # **************** super admin *******************
@@ -370,12 +371,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/survey"
     resource :"admin/custom_survey"
     resource :group
-    resource :"api_company"
-    resource :"api_company_field"
-    resource :"api_email_config"
-    resource :"api_business_calendar"
-    resource :"api_group"
-    resource :"api_product"
     resource :ticket_field
     resource :"admin/contact_field"
     resource :"admin/company_field"
@@ -411,6 +406,12 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
+    resource :"api_company", :only => [:create, :update, :destroy, :index, :show]
+    resource :"api_company_field", :only => [:index]
+    resource :"api_business_calendar", :only => [:index, :show]
+    resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
+    resource :"api_sla_policy"
+    resource :"api_product", :only => [:index, :show]
   end
 
   manage_account do
