@@ -1,5 +1,5 @@
 class ApiGroupsController < ApiApplicationController
-  before_filter :manipulate_agents, only: [:create, :update]
+  before_filter :preparing_agents, only: [:create, :update]
   before_filter :set_round_robin_enbled
 
   private
@@ -36,7 +36,7 @@ class ApiGroupsController < ApiApplicationController
                                            params[cname])
     end
 
-    def manipulate_agents
+    def preparing_agents
       initialize_agents
       drop_existing_agents if update? && @agents
       build_agents
