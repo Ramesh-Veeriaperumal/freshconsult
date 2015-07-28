@@ -1,62 +1,9 @@
-<% my_drafts = @drafts.drafts_by_user(current_user) %>
-<% my_drafts_count = my_drafts.size %>
-<div class="solutions-widget-header">
-  <span class="ficon-file fsize-18 pr9"></span>
-  <div class="sidebar-dropdown">
-    <div data-tabs='tabs'>
-      <ul role="tablist">
-        <li class="dropdown">
-          <h5 class="dropdown-toggle" data-toggle="<%='dropdown' unless  my_drafts_count < 1 %>">
-            <% title = my_drafts_count < 1 ? t('solution.sidebar.drafts.all') : t('solution.sidebar.drafts.me') %> 
-            <span class="widget-filter drafts-filter-title"><%= title %></span>
-            <% unless my_drafts_count < 1 %>
-              <span class="caret"></span>
-            <% end %>
-          </h5>
-          <% unless my_drafts_count < 1 %>
-            <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
-              <li class="widget-filter">
-                <a class="item drafts-filter-me" href="#drafts-me" data-hash-url="false" data-toggle="tab" ul_class="tick">
-                <%=t('solution.sidebar.drafts.me').html_safe%>
-                </a>
-              </li>
-              <li class="widget-filter drafts-filter-all">
-                <a class="item" href="#drafts-all" data-hash-url="false" data-toggle="tab"  ul_class="tick">
-                  <%=t('solution.sidebar.drafts.all').html_safe%>
-                </a>
-              </li>
-            </ul>
-          <% end %>
-        </li>
-      </ul>
-  </div>
-  </div>
-  <span class="lead lead-small"><%=t('solution.sidebar.drafts.title').html_safe%></span>
-</div>
-<div class="tab-content">
-  <% active = my_drafts_count < 1 ? '' : 'active' %>
-  <div class='tab-pane sidebar-list <%= active %>' id="drafts-me" > 
-      <ul>
-      <% my_drafts.first(3).each do |a| %>
-        <%= sidebar_drafts(a) %>
-      <% end %>
-    <% if my_drafts_count > 3 %>
-      <span>
-        <%= pjax_link_to t('solution.sidebar.view_all'),solution_my_drafts_path('all'), { :class => "view-all"} %>
-      </span>
-    <% end %>
-    </ul>
-  </div>
-  <div class='tab-pane sidebar-list <%= 'active' if active.empty? %>' id="drafts-all"> 
-      <ul >
-      <% @drafts.first(3).each do |a| %>
-        <%= sidebar_drafts(a) %>
-      <% end %>
-    <% if @drafts.size > 3 %>
-      <span>
-        <%= pjax_link_to t('solution.sidebar.view_all'), solution_drafts_path, { :class => "view-all"} %>
-      </span>
-    <% end %>
-    </ul>
-  </div>
-</div>
+<%  
+  @my_drafts = @drafts.drafts_by_user(current_user)
+  @my_drafts_count = @my_drafts.size 
+%>
+<% if @my_drafts_count < 1 %>
+  <%= render :partial => "all_drafts" %>
+<% else %>
+  <%= render :partial => "my_drafts" %>
+<% end %>

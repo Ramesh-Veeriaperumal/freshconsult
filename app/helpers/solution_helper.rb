@@ -190,12 +190,37 @@ module SolutionHelper
           <div class="muted list-desc"> 
             #{t('solution.sidebar.drafts.details',
                               :name => a.user.name, 
-                              :time => a.modified_at,
+                              :time => a.modified_at.to_i,
                               :time_string => time_ago_in_words(a.modified_at)).html_safe}
 					</div>
 	      </div>
 	    </li>
 		}.html_safe
 	end
-	
+
+	def sidebar_drafts_list(drafts, container_id, active='')
+		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
+    drafts.first(3).each do |draft|
+      content << sidebar_drafts(draft)
+    end
+    content << %{</ul>}
+    content << pjax_link_to( t('solution.sidebar.view_all'),
+    												 solution_drafts_path, { :class => "view-all"}) if drafts.size > 3
+		content << %{</div>}
+		content.html_safe
+	end
+
+
+	def sidebar_feedbacks_list(feedbacks, container_id, active='')
+		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
+    feedbacks.first(3).each do |feedback|
+      content << article_feedback(feedback)
+    end
+    content << %{</ul>}
+    content << pjax_link_to( t('solution.sidebar.view_all'),
+    												 "/helpdesk/tickets/filter/article_feedback",
+    												  { :class => "view-all"}) if feedbacks.size > 3
+		content << %{</div>}
+		content.html_safe
+	end
 end
