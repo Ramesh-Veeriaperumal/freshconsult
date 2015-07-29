@@ -208,7 +208,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             });
         },
         redrawDayTrend: function (dow, prev_active, present) {
-            this.core.active_day = this.DAY_MAPPING[this.WEEKDAY_MAPPING[dow]];
+            this.core_util.active_day = this.DAY_MAPPING[this.WEEKDAY_MAPPING[dow]];
             var chart = jQuery('#day_trend_chart').highcharts();
             for (i = 0; i < this.series.length; i++) {
                 chart.series[i].update({
