@@ -3527,6 +3527,7 @@ en:
       visibility:
         no_companies: You haven't selected any valid companies.
         success: Successfully changed the visibility.
+        failure: Could not change the visibility of the selected folders.
         extra_companies:  
           one: " and one more company."
           other: " and %{count} more companies."

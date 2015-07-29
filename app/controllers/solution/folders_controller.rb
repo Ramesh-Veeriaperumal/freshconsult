@@ -198,7 +198,8 @@ class Solution::FoldersController < ApplicationController
     end
 
     def visibility_validate?
-      Solution::Folder::VISIBILITY.map { |v| v[2]}.include?(params[:visibility].to_i)
+      @visibility = params[:visibility].to_i if params[:visibility]
+      Solution::Folder::VISIBILITY.map { |v| v[2]}.include?(@visibility)
     end
 
     def valid_customers(customer_ids)
@@ -206,23 +207,18 @@ class Solution::FoldersController < ApplicationController
     end
 
     def change_visibility
-      visibility = params[:visibility].to_i
-      customer_ids, add_to_existing = [], false
-      if visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
-        customer_ids = valid_customers(params[:companies])
-        if customer_ids.blank?
+      @folders = current_account.folders.where(:id => params[:folderIds])
+      if @visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+        if valid_customers(params[:companies]).blank?
           flash[:notice] = t('solution.folders.visibility.no_companies')
           return
         end
-        add_to_existing = (params[:addToExisting].to_i == 1)
+        customer_ids, add_to_existing = [valid_customers(params[:companies]), (params[:addToExisting].to_i == 1)]
+        change_result = @folders.map {|f| f.add_visibility(@visibility, customer_ids, add_to_existing)}.reduce(:&)
+      else
+        change_result = @folders.update_all(:visibility => @visibility)
       end
-      
-      @folders = current_account.folders.find_all_by_id(params[:folderIds])
-      @folders.each do |folder|
-        if folder.add_visibility(visibility, customer_ids, add_to_existing)
-          flash[:notice] = t('solution.folders.visibility.success')
-        end
-      end
+      flash[:notice] = t("solution.folders.visibility.#{change_result ? "success" : "failure"}")
     end
 
     def bulk_update_category
