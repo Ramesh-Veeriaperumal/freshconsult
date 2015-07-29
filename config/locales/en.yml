@@ -3496,6 +3496,7 @@ en:
         all: "All Feedback"
         details: "%{name}'s feedback, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
         status: 'Status : %{status}'
+    anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
     add_category: New Category
     orphan: Orphan
