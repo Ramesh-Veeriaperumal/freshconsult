@@ -130,7 +130,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def has_thumbnail?
-    !["Helpdesk::Ticket", "Helpdesk::Note"].include?(attachable_type)
+    !["Helpdesk::Ticket", "Helpdesk::Note", "Account"].include?(attachable_type)
   end
 
   def attachment_sizes
