@@ -18,6 +18,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :set_current_folder, :only => [:create]
   before_filter :validate_author, :only => [:update]
   
+  UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
   def index
     redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
@@ -91,11 +92,8 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    if save_as_draft? || publish? || cancel_draft_changes?
-      publish? ? publish_article : (cancel_draft_changes? ? revert_draft_changes : update_draft)
-      return
-    end
-    update_article
+    update_article and return unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
+    send("article_#{(UPDATE_FLAGS & params.keys.map(&:to_sym)).first}")
   end
 
   def destroy
@@ -249,7 +247,7 @@ class Solution::ArticlesController < ApplicationController
       true
     end
 
-    def publish_article
+    def article_publish
       @draft = @article.draft
       if @draft.present? 
         if update_draft_attributes and @draft.publish!
@@ -264,7 +262,7 @@ class Solution::ArticlesController < ApplicationController
       update_article
     end
 
-    def revert_draft_changes
+    def article_cancel_draft_changes
       #TODO : Catch Errors and handle in cancelling draft
       if (@article.draft.present? && latest_content?)
         @draft = @article.draft
@@ -285,7 +283,7 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def update_draft
+    def article_save_as_draft
       @draft = @article.draft
       if (@draft.blank? || (@draft.user == current_user))
         @draft = @article.build_draft_from_article if @draft.blank?
