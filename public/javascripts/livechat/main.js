@@ -117,26 +117,9 @@
  		//Time Period 
  		var timePeriod = $filterForm.find("#date_range").val();
  		if(timePeriod){
-			filterName.timePeriod = timePeriod;
-			var fromDate = timePeriod.split('-')[0];
-			var	toDate;
-			if(timePeriod.split('-')[1]){
-				toDate = timePeriod.split('-')[1];
-			}else{
-				toDate = timePeriod.split('-')[0];
-			}
-			var frm = new Date(fromDate);
-			frm.setHours(0, 0, 0, 0);
-			var to = new Date(toDate);
-			to.setHours(23, 59, 59, 999);
-			filterVal.frm = frm.getTime();
-			filterVal.to  = to.getTime();
- 		}else{
- 			jQuery("#date_range_error").show();
- 			filterVal.frm = new Date("Thu, 01 Jan 1970 00:00:00 UTC").getTime();
-			filterVal.to  = new Date("Thu, 01 Jan 1970 00:00:00 UTC").getTime();
-			filterName.timePeriod = " - ";
-			return false;
+ 			filterName.timePeriod = timePeriod;
+ 			filterVal.frm = timePeriod.split('-')[0];
+ 			filterVal.to  = timePeriod.split('-')[1];
  		}
 
  		//Agent 

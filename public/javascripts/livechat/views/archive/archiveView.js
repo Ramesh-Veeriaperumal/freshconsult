@@ -41,12 +41,10 @@ liveChat.archiveView = function(){
 			},
 			loadPrevPage:function(event){
 				event.preventDefault();
-				jQuery("#next-page,#prev-page").addClass("disabled");
 				this.collection.loadPrevPage();				
 			},
 			loadNextPage:function(event){
 				event.preventDefault();
-				jQuery("#next-page,#prev-page").addClass("disabled");
 				this.collection.loadNextPage();				
 			},
 			navigateToMessage:function(event){
