@@ -668,7 +668,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match '/quickbooks/refresh_access_token' => 'quickbooks#refresh_access_token', :as => :oauth_action
+    namespace :quickbooks do
+      get :refresh_access_token
+      get :render_success
+    end
+    
     resources :dynamics_crm do
       collection do
         post :settings_update

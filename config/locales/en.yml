@@ -5422,6 +5422,12 @@ en:
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
+      remote_configurations:
+        signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
+        connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
+        disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
+        launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
