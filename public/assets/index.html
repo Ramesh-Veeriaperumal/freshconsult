@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_08c8aa1419d494f5a365347090709e75.eot");
-  src: url("../../assets/glyphs_08c8aa1419d494f5a365347090709e75.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_08c8aa1419d494f5a365347090709e75.woff") format("woff"),
-       url("../../assets/glyphs_08c8aa1419d494f5a365347090709e75.ttf") format("truetype"),
-       url("../../assets/glyphs_08c8aa1419d494f5a365347090709e75.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_1c5f5d998faffb05f1d4f9461351a58a.eot");
+  src: url("../../assets/glyphs_1c5f5d998faffb05f1d4f9461351a58a.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_1c5f5d998faffb05f1d4f9461351a58a.woff") format("woff"),
+       url("../../assets/glyphs_1c5f5d998faffb05f1d4f9461351a58a.ttf") format("truetype"),
+       url("../../assets/glyphs_1c5f5d998faffb05f1d4f9461351a58a.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_08c8aa1419d494f5a365347090709e75.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_1c5f5d998faffb05f1d4f9461351a58a.svg#glyphs") format("svg");
   }
 }
 
@@ -161,7 +161,7 @@
 .ficon-billing:before,
 .ficon-blank-file:before,
 .ficon-book:before,
-.ficon-book-new:before,
+.ficon-book-hollow:before,
 .ficon-bulb:before,
 .ficon-bullhorn:before,
 .ficon-business-hours:before,
@@ -283,6 +283,7 @@
 .ficon-number:before,
 .ficon-observer:before,
 .ficon-open-in-new-window:before,
+.ficon-open-in-portal:before,
 .ficon-opera:before,
 .ficon-paperplane:before,
 .ficon-paragraph:before,
@@ -378,7 +379,7 @@
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
 .ficon-book:before { content: "\f112"; }
-.ficon-book-new:before { content: "\f1cc"; }
+.ficon-book-hollow:before { content: "\f1cf"; }
 .ficon-bulb:before { content: "\f113"; }
 .ficon-bullhorn:before { content: "\f114"; }
 .ficon-business-hours:before { content: "\f115"; }
@@ -500,6 +501,7 @@
 .ficon-number:before { content: "\f174"; }
 .ficon-observer:before { content: "\f175"; }
 .ficon-open-in-new-window:before { content: "\f176"; }
+.ficon-open-in-portal:before { content: "\f1d2"; }
 .ficon-opera:before { content: "\f177"; }
 .ficon-paperplane:before { content: "\f178"; }
 .ficon-paragraph:before { content: "\f179"; }
@@ -571,7 +573,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (203)</h1>
+      <h1>Font Icons (204)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -795,10 +797,10 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
-          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-book-new" class="ficon-book-new"></i></span>
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-book-hollow" class="ficon-book-hollow"></i></span>
         </div>
         <div class="usage">
-          <span>book-new</span>
+          <span>book-hollow</span>
         </div>
       </div>
       
@@ -1888,6 +1890,15 @@
         </div>
         <div class="usage">
           <span>open-in-new-window</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-open-in-portal" class="ficon-open-in-portal"></i></span>
+        </div>
+        <div class="usage">
+          <span>open-in-portal</span>
         </div>
       </div>
       

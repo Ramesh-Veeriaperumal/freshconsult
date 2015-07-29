@@ -25,13 +25,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    @enable_pattern = true
     @article = current_account.solution_articles.find_by_id!(params[:id], :include => [:folder, :draft, :tickets])
-    @page_title = (@article.draft || @article).title
     respond_to do |format|
       format.html {
         @current_item = @article.draft || @article
-        render "show"
+        @page_title = @current_item.title
       }
       format.xml  { render :xml => @article }
       format.json { render :json => @article }
@@ -74,7 +72,7 @@ class Solution::ArticlesController < ApplicationController
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
                             :url => support_solutions_article_path(@article)).html_safe if publish?
-          redirect_to creation_redirect_url 
+          redirect_to @article
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
@@ -335,11 +333,6 @@ class Solution::ArticlesController < ApplicationController
         new_author = current_account.users.find_by_id(new_author_id)
         params[:solution_article] = params[:solution_article].except(:user_id) unless new_author && new_author.agent?
       end
-    end
-
-    def creation_redirect_url    
-      return @article if params[:save_and_create].nil?
-      new_solution_category_folder_article_path(params[:category_id], params[:folder_id])
     end
 
     def render_edit

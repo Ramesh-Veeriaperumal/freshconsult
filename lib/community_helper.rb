@@ -7,7 +7,7 @@ module CommunityHelper
     end
 
     %(<span class="tooltip pull-right portal-preview-icon" title="#{t('solution.view_on_portal')}">
-      #{link_to('<i class="ficon-open-in-new-window fsize-21"></i>'.html_safe, path, :target => "_blank")}
+      #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, path, :target => "_blank")}
     </span>).html_safe
   end
 
