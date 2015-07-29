@@ -2,7 +2,7 @@ module Helpdesk
   class ResetResponder < BaseWorker
 
     sidekiq_options :queue => :reset_responder, :retry => 0, :backtrace => true, :failures => :exhausted
-    BATCH_LIMIT = 500
+    BATCH_LIMIT = 50
 
     def perform(args)
       begin

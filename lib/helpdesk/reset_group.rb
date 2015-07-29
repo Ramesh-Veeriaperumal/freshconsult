@@ -2,7 +2,7 @@ module Helpdesk
   class ResetGroup < BaseWorker
 
     sidekiq_options :queue => :reset_group, :retry => 0, :backtrace => true, :failures => :exhausted
-    BATCH_LIMIT = 500
+    BATCH_LIMIT = 50
 
     def perform(args)
       begin
