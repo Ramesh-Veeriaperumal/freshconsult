@@ -196,32 +196,32 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def set_solution_tags
-      tags_changed = false
-      return tags_changed unless params[:tags] && (params[:tags].is_a?(Hash) && !params[:tags][:name].nil?)  
-         
-      tags = params[:tags][:name]
-      ar_tags = tags.split(',').map(&:strip).uniq    
-      existing_tags = @article.tags.map(&:name)
-      
-      return tags_changed if ar_tags.sort == existing_tags.sort
-
-      new_tag = nil
-
-      @article.tags.clear    
-
-      ar_tags.each do |tag|      
-        new_tag = Helpdesk::Tag.find_by_name_and_account_id(tag, current_account) ||
-           Helpdesk::Tag.new(:name => tag ,:account_id => current_account.id)
+      return false unless tags_present? 
+      set_tags_input
+      return false unless tags_changed?
+      @article.tags.clear   
+      @tags_input.each do |tag|      
         begin
-          @article.tags << new_tag
+          @article.tags << Helpdesk::Tag.find_or_initialize_by_name_and_account_id(tag,current_account)
         rescue ActiveRecord::RecordInvalid => e
         end
       end
-
       @article.updated_at = Time.now
-      tags_changed = true
+      return true
     end
-    
+
+    def tags_present?
+      params[:tags] && (params[:tags].is_a?(Hash) && !params[:tags][:name].nil?)
+    end
+
+    def set_tags_input
+      @tags_input = params[:tags][:name].split(',').map(&:strip).uniq   
+    end
+
+    def tags_changed?
+      !(@tags_input.sort == @article.tags.map(&:name).sort)
+    end
+
     def portal_check
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
