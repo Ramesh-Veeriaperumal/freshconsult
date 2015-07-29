@@ -60,7 +60,7 @@ class ApiContactsController < ApiApplicationController
   private
 
     def scoper
-      current_account.all_users
+      current_account.all_contacts
     end
 
     def validate_params

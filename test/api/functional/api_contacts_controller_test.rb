@@ -7,8 +7,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     { api_contact: params }
   end
 
-  def user
-    get_default_user
+  def get_user
+    @account.all_contacts.where(deleted: false).first
   end
 
   def get_company
@@ -149,7 +149,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name:"" }
-    sample_user = user
+    sample_user = get_user
     sample_user.update_attribute(:phone,"1234567890")
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
@@ -158,7 +158,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_user_without_any_contact_detail
     params_hash = { email: "", phone:"", mobile:"", twitter_id:"" }
-    sample_user = user
+    sample_user = get_user
     put :update, construct_params({id: sample_user.id}, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('email','Please fill at least 1 of email, mobile, phone, twitter_id fields.'),
@@ -180,8 +180,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: "en",
                                         tags: ["tag_sample_test_1","tag_sample_test_2","tag_sample_test_3"],
                                         avatar_attributes: { content: file })
-    sample_user = User.last
     assert_response :created
+    sample_user = User.where(helpdesk_agent: false).last
 
     params_hash = { language: "cs", 
                     time_zone: "Tokyo",
@@ -202,7 +202,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_valid_company_id_and_client_manager
     comp = get_company
-    sample_user = User.first
+    sample_user = get_user
     params_hash = { company_id: comp.id, client_manager: true }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
@@ -212,7 +212,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_client_manager_with_invalid_company_id
-    sample_user = User.first
+    sample_user = get_user
     comp = get_company
     params_hash = { company_id: 1, client_manager: true, phone: "1234567890" }
     put :update, construct_params({ id: sample_user.id }, params_hash)
@@ -227,7 +227,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Delete user
 
   def test_delete_contact
-    sample_user = User.last
+    sample_user = get_user
     sample_user.update_column(:deleted, false)
     delete :destroy, construct_params({id: sample_user.id})
     assert_response :no_content
@@ -235,7 +235,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_delete_a_deleted_contact
-    sample_user = User.last
+    sample_user = get_user
     sample_user.update_column(:deleted, false)
     delete :destroy, construct_params({id: sample_user.id})
     assert_response :no_content
@@ -244,7 +244,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_a_deleted_contact
-    sample_user = User.last
+    sample_user = get_user
     sample_user.update_column(:deleted, false)
     delete :destroy, construct_params({id: sample_user.id})
     assert_response :no_content
@@ -254,7 +254,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_show_a_deleted_contact
-    sample_user = User.last
+    sample_user = get_user
     sample_user.update_column(:deleted, false)
     delete :destroy, construct_params({id: sample_user.id})
     assert_response :no_content
@@ -263,7 +263,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_restore_a_deleted_contact
-    sample_user = User.last
+    sample_user = get_user
     sample_user.update_column(:deleted, false)
     delete :destroy, construct_params({id: sample_user.id})
     assert_response :no_content
@@ -275,17 +275,17 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # User Index and Filters
   def test_contact_index
-    User.update_all(deleted: false)
+    @account.all_contacts.update_all(deleted: false)
     get :index, controller_params
     assert_response :success
-    users = User.all
+    users = @account.all_contacts
     pattern = users.map { |user| index_deleted_contact_pattern(user) }
     match_json(pattern)
   end
 
   def test_contact_filter_state
-    User.update_all(deleted: false)
-    User.first.update_column(:deleted, true)
+    @account.all_contacts.update_all(deleted: false)
+    @account.all_contacts.first.update_column(:deleted, true)
     get :index, controller_params({state: 'deleted'})
     assert_response :success
     response = parse_response @response.body
@@ -293,8 +293,8 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_phone
-    User.update_all(phone: nil)
-    User.first.update_column(:phone, '1234567890')
+    @account.all_contacts.update_all(phone: nil)
+    @account.all_contacts.first.update_column(:phone, '1234567890')
     get :index, controller_params({phone: '1234567890'})
     assert_response :success
     response = parse_response @response.body
@@ -302,9 +302,9 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_email
-    User.update_all(email: nil)
+    @account.all_contacts.update_all(email: nil)
     email = Faker::Internet.email
-    User.first.update_column(:email, email)
+    @account.all_contacts.first.update_column(:email, email)
     get :index, controller_params({email: email})
     assert_response :success
     response = parse_response @response.body
@@ -313,8 +313,8 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_contact_filter_company_id
     comp = get_company
-    User.update_all(customer_id: nil)
-    User.first.update_column(:customer_id, comp.id)
+    @account.all_contacts.update_all(customer_id: nil)
+    @account.all_contacts.first.update_column(:customer_id, comp.id)
     get :index, controller_params({company_id: comp.id})
     assert_response :success
     response = parse_response @response.body
@@ -324,10 +324,10 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_contact_combined_filter
     email = Faker::Internet.email
     comp = get_company
-    User.update_all(customer_id: nil)
-    User.first.update_column(:customer_id, comp.id)
-    User.first.update_column(:email, email)
-    User.last.update_column(:customer_id,comp.id)
+    @account.all_contacts.update_all(customer_id: nil)
+    @account.all_contacts.first.update_column(:customer_id, comp.id)
+    @account.all_contacts.first.update_column(:email, email)
+    @account.all_contacts.last.update_column(:customer_id, comp.id)
     get :index, controller_params({company_id: comp.id, email: email})
     assert_response :success
     response = parse_response @response.body
@@ -341,30 +341,32 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   # Make agent out of a user
-
   def test_make_agent
-    User.update_all(email: nil)
-    User.first.update_attribute(:email,Faker::Internet.email)
-    put :make_agent, construct_params({id: User.first.id})
+    sample_user = get_user
+    sample_user.update_attribute(:email,Faker::Internet.email) if sample_user.email.blank?
+    put :make_agent, construct_params({id: sample_user.id})
     assert_response :success
-    assert User.first.reload.helpdesk_agent == true
-    assert Agent.last.user.id = User.first.id
+    assert sample_user.reload.helpdesk_agent == true
+    assert Agent.last.user.id = sample_user.id
   end
 
   def test_make_agent_out_of_a_user_without_email
-    User.first.account.subscription.update_attribute(:agent_limit, nil)
-    User.update_all(email: nil)
-    put :make_agent, construct_params({id: User.first.id})
+    @account.subscription.update_attribute(:agent_limit, nil)
+    sample_user = get_user
+    email = sample_user.email 
+    sample_user.update_attribute(:email, nil)
+    put :make_agent, construct_params({id: sample_user.id})
     assert_response :bad_request
+    sample_user.update_attribute(:email, email)
     match_json([bad_request_error_pattern('email','Contact with email id can only be converted to agent')])
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
-    User.first.account.subscription.update_attribute(:agent_limit,1)
-    User.last.update_attribute(:email,Faker::Internet.email) if User.last.email.blank?
-    put :make_agent, construct_params({id: User.last.id})
+    @account.subscription.update_attribute(:agent_limit, 1)
+    sample_user = get_user
+    sample_user.update_attribute(:email, Faker::Internet.email) if sample_user.email.blank?
+    put :make_agent, construct_params({id: sample_user.id})
     assert_response :bad_request
     match_json([bad_request_error_pattern('id','You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.')])
-     
   end
 end

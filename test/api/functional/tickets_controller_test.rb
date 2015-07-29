@@ -1341,7 +1341,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_company
-    company = Company.first || create_company
+    company = create_company
     user = User.first
     user.update_attributes(customer_id: company.id)
     get :index, controller_params(company_id: company.id)
