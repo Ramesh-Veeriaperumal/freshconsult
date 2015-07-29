@@ -23,18 +23,12 @@ liveChat.visitorListView = function(){
       this.listenTo(this.collection, 'change_visitor_type', this.addVisitor); // when a visitor becomes active in collection
       this.listenTo(this.collection, 'save_filterd_visitors', this.saveFilteredCollection); //from visitor collection fetch
       this.listenTo(this.collection, 'change_count', this.setCount);
-      this.autoRefreshVisitorList = new PeriodicalExecuter(function(pe) {
-        if(visitorCollection.count[this.type] !=  this.filteredCollection.length){
-          this.addLoader();
-          visitorCollection.fetch({ type: this.type });
-        }
-      }.bind(this),180);
     },
     saveFilteredCollection : function(visitors){
       if(this.type == 'newVisitor'){
         visitors.values = jQuery.map(visitors.values,JSON.parse);
       }
-      this.filteredCollection.reset(visitors.values,{merge: true});
+      this.filteredCollection.add(visitors.values,{merge: true});
       this.filteredCollection.sort({silent: true});
       this.collection.saveCount(visitors.count);
       this.render();
@@ -236,9 +230,6 @@ liveChat.visitorListView = function(){
     addLoader : function(){
       jQuery("#loading-box").show(); 
       jQuery("#visitors_view_container").css('opacity','0.2');
-    },
-    destroyAutoRefreshTimer : function(){
-      this.autoRefreshVisitorList.stop();      
     },
     initiateChat : function(event){
       var clicked_row = jQuery(event.currentTarget);

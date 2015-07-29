@@ -222,13 +222,13 @@
 						<label class="caption"><%=t('freshchat.form_details')%></label>
 						<div class="fields clearfix">
 							<div>
-								<input type="text" class="text span3" id="missed_chat_name" maxlength="100" name="missed_chat_name" value="" placeholder="<%=t('freshchat.name')%>">
+								<input type="text" class="text span3" id="missed_chat_name" name="missed_chat_name" value="" placeholder="<%=t('freshchat.name')%>">
 							</div>
 							<div>
 								<input type="text" class="text span3" id="missed_chat_email" name="missed_chat_email" value="" placeholder="<%=t('freshchat.mail')%>">
 							</div>
 							<div>
-								<input type="text" class="text span3" id="missed_chat_message" maxlength="100" name="missed_chat_message" value="" placeholder="<%=t('freshchat.message')%>">
+								<input type="text" class="text span3" id="missed_chat_message" name="missed_chat_message" value="" placeholder="<%=t('freshchat.message')%>">
 							</div>
 						</div>
 					</li>
@@ -249,6 +249,7 @@
 							<div class="ff_item">
 								<label class="item-large"> 
 									<div class="fc_title_info"><%= t('freshchat.show_chat_hours_msg') %></div>
+									<div class="info-data"><%= t('freshchat.show_chat_hours_info') %></div>
 								</label>
 							</div>
 						</div>
@@ -400,6 +401,7 @@
 					<li class="code-view">
 						<div class="chat_code_copy tooltip" twipsy-content-set="true" data-original-title="<%= t('freshchat.copy_to_clipboard') %>"><span class="ficon icon-copy"></span></div>  
 						<textarea id="EmbedCode" readonly></textarea>
+						<div class="intro"><%=t('freshchat.integrate_freshchat_info')%>
 					</li>
 				</ul>		
 			</div>
