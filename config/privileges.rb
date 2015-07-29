@@ -406,6 +406,8 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
+    resource :"api_contact", :only => [:show, :create, :update, :destroy, :restore, :index, :make_agent]
+    resource :"api_contact_field", :only => [:index]
     resource :"api_company", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_company_field", :only => [:index]
     resource :"api_business_calendar", :only => [:index, :show]

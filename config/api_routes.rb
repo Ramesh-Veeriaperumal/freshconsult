@@ -48,6 +48,15 @@ Helpkit::Application.routes.draw do
     end
     resources :groups, as: "api_groups", :controller => "api_groups", :except => [:new, :edit]
 
+    resources :contacts, as: "api_contacts", :controller => "api_contacts" do
+      member do
+        put :restore
+        put :make_agent
+      end
+    end
+
+    resources :contact_fields, as: "api_contact_fields", :controller => "api_contact_fields", :only => [:index]
+
     resources :products, :controller => "api_products", :only => [:index, :show]
 
     resources :email_configs, :controller => "api_email_configs", :only => [:index, :show]

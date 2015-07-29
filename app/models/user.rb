@@ -183,6 +183,36 @@ class User < ActiveRecord::Base
       User.current = nil
     end
 
+    # Used by API V2
+    def api_filter(contact_filter = nil)
+      filters = {}
+
+      state = contact_filter.try(:state)
+      case state
+        when "verified", "unverified"
+          filters.merge!( state: { conditions: { deleted: false, active: state.eql?("verified") } })
+        when "deleted"
+          filters.merge!( state: { conditions: { deleted: true } })
+        when "blocked"
+          filters.merge!( state: { conditions: { blocked: true } })
+      end
+
+      filters.merge!(
+        company_id: {
+          conditions: { customer_id: contact_filter.try(:company_id) }
+        },
+        email: {
+          conditions: { email: contact_filter.try(:email) }
+        },
+        phone: {
+          conditions: { phone: contact_filter.try(:phone) }
+        },
+        mobile: {
+          conditions: { phone: contact_filter.try(:mobile) }
+        })
+
+    end
+
     # protected :find_by_email_or_name, :find_by_an_unique_id
   end
 
