@@ -45,7 +45,7 @@ var isDefault = /^default/.test(field_type),
 			case 'time_zone_dropdown':
 			case 'dropdown':
 			case 'dropdown_blank': %>
-				<select class='select2 input-xlarge' disabled>
+				<select class='input-xlarge' disabled>
 					<% _.each(admin_choices, function(choice, index) { %>
 						<option value="<%= choice['value'] %>" > <%= choice['name'] %> </option>
  					<% }) %>
@@ -57,7 +57,7 @@ var isDefault = /^default/.test(field_type),
 				<textarea rows="5" disabled></textarea>
 				<% break;
 			case 'nested_field':  %> 
-				<select class='select2 input-xlarge' disabled>
+				<select class='input-xlarge' disabled>
 					<% nestedTree = new NestedField(admin_choices);
 						var choice = nestedTree.getCategory() ;
 						choice = choice.split(",");
