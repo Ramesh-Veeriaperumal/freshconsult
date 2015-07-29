@@ -583,10 +583,6 @@
     }
 	}
 
-  &:not(.faded) .visible-to-btn {
-    border: 1px solid #666666;
-  }
-
 	.right-btn {
 		@include margin-left(10px);
 	}
@@ -884,7 +880,7 @@ body.community #sticky_header.category-sticky.is_stuck {
 
 #folder-bulk-action .fd-menu {
   margin-top: 10px;
-  border: 1px solid #5897fb;
+  border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 4px 4px 4px 4px;
   a:hover, a.selected {
     background: #3875d7;
