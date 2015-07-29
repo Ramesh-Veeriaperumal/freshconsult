@@ -63,15 +63,6 @@
 					this.closeWindow(null,null,true);
 					return false;
 				}
-				if(!data.messages || data.messages.length === 0){
-					var options = {
-						externalId : this.ticket.existingExternalId,
-						ongoingChat : data.ongoingChat,
-						chatId : data.chatId
-					}
-					this.closeWindow(null,options);
-					return false;
-				}
 				var that = this;
 	          	var note = "<div class='conversation_wrap'><table style='width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse;'>"+this.parseMessages(data.messages)+"</table></div>";
 	          	var chatTransfered = false;
@@ -125,8 +116,6 @@
 				this.$parentElem.on('blur','input',this.validateInputFields.bind(this));
 				//Selecting ticket from existing ticket option page
 				this.$parentElem.on('click','.selected_tkt_button',this.addNoteToExistingTicket.bind(this));
-				window.liveChatTempCloseFunc = this.cleanUp.bind(this);
-				$(document).on('keyup', window.liveChatTempCloseFunc);	
 			},
 			
 			
@@ -160,11 +149,13 @@
 				this.$newTicketElem.show();
 			},
 			showExistingTicketOption: function(event){
+				var searchlistTemplate = window.JST['livechat/templates/tickets/ticketSearchList'];
 				this.$existingTicketElem.freshTicketSearch({ 
-					className: 'chat_tkt_search_container'
+					className: 'chat_tkt_search_container',
+					template:  new Template(searchlistTemplate())
 				});
-				var requester = (this.visitor && this.visitor.name) ? this.visitor.name : this.participant_id;
-				this.$existingTicketElem.initializeRequester(requester);
+	      		var requester = (this.visitor && this.visitor.name) ? this.visitor.name : this.participant_id;
+	      		this.$existingTicketElem.initializeRequester(requester);
 
 				this.$ticketOptionElem.hide();
 				this.$existingTicketElem.show();
@@ -284,11 +275,6 @@
 	    	},
 	    	// whenever the close button is clicked, all referenced nodes will be removed.
 	    	cleanUp: function(event){
-	    		if(event && event.type === "keyup" && event.keyCode !== 27) {
-	    			return;
-	    		};
-	    		$(document).off("keyup", window.liveChatTempCloseFunc);
-	    		window.liveChatTempCloseFunc = null;
 	    		// If the user clicks the close button directly
 	    		if(event && event.isTrigger !== true){
 					window.chatCollection.disableChatTab(this.chat.chat_id,false);

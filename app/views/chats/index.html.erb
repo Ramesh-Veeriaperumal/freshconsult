@@ -63,7 +63,6 @@
 	var liveChat =window.liveChat || {};
 	window.liveChat.widgetList = <%=@widgets%>
 	jQuery(document).on('ready pjax:end',function(){
-		 jQuery("#date_range_error").hide();
 		var $dateElement = jQuery('#livechat_archive_page').find('#date_range');
 		if($dateElement.length >0){
 			$dateElement.off().daterangepicker({
@@ -78,14 +77,8 @@
 				},
 				dateFormat: window.getDateFormat('datepicker'),
 				closeOnSelect: true,
-				onChange: function() { jQuery("#date_range_error").hide(); },
 				earliestDate: Date.parse('13/06/2013')
 			});
-			$dateElement.on('keypress keyup keydown', function(ev) {
-		   	ev.preventDefault();
-		    return false;
-		 });
-
 		}
 	});
 </script>

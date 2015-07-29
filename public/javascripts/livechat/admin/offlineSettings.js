@@ -22,7 +22,7 @@ window.liveChat.offlineSettings = function(){
 
     defaultOfflineChat: function(){
       return {
-        show 	  : "1",
+        show 	  : "0",
         form 	  : { "name"        : CHAT_I18n.name, 
                     "email"       : CHAT_I18n.email,
                     "message"     : CHAT_I18n.message
