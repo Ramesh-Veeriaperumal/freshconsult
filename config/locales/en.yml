@@ -6485,6 +6485,7 @@ en:
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
       followup: "worth phone credits"
+      followup_text: "worth phone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       could_be_invalid_number: "Could be an invalid number."
