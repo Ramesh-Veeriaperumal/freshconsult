@@ -13,7 +13,7 @@
 
 <% if @folder.articles.blank? %>
   <div class="no-data">
-    <%= t('solution.no_solutions_info') %>
+    <%= t('solution.no_articles_info') %>
     <div class="mt20">
       <% if privilege?(:publish_solution) %>
         <%= pjax_link_to(t('solution.add_article'), new_solution_article_path(:folder_id => @folder.id), :class => "btn btn-primary") %>

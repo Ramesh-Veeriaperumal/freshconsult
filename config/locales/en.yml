@@ -3600,6 +3600,7 @@ en:
         content_changed_you: "You have updated the content elsewhere. "
         content_changed: "The content has changed. "
         other_problem: "The content could not be saved. "
+    no_articles_info: No articles in this folder
     you: You
     info9: Public (Will be published in self service)
     edit: Edit Solution
@@ -3611,7 +3612,6 @@ en:
     title_singular: Solution
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
-    no_solutions_info: No solutions in this folder
     info4: Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
     type: Article Type
     info5: Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions

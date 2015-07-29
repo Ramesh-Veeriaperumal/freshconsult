@@ -4,11 +4,9 @@
 	</span>
 <% else %>
 	<%= font_icon :like %> 
-	<%= @article.thumbs_up %>
 	<%= user_votes_stats(@article.thumbs_up, 1) %>
 	- 
 	<%= font_icon :dislike %> 
-	<%= @article.thumbs_down %> 
 	<%= user_votes_stats(@article.thumbs_down, 0) %>
 <% end %>
 

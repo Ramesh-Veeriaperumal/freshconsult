@@ -65,7 +65,7 @@ module Solution::ArticlesHelper
   def user_votes_stats count, type
     t_type = (type ==  1) ? 'likes' : 'dislikes'
     return t(t_type) if count < 1
-    link_to( t(t_type), 
+    link_to( "#{count} #{t(t_type)}".html_safe,
             voted_users_solution_article_path(@article, {:vote => type}),
             :rel => "freshdialog",
             :class => "article-#{t_type}",

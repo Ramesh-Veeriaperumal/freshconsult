@@ -14,15 +14,15 @@
 					<%= new_solutions_button(:folder) %>
 				</li>
 			  <li class="list-reorder-btns">
-			    <a href="#" class="btn btn-primary" id="submit_btn">Done</a>
-			    <a href="#" class="btn btn-link" id="cancel_btn">cancel</a>
+			    <a href="#" class="btn btn-primary" id="submit_btn"><%= t('save') %></a>
+			    <a href="#" class="btn btn-link" id="cancel_btn"><%= t('cancel') %></a>
 			  </li>
 			</ul>
 			<div class="action-btns-bar span1">
-				<%= link_to( font_icon(:edit, {:size => 23}), 
+				<%= link_to( '', 
 							edit_solution_category_path(@category),
 							:rel => "freshdialog",
-							:class => "tooltip",
+							:class => "ficon-edit fsize-23 tooltip",
 							:title => t('solutions.edit'),
 							"data-target" => "#category-edit",
 							"data-close-label" => t('cancel'),
