@@ -6280,6 +6280,7 @@ en:
   helpdesk_reports:
     time_period: Select Time Period
     filter_by: Filter by
+    edit_filter: Filter
     ticket_volume: 
       title: Ticket Volume
       time_trends:
