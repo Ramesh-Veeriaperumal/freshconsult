@@ -159,11 +159,11 @@ Along with the above options, few flags and counters are available which are lis
     saveContent: function () {
       this.getContent();
 
-      this.savingContentFlag = true;
-
-      if (!this.minContentLengthCheck) {
+      if (!this.minContentLengthCheck || this.savingContentFlag) {
         return;
       }
+
+      this.savingContentFlag = true;
 
       $.ajax({
         url: this.opts.autosaveUrl,

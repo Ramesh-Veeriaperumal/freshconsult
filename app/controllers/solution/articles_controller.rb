@@ -251,10 +251,12 @@ class Solution::ArticlesController < ApplicationController
         if update_draft_attributes and @draft.publish!
           flash[:notice] = t('solution.articles.published_success',
                                :url => support_solutions_article_path(@article)).html_safe
+          redirect_to :action => "show"
         else
-          flash[:error] = t('solution.articles.published_failure')
+          flash[:error] = show_draft_errors || t('solution.articles.published_failure')
+          redirect_to solution_article_path(@article.id, :anchor => "edit")
         end
-        redirect_to :action => "show" and return
+        return
       end
       @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
       update_article
@@ -286,10 +288,12 @@ class Solution::ArticlesController < ApplicationController
       if (@draft.blank? || (@draft.user == current_user))
         @draft = @article.build_draft_from_article if @draft.blank?
         unless update_draft_attributes
-          flash[:error], action = t('solution.articles.draft.save_error'), "edit"
+          flash[:error] = show_draft_errors || t('solution.articles.draft.save_error')
+          redirect_to solution_article_path(@article.id, :anchor => "edit")
+          return
         end    
       end
-      redirect_to :action => (action || "show") and return
+      redirect_to :action => "show"
     end
 
     def latest_content?
@@ -337,7 +341,7 @@ class Solution::ArticlesController < ApplicationController
 
     def render_edit
       return if !load_draft
-      redirect_to solution_article_path(@article, :anchor => "#edit")
+      redirect_to solution_article_path(@article, :anchor => "edit")
     end
 
     def bulk_update_folder
@@ -371,6 +375,12 @@ class Solution::ArticlesController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
         @current_folder = current_account.solution_folders.first
+      end
+    end
+
+    def show_draft_errors
+      if @article.draft.present? && @article.draft.errors.present?
+        flash[:error] = @article.draft.errors.full_messages.join("<br />\n").html_safe
       end
     end
 

@@ -21,6 +21,7 @@ window.App = window.App || {};
       this.setDataFromPage();
       this.bindHandlers();
       this.handleEdit();
+      this.formValidate();
       highlight_code();
       App.Solutions.SearchConfig.onVisit();
     },
@@ -161,8 +162,13 @@ window.App = window.App || {};
     },
 
     formValidate: function () {
+      var $this = this;
       $('body').on('submit.articles', '#article-form', function (ev) {
-        return $('#article-form').valid();
+        var validation = $('#article-form').valid();
+        if (validation && !$.isEmptyObject($this.autoSave)) {
+          $this.autoSave.stopSaving();
+        }
+        return validation;
       });
     },
 
