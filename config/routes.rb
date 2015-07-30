@@ -824,16 +824,20 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :portal, :only => [:index, :update]
+    resources :products
 
-    resources :products do
+    resources :portal, :only => [:index, :update, :edit, :create, :destroy] do
+
+      collection do
+        get :settings
+        get :enable
+        put :update_settings
+      end
       member do
         delete :delete_logo
         delete :delete_favicon
       end
-    end
 
-    resources :portal, :only => [:index, :update] do
       resource :template do
         collection do
           get :show

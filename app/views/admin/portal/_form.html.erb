@@ -1,0 +1,152 @@
+<%= f.error_messages %>
+<div class="row-fluid hidden-items">
+  <% unless portal.main_portal %>
+  <h4 class="heading caption lead">
+    <%= t('admin.products.portal.portal_settings') %>
+  </h4>
+  <% end %>
+  <div class="pt15">
+    <div class="fields">
+      <div class="control-group">
+        <%= content_tag(:label, t('admin.products.portal.portal_name'), :class => "control-label") %>
+        <div class="controls">
+          <%= f.text_field :name, :class => "text input-xlarge #{'required' if portal.main_portal}" %>
+          <%= content_tag(:div, t('admin.products.portal.portal_name_info'), :class => "info-data") %>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= content_tag(:label, (t('admin.products.portal.portal_url') + "#{"<span class='required_star'>*</span>" unless portal.main_portal}").html_safe, :class => "control-label") %>
+        <div class="controls">
+          <% if portal.main_portal && !feature?(:custom_domain) %>
+            <div class="label-locked-feature pb5">
+              <%= content_tag(:label, current_account.full_domain, :class => "control-label") %>
+              <div class="help-block">
+                <% options =  ( current_user.privilege?(:manage_account) ) ? 
+                  {:tag => :a, :href => subscription_url } : {:tag => :span} %>
+                  <%= content_tag(options[:tag], t('subscription.upgrade.cname'), :href => options[:href] ) %>
+              </div>
+            </div>
+          <% else %>
+    	      <%= f.text_field :portal_url, 
+              :class => " input-xlarge portal_url url_without_protocol #{'required' unless portal.main_portal}", 
+              :id => "PortalUrl", 
+              :placeholder => "Eg. help.yourcompany.com",
+              :"data-domain" => Helpdesk::HOST[Rails.env.to_sym] %>
+    	      <span class="portal_url_if_long">
+              <%= content_tag(:div, t('admin.products.portal.cname_configure_info', 
+                              :full_domain => current_account.full_domain).html_safe, :class => "info-data") %>
+            </span>
+          <% end %>
+        </div> 
+      </div>
+      <div class="control-group">
+    	<% if feature?(:multi_language) %>
+    	  <%= content_tag(:label, t('admin.products.portal.default_portal_language'), :class => "control-label") %>
+          <div class="controls">
+            <%= f.select :language, I18n.available_locales_with_name , 
+                              {:selected =>  (!portal.blank?) ? portal.language.to_sym() : current_portal.language.to_sym() } ,
+                               :class => "select2 input-xlarge"%>
+          </div>
+    	<% end %>
+      </div>
+      <div class="control-group pt10">
+       <label class="control-label"><%= t("admin.products.portal.categories_visible") %></label>
+        <div class="controls category-section">
+          <div>
+            <%= content_tag(:div, t('header.tabs.forums'), :class => "pb5") %>
+            <input type="hidden" name="portal[forum_category_ids][]" value="" />
+            <%= f.collection_select :forum_category_ids, @forums_categories, 
+                      :id, :name, {} , 
+                      :class => "select2 input-xlarge",
+                      :id => "forums_categories",
+                      :multiple => true, 
+                      :placeholder => t("admin.products.portal.select_forum_category").html_safe %>
+          </div>
+          <div class="pt20">
+            <%= content_tag(:div, t('header.tabs.solutions'), :class => "pb5") %>
+            <input type="hidden" name="portal[solution_category_ids][]" value="" />
+            <%= f.collection_select :solution_category_ids, @solution_categories.reject(&:is_default?), 
+                      :id, :name, {} ,
+                      :class => "select2 input-xlarge",
+                      :id => "solution_categories",
+                      :multiple => true, 
+                      :placeholder => t("admin.products.portal.select_solution_category").html_safe %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fields">
+      <span class="seperator"></span>
+      <h4 class="heading caption lead rebranding-header"><%= t('admin.products.portal.portal_rebranding') %></h4>
+      <div class="control-group">
+        <label class="control-label"><%= t("admin.products.portal.logo_and_favicon") %></label>
+        <div class="controls">
+          <div class="row-fluid">
+            <div class="span6">
+              <%= render :partial => "/shared/logo_image", 
+                          :locals => { :item => portal, :field_name => "portal"} %>
+            </div>
+            <div class="span6">
+              <%= render :partial => "/shared/fav_image", 
+                        :locals => { :item => portal, :field_name => "portal"} %>
+            </div>    
+          </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="control-label"><%= t("linkback_overlabel") %></div>     
+        <div class="controls">
+          <input 
+              name="portal[preferences][logo_link]" id="link_back_text" 
+              value="<%=(portal[:preferences]||{}).fetch(:logo_link, '')%>" 
+              placeholder="http://<%= portal.main_portal ? current_account.host : portal.portal_url.presence %>"
+              class="text input-xlarge" />
+          <div class="info-data"> <%= t("linkback_info") %> </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label"><%= t("admin.products.portal.helpdesk_phone") %></label>
+        <div class="controls">
+          <input 
+              name="portal[preferences][contact_info]" id="contact_info_text"
+              placeholder="<%= t("admin.products.portal.contact_us") %> @ 888 888 888"
+              value="<%=portal_pref(portal, :contact_info) %>" class="text input-xlarge" />
+        </div>
+      </div>
+
+      <%= f.fields_for :preferences do |p| %>
+        <input type="hidden" name="portal[preferences][header_color]" 
+          value="<%= portal_pref(current_account.main_portal, :header_color) %>" />
+        <input type="hidden" name="portal[preferences][tab_color]"
+          value="<%= portal_pref(current_account.main_portal, :tab_color) %>" /> 
+        <input type="hidden" name="portal[preferences][bg_color]" 
+          value="<%= portal_pref(current_account.main_portal, :bg_color) %>" />
+      <% end %>
+      <div class="control-group">
+        <label class="control-label"><%=t('admin.products.portal.portal_customization')%></label>
+        <div class="controls">
+            <%= link_to portal.template.present? ? admin_portal_template_path(portal.id) : '', 
+              {:class => "btn customize-btn", :rel => "customize-portal"} do %>
+              <%= font_icon "arrow-right", :size => 15, :id => "customize-arrow" %>
+              <div class='customize'><%= portal.template.present? ? t('admin.products.portal.customize_portal') : t('admin.products.portal.save_and_customize').html_safe %></div>
+              <% if portal.template.present? %>
+              <div class="published-at">           
+                  <%= t("admin.products.portal.last_published")%> <%= distance_of_time_in_words_to_now(portal.template.updated_at) %> <%= t("admin.products.portal.ago") %>         
+              </div>
+              <% end %>
+            <% end %>
+        </div>
+      </div>
+      <%= hidden_field_tag("product", @product.id) if portal.new_record? %>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag do %>  
+  jQuery('body').one('assetLoaded.fjax', function() {
+    App.Admin.Portal.bindSaveAndCustomize('<%= "#{t('admin.products.portal.save_and_customize')}?".html_safe %>');
+    var opts = { add_text: "<%= t('add_all')%>", clear_text: "<%= t('clear')%>" }
+    jQuery('#forums_categories').add_clear(opts);
+    jQuery('#solution_categories').add_clear(opts);
+  });
+<% end %>

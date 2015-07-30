@@ -136,19 +136,6 @@
           </div>
         </div>
       </div>
-      <div class="configure-portal control-group">
-        <label class="control-label">
-          <%= t("admin.products.form.configure_seperate_portal").html_safe %> 
-        </label>
-        <%= form.check_box :enable_portal, 
-                  {:class => "checkbox controls", :rel => "toggle", :id => "EnablePortal"   }%>
-      </div>
-    </div>
-    <span class="seperator"></span>    
-    <div id="PortalSettings">
-      <%= form.fields_for :portal do |portal| %>
-        <%= render :partial => "portal", :object => portal %>
-      <% end %>
     </div>
   </div>
 </div>
