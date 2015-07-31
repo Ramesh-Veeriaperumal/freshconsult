@@ -2687,6 +2687,9 @@ en:
       publish: Publish
     delete: "Delete"
     edit: "Edit"
+    company:
+      add_existing: "Add to Existing"
+      replace_existing: "Replace Existing"
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket

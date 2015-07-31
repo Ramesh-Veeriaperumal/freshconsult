@@ -43,11 +43,11 @@
 							<div class="control-group row-fluid">
 								<div class="replace-existing">
 									<%= radio_button :company, :add_to_existing, 1, :checked => true, :class => "add-to-existing" %>
-									<%= label_tag :add_to_existing, "Add to Existing" %>
+									<%= label_tag :add_to_existing, t('solutions.company.add_existing') %>
 								</div>
 								<div class="replace-existing">
 									<%= radio_button :company, :add_to_existing, 0, :class => "add-to-existing" %>
-									<%= label_tag :add_to_existing, "Replace Existing" %>
+									<%= label_tag :add_to_existing, t('solutions.company.replace_existing') %>
 								</div>
 							</div>
 							<div class="control-group row-fluid company-form-submit-btns">
