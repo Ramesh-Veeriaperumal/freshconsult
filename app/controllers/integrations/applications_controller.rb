@@ -52,6 +52,9 @@ class Integrations::ApplicationsController < Admin::AdminController
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
 		    flash[:notice] = t(:'flash.application.install.success') if installed_application
 		    kv_store.remove_key
+        if (installed_application.application.name == Integrations::Constants::APP_NAMES[:quickbooks])
+          redirect_to integrations_quickbooks_render_success_path and return
+        end
         if(installed_application.application.options[:configurable])
           redirect_to edit_integrations_installed_application_path(installed_application)
           return

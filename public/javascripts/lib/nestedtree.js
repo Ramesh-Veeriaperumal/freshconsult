@@ -130,24 +130,24 @@ var NestedField = Class.create({
   },
   getItems: function(category_key, subcategory_key){    
       _items = [];
-      console.log("category_key: "+category_key);
-      console.log("subcategory_key: "+subcategory_key);
+      // console.log("category_key: "+category_key);
+      // console.log("subcategory_key: "+subcategory_key);
       if(this.tree.get(category_key))
         if(this.tree.get(category_key).get(subcategory_key).children)
             this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+o.value.id+">"+o.key+"</option>") });
 
-      console.log("ITEMS: "+_items);
+      // console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;
   },
   getItemsEscaped: function(category_key, subcategory_key){    
       _items = [];
-      console.log("category_key: "+category_key);
-      console.log("subcategory_key: "+subcategory_key);
+      // console.log("category_key: "+category_key);
+      // console.log("subcategory_key: "+subcategory_key);
       if(this.tree.get(category_key))
         if(this.tree.get(category_key).get(subcategory_key).children)
             this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });
 
-      console.log("ITEMS: "+_items);
+      // console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;
   },
 

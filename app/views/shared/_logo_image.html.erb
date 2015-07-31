@@ -1,18 +1,20 @@
-	<%= image_tag logo_url(item), :alt => t('logo'),
+	<div>
+		<%= image_tag logo_url(item), :alt => t('logo'),
 								:onerror => "default_image_error(this)",
 								:"data-type" => "logo" %>
+	</div>
 	<div class="thumb-file-upload">
 		<%= fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
 			<div class="file-upload-wrap">
-				<span class="file-upload-text"><%= t("account.change_logo") %></span>
+				<span class="file-upload-text">
+					<%= t("account.change_logo") %>
+					<%= logo_form.file_field :content, :class => "upload_size_validity validate_image fileAdminUpload portal-logo", :accept => 'image/*', :id => "portal-logo" %>
+				</span>
 			</div>
-			<%= logo_form.file_field :content, :class => "upload_size_validity validate_image fileAdminUpload portal-logo", :accept => 'image/*', :id => "portal-logo" %>
 		<% end %>
-		<div>
-			<% if item.logo.present? %>
-				<% default_logo_url = item.main_portal? ? delete_logo_account_path : delete_logo_admin_product_path(item) %>
-				<%= link_to(t("account.use_default"), default_logo_url,
-					:confirm => t('logo_delete_msg'), :method => 'delete') %>
-			<% end %>
-		</div>
+		<% if item.logo.present? %>
+			<% default_logo_url = item.main_portal? ? delete_logo_account_path : delete_logo_admin_portal_path(item) %>
+			<%= link_to(t("account.use_default"), default_logo_url,
+				:confirm => t('logo_delete_msg'), :method => 'delete') %>
+		<% end %>
 	</div>

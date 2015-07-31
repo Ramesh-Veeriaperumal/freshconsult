@@ -1,0 +1,9 @@
+<%= content_tag( :h3, t('portals_key'), :class => "lead" ) %>
+<ul class="tabs nav-tabs">
+  <li role="presentation" class="<%= 'active' if active.eql?(:portals) %>">
+  	<%= pjax_link_to t('portal_key'), admin_portal_index_path	 %>
+  </li>
+  <li role="presentation" class="<%= 'active' if active.eql?(:settings) %>">
+  	<%= pjax_link_to t('admin.products.portal.settings'), settings_admin_portal_index_path %>
+  </li>
+</ul>	

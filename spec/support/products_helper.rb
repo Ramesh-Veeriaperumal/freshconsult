@@ -25,6 +25,10 @@ module ProductsHelper
 												:forum_category_ids => (option[:forum_category_ids] || [""]),
 												:solution_category_ids => [""],
 												:account_id => @account.id,
+												:logo_attributes => { :content => 
+													fixture_file_upload('files/image4kb.png', 'image/png')},
+												:fav_icon_attributes => {:content => 
+													fixture_file_upload('files/image33kb.jpg', 'image/jpg')}, 
 												:preferences=>{ 
 													:logo_link=>"", 
 													:contact_info=>"", 
@@ -42,13 +46,26 @@ module ProductsHelper
 			:name => option[:name], :description => option[:description] || Faker::Lorem.paragraph,
 			:email_configs_attributes=>{ "0"=>{ :reply_email =>option[:email] || "", :primary_role =>"true", :_destroy=>"false", 
 			                         		   :to_email=>option[:email] || "",:group_id=>"", :id => option[:email_configs_id] || "" }
-                                        }, 
-            :enable_portal=> option[:enable_portal] || "1", 
-            :portal_attributes=>{ :name=>option[:portal_name] || "", :portal_url=>option[:portal_url] || "", :language=>"en", :forum_category_ids=>[""], :solution_category_ids=>[""], 
-                                  :preferences=>{ :logo_link=>"", :contact_info=>"", :header_color=> option[:header_color] || "#252525", 
-                                  	              :tab_color=>"#006063", :bg_color=>option[:bg_color] || "#efefef" },
-                                  :id => option[:portal_id] || ""
-                                }
+                                        }
+		}
+	end
+
+	def portal_params(option={})
+		{ 
+			:name=>option[:portal_name] || "", 
+			:portal_url=>option[:portal_url] || "", 
+			:language=>option[:language] || "en", 
+			:forum_category_ids=>[""], 
+			:solution_category_ids=>[""], 
+	    :preferences =>
+	    	{ 
+	    		:logo_link=>"", 
+	    		:contact_info=>"", 
+	    		:header_color=> option[:header_color] || "#252525", 
+					:tab_color=>"#006063", 
+					:bg_color=>option[:bg_color] || "#efefef" 
+				},
+	      :id => option[:portal_id] || ""
 		}
 	end
 end

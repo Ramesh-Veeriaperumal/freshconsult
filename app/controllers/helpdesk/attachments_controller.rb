@@ -127,7 +127,7 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
 
     def ticket_access?(ticket)
-      return false if ticket.blank?
+      return false if ticket.nil?
       (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
         (privilege?(:client_manager)  && ticket.requester.company == current_user.company))) || 
         (params[:access_token] && ticket.access_token == params[:access_token])

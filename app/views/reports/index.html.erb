@@ -58,7 +58,7 @@
 		<ul class="report_icons">
 			<%= report_item({:label => t('adv_reports.helpdesk_load_analysis'), :class => 'helpdesk-load-analysis', :url => reports_analysis_reports_url}) %>
 			<%= report_item({:label => t('adv_reports.helpdesk_performance_analysis'), :class => 'helpdesk-performance-analysis', :url => reports_performance_analysis_reports_url}) %>
-			<% if feature?(:bi_reports) %>
+			<% if bi_reports_ui_enabled? %>
 				<%= helpdesk_report_item({:label => t('helpdesk_reports.ticket_volume.title'), :class => 'ticket-volume', :url => reports_v2_ticket_volume_index_url}) %>
 			<% end %>
 		</ul>

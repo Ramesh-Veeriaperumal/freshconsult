@@ -1,6 +1,8 @@
 module BigBrother
   
-  include ControllerLogger
+  include ControllerLogger 
+
+  BIGBROTHER_LOGGER = CustomLogger.new("#{Rails.root}/log/big_brother.log")
 
   def record_stats
     if self.respond_to?(:account_id)
@@ -10,10 +12,6 @@ module BigBrother
 
   def self.included(receiver)
       receiver.after_commit :record_stats , :on => :create
-  end
-
-  def log_file
-    @log_file_path = "#{Rails.root}/log/big_brother.log"
   end
   
   def logging_format
@@ -26,6 +24,10 @@ module BigBrother
 
   def camel_to_table
     @camel_to_table ||= self.class.to_s.gsub("::","").tableize
+  end
+
+  def custom_logger
+    BIGBROTHER_LOGGER
   end
 end
 

@@ -1173,8 +1173,8 @@ de:
         feedbackwidget_text_button: Textschaltfläche
         feedbackwidget_image_button: Bildschaltfläche
         feedbackwidget_button_text_placeholder: Support
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Schaltfläche anpassen"
         feedbackwidget_form_customization: "Formular anpassen"
         feedbackwidget_embedded_code: "Code des eingebetteten Widgets"

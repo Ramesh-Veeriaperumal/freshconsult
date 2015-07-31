@@ -7,6 +7,17 @@
 		display: inline;
 	}
 }
+.contact_fields_dialog{
+	.custom-choices{
+		position:relative;
+		.add-choice{
+		  position: absolute;
+	    left: 270px;
+	    bottom: 10px;
+	    z-index: 99999;
+	  }
+	}
+}
 .contact_fields{
 	.custom-field-form {
 		@include pie-clearfix;
