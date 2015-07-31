@@ -343,7 +343,7 @@ module SupportHelper
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
-		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"}">
+		   			<div class="controls">
 
 		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
