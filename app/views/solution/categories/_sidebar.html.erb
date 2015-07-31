@@ -1,21 +1,21 @@
 <div class="sidepanel">
 
   <%  empty_drafts = @drafts.blank?
-      empty_feedbacks = @feedbacks.blank? %>
+      empty_feedbacks = @feedbacks.blank? 
+      empty_orphan_categories = @orphan_categories.blank? 
+  %>
 
-  <% unless empty_drafts and empty_feedbacks %>
-      <% unless @orphan_categories.blank?  %>
-      <div class="solutions-widget">
-       <%= render :partial => "orphan_categories" %>
-      </div>
+  <% unless empty_drafts and empty_feedbacks and empty_orphan_categories  %>
+      <% unless empty_orphan_categories  %>
+        <div class="solutions-widget">
+         <%= render :partial => "orphan_categories" %>
+        </div>
       <% end %>
-
       <% unless empty_drafts %>
-      <div class="solutions-widget">
-       <%= render :partial => "drafts" %>
-      </div>
+        <div class="solutions-widget">
+         <%= render :partial => "drafts" %>
+        </div>
       <% end %>
-
       <% unless empty_feedbacks %>
         <div class="solutions-widget">
           <%= render :partial => "feedbacks" %>
@@ -33,5 +33,4 @@
       <p><%=t('solution.info14').html_safe%></p>
       <p><a href="https://support.freshdesk.com/support/solutions/folders/74531" _target="blank"> <%=t('group.learn_more').html_safe%> </a></p>
   <% end %>
-
 </div>

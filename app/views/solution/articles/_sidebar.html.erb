@@ -11,7 +11,7 @@
 			</div>
 			<div class="section feedback-list">
 				<ul>
-					<% @article.tickets[0..2].each do |ticket| %>
+					<% @article.tickets.limit(3).each do |ticket| %>
 						<li>
 			        <div>
 			          <%= pjax_link_to(t('solution.sidebar.feedbacks.details', 

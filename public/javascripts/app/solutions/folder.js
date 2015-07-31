@@ -15,12 +15,10 @@ window.App = window.App || {};
       this.initialData();
       this.bindHandlers();
       this.removeCurrentFolder();
-      App.Solutions.SearchConfig.onVisit();
     },
     
     onLeave: function (data) {
       $('body').off('.folders_articles');
-      App.Solutions.SearchConfig.onLeave();
     },
 
     initialData: function () {
@@ -273,6 +271,18 @@ window.App = window.App || {};
     hideSelectAll: function () {
       if ($('#fa_item-select-all:checked').size() > 0) {
         $("#fa_item-select-all").attr('checked', false);
+      }
+    },
+
+    setCompanyVisibility: function () {
+      console.log('setting company visiblity');
+      var visiblity = $('#solution_folder_visibility').val();
+      if (parseInt(visiblity, 10) === 4) {
+        $('.company_folders').show();
+      } else {
+        $('#customers_filter').val("");
+        $("#customers_filter").trigger("liszt:updated");
+        $('.company_folders').hide();
       }
     }
   };

@@ -23,7 +23,6 @@ window.App = window.App || {};
       this.handleEdit();
       this.formValidate();
       highlight_code();
-      App.Solutions.SearchConfig.onVisit();
     },
     
     onLeave: function (data) {
@@ -32,7 +31,6 @@ window.App = window.App || {};
         this.autoSave.stopSaving();
         this.autoSave = null;
       }
-      App.Solutions.SearchConfig.onLeave();
     },
 
     handleEdit: function () {

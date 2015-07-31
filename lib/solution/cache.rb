@@ -17,14 +17,18 @@ module Solution::Cache
   end
   
   def current_categories
-    category_collection[:current].sort do |x,y|
-      category_sort_order(x) <=> category_sort_order(y)
+    @current_categories_from_cache ||= begin
+      category_collection[:current].sort do |x,y|
+        category_sort_order(x) <=> category_sort_order(y)
+      end
     end
   end
   
   def other_categories
-    category_collection[:others].sort do |x,y|
-      x[:position] <=> y[:position]
+    @other_categories_from_cache ||= begin
+      category_collection[:others].sort do |x,y|
+        x[:position] <=> y[:position]
+      end
     end
   end
     

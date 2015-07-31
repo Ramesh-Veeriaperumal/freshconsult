@@ -19,6 +19,7 @@ window.App = window.App || {};
       }
       App.Solutions.Reorder.start();
 			App.Solutions.NavMenu.start();
+      App.Solutions.SearchConfig.onVisit();
       this.bindHandlers();
     },
 
@@ -45,22 +46,11 @@ window.App = window.App || {};
     },
 
     bindHandlers: function () {
-      $('body').on('change.solutionHome', '#solution_folder_visibility', this.setCompanyVisibility);
+      $('body').on('change.solutionHome', '#solution_folder_visibility', App.Solutions.Folder.setCompanyVisibility);
     },
 
     unBindHandlers: function () {
       $('body').off('.solutionHome');
-    },
-
-    setCompanyVisibility: function () {
-      var visiblity = $('#solution_folder_visibility').val();
-      if (parseInt(visiblity, 10) === 4) {
-        $('.company_folders').show();
-      } else {
-        $('#customers_filter').val("");
-        $("#customers_filter").trigger("liszt:updated");
-        $('.company_folders').hide();
-      }
     },
 
     onLeave: function (data) {
@@ -70,6 +60,7 @@ window.App = window.App || {};
       }
       App.Solutions.Reorder.leave();
       App.Solutions.NavMenu.leave();
+      App.Solutions.SearchConfig.onLeave();
       this.unBindHandlers();
     }
   };
