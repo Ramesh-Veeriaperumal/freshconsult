@@ -15,14 +15,8 @@ module SolutionDraftsMigration
 					Account.find(account_id).make_current
 					p "*"*50
 					p "Migration started for account_id #{Account.current.id}"
-					unpublished_articles = Account.current.solution_articles.find(:all, 
-									:joins => %(LEFT JOIN solution_folders ON solution_folders.id = solution_articles.folder_id), 
-									:conditions => ['`solution_folders`.is_default is true'])
-					unpublished_articles.each do |article|
-						unless article.draft
-							create_draft(article)
-						end
-					end
+					default_folder = current_account.solution_folders.select{|f| f.is_default?}.first
+					default_folder.articles.update_all(:status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft])
 				rescue Exception => e
 					puts "-" * 50
 					puts "Error while migrating drafts for Account: #{Account.current.id}"
@@ -32,13 +26,5 @@ module SolutionDraftsMigration
 			end
 		end
 
-		def create_draft(article)
-			draft = article.create_draft_from_article(:user => article.user)
-			if draft.save
-				p "."
-			else
-				p "******** Error while creating draft for article #{article.id} ********"
-			end
-		end
 	end
 end

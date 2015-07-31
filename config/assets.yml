@@ -187,7 +187,6 @@ javascripts:
     - public/javascripts/app/product_notifications.js
     - public/javascripts/app/admin_font_settings.js
     - public/javascripts/app/merge.js
-    - public/javascripts/autosave.js
 
   livechat_collision:
     - public/javascripts/livechat/collision/collisionChat.js
