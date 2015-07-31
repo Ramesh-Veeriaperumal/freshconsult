@@ -16,7 +16,7 @@ module EmailHelper
 	end
 
   def large_email(time=nil)
-    @large_email ||= (Time.now - (time || start_time)).to_i > REQUEST_TIMEOUT
+    @large_email ||= (Time.now.utc - (time || start_time)).to_i > REQUEST_TIMEOUT
   end
 
   def mark_email(key, from, to, subject, message_id)

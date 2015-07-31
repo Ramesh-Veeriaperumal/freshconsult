@@ -167,6 +167,7 @@ class CustomFieldsController < Admin::AdminController
           if sec_field[:ticket_field_id].nil?
             alias_name = field_name(ticket_field_name, account)
             invalid_field = @invalid_fields.find { |f| f.name == alias_name && f.section_field? }
+            # When multiple fields with same name are saved, we'll save the last field and not the first. 
             if invalid_field.present?
               index = @invalid_fields.index(invalid_field)
               invalid_field.field_options["section"] = false

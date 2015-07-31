@@ -9,6 +9,8 @@ module Helpdesk::DetectDuplicateEmail
                                :unique_key => get_message_id || received_time.to_i}
   end
 
+  # Mailgun gives us the message id in the params with "Message-Id" key
+  # For sendgrid, we'll extract it from the headers in ProcessByMessageId
   def get_message_id
     params["Message-Id"] ? params["Message-Id"][1..-2] : message_id
   end
@@ -30,12 +32,12 @@ module Helpdesk::DetectDuplicateEmail
 
   def received_time
     @received_time ||= begin
-      if params[:internal_date]
+      if params[:internal_date] # From custom mailbox
         params[:internal_date].to_time
-      elsif params["timestamp"]
+      elsif params["timestamp"] # Mailgun gives the timestamp in params
         Time.at(params["timestamp"]).utc
       else
-        calculate_received_time
+        calculate_received_time # Calculating from headers for Sendgrid
       end
     end
   end
