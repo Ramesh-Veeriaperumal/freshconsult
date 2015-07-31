@@ -1,7 +1,6 @@
 class Integrations::QuickbooksController < ApplicationController
 include Integrations::OauthHelper
 
-  before_filter { |c| c.check_agent_app_access Integrations::Constants::APP_NAMES[:quickbooks] }
 
 	def refresh_access_token
 		begin
@@ -26,6 +25,11 @@ include Integrations::OauthHelper
 			Rails.logger.error "Error refreshing access token from #{app_name}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			render :json => {:error=> "#{e}"}
 		end
+	end
+
+	def render_success
+		flash[:notice] = t(:'flash.application.install.success')
+		render :template => "/integrations/applications/quickbooks_install_success", :layout => "remote_configurations"
 	end
 
 	private

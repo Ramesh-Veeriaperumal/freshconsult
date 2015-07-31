@@ -12,7 +12,7 @@ class Product < ActiveRecord::Base
   after_commit :clear_cache
   after_update :widget_update
 
-  belongs_to :account
+  belongs_to_account
   has_one    :portal               , :dependent => :destroy
   has_one    :chat_widget          , :dependent => :destroy
   has_many   :email_configs        , :dependent => :nullify, :order => "primary_role desc"
@@ -34,11 +34,11 @@ class Product < ActiveRecord::Base
   end
   
   def enable_portal
-    @enable_portal ||= (portal && !portal.new_record?)? '1' : '0'
+    @enable_portal = true
   end
   
   def portal_enabled?
-    enable_portal.eql? '1'
+    @enable_portal || !(portal.blank? || portal.new_record?)
   end
   
   def portal_attributes=(pt_attr) # Possible dead code

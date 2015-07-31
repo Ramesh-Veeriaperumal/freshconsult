@@ -140,10 +140,15 @@ describe DiscussionsController do
 			p2 = create_product({
                                 :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
                                 })
-			
-			arr = [p1.portal.id, p2.portal.id, @account.main_portal.id]
-			@forum_category = create_test_category_with_portals(p1.portal.id, p2.portal.id)
-			result = @forum_category.portal_forum_categories.map(&:portal_id)
+			arr = [p1.portal.id, p2.portal.id]
+
+			post :create, :forum_category => {
+												:name => "Test category with portals",
+												:portal_ids => arr
+											}
+											
+			category = @account.forum_categories.find_by_name("Test category with portals")
+			result = category.portal_forum_categories.map(&:portal_id)
 			result.sort.should eql arr.sort
 		end
 	end

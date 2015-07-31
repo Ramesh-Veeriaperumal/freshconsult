@@ -6,9 +6,10 @@
 	<%= sidebar_toggle("mt4") %>
 	<h3 class="lead"><%= t('edit_forum_category')%></h3>
 </div>
-<%= form_for @forum_category, :url => discussion_url , :html=>{:method=>:put}  do |f| -%>
+<%= form_for @forum_category, :url => discussion_url , :html=>{:method=>:put, :rel => :validate}  do |f| -%>
   <%= f.error_messages %>
   <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
+  <%= render :partial => "portal", :locals => { :f => f }%>
 	<div class="button-container">
 		<div class="floatl">
 			<%= confirm_delete(@forum_category, discussion_path(@forum_category)) %>

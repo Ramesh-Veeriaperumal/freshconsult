@@ -13,7 +13,7 @@ module Integrations::OauthHelper
       oauth_options = Integrations::OauthHelper.get_oauth_options(params[:app_name])
       oauth_keys = Integrations::OauthHelper.get_oauth_keys(params[:app_name])
       consumer = OAuth::Consumer.new(oauth_keys['consumer_token'], oauth_keys['consumer_secret'], oauth_options)
-      installed_app = Account.current.installed_applications.with_name(params[:app_name]).first
+      installed_app = params[:installed_app] || Account.current.installed_applications.with_name(params[:app_name]).first
       access_token = OAuth::AccessToken.new(consumer, installed_app.configs[:inputs]["oauth_token"], installed_app.configs[:inputs]["oauth_token_secret"])
       return consumer.request(params[:method], params[:url], access_token, {}, params[:body], params[:headers])
     end

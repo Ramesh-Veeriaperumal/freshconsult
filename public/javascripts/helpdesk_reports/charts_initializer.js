@@ -14,7 +14,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         DAY_MAPPING: {
             0 : 'Sundays',
             1 : 'Mondays',
-            2 : 'tuesdays',
+            2 : 'Tuesdays',
             3 : 'Wednesdays',
             4 : 'Thursdays',
             5 : 'Fridays',
@@ -208,7 +208,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             });
         },
         redrawDayTrend: function (dow, prev_active, present) {
-            this.core_util.active_day = dow;
+            this.core_util.active_day = this.DAY_MAPPING[this.WEEKDAY_MAPPING[dow]];
             var chart = jQuery('#day_trend_chart').highcharts();
             for (i = 0; i < this.series.length; i++) {
                 chart.series[i].update({

@@ -1,7 +1,7 @@
 module Helpdesk
   module Services
     module Note
-      include Utils::Sanitizer
+      include ::Utils::Sanitizer
 
       def save_note
         build_note_and_sanitize

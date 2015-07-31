@@ -2,7 +2,7 @@
 	<% @related_articles.each do |related_article| %>
 	<li>
 		<div class="ellipsis">
-			<%= link_to related_article.title, related_article %>
+			<%= link_to related_article.title, support_solutions_article_path(related_article) %>
 		</div>
 	</li>
 	<% end %>

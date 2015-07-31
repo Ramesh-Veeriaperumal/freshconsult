@@ -35,11 +35,11 @@ class Solution::Category < ActiveRecord::Base
   has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
           :conditions => [" solution_folders.visibility in (?,?) ",
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
-   
-  after_create :assign_portal
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
+
+  before_create :set_default_portal
 
   has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :dependent => :destroy
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
@@ -78,12 +78,6 @@ class Solution::Category < ActiveRecord::Base
   def to_liquid
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
-
-  def assign_portal
-    portal_solution_category = self.portal_solution_categories.build
-    portal_solution_category.portal_id = account.main_portal.id
-    portal_solution_category.save
-  end
    
   private 
 
@@ -93,6 +87,10 @@ class Solution::Category < ActiveRecord::Base
 
     def set_mobihelp_app_updated_time
       update_mh_app_time(self.id)
+    end
+
+    def set_default_portal
+      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
     end
 
 end
