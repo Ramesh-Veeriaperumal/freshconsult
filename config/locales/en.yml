@@ -2588,6 +2588,7 @@ en:
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
   solution_category:
+    all: All Categories
     name: Name
     new: New Solution Category
     edit: Edit Solution Category
@@ -3640,8 +3641,8 @@ en:
     solution_meta_title: Title Tag
     solution_meta_keywords: Meta Keywords
     solution_meta_description: Meta Description
-    title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
-    description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
+    title_counter_message: Best SEO pages recommend a maximum of 72 characters for title.
+    description_counter_message: Best SEO pages recommend a maximum of 150 characters for description.
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
     user_details: "By <span class='user'>%{user}</span>, %{time}"

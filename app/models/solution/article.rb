@@ -66,7 +66,7 @@ class Solution::Article < ActiveRecord::Base
   before_destroy  :set_mobihelp_solution_updated_time
 
   validates_presence_of :title, :description, :user_id , :account_id
-  validates_length_of :title, :in => 3..240, :if => :title_present?
+  validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
   validate :status_in_default_folder
  
@@ -291,10 +291,6 @@ class Solution::Article < ActiveRecord::Base
       if status == STATUS_KEYS_BY_TOKEN[:published] and self.folder.is_default
         errors.add(:status, I18n.t('solution.articles.cant_publish'))
       end
-    end
-
-    def title_present?
-      self.title.present?
     end
     
     def hit_key

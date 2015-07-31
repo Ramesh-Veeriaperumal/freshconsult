@@ -16,7 +16,7 @@ class Solution::Draft < ActiveRecord::Base
 
   validates_uniqueness_of :article_id, :if => 'article_id.present?'
   validates_presence_of :title, :description, :user_id , :account_id
-  validates_length_of :title, :in => 3..240, :if => :title_present?
+  validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
 
   before_save :populate_defaults
@@ -113,9 +113,5 @@ class Solution::Draft < ActiveRecord::Base
           item.update_attributes(item.object_type => article)
         end
       end
-    end
-    
-    def title_present?
-      self.title.present?
     end
 end

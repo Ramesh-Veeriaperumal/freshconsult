@@ -13,7 +13,6 @@
 <% if current_user.privilege?(:delete_solution) && (@article.thumbs_up > 0 || @article.thumbs_down > 0)
 		reset_url = reset_ratings_solution_category_folder_article_path(@article.folder.category, @article.folder, @article)
 	%>
-	<% reset_url = "#{reset_url}?reset_votes=true" if defined?(new_draft_ui) %>
  - 
 	<%= link_to(t('solution.articles.reset_rating.link'), '', 
 			"data-target" => "#article-reset-rating-confirmation", 

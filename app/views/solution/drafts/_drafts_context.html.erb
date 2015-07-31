@@ -2,7 +2,7 @@
 	
 	<div class="item portal-menu">
 		
-		<% current_portal_name = (@drafts_context == 0 ? t('discussions.all_categories') : @drafts_context_portal.name) %>
+		<% current_portal_name = (@drafts_context == 0 ? t('solution_category.all') : @drafts_context_portal.name) %>
 		In :
 		<a class="drop-right nav-trigger" href="#" menuid="#context_menu">
 		  <b class="tooltip all_categories" data-placement="right" title="<%= current_portal_name %>">
@@ -21,7 +21,7 @@
 			   				(@drafts_context == p.id)
 			   			]
 			   		} %>
-			   <% context_menu.unshift([t('discussions.all_categories'), "#{solution_my_drafts_path('all')}?portal=0", @drafts_context == 0]) %>
+			   <% context_menu.unshift([t('solution_category.all'), "#{solution_my_drafts_path('all')}?portal=0", @drafts_context == 0]) %>
 			   <% context_menu.map do |context| %>
 			      <li>
 			      	<%= pjax_link_to "#{"<span class='icon ticksymbol'></span>" if context[2]} #{context[0]}".html_safe, context[1] %>
