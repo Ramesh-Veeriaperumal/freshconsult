@@ -33,7 +33,7 @@ class ApiApplicationController < MetalApiController
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
   # Modify ApiConstants::LOAD_OBJECT_EXCEPT to include any new methods introduced in the controller that does not require load_object.
   before_filter :before_load_object, :load_object, :after_load_object, except: ApiConstants::LOAD_OBJECT_EXCEPT
-  
+
   # Used to check if update contains no parameters.
   before_filter :check_params, only: :update
 
@@ -51,7 +51,6 @@ class ApiApplicationController < MetalApiController
 
   # Validating the filter params sent in the url for filtering collection of objects.
   before_filter :validate_filter_params, only: [:index]
-
 
   before_filter :validate_url_params, only: [:show]
 
@@ -121,12 +120,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def validate_filter_params
-      # Template method - If filtering is present in index action, this can be used to validate 
+      # Template method - If filtering is present in index action, this can be used to validate
       # each filter and its value using strong params and custom validation classes.
     end
 
     def validate_url_params
-      # Template method - If embedding is present in show action, this can be used to validate 
+      # Template method - If embedding is present in show action, this can be used to validate
       # the imput sent using strong params and custom validations.
     end
 

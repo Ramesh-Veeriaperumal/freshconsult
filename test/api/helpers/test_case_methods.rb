@@ -190,7 +190,7 @@ module TestCaseMethods
   end
 
   def v2_group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agents: [1, 3] }
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, user_ids: [1, 3] }
   end
 
   def group_payload

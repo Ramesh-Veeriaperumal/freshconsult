@@ -18,9 +18,9 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_create_group_with_all_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.sentence(2),
-                                       escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true, agents: [1])
+                                       escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true, user_ids: [1])
     assert_response :created
-    match_json(group_pattern({ agents: [1] }, Group.last))
+    match_json(group_pattern({ user_ids: [1] }, Group.last))
   end
 
   def test_restrict_group_creation_without_name
@@ -47,15 +47,15 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_create_group_with_invalid_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
-                                       agents: ['asd', 'asd1'])
-    match_json([bad_request_error_pattern('agents', 'is not a number')])
+                                       user_ids: ['asd', 'asd1'])
+    match_json([bad_request_error_pattern('user_ids', 'is not a number')])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
     agent_id = Faker::Number.between(5000, 10_000)
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
-                                       agents: [agent_id])
-    match_json([bad_request_error_pattern('agents', 'list is invalid', list: agent_id.to_s)])
+                                       user_ids: [agent_id])
+    match_json([bad_request_error_pattern('user_ids', 'list is invalid', list: agent_id.to_s)])
   end
 
   def test_index_load_groups
@@ -108,10 +108,10 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_group
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
-                                                    auto_ticket_assign: true, agents: [1, 2])
+                                                    auto_ticket_assign: true, user_ids: [1, 2])
     assert_response :success
     match_json(group_pattern({ escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: 1,
-                               agents: [1, 2] }, group.reload))
+                               user_ids: [1, 2] }, group.reload))
   end
 
   def test_update_group_with_blank_name
@@ -140,21 +140,21 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_update_agents_of_group
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
-    put :update, construct_params({ id: group.id }, agents: [1, 2])
+    put :update, construct_params({ id: group.id }, user_ids: [1, 2])
     assert_response :success
-    match_json(group_pattern({ agents: [1, 2] }, group.reload))
+    match_json(group_pattern({ user_ids: [1, 2] }, group.reload))
   end
 
   def test_validate_agent_list
-    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agents: [''])
-    match_json([bad_request_error_pattern('agents', 'is not a number')])
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, user_ids: [''])
+    match_json([bad_request_error_pattern('user_ids', 'is not a number')])
   end
 
   def test_delete_existing_agents_while_update
     group = create_group_with_agents(@account, agent_list: [1, 2, 3], name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
-    put :update, construct_params({ id: group.id }, agents: [1])
+    put :update, construct_params({ id: group.id }, user_ids: [1])
     assert_response :success
-    match_json(group_pattern({ agents: [1] }, group.reload))
+    match_json(group_pattern({ user_ids: [1] }, group.reload))
   end
 
   def test_show_group_with_round_robin_disabled
@@ -176,8 +176,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_destroy_all_agents_in_a_group
     group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_list: [1, 2, 3])
-    put :update, construct_params({ id: group.id }, agents: [])
+    put :update, construct_params({ id: group.id }, user_ids: [])
     assert_response :success
-    match_json(group_pattern({ agents: [] }, group.reload))
+    match_json(group_pattern({ user_ids: [] }, group.reload))
   end
 end

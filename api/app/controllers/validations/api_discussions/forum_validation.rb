@@ -1,6 +1,6 @@
 module ApiDiscussions
   class ForumValidation < ApiValidation
-    attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility, :customers,
+    attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility, :company_ids,
                   :description_html, :topics_count
     validates :name, required: true
     validates :forum_category_id, required: { allow_nil: false, message: 'required_and_numericality' }
@@ -10,11 +10,11 @@ module ApiDiscussions
     # Forum type can't be updated if the forum has any topics. Can be updated only if no topics found for forum.
     validates :forum_type, inclusion: { in: [nil], message: 'invalid_field' }, if: -> { @topics_count.to_i > 0 && @forum_type_set }
     validates :forum_type, custom_inclusion: { in: DiscussionConstants::FORUM_TYPE_KEYS_BY_TOKEN, required: true }, if: -> { @topics_count.to_i == 0 }
-    validates :customers, inclusion: { in: [nil], message: 'invalid_field' }, if: proc { |x| x.forum_visibility.to_i != Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] }
+    validates :company_ids, inclusion: { in: [nil], message: 'invalid_field' }, if: proc { |x| x.forum_visibility.to_i != Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] }
 
-    # customers should be nil if forum has visibility other than 4.
-    validates :customers, data_type: { rules: Array, allow_nil: true }, if: proc { |x| x.forum_visibility.to_i == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] }
-    validates :customers,  array: { numericality: { allow_nil: true } }
+    # company_ids should be nil if forum has visibility other than 4.
+    validates :company_ids, data_type: { rules: Array, allow_nil: true }, if: proc { |x| x.forum_visibility.to_i == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] }
+    validates :company_ids,  array: { numericality: { allow_nil: true } }
     validates :description_html, data_type: { rules: String, allow_nil: true }
 
     def initialize(request_params, item)
