@@ -837,10 +837,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       new_and_my_open: {
         conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
       },
-      monitored_by: {
-        conditions: { helpdesk_subscriptions: { user_id: current_user.try(:id) } },
-        joins: :subscriptions
-      },
       requester_id: {
         conditions: { requester_id: ticket_filter.try(:requester_id) }
       },
