@@ -20,7 +20,7 @@ module EmailHelper
   end
 
   def mark_email(key, from, to, subject, message_id)
-    value = { "from" => from, "to" => to, "subject" => subject, "message_id" => message_id }.to_json
+    value = { "from" => from, "to" => to, "subject" => subject, "message_id" => message_id }
     set_others_redis_hash(key, value)
     set_others_redis_expiry(key, SENDGRID_RETRY_TIME)
   end
@@ -30,9 +30,10 @@ module EmailHelper
       yield
     end
   rescue error => e
-    Rails.logger.debug "#{error} e.backtrace"
-    FreshdeskErrorsMailer.send_later(:error_email, nil, e.backtrace, e, 
-                                      { :subject => "Timeout Error in Process Email - #{error}" })
+    subject = "ProcessEmail :: Timeout Error - #{error}"
+    Rails.logger.debug "#{error} #{e.backtrace}"
+    NewRelic::Agent.notice_error(e)
+    DevNotification.publish(SNS["reports_notification_topic"], subject, e.backtrace)
     yield # Running the same code without timeout, as a temporary way. Need to handle it better
   end
 
