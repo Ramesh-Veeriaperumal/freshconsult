@@ -48,30 +48,38 @@
 
   SurveyConstants = {
   rating:{
-    "EXTREMELY_UNHAPPY":-3,
-    "VERY_HAPPY":2,
-    "HAPPY":1,
-    "NEUTRAL":0,
-    "UNHAPPY":-1,
-    "VERY_UNHAPPY":-2,
-    "EXTREMELY_HAPPY":3
+    "EXTREMELY_UNHAPPY":-103,
+    "VERY_HAPPY":102,
+    "HAPPY":101,
+    "NEUTRAL":100,
+    "UNHAPPY":-101,
+    "VERY_UNHAPPY":-102,
+    "EXTREMELY_HAPPY":103
   },
   notification:{
     "CLOSED_NOTIFICATION":3,
     "RESOLVED_NOTIFICATION":2,
     "ANY_EMAIL_RESPONSE":1,
     "SPECIFIC_EMAIL_RESPONSE":4
+  },
+  questions:{
+    "LIMIT" : 10
+  },
+  limit:{
+    "thanks_text" : 500,
+    "scale":30,
+    "title_text": 150
   }
 }
 
 
-  view = {"choiceValues":[{"id":"-3","text":"Strongly Disagree","className":"strongly-disagree"},
-            {"id":"-2","text":"Some What Disagree","className":"some-what-disagree"},
-            {"id":"-1","text":"Disagree","className":"disagree"},
-            {"id":"0","text":"Neutral","className":"satisfaction-neutral"},
-            {"id":"1","text":"Agree","className":"agree"},
-            {"id":"2","text":"Some What Agree","className":"some-what-agree"},
-            {"id":"3","text":"Strongly Agree","className":"strongly-agree"}],
+  view = {"choiceValues":[{"id":"-103","text":"Strongly Disagree","className":"strongly-disagree"},
+            {"id":"-102","text":"Some What Disagree","className":"some-what-disagree"},
+            {"id":"-101","text":"Disagree","className":"disagree"},
+            {"id":"100","text":"Neutral","className":"satisfaction-neutral"},
+            {"id":"101","text":"Agree","className":"agree"},
+            {"id":"102","text":"Some What Agree","className":"some-what-agree"},
+            {"id":"103","text":"Strongly Agree","className":"strongly-agree"}],
     "action":"new","rating":{"title":" Customer Satisfaction Rating",
     "link_text":" Please tell us what you think of your support experience",
     "send_while":{"title":" Choose which emails have the satisfaction survey link",
@@ -80,7 +88,7 @@
           {"value":"1","text":"Allrepliessenttocustomer."},
           {"value":"4","text":"Allowagentstoaddsurveylinkstospecificemails."}],
     "defaultValue":2}},"scale":{"keys":"[2, 3, 5, 7]","default":3,"click":"SurveyProtocol.content.scale.change(this)"},
-    "choice":{"2":"[3, -3]","3":"[3, 0, -3]","5":"[3, 2, 0, -2, -3]","7":"[3, 2, 1, 0, -1, -2, -3]"},
+    "choice":{"2":"[103, -103]","3":"[103, 100, -103]","5":"[103, 102, 100, -102, -103]","7":"[103, 102, 101, 100, -101, -102, -103]"},
     "thanks":{"title":"Thank you message","message":"Thank you for your valuable feedback.",
     "link":{"label":"Add a feedback survey","action":"SurveyQuestion.create()"}},
     "survey":{"elements":[{"type":"link","html":"SurveyList","click":"SurveyList.show"},
@@ -88,11 +96,11 @@
     "question":{"default_text":"Thank you for your valuable feedback."},
     "questions":{"action":{"value":"+ Add Question","click":"SurveyQuestion.add()"},
     "list":[{"label":"Areyousatisfiedwithourcustomersupportexperience?"}],"limit":10,"count":0,
-    "choiceValues":[{"id":"-3","text":"StronglyDisagree","className":"strongly-disagree"},
-            {"id":"0","text":"Neutral","className":"satisfaction-neutral"},
-            {"id":"1","text":"Agree","className":"agree"},
-            {"id":"2","text":"SomeWhatAgree","className":"some-what-agree"},
-            {"id":"3","text":"StronglyAgree","className":"strongly-agree"}]},
+    "choiceValues":[{"id":"-103","text":"StronglyDisagree","className":"strongly-disagree"},
+            {"id":"100","text":"Neutral","className":"satisfaction-neutral"},
+            {"id":"101","text":"Agree","className":"agree"},
+            {"id":"102","text":"SomeWhatAgree","className":"some-what-agree"},
+            {"id":"103","text":"StronglyAgree","className":"strongly-agree"}]},
     "can_comment":false,"feedback_response_text":""};
 
 
@@ -100,4 +108,4 @@
                  "feedback_response_text":"","id":20,"link_text":" Please tell us what you think of your support experience",
                  "send_while":1,"thanks_text":"Thank you for your valuable feedback.",
                  "title_text":"test_survey123","updated_at":"2015-03-02T19:16:40+05:30",
-                 "choices":[["Strongly Agree",3],["Neutral",0],["Strongly Disagree",-3]]}}
+                 "choices":[["Strongly Agree",103],["Neutral",100],["Strongly Disagree",-103]]}}
