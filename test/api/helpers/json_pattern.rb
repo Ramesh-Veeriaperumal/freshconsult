@@ -298,13 +298,13 @@ module JsonPattern
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
-    group_json[:agents] = group.agent_groups.map(&:user_id)
+    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 
   def group_pattern_without_assingn_type(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    group_json[:agents] = group.agent_groups.map(&:user_id)
+    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 

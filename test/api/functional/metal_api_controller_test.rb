@@ -2,7 +2,13 @@ require_relative '../test_helper'
 
 class MetalApiControllerTest < ActionController::TestCase
   def test_included_modules
-    assert (MetalApiController::METAL_MODULES - MetalApiController.included_modules).empty?
+    metal_modules = [ActionController::Head, ActionController::Helpers, ActionController::Redirecting,
+                     ActionController::Rendering, ActionController::RackDelegation, ActionController::Caching,
+                     Rails.application.routes.url_helpers, ActiveSupport::Rescuable, ActionController::MimeResponds,
+                     ActionController::ImplicitRender, ActionController::StrongParameters, ActionController::Cookies,
+                     ActionController::HttpAuthentication::Basic::ControllerMethods, AbstractController::Callbacks,
+                     ActionController::Rescue, ActionController::ParamsWrapper, ActionController::Instrumentation]
+    assert (metal_modules - MetalApiController.included_modules).empty?
   end
 
   def test_included_view_paths

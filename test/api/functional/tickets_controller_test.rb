@@ -1275,7 +1275,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 999, requester_id: 999, filter: 'x')
-    pattern = [bad_request_error_pattern('filter', 'not_included', list: 'new_and_my_open,monitored_by,spam,deleted')]
+    pattern = [bad_request_error_pattern('filter', 'not_included', list: 'new_and_my_open,spam,deleted')]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     pattern << bad_request_error_pattern('requester_id', "can't be blank")
     assert_response :bad_request
@@ -1312,22 +1312,6 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
     match_json(pattern)
-  end
-
-  def test_index_with_monitored_by
-    get :index, controller_params(filter: 'monitored_by')
-    assert_response :success
-    response = parse_response @response.body
-    assert_equal 0, response.count
-
-    subscription = FactoryGirl.build(:subscription, account_id: @account.id,
-                                                    ticket_id: Helpdesk::Ticket.first.id,
-                                                    user_id: @agent.id)
-    subscription.save
-    get :index, controller_params(filter: 'monitored_by')
-    assert_response :success
-    response = parse_response @response.body
-    assert_equal 1, response.count
   end
 
   def test_index_with_requester

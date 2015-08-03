@@ -109,20 +109,20 @@ module ApiDiscussions
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id, 67, 78])
+      put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: [customer.id, 67, 78])
       assert_response :bad_request
-      match_json([bad_request_error_pattern('customers', 'list is invalid', list: '67, 78')])
+      match_json([bad_request_error_pattern('company_ids', 'list is invalid', list: '67, 78')])
     end
 
     def test_update_with_customer_id
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id])
+      put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: [customer.id])
       assert_response :success
-      pattern = forum_pattern(forum.reload).merge(customers: [customer.id])
+      pattern = forum_pattern(forum.reload).merge(company_ids: [customer.id])
       match_json(pattern)
-      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(customers: [customer.id])
+      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(company_ids: [customer.id])
       match_json(pattern)
     end
 
@@ -131,9 +131,9 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_visibility: 4)
       assert_response :success
-      pattern = forum_pattern(forum.reload).merge(customers: [])
+      pattern = forum_pattern(forum.reload).merge(company_ids: [])
       match_json(pattern)
-      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(customers: [])
+      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(company_ids: [])
       match_json(pattern)
     end
 
@@ -174,10 +174,10 @@ module ApiDiscussions
       name = Faker::Name.name
       post :create, construct_params({}, description: 'desc', forum_visibility: '4',
                                          forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
-      pattern = forum_pattern(Forum.last).merge(customers: [])
+      pattern = forum_pattern(Forum.last).merge(company_ids: [])
       match_json(pattern)
       pattern = forum_response_pattern(Forum.last, description: 'desc', forum_visibility: 4,
-                                                   forum_type: 1, name: name, forum_category_id: ForumCategory.first.id).merge(customers: [])
+                                                   forum_type: 1, name: name, forum_category_id: ForumCategory.first.id).merge(company_ids: [])
       match_json(pattern)
       assert_response :created
     end
@@ -198,22 +198,22 @@ module ApiDiscussions
       fc = fc_obj
       customer = company
       post :create, construct_params({}, description: 'desc', forum_visibility: '4', forum_type: 1,
-                                         name: 'customer test', forum_category_id: fc.id, customers: [customer.id, 67, 78])
+                                         name: 'customer test', forum_category_id: fc.id, company_ids: [customer.id, 67, 78])
       assert_response :bad_request
-      match_json([bad_request_error_pattern('customers', 'list is invalid', list: '67, 78')])
+      match_json([bad_request_error_pattern('company_ids', 'list is invalid', list: '67, 78')])
     end
 
     def test_create_with_customer_id
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, customers: [customer.id] }
+      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, company_ids: [customer.id] }
       post :create, construct_params({}, params)
       assert_response :success
       pattern = forum_pattern(Forum.last.reload)
-      pattern[:customers] = [customer.id]
+      pattern[:company_ids] = [customer.id]
       match_json(pattern)
       pattern = forum_response_pattern(Forum.last, params)
-      pattern[:customers] = [customer.id]
+      pattern[:company_ids] = [customer.id]
       match_json(pattern)
       assert_equal Forum.last.customer_forums.collect(&:customer_id), [customer.id]
     end
@@ -221,9 +221,9 @@ module ApiDiscussions
     def test_create_with_customer_id_and_visibility_not_company_users
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 1, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, customers: [customer.id] }
+      params = { description: 'desc', forum_visibility: 1, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, company_ids: [customer.id] }
       post :create, construct_params({}, params)
-      match_json([bad_request_error_pattern('customers', 'invalid_field')])
+      match_json([bad_request_error_pattern('company_ids', 'invalid_field')])
       assert_response :bad_request
     end
 
@@ -231,18 +231,18 @@ module ApiDiscussions
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 1, customers: [customer.id])
-      match_json([bad_request_error_pattern('customers', 'invalid_field')])
+      put :update, construct_params({ id: forum.id }, forum_visibility: 1, company_ids: [customer.id])
+      match_json([bad_request_error_pattern('company_ids', 'invalid_field')])
       assert_response :bad_request
     end
 
     def test_create_with_customer_id_and_visibility_invalid
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 'x', forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, customers: [customer.id] }
+      params = { description: 'desc', forum_visibility: 'x', forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, company_ids: [customer.id] }
       post :create, construct_params({}, params)
       match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
-                  bad_request_error_pattern('customers', 'invalid_field')])
+                  bad_request_error_pattern('company_ids', 'invalid_field')])
       assert_response :bad_request
     end
 
@@ -250,18 +250,18 @@ module ApiDiscussions
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 'x', customers: "#{customer.id}")
+      put :update, construct_params({ id: forum.id }, forum_visibility: 'x', company_ids: "#{customer.id}")
       match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
-                  bad_request_error_pattern('customers', 'invalid_field')])
+                  bad_request_error_pattern('company_ids', 'invalid_field')])
       assert_response :bad_request
     end
 
     def test_create_with_customer_id_invalid_data_type
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, customers: "#{customer.id}" }
+      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, company_ids: "#{customer.id}" }
       post :create, construct_params({}, params)
-      match_json([bad_request_error_pattern('customers', 'data_type_mismatch', data_type: 'Array')])
+      match_json([bad_request_error_pattern('company_ids', 'data_type_mismatch', data_type: 'Array')])
       assert_response :bad_request
     end
 
@@ -269,19 +269,19 @@ module ApiDiscussions
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: "#{customer.id}")
-      match_json([bad_request_error_pattern('customers', 'data_type_mismatch', data_type: 'Array')])
+      put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: "#{customer.id}")
+      match_json([bad_request_error_pattern('company_ids', 'data_type_mismatch', data_type: 'Array')])
       assert_response :bad_request
     end
 
     def test_update_with_customer_id_and_visibility_valid
       customer = company
       forum = create_test_forum(fc_obj, 1, 1)
-      put :update, construct_params({ id: forum.id }, forum_visibility: 4, customers: [customer.id])
+      put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: [customer.id])
       assert_response :success
-      pattern = forum_pattern(forum.reload).merge(customers: [customer.id])
+      pattern = forum_pattern(forum.reload).merge(company_ids: [customer.id])
       match_json(pattern)
-      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(customers: [customer.id])
+      pattern = forum_response_pattern(forum, forum_visibility: 4).merge(company_ids: [customer.id])
       match_json(pattern)
       assert_equal forum.customer_forums.collect(&:customer_id), [customer.id]
     end
@@ -347,9 +347,9 @@ module ApiDiscussions
       put :update, construct_params({ id: forum.id }, description: 'new description')
       assert_response :success
       result_pattern = forum_pattern(forum.reload)
-      result_pattern[:customers] = []
+      result_pattern[:company_ids] = []
       forum.customer_forums.each do |cf|
-        result_pattern[:customers] << cf.customer_id
+        result_pattern[:company_ids] << cf.customer_id
       end
       match_json(result_pattern)
       forum.update_column(:forum_visibility, forum_visibility)
@@ -360,9 +360,9 @@ module ApiDiscussions
                                          forum_type: 1, name: 'test new name', forum_category_id: ForumCategory.first.id)
       forum = Forum.last
       result_pattern = forum_pattern(forum)
-      result_pattern[:customers] = []
+      result_pattern[:company_ids] = []
       forum.customer_forums.each do |cf|
-        result_pattern[:customers] << cf.customer_id
+        result_pattern[:company_ids] << cf.customer_id
       end
       match_json(result_pattern)
       assert_response :success

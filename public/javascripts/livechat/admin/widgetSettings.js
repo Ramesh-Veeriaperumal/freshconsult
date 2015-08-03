@@ -87,22 +87,12 @@ window.liveChat.widgetSettings = function($){
 			$("#custom_link").on('change',function(){
 				if($(this).is(":checked")){
 					$("#custom_link_url_item").show();
-					if($("#hide_offline_chat_window").is(':checked')){
-						$(".offline_messages").hide();
-					}
+					$(".offline_messages").hide();
 				}else{
 					$("#custom_link_url_item").hide();
 					$(".offline_messages").show();
 				}
 			});
-
-			$("#hide_offline_chat_window, #show_offline_chat_window").on('change', function(){
-				if($("#custom_link").is(":checked") && $("#hide_offline_chat_window").is(":checked")){
-					$(".offline_messages").hide();
-				}else{
-					$(".offline_messages").show();
-				}
-			});		
 
 			$('#custom_link_url').on('change', function (){
 				self.validateUrl($(this).val());
@@ -139,7 +129,7 @@ window.liveChat.widgetSettings = function($){
 				_widgetPreferences['welcome_message'] 	= $("#welcome_message").val();
 				_widgetPreferences['thank_message'] 		= $("#thank_message").val();
 				_widgetPreferences['wait_message'] 			= $("#wait_message").val();
-				_widgetPreferences["agent_transfer_msg_to_visitor"] = $("#agent_transfer_msg_to_visitor").val();
+
 				_nonavailabilityPreferences['text'] = _nonavailabilityMessage;
 				_nonavailabilityPreferences['customLink'] = _useCustomLink ? 1 : 0;
 				_nonavailabilityPreferences['customLinkUrl'] = _useCustomLink ? $("#custom_link_url").val() : "";
@@ -308,8 +298,7 @@ window.liveChat.widgetSettings = function($){
 			});
 
 			//Registered an event to prompt an user if there are unsaved changed and user is navigating away from that page.
-			$("#chat_setting ul.nav-tabs").on('click', function(e){
-				e.preventDefault();
+			$("#chat_setting ul.nav-tabs").on('click', function(){
 				if(self.pendingChanges){
 					if(confirm(CHAT_I18n.settings_save)){ //Means he opted to stay on the same settings page
 						var href = $("#chat_setting li.active a").attr("href");
@@ -318,7 +307,6 @@ window.liveChat.widgetSettings = function($){
 					}else{                     // Means he opted to navigate away eventhough there were pending changes
 						self.pendingChanges = false;
 					}
-					history.pushState( null, null, $(this).attr('href') );
 				}
 			});
 		}

@@ -29,7 +29,7 @@ module ApiDiscussions
       end
 
       def manipulate_params
-        customers = params[cname]['customers'] || []
+        customers = params[cname]['company_ids'] || []
         params[cname][:customer_forums_attributes] = { customer_id: customers }
       end
 
@@ -46,8 +46,8 @@ module ApiDiscussions
 
       def set_custom_errors(_item = @item)
         bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
-        @item.errors.add('customers', 'list is invalid') if bad_customer_ids.present?
-        @error_options = { remove: :customer_forums, customers: { list: "#{bad_customer_ids.join(', ')}" } }
+        @item.errors.add('company_ids', 'list is invalid') if bad_customer_ids.present?
+        @error_options = { remove: :customer_forums, company_ids: { list: "#{bad_customer_ids.join(', ')}" } }
         ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @item)
       end
   end

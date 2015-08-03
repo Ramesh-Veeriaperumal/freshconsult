@@ -11,11 +11,11 @@ class TicketsController < ApiApplicationController
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     assign_protected
-    tckt_dlgtr = TicketDelegator.new(@item)
-    if !tckt_dlgtr.valid?
-      render_error(tckt_dlgtr.errors)
+    ticket_delegator = TicketDelegator.new(@item)
+    if !ticket_delegator.valid?
+      render_error(ticket_delegator.errors)
     elsif @item.save_ticket
-      render '/tickets/create', location: send("#{nscname}_url", @item.display_id), status: 201
+      render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
       set_custom_errors

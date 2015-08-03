@@ -20,13 +20,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_no_route
-    put '/api/discussions/category', nil, @headers
+    put '/api/discussions/category', '{"name": "true"}', @write_headers
     assert_response :not_found
     assert_equal ' ', @response.body
   end
 
   def test_method_not_allowed
-    post '/api/discussions/categories/1', nil, @headers
+    post '/api/discussions/categories/1', '{"name": "true"}', @write_headers
     assert_response :method_not_allowed
     response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET, PUT, DELETE'))
     assert_equal 'GET, PUT, DELETE', response.headers['Allow']
@@ -40,6 +40,12 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_unsupported_media_type_invalid_content_type
     post '/api/discussions/categories', '{"category": {"name": "true"}}', @headers.merge('CONTENT_TYPE' => 'text/plain')
+    assert_response :unsupported_media_type
+    response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+  end
+
+  def test_unsupported_media_type_invalid_content_type_with_no_body
+    post '/api/discussions/categories', nil, @headers.merge('CONTENT_TYPE' => 'text/plain')
     assert_response :unsupported_media_type
     response.body.must_match_json_expression(un_supported_media_type_error_pattern)
   end
@@ -88,8 +94,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_not_valid_fd_domain
     without_proper_fd_domain do
       get '/api/discussions/categories', nil, headers
-      assert_response :forbidden
-      match_json(request_error_pattern('fd_domain_required'))
+      assert_response :not_found
     end
   end
 
