@@ -121,7 +121,7 @@ div.forum-follower {
 }
 
 .topic-follower-right {
-	right: 75px;
+	@include right(75px);
 }
 
 div.follower_label {
@@ -329,14 +329,14 @@ body.community.moderation.cs-always-show {
 		background-color: #535353;
 		color: white;
 		overflow: hidden;
-		border-radius: 4px 4px 0px 0px;
+		@include border-radius(4px 4px 0px 0px);
 		padding: 15px;
 
 		.delete-confirm-warning-icon{
-			float: left;
+			@include float(left);
 			font-size: 40px;
 			display: inline-block;
-			margin-right: 30px;
+			@include margin-right(30px);
 			border-radius: 50%;
 			background: white;
 		}
@@ -355,7 +355,7 @@ body.community.moderation.cs-always-show {
 		background-color: #EFEFEF;
 		padding: 13px;
 		padding-top: 20px;
-		border-radius: 0px 0px 4px 4px;
+		@include border-radius(0px 0px 4px 4px);
 		margin-bottom: -10px;
 	}
 }
@@ -373,7 +373,7 @@ body.community.moderation.cs-always-show {
 }
 
 .portal-preview-icon {
-	margin-left: 10px;
+	@include margin-left(10px);
 }
 
 .article-sticky {

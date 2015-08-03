@@ -289,25 +289,25 @@ body.community.cs-always-show #community-sidebar {
     list-style-type: disc;
     list-style-position: inside;
     color: #ddd;
-    padding-left: 6px;
+    @include padding-left(6px);
     margin-bottom: 16px;
 
     a {
       font-size: 13px;
-      padding-left: 9px;
+      @include padding-left(9px);
     }
   }    
 }
 
 .list-desc {
   font-size: 11px;
-  margin-left: 12px;
-  padding-left: 10px;
+  @include margin-left(12px);
+  @include padding-left(10px);
 }
 
 .view-all {
   margin-bottom: 16px;
-  margin-left: 20px;
+  @include margin-left(20px);
   font-weight: 400;
   font-size: 12px;
   color: #78B1EA;
@@ -315,18 +315,18 @@ body.community.cs-always-show #community-sidebar {
 
 .orphan-cat-icon {
   color: red;
-  padding-right: 5px;
+  @include padding-right(5px);
 }
 
 .orphan-desc {
   font-size: 11px;
-  margin-left: 27px;
+  @include margin-left(27px);
   display: block;
 }
 
 .feedback-article {
   color: #333;
-  margin-left: 22px;
+  @include margin-left(22px);
 }
 
 .sidebar-dropdown .dropdown-menu {

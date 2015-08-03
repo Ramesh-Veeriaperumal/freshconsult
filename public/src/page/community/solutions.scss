@@ -188,7 +188,7 @@
     border-bottom: 2px solid #ccc;
     &.article-history {
       .ellipsis {
-        padding: 0px 6px 5px 11px;
+        @include padding(0px 6px 5px 11px);
         background-color: #ddd;
         border-radius: 3px;
         width: 15px;
@@ -366,7 +366,7 @@
     /*margin: 0px -15px;*/
     width:100%;
     box-sizing: border-box;
-    float: left;
+    @include float(left);
     min-height: 220px;
     .redactor_box{
       border: 0;
@@ -390,7 +390,7 @@
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
     border-radius: 0;
-    padding-left: 0px;
+    @include padding-left(0px);
     width: 100%;
 
     &:focus{
@@ -403,13 +403,13 @@
       color: brown;
     }
     .control-label {
-      float: left;
+      @include float(left);
       width: 130px;
       padding-top: 5px;
       font-weight: 500;
     }
     .controls{
-      margin-left: 150px;
+      @include margin-left(150px);
       input, textarea {
         margin-bottom: 0px;
       }
@@ -424,7 +424,7 @@
         &.info-data {
           position: relative;
           top: 6px;
-          left: -15px;
+          @include left(-15px);
         }
       }
     }
@@ -445,14 +445,14 @@
     padding-bottom: 3px;
 
     .avatar-wrap {
-      float: left;
+      @include float(left);
     }
     .user-name {
-      float: left;
+      @include float(left);
       margin-top: 5px;
     }
     .anonymous {
-      margin-left: -8px;
+      @include margin-left(-8px);
     }
   }
 }
@@ -478,7 +478,7 @@
 
 #solution_sort {
   .comm-item-main {
-    margin-left: 15px;
+    @include margin-left(15px);
   }
 
   .solution-list-checkbox {
@@ -518,10 +518,10 @@
 }
 
 .sol-details-left {
-  float: left;
+  @include float(left);
   .list-actions-left {
-    margin-left: 0px;
-    padding: 6px 5px 10px 0px;
+    @include margin-left(0px);
+    @include padding(6px 5px 10px 0px);
     color: white;
     &.folder-icon-bg {
       background-color: #B5C8EB;
@@ -533,11 +533,11 @@
 }
 
 .sol-details-right {
-  border-left: 1px solid white;
+  @include border-left(1px solid white);
   .action-btns-bar {
     padding: 20px 0px;
     .delete-icon {
-      margin-left: 20px;
+      @include margin-left(20px);
       color: #444;
       &:hover {
         color: #000;
@@ -552,12 +552,12 @@
   }
   .category-details {
     margin-top: 5px;
-    border-left: 1px solid #ddd;
+    @include border-left(1px solid #ddd);
     .list-title {
       line-height: 1.4;
     }
     .sol-visibility {
-      margin:3px 0px 0px 15px;
+      @include margin(3px 0px 0px 15px);
     }
   }
 
@@ -576,7 +576,7 @@
 		display: inline-block;
 		background-color: white;
 	  border: 1px solid lightgrey;
-	  padding: 4px 4px 6px 10px;
+	  @include padding(4px 4px 6px 10px);
 	  border-radius: 5px;
     .fd-menu {
       a:hover, a.selected {
@@ -590,28 +590,28 @@
 	}
 
   .drop-right:after {
-    margin-left: 8px;
+    @include margin-left(8px);
   }
 
   .fd-menu {
     margin-top: 8px;
-    margin-left: -11px;
+    @include margin-left(-11px);
     min-width: 200px;
     .left-list, .right-select-companies {
-      float: left;
+      @include float(left);
       min-width: 200px;
     }
     .left-list {
       li a {
-        padding: 6px 10px 6px 25px;
+        @include padding(6px 10px 6px 25px);
       }
     }
     .right-select-companies {
       width: 300px;
       height: 100%;
-      border-left: 1px solid #ccc;
+      @include border-left(1px solid #ccc);
       padding: 5px 10px;
-      margin-left: 10px;
+      @include margin-left(10px);
       
       .autocomplete_filter .select2-container {
         width: 100%;
@@ -631,10 +631,10 @@
       }
       .replace-existing {
         display: inline-block;
-        margin-right: 10px;
-        padding-left: 2px;
+        @include margin-right(10px);
+        @include padding-left(2px);
         label {
-          padding-left: 4px;
+          @include padding-left(4px);
           display: inline-block;
         }
         input {
@@ -652,7 +652,7 @@
 }
 
 .more-cat {
-  margin-left: 21px;
+  @include margin-left(21px);
   font-weight: 400;
   font-size: 12px;
   color: #78B1EA;
@@ -691,7 +691,7 @@
       padding: 10px 0px;
       border-bottom: 1px solid #eee;
       line-height: 1.8em;
-      margin-left: 0px;
+      @include margin-left(0px);
       
       .parent-link {
         color: rgb(51, 51, 51);
@@ -715,7 +715,7 @@
 
 .draft-listing-header {
   .item {
-    margin-right: 20px;
+    @include margin-right(20px);
     padding-bottom: 8px;
     display: inline-block;
   }
@@ -728,7 +728,7 @@
     color: #444;
   }
   .portal-selector {
-    margin-right: 20px;
+    @include margin-right(20px);
   }
 
   .portal-menu {
@@ -764,7 +764,7 @@
 .solution-content {
   .article-edit {
     .article-title {
-      padding-left: 0px;
+      @include padding-left(0px);
       padding-bottom: 10px;
     }
   }
@@ -805,7 +805,7 @@
       margin-top: 0px;
       margin-bottom: 5px;
       font-weight: 500;
-      padding-left: 1px;
+      @include padding-left(1px);
       .ficon-categories-orphan {
         color: #E40725;
       }
@@ -813,7 +813,7 @@
         color: #3E74CF;
       }
       .cat-title-icon {
-        margin-right: 6px;
+        @include margin-right(6px);
         font-size: 20px;
         display: inline;
         position: relative;
@@ -824,19 +824,19 @@
       }
     }
     ul {
-      margin-left: 9px;
+      @include margin-left(9px);
       li {
         list-style-type: disc;
         list-style-position: inside;
         color: #ddd;
         a {
-          margin-left: -18px;
+          @include margin-left(-18px);
         }
       }
       li {
         &.no-bullet{
           list-style-type: none;
-          padding-left: 15px;
+          @include padding-left(15px);
         }
       }
     }
@@ -890,8 +890,8 @@ body.community #sticky_header.category-sticky.is_stuck {
 }
 
 .visible-to-selected {
-  padding: 2px 18px 2px 6px;
-  margin-left: -6px;
+  @include padding(2px 18px 2px 6px);
+  @include margin-left(-6px);
   border-radius: 4px;
   color: #888;
   &:hover {
@@ -901,12 +901,12 @@ body.community #sticky_header.category-sticky.is_stuck {
     content: "";
     width: 0;
     height: 0;
-    margin: 5px 0 0 5px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
+    @include margin(5px 0 0 5px);
+    @include border-left(4px solid transparent);
+    @include border-right(4px solid transparent);
     border-bottom: 4px solid #888;
     position: absolute;
-    margin-left: 8px;
+    @include margin-left(8px);
   }
 }
 
@@ -919,8 +919,8 @@ body.community #sticky_header.category-sticky.is_stuck {
           cursor: pointer;
         }
         .dropdown-menu {
-            right: 0;
-            left: inherit;
+            @include right(0);
+            @include left(inherit);
         }
       }
     }
@@ -934,7 +934,7 @@ body.community #sticky_header.category-sticky.is_stuck {
 } 
 
 .empty-category {
-  margin-left: 20px;
+  @include margin-left(20px);
 }
 
 .add-folder-link {
@@ -954,9 +954,9 @@ body.community #sticky_header.category-sticky.is_stuck {
 }
 
 .solution-icon {
-  margin-right: 10px;
+  @include margin-right(10px);
   display: inline-block;
-  float: left;
+  @include float(left);
 }
 
 .sol-details-right .dropdown-menu {
@@ -1010,8 +1010,8 @@ body.community #sticky_header.category-sticky.is_stuck {
 .community-search .article-icon {
   padding: 7px;
   border-radius: 5px;
-  margin-right: 10px;
-  float: left;
+  @include margin-right(10px);
+  @include float(left);
   color: #FFFFFF;
   background-color: #D8DBDF;  
 }

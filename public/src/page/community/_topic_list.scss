@@ -265,12 +265,12 @@ $community-types: problem #e65e63,
 }
 
 .modal-body .comm-items .comm-item{
-	padding: 10px 0 10px 10px;
+	@include padding(10px 0 10px 10px);
 }
 
 
 #dynamo-next-page{
-	float: left;
+	@include float(left);
 	width: 100%;
 	min-height: 56px;
 	text-align: center;
@@ -415,10 +415,10 @@ $community-types: problem #e65e63,
 	}
 	
 	.action-icon-popup{
-		float: left;
+		@include float(left);
 		height: 25px;
 		width: 30px;
-		padding-left: 5px;
+		@include padding-left(5px);
 	}
 }
 
@@ -464,7 +464,7 @@ $community-types: problem #e65e63,
 .reorder-icon{
 	@include float(left);
 	@include margin(0px 0px -10px -80px);
-	padding: 10px 8px 8px 10px;
+	@include padding(10px 8px 8px 10px);
 	height: 15px;
 	width: 15px;
 	background-color: #999;
