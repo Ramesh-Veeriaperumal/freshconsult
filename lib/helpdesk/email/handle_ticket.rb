@@ -105,7 +105,7 @@ class Helpdesk::Email::HandleTicket
     content_id_hash = {}
     email[:attached_items].each_with_index do |(key,attached),i|
       begin
-        att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i))
+        att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i), true)
         if att.is_a? Helpdesk::Attachment
           content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
           attachments.push att
