@@ -54,10 +54,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
     end
 
-    def create_for_3rd_party account, item, attached, i, content_id
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
+      limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
+                        HelpdeskAttachable::MAX_ATTACHMENT_SIZE
       unless item.validate_attachment_size({:content => attached.tempfile},
-                                           {:attachment_limit => 
-                                              HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE})
+                                           {:attachment_limit => limit })
         filename = self.new.utf8_name attached.original_filename,
                              "attachment-#{i+1}"
         attributes = { :content_file_name => filename,
