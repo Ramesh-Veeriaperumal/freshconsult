@@ -21,11 +21,14 @@ module Helpdesk::DetectDuplicateEmail
                                     "to" => to, 
                                     "subject" => subject, 
                                     "message_id" => message_id }
+      subject = "ProcessEmail :: Duplicate Email in account_id #{Account.current.id}"
       msg = "Duplicate Email in account_id #{Account.current.id} with subject : #{subject}
                                                                         from  : #{from}
                                                                         to    : #{to}
                                                                   message_id  : #{message_id}"
       NewRelic::Agent.notice_error msg
+      Rails.logger.debug msg
+      DevNotification.publish(email_topic, subject, msg)
       true
     end
   end
@@ -46,8 +49,19 @@ module Helpdesk::DetectDuplicateEmail
     headers = Mail::Header.new params[:headers]
     headers[:received][0].to_s.to_time if headers[:received].any?
   rescue Exception => e
-    FreshdeskErrorsMailer.send_later(:error_email, nil, e.backtrace, e, 
-                                     { :subject => "Process Email Error - #{e.class}" })
+    subject = "ProcessEmail :: Received Time Calculation Error - Account ID #{Account.current.id}"
+    msg     = {
+      :account_id => Account.current.id,
+      :subject    => params[:subject],
+      :headers    => params[:headers]
+    }
+    NewRelic::Agent.notice_error(e, msg)
+    Rails.logger.debug msg.to_json
+    DevNotification.publish(email_topic, subject, msg.to_json)
     nil
+  end
+
+  def email_topic
+    SNS["reports_notification_topic"] # Using reports topic temporarily
   end
 end
