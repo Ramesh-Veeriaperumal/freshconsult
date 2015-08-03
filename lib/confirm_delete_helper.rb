@@ -2,7 +2,7 @@ module ConfirmDeleteHelper
 
 	SUPPORTED_DIALOGS = [
 		"Solution::Category", "Solution::Folder", "Solution::Article", 
-		"Forum", "ForumCategory", "Topic"
+		"Forum", "ForumCategory", "Topic", "Portal"
 	]
 
 	def confirm_delete(item, url, options = {})
@@ -75,6 +75,20 @@ module ConfirmDeleteHelper
 	def forumcategory_delete_message(forum_category)
 		return t('forum_confirm_msg1').html_safe if (forum_category.forums.size == 0) && (forum_category.topics.size == 0)
 		t('forum_category.delete_confirm', :forums => forum_category.forums.size, :topics => forum_category.topics.size)
+	end
+
+	def portal_delete_message(portal)
+		content_tag(:div) do
+			content_tag(:span, "#{t('admin.portal.delete_confirm.title')}:") + 
+			(content_tag(:ul) do
+				content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info1')}") +
+				content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info2')}")
+			end)
+		end
+	end
+
+	def bullet
+		"<span class='bullet'></span>".html_safe
 	end
 
 end

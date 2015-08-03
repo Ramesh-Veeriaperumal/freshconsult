@@ -1,18 +1,21 @@
-  <%= image_tag fav_icon_url(item), :alt => t('favicon'),
+  <div>
+    <%= image_tag fav_icon_url(item), :alt => t('favicon'),
                 :onerror => "default_image_error(this)",
                 :"data-type" => "favicon" %>
+  </div>
   <div class="thumb-file-upload">
     <%= fields_for "#{field_name}[fav_icon_attributes]", item.fav_icon do |fav_icon_form| %>
       <div class="file-upload-wrap">
-        <span class="file-upload-text"><%= t("account.change_favicon") %></span>
+        <span class="file-upload-text">
+          <%= t("account.change_favicon") %>
+        	<%= fav_icon_form.file_field :content, :class => "upload_size_validity validate_image fileAdminUpload portal-fav-icon", :accept => 'image/*', :id => "portal-fav-icon" %>
+        </span>
       </div>
-      	<%= fav_icon_form.file_field :content, :class => "upload_size_validity validate_image fileAdminUpload portal-fav-icon", :accept => 'image/*', :id => "portal-fav-icon" %>
     <% end %>
-    <div>
+    <span>
       <% if item.fav_icon.present? %>
-        <% default_favicon_url = item.main_portal? ? delete_favicon_account_path : delete_favicon_admin_product_path(item) %>
-        <%= link_to(t("account.use_default"), default_favicon_url,
-          :confirm => t('fav_delete_msg'), :method => 'delete') %>
+        <% default_favicon_url = item.main_portal? ? delete_favicon_account_path : delete_favicon_admin_portal_path(item) %>
+        <%= link_to(t("account.use_default"), default_favicon_url, :confirm => t('fav_delete_msg'), :method => 'delete') %>
       <% end %>
+    </span>
   </div>
-    </div>

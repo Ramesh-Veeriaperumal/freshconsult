@@ -346,6 +346,16 @@ body.community.moderation.cs-always-show {
 			width: 80%;
 		}
 
+		.bullet{
+			height: 3px;
+			width: 3px;
+			display: inline-block;
+			border: 1px #FFF solid;
+			background-color: #FFF;
+			@include border-radius(50%);
+			@include margin(0 5px 2px 5px);
+		}
+
 		p {
 			margin: 0px;
 		}

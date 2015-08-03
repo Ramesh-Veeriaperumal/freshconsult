@@ -63,12 +63,11 @@ module Mobile::Actions::Ticket
     }
     if only_public_notes
      json_inlcude[:public_notes] = NOTES_OPTION 
-    else if include_notes
+    elsif include_notes
      json_inlcude[:notes] = NOTES_OPTION
-	 end
     end
     options = {
-      :only => [ :id, :display_id, :subject, :description_html, 
+      :only => [ :id, :display_id, :subject, :description_html, :status,
                  :deleted, :spam, :cc_email, :due_by, :created_at, :updated_at ],
       :methods => [ :status_name, :priority_name, :requester_name, :responder_name, 
                     :source_name, :is_closed, :to_emails, :to_cc_emails,:conversation_count, 

@@ -19,8 +19,7 @@ window.liveChat.conversationView = function(){
 				"click #navigateMessage"	: "loadMessage",
 				"click #convertTicket"		: "convertTicket", 
 				"click #add-note"		: "addNote",
-				"click #mark-spam"		: "markAsSpam",
-				"click #undo-spam" : "undoSpam"
+				"click #mark-spam"		: "markAsSpam"
 			},
 			navigateArchive:function(event){
 				event.preventDefault();
@@ -141,6 +140,10 @@ window.liveChat.conversationView = function(){
 					if(chatData.type ==="visitor"){
 						this.loadVisitorDetail(archiveModel);
 					}
+					// To check if spam param is changed. Taking type for random check
+					if(archiveModel.hasChanged('spam') === true && archiveModel.hasChanged('message') === false && archiveModel.attributes.spam === true){
+						this.showSpamFlash();
+					}
 				}
 			},
 			loadVisitorDetail : function(archiveModel){
@@ -244,10 +247,19 @@ window.liveChat.conversationView = function(){
 				}
 				
 			},
-			undoSpam:function(event){
-				if(this.archiveModel){
-					this.archiveModel.markSpam(false);
-				}
+			showSpamFlash : function(){
+				var that = this;
+				var msg = "Chat has been marked as spam.<a id = 'undo-spam' href='#' > Undo </a> ";
+				var $flashDiv = jQuery("#noticeajax");
+				$flashDiv.html(msg).show();
+				$flashDiv.find("#undo-spam").on('click',function(event){
+					if(that.archiveModel){
+						that.archiveModel.markSpam(false);
+						jQuery("#noticeajax").fadeOut(600);
+						jQuery("#noticeajax").html("");
+					}				
+				});
+				this.closeFlash($flashDiv);
 			},
 			closeFlash : function($flashDiv){
 				flash = $flashDiv

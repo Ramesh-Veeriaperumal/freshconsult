@@ -256,6 +256,10 @@
 			background-color: #FFF;
 			cursor: move;
 		}
+		select{
+			height: 26px;
+    	min-width: 150px;
+		}
 		&.dropdown, &.custom-dropdown, &.dropdown_blank, &.nested_field {
 			position: relative;
 			.overlay-field {

@@ -1,7 +1,7 @@
 module Helpdesk
   module Services
     module Ticket
-      include Utils::Sanitizer
+      include ::Utils::Sanitizer
 
       def save_ticket
         build_ticket_and_sanitize

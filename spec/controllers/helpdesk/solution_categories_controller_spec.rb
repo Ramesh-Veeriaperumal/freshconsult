@@ -55,7 +55,38 @@ describe Solution::CategoriesController do
     categories.each do |c|
       c.position.should be_eql(reorder_hash[c.id])
     end          
-  end  
+  end
+
+  it "should create a category with main portal associated if no portal is associated" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, :solution_category => {:name => "Test category #{now}", :portal_ids => []}
+
+    category = @account.solution_categories.find_by_name("Test category #{now}")
+    category.should be_an_instance_of(Solution::Category)
+    result = @account.main_portal.portal_solution_categories.find_by_solution_category_id(category.id)
+    result.should_not be_nil
+  end
+
+  it "should create one record for each specified portal in portal_solution_categories" do
+
+    p1 = create_product({
+              :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
+                              })
+
+    p2 = create_product({
+                         :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
+                              })
+    arr = [p1.portal.id, p2.portal.id]
+
+    post :create, :solution_category => {
+                      :name => "Test category with portals",
+                      :portal_ids => arr
+                    }
+                    
+    category = @account.solution_categories.find_by_name("Test category with portals")
+    result = category.portal_solution_categories.map(&:portal_id)
+    result.sort.should eql arr.sort
+  end
 
   it "should not edit a default category" do 
     default_category = @account.solution_categories.find_by_is_default(true)

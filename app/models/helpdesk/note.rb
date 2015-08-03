@@ -28,6 +28,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
 
+  delegate :to_emails, :cc_emails, :bcc_emails, :subject, :to => :schema_less_note
+
   scope :newest_first, :order => "created_at DESC"
   scope :visible, :conditions => { :deleted => false } 
   scope :public, :conditions => { :private => false } 
@@ -214,7 +216,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary].include? attribute.to_sym
+    return false if [:empty?, :to_ary].include? attribute.to_sym
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 

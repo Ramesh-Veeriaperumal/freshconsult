@@ -15,17 +15,19 @@
 			<%= f.text_area :description, :rows => 7 %>
 		</div>
 	</div>
-	<% if current_account.portals.count>1 %>
-		<div class="control-group">
-			<label class="control-label"><%= t("solution_category.product_portal_visibility").html_safe %></label>
-			<div class="controls">
-				<input type="hidden" name="product_ids" value="" />
-				<%= f.collection_select :portal_ids, current_account.portals.reject(&:main_portal), 
-																	:id, :portal_name, {:selected => current_portal.id}, 
-																	:class => "select2 input-xlarge", :multiple => true, 
-																	:placeholder => t("solution_category.select_solution_category").html_safe %>
-				<%= content_tag(:div, t('solution_category.solution_categories_portal_info').html_safe, :class => "info-data") %>
-			</div>
+	<% if current_account.portals.count > 1 %>
+	<div class="control-group">
+		<label class="control-label"><%= t("solution_category.product_portal_visibility").html_safe %></label>
+		<div class="controls">
+			<input type="hidden" name="product_ids" value="" />
+			<%= f.collection_select :portal_ids, current_account.portals, 
+																:id, :portal_name, 
+																{
+																	:selected => @category.new_record? ? current_portal.id : @category.portals.map(&:id)
+																}, 
+																:class => "select2 input-xlarge portal_visibility_required", :multiple => true, 
+																:placeholder => t("solution_category.select_solution_category").html_safe %>
 		</div>
+	</div>
 	<% end %>
 </div>

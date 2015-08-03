@@ -40,12 +40,13 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever]  
-  before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
+  before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
   before_filter :load_ticket, :verify_permission,
     :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
       :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
@@ -64,11 +65,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
-  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
+  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv],
+    :unless => lambda { |controller| 
+      controller.request.format.xml? or controller.request.format.json? or controller.request.format.mobile? }
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
  
   def user_ticket
     if params[:email].present?
@@ -213,7 +215,7 @@ class Helpdesk::TicketsController < ApplicationController
     if params['format'] == 'widget'
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
-      if @ticket.blank?
+      if @ticket.nil?
         @item = @ticket = Helpdesk::Ticket.new
         @ticket.build_ticket_body
         render :new, :layout => "widgets/contacts"
@@ -283,7 +285,10 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
                                                         :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]}, true))
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))                            
-        hash.merge!({:subscription => !@subscription.nil?})                                          
+        hash.merge!({:subscription => !@subscription.nil?}) 
+        hash.merge!({:reply_emails => @reply_emails})
+        hash.merge!({:to_cc_emails => @to_cc_emails})
+        hash.merge!({:bcc_drop_box_email => bcc_drop_box_email})                                         
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
@@ -873,7 +878,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files])
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files,:note_old_body])
     reply_to_all_emails
   end
 

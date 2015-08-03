@@ -1,0 +1,19 @@
+<% if current_account.portals.count > 1 %>
+<div class="form-horizontal">
+  <div class="control-group">
+    <%= f.label :portal_ids, t('forum_category.product_portal_visibility'), :class => "control-label" %>
+    <div class="controls">
+      <input type="hidden" name="product_ids" value="" />
+      <%= f.collection_select :portal_ids, current_account.portals,
+                  :id, :portal_name, 
+                  {
+                    :selected => @forum_category.new_record? ? current_portal.id : @forum_category.portals.map(&:id)
+                  },
+                  :class => "select2 input-xlarge portal_visibility_required",
+                  :id => "product_portal_visibility", :multiple => true,
+                  :placeholder => t("forum_category.select_product").html_safe 
+                  %>
+    </div>
+  </div>
+</div>
+<% end %>

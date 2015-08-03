@@ -3,6 +3,7 @@ module Helpdesk::Email::TicketMethods
   include Redis::OthersRedis
   include ParserUtil
   include AccountConstants
+  include EmailHelper
 
   def get_original_user
     email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
@@ -131,6 +132,7 @@ module Helpdesk::Email::TicketMethods
     rescue ActiveRecord::RecordInvalid => e
       FreshdeskErrorsMailer.error_email(ticket,email,e)
     end
+    cleanup_attachments ticket
     create_redis_key_for_ticket(ticket_message_id) unless ticket_message_id.nil?
   end
 

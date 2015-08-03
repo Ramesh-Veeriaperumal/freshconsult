@@ -34,7 +34,6 @@ window.liveChat.visitorFormSettings = function($){
 
 			$("#missed_chat_name").val(offline_chat_form['name']);
 			$("#missed_chat_email").val(offline_chat_form['email']);
-			$("#missed_chat_message").val(offline_chat_form['message']);
 
 			for(var k in form_details){
 				var list = '<li class="inline-field" data-type="'+k+'"><i class="ficon-rearrange"></i>';
@@ -54,7 +53,7 @@ window.liveChat.visitorFormSettings = function($){
 				if(k == "dropdown"){
 					list += '<div class="prechat_wrap">';
 				}
-				list += '<input type="text" class="prechat_input" id="prechat_form_'+k+'" name="prechat_form_name" maxlength="35" value="'+form_details[k].title+'" placeholder="'+labels[k]+'">';
+				list += '<input type="text" class="prechat_input" id="prechat_form_'+k+'" name="prechat_form_name" maxlength="20" value="'+form_details[k].title+'" placeholder="'+labels[k]+'">';
 				if(k == "dropdown"){
 					list += '<i class="ficon-caret-down"></i></div>';
 				}

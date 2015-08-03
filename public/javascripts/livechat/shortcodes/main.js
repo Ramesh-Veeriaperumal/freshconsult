@@ -6,10 +6,10 @@ liveChat.admin_short_codes = (function(){
       _new_code_dom_fragment : window.JST["livechat/templates/shortcodes/shortCodes"],
       _auth_params: null,
       _action_urls: {
-          create   : { type: "POST", url: "/shortcodes/create"},
-          getCodes : {type: "GET", url: "/shortcodes/getCodes"},
-          update   : {type: "POST", url: "/shortcodes/update"},
-          destroy  : {type: "POST", url: "/shortcodes/destroy"}
+          create   : { type: "POST", url: "shortcodes/create"},
+          getCodes : {type: "GET", url: "shortcodes/getCodes"},
+          update   : {type: "POST", url: "shortcodes/update"},
+          destroy  : {type: "POST", url: "shortcodes/destroy"}
       },
       _error_messages: {
           CODE_EMPTY : "Code cannot be empty.",

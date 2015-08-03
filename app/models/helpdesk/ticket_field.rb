@@ -145,6 +145,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
+  def nested_field?
+    field_type == "nested_field"
+  end
+
   def choices(ticket = nil, admin_pg = false)
      case field_type
        when "custom_dropdown" then
@@ -369,8 +373,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_options.blank? ? false : field_options.symbolize_keys.fetch(:section, false)
   end
 
+  def has_sections_feature?
+    account.features_included?(:dynamic_sections)
+  end
+
   def has_section?
-    return true if account.features_included?(:dynamic_sections) && field_type == "default_ticket_type"
+    return true if has_sections_feature? && field_type == "default_ticket_type"
     # if field_type == "custom_dropdown"
     #   return false if section_field?
     #   !dynamic_section_fields.blank?
