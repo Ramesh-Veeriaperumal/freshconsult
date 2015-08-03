@@ -1,0 +1,12 @@
+<div class="form">
+	<div class="logo">
+		<i class="remote-configurations-freshdesk-logo"></i><i class="remote-configurations-arrow"></i><i class="remote-configurations-quickbooks-logo"></i>
+	</div>
+	<div class="input_box"><%= t(:'flash.application.install.success') %></div>
+</div>
+<script type="text/javascript">
+	if (window.opener) {
+		window.opener.location = "/integrations/applications";
+		window.close();
+	}
+</script>

@@ -441,7 +441,7 @@ private
     if !self.new_record? && status_changed?
       # OPTIMIZE
       # read it from cache
-      self.ticket_status = Helpdesk::TicketStatus.all_statuses_from_cache(account).find {|x| x.status_id == status }
+      self.ticket_status = Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == status }
     end
   end
 
@@ -600,7 +600,7 @@ private
   def previous_state_was_sla_stop_state?
     # OPTIMIZE
     # read it from cache
-    Helpdesk::TicketStatus.all_statuses_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer? 
+    Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer? 
   end
 
   def update_ticket_state_sla_timer

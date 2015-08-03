@@ -646,7 +646,7 @@
 		},
 
 		storedSectionData: function(parentFieldId,types,builderDom){
-			var data_dom = [],
+			var data_dom = {},
 				self = this;
 			this.options.types[parentFieldId] = types;
 			this.options.parent_id = parentFieldId;

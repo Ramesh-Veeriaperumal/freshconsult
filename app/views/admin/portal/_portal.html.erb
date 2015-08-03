@@ -1,0 +1,23 @@
+<% portal ||= Account.current.main_portal %>
+<tr>
+  <td>
+    <div class="portal-logo-center">
+      <%= portal_logo(portal) %>
+    </div>
+  </td>
+  <td class="portal-text">
+      <div class="portal-name"><%= pjax_link_to portal.portal_name.blank? ? current_account.name : portal.portal_name, edit_admin_portal_path(portal) %></div>
+      <div class="muted"><%= (portal.product || current_account).name %></div>
+  </td>
+  <td>
+    <div class="pull-right">
+      <span class="view-portal">
+        <span class='ficon-open-in-new-window pr5 fsize-14'></span>
+        <span class="tooltip" title="<%= portal.full_url %>">
+          <%= link_to(t("admin.products.product.view_portal"), portal.full_url, { :target => "_blank" }) %>
+        </span>
+      </span>
+        <%= link_to t("admin.products.product.customize_portal").html_safe, admin_portal_template_path(portal), :class => "btn btn-mini" %>
+    </div>
+  </td>
+</tr>

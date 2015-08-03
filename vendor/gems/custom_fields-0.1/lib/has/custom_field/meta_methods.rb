@@ -4,10 +4,10 @@ module Has
     module MetaMethods
 
       def respond_to? attribute, include_private_methods = false
-        return false if [:to_ary, :after_initialize_without_slave, :to_a, :created_on, :updated_on].include?(attribute) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
+        return false if [:empty?, :to_ary, :after_initialize_without_slave].include?(attribute) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
         # Rails.logger.debug "respond_to? #{self.class},#{attribute}"
         # Should include methods like to_a, created_on, updated_on as record_time_stamps is calling these mthds before any write operation
-        return super(attribute, include_private_methods) if [:to_a, :created_on, :updated_on, :empty?].include?(attribute)
+        return super(attribute, include_private_methods) if [:to_a, :created_on, :updated_on].include?(attribute)
         super(attribute, include_private_methods) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
       end
 

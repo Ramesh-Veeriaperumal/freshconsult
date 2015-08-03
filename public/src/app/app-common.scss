@@ -2615,21 +2615,26 @@ a.mobile_switchBtn {
   @include text-align(left);
   cursor:pointer;
   vertical-align:top;
+  border-top: 1px solid #F1F1F1;
+  padding-top: 5px;
+  display: inline-block;
   >div{
   	@include margin(0 5px 18px 0);
   }
   input[type='file']{
   	position:absolute;
-  	top:0;
+  	top: 0;
+  	left: 0;
     z-index: 999999;
     width:100%;
     min-height:30px;
     @include opacity(0);
     cursor: pointer;
-    cursor: hand;
     &::-webkit-file-upload-button { cursor:pointer; }
   }
   .file-upload-wrap{
+  	@include padding-right(15px);
+  	display: inline-block;
     .file-upload-text{
       position: relative;
       color: #0066cc;
@@ -4092,3 +4097,18 @@ img.small{
 	$j: $j - 1;
 }
 }
+
+// Add Clear plugin
+
+.add-clear{
+	position: absolute;
+	@include padding-left(10px);
+	padding-top: 7px;
+	.clear-all{
+		@include border-left(1px solid #DDD);
+		@include padding-left(10px);
+		@include margin-left(10px);
+	}
+}
+
+// end

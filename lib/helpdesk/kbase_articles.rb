@@ -77,7 +77,7 @@ class Helpdesk::KbaseArticles
       article.user = user
       article.account = account
       article.save
-      article
+      article.reload
     end
   end
 

@@ -36,7 +36,7 @@ class ThirdCRM
   def lead_info(account)
     account_info = user_info(account)
     subscription_info = subscription_info(account.subscription)
-    misc = account.conversion_metric ? signup_info(account.conversion_metric) : {}
+    misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
     lead_details = account_info['default'].merge(misc['default'])
     lead_details["custom"] = account_info['custom'].merge(subscription_info['custom']).merge(misc['custom'])
     {"contact" => lead_details}

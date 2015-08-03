@@ -145,6 +145,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
+  def nested_field?
+    field_type == "nested_field"
+  end
+
   def api_choices(current_account)
     case field_type
     when "custom_dropdown"
@@ -154,7 +158,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     when "default_source"
       Hash[TicketConstants.source_names]
     when "default_status"
-      api_statuses = Helpdesk::TicketStatus.all_statuses_from_cache(current_account).map{|status| 
+      api_statuses = Helpdesk::TicketStatus.status_objects_from_cache(current_account).map{|status| 
                   [ 
                     status.status_id, [Helpdesk::TicketStatus.translate_status_name(status, 'name'), 
                     Helpdesk::TicketStatus.translate_status_name(status, 'customer_display_name') ]
@@ -410,8 +414,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_options.blank? ? false : field_options.symbolize_keys.fetch(:section, false)
   end
 
+  def has_sections_feature?
+    account.features_included?(:dynamic_sections)
+  end
+
   def has_section?
-    return true if account.features_included?(:dynamic_sections) && field_type == "default_ticket_type"
+    return true if has_sections_feature? && field_type == "default_ticket_type"
     # if field_type == "custom_dropdown"
     #   return false if section_field?
     #   !dynamic_section_fields.blank?

@@ -182,6 +182,14 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
+  def full_url
+    main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
+  end
+
+  def full_name
+    main_portal && name.blank? ? Account.current.name : name
+  end
+
   private
 
     def update_users_language
