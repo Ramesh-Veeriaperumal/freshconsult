@@ -79,7 +79,7 @@ window.App = window.App || {};
         }
       });
 
-      $('body').on('afterReorder.folders_articles', function () {
+      $('body').on('reordered.folders_articles', function () {
         App.Solutions.NavMenu.reload();
       });
 
