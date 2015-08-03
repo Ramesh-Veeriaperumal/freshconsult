@@ -1,0 +1,17 @@
+<div class="configure-portal control-group">
+  <label class="control-label">
+    <%= t("admin.products.portal.customer_portal").html_safe %> 
+  </label>
+  <%= check_box( "product", "enable_portal", 
+  						{ :checked => !@portal.new_record? || params[:enable].present?, 
+  							:rel => 'toggle',
+  							:id => "enable-portal"}) %>
+ 	<% if edit %>
+ 		<%= confirm_delete(@portal, admin_portal_path(@portal), 
+ 			{ :class => "hide",
+ 				"data-item-title" => @portal.portal_name,
+ 				"data-dialog-id" => "disable-portal"
+ 			}) %>
+ 	<% end %>
+</div>
+<hr/>

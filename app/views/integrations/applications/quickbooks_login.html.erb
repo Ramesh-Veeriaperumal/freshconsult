@@ -10,19 +10,22 @@
 		</div>
 		<div class="submit_box">
 			<%= submit_tag t('integrations.remote_login.connect'), :class => "button" %>
+			<% unless params[:operation] %>
 			<p>
 				<%= t("integrations.remote_login.new_to_freshdesk") %>				
-				<a href="#" class="anchor" onClick = "showMsgAndRedirect('signup','http://freshdesk.com/signup')"><%= t("integrations.remote_login.sign_up") %></a>
+				<a href="#" class="anchor" onClick = "showMsgAndRedirect('<%= t('integrations.quickbooks.remote_configurations.signup') %>', 'http://freshdesk.com/signup')"><%= t("integrations.remote_login.sign_up") %></a>
 			</p>
+			<% end %>
 		</div>
 		<input type="hidden" name="app" value="<%= params[:app] %>" />
+		<input type="hidden" name="operation" value="<%= params[:operation] %>" />
 <% end %>
 <% if flash[:notice] %>
 	<div id="noti" class="notice"><%= flash[:notice] %></div>
 <% end %>
 <script>
 function showMsgAndRedirect(msg, loc){
-	$('#input_box').replaceWith( '<div class="remote-configurations-'+msg+'-msg"></div>')
+	$('#input_box').html(msg)
 	delayedRedirectTo(loc)
 }
 function delayedRedirectTo(loc){
@@ -30,9 +33,19 @@ function delayedRedirectTo(loc){
 		window.location = loc
 	}, 10000);
 }
-<% if @valid_domain %>
+<% if @valid_domain 
+		if params[:operation] == 'launch' %>
 $(document).ready(function() {
-	showMsgAndRedirect("login","<%= params[:domain] + integrations_applications_path %>");
+	showMsgAndRedirect("<%= t('integrations.quickbooks.remote_configurations.launch').html_safe %>", "<%= params[:domain] + '/helpdesk' %>");
 })
-<% end %>
+		<% elsif params[:operation] == 'disconnect' %>
+$(document).ready(function() {
+	showMsgAndRedirect("<%= t('integrations.quickbooks.remote_configurations.disconnect').html_safe %>", "<%= params[:domain] + integrations_applications_path %>");
+})
+		<% else %>
+$(document).ready(function() {
+	showMsgAndRedirect("<%= t('integrations.quickbooks.remote_configurations.connect').html_safe %>", "<%= params[:domain] + integrations_applications_path %>");
+})
+<% end
+end %>
 </script>

@@ -10,7 +10,7 @@
 			},
 			addChoice :         '#addchoice',
 			deleteChoice:       '.delete_choice_btn', 
-			maxNoOfChoices:     '50',
+			maxNoOfChoices:     '1000',
 			dropdownChoiceDiv:  '.custom-choices',
 			dropdown_rearrange: '.rearrange-icon'
 		}

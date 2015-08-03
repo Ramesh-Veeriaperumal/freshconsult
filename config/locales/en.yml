@@ -81,6 +81,7 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  add_all: "Add all"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -323,7 +324,7 @@ en:
       level2: "Level 2"
       level3: "Level 3"
       nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
-      nested_field_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
+      nested_field_helptext: "Use the below textarea to add or edit items in your dropdown. Indent items by pressing the tab key once or twice. We will convert it to dropdown items based on the indentation. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       drop_down_items_edit: "Dropdown items - Edit"
       dropdown_items_preview: "Dropdown items - Preview"
@@ -332,6 +333,7 @@ en:
       sla_timer: "SLA timer"
       section_type_change: Please save the ticket form to see the latest changes that you have made to type field.
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+      nested_field_helptext_preview: "This is the preview of sample dropdown items. Click \"Edit\" to change the values for each drop down."
       delete_field: "Delete field"
       field_label_agents: "Field label for agents"
       field_label_customer: "Field label for customers"
@@ -355,6 +357,7 @@ en:
       cc_company_contacts: Can CC only company contacts
       cc_any_email: Can CC any email address
       field_delete_disabled: You cant delete default fields
+      default_field_delete_disabled: Default fields cannot be deleted
       dropdown_choice_disabled: Default choice cant be deleted 
       nested_tree_validation: You need atleast one category & sub-category
       nested_unique_names: Agent label should not be same as other two levels
@@ -836,7 +839,12 @@ en:
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
     portal:
-      index:
+      delete_confirm:
+        title: "Deleting this portal will remove"
+        info1: "All the settings in portal customization"
+        info2: "All the linked solution and forum categories"
+      settings:
+        title: 'Customer Portals'
         portal_customizer_title: "Customer Portal Configuration"
         signup_login: "User Signup and Login"
         allow_signup: "Allow users to Sign Up from the customer portal"
@@ -868,6 +876,13 @@ en:
         moderate_all_help: "Enable this feature if you want to be stringent on every post that gets created in your community."
         moderate_none: "Do not Moderate"
         moderate_none_help: "Enable this feature if you are sure that your community does not attract spammers."
+      helpnote:
+        title: Setting up your portals
+        tour: Help me configure my portal
+        info1: "If you would like your customers and support agents ​to ​access your support portal in your own domain, you can point your support URL ​<b>yourcompany.freshdesk.com​</b> to your own domain like​ ​<b>support.yourcompany.com</b>"
+        info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
+        info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
+        info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -1522,26 +1537,31 @@ en:
         heading1: Multiple Products
         content1: You can support multiple products with separate branded portals from a single Freshdesk account. Configure separate support emails for each product and automatically queue them in a specific group.
         heading2: Configuring a separate portal for products
+        heading3: Supporting Multiple Products
         content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
+        content3: You can configure portals for these products ​by clicking on the Admin tab and then 'Portals​'​
       new:
         title: New Product
         saving: Saving...
       portal:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
-        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
-        portal_settings: Portal settings
+        settings: Settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
         portal_url: Portal URL
         solution_categories: Solution Categories
         forum_categories: Forum Categories
-        portal_name: Portal name
+        portal_name: Portal Name
         portal_language: Portal Language
+        default_portal_language: Default Portal Language
         portal_language_info: This will be the default language when customers visits your portal
-        portal_customization: Portal customization
+        portal_customization: Portal Customization
+        portal_settings: Portal Settings
+        edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
         save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
@@ -1549,10 +1569,17 @@ en:
         ago: ago
         last_published: Your portal was last published
         contact_us: Contact us
-        logo_and_favicon: "Logo & favicon"
+        logo_and_favicon: "Logo & Favicon"
+        customer_portal: Customer Portal
+        portal_settings: Portal Settings
+        categories_visible: Portal Categories
+        product_label: "Product: %{product_name}"
       edit:
         title: Edit Product
         updating: Updating...
+      footer:
+        edit_portal: "Save & Edit Portal"
+        enable_portal: "Save & Enable Portal"
       form:
         configure_seperate_portal: Enable Customer Portal
         enable_product_portal: Enable Product Portal
@@ -1561,7 +1588,7 @@ en:
         email_address_present: Reply email is already used
         configure_email: Configure Email
         product_support_emails: Product Support Emails
-        product_name: Product name
+        product_name: Product Name
         product_desc: Description
         forwarding_email_info: Forwarding email
         please_wait: Please wait...
@@ -1570,6 +1597,8 @@ en:
         edit_facebook_page: "Edit Facebook page %{page_name}"
         customize_portal: "Customize portal"
         enable_portal: "Enable Portal"
+        portal_disabled: "Portal disabled"
+        disable_portal: "Disable Portal"
         email_not_verified: Unverified
         view_portal: View Portal
         delete: Are you sure you want to delete this Product?
@@ -1679,6 +1708,7 @@ en:
         survey-settings: Customer Satisfaction
         gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
+        helpdesk-settings: Helpdesk
         account-settings: Account Settings
         helpdesk-productivity: Helpdesk Productivity
         canned-response: Canned Response
@@ -1718,6 +1748,7 @@ en:
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Customer Portal
+        portals: Portals
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -1917,6 +1948,18 @@ en:
       tickets:
         create:
           success: Your ticket has been created.
+      create:
+        success: "Portal has been enabled for '%{product_name}'"
+        failure: "Portal could not be enabled"
+      update:
+        success: "Portal has been updated"
+        failure: "Portal could not be updated"
+      destroy:
+        success: "Portal of '%{product_name}' has been disabled"
+        failure: "Main portal can not be disabled"
+      not_found:
+        portal: "The portal could not be found. It might have been deleted or the URL mistyped."
+        product: "The product could not be found. It might have been deleted or the URL mistyped."
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
@@ -2426,8 +2469,12 @@ en:
     helpcard:
       title: Rebranding your support portal
       tour: Help me rebrand my helpdesk
+      tour1: Help me setup my helpdesk
+      setup: Setting up your helpdesk
       info1: You can completely customize your Freshdesk help desk for customers logging into your self-service portal as well as your agents. Rebrand the look and feel of your helpdesk with your logo and theme by uploading your logo and favicon, giving your help desk a name, and customizing your portal colors.
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
+      info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
+      info4: The 'Edit Portal' option will let you configure the portal for your product.
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -3208,6 +3255,7 @@ en:
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
+  portals_key: Portals
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
@@ -4262,7 +4310,7 @@ en:
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
     page_colors:
-      title: Helpdesk colors
+      title: Helpdesk Colors
       background: Background
       header: Header
       tab_color: Tab Color
@@ -4279,7 +4327,9 @@ en:
     non_us: DAY-MONTH-YEAR
     us: MONTH-DAY-YEAR
     helpdesk_name: Helpdesk/Portal name
+    helpdesk_name_plain: Helpdesk Name
     rebrand: Rebrand your Helpdesk
+    helpdesk: Helpdesk
     helpdesk_url: Helpdesk/Portal URL
     language: Language
     primary_language: Primary Language
@@ -5421,6 +5471,12 @@ en:
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
+      remote_configurations:
+        signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
+        connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
+        disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
+        launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
@@ -6279,6 +6335,7 @@ en:
   helpdesk_reports:
     time_period: Select Time Period
     filter_by: Filter by
+    edit_filter: Filter
     ticket_volume: 
       title: Ticket Volume
       time_trends:
@@ -6484,6 +6541,7 @@ en:
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
       followup: "worth phone credits"
+      followup_text: "worth phone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       could_be_invalid_number: "Could be an invalid number."

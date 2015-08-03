@@ -24,8 +24,8 @@ module Mobile::Controllers::Ticket
         if field.field_type == "default_agent"
           field[:agent_groups] = agent_group_map
         end
-        field[:nested_choices] = field.nested_choices
-        field[:nested_levels] = field.nested_levels
+        field[:nested_choices] = field.nested_field? ? field.nested_choices : nil 
+        field[:nested_levels] = field.nested_field? ? field.nested_levels : nil
         field[:field_value] = field_value
         field[:choices] = field.choices #TODO try to use to_json
         field[:domtype] = dom_type

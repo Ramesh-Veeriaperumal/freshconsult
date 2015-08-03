@@ -1,0 +1,15 @@
+<tr>
+  <td>
+    <div class="portal-logo-center">
+      <%= portal_logo(product.portal) %>
+    </div>
+  </td>
+  <td class="portal-text">
+    <div class="portal-name"><%= pjax_link_to product.name, enable_admin_portal_index_path(:product => product.id) %></div>
+  </td>
+  <td>
+    <div class="pull-right muted">
+      <%= t("admin.products.product.portal_disabled").html_safe %>
+    </div>
+  </td>
+</tr>

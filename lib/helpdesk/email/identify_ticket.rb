@@ -1,6 +1,7 @@
 class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
   attr_accessor :ticket
+  include EmailHelper
 
   IDENTIFICATION_METHODS = ['subject_id_based_ticket', 'assign_header_based_ticket', 'ticket_from_email_body' , 'ticket_from_id_span']
 
@@ -34,7 +35,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def parsed_html
-    @parsed ||= Nokogiri::HTML(email[:html])
+    @parsed ||= run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(email[:html]) }
   end
 
   def check_parent

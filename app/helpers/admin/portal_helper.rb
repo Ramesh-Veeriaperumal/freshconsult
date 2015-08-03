@@ -1,5 +1,13 @@
 module Admin::PortalHelper
-
+	
+	def portal_logo(portal=nil)
+		image_tag (portal && portal.logo) ?
+								portal.logo.content.url(:logo) : spacer_image_url,
+								:on_error => "default_image_error(this)",
+								:"data-type" => "logo",
+								:class => "common-icon-default-logo"
+	end
+	
 	def multiple_feature_radio_btn(group, features, options={})
 		content_tag('div', { :class => "#{group} multiple_radio", :id => "#{group}" }) do
 			op = ""

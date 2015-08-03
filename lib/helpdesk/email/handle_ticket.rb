@@ -11,6 +11,7 @@ class Helpdesk::Email::HandleTicket
   include Helpdesk::Email::NoteMethods
   include Helpdesk::Email::TicketMethods
   include ActionView::Helpers
+  include Helpdesk::DetectDuplicateEmail
 
   attr_accessor :note, :email, :user, :account, :ticket
 
@@ -42,17 +43,32 @@ class Helpdesk::Email::HandleTicket
 
   #-------------------------------------TICKET PART----------------------------------------------
 
-	def create_ticket
+	def create_ticket(start_time)
     create_ticket_object
     check_valid_ticket
     handle_ticket_email_commands if current_agent?
-    build_attachments(ticket)
-    finalize_ticket_save
+    # Creating attachments without attachable info
+    # Hitting S3 outside create-ticket transaction
+    # attachable info will be updated on ticket save
+    self.class.trace_execution_scoped(['Custom/Mailgun/ticket_attachments']) do
+      ticket.attachments = build_attachments(ticket)
+    end
+    self.class.trace_execution_scoped(['Custom/Mailgun/tickets']) do
+      return if large_email(start_time) && duplicate_email?(email[:from][:email],
+                                                            email[:to][:email],
+                                                            email[:subject],
+                                                            email[:message_id][1..-2])
+      finalize_ticket_save
+      mark_email(process_email_key, email[:from][:email],
+                                    email[:to][:email],
+                                    email[:subject],
+                                    email[:message_id][1..-2]) if large_email(start_time)
+    end
 	end
 
   #-------------------------------------NOTE PART-------------------------------------------------
 
-	def create_note
+	def create_note(start_time)
     build_note_object
     begin
       update_ticket_cc
@@ -60,38 +76,47 @@ class Helpdesk::Email::HandleTicket
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end
-    build_attachments(note)
-    # ticket.save
-    note.notable = ticket
-    note.save_note
+    # Creating attachments without attachable info
+    # Hitting S3 outside create-note transaction
+    # attachable info will be updated on note save
+    self.class.trace_execution_scoped(['Custom/Mailgun/note_attachments']) do
+      note.attachments = build_attachments(note)
+    end
+    
+    self.class.trace_execution_scoped(['Custom/Mailgun/notes']) do
+      note.notable = ticket
+      return if large_email(start_time) && duplicate_email?(email[:from][:email],
+                                                            email[:to][:email],
+                                                            email[:subject],
+                                                            email[:message_id][1..-2])
+      note.save_note
+      cleanup_attachments note
+      mark_email(process_email_key, email[:from][:email],
+                                    email[:to][:email],
+                                    email[:subject],
+                                    email[:message_id][1..-2]) if large_email(start_time)
+    end
 	end
 
 #-------------------------------------ATTACHMENTS PART--------------------------------------------
 
 	def build_attachments item
+    attachments = []
     content_id_hash = {}
     email[:attached_items].each_with_index do |(key,attached),i|
-      file = create_attachment(item, "attachment-#{i+1}")
-      content_id_hash[file.content_file_name+"#{i}"] = cid(i) if file.is_a? Helpdesk::Attachment and cid(i)
+      att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i))
+      if att.is_a? Helpdesk::Attachment
+        content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
+        attachments.push att
+      end
     end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
+    attachments
 	end
 
   # Content-id for inline attachments
   def cid(i)
     email[:content_ids]["attachment-#{i+1}"]
-  end
-
-  def create_attachment item, attachment_name
-    begin
-      create_attachment_from_params(item, attachment_params(attachment_name), nil,
-                                    attachment_name, {:attachment_limit => HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE})
-    rescue HelpdeskExceptions::AttachmentLimitException => ex
-      Rails.logger.error("ERROR ::: #{ex.message}")
-      add_notification_text item
-    rescue Exception => e
-      Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-    end
   end
 
   def add_notification_text item

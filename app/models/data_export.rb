@@ -18,10 +18,10 @@ class DataExport < ActiveRecord::Base
                     :completed => 4 }
 
 
-  scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }
+  scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
   scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
-  scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }
-  scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }
+  scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }, :order => "id"
+  scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }, :order => "id"
   scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
 
   def owner?(downloader)
