@@ -118,7 +118,13 @@
         .on("change", function(e){
           var id = jQuery("option:selected", this).data("id");
           jQuery('div.ticket_section').remove();
-          jQuery(jQuery('.picklist_section_'+id).val().replace(new RegExp('&lt', 'g'), '<').replace(new RegExp('&gt', 'g'), '>')).insertAfter(jQuery("#helpdesk_ticket_ticket_type").parents('.control-group'));
+          var element = jQuery('.picklist_section_'+id).parent();
+          if(element.length != 0) {
+            jQuery(jQuery('.picklist_section_'+id).val()
+                  .replace(new RegExp('&lt', 'g'), '<')
+                  .replace(new RegExp('&gt', 'g'), '>'))
+                .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parents('.control-group'));
+          }
       });
     }); 
 
