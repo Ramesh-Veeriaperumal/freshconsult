@@ -572,15 +572,15 @@ GEM
     ipaddress (0.8.0)
     jammit (0.6.5)
       yui-compressor (>= 0.9.3)
-    jbuilder (2.2.13)
-      activesupport (>= 3.0.0, < 5)
-      multi_json (~> 1.2)
     jasmine (2.2.0)
       jasmine-core (~> 2.2)
       phantomjs
       rack (>= 1.2.1)
       rake
     jasmine-core (2.2.0)
+    jbuilder (2.2.13)
+      activesupport (>= 3.0.0, < 5)
+      multi_json (~> 1.2)
     jira4r (0.3.0)
       soap4r
     jmespath (1.0.2)
@@ -588,8 +588,8 @@ GEM
     journey (1.0.4)
     json (1.8)
     json-compare (0.1.8)
-    json_pure (1.8.2)
     json_expressions (0.8.3)
+    json_pure (1.8.2)
     jwt (1.0.0)
     koala (1.10.1)
       addressable
@@ -712,6 +712,8 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-nav (0.2.4)
+      pry (>= 0.9.10, < 0.11.0)
     rack-cache (1.2)
       rack
       rack (>= 0.4)
@@ -1025,8 +1027,8 @@ DEPENDENCIES
   insensitive_hash (= 0.2.3)
   ipaddress (= 0.8.0)
   jammit (= 0.6.5)
-  jbuilder (= 2.2.13)
   jasmine
+  jbuilder (= 2.2.13)
   jira4r (= 0.3.0)
   json (~> 1.8)
   json-compare (= 0.1.8)
@@ -1072,6 +1074,7 @@ DEPENDENCIES
   prototype-rails (~> 3.2.0)
   prototype_legacy_helper (= 0.0.0)!
   pry
+  pry-nav
   rack!
   rack-cors (~> 0.3.1)
   rack-mini-profiler

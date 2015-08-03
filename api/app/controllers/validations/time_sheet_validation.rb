@@ -57,7 +57,7 @@ class TimeSheetValidation < ApiValidation
     end
 
     def valid_user?
-      user = Account.current.agents_from_cache.find { |x| x.user_id == @user_id } if @user_id_set
+      user = Account.current.agents_from_cache.detect { |x| x.user_id == @user_id } if @user_id_set
       errors.add(:user_id, :blank) unless user
     end
 

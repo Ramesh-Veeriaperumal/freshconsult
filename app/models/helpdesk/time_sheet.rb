@@ -100,7 +100,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
 
-  def self.filter(filter_options=DEFAULT_FILTER_OPTIONS)
+  def self.filter(filter_options=FILTER_OPTIONS)
     relation = scoped
     filter_options.each_pair do |key, value|
       clause = filter_conditions(filter_options)[key.to_sym] || {}
@@ -109,7 +109,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     relation
   end
 
-  def self.filter_conditions(filter_options=DEFAULT_FILTER_OPTIONS)
+  def self.filter_conditions(filter_options=FILTER_OPTIONS)
     {
       billable: {
         conditions: { billable: filter_options[:billable].to_s.to_bool }

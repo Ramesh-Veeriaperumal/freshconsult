@@ -18,7 +18,6 @@ class TicketsController < ApiApplicationController
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      set_custom_errors
       render_error(@item.errors)
     end
   end
@@ -34,7 +33,6 @@ class TicketsController < ApiApplicationController
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
-      set_custom_errors
       render_error(@item.errors)
     end
   end
@@ -171,8 +169,8 @@ class TicketsController < ApiApplicationController
       @item.account = current_account
       @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
       @item.cc_email = @cc_emails
-      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-      @item.attachments += (attachments || []) if create? # assign attachments so that it will not be queried again in model callbacks
+      build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
     end
 
     def verify_ticket_permission

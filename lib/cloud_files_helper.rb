@@ -19,7 +19,6 @@ module CloudFilesHelper
 		(attachments || []).each do |attach|
       model.attachments.build(:content => attach[:resource], :description => attach[:description], :account_id => model.account_id)
     end
-    return model.attachments
 	end
 
 	def build_cloud_files_attachments model,attachments

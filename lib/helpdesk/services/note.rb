@@ -14,8 +14,6 @@ module Helpdesk
       end
 
       def update_note_attributes(attributes)
-        #Needed for API if params has only body instead body_html
-        assign_element_html(attributes[:note_body_attributes], "body", "full_text") if attributes[:note_body_attributes]
         attributes = sanitize_body_hash(attributes,:note_body_attributes,"body","full_text") if(attributes)
         self.update_attributes(attributes)
       end

@@ -20,7 +20,7 @@ class TicketFilterValidation < ApiValidation
   end
 
   def check_company
-    company = Account.current.companies_from_cache.find { |c| c.id == @company_id.to_i }
+    company = Account.current.companies_from_cache.detect { |c| c.id == @company_id.to_i }
     errors.add(:company_id, "can't be blank") unless company
   end
 end

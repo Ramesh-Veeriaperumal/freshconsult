@@ -27,6 +27,7 @@ class NotesController < ApiApplicationController
 
   def update
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+    @item.assign_element_html(params[cname][:note_body_attributes], "body", "full_text") if params[cname][:note_body_attributes]
     unless @item.update_note_attributes(params[cname])
       render_error(@item.errors)
     end
@@ -66,7 +67,7 @@ class NotesController < ApiApplicationController
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
       @item.notable.account = current_account
       attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-      @item.attachments =  attachments.present? ? attachments : [] # assign attachments so that it will not be queried again in model callbacks
+      @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
       @item.save_note
     end
 
