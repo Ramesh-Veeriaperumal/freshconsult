@@ -104,10 +104,19 @@ class Helpdesk::Email::HandleTicket
     attachments = []
     content_id_hash = {}
     email[:attached_items].each_with_index do |(key,attached),i|
-      att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i))
-      if att.is_a? Helpdesk::Attachment
-        content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
-        attachments.push att
+      begin
+        att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i))
+        if att.is_a? Helpdesk::Attachment
+          content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
+          attachments.push att
+        end
+      rescue HelpdeskExceptions::AttachmentLimitException => ex
+        Rails.logger.error("ERROR ::: #{ex.message}")
+        add_notification_text item
+        break
+      rescue Exception => e
+        Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
+        break
       end
     end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
