@@ -10,7 +10,7 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         show: 1,
         update: 7,
         index: 0,
-        destroy: 11
+        destroy: 10
       }
 
       # create
