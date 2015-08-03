@@ -71,7 +71,7 @@ window.App.Solutions = window.App.Solutions || {};
 						$this.showSearch();
 						$this.enableBulkAction();
 						// App.Discussions.Sidebar.reload();
-						$('body').trigger('reordered');
+						$('body').trigger('reorder');
 					}
 				});
 				var url = $this.submitUrl;
