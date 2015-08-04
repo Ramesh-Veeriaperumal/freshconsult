@@ -22,7 +22,6 @@ class Portal < ActiveRecord::Base
   before_save :update_portal_forum_categories
   before_save :save_route_info
   after_destroy :destroy_route_info
-  before_save :add_default_solution_category
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -284,10 +283,5 @@ class Portal < ActiveRecord::Base
     def destroy_route_info(old_portal_url = portal_url)
       Rails.logger.info "Deleting #{old_portal_url} route."
       delete_route_info(old_portal_url) unless old_portal_url.blank?
-    end
-
-    def add_default_solution_category
-      default_category = Account.current.solution_categories.find_by_is_default(true)
-      self.solution_category_ids = self.solution_category_ids | [default_category.id]
     end
 end
