@@ -288,7 +288,8 @@ class Solution::ArticlesController < ApplicationController
       if (@draft.blank? || (@draft.user == current_user))
         @draft = @article.build_draft_from_article if @draft.blank?
         unless update_draft_attributes
-          flash[:error] = show_draft_errors || t('solution.articles.draft.save_error')
+          show_draft_errors
+          flash[:error] ||= t('solution.articles.draft.save_error')
           redirect_to solution_article_path(@article.id, :anchor => "edit")
           return
         end    
@@ -380,8 +381,9 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def show_draft_errors
-      if @article.draft.present? && @article.draft.errors.present?
-        flash[:error] = @article.draft.errors.full_messages.join("<br />\n").html_safe
+      draft = @article.draft || @draft
+      if draft.present? && draft.errors.present?
+        flash[:error] = draft.errors.full_messages.join("<br />\n").html_safe
       end
     end
 

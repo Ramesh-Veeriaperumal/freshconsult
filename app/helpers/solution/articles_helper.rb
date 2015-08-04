@@ -106,8 +106,8 @@ module Solution::ArticlesHelper
     else
       output << submit_tag(t('cancel'), :class => "btn cancel-button", :id => "edit-cancel-button")
     end
-    output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => save_btn || "save-as-draft-btn")
-    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn")
+    output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => save_btn || "save-as-draft-btn", :"data-target-btn" => "#save-as-draft-btn")
+    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn", :"data-target-btn" => "#article-publish-btn")
     output.join(' ').html_safe
   end
   

@@ -5,7 +5,8 @@
                 :multipart => true, 
                 :id => "article-form", 
                 :class => "article-edit-form form-horizontal",
-                :data => form_data_attrs
+                :data => form_data_attrs,
+                :rel => :validate
               } do |f| %>
     <%= f.error_messages %>
     <div class="row-fluid">

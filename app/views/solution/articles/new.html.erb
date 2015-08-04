@@ -1,6 +1,6 @@
 <% content_for :layoutType do %>community solutions<% end %>
 <% content_for :sticky_right do %>
-	<%= article_btns %>
+	<%= article_btns('save-btn', 'publish-btn') %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', 
            :locals => { :page => :article, :sticky_class => 'article-sticky'} %>

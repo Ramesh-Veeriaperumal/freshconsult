@@ -3568,6 +3568,9 @@ en:
       article_prop: Article Properties
       feedback: Feedback
       analytics: Analytics
+      unsaved_content: You have unsaved content in this page.
+      leave_page_que: Do you want to leave this page?
+      something_wrong: Something went wrong!
     folders:
       view_all: "View all folders..."
       choose_folder: Choose folder

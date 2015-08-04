@@ -9,20 +9,21 @@ window.App = window.App || {};
     
     data: {},
 
+    STRINGS: {},
+
     autoSave: null,
 
     onVisit: function (data) {
       
       if (App.namespace === "solution/articles/new") {
         this.eventsForNewPage();
+      } else {
+        this.resetData();
+        this.setDataFromPage();
+        this.bindHandlers();
+        this.handleEdit();
+        highlight_code();
       }
-			
-      this.resetData();
-      this.setDataFromPage();
-      this.bindHandlers();
-      this.handleEdit();
-      this.formValidate();
-      highlight_code();
     },
     
     onLeave: function (data) {
@@ -56,24 +57,30 @@ window.App = window.App || {};
 
     bindHandlers: function () {
       var $this = this;
-      this.bindForMasterVersion();
+      // this.bindForMasterVersion();
+      this.editArticleEventBindings();
+      this.dummyActionButtonTriggers();
+
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
         $('.info-data').remove();
       });
-      this.editArticleEventBindings();
+
       $('body').on('click.articles', '.article-history .ellipsis', function () {
         $('.created-history').toggleClass('hide');
         $('.article-history .ellipsis').toggleClass('hide');
       });
+
       $('body').on('modal_loaded.articles', function () {
         $this.setTagSelector();
       });
-      $('body').on('click.articles', '#save-btn', function () {
-        $('#save-as-draft-btn').trigger('click');
-      });
-      $('body').on('click.articles', '#publish-btn', function () {
-        $('#article-publish-btn').trigger('click');
+    },
+
+    dummyActionButtonTriggers: function () {
+      console.log("inside dummy");
+      $('body').on('click.articles', '#save-btn, #publish-btn', function () {
+        var targetBtn = $(this).data().targetBtn;
+        $(targetBtn).trigger('click');
       });
     },
 		
@@ -83,7 +90,6 @@ window.App = window.App || {};
     
     startEditing: function () {
       $('#solution_article_title').focus();
-      $('.sub-content.article-edit').html($('.sub-content.article-view').html());
       this.setFormValues();
       this.toggleViews();
 
@@ -95,8 +101,6 @@ window.App = window.App || {};
       }
       this.editUrlChange(true);
       this.attachmentsDelEvents();
-      //Disable save and publish buttons until we start editing
-      // $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').addClass('disabled');
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
     },
@@ -112,41 +116,44 @@ window.App = window.App || {};
       $('#solution_article_title').val(this.data.title);
       $('#solution_article_description').setCode(this.data.description);
     },
-    
-    bindForMasterVersion: function () {
-      var $this = this;
-      $(window).on('resize.articles', function () {
-        $('.masterversion').height(parseInt($(document).height(), 10));
-      }).trigger('resize.article');
 
-      $('body').on('click.articles', '.masterversion-link', function () {
-        $this.animateMasterver(35);
-        $(this).addClass('disable');
-      });
+    //This is for Multi-lingual
 
-      $('body').on('click.articles', '.close-link', function () {
-        $this.animateMasterver(470);
-        $('.masterversion-link').removeClass('disable');
-      });
-    },
+    // bindForMasterVersion: function () {
+    //   var $this = this;
+    //   $(window).on('resize.articles', function () {
+    //     $('.masterversion').height(parseInt($(document).height(), 10));
+    //   }).trigger('resize.article');
 
-    animateMasterver: function (distance) {
-      if ($('html').attr('dir') === 'rtl') {
-        $('.master-content').animate({
-          right: distance
-        });
-      } else {
-        $('.master-content').animate({
-          left: distance
-        });
-      }
-    },
+    //   $('body').on('click.articles', '.masterversion-link', function () {
+    //     $this.animateMasterver(35);
+    //     $(this).addClass('disable');
+    //   });
+
+    //   $('body').on('click.articles', '.close-link', function () {
+    //     $this.animateMasterver(470);
+    //     $('.masterversion-link').removeClass('disable');
+    //   });
+    // },
+
+    // animateMasterver: function (distance) {
+    //   if ($('html').attr('dir') === 'rtl') {
+    //     $('.master-content').animate({
+    //       right: distance
+    //     });
+    //   } else {
+    //     $('.master-content').animate({
+    //       left: distance
+    //     });
+    //   }
+    // },
     
     eventsForNewPage: function () {
       this.bindPropertiesToggle();
       this.formatSeoMeta();
-      this.formValidate();
       this.setTagSelector();
+      this.dummyActionButtonTriggers();
+      this.unsavedContentNotif();
     },
     
     bindPropertiesToggle: function () {
@@ -171,9 +178,6 @@ window.App = window.App || {};
       var $this = this;
       $('body').on('submit.articles', '#article-form', function (ev) {
         var validation = $('#article-form').valid();
-        if (validation && !$.isEmptyObject($this.autoSave)) {
-          $this.autoSave.stopSaving();
-        }
         return validation;
       });
     },
@@ -196,11 +200,11 @@ window.App = window.App || {};
       $('#cancel_draft_changes_input').prop('disabled', false);
       //request for submitting serialized form if a draft already existed
       var form_submit = {
-        type: 'POST',
-        data: $('.article-edit-form').serialize(),
-        dataType: "script"
-      },
-      //request for discarding draft if a draft didn't exist initially
+          type: 'POST',
+          data: $('.article-edit-form').serialize(),
+          dataType: "script"
+        },
+        //request for discarding draft if a draft didn't exist initially
 				draft_discard = {
 					type: 'DELETE',
 					url: $('.article-edit-form').data().draftDiscardUrl,
@@ -209,13 +213,14 @@ window.App = window.App || {};
 				handlers = {
 					success: function () {
 						console.log('Cancel success');
-          //TODO What all to do in cancel request
+            //TODO What all to do in cancel request
 					},
 					error: function () {
 						console.log('Cancel error');
 					}
 				},
 				request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit));
+
       //Only if a single autosave is success should we reverse the changes done
       if (this.autoSave.successCount > 0) {
         $.ajax(request);
@@ -247,33 +252,12 @@ window.App = window.App || {};
     },
 
     editArticleEventBindings: function () {
-      if (App.namespace != "solution/articles/new") {
-        this.bindForCancel();
-      }
+      this.bindForCancel();
       this.unsavedContentNotif();
       if (this.data.defaultFolder) {
         this.defaultFolderValidate();
       }
-      //enabling save, publish buttons on content change
-      // var $this = this;
-      // $('body').on('redactor:sync.articles.btnsEnable', '#solution_article_description', $this.enableBtnsCheck.bind(this));
-      // $('body').on('keyup.articles.btnsEnable', '#solution_article_title', $this.enableBtnsCheck.bind(this));
-      // $('body').on('change.articles.btnsEnable', '.hidden_upload, .list_element, .article-edit #article-attach-container', function () {
-      //   $this.enableBtnsOnContentChange();
-      // });
     },
-
-    // enableBtnsOnContentChange: function () {
-    //   $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').removeClass('disabled');
-    //   $('body').off('articles.btnsEnable');
-    // },
-
-    // enableBtnsCheck: function (e) {
-    //   var el = $(e.target)
-    //   if(el.data().previousSavedData && el.val() != el.data().previousSavedData) {
-    //     this.enableBtnsOnContentChange();
-    //   }
-    // },
 
     autosaveDomManipulate: function (response) {
 
@@ -363,7 +347,6 @@ window.App = window.App || {};
       if (this.autoSave && !this.autoSave.lastSaveStatus) {
         return false;
       }
-      // return (this.autoSave.contentChanged || ($(".hidden_upload input").length > 1));
       return ($(".hidden_upload input").length > 1);
     },
 
@@ -382,6 +365,9 @@ window.App = window.App || {};
       });
 
       $('body').on('submit.articles', '.article-edit-form', function () {
+        if (!$.isEmptyObject($this.autoSave)) {
+          $this.autoSave.stopSaving();
+        }
         $(window).off('beforeunload.articles');
       });
 
@@ -406,6 +392,7 @@ window.App = window.App || {};
         return true;
       });
     },
+
     setTagSelector: function () {
       var previouslyselectedTags = [];
       $('.article-tags').val().split(',').each(function (item, i) { previouslyselectedTags.push({ id: item, text: item }); });
