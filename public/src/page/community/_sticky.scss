@@ -60,7 +60,7 @@
 }
 
 /* Solution search */
-.sticky_search_wrap{
+.sticky_search_wrap {
 	position: absolute;
 	width: 100%;
 	@include left(0);
@@ -96,5 +96,20 @@
 		top: 27px;
 		font-size: 22px;
 		color: #565656;
+	}
+
+	.community-search::-webkit-input-placeholder {
+		font-weight: 300;
+		font-size: 16px;
+	}
+
+	.community-search::-moz-placeholder {
+		font-weight: 300;
+		font-size: 16px;
+	}
+
+	.community-search::-ms-input-placeholder {
+	  font-weight: 300;
+		font-size: 16px;
 	}
 }

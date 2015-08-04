@@ -10,49 +10,7 @@
   height: 6px;
   border-radius: 50%;
 }
-.solution{
-  .bread-crumb{
-    border-bottom: 1px solid #eee;
-    margin: 0px -20px;
-    padding: 0px 20px 10px;
-    a{
-      color: #1272de;
-      font-size: 13px;
-      &:not(:last-child):after {
-        content: '/';
-        color: #aaa;
-        padding: 0 7px;
-      }
-      .active{
-        color: #333;
-      }
-    }
-  }
-  #article-form {
-    #editortool {
-      .redactor_toolbar {
-        background: none;
-      }
-    }
-    .attachment_list {
-      .new_attachment {
-        .attach_content {
-          a {
-            color: black;
-            cursor: default;
-          }
-        }
-      }
-    }
-  }
-  .article-view {
-    #current-article-title {
-      font-size: 20px;
-      margin-bottom: 10px;
-      padding-top: 5px;
-    }
-  }
-}
+
 .solution-header{
   /*padding-top: 10px;*/
   background: #fff;
@@ -341,140 +299,6 @@
     font-size: 13px;
   }
 }
-/*Solution overlay*/
-#article-prop{
-  p{
-    margin: 0;
-  }
-  .formdesc{
-    margin-top: 3px;
-  }
-  .unpublish-label{
-    color: #333;
-    font-family: 13px;
-    font-weight: bold;
-  }
-  .publish-settings{
-    padding-top: 15px;
-  }
-}
-
-
-
-.article-edit{
-  .editor-body{
-    /*margin: 0px -15px;*/
-    width:100%;
-    box-sizing: border-box;
-    @include float(left);
-    min-height: 220px;
-    .redactor_box{
-      border: 0;
-      .redactor_editor {
-        min-height: 200px;
-        padding: 15px 0px !important;
-      }
-      .redactor_toolbar {
-        background: none;
-        border: none;
-      }
-    }
-  }
-  .article-title{
-    border: none;
-    box-shadow: none;
-    font-size: 20px;
-    color: #333;
-    font-weight: 300;
-    height: 25px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    border-radius: 0;
-    @include padding-left(0px);
-    width: 100%;
-
-    &:focus{
-      box-shadow: none;
-    }
-  }
-  .select-folder{
-    margin-bottom: 20px;
-    .folder-warning-msg {
-      color: brown;
-    }
-    .control-label {
-      @include float(left);
-      width: 130px;
-      padding-top: 5px;
-      font-weight: 500;
-    }
-    .controls{
-      @include margin-left(150px);
-      input, textarea {
-        margin-bottom: 0px;
-      }
-    }
-    .control-label, controls {
-      display: inline;
-    }
-  }
-  .attachments-wrap {
-    .attachments-container {
-      span {
-        &.info-data {
-          position: relative;
-          top: 6px;
-          @include left(-15px);
-        }
-      }
-    }
-  }
-  .action-btns-container {
-    margin-top: 15px;
-  }
-}
-
-/* For likes and dislikes voted popups */
-#article-likes, #article-dislikes {
-  .voted-user{
-    
-    width: 100%;
-    overflow: hidden;
-    border-bottom: 1px solid lightgrey;
-    margin-bottom: 5px;
-    padding-bottom: 3px;
-
-    .avatar-wrap {
-      @include float(left);
-    }
-    .user-name {
-      @include float(left);
-      margin-top: 5px;
-    }
-    .anonymous {
-      @include margin-left(-8px);
-    }
-  }
-}
-
-.draft-notif {
-  .error{
-    background-color: #C6656F;
-    color: white;
-    .btn-small{
-      background: #F8EFF0;
-    }
-    .draft-btn {
-      display:none;
-    }
-    .preview-draft-link {
-      color: white;
-    }
-    a {
-      color: white;
-    }
-  }
-}
 
 .orphan-cat-info {
   color: #DF013A;
@@ -496,107 +320,6 @@
 
 .sol-list {
   width: 100%;
-}
-
-/* Draft listing view */
-
-#drafts-section {
-  
-  .solution-drafts {
-    
-    overflow: hidden;
-    border-top: 1px solid #ccc;
-    margin: 0px -20px 10px;
-    padding: 0px 20px;
-    
-    .draft_info_data {
-      margin-top: 15px;
-      font-size: 15px;
-      color: #888;
-    }
-
-    .draft-list-item {
-        
-      padding: 10px 0px;
-      border-bottom: 1px solid #eee;
-      line-height: 1.8em;
-      @include margin-left(0px);
-      
-      .parent-link {
-        color: rgb(51, 51, 51);
-      }
-
-      .draft-title {
-        font-weight: 400; 
-        font-size: 14px;
-      }
-
-      .draft-icon-file {
-        color: #bbb;
-      }
-
-      .draft-icon-mail {
-        color: #bbb;
-      }
-    }
-  } 
-}
-
-.draft-listing-header {
-  .item {
-    @include margin-right(20px);
-    padding-bottom: 8px;
-    display: inline-block;
-  }
-  .heading {
-    font-size: 16px;
-    font-weight: 400;
-  }
-  .active {
-    border-bottom: 3px solid #CCCCCC;
-    color: #444;
-  }
-  .portal-selector {
-    @include margin-right(20px);
-  }
-
-  .portal-menu {
-    font-weight: 400;
-    font-size: 13px;
-    min-width: 250px;
-  }
-
-  .drop-right {
-    color: #222;
-  }
-
-  .sticky_left {
-    margin-top: -5px;
-  }
-}
-
-.community-search::-webkit-input-placeholder {
-	font-weight: 300;
-	font-size: 16px;
-}
-
-.community-search::-moz-placeholder {
-	font-weight: 300;
-	font-size: 16px;
-}
-
-.community-search::-ms-input-placeholder {
-  font-weight: 300;
-	font-size: 16px;
-}
-
-.solution-content {
-  .article-edit {
-    .article-title {
-      @include padding-left(0px);
-      padding-bottom: 10px;
-    }
-  }
 }
 
 .solution-list {
@@ -725,12 +448,6 @@ body.community #sticky_header.category-sticky.is_stuck {
   }
 }
 
-.draft-notif {
-  .autosave-notif, .article-view-edit {
-    box-shadow: none;
-  }
-} 
-
 .empty-category {
   @include margin-left(20px);
 }
@@ -739,16 +456,14 @@ body.community #sticky_header.category-sticky.is_stuck {
   font-size: 12px;
 }
 
-.article-view .article-title {
-  border-bottom: 1px solid #eee;
-  border-radius: 0;
+.solution-icon {
+  @include margin-right(10px);
+  display: inline-block;
+  @include float(left);
 }
 
-.article-edit textarea {
-  z-index: 5;
-  box-sizing: border-box;
-  padding: 10px;
-  border: solid 1px #EEE;
+.sol-details-right .dropdown-menu {
+  min-width: 140px;  
 }
 
 .solution-home-header .dropdown-menu {
@@ -764,41 +479,6 @@ body.community #sticky_header.category-sticky.is_stuck {
   margin-top: 3px;
 }
 
-.article-properties-edit {
- border-top: 1px solid #CCC;
-}
-
-#solution_article_art_type_1, #solution_article_art_type_2 {
-  margin-top:-2px;
-}
-
 .author-dropdown {
   width: 200px;
-}
-
-.article-view .attachment_wrapper {
-  border-top: 1px solid #eee;
-}
-
-.community-search .article-icon {
-  padding: 7px;
-  border-radius: 5px;
-  @include margin-right(10px);
-  @include float(left);
-  color: #FFFFFF;
-  background-color: #D8DBDF;  
-}
-
-.article-search-meta {
-  padding-top: 5px;
-  margin-bottom: -5px;
-  margin-top: 6px;
-  @include padding-right(15px); 
-}
-
-.article-list-meta {
-  padding-top: 7px;
-  margin-bottom: -7px;
-  margin-top: 6px;
-  @include padding-right(15px); 
 }
