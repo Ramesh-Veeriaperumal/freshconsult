@@ -270,6 +270,10 @@ protected
         page << "if(document.getElementById('cnt-reply-quoted')){"
         page.replace_html 'cnt-reply-quoted', h(quoted_text(@parent)) if @parent
         page << "}"
+      else
+        if @items.present?
+          page << "trigger_event('attachment_deleted', {attachment_id: #{@items[0].id}, attachment_type: '#{@items[0].class.name.split('::')[1].underscore}'});"
+        end
       end
       show_ajax_flash(page)
     }

@@ -19,7 +19,7 @@ class Solution::Draft < ActiveRecord::Base
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
 
-  before_save :populate_defaults
+  before_validation :populate_defaults
   before_destroy :discard_notification
 
   attr_protected :account_id, :status, :user_id

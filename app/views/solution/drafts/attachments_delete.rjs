@@ -1,6 +1,5 @@
-show_growl_flash(page)
-page << "jQuery('.article-view #helpdesk_#{params[:attachment_type]}_#{@attachment.id}').remove();"
-page << "jQuery('.article-edit #helpdesk_#{params[:attachment_type]}_#{@attachment.id}').fadeOut('slow');"
-page << "window.autoSaveArticleDraft.opts.extraParams.timestamp = #{@draft.updation_timestamp}"
+show_ajax_flash(page)
+page << "trigger_event('attachment_deleted', {attachment_id: #{@attachment.id}, attachment_type: '#{params[:attachment_type]}'});"
+page << "App.Solutions.Article.autoSave.opts.extraParams.timestamp = #{@draft.updation_timestamp}"
 page << "jQuery('#article-form').data().timestamp = #{@draft.updation_timestamp};"
 page << "jQuery('#last-updated-at').val(#{@draft.updation_timestamp});"

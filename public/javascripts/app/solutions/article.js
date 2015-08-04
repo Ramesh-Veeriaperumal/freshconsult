@@ -94,10 +94,18 @@ window.App = window.App || {};
         this.autosaveInitialize();
       }
       this.editUrlChange(true);
+      this.attachmentsDelEvents();
       //Disable save and publish buttons until we start editing
-      $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').addClass('disabled');
+      // $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').addClass('disabled');
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
+    },
+
+    attachmentsDelEvents: function () {
+      $(document).on('attachment_deleted', function(ev, data){
+        $(".article-view #helpdesk_" + data.attachment_type + "_" + data.attachment_id).remove();
+        $(".article-edit #helpdesk_" + data.attachment_type + "_" + data.attachment_id).fadeOut(500, function(){ $(this).remove(); });
+      });
     },
     
     setFormValues: function () {
@@ -246,27 +254,26 @@ window.App = window.App || {};
       if (this.data.defaultFolder) {
         this.defaultFolderValidate();
       }
-      var $this = this;
-
-      $('body').on('redactor:sync.articles.btnsEnable', '#solution_article_description', $this.enableBtnsCheck.bind(this));
-      $('body').on('keyup.articles.btnsEnable', '#solution_article_title', $this.enableBtnsCheck.bind(this));
-
-      $('body').on('change.articles.btnsEnable', '.hidden_upload, .list_element', function () {
-        $this.enableBtnsOnContentChange();
-      });
+      //enabling save, publish buttons on content change
+      // var $this = this;
+      // $('body').on('redactor:sync.articles.btnsEnable', '#solution_article_description', $this.enableBtnsCheck.bind(this));
+      // $('body').on('keyup.articles.btnsEnable', '#solution_article_title', $this.enableBtnsCheck.bind(this));
+      // $('body').on('change.articles.btnsEnable', '.hidden_upload, .list_element, .article-edit #article-attach-container', function () {
+      //   $this.enableBtnsOnContentChange();
+      // });
     },
 
-    enableBtnsOnContentChange: function () {
-      $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').removeClass('disabled');
-      $('body').off('articles.btnsEnable');
-    },
+    // enableBtnsOnContentChange: function () {
+    //   $('#save-as-draft-btn, #save-btn, #article-publish-btn, #publish-btn').removeClass('disabled');
+    //   $('body').off('articles.btnsEnable');
+    // },
 
-    enableBtnsCheck: function (e) {
-      var el = $(e.target)
-      if(el.data().previousSavedData && el.val() != el.data().previousSavedData) {
-        this.enableBtnsOnContentChange();
-      }
-    },
+    // enableBtnsCheck: function (e) {
+    //   var el = $(e.target)
+    //   if(el.data().previousSavedData && el.val() != el.data().previousSavedData) {
+    //     this.enableBtnsOnContentChange();
+    //   }
+    // },
 
     autosaveDomManipulate: function (response) {
 
