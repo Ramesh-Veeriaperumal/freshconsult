@@ -13,12 +13,13 @@ class Helpdesk::Email::HandleTicket
   include ActionView::Helpers
   include Helpdesk::DetectDuplicateEmail
 
-  attr_accessor :note, :email, :user, :account, :ticket
+  attr_accessor :note, :email, :user, :account, :ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
 
   def initialize email, user, account, ticket=nil
     self.email = email 
+    self.original_sender = email[:from][:email]
     #the param hash is a shallow duplicate. Reference to hashes and arrays inside are to the common_email_data in process.rb. 
     #Any changes here can reflect there.
     self.user = user
