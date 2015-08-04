@@ -33,6 +33,9 @@ class Survey < ActiveRecord::Base
   belongs_to :account
   has_many :survey_handles, :dependent => :destroy
   has_many :survey_results, :dependent => :destroy
+
+  xss_sanitize :only => [:link_text, :happy_text, :neutral_text , :unhappy_text], 
+               :plain_sanitizer => [:link_text, :happy_text, :neutral_text , :unhappy_text ]
   
   def can_send?(ticket, s_while)    
     ( account.features?(:surveys, :survey_links) && ticket.requester && 

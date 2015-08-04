@@ -63,7 +63,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     #Need to think about another way of handling this
     if params[:time_entry][:workable_id].blank? #this will be always present when called from portal's 'Add Time'
       check_ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless params[:ticket_id].nil?
-      unless check_ticket.blank?
+      unless check_ticket.nil?
         params[:time_entry][:workable_id] = check_ticket.id
       else
           raise ActiveRecord::RecordNotFound

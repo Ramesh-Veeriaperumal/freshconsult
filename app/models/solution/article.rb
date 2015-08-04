@@ -36,7 +36,7 @@ class Solution::Article < ActiveRecord::Base
   acts_as_list :scope => :folder
   
 
-  before_save     :set_mobihelp_solution_updated_time, :if => :content_changed?
+  after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
   before_destroy  :set_mobihelp_solution_updated_time
 
   validates_presence_of :title, :description, :user_id , :account_id
@@ -240,7 +240,7 @@ class Solution::Article < ActiveRecord::Base
     end
 
     def content_changed?
-      all_fields = [:title, :description, :status, :position]
+      all_fields = [:modified_at, :status, :position]
       changed_fields = self.changes.symbolize_keys.keys
       (changed_fields & all_fields).any? or tags_changed
     end

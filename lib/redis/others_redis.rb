@@ -71,4 +71,16 @@ module Redis::OthersRedis
 	def get_others_redis_lrem(key, value, all=0)
 		newrelic_begin_rescue { $redis_others.lrem(key,all,value) }
 	end
+	
+	def ismember?(key, value)
+		newrelic_begin_rescue { $redis_others.sismember(key, value) }
+	end
+	
+	def set_others_redis_hash(key, value)
+		newrelic_begin_rescue { $redis_others.mapped_hmset(key,value) }
+	end
+
+	def get_others_redis_hash(key)
+		newrelic_begin_rescue { $redis_others.hgetall(key) }
+	end
 end

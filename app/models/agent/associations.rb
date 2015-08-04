@@ -26,6 +26,6 @@ class Agent < ActiveRecord::Base
           :dependent => :delete_all
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key =>'responder_id', 
-          :primary_key => "user_id", :dependent => :nullify
+          :primary_key => "user_id"
 
 end

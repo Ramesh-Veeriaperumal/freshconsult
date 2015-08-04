@@ -1,0 +1,11 @@
+<div class="row-fluid survey-response-row">
+	<div class="span2">
+		<%= JST["survey/reports/template/response_user_info"]({user:remark.customer})%>
+	</div>
+	<div class="span7">
+		<%= JST["survey/reports/template/content_response_msg"]({msg:remark.msg,agent:remark.agent,ticket:remark.ticket,group:remark.group})%>
+	</div>
+	<div class="span3 align-right">
+		<%= JST["survey/reports/template/content_response_rating"]({rating:remark.rating})%>
+	</div>
+</div>

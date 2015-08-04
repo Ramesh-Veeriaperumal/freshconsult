@@ -8,13 +8,14 @@ class Helpdesk::Note < ActiveRecord::Base
   include Mobile::Actions::Note
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
+  include BusinessHoursCalculation
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
 
   self.table_name =  "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
   text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id"
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text
@@ -26,6 +27,8 @@ class Helpdesk::Note < ActiveRecord::Base
            :dependent => :destroy
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
+
+  delegate :to_emails, :cc_emails, :bcc_emails, :subject, :to => :schema_less_note
 
   scope :newest_first, :order => "created_at DESC"
   scope :visible, :conditions => { :deleted => false } 
@@ -111,6 +114,10 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def tweet?
     source == SOURCE_KEYS_BY_TOKEN["twitter"]    
+  end
+  
+  def fb_note?
+    source == SOURCE_KEYS_BY_TOKEN["facebook"]
   end
   
   def feedback?
@@ -209,7 +216,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary].include? attribute.to_sym
+    return false if [:empty?, :to_ary].include? attribute.to_sym
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
@@ -221,6 +228,7 @@ class Helpdesk::Note < ActiveRecord::Base
         ticket_state.inbound_count = notable.notes.visible.customer_responses.count+1
       elsif !private
         update_note_level_resp_time(ticket_state)
+        
         ticket_state.set_avg_response_time
         ticket_state.agent_responded_at = created_at
         ticket_state.set_first_response_time(created_at)
@@ -237,11 +245,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def update_note_level_resp_time(ticket_state)
     resp_time_bhrs = nil
     if ticket_state.first_response_time.nil?
+      notable.schema_less_ticket.first_response_id = id
       resp_time = created_at - notable.created_at
       BusinessCalendar.execute(self.notable) {
-        business_calendar_config = Group.default_business_calendar(notable.group)
-        resp_time_bhrs = Time.zone.parse(notable.created_at.to_s).
-                            business_time_until(Time.zone.parse(created_at.to_s), business_calendar_config)
+        resp_time_bhrs = calculate_time_in_bhrs(notable.created_at, created_at, notable.group)
       }
     else
       customer_resp = notable.notes.visible.customer_responses.
@@ -251,12 +258,11 @@ class Helpdesk::Note < ActiveRecord::Base
       unless customer_resp.blank?
         resp_time = created_at - customer_resp.created_at
         BusinessCalendar.execute(self.notable) {
-          business_calendar_config = Group.default_business_calendar(notable.group)
-          resp_time_bhrs = Time.zone.parse(customer_resp.created_at.to_s).
-                            business_time_until(Time.zone.parse(created_at.to_s), business_calendar_config)
+          resp_time_bhrs = calculate_time_in_bhrs(customer_resp.created_at, created_at, notable.group)
         }
       end
     end
+    
     schema_less_note.update_attributes(:response_time_in_seconds => resp_time,
       :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
   end

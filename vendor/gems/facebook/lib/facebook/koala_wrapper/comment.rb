@@ -2,6 +2,7 @@ class Facebook::KoalaWrapper::Comment
 
   include Facebook::Core::Util
   include Facebook::Constants
+  include Social::Util
 
   attr_accessor :comment, :comment_id, :requester, :feed_type, :description, :description_html, :created_at, 
                  :parent, :subject, :parent_post, :comments, :can_comment, :post_type
@@ -25,6 +26,7 @@ class Facebook::KoalaWrapper::Comment
 
   def parse
     @comment            =  @comment.symbolize_keys!
+    @comment[:message]  =  remove_utf8mb4_char(@comment[:message])
     @comment_id         =  @comment[:id]
     @requester          =  @comment[:from]
     @feed_type          =  @comment[:attachment][:type] if @comment[:attachment]

@@ -173,6 +173,14 @@ class Portal < ActiveRecord::Base
     account.launched?(:meta_read) ? solution_categories_through_metum_ids : super
   end
 
+  def full_url
+    main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
+  end
+
+  def full_name
+    main_portal && name.blank? ? Account.current.name : name
+  end
+
   private
 
     def update_users_language
@@ -220,7 +228,7 @@ class Portal < ActiveRecord::Base
     def ticket_field_conditions
       { 'product' => (main_portal && !account.products.empty?) }
     end
-    
+
     def filter_fields(f_list, conditions)
       to_ret = []
 

@@ -4,10 +4,12 @@ class TicketFieldsController < CustomFieldsController
 
   def index
     @ticket_fields = current_portal.ticket_fields
+    @section_data = current_account.sections
 
     respond_to do |format|
       format.html {
         @ticket_field_json = ticket_field_hash(@ticket_fields, current_account)
+        @section_data_json = section_data_hash(@section_data, current_account)
       }
       format.xml  { render :xml => @ticket_fields.to_xml }
       format.json  { render :json => @ticket_fields }

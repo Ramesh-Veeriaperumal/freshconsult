@@ -33,7 +33,7 @@
         :url                           =>   "/admin/mobihelp/apps",
         :privilege                     =>   privilege?(:admin_tasks)
       },
-      :rebranding                      =>   {
+      :"helpdesk-settings"             =>   {
         :url                           =>   "/account/edit",
         :privilege                     =>   privilege?(:admin_tasks)
       },
@@ -45,7 +45,7 @@
         :url                           =>   "/admin/contact_fields",
         :privilege                     =>   privilege?(:admin_tasks)
       },
-      :"customer-portal"               =>   {
+      :"portals"                        =>   {
         :url                           =>   "/admin/portal",
         :privilege                     =>   privilege?(:admin_tasks)
       },
@@ -106,7 +106,7 @@
         :privilege                     =>   privilege?(:manage_canned_responses)
       },
       :"survey-settings"               =>   {
-        :url                           =>   "/admin/surveys",
+        :url                           =>   "/admin/surveys/",
         :privilege                     =>   current_account.features?(:surveys) && privilege?(:admin_tasks)
       },
       :"gamification-settings"         =>   {
@@ -188,8 +188,8 @@
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp"],
-      :"general-settings"       =>    ["rebranding", "ticket-fields", "customer-fields", "customer-portal", "agent", "group", "role", "security", "sla",
+      :"support-channels"       =>    ["email", "portals", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp"],
+      :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
@@ -224,9 +224,8 @@
       :feedback                   =>      {
           :open_keywords          =>      [:customize_feedback_widget, :embedded_widget, :popup_widget]
       },
-      :rebranding                 =>      {
-          :open_keywords          =>      [:set_time_zone, :set_helpdesk_language, :set_portal_url, :set_ticket_id,
-                                              :set_portal_name, :supported_languages, :portal_customization],
+      :"helpdesk-settings"                 =>      {
+          :open_keywords          =>      [:set_time_zone, :set_ticket_id, :set_portal_name, :supported_languages],
           :closed_keywords        =>      [:layout_customization, :stylesheet_customization, :custom_domain_name]
       },
       :"ticket-fields"            =>      {
@@ -235,8 +234,10 @@
       :"customer-fields"            =>      {
           :open_keywords          =>      [:customize_new_contact_form, :customize_new_company_form]
       },
-      :"customer-portal"          =>      {
-          :open_keywords          =>      [:signin_using_google, :signin_using_facebook, :signin_using_twitter, :suggestion_solutions],
+      :"portals"          =>      {
+          :open_keywords          =>      [:signin_using_google, :set_helpdesk_language, :set_portal_url, :set_portal_name,
+                                            :signin_using_facebook, :signin_using_twitter, :suggestion_solutions, :rebrand_portal,
+                                            :portal_customization],
           :closed_keywords        =>      [:forum_moderation]
       },
       :"agent"                    =>      {

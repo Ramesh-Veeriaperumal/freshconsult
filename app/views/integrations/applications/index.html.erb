@@ -40,6 +40,8 @@
 					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
 						  			<%if application.name.eql? "xero" %>
 			 								<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, application.options[:auth_url] , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %> 			
+			 							<% elsif application.name.eql? Integrations::Constants::APP_NAMES[:quickbooks] %>
+			 								<%= render :partial => "quickbooks_c2qb" %>
 										<% else %>
 						  				<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe,
 						  			 	"/integrations/installed_applications/#{application.id}/install", :method => :put,:class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>

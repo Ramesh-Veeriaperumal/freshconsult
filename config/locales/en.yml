@@ -23,7 +23,7 @@ en:
     abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
     month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
     abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
-    order: 
+    order:
       - :year
       - :month
       - :day
@@ -80,6 +80,7 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  add_all: "Add all"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -252,7 +253,7 @@ en:
     ie9_file_change_msg: "%{filename} Save to update profile image"
     errors:
       required_field: cannot be blank
-      custom_text : is not valid 
+      custom_text : is not valid
       custom_dropdown : should only contain one of the dropdown options
       custom_phone_number : is not a valid phone number
       custom_url : is not a valid URL
@@ -261,16 +262,21 @@ en:
     insert_field: Drag & Drop Field
     drag_drop_field_intro: Drag and drop any field type into the "%{name}" form below to add a new custom field
     number: Number
+    empty_section_info: Drop field here
     text: Single Line Text
     paragraph: Multi Line Text
     checkbox: Checkbox
     dropdown: Dropdown
+    decimal: Decimal
     dropdown_blank: Dropdown
     phone_number: Phone Number
     url: URL
+    decimal: Decimal
     date: Date
     regex: Regex
     email: Email
+    nested_field: Nested Fields
+    drag_and_drop_field: Drag & Drop Field
   ticket_fields:
     fields:
       source: Source
@@ -290,6 +296,7 @@ en:
     first_choice: First Choice
     second_choice: Second Choice
     confirm_delete: Are you sure you want to delete this field?
+    confirm_deletion: This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?
     no_choice_message: "At least one valid choice has to be present"
     index:
       number: Number
@@ -301,24 +308,31 @@ en:
       paragraph: Paragraph Text
       checkbox: Checkbox
       save: Save Ticket fields
+      save_ticket_fields: Save
       drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       dropdown: Dropdown
       nestedfield: "Dependent field"
+      drag_and_drop_field: Drag & Drop Field
     formfield_props:
       form_title: "Field properties"
       behavior: "Behavior"
       label: "Field Label"
       nested_label: "Nested field labels"
+      level: "Level"
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
       nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
+      nested_field_helptext: "Use the below textarea to add or edit items in your dropdown. Indent items by pressing the tab key once or twice. We will convert it to dropdown items based on the indentation. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
+      drop_down_items_edit: "Dropdown items - Edit"
       dropdown_items_preview: "Dropdown items - Preview"
       status_choices: "Status choices"
       display_to_customer: "Display message for customer"
       sla_timer: "SLA timer"
+      section_type_change: Please save the ticket form to see the latest changes that you have made to type field.
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+      nested_field_helptext_preview: "This is the preview of sample dropdown items. Click \"Edit\" to change the values for each drop down."
       delete_field: "Delete field"
       field_label_agents: "Field label for agents"
       field_label_customer: "Field label for customers"
@@ -341,6 +355,37 @@ en:
       display_cc_field: Display CC Field
       cc_company_contacts: Can CC only company contacts
       cc_any_email: Can CC any email address
+      field_delete_disabled: You cant delete default fields
+      default_field_delete_disabled: Default fields cannot be deleted
+      dropdown_choice_disabled: Default choice cant be deleted 
+      nested_tree_validation: You need atleast one category & sub-category
+      nested_unique_names: Agent label should not be same as other two levels
+      nested_3rd_level: Label required for 3rd level items
+    section:
+      remove_type: Section is associated with this type
+      new_section: New Section
+      confirm_text: Please Confirm...
+      oops_btn: Oops!
+      move_keep_copy: Copy field to target section
+      delete_field_section: Delete field from this section
+      would_you_like_to: Would you like to
+      move_field_remove_section: Move field to target section
+      delete_permanent: Delete field from all sections
+      delete_from_section: Are you sure you want to delete this field from this section?
+      field_remove_all_section: Moving the field outside will remove the field from all sections
+      delete_section: Are you sure you want to delete this section?
+      section_has_fields: Section has fields
+      field_available: The field already exists in target section.
+      section_delete_btn: Delete Section
+      ok_btn: OK
+      confirm_btn: Confirm
+      delete_btn: Delete
+      continue_btn: Continue
+      section_prop: Section Properties
+      sectino_label: Section Title
+      section_type_is: Show section when type is
+      section_name_unique: Section name already used
+
   folder:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
@@ -388,15 +433,22 @@ en:
   support:
     tickets:
       ticket_survey:
+        subject: Test mail for survey - %{title} 
+        survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
         rating_sub_title: "You have rated us"
-        survey_title: Please take a minute to rate our support
+        survey_title: How well did our customer service representative answer your question
+                      or solve your problem?
+        survey_question_title: How well did our customer service representative answer your question
+                      or solve your problem?
         feedback_title: Describe your support experience (optional)
         rated_on: on %{rated_on}
         change_of_mind: Changed your mind?
         rate_again: Rate us again
         submit: Submit
         cancel: Cancel
+        back: Back
+        loading_feedback: Loading Feedback
     login:
       form:
         email: Email
@@ -425,25 +477,24 @@ en:
     surveys:
       thanks_for_feedback: "We have received your feedback. Thank you very much."
       feedback_already_done: "You have already given feedback for this response."
+      handle_expired: "Your survey request link has been expired."
+      preview_feedback_error: The url entered is invalid.
+      no_survey_result_error: Invalid parameters to create feedback.
+      no_survey_active_error: Survey is not enabled to create feedback.
+      feedback_not_given: No comments
       new:
         thanks_info: Thanks for taking time to rate our support experience.
         feedback_info: Your feedback is very much appreciated.
         feedback_optional: Feedback is optional
-        submit: Submit
-        happy: Awesome
-        neutral: Just Okay
-        unhappy: Not Good
-        additional_info: Share your experience working with us.
-        customer_satisfaction: Customer satisfaction rating
-        rating: Your Rating
-      index:
-        thanks_info: Thanks for taking time to rate our support experience.
+        send: Send
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
         happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
-        neutral_info: Wish you were a little more happy.
         neutral_information:  Wish you were a little more happy.
+        neutral_info: We look forward to serve you better the next time around.
         unhappy_info: We will ensure that we will take extra care the next time around.
+        additional_info: Additionally, you could also share your experience working with us.
+        submit: Submit
   gamification:
     levels:
       beginner: Beginner
@@ -487,6 +538,7 @@ en:
 
   quests:
     delete: "Are you sure you want to delete this quest?"
+    survey_disabled_event: Surveys are disabled. Events associated with survey might not work as expected.
     inactive_quests: Inactive Quests
     date: Date
     satisfaction: Customer satisfaction rating
@@ -566,10 +618,11 @@ en:
       ticket_list: "Your tickets"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
-  admin:    
+  admin:
     help_image_alt:
       helpdesk_arcarde: "Helpdesk Arcade"
       import_csv_file_pattern: "Import CSV file pattern"
+    survey_modified: The survey associated with the rule is modified.Please re-configure.
     social:
       helpcard:
         title1: "Adding social accounts"
@@ -594,7 +647,7 @@ en:
           all: Everyone
         cancel: "Cancel"
         update: "Update"
-        index: 
+        index:
           title: "Social Streams"
           new_account: "New Account"
           new_stream: "New Stream"
@@ -660,13 +713,13 @@ en:
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
       no_choice_message: "At least one valid choice has to be present"
-      index: 
+      index:
         add_custom_field: Add a Custom Field
         customize_form: "Customize your “New Company form."
         title: Company Fields
         save: Save
         saving: Saving
-      formfield_props: 
+      formfield_props:
         default: Default
         form_title: Properties
         behavior: "Behavior"
@@ -684,7 +737,9 @@ en:
         nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
         delete_field: "Delete field"
         field_label_agents: "Field label for agents"
+        field_label_agents_level2: "Level 2 label for agents"
         field_label_customer: "Field label for customers"
+        field_label_customer_level2: "Level 2 label for customers"
         add_new_choice: Add Item
         customer_mandatory: Required when submitting the form
         customer_edit_signup: Customer can see this when they Sign up
@@ -730,13 +785,13 @@ en:
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
       no_choice_message: "At least one valid choice has to be present"
-      index: 
+      index:
         add_custom_field: Add a Custom Field
         customize_form: "Customize your “New Contact form."
         title: Contact Fields
         save: Save
         saving: Saving
-      formfield_props: 
+      formfield_props:
         default: Default
         form_title: Properties
         behavior: "Behavior"
@@ -753,8 +808,11 @@ en:
         sla_timer: "SLA timer"
         nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
         delete_field: "Delete field"
+        delete_section: "Delete Section"
         field_label_agents: "Field label for agents"
         field_label_customer: "Field label for customers"
+        field_label_agents_level2: "Level 2 label for agents"
+        field_label_customer_level2: "Level 2 label for customers"
         add_new_choice: Add Item
         customer_mandatory: Required when submitting the form
         customer_edit_signup: Customer can see this when they Sign up
@@ -780,7 +838,12 @@ en:
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
     portal:
-      index:
+      delete_confirm:
+        title: "Deleting this portal will remove"
+        info1: "All the settings in portal customization"
+        info2: "All the linked solution and forum categories"
+      settings:
+        title: 'Customer Portals'
         portal_customizer_title: "Customer Portal Configuration"
         signup_login: "User Signup and Login"
         allow_signup: "Allow users to Sign Up from the customer portal"
@@ -812,6 +875,13 @@ en:
         moderate_all_help: "Enable this feature if you want to be stringent on every post that gets created in your community."
         moderate_none: "Do not Moderate"
         moderate_none_help: "Enable this feature if you are sure that your community does not attract spammers."
+      helpnote:
+        title: Setting up your portals
+        tour: Help me configure my portal
+        info1: "If you would like your customers and support agents ​to ​access your support portal in your own domain, you can point your support URL ​<b>yourcompany.freshdesk.com​</b> to your own domain like​ ​<b>support.yourcompany.com</b>"
+        info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
+        info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
+        info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -836,7 +906,7 @@ en:
           platform: Platform
           configurations: SDK Configurations
           solution_categories: Solution Categories
-          solution_categories_info: The solution categories you select will be shown in the App Support 
+          solution_categories_info: The solution categories you select will be shown in the App Support
           app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           app_store_id_v12_info: Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer Integration guide.
@@ -948,6 +1018,7 @@ en:
       points: Points
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
+      survey_preview_error: The current user is not an agent. Error while previewing the survey.
       help_text:
         why_game: "Points and levels"
         why_game_info1: "Points are awarded to agents based on how fast they resolve the tickets assigned to them. There are also bonus points for first call resolution and satisfied customers. Agents also lose points for late resolution of tickets and for unhappy customers."
@@ -997,8 +1068,31 @@ en:
         new_quest: New Quest
         quest_title: Quests
     surveys:
+     successfully_created: Customer Satisfaction settings has been successfully created.
      successfully_updated: Customer Satisfaction settings has been successfully updated.
+     successfully_deleted: Survey has been successfully deleted.
      error_updated: Error while updating survey settings.
+     custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
+
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
+     <br><br>
+     <b>Agent survey and follow-up surveys</b><br>
+     You can ask one agent survey question and multiple follow-up survey questions. 
+     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey. 
+     The observer rules and gamification points will be based only on the agent survey rating.<br>
+     <br><br>
+     <b>Points scale</b><br>
+     You can choose different point scales for the agent survey and follow-up survey. It could be<br>
+      2 point (Eg: Yes, No)<br>
+      3 point (Eg: Agree, Undecided, Disagree)<br>
+      5 point (Eg: Always to Never)<br>
+      7 point (Eg: Very Poor to Exceptional)<br><br>
+
+      Once a customer takes the survey, the scales will be locked down and they cannot be edited.
+      </p>"
+
      helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
 
      Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
@@ -1013,13 +1107,96 @@ en:
      <br><br>
      You can learn more about satisfaction surveys from our solutions page.
      </p>"
+     limit_exceed_error: You can only add upto %{count} surveys.
+     questions:
+        limit_exceed_error: You can only add upto %{count} questions.
+     new_layout:
+        loading: Loading...
+        default_survey: Default Survey
+        title: Title
+        title_error_text: Survey Name has already been taken
+        result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
+
+     new_rating:
+        content_text: This Question helps access the overall satisfaction for the response provided by the agent.
+                      It appears below your signature at the bottom of the email sent to the customer.
+                      Scale cannot be changed once response has been collected for this question.
+        survey_question: Survey question
+        error_text: This field is required
+        points_scale: points scale
+        scale_text: You have chosen 
+        scale: point scale
+
+     new_thanks:
+        survey_feedback: Survey Feedback Page
+        thanks_feedback: Thank you for your valuable feedback.
+        additional_comments_feedback: Collect additional feedback
+        comments_feedback: Add more details about customer experience.
+        thanks_message_feedback: Thank you message for Feedback survey
+        default_question_text: Are you satisfied with our customer support experience?
+        thanks_label: Message will appear after submitting the feedback survey
+        feedback_response_text: Thank you. Your feedback has been sent.
+        help_text: Follow-up survey appears in a new page after the customer takes the agent survey.
+                    Questions can be about product/company/agent.
+
+     new_questions_layout:
+        title_text: Select the points scale for your questions
+        add_question: Add Question
+        questions: Questions
 
      index:
+        custom_title: Surveys
         title: Customer Satisfaction Settings
+        new_survey: New Survey
+        load_text: Loading survey list...
+        editing_survey: Editing survey
+        deleting_survey: Deleting survey
+        saving_survey: Saving survey
+        enabling_survey: Enabling survey
+        disabling_survey: Disabling survey
+        feedback_survey_begin: Sending survey feedback to your email id
+        feedback_survey_end: Survey feedback is sent to your email id
+        survey_feedback: Submitting Feedback...
+        portal_msg: Redirecting to ticket page
+        update: update
+        new: New
+        edit: Edit
+        cancel: Cancel
+        hide: Remove
+        preview: Test
+        enabled: Enabled
+        disabled: Disabled
+        save_survey: Save
+        default_survey: Default Survey
+        delete_survey: Delete Survey
+        delete_msg: Are you sure you want to delete this survey?
+        survey_help_msg: Selecting a rating above will link off to the page below
+        on: ON
+        off: OFF
+
+
+     choice_contents:
+        strongly_disagree: Strongly Disagree
+        some_what_disagree: Some What Disagree
+        disagree: Disagree
+        neutral: Neutral
+        agree: Agree
+        some_what_agree: Some What Agree
+        strongly_agree: Strongly Agree
+
+     thanks_contents:
+        title_text: Thank you message for Customer satisfaction rating
+        message_text: Thank you for your valuable feedback.
+        label_text: Add a feedback survey
+        question_error_text: Question has been already entered.
+        empty_text: Question value cannot be blank.
+
      satisfaction_settings:
-        enable_label: Customer Satisfaction Surveys
+        enable_label: Customer Satisfaction Rating
+        satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
-        link_text_input: Please tell us what you think of your support experience
+        link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
+        link_text_input:  Please tell us what you think of your support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
         send_while_option1: All replies sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
@@ -1198,6 +1375,7 @@ en:
         title: Supervisor - Clone Rule
     observer_rules:
       info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
+      survey_disabled_rule: Surveys are disabled. Rules associated with survey might not work as expected.
       index:
         human_name: Observer Rule
         title: Observer - Rules
@@ -1358,26 +1536,31 @@ en:
         heading1: Multiple Products
         content1: You can support multiple products with separate branded portals from a single Freshdesk account. Configure separate support emails for each product and automatically queue them in a specific group.
         heading2: Configuring a separate portal for products
+        heading3: Supporting Multiple Products
         content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
+        content3: You can configure portals for these products ​by clicking on the Admin tab and then 'Portals​'​
       new:
         title: New Product
         saving: Saving...
       portal:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
-        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
-        portal_settings: Portal settings
+        settings: Settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
         portal_url: Portal URL
         solution_categories: Solution Categories
         forum_categories: Forum Categories
-        portal_name: Portal name
+        portal_name: Portal Name
         portal_language: Portal Language
+        default_portal_language: Default Portal Language
         portal_language_info: This will be the default language when customers visits your portal
-        portal_customization: Portal customization
+        portal_customization: Portal Customization
+        portal_settings: Portal Settings
+        edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
         save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
@@ -1385,10 +1568,17 @@ en:
         ago: ago
         last_published: Your portal was last published
         contact_us: Contact us
-        logo_and_favicon: "Logo & favicon"
+        logo_and_favicon: "Logo & Favicon"
+        customer_portal: Customer Portal
+        portal_settings: Portal Settings
+        categories_visible: Portal Categories
+        product_label: "Product: %{product_name}"
       edit:
         title: Edit Product
         updating: Updating...
+      footer:
+        edit_portal: "Save & Edit Portal"
+        enable_portal: "Save & Enable Portal"
       form:
         configure_seperate_portal: Enable Customer Portal
         enable_product_portal: Enable Product Portal
@@ -1397,7 +1587,7 @@ en:
         email_address_present: Reply email is already used
         configure_email: Configure Email
         product_support_emails: Product Support Emails
-        product_name: Product name
+        product_name: Product Name
         product_desc: Description
         forwarding_email_info: Forwarding email
         please_wait: Please wait...
@@ -1406,6 +1596,8 @@ en:
         edit_facebook_page: "Edit Facebook page %{page_name}"
         customize_portal: "Customize portal"
         enable_portal: "Enable Portal"
+        portal_disabled: "Portal disabled"
+        disable_portal: "Disable Portal"
         email_not_verified: Unverified
         view_portal: View Portal
         delete: Are you sure you want to delete this Product?
@@ -1417,7 +1609,7 @@ en:
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
-      product_label_msg: "Product"    
+      product_label_msg: "Product"
     twitters:
       index:
         new: Add Twitter account
@@ -1515,6 +1707,7 @@ en:
         survey-settings: Customer Satisfaction
         gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
+        helpdesk-settings: Helpdesk
         account-settings: Account Settings
         helpdesk-productivity: Helpdesk Productivity
         canned-response: Canned Response
@@ -1554,6 +1747,7 @@ en:
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Customer Portal
+        portals: Portals
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -1666,7 +1860,7 @@ en:
       zero: Are you sure you want to delete this forum?
       one: "Deleting this forum will delete one topic in it."
       other: "Deleting this forum will delete all %{count} topics in it."
-    size: 
+    size:
       one: "1 topic will also be deleted."
       other: "%{count} topics will also be deleted."
     verb:
@@ -1742,7 +1936,7 @@ en:
     portal:
       discussions:
         topics:
-          moderation_none: 
+          moderation_none:
             topic: "Thank you for starting a new topic. Your topic will appear in the forum after checking for spam."
             post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
@@ -1753,6 +1947,18 @@ en:
       tickets:
         create:
           success: Your ticket has been created.
+      create:
+        success: "Portal has been enabled for '%{product_name}'"
+        failure: "Portal could not be enabled"
+      update:
+        success: "Portal has been updated"
+        failure: "Portal could not be updated"
+      destroy:
+        success: "Portal of '%{product_name}' has been disabled"
+        failure: "Main portal can not be disabled"
+      not_found:
+        portal: "The portal could not be found. It might have been deleted or the URL mistyped."
+        product: "The product could not be found. It might have been deleted or the URL mistyped."
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
@@ -1827,14 +2033,14 @@ en:
       failure: Please try again
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
-      info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. " 
-      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:" 
-      created: "Created: %{count}" 
-      updated: "Updated: %{count}" 
-      failed:  "Failed : %{count}" 
-      info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}." 
-      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment." 
-      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file" 
+      info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. "
+      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:"
+      created: "Created: %{count}"
+      updated: "Updated: %{count}"
+      failed:  "Failed : %{count}"
+      info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}."
+      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
+      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
@@ -1897,6 +2103,8 @@ en:
       type:
         contact_fields_controller: Contact Fields
         company_fields_controller: Company Fields
+        surveys_controller: Surveys
+        custom_surveys_controller: Surveys
       success: "%{type} have been successfully updated."
       delete:
         failure: deletion failed.
@@ -2130,7 +2338,7 @@ en:
         long: "{{user_path}} has marked the forum topic '{{notable_path}}' as 'Unsolved'"
       topic_merge:
         short: "{{user_path}} has merged a topic"
-        long: "{{user_path}} has merged the topic {{notable_path}} into {{target_topic_path}}"        
+        long: "{{user_path}} has merged the topic {{notable_path}} into {{target_topic_path}}"
     tickets:
       assigned_to_nobody:
         short: Assigned to 'None' by {{user_path}}
@@ -2260,8 +2468,12 @@ en:
     helpcard:
       title: Rebranding your support portal
       tour: Help me rebrand my helpdesk
+      tour1: Help me setup my helpdesk
+      setup: Setting up your helpdesk
       info1: You can completely customize your Freshdesk help desk for customers logging into your self-service portal as well as your agents. Rebrand the look and feel of your helpdesk with your logo and theme by uploading your logo and favicon, giving your help desk a name, and customizing your portal colors.
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
+      info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
+      info4: The 'Edit Portal' option will let you configure the portal for your product.
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -2782,6 +2994,9 @@ en:
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
     learn_more: Learn more
+    settings_saved: Your setting is successfully saved.
+    disable_round_robin_info1: Allow agents the ability to turn on/off automatic ticket assignment
+    disable_round_robin_info2: If disabled, agents will always be set as “available”. Admins can change the agent availability from the dashboard, if necessary.
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes
@@ -2837,7 +3052,7 @@ en:
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
-    day_passes_available: 
+    day_passes_available:
       zero: "No day pass available"
       one: "1 Day pass available"
       other: "%{count} Day passes available"
@@ -2949,7 +3164,7 @@ en:
     export_start: Your Contact data will be sent to your email shortly!
     export_title: "Export %{type} to CSV"
     deleted_message: This is a deleted contact
-    deleted_info_msg: This is a deleted contact - 
+    deleted_info_msg: This is a deleted contact -
     contacts_in_companies: "%{contacts}"
     contact: contact
     contacts: contacts
@@ -3034,10 +3249,11 @@ en:
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
     segment_api:
       invalid_type: Invalid operation. Check your type.
-      email_blank: Email can't be blank 
+      email_blank: Email can't be blank
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
+  portals_key: Portals
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
@@ -3374,7 +3590,7 @@ en:
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
   customer_import:
     import_step2_info: Map fields from your CSV with %{type} fields.
-    import_warning_info: If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated. 
+    import_warning_info: If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated.
     import_csv: "Import %{type} from CSV"
     sample_data: Sample data
     contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
@@ -3415,18 +3631,18 @@ en:
     phone_integration: "Phone Integration"
     mobile_apps: "Mobile Apps"
     integrations: "Built-in Integrations"
-    everything_in_sprout: "Everything in Sprout" 
-    multiple_mailboxes: "Multiple Mailboxes" 
-    custom_domain: "Custom Domain" 
-    social_support: "Social Support" 
-    satisfaction_survey: "Satisfaction surveys" 
-    forums: "Community Forums" 
+    everything_in_sprout: "Everything in Sprout"
+    multiple_mailboxes: "Multiple Mailboxes"
+    custom_domain: "Custom Domain"
+    social_support: "Social Support"
+    satisfaction_survey: "Satisfaction surveys"
+    forums: "Community Forums"
     gamification: "Gamification"
     everything_in_blossom: "Everything in Blossom"
     chat: "Integrated Live Chat"
     multiple_languages: "Multiple Languages"
     multiple_products: "Multi Product Support"
-    multiple_timezones: Multiple Timezones 
+    multiple_timezones: Multiple Timezones
     css_customization: "CSS Customization"
     everything_in_garden: "Everything in Garden"
     agent_collision: "Agent Collision"
@@ -4048,7 +4264,7 @@ en:
     info8: More info regarding this company like address, phone number, website etc
     errors:
       required_field: cannot be blank
-      custom_text : is not valid 
+      custom_text : is not valid
       custom_dropdown : should only contain one of the dropdown options
       custom_phone_number : is not a valid phone number
       custom_url : is not a valid URL
@@ -4092,7 +4308,7 @@ en:
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
     page_colors:
-      title: Helpdesk colors
+      title: Helpdesk Colors
       background: Background
       header: Header
       tab_color: Tab Color
@@ -4109,7 +4325,9 @@ en:
     non_us: DAY-MONTH-YEAR
     us: MONTH-DAY-YEAR
     helpdesk_name: Helpdesk/Portal name
+    helpdesk_name_plain: Helpdesk Name
     rebrand: Rebrand your Helpdesk
+    helpdesk: Helpdesk
     helpdesk_url: Helpdesk/Portal URL
     language: Language
     primary_language: Primary Language
@@ -4185,6 +4403,8 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    surveys:
+      invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
     ticket_notifier:
         reply:
             happy: Awesome
@@ -4576,6 +4796,9 @@ en:
            not_added: (Not Added)
            not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
+        survey_response: Survey response for %{survey_name}
+        survey_response_to: to %{agent}
+        survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
     merge:
       merge:
         merge_into: Merge into?
@@ -4759,7 +4982,7 @@ en:
       requester_phone: "Requester Phone"
     call_history:
       info:
-        success: We have started exporting your call records. It will be mailed to you once completed. 
+        success: We have started exporting your call records. It will be mailed to you once completed.
         error: We were unable to start the export. Please try again or contact Freshdesk support.
       subject: Call Records within (%{range})
       body:
@@ -5055,21 +5278,21 @@ en:
         api_secret_info: "Get the Api Secret for the store from SEOshop support"
         language: "Language"
         language_info: "Select your store language"
-        bg: "Bulgarian" 
-        da: "Danish" 
-        de: "Deutsch"     
+        bg: "Bulgarian"
+        da: "Danish"
+        de: "Deutsch"
         en: "English"
-        fr: "French" 
-        el: "Greek" 
-        it: "Italian" 
-        nor: "Norwegian" 
+        fr: "French"
+        el: "Greek"
+        it: "Italian"
+        nor: "Norwegian"
         nl: "Nederlands"
-        pt: "Portuguese" 
-        pl: "Polish" 
-        ru: "Russian" 
-        es: "Spanish" 
-        sv: "Swedish" 
-        tr: "Turkish" 
+        pt: "Portuguese"
+        pl: "Polish"
+        ru: "Russian"
+        es: "Spanish"
+        sv: "Swedish"
+        tr: "Turkish"
     screenr:
       button_label: "Record Screencast"
       label: "Screenr"
@@ -5226,6 +5449,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
+      add_attachments_in_jira: "While syncing exclude ticket attachments" 
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
@@ -5245,6 +5469,12 @@ en:
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
+      remote_configurations:
+        signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
+        connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
+        disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
+        launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
@@ -5369,7 +5599,7 @@ en:
       form:
          slack_setting: ""
          slack_info: ""
-    slack_settings:     
+    slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
       note_create: "Note creation"
@@ -5633,6 +5863,32 @@ en:
         customer_champion: Customer Champion
         valuable_player: Most valuable Player
       survey_reports:
+        main:
+            all: All
+            time_period: Time Period
+            group: Group
+            agent: Agent
+            overview: Overview
+            responses: Responses
+            response_to: Response to
+            rating: Rating
+            question: Q
+            positive: Positive
+            neutral: Neutral
+            negative: Negative
+            answered: Answered
+            unanswered: Unanswered
+            total_responses: Total No.of responses
+            filter_by: Filter by
+            preparing_chart_for: Preparing chart for
+            loading_chart: Loading...
+            no_remarks: No responses available
+            loading_remarks: Loading remarks
+            fetching_responses: Fetching responses
+            no_overview: No data available
+            view_report_by: View by
+            overall_rating: Rating
+            all_responses: All Responses
         index:
             agent_list_loading: Fetching agent list
         feedbacks:
@@ -5717,8 +5973,11 @@ en:
       tour: "Help me understand ticket fields"
       title1: "Ticket Fields"
       title2: "Dependent Fields"
+      title3: "Dynamic Fields"
       info1: "The ticket form is the easiest way to capture all the data you need from the customer, even as they submit a ticket. For example, having the customer’s order ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Ticket Form in Freshdesk to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want."
+      info_1: "The ticket form helps capture the data you need from the customer when they submit a ticket. You can customize your Ticket Form to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want. For example, in an e-commerce company, getting a customer's order ID in the ticket form would be very helpful to the agent solving the ticket."
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
+      info3: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/210807'>Read more about dynamic fields</a>."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
@@ -6071,6 +6330,32 @@ en:
   activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
+  helpdesk_reports:
+    time_period: Select Time Period
+    filter_by: Filter by
+    edit_filter: Filter
+    ticket_volume: 
+      title: Ticket Volume
+      time_trends:
+        day: Day
+        week: Week
+        month: Month
+        qtr: Quarter
+        year: Year
+        title: Trend of Tickets Received and Resolved
+      day_trend:
+        title: Day of the Week Trend of Tickets Received and Resolved
+        subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
+    glance:
+      title: Helpdesk At A Glance
+    performance:
+      title: Performance Distribution
+    group_summary:
+      title: Group Summary
+    agent_summary:
+      title: Agent Summary
+    customer_report:
+      title:  Customer Report
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
@@ -6254,10 +6539,11 @@ en:
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
       followup: "worth phone credits"
+      followup_text: "worth phone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       could_be_invalid_number: "Could be an invalid number."
-      invalid_number_continue_call: "Press call button again" 
+      invalid_number_continue_call: "Press call button again"
       not_enough_credit: "Not Enough Credit"
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"

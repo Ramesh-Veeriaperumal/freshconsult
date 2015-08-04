@@ -6,6 +6,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   include Reports::TicketStats
   include Redis::RedisKeys
   include Redis::ReportsRedis
+  include BusinessHoursCalculation
 
   # Attributes for populating data into monthly stats tables
   STATS_ATTRIBUTES = ['resolved_at','first_assigned_at','assigned_at','opened_at']
@@ -21,7 +22,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
   after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
-  after_commit :update_search_index, on: :update
+  after_commit :update_search_index,  on: :update
   
   def reset_tkt_states
     @resolved_time_was = self.resolved_at_was
@@ -34,14 +35,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was ||= resolved_at
   end
   
-  def set_resolved_at_state
-    self.resolved_at=Time.zone.now
+  def set_resolved_at_state(time=Time.zone.now)
+    self.resolved_at = time 
     set_resolution_time_by_bhrs
   end
   
-  def set_closed_at_state
+  def set_closed_at_state(time=Time.zone.now)
     set_resolved_at_state if resolved_at.nil?
-    self.closed_at=Time.zone.now
+    self.closed_at = time
   end
   
   def need_attention
@@ -98,6 +99,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     closed_at || closed_at_dirty_fix
   end
 
+
   def set_first_response_time(time)
     self.first_response_time ||= time
     BusinessCalendar.execute(self.tickets) { 
@@ -105,9 +107,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
         self.first_resp_time_by_bhrs
       else
         default_group = tickets.group if tickets
-        business_calendar_config = Group.default_business_calendar(default_group)
-        self.first_resp_time_by_bhrs = Time.zone.parse(created_at.to_s).
-                          business_time_until(Time.zone.parse(first_response_time.to_s),business_calendar_config)
+        self.first_resp_time_by_bhrs = calculate_time_in_bhrs(created_at, first_response_time, default_group)
       end
     }
   end
@@ -117,9 +117,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     time = created_at || Time.zone.now
     BusinessCalendar.execute(self.tickets) {
       default_group = tickets.group if tickets
-      business_calendar_config = Group.default_business_calendar(default_group)
-      self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
-                          business_time_until(Time.zone.parse(resolved_at.to_s),business_calendar_config)
+      self.resolution_time_by_bhrs = calculate_time_in_bhrs(time, resolved_at, default_group)
     }
   end
 

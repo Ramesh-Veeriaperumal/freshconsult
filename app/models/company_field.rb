@@ -35,7 +35,7 @@ class CompanyField < ActiveRecord::Base
   # after_commit :clear_company_fields_cache # Clearing cache in CompanyFieldsController#update action
   # Can't clear cache on every CompanyField or CompanyFieldChoices save
 
-  def default_company_form
+  def default_company_form dummy_company_form_id
     (Account.current || account).company_form
   end
 

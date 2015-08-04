@@ -122,5 +122,11 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       try copy-pasting the URL into your browser. Please get in touch with us if you need any help. 
       <br/><br/>Thanks, <br/>{{helpdesk_name}} <br/></p>',
     :requester_subject_template => '{{helpdesk_name}} Email Activation'
+},
+{
+    :notification_type => EmailNotification::PREVIEW_EMAIL_VERIFICATION,
+    :account_id => account.id, :requester_notification => false, :agent_notification => true,
+    :agent_template => '<p>Hi agent,<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>',
+    :agent_subject_template => '{{ticket.subject}}'
 }
 ])

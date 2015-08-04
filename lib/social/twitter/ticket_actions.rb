@@ -3,6 +3,7 @@ module Social::Twitter::TicketActions
   include Social::DynamoHelper
   include Social::Constants
   include Social::Stream::Util
+  include Social::Util
 
   def tweet_to_fd_item(current_feed_hash, search_type)
     feeds = build_current_interaction(current_feed_hash, search_type, true)
@@ -12,6 +13,7 @@ module Social::Twitter::TicketActions
   def add_as_ticket(twt, twt_handle, twt_type, options={})
     tkt_hash = construct_params(twt, options)
     account  = Account.current
+    
     ticket   = account.tickets.build(
       :subject    =>  Helpdesk::HTMLSanitizer.plain(tkt_hash[:body]) ,
       :twitter_id =>  tkt_hash[:sender] ,
@@ -125,8 +127,9 @@ module Social::Twitter::TicketActions
     end
 
     def construct_params(twt, options)
+      tweet_body = options[:tweet] ? twt[:body] : twt.text
       hash = {
-        :body         => options[:tweet] ? twt[:body] : twt.text,
+        :body         => remove_utf8mb4_char(tweet_body),
         :tweet_id     => options[:tweet] ? twt[:id].split(":").last.to_i : twt.id ,
         :posted_time  => options[:tweet] ? Time.at(Time.parse(twt[:postedTime]).to_i) : Time.at(twt.created_at).utc,
         :sender       => options[:tweet] ? @sender : @sender.screen_name

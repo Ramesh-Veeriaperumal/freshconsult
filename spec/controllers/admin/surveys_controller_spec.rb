@@ -14,12 +14,12 @@ describe Admin::SurveysController do
   end
 
   it "should disable customer satisfaction surveys" do
-    post :disable
+    post :disable 
     @account.features.find_by_type("SurveyLinksFeature").should be_nil
   end
 
   it "should enable customer satisfaction surveys" do
-    post :enable
+     post :enable 
     @account.features.find_by_type("SurveyLinksFeature").should be_an_instance_of(SurveyLinksFeature)
   end
 
@@ -28,14 +28,14 @@ describe Admin::SurveysController do
     happy_text = Faker::Lorem.sentence
     neutral_text = Faker::Lorem.sentence
     unhappy_text = Faker::Lorem.sentence
-    put :update, :id => "update", :survey => {  
+    put :update, :id => @account.survey.id , :survey => {  
                                                 :link_text => link_text, 
                                                 :happy_text => happy_text, 
                                                 :neutral_text => neutral_text, 
                                                 :unhappy_text => unhappy_text, 
                                                 :send_while => 1
                                               }
-    survey = @account.survey
+    survey = Survey.find(:last)
     survey.link_text.should be_eql(link_text)
     survey.happy_text.should be_eql(happy_text)
     survey.neutral_text.should be_eql(neutral_text)

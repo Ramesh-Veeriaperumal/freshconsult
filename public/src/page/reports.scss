@@ -808,6 +808,18 @@ $animation_timing: .1s;
 						padding:1px 3px;
 						position:relative;
 					}
+					div.beta-tag{
+						color: #fff;
+						background-color: #ef6962;
+						font-size: 10px;
+						font-weight: 600;
+						padding: 0 8px;
+						border: solid 4px #fff;
+						border-radius: 15px;
+						position: absolute;
+						top: 12px;
+						right: -8px;
+					}
 				}
 			}
 		}	

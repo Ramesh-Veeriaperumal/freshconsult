@@ -57,32 +57,32 @@ describe AuthorizationsController do
     @request.env["omniauth.origin"] = "id=1&portal_id=1&iapp_id=3&app_name=google_contacts"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
       { :credentials => { :expires => true,
-                          :expires_at => "1429604886",
-                          :refresh_token => "1/oN_ue3z0Bi9HDQS2A30GUA8Lxh6Yw0zmJxZ9gpXZFkMMEudVrK5jSpoR30zcRFq6",
-                          "token" => "ya29.XAHKpQSKdIitH2teAaEIDZkgjltwa12KG-u7lcsPZ19jrxJH5e9UVjsp4h1L54oJy82Fle6haVpmcQ"
+                          :expires_at => "1436787350",
+                          :refresh_token => "1/7QR5U0kKISVkHrHsKvfpW5cI3-HKaDAAHQIPbNUwe2lIgOrJDtdun6zK6XiATCKT",
+                          "token" => "ya29.rwGCIOdIePYmPL3SVLB2n-plYWOHuQDMrlvgLSKphYJzaEzwwwNMhGRDtd0rQeUt6mFb"
                         }, 
-        :extra => { :raw_info => { :email => "bala@freshdesk.com",
-                                   :family_name=>"Kumar", 
+        :extra => { :raw_info => { :email => "admin@freshpo.com",
+                                   :family_name=>"Freshdesk", 
                                    :gender=>"male", 
-                                   :given_name=>"Bala", 
-                                   :hd=>"freshdesk.com", 
-                                   :id=>"116155779926622689580",
-                                   :link=>"https://plus.google.com/+BalaKumarSM", 
+                                   :given_name=>"Freshpo", 
+                                   :hd=>"freshpo.com", 
+                                   :id=>"111788248084232796423",
+                                   :link=>"https://plus.google.com/111788248084232796423", 
                                    :locale=>"en", 
-                                   :name=>"Bala Kumar", 
-                                   :picture=>"https://lh5.googleusercontent.com/-o3nQbAwnMXs/AAAAAAAAAAI/AAAAAAAAABc/yXa8EfpQ6K8/photo.jpg", 
+                                   :name=>"Freshpo Freshdesk", 
+                                   :picture=>"https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg", 
                                    :verified_email=>true
                                   }
                   },
-        :info => { :email=>"bala@freshdesk.com", 
-                   :first_name=>"Bala", 
-                   :image=>"https://lh5.googleusercontent.com/-o3nQbAwnMXs/AAAAAAAAAAI/AAAAAAAAABc/yXa8EfpQ6K8/photo.jpg", 
-                   :last_name=>"Kumar", 
-                   :name=>"Bala Kumar"
+        :info => { :email=>"admin@freshpo.com", 
+                   :first_name=>"Freshpo", 
+                   :image=>"https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg", 
+                   :last_name=>"Freshdesk", 
+                   :name=>"Freshpo Freshdesk"
                   },
         'provider' => "google_contacts",
-        :uid=>"116155779926622689580"}) 
-    get :create, :code=>"4/hZQgEheYCv4YPoHwhAyVeVCzFnf3DY64dIvgUhfaqVI.Uvmomzjs_coecp7tdiljKKb56cC1mQI", :provider=>"google_contacts"
+        :uid=>"111788248084232796423"}) 
+    get :create, :code=>"4/xnzupD-QqB2erbkpaGis-_kAOaNMWaHMaDubEVN9dTk", :provider=>"google_contacts"
     response.location.should eql "#{portal_url}/integrations/applications/oauth_install/google_contacts"
   end
 

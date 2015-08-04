@@ -1,0 +1,20 @@
+<% 
+	var list_of_type = ''; 
+	for (var i = 0; i < obj.picklist_ids.length; i++) { 
+		for (var j = 0; j < types.length; j++) {
+			if(types[j].id == obj.picklist_ids[i].picklist_value_id){ 
+				list_of_type 	+= types[j].value;
+				if(i!=obj.picklist_ids.length-1)  list_of_type 	+= ', ';
+			}
+		}
+	} 
+%>
+<div class="section-title pull-left">
+	<div class="section-name"><%= obj.label %></div>
+	<div class="section-type">
+		<span>Show when type is </span>
+		<span class="tooltip" title="<%= list_of_type %>"><%= list_of_type %></span>
+	</div>
+	<div class = "section-icon ficon-edit section-edit pull-right"></div>
+</div>
+<div class = "section-icon pull-right ficon-trash-o section-delete" id="delete-section-icon"></div>

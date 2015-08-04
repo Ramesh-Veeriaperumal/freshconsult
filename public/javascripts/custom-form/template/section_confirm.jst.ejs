@@ -1,0 +1,122 @@
+<!-- Modal -->
+<!-- available -->
+<div id="sectionConfirmModal" class="section-dialog-confirm modal hide fade" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
+    <h3>
+      <% if(confirm_type != 'available'){%>
+        <%= translate.get('confirm_text') %>
+      <% } else { %>
+        <%= translate.get('oops_btn') %>
+      <% } %>
+    </h3>
+  </div>
+  <div class="modal-body">
+  	<input type="hidden" name="confirm_type" id="confirmType" value='<%= confirm_type %>'>
+    <% if(confirm_type == 'move' || confirm_type == 'deleteSecField') { %>
+      <p> <%= translate.get('would_you_like_to') %> </p>
+    <% } %>
+  	<% if(confirm_type == 'move' || confirm_type == 'deleteSecField' || confirm_type == 'confirmDeleteField'){ %>
+  	<% if(confirm_type != 'confirmDeleteField'){ %>
+	    <label class="radio">
+		  <input type="radio" name="moveField" value="true" checked>
+
+			<% if(confirm_type == 'move'){ %>
+					<%= translate.get('move_keep_copy') %> 
+			<% }else if(confirm_type == 'deleteSecField'){%>
+
+				<%= translate.get('delete_field_section') %>
+
+			<% } %>	
+		</label>
+		<% }%>
+		<label <% if(confirm_type != 'confirmDeleteField') {%> class="radio" <% } %>>
+
+		  <input type="radio" name="moveField" value="false" <% if(confirm_type == 'confirmDeleteField') {%> class="hide" checked <% } %>>
+
+		  <% if(confirm_type == 'move'){ %>
+
+				<%= translate.get('move_field_remove_section') %>
+
+			<% }else if(confirm_type == 'deleteSecField'){%>
+
+				<%= translate.get('delete_permanent') %>  
+
+			<% }else if(confirm_type == 'confirmDeleteField'){ %>	
+        
+        <%= translate.get('delete_from_section') %>  
+
+      <% } %>
+		  
+		</label>
+
+	<% } else if(confirm_type == 'secToForm'){%>
+
+		<div>
+			<%= translate.get('field_remove_all_section') %> 
+		</div>	
+
+	<% } else if(confirm_type == 'deleteField'){%>
+
+		<div>
+			<%= translate.get('confirm_delete') %> 	
+		</div>
+
+	<% } else if(confirm_type == 'deleteSection'){%>
+
+		<div>
+			<input type="hidden" name="confirm-section-id" id="confirm-section-id" value='<%= section_id %>'>
+			<%= translate.get('delete_section') %>
+		</div>
+
+	<% } else if(confirm_type == 'deleteError'){%>
+
+		<div>
+			<input type="hidden" name="confirm-section-id" id="confirm-section-id" value='false'>
+			<%= translate.get('section_has_fields') %> 
+			 
+		</div>
+
+	<% } else{ %>	
+
+		<div>
+			<%= translate.get('field_available') %> 
+		</div>
+
+	<% } %>
+  </div>
+  <span class="seperator"></span> 
+  <div class="alignright modal-footer">
+    <% if(confirm_type != 'available'){%>
+    <button class="btn" data-dismiss="modal" aria-hidden="true" id="confirmFieldCancel"><%= translate.get('cancel') %> </button>
+    <% } %>
+    <a class="btn btn-primary" id="confirmFieldSubmit">
+    	<% 
+    		switch(confirm_type) {
+    			case 'available':
+    			case 'deleteError':
+    				print(translate.get('ok_btn'));
+    				break; 
+
+    			case 'move':
+    				print(translate.get('confirm_btn'));
+    				break; 
+
+    			case 'deleteSecField':
+    			case 'deleteField':
+    			case 'confirmDeleteField':
+    				print(translate.get('delete_btn'));
+    				break; 
+
+    			case 'deleteSection':
+    				print(translate.get('delete_section_btn'));
+    				break; 
+
+    			case 'secToForm':
+    				print(translate.get('continue_btn'));
+    				break; 
+    		}
+    	%>
+    </a> 
+  </div>
+</div>

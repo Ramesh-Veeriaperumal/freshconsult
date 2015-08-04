@@ -1,0 +1,38 @@
+<div class="lead">
+		<%= surveysI18n.survey_feedback %>
+</div>
+<div class="control-group">
+	<label><b><%=thanks.title%></b></label>
+	<div class="">
+		<input type="text" maxlength=<%=SurveyConstants.limit.thanks_text%> name="thanks_text" placeholder="<%=thanks.default_text%>" value='<%=thanks.message%>' />
+		<label id="thanks_text-error" class="error" style="display:none;"><%= surveysI18n.error_text %></label>
+	</div>
+</div>
+<div class="pt20 survey-label">
+	<%if(!isSurveyResult){%>
+		<label class='addQuest'>
+			<a href="javascript:<%=thanks.link.action%>;"><%=thanks.link.label%></a>
+			<a href="#survey-popover-content" rel="hover-popover" id="survey-popover"
+				data-content="<div class='input-xlarge'><%= surveysI18n.thanks_help_text %> </div> ">
+				<span class="ficon-help fsize-22 vertical-alignment ml20"></span>
+			</a>
+			<a href="javascript:SurveyQuestion.hide();" id="question-cancel" class="vertical-alignment pull-right" style="display:none;"> <%= surveysI18n.hide %> </a>
+		</label>
+	<%}%>
+</div>
+<form name="survey_question_fields">
+	<div id="survey_questions" class="sub-container cust-feedback-survey" style="display:none;">
+	</div>
+</form>
+
+<div id="comments" class="clearfix control-group">
+	<div class="pb10"><input type="checkbox" name="can_comment" <%if(can_comment){%>checked<%}%>><span> <%= surveysI18n.additional_comments_feedback %></span></div>
+	<input class="input-comment" rel="ghostwriter" name="comments_text" placeholder= "<%=surveysI18n.comments_feedback %>" type="text" width="100%" value='<%=comments_text%>' maxlength="250">
+
+</div>
+
+<div id="feedback-thanks" style="display:none;" class="clearfix control-group pt20">
+	<label><b><%= surveysI18n.thanks_message_feedback %></b></label>
+	<input name="feedback_response_text" class="input-comment" placeholder="<%=surveysI18n.thanks_feedback%>" rel="ghostwriter" size="24" type="text" width="100%" value='<%=feedback_response_text%>'>
+	<p class="muted pt5"><%=surveysI18n.thanks_label%></p>
+</div>

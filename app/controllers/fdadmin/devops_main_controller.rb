@@ -57,4 +57,10 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
       end
     end
 
+    def run_on_slave
+      Sharding.run_on_slave do
+        yield
+      end
+    end
+
 end

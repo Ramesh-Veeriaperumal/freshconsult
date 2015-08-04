@@ -3,7 +3,9 @@ class MergeContacts < BaseWorker
   sidekiq_options :queue => :merge_contacts, :retry => 0, :backtrace => true, :failures => :exhausted
 
   BATCH_LIMIT = 500
-
+  
+  REPORTS_TRACKING_CLASS = ["Helpdesk::Ticket"]
+ 
   VOTE_OPTIONS = {
     :object     => "votes",
     :poly_type  => :voteable_type, 
@@ -79,7 +81,14 @@ class MergeContacts < BaseWorker
   #Moving relations by batches of 500
   def update_by_batches items, dependent_id, conditions
     begin
-      records_updated = items.where(conditions).limit(BATCH_LIMIT).update_all({dependent_id.to_sym => @parent_user.id})
+      items_to_update     = items.where(conditions).limit(BATCH_LIMIT)
+      klass_name          = items_to_update.klass.name
+      # We are doing update_all to update the user id to the parent user id. update_all won't instantiate active record objects ,
+      # but just returns the count. We need to manually push the changes to RMQ as it does not trigger callbacks too.
+      # Here adding .all to trigger the query(delayed query) and storing the active record objects for which updates need to be sent to RMQ 
+      items_to_update_arr = items_to_update.all if REPORTS_TRACKING_CLASS.include?(klass_name)
+      records_updated     = items_to_update.update_all({dependent_id.to_sym => @parent_user.id})
+      send_updates_to_rmq(items_to_update_arr, klass_name) if REPORTS_TRACKING_CLASS.include?(klass_name)
     end while records_updated == BATCH_LIMIT
   end
 
@@ -128,6 +137,17 @@ class MergeContacts < BaseWorker
     end
     @account.send(options[:object]).where({:id => update_ids}).update_all({options[:user] => @parent_user.id}) if update_ids.present?
     @account.send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
+  end
+  
+  ## TODO Must send only one push for all the subscribers(reports, search, activities)
+  # Currently only reports is handled.
+  # Need to handle it in a generic way for all the subscribers
+  def send_updates_to_rmq(items, klass_name)
+    items.each do |item|
+      item.reload ## Here reloading to get the current state of the object. TODO check if it will trigger any performace impact. Must reorg
+      key = RabbitMq::Constants.const_get("RMQ_REPORTS_#{klass_name.demodulize.upcase}_KEY")
+      item.manual_publish_to_rmq("update", key, {:manual_publish => true})
+    end
   end
   
 end

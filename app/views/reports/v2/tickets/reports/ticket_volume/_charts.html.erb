@@ -1,0 +1,66 @@
+<div class="row-fluid">
+	<div class="span5 chart-title">
+		<span class="trend-subtitle"></span>
+		<%=t('helpdesk_reports.ticket_volume.time_trends.title').html_safe %>
+	</div>
+	<div class="span7 trend-type">
+		<div class="btn-group">
+		<span class="btn chart-trend" data-format="doy">
+			<%=t('helpdesk_reports.ticket_volume.time_trends.day') %>
+		</span>
+		<span class="btn chart-trend" data-format="w">
+			<%=t('helpdesk_reports.ticket_volume.time_trends.week') %>
+		</span>
+		<span class="btn chart-trend" data-format="mon">
+			<%=t('helpdesk_reports.ticket_volume.time_trends.month') %>
+		</span>
+		<span class="btn chart-trend" data-format="qtr">
+			<%=t('helpdesk_reports.ticket_volume.time_trends.qtr') %>
+		</span>
+		<span class="btn chart-trend" data-format="y">
+		<%=t('helpdesk_reports.ticket_volume.time_trends.year') %>
+		</span>
+		</div>
+	</div>
+</div>
+
+<div class="charts_container" id="time_trend_chart"></div>
+<div class='comparision-chart-title'>
+	<%=t('helpdesk_reports.ticket_volume.day_trend.title').html_safe %>
+</div>
+<div class="comparision-chart-subtitle">
+	<%=t('helpdesk_reports.ticket_volume.day_trend.subtitle').html_safe %>
+</div>
+<div class="charts_container">
+	<div class="mini-chart-wrapper clearfix">
+		<div class="mini-chart" id="monday_chart" data-value="monday"></div>
+		<div class="mini-chart" id="tuesday_chart" data-value="tuesday"></div>
+		<div class="mini-chart" id="wednesday_chart" data-value="wednesday"></div>
+		<div class="mini-chart" id="thursday_chart" data-value="thursday"></div>
+		<div class="mini-chart" id="friday_chart" data-value="friday"></div>
+		<div class="mini-chart" id="saturday_chart" data-value="saturday"></div>
+		<div class="mini-chart" id="sunday_chart" data-value="sunday"></div>
+	</div>
+	<div id="day_trend_chart"></div>
+</div>
+
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+			var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+	    var _this = HelpdeskReports.CoreUtil;
+	    _this.chart_hash = <%= @data.to_json.html_safe %> ;
+	    if (!jQuery.isEmptyObject(_this.chart_hash[_this.metric]) && jQuery.isEmptyObject(_this.chart_hash[_this.metric]["error"])) {
+	        HelpdeskReports.ChartsInitializer.TicketVolume.init(_this.chart_hash);
+	    } else if (err) {
+	        jQuery('#day_trend_chart, #time_trend_chart').html('<h4>'+err+'<h4>');
+	        jQuery('.trend-type, .mini-chart-wrapper').hide();
+	    } else if (!jQuery.isEmptyObject(_this.chart_hash["error"]) || !jQuery.isEmptyObject(_this.chart_hash[_this.metric]["error"])) {
+	        jQuery('#day_trend_chart, #time_trend_chart').html('<h4>Something went wrong. Please try again</h4>');
+	        jQuery('.trend-type, .mini-chart-wrapper').hide();
+	    } else if (jQuery.isEmptyObject(_this.chart_hash[_this.metric])) {
+	        jQuery('#day_trend_chart, #time_trend_chart').html('<h4>No data to display</h4>');
+	        jQuery('.trend-type, .mini-chart-wrapper').hide();
+	    }
+	});
+</script>

@@ -332,20 +332,20 @@ module SupportHelper
 		form_value.merge!({:category_val => URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "") })
 	end
 
-	def ticket_field_container form_builder,object_name, field, field_value = ""
+	def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil
 		case field.dom_type
 			when "checkbox" then
 				required = (field[:required_in_portal] && field[:editable_in_portal])
 				%(  <div class="controls">
 						<label class="checkbox #{required ? 'required' : '' }">
-							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
+							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } } #{ field[:label_in_portal] }
 						</label>
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
 		   			<div class="controls">
 
-		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value }
+		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
 		end
 	end
@@ -357,9 +357,11 @@ module SupportHelper
 	end
 
 	def ticket_form_element form_builder, object_name, field, field_value = "", html_opts = {}
+			pl_value_id = html_opts.delete(:pl_value_id)
 	    dom_type = (field.field_type == "nested_field") ? "nested_field" : (field['dom_type'] || field.dom_type)
 	    required = (field.required_in_portal && field.editable_in_portal)
-	    element_class = " #{required ? 'required' : '' } #{ dom_type }"
+	    element_class   = " #{required ? 'required' : '' } #{ dom_type }"
+	    element_class  += " section_field" if field.section_field?
 	    field_name      = (field_name.blank?) ? field.field_name : field_name
 	    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
 
@@ -381,13 +383,18 @@ module SupportHelper
 	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
-	        	{:include_blank => "...", :selected => field_value},
+	        	{:include_blank => "...", :selected => field_value, :pl_value_id => pl_value_id},
 	        	{:class => element_class}, field_value, true, required)
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } ) :
-                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value.to_s.to_bool }) )
+	      	check_box_html = { :class => element_class }
+	        if pl_value_id
+	          id = gsub_id object_name+"_"+field_name+"_"+pl_value_id
+	          check_box_html.merge!({:id => id})
+	        end
+	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, check_box_html ) :
+                                                   check_box(object_name, field_name, check_box_html.merge!({:checked => field_value.to_s.to_bool})) )
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
@@ -405,19 +412,32 @@ module SupportHelper
 	# The field_value(init value) for the nested field should be in the the following format
 	# { :category_val => "", :subcategory_val => "", :item_val => "" }
 	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
-		_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 		_javascript_opts = {
 		  :data_tree => _field.nested_choices,
 		  :initValues => _field_values,
 		  :disable_children => false
 		}.merge!(_opt)
+		if _opt[:pl_value_id].present?
+			_htmlopts.merge!({:id => gsub_id("#{_name}_#{_fieldname}_#{_opt[:pl_value_id]}")})
+			_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 
-		_field.nested_levels.each do |l|
-		  _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-		  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+			_field.nested_levels.each do |l|
+        _htmlopts.merge!({:id => gsub_id("#{_name}_#{l[:name]}_#{_opt[:pl_value_id]}")})
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name]+"_"+_opt[:pl_value_id])
+        _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname+"_"+_opt[:pl_value_id])}').nested_select_tag(#{_javascript_opts.to_json});"))
+		else
+			_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+
+			_field.nested_levels.each do |l|
+			  _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name])
+			  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+			end
+
+			_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")
 		end
-
-		_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
 	end
 
 	# NON-FILTER HELPERS
@@ -702,7 +722,7 @@ module SupportHelper
 	def default_attachment_type (attachment)
 		output = []
 
-		if attachment.is_image?
+		if attachment.is_image? && attachment.source.has_thumbnail?
 			output << %(<img src="#{attachment.thumbnail}" onerror="default_image_error(this)" class="file-thumbnail image" alt="#{attachment.filename}">)
 		else
 	      	filetype = attachment.filename.split(".")[-1] || ""

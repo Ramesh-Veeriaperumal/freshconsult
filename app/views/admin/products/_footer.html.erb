@@ -1,0 +1,15 @@
+<div class="button-container">
+  <%= link_to("#{@product.portal.present? ? t('.edit_portal') : t('.enable_portal')}", '', :class => "btn pull-left", :id => "edit-portal" )  %>
+  <span class="pull-right">
+    <%= pjax_link_to(t('cancel'), admin_products_path, :class => "btn", :id => "email-form-cancel" )  %>
+    <%= f.submit t('save'), :id => "email-form-update", :class => "btn btn-primary", "data-loading-text" => t('saving') %> 
+  </span>
+</div>
+
+<% content_for :onload_script do %>
+	jQuery('#edit-portal').on('click', function (ev) {
+	  ev.preventDefault();
+	  setPostParam('#ProductForm', "enable_portal", true)
+	  jQuery("#ProductForm").submit();
+	});
+<% end %>

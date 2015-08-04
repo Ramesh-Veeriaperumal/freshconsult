@@ -37,6 +37,7 @@ table {
   // Bottom align for column headings
   thead th {
     vertical-align: bottom;
+    background-color: #f6f6f6;
   }
   // Remove top border from thead by default
   caption + thead tr:first-child th,
@@ -58,10 +59,10 @@ table {
 // CONDENSED TABLE W/ HALF PADDING
 // -------------------------------
 
-.table-condensed {
+.table-condensed tr{
   th,
   td {
-    padding: 4px 5px;
+    padding: 10px 8px;
   }
 }
 
@@ -136,8 +137,8 @@ table {
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
 .table-striped {
   tbody {
-    tr:nth-child(odd) td,
-    tr:nth-child(odd) th {
+    tr:nth-child(even) td,
+    tr:nth-child(even) th {
       background-color: $tableBackgroundAccent;
     }
   }

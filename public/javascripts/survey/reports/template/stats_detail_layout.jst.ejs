@@ -1,0 +1,20 @@
+<%= JST["survey/reports/template/content_switch"]()%>
+<div class='empty-chart'></div>
+<div id="survey_report_summary"><%= JST["survey/reports/template/content_summary"]({data:SurveySummary.create()})%></div>
+
+<div class="" id="survey_overview">
+	<%=  JST["survey/reports/template/content_stats_chart"]() %>
+	<div id="reportView">
+		<ul class="nav nav-tabs sleek-tab" id="viewReportBy" value=<%= SurveyReportData.defaultAllValues.group %>>
+	  		<li class="active"><a onclick="SurveyTable.type.change(this)" value=<%=  SurveyReportData.defaultAllValues.group %> ><%= SurveyI18N.group %></a></li>
+	  		<li><a onclick="SurveyTable.type.change(this)" value= <%= SurveyReportData.defaultAllValues.agent %> ><%= SurveyI18N.agent %></a></li>
+		</ul>
+	</div>
+
+	<div id="survey_table">
+		<%=  JST["survey/reports/template/stats_detail_table"]({table:SurveyTable.format()}) %>
+	</div>
+</div>
+<div class="survey-responses" style="display:none;" id="survey_responses">
+	<%=  JST["survey/reports/template/content_response_layout"]({remarks:[]}) %>
+</div>

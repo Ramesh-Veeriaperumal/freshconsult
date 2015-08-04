@@ -1,4 +1,12 @@
 class Helpdesk::Ticket < ActiveRecord::Base
+  
+  
+  def manual_publish_to_rmq(action, key, options = {})
+    # TODO currently the manual publish is specific to reports
+    # But need to reorg this method such that it pushes only msg to rmq
+    # for all the subscribers(reports, activities, search etc)
+    manual_publish_to_xchg("ticket", (reports_rmq_msg(action, options)).to_json, key)
+  end
 
   def to_rmq_json(keys, action)
     return ticket_identifiers if destroy_action?(action)
@@ -28,24 +36,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "source"           =>   source,
       "requester_id"     =>   requester_id,
       "ticket_type"      =>   ticket_type,
-      "visible"          =>   spam || deleted || (parent_ticket ? 0 : 1),
+      "visible"          =>   !spam && !deleted && !parent_ticket ,
       "responder_name"   =>   responder.nil? ? "" : responder.name,
       "subject"          =>   subject,
-      "description"      =>   description[0..50],
       "requester_name"   =>   requester.name,
       "due_by"           =>   due_by.to_i,
       "is_escalated"     =>   isescalated,
       "fr_escalated"     =>   fr_escalated,      
       "created_at"       =>   created_at.to_i,
-      "tag_names"        =>   tags.map(&:name)
+      # @ARCHIVE TODO Currently setting archive as false. 
+      # Will change it once "archiving tickets" feature is rolled out.
+      "archive"          =>   false 
     }
   end
-
+  
   def ticket_schemaless_hash 
     @rmq_ticket_schemaless_hash ||= {
-      "sla_policy_id"   => schema_less_ticket.sla_policy_id,
-      "product_id"      => schema_less_ticket.product_id
-    } 
+      "sla_policy_id"   =>  schema_less_ticket.sla_policy_id,
+      "product_id"       => schema_less_ticket.product_id
+    }.merge(schema_less_ticket.reports_hash)
   end
 
   def ticket_custom_field_hash
@@ -59,11 +68,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "resolved_at"                 =>  resolved_at.to_i,
       "time_to_resolution_in_bhrs"  =>  ticket_states.resolution_time_by_bhrs,
       "time_to_resolution_in_chrs"  =>  (resolved_at ? (resolved_at - created_at) : nil ),
-      "fcr_violation"               =>  (resolved_at ? ticket_states.inbound_count > 1 : nil),
       "first_response_by_bhrs"      =>  ticket_states.first_resp_time_by_bhrs,
+      "inbound_count"               =>  ticket_states.inbound_count
     }
   end
 
+  def reports_rmq_msg(action, options)
+    { 
+        "object"                =>  "ticket",
+        "action"                =>  action,
+        "action_epoch"          =>  Time.zone.now.to_i,
+        "ticket_properties"     =>  mq_reports_ticket_properties(action),
+        "subscriber_properties" =>  { "reports" => mq_reports_subscriber_properties(action).merge(options)  }     
+    }
+  end
+  
   def return_specific_keys(hash, keys)
     new_hash = {}
     keys.each do |key|

@@ -16,11 +16,11 @@ class Solution::Category < ActiveRecord::Base
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
-
-  after_create :assign_portal
   
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
+
+  before_create :set_default_portal
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
   
@@ -59,13 +59,6 @@ class Solution::Category < ActiveRecord::Base
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
 
-  def assign_portal
-    ### MULTILINGUAL SOLUTIONS - META READ HACK!! - Need to verify once
-    portal_solution_category = self.portal_solution_categories.build(:solution_category_id => self.id)
-    portal_solution_category.portal_id = account.main_portal.id
-    portal_solution_category.save
-  end
-
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def portal_ids
     account.launched?(:meta_read) ? portals_through_metum_ids : super
@@ -79,6 +72,10 @@ class Solution::Category < ActiveRecord::Base
 
     def set_mobihelp_app_updated_time
       update_mh_app_time
+    end
+
+    def set_default_portal
+      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
     end
 
 end

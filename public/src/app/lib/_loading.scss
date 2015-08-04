@@ -193,7 +193,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 	}
 }
 
-.request_details .request-cnt-first .loading-edit{ 
+.request_details .request-cnt-first .loading-edit{
 	position:absolute;
 	width:16px;
 	height:11px;
@@ -209,6 +209,32 @@ input[type="text"].loading, .ui-autocomplete-loading{
 .report-page .loading-center{
 	padding-top:50%;
 }*/
+
+/* survey Loading */
+.survey-overlay{
+	@include size(100%, 100%);
+	background-color: rgba(255,255,255,0.8);
+	display: block;
+	position: absolute;
+	box-sizing: border-box;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	.sloading{
+		margin-top: 134px;
+		display: block;
+		.spinner{
+			display: inline-block;
+		}
+		.survey-overlay-text{
+			position: relative;
+			top: 15px;
+		}
+	}
+}
+
 /* Chargebee credit card form loader overlay */
 .cb-process-request{
 	position:absolute;

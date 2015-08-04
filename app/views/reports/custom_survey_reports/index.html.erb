@@ -1,0 +1,98 @@
+
+<%= stylesheet_link_tag_with_rtl :'cdn/custom_survey_reports'  %>
+
+<%= render :partial => '/admin/custom_surveys/constants' %>
+
+<%
+	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)
+%>
+
+<%= javascript_tag do %>
+	var SurveyReportData = {
+		  surveysList : <%=@surveys.to_json.html_safe%>,
+		  agentsList : <%=@agents.to_json.html_safe%>,
+		  groupsList : <%=@groups.to_json.html_safe%>,
+		  survey_report_date_range : "<%=date_range.html_safe%>	",
+		  customerRatings : <%=CustomSurvey::Survey::CUSTOMER_RATINGS.to_json.html_safe%>,
+		  customerRatingsColor : <%=CustomSurvey::Survey::CUSTOMER_RATINGS_COLOR.to_json.html_safe%>,
+		  customerRatingsStyle : <%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE.to_json.html_safe%>,
+		  unanswered : <%=@unanswered%>,
+		  questionsResult: <%=@questions_result.to_json.html_safe%>,
+		  groupWiseReport: <%=@group_wise_report.to_json.html_safe%>,
+		  agentWiseReport: <%=@agent_wise_report.to_json.html_safe%>,
+		  type: {question:<%=CustomSurvey::SurveyResult::QUESTION%>, rating:<%=CustomSurvey::SurveyResult::RATING%>, remarks:<%=CustomSurvey::SurveyResult::REMARKS%>},
+		  defaultAllValues: <%=@default_all_values.to_json.html_safe%>
+	 };
+    var SurveyI18N = {
+		all: "<%= t('reports.survey_reports.main.all') %>",
+		time_period: "<%= t('reports.survey_reports.main.time_period') %>",
+		group: "<%= t('reports.survey_reports.main.group') %>",
+		agent: "<%= t('reports.survey_reports.main.agent') %>",
+		overview: "<%= t('reports.survey_reports.main.overview') %>",
+		responses: "<%= t('reports.survey_reports.main.responses') %>",
+		response_to: "<%= t('reports.survey_reports.main.response_to') %>",
+		rating: "<%= t('reports.survey_reports.main.rating') %>",
+		question: "<%= t('reports.survey_reports.main.question') %>",
+		positive: "<%= t('reports.survey_reports.main.positive') %>",
+		neutral: "<%= t('reports.survey_reports.main.neutral') %>",
+		negative: "<%= t('reports.survey_reports.main.negative') %>",
+		answered: "<%= t('reports.survey_reports.main.answered') %>",
+		unanswered: "<%= t('reports.survey_reports.main.unanswered') %>",
+		total_responses: "<%= t('reports.survey_reports.main.total_responses') %>",
+		preparing_chart_for: "<%= t('reports.survey_reports.main.preparing_chart_for') %>",
+		loading_chart: "<%=t('reports.survey_reports.main.loading_chart')%>",
+		month_names: <%=t('date.abbr_month_names').to_json.html_safe%>,
+		no_remarks: "<%= t('reports.survey_reports.main.no_remarks') %>",
+		loading_remarks: "<%= t('reports.survey_reports.main.loading_remarks') %>",
+		fetching_responses: "<%= t('reports.survey_reports.main.fetching_responses') %>",
+		no_overview: "<%= t('reports.survey_reports.main.no_overview') %>",
+		view_report_by: "<%= t('reports.survey_reports.main.view_report_by')%>",
+		overall_rating: "<%= t('reports.survey_reports.main.overall_rating') %>",
+    allResponse: "<%= t('reports.survey_reports.main.all_responses') %>"
+	};
+	var dateRange = "<%=date_range%>";
+<% end %>
+
+<%= javascript_include_tag :'cdn/survey_report'  %>
+<%= javascript_include_tag :'cdn/reports'  %>
+
+<div class="survey-overlay center"><div class="sloading loading-small loading-center"> <div class="survey-overlay-text"><b> <%= t('admin.surveys.new_layout.loading') %> </b></div></div></div>
+<div id="survey_main_layout" class="survey_main_layout">
+ <h2 class="lead"></h2>
+<%= select_tag :survey_report_survey_list , options_for_select(@surveys.collect{ |s| [s["title_text"] || s["label"],s["id"]||s["value"]]}, @surveys.detect{|s| s["active"] == 1 }.blank? ? @surveys.detect{|s| s["active"]}["id"] :
+	@surveys.detect{|s| s["active"] == 1}["id"]) , :onchange => "SurveyList.change(this)", :class => 'select2 survey-list-select'%>
+<div class="row-fluid mt20" id="content_header">
+	 <div class="span4">
+  		<div class="span3"><%= t('reports.survey_reports.main.time_period') %></div>
+  		<div class="span9">
+  			<div id="survey_date_link_container">
+  				<a id="survey_date_range_link" href="javascript:SurveyDateRange.open();"></a>
+  			</div>
+  			<div id="survey_date_text_container" style="display:none;"><input type="text" id="survey_date_range" value="">
+  			</div>
+  		</div>
+  	</div>
+
+  	<div class="span2">
+  		<div class="span4"><%=t('reports.survey_reports.main.group')%></div>
+  		<div class="span8">
+  		<%= select_tag :survey_report_group_list , options_for_select(@groups.collect{ |g| [g["name"],g["id"]]}.insert(0,["All","g"])) , :onchange => "SurveyGroup.change(this)", :class => 'select2 group-select' %>
+  		</div>
+  	</div>
+
+  	<div class="span2">
+  		<div class="span4"><%=t('reports.survey_reports.main.agent')%></div>
+  		<div class="span8">
+  			<%= select_tag :survey_report_agent_list , options_for_select(@agents.collect{ |a| [a["user"]["name"],a["user"]["id"]]}.insert(0,["All","a"])) , :onchange => "SurveyAgent.change(this)", :class => 'select2 agent-select' %>
+  		</div>
+  	</div>
+</div>
+<hr class="report-divider" />
+
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]());
+});
+</script>

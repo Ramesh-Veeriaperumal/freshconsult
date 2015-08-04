@@ -13,5 +13,7 @@ module CustomFields
       :custom_paragraph       => { :type => 1008, :dom_type => :paragraph,      :db_column_type => :text },
       :custom_url             => { :type => 1009, :dom_type => :url,            :db_column_type => :text }
     }
+
+    TIME_ZONE_CHOICES = ActiveSupport::TimeZone.all.map do |time_zone| [time_zone.to_s, time_zone.name.to_sym] end
   end
 end

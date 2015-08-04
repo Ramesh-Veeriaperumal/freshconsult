@@ -1,0 +1,32 @@
+<div class="section">
+	<h3 class='title'> 
+		<%= translate.get('dropdownChoice') %> - <%= translate.get('preview') %>
+	</h3>
+	<a href='#' class='button-link pull-right' id='nested-edit-button'><%= translate.get("edit") %></a>
+	<div class="custom-choices" id="nestedContainer">	    
+		<div id="nested-selectboxs">
+			<div class="alert m0 mb15">
+			<%= translate.get('nestedfield_helptext_preview') %>
+			</div>
+			<ul class="nested-selectboxs row-fluid">
+				<li class="span4">
+					<select name="nest-category" id="nest-category">
+						<option>...</option>
+					</select>
+				</li>
+				<li class="span4 subcategory">   
+					<span class="connector"></span>
+					<select name="nest-subcategory" id="nest-subcategory">
+						<option>...</option>
+					</select>
+				</li>
+				<li class="span4 item">               
+					<span class="connector"></span>
+					<select name="nest-item" id="nest-item" >
+						<option>...</option>
+					</select>
+				</li>            
+			</ul>
+		</div>
+	</div>
+</div> 
