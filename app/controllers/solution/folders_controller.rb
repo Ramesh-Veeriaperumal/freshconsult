@@ -240,7 +240,8 @@ class Solution::FoldersController < ApplicationController
                                     :id => 'folders_undo_bulk',
                                     :data => { 
                                       :items => @updated_items, 
-                                      :parent_id => @category_id
+                                      :parent_id => @category_id,
+                                      :action_on => 'folders'
                                     })
                   )).html_safe
     end

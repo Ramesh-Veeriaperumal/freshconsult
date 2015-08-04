@@ -13,7 +13,9 @@
 		          	:'data-container-css-class' => 'bulk-action-button',
 	              :include_blank => true,
 	              :placeholder => t('solution.move_to'),
-	              :"data-show-below-only" => true
+	              :"data-show-below-only" => true,
+	              :"data-action-on" => "articles",
+	              :"data-action" => "move_to"
 	          } %>
 			</span>
 			<% if privilege?(:admin_tasks) %>
@@ -26,7 +28,9 @@
 			          	:'data-container-css-class' => 'bulk-action-button',
 		              :"data-show-below-only" => true,
 		              :include_blank => true,
-		              :placeholder => t('solution.change_author')
+		              :placeholder => t('solution.change_author'),
+		              :"data-action-on" => "articles",
+		              :"data-action" => "change_author"
 		          } %>
 				</span>
 			<% end %>

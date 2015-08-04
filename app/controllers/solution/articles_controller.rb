@@ -363,7 +363,8 @@ class Solution::ArticlesController < ApplicationController
                                     :id => 'articles_undo_bulk',
                                     :data => { 
                                       :items => @updated_items, 
-                                      :parent_id => @folder_id
+                                      :parent_id => @folder_id,
+                                      :action_on => 'articles'
                                     })
                   )).html_safe
     end

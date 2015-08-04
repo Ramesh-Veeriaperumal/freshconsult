@@ -11,7 +11,7 @@ window.App = window.App || {};
     submitData: {},
 
     onVisit: function (data) {
-      console.log("Loaded the folder.js");
+      console.log("Loaded the list_view.js");
       this.initialData();
       this.bindHandlers();
       this.removeCurrentFolder();
@@ -83,28 +83,14 @@ window.App = window.App || {};
         App.Solutions.NavMenu.reload();
       });
 
-      //binding for folders move to
-      $('#folder-bulk-action #move_to').on('change.folders_articles', function () {
-        $this.bulk_action($this, 'folders', 'move_to', this.value);
+      $('body').on('change.folders_articles', '#move_to, #change_author', function () {
+        var el = $(this);
+        $this.bulk_action($this, el.data('action-on'), el.data('action'), this.value);
       });
-
-      //binding for articles move to
-      $('#article-bulk-action #move_to').on('change.folders_articles', function () {
-        $this.bulk_action($this, 'articles', 'move_to', this.value);
-      });
-
-      //binding for change author
-      $('#change_author').on('change.folders_articles', function () {
-        $this.bulk_action($this, 'articles', 'change_author', this.value);
-      });
-
-      //bindings for undo
-      $('body').on('click.folders_articles', '#folders_undo_bulk', function () {
-        $this.undo_bulk_action($(this), "folders");
-      });
-
-      $('body').on('click.folders_articles', '#articles_undo_bulk', function () {
-        $this.undo_bulk_action($(this), "articles");
+      
+      $('body').on('click.folders_articles', '#folders_undo_bulk, #articles_undo_bulk', function () {
+        var el = $(this);
+        $this.undo_bulk_action(el,el.data('action-on'));
       });
 
       $('#move_to').on('select2-open', function () {

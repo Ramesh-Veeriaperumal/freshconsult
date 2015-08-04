@@ -23,10 +23,10 @@ window.App.Solutions = window.App.Solutions || {};
     },
 
     bindHandlers: function () {
-      $("body").on('click.solutionCategory', '.show-more-cat', function () {
+      $("body").on('click.solutionCategory', '.show-more-cat', function (ev) {
+        ev.preventDefault();
         $('.other-portal-cat').show();
         $('.view-more-cat').hide();
-        return false;
       });
       $("body").on('click.solutionCategory', '#categories_reorder_button, #categories_sort_cancel', function () {
         $('#search-show').toggle();
