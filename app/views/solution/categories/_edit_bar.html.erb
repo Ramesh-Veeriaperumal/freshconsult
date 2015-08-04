@@ -3,7 +3,7 @@
 		<li class="lf-item">
 			<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
 		</li>
-		<li class="lf-item lf-btns faded" id="folder-bulk-action">
+		<li class="lf-item lf-btns faded solution-bulk-actions" id="folder-bulk-action">
 			<span>
 				<%= select_tag :id,
 		          options_for_select(current_account.solution_categories.reject { |sc| sc.is_default? || sc.id == @category.id }.collect{|c|[c.name, c.id]}), {
