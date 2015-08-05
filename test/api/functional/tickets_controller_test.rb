@@ -6,10 +6,20 @@ class TicketsControllerTest < ActionController::TestCase
     request_params.merge(params)
   end
 
-  CUSTOM_FIELDS = %w(number checkbox text paragraph)
+  CUSTOM_FIELDS = %w(number checkbox decimal text paragraph)
 
-  custom_fields_values = { 'number' => 32_234, 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
-  update_custom_fields_values = { 'number' => 12, 'checkbox' => nil, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal)
+
+  custom_fields_values = { 'number' => 32_234, 'decimal' => "90.89", 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  update_custom_fields_values = { 'number' => 12, 'decimal' => "8900.89",  'checkbox' => nil, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  custom_fields_values_invalid = { 'number' => "1.90", 'decimal' => "dd", 'checkbox' => "iu", 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  update_custom_fields_values_invalid = { 'number' => "1.89", 'decimal' => "addsad", 'checkbox' => "nmbm", 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+
+  ERROR_PARAMS =  {
+                    'number' => ['must be an integer'],
+                    'decimal' => ['data_type_mismatch', data_type: 'number'],
+                    'checkbox' => ['not_included', list: "true,false"]
+                  }
 
   def wrap_cname(params = {})
     { ticket: params }
@@ -400,6 +410,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
+  def test_create_with_custom_dropdown_invalid
+    params = ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => 'fdfdfdffdfdfdffdf' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("movies_#{@account.id}", 'not_included', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
   def test_create_notify_cc_emails
     params = ticket_params_hash
     controller.class.any_instance.expects(:notify_cc_people).once
@@ -419,6 +436,14 @@ class TicketsControllerTest < ActionController::TestCase
       match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     end
 
+    define_method("test_create_with_custom_#{custom_field}_invalid") do
+      params = ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => custom_fields_values_invalid[custom_field] })
+      post :create, construct_params({}, params)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_PARAMS[custom_field]))])
+    end if VALIDATABLE_CUSTOM_FIELDS.include?(custom_field)
+
+
     define_method("test_update_with_custom_#{custom_field}") do
       params_hash = update_ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => update_custom_fields_values[custom_field] })
       t = ticket
@@ -427,6 +452,15 @@ class TicketsControllerTest < ActionController::TestCase
       match_json(ticket_pattern(params_hash, t.reload))
       match_json(ticket_pattern({}, t.reload))
     end
+
+    define_method("test_update_with_custom_#{custom_field}_invalid") do
+      params_hash = update_ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => update_custom_fields_values_invalid[custom_field] })
+      t = ticket
+      put :update, construct_params({ id: t.display_id }, params_hash)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_PARAMS[custom_field]))])
+    end if VALIDATABLE_CUSTOM_FIELDS.include?(custom_field)
+
   end
 
   def test_update_with_attachment
@@ -983,6 +1017,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :success
     match_json(ticket_pattern(params, t.reload))
     match_json(ticket_pattern({}, t.reload))
+  end
+
+   def test_update_with_custom_dropdown_invalid
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => 'test' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("movies_#{@account.id}", 'not_included', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
 
   def test_destroy

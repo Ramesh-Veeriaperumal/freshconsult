@@ -6,17 +6,17 @@ class MetalApiController < ActionController::Metal
   include ActionController::Helpers # needed for calling methods which are defined as helper methods.
   include ActionController::Redirecting
   include ActionController::Rendering
-  include ActionController::RackDelegation # Needed so that reqeest and response method will be delegated to Rack
+  include ActionController::RackDelegation # Needed so that request and response method will be delegated to Rack
   include ActionController::Caching
   include Rails.application.routes.url_helpers # Need for location header in response
   include ActiveSupport::Rescuable # Dependency with strong params
-  include ActionController::MimeResponds
+  include ActionController::MimeResponds  #Needed for respond_to/redirect_to
   include ActionController::ImplicitRender
   include ActionController::StrongParameters
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
-  include AbstractController::Callbacks
-  include ActionController::Rescue
+  include AbstractController::Callbacks # before filters
+  include ActionController::Rescue 
   include ActionController::ParamsWrapper
   include ActionController::Instrumentation  # need this for active support instrumentation.
 

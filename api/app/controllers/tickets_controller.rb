@@ -13,7 +13,7 @@ class TicketsController < ApiApplicationController
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_error(ticket_delegator.errors)
+      render_error(ticket_delegator.errors, ticket_delegator.error_options)
     elsif @item.save_ticket
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
@@ -24,15 +24,17 @@ class TicketsController < ApiApplicationController
   end
 
   def update
-    assign_protected
+    assign_protected 
+
+    # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname])
-    tckt_dlgtr = TicketDelegator.new(@item)
-    if !tckt_dlgtr.valid?
-      set_custom_errors(tckt_dlgtr)
-      render_error(tckt_dlgtr.errors)
+    ticket_delegator = TicketDelegator.new(@item)
+    if !ticket_delegator.valid?
+      set_custom_errors(ticket_delegator)
+      render_error(ticket_delegator.errors, ticket_delegator.error_options)
     elsif @item.update_ticket_attributes(params[cname])
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
-      notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
+      notify_cc_people @new_cc_emails unless @new_cc_emails.blank? # notify cc_people on update too.
     else
       set_custom_errors
       render_error(@item.errors)
@@ -45,6 +47,7 @@ class TicketsController < ApiApplicationController
   end
 
   def assign
+    # can unassign an agent too. Should support that too.
     user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
     if user
       @item.responder = user

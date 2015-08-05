@@ -783,6 +783,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # To keep flexifield & @custom_field in sync
 
   def custom_field
+    # throws error in retrieve_ff_values if flexifield is nil and custom_field is not set. Hence the check
+    return nil unless @custom_field || flexifield
     @custom_field ||= retrieve_ff_values
   end
 

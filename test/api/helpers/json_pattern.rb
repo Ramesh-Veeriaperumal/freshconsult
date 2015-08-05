@@ -162,7 +162,7 @@ module JsonPattern
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.ignore_extra_keys! : ticket.custom_field
+    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.as_json.ignore_extra_keys! : ticket.custom_field.as_json
 
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],

@@ -7,7 +7,7 @@ class BaseError
                     'required_and_inclusion'],
     already_exists: ['has already been taken', 'already exists in the selected category'],
     invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
-    datatype_mismatch: ['is not a date', 'is not a number', 'data_type_mismatch'],
+    datatype_mismatch: ['is not a date', 'is not a number', 'data_type_mismatch', 'must be an integer'],
     invalid_field: ['invalid_field', "Can't update user when timer is running"],
     invalid_size: ['invalid_size']
   }
