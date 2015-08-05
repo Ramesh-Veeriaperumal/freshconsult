@@ -215,3 +215,107 @@
   margin-top: 6px;
   @include padding-right(15px); 
 }
+
+// ------------------------------------------------------------------------------------------------------------
+//                    Solution Articles Page Properties Section Styles
+// ------------------------------------------------------------------------------------------------------------
+
+#solution-properties-container {
+  margin-bottom: 25px;
+  .solution-properties-message {
+    color: #666;
+  }
+  .solution-properties-description {
+    height: 48px;
+  }
+  .solution-properties-show {
+    font-size:7px;
+    &.arrow-right{
+      margin-top: -3px;
+    }
+  }
+  .solution-properties-title {
+    cursor: pointer;
+    border-top: 1px solid #CCC;
+    padding-top: 6px;
+    a{
+      font-size: 13px;
+      font-weight: bold;
+      &:hover{
+        color: #333;
+      }
+    }
+    span {
+      font-size: 13px;
+      font-weight: bold;
+    }
+  }
+  #solution-properties-seo {
+    margin-top: 20px;
+  }
+  #solution-properties .controls label {
+    display: inline;
+    margin-left: 5px;
+    margin-right: 20px;
+
+    &.error {
+      clear: both;
+      display: block;
+    }
+  }
+
+  .solution-seo {
+    margin-bottom: 10px;
+  }
+
+  .folder-warning-msg {
+    color: brown;
+  }
+}
+//------------- End of  Solution Articles Page Properties Section Styles ----------------------------------------//
+
+//------------- Article Properties Remote load Form Styles ------------------------------------------------------//
+.modal-body {
+  #solution-properties-container{
+    margin-bottom: 0px;
+  }
+  #solution-properties {
+    .control-label {
+      float: left;
+      width: 130px;
+      padding-top: 5px;
+      font-weight: 500;
+    }
+    .controls{
+      margin-left: 150px;
+      input, textarea {
+        margin-bottom: 0px;
+      }
+    }
+    .control-label, controls {
+      display: inline;
+    }
+    .control-group {
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .unpublish-article {
+      margin-left: 20px;
+      margin-top: 5px;
+      span {
+        font-weight: bold;
+        margin-left: 5px;
+      }
+      .row {
+        input {
+          margin-top: -3px;
+        }
+      }
+      .msg {
+        color: #999;
+      }
+    }
+  }
+}
+//------------- End of Article Properties Remote load Form Styles -----------------------------------------------//
+
