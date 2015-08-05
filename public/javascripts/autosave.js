@@ -73,6 +73,7 @@ Along with the above options, few flags and counters are available which are lis
     savingContentFlag: false,
     successCount: 0,
     failureCount: 0,
+    totalCount: 0,
     lastSaveStatus: true,
     timer: null,
     minContentLengthCheck: true,
@@ -164,7 +165,7 @@ Along with the above options, few flags and counters are available which are lis
       }
 
       this.savingContentFlag = true;
-
+      this.totalCount += 1;
       $.ajax({
         url: this.opts.autosaveUrl,
         type: 'POST',
