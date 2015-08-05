@@ -9,6 +9,7 @@ window.App = window.App || {};
     
     data: {},
     submitData: {},
+    COMPANY_VISIBILITY: 4,
 
     onVisit: function (data) {
       console.log("Loaded the list_view.js");
@@ -143,7 +144,7 @@ window.App = window.App || {};
       this.submitData = {};
       this.submitData.visibility = data.visibility;
       this.data.visibleToUrl = data.url;
-      if (data.visibility === 4) {
+      if (data.visibility === this.COMPANY_VISIBILITY) {
         this.toggleCompanyClass(true);
         this.eventsForCompanySelect();
         $('.company_folders .select2-search-field input').focus();
@@ -172,11 +173,6 @@ window.App = window.App || {};
       });
     },
 
-    preVisibleToSubmitActions: function () {
-      this.hideFdMenu();
-      this.getCompanyData();
-    },
-
     hideFdMenu: function () {
       this.toggleCompanyClass(false);
       $("#visible_to").css('display', 'none');
@@ -184,22 +180,23 @@ window.App = window.App || {};
     },
 
     getCompanyData: function () {
-      if (this.submitData.visibility === 4) {
+      if (this.submitData.visibility === this.COMPANY_VISIBILITY) {
         this.submitData.companies = $("#change_folder_customers_filter").val();
         this.submitData.addToExisting = $(".right-select-companies .add-to-existing:checked").val();
       }
       this.submitData.folderIds = this.data.selectedElementIds;
+      return this.submitData;
     },
 
     visibleToSubmit: function () {
       var $this = this;
-      this.preVisibleToSubmitActions();
+      this.hideFdMenu();
       this.loadingAnimation();
 
       $.ajax({
         url: $this.data.visibleToUrl,
         type: 'PUT',
-        data: this.submitData,
+        data: $this.getCompanyData(),
         dataType: "script"
       });
     },
