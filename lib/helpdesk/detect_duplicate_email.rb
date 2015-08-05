@@ -62,6 +62,6 @@ module Helpdesk::DetectDuplicateEmail
   end
 
   def email_topic
-    SNS["reports_notification_topic"] # Using reports topic temporarily
+    SNS["mailbox_notification_topic"]
   end
 end
