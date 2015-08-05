@@ -1,0 +1,193 @@
+/*jslint browser: true, devel: true */
+/*global  App, moment, highlight_code, Fjax */
+
+window.App = window.App || {};
+(function ($) {
+  "use strict";
+
+  App.Solutions.Article = $.extend(App.Solutions.Article, {
+
+    showPageBindings: function () {
+      var $this = this;
+      this.articleHistoryEllipsisExpand();
+
+      this.bindForCancelBtn();
+      this.bindForEditBtn();
+
+      this.dummyActionButtonTriggers();
+      this.unsavedContentNotif();
+      if (this.data.defaultFolder) {
+        this.defaultFolderValidate();
+      }
+      this.modalBindings();
+    },
+
+    modalBindings: function () {
+      var $this = this;
+      $('body').on('modal_loaded.articles', function () {
+        $this.articleTags = $('#tags_name').val().split(",");
+        $this.setTagSelector();
+        $this.articleProperties();
+      });
+    },
+
+    bindForEditBtn: function () {
+      var $this = this;
+      $('body').on('click.articles', '.article-edit-btn', function () {
+        $this.startEditing();
+        $('.info-data').remove();
+      });
+    },
+
+    dummyActionButtonTriggers: function () {
+      $('body').on('click.articles', '#save-btn, #publish-btn', function () {
+        var targetBtn = $(this).data().targetBtn;
+        $(targetBtn).trigger('click');
+      });
+    },
+
+    articleHistoryEllipsisExpand: function() {
+      $('body').on('click.articles', '.article-history .ellipsis', function () {
+        $('.created-history').toggleClass('hide');
+        $('.article-history .ellipsis').toggleClass('hide');
+      });
+    },
+
+    attachmentsDelEvents: function () {
+      $(document).on('attachment_deleted', function(ev, data){
+        $(".article-view #helpdesk_" + data.attachment_type + "_" + data.attachment_id).remove();
+        $(".article-edit #helpdesk_" + data.attachment_type + "_" + data.attachment_id).fadeOut(500, function(){ $(this).remove(); });
+      });
+    },
+
+    bindPropertiesToggle: function () {
+      $('body').on('click.articles', '#solution-properties-show', function (ev) {
+        var visiblility = $('#solution-properties-seo').is(":visible");
+        $('#show-hide-button')
+          .toggleClass("arrow-right", visiblility)
+          .toggleClass("arrow-down", !visiblility);
+        $('#solution-properties-seo').toggle('fast', function () {});
+      });
+    },
+
+    formatSeoMeta: function () {
+      $('body').on('submit.articles', '#article-form', function (ev) {
+        $('#solution_article_seo_data_meta_description').val(
+          $('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim()
+        );
+      });
+    },
+
+    bindForCancelBtn: function () {
+      var $this = this;
+      $("body").on('click.articles', "#edit-cancel-button", function (ev) {
+        ev.preventDefault();
+        $this.cancel_UI_toggle();
+        $this.editUrlChange(false);
+        $this.autoSave.stopSaving();
+
+        if($this.autoSave.totalCount > 0) {
+          $(".article-edit-form")[0].reset();
+          $this.setFormValues();
+          $this.resetDraftRequest();
+          $this.autoSave.contentChanged = false;
+          $this.autoSave.totalCount = 0;
+          $this.autoSave.successCount = 0;
+          $this.autoSave.failureCount = 0; 
+        }
+      });
+    },
+
+    articleProperties: function () {
+      var $this = this;
+      this.formatSeoMeta();
+      $("#article-prop-cancel").bind("click", function () {
+        $('#article-prop-content #article-form').resetForm();
+        $('.article-tags').select2('val', $this.articleTags);
+      });
+    },
+
+    unsavedContentNotif: function () {
+      var $this = this;
+
+      $(window).on('beforeunload.articles', function (e) {
+        if ($this.unsavedContent()) {
+          var msg = "You have unsaved content in this page.";
+          e = e || window.event;
+          if (e) {
+            e.returnValue = msg;
+          }
+          return msg;
+        }
+      });
+
+      $('body').on('submit.articles', '.article-edit-form', function () {
+        if (!$.isEmptyObject($this.autoSave)) {
+          $this.autoSave.stopSaving();
+        }
+        $(window).off('beforeunload.articles');
+      });
+
+      $(document).on('pjax:beforeSend', function (event, xhr, settings, options) {
+        if ($this.unsavedContent()) {
+          if (!confirm('You have unsaved content in this page. Do you want to leave this page?')) {
+            Fjax.resetLoading();
+            return false;
+          }
+        }
+      });
+    },
+
+    defaultFolderValidate: function () {
+      $('body').on('click.articles', '#article-publish-btn, #save-as-draft-btn', function () {
+        if ($("#article-form").data().defaultFolder) {
+          if ($('#solution_article_folder_id').val() === "") {
+            $('.folder-warning-msg').show();
+            return false;
+          }
+        }
+        return true;
+      });
+    },
+
+    setTagSelector: function () {
+      var previouslyselectedTags = [];
+      $('.article-tags').val().split(',').each(function (item, i) { previouslyselectedTags.push({ id: item, text: item }); });
+      $('.article-tags').select2({
+        multiple: true,
+        maximumInputLength: 32,
+        data: previouslyselectedTags,
+        quietMillis: 500,
+        tags: true,
+        tokenSeparators: [','],
+        ajax: {
+          url: '/search/autocomplete/tags',
+          dataType: 'json',
+          data: function (term) {
+            return { q: term };
+          },
+          results: function (data) {
+            var results = [];
+            $.each(data.results, function (i, item) {
+              var result = escapeHtml(item.value);
+              results.push({ id: result, text: result });
+              window.results = results;
+            });
+            return { results: results };
+
+          }
+        },
+        initSelection : function (element, callback) {
+          callback(previouslyselectedTags);
+        },
+        formatInputTooLong: function () {
+          return 'Maximum key length';
+        },
+        createSearchChoice: function (term, data) {
+          if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0)
+          return { id: term, text: term };
+        }
+      });
+    }
+  });
+}(window.jQuery));

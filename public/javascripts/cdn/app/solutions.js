@@ -1,6 +1,9 @@
 //= require app/solutions/solutions.js
 //= require app/solutions/list_view.js
-//= require app/solutions/article.js
+//= require app/solutions/article/article.js
+//= require app/solutions/article/handlers.js
+//= require app/solutions/article/bindings.js
+//= require app/solutions/article/draft.js
 //= require app/solutions/reorder.js
 //= require app/solutions/nav_menu.js
 //= require app/solutions/category.js
