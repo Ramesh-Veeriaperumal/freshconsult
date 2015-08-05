@@ -175,7 +175,7 @@ window.App = window.App || {};
 
     hideFdMenu: function () {
       this.toggleCompanyClass(false);
-      $("#visible_to").css('display', 'none');
+      $("#visible_to").hide();
       $(".bulk-action-btns[menuid='#visible_to']").removeClass('selected');
     },
 
