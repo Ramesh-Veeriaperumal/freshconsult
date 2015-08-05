@@ -223,4 +223,8 @@ module SolutionHelper
 		content << %{</div>}
 		content.html_safe
 	end
+
+	def option_selector_name identifier
+		identifier.delete(' ').underscore 
+	end
 end

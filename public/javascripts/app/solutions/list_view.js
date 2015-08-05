@@ -95,19 +95,21 @@ window.App = window.App || {};
       });
 
       $('#move_to').on('select2-open', function () {
-        $this.unSelectVisibleTo();
+        if ($('#visible_to').is(':visible')) {
+          $this.toggleVisibleTo(false);
+        }
         hideActiveMenu();
       });
 
       $("body").on('click.folders_articles', function (e) {
         var container =  $('.visible-to-btn');
         if (!container.is(e.target) && container.has(e.target).length === 0) {
-          $this.unSelectVisibleTo();
+            $this.toggleVisibleTo(false);
         } else {
           if ($('#visible_to').is(':visible')) {
-            $this.selectVisibleTo();
+            $this.toggleVisibleTo(true);
           } else {
-            $this.unSelectVisibleTo();
+            $this.toggleVisibleTo(false);
           }
         }
       });
@@ -115,16 +117,9 @@ window.App = window.App || {};
       focusFirstModalElement('folders_articles');
     },
 
-    selectVisibleTo: function () {
-      $('.visible-to-btn').addClass('highlight-border');
-      $('.visible-to-btn .bulk-action-btns').removeClass('drop-right');
-      $('.visible-to-btn .bulk-action-btns').addClass('visible-to-selected');
-    },
-
-    unSelectVisibleTo: function () {
-      $('.visible-to-btn').removeClass('highlight-border');
-      $('.visible-to-btn .bulk-action-btns').addClass('drop-right');
-      $('.visible-to-btn .bulk-action-btns').removeClass('visible-to-selected');
+    toggleVisibleTo: function (flag) {
+      $('.visible-to-btn').toggleClass('highlight-border', flag);
+      $('.visible-to-btn .bulk-action-btns').toggleClass('drop-right', !flag).toggleClass('visible-to-selected',flag);
     },
 
     removeCurrentFolder: function () {
@@ -156,11 +151,7 @@ window.App = window.App || {};
 
     toggleCompanyClass: function (flag) {
       $(".right-select-companies").toggleClass('hide', !flag);
-      if (flag) {
-        $($('#visible_to ul li a')[3]).addClass('selected');
-      } else {
-        $($('#visible_to ul li a')[3]).removeClass('selected');
-      }
+      $('.select_companies').toggleClass('selected', flag);
     },
 
     eventsForCompanySelect: function () {
