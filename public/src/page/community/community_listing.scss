@@ -60,6 +60,10 @@
       .sol-visibility {
         @include margin(3px 0px 0px 15px);
       }
+
+      .orphan-cat-info {
+        color: #DF013A;
+      }
     }
 
     .dropdown-menu {
