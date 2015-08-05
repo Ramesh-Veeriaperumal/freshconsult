@@ -25,6 +25,8 @@ window.App = window.App || {};
     
     onLeave: function (data) {
       $('body').off('.articles');
+      $(document).off('.articles');
+      $(window).off('.articles');
       if (this.autoSave) {
         this.autoSave.stopSaving();
         this.autoSave = null;

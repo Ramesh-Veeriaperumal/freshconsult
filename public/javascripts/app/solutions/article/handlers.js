@@ -44,7 +44,7 @@ window.App = window.App || {};
       } else {
         this.autosaveInitialize();
       }
-
+      this.unsavedContentNotif();
       this.editUrlChange(true);
       this.attachmentsDelEvents();
       this.disableDraftResetAttr();
@@ -71,7 +71,18 @@ window.App = window.App || {};
       if (this.autoSave && !this.autoSave.lastSaveStatus) {
         return false;
       }
-      return ($(".hidden_upload input").length > 1);
+      return this.checkAttachments();
+    },
+
+    checkAttachments: function () {
+      var att_el = ["#article-attach-container", "#dropboxjs", "#boxjs", ".hidden_upload"];
+      for(var i = 0; i < att_el.length ; i ++) {
+        var el = $(att_el[i]+" input");
+        if(el.length > 1) {
+          return true;
+        }
+      }
+      return false;
     }
   });
 }(window.jQuery));

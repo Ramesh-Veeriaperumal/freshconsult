@@ -15,7 +15,6 @@ window.App = window.App || {};
       this.bindForEditBtn();
 
       this.dummyActionButtonTriggers();
-      this.unsavedContentNotif();
       if (this.data.defaultFolder) {
         this.defaultFolderValidate();
       }
@@ -25,7 +24,8 @@ window.App = window.App || {};
     modalBindings: function () {
       var $this = this;
       $('body').on('modal_loaded.articles', function () {
-        $this.articleTags = $('#tags_name').val().split(",");
+        $this.articleTags = $('#tags_name').val();
+        $this.articleTags = $this.articleTags != "" ? $this.articleTags.split(",") : "";
         $this.setTagSelector();
         $this.articleProperties();
       });
@@ -85,9 +85,9 @@ window.App = window.App || {};
         $this.cancel_UI_toggle();
         $this.editUrlChange(false);
         $this.autoSave.stopSaving();
+        $(".article-edit-form")[0].reset();
 
         if($this.autoSave.totalCount > 0) {
-          $(".article-edit-form")[0].reset();
           $this.setFormValues();
           $this.resetDraftRequest();
           $this.autoSave.contentChanged = false;
@@ -112,9 +112,9 @@ window.App = window.App || {};
 
       $(window).on('beforeunload.articles', function (e) {
         if ($this.unsavedContent()) {
-          var msg = "You have unsaved content in this page.";
+          var msg = $this.STRINGS.unsavedContent;
           e = e || window.event;
-          if (e) {
+          if (e) { 
             e.returnValue = msg;
           }
           return msg;
@@ -128,9 +128,9 @@ window.App = window.App || {};
         $(window).off('beforeunload.articles');
       });
 
-      $(document).on('pjax:beforeSend', function (event, xhr, settings, options) {
+      $(document).on('pjax:beforeSend.articles', function (event, xhr, settings, options) {
         if ($this.unsavedContent()) {
-          if (!confirm('You have unsaved content in this page. Do you want to leave this page?')) {
+          if (!confirm($this.STRINGS.unsavedContent + " " + $this.STRINGS.leaveQuestion)) {
             Fjax.resetLoading();
             return false;
           }
@@ -151,6 +151,7 @@ window.App = window.App || {};
     },
 
     setTagSelector: function () {
+      var $this = this;
       var previouslyselectedTags = [];
       $('.article-tags').val().split(',').each(function (item, i) { previouslyselectedTags.push({ id: item, text: item }); });
       $('.article-tags').select2({
@@ -181,7 +182,7 @@ window.App = window.App || {};
           callback(previouslyselectedTags);
         },
         formatInputTooLong: function () {
-          return 'Maximum key length';
+          return $this.STRINGS.maxInput;
         },
         createSearchChoice: function (term, data) {
           if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0)

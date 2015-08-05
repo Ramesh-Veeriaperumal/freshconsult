@@ -41,11 +41,11 @@ window.App = window.App || {};
         },
         handlers = {
           success: function () {
-            console.log('Cancel success');
+            console.log('Success');
             //TODO What all to do in cancel request
           },
           error: function () {
-            console.log('Cancel error');
+            console.log('Error');
           }
         },
         request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit));
@@ -57,7 +57,7 @@ window.App = window.App || {};
     },
 
     autosaveDomManipulate: function (response) {
-
+      var $this = this;
       var changeDom = {
         mainElement: $(".draft-notif"),
         msgElement: $(".autosave-notif"),
@@ -70,7 +70,7 @@ window.App = window.App || {};
         },
         reloadButton: function () {
           return $('<span />').attr('onclick', 'window.location.reload();').
-            html("Reload").attr('class', 'btn btn-small reload-btn');
+            html($this.STRINGS.reload).attr('class', 'btn btn-small reload-btn');
         },
         message: function (msg, success) {
           return $('<span />').html(msg).attr('class', (success ? "" : "delete-confirm-warning-icon"));
@@ -97,18 +97,21 @@ window.App = window.App || {};
         },
         previewDrafts: function () {
           var data = $('#article-form').data();
-          return $('<span />').attr('class', 'pull-right')
+          if(data) {
+            return $('<span />').attr('class', 'pull-right')
                   .html($('<a>').attr('href', data.previewPath).attr('target', "_blank")
                   .text(data.previewText));
+          } else {
+            return $('<span />');
+          }
         },
         manipulate: function (response, success) {
           var content = "";
-          response = response || { msg: "Something went wrong!"};
+          response = response || { msg: $this.STRINGS.somethingWrong};
           if (response.msg) {
             content = this.htmlToStr(this.message(response.msg, success));
             content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton());
             content += this.htmlToStr(this.previewDrafts());
-            // this.msgElement.html(content).show();
             this.msgElement.html(content).filter(':hidden').show();
             $('.article-view-edit:visible').hide();
             this.themeChange(!success);
