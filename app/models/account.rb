@@ -211,8 +211,6 @@ class Account < ActiveRecord::Base
   
   #Will be used as :host in emails
   def host
-    # OPTIMIZE 
-    # main_portal was being used. read it from cache
     main_portal_from_cache.portal_url.blank? ? full_domain : main_portal_from_cache.portal_url
   end
   
@@ -248,8 +246,6 @@ class Account < ActiveRecord::Base
   end
   
    def language
-    # OPTIMIZE
-    # main_portal.language  
     main_portal_from_cache.language
    end
   
