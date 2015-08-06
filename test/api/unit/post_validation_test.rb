@@ -10,13 +10,12 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_numericality_params_invalid
-    controller_params = { 'topic_id' => 'x', 'user_id' => 'x' }
+    controller_params = { 'topic_id' => 'x' }
     item = nil
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     refute post.valid?
     error = post.errors.full_messages
     assert error.include?('Topic is not a number')
-    assert error.include?('User is not a number')
   end
 
   def test_inclusion_params_invalid

@@ -29,7 +29,7 @@ module ApiDiscussions
       end
 
       def manipulate_params
-        customers = params[cname]['company_ids'] || []
+        customers = params[cname]['company_ids'].try(:uniq) || []
         params[cname][:customer_forums_attributes] = { customer_id: customers }
       end
 

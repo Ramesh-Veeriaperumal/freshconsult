@@ -18,7 +18,6 @@ class TicketsController < ApiApplicationController
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      set_custom_errors
       render_error(@item.errors)
     end
   end

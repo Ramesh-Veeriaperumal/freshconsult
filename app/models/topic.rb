@@ -11,7 +11,7 @@ class Topic < ActiveRecord::Base
   include Community::HitMethods
   
   acts_as_voteable
-  validates :forum, :user, :title, :presence => true
+  validates_presence_of :forum, :user, :title
   validate :check_stamp_type
 
   concerned_with :merge
@@ -267,14 +267,9 @@ class Topic < ActiveRecord::Base
 
   def check_stamp_type
     if forum
-      allowed_types = FORUM_TO_STAMP_TYPE[forum.forum_type]
-      is_valid = allowed_types.include?(stamp_type)
+      is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
       is_valid &&= check_answers if questions?
-      unless is_valid
-        error_msg = "allowed values are #{allowed_types.join(",")}"
-        error_msg += "nil" if allowed_types.include?(nil)
-        errors.add(:stamp_type, error_msg) 
-      end
+      errors.add(:stamp_type, "is not valid") unless is_valid
     end
   end
 

@@ -118,93 +118,17 @@ module ApiDiscussions
       assert_equal "http://#{@request.host}/api/v2/discussions/posts/#{result['id']}", response.headers['Location']
     end
 
-    def test_create_customer_user
-      topic_obj.update_column(:locked, false)
-      user = customer
-      updated_at = 1.days.ago.to_s
-      params = { :body_html => 'test', 'topic_id' => topic_obj.id,
-                 'user_id' => user.id, :answer => true }
-      post :create, construct_params({}, params)
-      assert_response :created
-      match_json(post_pattern(Post.last))
-      match_json(post_pattern(params, Post.last))
-    end
-
-    def test_create_customer_user_topic_locked
-      user = customer
-      topic_obj.update_column(:locked, true)
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'user_id' => user.id)
-      assert_response :forbidden
-      match_json(request_error_pattern('access_denied', id: user.id, name: user.name))
-      topic_obj.update_column(:locked, false)
-    end
-
-    def test_create_agent_email_topic_locked
-      user = agent
-      controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
-      topic_obj.update_column(:locked, true)
-      params = { :body_html => 'test', 'topic_id' => topic_obj.id,
-                 'email' => user.email }
-      post :create, construct_params({}, params)
-      match_json(post_pattern(Post.last))
-      match_json(post_pattern(params, Post.last))
-      assert_response :created
-      topic_obj.update_column(:locked, false)
-      controller.class.any_instance.unstub(:is_allowed_to_assume?)
-    end
-
     def test_create_invalid_model
-      topic_obj.update_column(:locked, true)
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => 999)
       assert_response :bad_request
       match_json([bad_request_error_pattern('topic_id', "can't be blank")])
     end
 
-    def test_create_invalid_user
+    def test_create_invalid_user_field
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => 999)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id', "can't be blank")])
-    end
-
-    def test_create_without_manage_users_privilege
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(false).once
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'user_id' => 999)
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
-    end
-
-    def test_create_with_email_without_assume_privilege
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'email' => deleted_user.email)
-      assert_response :forbidden
-      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
-      deleted_user.update_column(:deleted, false)
-    end
-
-    def test_create_with_invalid_email
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'email' => 'random')
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('email', "can't be blank")])
-    end
-
-    def test_create_with_user_without_assume_privilege
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'user_id' => deleted_user.id)
-      assert_response :forbidden
-      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
-      deleted_user.update_column(:deleted, false)
-    end
-
-    def test_create_with_invalid_user_id
-      post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
-                                         'user_id' => '999')
-      assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', "invalid_field")])
     end
 
     def test_posts_invalid_id

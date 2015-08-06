@@ -37,9 +37,6 @@ class ApiApplicationController < MetalApiController
   # Used to check if update contains no parameters.
   before_filter :check_params, only: :update
 
-  # Used to stop execution of create before validating the params.
-  before_filter :before_validation, only: [:create]
-
   # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
   before_filter :validate_params, only: [:create, :update]
 
@@ -110,10 +107,6 @@ class ApiApplicationController < MetalApiController
     end
 
   private
-
-    def before_validation
-      # Template method - can be used to limit the parameters sent based on the permissions of the user before creating.
-    end
 
     def assign_protected
       # Template method - Assign attributes that cannot be mass assigned.
@@ -273,7 +266,7 @@ class ApiApplicationController < MetalApiController
     def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
       fields = constant[:all]
-      constant.keys.each { |key| fields += constant[key] if privilege?(key) }
+      constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
       fields
     end
 

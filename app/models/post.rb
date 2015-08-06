@@ -12,7 +12,7 @@ class Post < ActiveRecord::Base
 
   self.primary_key = :id
   def self.per_page() 25 end
-  validates_presence_of :user, :body_html, :topic
+  validates_presence_of :user_id, :body_html, :topic
 
   belongs_to_account
 
