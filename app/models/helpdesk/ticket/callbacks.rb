@@ -339,7 +339,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_display_id?
-    account.features_included?(:redis_display_id)
+    Account.current.features?(:redis_display_id)
   end
 
   def assign_display_id
@@ -407,11 +407,11 @@ private
   end
 
   def auto_refresh_allowed?
-    account.features_included?(:auto_refresh)
+    Account.current.features?(:auto_refresh)
   end
 
   def autorefresh_node_allowed?
-    account.features_included?(:autorefresh_node)
+    Account.current.features?(:autorefresh_node)
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 
@@ -532,7 +532,7 @@ private
   end
 
   def publish_to_update_channel
-    return unless account.features_included?(:agent_collision)
+    return unless Account.current.features?(:agent_collision)
     agent_name = User.current ? User.current.name : ""
     message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id, 
                                                   :ticket_id => self.id, 
@@ -603,7 +603,7 @@ private
 
   def report_regenerate_fields
     regenerate_fields = [:deleted, :spam,:responder_id]
-    if account.features_included?(:report_field_regenerate)
+    if Account.current.features?(:report_field_regenerate)
       regenerate_fields.concat([:source, :ticket_type, :group_id, :priority])
       #account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
     end
