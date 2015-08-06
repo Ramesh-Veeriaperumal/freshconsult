@@ -40,7 +40,7 @@ describe Helpdesk::CannedResponses::FoldersController do
   end
 
   it "should update a folder" do
-    get :edit
+    get :edit, :id => @cr_folder_1.id
     response.should_not be_nil
     put :update, { :id => @cr_folder_1.id,
                    :admin_canned_responses_folder => { :name => "Updated CR Folder #{@now}" }

@@ -1,5 +1,5 @@
 class ApiGroupsController < ApiApplicationController
-  before_filter :manipulate_agents, only: [:create, :update]
+  before_filter :preparing_agents, only: [:create, :update]
   before_filter :set_round_robin_enbled
 
   private
@@ -27,7 +27,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def initialize_agents
-      @agents = Array.wrap params[cname][:agents] if params[cname].key?(:agents)
+      @agents = Array.wrap params[cname][:user_ids] if params[cname].key?(:user_ids)
     end
 
     def manipulate_params
@@ -36,7 +36,7 @@ class ApiGroupsController < ApiApplicationController
                                            params[cname])
     end
 
-    def manipulate_agents
+    def preparing_agents
       initialize_agents
       drop_existing_agents if update? && @agents
       build_agents
@@ -57,7 +57,7 @@ class ApiGroupsController < ApiApplicationController
 
     def set_custom_errors(_item = @item)
       bad_agent_ids = @item.agent_groups.select { |x| x.errors.present? }.collect(&:user_id)
-      @item.errors.add(:agents, 'list is invalid') if bad_agent_ids.present?
-      @error_options = { remove: :'agent_groups.user', agents: { list: "#{bad_agent_ids.join(', ')}" } }
+      @item.errors.add(:user_ids, 'list is invalid') if bad_agent_ids.present?
+      @error_options = { remove: :'agent_groups.user', user_ids: { list: "#{bad_agent_ids.join(', ')}" } }
     end
 end

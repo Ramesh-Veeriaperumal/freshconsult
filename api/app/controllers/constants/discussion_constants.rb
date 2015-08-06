@@ -1,7 +1,7 @@
 module DiscussionConstants
   # ControllerConstants
   CATEGORY_FIELDS = ['name', 'description']
-  FORUM_FIELDS = ['name', 'description', 'forum_category_id', 'forum_type', 'forum_visibility', 'customers', 'customers' => []]
+  FORUM_FIELDS = ['name', 'description', 'forum_category_id', 'forum_type', 'forum_visibility', 'company_ids', 'company_ids' => []]
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'], manage_forums: ['forum_id'] }
   CREATE_TOPIC_FIELDS = UPDATE_TOPIC_FIELDS.merge(all: %w(title message_html stamp_type email user_id))
   UPDATE_POST_FIELDS = { all: ['body_html', 'answer'] }

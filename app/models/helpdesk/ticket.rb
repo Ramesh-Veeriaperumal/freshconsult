@@ -204,6 +204,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       find_by_display_id_and_account_id(token, account.id)
     end
 
+    def find_all_by_param(token)
+      find_all_by_display_id(token)
+    end
+
     def extract_id_token(text, delimeter)
       pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
       pieces && pieces[1]
@@ -341,7 +345,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation(page = nil, no_of_records = 5, includes=[])
-    notes.visible.exclude_source('meta').newest_first(:include => includes).paginate(:page => page, :per_page => no_of_records)
+    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
@@ -349,7 +353,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_before(before_id)
-    return notes.visible.exclude_source('meta').newest_first.before(before_id)
+    includes = [:survey_remark, :user, :attachments, :schema_less_note, :cloud_files, :note_old_body]
+    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(includes)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
@@ -555,7 +560,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
+    return false if [:empty?, :to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
     
@@ -778,6 +783,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # To keep flexifield & @custom_field in sync
 
   def custom_field
+    # throws error in retrieve_ff_values if flexifield is nil and custom_field is not set. Hence the check
+    return nil unless @custom_field || flexifield
     @custom_field ||= retrieve_ff_values
   end
 
@@ -836,10 +843,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       },
       new_and_my_open: {
         conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
-      },
-      monitored_by: {
-        conditions: { helpdesk_subscriptions: { user_id: current_user.try(:id) } },
-        joins: :subscriptions
       },
       requester_id: {
         conditions: { requester_id: ticket_filter.try(:requester_id) }

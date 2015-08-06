@@ -119,7 +119,7 @@ class Mobile::TicketsController < ApplicationController
   def filter_count(selector, agent_filter=false)
     Sharding.run_on_slave do
       tickets = filter_tickets(agent_filter,selector)
-      tickets.count
+      tickets.unresolved.count
     end
   end
 

@@ -10,7 +10,8 @@ module ApiTicketConstants
   TICKET_ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s)
 
   # all_tickets is not included because it is the default filter applied.
-  TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 2, 3, 4)
+  # monitored_by is not inlcuded because it needs to be thought through to support different user_id as value
+  TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 3, 4)
 
   TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s) + ['', nil]
   INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type created_since updated_since)

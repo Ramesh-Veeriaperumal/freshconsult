@@ -48,7 +48,7 @@
                       :rel => 'freshdialog', 
                       "data-target" => "#requester_tickets",
                       "data-template-footer" => "",
-                      :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)) unless ticket.nil? %>
               <% when :filter then %>
                 <% if local_assigns.has_key? :new_tab %>
                   <%= link_to t('ticket.recent_tickets'), 

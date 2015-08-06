@@ -162,7 +162,7 @@ module JsonPattern
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.ignore_extra_keys! : ticket.custom_field
+    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.as_json.ignore_extra_keys! : ticket.custom_field.as_json
 
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
@@ -298,13 +298,13 @@ module JsonPattern
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
-    group_json[:agents] = group.agent_groups.map(&:user_id)
+    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 
   def group_pattern_without_assingn_type(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    group_json[:agents] = group.agent_groups.map(&:user_id)
+    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 

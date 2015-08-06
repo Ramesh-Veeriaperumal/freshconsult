@@ -195,7 +195,7 @@
 		onSubCategoryChange: function($this){
 			$("#nest-item")
 				  .html(this.nestedTree.getItemsEscaped($("#nest-category option:selected").text(), 
-				      $this.children("option:selected").text()));
+				      escapeHtml($this.children("option:selected").text())));
 		},
 		attachEvents: function() {
 			//Nested Field start

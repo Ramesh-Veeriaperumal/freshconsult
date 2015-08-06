@@ -3,13 +3,13 @@
 <%-end %>
 <div class="row-fluid">
   <% @page_title = t('.title') %>
-  <%= content_tag :h3, @page_title, :class => "title lead" %>
+  <h4 class="heading lead pb10">
+    <%= pjax_link_to(t('admin.products.index.title'), admin_products_path) %> / 
+    <%= @product.name %>
+  </h4>
   <%= form_for @product, :url => admin_product_path, :html => { :multipart => true, :rel => "validate", :method => :put, :id => "ProductForm", "data-rebrand-form" => true  , :class => "form-horizontal" } do |f| %>
     <%= render :partial => "form", :object => f %>
-    <div class="button-container">
-      <%= f.submit t('update'), :id => "email-form-update", :class => "btn btn-primary pull-right", "data-loading-text" => t('.updating') %> 
-      <%= link_to(t('cancel'), admin_products_path, :class => "btn pull-right", :id => "email-form-cancel" )  %>  	 	
-    </div>
+    <%= render :partial => "footer", :locals => { :f => f } %>
   <% end %>
 </div>
 

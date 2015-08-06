@@ -294,6 +294,10 @@ class Account < ActiveRecord::Base
   def ticket_status_values
     ticket_statuses.visible
   end
+
+  def ticket_status_values_from_cache
+    Helpdesk::TicketStatus.status_objects_from_cache(self)
+  end
   
   def has_multiple_products?
     !products.empty?

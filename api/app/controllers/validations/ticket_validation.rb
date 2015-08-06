@@ -34,6 +34,10 @@ class TicketValidation < ApiValidation
   validate :due_by_validation, if: -> { due_by && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
+  validates :custom_fields, custom_field: { 
+                              validatable_custom_fields: proc { Helpers::TicketsValidationHelper.data_type_validatable_custom_fields },
+                           }, allow_nil: true, if: -> { errors[:custom_fields].blank? }
+
   def initialize(request_params, item)
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item

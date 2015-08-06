@@ -183,6 +183,15 @@ protected
     @item || raise(ActiveRecord::RecordNotFound)
   end
 
+  def load_items
+    if params[:ids]
+      @items = scoper.respond_to?(:find_all_by_param) ? scoper.find_all_by_param(params[:ids]) : scoper.find_all_by_id(params[:ids])
+      self.instance_variable_set('@' + cname.pluralize, @items)
+    else
+      load_multiple_items
+    end
+  end
+
   def load_multiple_items
     @items = (params[:ids] || Array.wrap(params[:id])).map { |id| load_by_param(id) }.select{ |r| r }
     self.instance_variable_set('@' + cname.pluralize, @items) 

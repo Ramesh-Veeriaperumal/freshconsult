@@ -97,7 +97,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
   private
 
   def load_object
-    @current_folder = scoper.find(params[:id])
+    @current_folder = scoper.find_by_id(params[:id])
   end    
 
   def check_default
@@ -126,10 +126,6 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
   def new_folder
     @new_ca_res_folder = scoper.new
   end
-
-  def cname # possible dead code
-    @cname ||= controller_name.singularize
-  end  
 
   def scoper
     current_account.canned_response_folders

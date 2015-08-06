@@ -82,7 +82,7 @@ module ChatHelper
 
   def default_offline_chat
     return {
-      :show      => "1",
+      :show      => "0",
       :form      => { :name => t("freshchat.name"), 
                       :email => t("freshchat.mail"), 
                       :message => t("freshchat.message") },
@@ -313,17 +313,7 @@ module ChatHelper
             :offline_thank_header_msg => t("freshchat.offline_thank_header_msg"),
             :missed_chat_info => t("freshchat.missed_chat_info"),
             :shorthands => t('short_code.title'),
-            :no_code => t('short_code.no_code'),
-            :unmark_spam => t('freshchat.unmark_spam'),
-            :mark_spam => t('freshchat.mark_spam'),
-            :convert => t('freshchat.convert'),
-            :conversation => t('freshchat.conversation'),
-            :missed_chat => t('freshchat.missed_chat'),
-            :and => t('freshchat.and'),
-            :via_widget => t('freshchat.via_widget'),
-            :reported => t('freshchat.reported'),
-            :add_note => t('freshchat.add_note'),
-            :view_ticket => t('freshchat.view_ticket')
+            :no_code => t('short_code.no_code')
         }
         return text.to_json.html_safe
   end

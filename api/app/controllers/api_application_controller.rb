@@ -29,14 +29,29 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
+
+  # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
+  # Modify ApiConstants::LOAD_OBJECT_EXCEPT to include any new methods introduced in the controller that does not require load_object.
   before_filter :before_load_object, :load_object, :after_load_object, except: ApiConstants::LOAD_OBJECT_EXCEPT
+
+  # Used to check if update contains no parameters.
   before_filter :check_params, only: :update
+
+  # Used to stop execution of create before validating the params.
   before_filter :before_validation, only: [:create]
+
+  # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
   before_filter :validate_params, only: [:create, :update]
+
+  # Manipulating the parameters similar to the attributes that the model understands.
   before_filter :manipulate_params, only: [:create, :update]
+
+  # This is not moved inside create because, controlelrs redefining create needn't call build_object again.
   before_filter :build_object, only: [:create]
-  before_filter :load_association, only: [:show]
+
+  # Validating the filter params sent in the url for filtering collection of objects.
   before_filter :validate_filter_params, only: [:index]
+
   before_filter :validate_url_params, only: [:show]
 
   def index
@@ -46,7 +61,7 @@ class ApiApplicationController < MetalApiController
   def create
     assign_protected
     if @item.save
-      render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
+      render_201_with_location
     else
       set_custom_errors
       @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
@@ -72,6 +87,7 @@ class ApiApplicationController < MetalApiController
 
   def route_not_found
     path = env['PATH_INFO']
+    Rails.logger.error("API 404 Error. Path: #{path} Params: #{params.inspect}")
     allows = ActionDispatch::Routing::HTTP_METHODS.select do |verb|
       match = Rails.application.routes.recognize_path(path, method: verb)
       match[:action] != 'route_not_found'
@@ -96,18 +112,25 @@ class ApiApplicationController < MetalApiController
   private
 
     def before_validation
+      # Template method - can be used to limit the parameters sent based on the permissions of the user before creating.
     end
 
     def assign_protected
+      # Template method - Assign attributes that cannot be mass assigned.
     end
 
     def validate_filter_params
+      # Template method - If filtering is present in index action, this can be used to validate
+      # each filter and its value using strong params and custom validation classes.
     end
 
     def validate_url_params
+      # Template method - If embedding is present in show action, this can be used to validate
+      # the imput sent using strong params and custom validations.
     end
 
     def feature_name
+      # Template method - Redefine if the controller needs requires_feature before_filter
     end
 
     def not_get_request?
@@ -167,8 +190,14 @@ class ApiApplicationController < MetalApiController
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
+      Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
       render_error invalid_fields
+    end
+
+    # Using optional parameters for extensibility
+    def render_201_with_location(template_name: "#{controller_path}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+      render template_name, location: send(location_url, item_id), status: 201
     end
 
     def render_error(errors, meta = nil)
@@ -248,10 +277,6 @@ class ApiApplicationController < MetalApiController
       fields
     end
 
-    def load_association
-      # This is used to load the association before the show method.
-    end
-
     def paginate_items(item)
       item.paginate(paginate_options)
     end
@@ -265,9 +290,9 @@ class ApiApplicationController < MetalApiController
       render_request_error(:ssl_required, 403) unless request.ssl?
     end
 
-    def ensure_proper_fd_domain
+    def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      render_request_error(:fd_domain_required, 403) unless ApiConstants::ALLOWED_DOMAIN == request.domain
+      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain
     end
 
     def manipulate_params
@@ -283,18 +308,18 @@ class ApiApplicationController < MetalApiController
     end
 
     def update?
-      current_action?('update')
+      @update ||= current_action?('update')
     end
 
     def create?
-      current_action?('create')
+      @create ||= current_action?('create')
     end
 
     def show?
-      current_action?('show')
+      @show ||= current_action?('show')
     end
 
     def destroy?
-      current_action?('destroy')
+      @destroy ||= current_action?('destroy')
     end
 end

@@ -2,8 +2,15 @@ module DiscussionMonitorConcern
   extend ActiveSupport::Concern
   included do
     before_filter :validate_toggle_params, only: [:follow, :unfollow]
-    before_filter :can_send_user?, only: [:followed_by, :is_following, :follow, :unfollow]
+
+    # followed_by and is_following would not follow the before_load_object, load_object, after_load_object flow,
+    # as both methods do not require the topic/forum object to be loaded. Hence privileged_to_send_user? is not part of before_laod_object.
+    before_filter :privileged_to_send_user?, only: [:followed_by, :is_following]
+
+    # For same reason above validate_follow_params is not part of after_load_object.
     before_filter :validate_follow_params, only: [:followed_by, :is_following]
+
+    # find_monitorship is not aprt of after_load_object as that would necessitate a unfollow? check in after_load_object.
     before_filter :find_monitorship, only: [:unfollow]
   end
 
@@ -81,29 +88,25 @@ module DiscussionMonitorConcern
       render_error monitor.errors unless monitor.valid?
     end
 
-    def can_send_user?
-      if followed_by? || is_following?
-        if params[:user_id].present? && params[:user_id] != current_user.id && !privilege?(:manage_forums)
-          render_request_error(:access_denied, 403, id: params[:user_id])
-        end
-      else
-        super
+    def privileged_to_send_user?
+      if params[:user_id].present? && params[:user_id] != current_user.id && !privilege?(:manage_forums)
+        render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end
 
     def is_following?
-      current_action?('is_following')
+      @is_following ||= current_action?('is_following')
     end
 
     def follow?
-      current_action?('follow')
+      @follow ||= current_action?('follow')
     end
 
     def unfollow?
-      current_action?('unfollow')
+      @unfollow ||= current_action?('unfollow')
     end
 
     def followed_by?
-      current_action?('followed_by')
+      @followed_by ||= current_action?('followed_by')
     end
 end

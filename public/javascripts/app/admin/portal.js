@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global  App */
+/*global  App, setPostParam, confirm */
 
 window.App = window.App || {};
 window.App.Admin = window.App.Admin || {};
@@ -12,43 +12,77 @@ window.App.Admin = window.App.Admin || {};
 		},
 		
 		bindHandlers: function () {
-			this.bindMultiRadio();
-			this.bindShowCaptcha();
-			this.bindForumCaptcha();
+			this.bindFormHide();
+			this.portalUrlChange();
+			this.bindFormChange();
+			this.bindImageUpload();
+			this.bindDeleteConfirmCancel();
+			this.handleSaveFailure();
 		},
 
-		bindMultiRadio: function () {
-			var $this = this;
-			$(".multiple_radio input").on('change.portal', function () {
-				var current_btn_group = $('#' + $(this).data('group'));
-				$this.toggleValues(current_btn_group);
+		bindFormHide: function () {
+			$("#enable-portal").on("change.portal", function () {
+				$('.hidden-items').toggle($("#enable-portal:checked").length !== 0);
+				$('#errorExplanation').toggle($("#enable-portal:checked").length !== 0);
+				if ($("#enable-portal:checked").length === 0) {
+					$('[rel=confirmdelete]').trigger('click');
+				}
+			}).trigger("change");
+		},
+
+		portalUrlChange: function () {
+			$("#PortalUrl").on('blur.portal', function () {
+				var input_url = $('#PortalUrl').val(),
+					protocol_exists = !(input_url.indexOf('http://') && input_url.indexOf('https://')),
+					get_index = input_url.indexOf("://"),
+					result_url = input_url.substring(get_index + 3);
+				if (protocol_exists) {
+					$('#PortalUrl').val(result_url);
+				}
 			});
 		},
 
-		toggleValues: function (current_btn_group) {
-			$(current_btn_group).find('input[type=hidden]').each(function () {
-				$(this).val($(current_btn_group).find('[data-name="' + $(this).attr('name') + '"]').is(':checked') ? 1 : 0);
+		bindFormChange: function () {
+			$("[data-rebrand-form]").on("change.portal", function (ev) {
+				$(this).data('formChanged', true);
 			});
 		},
 
-		bindShowCaptcha: function () {
-			$('[name="account[features][anonymous_tickets]"]').on('change.portal', function () {
-				if ($('[name="account[features][anonymous_tickets]"]:checked').val() === "1") {
-					$('.captcha').slideDown();
-				} else {
-					$('.captcha').slideUp();
-				}
-			}).trigger('change');
+		bindImageUpload: function () {
+			$('.fileAdminUpload').on("change.portal", function () {
+				setPostParam(this.form, "redirect_url", window.location);
+				$(this.form).submit();
+			});
 		},
 
-		bindForumCaptcha: function () {
-			$('.forums_visibility input[data-name]').on('change.portal', function () {
-				if ($('[data-name="account[features][hide_portal_forums]"]').is(':checked')) {
-					$('#forum_captcha_section').slideUp();
-				} else {
-					$('#forum_captcha_section').slideDown();
+		bindSaveAndCustomize: function (confirm_text) {
+			$("[rel=customize-portal]").on("click.portal", function (ev) {
+				ev.preventDefault();
+				var form = $(this).parents('form:first');
+				if (form.valid()) {
+					if (form.data('formChanged')) {
+						ev.preventDefault();
+						if (confirm(confirm_text)) {
+							setPostParam(form, "customize_portal", true);
+							form.submit();
+						}
+					} else {
+						window.location = $(this).attr('href');
+					}
 				}
-			}).trigger('change');
+			});
+		},
+
+		bindDeleteConfirmCancel: function () {
+			$('body').on('click.portal', '#disable-portal-cancel, #disable-portal .close', function () {
+				$("#enable-portal").trigger('click');
+			});
+		},
+
+		handleSaveFailure: function () {
+			if (App.namespace === "admin/portal/create") {
+				$("#enable-portal").trigger('click');
+			}
 		},
 
 		unbindHandlers: function () {
