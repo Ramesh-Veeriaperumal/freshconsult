@@ -185,7 +185,7 @@ protected
 
   def load_items
     if params[:ids]
-      @items = scoper.respond_to?(:find_all_by_param) ? scoper.find_all_by_param(params[:ids]) : scoper.find_all_by_id(params[:ids])
+      @items = cname.classify.eql?("Ticket") ? scoper.find_all_by_param(params[:ids]) : scoper.find_all_by_id(params[:ids])
       self.instance_variable_set('@' + cname.pluralize, @items)
     else
       load_multiple_items
