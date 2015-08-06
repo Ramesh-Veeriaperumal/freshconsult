@@ -1,6 +1,6 @@
   var surveysI18n = {};
   surveysI18n = {};
-  surveysI18n.title_text = "<%= t('admin.surveys.new_questions_layout.title_text') %>";
+  surveysI18n.title_text = "<%= t('admin.surveys.new_questions_layout.title_text_v2') %>";
   surveysI18n.add_question = "<%= t('admin.surveys.new_questions_layout.add_question') %>";
   surveysI18n.questions = "<%= t('admin.surveys.new_questions_layout.questions') %>";
   surveysI18n.content_text = "<%= t('admin.surveys.new_rating.content_text')%>";
