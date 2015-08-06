@@ -336,6 +336,44 @@
         color: #999;
       }
     }
+    /*Solution overlay tab customization*/
+    .tab-wrapper{
+      .nav-tabs{
+        border-bottom: 1px solid #9b9b9b;
+        li{
+          @include margin(0 20px 0 0);
+          a{
+            border: 0;
+            background: none;
+            @include padding-left( 0);
+            @include padding-right(0);
+            font-size: 14px;
+            &:hover{
+              background: none;
+            }
+          }
+          &.active{
+            a{
+              
+              border-bottom: 2px solid #9b9b9b;
+              &:hover{
+                border-width: 0 0 2px 0;
+                border-bottom: 2px solid #9b9b9b;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
+      .tab-content{
+        margin: -20px;
+        padding: 20px;
+        background: #f8f8f8;
+      }
+      .control-label{
+        font-size: 13px;
+      }
+    }
   }
 }
 //------------- End of Article Properties Remote load Form Styles -----------------------------------------------//
@@ -434,4 +472,3 @@
     }
   }
 }
-
