@@ -2,8 +2,8 @@ module Cache::Memcache::Mobihelp::Solution
   
   include MemcacheKeys
 
-  def clear_solutions_cache(category_id)
-    MemcacheKeys.delete_from_cache(mobihelp_solutions_key(category_id))
+  def clear_solutions_cache
+    MemcacheKeys.delete_from_cache(mobihelp_solutions_key)
   end
 
   def clear_last_updated_time(app_id)
@@ -37,8 +37,8 @@ module Cache::Memcache::Mobihelp::Solution
   end
 
   private
-    def mobihelp_solutions_key(category_id)
-      MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => category_id }
+    def mobihelp_solutions_key
+      MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => self.id }
     end
 
     def mobihelp_solution_updated_time_key(app_id)
@@ -48,8 +48,12 @@ module Cache::Memcache::Mobihelp::Solution
     def solutions(category_id)
       MemcacheKeys.fetch(mobihelp_solutions_key(category_id)) {
 
-        category = Solution::Category.includes(:public_folders => 
-          {:published_articles => [:tags]}).find_by_id_and_account_id(category_id, account_id)
+        ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+        include_hash = (Account.current.launched?(:meta_read) ? 
+                        {:public_folders_through_meta => {:published_articles_through_meta => [:tags]}} : 
+                        {:public_folders => {:published_articles => [:tags]}}) 
+
+        category = Solution::Category.includes(include_hash).find_by_id_and_account_id(category_id, account_id)
 
         category.to_json(:except => :account_id, :include => {:public_folders => 
           {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 

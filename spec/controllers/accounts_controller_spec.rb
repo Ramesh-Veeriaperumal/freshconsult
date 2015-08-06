@@ -61,6 +61,20 @@ describe AccountsController do
     @account.main_portal.name.should match("RSpec new account")
   end
 
+  it "should update solution categories/folders/articles' language_id if main portal's language is changed" do
+    update_params = {"account"=>{"main_portal_attributes"=>{"name"=>"RSpec new account", 
+      "portal_url"=>"", "language"=>"hu", "preferences"=>{"logo_link"=>"", "header_color"=>"#252525", 
+        "tab_color"=>"#006063", "bg_color"=>"#efefef", "contact_info"=>""}, "id"=>"1"}, 
+        "account_additional_settings_attributes"=>{"date_format"=>"1", "id"=>"1"}, 
+        "time_zone"=>"Chennai", "ticket_display_id"=>"100"}, "redirect_url"=>""}
+    Resque.inline = true 
+    put :update, update_params
+    Resque.inline = false
+    @account.reload
+    @account.main_portal.language.should match("hu")
+    check_language_equality
+  end
+
   it 'should delete main portal logo' do
     @account.main_portal.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
      :description => "logo", 

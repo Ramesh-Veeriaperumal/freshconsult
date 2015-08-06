@@ -161,6 +161,8 @@ gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
+gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
+
 
 gem "bunny", "1.7.0"
 

@@ -135,6 +135,8 @@ if Rails.env.test?
     "spec/controllers/support/articles_controller_spec.rb",
     "spec/controllers/support/solutions_controller_spec.rb",
     "spec/controllers/support/folders_controller_spec.rb",
+    "spec/lib/solution/meta_association_switcher_spec.rb",
+    "spec/lib/language_spec.rb",
     "spec/controllers/helpdesk/solution_articles_controller_spec.rb",
     "spec/controllers/helpdesk/solution_folders_controller_spec.rb",
     "spec/controllers/helpdesk/solution_categories_controller_spec.rb"
@@ -502,6 +504,15 @@ if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ForumTests+SolutionTests).uniq
+        end
+      end
+
+      namespace :solution_tests do
+        desc "Running all community tests"
+        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+        RSpec::Core::RakeTask.new(:all) do |t|
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(SolutionTests).uniq
         end
       end
       

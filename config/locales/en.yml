@@ -1,7 +1,6 @@
 en:
   meta:
-   language_id: 6
-   language_name: 'English'
+    language_name: 'English'
   date:
     ago: ago
     from: from now

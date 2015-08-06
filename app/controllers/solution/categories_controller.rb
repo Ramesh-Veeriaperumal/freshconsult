@@ -15,7 +15,9 @@ class Solution::CategoriesController < ApplicationController
   before_filter :set_default_order, :only => :reorder
 
   def index
-    @categories = current_portal.solution_categories
+    ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+    include_assoc = (current_account.launched?(:meta_read) ? :folders_through_meta : :folders)
+    @categories = current_portal.solution_categories.includes(include_assoc)
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb
@@ -63,7 +65,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def create
-    @category = current_account.solution_categories.new(params[nscname]) 
+    @category = current_account.solution_categories.build(params[nscname])
     redirect_to_url = new_solution_category_path unless params[:save_and_create].nil?
     
     respond_to do |format|

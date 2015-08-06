@@ -7,7 +7,7 @@ class Mobihelp::App < ActiveRecord::Base
   
   self.table_name =  :mobihelp_apps
 
-  concerned_with :associations, :callbacks, :constants, :validations
+  concerned_with :associations, :solution_associations, :callbacks, :constants, :validations
   serialize :config, Hash
   attr_protected :account_id
   attr_accessor :category_ids

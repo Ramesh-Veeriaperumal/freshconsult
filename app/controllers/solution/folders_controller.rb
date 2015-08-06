@@ -22,7 +22,7 @@ class Solution::FoldersController < ApplicationController
   def show    
     @folder = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
     @page_title = @folder.name
-    
+    #META-READ-CHECK
     respond_to do |format|
       format.html {
         redirect_to solution_my_drafts_path('all') if @folder.is_default?

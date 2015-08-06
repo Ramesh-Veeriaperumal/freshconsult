@@ -62,8 +62,9 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
-    def load_and_check_permission      
-      @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
+    def load_and_check_permission
+      @article = current_account.solution_articles.find_by_id!(params[:id], 
+                  :readonly => false)### MULTILINGUAL SOLUTIONS - META READ HACK!!
       unless @article && @article.folder.visible?(current_user)    
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)

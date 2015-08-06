@@ -185,6 +185,15 @@ GIT
   specs:
     fd_rate_limiter (0.0.1)
 
+GIT
+  remote: git@github.com:freshdesk/launch-party.git
+  revision: 9b884e22f31af95f68b016c7ce203c70658fa90a
+  branch: master
+  specs:
+    launchparty (0.0.0)
+      launchparty
+      redis
+
 PATH
   remote: vendor/gems/acts_as_voteable
   specs:
@@ -972,6 +981,7 @@ DEPENDENCIES
   json-compare (= 0.1.8)
   jwt (= 1.0.0)
   koala (= 1.10.1)
+  launchparty!
   lhm!
   liquid!
   lockfile (= 1.4.3)
