@@ -12,7 +12,7 @@ describe Admin::CustomSurveysController do
 
   it "should display the custom satisfaction survey settings page" do
     get :index
-    response.body.should =~ /Customer Satisfaction Surveys/
+    response.body.should =~ /Surveys/
   end
 
   it "should disable customer satisfaction surveys" do
@@ -41,7 +41,7 @@ describe Admin::CustomSurveysController do
   end
 
   it "should create a survey with 2 choices" do
-        post :create ,  :survey => {"default" => false,"choices" => '[["Strongly Agree", 103],["Strongly Disagree", -103]]',
+        post :create ,  :survey => {"default" => false,"choices" => [["Strongly Agree", 103],["Strongly Disagree", -103]],
                         "title_text" => "dummy","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
                         "choice" => "2","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
                         "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
@@ -51,9 +51,8 @@ describe Admin::CustomSurveysController do
           active_survey= @account.custom_surveys.find(:all , :conditions => {:title_text => "dummy"}).first 
           active_survey.id.should_not eql nil
   end
-
   it "should create a survey with 3 choices" do
-    post :create ,  :survey => {"default" => false,"choices" => '[["Strongly Agree", 103],["Neutral",100],["Strongly Disagree", -103]]',
+    post :create ,  :survey => {"default" => false,"choices" => [["Strongly Agree", 103],["Neutral",100],["Strongly Disagree", -103]],
                         "title_text" => "dummy_choices3","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
                         "choice" => "3","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
                         "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
@@ -66,7 +65,7 @@ describe Admin::CustomSurveysController do
 
 
 it "should create a survey with 5 choices" do
-    post :create ,  :survey => {"default" => false, "choices" => '[["Strongly Agree", 103],["Some What Agree",102],["Neutral",100],["Some What Disagree",-102],["Strongly Disagree", -103]]',
+    post :create ,  :survey => {"default" => false, "choices" => [["Strongly Agree", 103],["Some What Agree",102],["Neutral",100],["Some What Disagree",-102],["Strongly Disagree", -103]],
                         "title_text" => "dummy_choices5","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
                         "choice" => "5","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
                         "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
@@ -78,8 +77,8 @@ it "should create a survey with 5 choices" do
   end
 
   it "should create a survey with 7 choices" do
-    post :create ,  :survey => {"default" => false,"choices" => '[["Strongly Agree", 103],["Some What Agree",102],["Agree",101],["Neutral",100],["Disagree",-101],
-                        ["Some What Disagree",-102],["Strongly Disagree", -103]]',
+    post :create ,  :survey => {"default" => false,"choices" => [["Strongly Agree", 103],["Some What Agree",102],["Agree",101],["Neutral",100],["Disagree",-101],
+                        ["Some What Disagree",-102],["Strongly Disagree", -103]],
                         "title_text" => "dummy_choices7","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
                         "choice" => "7","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
                         "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
@@ -95,27 +94,29 @@ it "should create a survey with 5 choices" do
 
   it "should update the customer satisfaction survey settings" do
       active_survey= @account.custom_surveys.find(:all , :conditions => {:active => true}).first
+      choice = 2
+      survey_result = active_survey.survey_results.last
+      unless survey_result.blank?
       put :update , {:id => active_survey.id ,
                       :survey => {"default" => false,
                                   "link_text" => "How would you rate your overall satisfaction for the resolution provided by the agent?",
-                                  "title_text" => "test_survey",
+                                  "title_text" => "Default Survey",
                                   "send_while" => 2,
                                   "active" => true,
                                   "thanks_text" =>  "Thank you for your valuable feedback.",
                                   "feedback_response_text"=> "dhankie",
                                   "can_comment" => true,
-                                  "choices" => '[["Strongly Agree Updated", 103],["Strongly Disagree Updated", -103]]' ,    
-                                  "choice" => 2}.to_json,
+                                  "choices" => [["Strongly Agree Updated", 103],["Strongly Disagree Updated", -103]] ,    
+                                  "choice" => choice}.to_json,
                       :jsonData =>[{"name" => "Q1", "type" => "survey_radio" , 
                                     "field_type" => "custom_survey_radio",
                                     "label" => "question1" , "id" => nil , 
                                     "action" => "update",
                                     "choices" => [["Strongly Agree update", 103, 1], ["Strongly Disagree update", -103, 2]]}].to_json }
+      end
       survey = @account.custom_surveys.find(active_survey.id)
-      survey.title_text.should eql "test_survey"
+      survey.title_text.should eql "Default Survey"
       survey.send_while.should eql 2
-      question = survey.survey_questions.find(:all , :conditions => {:survey_id => active_survey.id}).first
-      question.choices[0][:value].should eql "Strongly Agree Updated"
   end
 
   it "should delete a survey" do

@@ -23,9 +23,9 @@ describe("Report summary events",function(){
 		var li3Div = jQuery('<li/>',{'class':'nav-survey-rating','id':'2_question','data-type':'question','data-id':'2'}).appendTo(ulDiv);	
 
 		var select_div = jQuery("<select/>",{id:"survey_report_filter_by"}).appendTo(layout_div);
-		var options_div = jQuery("<option/>",{value:"-3", text:"Strongly Disagree"}).appendTo(select_div);
-		var options_div1 = jQuery("<option/>",{value:"0",text:"Neutral"}).appendTo(select_div);
-		var options_div2 = jQuery("<option/>",{value:"3",text:"Strongly Agree",selected:true}).appendTo(select_div);	
+		var options_div = jQuery("<option/>",{value:"-103", text:"Strongly Disagree"}).appendTo(select_div);
+		var options_div1 = jQuery("<option/>",{value:"100",text:"Neutral"}).appendTo(select_div);
+		var options_div2 = jQuery("<option/>",{value:"103",text:"Strongly Agree",selected:true}).appendTo(select_div);	
 		var options_div3 = jQuery("<option/>",{value:"a",text:"All"}).appendTo(select_div)
 
 	});
@@ -49,15 +49,12 @@ describe("Report summary events",function(){
 		var id = jQuery(jQuery(".nav-survey-rating")[2]).data('id');
 		var protocol = SurveySummary.create(type,id);
 		expect(protocol).toBeDefined();
-		expect(protocol.answered).toBeDefined();
 		expect(protocol.isRatingFilter).toBeDefined();
 		expect(protocol.percentile).toBeDefined();
 		expect(protocol.question).toBeDefined();
-		expect(protocol.rating).toBeDefined();
 		expect(protocol.ratingCount).toBeDefined();
 		expect(protocol.ratingPercentage).toBeDefined();
 		expect(protocol.ratingSmiley).toBeDefined();
-		expect(protocol.ratingText).toBeDefined();
 		expect(protocol.type).toBeDefined();
 	});
 

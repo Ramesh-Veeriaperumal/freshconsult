@@ -54,38 +54,32 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
     end
 
-    def create_for_3rd_party account, item, attached, i, content_id
-      begin
-        unless item.validate_attachment_size({:content => attached.tempfile},
-                                             {:attachment_limit => 
-                                                HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE})
-          filename = self.new.utf8_name attached.original_filename,
-                               "attachment-#{i+1}"
-          attributes = { :content_file_name => filename,
-                         :content_content_type => attached.content_type,
-                         :content_file_size => attached.tempfile.size.to_i
-                        }
-          write_options = { :content_type => attached.content_type }
-          if content_id
-            attributes.merge!({:description => "content_id"})
-            write_options.merge!({:acl => "public-read"})
-          end
-
-          att = account.attachments.new(attributes)
-          if att.save
-            path = s3_path(att.id, att.content_file_name)
-            AwsWrapper::S3Object.store(path, 
-                                       attached.tempfile, 
-                                       S3_CONFIG[:bucket], 
-                                       write_options)
-            att
-          end
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
+      limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
+                        HelpdeskAttachable::MAX_ATTACHMENT_SIZE
+      unless item.validate_attachment_size({:content => attached.tempfile},
+                                           {:attachment_limit => limit })
+        filename = self.new.utf8_name attached.original_filename,
+                             "attachment-#{i+1}"
+        attributes = { :content_file_name => filename,
+                       :content_content_type => attached.content_type,
+                       :content_file_size => attached.tempfile.size.to_i
+                      }
+        write_options = { :content_type => attached.content_type }
+        if content_id
+          attributes.merge!({:description => "content_id"})
+          write_options.merge!({:acl => "public-read"})
         end
-      rescue HelpdeskExceptions::AttachmentLimitException => ex
-        Rails.logger.error("ERROR ::: #{ex.message}")
-        add_notification_text item
-      rescue Exception => e
-        Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
+
+        att = account.attachments.new(attributes)
+        if att.save
+          path = s3_path(att.id, att.content_file_name)
+          AwsWrapper::S3Object.store(path, 
+                                     attached.tempfile, 
+                                     S3_CONFIG[:bucket], 
+                                     write_options)
+          att
+        end
       end
     end
   end

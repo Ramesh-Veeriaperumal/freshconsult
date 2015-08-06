@@ -488,6 +488,8 @@ en:
         feedback_info: Your feedback is very much appreciated.
         feedback_optional: Feedback is optional
         send: Send
+        submit: Submit
+        additional_comments: Additional Comments
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
         happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
@@ -1109,6 +1111,27 @@ en:
      You can learn more about satisfaction surveys from our solutions page.
      </p>"
      limit_exceed_error: You can only add upto %{count} surveys.
+     custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
+
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
+     <br><br>
+     <b>Satisfaction Survey</b><br>
+     You can ask one customer satisfaction survey question and additional survey questions. 
+     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions. 
+     The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
+     <br><br>
+     <b>Point scales</b><br>
+     You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
+      2 point (Eg: Yes, No)<br>
+      3 point (Eg: Agree, Undecided, Disagree)<br>
+      5 point (Eg: Always to Never)<br>
+      7 point (Eg: Very Poor to Exceptional)<br><br>
+
+      Once a customer takes the survey, the scales will be locked down and they cannot be edited.
+      </p>"
+
      questions:
         limit_exceed_error: You can only add upto %{count} questions.
      new_layout:
@@ -1122,26 +1145,37 @@ en:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
+        content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
+                      It appears below your signature at the bottom of the email sent to the customer.            
         survey_question: Survey question
+        survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
+        point_scale_v2: Point scale
         scale_text: You have chosen 
         scale: point scale
 
      new_thanks:
         survey_feedback: Survey Feedback Page
+        survey_feedback_v2: Thank You Page
         thanks_feedback: Thank you for your valuable feedback.
+        thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
+        thanks_message_feedback_v2: Thank you message for Additional Questions
         default_question_text: Are you satisfied with our customer support experience?
         thanks_label: Message will appear after submitting the feedback survey
+        thanks_label_v2: Message will appear after submitting feedback for additional questions.
         feedback_response_text: Thank you. Your feedback has been sent.
         help_text: Follow-up survey appears in a new page after the customer takes the agent survey.
+                    Questions can be about product/company/agent.
+        help_text_v2: Additional survey questions appear in a new page after the customer takes the satisfaction survey.
                     Questions can be about product/company/agent.
 
      new_questions_layout:
         title_text: Select the points scale for your questions
+        title_text_v2: Select the point scale for your questions
         add_question: Add Question
         questions: Questions
 
@@ -1172,6 +1206,7 @@ en:
         delete_survey: Delete Survey
         delete_msg: Are you sure you want to delete this survey?
         survey_help_msg: Selecting a rating above will link off to the page below
+        survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         on: ON
         off: OFF
 
@@ -1187,13 +1222,16 @@ en:
 
      thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
+        title_text_v2: Thank you message for Customer Satisfaction Survey.
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
+        label_text_v2: Additional Survey Questions
         question_error_text: Question has been already entered.
         empty_text: Question value cannot be blank.
 
      satisfaction_settings:
         enable_label: Customer Satisfaction Rating
+        enable_label_v2: Customer Satisfaction Survey
         satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
         link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
