@@ -63,7 +63,7 @@ class Solution::FoldersController < ApplicationController
     @folder = current_category.folders.new(params[nscname]) 
     @folder.category_id = @new_category.id
 
-    redirect_to_url = new_solution_category_folder_path(@new_category.id) unless
+    redirect_to_url = new_solution_folder_path(:category_id => @new_category.id) unless
       params[:save_and_create].nil?
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
