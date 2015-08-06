@@ -51,7 +51,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def validate_format_of_custom_url(record, field_name, value)
-      record.errors.add(field_name.to_sym, 'is not a url') unless value[field_name] =~ URI.regexp
+      record.errors.add(field_name, 'is not a url') unless value[field_name.to_s] =~ URI.regexp
     end
 
     def validate_format_of_custom_date(record, field_name, value)

@@ -52,7 +52,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def initialize_agents
-      @agents = Array.wrap params[cname][:user_ids] if params[cname].key?(:user_ids)
+      @agents = Array.wrap params[cname][:agent_ids] if params[cname].key?(:agent_ids)
     end
 
     def manipulate_params

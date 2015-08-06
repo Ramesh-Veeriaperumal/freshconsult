@@ -219,7 +219,7 @@ module JsonPattern
       note: expected_output[:note] || time_sheet.note,
       ticket_id: expected_output[:ticket_id] || time_sheet.workable.display_id,
       id: Fixnum,
-      user_id: expected_output[:user_id] || time_sheet.user_id,
+      agent_id: expected_output[:agent_id] || time_sheet.user_id,
       billable: (expected_output[:billable] || time_sheet.billable).to_s.to_bool,
       timer_running: (expected_output[:timer_running] || time_sheet.timer_running).to_s.to_bool,
       time_spent: expected_output[:time_spent] || time_sheet.api_time_spent,
@@ -298,13 +298,13 @@ module JsonPattern
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
-    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
+    group_json[:agent_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 
   def group_pattern_without_assingn_type(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
+    group_json[:agent_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 
@@ -418,16 +418,16 @@ module JsonPattern
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     contact_custom_field = (contact.custom_field && ignore_extra_keys) ? contact.custom_field.ignore_extra_keys! : contact.custom_field
 
-    if(contact.avatar)
+    if contact.avatar
       contact_avatar = {
-                        content_type: contact.avatar.content_content_type,
-                        file_size: contact.avatar.content_file_size,
-                        file_name: contact.avatar.content_file_name,
-                        avatar_url: String,
-                        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-                        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-                        id: contact.avatar.id
-                      }
+        content_type: contact.avatar.content_content_type,
+        file_size: contact.avatar.content_file_size,
+        file_name: contact.avatar.content_file_name,
+        avatar_url: String,
+        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        id: contact.avatar.id
+      }
     end
 
     {
@@ -445,7 +445,7 @@ module JsonPattern
       mobile: expected_output[:mobile] || contact.mobile,
       name: expected_output[:name] || contact.name,
       phone: expected_output[:phone] || contact.phone,
-      tags: expected_output[:tags] || contact.tags.collect { |t| t.name },
+      tags: expected_output[:tags] || contact.tags.collect(&:name),
       time_zone: expected_output[:time_zone] || contact.time_zone,
       twitter_id: expected_output[:twitter_id] || contact.twitter_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -488,7 +488,6 @@ module JsonPattern
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
-
 end
 
 include JsonPattern
