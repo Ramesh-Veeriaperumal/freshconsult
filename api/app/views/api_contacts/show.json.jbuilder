@@ -4,7 +4,7 @@ json.cache! @item do
 
   json.set! :custom_fields, @item.custom_field
 
-  json.set! :tags, @item.tags.map { |x| x.name }
+  json.set! :tags, @item.tags.map(&:name)
 
   json.set! :deleted, @item.deleted if @item.deleted
 
@@ -20,5 +20,4 @@ json.cache! @item do
   else
     json.set! :avatar_attributes, nil
   end
-
 end

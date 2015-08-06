@@ -108,10 +108,10 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_group
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
-                                                    auto_ticket_assign: true, user_ids: [1, 2])
+                                                    auto_ticket_assign: true, user_ids: [1])
     assert_response :success
     match_json(group_pattern({ escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: 1,
-                               user_ids: [1, 2] }, group.reload))
+                               user_ids: [1] }, group.reload))
   end
 
   def test_update_group_with_blank_name
@@ -140,9 +140,9 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_update_agents_of_group
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
-    put :update, construct_params({ id: group.id }, user_ids: [1, 2])
+    put :update, construct_params({ id: group.id }, user_ids: [1])
     assert_response :success
-    match_json(group_pattern({ user_ids: [1, 2] }, group.reload))
+    match_json(group_pattern({ user_ids: [1] }, group.reload))
   end
 
   def test_validate_agent_list
