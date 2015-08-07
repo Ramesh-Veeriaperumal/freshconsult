@@ -7,7 +7,10 @@ module Helpdesk::Email::TicketMethods
 
   def get_original_user
     email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
-    get_user(email_from_text , email[:email_config], email[:text]) unless email_from_text.blank?
+    unless email_from_text.blank?
+      self.original_sender = email_from_text[:email]
+      get_user(email_from_text , email[:email_config], email[:text])
+    end
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
@@ -31,6 +34,8 @@ module Helpdesk::Email::TicketMethods
   end
 
   def create_ticket_object
+    alter_forwarding_based_user if current_agent?
+
     self.ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => email[:subject],
@@ -46,20 +51,11 @@ module Helpdesk::Email::TicketMethods
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
-
-    if current_agent?
-      ticket.sender_email = get_original_email || email[:from][:email]
-      alter_forwarding_based_user       
-    end
+    ticket.sender_email = self.original_sender
   end
 
   def alter_forwarding_based_user
     self.user = (get_original_user || user)
-    ticket.requester = user
-  end
-
-  def get_original_email
-    (orig_email_from_text.present?)  ? orig_email_from_text[:email] : nil
   end
 
   def hash_cc_emails
