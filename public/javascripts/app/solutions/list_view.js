@@ -218,6 +218,7 @@ window.App = window.App || {};
         success: function () {
           $this.initialData();
           console.log('success');
+          App.Solutions.NavMenu.reload();
         }
       });
       $("#" + action_name).select2('val', '');
@@ -233,7 +234,10 @@ window.App = window.App || {};
           parent_id: obj.data('parent-id'),
           items: obj.data('items')
         },
-        success: $.proxy(this.onSaveSuccess, this),
+        success: function () {
+          $.proxy(this.onSaveSuccess, this);
+          App.Solutions.NavMenu.reload();
+        },
         error: $.proxy(this.onSaveError, this)
       });
     },
