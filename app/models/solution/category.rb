@@ -60,9 +60,11 @@ class Solution::Category < ActiveRecord::Base
   end
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def portal_ids
-    account.launched?(:meta_read) ? portals_through_metum_ids : super
+  def portal_ids_with_meta
+    account.launched?(:meta_read) ? portals_through_metum_ids : portal_ids_without_meta
   end
+
+  alias_method_chain :portal_ids, :meta
    
   private 
 
@@ -74,8 +76,9 @@ class Solution::Category < ActiveRecord::Base
       update_mh_app_time
     end
 
+    ### MULTILINGUAL SOLUTIONS - META WRITE HACK!!
     def set_default_portal
-      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
+      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids_without_meta.blank?
     end
 
 end
