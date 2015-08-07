@@ -60,7 +60,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:subject],
                                                             email[:message_id][1..-2])
       finalize_ticket_save
-      mark_email(process_email_key, email[:from][:email],
+      mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
                                     email[:message_id][1..-2]) if large_email(start_time)
@@ -92,7 +92,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:message_id][1..-2])
       note.save_note
       cleanup_attachments note
-      mark_email(process_email_key, email[:from][:email],
+      mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
                                     email[:message_id][1..-2]) if large_email(start_time)
