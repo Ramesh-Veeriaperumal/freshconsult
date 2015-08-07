@@ -100,7 +100,7 @@ class TicketsController < ApiApplicationController
     end
 
     def tickets_filter(tickets)
-      tickets = tickets.where(deleted: false, spam: false).api_permissible(current_user)
+      tickets = tickets.where(deleted: false, spam: false).permissible(current_user)
       @ticket_filter.conditions.each do |key|
         clause = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])

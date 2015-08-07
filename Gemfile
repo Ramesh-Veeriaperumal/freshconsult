@@ -49,7 +49,6 @@ end
 
 group :development do
   gem 'rack-mini-profiler'
-  gem 'capybara'
   gem 'launchy'
 end
 

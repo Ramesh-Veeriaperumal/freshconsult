@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
+  include ApiApplicationHelper
   def wrap_cname(_params)
     remove_wrap_params
     {}
@@ -21,7 +22,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
         new_pattern = ticket_field_nested_pattern(field)
       else
         new_pattern = ticket_field_pattern(field)
-        new_pattern.merge!(choices: Hash) if field.api_choices(@account).class == Hash
+        new_pattern.merge!(choices: Hash) if api_choices(@account, field).class == Hash
       end
       pattern << new_pattern
     end

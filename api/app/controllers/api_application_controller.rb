@@ -162,7 +162,7 @@ class ApiApplicationController < MetalApiController
       user_id = params[cname][:user_id]
       email = params[cname][:email]
       if user_id || email
-        @user = current_account.all_users.find_by_email(email) if email # should use user_for_email instead of find_by_email
+        @user = current_account.user_emails.user_for_email(email) if email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
         if @user && @user != current_user && !is_allowed_to_assume?(@user)
           render_request_error(:invalid_user, 403, id: @user.id, name: @user.name)
